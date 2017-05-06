@@ -40,7 +40,6 @@
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
 CIniFile settingsini( "sd:/_nds/srloader/settings.ini" );
-CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 
 int theme = 0;
 
@@ -143,24 +142,20 @@ int main(int argc, char **argv) {
 
 	// Clear the screen
 	iprintf ("\x1b[2J");
+	
+	if (!fatInitDefault()) {
+		iprintf ("fatinitDefault failed!\n");
+		
+		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
+		if(*SCFG_EXT>0)
+			iprintf ("SCFG_EXT : %x\n",*SCFG_EXT);
+			
+		stop();
+	}
 
 	LoadSettings();
 
 	iconTitleInit(theme);
-	
-	if (screenmode == 0) {
-	
-		if (!fatInitDefault()) {
-			iprintf ("fatinitDefault failed!\n");
-			
-			unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
-			if(*SCFG_EXT>0)
-				iprintf ("SCFG_EXT : %x\n",*SCFG_EXT);
-				
-			stop();
-		}
-		
-	}
 
 	keysSetRepeat(25,5);
 
@@ -236,6 +231,7 @@ int main(int argc, char **argv) {
 
 					std::string path = argarray[0];
 					std::string savepath = savename;
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 					path = ReplaceAll( path, "sd:/", "fat:/");
 					savepath = ReplaceAll( savepath, "sd:/", "fat:/");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
@@ -324,6 +320,7 @@ int main(int argc, char **argv) {
 							screenmode = 0;
 							selectmode = false;
 							iprintf ("\x1b[2J");
+							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 							bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 							bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
 							int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
