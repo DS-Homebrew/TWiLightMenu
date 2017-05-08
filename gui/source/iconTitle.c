@@ -49,6 +49,8 @@
 
 #define TEXT_WIDTH	((20-4)*8/6)
 
+extern int theme;
+
 static int bg2, bg3;
 static u16 *sprite;
 static tNDSBanner banner;
@@ -142,7 +144,7 @@ void bannerTitleInit (void) {
 }
 
 
-void iconTitleInit (int theme) {
+void iconTitleInit (void) {
 	// initialize video mode
 	videoSetMode(MODE_4_2D);
 

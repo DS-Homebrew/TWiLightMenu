@@ -25,7 +25,7 @@ extern "C" {
 
 void bannerTitleInit (void);
 
-void iconTitleInit (int theme);
+void iconTitleInit (void);
 void iconTitleUpdate (int isdir, const char* name);
 
 #ifdef __cplusplus

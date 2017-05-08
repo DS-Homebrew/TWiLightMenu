@@ -39,24 +39,31 @@
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
-CIniFile settingsini( "sd:/_nds/srloader/settings.ini" );
-
+bool autorun = false;
 int theme = 0;
 
 void LoadSettings(void) {
+	CIniFile settingsini( settingsinipath );
+
 	// Customizable UI settings.
+	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 }
 
 void SaveSettings(void) {
+	CIniFile settingsini( settingsinipath );
+
 	// UI settings.
+	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 
 int screenmode = 0;
+int subscreenmode = 0;
 
 int menucursor = 0;
+int settingscursor = 0;
 
 bool useBootstrap = false;
 
@@ -105,9 +112,38 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	if (!fatInitDefault()) {
+		bannerTitleInit();
+		
+		// Subscreen as a console
+		videoSetModeSub(MODE_0_2D);
+		vramSetBankH(VRAM_H_SUB_BG);
+		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+		
+		iprintf ("fatinitDefault failed!\n");
+		
+		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
+		if(*SCFG_EXT>0)
+			iprintf ("SCFG_EXT : %x\n",*SCFG_EXT);
+			
+		stop();
+	}
+
 	int pathLen;
 	std::string filename;
 	std::string bootstrapfilename;
+
+	LoadSettings();
+	
+	swiWaitForVBlank();
+	scanKeys();
+
+	if (autorun && !(keysHeld() & KEY_B)) {
+		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+		bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+		bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
+		runNdsFile (bootstrapfilename.c_str(), 0, 0);
+	}
 
 	bannerTitleInit();
 
@@ -143,19 +179,7 @@ int main(int argc, char **argv) {
 	// Clear the screen
 	iprintf ("\x1b[2J");
 	
-	if (!fatInitDefault()) {
-		iprintf ("fatinitDefault failed!\n");
-		
-		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
-		if(*SCFG_EXT>0)
-			iprintf ("SCFG_EXT : %x\n",*SCFG_EXT);
-			
-		stop();
-	}
-
-	LoadSettings();
-
-	iconTitleInit(theme);
+	iconTitleInit();
 
 	keysSetRepeat(25,5);
 
@@ -271,24 +295,64 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					iprintf ("\x1b[2J");
 					
-					iprintf ("SRLoader v0.0.1\n");
-					iprintf ("\n");
-					
-					if (menucursor == 0)
-						iprintf ("*Return to ROM select\n");
-					else
-						iprintf (" Return to ROM select\n");
+					if(subscreenmode == 0) {
+						iprintf ("SRLoader v0.0.1\n");
+						iprintf ("\n\n");
 						
-					if (menucursor == 1)
-						iprintf ("*Run last played ROM\n");
-					else
-						iprintf (" Run last played ROM\n");
+						if (menucursor == 0)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Return to ROM select\n");
+							
+						if (menucursor == 1)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Run last played ROM\n");
+							
+						if (menucursor == 2)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Settings\n");
+							
+					} else if(subscreenmode == 1) {
+						iprintf ("Settings\n");
+						iprintf ("\n\n");
 						
-					if (menucursor == 2)
-						iprintf ("*Change theme\n");
-					else
-						iprintf (" Change theme\n");
+						if (settingscursor == 0)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Change theme\n");
+							
+						if (settingscursor == 1)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Run last played ROM on startup ");
+						iprintf ("                           ");
+						if(autorun) iprintf ("On"); else iprintf ("Off");
+						iprintf ("\n");
+
+						if (settingscursor == 2)
+							iprintf ("*");
+						else
+							iprintf (" ");
+						iprintf ("Back");
 						
+						 if (settingscursor == 0) {
+							iprintf ("\n\n\n\n\n\n\n\n\n\n\n\n");
+							iprintf ("Changes top screen theme.");
+						} else if (settingscursor == 1) {
+							iprintf ("\n\n\n\n\n\n\n\n\n\n\n\n");
+							iprintf ("If turned on, hold B on\n");
+							iprintf ("startup to skip to the\n");
+							iprintf ("ROM select menu.");
+						}
+
+					}
 					menuprinted = true;
 				}
 
@@ -298,53 +362,98 @@ int main(int argc, char **argv) {
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
 				} while (!pressed);
-
-				if (pressed & KEY_UP) {
-					menucursor -= 1;
-					menuprinted = false;
-				}
-				if (pressed & KEY_DOWN) {
-					menucursor += 1;
-					menuprinted = false;
-				}
 				
-				if (pressed & KEY_A) {
-					switch (menucursor) {
-						case 0:
-						default:
-							screenmode = 0;
-							selectmode = false;
-							break;
-						case 1:
-						{
-							screenmode = 0;
-							selectmode = false;
-							iprintf ("\x1b[2J");
-							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-							bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-							bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
-							int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
-							iprintf ("Start failed. Error %i\n", err);
-							break;
-						}
-						case 2:
-							theme += 1;
-							if (theme > 1) theme = 0;
-							iconTitleInit(theme);
-							SaveSettings();
-							break;
+				if(subscreenmode == 0) {
+					if (pressed & KEY_UP) {
+						menucursor -= 1;
+						menuprinted = false;
 					}
-				}
+					if (pressed & KEY_DOWN) {
+						menucursor += 1;
+						menuprinted = false;
+					}
+					
+					if (pressed & KEY_A) {
+						switch (menucursor) {
+							case 0:
+							default:
+								screenmode = 0;
+								selectmode = false;
+								break;
+							case 1:
+							{
+								screenmode = 0;
+								selectmode = false;
+								iprintf ("\x1b[2J");
+								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+								bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+								bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
+								int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
+								iprintf ("Start failed. Error %i\n", err);
+								break;
+							}
+							case 2:
+								subscreenmode = 1;
+								menuprinted = false;
+								break;
+						}
+					}
 
-				if (pressed & KEY_B) {
-					menucursor = 0;
-					screenmode = 0;
-					selectmode = false;
-					break;
+					if (pressed & KEY_B) {
+						menucursor = 0;
+						screenmode = 0;
+						selectmode = false;
+						break;
+					}
+					
+					if (menucursor > 2) menucursor = 0;
+					else if (menucursor < 0) menucursor = 2;
+				} else if(subscreenmode == 1) {
+					if (pressed & KEY_UP) {
+						settingscursor -= 1;
+						menuprinted = false;
+					}
+					if (pressed & KEY_DOWN) {
+						settingscursor += 1;
+						menuprinted = false;
+					}
+
+					if (pressed & KEY_A) {
+						switch (settingscursor) {
+							case 0:
+							default:
+								theme += 1;
+								if (theme > 1) theme = 0;
+								iconTitleInit();
+								break;
+							case 1:
+								autorun = !autorun;
+								menuprinted = false;
+								break;
+							case 2:
+								iprintf ("\x1b[2J");
+								iprintf ("Saving settings...");
+								SaveSettings();
+								subscreenmode = 0;
+								menuprinted = false;
+								break;
+						}
+					}
+
+					if (pressed & KEY_B) {
+						iprintf ("\x1b[2J");
+						iprintf ("Saving settings...");
+						SaveSettings();
+						subscreenmode = 0;
+						menuprinted = false;
+						break;
+					}
+
+					if (settingscursor > 2) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 2;
+					
 				}
 				
-				if (menucursor > 2) menucursor = 0;
-				else if (menucursor < 0) menucursor = 2;
 			}
 
 		}
