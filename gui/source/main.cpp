@@ -296,7 +296,7 @@ int main(int argc, char **argv) {
 					iprintf ("\x1b[2J");
 					
 					if(subscreenmode == 0) {
-						iprintf ("SRLoader v0.0.1\n");
+						iprintf ("SRLoader v0.0.2\n");
 						iprintf ("\n\n");
 						
 						if (menucursor == 0)
