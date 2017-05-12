@@ -90,7 +90,6 @@ void doPause(int x, int y) {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
-		swiWaitForVBlank();
 	}
 	scanKeys();
 }
@@ -102,6 +101,11 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
         start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
+}
+
+void loadROMselect() {
+	int err = runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
+	iprintf ("Start failed. Error %i\n", err);
 }
 
 //---------------------------------------------------------------------------------
@@ -372,8 +376,7 @@ int main(int argc, char **argv) {
 			}
 
 		} else {
-			int err = runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
-			iprintf ("Start failed. Error %i\n", err);
+			loadROMselect();
 		}
 
 	}
