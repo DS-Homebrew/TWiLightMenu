@@ -1,7 +1,6 @@
 /*-----------------------------------------------------------------
- Copyright (C) 2005 - 2010
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
+ Copyright (C) 2015
+	Matthew Scholefield
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,15 +17,46 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
+#pragma once
 
-#ifndef FILE_BROWSE_H
-#define FILE_BROWSE_H
+template <typename T> int sign(T val)
+{
+	return (T(0) < val) - (val < T(0));
+}
 
-#include <string>
-#include <vector>
+class TextEntry
+{
+public:
+	static const int ACTIVE = 0;
+	static const int COMPLETE = -1;
+	static const int PRECISION = 10;
 
-std::string browseForFile (const std::vector<std::string> extensionList);
+	enum class FadeType
+	{
+		NONE,
+		IN,
+		OUT
+	};
 
+	enum class AnimType
+	{
+		IN,
+		OUT
+	};
 
+	bool large;
+	bool immune; //Does not clear
+	bool delayShown;
+	FadeType fade;
+	AnimType anim;
+	int initX, initY, x, y, finalX, finalY;
+	int invAccel;
+	int delay;
+	int polyID;
+	const char *message;
 
-#endif //FILE_BROWSE_H
+	int calcAlpha();
+	bool update(); //Returns true to delete itself
+
+	TextEntry(bool large, int x, int y, const char *message);
+};

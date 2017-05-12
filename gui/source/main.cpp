@@ -27,15 +27,21 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <gl2d.h>
 
-#include "nds_loader_arm9.h"
-#include "file_browse.h"
+#include "graphics/graphics.h"
+
+#include "ndsLoaderArm9.h"
+#include "fileBrowse.h"
 
 #include "dsmenu_top.h"
 
 #include "iconTitle.h"
+#include "graphics/fontHandler.h"
 
 #include "inifile.h"
+
+bool dodrawIcon = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
@@ -80,9 +86,10 @@ void stop (void) {
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
-void doPause() {
+void doPause(int x, int y) {
 //---------------------------------------------------------------------------------
-	iprintf("Press start...\n");
+	// iprintf("Press start...\n");
+	printSmall(false, x, y, "Press start...");
 	while(1) {
 		scanKeys();
 		if(keysDown() & KEY_START)
@@ -101,7 +108,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -112,24 +118,18 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+#ifndef EMULATE_FILES
+
 	if (!fatInitDefault()) {
-		bannerTitleInit();
-		
-		// Subscreen as a console
-		videoSetModeSub(MODE_0_2D);
-		vramSetBankH(VRAM_H_SUB_BG);
-		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-		
-		iprintf ("fatinitDefault failed!\n");
-		
-		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
-		if(*SCFG_EXT>0)
-			iprintf ("SCFG_EXT : %x\n",*SCFG_EXT);
-			
+		graphicsInit();
+		fontInit();
+		//iprintf ("fatinitDefault failed!\n");
+		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
 
-	int pathLen;
+#endif
+
 	std::string filename;
 	std::string bootstrapfilename;
 
@@ -145,13 +145,9 @@ int main(int argc, char **argv) {
 		runNdsFile (bootstrapfilename.c_str(), 0, 0);
 	}
 
-	bannerTitleInit();
+	graphicsInit();
+	fontInit();
 
-	// Subscreen as a console
-	videoSetModeSub(MODE_0_2D);
-	vramSetBankH(VRAM_H_SUB_BG);
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-	
 	unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;		
 	unsigned int * SCFG_CLK=	(unsigned int*)0x4004004;
 	unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
@@ -160,42 +156,77 @@ int main(int argc, char **argv) {
 	unsigned int * SCFG_EXT_ARM7_COPY=  (unsigned int*)0x2370001;
 
 	if(*SCFG_EXT>0) {
-		iprintf ("DSI SCFG_ROM ARM9 : %x\n\n",*SCFG_ROM);			
-		iprintf ("DSI SCFG_CLK ARM9 : %x\n\n",*SCFG_CLK);
-		iprintf ("DSI SCFG_EXT ARM9 : %x\n\n",*SCFG_EXT);			
-		iprintf ("DSI SCFG_MC ARM9 : %x\n\n",*SCFG_MC);
+		char text1[48], text2[48], text3[48], text4[48], text5[48], text6[48]; 
 		
-		iprintf ("DSI SCFG_ROM ARM7 : %x\n\n",*SCFG_ROM_ARM7_COPY);
-		iprintf ("DSI SCFG_EXT ARM7 : %x\n\n",*SCFG_EXT_ARM7_COPY);
+		snprintf (text1, sizeof(text1), "DSI SCFG_ROM ARM9 : %x",*SCFG_ROM);			
+		snprintf (text2, sizeof(text2), "DSI SCFG_CLK ARM9 : %x",*SCFG_CLK);
+		snprintf (text3, sizeof(text3), "DSI SCFG_EXT ARM9 : %x",*SCFG_EXT);			
+		snprintf (text4, sizeof(text4), "DSI SCFG_MC ARM9 : %x",*SCFG_MC);
+		
+		snprintf (text5, sizeof(text5), "DSI SCFG_ROM ARM7 : %x",*SCFG_ROM_ARM7_COPY);
+		snprintf (text6, sizeof(text6), "DSI SCFG_EXT ARM7 : %x",*SCFG_EXT_ARM7_COPY);
+		
+		int yPos = 4;
+		
+		printSmall(false, 4, yPos, text1);
+		yPos += 16;
+		printSmall(false, 4, yPos, text2);
+		yPos += 16;
+		printSmall(false, 4, yPos, text3);
+		yPos += 16;
+		printSmall(false, 4, yPos, text4);
+		yPos += 16;
+		printSmall(false, 4, yPos, text5);
+		yPos += 16;
+		printSmall(false, 4, yPos, text6);
 		
 		//test RAM
 		//unsigned int * TEST32RAM=	(unsigned int*)0xD004000;		
 		//*TEST32RAM = 0x55;
 		//iprintf ("32 MB RAM ACCESS : %x\n\n",*TEST32RAM);
+		doPause(80, 140);
 	}
-			
-	doPause();
 
-	// Clear the screen
-	iprintf ("\x1b[2J");
-	
+	loadThemegraphics();
+
 	iconTitleInit();
-
+	/*while (1)
+	{
+		//swiWaitForVBlank();
+		while (REG_DISPCAPCNT & DCAP_ENABLE);
+		startRendering(true);
+		glBegin2D();
+		{
+			glBoxFilledGradient(0, 0, 255, 191, RGB15(25, 0, 0), RGB15(23, 20, 0), RGB15(25, 0, 0), RGB15(23, 20, 0));
+			drawIcon();
+		}
+		glEnd2D();
+		glFlush(0);
+		swiWaitForVBlank();
+	}*/
+	// fontInit();
+		
+	dodrawIcon = true;
+	
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
+	srand(time(NULL));
 
 	while(1) {
 	
 		if (screenmode == 0) {
-
+			//Navigates to the file to launch
 			filename = browseForFile(extensionList);
 
+			////////////////////////////////////
+			// Launch the item
+#ifndef EMULATE_FILES
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
-			pathLen = strlen (filePath);
+			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
@@ -234,7 +265,8 @@ int main(int argc, char **argv) {
 					std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 					if (access(savename.c_str(), F_OK)) {
-						iprintf ("Creating save file...\n");
+						// iprintf ("Creating save file...\n");
+						printSmall(false, 4, 4, "Creating save file...");
 
 						static const int BUFFER_SIZE = 4096;
 						char buffer[BUFFER_SIZE];
@@ -249,7 +281,8 @@ int main(int argc, char **argv) {
 							}
 							fclose(pFile);
 						}
-						iprintf ("Save file created!\n");
+						// iprintf ("Save file created!\n");
+						printSmall(false, 4, 12, "Save file created!");
 
 					}
 
@@ -283,6 +316,7 @@ int main(int argc, char **argv) {
 			// 	scanKeys();
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }
+#endif
 		} else if (screenmode == 1) {
 			
 			bool selectmode = true;
@@ -293,63 +327,68 @@ int main(int argc, char **argv) {
 
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
-					iprintf ("\x1b[2J");
+					clearText();
 					
 					if(subscreenmode == 0) {
-						iprintf ("SRLoader v0.0.2\n");
-						iprintf ("\n\n");
+						printLarge(false, 4, 4, "SRLoader v0.0.2");
 						
-						if (menucursor == 0)
-							iprintf ("*");
-						else
-							iprintf (" ");
-						iprintf ("Return to ROM select\n");
+						int yPos;
+						switch (menucursor) {
+							case 0:
+							default:
+								yPos = 20;
+								break;
+							case 1:
+								yPos = 28;
+								break;
+							case 2:
+								yPos = 36;
+								break;
+						}
 							
-						if (menucursor == 1)
-							iprintf ("*");
-						else
-							iprintf (" ");
-						iprintf ("Run last played ROM\n");
-							
-						if (menucursor == 2)
-							iprintf ("*");
-						else
-							iprintf (" ");
-						iprintf ("Settings\n");
+						printSmall(false, 4, yPos, ">");
+						
+						printSmall(false, 12, 20, "Return to ROM select");
+						printSmall(false, 12, 28, "Run last played ROM");
+						printSmall(false, 12, 36, "Settings");
 							
 					} else if(subscreenmode == 1) {
-						iprintf ("Settings\n");
-						iprintf ("\n\n");
+						printLarge(false, 4, 4, "Settings");
 						
-						if (settingscursor == 0)
-							iprintf ("*");
-						else
-							iprintf (" ");
-						iprintf ("Change theme\n");
-							
-						if (settingscursor == 1)
-							iprintf ("*");
-						else
-							iprintf (" ");
-						iprintf ("Run last played ROM on startup ");
-						iprintf ("                           ");
-						if(autorun) iprintf ("On"); else iprintf ("Off");
-						iprintf ("\n");
+						int yPos;
+						switch (settingscursor) {
+							case 0:
+							default:
+								yPos = 20;
+								break;
+							case 1:
+								yPos = 28;
+								break;
+							case 2:
+								yPos = 44;
+								break;
+						}
+						
+						printSmall(false, 4, yPos, ">");
 
-						if (settingscursor == 2)
-							iprintf ("*");
+						printSmall(false, 12, 20, "Theme");
+						if(theme == 1)
+							printSmall(false, 156, 20, "3DS HOME Menu");
 						else
-							iprintf (" ");
-						iprintf ("Back");
+							printSmall(false, 156, 20, "DS Menu");
+						printSmall(false, 12, 28, "Run last played ROM on startup ");
+						if(autorun)
+							printSmall(false, 224, 36, "On");
+						else
+							printSmall(false, 224, 36, "Off");
+						printSmall(false, 12, 44, "Back");
 						
-						 if (settingscursor == 0) {
-							iprintf ("\n\n\n\n\n\n\n\n\n\n\n\n");
-							iprintf ("Changes top screen theme.");
+						if (settingscursor == 0) {
+							printSmall(false, 4, 156, "Changes top screen theme.");
 						} else if (settingscursor == 1) {
-							iprintf ("\n\n\n\n\n\n\n\n\n\n\n\n");
-							iprintf ("If turned on, hold B on\n");
-							iprintf ("startup to skip to the\n");
-							iprintf ("ROM select menu.");
+							printSmall(false, 4, 156, "If turned on, hold B on\n");
+							printSmall(false, 4, 164, "startup to skip to the\n");
+							printSmall(false, 4, 172, "ROM select menu.");
 						}
 
 					}
@@ -384,7 +423,7 @@ int main(int argc, char **argv) {
 							{
 								screenmode = 0;
 								selectmode = false;
-								iprintf ("\x1b[2J");
+								clearText();
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 								bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 								bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
@@ -424,15 +463,16 @@ int main(int argc, char **argv) {
 							default:
 								theme += 1;
 								if (theme > 1) theme = 0;
-								iconTitleInit();
+								loadThemegraphics();
+								menuprinted = false;
 								break;
 							case 1:
 								autorun = !autorun;
 								menuprinted = false;
 								break;
 							case 2:
-								iprintf ("\x1b[2J");
-								iprintf ("Saving settings...");
+								clearText();
+								printSmall(false, 4, 4, "Saving settings...");
 								SaveSettings();
 								subscreenmode = 0;
 								menuprinted = false;
@@ -441,8 +481,8 @@ int main(int argc, char **argv) {
 					}
 
 					if (pressed & KEY_B) {
-						iprintf ("\x1b[2J");
-						iprintf ("Saving settings...");
+						clearText();
+						printSmall(false, 4, 4, "Saving settings...");
 						SaveSettings();
 						subscreenmode = 0;
 						menuprinted = false;
@@ -457,9 +497,7 @@ int main(int argc, char **argv) {
 			}
 
 		}
-
 	}
 
 	return 0;
 }
-

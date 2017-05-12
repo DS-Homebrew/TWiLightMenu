@@ -1,8 +1,6 @@
 /*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
+ Copyright (C) 2015
+	Matthew Scholefield
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -19,7 +17,26 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
+
+#include "TextEntry.h"
+#include "TextPane.h"
+#include "FontGraphic.h"
+
 #pragma once
-void iconTitleInit();
-void iconTitleUpdate(bool isDir, const char* name);
-void drawIcon();
+
+void fontInit();
+void updateText(bool top);
+void clearText(bool top);
+void clearText();
+void printSmall(bool top, int x, int y, const char *message);
+void printSmallCentered(bool top, int y, const char *message);
+void printLarge(bool top, int x, int y, const char *message);
+void printLargeCentered(bool top, int y, const char *message);
+int calcSmallFontWidth(const char *text);
+int calcLargeFontWidth(const char *text);
+void animateTextIn(bool top);
+void scrollTextVert(bool top, bool up, TextEntry &newEntry);
+TextEntry *getPreviousTextEntry(bool top);
+TextPane &createTextPane(int startX, int startY, int shownElements);
+FontGraphic &getFont(bool large);
+void waitForPanesToClear();

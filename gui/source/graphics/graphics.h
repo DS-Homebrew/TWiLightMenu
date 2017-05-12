@@ -1,8 +1,6 @@
 /*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
+ Copyright (C) 2015
+	Matthew Scholefield
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -20,6 +18,14 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-void iconTitleInit();
-void iconTitleUpdate(bool isDir, const char* name);
-void drawIcon();
+
+void initSubSprites(void);
+void graphicsInit();
+void loadThemegraphics();
+void startRendering(bool top);
+bool isRenderingTop();
+
+template<typename T> inline const T abs(T const & x)
+{
+	return ( x < 0) ? -x : x;
+}

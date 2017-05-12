@@ -1,8 +1,7 @@
 /*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
+ Copyright (C) 2005 - 2010
 	Michael "Chishm" Chisholm
 	Dave "WinterMute" Murphy
-	Claudio "sverx"
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -19,7 +18,17 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
-#pragma once
-void iconTitleInit();
-void iconTitleUpdate(bool isDir, const char* name);
-void drawIcon();
+
+#ifndef FILE_BROWSE_H
+#define FILE_BROWSE_H
+
+#include <string>
+#include <vector>
+
+//#define EMULATE_FILES
+
+std::string browseForFile(const std::vector<std::string> extensionList);
+
+
+
+#endif //FILE_BROWSE_H

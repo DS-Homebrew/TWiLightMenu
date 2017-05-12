@@ -1,8 +1,6 @@
 /*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
+ Copyright (C) 2015
+	Matthew Scholefield
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -19,7 +17,31 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
-#pragma once
-void iconTitleInit();
-void iconTitleUpdate(bool isDir, const char* name);
-void drawIcon();
+#ifndef TEXTPANE_H
+#define	TEXTPANE_H
+
+#include <list>
+#include <vector>
+#include <string>
+#include "TextEntry.h"
+
+
+
+class TextPane
+{
+	const int START_PX, START_PY, SHOWN_ELEMENTS;
+	int startIndex;
+	std::list<TextEntry> shownText;
+	std::vector<const char *> text;
+	void wrapTransition();
+public:
+	void createDefaultEntries();
+	void slideTransition(bool transitionIn, bool right = true, int delay = 0, int clickedIndex = -1);
+	void scroll(bool up);
+	void addLine(const char *line);
+	bool update(bool top);
+	TextPane(int startPX, int startPY, int shownElements);
+};
+
+#endif	/* TEXTPANE_H */
+
