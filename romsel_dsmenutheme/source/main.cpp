@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	// defaultExceptionHandler();
-	// Sorry, but to me, it's the only known way to get rid of those crash messages.
+	// Sorry, but to me, it's the only known way to get rid of some of those crash messages.
 
 #ifndef EMULATE_FILES
 

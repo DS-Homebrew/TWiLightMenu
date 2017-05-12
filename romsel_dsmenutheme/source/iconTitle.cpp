@@ -31,28 +31,26 @@
 #include "font6x8.h"
 
 // DS Menu theme
-#define TITLE_POS_X	(14*8)
-#define TITLE_POS_Y	(10*8)
-
 #define ICON_POS_X	40
 #define ICON_POS_Y	80
 
 
 #define TEXT_WIDTH	((20-4)*8/6)
 
+#define BOX_PX	(14*8)
 #define BOX_PY (10*8)
 
 // 3DS HOME Menu theme
-#define TITLE_POS_X2	(11*8)
-#define TITLE_POS_Y2	(16*8)
-
 #define ICON_POS_X2	112
 #define ICON_POS_Y2	56
 
 
 #define TEXT_WIDTH2	((32-4)*8/6)
 
+// #define BOX_PX2	(11*8)
 #define BOX_PY2 (16*8)
+
+extern int theme;
 
 static int iconTexID;
 static tNDSBanner banner;
@@ -72,7 +70,8 @@ void iconTitleInit()
 
 static inline void writeRow(int rownum, const char* text)
 {
-	printSmallCentered(true, BOX_PY + FONT_SY * rownum, text);
+	if (theme == 1) printSmallCentered(true, BOX_PY2 + FONT_SY * rownum, text);
+	else printSmall(true, BOX_PX + FONT_SX, BOX_PY + FONT_SY * rownum, text);
 }
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew)
@@ -119,7 +118,8 @@ static void clearIcon(void)
 
 void drawIcon()
 {
-	glSprite(ICON_POS_X, ICON_POS_Y, GL_FLIP_NONE, icon);
+	if (theme == 1) glSprite(ICON_POS_X2, ICON_POS_Y2, GL_FLIP_NONE, icon);
+	else glSprite(ICON_POS_X, ICON_POS_Y, GL_FLIP_NONE, icon);
 }
 
 void iconTitleUpdate(bool isDir, const char* name)
