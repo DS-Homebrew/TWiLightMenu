@@ -119,12 +119,23 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	// Read user name
+	char *username = (char*)PersonalData->name;
+		
+	// text
+	for (int i = 0; i < 10; i++) {
+		if (username[i*2] == 0x00)
+			username[i*2/2] = 0;
+		else
+			username[i*2/2] = username[i*2];
+	}
+
 #ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
 		graphicsInit();
 		fontInit();
-		//iprintf ("fatinitDefault failed!\n");
+		printSmall(true, 1, 2, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
@@ -222,7 +233,7 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 28, "Save file created!");
 
 				}
-
+				
 				std::string path = argarray[0];
 				std::string savepath = savename;
 				CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );

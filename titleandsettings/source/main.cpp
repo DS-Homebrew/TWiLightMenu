@@ -117,12 +117,23 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	// Read user name
+	char *username = (char*)PersonalData->name;
+		
+	// text
+	for (int i = 0; i < 10; i++) {
+		if (username[i*2] == 0x00)
+			username[i*2/2] = 0;
+		else
+			username[i*2/2] = username[i*2];
+	}
+
 #ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
 		graphicsInit();
 		fontInit();
-		//iprintf ("fatinitDefault failed!\n");
+		printSmall(true, 1, 2, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
@@ -146,7 +157,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 0, 0, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 0, 1, 0);
 
 	graphicsInit();
 	fontInit();
@@ -212,6 +223,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 					
+					printSmall(true, 1, 2, username);
 					printSmall(true, 192, 184, vertext);
 					
 					printLarge(false, 4, 4, "Settings");
