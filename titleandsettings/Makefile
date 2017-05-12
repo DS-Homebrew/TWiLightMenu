@@ -9,12 +9,12 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export VER_MAJOR	:= 0
-export VER_MINOR	:= 5
-export VER_PATCH	:= 0
+export VERSION_MAJOR	:= 0
+export VERSION_MINOR	:= 0
+export VERSION_PATCH	:= 2
 
 
-VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
+VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
