@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
 	swiWaitForVBlank();
 	scanKeys();
 
-	if (autorun && !(keysHeld() & KEY_B)) {
+	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 		bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
