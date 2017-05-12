@@ -226,7 +226,6 @@ int main(int argc, char **argv) {
 				int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 				iprintf ("Start failed. Error %i\n", err);
 			} else {
-				if (gotosettings) SaveSettings();
 				iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
 				iprintf ("Start failed. Error %i\n", err);

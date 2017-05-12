@@ -39,6 +39,10 @@
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
 
+#include "ndsLoaderArm9.h"
+
+#include "inifile.h"
+
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
 #define ENTRIES_START_ROW 3
@@ -377,7 +381,12 @@ string browseForFile(const vector<string> extensionList)
 			pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 			// Return the chosen file
 			waitForPanesToClear();
-			return "sd:/boot.nds";
+			CIniFile settingsini( "sd:/_nds/srloader/settings.ini" );
+			settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+			settingsini.SaveIniFile("sd:/_nds/srloader/settings.ini");
+			int err = runNdsFile ("sd:/boot.nds", 0, 0);
+			iprintf ("Start failed. Error %i\n", err);
+			return "null";
 		}
 
 	}
