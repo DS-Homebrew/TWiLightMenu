@@ -308,7 +308,7 @@ string browseForFile(const vector<string> extensionList)
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
-				chdir(entry->name.c_str());
+				/* chdir(entry->name.c_str());
 				updatePath();
 				pane->slideTransition(false, false, 0, fileOffset - screenOffset);
 				pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -318,7 +318,7 @@ string browseForFile(const vector<string> extensionList)
 				pane->createDefaultEntries();
 				pane->slideTransition(true, false, 20);
 				screenOffset = 0;
-				fileOffset = 0;
+				fileOffset = 0; */
 			}
 			else
 			{
@@ -336,7 +336,7 @@ string browseForFile(const vector<string> extensionList)
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
-				chdir(entry->name.c_str());
+				/* chdir(entry->name.c_str());
 				updatePath();
 				pane->slideTransition(false, false, 0, fileOffset - screenOffset);
 				pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -346,7 +346,7 @@ string browseForFile(const vector<string> extensionList)
 				pane->createDefaultEntries();
 				pane->slideTransition(true, false, 20);
 				screenOffset = 0;
-				fileOffset = 0;
+				fileOffset = 0; */
 			}
 			else
 			{
