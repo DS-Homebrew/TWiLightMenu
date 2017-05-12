@@ -25,7 +25,6 @@
 #include "srloader_banner.h"
 #include "sub_bg.h"
 #include "font6x8.h"
-#include "../iconTitle.h"
 #include "graphics.h"
 #include "fontHandler.h"
 
