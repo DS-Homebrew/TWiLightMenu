@@ -43,6 +43,8 @@
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
+std::string romfolder;
+
 bool gotosettings = false;
 
 bool autorun = false;
@@ -50,6 +52,9 @@ int theme = 0;
 
 void LoadSettings(void) {
 	CIniFile settingsini( settingsinipath );
+
+	// UI settings.
+	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -112,8 +117,7 @@ int main(int argc, char **argv) {
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	// defaultExceptionHandler();
-	// Sorry, but to me, it's the only known way to get rid of some of those crash messages.
+	defaultExceptionHandler();
 
 #ifndef EMULATE_FILES
 
@@ -143,6 +147,13 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
 	srand(time(NULL));
+	
+	if (romfolder == "") romfolder = "nds";
+	
+	char path[256];
+	snprintf (path, sizeof(path), "sd:/%s", romfolder.c_str());
+	
+	chdir (path);
 
 	while(1) {
 	
@@ -193,8 +204,7 @@ int main(int argc, char **argv) {
 				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 				if (access(savename.c_str(), F_OK)) {
-					// iprintf ("Creating save file...\n");
-					printSmall(false, 4, 4, "Creating save file...");
+					printSmall(false, 4, 20, "Creating save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -209,8 +219,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					// iprintf ("Save file created!\n");
-					printSmall(false, 4, 12, "Save file created!");
+					printSmall(false, 4, 28, "Save file created!");
 
 				}
 

@@ -111,7 +111,8 @@ void vBlankHandler()
 		}
 		else
 		{
-			drawBG(subBgImage);
+			if (theme == 1) glBoxFilled(0, 0, 256, 192, RGB15(220, 220, 210));
+			else drawBG(subBgImage);
 			glColor(RGB15(31, 31, 31));
 			updateText(renderingTop);
 		}

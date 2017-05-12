@@ -37,7 +37,7 @@
 
 #define TEXT_WIDTH	((20-4)*8/6)
 
-#define BOX_PX	(14*8)
+#define BOX_PX	(9*8)
 #define BOX_PY (10*8)
 
 // 3DS HOME Menu theme

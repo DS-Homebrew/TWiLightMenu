@@ -156,7 +156,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 	if (pdir == NULL)
 	{
-		iprintf("Unable to open the directory.\n");
+		// iprintf("Unable to open the directory.\n");
+		printSmall (false, 4, 4, "Unable to open the directory.");
 	}
 	else
 	{
@@ -176,7 +177,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 				dirEntry.visibleName = "[" + dirEntry.name + "]";
 			else
 				dirEntry.visibleName = dirEntry.name;
-
 
 			if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
 				dirContents.push_back(dirEntry);
@@ -358,7 +358,7 @@ string browseForFile(const vector<string> extensionList)
 			}
 		}
 
-		if (pressed & KEY_B && !isTopLevel(path))
+		/* if (pressed & KEY_B && !isTopLevel(path))
 		{
 			// Go up a directory
 			chdir("..");
@@ -372,7 +372,7 @@ string browseForFile(const vector<string> extensionList)
 			pane->slideTransition(true, true, 20);
 			screenOffset = 0;
 			fileOffset = 0;
-		}
+		} */
 		
 		if (pressed & KEY_START)
 		{
