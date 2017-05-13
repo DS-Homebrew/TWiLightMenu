@@ -48,6 +48,9 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern bool titleboxXmoveleft;
+extern bool titleboxXmoveright;
+
 extern bool gotosettings;
 
 extern bool useBootstrap;
@@ -284,8 +287,13 @@ string browseForFile(const vector<string> extensionList)
 		// 	cursor->invAccel = 4;
 		// }
 
-		if (pressed & KEY_LEFT) fileOffset -= 1;
-		if (pressed & KEY_RIGHT) fileOffset += 1;
+		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
+			fileOffset -= 1;
+			if (fileOffset >= 0) titleboxXmoveleft = true;
+		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
+			fileOffset += 1;
+			if (fileOffset <= ((int) dirContents[scrn].size() - 1)) titleboxXmoveright = true;
+		}
 		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;
 
@@ -298,9 +306,7 @@ string browseForFile(const vector<string> extensionList)
 			fileOffset = dirContents[scrn].size() - 1;
 		}
 		
-		titleboxXpos = fileOffset*64;
-
-		if (pressed & KEY_A)
+		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			DirEntry* entry = &dirContents[scrn].at(fileOffset);
 			if (entry->isDirectory)
@@ -328,7 +334,7 @@ string browseForFile(const vector<string> extensionList)
 			}
 		}
 
-		if (pressed & KEY_Y)
+		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			DirEntry* entry = &dirContents[scrn].at(fileOffset);
 			if (entry->isDirectory)

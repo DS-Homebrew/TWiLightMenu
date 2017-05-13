@@ -74,6 +74,9 @@ bool useBootstrap = false;
 
 using namespace std;
 
+bool titleboxXmoveleft = false;
+bool titleboxXmoveright = false;
+
 int spawnedtitleboxes = 0;
 int titleboxXpos = 0;
 
