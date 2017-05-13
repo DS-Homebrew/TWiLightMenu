@@ -103,8 +103,8 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void loadROMselect() {
-	int err = runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
-	iprintf ("Start failed. Error %i\n", err);
+	if (theme == 2) runNdsFile ("sd:/_nds/srloader/dsimenu.srldr", 0, 0);
+	else runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
 }
 
 //---------------------------------------------------------------------------------
@@ -242,7 +242,9 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 					
 					printSmall(false, 12, 20, "Theme");
-					if(theme == 1)
+					if(theme == 2)
+						printSmall(false, 156, 20, "DSi Menu");
+					else if(theme == 1)
 						printSmall(false, 156, 20, "3DS HOME Menu");
 					else
 						printSmall(false, 156, 20, "DS Menu");
@@ -285,7 +287,7 @@ int main(int argc, char **argv) {
 						case 0:
 						default:
 							theme += 1;
-							if (theme > 1) theme = 0;
+							if (theme > 2) theme = 0;
 							menuprinted = false;
 							break;
 						case 1:

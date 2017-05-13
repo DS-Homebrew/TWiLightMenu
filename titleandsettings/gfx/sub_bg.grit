@@ -4,8 +4,8 @@
 #bitmap mode
 -gb
 
-# Set the bit depth to 8 (256 colors)
--gB8
+# Set the bit depth to 4 (16 colors)
+-gB4
 
 #The Transperant colour of 0xFF00FF
 #-gT FF00FF
