@@ -163,7 +163,7 @@ void vBlankHandler()
 				Xpos += 64;
 				iconXpos += 64;
 			}
-			glSprite(Xpos+4-titleboxXpos, 88, GL_FLIP_H, braceImage);
+			glSprite(Xpos+2-titleboxXpos, 84, GL_FLIP_H, braceImage);
 			glColor(RGB15(31, 31, 31));
 			updateText(renderingTop);
 		}
