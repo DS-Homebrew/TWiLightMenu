@@ -74,6 +74,9 @@ bool useBootstrap = false;
 
 using namespace std;
 
+int spawnedtitleboxes = 0;
+int titleboxXpos = 0;
+
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------

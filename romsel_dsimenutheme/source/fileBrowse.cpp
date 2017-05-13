@@ -54,6 +54,9 @@ extern bool useBootstrap;
 
 using namespace std;
 
+extern int spawnedtitleboxes;
+extern int titleboxXpos;
+
 struct DirEntry
 {
 	string name;
@@ -150,6 +153,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	dirContents.push_back(last);
 
 #else
+	spawnedtitleboxes = 0;
 
 	struct stat st;
 	DIR *pdir = opendir(".");
@@ -179,8 +183,10 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 				dirEntry.visibleName = dirEntry.name;
 
 			// if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
-			if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList)))
+			if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
 				dirContents.push_back(dirEntry);
+				spawnedtitleboxes++;
+			}
 
 		}
 
@@ -236,7 +242,6 @@ bool isTopLevel(const char *path)
 string browseForFile(const vector<string> extensionList)
 {
 	int pressed = 0;
-	int screenOffset = 0;
 	int fileOffset = 0;
 	SwitchState scrn(3);
 	vector<DirEntry> dirContents[scrn.SIZE];
@@ -289,6 +294,8 @@ string browseForFile(const vector<string> extensionList)
 		{
 			fileOffset = dirContents[scrn].size() - 1;
 		}
+		
+		titleboxXpos = fileOffset*64;
 
 		if (pressed & KEY_A)
 		{

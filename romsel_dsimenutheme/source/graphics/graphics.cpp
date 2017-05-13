@@ -30,6 +30,9 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
+extern int spawnedtitleboxes;
+extern int titleboxXpos;
+
 bool renderingTop = true;
 int subBgTexID, mainBgTexID, bubbleTexID, boxfullTexID;
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -123,7 +126,11 @@ void vBlankHandler()
 		{
 			drawBG(subBgImage);
 			drawBubble(bubbleImage);
-			glSprite(96, 88, GL_FLIP_NONE, boxfullImage);
+			int Xpos = 96;
+			for(int i = 0; i < spawnedtitleboxes; i++) {
+				glSprite(Xpos-titleboxXpos, 88, GL_FLIP_NONE, boxfullImage);
+				Xpos += 64;
+			}
 			drawIcon();
 			glColor(RGB15(31, 31, 31));
 			updateText(renderingTop);
