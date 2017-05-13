@@ -247,6 +247,9 @@ string browseForFile(const vector<string> extensionList)
 	vector<DirEntry> dirContents[scrn.SIZE];
 
 	getDirectoryContents(dirContents[scrn], extensionList);
+	for(int i = 0; i < spawnedtitleboxes; i++) {
+		iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
+	}
 	/* clearText(false);
 	updatePath();
 	TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -265,7 +268,7 @@ string browseForFile(const vector<string> extensionList)
 		// cursor->finalY = 4 + 10 * (fileOffset - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		iconTitleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
+		titleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do

@@ -127,11 +127,13 @@ void vBlankHandler()
 			drawBG(subBgImage);
 			drawBubble(bubbleImage);
 			int Xpos = 96;
+			int iconXpos = 112;
 			for(int i = 0; i < spawnedtitleboxes; i++) {
 				glSprite(Xpos-titleboxXpos, 88, GL_FLIP_NONE, boxfullImage);
+				drawIcon(iconXpos-titleboxXpos, i);
 				Xpos += 64;
+				iconXpos += 64;
 			}
-			drawIcon();
 			glColor(RGB15(31, 31, 31));
 			updateText(renderingTop);
 		}
