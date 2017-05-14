@@ -242,7 +242,7 @@ bool isTopLevel(const char *path)
 #endif
 }
 
-string browseForFile(const vector<string> extensionList)
+string browseForFile(const vector<string> extensionList, const char* username)
 {
 	int pressed = 0;
 	int fileOffset = 0;
@@ -253,6 +253,8 @@ string browseForFile(const vector<string> extensionList)
 	for(int i = 0; i < spawnedtitleboxes; i++) {
 		iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
 	}
+	
+	printSmall(true, 24, 8, username);
 	/* clearText(false);
 	updatePath();
 	TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);

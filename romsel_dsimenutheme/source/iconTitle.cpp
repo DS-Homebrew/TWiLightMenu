@@ -29,9 +29,9 @@
 #include "graphics/fontHandler.h"
 
 #define ICON_POS_X	112
-#define ICON_POS_Y	100
+#define ICON_POS_Y	96
 
-#define BOX_PY (2*8)
+#define BOX_PY 13
 
 static int iconTexID[40];
 static tNDSBanner banner;
@@ -90,7 +90,7 @@ void iconTitleInit()
 
 static inline void writeRow(int rownum, const char* text)
 {
-	printLargeCentered(false, BOX_PY + 15 * rownum, text);
+	printLargeCentered(false, BOX_PY + 19 * rownum, text);
 }
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew)
@@ -1164,8 +1164,8 @@ void titleUpdate(bool isDir, const char* name)
 
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
-		char *p = (char*) banner.titles[0];
-		for (unsigned int i = 0; i < sizeof (banner.titles[0]); i += 2)
+		char *p = (char*) banner.titles[PersonalData->language];
+		for (unsigned int i = 0; i < sizeof (banner.titles[PersonalData->language]); i += 2)
 		{
 			if ((p[i] == 0x0A) || (p[i] == 0xFF))
 				p[i / 2] = 0;

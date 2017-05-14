@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
 	if (!fatInitDefault()) {
 		graphicsInit();
 		fontInit();
-		printSmall(true, 1, 2, username);
+		printSmall(true, 24, 8, username);
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 		//doPause(80, 80);
 		stop();
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
 	while(1) {
 	
 		//Navigates to the file to launch
-		filename = browseForFile(extensionList);
+		filename = browseForFile(extensionList, username);
 
 		////////////////////////////////////
 		// Launch the item
