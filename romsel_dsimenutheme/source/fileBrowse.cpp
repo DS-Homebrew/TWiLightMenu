@@ -257,7 +257,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
 	}
 	
-	printSmall(true, 24, 8, username);
+	printSmall(true, 24, 4, username);
 	/* clearText(false);
 	updatePath();
 	TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);

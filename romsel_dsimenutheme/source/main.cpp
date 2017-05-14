@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 		showSTARTborder = false;
 		graphicsInit();
 		fontInit();
-		printSmall(true, 24, 8, username);
+		printSmall(true, 24, 4, username);
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 				
 		// Control the DSi Menu, but can't launch anything.
