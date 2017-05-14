@@ -95,7 +95,7 @@ extern const unsigned int large_font_texcoords[] = {
 	128, 32, 10, TEXT_SY, // H
 	144, 32, 3, TEXT_SY, // I
 	160, 32, 5, TEXT_SY, // J
-	178, 32, 9, TEXT_SY, // K
+	176, 32, 9, TEXT_SY, // K
 	192, 32, 7, TEXT_SY, // L
 	208, 32, 13, TEXT_SY, // M
 	224, 32, 9, TEXT_SY, // N
@@ -127,7 +127,7 @@ extern const unsigned int large_font_texcoords[] = {
 	128, 48, 8, TEXT_SY, // h
 	144, 48, 4, TEXT_SY, // i
 	160, 48, 6, TEXT_SY, // j
-	186, 48, 7, TEXT_SY, // k
+	176, 48, 7, TEXT_SY, // k
 	192, 48, 3, TEXT_SY, // l
 	208, 48, 13, TEXT_SY, // m
 	224, 48, 8, TEXT_SY, // n
