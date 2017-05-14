@@ -146,16 +146,16 @@ void vBlankHandler()
 			drawBG(subBgImage);
 			
 			if (titleboxXmoveleft) {
-				if (movetimer < 8) {
-					titleboxXpos -= 8;
+				if (movetimer < 4) {
+					titleboxXpos -= 16;
 					movetimer++;
 				} else {
 					titleboxXmoveleft = false;
 					movetimer = 0;
 				}
 			} else if (titleboxXmoveright) {
-				if (movetimer < 8) {
-					titleboxXpos += 8;
+				if (movetimer < 4) {
+					titleboxXpos += 16;
 					movetimer++;
 				} else {
 					titleboxXmoveright = false;
