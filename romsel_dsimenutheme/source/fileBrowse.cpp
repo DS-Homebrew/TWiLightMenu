@@ -48,6 +48,9 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern bool showbubble;
+extern bool showSTARTborder;
+
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
 
@@ -273,7 +276,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->finalY = 4 + 10 * (fileOffset - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		titleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
+		if (fileOffset > ((int) dirContents[scrn].size() - 1)) {
+			showbubble = false;
+			showSTARTborder = false;
+			clearText(false);	// Clear title
+		} else {
+			showbubble = true;
+			showSTARTborder = true;
+			titleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
+		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do
@@ -294,7 +305,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (fileOffset >= 0) titleboxXmoveleft = true;
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			fileOffset += 1;
-			if (fileOffset <= ((int) dirContents[scrn].size() - 1)) titleboxXmoveright = true;
+			if (fileOffset <= 38) titleboxXmoveright = true;
 		}
 		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;
@@ -303,12 +314,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			fileOffset = 0;
 		}
-		else if (fileOffset > ((int) dirContents[scrn].size() - 1))
+		else if (fileOffset > 38)
 		{
-			fileOffset = dirContents[scrn].size() - 1;
+			fileOffset = 38;
 		}
+		// else if (fileOffset > ((int) dirContents[scrn].size() - 1))
+		// {
+		// 	fileOffset = dirContents[scrn].size() - 1;
+		// }
 		
-		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright)
+		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
 			DirEntry* entry = &dirContents[scrn].at(fileOffset);
 			if (entry->isDirectory)
@@ -336,7 +351,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright)
+		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
 			DirEntry* entry = &dirContents[scrn].at(fileOffset);
 			if (entry->isDirectory)

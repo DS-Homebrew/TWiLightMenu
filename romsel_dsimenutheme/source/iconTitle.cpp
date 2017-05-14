@@ -75,7 +75,8 @@ static glImage icon36[1];
 static glImage icon37[1];
 static glImage icon38[1];
 static glImage icon39[1];
-static glImage icon40[1];
+
+static glImage iconlaunch[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -740,22 +741,6 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num)//(u8(*tilesSrc)[(32 * 32) / 2]
 						(u8*) tilesModified // Raw image data
 						);
 			break;
-		case 39:
-			iconTexID[num] =
-			glLoadTileSet(icon40, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
 	}
 }
 
@@ -884,9 +869,6 @@ void drawIcon(int Xpos, int num)
 			break;
 		case 38:
 			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon39);
-			break;
-		case 39:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon40);
 			break;
 	}
 }

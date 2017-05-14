@@ -74,11 +74,13 @@ bool useBootstrap = false;
 
 using namespace std;
 
+bool showbubble = true;
+bool showSTARTborder = true;
+
 bool titleboxXmoveleft = false;
 bool titleboxXmoveright = false;
 
 int spawnedtitleboxes = 0;
-int titleboxXpos = 0;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -137,12 +139,43 @@ int main(int argc, char **argv) {
 #ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
+		showSTARTborder = false;
 		graphicsInit();
 		fontInit();
 		printSmall(true, 24, 8, username);
 		printLarge(false, 64, 32, "fatinitDefault failed!");
-		//doPause(80, 80);
-		stop();
+				
+		// Control the DSi Menu, but can't launch anything.
+		int pressed = 0;
+		int fileOffset = 0;
+
+		while (1) {
+			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			do
+			{
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			}
+			while (!pressed);
+
+			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
+				fileOffset -= 1;
+				if (fileOffset >= 0) titleboxXmoveleft = true;
+			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
+				fileOffset += 1;
+				if (fileOffset <= 38) titleboxXmoveright = true;
+			}
+			if (fileOffset < 0)
+			{
+				fileOffset = 0;
+			}
+			else if (fileOffset > 38)
+			{
+				fileOffset = 38;
+			}
+
+		}
 	}
 
 #endif
@@ -220,7 +253,7 @@ int main(int argc, char **argv) {
 				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 				if (access(savename.c_str(), F_OK)) {
-					printSmall(false, 4, 20, "Creating save file...");
+					printSmall(false, 8, 20, "Creating save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -235,7 +268,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 4, 28, "Save file created!");
+					printSmall(false, 8, 28, "Save file created!");
 
 				}
 				
