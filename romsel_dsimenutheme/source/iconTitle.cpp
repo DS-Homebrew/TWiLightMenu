@@ -887,7 +887,7 @@ void iconUpdate(bool isDir, const char* name, int num)
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
-		size_t size = 0;
+		// size_t size = 0;
 		ssize_t rc;
 
 		// open the argv file

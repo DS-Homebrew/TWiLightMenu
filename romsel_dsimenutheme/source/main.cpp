@@ -29,6 +29,8 @@
 #include <unistd.h>
 #include <gl2d.h>
 
+#include "date.h"
+
 #include "graphics/graphics.h"
 
 #include "ndsLoaderArm9.h"
@@ -68,6 +70,99 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
+}
+
+int colorRvalue;
+int colorGvalue;
+int colorBvalue;
+
+/**
+ * Load the console's color.
+ */
+void LoadColor(void) {
+	switch (PersonalData->theme) {
+		case 0:
+		default:
+			colorRvalue = 99;
+			colorGvalue = 127;
+			colorBvalue = 127;
+			break;
+		case 1:
+			colorRvalue = 139;
+			colorGvalue = 99;
+			colorBvalue = 0;
+			break;
+		case 2:
+			colorRvalue = 255;
+			colorGvalue = 0;
+			colorBvalue = 0;
+			break;
+		case 3:
+			colorRvalue = 255;
+			colorGvalue = 127;
+			colorBvalue = 127;
+			break;
+		case 4:
+			colorRvalue = 223;
+			colorGvalue = 63;
+			colorBvalue = 0;
+			break;
+		case 5:
+			colorRvalue = 215;
+			colorGvalue = 215;
+			colorBvalue = 0;
+			break;
+		case 6:
+			colorRvalue = 215;
+			colorGvalue = 255;
+			colorBvalue = 0;
+			break;
+		case 7:
+			colorRvalue = 0;
+			colorGvalue = 255;
+			colorBvalue = 0;
+			break;
+		case 8:
+			colorRvalue = 63;
+			colorGvalue = 255;
+			colorBvalue = 63;
+			break;
+		case 9:
+			colorRvalue = 31;
+			colorGvalue = 231;
+			colorBvalue = 31;
+			break;
+		case 10:
+			colorRvalue = 0;
+			colorGvalue = 63;
+			colorBvalue = 255;
+			break;
+		case 11:
+			colorRvalue = 63;
+			colorGvalue = 63;
+			colorBvalue = 255;
+			break;
+		case 12:
+			colorRvalue = 0;
+			colorGvalue = 0;
+			colorBvalue = 255;
+			break;
+		case 13:
+			colorRvalue = 127;
+			colorGvalue = 0;
+			colorBvalue = 255;
+			break;
+		case 14:
+			colorRvalue = 255;
+			colorGvalue = 0;
+			colorBvalue = 255;
+			break;
+		case 15:
+			colorRvalue = 255;
+			colorGvalue = 0;
+			colorBvalue = 127;
+			break;
+	}
 }
 
 bool useBootstrap = false;
@@ -135,14 +230,16 @@ int main(int argc, char **argv) {
 		else
 			username[i*2/2] = username[i*2];
 	}
+	
+	LoadColor();
 
 #ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
+		// showbubble = false;
 		showSTARTborder = false;
 		graphicsInit();
 		fontInit();
-		printSmall(true, 24, 4, username);
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 				
 		// Control the DSi Menu, but can't launch anything.
@@ -153,6 +250,12 @@ int main(int argc, char **argv) {
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
+				clearText(true);
+				printSmall(true, 24, 4, username);
+
+				// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
+				printSmall(true, 200, 4, RetTime().c_str());
+
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
