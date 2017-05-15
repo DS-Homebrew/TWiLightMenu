@@ -27,7 +27,7 @@
 
 //#define EMULATE_FILES
 
-std::string browseForFile(const std::vector<std::string> extensionList);
+std::string browseForFile(const std::vector<std::string> extensionList, const char* username);
 
 
 

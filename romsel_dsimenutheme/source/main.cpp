@@ -311,7 +311,7 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".argv");
 	srand(time(NULL));
 	
-	if (romfolder == "") romfolder = "nds";
+	if (romfolder == "") romfolder = "roms/nds";
 	
 	char path[256];
 	snprintf (path, sizeof(path), "sd:/%s", romfolder.c_str());

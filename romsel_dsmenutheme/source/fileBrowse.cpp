@@ -233,7 +233,7 @@ bool isTopLevel(const char *path)
 #endif
 }
 
-string browseForFile(const vector<string> extensionList)
+string browseForFile(const vector<string> extensionList, const char* username)
 {
 	int pressed = 0;
 	int screenOffset = 0;
@@ -261,6 +261,7 @@ string browseForFile(const vector<string> extensionList)
 		cursor->delay = TextEntry::ACTIVE;
 
 		iconTitleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
+		printSmall(true, 1, 3, username);
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do
