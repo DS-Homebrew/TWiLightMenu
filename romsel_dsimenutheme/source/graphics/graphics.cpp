@@ -155,11 +155,11 @@ void vBlankHandler()
 	{
 		if (renderingTop)
 		{
-			glBoxFilledGradient(0, 0, 256, 112,
-						  RGB15(79,79,79), RGB15(0,0,0), RGB15(0,0,0), RGB15(79,79,79)
+			glBoxFilledGradient(0, -64, 256, 112,
+						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
 						);
 			glBoxFilledGradient(0, 112, 256, 192,
-						  RGB15(0,0,0), RGB15(119,119,119), RGB15(119,119,119), RGB15(0,0,0)
+						  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
 						);
 			drawBG(mainBgImage);
 			updateText(renderingTop);

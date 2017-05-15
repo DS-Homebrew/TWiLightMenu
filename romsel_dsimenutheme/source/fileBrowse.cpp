@@ -32,6 +32,8 @@
 #include <nds.h>
 #include <gl2d.h>
 
+#include "date.h"
+
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -257,7 +259,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
 	}
 	
-	printSmall(true, 24, 4, username);
 	/* clearText(false);
 	updatePath();
 	TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -289,6 +290,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do
 		{
+			clearText(true);
+			printSmall(true, 24, 4, username);
+
+			// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
+			printSmall(true, 200, 4, RetTime().c_str());
+
 			scanKeys();
 			pressed = keysDownRepeat();
 			swiWaitForVBlank();
