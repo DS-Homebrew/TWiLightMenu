@@ -103,7 +103,7 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void loadROMselect() {
-	if (theme == 2) runNdsFile ("sd:/_nds/srloader/dsimenu.srldr", 0, 0);
+	if (theme == 0) runNdsFile ("sd:/_nds/srloader/dsimenu.srldr", 0, 0);
 	else runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
 }
 
@@ -157,7 +157,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 0, 1, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 0, 0);
 
 	graphicsInit();
 	fontInit();
@@ -203,8 +203,18 @@ int main(int argc, char **argv) {
 			//unsigned int * TEST32RAM=	(unsigned int*)0xD004000;		
 			//*TEST32RAM = 0x55;
 			//iprintf ("32 MB RAM ACCESS : %x\n\n",*TEST32RAM);
-			doPause(80, 140);
+			// doPause(80, 140);
 		}
+		
+		for (int i = 0; i < 60*2; i++) {
+			swiWaitForVBlank();
+		}
+		
+		scanKeys();
+
+		if (keysHeld() & KEY_START)
+			screenmode = 1;
+
 	}
 
 	srand(time(NULL));
@@ -243,11 +253,11 @@ int main(int argc, char **argv) {
 					
 					printSmall(false, 12, 20, "Theme");
 					if(theme == 2)
-						printSmall(false, 156, 20, "DSi Menu");
-					else if(theme == 1)
 						printSmall(false, 156, 20, "3DS HOME Menu");
-					else
+					else if(theme == 1)
 						printSmall(false, 156, 20, "DS Menu");
+					else
+						printSmall(false, 156, 20, "DSi Menu");
 					printSmall(false, 12, 28, "Run last played ROM on startup ");
 					if(autorun)
 						printSmall(false, 224, 36, "On");
@@ -255,7 +265,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 224, 36, "Off");
 						
 					if (settingscursor == 0) {
-						printSmall(false, 4, 156, "Changes top screen theme.");
+						printSmall(false, 4, 156, "Select a theme to use.");
 					} else if (settingscursor == 1) {
 						printSmall(false, 4, 148, "If turned on, hold B on\n");
 						printSmall(false, 4, 156, "startup to skip to the\n");
