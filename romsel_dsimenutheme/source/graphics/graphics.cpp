@@ -52,9 +52,14 @@ extern bool showSTARTborder;
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
 
+extern bool applaunchprep;
+
 int movetimer = 0;
 
+int titleboxYmovepos = 0;
+
 extern int spawnedtitleboxes;
+extern int fileOffset;
 int titleboxXpos;
 int titlewindowXpos;
 
@@ -217,11 +222,24 @@ void vBlankHandler()
 			for(int i = 0; i < 39; i++) {
 				if (i < spawnedtitleboxes) {
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
-					drawIcon(iconXpos-titleboxXpos, i);
+					drawIcon(iconXpos-titleboxXpos, 96, i);
 				} else
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxemptyImage);
 				spawnedboxXpos += 64;
 				iconXpos += 64;
+			}
+			if (applaunchprep) {
+				// Cover selected app
+				for (int y = 0; y < 4; y++)
+				{
+					for (int x = 0; x < 4; x++)
+					{
+						glSprite(96+x*16, 84+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
+					}
+				}
+				glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+				drawIcon(112, 96-titleboxYmovepos, fileOffset);
+				titleboxYmovepos += 6;
 			}
 			glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			if (showSTARTborder) {

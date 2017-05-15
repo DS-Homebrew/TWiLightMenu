@@ -76,8 +76,6 @@ static glImage icon37[1];
 static glImage icon38[1];
 static glImage icon39[1];
 
-static glImage iconlaunch[1];
-
 u8 *clearTiles;
 u16 *blackPalette;
 u8 *tilesModified;
@@ -749,126 +747,126 @@ static void clearIcon(int num)
 	loadIcon(clearTiles, blackPalette, num);
 }
 
-void drawIcon(int Xpos, int num)
+void drawIcon(int Xpos, int Ypos, int num)
 {
 	switch (num) {
 		case 0:
 		default:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon1);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon1);
 			break;
 		case 1:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon2);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon2);
 			break;
 		case 2:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon3);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon3);
 			break;
 		case 3:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon4);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon4);
 			break;
 		case 4:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon5);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon5);
 			break;
 		case 5:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon6);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon6);
 			break;
 		case 6:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon7);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon7);
 			break;
 		case 7:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon8);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon8);
 			break;
 		case 8:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon9);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon9);
 			break;
 		case 9:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon10);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon10);
 			break;
 		case 10:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon11);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon11);
 			break;
 		case 11:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon12);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon12);
 			break;
 		case 12:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon13);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon13);
 			break;
 		case 13:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon14);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon14);
 			break;
 		case 14:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon15);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon15);
 			break;
 		case 15:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon16);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon16);
 			break;
 		case 16:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon17);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon17);
 			break;
 		case 17:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon18);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon18);
 			break;
 		case 18:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon19);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon19);
 			break;
 		case 19:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon20);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon20);
 			break;
 		case 20:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon21);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon21);
 			break;
 		case 21:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon22);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon22);
 			break;
 		case 22:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon23);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon23);
 			break;
 		case 23:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon24);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon24);
 			break;
 		case 24:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon25);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon25);
 			break;
 		case 25:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon26);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon26);
 			break;
 		case 26:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon27);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon27);
 			break;
 		case 27:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon28);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon28);
 			break;
 		case 28:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon29);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon29);
 			break;
 		case 29:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon30);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon30);
 			break;
 		case 30:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon31);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon31);
 			break;
 		case 31:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon32);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon32);
 			break;
 		case 32:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon33);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon33);
 			break;
 		case 33:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon34);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon34);
 			break;
 		case 34:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon35);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon35);
 			break;
 		case 35:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon36);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon36);
 			break;
 		case 36:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon37);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon37);
 			break;
 		case 37:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon38);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon38);
 			break;
 		case 38:
-			glSprite(Xpos, ICON_POS_Y, GL_FLIP_NONE, icon39);
+			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon39);
 			break;
 	}
 }

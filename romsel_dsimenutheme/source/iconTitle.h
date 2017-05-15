@@ -23,4 +23,4 @@
 void iconTitleInit();
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, const char* name);
-void drawIcon(int Xpos, int num);
+void drawIcon(int Xpos, int Ypos, int num);

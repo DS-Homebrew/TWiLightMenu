@@ -56,6 +56,8 @@ extern bool showSTARTborder;
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
 
+extern bool applaunchprep;
+
 extern bool gotosettings;
 
 extern bool useBootstrap;
@@ -63,6 +65,7 @@ extern bool useBootstrap;
 using namespace std;
 
 extern int spawnedtitleboxes;
+extern int fileOffset;
 extern int titleboxXpos;
 
 struct DirEntry
@@ -250,7 +253,6 @@ bool isTopLevel(const char *path)
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	int pressed = 0;
-	int fileOffset = 0;
 	SwitchState scrn(3);
 	vector<DirEntry> dirContents[scrn.SIZE];
 
@@ -350,10 +352,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				applaunchprep = true;
 				useBootstrap = true;
-				// pane->slideTransition(false, true, 0, fileOffset - screenOffset);
+				
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+
 				// Return the chosen file
-				// waitForPanesToClear();
 				return entry->name;
 			}
 		}
@@ -378,10 +384,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				applaunchprep = true;
 				useBootstrap = false;
-				// pane->slideTransition(false, true, 0, fileOffset - screenOffset);
+
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+
 				// Return the chosen file
-				// waitForPanesToClear();
 				return entry->name;
 			}
 		}

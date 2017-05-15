@@ -175,7 +175,11 @@ bool showSTARTborder = true;
 bool titleboxXmoveleft = false;
 bool titleboxXmoveright = false;
 
+bool applaunchprep = false;
+
 int spawnedtitleboxes = 0;
+
+int fileOffset = 0;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -244,7 +248,6 @@ int main(int argc, char **argv) {
 				
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;
-		int fileOffset = 0;
 
 		while (1) {
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -276,6 +279,14 @@ int main(int argc, char **argv) {
 			else if (fileOffset > 38)
 			{
 				fileOffset = 38;
+			}
+			
+			if (pressed & KEY_A) {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+
+				applaunchprep = true;
 			}
 
 		}
@@ -356,7 +367,7 @@ int main(int argc, char **argv) {
 				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 				if (access(savename.c_str(), F_OK)) {
-					printSmall(false, 8, 20, "Creating save file...");
+					printSmall(false, 8, 4, "Creating save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -371,7 +382,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 8, 28, "Save file created!");
+					printSmall(false, 8, 12, "Save file created!");
 
 				}
 				
