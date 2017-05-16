@@ -358,6 +358,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showbubble = false;
 				showSTARTborder = false;
 				clearText(false);	// Clear title
+				
+				for (int i = 0; i < 90; i++) {
+					swiWaitForVBlank();
+				}
 
 				// Return the chosen file
 				return entry->name;
@@ -390,6 +394,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showbubble = false;
 				showSTARTborder = false;
 				clearText(false);	// Clear title
+
+				for (int i = 0; i < 90; i++) {
+					swiWaitForVBlank();
+				}
 
 				// Return the chosen file
 				return entry->name;

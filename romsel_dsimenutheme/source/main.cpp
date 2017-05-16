@@ -367,7 +367,7 @@ int main(int argc, char **argv) {
 				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 				if (access(savename.c_str(), F_OK)) {
-					printSmall(false, 8, 4, "Creating save file...");
+					printLarge(false, 8, 4, "Creating save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -382,7 +382,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 8, 12, "Save file created!");
+					printLarge(false, 8, 20, "Save file created!");
 
 				}
 				

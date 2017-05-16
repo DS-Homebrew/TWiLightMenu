@@ -168,7 +168,8 @@ void vBlankHandler()
 						);
 			drawBG(mainBgImage);
 			updateText(renderingTop);
-			glColor(RGB15(31, 31, 31));			
+			glColor(RGB15(31, 31, 31));
+			if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 		}
 		else
 		{
@@ -250,6 +251,7 @@ void vBlankHandler()
 			}
 			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
+			if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			updateText(renderingTop);
 			glColor(RGB15(31, 31, 31));
 		}
