@@ -39,6 +39,7 @@
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
+bool showlogo = true;
 bool gotosettings = false;
 
 bool autorun = false;
@@ -47,18 +48,22 @@ int theme = 0;
 void LoadSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
-	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
+	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
+
+	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 }
 
 void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
-	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
+	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+
+	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
 }
@@ -159,14 +164,20 @@ int main(int argc, char **argv) {
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 0, 1);
 
-	graphicsInit();
-	fontInit();
+	if (showlogo) {
+		graphicsInit();
+		fontInit();
+	}
 
 	if (gotosettings) {
+		if (!showlogo) {
+			graphicsInit();
+			fontInit();
+		}
 		screenmode = 1;
 		gotosettings = false;
 		SaveSettings();
-	} else {
+	} else if (showlogo) {
 		unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;		
 		unsigned int * SCFG_CLK=	(unsigned int*)0x4004004;
 		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
@@ -215,7 +226,16 @@ int main(int argc, char **argv) {
 		if (keysHeld() & KEY_START)
 			screenmode = 1;
 
+	} else {
+		scanKeys();
+
+		if (keysHeld() & KEY_START) {
+			graphicsInit();
+			fontInit();
+			screenmode = 1;
+		}
 	}
+
 
 	srand(time(NULL));
 
@@ -247,6 +267,9 @@ int main(int argc, char **argv) {
 						case 1:
 							yPos = 28;
 							break;
+						case 2:
+							yPos = 44;
+							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
@@ -258,19 +281,31 @@ int main(int argc, char **argv) {
 						printSmall(false, 156, 20, "DS Menu");
 					else
 						printSmall(false, 156, 20, "DSi Menu");
-					printSmall(false, 12, 28, "Run last played ROM on startup ");
+
+					printSmall(false, 12, 28, "Run last played ROM on startup");
 					if(autorun)
 						printSmall(false, 224, 36, "On");
 					else
 						printSmall(false, 224, 36, "Off");
 						
+					printSmall(false, 12, 44, "Show SRLoader logo on startup");
+					if(showlogo)
+						printSmall(false, 224, 52, "On");
+					else
+						printSmall(false, 224, 52, "Off");
+						
+
 					if (settingscursor == 0) {
 						printSmall(false, 4, 156, "Select a theme to use.");
 					} else if (settingscursor == 1) {
-						printSmall(false, 4, 148, "If turned on, hold B on\n");
-						printSmall(false, 4, 156, "startup to skip to the\n");
+						printSmall(false, 4, 148, "If turned on, hold B on");
+						printSmall(false, 4, 156, "startup to skip to the");
 						printSmall(false, 4, 164, "ROM select menu.");
 						printSmall(false, 4, 172, "Press Y to start last played ROM.");
+					} else if (settingscursor == 2) {
+						printSmall(false, 4, 156, "The SRLoader logo will be");
+						printSmall(false, 4, 164, "shown when you start");
+						printSmall(false, 4, 172, "SRLoader.");
 					}
 
 					menuprinted = true;
@@ -304,6 +339,10 @@ int main(int argc, char **argv) {
 							autorun = !autorun;
 							menuprinted = false;
 							break;
+						case 2:
+							showlogo = !showlogo;
+							menuprinted = false;
+							break;
 					}
 				}
 				
@@ -334,8 +373,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 1) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 1;
+				if (settingscursor > 2) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 2;
 			}
 
 		} else {
