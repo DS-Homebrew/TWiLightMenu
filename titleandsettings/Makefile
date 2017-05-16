@@ -11,7 +11,7 @@ include $(DEVKITARM)/ds_rules
 
 export VERSION_MAJOR	:= 1
 export VERSION_MINOR	:= 0
-export VERSION_PATCH	:= 0
+export VERSION_PATCH	:= 1
 
 
 VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)

@@ -76,6 +76,11 @@ bool useBootstrap = false;
 
 using namespace std;
 
+typedef struct {
+	char gameTitle[12];			//!< 12 characters for the game title.
+	char gameCode[4];			//!< 4 characters for the game code.
+} sNDSHeadertitlecodeonly;
+
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -215,22 +220,48 @@ int main(int argc, char **argv) {
 				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 				if (access(savename.c_str(), F_OK)) {
-					printSmall(false, 4, 20, "Creating save file...");
+					FILE *f_nds_file = fopen(argarray[0], "rb");
 
-					static const int BUFFER_SIZE = 4096;
-					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
+					char game_TID[5];
+					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+					fread(game_TID, 1, 4, f_nds_file);
+					game_TID[4] = 0;
+					fclose(f_nds_file);
 
-					int savesize = 524288;	// 512KB (default size for most games)
+					if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
+						printSmall(false, 8, 20, "Creating save file...");
 
-					FILE *pFile = fopen(savename.c_str(), "wb");
-					if (pFile) {
-						for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), pFile);
+						static const int BUFFER_SIZE = 4096;
+						char buffer[BUFFER_SIZE];
+						memset(buffer, 0, sizeof(buffer));
+
+						int savesize = 524288;	// 512KB (default size for most games)
+
+						// Set save size to 1MB for the following games
+						if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+							strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+							strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+							strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+						{
+							savesize = 1048576;
 						}
-						fclose(pFile);
+
+						// Set save size to 32MB for the following games
+						if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+							strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+						{
+							savesize = 1048576*32;
+						}
+
+						FILE *pFile = fopen(savename.c_str(), "wb");
+						if (pFile) {
+							for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+								fwrite(buffer, 1, sizeof(buffer), pFile);
+							}
+							fclose(pFile);
+						}
+						printSmall(false, 8, 28, "Save file created!");
 					}
-					printSmall(false, 4, 28, "Save file created!");
 
 				}
 				
