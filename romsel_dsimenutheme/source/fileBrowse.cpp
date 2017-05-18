@@ -58,6 +58,10 @@ extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
+extern int romtype;
+
+extern bool applaunch;
+
 extern bool gotosettings;
 
 extern bool useBootstrap;
@@ -257,8 +261,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	vector<DirEntry> dirContents[scrn.SIZE];
 
 	getDirectoryContents(dirContents[scrn], extensionList);
-	for(int i = 0; i < spawnedtitleboxes; i++) {
-		iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
+	if (romtype == 0) {
+		for(int i = 0; i < spawnedtitleboxes; i++) {
+			iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
+		}
 	}
 	
 	/* clearText(false);
@@ -352,6 +358,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				applaunch = true;
 				applaunchprep = true;
 				useBootstrap = true;
 				
@@ -388,6 +395,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				applaunch = true;
 				applaunchprep = true;
 				useBootstrap = false;
 
@@ -422,6 +430,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if (pressed & KEY_START)
 		{
+			applaunch = true;
 			useBootstrap = false;
 			gotosettings = true;
 			// pane->slideTransition(false, true, 0, fileOffset - screenOffset);
@@ -432,6 +441,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			settingsini.SaveIniFile("sd:/_nds/srloader/settings.ini");
 			int err = runNdsFile ("sd:/boot.nds", 0, 0);
 			iprintf ("Start failed. Error %i\n", err);
+			return "null";
+		}
+
+		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		{
+			if (romtype == 1) romtype = 0;
+			else romtype = 1;
 			return "null";
 		}
 

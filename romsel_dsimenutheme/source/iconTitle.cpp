@@ -33,7 +33,11 @@
 
 #define BOX_PY 13
 
+// Graphic files
+#include "gbc.h"
+
 static int iconTexID[40];
+static int gbcTexID;
 static tNDSBanner banner;
 
 static glImage icon1[1];
@@ -75,6 +79,8 @@ static glImage icon36[1];
 static glImage icon37[1];
 static glImage icon38[1];
 static glImage icon39[1];
+
+static glImage gbcIcon[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -742,6 +748,26 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num)//(u8(*tilesSrc)[(32 * 32) / 2]
 	}
 }
 
+void loadGBCIcon()
+{
+	glDeleteTextures(1, &gbcTexID);
+	
+	gbcTexID =
+	glLoadTileSet(gbcIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) gbcPal, // Image palette
+				(u8*) gbcBitmap // Raw image data
+				);
+}
+
 static void clearIcon(int num)
 {
 	loadIcon(clearTiles, blackPalette, num);
@@ -869,6 +895,11 @@ void drawIcon(int Xpos, int Ypos, int num)
 			glSprite(Xpos, Ypos, GL_FLIP_NONE, icon39);
 			break;
 	}
+}
+
+void drawIconGBC(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbcIcon);
 }
 
 void iconUpdate(bool isDir, const char* name, int num)
@@ -1010,6 +1041,12 @@ void titleUpdate(bool isDir, const char* name)
 		writeRow(0, name);
 		// text
 		writeRow(2, "[directory]");
+	}
+	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 )
+	{
+		writeRow(1, name);
 	}
 	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 	{
