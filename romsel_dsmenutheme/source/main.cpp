@@ -43,6 +43,17 @@
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+static void RemoveTrailingSlashes(std::string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
+
 std::string romfolder;
 
 bool gotosettings = false;
@@ -55,6 +66,7 @@ void LoadSettings(void) {
 
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
+	RemoveTrailingSlashes(romfolder);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);

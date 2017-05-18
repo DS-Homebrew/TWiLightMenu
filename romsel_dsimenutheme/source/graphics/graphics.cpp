@@ -271,6 +271,9 @@ void vBlankHandler()
 
 void graphicsInit()
 {
+	titleboxXpos = fileOffset*64;
+	titlewindowXpos = fileOffset*5;
+
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////

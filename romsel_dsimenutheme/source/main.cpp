@@ -43,6 +43,17 @@
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+static void RemoveTrailingSlashes(std::string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
+
 std::string romfolder;
 std::string gbromfolder;
 
@@ -54,13 +65,18 @@ bool gotosettings = false;
 
 bool autorun = false;
 int theme = 2;
+int fileOffset = 0;
 
 void LoadSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
+	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
+	RemoveTrailingSlashes(gbromfolder);
+	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	fileOffset = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -70,6 +86,9 @@ void LoadSettings(void) {
 
 void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
+
+	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", fileOffset);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -184,8 +203,6 @@ bool titleboxXmoveright = false;
 bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
-
-int fileOffset = 0;
 
 typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
@@ -355,6 +372,9 @@ int main(int argc, char **argv) {
 #ifndef EMULATE_FILES
 
 		if (applaunch) {
+			// Save cursor position
+			SaveSettings();
+		
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
@@ -464,7 +484,9 @@ int main(int argc, char **argv) {
 			} else if ( strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
-				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", 0, 0);
+				char gbROMpath[256];
+				snprintf (gbROMpath, sizeof(gbROMpath), "sd:/%s/%s", gbromfolder.c_str(), filename.c_str());
+				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", sizeof(gbROMpath), (const char **)&gbROMpath);	// Pass ROM to GameYob as argument
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				printLarge(false, 4, 4, text);
