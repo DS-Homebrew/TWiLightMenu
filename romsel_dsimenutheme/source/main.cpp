@@ -220,10 +220,10 @@ void stop (void) {
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
-void doPause(int x, int y) {
+void doPause() {
 //---------------------------------------------------------------------------------
 	// iprintf("Press start...\n");
-	printSmall(false, x, y, "Press start...");
+	// printSmall(false, x, y, "Press start...");
 	while(1) {
 		scanKeys();
 		if(keysDown() & KEY_START)
@@ -485,8 +485,9 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
 				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "sd:/%s/%s", gbromfolder.c_str(), filename.c_str());
-				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", sizeof(gbROMpath), (const char **)&gbROMpath);	// Pass ROM to GameYob as argument
+				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
+				argarray.at(0) = (char*) &gbROMpath;
+				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				printLarge(false, 4, 4, text);
