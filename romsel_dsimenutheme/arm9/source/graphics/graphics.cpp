@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <maxmod9.h>
 #include <gl2d.h>
 #include "FontGraphic.h"
 
@@ -88,6 +89,8 @@ glImage startbrdImage[(32 / 16) * (128 / 16)];
 glImage braceImage[(16 / 16) * (128 / 16)];
 glImage boxfullImage[(64 / 16) * (64 / 16)];
 glImage boxemptyImage[(64 / 16) * (64 / 16)];
+
+extern mm_sound_effect snd_stop;
 
 //-------------------------------------------------------
 // set up a 2D layer construced of bitmap sprites
@@ -191,6 +194,7 @@ void vBlankHandler()
 				
 				if (titleboxXmoveleft) {
 					if (movetimer == 4) {
+						mmEffectEx(&snd_stop);
 						titlewindowXpos -= 1;
 						movetimer++;
 					} else if (movetimer < 4) {
@@ -203,6 +207,7 @@ void vBlankHandler()
 					}
 				} else if (titleboxXmoveright) {
 					if (movetimer == 4) {
+						mmEffectEx(&snd_stop);
 						titlewindowXpos += 1;
 						movetimer++;
 					} else if (movetimer < 4) {
