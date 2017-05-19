@@ -20,6 +20,8 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <maxmod9.h>
+
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -40,6 +42,11 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
+
+#include "soundbank.h"
+#include "soundbank_bin.h"
+
+bool renderScreens = true;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
@@ -351,6 +358,8 @@ int main(int argc, char **argv) {
 	char gbPath[256];
 	snprintf (gbPath, sizeof(gbPath), "sd:/%s", gbromfolder.c_str());
 	
+	InitSFX();
+	
 	while(1) {
 	
 		if (romtype == 1) {
@@ -367,13 +376,14 @@ int main(int argc, char **argv) {
 			filename = browseForFile(extensionList, username);
 		}
 
+		// Save cursor position
+		SaveSettings();
+
 		////////////////////////////////////
 		// Launch the item
 #ifndef EMULATE_FILES
 
 		if (applaunch) {
-			// Save cursor position
-			SaveSettings();
 		
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);

@@ -30,6 +30,7 @@
 #include <dirent.h>
 
 #include <nds.h>
+#include <maxmod9.h>
 #include <gl2d.h>
 
 #include "date.h"
@@ -44,6 +45,9 @@
 #include "ndsLoaderArm9.h"
 
 #include "inifile.h"
+
+#include "soundbank.h"
+#include "soundbank_bin.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -71,6 +75,49 @@ using namespace std;
 extern int spawnedtitleboxes;
 extern int fileOffset;
 extern int titleboxXpos;
+
+mm_sound_effect snd_launch;
+mm_sound_effect snd_select;
+mm_sound_effect snd_stop;
+mm_sound_effect snd_switch;
+
+void InitSFX() {
+	mmInitDefaultMem((mm_addr)soundbank_bin);
+	
+	mmLoadEffect( SFX_LAUNCH );
+	mmLoadEffect( SFX_SELECT );
+	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_SWITCH );
+
+	snd_launch = {
+		{ SFX_LAUNCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_select = {
+		{ SFX_SELECT } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_stop = {
+		{ SFX_STOP } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_switch = {
+		{ SFX_SWITCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+}
 
 struct DirEntry
 {
@@ -318,9 +365,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			fileOffset -= 1;
 			if (fileOffset >= 0) titleboxXmoveleft = true;
+			mmEffectEx(&snd_select);
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			fileOffset += 1;
 			if (fileOffset <= 38) titleboxXmoveright = true;
+			mmEffectEx(&snd_select);
 		}
 		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;
@@ -358,6 +407,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				mmEffectEx(&snd_launch);
 				applaunch = true;
 				applaunchprep = true;
 				useBootstrap = true;
@@ -395,6 +445,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				mmEffectEx(&snd_launch);
 				applaunch = true;
 				applaunchprep = true;
 				useBootstrap = false;
@@ -446,6 +497,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
+			mmEffectEx(&snd_switch);
 			if (romtype == 1) romtype = 0;
 			else romtype = 1;
 			return "null";

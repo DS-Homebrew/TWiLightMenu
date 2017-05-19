@@ -27,6 +27,7 @@
 
 //#define EMULATE_FILES
 
+void InitSFX();
 std::string browseForFile(const std::vector<std::string> extensionList, const char* username);
 
 

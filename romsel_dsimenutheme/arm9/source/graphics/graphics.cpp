@@ -45,6 +45,8 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
+extern bool renderScreens;
+
 extern int colorRvalue;
 extern int colorGvalue;
 extern int colorBvalue;
@@ -161,112 +163,114 @@ bool isRenderingTop()
 
 void vBlankHandler()
 {
-	startRendering(renderingTop);
-	glBegin2D();
-	{
-		if (renderingTop)
+	if (renderScreens) {
+		startRendering(renderingTop);
+		glBegin2D();
 		{
-			glBoxFilledGradient(0, -64, 256, 112,
-						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
-						);
-			glBoxFilledGradient(0, 112, 256, 192,
-						  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
-						);
-			drawBG(mainBgImage);
-			updateText(renderingTop);
-			glColor(RGB15(31, 31, 31));
-			if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-		}
-		else
-		{
-			drawBG(subBgImage);
-			if (showbubble) drawBubble(bubbleImage);
-			else glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
-			glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-			glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
-			glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
-			
-			if (titleboxXmoveleft) {
-				if (movetimer == 4) {
-					titlewindowXpos -= 1;
-					movetimer++;
-				} else if (movetimer < 4) {
-					titleboxXpos -= 16;
-					titlewindowXpos -= 1;
-					movetimer++;
-				} else {
-					titleboxXmoveleft = false;
-					movetimer = 0;
-				}
-			} else if (titleboxXmoveright) {
-				if (movetimer == 4) {
-					titlewindowXpos += 1;
-					movetimer++;
-				} else if (movetimer < 4) {
-					titleboxXpos += 16;
-					titlewindowXpos += 1;
-					movetimer++;
-				} else {
-					titleboxXmoveright = false;
-					movetimer = 0;
-				}
+			if (renderingTop)
+			{
+				glBoxFilledGradient(0, -64, 256, 112,
+							  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
+							);
+				glBoxFilledGradient(0, 112, 256, 192,
+							  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
+							);
+				drawBG(mainBgImage);
+				updateText(renderingTop);
+				glColor(RGB15(31, 31, 31));
+				if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			}
-			
-			glColor(RGB15(31, 31, 31));
-			glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-			int bipXpos = 30;
-			for(int i = 0; i < 39; i++) {
-				if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
-				else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
-				bipXpos += 5;
-			}
-			glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-			glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
-			glColor(RGB15(31, 31, 31));
-			glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
-			int spawnedboxXpos = 96;
-			int iconXpos = 112;
-			for(int i = 0; i < 39; i++) {
-				if (i < spawnedtitleboxes) {
-					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
-					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, 96);
-					else drawIcon(iconXpos-titleboxXpos, 96, i);
-				} else
-					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxemptyImage);
-				spawnedboxXpos += 64;
-				iconXpos += 64;
-			}
-			if (applaunchprep) {
-				// Cover selected app
-				for (int y = 0; y < 4; y++)
-				{
-					for (int x = 0; x < 4; x++)
-					{
-						glSprite(96+x*16, 84+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
+			else
+			{
+				drawBG(subBgImage);
+				if (showbubble) drawBubble(bubbleImage);
+				else glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
+				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
+				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
+				
+				if (titleboxXmoveleft) {
+					if (movetimer == 4) {
+						titlewindowXpos -= 1;
+						movetimer++;
+					} else if (movetimer < 4) {
+						titleboxXpos -= 16;
+						titlewindowXpos -= 1;
+						movetimer++;
+					} else {
+						titleboxXmoveleft = false;
+						movetimer = 0;
+					}
+				} else if (titleboxXmoveright) {
+					if (movetimer == 4) {
+						titlewindowXpos += 1;
+						movetimer++;
+					} else if (movetimer < 4) {
+						titleboxXpos += 16;
+						titlewindowXpos += 1;
+						movetimer++;
+					} else {
+						titleboxXmoveright = false;
+						movetimer = 0;
 					}
 				}
-				glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
-				if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
-				else drawIcon(112, 96-titleboxYmovepos, fileOffset);
-				titleboxYmovepos += 6;
-			}
-			glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
-			if (showSTARTborder) {
-			glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-				glSprite(96, 80, GL_FLIP_NONE, startbrdImage);
-				glSprite(96+32, 80, GL_FLIP_H, startbrdImage);
+				
+				glColor(RGB15(31, 31, 31));
+				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+				int bipXpos = 30;
+				for(int i = 0; i < 39; i++) {
+					if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
+					else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+					bipXpos += 5;
+				}
+				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				glColor(RGB15(31, 31, 31));
+				glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+				int spawnedboxXpos = 96;
+				int iconXpos = 112;
+				for(int i = 0; i < 39; i++) {
+					if (i < spawnedtitleboxes) {
+						glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
+						if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, 96);
+						else drawIcon(iconXpos-titleboxXpos, 96, i);
+					} else
+						glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxemptyImage);
+					spawnedboxXpos += 64;
+					iconXpos += 64;
+				}
+				if (applaunchprep) {
+					// Cover selected app
+					for (int y = 0; y < 4; y++)
+					{
+						for (int x = 0; x < 4; x++)
+						{
+							glSprite(96+x*16, 84+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
+						}
+					}
+					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+					if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
+					else drawIcon(112, 96-titleboxYmovepos, fileOffset);
+					titleboxYmovepos += 6;
+				}
+				glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
+				if (showSTARTborder) {
+				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glSprite(96, 80, GL_FLIP_NONE, startbrdImage);
+					glSprite(96+32, 80, GL_FLIP_H, startbrdImage);
+					glColor(RGB15(31, 31, 31));
+				}
+				if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
+				if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
+				if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+				updateText(renderingTop);
 				glColor(RGB15(31, 31, 31));
 			}
-			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
-			if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
-			if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			updateText(renderingTop);
-			glColor(RGB15(31, 31, 31));
 		}
+		glEnd2D();
+		GFX_FLUSH = 0;
+		renderingTop = !renderingTop;
 	}
-	glEnd2D();
-	GFX_FLUSH = 0;
-	renderingTop = !renderingTop;
 }
 
 void graphicsInit()
