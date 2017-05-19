@@ -81,7 +81,7 @@ mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
 mm_sound_effect snd_switch;
 
-void InitSFX() {
+void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 	
 	mmLoadEffect( SFX_LAUNCH );

@@ -358,7 +358,7 @@ int main(int argc, char **argv) {
 	char gbPath[256];
 	snprintf (gbPath, sizeof(gbPath), "sd:/%s", gbromfolder.c_str());
 	
-	InitSFX();
+	InitSound();
 	
 	while(1) {
 	
@@ -433,7 +433,10 @@ int main(int argc, char **argv) {
 						fclose(f_nds_file);
 
 						if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
-							printLarge(false, 4, 4, "Creating save file...");
+							const char* savecreate = "Creating save file...";
+							const char* savecreated = "Save file created!";
+							printLarge(false, 4, 4, savecreate);
+							printLarge(true, 4, 4, savecreate);
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -459,12 +462,15 @@ int main(int argc, char **argv) {
 
 							FILE *pFile = fopen(savename.c_str(), "wb");
 							if (pFile) {
+								renderScreens = false;	// Disable screen rendering to avoid crashing
 								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 									fwrite(buffer, 1, sizeof(buffer), pFile);
 								}
 								fclose(pFile);
+								renderScreens = true;
 							}
-							printLarge(false, 4, 20, "Save file created!");
+							printLarge(false, 4, 20, savecreated);
+							printLarge(true, 4, 20, savecreated);
 						}
 
 					}
