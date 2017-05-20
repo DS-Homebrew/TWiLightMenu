@@ -47,6 +47,7 @@
 #include "soundbank_bin.h"
 
 bool renderScreens = true;
+bool whiteScreen = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 
@@ -376,14 +377,17 @@ int main(int argc, char **argv) {
 			filename = browseForFile(extensionList, username);
 		}
 
-		// Save cursor position
-		SaveSettings();
-
 		////////////////////////////////////
 		// Launch the item
 #ifndef EMULATE_FILES
 
 		if (applaunch) {
+			clearText(false);
+			clearText(true);
+			for (int i = 0; i < 4; i++) swiWaitForVBlank();
+
+			// Save cursor position
+			SaveSettings();
 		
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);

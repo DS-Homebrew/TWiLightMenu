@@ -47,6 +47,7 @@
 #include "fontHandler.h"
 
 extern bool renderScreens;
+extern bool whiteScreen;
 
 extern int colorRvalue;
 extern int colorGvalue;
@@ -179,9 +180,9 @@ void vBlankHandler()
 							  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
 							);
 				drawBG(mainBgImage);
+				if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 				updateText(renderingTop);
 				glColor(RGB15(31, 31, 31));
-				if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			}
 			else
 			{
@@ -257,17 +258,18 @@ void vBlankHandler()
 					if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
 					else drawIcon(112, 96-titleboxYmovepos, fileOffset);
 					titleboxYmovepos += 6;
+					if (titleboxYmovepos > 192) whiteScreen = true;
 				}
 				glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 				if (showSTARTborder) {
-				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
 					glSprite(96, 80, GL_FLIP_NONE, startbrdImage);
 					glSprite(96+32, 80, GL_FLIP_H, startbrdImage);
 					glColor(RGB15(31, 31, 31));
 				}
 				if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 				if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
-				if (titleboxYmovepos > 192) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+				if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 				updateText(renderingTop);
 				glColor(RGB15(31, 31, 31));
 			}

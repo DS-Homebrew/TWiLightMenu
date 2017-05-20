@@ -54,6 +54,8 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern bool whiteScreen;
+
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -75,6 +77,8 @@ using namespace std;
 extern int spawnedtitleboxes;
 extern int fileOffset;
 extern int titleboxXpos;
+
+extern void SaveSettings();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -479,6 +483,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			fileOffset = 0;
 		} */
 		
+		if (pressed & KEY_B) {
+			clearText(false);
+			clearText(true);
+			whiteScreen = true;
+			for (int i = 0; i < 4; i++) swiWaitForVBlank();
+			SaveSettings();
+			fifoSendValue32(FIFO_USER_01, 1);
+		}
+		
 		if (pressed & KEY_START)
 		{
 			applaunch = true;
@@ -487,12 +500,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 			// Return the chosen file
 			// waitForPanesToClear();
-			CIniFile settingsini( "sd:/_nds/srloader/settings.ini" );
-			settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-			settingsini.SaveIniFile("sd:/_nds/srloader/settings.ini");
+			clearText(false);
+			clearText(true);
+			whiteScreen = true;
+			for (int i = 0; i < 4; i++) swiWaitForVBlank();
+			SaveSettings();
 			int err = runNdsFile ("sd:/boot.nds", 0, 0);
 			iprintf ("Start failed. Error %i\n", err);
-			return "null";
 		}
 
 		/* if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
