@@ -9,4 +9,6 @@ Building this app by yourself require DEVKITARM with DEVKITPRO r45. You will als
 - ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap)
 - Apache Thunder: DS menu top screen image.
 - Joom: Original TWLoader logo.
+- me: For implementing the auto-reset power button function used in NTR-mode, to nds-bootstrap.
+- shutterbug2000: For the sound/touchscreen fix for nds-bootstrap.
 - spinal_cord: DSi4DS assets.
