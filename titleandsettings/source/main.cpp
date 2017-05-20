@@ -38,6 +38,7 @@
 #include "inifile.h"
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool showlogo = true;
 bool gotosettings = false;
@@ -45,7 +46,12 @@ bool gotosettings = false;
 bool autorun = false;
 int theme = 0;
 
+bool bstrap_boostcpu = false;
+bool bstrap_debug = false;
+bool bstrap_lockARM9scfgext = false;
+
 void LoadSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -54,9 +60,17 @@ void LoadSettings(void) {
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+
+	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
+	bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
 
 void SaveSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -66,6 +80,14 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
+
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 int screenmode = 0;
@@ -154,7 +176,7 @@ int main(int argc, char **argv) {
 	scanKeys();
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
-		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+		CIniFile bootstrapini( bootstrapinipath );
 		bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
 		bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
 		runNdsFile (bootstrapfilename.c_str(), 0, 0);
@@ -162,7 +184,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 0, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 1, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -233,6 +255,9 @@ int main(int argc, char **argv) {
 			graphicsInit();
 			fontInit();
 			screenmode = 1;
+			for (int i = 0; i < 60; i++) {
+				swiWaitForVBlank();
+			}
 		}
 	}
 
@@ -256,47 +281,76 @@ int main(int argc, char **argv) {
 					printSmall(true, 1, 2, username);
 					printSmall(true, 192, 184, vertext);
 					
-					printLarge(false, 4, 4, "Settings");
+					printLarge(false, 4, 4, "Settings: GUI");
+					printLarge(false, 4, 64, "Settings: Bootstrap");
 					
 					int yPos;
 					switch (settingscursor) {
 						case 0:
 						default:
-							yPos = 20;
+							yPos = 24;
 							break;
 						case 1:
-							yPos = 28;
+							yPos = 32;
 							break;
 						case 2:
-							yPos = 44;
+							yPos = 48;
+							break;
+						case 3:
+							yPos = 88;
+							break;
+						case 4:
+							yPos = 96;
+							break;
+						case 5:
+							yPos = 104;
 							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
 					
-					printSmall(false, 12, 20, "Theme");
+					printSmall(false, 12, 24, "Theme");
 					if(theme == 2)
-						printSmall(false, 156, 20, "3DS HOME Menu");
+						printSmall(false, 156, 24, "3DS HOME Menu");
 					else if(theme == 1)
-						printSmall(false, 156, 20, "DS Menu");
+						printSmall(false, 156, 24, "DS Menu");
 					else
-						printSmall(false, 156, 20, "DSi Menu");
+						printSmall(false, 156, 24, "DSi Menu");
 
-					printSmall(false, 12, 28, "Run last played ROM on startup");
+					printSmall(false, 12, 32, "Run last played ROM on startup");
 					if(autorun)
-						printSmall(false, 224, 36, "On");
+						printSmall(false, 224, 40, "On");
 					else
-						printSmall(false, 224, 36, "Off");
+						printSmall(false, 224, 40, "Off");
 						
-					printSmall(false, 12, 44, "Show SRLoader logo on startup");
+					printSmall(false, 12, 48, "Show SRLoader logo on startup");
 					if(showlogo)
-						printSmall(false, 224, 52, "On");
+						printSmall(false, 224, 56, "On");
 					else
-						printSmall(false, 224, 52, "Off");
+						printSmall(false, 224, 56, "Off");
+
+
+					printSmall(false, 12, 88, "ARM9 CPU Speed");
+					if(bstrap_boostcpu)
+						printSmall(false, 156, 88, "133mhz (TWL)");
+					else
+						printSmall(false, 156, 88, "67mhz (NTR)");
+						
+					printSmall(false, 12, 96, "Debug");
+					if(bstrap_debug)
+						printSmall(false, 224, 96, "On");
+					else
+						printSmall(false, 224, 96, "Off");
+						
+					printSmall(false, 12, 104, "Lock ARM9 SCFG_EXT");
+					if(bstrap_lockARM9scfgext)
+						printSmall(false, 224, 104, "On");
+					else
+						printSmall(false, 224, 104, "Off");
 						
 
 					if (settingscursor == 0) {
-						printSmall(false, 4, 156, "Select a theme to use.");
+						printSmall(false, 4, 156, "The theme to use in SRLoader.");
 					} else if (settingscursor == 1) {
 						printSmall(false, 4, 148, "If turned on, hold B on");
 						printSmall(false, 4, 156, "startup to skip to the");
@@ -306,6 +360,16 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "The SRLoader logo will be");
 						printSmall(false, 4, 164, "shown when you start");
 						printSmall(false, 4, 172, "SRLoader.");
+					} else if (settingscursor == 3) {
+						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
+						printSmall(false, 4, 164, "in some games.");
+					} else if (settingscursor == 4) {
+						printSmall(false, 4, 156, "Displays some text before");
+						printSmall(false, 4, 164, "launched game.");
+					} else if (settingscursor == 5) {
+						printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
+						printSmall(false, 4, 164, "avoiding conflict with");
+						printSmall(false, 4, 172, "recent libnds.");
 					}
 
 					menuprinted = true;
@@ -343,25 +407,30 @@ int main(int argc, char **argv) {
 							showlogo = !showlogo;
 							menuprinted = false;
 							break;
+						case 3:
+							bstrap_boostcpu = !bstrap_boostcpu;
+							menuprinted = false;
+							break;
+						case 4:
+							bstrap_debug = !bstrap_debug;
+							menuprinted = false;
+							break;
+						case 5:
+							bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+							menuprinted = false;
+							break;
 					}
 				}
 				
-				if (pressed & KEY_Y) {
-					switch (settingscursor) {
-						case 1:
-						default:
-						{
-							screenmode = 0;
-							selectmode = false;
-							clearText();
-							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-							bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-							bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
-							int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
-							iprintf ("Start failed. Error %i\n", err);
-							break;
-						}
-					}
+				if (pressed & KEY_Y && settingscursor == 1) {
+					screenmode = 0;
+					selectmode = false;
+					clearText();
+					CIniFile bootstrapini( bootstrapinipath );
+					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+					bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
+					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
+					iprintf ("Start failed. Error %i\n", err);
 				}
 				
 				if (pressed & KEY_B) {
@@ -373,8 +442,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 2) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 2;
+				if (settingscursor > 5) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 5;
 			}
 
 		} else {

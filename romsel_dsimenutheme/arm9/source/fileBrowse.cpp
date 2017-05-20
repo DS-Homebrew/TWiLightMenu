@@ -495,13 +495,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";
 		}
 
-		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		/* if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
 			mmEffectEx(&snd_switch);
 			if (romtype == 1) romtype = 0;
 			else romtype = 1;
 			return "null";
-		}
+		} */
 
 	}
 }

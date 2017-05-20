@@ -82,7 +82,7 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
-	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	// romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
 	fileOffset = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
@@ -94,7 +94,7 @@ void LoadSettings(void) {
 void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
-	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	// settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", fileOffset);
 
 	// UI settings.
