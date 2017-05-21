@@ -83,6 +83,7 @@ extern void SaveSettings();
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
+mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
 
 void InitSound() {
@@ -91,6 +92,7 @@ void InitSound() {
 	mmLoadEffect( SFX_LAUNCH );
 	mmLoadEffect( SFX_SELECT );
 	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
 
 	snd_launch = {
@@ -109,6 +111,13 @@ void InitSound() {
 	};
 	snd_stop = {
 		{ SFX_STOP } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_back = {
+		{ SFX_BACK } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
@@ -487,6 +496,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			clearText(false);
 			clearText(true);
 			whiteScreen = true;
+			mmEffectEx(&snd_back);
 			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
 			fifoSendValue32(FIFO_USER_01, 1);
