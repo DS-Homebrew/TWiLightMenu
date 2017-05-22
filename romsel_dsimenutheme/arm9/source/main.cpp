@@ -50,6 +50,7 @@ bool renderScreens = true;
 bool whiteScreen = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -65,6 +66,8 @@ static void RemoveTrailingSlashes(std::string& path)
 std::string romfolder;
 std::string gbromfolder;
 
+std::string arm7DonorPath;
+
 int romtype = 0;
 
 bool applaunch = false;
@@ -76,6 +79,7 @@ int theme = 2;
 int fileOffset = 0;
 
 void LoadSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
@@ -90,9 +94,15 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 2);
+	
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
 }
 
 void SaveSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
@@ -103,6 +113,12 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
+	
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 int colorRvalue;
@@ -381,14 +397,7 @@ int main(int argc, char **argv) {
 		// Launch the item
 #ifndef EMULATE_FILES
 
-		if (applaunch) {
-			clearText(false);
-			clearText(true);
-			for (int i = 0; i < 4; i++) swiWaitForVBlank();
-
-			// Save cursor position
-			SaveSettings();
-		
+		if (applaunch) {		
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);

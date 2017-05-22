@@ -37,11 +37,15 @@
 
 #include "inifile.h"
 
+bool renderScreens = true;
+
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool showlogo = true;
 bool gotosettings = false;
+
+std::string arm7DonorPath;
 
 bool autorun = false;
 int theme = 0;
@@ -64,6 +68,7 @@ void LoadSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
+	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
@@ -84,6 +89,7 @@ void SaveSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
+	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
@@ -305,6 +311,9 @@ int main(int argc, char **argv) {
 						case 5:
 							yPos = 104;
 							break;
+						case 6:
+							yPos = 112;
+							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
@@ -348,6 +357,8 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 104, "Off");
 						
+					printSmall(false, 12, 112, "Unset donor ROM");
+						
 
 					if (settingscursor == 0) {
 						printSmall(false, 4, 156, "The theme to use in SRLoader.");
@@ -370,6 +381,9 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 						printSmall(false, 4, 164, "avoiding conflict with");
 						printSmall(false, 4, 172, "recent libnds.");
+					} else if (settingscursor == 6) {
+						printSmall(false, 4, 156, "Unset currently set");
+						printSmall(false, 4, 164, "donor ROM.");
 					}
 
 					menuprinted = true;
@@ -419,6 +433,10 @@ int main(int argc, char **argv) {
 							bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							menuprinted = false;
 							break;
+						case 6:
+							arm7DonorPath = "";
+							printSmall(false, 156, 112, "Done!");
+							break;
 					}
 				}
 				
@@ -442,8 +460,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 5) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 5;
+				if (settingscursor > 6) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 6;
 			}
 
 		} else {

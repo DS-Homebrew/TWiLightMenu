@@ -20,6 +20,8 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <maxmod9.h>
+
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -41,7 +43,11 @@
 
 #include "inifile.h"
 
+bool renderScreens = true;
+bool whiteScreen = false;
+
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -56,12 +62,15 @@ static void RemoveTrailingSlashes(std::string& path)
 
 std::string romfolder;
 
+std::string arm7DonorPath;
+
 bool gotosettings = false;
 
 bool autorun = false;
 int theme = 0;
 
 void LoadSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
@@ -72,9 +81,15 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
 }
 
 void SaveSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
@@ -82,6 +97,12 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
+
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 bool useBootstrap = false;
@@ -183,6 +204,8 @@ int main(int argc, char **argv) {
 	
 	chdir (path);
 
+	InitSound();
+	
 	while(1) {
 	
 		//Navigates to the file to launch
@@ -267,10 +290,12 @@ int main(int argc, char **argv) {
 
 						FILE *pFile = fopen(savename.c_str(), "wb");
 						if (pFile) {
+							renderScreens = false;	// Disable screen rendering to avoid crashing
 							for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 								fwrite(buffer, 1, sizeof(buffer), pFile);
 							}
 							fclose(pFile);
+							renderScreens = true;
 						}
 						printSmall(false, 8, 28, "Save file created!");
 					}

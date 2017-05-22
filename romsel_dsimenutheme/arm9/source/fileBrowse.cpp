@@ -64,6 +64,10 @@ extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
+extern std::string romfolder;
+
+extern std::string arm7DonorPath;
+
 extern int romtype;
 
 extern bool applaunch;
@@ -387,6 +391,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;
 
+		/* if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		{
+			mmEffectEx(&snd_switch);
+			if (romtype == 1) romtype = 0;
+			else romtype = 1;
+			return "null";
+		} */
+
 		if (fileOffset < 0)
 		{
 			fileOffset = 0;
@@ -433,6 +445,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					swiWaitForVBlank();
 				}
 
+				clearText(true);
+				for (int i = 0; i < 4; i++) swiWaitForVBlank();
+				SaveSettings();
+
 				// Return the chosen file
 				return entry->name;
 			}
@@ -470,6 +486,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 90; i++) {
 					swiWaitForVBlank();
 				}
+				
+				clearText(true);
+				for (int i = 0; i < 4; i++) swiWaitForVBlank();
+				SaveSettings();
 
 				// Return the chosen file
 				return entry->name;
@@ -519,13 +539,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			iprintf ("Start failed. Error %i\n", err);
 		}
 
-		/* if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			mmEffectEx(&snd_switch);
-			if (romtype == 1) romtype = 0;
-			else romtype = 1;
-			return "null";
-		} */
+			arm7DonorPath = romfolder+dirContents[scrn].at(fileOffset).name.c_str();
+			printSmallCentered(false, 160, "Donor ROM is set.");
+			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
+		}
 
 	}
 }
