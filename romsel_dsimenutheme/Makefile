@@ -117,9 +117,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub BootStrap clean
+.PHONY: bootloader bootstub clean
 
-all:	bootloader bootstub BootStrap $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
 	@rm	-fr	hbmenu
