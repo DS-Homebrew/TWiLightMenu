@@ -68,7 +68,7 @@ int movetimer = 0;
 int titleboxYmovepos = 0;
 
 extern int spawnedtitleboxes;
-extern int fileOffset;
+extern int cursorPosition;
 int titleboxXpos;
 int titlewindowXpos;
 
@@ -256,7 +256,7 @@ void vBlankHandler()
 					}
 					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 					if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
-					else drawIcon(112, 96-titleboxYmovepos, fileOffset);
+					else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
 					titleboxYmovepos += 6;
 					if (titleboxYmovepos > 192) whiteScreen = true;
 				}
@@ -282,8 +282,8 @@ void vBlankHandler()
 
 void graphicsInit()
 {
-	titleboxXpos = fileOffset*64;
-	titlewindowXpos = fileOffset*5;
+	titleboxXpos = cursorPosition*64;
+	titlewindowXpos = cursorPosition*5;
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

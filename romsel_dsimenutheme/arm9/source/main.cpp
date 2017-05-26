@@ -76,7 +76,8 @@ bool gotosettings = false;
 
 bool autorun = false;
 int theme = 2;
-int fileOffset = 0;
+int cursorPosition = 0;
+int pagenum = 0;
 
 void LoadSettings(void) {
 	// GUI
@@ -88,7 +89,8 @@ void LoadSettings(void) {
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
 	// romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
-	fileOffset = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
+	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
+	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -106,7 +108,8 @@ void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	// settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
-	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", fileOffset);
+	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -318,19 +321,19 @@ int main(int argc, char **argv) {
 			while (!pressed);
 
 			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				fileOffset -= 1;
-				if (fileOffset >= 0) titleboxXmoveleft = true;
+				cursorPosition -= 1;
+				if (cursorPosition >= 0) titleboxXmoveleft = true;
 			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				fileOffset += 1;
-				if (fileOffset <= 38) titleboxXmoveright = true;
+				cursorPosition += 1;
+				if (cursorPosition <= 38) titleboxXmoveright = true;
 			}
-			if (fileOffset < 0)
+			if (cursorPosition < 0)
 			{
-				fileOffset = 0;
+				cursorPosition = 0;
 			}
-			else if (fileOffset > 38)
+			else if (cursorPosition > 38)
 			{
-				fileOffset = 38;
+				cursorPosition = 38;
 			}
 			
 			if (pressed & KEY_A) {

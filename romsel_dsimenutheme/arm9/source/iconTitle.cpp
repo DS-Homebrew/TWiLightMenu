@@ -108,7 +108,7 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 		case 2:
 			printLargeCentered(false, BOX_PY, text1);
 			printLargeCentered(false, BOX_PY+19, text2);
-			printLargeCentered(false, BOX_PY+37, text3);
+			printLargeCentered(false, BOX_PY+19*2, text3);
 			break;
 	}
 }
@@ -1853,7 +1853,7 @@ void titleUpdate(bool isDir, const char* name)
 				p += strlen(p) + 1;
 				printLargeCentered(false, BOX_PY+19, p);
 				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+37, p);
+				printLargeCentered(false, BOX_PY+19*2, p);
 				break;
 		}
 		

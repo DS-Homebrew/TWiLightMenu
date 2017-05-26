@@ -79,8 +79,11 @@ extern bool useBootstrap;
 using namespace std;
 
 extern int spawnedtitleboxes;
-extern int fileOffset;
+static int file_count = 0;
+extern int cursorPosition;
+extern int pagenum;
 extern int titleboxXpos;
+extern int titlewindowXpos;
 
 extern void SaveSettings();
 
@@ -240,8 +243,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	dirContents.push_back(last);
 
 #else
-	spawnedtitleboxes = 0;
-
+	file_count = 0;
+	
 	struct stat st;
 	DIR *pdir = opendir(".");
 
@@ -272,7 +275,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			// if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
 			if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
 				dirContents.push_back(dirEntry);
-				spawnedtitleboxes++;
+				file_count++;
 			}
 
 		}
@@ -333,9 +336,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	vector<DirEntry> dirContents[scrn.SIZE];
 
 	getDirectoryContents(dirContents[scrn], extensionList);
+
+	spawnedtitleboxes = 0;
 	if (romtype == 0) {
-		for(int i = 0; i < spawnedtitleboxes; i++) {
-			iconUpdate(dirContents[scrn].at(i).isDirectory, dirContents[scrn].at(i).name.c_str(), i);
+		for(int i = 0; i < 39; i++) {
+			if (i+pagenum*39 < file_count) {
+				iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
+				spawnedtitleboxes++;
+			}
 		}
 	}
 	
@@ -347,24 +355,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	pane->createDefaultEntries();
 	pane->slideTransition(true);
 
-	printSmall(false, 12 - 16, 4 + 10 * (fileOffset - screenOffset + ENTRIES_START_ROW), ">");
+	printSmall(false, 12 - 16, 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW), ">");
 	TextEntry *cursor = getPreviousTextEntry(false);
 	cursor->fade = TextEntry::FadeType::IN;
 	cursor->finalX += 16; */
 
 	while (true)
 	{
-		// cursor->finalY = 4 + 10 * (fileOffset - screenOffset + ENTRIES_START_ROW);
+		// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		if (fileOffset > ((int) dirContents[scrn].size() - 1)) {
+		if (cursorPosition+pagenum*39 > ((int) dirContents[scrn].size() - 1)) {
 			showbubble = false;
 			showSTARTborder = false;
 			clearText(false);	// Clear title
 		} else {
 			showbubble = true;
 			showSTARTborder = true;
-			titleUpdate(dirContents[scrn].at(fileOffset).isDirectory, dirContents[scrn].at(fileOffset).name.c_str());
+			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*39).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str());
 		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -388,22 +396,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// }
 
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-			fileOffset -= 1;
-			if (fileOffset >= 0) {
+			cursorPosition -= 1;
+			if (cursorPosition >= 0) {
 				titleboxXmoveleft = true;
 				mmEffectEx(&snd_select);
 			} else
 				mmEffectEx(&snd_wrong);
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-			fileOffset += 1;
-			if (fileOffset <= 38) {
+			cursorPosition += 1;
+			if (cursorPosition <= 38) {
 				titleboxXmoveright = true;
 				mmEffectEx(&snd_select);
 			} else
 				mmEffectEx(&snd_wrong);
 		}
-		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
-		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;
+		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
+		// if (pressed & KEY_DOWN) cursorPosition += ENTRY_PAGE_LENGTH;
 
 		/* if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
@@ -413,28 +421,28 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";
 		} */
 
-		if (fileOffset < 0)
+		if (cursorPosition < 0)
 		{
-			fileOffset = 0;
+			cursorPosition = 0;
 		}
-		else if (fileOffset > 38)
+		else if (cursorPosition > 38)
 		{
-			fileOffset = 38;
+			cursorPosition = 38;
 		}
-		// else if (fileOffset > ((int) dirContents[scrn].size() - 1))
+		// else if (cursorPosition > ((int) dirContents[scrn].size() - 1))
 		// {
-		// 	fileOffset = dirContents[scrn].size() - 1;
+		// 	cursorPosition = dirContents[scrn].size() - 1;
 		// }
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(fileOffset);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
 				/* chdir(entry->name.c_str());
 				updatePath();
-				pane->slideTransition(false, false, 0, fileOffset - screenOffset);
+				pane->slideTransition(false, false, 0, cursorPosition - screenOffset);
 				pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
 				getDirectoryContents(dirContents[++scrn], extensionList);
 				for (auto &i : dirContents[scrn])
@@ -442,7 +450,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pane->createDefaultEntries();
 				pane->slideTransition(true, false, 20);
 				screenOffset = 0;
-				fileOffset = 0; */
+				cursorPosition = 0; */
 			}
 			else
 			{
@@ -470,13 +478,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(fileOffset);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
 				/* chdir(entry->name.c_str());
 				updatePath();
-				pane->slideTransition(false, false, 0, fileOffset - screenOffset);
+				pane->slideTransition(false, false, 0, cursorPosition - screenOffset);
 				pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
 				getDirectoryContents(dirContents[++scrn], extensionList);
 				for (auto &i : dirContents[scrn])
@@ -484,7 +492,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pane->createDefaultEntries();
 				pane->slideTransition(true, false, 20);
 				screenOffset = 0;
-				fileOffset = 0; */
+				cursorPosition = 0; */
 			}
 			else
 			{
@@ -510,6 +518,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
+		if ((pressed & KEY_L) && !titleboxXmoveleft && !titleboxXmoveright)
+		{
+			pagenum -= 1;
+			if (pagenum < 0) pagenum = 0;
+			cursorPosition = 0;
+			titleboxXpos = 0;
+			titlewindowXpos = 0;
+			return "null";		
+		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright)
+		{
+			if (file_count > pagenum*39) pagenum += 1;
+			cursorPosition = 0;
+			titleboxXpos = 0;
+			titlewindowXpos = 0;
+			return "null";		
+		}
+
+
 		/* if (pressed & KEY_B && !isTopLevel(path))
 		{
 			// Go up a directory
@@ -523,7 +549,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			pane->createDefaultEntries();
 			pane->slideTransition(true, true, 20);
 			screenOffset = 0;
-			fileOffset = 0;
+			cursorPosition = 0;
 		} */
 		
 		if (pressed & KEY_B) {
@@ -541,7 +567,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			applaunch = true;
 			useBootstrap = false;
 			gotosettings = true;
-			// pane->slideTransition(false, true, 0, fileOffset - screenOffset);
+			// pane->slideTransition(false, true, 0, cursorPosition - screenOffset);
 			// Return the chosen file
 			// waitForPanesToClear();
 			clearText(false);
@@ -555,7 +581,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			arm7DonorPath = "fat:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
+			arm7DonorPath = "fat:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str();
 			printSmallCentered(false, 160, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}
