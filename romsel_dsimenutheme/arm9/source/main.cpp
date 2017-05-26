@@ -310,10 +310,9 @@ int main(int argc, char **argv) {
 			{
 				clearText(true);
 				printSmall(true, 24, 4, username);
-
 				// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
 				printSmall(true, 200, 4, RetTime().c_str());
-
+				
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();

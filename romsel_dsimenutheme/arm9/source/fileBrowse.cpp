@@ -380,9 +380,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			clearText(true);
 			printSmall(true, 24, 4, username);
-
 			// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
 			printSmall(true, 200, 4, RetTime().c_str());
+
+			if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
+			if (file_count > 39+pagenum*39) printSmall(true, 182, 177, "Next Page");
 
 			scanKeys();
 			pressed = keysDownRepeat();
@@ -518,17 +520,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_L) && !titleboxXmoveleft && !titleboxXmoveright)
+		if ((pressed & KEY_L) && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
 		{
+			mmEffectEx(&snd_switch);
 			pagenum -= 1;
-			if (pagenum < 0) pagenum = 0;
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
 			return "null";		
-		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright)
+		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 39+pagenum*39)
 		{
-			if (file_count > pagenum*39) pagenum += 1;
+			mmEffectEx(&snd_switch);
+			pagenum += 1;
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
