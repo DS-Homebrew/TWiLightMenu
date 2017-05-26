@@ -87,6 +87,7 @@ extern void SaveSettings();
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
+mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
 
@@ -115,6 +116,13 @@ void InitSound() {
 	};
 	snd_stop = {
 		{ SFX_STOP } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_wrong = {
+		{ SFX_WRONG } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
@@ -381,12 +389,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			fileOffset -= 1;
-			if (fileOffset >= 0) titleboxXmoveleft = true;
-			mmEffectEx(&snd_select);
+			if (fileOffset >= 0) {
+				titleboxXmoveleft = true;
+				mmEffectEx(&snd_select);
+			} else
+				mmEffectEx(&snd_wrong);
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			fileOffset += 1;
-			if (fileOffset <= 38) titleboxXmoveright = true;
-			mmEffectEx(&snd_select);
+			if (fileOffset <= 38) {
+				titleboxXmoveright = true;
+				mmEffectEx(&snd_select);
+			} else
+				mmEffectEx(&snd_wrong);
 		}
 		// if (pressed & KEY_UP) fileOffset -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) fileOffset += ENTRY_PAGE_LENGTH;

@@ -195,7 +195,7 @@ void vBlankHandler()
 				
 				if (titleboxXmoveleft) {
 					if (movetimer == 4) {
-						mmEffectEx(&snd_stop);
+						if (showbubble) mmEffectEx(&snd_stop);
 						titlewindowXpos -= 1;
 						movetimer++;
 					} else if (movetimer < 4) {
@@ -208,7 +208,7 @@ void vBlankHandler()
 					}
 				} else if (titleboxXmoveright) {
 					if (movetimer == 4) {
-						mmEffectEx(&snd_stop);
+						if (showbubble) mmEffectEx(&snd_stop);
 						titlewindowXpos += 1;
 						movetimer++;
 					} else if (movetimer < 4) {
