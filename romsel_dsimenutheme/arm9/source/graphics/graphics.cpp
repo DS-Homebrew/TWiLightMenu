@@ -40,7 +40,7 @@
 #include "box_empty.h"
 
 // Built-in icons
-#include "gbc.h"
+#include "icon_gbc.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
