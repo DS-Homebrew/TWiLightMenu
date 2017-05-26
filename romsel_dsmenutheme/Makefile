@@ -10,7 +10,7 @@ endif
 include $(DEVKITARM)/ds_rules
 
 export VERSION_MAJOR	:= 1
-export VERSION_MINOR	:= 0
+export VERSION_MINOR	:= 1
 export VERSION_PATCH	:= 0
 
 
@@ -49,7 +49,7 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lgl2d -lnds9
+LIBS	:= 	-lfat -lmm9 -lgl2d -lnds9
  
  
 #---------------------------------------------------------------------------------
@@ -115,9 +115,11 @@ else
 	endif
 endif
  
-.PHONY: bootloader bootstub BootStrap $(BUILD) clean
+export GAME_TITLE := $(TARGET)
 
-all:	bootloader bootstub $(BUILD) BootStrap
+.PHONY: bootloader bootstub clean
+
+all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
 	@rm	-fr	hbmenu
@@ -125,18 +127,39 @@ dist:	all
 	@cp $(TARGET).nds hbmenu/BOOT.NDS
 	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds hbmenu
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
+	
+$(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
+	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "SRLoader;DS theme;Robz8"
+
+$(TARGET).arm7: arm7/$(TARGET).elf
+	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
+
+$(TARGET).arm9: arm9/$(TARGET).elf
+	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
 
 #---------------------------------------------------------------------------------
-$(BUILD):
-	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+arm7/$(TARGET).elf:
+	@$(MAKE) -C arm7
+	
+#---------------------------------------------------------------------------------
+arm9/$(TARGET).elf:
+	@$(MAKE) -C arm9
+
+#---------------------------------------------------------------------------------
+#$(BUILD):
+	#@[ -d $@ ] || mkdir -p $@
+	#@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
+	@rm -fr $(TARGET).arm7.elf
+	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C BootStrap clean
+	@$(MAKE) -C arm9 clean
+	@$(MAKE) -C arm7 clean
 
 data:
 	@mkdir -p data
@@ -156,8 +179,8 @@ else
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-$(OUTPUT).nds	: 	$(OUTPUT).elf
-$(OUTPUT).elf	:	$(OFILES)
+#$(OUTPUT).nds	: 	$(OUTPUT).elf
+#$(OUTPUT).elf	:	$(OFILES)
  
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin

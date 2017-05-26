@@ -50,6 +50,7 @@ bool renderScreens = true;
 bool whiteScreen = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -65,6 +66,8 @@ static void RemoveTrailingSlashes(std::string& path)
 std::string romfolder;
 std::string gbromfolder;
 
+std::string arm7DonorPath;
+
 int romtype = 0;
 
 bool applaunch = false;
@@ -73,9 +76,11 @@ bool gotosettings = false;
 
 bool autorun = false;
 int theme = 2;
-int fileOffset = 0;
+int cursorPosition = 0;
+int pagenum = 0;
 
 void LoadSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
@@ -84,25 +89,39 @@ void LoadSettings(void) {
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
 	// romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
-	fileOffset = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
+	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
+	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 2);
+	
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
 }
 
 void SaveSettings(void) {
+	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
-	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", fileOffset);
+	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SaveIniFile(settingsinipath);
+	
+	// nds-bootstrap
+	CIniFile bootstrapini( bootstrapinipath );
+	
+	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 int colorRvalue;
@@ -291,10 +310,9 @@ int main(int argc, char **argv) {
 			{
 				clearText(true);
 				printSmall(true, 24, 4, username);
-
 				// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
 				printSmall(true, 200, 4, RetTime().c_str());
-
+				
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
@@ -302,19 +320,19 @@ int main(int argc, char **argv) {
 			while (!pressed);
 
 			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				fileOffset -= 1;
-				if (fileOffset >= 0) titleboxXmoveleft = true;
+				cursorPosition -= 1;
+				if (cursorPosition >= 0) titleboxXmoveleft = true;
 			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				fileOffset += 1;
-				if (fileOffset <= 38) titleboxXmoveright = true;
+				cursorPosition += 1;
+				if (cursorPosition <= 38) titleboxXmoveright = true;
 			}
-			if (fileOffset < 0)
+			if (cursorPosition < 0)
 			{
-				fileOffset = 0;
+				cursorPosition = 0;
 			}
-			else if (fileOffset > 38)
+			else if (cursorPosition > 38)
 			{
-				fileOffset = 38;
+				cursorPosition = 38;
 			}
 			
 			if (pressed & KEY_A) {
@@ -381,14 +399,7 @@ int main(int argc, char **argv) {
 		// Launch the item
 #ifndef EMULATE_FILES
 
-		if (applaunch) {
-			clearText(false);
-			clearText(true);
-			for (int i = 0; i < 4; i++) swiWaitForVBlank();
-
-			// Save cursor position
-			SaveSettings();
-		
+		if (applaunch) {		
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);

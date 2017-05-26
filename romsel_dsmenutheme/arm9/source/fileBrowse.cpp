@@ -30,6 +30,7 @@
 #include <dirent.h>
 
 #include <nds.h>
+#include <maxmod9.h>
 #include <gl2d.h>
 
 #include "iconTitle.h"
@@ -43,16 +44,79 @@
 
 #include "inifile.h"
 
+#include "soundbank.h"
+#include "soundbank_bin.h"
+
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern bool whiteScreen;
+
 extern bool gotosettings;
 
 extern bool useBootstrap;
 
+extern std::string romfolder;
+
+extern std::string arm7DonorPath;
+
 using namespace std;
+
+extern void SaveSettings();
+
+mm_sound_effect snd_launch;
+mm_sound_effect snd_select;
+mm_sound_effect snd_stop;
+mm_sound_effect snd_back;
+mm_sound_effect snd_switch;
+
+void InitSound() {
+	mmInitDefaultMem((mm_addr)soundbank_bin);
+	
+	mmLoadEffect( SFX_LAUNCH );
+	mmLoadEffect( SFX_SELECT );
+	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_BACK );
+	mmLoadEffect( SFX_SWITCH );
+
+	snd_launch = {
+		{ SFX_LAUNCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_select = {
+		{ SFX_SELECT } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_stop = {
+		{ SFX_STOP } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_back = {
+		{ SFX_BACK } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_switch = {
+		{ SFX_SWITCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+}
 
 struct DirEntry
 {
@@ -277,10 +341,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursor->invAccel = 4;
 		}
 
-		if (pressed & KEY_UP) fileOffset -= 1;
-		if (pressed & KEY_DOWN) fileOffset += 1;
-		if (pressed & KEY_LEFT) fileOffset -= ENTRY_PAGE_LENGTH;
-		if (pressed & KEY_RIGHT) fileOffset += ENTRY_PAGE_LENGTH;
+		if (pressed & KEY_UP) {
+			fileOffset -= 1;
+			mmEffectEx(&snd_select);
+		}
+		if (pressed & KEY_DOWN) {
+			fileOffset += 1;
+			mmEffectEx(&snd_select);
+		}
+		if (pressed & KEY_LEFT) {
+			fileOffset -= ENTRY_PAGE_LENGTH;
+			mmEffectEx(&snd_select);
+		}
+		if (pressed & KEY_RIGHT) {
+			fileOffset += ENTRY_PAGE_LENGTH;
+			mmEffectEx(&snd_select);
+		}
 
 		if (fileOffset < 0)
 		{
@@ -324,10 +400,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				mmEffectEx(&snd_launch);
 				useBootstrap = true;
 				pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 				// Return the chosen file
 				waitForPanesToClear();
+				
+				for (int i = 0; i < 4; i++) swiWaitForVBlank();
+				SaveSettings();
+				
 				return entry->name;
 			}
 		}
@@ -352,10 +433,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
+				mmEffectEx(&snd_launch);
 				useBootstrap = false;
 				pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 				// Return the chosen file
 				waitForPanesToClear();
+				
+				for (int i = 0; i < 4; i++) swiWaitForVBlank();
+				SaveSettings();
+					
 				return entry->name;
 			}
 		}
@@ -376,6 +462,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			fileOffset = 0;
 		} */
 		
+		if (pressed & KEY_B) {
+			mmEffectEx(&snd_back);
+			pane->slideTransition(false, true, 0, fileOffset - screenOffset);
+			waitForPanesToClear();
+			clearText(false);
+			clearText(true);
+			whiteScreen = true;
+			for (int i = 0; i < 4; i++) swiWaitForVBlank();
+			SaveSettings();
+			fifoSendValue32(FIFO_USER_01, 1);
+		}
+		
 		if (pressed & KEY_START)
 		{
 			useBootstrap = false;
@@ -383,12 +481,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 			// Return the chosen file
 			waitForPanesToClear();
-			CIniFile settingsini( "sd:/_nds/srloader/settings.ini" );
-			settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-			settingsini.SaveIniFile("sd:/_nds/srloader/settings.ini");
+			clearText(false);
+			clearText(true);
+			whiteScreen = true;
+			for (int i = 0; i < 4; i++) swiWaitForVBlank();
+			SaveSettings();
 			int err = runNdsFile ("sd:/boot.nds", 0, 0);
 			iprintf ("Start failed. Error %i\n", err);
 			return "null";
+		}
+
+		if (pressed & KEY_SELECT)
+		{
+			arm7DonorPath = "fat:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
+			printSmallCentered(true, 160, "Donor ROM is set.");
+			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}
 
 	}

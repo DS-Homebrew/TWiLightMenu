@@ -37,16 +37,21 @@
 
 #include "inifile.h"
 
+bool renderScreens = true;
+
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool showlogo = true;
 bool gotosettings = false;
 
+std::string arm7DonorPath;
+
 bool autorun = false;
 int theme = 0;
 
 bool bstrap_boostcpu = false;
+bool bstrap_boostvram = false;
 bool bstrap_debug = false;
 bool bstrap_lockARM9scfgext = false;
 
@@ -64,7 +69,9 @@ void LoadSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
+	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	bstrap_boostvram = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
@@ -84,7 +91,9 @@ void SaveSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
+	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", bstrap_boostvram);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 	bootstrapini.SaveIniFile(bootstrapinipath);
@@ -184,7 +193,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 1, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 1, 2);
 
 	if (showlogo) {
 		graphicsInit();
@@ -305,6 +314,12 @@ int main(int argc, char **argv) {
 						case 5:
 							yPos = 104;
 							break;
+						case 6:
+							yPos = 112;
+							break;
+						case 7:
+							yPos = 120;
+							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
@@ -335,18 +350,28 @@ int main(int argc, char **argv) {
 						printSmall(false, 156, 88, "133mhz (TWL)");
 					else
 						printSmall(false, 156, 88, "67mhz (NTR)");
-						
-					printSmall(false, 12, 96, "Debug");
+					
+					if (bstrap_boostcpu) {
+						printSmall(false, 12, 96, "VRAM boost");
+						if(bstrap_boostvram)
+							printSmall(false, 224, 96, "On");
+						else
+							printSmall(false, 224, 96, "Off");
+					}
+					
+					printSmall(false, 12, 104, "Debug");
 					if(bstrap_debug)
-						printSmall(false, 224, 96, "On");
-					else
-						printSmall(false, 224, 96, "Off");
-						
-					printSmall(false, 12, 104, "Lock ARM9 SCFG_EXT");
-					if(bstrap_lockARM9scfgext)
 						printSmall(false, 224, 104, "On");
 					else
 						printSmall(false, 224, 104, "Off");
+						
+					printSmall(false, 12, 112, "Lock ARM9 SCFG_EXT");
+					if(bstrap_lockARM9scfgext)
+						printSmall(false, 224, 112, "On");
+					else
+						printSmall(false, 224, 112, "Off");
+						
+					printSmall(false, 12, 120, "Unset donor ROM");
 						
 
 					if (settingscursor == 0) {
@@ -364,12 +389,18 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
 						printSmall(false, 4, 164, "in some games.");
 					} else if (settingscursor == 4) {
+						printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
+						printSmall(false, 4, 164, "and expands the bus to 32 bit.");
+					} else if (settingscursor == 5) {
 						printSmall(false, 4, 156, "Displays some text before");
 						printSmall(false, 4, 164, "launched game.");
-					} else if (settingscursor == 5) {
+					} else if (settingscursor == 6) {
 						printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 						printSmall(false, 4, 164, "avoiding conflict with");
 						printSmall(false, 4, 172, "recent libnds.");
+					} else if (settingscursor == 7) {
+						printSmall(false, 4, 156, "Unset currently set");
+						printSmall(false, 4, 164, "donor ROM.");
 					}
 
 					menuprinted = true;
@@ -384,10 +415,14 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor -= 1;
+					if (!bstrap_boostcpu && settingscursor == 4)
+						settingscursor -= 1;
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor += 1;
+					if (!bstrap_boostcpu && settingscursor == 4)
+						settingscursor += 1;
 					menuprinted = false;
 				}
 					
@@ -412,12 +447,20 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 4:
-							bstrap_debug = !bstrap_debug;
+							bstrap_boostvram = !bstrap_boostvram;
 							menuprinted = false;
 							break;
 						case 5:
+							bstrap_debug = !bstrap_debug;
+							menuprinted = false;
+							break;
+						case 6:
 							bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							menuprinted = false;
+							break;
+						case 7:
+							arm7DonorPath = "";
+							printSmall(false, 156, 120, "Done!");
 							break;
 					}
 				}
@@ -442,8 +485,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 5) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 5;
+				if (settingscursor > 7) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 7;
 			}
 
 		} else {

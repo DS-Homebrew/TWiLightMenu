@@ -23,6 +23,8 @@
 #include "inifile.h"
 #include "stringtool.h"
 
+extern bool renderScreens;
+
 static bool freadLine(FILE* f,std::string& str)
 {
   str.clear();
@@ -224,6 +226,7 @@ bool CIniFile::SaveIniFileModified(const std::string& FileName)
 
 bool CIniFile::SaveIniFile(const std::string& FileName)
 {
+  renderScreens = false;	// Disable screen rendering to avoid crashing
   if(FileName!="")
     m_sFileName=FileName;
 
@@ -254,6 +257,7 @@ bool CIniFile::SaveIniFile(const std::string& FileName)
 
   m_bModified=false;
 
+  renderScreens = true;
   return true;
 }
 
