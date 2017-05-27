@@ -517,7 +517,8 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
-				argarray.at(0) = (char*) &gbROMpath;
+				argarray.push_back(gbROMpath);
+				argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
 				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
