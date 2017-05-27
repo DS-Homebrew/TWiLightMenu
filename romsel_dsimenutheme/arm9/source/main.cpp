@@ -88,7 +88,7 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
-	// romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
@@ -107,7 +107,7 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
-	// settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 

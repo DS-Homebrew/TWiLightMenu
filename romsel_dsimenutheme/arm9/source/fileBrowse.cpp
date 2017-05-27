@@ -338,12 +338,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	getDirectoryContents(dirContents[scrn], extensionList);
 
 	spawnedtitleboxes = 0;
-	if (romtype == 0) {
-		for(int i = 0; i < 39; i++) {
-			if (i+pagenum*39 < file_count) {
-				iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
-				spawnedtitleboxes++;
-			}
+	for(int i = 0; i < 39; i++) {
+		if (i+pagenum*39 < file_count) {
+			if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
+			spawnedtitleboxes++;
 		}
 	}
 	
@@ -415,13 +413,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) cursorPosition += ENTRY_PAGE_LENGTH;
 
-		/* if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			mmEffectEx(&snd_switch);
+			pagenum = 0;
+			cursorPosition = 0;
+			titleboxXpos = 0;
+			titlewindowXpos = 0;
 			if (romtype == 1) romtype = 0;
 			else romtype = 1;
 			return "null";
-		} */
+		} 
 
 		if (cursorPosition < 0)
 		{
