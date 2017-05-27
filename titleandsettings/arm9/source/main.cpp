@@ -147,6 +147,10 @@ void loadROMselect() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
+	// Turn on screen backlights if they're disabled
+	powerOn(PM_BACKLIGHT_TOP);
+	powerOn(PM_BACKLIGHT_BOTTOM);
+
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
