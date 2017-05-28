@@ -493,7 +493,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if (pressed & KEY_SELECT)
 		{
-			arm7DonorPath = "fat:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
+			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
 			printSmallCentered(true, 160, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}

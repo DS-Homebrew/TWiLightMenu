@@ -191,13 +191,12 @@ int main(int argc, char **argv) {
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		CIniFile bootstrapini( bootstrapinipath );
 		bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-		bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
 		runNdsFile (bootstrapfilename.c_str(), 0, 0);
 	}
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 2, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 2, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -475,7 +474,6 @@ int main(int argc, char **argv) {
 					clearText();
 					CIniFile bootstrapini( bootstrapinipath );
 					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-					bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
 					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					iprintf ("Start failed. Error %i\n", err);
 				}

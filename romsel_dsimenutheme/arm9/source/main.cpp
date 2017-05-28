@@ -493,13 +493,10 @@ int main(int argc, char **argv) {
 					std::string path = argarray[0];
 					std::string savepath = savename;
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-					path = ReplaceAll( path, "sd:/", "fat:/");
-					savepath = ReplaceAll( savepath, "sd:/", "fat:/");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-					bootstrapfilename = ReplaceAll( bootstrapfilename, "fat:/", "sd:/");
 					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
