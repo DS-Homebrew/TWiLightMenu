@@ -21,5 +21,7 @@
 ------------------------------------------------------------------*/
 #pragma once
 void iconTitleInit();
+void loadGBCIcon();
 void iconTitleUpdate(bool isDir, const char* name);
 void drawIcon();
+void drawIconGBC();

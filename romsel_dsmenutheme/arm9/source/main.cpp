@@ -61,8 +61,13 @@ static void RemoveTrailingSlashes(std::string& path)
 }
 
 std::string romfolder;
+std::string gbromfolder;
 
 std::string arm7DonorPath;
+
+int romtype = 0;
+
+bool applaunch = false;
 
 bool gotosettings = false;
 
@@ -76,6 +81,9 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
+	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
+	RemoveTrailingSlashes(gbromfolder);
+	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -91,6 +99,8 @@ void LoadSettings(void) {
 void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
+
+	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -193,142 +203,178 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
+	vector<string> gbExtensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
+	gbExtensionList.push_back(".gb");
+	gbExtensionList.push_back(".sgb");
+	gbExtensionList.push_back(".gbc");
 	srand(time(NULL));
 	
 	if (romfolder == "") romfolder = "roms/nds";
+	if (gbromfolder == "") gbromfolder = "roms/gb";
 	
 	char path[256];
 	snprintf (path, sizeof(path), "sd:/%s", romfolder.c_str());
-	
-	chdir (path);
+	char gbPath[256];
+	snprintf (gbPath, sizeof(gbPath), "sd:/%s", gbromfolder.c_str());
 
 	InitSound();
 	
 	while(1) {
 	
-		//Navigates to the file to launch
-		filename = browseForFile(extensionList, username);
+		if (romtype == 1) {
+			// Set directory
+			chdir (gbPath);
+
+			//Navigates to the file to launch
+			filename = browseForFile(gbExtensionList, username);
+		} else {
+			// Set directory
+			chdir (path);
+
+			//Navigates to the file to launch
+			filename = browseForFile(extensionList, username);
+		}
 
 		////////////////////////////////////
 		// Launch the item
 #ifndef EMULATE_FILES
-		// Construct a command line
-		getcwd (filePath, PATH_MAX);
-		int pathLen = strlen(filePath);
-		vector<char*> argarray;
 
-		if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
+		if (applaunch) {		
+			// Construct a command line
+			getcwd (filePath, PATH_MAX);
+			int pathLen = strlen(filePath);
+			vector<char*> argarray;
 
-			FILE *argfile = fopen(filename.c_str(),"rb");
-				char str[PATH_MAX], *pstr;
-			const char seps[]= "\n\r\t ";
+			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
 
-			while( fgets(str, PATH_MAX, argfile) ) {
-				// Find comment and end string there
-				if( (pstr = strchr(str, '#')) )
-					*pstr= '\0';
+				FILE *argfile = fopen(filename.c_str(),"rb");
+					char str[PATH_MAX], *pstr;
+				const char seps[]= "\n\r\t ";
 
-				// Tokenize arguments
-				pstr= strtok(str, seps);
+				while( fgets(str, PATH_MAX, argfile) ) {
+					// Find comment and end string there
+					if( (pstr = strchr(str, '#')) )
+						*pstr= '\0';
 
-				while( pstr != NULL ) {
-					argarray.push_back(strdup(pstr));
-					pstr= strtok(NULL, seps);
-				}
-			}
-			fclose(argfile);
-			filename = argarray.at(0);
-		} else {
-			argarray.push_back(strdup(filename.c_str()));
-		}
+					// Tokenize arguments
+					pstr= strtok(str, seps);
 
-		if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") != 0 || argarray.size() == 0 ) {
-			// iprintf("no nds file specified\n");
-		} else {
-			char *name = argarray.at(0);
-			strcpy (filePath + pathLen, name);
-			free(argarray.at(0));
-			argarray.at(0) = filePath;
-			if (useBootstrap) {
-				std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
-
-				if (access(savename.c_str(), F_OK)) {
-					FILE *f_nds_file = fopen(argarray[0], "rb");
-
-					char game_TID[5];
-					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-					fread(game_TID, 1, 4, f_nds_file);
-					game_TID[4] = 0;
-					fclose(f_nds_file);
-
-					if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
-						printSmall(false, 8, 20, "Creating save file...");
-
-						static const int BUFFER_SIZE = 4096;
-						char buffer[BUFFER_SIZE];
-						memset(buffer, 0, sizeof(buffer));
-
-						int savesize = 524288;	// 512KB (default size for most games)
-
-						// Set save size to 1MB for the following games
-						if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-							strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-							strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-							strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
-						{
-							savesize = 1048576;
-						}
-
-						// Set save size to 32MB for the following games
-						if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-							strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
-						{
-							savesize = 1048576*32;
-						}
-
-						FILE *pFile = fopen(savename.c_str(), "wb");
-						if (pFile) {
-							renderScreens = false;	// Disable screen rendering to avoid crashing
-							for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-								fwrite(buffer, 1, sizeof(buffer), pFile);
-							}
-							fclose(pFile);
-							renderScreens = true;
-						}
-						printSmall(false, 8, 28, "Save file created!");
+					while( pstr != NULL ) {
+						argarray.push_back(strdup(pstr));
+						pstr= strtok(NULL, seps);
 					}
-
 				}
-				
-				std::string path = argarray[0];
-				std::string savepath = savename;
-				CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-				bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-				bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
-				int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
-				iprintf ("Start failed. Error %i\n", err);
+				fclose(argfile);
+				filename = argarray.at(0);
 			} else {
-				iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
-				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
-				iprintf ("Start failed. Error %i\n", err);
+				argarray.push_back(strdup(filename.c_str()));
 			}
 
-		}
+			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
+				char *name = argarray.at(0);
+				strcpy (filePath + pathLen, name);
+				free(argarray.at(0));
+				argarray.at(0) = filePath;
+				if (useBootstrap) {
+					std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
-		while(argarray.size() !=0 ) {
-			free(argarray.at(0));
-			argarray.erase(argarray.begin());
-		}
+					if (access(savename.c_str(), F_OK)) {
+						FILE *f_nds_file = fopen(argarray[0], "rb");
 
-		// while (1) {
-		// 	swiWaitForVBlank();
-		// 	scanKeys();
-		// 	if (!(keysHeld() & KEY_A)) break;
-		// }
+						char game_TID[5];
+						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+						fread(game_TID, 1, 4, f_nds_file);
+						game_TID[4] = 0;
+						fclose(f_nds_file);
+
+						if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
+							printSmall(false, 8, 20, "Creating save file...");
+
+							static const int BUFFER_SIZE = 4096;
+							char buffer[BUFFER_SIZE];
+							memset(buffer, 0, sizeof(buffer));
+
+							int savesize = 524288;	// 512KB (default size for most games)
+
+							// Set save size to 1MB for the following games
+							if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
+								strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
+								strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
+								strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+							{
+								savesize = 1048576;
+							}
+
+							// Set save size to 32MB for the following games
+							if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
+								strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+							{
+								savesize = 1048576*32;
+							}
+
+							FILE *pFile = fopen(savename.c_str(), "wb");
+							if (pFile) {
+								renderScreens = false;	// Disable screen rendering to avoid crashing
+								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+									fwrite(buffer, 1, sizeof(buffer), pFile);
+								}
+								fclose(pFile);
+								renderScreens = true;
+							}
+							printSmall(false, 8, 28, "Save file created!");
+						}
+
+					}
+					
+					std::string path = argarray[0];
+					std::string savepath = savename;
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					printSmall(false, 8, 20, text);
+					stop();
+				} else {
+					iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					printSmall(false, 8, 20, text);
+					stop();
+				}
+			} else if ( strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0 ||
+						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
+						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
+				char gbROMpath[256];
+				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
+				argarray.push_back(gbROMpath);
+				argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
+				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				printSmall(false, 8, 20, text);
+				stop();
+			} else {
+
+			}
+
+			while(argarray.size() !=0 ) {
+				free(argarray.at(0));
+				argarray.erase(argarray.begin());
+			}
+
+			// while (1) {
+			// 	swiWaitForVBlank();
+			// 	scanKeys();
+			// 	if (!(keysHeld() & KEY_A)) break;
+			// }
+		}
 #endif
 	}
 

@@ -56,6 +56,10 @@ extern bool whiteScreen;
 
 extern bool gotosettings;
 
+extern bool applaunch;
+
+extern int romtype;
+
 extern bool useBootstrap;
 
 extern std::string romfolder;
@@ -358,6 +362,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_select);
 		}
 
+		if (pressed & KEY_L)
+		{
+			mmEffectEx(&snd_switch);
+			if (romtype == 1) romtype = 0;
+			else  romtype = 1;
+			pane->slideTransition(false, true, 0, fileOffset - screenOffset);
+			waitForPanesToClear();
+			return "null";
+		} 
+
 		if (fileOffset < 0)
 		{
 			fileOffset = dirContents[scrn].size() - 1;
@@ -401,6 +415,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			else
 			{
 				mmEffectEx(&snd_launch);
+				applaunch = true;
 				useBootstrap = true;
 				pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 				// Return the chosen file
@@ -434,6 +449,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			else
 			{
 				mmEffectEx(&snd_launch);
+				applaunch = true;
 				useBootstrap = false;
 				pane->slideTransition(false, true, 0, fileOffset - screenOffset);
 				// Return the chosen file
