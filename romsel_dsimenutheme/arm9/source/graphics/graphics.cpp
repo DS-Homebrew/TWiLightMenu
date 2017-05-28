@@ -261,7 +261,7 @@ void vBlankHandler()
 					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 					if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
 					else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
-					titleboxYmovepos += 6;
+					titleboxYmovepos += 7;
 					if (titleboxYmovepos > 192) whiteScreen = true;
 				}
 				glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
