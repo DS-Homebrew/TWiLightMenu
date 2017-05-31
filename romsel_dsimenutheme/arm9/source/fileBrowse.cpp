@@ -345,6 +345,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		}
 	}
 	
+	whiteScreen = false;
+	
 	/* clearText(false);
 	updatePath();
 	TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -420,6 +422,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
+			whiteScreen = true;
+			clearText(true);
+			clearText(false);
 			if (romtype == 1) romtype = 0;
 			else romtype = 1;
 			return "null";
@@ -529,6 +534,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
+			whiteScreen = true;
+			clearText(true);
+			clearText(false);
 			return "null";		
 		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 39+pagenum*39)
 		{
@@ -537,6 +545,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
+			whiteScreen = true;
+			clearText(true);
+			clearText(false);
 			return "null";		
 		}
 

@@ -47,7 +47,7 @@
 #include "soundbank_bin.h"
 
 bool renderScreens = true;
-bool whiteScreen = false;
+bool whiteScreen = true;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -376,6 +376,7 @@ int main(int argc, char **argv) {
 		showSTARTborder = false;
 		graphicsInit();
 		fontInit();
+		whiteScreen = false;
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 				
 		// Control the DSi Menu, but can't launch anything.
