@@ -45,7 +45,7 @@ const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 bool showlogo = true;
 bool gotosettings = false;
 
-std::string arm7DonorPath;
+bool bstrap_useArm7Donor;
 
 bool autorun = false;
 int theme = 0;
@@ -71,7 +71,7 @@ void LoadSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
-	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
+	bstrap_useArm7Donor = bootstrapini.GetInt( "NDS-BOOTSTRAP", "USE_ARM7_DONOR", 1);
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	bstrap_boostvram = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
@@ -94,7 +94,7 @@ void SaveSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
-	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", bstrap_boostvram);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
@@ -449,7 +449,11 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 112, "Off");
 						
-					printSmall(false, 12, 120, "Unset donor ROM");
+					printSmall(false, 12, 120, "Use donor ROM");
+					if(bstrap_useArm7Donor)
+						printSmall(false, 224, 120, "On");
+					else
+						printSmall(false, 224, 120, "Off");
 						
 
 					if (settingscursor == 0) {
@@ -478,7 +482,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 164, "avoiding conflict with");
 						printSmall(false, 4, 172, "recent libnds.");
 					} else if (settingscursor == 7) {
-						printSmall(false, 4, 156, "Unset currently set");
+						printSmall(false, 4, 156, "Enable or disable use of");
 						printSmall(false, 4, 164, "donor ROM.");
 					}
 
@@ -546,10 +550,8 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 7:
-							if (pressed & KEY_A) {
-								arm7DonorPath = "";
-								printSmall(false, 156, 120, "Done!");
-							}
+							bstrap_useArm7Donor = !bstrap_useArm7Donor;
+							menuprinted = false;
 							break;
 					}
 				}
