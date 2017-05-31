@@ -56,6 +56,8 @@ extern bool whiteScreen;
 
 extern bool gotosettings;
 
+extern int subtheme;
+
 extern bool applaunch;
 
 extern int romtype;
@@ -510,7 +512,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (pressed & KEY_SELECT)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
-			printSmallCentered(true, 160, "Donor ROM is set.");
+			if (subtheme == 1) printSmallCentered(true, 172, "Donor ROM is set.");
+			else printSmallCentered(true, 160, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}
 

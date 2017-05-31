@@ -33,7 +33,7 @@
 extern bool renderScreens;
 extern bool whiteScreen;
 
-extern int theme;
+extern int subtheme;
 
 extern int romtype;
 
@@ -119,7 +119,7 @@ void vBlankHandler()
 			}
 			else
 			{
-				if (theme == 2) glBoxFilled(0, 0, 256, 192, RGB15(220, 220, 210));
+				if (subtheme == 1) glBoxFilled(0, 0, 256, 192, RGB15(220, 220, 210));
 				else drawBG(subBgImage);
 				glColor(RGB15(31, 31, 31));
 				updateText(renderingTop);
@@ -173,7 +173,7 @@ void graphicsInit()
 
 	loadGBCIcon();
 
-	if (theme == 2) {
+	if (subtheme == 1) {
 		mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array
 									16, // sprite width
 									16, // sprite height

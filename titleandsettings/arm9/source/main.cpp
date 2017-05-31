@@ -49,6 +49,7 @@ std::string arm7DonorPath;
 
 bool autorun = false;
 int theme = 0;
+int subtheme = 0;
 
 bool bstrap_boostcpu = false;
 bool bstrap_boostvram = false;
@@ -65,6 +66,7 @@ void LoadSettings(void) {
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -86,6 +88,7 @@ void SaveSettings(void) {
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
+	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 
 	// nds-bootstrap
@@ -100,7 +103,7 @@ void SaveSettings(void) {
 }
 
 int screenmode = 0;
-// int subscreenmode = 0;
+int subscreenmode = 0;
 
 int settingscursor = 0;
 
@@ -196,7 +199,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 2, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 2, 2);
 
 	if (showlogo) {
 		graphicsInit();
@@ -276,15 +279,89 @@ int main(int argc, char **argv) {
 
 	srand(time(NULL));
 
+	bool menuprinted = false;
+
+	int pressed = 0;
+
 	while(1) {
 	
 		if (screenmode == 1) {
 			
-			bool selectmode = true;
-			bool menuprinted = false;
-			
-			while(selectmode) {
-				int pressed = 0;
+			if (subscreenmode == 1) {
+				pressed = 0;
+
+				if (!menuprinted) {
+					// Clear the screen so it doesn't over-print
+					clearText();
+					
+					printSmall(true, 1, 2, username);
+					printSmall(true, 192, 184, vertext);
+					
+					switch (theme) {
+						case 0:
+						default:
+							printLarge(false, 4, 4, "Sub-theme select: DSi Menu");
+							break;
+						case 1:
+							printLarge(false, 4, 4, "Sub-theme select: Aura Launcher");
+							break;
+					}
+					
+					int yPos;
+					switch (subtheme) {
+						case 0:
+						default:
+							yPos = 24;
+							break;
+						case 1:
+							yPos = 32;
+							break;
+					}
+					
+					printSmall(false, 4, yPos, ">");
+					
+					switch (theme) {
+						case 0:
+						default:
+							printSmall(false, 12, 24, "SD Card Menu");
+							printSmall(false, 12, 32, "Normal Menu");
+							break;
+						case 1:
+							printSmall(false, 12, 24, "DS Menu");
+							printSmall(false, 12, 32, "3DS HOME Menu");
+							break;
+					}
+
+					printSmall(false, 4, 156, "A/B: Set sub-theme.");
+
+					menuprinted = true;
+				}
+
+				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!pressed);
+				
+				if (pressed & KEY_UP) {
+					subtheme -= 1;
+					menuprinted = false;
+				}
+				if (pressed & KEY_DOWN) {
+					subtheme += 1;
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_A) || (pressed & KEY_B)) {
+					subscreenmode = 0;
+					menuprinted = false;
+				}
+
+				if (subtheme > 1) subtheme = 0;
+				else if (subtheme < 0) subtheme = 1;
+			} else {
+				pressed = 0;
 
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
@@ -328,10 +405,8 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 					
 					printSmall(false, 12, 24, "Theme");
-					if(theme == 2)
-						printSmall(false, 156, 24, "3DS HOME Menu");
-					else if(theme == 1)
-						printSmall(false, 156, 24, "DS Menu");
+					if(theme == 1)
+						printSmall(false, 156, 24, "Aura Launcher");
 					else
 						printSmall(false, 156, 24, "DSi Menu");
 
@@ -379,6 +454,7 @@ int main(int argc, char **argv) {
 
 					if (settingscursor == 0) {
 						printSmall(false, 4, 156, "The theme to use in SRLoader.");
+						printSmall(false, 4, 164, "Press A for sub-themes.");
 					} else if (settingscursor == 1) {
 						printSmall(false, 4, 148, "If turned on, hold B on");
 						printSmall(false, 4, 156, "startup to skip to the");
@@ -429,12 +505,20 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 					
-				if (pressed & KEY_A) {
+				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 					switch (settingscursor) {
 						case 0:
 						default:
-							theme += 1;
-							if (theme > 2) theme = 0;
+							if (pressed & KEY_LEFT) {
+								subtheme = 0;
+								theme -= 1;
+								if (theme < 0) theme = 1;
+							} else if (pressed & KEY_RIGHT) {
+								subtheme = 0;
+								theme += 1;
+								if (theme > 1) theme = 0;
+							} else
+								subscreenmode = 1;
 							menuprinted = false;
 							break;
 						case 1:
@@ -462,15 +546,16 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 7:
-							arm7DonorPath = "";
-							printSmall(false, 156, 120, "Done!");
+							if (pressed & KEY_A) {
+								arm7DonorPath = "";
+								printSmall(false, 156, 120, "Done!");
+							}
 							break;
 					}
 				}
 				
 				if (pressed & KEY_Y && settingscursor == 1) {
 					screenmode = 0;
-					selectmode = false;
 					clearText();
 					CIniFile bootstrapini( bootstrapinipath );
 					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
@@ -482,8 +567,7 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
-					screenmode = 0;
-					selectmode = false;
+					loadROMselect();
 					break;
 				}
 				

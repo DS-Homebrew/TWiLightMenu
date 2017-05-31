@@ -30,7 +30,7 @@
 
 #include "font6x8.h"
 
-// DS Menu theme
+// DS Menu subtheme
 #define ICON_POS_X	40
 #define ICON_POS_Y	80
 
@@ -40,7 +40,7 @@
 #define BOX_PX	(9*8)
 #define BOX_PY (80-2)
 
-// 3DS HOME Menu theme
+// 3DS HOME Menu subtheme
 #define ICON_POS_X2	112
 #define ICON_POS_Y2	56
 
@@ -53,7 +53,7 @@
 // Graphic files
 #include "icon_gbc.h"
 
-extern int theme;
+extern int subtheme;
 
 static int iconTexID;
 static int gbcTexID;
@@ -75,7 +75,7 @@ void iconTitleInit()
 
 static inline void writeRow(int rownum, const char* text)
 {
-	if (theme == 2) printSmallCentered(true, BOX_PY2 + FONT_SY * rownum, text);
+	if (subtheme == 1) printSmallCentered(true, BOX_PY2 + FONT_SY * rownum, text);
 	else printSmall(true, BOX_PX + FONT_SX, BOX_PY + FONT_SY * rownum, text);
 }
 
@@ -143,13 +143,13 @@ static void clearIcon(void)
 
 void drawIcon()
 {
-	if (theme == 2) glSprite(ICON_POS_X2, ICON_POS_Y2, GL_FLIP_NONE, icon);
+	if (subtheme == 1) glSprite(ICON_POS_X2, ICON_POS_Y2, GL_FLIP_NONE, icon);
 	else glSprite(ICON_POS_X, ICON_POS_Y, GL_FLIP_NONE, icon);
 }
 
 void drawIconGBC()
 {
-	if (theme == 2) glSprite(ICON_POS_X2, ICON_POS_Y2, GL_FLIP_NONE, gbcIcon);
+	if (subtheme == 1) glSprite(ICON_POS_X2, ICON_POS_Y2, GL_FLIP_NONE, gbcIcon);
 	else glSprite(ICON_POS_X, ICON_POS_Y, GL_FLIP_NONE, gbcIcon);
 }
 

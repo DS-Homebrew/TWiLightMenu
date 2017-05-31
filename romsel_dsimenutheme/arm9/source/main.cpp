@@ -78,7 +78,8 @@ bool applaunch = false;
 bool gotosettings = false;
 
 bool autorun = false;
-int theme = 2;
+int theme = 0;
+int subtheme = 0;
 int cursorPosition = 0;
 int pagenum = 0;
 
@@ -98,7 +99,8 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	theme = settingsini.GetInt("SRLOADER", "THEME", 2);
+	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -118,6 +120,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
+	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 	
 	// nds-bootstrap
