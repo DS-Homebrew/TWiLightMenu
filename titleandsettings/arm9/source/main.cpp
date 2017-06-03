@@ -45,6 +45,8 @@ const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 bool showlogo = true;
 bool gotosettings = false;
 
+const char* romreadled_valuetext;
+
 bool bstrap_useArm7Donor;
 
 bool autorun = false;
@@ -54,7 +56,8 @@ int subtheme = 0;
 bool bstrap_boostcpu = false;
 bool bstrap_boostvram = false;
 bool bstrap_debug = false;
-bool bstrap_lockARM9scfgext = false;
+int bstrap_romreadled = 0;
+// bool bstrap_lockARM9scfgext = false;
 
 void LoadSettings(void) {
 	// GUI
@@ -75,7 +78,8 @@ void LoadSettings(void) {
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	bstrap_boostvram = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
-	bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
+	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
+	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
 
 void SaveSettings(void) {
@@ -98,7 +102,8 @@ void SaveSettings(void) {
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", bstrap_boostvram);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
+	// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
@@ -199,7 +204,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 2, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 3, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -443,12 +448,21 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 104, "Off");
 						
-					printSmall(false, 12, 112, "Lock ARM9 SCFG_EXT");
-					if(bstrap_lockARM9scfgext)
-						printSmall(false, 224, 112, "On");
-					else
-						printSmall(false, 224, 112, "Off");
-						
+					printSmall(false, 12, 112, "ROM read LED");
+					switch(bstrap_romreadled) {
+						case 0:
+						default:
+							romreadled_valuetext = "None";
+							break;
+						case 1:
+							romreadled_valuetext = "WiFi";
+							break;
+						case 2:
+							romreadled_valuetext = "Power";
+							break;
+					}
+					printSmall(false, 208, 112, romreadled_valuetext);
+					
 					printSmall(false, 12, 120, "Use donor ROM");
 					if(bstrap_useArm7Donor)
 						printSmall(false, 224, 120, "On");
@@ -478,9 +492,10 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "Displays some text before");
 						printSmall(false, 4, 164, "launched game.");
 					} else if (settingscursor == 6) {
-						printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
-						printSmall(false, 4, 164, "avoiding conflict with");
-						printSmall(false, 4, 172, "recent libnds.");
+						// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
+						// printSmall(false, 4, 164, "avoiding conflict with");
+						// printSmall(false, 4, 172, "recent libnds.");
+						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
 					} else if (settingscursor == 7) {
 						printSmall(false, 4, 156, "Enable or disable use of");
 						printSmall(false, 4, 164, "donor ROM.");
@@ -546,7 +561,14 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 6:
-							bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+							if (pressed & KEY_LEFT) {
+								bstrap_romreadled -= 1;
+								if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+								bstrap_romreadled += 1;
+								if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+							}
 							menuprinted = false;
 							break;
 						case 7:
