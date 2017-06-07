@@ -57,6 +57,7 @@ bool bstrap_boostcpu = false;
 bool bstrap_boostvram = false;
 bool bstrap_debug = false;
 int bstrap_romreadled = 0;
+bool bstrap_softReset = false;
 // bool bstrap_lockARM9scfgext = false;
 
 void LoadSettings(void) {
@@ -79,6 +80,7 @@ void LoadSettings(void) {
 	bstrap_boostvram = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
+	bstrap_softReset = bootstrapini.GetInt("NDS-BOOTSTRAP", "SOFT_RESET", 0);
 	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
 
@@ -103,6 +105,7 @@ void SaveSettings(void) {
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", bstrap_boostvram);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "SOFT_RESET", bstrap_softReset);
 	// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 	bootstrapini.SaveIniFile(bootstrapinipath);
 }
@@ -204,7 +207,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 3, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 4, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -405,6 +408,9 @@ int main(int argc, char **argv) {
 						case 7:
 							yPos = 120;
 							break;
+						case 8:
+							yPos = 128;
+							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
@@ -468,6 +474,12 @@ int main(int argc, char **argv) {
 						printSmall(false, 224, 120, "On");
 					else
 						printSmall(false, 224, 120, "Off");
+
+					printSmall(false, 12, 128, "Return with POWER button");
+					if(bstrap_softReset)
+						printSmall(false, 224, 128, "On");
+					else
+						printSmall(false, 224, 128, "Off");
 						
 
 					if (settingscursor == 0) {
@@ -499,7 +511,14 @@ int main(int argc, char **argv) {
 					} else if (settingscursor == 7) {
 						printSmall(false, 4, 156, "Enable or disable use of");
 						printSmall(false, 4, 164, "donor ROM.");
+					} else if (settingscursor == 8) {
+						printSmall(false, 4, 148, "If you have Zelda Four Swords");
+						printSmall(false, 4, 156, "with 4swordshax installed,");
+						printSmall(false, 4, 164, "press POWER while playing a ROM");
+						printSmall(false, 4, 172, "to return to the SRLoader menu.");
 					}
+
+
 
 					menuprinted = true;
 				}
@@ -575,6 +594,10 @@ int main(int argc, char **argv) {
 							bstrap_useArm7Donor = !bstrap_useArm7Donor;
 							menuprinted = false;
 							break;
+						case 8:
+							bstrap_softReset = !bstrap_softReset;
+							menuprinted = false;
+							break;
 					}
 				}
 				
@@ -595,8 +618,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 7) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 7;
+				if (settingscursor > 8) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 8;
 			}
 
 		} else {
