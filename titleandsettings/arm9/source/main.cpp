@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 4, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 4, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -475,11 +475,11 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 120, "Off");
 
-					printSmall(false, 12, 128, "Return with POWER button");
-					if(bstrap_softReset)
-						printSmall(false, 224, 128, "On");
-					else
-						printSmall(false, 224, 128, "Off");
+					// printSmall(false, 12, 128, "Return with POWER button");
+					// if(bstrap_softReset)
+					// 	printSmall(false, 224, 128, "On");
+					// else
+					// 	printSmall(false, 224, 128, "Off");
 						
 
 					if (settingscursor == 0) {
@@ -511,12 +511,12 @@ int main(int argc, char **argv) {
 					} else if (settingscursor == 7) {
 						printSmall(false, 4, 156, "Enable or disable use of");
 						printSmall(false, 4, 164, "donor ROM.");
-					} else if (settingscursor == 8) {
+					} /* else if (settingscursor == 8) {
 						printSmall(false, 4, 148, "If you have Zelda Four Swords");
 						printSmall(false, 4, 156, "with 4swordshax installed,");
 						printSmall(false, 4, 164, "press POWER while playing a ROM");
 						printSmall(false, 4, 172, "to return to the SRLoader menu.");
-					}
+					} */
 
 
 
@@ -594,10 +594,6 @@ int main(int argc, char **argv) {
 							bstrap_useArm7Donor = !bstrap_useArm7Donor;
 							menuprinted = false;
 							break;
-						case 8:
-							bstrap_softReset = !bstrap_softReset;
-							menuprinted = false;
-							break;
 					}
 				}
 				
@@ -618,8 +614,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 8) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 8;
+				if (settingscursor > 7) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 7;
 			}
 
 		} else {
