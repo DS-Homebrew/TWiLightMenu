@@ -65,6 +65,8 @@ std::string gbromfolder;
 
 std::string arm7DonorPath;
 
+int donorSdkVer = 0;
+
 int mpuregion = 0;
 int mpusize = 0;
 
