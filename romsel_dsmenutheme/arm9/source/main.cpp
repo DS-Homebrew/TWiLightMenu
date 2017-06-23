@@ -131,6 +131,88 @@ typedef struct {
 } sNDSHeadertitlecodeonly;
 
 /**
+ * Set donor SDK version for a specific game.
+ */
+void SetDonorSDK(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+	
+	donorSdkVer = 0;
+
+	// Check for ROM hacks that need an SDK version.
+	static const char sdk2_list[][4] = {
+		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
+		"AMH",	// Metroid Prime Hunters
+		"ASM",	// Super Mario 64 DS
+	};
+	
+	static const char sdk3_list[][4] = {
+		"AMC",	// Mario Kart DS
+		"EKD",	// Ermii Kart DS (Mario Kart DS hack)
+		"ADA",	// Pokemon Diamond
+		"APA",	// Pokemon Pearl
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+	
+	static const char sdk4_list[][4] = {
+		"A6C",	// MegaMan Star Force - Dragon
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"YT7",	// SEGA Superstars Tennis
+		"AZL",	// Style Savvy
+	};
+
+	static const char sdk5_list[][4] = {
+		"CS3",	// Sonic and Sega All Stars Racing
+		"BXS",	// Sonic Colo(u)rs
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk2_list)/sizeof(sdk2_list[0]); i++) {
+		if (!memcmp(game_TID, sdk2_list[i], 3)) {
+			// Found a match.
+			donorSdkVer = 2;
+			break;
+		}
+	}
+	
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk3_list)/sizeof(sdk3_list[0]); i++) {
+		if (!memcmp(game_TID, sdk3_list[i], 3)) {
+			// Found a match.
+			donorSdkVer = 3;
+			break;
+		}
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk4_list)/sizeof(sdk4_list[0]); i++) {
+		if (!memcmp(game_TID, sdk4_list[i], 3)) {
+			// Found a match.
+			donorSdkVer = 4;
+			break;
+		}
+	}
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(sdk5_list)/sizeof(sdk5_list[0]); i++) {
+		if (!memcmp(game_TID, sdk5_list[i], 3)) {
+			// Found a match.
+			donorSdkVer = 5;
+			break;
+		}
+	}
+
+}
+
+/**
  * Set MPU settings for a specific game.
  */
 void SetMPUSettings(const char* filename) {
@@ -405,6 +487,7 @@ int main(int argc, char **argv) {
 
 					}
 					
+					SetDonorSDK(argarray[0]);
 					SetMPUSettings(argarray[0]);
 					
 					std::string path = argarray[0];
