@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 4, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 5, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -466,6 +466,9 @@ int main(int argc, char **argv) {
 						case 2:
 							romreadled_valuetext = "Power";
 							break;
+						case 3:
+							romreadled_valuetext = "Camera";
+							break;
 					}
 					printSmall(false, 208, 112, romreadled_valuetext);
 					
@@ -583,10 +586,10 @@ int main(int argc, char **argv) {
 							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							if (pressed & KEY_LEFT) {
 								bstrap_romreadled -= 1;
-								if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+								if (bstrap_romreadled < 0) bstrap_romreadled = 3;
 							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
 								bstrap_romreadled += 1;
-								if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+								if (bstrap_romreadled > 3) bstrap_romreadled = 0;
 							}
 							menuprinted = false;
 							break;

@@ -67,6 +67,8 @@ std::string arm7DonorPath;
 
 int donorSdkVer = 0;
 
+bool run_timeout = true;
+
 int mpuregion = 0;
 int mpusize = 0;
 
@@ -157,6 +159,7 @@ void SetDonorSDK(const char* filename) {
 	static const char sdk3_list[][4] = {
 		"AMC",	// Mario Kart DS
 		"EKD",	// Ermii Kart DS (Mario Kart DS hack)
+		"A2D",	// New Super Mario Bros.
 		"ADA",	// Pokemon Diamond
 		"APA",	// Pokemon Pearl
 		"ARZ",	// Rockman ZX/MegaMan ZX
@@ -212,6 +215,38 @@ void SetDonorSDK(const char* filename) {
 		}
 	}
 
+}
+
+/**
+ * Set compatibility check for a specific game.
+ */
+void SetCompatibilityCheck(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+	
+	run_timeout = true;
+
+	// Check for games that don't need compatibility checks.
+	static const char list[][4] = {
+		"###",	// Homebrew
+		"NTR",	// Download Play ROMs
+		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
+	};
+	
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
+		if (!memcmp(game_TID, list[i], 3)) {
+			// Found a match.
+			run_timeout = false;
+			break;
+		}
+	}
 }
 
 /**
@@ -490,6 +525,7 @@ int main(int argc, char **argv) {
 					}
 					
 					SetDonorSDK(argarray[0]);
+					SetCompatibilityCheck(argarray[0]);
 					SetMPUSettings(argarray[0]);
 					
 					std::string path = argarray[0];
@@ -497,6 +533,8 @@ int main(int argc, char **argv) {
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+					bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
+					bootstrapini.SetInt( "NDS-BOOTSTRAP", "CHECK_COMPATIBILITY", run_timeout);
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
