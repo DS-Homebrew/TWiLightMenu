@@ -207,7 +207,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 5, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 5, 1);
 
 	if (showlogo) {
 		graphicsInit();

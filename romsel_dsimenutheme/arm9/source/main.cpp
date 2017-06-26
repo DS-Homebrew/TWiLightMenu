@@ -348,7 +348,9 @@ void SetCompatibilityCheck(const char* filename) {
 	static const char list[][4] = {
 		"###",	// Homebrew
 		"NTR",	// Download Play ROMs
+		"ADM",	// Animal Crossing: Wild World
 		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
+		"A2D",	// New Super Mario Bros.
 	};
 	
 	// TODO: If the list gets large enough, switch to bsearch().
