@@ -421,6 +421,7 @@ void SetMPUSettings(const char* filename) {
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"A2D",	// New Super Mario Bros.
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -644,6 +645,7 @@ int main(int argc, char **argv) {
 						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 						fread(game_TID, 1, 4, f_nds_file);
 						game_TID[4] = 0;
+						game_TID[3] = 0;
 						fclose(f_nds_file);
 
 						if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
@@ -658,18 +660,26 @@ int main(int argc, char **argv) {
 
 							int savesize = 524288;	// 512KB (default size for most games)
 
+							// Set save size to 8KB for the following games
+							if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+							{
+								savesize = 8192;
+							}
+
+							// Set save size to 256KB for the following games
+							if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+							{
+								savesize = 262144;
+							}
+
 							// Set save size to 1MB for the following games
-							if (strcmp(game_TID, "AZLJ") == 0 ||	// Wagamama Fashion: Girls Mode
-								strcmp(game_TID, "AZLE") == 0 ||	// Style Savvy
-								strcmp(game_TID, "AZLP") == 0 ||	// Nintendo presents: Style Boutique
-								strcmp(game_TID, "AZLK") == 0 )	// Namanui Collection: Girls Style
+							if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
 							{
 								savesize = 1048576;
 							}
 
 							// Set save size to 32MB for the following games
-							if (strcmp(game_TID, "UORE") == 0 ||	// WarioWare - D.I.Y.
-								strcmp(game_TID, "UORP") == 0 )	// WarioWare - Do It Yourself
+							if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
 							{
 								savesize = 1048576*32;
 							}
