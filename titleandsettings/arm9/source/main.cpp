@@ -227,33 +227,45 @@ int main(int argc, char **argv) {
 		unsigned int * SCFG_CLK=	(unsigned int*)0x4004004;
 		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
 		unsigned int * SCFG_MC=		(unsigned int*)0x4004010;
-		unsigned int * SCFG_ROM_ARM7_COPY=	(unsigned int*)0x2370000;
-		unsigned int * SCFG_EXT_ARM7_COPY=  (unsigned int*)0x2370001;
 
 		if(*SCFG_EXT>0) {
-			char text1[48], text2[48], text3[48], text4[48], text5[48], text6[48]; 
-			
-			snprintf (text1, sizeof(text1), "DSI SCFG_ROM ARM9 : %x",*SCFG_ROM);			
-			snprintf (text2, sizeof(text2), "DSI SCFG_CLK ARM9 : %x",*SCFG_CLK);
-			snprintf (text3, sizeof(text3), "DSI SCFG_EXT ARM9 : %x",*SCFG_EXT);			
-			snprintf (text4, sizeof(text4), "DSI SCFG_MC ARM9 : %x",*SCFG_MC);
-			
-			snprintf (text5, sizeof(text5), "DSI SCFG_ROM ARM7 : %x",*SCFG_ROM_ARM7_COPY);
-			snprintf (text6, sizeof(text6), "DSI SCFG_EXT ARM7 : %x",*SCFG_EXT_ARM7_COPY);
+			printSmall(true, 192, 184, vertext);
+
+			char text1[48], text2[48], text3[48], text4[48], text5[48], text6[48], text7[48]; 
+			//arm9
+			snprintf (text1, sizeof(text1), "SCFG_ROM ARM9: %x",*SCFG_ROM);			
+			snprintf (text2, sizeof(text2), "SCFG_CLK ARM9: %x",*SCFG_CLK);
+			snprintf (text3, sizeof(text3), "SCFG_EXT ARM9: %x",*SCFG_EXT);			
+			snprintf (text4, sizeof(text4), "SCFG_MC ARM9: %x",*SCFG_MC);
+			//arm7
+			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_ROM);
+			snprintf (text5, sizeof(text5), "SCFG_ROM ARM7: %x",FIFO_USER_01);
+			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_CLK);
+			snprintf (text6, sizeof(text6), "SCFG_CLK ARM7: %x",FIFO_USER_01);
+			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_EXT);
+			snprintf (text7, sizeof(text7), "SCFG_EXT ARM7: %x",FIFO_USER_01);
 			
 			int yPos = 4;
 			
+			printSmall(false, 4, yPos, "ARM9 SCFG:");
+			yPos += 16;
 			printSmall(false, 4, yPos, text1);
-			yPos += 16;
+			yPos += 8;
 			printSmall(false, 4, yPos, text2);
-			yPos += 16;
+			yPos += 8;
 			printSmall(false, 4, yPos, text3);
+			yPos += 24;
+			printSmall(false, 4, yPos, "Slot-1 Status:");
 			yPos += 16;
 			printSmall(false, 4, yPos, text4);
+			yPos += 24;
+			printSmall(false, 4, yPos, "ARM7 SCFG:");
 			yPos += 16;
 			printSmall(false, 4, yPos, text5);
-			yPos += 16;
+			yPos += 8;
 			printSmall(false, 4, yPos, text6);
+			yPos += 8;
+			printSmall(false, 4, yPos, text7);
 			
 			//test RAM
 			//unsigned int * TEST32RAM=	(unsigned int*)0xD004000;		
@@ -262,7 +274,7 @@ int main(int argc, char **argv) {
 			// doPause(80, 140);
 		}
 		
-		for (int i = 0; i < 60*2; i++) {
+		for (int i = 0; i < 60*3; i++) {
 			swiWaitForVBlank();
 		}
 		
@@ -511,6 +523,8 @@ int main(int argc, char **argv) {
 						// printSmall(false, 4, 164, "avoiding conflict with");
 						// printSmall(false, 4, 172, "recent libnds.");
 						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
+						printSmall(false, 4, 164, "If on, Camera LED will be");
+						printSmall(false, 4, 172, "used as async prefetch indicator.");
 					} else if (settingscursor == 7) {
 						printSmall(false, 4, 156, "Enable or disable use of");
 						printSmall(false, 4, 164, "donor ROM.");
@@ -586,10 +600,10 @@ int main(int argc, char **argv) {
 							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							if (pressed & KEY_LEFT) {
 								bstrap_romreadled -= 1;
-								if (bstrap_romreadled < 0) bstrap_romreadled = 3;
+								if (bstrap_romreadled < 0) bstrap_romreadled = 2;
 							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
 								bstrap_romreadled += 1;
-								if (bstrap_romreadled > 3) bstrap_romreadled = 0;
+								if (bstrap_romreadled > 2) bstrap_romreadled = 0;
 							}
 							menuprinted = false;
 							break;

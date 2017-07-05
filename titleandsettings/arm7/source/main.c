@@ -50,6 +50,16 @@ void VcountHandler() {
 	inputGetAndSend();
 }
 
+void myFIFOValue32Handler(u32 value,void* data)
+{
+  nocashMessage("myFIFOValue32Handler");
+
+  nocashMessage("default");
+  nocashMessage("fifoSendValue32");
+  fifoSendValue32(FIFO_USER_02,*((unsigned int*)value));
+
+}
+
 volatile bool exitflag = false;
 
 //---------------------------------------------------------------------------------
@@ -87,6 +97,8 @@ int main() {
 	irqSet(IRQ_VBLANK, VblankHandler);
 
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
+
+	fifoSetValue32Handler(FIFO_USER_01,myFIFOValue32Handler,0);
 
 	setPowerButtonCB(powerButtonCB);
 	
