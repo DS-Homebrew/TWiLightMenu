@@ -29,6 +29,13 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
+unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
+unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
+unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+unsigned int * SCFG_MC=(unsigned int*)0x4004010;
+unsigned int * CPUID=(unsigned int*)0x4004D00;
+unsigned int * CPUID2=(unsigned int*)0x4004D04;
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -48,16 +55,6 @@ void VblankHandler(void) {
 void VcountHandler() {
 //---------------------------------------------------------------------------------
 	inputGetAndSend();
-}
-
-void myFIFOValue32Handler(u32 value,void* data)
-{
-  nocashMessage("myFIFOValue32Handler");
-
-  nocashMessage("default");
-  nocashMessage("fifoSendValue32");
-  fifoSendValue32(FIFO_USER_02,*((unsigned int*)value));
-
 }
 
 volatile bool exitflag = false;
@@ -98,9 +95,14 @@ int main() {
 
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
 
-	fifoSetValue32Handler(FIFO_USER_01,myFIFOValue32Handler,0);
-
 	setPowerButtonCB(powerButtonCB);
+	
+	fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
+	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
+	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_04, *CPUID);
+	fifoSendValue32(FIFO_USER_05, *CPUID2);
+	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {

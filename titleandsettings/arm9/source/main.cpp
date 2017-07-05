@@ -223,27 +223,34 @@ int main(int argc, char **argv) {
 		gotosettings = false;
 		SaveSettings();
 	} else if (showlogo) {
-		unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;		
-		unsigned int * SCFG_CLK=	(unsigned int*)0x4004004;
-		unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
-		unsigned int * SCFG_MC=		(unsigned int*)0x4004010;
-
+		unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
+		unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
+		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
+		
 		if(*SCFG_EXT>0) {
 			printSmall(true, 192, 184, vertext);
-
-			char text1[48], text2[48], text3[48], text4[48], text5[48], text6[48], text7[48]; 
-			//arm9
-			snprintf (text1, sizeof(text1), "SCFG_ROM ARM9: %x",*SCFG_ROM);			
-			snprintf (text2, sizeof(text2), "SCFG_CLK ARM9: %x",*SCFG_CLK);
-			snprintf (text3, sizeof(text3), "SCFG_EXT ARM9: %x",*SCFG_EXT);			
-			snprintf (text4, sizeof(text4), "SCFG_MC ARM9: %x",*SCFG_MC);
-			//arm7
-			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_ROM);
-			snprintf (text5, sizeof(text5), "SCFG_ROM ARM7: %x",FIFO_USER_01);
-			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_CLK);
-			snprintf (text6, sizeof(text6), "SCFG_CLK ARM7: %x",FIFO_USER_01);
-			fifoSendValue32(FIFO_USER_01,(long unsigned int)&REG_SCFG_EXT);
-			snprintf (text7, sizeof(text7), "SCFG_EXT ARM7: %x",FIFO_USER_01);
+			
+			char text1[48],
+				text2[48],
+				text3[48],
+				text4[48],
+				text5[48],
+				text6[48],
+				text7[48],
+				text8[32];
+			//arm9 SCFG
+			snprintf (text1, sizeof(text1), "SCFG_ROM: %x",*SCFG_ROM);
+			snprintf (text2, sizeof(text2), "SCFG_CLK: %x",*SCFG_CLK);
+			snprintf (text3, sizeof(text3), "SCFG_EXT: %x",*SCFG_EXT);			
+			snprintf (text4, sizeof(text4), "SCFG_MC: %x",*SCFG_MC);
+			//arm7 SCFG
+			fifoWaitValue32(FIFO_USER_06);
+			snprintf (text5, sizeof(text5), "SCFG_ROM: %x",fifoGetValue32(FIFO_USER_01));
+			snprintf (text6, sizeof(text6), "SCFG_CLK: %x",fifoGetValue32(FIFO_USER_02));
+			snprintf (text7, sizeof(text7), "SCFG_EXT: %x",fifoGetValue32(FIFO_USER_03));
+			//ConsoleID
+			snprintf (text8, sizeof(text8), "ConsoleID: %x%x",fifoGetValue32(FIFO_USER_04),fifoGetValue32(FIFO_USER_05));
 			
 			int yPos = 4;
 			
@@ -258,14 +265,18 @@ int main(int argc, char **argv) {
 			printSmall(false, 4, yPos, "Slot-1 Status:");
 			yPos += 16;
 			printSmall(false, 4, yPos, text4);
-			yPos += 24;
-			printSmall(false, 4, yPos, "ARM7 SCFG:");
-			yPos += 16;
-			printSmall(false, 4, yPos, text5);
-			yPos += 8;
-			printSmall(false, 4, yPos, text6);
-			yPos += 8;
-			printSmall(false, 4, yPos, text7);
+			if (fifoGetValue32(FIFO_USER_03) != 0) {
+				yPos += 24;
+				printSmall(false, 4, yPos, "ARM7 SCFG:");
+				yPos += 16;
+				printSmall(false, 4, yPos, text5);
+				yPos += 8;
+				printSmall(false, 4, yPos, text6);
+				yPos += 8;
+				printSmall(false, 4, yPos, text7);
+				yPos += 24;
+				printSmall(false, 4, yPos, text8);
+			}
 			
 			//test RAM
 			//unsigned int * TEST32RAM=	(unsigned int*)0xD004000;		
