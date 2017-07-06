@@ -550,7 +550,11 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+					if (fifoGetValue32(FIFO_USER_03) != 0) {
+						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+					} else {
+						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+					}
 					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);

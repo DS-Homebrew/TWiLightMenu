@@ -30,6 +30,8 @@
 #include <nds.h>
 #include <maxmod7.h>
 
+unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -94,6 +96,8 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {

@@ -200,14 +200,18 @@ int main(int argc, char **argv) {
 	scanKeys();
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
-		CIniFile bootstrapini( bootstrapinipath );
-		bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+		fifoWaitValue32(FIFO_USER_06);
+		if (fifoGetValue32(FIFO_USER_03) != 0) {
+			bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+		} else {
+			bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+		}
 		runNdsFile (bootstrapfilename.c_str(), 0, 0);
 	}
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 5, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 6, 0);
 
 	if (showlogo) {
 		graphicsInit();
