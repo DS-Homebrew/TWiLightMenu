@@ -100,8 +100,8 @@ int main() {
 	fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
 	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_04, *CPUID);
-	fifoSendValue32(FIFO_USER_05, *CPUID2);
+	fifoSendValue32(FIFO_USER_04, *CPUID2);
+	fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
