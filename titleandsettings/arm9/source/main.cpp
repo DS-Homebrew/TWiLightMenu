@@ -46,15 +46,15 @@ bool showlogo = true;
 bool gotosettings = false;
 
 const char* romreadled_valuetext;
+const char* useArm7Donor_valuetext;
 
-bool bstrap_useArm7Donor;
+int bstrap_useArm7Donor = 1;
 
 bool autorun = false;
 int theme = 0;
 int subtheme = 0;
 
 bool bstrap_boostcpu = false;
-bool bstrap_boostvram = false;
 bool bstrap_debug = false;
 int bstrap_romreadled = 0;
 bool bstrap_softReset = false;
@@ -77,7 +77,6 @@ void LoadSettings(void) {
 
 	bstrap_useArm7Donor = bootstrapini.GetInt( "NDS-BOOTSTRAP", "USE_ARM7_DONOR", 1);
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	bstrap_boostvram = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
 	bstrap_softReset = bootstrapini.GetInt("NDS-BOOTSTRAP", "SOFT_RESET", 0);
@@ -102,7 +101,6 @@ void SaveSettings(void) {
 
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", bstrap_boostvram);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "SOFT_RESET", bstrap_softReset);
@@ -211,7 +209,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 6, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 6, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -467,21 +465,21 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 156, 88, "67mhz (NTR)");
 					
-					if (bstrap_boostcpu) {
-						printSmall(false, 12, 96, "VRAM boost");
-						if(bstrap_boostvram)
-							printSmall(false, 224, 96, "On");
-						else
-							printSmall(false, 224, 96, "Off");
-					}
+					// if (bstrap_boostcpu) {
+					// 	printSmall(false, 12, 96, "VRAM boost");
+					// 	if(bstrap_boostvram)
+					// 		printSmall(false, 224, 96, "On");
+					// 	else
+					// 		printSmall(false, 224, 96, "Off");
+					// }
 					
-					printSmall(false, 12, 104, "Debug");
+					printSmall(false, 12, 96, "Debug");
 					if(bstrap_debug)
-						printSmall(false, 224, 104, "On");
+						printSmall(false, 224, 96, "On");
 					else
-						printSmall(false, 224, 104, "Off");
+						printSmall(false, 224, 96, "Off");
 						
-					printSmall(false, 12, 112, "ROM read LED");
+					printSmall(false, 12, 104, "ROM read LED");
 					switch(bstrap_romreadled) {
 						case 0:
 						default:
@@ -497,13 +495,22 @@ int main(int argc, char **argv) {
 							romreadled_valuetext = "Camera";
 							break;
 					}
-					printSmall(false, 208, 112, romreadled_valuetext);
+					printSmall(false, 208, 104, romreadled_valuetext);
 					
-					printSmall(false, 12, 120, "Use donor ROM");
-					if(bstrap_useArm7Donor)
-						printSmall(false, 224, 120, "On");
-					else
-						printSmall(false, 224, 120, "Off");
+					printSmall(false, 12, 112, "Use donor ROM");
+					switch(bstrap_useArm7Donor) {
+						case 0:
+						default:
+							useArm7Donor_valuetext = "Off";
+							break;
+						case 1:
+							useArm7Donor_valuetext = "On";
+							break;
+						case 2:
+							useArm7Donor_valuetext = "Force-use";
+							break;
+					}
+					printSmall(false, 192, 112, useArm7Donor_valuetext);
 
 					// printSmall(false, 12, 128, "Return with POWER button");
 					// if(bstrap_softReset)
@@ -527,21 +534,21 @@ int main(int argc, char **argv) {
 					} else if (settingscursor == 3) {
 						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
 						printSmall(false, 4, 164, "in some games.");
-					} else if (settingscursor == 4) {
+					} /* else if (settingscursor == 4) {
 						printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
 						printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-					} else if (settingscursor == 5) {
+					} */ else if (settingscursor == 4) {
 						printSmall(false, 4, 156, "Displays some text before");
 						printSmall(false, 4, 164, "launched game.");
-					} else if (settingscursor == 6) {
+					} else if (settingscursor == 5) {
 						// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 						// printSmall(false, 4, 164, "avoiding conflict with");
 						// printSmall(false, 4, 172, "recent libnds.");
 						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
 						printSmall(false, 4, 164, "If on, Camera LED will be");
 						printSmall(false, 4, 172, "used as async prefetch indicator.");
-					} else if (settingscursor == 7) {
-						printSmall(false, 4, 156, "Enable or disable use of");
+					} else if (settingscursor == 6) {
+						printSmall(false, 4, 156, "Enable, disable, or force use of");
 						printSmall(false, 4, 164, "donor ROM.");
 					} /* else if (settingscursor == 8) {
 						printSmall(false, 4, 148, "If you have Zelda Four Swords");
@@ -564,14 +571,10 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor -= 1;
-					if (!bstrap_boostcpu && settingscursor == 4)
-						settingscursor -= 1;
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor += 1;
-					if (!bstrap_boostcpu && settingscursor == 4)
-						settingscursor += 1;
 					menuprinted = false;
 				}
 					
@@ -604,14 +607,10 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 4:
-							bstrap_boostvram = !bstrap_boostvram;
-							menuprinted = false;
-							break;
-						case 5:
 							bstrap_debug = !bstrap_debug;
 							menuprinted = false;
 							break;
-						case 6:
+						case 5:
 							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							if (pressed & KEY_LEFT) {
 								bstrap_romreadled -= 1;
@@ -622,8 +621,14 @@ int main(int argc, char **argv) {
 							}
 							menuprinted = false;
 							break;
-						case 7:
-							bstrap_useArm7Donor = !bstrap_useArm7Donor;
+						case 6:
+							if (pressed & KEY_LEFT) {
+								bstrap_useArm7Donor -= 0;
+								if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
+							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+								bstrap_useArm7Donor += 1;
+								if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
+							}
 							menuprinted = false;
 							break;
 					}
@@ -646,8 +651,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 7) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 7;
+				if (settingscursor > 6) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 6;
 			}
 
 		} else {
