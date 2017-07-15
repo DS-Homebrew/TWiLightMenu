@@ -42,6 +42,8 @@ bool renderScreens = true;
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+bool rebootInRocketLauncher = false;
+
 bool showlogo = true;
 bool gotosettings = false;
 
@@ -57,7 +59,6 @@ int subtheme = 0;
 bool bstrap_boostcpu = false;
 bool bstrap_debug = false;
 int bstrap_romreadled = 0;
-bool bstrap_softReset = false;
 // bool bstrap_lockARM9scfgext = false;
 
 void LoadSettings(void) {
@@ -67,6 +68,7 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
+	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_IN_ROCKETLAUNCHER", 0);
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -79,7 +81,6 @@ void LoadSettings(void) {
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
-	bstrap_softReset = bootstrapini.GetInt("NDS-BOOTSTRAP", "SOFT_RESET", 0);
 	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
 
@@ -90,6 +91,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+	settingsini.SetInt("SRLOADER", "REBOOT_IN_ROCKETLAUNCHER", rebootInRocketLauncher);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -103,7 +105,6 @@ void SaveSettings(void) {
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "SOFT_RESET", bstrap_softReset);
 	// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 	bootstrapini.SaveIniFile(bootstrapinipath);
 }
@@ -202,6 +203,13 @@ int main(int argc, char **argv) {
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax, then arm7 SCFG is locked.
 
 	scanKeys();
+
+	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
+		fifoSendValue32(FIFO_USER_08, 1);
+		for (int i = 0; i < 30; i++) {
+			swiWaitForVBlank();
+		}
+	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		if (!arm7SCFGLocked) {
@@ -482,12 +490,6 @@ int main(int argc, char **argv) {
 							break;
 					}
 					printSmall(false, 184, 48, useArm7Donor_valuetext);
-
-					// printSmall(false, 12, 128, "Return with POWER button");
-					// if(bstrap_softReset)
-					// 	printSmall(false, 224, 128, "On");
-					// else
-					// 	printSmall(false, 224, 128, "Off");
 						
 
 					if (settingscursor == 0) {
@@ -637,13 +639,19 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 56, "Off");
 						
-					if(arm7SCFGLocked)
+					if(arm7SCFGLocked) {
 						printSmall(false, 12, 64, "RocketLauncher mode");
+						
+						if(rebootInRocketLauncher)
+							printSmall(false, 224, 64, "On");
+						else
+							printSmall(false, 224, 64, "Off");
+					}
 
 
 					if (settingscursor == 0) {
-						printSmall(false, 4, 156, "The theme to use in SRLoader.");
-						printSmall(false, 4, 164, "Press A for sub-themes.");
+						printSmall(false, 4, 164, "The theme to use in SRLoader.");
+						printSmall(false, 4, 172, "Press A for sub-themes.");
 					} else if (settingscursor == 1) {
 						printSmall(false, 4, 148, "If turned on, hold B on");
 						printSmall(false, 4, 156, "startup to skip to the");
@@ -654,11 +662,12 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 164, "shown when you start");
 						printSmall(false, 4, 172, "SRLoader.");
 					} else if (settingscursor == 3) {
-						printSmall(false, 4, 140, "Reboots with unlocked ARM7 SCFG,");
-						printSmall(false, 4, 148, "for sound to play correctly in");
-						printSmall(false, 4, 156, "nds-bootstrap. Requires a Slot-1");
-						printSmall(false, 4, 164, "card in the slot, and it's TID");
-						printSmall(false, 4, 172, "with the exploit in the whitelist.");
+						printSmall(false, 4, 132, "Reboots with unlocked ARM7 SCFG,");
+						printSmall(false, 4, 140, "for sound to play correctly in");
+						printSmall(false, 4, 148, "nds-bootstrap. Requires a Slot-1");
+						printSmall(false, 4, 156, "card in the slot, and it's TID");
+						printSmall(false, 4, 164, "with the exploit in the whitelist.");
+						printSmall(false, 4, 172, "Press A to reboot in this mode.");
 					}
 
 
@@ -706,12 +715,16 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 3:
-							clearText();
-							printSmall(false, 4, 4, "Saving settings...");
-							SaveSettings();
-							fifoSendValue32(FIFO_USER_08, 1);
-							for (int i = 0; i < 30; i++) {
-								swiWaitForVBlank();
+							if (pressed & (KEY_LEFT | KEY_RIGHT)) {
+								rebootInRocketLauncher = !rebootInRocketLauncher;
+							} else {
+								clearText();
+								printSmall(false, 4, 4, "Saving settings...");
+								SaveSettings();
+								fifoSendValue32(FIFO_USER_08, 1);
+								for (int i = 0; i < 30; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							menuprinted = false;
 							break;
