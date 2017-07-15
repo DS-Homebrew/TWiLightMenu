@@ -29,6 +29,8 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
+#include "ResetData_Mario64.h"
+
 unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
@@ -37,18 +39,19 @@ unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
 //---------------------------------------------------------------------------------
-void ReturntoDSiMenu() {
+void RocketLauncherMode() {
 //---------------------------------------------------------------------------------
+	memcpy((u32*)0x02000000,ResetData_Mario64,0x560);
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
-	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
+	i2cWriteRegister(0x4A, 0x11, 0x01);		// Soft-reset to Slot-1 card
 }
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	// if(fifoCheckValue32(FIFO_USER_01)) {
-	// 	ReturntoDSiMenu();
-	// }
+	if(fifoGetValue32(FIFO_USER_08) != 0) {
+		RocketLauncherMode();
+	}
 }
 
 //---------------------------------------------------------------------------------

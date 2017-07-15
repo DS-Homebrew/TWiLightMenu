@@ -189,17 +189,22 @@ int main(int argc, char **argv) {
 
 #endif
 
+	bool arm7SCFGLocked = false;
+
 	std::string filename;
 	std::string bootstrapfilename;
 
 	LoadSettings();
 	
 	swiWaitForVBlank();
+
+	fifoWaitValue32(FIFO_USER_06);
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax, then arm7 SCFG is locked.
+
 	scanKeys();
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
-		fifoWaitValue32(FIFO_USER_06);
-		if (fifoGetValue32(FIFO_USER_03) != 0) {
+		if (!arm7SCFGLocked) {
 			bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
 		} else {
 			bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
@@ -209,7 +214,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 6, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 7, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -246,13 +251,14 @@ int main(int argc, char **argv) {
 			snprintf (text2, sizeof(text2), "SCFG_CLK: %x",*SCFG_CLK);
 			snprintf (text3, sizeof(text3), "SCFG_EXT: %x",*SCFG_EXT);			
 			snprintf (text4, sizeof(text4), "SCFG_MC: %x",*SCFG_MC);
-			//arm7 SCFG
-			fifoWaitValue32(FIFO_USER_06);
-			snprintf (text5, sizeof(text5), "SCFG_ROM: %x",fifoGetValue32(FIFO_USER_01));
-			snprintf (text6, sizeof(text6), "SCFG_CLK: %x",fifoGetValue32(FIFO_USER_02));
-			snprintf (text7, sizeof(text7), "SCFG_EXT: %x",fifoGetValue32(FIFO_USER_03));
-			//ConsoleID
-			snprintf (text8, sizeof(text8), "ConsoleID: %x%x",fifoGetValue32(FIFO_USER_04),fifoGetValue32(FIFO_USER_05));
+			if (!arm7SCFGLocked) {
+				//arm7 SCFG
+				snprintf (text5, sizeof(text5), "SCFG_ROM: %x",fifoGetValue32(FIFO_USER_01));
+				snprintf (text6, sizeof(text6), "SCFG_CLK: %x",fifoGetValue32(FIFO_USER_02));
+				snprintf (text7, sizeof(text7), "SCFG_EXT: %x",fifoGetValue32(FIFO_USER_03));
+				//ConsoleID
+				snprintf (text8, sizeof(text8), "ConsoleID: %x%x",fifoGetValue32(FIFO_USER_04),fifoGetValue32(FIFO_USER_05));
+			}
 			
 			int yPos = 4;
 			
@@ -267,7 +273,7 @@ int main(int argc, char **argv) {
 			printSmall(false, 4, yPos, "Slot-1 Status:");
 			yPos += 16;
 			printSmall(false, 4, yPos, text4);
-			if (fifoGetValue32(FIFO_USER_03) != 0) {
+			if (!arm7SCFGLocked) {
 				yPos += 24;
 				printSmall(false, 4, yPos, "ARM7 SCFG:");
 				yPos += 16;
@@ -320,7 +326,7 @@ int main(int argc, char **argv) {
 	
 		if (screenmode == 1) {
 			
-			if (subscreenmode == 1) {
+			if (subscreenmode == 2) {
 				pressed = 0;
 
 				if (!menuprinted) {
@@ -393,7 +399,7 @@ int main(int argc, char **argv) {
 
 				if (subtheme > 1) subtheme = 0;
 				else if (subtheme < 0) subtheme = 1;
-			} else {
+			} else if (subscreenmode == 1) {
 				pressed = 0;
 
 				if (!menuprinted) {
@@ -403,8 +409,7 @@ int main(int argc, char **argv) {
 					printSmall(true, 1, 2, username);
 					printSmall(true, 192, 184, vertext);
 					
-					printLarge(false, 4, 4, "Settings: GUI");
-					printLarge(false, 4, 64, "Settings: Bootstrap");
+					printLarge(false, 4, 4, "Settings: Games/Apps");
 					
 					int yPos;
 					switch (settingscursor) {
@@ -416,54 +421,20 @@ int main(int argc, char **argv) {
 							yPos = 32;
 							break;
 						case 2:
-							yPos = 48;
+							yPos = 40;
 							break;
 						case 3:
-							yPos = 88;
-							break;
-						case 4:
-							yPos = 96;
-							break;
-						case 5:
-							yPos = 104;
-							break;
-						case 6:
-							yPos = 112;
-							break;
-						case 7:
-							yPos = 120;
-							break;
-						case 8:
-							yPos = 128;
+							yPos = 48;
 							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
 					
-					printSmall(false, 12, 24, "Theme");
-					if(theme == 1)
-						printSmall(false, 156, 24, "Aura Launcher");
-					else
-						printSmall(false, 156, 24, "DSi Menu");
-
-					printSmall(false, 12, 32, "Run last played ROM on startup");
-					if(autorun)
-						printSmall(false, 224, 40, "On");
-					else
-						printSmall(false, 224, 40, "Off");
-						
-					printSmall(false, 12, 48, "Show SRLoader logo on startup");
-					if(showlogo)
-						printSmall(false, 224, 56, "On");
-					else
-						printSmall(false, 224, 56, "Off");
-
-
-					printSmall(false, 12, 88, "ARM9 CPU Speed");
+					printSmall(false, 12, 24, "ARM9 CPU Speed");
 					if(bstrap_boostcpu)
-						printSmall(false, 156, 88, "133mhz (TWL)");
+						printSmall(false, 156, 24, "133mhz (TWL)");
 					else
-						printSmall(false, 156, 88, "67mhz (NTR)");
+						printSmall(false, 156, 24, "67mhz (NTR)");
 					
 					// if (bstrap_boostcpu) {
 					// 	printSmall(false, 12, 96, "VRAM boost");
@@ -473,13 +444,13 @@ int main(int argc, char **argv) {
 					// 		printSmall(false, 224, 96, "Off");
 					// }
 					
-					printSmall(false, 12, 96, "Debug");
+					printSmall(false, 12, 32, "Debug");
 					if(bstrap_debug)
-						printSmall(false, 224, 96, "On");
+						printSmall(false, 224, 32, "On");
 					else
-						printSmall(false, 224, 96, "Off");
+						printSmall(false, 224, 32, "Off");
 						
-					printSmall(false, 12, 104, "ROM read LED");
+					printSmall(false, 12, 40, "ROM read LED");
 					switch(bstrap_romreadled) {
 						case 0:
 						default:
@@ -495,9 +466,9 @@ int main(int argc, char **argv) {
 							romreadled_valuetext = "Camera";
 							break;
 					}
-					printSmall(false, 208, 104, romreadled_valuetext);
+					printSmall(false, 208, 40, romreadled_valuetext);
 					
-					printSmall(false, 12, 112, "Use donor ROM");
+					printSmall(false, 12, 48, "Use donor ROM");
 					switch(bstrap_useArm7Donor) {
 						case 0:
 						default:
@@ -510,7 +481,7 @@ int main(int argc, char **argv) {
 							useArm7Donor_valuetext = "Force-use";
 							break;
 					}
-					printSmall(false, 192, 112, useArm7Donor_valuetext);
+					printSmall(false, 184, 48, useArm7Donor_valuetext);
 
 					// printSmall(false, 12, 128, "Return with POWER button");
 					// if(bstrap_softReset)
@@ -520,34 +491,22 @@ int main(int argc, char **argv) {
 						
 
 					if (settingscursor == 0) {
-						printSmall(false, 4, 156, "The theme to use in SRLoader.");
-						printSmall(false, 4, 164, "Press A for sub-themes.");
-					} else if (settingscursor == 1) {
-						printSmall(false, 4, 148, "If turned on, hold B on");
-						printSmall(false, 4, 156, "startup to skip to the");
-						printSmall(false, 4, 164, "ROM select menu.");
-						printSmall(false, 4, 172, "Press Y to start last played ROM.");
-					} else if (settingscursor == 2) {
-						printSmall(false, 4, 156, "The SRLoader logo will be");
-						printSmall(false, 4, 164, "shown when you start");
-						printSmall(false, 4, 172, "SRLoader.");
-					} else if (settingscursor == 3) {
 						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
 						printSmall(false, 4, 164, "in some games.");
 					} /* else if (settingscursor == 4) {
 						printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
 						printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-					} */ else if (settingscursor == 4) {
+					} */ else if (settingscursor == 1) {
 						printSmall(false, 4, 156, "Displays some text before");
 						printSmall(false, 4, 164, "launched game.");
-					} else if (settingscursor == 5) {
+					} else if (settingscursor == 2) {
 						// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 						// printSmall(false, 4, 164, "avoiding conflict with");
 						// printSmall(false, 4, 172, "recent libnds.");
 						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
 						printSmall(false, 4, 164, "If on, Camera LED will be");
 						printSmall(false, 4, 172, "used as async prefetch indicator.");
-					} else if (settingscursor == 6) {
+					} else if (settingscursor == 3) {
 						printSmall(false, 4, 156, "Enable, disable, or force use of");
 						printSmall(false, 4, 164, "donor ROM.");
 					} /* else if (settingscursor == 8) {
@@ -582,35 +541,14 @@ int main(int argc, char **argv) {
 					switch (settingscursor) {
 						case 0:
 						default:
-							if (pressed & KEY_LEFT) {
-								subtheme = 0;
-								theme -= 1;
-								if (theme < 0) theme = 1;
-							} else if (pressed & KEY_RIGHT) {
-								subtheme = 0;
-								theme += 1;
-								if (theme > 1) theme = 0;
-							} else
-								subscreenmode = 1;
-							menuprinted = false;
-							break;
-						case 1:
-							autorun = !autorun;
-							menuprinted = false;
-							break;
-						case 2:
-							showlogo = !showlogo;
-							menuprinted = false;
-							break;
-						case 3:
 							bstrap_boostcpu = !bstrap_boostcpu;
 							menuprinted = false;
 							break;
-						case 4:
+						case 1:
 							bstrap_debug = !bstrap_debug;
 							menuprinted = false;
 							break;
-						case 5:
+						case 2:
 							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							if (pressed & KEY_LEFT) {
 								bstrap_romreadled -= 1;
@@ -621,7 +559,7 @@ int main(int argc, char **argv) {
 							}
 							menuprinted = false;
 							break;
-						case 6:
+						case 3:
 							if (pressed & KEY_LEFT) {
 								bstrap_useArm7Donor -= 0;
 								if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
@@ -634,11 +572,168 @@ int main(int argc, char **argv) {
 					}
 				}
 				
+				if (pressed & KEY_L) {
+					subscreenmode = 0;
+					settingscursor = 0;
+					menuprinted = false;
+				}
+
+				if (pressed & KEY_B) {
+					clearText();
+					printSmall(false, 4, 4, "Saving settings...");
+					SaveSettings();
+					loadROMselect();
+					break;
+				}
+				
+				if (settingscursor > 3) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 3;
+			} else {
+				pressed = 0;
+
+				if (!menuprinted) {
+					// Clear the screen so it doesn't over-print
+					clearText();
+					
+					printSmall(true, 1, 2, username);
+					printSmall(true, 192, 184, vertext);
+					
+					printLarge(false, 4, 4, "Settings: GUI");
+					
+					int yPos;
+					switch (settingscursor) {
+						case 0:
+						default:
+							yPos = 24;
+							break;
+						case 1:
+							yPos = 32;
+							break;
+						case 2:
+							yPos = 48;
+							break;
+						case 3:
+							yPos = 64;
+							break;
+					}
+					
+					printSmall(false, 4, yPos, ">");
+					
+					printSmall(false, 12, 24, "Theme");
+					if(theme == 1)
+						printSmall(false, 156, 24, "Aura Launcher");
+					else
+						printSmall(false, 156, 24, "DSi Menu");
+
+					printSmall(false, 12, 32, "Run last played ROM on startup");
+					if(autorun)
+						printSmall(false, 224, 40, "On");
+					else
+						printSmall(false, 224, 40, "Off");
+						
+					printSmall(false, 12, 48, "Show SRLoader logo on startup");
+					if(showlogo)
+						printSmall(false, 224, 56, "On");
+					else
+						printSmall(false, 224, 56, "Off");
+						
+					if(arm7SCFGLocked)
+						printSmall(false, 12, 64, "RocketLauncher mode");
+
+
+					if (settingscursor == 0) {
+						printSmall(false, 4, 156, "The theme to use in SRLoader.");
+						printSmall(false, 4, 164, "Press A for sub-themes.");
+					} else if (settingscursor == 1) {
+						printSmall(false, 4, 148, "If turned on, hold B on");
+						printSmall(false, 4, 156, "startup to skip to the");
+						printSmall(false, 4, 164, "ROM select menu.");
+						printSmall(false, 4, 172, "Press Y to start last played ROM.");
+					} else if (settingscursor == 2) {
+						printSmall(false, 4, 156, "The SRLoader logo will be");
+						printSmall(false, 4, 164, "shown when you start");
+						printSmall(false, 4, 172, "SRLoader.");
+					} else if (settingscursor == 3) {
+						printSmall(false, 4, 140, "Reboots with unlocked ARM7 SCFG,");
+						printSmall(false, 4, 148, "for sound to play correctly in");
+						printSmall(false, 4, 156, "nds-bootstrap. Requires a Slot-1");
+						printSmall(false, 4, 164, "card in the slot, and it's TID");
+						printSmall(false, 4, 172, "with the exploit in the whitelist.");
+					}
+
+
+					menuprinted = true;
+				}
+
+				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!pressed);
+				
+				if (pressed & KEY_UP) {
+					settingscursor -= 1;
+					menuprinted = false;
+				}
+				if (pressed & KEY_DOWN) {
+					settingscursor += 1;
+					menuprinted = false;
+				}
+					
+				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+					switch (settingscursor) {
+						case 0:
+						default:
+							if (pressed & KEY_LEFT) {
+								subtheme = 0;
+								theme -= 1;
+								if (theme < 0) theme = 1;
+							} else if (pressed & KEY_RIGHT) {
+								subtheme = 0;
+								theme += 1;
+								if (theme > 1) theme = 0;
+							} else
+								subscreenmode = 2;
+							menuprinted = false;
+							break;
+						case 1:
+							autorun = !autorun;
+							menuprinted = false;
+							break;
+						case 2:
+							showlogo = !showlogo;
+							menuprinted = false;
+							break;
+						case 3:
+							clearText();
+							printSmall(false, 4, 4, "Saving settings...");
+							SaveSettings();
+							fifoSendValue32(FIFO_USER_08, 1);
+							for (int i = 0; i < 30; i++) {
+								swiWaitForVBlank();
+							}
+							menuprinted = false;
+							break;
+					}
+				}
+				
+				if (pressed & KEY_R) {
+					subscreenmode = 1;
+					settingscursor = 0;
+					menuprinted = false;
+				}
+
 				if (pressed & KEY_Y && settingscursor == 1) {
 					screenmode = 0;
 					clearText();
-					CIniFile bootstrapini( bootstrapinipath );
-					bootstrapfilename = bootstrapini.GetString("NDS-BOOTSTRAP", "BOOTSTRAP_PATH","");
+					printSmall(false, 4, 4, "Saving settings...");
+					SaveSettings();
+					if (!arm7SCFGLocked) {
+						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+					} else {
+						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+					}
 					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					iprintf ("Start failed. Error %i\n", err);
 				}
@@ -651,8 +746,13 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 6) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 6;
+				if(!arm7SCFGLocked) {
+					if (settingscursor > 2) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 2;
+				} else {
+					if (settingscursor > 3) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 3;
+				}
 			}
 
 		} else {
