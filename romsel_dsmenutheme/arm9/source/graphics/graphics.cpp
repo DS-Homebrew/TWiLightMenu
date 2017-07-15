@@ -30,7 +30,6 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
-extern bool renderScreens;
 extern bool whiteScreen;
 
 extern int subtheme;
@@ -105,31 +104,29 @@ bool isRenderingTop()
 
 void vBlankHandler()
 {
-	if (renderScreens) {
-		startRendering(renderingTop);
-		glBegin2D();
+	startRendering(renderingTop);
+	glBegin2D();
+	{
+		if (renderingTop)
 		{
-			if (renderingTop)
-			{
-				drawBG(mainBgImage);
-				if (romtype == 1) drawIconGBC();
-				else drawIcon();
-				updateText(renderingTop);
-				if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			}
-			else
-			{
-				if (subtheme == 1) glBoxFilled(0, 0, 256, 192, RGB15(220, 220, 210));
-				else drawBG(subBgImage);
-				glColor(RGB15(31, 31, 31));
-				updateText(renderingTop);
-				if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			}
+			drawBG(mainBgImage);
+			if (romtype == 1) drawIconGBC();
+			else drawIcon();
+			updateText(renderingTop);
+			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 		}
-		glEnd2D();
-		GFX_FLUSH = 0;
-		renderingTop = !renderingTop;
+		else
+		{
+			if (subtheme == 1) glBoxFilled(0, 0, 256, 192, RGB15(220, 220, 210));
+			else drawBG(subBgImage);
+			glColor(RGB15(31, 31, 31));
+			updateText(renderingTop);
+			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+		}
 	}
+	glEnd2D();
+	GFX_FLUSH = 0;
+	renderingTop = !renderingTop;
 }
 
 void graphicsInit()

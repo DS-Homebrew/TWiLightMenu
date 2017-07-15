@@ -37,8 +37,6 @@
 
 #include "inifile.h"
 
-bool renderScreens = true;
-
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 

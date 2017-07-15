@@ -43,7 +43,6 @@
 
 #include "inifile.h"
 
-bool renderScreens = true;
 bool whiteScreen = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
@@ -524,12 +523,10 @@ int main(int argc, char **argv) {
 
 							FILE *pFile = fopen(savename.c_str(), "wb");
 							if (pFile) {
-								renderScreens = false;	// Disable screen rendering to avoid crashing
 								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 									fwrite(buffer, 1, sizeof(buffer), pFile);
 								}
 								fclose(pFile);
-								renderScreens = true;
 							}
 							printSmall(false, 8, 28, "Save file created!");
 						}

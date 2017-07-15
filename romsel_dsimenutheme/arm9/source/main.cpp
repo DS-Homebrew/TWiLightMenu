@@ -46,7 +46,6 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
-bool renderScreens = true;
 bool whiteScreen = true;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
@@ -652,7 +651,6 @@ int main(int argc, char **argv) {
 							const char* savecreate = "Creating save file...";
 							const char* savecreated = "Save file created!";
 							printLarge(false, 4, 4, savecreate);
-							printLarge(true, 4, 4, savecreate);
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -686,15 +684,12 @@ int main(int argc, char **argv) {
 
 							FILE *pFile = fopen(savename.c_str(), "wb");
 							if (pFile) {
-								renderScreens = false;	// Disable screen rendering to avoid crashing
 								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 									fwrite(buffer, 1, sizeof(buffer), pFile);
 								}
 								fclose(pFile);
-								renderScreens = true;
 							}
 							printLarge(false, 4, 20, savecreated);
-							printLarge(true, 4, 20, savecreated);
 						}
 
 					}
