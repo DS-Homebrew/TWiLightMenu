@@ -39,16 +39,18 @@ unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
 //---------------------------------------------------------------------------------
-void LoadRocketLauncherPayload() {
+void RocketLauncher() {
 //---------------------------------------------------------------------------------
 	memcpy((u32*)0x02800000,payload_RocketLauncher,payload_RocketLauncher_len);
+	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
+	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reboot to RocketLauncher
 }
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_08) != 0) {
-		LoadRocketLauncherPayload();
+	if(fifoCheckValue32(FIFO_USER_08)) {
+		RocketLauncher();
 	}
 }
 

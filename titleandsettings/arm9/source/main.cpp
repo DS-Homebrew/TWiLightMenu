@@ -203,11 +203,14 @@ int main(int argc, char **argv) {
 	scanKeys();
 
 	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
+		int size = 0x560;
+		FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
+		fread((void*)0x02000000,1,size,ResetData);
+		fclose(ResetData);
 		fifoSendValue32(FIFO_USER_08, 1);
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 20; i++) {
 			swiWaitForVBlank();
 		}
-		runNdsFile ("sd:/_nds/ResetIntoRocketLauncher.nds", 0, 0);
 	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
@@ -221,7 +224,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 7, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 7, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -720,11 +723,14 @@ int main(int argc, char **argv) {
 								clearText();
 								printSmall(false, 4, 4, "Saving settings...");
 								SaveSettings();
+								int size = 0x560;
+								FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
+								fread((void*)0x02000000,1,size,ResetData);
+								fclose(ResetData);
 								fifoSendValue32(FIFO_USER_08, 1);
-								for (int i = 0; i < 15; i++) {
+								for (int i = 0; i < 20; i++) {
 									swiWaitForVBlank();
 								}
-								runNdsFile ("sd:/_nds/ResetIntoRocketLauncher.nds", 0, 0);
 							}
 							menuprinted = false;
 							break;
