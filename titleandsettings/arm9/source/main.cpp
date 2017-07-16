@@ -66,7 +66,7 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_IN_ROCKETLAUNCHER", 0);
+	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -89,7 +89,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-	settingsini.SetInt("SRLOADER", "REBOOT_IN_ROCKETLAUNCHER", rebootInRocketLauncher);
+	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -638,7 +638,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 224, 56, "Off");
 						
 					if(arm7SCFGLocked) {
-						printSmall(false, 12, 64, "RocketLauncher mode");
+						printSmall(false, 12, 64, "Reboot into RocketLauncher");
 						
 						if(rebootInRocketLauncher)
 							printSmall(false, 224, 64, "On");
