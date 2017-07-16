@@ -204,9 +204,10 @@ int main(int argc, char **argv) {
 
 	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
 		fifoSendValue32(FIFO_USER_08, 1);
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 15; i++) {
 			swiWaitForVBlank();
 		}
+		runNdsFile ("sd:/_nds/ResetIntoRocketLauncher.nds", 0, 0);
 	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
@@ -720,9 +721,10 @@ int main(int argc, char **argv) {
 								printSmall(false, 4, 4, "Saving settings...");
 								SaveSettings();
 								fifoSendValue32(FIFO_USER_08, 1);
-								for (int i = 0; i < 30; i++) {
+								for (int i = 0; i < 15; i++) {
 									swiWaitForVBlank();
 								}
+								runNdsFile ("sd:/_nds/ResetIntoRocketLauncher.nds", 0, 0);
 							}
 							menuprinted = false;
 							break;
