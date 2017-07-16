@@ -30,6 +30,7 @@
 #include <nds.h>
 
 #include "ResetData_Mario64.h"
+#include "RocketLauncher.h"	// RocketLauncher payload
 
 unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
@@ -42,6 +43,7 @@ unsigned int * CPUID2=(unsigned int*)0x4004D04;
 void RocketLauncherMode() {
 //---------------------------------------------------------------------------------
 	memcpy((u32*)0x02000000,ResetData_Mario64,0x560);
+	memcpy((u32*)0x02800000,payload_RocketLauncher,payload_RocketLauncher_len);
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 	i2cWriteRegister(0x4A, 0x11, 0x01);		// Soft-reset to Slot-1 card
 }
