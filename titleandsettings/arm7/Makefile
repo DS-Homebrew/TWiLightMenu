@@ -35,7 +35,7 @@ CFLAGS	:=	-g -Wall -O2\
 CFLAGS	+=	$(INCLUDE) -DARM7
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=../ds_arm7_ram.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 
 #---------------------------------------------------------------------------------

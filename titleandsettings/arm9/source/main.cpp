@@ -37,6 +37,8 @@
 
 #include "inifile.h"
 
+bool renderScreens = true;
+
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -58,6 +60,8 @@ bool bstrap_boostcpu = false;
 bool bstrap_debug = false;
 int bstrap_romreadled = 0;
 // bool bstrap_lockARM9scfgext = false;
+
+bool flashcardUsed = false;
 
 void LoadSettings(void) {
 	// GUI
@@ -147,8 +151,8 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void loadROMselect() {
-	if (theme == 0) runNdsFile ("sd:/_nds/srloader/dsimenu.srldr", 0, 0);
-	else runNdsFile ("sd:/_nds/srloader/dsmenu.srldr", 0, 0);
+	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, 0);
+	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, 0);
 }
 
 //---------------------------------------------------------------------------------
@@ -192,6 +196,8 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 	std::string bootstrapfilename;
+	
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	LoadSettings();
 	

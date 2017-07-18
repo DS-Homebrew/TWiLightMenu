@@ -43,6 +43,8 @@
 
 #include "inifile.h"
 
+bool renderScreens = true;
+
 bool whiteScreen = false;
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
@@ -81,16 +83,23 @@ bool autorun = false;
 int theme = 0;
 int subtheme = 0;
 
+int flashcardUsed = false;
+
 void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
-	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
+	if (flashcardUsed) romfolder = settingsini.GetString("SRLOADER", "FCROM_FOLDER", "");
+	else romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
-	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	if (flashcardUsed) {
+		romtype = 0;
+	} else {
+		romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	}
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -108,7 +117,9 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
-	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	if (!flashcardUsed) {
+		settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	}
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -391,6 +402,8 @@ int main(int argc, char **argv) {
 	std::string filename;
 	std::string bootstrapfilename;
 
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
 	LoadSettings();
 	
 	graphicsInit();
@@ -476,19 +489,20 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBootstrap) {
+					char game_TID[5];
+					
+					FILE *f_nds_file = fopen(argarray[0], "rb");
+
+					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+					fread(game_TID, 1, 4, f_nds_file);
+					game_TID[4] = 0;
+					game_TID[3] = 0;
+					fclose(f_nds_file);
+
 					std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
 					if (access(savename.c_str(), F_OK)) {
-						FILE *f_nds_file = fopen(argarray[0], "rb");
-
-						char game_TID[5];
-						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-						fread(game_TID, 1, 4, f_nds_file);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						fclose(f_nds_file);
-
-						if (strcmp(game_TID, "####") != 0) {	// Create save if game isn't homebrew
+						if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
 							printSmall(false, 8, 20, "Creating save file...");
 
 							static const int BUFFER_SIZE = 4096;
@@ -547,10 +561,14 @@ int main(int argc, char **argv) {
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-					if (fifoGetValue32(FIFO_USER_03) != 0) {
-						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+					if (strcmp(game_TID, "###") == 0) {
+						bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 					} else {
-						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+						if (fifoGetValue32(FIFO_USER_03) != 0) {
+							bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+						} else {
+							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+						}
 					}
 					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					char text[32];

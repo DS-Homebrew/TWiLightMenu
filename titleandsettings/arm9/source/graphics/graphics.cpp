@@ -28,6 +28,8 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
+extern bool renderScreens;
+
 bool renderingTop = true;
 int subBgTexID, mainBgTexID;
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -96,24 +98,26 @@ bool isRenderingTop()
 
 void vBlankHandler()
 {
-	startRendering(renderingTop);
-	glBegin2D();
-	{
-		if (renderingTop)
+	if (renderScreens) {
+		startRendering(renderingTop);
+		glBegin2D();
 		{
-			drawBG(mainBgImage);
-			updateText(renderingTop);
+			if (renderingTop)
+			{
+				drawBG(mainBgImage);
+				updateText(renderingTop);
+			}
+			else
+			{
+				drawBG(subBgImage);
+				glColor(RGB15(31, 31, 31));
+				updateText(renderingTop);
+			}
 		}
-		else
-		{
-			drawBG(subBgImage);
-			glColor(RGB15(31, 31, 31));
-			updateText(renderingTop);
-		}
+		glEnd2D();
+		GFX_FLUSH = 0;
+		renderingTop = !renderingTop;
 	}
-	glEnd2D();
-	GFX_FLUSH = 0;
-	renderingTop = !renderingTop;
 }
 
 void graphicsInit()
