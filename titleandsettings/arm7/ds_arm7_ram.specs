@@ -1,8 +1,0 @@
-%rename link                old_link
-
-*link:
-%(old_link) -T ../ds_arm7_ram.ld%s --gc-sections
-
-*startfile:
-ds_arm7_crt0%O%s crti%O%s crtbegin%O%s
-

@@ -43,8 +43,6 @@
 
 #include "inifile.h"
 
-bool renderScreens = true;
-
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
