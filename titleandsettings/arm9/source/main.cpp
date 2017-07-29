@@ -207,9 +207,8 @@ int main(int argc, char **argv) {
 	scanKeys();
 
 	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
-		int size = 0x560;
 		FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-		fread((void*)0x02000000,1,size,ResetData);
+		fread((void*)0x02000300,1,32,ResetData);
 		fclose(ResetData);
 		fifoSendValue32(FIFO_USER_08, 1);
 		for (int i = 0; i < 20; i++) {
@@ -727,9 +726,8 @@ int main(int argc, char **argv) {
 								clearText();
 								printSmall(false, 4, 4, "Saving settings...");
 								SaveSettings();
-								int size = 0x560;
 								FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-								fread((void*)0x02000000,1,size,ResetData);
+								fread((void*)0x02000300,1,32,ResetData);
 								fclose(ResetData);
 								fifoSendValue32(FIFO_USER_08, 1);
 								for (int i = 0; i < 20; i++) {

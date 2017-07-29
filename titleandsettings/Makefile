@@ -11,7 +11,7 @@ include $(DEVKITARM)/ds_rules
 
 export VERSION_MAJOR	:= 1
 export VERSION_MINOR	:= 1
-export VERSION_PATCH	:= 0
+export VERSION_PATCH	:= 1
 
 
 VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
@@ -129,7 +129,10 @@ dist:	all
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "SRLoader;Robz8"
+	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
+			-b icon.bmp "SRLoader;Robz8" \
+			-g SRLA 01 "SRLOADER" -z 80040000 -u 00030015
+	python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
