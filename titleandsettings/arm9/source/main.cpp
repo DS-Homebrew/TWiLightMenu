@@ -185,8 +185,8 @@ void RocketLauncher() {
 }
 
 void loadROMselect() {
-	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, 0);
-	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, 0);
+	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
+	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, NULL);
 }
 
 //---------------------------------------------------------------------------------
@@ -226,7 +226,10 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 44, "to proceed.");
 		while(1) {
 			scanKeys();
-			if(keysHeld() & KEY_START) break;
+			if(keysHeld() & KEY_START) {
+				fatInitDefault();
+				runNdsFile ("/BOOT.NDS", 0, NULL);
+			}
 		}
 	}
 
