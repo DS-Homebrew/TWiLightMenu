@@ -29,8 +29,6 @@
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 
-#include "RocketLauncher.h"	// RocketLauncher payload
-
 unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
@@ -39,9 +37,8 @@ unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
 //---------------------------------------------------------------------------------
-void RocketLauncher() {
+void RocketLauncherReboot() {
 //---------------------------------------------------------------------------------
-	memcpy((u32*)0x02800000,payload_RocketLauncher,payload_RocketLauncher_len);
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reboot to RocketLauncher
 }
@@ -50,7 +47,7 @@ void RocketLauncher() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	if(fifoCheckValue32(FIFO_USER_08)) {
-		RocketLauncher();
+		RocketLauncherReboot();
 	}
 }
 

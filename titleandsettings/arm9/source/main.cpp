@@ -50,6 +50,8 @@ const char* useArm7Donor_valuetext;
 
 int bstrap_useArm7Donor = 1;
 
+bool ntr_touch = true;
+
 bool autorun = false;
 int theme = 0;
 int subtheme = 0;
@@ -61,6 +63,17 @@ int bstrap_romreadled = 0;
 
 bool flashcardUsed = false;
 
+int flashcard;
+/* Flashcard value
+	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+	1: R4DS (Original Non-SDHC version)/ M3 Simply
+	2: R4iDSN/R4i Gold RTS
+	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+	4: Acekard RPG
+	5: Ace 3DS+/Gateway Blue Card/R4iTT
+	6: SuperCard DSTWO
+*/
+
 void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
@@ -69,6 +82,8 @@ void LoadSettings(void) {
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
+	ntr_touch = settingsini.GetInt("SRLOADER", "NTR_TOUCH", 1);
+	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -92,6 +107,8 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
+	settingsini.SetInt("SRLOADER", "NTR_TOUCH", ntr_touch);
+	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -148,6 +165,25 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+void RocketLauncher() {
+	FILE* RocketLauncherPayload = fopen("sd:/_nds/RocketLauncher.bin","rb");
+	off_t fsize = 0;
+	if (RocketLauncherPayload) {
+		fseek(RocketLauncherPayload, 0, SEEK_END);
+		fsize = ftell(RocketLauncherPayload);
+		fseek(RocketLauncherPayload, 0, SEEK_SET);
+		fread((void*)0x02800000,1,fsize,RocketLauncherPayload);
+    }
+	fclose(RocketLauncherPayload);
+	FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
+	fread((void*)0x02000300,1,32,ResetData);
+	fclose(ResetData);
+	fifoSendValue32(FIFO_USER_08, 1);
+	for (int i = 0; i < 20; i++) {
+		swiWaitForVBlank();
+	}
+}
+
 void loadROMselect() {
 	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, 0);
 	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, 0);
@@ -176,6 +212,22 @@ int main(int argc, char **argv) {
 			username[i*2/2] = 0;
 		else
 			username[i*2/2] = username[i*2];
+	}
+
+	scanKeys();
+	if(keysHeld() & KEY_RIGHT) {
+		graphicsInit();
+		fontInit();
+		printSmall(true, 1, 2, username);
+		printSmall(false, 4, 4, "Please remove your SD Card,");
+		printSmall(false, 4, 12, "and insert one containing the");
+		printSmall(false, 4, 20, "NDS ROMs and SRLoader.");
+		printSmall(false, 4, 36, "After inserting it, press START");
+		printSmall(false, 4, 44, "to proceed.");
+		while(1) {
+			scanKeys();
+			if(keysHeld() & KEY_START) break;
+		}
 	}
 
 #ifndef EMULATE_FILES
@@ -207,18 +259,13 @@ int main(int argc, char **argv) {
 	scanKeys();
 
 	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
-		FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-		fread((void*)0x02000300,1,32,ResetData);
-		fclose(ResetData);
-		fifoSendValue32(FIFO_USER_08, 1);
-		for (int i = 0; i < 20; i++) {
-			swiWaitForVBlank();
-		}
+		RocketLauncher();
 	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		if (!arm7SCFGLocked) {
-			bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+			if(ntr_touch) bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+			else bootstrapfilename = "sd:/_nds/nds-bootstrap.nds";
 		} else {
 			bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 		}
@@ -227,7 +274,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 7, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 8, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -332,6 +379,7 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	bool menuprinted = false;
+	const char* lrswitchpages = "L/R: Switch pages";
 
 	int pressed = 0;
 
@@ -339,7 +387,85 @@ int main(int argc, char **argv) {
 	
 		if (screenmode == 1) {
 			
-			if (subscreenmode == 2) {
+			if (subscreenmode == 3) {
+				pressed = 0;
+
+				if (!menuprinted) {
+					// Clear the screen so it doesn't over-print
+					clearText();
+					
+					printSmall(true, 1, 2, username);
+					printSmall(true, 192, 184, vertext);
+					
+					printLarge(false, 4, 4, "Flashcard(s) select");
+					
+					int yPos;
+					switch (flashcard) {
+						case 0:
+						default:
+							printSmall(false, 12, 24, "DSTT");
+							printSmall(false, 12, 32, "R4i Gold");
+							printSmall(false, 12, 40, "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
+							printSmall(false, 12, 48, "R4 SDHC Dual-Core");
+							printSmall(false, 12, 56, "R4 SDHC Upgrade");
+							printSmall(false, 12, 64, "SuperCard DSONE");
+							break;
+						case 1:
+							printSmall(false, 12, 24, "Original R4");
+							printSmall(false, 12, 32, "M3 Simply");
+							break;
+						case 2:
+							printSmall(false, 12, 24, "R4iDSN");
+							printSmall(false, 12, 32, "R4i Gold RTS");
+							break;
+						case 3:
+							printSmall(false, 12, 24, "Acekard 2(i)");
+							printSmall(false, 12, 32, "Galaxy Eagle");
+							printSmall(false, 12, 40, "M3DS Real");
+							break;
+						case 4:
+							printSmall(false, 12, 24, "Acekard RPG");
+							break;
+						case 5:
+							printSmall(false, 12, 24, "Ace 3DS+");
+							printSmall(false, 12, 32, "Gateway Blue Card");
+							printSmall(false, 12, 40, "R4iTT");
+							break;
+						case 6:
+							printSmall(false, 12, 24, "SuperCard DSTWO");
+							break;
+					}
+
+					printSmall(false, 4, 156, "Left/Right: Select flashcard(s)");
+					printSmall(false, 4, 164, "A/B: Set and return");
+
+					menuprinted = true;
+				}
+
+				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!pressed);
+				
+				if (pressed & KEY_LEFT) {
+					flashcard -= 1;
+					menuprinted = false;
+				}
+				if (pressed & KEY_RIGHT) {
+					flashcard += 1;
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_A) || (pressed & KEY_B)) {
+					subscreenmode = 1;
+					menuprinted = false;
+				}
+
+				if (flashcard > 6) flashcard = 0;
+				else if (flashcard < 0) flashcard = 6;
+			} else if (subscreenmode == 2) {
 				pressed = 0;
 
 				if (!menuprinted) {
@@ -420,6 +546,7 @@ int main(int argc, char **argv) {
 					clearText();
 					
 					printSmall(true, 1, 2, username);
+					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 					
 					printLarge(false, 4, 4, "Settings: Games/Apps");
@@ -439,15 +566,23 @@ int main(int argc, char **argv) {
 						case 3:
 							yPos = 48;
 							break;
+						case 4:
+							yPos = 56;
+							break;
+						case 5:
+							yPos = 64;
+							break;
 					}
 					
 					printSmall(false, 4, yPos, ">");
 					
-					printSmall(false, 12, 24, "ARM9 CPU Speed");
+					printSmall(false, 12, 24, "Flashcard(s) select");
+						
+					printSmall(false, 12, 32, "ARM9 CPU Speed");
 					if(bstrap_boostcpu)
-						printSmall(false, 156, 24, "133mhz (TWL)");
+						printSmall(false, 156, 32, "133mhz (TWL)");
 					else
-						printSmall(false, 156, 24, "67mhz (NTR)");
+						printSmall(false, 156, 32, "67mhz (NTR)");
 					
 					// if (bstrap_boostcpu) {
 					// 	printSmall(false, 12, 96, "VRAM boost");
@@ -457,13 +592,13 @@ int main(int argc, char **argv) {
 					// 		printSmall(false, 224, 96, "Off");
 					// }
 					
-					printSmall(false, 12, 32, "Debug");
+					printSmall(false, 12, 40, "Debug");
 					if(bstrap_debug)
-						printSmall(false, 224, 32, "On");
+						printSmall(false, 224, 40, "On");
 					else
-						printSmall(false, 224, 32, "Off");
+						printSmall(false, 224, 40, "Off");
 						
-					printSmall(false, 12, 40, "ROM read LED");
+					printSmall(false, 12, 48, "ROM read LED");
 					switch(bstrap_romreadled) {
 						case 0:
 						default:
@@ -479,9 +614,9 @@ int main(int argc, char **argv) {
 							romreadled_valuetext = "Camera";
 							break;
 					}
-					printSmall(false, 208, 40, romreadled_valuetext);
+					printSmall(false, 208, 48, romreadled_valuetext);
 					
-					printSmall(false, 12, 48, "Use donor ROM");
+					printSmall(false, 12, 56, "Use donor ROM");
 					switch(bstrap_useArm7Donor) {
 						case 0:
 						default:
@@ -494,28 +629,42 @@ int main(int argc, char **argv) {
 							useArm7Donor_valuetext = "Force-use";
 							break;
 					}
-					printSmall(false, 184, 48, useArm7Donor_valuetext);
+					printSmall(false, 184, 56, useArm7Donor_valuetext);
+					
+					if(!arm7SCFGLocked) {
+						printSmall(false, 12, 64, "NTR Touch Screen mode");
+						if(ntr_touch)
+							printSmall(false, 224, 64, "On");
+						else
+							printSmall(false, 224, 64, "Off");
+					}
 						
 
 					if (settingscursor == 0) {
+						printSmall(false, 4, 156, "Pick a flashcard to use to");
+						printSmall(false, 4, 164, "run ROMs from it.");
+					} else if (settingscursor == 1) {
 						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
 						printSmall(false, 4, 164, "in some games.");
 					} /* else if (settingscursor == 4) {
 						printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
 						printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-					} */ else if (settingscursor == 1) {
+					} */ else if (settingscursor == 2) {
 						printSmall(false, 4, 156, "Displays some text before");
 						printSmall(false, 4, 164, "launched game.");
-					} else if (settingscursor == 2) {
+					} else if (settingscursor == 3) {
 						// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 						// printSmall(false, 4, 164, "avoiding conflict with");
 						// printSmall(false, 4, 172, "recent libnds.");
 						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
 						printSmall(false, 4, 164, "If on, Camera LED will be");
 						printSmall(false, 4, 172, "used as async prefetch indicator.");
-					} else if (settingscursor == 3) {
+					} else if (settingscursor == 4) {
 						printSmall(false, 4, 156, "Enable, disable, or force use of");
 						printSmall(false, 4, 164, "donor ROM.");
+					} else if (settingscursor == 5) {
+						printSmall(false, 4, 156, "If launched from DSi Menu via");
+						printSmall(false, 4, 164, "HiyaCFW, disable this option.");
 					} /* else if (settingscursor == 8) {
 						printSmall(false, 4, 148, "If you have Zelda Four Swords");
 						printSmall(false, 4, 156, "with 4swordshax installed,");
@@ -548,14 +697,18 @@ int main(int argc, char **argv) {
 					switch (settingscursor) {
 						case 0:
 						default:
-							bstrap_boostcpu = !bstrap_boostcpu;
+							subscreenmode = 3;
 							menuprinted = false;
 							break;
 						case 1:
-							bstrap_debug = !bstrap_debug;
+							bstrap_boostcpu = !bstrap_boostcpu;
 							menuprinted = false;
 							break;
 						case 2:
+							bstrap_debug = !bstrap_debug;
+							menuprinted = false;
+							break;
+						case 3:
 							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 							if (pressed & KEY_LEFT) {
 								bstrap_romreadled -= 1;
@@ -566,7 +719,7 @@ int main(int argc, char **argv) {
 							}
 							menuprinted = false;
 							break;
-						case 3:
+						case 4:
 							if (pressed & KEY_LEFT) {
 								bstrap_useArm7Donor -= 0;
 								if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
@@ -576,10 +729,14 @@ int main(int argc, char **argv) {
 							}
 							menuprinted = false;
 							break;
+						case 5:
+							ntr_touch = !ntr_touch;
+							menuprinted = false;
+							break;
 					}
 				}
 				
-				if (pressed & KEY_L) {
+				if ((pressed & KEY_L) || (pressed & KEY_R)) {
 					subscreenmode = 0;
 					settingscursor = 0;
 					menuprinted = false;
@@ -593,8 +750,13 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 3) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 3;
+				if(!arm7SCFGLocked) {
+					if (settingscursor > 5) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 5;
+				} else {
+					if (settingscursor > 4) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 4;
+				}
 			} else {
 				pressed = 0;
 
@@ -603,6 +765,7 @@ int main(int argc, char **argv) {
 					clearText();
 					
 					printSmall(true, 1, 2, username);
+					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 					
 					printLarge(false, 4, 4, "Settings: GUI");
@@ -726,20 +889,14 @@ int main(int argc, char **argv) {
 								clearText();
 								printSmall(false, 4, 4, "Saving settings...");
 								SaveSettings();
-								FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-								fread((void*)0x02000300,1,32,ResetData);
-								fclose(ResetData);
-								fifoSendValue32(FIFO_USER_08, 1);
-								for (int i = 0; i < 20; i++) {
-									swiWaitForVBlank();
-								}
+								RocketLauncher();
 							}
 							menuprinted = false;
 							break;
 					}
 				}
 				
-				if (pressed & KEY_R) {
+				if ((pressed & KEY_L) || (pressed & KEY_R)) {
 					subscreenmode = 1;
 					settingscursor = 0;
 					menuprinted = false;
@@ -751,7 +908,8 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
 					if (!arm7SCFGLocked) {
-						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+						if(ntr_touch) bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+						else bootstrapfilename = "sd:/_nds/nds-bootstrap.nds";
 					} else {
 						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 					}
