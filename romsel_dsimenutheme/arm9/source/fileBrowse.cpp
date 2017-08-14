@@ -85,6 +85,8 @@ extern int pagenum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
 
+extern bool flashcardUsed;
+
 extern void SaveSettings();
 
 mm_sound_effect snd_launch;
@@ -591,11 +593,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
-			int err = runNdsFile ("sd:/boot.nds", 0, 0);
+			int err = runNdsFile ("sd:/boot.nds", 0, NULL);
 			iprintf ("Start failed. Error %i\n", err);
 		}
 
-		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str();
 			printSmallCentered(false, 160, "Donor ROM is set.");

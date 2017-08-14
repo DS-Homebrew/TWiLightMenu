@@ -66,6 +66,11 @@ std::string romfolder;
 std::string fcromfolder;
 std::string gbromfolder;
 
+// These are used by flashcard functions and must retain their trailing slash.
+static const std::string slashchar = "/";
+static const std::string woodfat = "fat0:/";
+static const std::string dstwofat = "fat1:/";
+
 std::string arm7DonorPath;
 
 int donorSdkVer = 0;
@@ -637,7 +642,7 @@ int main(int argc, char **argv) {
 		// Launch the item
 #ifndef EMULATE_FILES
 
-		if (applaunch) {		
+		if (applaunch) {
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
@@ -673,7 +678,7 @@ int main(int argc, char **argv) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (useBootstrap) {
+				if (useBootstrap && !flashcardUsed) {
 					char game_TID[5];
 					
 					FILE *f_nds_file = fopen(argarray[0], "rb");
@@ -758,7 +763,49 @@ int main(int argc, char **argv) {
 							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 						}
 					}
-					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
+					int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					printLarge(false, 4, 36, text);
+					stop();
+				} else 	if (flashcardUsed) {
+					std::string path;
+					int err = 0;
+					switch (flashcard) {
+						case 0:
+						case 1:
+						case 3:
+						default: {
+							CIniFile fcrompathini("fat:/_nds/YSMenu.ini");
+							path = ReplaceAll(argarray[0], "fat:/", slashchar);
+							fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+							fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+							fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+							fcrompathini.SaveIniFile("fat:/_nds/YSMenu.ini");
+							err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+							break;
+						}
+
+						case 2:
+						case 4:
+						case 5: {
+							CIniFile fcrompathini("fat:/_nds/lastsave.ini");
+							path = ReplaceAll(argarray[0], "fat:/", woodfat);
+							fcrompathini.SetString("Save Info", "lastLoaded", path);
+							fcrompathini.SaveIniFile("fat:/_nds/lastsave.ini");
+							err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+							break;
+						}
+
+						case 6: {
+							CIniFile fcrompathini("fat:/_nds/dstwoautoboot.ini");
+							path = ReplaceAll(argarray[0], "fat:/", dstwofat);
+							fcrompathini.SetString("Dir Info", "fullName", path);
+							fcrompathini.SaveIniFile("fat:/_nds/dstwoautoboot.ini");
+							err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+							break;
+						}
+					}
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					printLarge(false, 4, 36, text);
@@ -783,8 +830,6 @@ int main(int argc, char **argv) {
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				printLarge(false, 4, 4, text);
 				stop();
-			} else {
-
 			}
 
 			while(argarray.size() !=0 ) {

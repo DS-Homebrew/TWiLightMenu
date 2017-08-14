@@ -58,6 +58,8 @@ extern bool gotosettings;
 
 extern int subtheme;
 
+extern bool flashcardUsed;
+
 extern bool applaunch;
 
 extern int romtype;
@@ -504,12 +506,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
-			int err = runNdsFile ("sd:/boot.nds", 0, 0);
+			int err = runNdsFile ("sd:/boot.nds", 0, NULL);
 			iprintf ("Start failed. Error %i\n", err);
 			return "null";
 		}
 
-		if (pressed & KEY_SELECT)
+		if (pressed & KEY_SELECT && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(fileOffset).name.c_str();
 			if (subtheme == 1) printSmallCentered(true, 172, "Donor ROM is set.");
