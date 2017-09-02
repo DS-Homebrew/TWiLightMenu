@@ -82,7 +82,6 @@ void LoadSettings(void) {
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
-	ntr_touch = settingsini.GetInt("SRLOADER", "NTR_TOUCH", 1);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	// Customizable UI settings.
@@ -96,6 +95,7 @@ void LoadSettings(void) {
 	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
+	ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
 	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 }
 
@@ -107,7 +107,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
-	settingsini.SetInt("SRLOADER", "NTR_TOUCH", ntr_touch);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 
 	// UI settings.
@@ -122,6 +121,7 @@ void SaveSettings(void) {
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", ntr_touch);
 	// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 	bootstrapini.SaveIniFile(bootstrapinipath);
 }
@@ -228,7 +228,7 @@ int main(int argc, char **argv) {
 			scanKeys();
 			if(keysHeld() & KEY_START) {
 				fatInitDefault();
-				runNdsFile ("/BOOT.NDS", 0, NULL);
+				runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
 			}
 		}
 	}

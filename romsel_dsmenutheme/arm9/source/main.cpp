@@ -82,8 +82,6 @@ bool applaunch = false;
 
 bool gotosettings = false;
 
-bool ntr_touch = true;
-
 bool autorun = false;
 int theme = 0;
 int subtheme = 0;
@@ -123,7 +121,6 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 1);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 
-	ntr_touch = settingsini.GetInt("SRLOADER", "NTR_TOUCH", 1);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	// nds-bootstrap
@@ -143,7 +140,6 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-	settingsini.SetInt("SRLOADER", "NTR_TOUCH", ntr_touch);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -586,8 +582,7 @@ int main(int argc, char **argv) {
 						bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 					} else {
 						if (fifoGetValue32(FIFO_USER_03) != 0) {
-							if(ntr_touch) bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap.nds";
+							bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
 						} else {
 							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 						}
