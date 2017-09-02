@@ -48,6 +48,8 @@ bool whiteScreen = false;
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+bool is3DS = false;
+
 /**
  * Remove trailing slashes from a pathname, if present.
  * @param path Pathname to modify.
@@ -81,6 +83,8 @@ int romtype = 0;
 bool applaunch = false;
 
 bool gotosettings = false;
+
+bool bootstrapFile = false;
 
 bool autorun = false;
 int theme = 0;
@@ -118,10 +122,13 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
+	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 1);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
+
+	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -582,7 +589,12 @@ int main(int argc, char **argv) {
 						bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 					} else {
 						if (fifoGetValue32(FIFO_USER_03) != 0) {
-							bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+							if (is3DS) {
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+							} else {
+								bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+							}
 						} else {
 							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 						}

@@ -40,6 +40,8 @@
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+bool is3DS = false;
+
 bool rebootInRocketLauncher = false;
 
 bool showlogo = true;
@@ -49,6 +51,8 @@ const char* romreadled_valuetext;
 const char* useArm7Donor_valuetext;
 
 int bstrap_useArm7Donor = 1;
+
+bool bootstrapFile = false;
 
 bool ntr_touch = true;
 
@@ -81,8 +85,10 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
+	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
+	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -106,8 +112,10 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
+	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -214,25 +222,6 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 
-	scanKeys();
-	if(keysHeld() & KEY_RIGHT) {
-		graphicsInit();
-		fontInit();
-		printSmall(true, 1, 2, username);
-		printSmall(false, 4, 4, "Please remove your SD Card,");
-		printSmall(false, 4, 12, "and insert one containing the");
-		printSmall(false, 4, 20, "NDS ROMs and SRLoader.");
-		printSmall(false, 4, 36, "After inserting it, press START");
-		printSmall(false, 4, 44, "to proceed.");
-		while(1) {
-			scanKeys();
-			if(keysHeld() & KEY_START) {
-				fatInitDefault();
-				runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
-			}
-		}
-	}
-
 #ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
@@ -267,8 +256,12 @@ int main(int argc, char **argv) {
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		if (!arm7SCFGLocked) {
-			if(ntr_touch) bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
-			else bootstrapfilename = "sd:/_nds/nds-bootstrap.nds";
+			if (is3DS) {
+				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+			} else {
+				bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+			}
 		} else {
 			bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 		}
@@ -547,13 +540,13 @@ int main(int argc, char **argv) {
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
 					clearText();
-					
+
 					printSmall(true, 1, 2, username);
 					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 					
 					printLarge(false, 4, 4, "Settings: Games/Apps");
-					
+
 					int yPos;
 					switch (settingscursor) {
 						case 0:
@@ -575,8 +568,11 @@ int main(int argc, char **argv) {
 						case 5:
 							yPos = 64;
 							break;
+						case 6:
+							yPos = 72;
+							break;
 					}
-					
+
 					printSmall(false, 4, yPos, ">");
 					
 					printSmall(false, 12, 24, "Flashcard(s) select");
@@ -586,7 +582,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 156, 32, "133mhz (TWL)");
 					else
 						printSmall(false, 156, 32, "67mhz (NTR)");
-					
+
 					// if (bstrap_boostcpu) {
 					// 	printSmall(false, 12, 96, "VRAM boost");
 					// 	if(bstrap_boostvram)
@@ -594,13 +590,13 @@ int main(int argc, char **argv) {
 					// 	else
 					// 		printSmall(false, 224, 96, "Off");
 					// }
-					
+
 					printSmall(false, 12, 40, "Debug");
 					if(bstrap_debug)
 						printSmall(false, 224, 40, "On");
 					else
 						printSmall(false, 224, 40, "Off");
-						
+
 					printSmall(false, 12, 48, "ROM read LED");
 					switch(bstrap_romreadled) {
 						case 0:
@@ -618,7 +614,7 @@ int main(int argc, char **argv) {
 							break;
 					}
 					printSmall(false, 208, 48, romreadled_valuetext);
-					
+
 					printSmall(false, 12, 56, "Use donor ROM");
 					switch(bstrap_useArm7Donor) {
 						case 0:
@@ -633,15 +629,29 @@ int main(int argc, char **argv) {
 							break;
 					}
 					printSmall(false, 184, 56, useArm7Donor_valuetext);
-					
+
 					if(!arm7SCFGLocked) {
-						printSmall(false, 12, 64, "NTR Touch Screen mode");
-						if(ntr_touch)
-							printSmall(false, 224, 64, "On");
+						printSmall(false, 12, 64, "Game console");
+						if(is3DS)
+							printSmall(false, 200, 64, "3DS/2DS");
 						else
-							printSmall(false, 224, 64, "Off");
-					}
+							printSmall(false, 200, 64, "DSi");
 						
+						if(is3DS){
+							printSmall(false, 12, 72, "Bootstrap");
+							if(bootstrapFile)
+								printSmall(false, 184, 72, "Unofficial");
+							else
+								printSmall(false, 184, 72, "Release");
+						} else {
+							printSmall(false, 12, 72, "NTR Touch Screen mode");
+							if(ntr_touch)
+								printSmall(false, 224, 72, "On");
+							else
+								printSmall(false, 224, 72, "Off");
+						}
+					}
+
 
 					if (settingscursor == 0) {
 						printSmall(false, 4, 156, "Pick a flashcard to use to");
@@ -666,8 +676,16 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "Enable, disable, or force use of");
 						printSmall(false, 4, 164, "donor ROM.");
 					} else if (settingscursor == 5) {
-						printSmall(false, 4, 156, "If launched from DSi Menu via");
-						printSmall(false, 4, 164, "HiyaCFW, disable this option.");
+						printSmall(false, 4, 156, "Are you using a DSi");
+						printSmall(false, 4, 164, "or a 3DS/2DS?");
+					} else if (settingscursor == 6) {
+						if(is3DS){
+							printSmall(false, 4, 156, "Pick release or unofficial");
+							printSmall(false, 4, 164, "bootstrap.");
+						} else {
+							printSmall(false, 4, 156, "If launched from DSi Menu via");
+							printSmall(false, 4, 164, "HiyaCFW, disable this option.");
+						}
 					} /* else if (settingscursor == 8) {
 						printSmall(false, 4, 148, "If you have Zelda Four Swords");
 						printSmall(false, 4, 156, "with 4swordshax installed,");
@@ -733,7 +751,15 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 5:
-							ntr_touch = !ntr_touch;
+							is3DS = !is3DS;
+							menuprinted = false;
+							break;
+						case 6:
+							if(is3DS){
+								bootstrapFile = !bootstrapFile;
+							} else {
+								ntr_touch = !ntr_touch;
+							}
 							menuprinted = false;
 							break;
 					}
@@ -754,8 +780,8 @@ int main(int argc, char **argv) {
 				}
 				
 				if(!arm7SCFGLocked) {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+					if (settingscursor > 6) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 6;
 				} else {
 					if (settingscursor > 4) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 4;
@@ -911,8 +937,12 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
 					if (!arm7SCFGLocked) {
-						if(ntr_touch) bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
-						else bootstrapfilename = "sd:/_nds/nds-bootstrap.nds";
+						if (is3DS) {
+							if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+							else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+						} else {
+							bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+						}
 					} else {
 						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 					}
