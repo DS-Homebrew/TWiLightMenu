@@ -38,6 +38,7 @@
 #include "inifile.h"
 
 const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool is3DS = false;
@@ -106,6 +107,9 @@ void LoadSettings(void) {
 }
 
 void SaveSettings(void) {
+	bool twldrsettingsFound = false;
+	if (!access(twldrsettingsinipath, F_OK)) twldrsettingsFound = true;
+
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
@@ -121,6 +125,14 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
+	
+	if(is3DS && twldrsettingsFound) {
+		// Save some settings to TWLoader as well.
+		CIniFile twldrsettingsini( twldrsettingsinipath );
+		
+		twldrsettingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", bootstrapFile);
+		twldrsettingsini.SaveIniFile(twldrsettingsinipath);
+	}
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -270,7 +282,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 8, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 9, 0);
 
 	if (showlogo) {
 		graphicsInit();
