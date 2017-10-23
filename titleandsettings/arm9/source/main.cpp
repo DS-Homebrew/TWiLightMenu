@@ -41,6 +41,9 @@ const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+const char* consoleDSiText = "Console: Nintendo DSi";
+const char* console3DSText = "Console: Nintendo 3DS/2DS";
+
 bool is3DS = false;
 
 bool rebootInRocketLauncher = false;
@@ -86,7 +89,6 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
@@ -116,7 +118,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
@@ -222,6 +223,11 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+	
+	// Check for 32MB RAM access
+	if(*(u8*)(0x0DFFFFFA) == 0xAA) {
+		is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
+	}
 
 	// Read user name
 	char *username = (char*)PersonalData->name;
@@ -282,7 +288,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 9, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 9, 2);
 
 	if (showlogo) {
 		graphicsInit();
@@ -302,8 +308,10 @@ int main(int argc, char **argv) {
 		unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
-		
+
 		if(*SCFG_EXT>0) {
+			if(is3DS) printSmall(true, 8, 168, console3DSText);
+			else printSmall(true, 8, 168, consoleDSiText);
 			printSmall(true, 192, 184, vertext);
 			
 			char text1[48],
@@ -313,7 +321,8 @@ int main(int argc, char **argv) {
 				text5[48],
 				text6[48],
 				text7[48],
-				text8[32];
+				text8[32],
+				text9[32];
 			//arm9 SCFG
 			snprintf (text1, sizeof(text1), "SCFG_ROM: %x",*SCFG_ROM);
 			snprintf (text2, sizeof(text2), "SCFG_CLK: %x",*SCFG_CLK);
@@ -327,9 +336,10 @@ int main(int argc, char **argv) {
 				//ConsoleID
 				snprintf (text8, sizeof(text8), "ConsoleID: %x%x",fifoGetValue32(FIFO_USER_04),fifoGetValue32(FIFO_USER_05));
 			}
-			
+			//snprintf (text9, sizeof(text9), "Console: %x", *(u8*)0x0DFFFFFA);
+
 			int yPos = 4;
-			
+
 			printSmall(false, 4, yPos, "ARM9 SCFG:");
 			yPos += 16;
 			printSmall(false, 4, yPos, text1);
@@ -353,14 +363,10 @@ int main(int argc, char **argv) {
 				yPos += 24;
 				printSmall(false, 4, yPos, text8);
 			}
-			
-			//test RAM
-			//unsigned int * TEST32RAM=	(unsigned int*)0xD004000;		
-			//*TEST32RAM = 0x55;
-			//iprintf ("32 MB RAM ACCESS : %x\n\n",*TEST32RAM);
-			// doPause(80, 140);
+			//yPos += 24;
+			//printSmall(false, 4, yPos, text9);
 		}
-		
+
 		for (int i = 0; i < 60*3; i++) {
 			swiWaitForVBlank();
 		}
@@ -401,12 +407,14 @@ int main(int argc, char **argv) {
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
 					clearText();
-					
+
 					printSmall(true, 1, 2, username);
+					if(is3DS) printSmall(true, 8, 168, console3DSText);
+					else printSmall(true, 8, 168, consoleDSiText);
 					printSmall(true, 192, 184, vertext);
-					
+
 					printLarge(false, 4, 4, "Flashcard(s) select");
-					
+
 					int yPos;
 					switch (flashcard) {
 						case 0:
@@ -479,10 +487,12 @@ int main(int argc, char **argv) {
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
 					clearText();
-					
+
 					printSmall(true, 1, 2, username);
+					if(is3DS) printSmall(true, 8, 168, console3DSText);
+					else printSmall(true, 8, 168, consoleDSiText);
 					printSmall(true, 192, 184, vertext);
-					
+
 					switch (theme) {
 						case 0:
 						default:
@@ -492,7 +502,7 @@ int main(int argc, char **argv) {
 							printLarge(false, 4, 4, "Sub-theme select: Aura Launcher");
 							break;
 					}
-					
+
 					int yPos;
 					switch (subtheme) {
 						case 0:
@@ -503,9 +513,9 @@ int main(int argc, char **argv) {
 							yPos = 32;
 							break;
 					}
-					
+
 					printSmall(false, 4, yPos, ">");
-					
+
 					switch (theme) {
 						case 0:
 						default:
@@ -554,6 +564,8 @@ int main(int argc, char **argv) {
 					clearText();
 
 					printSmall(true, 1, 2, username);
+					if(is3DS) printSmall(true, 8, 168, console3DSText);
+					else printSmall(true, 8, 168, consoleDSiText);
 					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 					
@@ -643,24 +655,18 @@ int main(int argc, char **argv) {
 					printSmall(false, 184, 56, useArm7Donor_valuetext);
 
 					if(!arm7SCFGLocked) {
-						printSmall(false, 12, 64, "Game console");
-						if(is3DS)
-							printSmall(false, 200, 64, "3DS/2DS");
-						else
-							printSmall(false, 200, 64, "DSi");
-						
 						if(is3DS){
-							printSmall(false, 12, 72, "Bootstrap");
+							printSmall(false, 12, 64, "Bootstrap");
 							if(bootstrapFile)
-								printSmall(false, 184, 72, "Unofficial");
+								printSmall(false, 184, 64, "Unofficial");
 							else
-								printSmall(false, 184, 72, "Release");
+								printSmall(false, 184, 64, "Release");
 						} else {
-							printSmall(false, 12, 72, "NTR Touch Screen mode");
+							printSmall(false, 12, 64, "NTR Touch Screen mode");
 							if(ntr_touch)
-								printSmall(false, 224, 72, "On");
+								printSmall(false, 224, 64, "On");
 							else
-								printSmall(false, 224, 72, "Off");
+								printSmall(false, 224, 64, "Off");
 						}
 					}
 
@@ -688,9 +694,6 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "Enable, disable, or force use of");
 						printSmall(false, 4, 164, "donor ROM.");
 					} else if (settingscursor == 5) {
-						printSmall(false, 4, 156, "Are you using a DSi");
-						printSmall(false, 4, 164, "or a 3DS/2DS?");
-					} else if (settingscursor == 6) {
 						if(is3DS){
 							printSmall(false, 4, 156, "Pick release or unofficial");
 							printSmall(false, 4, 164, "bootstrap.");
@@ -763,10 +766,6 @@ int main(int argc, char **argv) {
 							menuprinted = false;
 							break;
 						case 5:
-							is3DS = !is3DS;
-							menuprinted = false;
-							break;
-						case 6:
 							if(is3DS){
 								bootstrapFile = !bootstrapFile;
 							} else {
@@ -790,10 +789,10 @@ int main(int argc, char **argv) {
 					loadROMselect();
 					break;
 				}
-				
+
 				if(!arm7SCFGLocked) {
-					if (settingscursor > 6) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 6;
+					if (settingscursor > 5) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 5;
 				} else {
 					if (settingscursor > 4) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 4;
@@ -804,11 +803,13 @@ int main(int argc, char **argv) {
 				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
 					clearText();
-					
+
 					printSmall(true, 1, 2, username);
+					if(is3DS) printSmall(true, 8, 168, console3DSText);
+					else printSmall(true, 8, 168, consoleDSiText);
 					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
-					
+
 					printLarge(false, 4, 4, "Settings: GUI");
 					
 					int yPos;

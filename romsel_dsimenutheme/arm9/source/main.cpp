@@ -132,7 +132,6 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	
@@ -517,6 +516,11 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+
+	// Check for 32MB RAM access
+	if(*(u8*)(0x0DFFFFFA) == 0xAA) {
+		is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
+	}
 
 	// Read user name
 	char *username = (char*)PersonalData->name;
