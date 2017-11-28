@@ -773,12 +773,12 @@ int main(int argc, char **argv) {
 							case 1:
 							case 3:
 							default: {
-								CIniFile fcrompathini("fat:/_nds/YSMenu.ini");
+								CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 								path = ReplaceAll(argarray[0], "fat:/", slashchar);
 								fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-								fcrompathini.SaveIniFile("fat:/_nds/YSMenu.ini");
+								fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
 								break;
 							}
@@ -786,10 +786,10 @@ int main(int argc, char **argv) {
 							case 2:
 							case 4:
 							case 5: {
-								CIniFile fcrompathini("fat:/_nds/lastsave.ini");
+								CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 								path = ReplaceAll(argarray[0], "fat:/", woodfat);
 								fcrompathini.SetString("Save Info", "lastLoaded", path);
-								fcrompathini.SaveIniFile("fat:/_nds/lastsave.ini");
+								fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
 								break;
 							}
