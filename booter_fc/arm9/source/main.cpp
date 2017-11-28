@@ -76,12 +76,9 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	while(1) {
-		int err = runNdsFile ("fat:/_nds/srloader/main.srldr", 0, NULL);
-		consoleDemoInit();
-		iprintf ("Start failed. Error %i\n", err);
-	}
-
+	int err = runNdsFile ("fat:/_nds/srloader/main.srldr", 0, NULL);
+	consoleDemoInit();
+	iprintf ("Start failed. Error %i\n", err);
 	stop();
 
 	return 0;
