@@ -48,7 +48,7 @@
 
 bool whiteScreen = true;
 
-const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool is3DS = false;
@@ -114,20 +114,13 @@ void LoadSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
-	if (flashcardUsed) romfolder = settingsini.GetString("SRLOADER", "FCROM_FOLDER", "");
-	else romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
+	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
-	if (flashcardUsed) {
-		romtype = 0;
-		pagenum = settingsini.GetInt("SRLOADER", "FCPAGE_NUMBER", 0);
-		cursorPosition = settingsini.GetInt("SRLOADER", "FCCURSOR_POSITION", 0);
-	} else {
-		romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
-		pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
-		cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
-	}
+	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
+	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
+	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
@@ -139,24 +132,21 @@ void LoadSettings(void) {
 
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
-	// nds-bootstrap
-	CIniFile bootstrapini( bootstrapinipath );
-	
-	arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
+	if(!flashcardUsed) {
+		// nds-bootstrap
+		CIniFile bootstrapini( bootstrapinipath );
+		
+		arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
+	}
 }
 
 void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
-	if (flashcardUsed) {
-		settingsini.SetInt("SRLOADER", "FCPAGE_NUMBER", pagenum);
-		settingsini.SetInt("SRLOADER", "FCCURSOR_POSITION", cursorPosition);
-	} else {
-		settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
-		settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-		settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
-	}
+	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
+	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
@@ -166,11 +156,13 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 	
-	// nds-bootstrap
-	CIniFile bootstrapini( bootstrapinipath );
-	
-	bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
-	bootstrapini.SaveIniFile(bootstrapinipath);
+	if(!flashcardUsed) {
+		// nds-bootstrap
+		CIniFile bootstrapini( bootstrapinipath );
+		
+		bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
+		bootstrapini.SaveIniFile(bootstrapinipath);
+	}
 }
 
 int colorRvalue;
@@ -517,8 +509,12 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	if (fatInitDefault()) {
+		if (!access("fat:/", F_OK)) flashcardUsed = true;
+	}
+
 	// Check for 32MB RAM access
-	if(*(u8*)(0x0DFFFFFA) == 0xAA) {
+	if(!flashcardUsed && *(u8*)(0x0DFFFFFA) == 0xAA) {
 		is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
 	}
 
@@ -534,8 +530,6 @@ int main(int argc, char **argv) {
 	}
 	
 	LoadColor();
-
-#ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
 		// showbubble = false;
@@ -590,12 +584,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-#endif
-
 	std::string filename;
 	std::string bootstrapfilename;
-
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	LoadSettings();
 	
@@ -619,13 +609,9 @@ int main(int argc, char **argv) {
 	if (gbromfolder == "") gbromfolder = "roms/gb";
 	
 	char path[256];
-	if (flashcardUsed) {
-		snprintf (path, sizeof(path), "fat:/%s", romfolder.c_str());
-	} else {
-		snprintf (path, sizeof(path), "sd:/%s", romfolder.c_str());
-	}
+	snprintf (path, sizeof(path), "/%s", romfolder.c_str());
 	char gbPath[256];
-	snprintf (gbPath, sizeof(gbPath), "sd:/%s", gbromfolder.c_str());
+	snprintf (gbPath, sizeof(gbPath), "/%s", gbromfolder.c_str());
 	
 	InitSound();
 	
@@ -647,7 +633,6 @@ int main(int argc, char **argv) {
 
 		////////////////////////////////////
 		// Launch the item
-#ifndef EMULATE_FILES
 
 		if (applaunch) {
 			// Construct a command line
@@ -685,142 +670,144 @@ int main(int argc, char **argv) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if (useBootstrap && !flashcardUsed) {
-					char game_TID[5];
-					
-					FILE *f_nds_file = fopen(argarray[0], "rb");
+				if(useBootstrap) {
+					if(!flashcardUsed) {
+						char game_TID[5];
+						
+						FILE *f_nds_file = fopen(argarray[0], "rb");
 
-					fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-					fread(game_TID, 1, 4, f_nds_file);
-					game_TID[4] = 0;
-					game_TID[3] = 0;
-					fclose(f_nds_file);
+						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+						fread(game_TID, 1, 4, f_nds_file);
+						game_TID[4] = 0;
+						game_TID[3] = 0;
+						fclose(f_nds_file);
 
-					std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
+						std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
-					if (access(savename.c_str(), F_OK)) {
-						if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
-							const char* savecreate = "Creating save file...";
-							const char* savecreated = "Save file created!";
-							printLarge(false, 4, 4, savecreate);
+						if (access(savename.c_str(), F_OK)) {
+							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
+								const char* savecreate = "Creating save file...";
+								const char* savecreated = "Save file created!";
+								printLarge(false, 4, 4, savecreate);
 
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							memset(buffer, 0, sizeof(buffer));
+								static const int BUFFER_SIZE = 4096;
+								char buffer[BUFFER_SIZE];
+								memset(buffer, 0, sizeof(buffer));
 
-							int savesize = 524288;	// 512KB (default size for most games)
+								int savesize = 524288;	// 512KB (default size for most games)
 
-							// Set save size to 8KB for the following games
-							if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
-							{
-								savesize = 8192;
-							}
-
-							// Set save size to 256KB for the following games
-							if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
-							{
-								savesize = 262144;
-							}
-
-							// Set save size to 1MB for the following games
-							if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-							{
-								savesize = 1048576;
-							}
-
-							// Set save size to 32MB for the following games
-							if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
-							{
-								savesize = 1048576*32;
-							}
-
-							FILE *pFile = fopen(savename.c_str(), "wb");
-							if (pFile) {
-								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
+								// Set save size to 8KB for the following games
+								if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+								{
+									savesize = 8192;
 								}
-								fclose(pFile);
-							}
-							printLarge(false, 4, 20, savecreated);
-						}
 
-					}
-					
-					SetDonorSDK(argarray[0]);
-					SetCompatibilityCheck(argarray[0]);
-					SetMPUSettings(argarray[0]);
-					
-					std::string path = argarray[0];
-					std::string savepath = savename;
-					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
-					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-					bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
-					bootstrapini.SetInt( "NDS-BOOTSTRAP", "CHECK_COMPATIBILITY", run_timeout);
-					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
-					bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
-					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-					if (strcmp(game_TID, "###") == 0) {
-						bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
-					} else {
-						if (fifoGetValue32(FIFO_USER_03) != 0) {
-							if (is3DS) {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-							} else {
-								bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+								// Set save size to 256KB for the following games
+								if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+								{
+									savesize = 262144;
+								}
+
+								// Set save size to 1MB for the following games
+								if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+								{
+									savesize = 1048576;
+								}
+
+								// Set save size to 32MB for the following games
+								if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+								{
+									savesize = 1048576*32;
+								}
+
+								FILE *pFile = fopen(savename.c_str(), "wb");
+								if (pFile) {
+									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+										fwrite(buffer, 1, sizeof(buffer), pFile);
+									}
+									fclose(pFile);
+								}
+								printLarge(false, 4, 20, savecreated);
 							}
+
+						}
+						
+						SetDonorSDK(argarray[0]);
+						SetCompatibilityCheck(argarray[0]);
+						SetMPUSettings(argarray[0]);
+						
+						std::string path = argarray[0];
+						std::string savepath = savename;
+						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CHECK_COMPATIBILITY", run_timeout);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+						if (strcmp(game_TID, "###") == 0) {
+							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {
-							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+							if (fifoGetValue32(FIFO_USER_03) != 0) {
+								if (is3DS) {
+									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+									else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+								} else {
+									bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+								}
+							} else {
+								bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+							}
 						}
-					}
-					int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
-					char text[32];
-					snprintf (text, sizeof(text), "Start failed. Error %i", err);
-					printLarge(false, 4, 36, text);
-					stop();
-				} else 	if (flashcardUsed) {
-					std::string path;
-					int err = 0;
-					switch (flashcard) {
-						case 0:
-						case 1:
-						case 3:
-						default: {
-							CIniFile fcrompathini("fat:/_nds/YSMenu.ini");
-							path = ReplaceAll(argarray[0], "fat:/", slashchar);
-							fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-							fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-							fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-							fcrompathini.SaveIniFile("fat:/_nds/YSMenu.ini");
-							err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
-							break;
-						}
+						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
+						char text[32];
+						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+						printLarge(false, 4, 36, text);
+						stop();
+					} else {
+						std::string path;
+						int err = 0;
+						switch (flashcard) {
+							case 0:
+							case 1:
+							case 3:
+							default: {
+								CIniFile fcrompathini("fat:/_nds/YSMenu.ini");
+								path = ReplaceAll(argarray[0], "fat:/", slashchar);
+								fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+								fcrompathini.SaveIniFile("fat:/_nds/YSMenu.ini");
+								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+								break;
+							}
 
-						case 2:
-						case 4:
-						case 5: {
-							CIniFile fcrompathini("fat:/_nds/lastsave.ini");
-							path = ReplaceAll(argarray[0], "fat:/", woodfat);
-							fcrompathini.SetString("Save Info", "lastLoaded", path);
-							fcrompathini.SaveIniFile("fat:/_nds/lastsave.ini");
-							err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
-							break;
-						}
+							case 2:
+							case 4:
+							case 5: {
+								CIniFile fcrompathini("fat:/_nds/lastsave.ini");
+								path = ReplaceAll(argarray[0], "fat:/", woodfat);
+								fcrompathini.SetString("Save Info", "lastLoaded", path);
+								fcrompathini.SaveIniFile("fat:/_nds/lastsave.ini");
+								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+								break;
+							}
 
-						case 6: {
-							CIniFile fcrompathini("fat:/_nds/dstwoautoboot.ini");
-							path = ReplaceAll(argarray[0], "fat:/", dstwofat);
-							fcrompathini.SetString("Dir Info", "fullName", path);
-							fcrompathini.SaveIniFile("fat:/_nds/dstwoautoboot.ini");
-							err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
-							break;
+							case 6: {
+								CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+								path = ReplaceAll(argarray[0], "fat:/", dstwofat);
+								fcrompathini.SetString("Dir Info", "fullName", path);
+								fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+								break;
+							}
 						}
+						char text[32];
+						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+						printLarge(false, 4, 36, text);
+						stop();
 					}
-					char text[32];
-					snprintf (text, sizeof(text), "Start failed. Error %i", err);
-					printLarge(false, 4, 36, text);
-					stop();
 				} else {
 					iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
@@ -835,8 +822,8 @@ int main(int argc, char **argv) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
-				argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
-				int err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
+				int err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				printLarge(false, 4, 4, text);
@@ -854,7 +841,6 @@ int main(int argc, char **argv) {
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }
 		}
-#endif
 	}
 
 	return 0;

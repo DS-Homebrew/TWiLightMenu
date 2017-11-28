@@ -36,6 +36,8 @@ unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
+int sndValue = 0;
+
 //---------------------------------------------------------------------------------
 void RocketLauncherReboot() {
 //---------------------------------------------------------------------------------
@@ -48,6 +50,11 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	if(fifoCheckValue32(FIFO_USER_08)) {
 		RocketLauncherReboot();
+	}
+	if(fifoGetValue32(FIFO_MAXMOD) == 2) {
+		*(u16*)(0x4004700) = 0xC00F;
+	} else if(fifoGetValue32(FIFO_MAXMOD) == 1) {
+		*(u16*)(0x4004700) = 0x800F;
 	}
 }
 
@@ -93,7 +100,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
 	
@@ -102,13 +109,11 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);
 	fifoSendValue32(FIFO_USER_05, *CPUID);
+	fifoSendValue32(FIFO_MAXMOD, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
-			exitflag = true;
-		}
 		// fifocheck();
 		swiWaitForVBlank();
 	}

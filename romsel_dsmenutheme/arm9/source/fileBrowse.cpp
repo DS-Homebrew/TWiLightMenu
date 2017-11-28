@@ -506,7 +506,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
-			int err = runNdsFile ("sd:/_nds/srloader/main.srldr", 0, NULL);
+			int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
 			iprintf ("Start failed. Error %i\n", err);
 			return "null";
 		}

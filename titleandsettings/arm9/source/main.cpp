@@ -37,12 +37,11 @@
 
 #include "inifile.h"
 
-const char* settingsinipath = "sd:/_nds/srloader/settings.ini";
+const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
-const char* consoleDSiText = "Console: Nintendo DSi";
-const char* console3DSText = "Console: Nintendo 3DS/2DS";
+const char* consoleText = "Flashcard mode";
 
 bool is3DS = false;
 
@@ -64,10 +63,12 @@ bool autorun = false;
 int theme = 0;
 int subtheme = 0;
 
-bool bstrap_boostcpu = false;
+bool bstrap_boostcpu = false;	// false == NTR, true == TWL
 bool bstrap_debug = false;
 int bstrap_romreadled = 0;
 // bool bstrap_lockARM9scfgext = false;
+
+bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
 bool flashcardUsed = false;
 
@@ -90,6 +91,7 @@ void LoadSettings(void) {
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
+	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
@@ -97,15 +99,17 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 
-	// nds-bootstrap
-	CIniFile bootstrapini( bootstrapinipath );
+	if(!flashcardUsed) {
+		// nds-bootstrap
+		CIniFile bootstrapini( bootstrapinipath );
 
-	bstrap_useArm7Donor = bootstrapini.GetInt( "NDS-BOOTSTRAP", "USE_ARM7_DONOR", 1);
-	bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
-	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
-	ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
-	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
+		bstrap_useArm7Donor = bootstrapini.GetInt( "NDS-BOOTSTRAP", "USE_ARM7_DONOR", 1);
+		bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
+		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
+		ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
+		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
+	}
 }
 
 void SaveSettings(void) {
@@ -119,6 +123,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
+	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
@@ -127,7 +132,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 	
-	if(is3DS && twldrsettingsFound) {
+	if(is3DS && twldrsettingsFound && !flashcardUsed) {
 		// Save some settings to TWLoader as well.
 		CIniFile twldrsettingsini( twldrsettingsinipath );
 		
@@ -135,16 +140,18 @@ void SaveSettings(void) {
 		twldrsettingsini.SaveIniFile(twldrsettingsinipath);
 	}
 
-	// nds-bootstrap
-	CIniFile bootstrapini( bootstrapinipath );
+	if(!flashcardUsed) {
+		// nds-bootstrap
+		CIniFile bootstrapini( bootstrapinipath );
 
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", ntr_touch);
-	// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
-	bootstrapini.SaveIniFile(bootstrapinipath);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", ntr_touch);
+		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
+		bootstrapini.SaveIniFile(bootstrapinipath);
+	}
 }
 
 int screenmode = 0;
@@ -206,6 +213,8 @@ void RocketLauncher() {
 }
 
 void loadROMselect() {
+	if(soundfreq) fifoSendValue32(FIFO_MAXMOD, 2);
+	else fifoSendValue32(FIFO_MAXMOD, 1);
 	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
 	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, NULL);
 }
@@ -223,15 +232,24 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
-	
-	// Check for 32MB RAM access
-	if(*(u8*)(0x0DFFFFFA) == 0xAA) {
-		is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
+
+	if (fatInitDefault()) {
+		if (!access("fat:/", F_OK)) flashcardUsed = true;
+	}
+
+	if(!flashcardUsed) {
+		// Check for 32MB RAM access
+		if(*(u8*)(0x0DFFFFFA) == 0xAA) {
+			is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
+			consoleText = "Console: Nintendo 3DS/2DS";
+		} else {
+			consoleText = "Console: Nintendo DSi";
+		}
 	}
 
 	// Read user name
 	char *username = (char*)PersonalData->name;
-		
+
 	// text
 	for (int i = 0; i < 10; i++) {
 		if (username[i*2] == 0x00)
@@ -239,8 +257,6 @@ int main(int argc, char **argv) {
 		else
 			username[i*2/2] = username[i*2];
 	}
-
-#ifndef EMULATE_FILES
 
 	if (!fatInitDefault()) {
 		graphicsInit();
@@ -250,21 +266,22 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-#endif
-
 	bool arm7SCFGLocked = false;
+	bool soundfreqsetting = false;
 
 	std::string filename;
 	std::string bootstrapfilename;
 	
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
-
 	LoadSettings();
 	
 	swiWaitForVBlank();
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
+
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_MAXMOD);
+	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
+	fifoSendValue32(FIFO_MAXMOD, 0);
 
 	scanKeys();
 
@@ -273,22 +290,41 @@ int main(int argc, char **argv) {
 	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
-		if (!arm7SCFGLocked) {
-			if (is3DS) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+		if(!flashcardUsed) {
+			if (!arm7SCFGLocked) {
+				if (is3DS) {
+					if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+					else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+				} else {
+					bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+				}
 			} else {
-				bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+				bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 			}
+			runNdsFile (bootstrapfilename.c_str(), 0, NULL);
 		} else {
-			bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+			switch (flashcard) {
+				case 0:
+				case 1:
+				case 3:
+				default:
+					runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+					break;
+				case 2:
+				case 4:
+				case 5:
+					runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+					break;
+				case 6:
+					runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+					break;
+			}
 		}
-		runNdsFile (bootstrapfilename.c_str(), 0, 0);
 	}
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 1, 9, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -309,11 +345,9 @@ int main(int argc, char **argv) {
 		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 
+		printSmall(true, 8, 168, consoleText);
+		printSmall(true, 192, 184, vertext);
 		if(*SCFG_EXT>0) {
-			if(is3DS) printSmall(true, 8, 168, console3DSText);
-			else printSmall(true, 8, 168, consoleDSiText);
-			printSmall(true, 192, 184, vertext);
-			
 			char text1[48],
 				text2[48],
 				text3[48],
@@ -409,8 +443,7 @@ int main(int argc, char **argv) {
 					clearText();
 
 					printSmall(true, 1, 2, username);
-					if(is3DS) printSmall(true, 8, 168, console3DSText);
-					else printSmall(true, 8, 168, consoleDSiText);
+					printSmall(true, 8, 168, consoleText);
 					printSmall(true, 192, 184, vertext);
 
 					printLarge(false, 4, 4, "Flashcard(s) select");
@@ -489,8 +522,7 @@ int main(int argc, char **argv) {
 					clearText();
 
 					printSmall(true, 1, 2, username);
-					if(is3DS) printSmall(true, 8, 168, console3DSText);
-					else printSmall(true, 8, 168, consoleDSiText);
+					printSmall(true, 8, 168, consoleText);
 					printSmall(true, 192, 184, vertext);
 
 					switch (theme) {
@@ -564,8 +596,7 @@ int main(int argc, char **argv) {
 					clearText();
 
 					printSmall(true, 1, 2, username);
-					if(is3DS) printSmall(true, 8, 168, console3DSText);
-					else printSmall(true, 8, 168, consoleDSiText);
+					printSmall(true, 8, 168, consoleText);
 					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 					
@@ -597,116 +628,149 @@ int main(int argc, char **argv) {
 							break;
 					}
 
+					int selyPos = 24;
+
 					printSmall(false, 4, yPos, ">");
-					
-					printSmall(false, 12, 24, "Flashcard(s) select");
-						
-					printSmall(false, 12, 32, "ARM9 CPU Speed");
-					if(bstrap_boostcpu)
-						printSmall(false, 156, 32, "133mhz (TWL)");
-					else
-						printSmall(false, 156, 32, "67mhz (NTR)");
 
-					// if (bstrap_boostcpu) {
-					// 	printSmall(false, 12, 96, "VRAM boost");
-					// 	if(bstrap_boostvram)
-					// 		printSmall(false, 224, 96, "On");
-					// 	else
-					// 		printSmall(false, 224, 96, "Off");
-					// }
+					if(!flashcardUsed) {
+						printSmall(false, 12, selyPos, "ARM9 CPU Speed");
+						if(bstrap_boostcpu)
+							printSmall(false, 156, selyPos, "133mhz (TWL)");
+						else
+							printSmall(false, 156, selyPos, "67mhz (NTR)");
+						selyPos += 8;
 
-					printSmall(false, 12, 40, "Debug");
-					if(bstrap_debug)
-						printSmall(false, 224, 40, "On");
-					else
-						printSmall(false, 224, 40, "Off");
+						// if (bstrap_boostcpu) {
+						// 	printSmall(false, 12, 96, "VRAM boost");
+						// 	if(bstrap_boostvram)
+						// 		printSmall(false, 224, 96, "On");
+						// 	else
+						// 		printSmall(false, 224, 96, "Off");
+						// }
 
-					printSmall(false, 12, 48, "ROM read LED");
-					switch(bstrap_romreadled) {
-						case 0:
-						default:
-							romreadled_valuetext = "None";
-							break;
-						case 1:
-							romreadled_valuetext = "WiFi";
-							break;
-						case 2:
-							romreadled_valuetext = "Power";
-							break;
-						case 3:
-							romreadled_valuetext = "Camera";
-							break;
-					}
-					printSmall(false, 208, 48, romreadled_valuetext);
+						printSmall(false, 12, selyPos, "Debug");
+						if(bstrap_debug)
+							printSmall(false, 224, selyPos, "On");
+						else
+							printSmall(false, 224, selyPos, "Off");
+						selyPos += 8;
+						printSmall(false, 12, selyPos, "ROM read LED");
+						switch(bstrap_romreadled) {
+							case 0:
+							default:
+								romreadled_valuetext = "None";
+								break;
+							case 1:
+								romreadled_valuetext = "WiFi";
+								break;
+							case 2:
+								romreadled_valuetext = "Power";
+								break;
+							case 3:
+								romreadled_valuetext = "Camera";
+								break;
+						}
+						printSmall(false, 208, selyPos, romreadled_valuetext);
+						selyPos += 8;
+						printSmall(false, 12, selyPos, "Use donor ROM");
+						switch(bstrap_useArm7Donor) {
+							case 0:
+							default:
+								useArm7Donor_valuetext = "Off";
+								break;
+							case 1:
+								useArm7Donor_valuetext = "On";
+								break;
+							case 2:
+								useArm7Donor_valuetext = "Force-use";
+								break;
+						}
+						printSmall(false, 184, selyPos, useArm7Donor_valuetext);
+						selyPos += 8;
+						if(!arm7SCFGLocked) {
+							if(is3DS){
+								printSmall(false, 12, selyPos, "Bootstrap");
+								if(bootstrapFile)
+									printSmall(false, 184, selyPos, "Unofficial");
+								else
+									printSmall(false, 184, selyPos, "Release");
+							} else {
+								printSmall(false, 12, selyPos, "NTR Touch Screen mode");
+								if(ntr_touch)
+									printSmall(false, 224, selyPos, "On");
+								else
+									printSmall(false, 224, selyPos, "Off");
+							}
+							selyPos += 8;
+						}
 
-					printSmall(false, 12, 56, "Use donor ROM");
-					switch(bstrap_useArm7Donor) {
-						case 0:
-						default:
-							useArm7Donor_valuetext = "Off";
-							break;
-						case 1:
-							useArm7Donor_valuetext = "On";
-							break;
-						case 2:
-							useArm7Donor_valuetext = "Force-use";
-							break;
-					}
-					printSmall(false, 184, 56, useArm7Donor_valuetext);
-
-					if(!arm7SCFGLocked) {
-						if(is3DS){
-							printSmall(false, 12, 64, "Bootstrap");
-							if(bootstrapFile)
-								printSmall(false, 184, 64, "Unofficial");
+						if(soundfreqsetting) {
+							printSmall(false, 12, selyPos, "Sound/Mic frequency");
+							if(soundfreq)
+								printSmall(false, 184, selyPos, "47.61 kHz");
 							else
-								printSmall(false, 184, 64, "Release");
-						} else {
-							printSmall(false, 12, 64, "NTR Touch Screen mode");
-							if(ntr_touch)
-								printSmall(false, 224, 64, "On");
+								printSmall(false, 184, selyPos, "32.73 kHz");
+						}
+
+
+						if (settingscursor == 0) {
+							printSmall(false, 4, 156, "Pick a flashcard to use to");
+							printSmall(false, 4, 164, "run ROMs from it.");
+						} else if (settingscursor == 1) {
+							printSmall(false, 4, 156, "Set to TWL to get rid of lags");
+							printSmall(false, 4, 164, "in some games.");
+						} /* else if (settingscursor == 4) {
+							printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
+							printSmall(false, 4, 164, "and expands the bus to 32 bit.");
+						} */ else if (settingscursor == 2) {
+							printSmall(false, 4, 156, "Displays some text before");
+							printSmall(false, 4, 164, "launched game.");
+						} else if (settingscursor == 3) {
+							// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
+							// printSmall(false, 4, 164, "avoiding conflict with");
+							// printSmall(false, 4, 172, "recent libnds.");
+							printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
+							printSmall(false, 4, 164, "If on, Camera LED will be");
+							printSmall(false, 4, 172, "used as async prefetch indicator.");
+						} else if (settingscursor == 4) {
+							printSmall(false, 4, 156, "Enable, disable, or force use of");
+							printSmall(false, 4, 164, "donor ROM.");
+						} else if (settingscursor == 5) {
+							if(!arm7SCFGLocked) {
+								if(is3DS){
+									printSmall(false, 4, 156, "Pick release or unofficial");
+									printSmall(false, 4, 164, "bootstrap.");
+								} else {
+									printSmall(false, 4, 156, "If launched from DSi Menu via");
+									printSmall(false, 4, 164, "HiyaCFW, disable this option.");
+								}
+							} else {
+								printSmall(false, 4, 156, "32.73 kHz: Original quality");
+								printSmall(false, 4, 164, "47.61 kHz: High quality");
+							}
+						} else if (settingscursor == 6) {
+							printSmall(false, 4, 156, "32.73 kHz: Original quality");
+							printSmall(false, 4, 164, "47.61 kHz: High quality");
+						}
+					} else {
+						printSmall(false, 12, selyPos, "Flashcard(s) select");
+						selyPos += 8;
+						if(soundfreqsetting) {
+							printSmall(false, 12, selyPos, "Sound/Mic frequency");
+							if(soundfreq)
+								printSmall(false, 184, selyPos, "47.61 kHz");
 							else
-								printSmall(false, 224, 64, "Off");
+								printSmall(false, 184, selyPos, "32.73 kHz");
+						}
+
+						if (settingscursor == 0) {
+							printSmall(false, 4, 156, "Pick a flashcard to use to");
+							printSmall(false, 4, 164, "run ROMs from it.");
+						} else if (settingscursor == 1) {
+							printSmall(false, 4, 156, "32.73 kHz: Original quality");
+							printSmall(false, 4, 164, "47.61 kHz: High quality");
 						}
 					}
-
-
-					if (settingscursor == 0) {
-						printSmall(false, 4, 156, "Pick a flashcard to use to");
-						printSmall(false, 4, 164, "run ROMs from it.");
-					} else if (settingscursor == 1) {
-						printSmall(false, 4, 156, "Set to TWL to get rid of lags");
-						printSmall(false, 4, 164, "in some games.");
-					} /* else if (settingscursor == 4) {
-						printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
-						printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-					} */ else if (settingscursor == 2) {
-						printSmall(false, 4, 156, "Displays some text before");
-						printSmall(false, 4, 164, "launched game.");
-					} else if (settingscursor == 3) {
-						// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
-						// printSmall(false, 4, 164, "avoiding conflict with");
-						// printSmall(false, 4, 172, "recent libnds.");
-						printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
-						printSmall(false, 4, 164, "If on, Camera LED will be");
-						printSmall(false, 4, 172, "used as async prefetch indicator.");
-					} else if (settingscursor == 4) {
-						printSmall(false, 4, 156, "Enable, disable, or force use of");
-						printSmall(false, 4, 164, "donor ROM.");
-					} else if (settingscursor == 5) {
-						if(is3DS){
-							printSmall(false, 4, 156, "Pick release or unofficial");
-							printSmall(false, 4, 164, "bootstrap.");
-						} else {
-							printSmall(false, 4, 156, "If launched from DSi Menu via");
-							printSmall(false, 4, 164, "HiyaCFW, disable this option.");
-						}
-					} /* else if (settingscursor == 8) {
-						printSmall(false, 4, 148, "If you have Zelda Four Swords");
-						printSmall(false, 4, 156, "with 4swordshax installed,");
-						printSmall(false, 4, 164, "press POWER while playing a ROM");
-						printSmall(false, 4, 172, "to return to the SRLoader menu.");
-					} */
 
 
 
@@ -730,49 +794,67 @@ int main(int argc, char **argv) {
 				}
 					
 				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
-					switch (settingscursor) {
-						case 0:
-						default:
-							subscreenmode = 3;
-							menuprinted = false;
-							break;
-						case 1:
-							bstrap_boostcpu = !bstrap_boostcpu;
-							menuprinted = false;
-							break;
-						case 2:
-							bstrap_debug = !bstrap_debug;
-							menuprinted = false;
-							break;
-						case 3:
-							// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
-							if (pressed & KEY_LEFT) {
-								bstrap_romreadled -= 1;
-								if (bstrap_romreadled < 0) bstrap_romreadled = 2;
-							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-								bstrap_romreadled += 1;
-								if (bstrap_romreadled > 2) bstrap_romreadled = 0;
-							}
-							menuprinted = false;
-							break;
-						case 4:
-							if (pressed & KEY_LEFT) {
-								bstrap_useArm7Donor -= 0;
-								if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
-							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-								bstrap_useArm7Donor += 1;
-								if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
-							}
-							menuprinted = false;
-							break;
-						case 5:
-							if(is3DS){
-								bootstrapFile = !bootstrapFile;
-							} else {
-								ntr_touch = !ntr_touch;
-							}
-							menuprinted = false;
-							break;
+					if(!flashcardUsed) {
+						switch (settingscursor) {
+							case 0:
+							default:
+								bstrap_boostcpu = !bstrap_boostcpu;
+								menuprinted = false;
+								break;
+							case 1:
+								bstrap_debug = !bstrap_debug;
+								menuprinted = false;
+								break;
+							case 2:
+								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+								if (pressed & KEY_LEFT) {
+									bstrap_romreadled -= 1;
+									if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+									bstrap_romreadled += 1;
+									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+								}
+								menuprinted = false;
+								break;
+							case 3:
+								if (pressed & KEY_LEFT) {
+									bstrap_useArm7Donor -= 0;
+									if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
+								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+									bstrap_useArm7Donor += 1;
+									if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
+								}
+								menuprinted = false;
+								break;
+							case 4:
+								if(!arm7SCFGLocked) {
+									if(is3DS){
+										bootstrapFile = !bootstrapFile;
+									} else {
+										ntr_touch = !ntr_touch;
+									}
+								} else {
+									soundfreq = !soundfreq;
+								}
+								menuprinted = false;
+								break;
+							case 5:
+								soundfreq = !soundfreq;
+								menuprinted = false;
+								break;
+						}
+					} else {
+						switch (settingscursor) {
+							case 0:
+							default:
+								subscreenmode = 3;
+								menuprinted = false;
+								break;
+							case 1:
+								soundfreq = !soundfreq;
+								menuprinted = false;
+								break;
+						}
 					}
 				}
 				
@@ -790,12 +872,24 @@ int main(int argc, char **argv) {
 					break;
 				}
 
-				if(!arm7SCFGLocked) {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+				if(!flashcardUsed) {
+					if(!arm7SCFGLocked) {
+						if (settingscursor > 5) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 5;
+					} else if(soundfreqsetting) {
+						if (settingscursor > 4) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 4;
+					} else {
+						if (settingscursor > 3) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 3;
+					}
 				} else {
-					if (settingscursor > 4) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 4;
+					if(soundfreqsetting) {
+						if (settingscursor > 1) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 1;
+					} else {
+						if (settingscursor != 0) settingscursor = 0;
+					}
 				}
 			} else {
 				pressed = 0;
@@ -805,8 +899,7 @@ int main(int argc, char **argv) {
 					clearText();
 
 					printSmall(true, 1, 2, username);
-					if(is3DS) printSmall(true, 8, 168, console3DSText);
-					else printSmall(true, 8, 168, consoleDSiText);
+					printSmall(true, 8, 168, consoleText);
 					printSmall(true, 1, 184, lrswitchpages);
 					printSmall(true, 192, 184, vertext);
 
@@ -828,9 +921,9 @@ int main(int argc, char **argv) {
 							yPos = 64;
 							break;
 					}
-					
+
 					printSmall(false, 4, yPos, ">");
-					
+
 					printSmall(false, 12, 24, "Theme");
 					if(theme == 1)
 						printSmall(false, 156, 24, "Aura Launcher");
@@ -842,20 +935,22 @@ int main(int argc, char **argv) {
 						printSmall(false, 224, 40, "On");
 					else
 						printSmall(false, 224, 40, "Off");
-						
+
 					printSmall(false, 12, 48, "Show SRLoader logo on startup");
 					if(showlogo)
 						printSmall(false, 224, 56, "On");
 					else
 						printSmall(false, 224, 56, "Off");
-						
-					if(arm7SCFGLocked) {
-						printSmall(false, 12, 64, "Reboot into RocketLauncher");
-						
-						if(rebootInRocketLauncher)
-							printSmall(false, 224, 64, "On");
-						else
-							printSmall(false, 224, 64, "Off");
+
+					if(!flashcardUsed) {
+						if(arm7SCFGLocked) {
+							printSmall(false, 12, 64, "Reboot into RocketLauncher");
+							
+							if(rebootInRocketLauncher)
+								printSmall(false, 224, 64, "On");
+							else
+								printSmall(false, 224, 64, "Off");
+						}
 					}
 
 
@@ -949,17 +1044,37 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
-					if (!arm7SCFGLocked) {
-						if (is3DS) {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-							else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+					int err = 0;
+					if(!flashcardUsed) {
+						if (!arm7SCFGLocked) {
+							if (is3DS) {
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+							} else {
+								bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+							}
 						} else {
-							bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
 						}
+						err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
 					} else {
-						bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+						switch (flashcard) {
+							case 0:
+							case 1:
+							case 3:
+							default:
+								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+								break;
+							case 2:
+							case 4:
+							case 5:
+								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+								break;
+							case 6:
+								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+								break;
+						}
 					}
-					int err = runNdsFile (bootstrapfilename.c_str(), 0, 0);
 					iprintf ("Start failed. Error %i\n", err);
 				}
 				
@@ -971,12 +1086,17 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if(!arm7SCFGLocked) {
+				if(!flashcardUsed) {
+					if(!arm7SCFGLocked) {
+						if (settingscursor > 2) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 2;
+					} else {
+						if (settingscursor > 3) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 3;
+					}
+				} else {
 					if (settingscursor > 2) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 2;
-				} else {
-					if (settingscursor > 3) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 3;
 				}
 			}
 
