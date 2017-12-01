@@ -76,7 +76,7 @@ int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
 	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS
+	2: R4iDSN/R4i Gold RTS/R4 Ultra
 	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
 	4: Acekard RPG
 	5: Ace 3DS+/Gateway Blue Card/R4iTT
@@ -324,7 +324,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -466,6 +466,7 @@ int main(int argc, char **argv) {
 						case 2:
 							printSmall(false, 12, 24, "R4iDSN");
 							printSmall(false, 12, 32, "R4i Gold RTS");
+							printSmall(false, 12, 40, "R4 Ultra");
 							break;
 						case 3:
 							printSmall(false, 12, 24, "Acekard 2(i)");

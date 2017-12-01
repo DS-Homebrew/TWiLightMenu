@@ -96,7 +96,7 @@ int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
 	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS
+	2: R4iDSN/R4i Gold RTS/R4 Ultra
 	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
 	4: Acekard RPG
 	5: Ace 3DS+/Gateway Blue Card/R4iTT
