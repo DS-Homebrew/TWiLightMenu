@@ -609,7 +609,6 @@ int main(int argc, char **argv) {
 						switch (flashcard) {
 							case 0:
 							case 1:
-							case 3:
 							default: {
 								CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
 								path = ReplaceAll(argarray[0], "fat:/", slashchar);
@@ -617,6 +616,17 @@ int main(int argc, char **argv) {
 								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 								fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+								break;
+							}
+
+							case 3: {
+								CIniFile fcrompathini("fat:/YSMenu/YSMenu.ini");
+								path = ReplaceAll(argarray[0], "fat:/", slashchar);
+								fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+								fcrompathini.SaveIniFile("fat:/YSMenu/YSMenu.ini");
 								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
 								break;
 							}
