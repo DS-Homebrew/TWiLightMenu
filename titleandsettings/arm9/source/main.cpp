@@ -306,7 +306,6 @@ int main(int argc, char **argv) {
 			switch (flashcard) {
 				case 0:
 				case 1:
-				case 3:
 				default:
 					runNdsFile ("fat:/YSMenu.nds", 0, NULL);
 					break;
@@ -314,6 +313,9 @@ int main(int argc, char **argv) {
 				case 4:
 				case 5:
 					runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+					break;
+				case 3:
+					runNdsFile ("fat:/Afwd.dat", 0, NULL);
 					break;
 				case 6:
 					runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
@@ -1059,7 +1061,6 @@ int main(int argc, char **argv) {
 						switch (flashcard) {
 							case 0:
 							case 1:
-							case 3:
 							default:
 								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
 								break;
@@ -1067,6 +1068,9 @@ int main(int argc, char **argv) {
 							case 4:
 							case 5:
 								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+								break;
+							case 3:
+								err = runNdsFile ("fat:/Afwd.dat", 0, NULL);
 								break;
 							case 6:
 								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
