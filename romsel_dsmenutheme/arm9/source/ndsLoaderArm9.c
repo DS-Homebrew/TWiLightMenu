@@ -352,8 +352,6 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 }
 
 int runNdsFile (const char* filename, int argc, const char** argv)  {
-	while(REG_VCOUNT != 191);
-
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
