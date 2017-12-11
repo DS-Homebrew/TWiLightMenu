@@ -41,7 +41,7 @@ const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
-const char* consoleText = "Flashcard mode";
+const char* consoleText = "";
 
 bool is3DS = false;
 
@@ -324,7 +324,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 2);
 
 	if (showlogo) {
 		graphicsInit();
@@ -715,28 +715,25 @@ int main(int argc, char **argv) {
 
 
 						if (settingscursor == 0) {
-							printSmall(false, 4, 156, "Pick a flashcard to use to");
-							printSmall(false, 4, 164, "run ROMs from it.");
-						} else if (settingscursor == 1) {
 							printSmall(false, 4, 156, "Set to TWL to get rid of lags");
 							printSmall(false, 4, 164, "in some games.");
 						} /* else if (settingscursor == 4) {
 							printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
 							printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-						} */ else if (settingscursor == 2) {
+						} */ else if (settingscursor == 1) {
 							printSmall(false, 4, 156, "Displays some text before");
 							printSmall(false, 4, 164, "launched game.");
-						} else if (settingscursor == 3) {
+						} else if (settingscursor == 2) {
 							// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 							// printSmall(false, 4, 164, "avoiding conflict with");
 							// printSmall(false, 4, 172, "recent libnds.");
 							printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
 							printSmall(false, 4, 164, "If on, Camera LED will be");
 							printSmall(false, 4, 172, "used as async prefetch indicator.");
-						} else if (settingscursor == 4) {
+						} else if (settingscursor == 3) {
 							printSmall(false, 4, 156, "Enable, disable, or force use of");
 							printSmall(false, 4, 164, "donor ROM.");
-						} else if (settingscursor == 5) {
+						} else if (settingscursor == 4) {
 							if(!arm7SCFGLocked) {
 								if(is3DS){
 									printSmall(false, 4, 156, "Pick release or unofficial");
@@ -749,7 +746,7 @@ int main(int argc, char **argv) {
 								printSmall(false, 4, 156, "32.73 kHz: Original quality");
 								printSmall(false, 4, 164, "47.61 kHz: High quality");
 							}
-						} else if (settingscursor == 6) {
+						} else if (settingscursor == 5) {
 							printSmall(false, 4, 156, "32.73 kHz: Original quality");
 							printSmall(false, 4, 164, "47.61 kHz: High quality");
 						}
