@@ -281,6 +281,8 @@ typedef struct {
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK(const char* filename) {
+	scanKeys();
+
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
@@ -288,6 +290,12 @@ void SetDonorSDK(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
+	char game_TID_char1[5];
+	fread(game_TID_char1, 1, 4, f_nds_file);
+	game_TID_char1[4] = 0;
+	game_TID_char1[3] = 0;
+	game_TID_char1[2] = 0;
+	game_TID_char1[1] = 0;
 	fclose(f_nds_file);
 	
 	donorSdkVer = 0;
@@ -307,11 +315,13 @@ void SetDonorSDK(const char* filename) {
 		"APA",	// Pokemon Pearl
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 	
 	static const char sdk4_list[][4] = {
-		"A6C",	// MegaMan Star Force - Dragon
+		"YKW",	// Kirby Super Star Ultra
+		"A6C",	// MegaMan Star Force: Dragon
+		"A6B",	// MegaMan Star Force: Leo Pegasus
+		"A6A",	// MegaMan Star Force: Dragon
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"YT7",	// SEGA Superstars Tennis
 		"AZL",	// Style Savvy
@@ -320,6 +330,19 @@ void SetDonorSDK(const char* filename) {
 	static const char sdk5_list[][4] = {
 		"CS3",	// Sonic and Sega All Stars Racing
 		"BXS",	// Sonic Colo(u)rs
+		"BK9",	// Kingdom Hearts: Re-Coded
+		"IRA",	// Pokemon Black Version
+		"IRB",	// Pokemon White Version
+		"BOO",	// Okamiden
+		"BT2",	// TrackMania Turbo
+		"BYY",	// Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
+		"TAD",	// Kirby Mass Attack
+		"IRE",	// Pokemon Black Version 2
+		"IRD",	// Pokemon White Version 2
+		"TCS",	// Scribblenauts Collection
+		"BVP",	// Drawn to Life Collection
+		"TFB",	// Frozen: Olaf's Quest
+		"THM",	// FabStyle
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -349,6 +372,9 @@ void SetDonorSDK(const char* filename) {
 		}
 	}
 
+	if(strcmp("V", game_TID_char1) == 0) {
+		donorSdkVer = 5;
+	} else
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk5_list)/sizeof(sdk5_list[0]); i++) {
 		if (!memcmp(game_TID, sdk5_list[i], 3)) {
@@ -358,6 +384,9 @@ void SetDonorSDK(const char* filename) {
 		}
 	}
 
+	if(keysHeld() & KEY_UP){
+		donorSdkVer = 5;
+	}
 }
 
 /**
@@ -751,13 +780,26 @@ int main(int argc, char **argv) {
 						} else {
 							if (fifoGetValue32(FIFO_USER_03) != 0) {
 								if (is3DS) {
-									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-									else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+									if(donorSdkVer==5) {
+										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+										else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+									} else {
+										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+										else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+									}
 								} else {
-									bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+									if(donorSdkVer==5) {
+										bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+									} else {
+										bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+									}
 								}
 							} else {
-								bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+								if(donorSdkVer==5) {
+									bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+								} else {
+									bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+								}
 							}
 						}
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);

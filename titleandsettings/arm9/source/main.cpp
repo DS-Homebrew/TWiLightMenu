@@ -55,6 +55,8 @@ const char* useArm7Donor_valuetext;
 
 int bstrap_useArm7Donor = 1;
 
+int donorSdkVer = 0;
+
 bool bootstrapFile = false;
 
 bool ntr_touch = true;
@@ -108,6 +110,7 @@ void LoadSettings(void) {
 		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
 		ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
+		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 	}
 }
@@ -194,21 +197,25 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void RocketLauncher() {
+	bool payloadFound = false;
 	FILE* RocketLauncherPayload = fopen("sd:/_nds/RocketLauncher.bin","rb");
 	off_t fsize = 0;
 	if (RocketLauncherPayload) {
+		payloadFound = true;
 		fseek(RocketLauncherPayload, 0, SEEK_END);
 		fsize = ftell(RocketLauncherPayload);
 		fseek(RocketLauncherPayload, 0, SEEK_SET);
 		fread((void*)0x02800000,1,fsize,RocketLauncherPayload);
     }
 	fclose(RocketLauncherPayload);
-	FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-	fread((void*)0x02000300,1,32,ResetData);
-	fclose(ResetData);
-	fifoSendValue32(FIFO_USER_08, 1);
-	for (int i = 0; i < 20; i++) {
-		swiWaitForVBlank();
+	if(payloadFound) {
+		FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
+		fread((void*)0x02000300,1,32,ResetData);
+		fclose(ResetData);
+		fifoSendValue32(FIFO_USER_08, 1);
+		for (int i = 0; i < 20; i++) {
+			swiWaitForVBlank();
+		}
 	}
 }
 
@@ -293,13 +300,26 @@ int main(int argc, char **argv) {
 		if(!flashcardUsed) {
 			if (!arm7SCFGLocked) {
 				if (is3DS) {
-					if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-					else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+					if(donorSdkVer==5) {
+						if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+						else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+					} else {
+						if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+						else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+					}
 				} else {
-					bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+					if(donorSdkVer==5) {
+						bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+					} else {
+						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+					}
 				}
 			} else {
-				bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+				if(donorSdkVer==5) {
+					bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+				} else {
+					bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+				}
 			}
 			runNdsFile (bootstrapfilename.c_str(), 0, NULL);
 		} else {
@@ -326,7 +346,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 0, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 1, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -1048,13 +1068,26 @@ int main(int argc, char **argv) {
 					if(!flashcardUsed) {
 						if (!arm7SCFGLocked) {
 							if (is3DS) {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+								if(donorSdkVer==5) {
+									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+									else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+								} else {
+									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+									else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+								}
 							} else {
-								bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+								if(donorSdkVer==5) {
+									bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+								} else {
+									bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+								}
 							}
 						} else {
-							bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+							if(donorSdkVer==5) {
+								bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+							} else {
+								bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+							}
 						}
 						err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
 					} else {
