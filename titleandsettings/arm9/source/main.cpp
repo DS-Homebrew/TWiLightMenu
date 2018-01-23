@@ -52,8 +52,10 @@ bool gotosettings = false;
 
 const char* romreadled_valuetext;
 const char* useArm7Donor_valuetext;
+const char* loadingScreen_valuetext;
 
 int bstrap_useArm7Donor = 1;
+int bstrap_loadingScreen = 1;
 
 int donorSdkVer = 0;
 
@@ -111,6 +113,7 @@ void LoadSettings(void) {
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
 		ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
 		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
+		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
 		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 	}
 }
@@ -152,6 +155,7 @@ void SaveSettings(void) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", ntr_touch);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 	}
@@ -727,36 +731,53 @@ int main(int argc, char **argv) {
 							selyPos += 8;
 						}
 
-						if(soundfreqsetting) {
-							printSmall(false, 12, selyPos, "Sound/Mic frequency");
-							if(soundfreq)
-								printSmall(false, 184, selyPos, "47.61 kHz");
-							else
-								printSmall(false, 184, selyPos, "32.73 kHz");
+						printSmall(false, 12, selyPos, "Sound/Mic frequency");
+						if(soundfreq)
+							printSmall(false, 184, selyPos, "47.61 kHz");
+						else
+							printSmall(false, 184, selyPos, "32.73 kHz");
+						selyPos += 8;
+
+						printSmall(false, 12, selyPos, "Loading screen");
+						switch(bstrap_loadingScreen) {
+							case 0:
+							default:
+								loadingScreen_valuetext = "None";
+								break;
+							case 1:
+								loadingScreen_valuetext = "Regular";
+								break;
+							case 2:
+								loadingScreen_valuetext = "Pong";
+								break;
+							case 3:
+								loadingScreen_valuetext = "Tic-Tac-Toe";
+								break;
 						}
+						printSmall(false, 176, selyPos, loadingScreen_valuetext);
 
 
-						if (settingscursor == 0) {
-							printSmall(false, 4, 156, "Set to TWL to get rid of lags");
-							printSmall(false, 4, 164, "in some games.");
-						} /* else if (settingscursor == 4) {
-							printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
-							printSmall(false, 4, 164, "and expands the bus to 32 bit.");
-						} */ else if (settingscursor == 1) {
-							printSmall(false, 4, 156, "Displays some text before");
-							printSmall(false, 4, 164, "launched game.");
-						} else if (settingscursor == 2) {
-							// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
-							// printSmall(false, 4, 164, "avoiding conflict with");
-							// printSmall(false, 4, 172, "recent libnds.");
-							printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
-							printSmall(false, 4, 164, "If on, Camera LED will be");
-							printSmall(false, 4, 172, "used as async prefetch indicator.");
-						} else if (settingscursor == 3) {
-							printSmall(false, 4, 156, "Enable, disable, or force use of");
-							printSmall(false, 4, 164, "donor ROM.");
-						} else if (settingscursor == 4) {
-							if(!arm7SCFGLocked) {
+						if(!arm7SCFGLocked) {
+							if (settingscursor == 0) {
+								printSmall(false, 4, 156, "Set to TWL to get rid of lags");
+								printSmall(false, 4, 164, "in some games.");
+							} /* else if (settingscursor == 4) {
+								printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
+								printSmall(false, 4, 164, "and expands the bus to 32 bit.");
+							} */ else if (settingscursor == 1) {
+								printSmall(false, 4, 156, "Displays some text before");
+								printSmall(false, 4, 164, "launched game.");
+							} else if (settingscursor == 2) {
+								// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
+								// printSmall(false, 4, 164, "avoiding conflict with");
+								// printSmall(false, 4, 172, "recent libnds.");
+								printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
+								printSmall(false, 4, 164, "If on, Camera LED will be");
+								printSmall(false, 4, 172, "used as async prefetch indicator.");
+							} else if (settingscursor == 3) {
+								printSmall(false, 4, 156, "Enable, disable, or force use of");
+								printSmall(false, 4, 164, "donor ROM.");
+							} else if (settingscursor == 4) {
 								if(is3DS){
 									printSmall(false, 4, 156, "Pick release or unofficial");
 									printSmall(false, 4, 164, "bootstrap.");
@@ -764,13 +785,40 @@ int main(int argc, char **argv) {
 									printSmall(false, 4, 156, "If launched from DSi Menu via");
 									printSmall(false, 4, 164, "HiyaCFW, disable this option.");
 								}
-							} else {
+							} else if (settingscursor == 5) {
 								printSmall(false, 4, 156, "32.73 kHz: Original quality");
 								printSmall(false, 4, 164, "47.61 kHz: High quality");
+							} else if (settingscursor == 6) {
+								printSmall(false, 4, 156, "Shows a loading screen before ROM");
+								printSmall(false, 4, 164, "is started in nds-bootstrap.");
 							}
-						} else if (settingscursor == 5) {
-							printSmall(false, 4, 156, "32.73 kHz: Original quality");
-							printSmall(false, 4, 164, "47.61 kHz: High quality");
+						} else {
+							if (settingscursor == 0) {
+								printSmall(false, 4, 156, "Set to TWL to get rid of lags");
+								printSmall(false, 4, 164, "in some games.");
+							} /* else if (settingscursor == 4) {
+								printSmall(false, 4, 156, "Allows 8 bit VRAM writes");
+								printSmall(false, 4, 164, "and expands the bus to 32 bit.");
+							} */ else if (settingscursor == 1) {
+								printSmall(false, 4, 156, "Displays some text before");
+								printSmall(false, 4, 164, "launched game.");
+							} else if (settingscursor == 2) {
+								// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
+								// printSmall(false, 4, 164, "avoiding conflict with");
+								// printSmall(false, 4, 172, "recent libnds.");
+								printSmall(false, 4, 156, "Sets LED as ROM read indicator.");
+								printSmall(false, 4, 164, "If on, Camera LED will be");
+								printSmall(false, 4, 172, "used as async prefetch indicator.");
+							} else if (settingscursor == 3) {
+								printSmall(false, 4, 156, "Enable, disable, or force use of");
+								printSmall(false, 4, 164, "donor ROM.");
+							} else if (settingscursor == 4) {
+								printSmall(false, 4, 156, "32.73 kHz: Original quality");
+								printSmall(false, 4, 164, "47.61 kHz: High quality");
+							} else if (settingscursor == 5) {
+								printSmall(false, 4, 156, "Shows a loading screen before ROM");
+								printSmall(false, 4, 164, "is started in nds-bootstrap.");
+							}
 						}
 					} else {
 						printSmall(false, 12, selyPos, "Flashcard(s) select");
@@ -815,67 +863,108 @@ int main(int argc, char **argv) {
 					
 				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 					if(!flashcardUsed) {
-						switch (settingscursor) {
-							case 0:
-							default:
-								bstrap_boostcpu = !bstrap_boostcpu;
-								menuprinted = false;
-								break;
-							case 1:
-								bstrap_debug = !bstrap_debug;
-								menuprinted = false;
-								break;
-							case 2:
-								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
-								if (pressed & KEY_LEFT) {
-									bstrap_romreadled -= 1;
-									if (bstrap_romreadled < 0) bstrap_romreadled = 2;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_romreadled += 1;
-									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
-								}
-								menuprinted = false;
-								break;
-							case 3:
-								if (pressed & KEY_LEFT) {
-									bstrap_useArm7Donor -= 0;
-									if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_useArm7Donor += 1;
-									if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
-								}
-								menuprinted = false;
-								break;
-							case 4:
-								if(!arm7SCFGLocked) {
+						if(!arm7SCFGLocked) {
+							switch (settingscursor) {
+								case 0:
+								default:
+									bstrap_boostcpu = !bstrap_boostcpu;
+									break;
+								case 1:
+									bstrap_debug = !bstrap_debug;
+									break;
+								case 2:
+									// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+									if (pressed & KEY_LEFT) {
+										bstrap_romreadled -= 1;
+										if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_romreadled += 1;
+										if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+									}
+									break;
+								case 3:
+									if (pressed & KEY_LEFT) {
+										bstrap_useArm7Donor -= 0;
+										if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_useArm7Donor += 1;
+										if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
+									}
+									break;
+								case 4:
 									if(is3DS){
 										bootstrapFile = !bootstrapFile;
 									} else {
 										ntr_touch = !ntr_touch;
 									}
-								} else {
+									break;
+								case 5:
 									soundfreq = !soundfreq;
-								}
-								menuprinted = false;
-								break;
-							case 5:
-								soundfreq = !soundfreq;
-								menuprinted = false;
-								break;
+									break;
+								case 6:
+									if (pressed & KEY_LEFT) {
+										bstrap_loadingScreen -= 0;
+										if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_loadingScreen += 1;
+										if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
+									}
+									break;
+							}
+						} else {
+							switch (settingscursor) {
+								case 0:
+								default:
+									bstrap_boostcpu = !bstrap_boostcpu;
+									break;
+								case 1:
+									bstrap_debug = !bstrap_debug;
+									break;
+								case 2:
+									// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+									if (pressed & KEY_LEFT) {
+										bstrap_romreadled -= 1;
+										if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_romreadled += 1;
+										if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+									}
+									break;
+								case 3:
+									if (pressed & KEY_LEFT) {
+										bstrap_useArm7Donor -= 0;
+										if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_useArm7Donor += 1;
+										if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
+									}
+									break;
+								case 4:
+									soundfreq = !soundfreq;
+									break;
+								case 5:
+									if (pressed & KEY_LEFT) {
+										bstrap_loadingScreen -= 0;
+										if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
+									} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+										bstrap_loadingScreen += 1;
+										if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
+									}
+									break;
+							}
 						}
 					} else {
 						switch (settingscursor) {
 							case 0:
 							default:
 								subscreenmode = 3;
-								menuprinted = false;
 								break;
 							case 1:
 								soundfreq = !soundfreq;
-								menuprinted = false;
 								break;
 						}
 					}
+					menuprinted = false;
 				}
 				
 				if ((pressed & KEY_L) || (pressed & KEY_R)) {
@@ -894,14 +983,11 @@ int main(int argc, char **argv) {
 
 				if(!flashcardUsed) {
 					if(!arm7SCFGLocked) {
+						if (settingscursor > 6) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 6;
+					} else {
 						if (settingscursor > 5) settingscursor = 0;
 						else if (settingscursor < 0) settingscursor = 5;
-					} else if(soundfreqsetting) {
-						if (settingscursor > 4) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 4;
-					} else {
-						if (settingscursor > 3) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 3;
 					}
 				} else {
 					if(soundfreqsetting) {
@@ -1029,15 +1115,12 @@ int main(int argc, char **argv) {
 								if (theme > 1) theme = 0;
 							} else
 								subscreenmode = 2;
-							menuprinted = false;
 							break;
 						case 1:
 							autorun = !autorun;
-							menuprinted = false;
 							break;
 						case 2:
 							showlogo = !showlogo;
-							menuprinted = false;
 							break;
 						case 3:
 							if (pressed & (KEY_LEFT | KEY_RIGHT)) {
@@ -1048,9 +1131,9 @@ int main(int argc, char **argv) {
 								SaveSettings();
 								RocketLauncher();
 							}
-							menuprinted = false;
 							break;
 					}
+					menuprinted = false;
 				}
 				
 				if ((pressed & KEY_L) || (pressed & KEY_R)) {
