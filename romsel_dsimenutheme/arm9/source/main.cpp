@@ -278,23 +278,34 @@ typedef struct {
 } sNDSHeadertitlecodeonly;
 
 /**
+ * Get the title ID.
+ * @param ndsFile DS ROM image.
+ * @param buf Output buffer for title ID. (Must be at least 4 characters.)
+ * @return 0 on success; non-zero on error.
+ */
+int grabTID(FILE* ndsFile, char *buf) {
+	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	size_t read = fread(buf, 1, 4, ndsFile);
+	return !(read == 4);
+}
+
+/**
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK(const char* filename) {
 	scanKeys();
 
 	FILE *f_nds_file = fopen(filename, "rb");
-	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 
 	char game_TID_full[5];
-	fread(game_TID_full, 1, 4, f_nds_file);
+	grabTID(f_nds_file, game_TID_full);
 	game_TID_full[4] = 0;
 	char game_TID[5];
-	fread(game_TID, 1, 4, f_nds_file);
+	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	char game_TID_char1[5];
-	fread(game_TID_char1, 1, 4, f_nds_file);
+	grabTID(f_nds_file, game_TID_char1);
 	game_TID_char1[4] = 0;
 	game_TID_char1[3] = 0;
 	game_TID_char1[2] = 0;
@@ -303,7 +314,7 @@ void SetDonorSDK(const char* filename) {
 	
 	donorSdkVer = 0;
 
-	// Check for ROM hacks that need an SDK version.
+	// Check for ROMs or ROM hacks that need an SDK version.
 	static const char sdk2_list[][4] = {
 		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
 		"AMH",	// Metroid Prime Hunters
