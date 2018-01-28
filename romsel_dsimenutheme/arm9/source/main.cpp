@@ -289,7 +289,7 @@ void SetDonorSDK(const char* filename) {
 	
 	donorSdkVer = 0;
 
-	// Check for ROMs or ROM hacks that need an SDK version.
+	// Check for ROM hacks that need an SDK version.
 	static const char sdk2_list[][4] = {
 		"AMQ",	// Mario vs. Donkey Kong 2 - March of the Minis
 		"AMH",	// Metroid Prime Hunters
@@ -605,7 +605,7 @@ int main(int argc, char **argv) {
 	std::string bootstrapfilename;
 
 	LoadSettings();
-	
+
 	graphicsInit();
 	fontInit();
 

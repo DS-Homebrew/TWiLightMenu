@@ -21,6 +21,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include <gl2d.h>
+#include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 
 // Graphic files
@@ -57,6 +58,9 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
+#define CONSOLE_SCREEN_WIDTH 32
+#define CONSOLE_SCREEN_HEIGHT 24
+
 extern bool whiteScreen;
 
 extern int colorRvalue;
@@ -84,7 +88,6 @@ extern int cursorPosition;
 int titleboxXpos;
 int titlewindowXpos;
 
-bool renderingTop = true;
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID;
 int bipsTexID, scrollwindowTexID, scrollwindowfrontTexID, buttonarrowTexID, startTexID, startbrdTexID, braceTexID, boxfullTexID, boxemptyTexID;
 
@@ -103,6 +106,16 @@ glImage startbrdImage[(32 / 16) * (128 / 16)];
 glImage braceImage[(16 / 16) * (128 / 16)];
 glImage boxfullImage[(64 / 16) * (64 / 16)];
 glImage boxemptyImage[(64 / 16) * (64 / 16)];
+
+void vramcpy_ui (void* dest, const void* src, int size) 
+{
+	u16* destination = (u16*)dest;
+	u16* source = (u16*)src;
+	while (size > 0) {
+		*destination++ = *source++;
+		size-=2;
+	}
+}
 
 extern mm_sound_effect snd_stop;
 
@@ -155,35 +168,11 @@ void drawBubble(glImage *images)
 	}
 }
 
-void startRendering(bool top)
-{
-	if (top)
-	{
-		lcdMainOnBottom();
-		vramSetBankC(VRAM_C_LCD);
-		vramSetBankD(VRAM_D_SUB_SPRITE);
-		REG_DISPCAPCNT = DCAP_BANK(2) | DCAP_ENABLE | DCAP_SIZE(3);
-	}
-	else
-	{
-		lcdMainOnTop();
-		vramSetBankD(VRAM_D_LCD);
-		vramSetBankC(VRAM_C_SUB_BG);
-		REG_DISPCAPCNT = DCAP_BANK(3) | DCAP_ENABLE | DCAP_SIZE(3);
-	}
-}
-
-bool isRenderingTop()
-{
-	return renderingTop;
-}
-
 void vBlankHandler()
 {
-	startRendering(renderingTop);
 	glBegin2D();
 	{
-		if (renderingTop)
+		/*if (renderingTop)
 		{
 			glBoxFilledGradient(0, -64, 256, 112,
 						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
@@ -199,7 +188,7 @@ void vBlankHandler()
 			glColor(RGB15(31, 31, 31));
 		}
 		else
-		{
+		{*/
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
 			else glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
@@ -208,26 +197,26 @@ void vBlankHandler()
 			glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
 			
 			if (titleboxXmoveleft) {
-				if (movetimer == 4) {
+				if (movetimer == 8) {
 					if (showbubble) mmEffectEx(&snd_stop);
 					titlewindowXpos -= 1;
 					movetimer++;
-				} else if (movetimer < 4) {
-					titleboxXpos -= 16;
-					titlewindowXpos -= 1;
+				} else if (movetimer < 8) {
+					titleboxXpos -= 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos -= 1;
 					movetimer++;
 				} else {
 					titleboxXmoveleft = false;
 					movetimer = 0;
 				}
 			} else if (titleboxXmoveright) {
-				if (movetimer == 4) {
+				if (movetimer == 8) {
 					if (showbubble) mmEffectEx(&snd_stop);
 					titlewindowXpos += 1;
 					movetimer++;
-				} else if (movetimer < 4) {
-					titleboxXpos += 16;
-					titlewindowXpos += 1;
+				} else if (movetimer < 8) {
+					titleboxXpos += 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos += 1;
 					movetimer++;
 				} else {
 					titleboxXmoveright = false;
@@ -271,7 +260,7 @@ void vBlankHandler()
 				glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 				if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
 				else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
-				titleboxYmovepos += 7;
+				titleboxYmovepos += 5;
 				if (titleboxYmovepos > 192) whiteScreen = true;
 			}
 			glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
@@ -284,13 +273,12 @@ void vBlankHandler()
 			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
 			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			updateText(renderingTop);
+			updateText(false);
 			glColor(RGB15(31, 31, 31));
-		}
+		//}
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
-	renderingTop = !renderingTop;
 }
 
 void graphicsInit()
@@ -302,25 +290,43 @@ void graphicsInit()
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_5_2D);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 
-	// Initialize OAM to capture 3D scene
-	initSubSprites();
 
-	// The sub background holds the top image when 3D directed to bottom
-	bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-
-	// Initialize GL in 3D mode
+	// Initialize gl2d
 	glScreen2D();
 
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
 	// sprites
-	// vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
+
 	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
+
 	vramSetBankE(VRAM_E_MAIN_BG);
+	lcdMainOnBottom();
+
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2);
+	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
+	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
+		bgMapSub[i] = (u16)i;
+	}
+	//consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+	//put bg 0 at a lower priority than the text background
+	//bgSetPriority(0, 1);
 	
+	if (subtheme == 1) {
+		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
+	} else {
+		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
+	}
+	
+	//iprintf("Robz");
+
 	if (subtheme == 1) {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
 								16, // sprite width
@@ -623,7 +629,7 @@ void graphicsInit()
 	
 	loadGBCIcon();
 
-	if (subtheme == 1) {
+	/*if (subtheme == 1) {
 		mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array
 									16, // sprite width
 									16, // sprite height
@@ -679,6 +685,6 @@ void graphicsInit()
 									(u16*) shoulderPal, // Load our 16 color tiles palette
 									(u8*) shoulderBitmap // image data generated by GRIT
 									);
-	}
+	}*/
 
 }
