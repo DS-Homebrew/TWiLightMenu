@@ -25,6 +25,10 @@
 #include "FontGraphic.h"
 
 // Graphic files
+#include "topbg_0gray.h"
+#include "topbg_11lightblue.h"
+#include "topbg_13violet.h"
+#include "topbg_14purple.h"
 #include "top.h"
 #include "org_top.h"
 #include "bottom.h"
@@ -281,6 +285,28 @@ void vBlankHandler()
 	GFX_FLUSH = 0;
 }
 
+void topBgLoad() {
+	switch (PersonalData->theme) {
+		case 0:
+		default:
+			swiDecompressLZSSVram ((void*)topbg_0grayTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_0grayPal, topbg_0grayPalLen);
+			break;
+		case 11:
+			swiDecompressLZSSVram ((void*)topbg_11lightblueTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_11lightbluePal, topbg_11lightbluePalLen);
+			break;
+		case 13:
+			swiDecompressLZSSVram ((void*)topbg_13violetTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_13violetPal, topbg_13violetPalLen);
+			break;
+		case 14:
+			swiDecompressLZSSVram ((void*)topbg_14purpleTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_14purplePal, topbg_14purplePalLen);
+			break;
+	}
+}
+
 void graphicsInit()
 {
 	titleboxXpos = cursorPosition*64;
@@ -290,7 +316,7 @@ void graphicsInit()
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE);
 
 
 	// Initialize gl2d
@@ -308,24 +334,28 @@ void graphicsInit()
 	lcdMainOnBottom();
 
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2);
+	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
+	REG_BG1CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
 	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
 		bgMapSub[i] = (u16)i;
 	}
-	//consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-	//put bg 0 at a lower priority than the text background
-	//bgSetPriority(0, 1);
+	bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
+	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
+		bgMapSub[i] = (u16)i;
+	}
 	
+	topBgLoad();
+
 	if (subtheme == 1) {
-		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
 	} else {
-		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
 	}
 	
-	//iprintf("Robz");
+	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
 	if (subtheme == 1) {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array

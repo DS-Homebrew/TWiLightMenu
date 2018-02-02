@@ -36,22 +36,14 @@ std::string RetTime();
 
 /**
  * Draw the date using the specified format.
- * @param screen Top or Bottom screen.
- * @param Xpos X position.
- * @param Ypos Y position.
- * @param size Text size.
  * @param format Date format.
  */
-void DrawDateF(bool screen, int x, int y, bool size, DateFormat format);
+char* DrawDateF(DateFormat format);
 
 /**
  * Draw the month and year using the specified color.
  * Format is selected based on the language setting.
- * @param Xpos X position.
- * @param Ypos Y position.
- * @param color Text color.
- * @param size Text size.
  */
-void DrawDate(bool screen, int x, int y, bool size);
+char* DrawDate(void);
 
 #endif // DATE_H

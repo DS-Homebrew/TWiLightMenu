@@ -563,11 +563,16 @@ int main(int argc, char **argv) {
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
-				clearText(true);
-				printSmall(true, 24, 4, username);
-				// DrawDate(true, 128, 4, false);	// Draws glitchiness for some reason
-				printSmall(true, 200, 4, RetTime().c_str());
-				
+				consoleClear();
+				char usernameRendered[10];
+				for (int i = 0; i < 10; i++) {
+					if (username[i] == 0)
+						usernameRendered[i] = 0x20;
+					else
+						usernameRendered[i] = username[i];
+				}
+				iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
+
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();

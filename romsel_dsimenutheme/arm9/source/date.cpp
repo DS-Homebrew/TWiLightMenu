@@ -89,14 +89,13 @@ string RetTime()
  * @param size Text size.
  * @param format Date format.
  */
-void DrawDateF(bool screen, int x, int y, bool size, DateFormat format)
+char* DrawDateF(DateFormat format)
 {
 	char date_str[24];
 	GetDate(format, date_str, sizeof(date_str));
 	if (date_str[0] == 0)
-		return;
-	if (size) printLarge(screen, x, y, date_str);
-	else printSmall(screen, x, y, date_str);
+		return "";
+	return date_str;
 }
 
 /**
@@ -107,7 +106,7 @@ void DrawDateF(bool screen, int x, int y, bool size, DateFormat format)
  * @param Ypos Y position.
  * @param size Text size.
  */
-void DrawDate(bool screen, int x, int y, bool size)
+char* DrawDate()
 {
 	// Date formats.
 	// - Index: Language ID.
@@ -123,5 +122,5 @@ void DrawDate(bool screen, int x, int y, bool size)
 		FORMAT_MD,	// Korean
 	};
 
-	DrawDateF(screen, x, y, size, (DateFormat)date_fmt[PersonalData->language]);
+	return DrawDateF((DateFormat)date_fmt[PersonalData->language]);
 }
