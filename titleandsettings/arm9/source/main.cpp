@@ -45,8 +45,6 @@ const char* consoleText = "";
 
 bool is3DS = false;
 
-bool rebootInRocketLauncher = false;
-
 bool showlogo = true;
 bool gotosettings = false;
 
@@ -94,13 +92,12 @@ void LoadSettings(void) {
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	rebootInRocketLauncher = settingsini.GetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Customizable UI settings.
-	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	//theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 
 	if(!flashcardUsed) {
@@ -128,7 +125,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-	settingsini.SetInt("SRLOADER", "REBOOT_INTO_ROCKETLAUNCHER", rebootInRocketLauncher);
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
@@ -200,34 +196,10 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-void RocketLauncher() {
-	bool payloadFound = false;
-	FILE* RocketLauncherPayload = fopen("sd:/_nds/RocketLauncher.bin","rb");
-	off_t fsize = 0;
-	if (RocketLauncherPayload) {
-		payloadFound = true;
-		fseek(RocketLauncherPayload, 0, SEEK_END);
-		fsize = ftell(RocketLauncherPayload);
-		fseek(RocketLauncherPayload, 0, SEEK_SET);
-		fread((void*)0x02800000,1,fsize,RocketLauncherPayload);
-    }
-	fclose(RocketLauncherPayload);
-	if(payloadFound) {
-		FILE* ResetData = fopen("sd:/_nds/ResetData.bin","rb");
-		fread((void*)0x02000300,1,32,ResetData);
-		fclose(ResetData);
-		fifoSendValue32(FIFO_USER_08, 1);
-		for (int i = 0; i < 20; i++) {
-			swiWaitForVBlank();
-		}
-	}
-}
-
 void loadROMselect() {
 	if(soundfreq) fifoSendValue32(FIFO_MAXMOD, 2);
 	else fifoSendValue32(FIFO_MAXMOD, 1);
-	if (theme == 0) runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
-	else runNdsFile ("/_nds/srloader/dsmenu.srldr", 0, NULL);
+	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
 }
 
 //---------------------------------------------------------------------------------
@@ -296,10 +268,6 @@ int main(int argc, char **argv) {
 
 	scanKeys();
 
-	if (arm7SCFGLocked && !gotosettings && rebootInRocketLauncher && !(keysHeld() & KEY_L)) {
-		RocketLauncher();
-	}
-
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		if(!flashcardUsed) {
 			if (!arm7SCFGLocked) {
@@ -313,16 +281,16 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					if(donorSdkVer==5) {
-						bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+						bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 					} else {
-						bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+						bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 					}
 				}
 			} else {
 				if(donorSdkVer==5) {
-					bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+					bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 				} else {
-					bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+					bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 				}
 			}
 			runNdsFile (bootstrapfilename.c_str(), 0, NULL);
@@ -1048,17 +1016,6 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 56, "Off");
 
-					if(!flashcardUsed) {
-						if(arm7SCFGLocked) {
-							printSmall(false, 12, 64, "Reboot into RocketLauncher");
-							
-							if(rebootInRocketLauncher)
-								printSmall(false, 224, 64, "On");
-							else
-								printSmall(false, 224, 64, "Off");
-						}
-					}
-
 
 					if (settingscursor == 0) {
 						printSmall(false, 4, 164, "The theme to use in SRLoader.");
@@ -1072,13 +1029,6 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "The SRLoader logo will be");
 						printSmall(false, 4, 164, "shown when you start");
 						printSmall(false, 4, 172, "SRLoader.");
-					} else if (settingscursor == 3) {
-						printSmall(false, 4, 132, "Reboots with unlocked ARM7 SCFG,");
-						printSmall(false, 4, 140, "for sound to play correctly in");
-						printSmall(false, 4, 148, "nds-bootstrap. Requires a Slot-1");
-						printSmall(false, 4, 156, "card in the slot, and it's TID");
-						printSmall(false, 4, 164, "with the exploit in the whitelist.");
-						printSmall(false, 4, 172, "Press A to reboot in this mode.");
 					}
 
 
@@ -1106,13 +1056,13 @@ int main(int argc, char **argv) {
 						case 0:
 						default:
 							if (pressed & KEY_LEFT) {
-								subtheme = 0;
-								theme -= 1;
-								if (theme < 0) theme = 1;
+								//subtheme = 0;
+								//theme -= 1;
+								//if (theme < 0) theme = 1;
 							} else if (pressed & KEY_RIGHT) {
-								subtheme = 0;
-								theme += 1;
-								if (theme > 1) theme = 0;
+								//subtheme = 0;
+								//theme += 1;
+								//if (theme > 1) theme = 0;
 							} else
 								subscreenmode = 2;
 							break;
@@ -1121,16 +1071,6 @@ int main(int argc, char **argv) {
 							break;
 						case 2:
 							showlogo = !showlogo;
-							break;
-						case 3:
-							if (pressed & (KEY_LEFT | KEY_RIGHT)) {
-								rebootInRocketLauncher = !rebootInRocketLauncher;
-							} else {
-								clearText();
-								printSmall(false, 4, 4, "Saving settings...");
-								SaveSettings();
-								RocketLauncher();
-							}
 							break;
 					}
 					menuprinted = false;
@@ -1160,16 +1100,16 @@ int main(int argc, char **argv) {
 								}
 							} else {
 								if(donorSdkVer==5) {
-									bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+									bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 								} else {
-									bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+									bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 								}
 							}
 						} else {
 							if(donorSdkVer==5) {
-								bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+								bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 							} else {
-								bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+								bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 							}
 						}
 						err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
@@ -1204,18 +1144,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if(!flashcardUsed) {
-					if(!arm7SCFGLocked) {
-						if (settingscursor > 2) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 2;
-					} else {
-						if (settingscursor > 3) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 3;
-					}
-				} else {
-					if (settingscursor > 2) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 2;
-				}
+				if (settingscursor > 2) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 2;
 			}
 
 		} else {

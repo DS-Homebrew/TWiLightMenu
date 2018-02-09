@@ -602,7 +602,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			iprintf ("Start failed. Error %i\n", err);
 		}
 
-		if ((pressed & KEY_SELECT) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
+		if ((pressed & KEY_SELECT) && (romtype == 0) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str();
 			printSmallCentered(false, 160, "Donor ROM is set.");

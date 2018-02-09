@@ -782,16 +782,16 @@ int main(int argc, char **argv) {
 									}
 								} else {
 									if(donorSdkVer==5) {
-										bootstrapfilename = "sd:/_nds/rocket-bootstrap-sdk5.nds";
+										bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 									} else {
-										bootstrapfilename = "sd:/_nds/rocket-bootstrap.nds";
+										bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 									}
 								}
 							} else {
 								if(donorSdkVer==5) {
-									bootstrapfilename = "sd:/_nds/dsiware-bootstrap-sdk5.nds";
+									bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
 								} else {
-									bootstrapfilename = "sd:/_nds/dsiware-bootstrap.nds";
+									bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
 								}
 							}
 						}
@@ -865,8 +865,14 @@ int main(int argc, char **argv) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
-				argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
-				int err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				int err = 0;
+				if(flashcardUsed) {
+					argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
+					err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				} else {
+					argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
+					err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				printLarge(false, 4, 4, text);
