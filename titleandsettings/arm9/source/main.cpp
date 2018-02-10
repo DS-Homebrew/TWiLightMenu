@@ -303,7 +303,8 @@ int main(int argc, char **argv) {
 	if (!fatInitDefault()) {
 		graphicsInit();
 		fontInit();
-		printSmall(true, 1, 2, username);
+		printf("\n ");
+		printf(username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
@@ -331,7 +332,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 1, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 2, 2, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -352,8 +353,11 @@ int main(int argc, char **argv) {
 		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 
-		printSmall(true, 8, 168, consoleText);
-		printSmall(true, 192, 184, vertext);
+		for (int i = 0; i < 20; i++) {
+			printf("\n");
+		}
+		iprintf(" %s\n\n", consoleText);
+		printf("                      %s", vertext);
 		if(*SCFG_EXT>0) {
 			char text1[48],
 				text2[48],
@@ -434,24 +438,30 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	bool menuprinted = false;
-	const char* lrswitchpages = "L/R: Switch pages";
+	//const char* lrswitchpages = "L/R: Switch pages";
 
 	int pressed = 0;
 
 	while(1) {
 	
 		if (screenmode == 1) {
-			
+
+			consoleClear();
+			printf("\n ");
+			printf(username);
+			for (int i = 0; i < 19; i++) {
+				printf("\n");
+			}
+			iprintf(" %s\n\n", consoleText);
+
 			if (subscreenmode == 3) {
 				pressed = 0;
 
 				if (!menuprinted) {
+					printf("                      %s", vertext);
+
 					// Clear the screen so it doesn't over-print
 					clearText();
-
-					printSmall(true, 1, 2, username);
-					printSmall(true, 8, 168, consoleText);
-					printSmall(true, 192, 184, vertext);
 
 					printLarge(false, 4, 4, "Flashcard(s) select");
 
@@ -526,12 +536,10 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
+					printf("                      %s", vertext);
+
 					// Clear the screen so it doesn't over-print
 					clearText();
-
-					printSmall(true, 1, 2, username);
-					printSmall(true, 8, 168, consoleText);
-					printSmall(true, 192, 184, vertext);
 
 					switch (theme) {
 						case 0:
@@ -600,14 +608,11 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
+					printf(" L/R: Switch pages    %s", vertext);
+
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmall(true, 1, 2, username);
-					printSmall(true, 8, 168, consoleText);
-					printSmall(true, 1, 184, lrswitchpages);
-					printSmall(true, 192, 184, vertext);
-					
 					printLarge(false, 4, 4, "Settings: Games/Apps");
 
 					int yPos;
@@ -905,13 +910,10 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
+					printf(" L/R: Switch pages    %s", vertext);
+
 					// Clear the screen so it doesn't over-print
 					clearText();
-
-					printSmall(true, 1, 2, username);
-					printSmall(true, 8, 168, consoleText);
-					printSmall(true, 1, 184, lrswitchpages);
-					printSmall(true, 192, 184, vertext);
 
 					printLarge(false, 4, 4, "Settings: GUI");
 					
