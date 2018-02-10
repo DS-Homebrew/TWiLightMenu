@@ -43,40 +43,40 @@ const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string bootstrapfilename;
 
+static bool is3DS = false;
+
 const char* consoleText = "";
 
-bool is3DS = false;
-
-bool showlogo = true;
-bool gotosettings = false;
+static bool showlogo = true;
+static bool gotosettings = false;
 
 const char* romreadled_valuetext;
 const char* useArm7Donor_valuetext;
 const char* loadingScreen_valuetext;
 
-int bstrap_useArm7Donor = 1;
-int bstrap_loadingScreen = 1;
+static int bstrap_useArm7Donor = 1;
+static int bstrap_loadingScreen = 1;
 
-int donorSdkVer = 0;
+static int donorSdkVer = 0;
 
-bool bootstrapFile = false;
+static bool bootstrapFile = false;
 
-bool ntr_touch = true;
+static bool ntr_touch = true;
 
-bool autorun = false;
-int theme = 0;
-int subtheme = 0;
+static bool autorun = false;
+static int theme = 0;
+static int subtheme = 0;
 
-bool bstrap_boostcpu = false;	// false == NTR, true == TWL
-bool bstrap_debug = false;
-int bstrap_romreadled = 0;
-// bool bstrap_lockARM9scfgext = false;
+static bool bstrap_boostcpu = false;	// false == NTR, true == TWL
+static bool bstrap_debug = false;
+static int bstrap_romreadled = 0;
+//static bool bstrap_lockARM9scfgext = false;
 
-bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
+static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
-bool flashcardUsed = false;
+static bool flashcardUsed = false;
 
-int flashcard;
+static int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
 	1: R4DS (Original Non-SDHC version)/ M3 Simply
@@ -101,6 +101,7 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	//theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
+	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 
 	if(!flashcardUsed) {
 		// nds-bootstrap
@@ -134,6 +135,7 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SaveIniFile(settingsinipath);
 	
 	if(is3DS && twldrsettingsFound && !flashcardUsed) {
@@ -159,12 +161,12 @@ void SaveSettings(void) {
 	}
 }
 
-int screenmode = 0;
-int subscreenmode = 0;
+static int screenmode = 0;
+static int subscreenmode = 0;
 
-int settingscursor = 0;
+static int settingscursor = 0;
 
-bool arm7SCFGLocked = false;
+static bool arm7SCFGLocked = false;
 
 using namespace std;
 
@@ -279,16 +281,6 @@ int main(int argc, char **argv) {
 		if (!access("fat:/", F_OK)) flashcardUsed = true;
 	}
 
-	if(!flashcardUsed) {
-		// Check for 32MB RAM access
-		if(*(u8*)(0x0DFFFFFA) == 0xAA) {
-			is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
-			consoleText = "Console: Nintendo 3DS/2DS";
-		} else {
-			consoleText = "Console: Nintendo DSi";
-		}
-	}
-
 	// Read user name
 	char *username = (char*)PersonalData->name;
 
@@ -325,6 +317,20 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_MAXMOD, 0);
 
 	scanKeys();
+
+	if(!flashcardUsed) {
+		if(keysHeld() & KEY_UP) {
+			is3DS = true;
+		}
+		if(keysHeld() & KEY_DOWN) {
+			is3DS = false;
+		}
+	}
+	if(is3DS) {
+		consoleText = "Console: Nintendo 3DS/2DS";
+	} else {
+		consoleText = "Console: Nintendo DSi";
+	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		lastRanROM();

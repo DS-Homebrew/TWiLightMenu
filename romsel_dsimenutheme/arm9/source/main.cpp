@@ -92,7 +92,6 @@ bool gotosettings = false;
 bool bootstrapFile = false;
 
 bool autorun = false;
-int theme = 0;
 int subtheme = 0;
 int cursorPosition = 0;
 int pagenum = 0;
@@ -126,8 +125,9 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	//theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
+	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
@@ -153,7 +153,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
-	settingsini.SetInt("SRLOADER", "THEME", theme);
+	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 	
@@ -531,11 +531,6 @@ int main(int argc, char **argv) {
 
 	if (fatInitDefault()) {
 		if (!access("fat:/", F_OK)) flashcardUsed = true;
-	}
-
-	// Check for 32MB RAM access
-	if(!flashcardUsed && *(u8*)(0x0DFFFFFA) == 0xAA) {
-		is3DS = true;	// If 32MB RAM is accessible, then the console is 3DS/2DS.
 	}
 
 	// Read user name
