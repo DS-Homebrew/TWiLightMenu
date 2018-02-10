@@ -39,18 +39,15 @@ unsigned int * CPUID2=(unsigned int*)0x4004D04;
 int sndValue = 0;
 
 //---------------------------------------------------------------------------------
-void RocketLauncherReboot() {
+void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
-	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reboot to RocketLauncher
+	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
 }
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_08)) {
-		RocketLauncherReboot();
-	}
 	if(fifoGetValue32(FIFO_MAXMOD) == 2) {
 		*(u16*)(0x4004700) = 0xC00F;
 	} else if(fifoGetValue32(FIFO_MAXMOD) == 1) {

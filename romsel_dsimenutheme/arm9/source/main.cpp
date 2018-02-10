@@ -787,16 +787,20 @@ int main(int argc, char **argv) {
 									}
 								} else {
 									if(donorSdkVer==5) {
-										bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
+										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
+										else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
 									} else {
-										bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
+										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
+										else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
 									}
 								}
 							} else {
 								if(donorSdkVer==5) {
-									bootstrapfilename = "sd:/_nds/dsi-bootstrap-sdk5.nds";
+									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
+									else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
 								} else {
-									bootstrapfilename = "sd:/_nds/dsi-bootstrap.nds";
+									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
+									else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
 								}
 							}
 						}
