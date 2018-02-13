@@ -48,9 +48,9 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_MAXMOD) == 2) {
+	if(fifoGetValue32(FIFO_USER_07) == 2) {
 		*(u16*)(0x4004700) = 0xC00F;
-	} else if(fifoGetValue32(FIFO_MAXMOD) == 1) {
+	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
 		*(u16*)(0x4004700) = 0x800F;
 	}
 }
@@ -106,7 +106,7 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);
 	fifoSendValue32(FIFO_USER_05, *CPUID);
-	fifoSendValue32(FIFO_MAXMOD, *(u16*)(0x4004700));
+	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle

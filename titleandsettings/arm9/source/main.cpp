@@ -203,8 +203,8 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void loadROMselect() {
-	if(soundfreq) fifoSendValue32(FIFO_MAXMOD, 2);
-	else fifoSendValue32(FIFO_MAXMOD, 1);
+	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+	else fifoSendValue32(FIFO_USER_07, 1);
 	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
 }
 
@@ -312,9 +312,9 @@ int main(int argc, char **argv) {
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_MAXMOD);
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
-	fifoSendValue32(FIFO_MAXMOD, 0);
+	fifoSendValue32(FIFO_USER_07, 0);
 
 	scanKeys();
 
