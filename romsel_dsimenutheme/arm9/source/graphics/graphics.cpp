@@ -61,6 +61,7 @@
 #include "../iconTitle.h"
 #include "graphics.h"
 #include "fontHandler.h"
+#include "../ndsheaderbanner.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -276,7 +277,16 @@ void vBlankHandler()
 			}
 			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
-			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			if (whiteScreen) {
+				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			} else {
+				// Playback animated icons
+				for (int i = 0; i < 39; i++) {
+					if(bnriconisDSi[i]==true) {
+						playBannerSequence(i);
+					}
+				}
+			}
 			updateText(false);
 			glColor(RGB15(31, 31, 31));
 		//}

@@ -227,4 +227,29 @@ int grabTID(FILE* ndsFile, char *buf);
  */
 u32 getSDKVersion(FILE* ndsFile);
 
+// bnriconframenum[]
+extern int bnriconframenumX[39];
+extern int bnriconframenumY[39];
+extern int bannerFlip[39];
+
+// bnriconisDSi[]
+extern bool bnriconisDSi[39];
+
+/**
+ * Get banner sequence from banner file.
+ * @param binFile Banner file.
+ */
+void grabBannerSequence(int iconnum);
+
+/**
+ * Clear loaded banner sequence.
+ */
+void clearBannerSequence(int iconnum);
+
+/**
+ * Play banner sequence.
+ * @param binFile Banner file.
+ */
+void playBannerSequence(int iconnum);
+
 #endif // NDS_HEADER2

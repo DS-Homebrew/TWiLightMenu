@@ -40,7 +40,7 @@
 
 static int iconTexID[40];
 static int gbcTexID;
-static sNDSBannerExt ndsBanner;
+sNDSBannerExt ndsBanner;
 
 static glImage icon1[(32 / 32) * (256 / 32)];
 static glImage icon2[(32 / 32) * (256 / 32)];
@@ -134,12 +134,19 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+	clearBannerSequence(num);
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
+	bnriconframenumX[num] = 0;
+	bnriconframenumY[num] = 0;
+	bannerFlip[num] = GL_FLIP_NONE;
+	bnriconisDSi[num] = false;
 	if(twl) {
+		grabBannerSequence(num);
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
+		bnriconisDSi[num] = true;
 	}
 
 	glDeleteTextures(1, &iconTexID[num]);
@@ -1434,121 +1441,121 @@ void drawIcon(int Xpos, int Ypos, int num)
 	switch (num) {
 		case 0:
 		default:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon1[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon1[bnriconframenumY[num] & 31]);
 			break;
 		case 1:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon2[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon2[bnriconframenumY[num] & 31]);
 			break;
 		case 2:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon3[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon3[bnriconframenumY[num] & 31]);
 			break;
 		case 3:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon4[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon4[bnriconframenumY[num] & 31]);
 			break;
 		case 4:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon5[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon5[bnriconframenumY[num] & 31]);
 			break;
 		case 5:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon6[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon6[bnriconframenumY[num] & 31]);
 			break;
 		case 6:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon7[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon7[bnriconframenumY[num] & 31]);
 			break;
 		case 7:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon8[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon8[bnriconframenumY[num] & 31]);
 			break;
 		case 8:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon9[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon9[bnriconframenumY[num] & 31]);
 			break;
 		case 9:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon10[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon10[bnriconframenumY[num] & 31]);
 			break;
 		case 10:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon11[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon11[bnriconframenumY[num] & 31]);
 			break;
 		case 11:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon12[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon12[bnriconframenumY[num] & 31]);
 			break;
 		case 12:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon13[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon13[bnriconframenumY[num] & 31]);
 			break;
 		case 13:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon14[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon14[bnriconframenumY[num] & 31]);
 			break;
 		case 14:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon15[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon15[bnriconframenumY[num] & 31]);
 			break;
 		case 15:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon16[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon16[bnriconframenumY[num] & 31]);
 			break;
 		case 16:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon17[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon17[bnriconframenumY[num] & 31]);
 			break;
 		case 17:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon18[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon18[bnriconframenumY[num] & 31]);
 			break;
 		case 18:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon19[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon19[bnriconframenumY[num] & 31]);
 			break;
 		case 19:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon20[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon20[bnriconframenumY[num] & 31]);
 			break;
 		case 20:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon21[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon21[bnriconframenumY[num] & 31]);
 			break;
 		case 21:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon22[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon22[bnriconframenumY[num] & 31]);
 			break;
 		case 22:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon23[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon23[bnriconframenumY[num] & 31]);
 			break;
 		case 23:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon24[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon24[bnriconframenumY[num] & 31]);
 			break;
 		case 24:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon25[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon25[bnriconframenumY[num] & 31]);
 			break;
 		case 25:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon26[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon26[bnriconframenumY[num] & 31]);
 			break;
 		case 26:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon27[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon27[bnriconframenumY[num] & 31]);
 			break;
 		case 27:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon28[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon28[bnriconframenumY[num] & 31]);
 			break;
 		case 28:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon29[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon29[bnriconframenumY[num] & 31]);
 			break;
 		case 29:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon30[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon30[bnriconframenumY[num] & 31]);
 			break;
 		case 30:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon31[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon31[bnriconframenumY[num] & 31]);
 			break;
 		case 31:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon32[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon32[bnriconframenumY[num] & 31]);
 			break;
 		case 32:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon33[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon33[bnriconframenumY[num] & 31]);
 			break;
 		case 33:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon34[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon34[bnriconframenumY[num] & 31]);
 			break;
 		case 34:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon35[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon35[bnriconframenumY[num] & 31]);
 			break;
 		case 35:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon36[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon36[bnriconframenumY[num] & 31]);
 			break;
 		case 36:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon37[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon37[bnriconframenumY[num] & 31]);
 			break;
 		case 37:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon38[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon38[bnriconframenumY[num] & 31]);
 			break;
 		case 38:
-			glSprite(Xpos, Ypos, GL_FLIP_NONE, &icon39[0 & 31]);
+			glSprite(Xpos, Ypos, bannerFlip[num], &icon39[bnriconframenumY[num] & 31]);
 			break;
 	}
 }
