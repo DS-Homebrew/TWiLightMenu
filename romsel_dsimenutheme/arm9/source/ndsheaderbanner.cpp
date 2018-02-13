@@ -58,7 +58,7 @@ char arm9binary[0x100000];
  * @return 0 on success; non-zero on error.
  */
 u32 getSDKVersion(FILE* ndsFile) {
-	sNDSHeader2 NDSHeader;
+	sNDSHeaderExt NDSHeader;
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
 	

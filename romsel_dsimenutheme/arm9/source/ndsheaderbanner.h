@@ -137,7 +137,7 @@ typedef struct {
 	u8 dsi1[0x30];
 	u32 dsi_tid;
 	u8 dsi2[0x180];
-} sNDSHeader2;
+} sNDSHeaderExt;
 
 typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
@@ -148,7 +148,7 @@ typedef struct {
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
 // Make sure the banner size is correct.
-static_assert(sizeof(sNDSHeader2) == 0x3B4, "sizeof(sNDSHeader) is not 0x3B4 bytes");
+static_assert(sizeof(sNDSHeaderExt) == 0x3B4, "sizeof(sNDSHeaderExt) is not 0x3B4 bytes");
 
 
 /*!
@@ -170,7 +170,7 @@ typedef struct {
 	u8 dsi_icon[8][512];	//!< DSi animated icon frame data.
 	u16 dsi_palette[8][16];	//!< Palette for each DSi icon frame.
 	u16 dsi_seq[64];	//!< DSi animated icon sequence.
-} sNDSBanner2;
+} sNDSBannerExt;
 
 // sNDSBanner version.
 typedef enum {
@@ -189,7 +189,7 @@ typedef enum {
 } sNDSBannerSize;
 
 // Make sure the banner size is correct.
-static_assert(sizeof(sNDSBanner2) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBanner2) is not 0x23C0 bytes");
+static_assert(sizeof(sNDSBannerExt) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBannerExt) is not 0x23C0 bytes");
 
 // Language indexes.
 typedef enum {
