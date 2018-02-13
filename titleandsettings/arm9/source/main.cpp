@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <maxmod9.h>
 #include <gl2d.h>
 
 #include "graphics/graphics.h"
@@ -36,6 +37,9 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
+
+#include "soundbank.h"
+#include "soundbank_bin.h"
 
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
@@ -169,6 +173,66 @@ static int settingscursor = 0;
 static bool arm7SCFGLocked = false;
 
 using namespace std;
+
+mm_sound_effect snd_launch;
+mm_sound_effect snd_select;
+mm_sound_effect snd_stop;
+mm_sound_effect snd_wrong;
+mm_sound_effect snd_back;
+mm_sound_effect snd_switch;
+
+void InitSound() {
+	mmInitDefaultMem((mm_addr)soundbank_bin);
+	
+	mmLoadEffect( SFX_LAUNCH );
+	mmLoadEffect( SFX_SELECT );
+	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_BACK );
+	mmLoadEffect( SFX_SWITCH );
+
+	snd_launch = {
+		{ SFX_LAUNCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_select = {
+		{ SFX_SELECT } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_stop = {
+		{ SFX_STOP } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_wrong = {
+		{ SFX_WRONG } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_back = {
+		{ SFX_BACK } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_switch = {
+		{ SFX_SWITCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+}
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -336,6 +400,8 @@ int main(int argc, char **argv) {
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		lastRanROM();
 	}
+	
+	InitSound();
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
@@ -525,15 +591,18 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_LEFT) {
 					flashcard -= 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_RIGHT) {
 					flashcard += 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 
 				if ((pressed & KEY_A) || (pressed & KEY_B)) {
 					subscreenmode = 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 
@@ -597,15 +666,18 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					subtheme -= 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					subtheme += 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 
 				if ((pressed & KEY_A) || (pressed & KEY_B)) {
 					subscreenmode = 0;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 
@@ -814,10 +886,12 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor -= 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor += 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 					
@@ -880,19 +954,25 @@ int main(int argc, char **argv) {
 								break;
 						}
 					}
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				
 				if ((pressed & KEY_L) || (pressed & KEY_R)) {
 					subscreenmode = 0;
 					settingscursor = 0;
+					mmEffectEx(&snd_switch);
 					menuprinted = false;
 				}
 
 				if (pressed & KEY_B) {
+					mmEffectEx(&snd_back);
 					clearText();
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
+					clearText();
+					printSmall(false, 4, 4, "Settings saved!");
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					loadROMselect();
 					break;
 				}
@@ -989,10 +1069,12 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor -= 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor += 1;
+					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 					
@@ -1004,18 +1086,24 @@ int main(int argc, char **argv) {
 								//subtheme = 0;
 								//theme -= 1;
 								//if (theme < 0) theme = 1;
+								mmEffectEx(&snd_wrong);
 							} else if (pressed & KEY_RIGHT) {
 								//subtheme = 0;
 								//theme += 1;
 								//if (theme > 1) theme = 0;
-							} else
+								mmEffectEx(&snd_wrong);
+							} else {
 								subscreenmode = 2;
+								mmEffectEx(&snd_select);
+							}
 							break;
 						case 1:
 							autorun = !autorun;
+							mmEffectEx(&snd_select);
 							break;
 						case 2:
 							showlogo = !showlogo;
+							mmEffectEx(&snd_select);
 							break;
 					}
 					menuprinted = false;
@@ -1024,22 +1112,31 @@ int main(int argc, char **argv) {
 				if ((pressed & KEY_L) || (pressed & KEY_R)) {
 					subscreenmode = 1;
 					settingscursor = 0;
+					mmEffectEx(&snd_switch);
 					menuprinted = false;
 				}
 
 				if (pressed & KEY_Y && settingscursor == 1) {
 					screenmode = 0;
+					mmEffectEx(&snd_launch);
 					clearText();
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
+					clearText();
+					printSmall(false, 4, 4, "Settings saved!");
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					int err = lastRanROM();
 					iprintf ("Start failed. Error %i\n", err);
 				}
 				
 				if (pressed & KEY_B) {
+					mmEffectEx(&snd_back);
 					clearText();
 					printSmall(false, 4, 4, "Saving settings...");
 					SaveSettings();
+					clearText();
+					printSmall(false, 4, 4, "Settings saved!");
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					loadROMselect();
 					break;
 				}

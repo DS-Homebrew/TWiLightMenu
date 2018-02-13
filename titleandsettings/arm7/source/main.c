@@ -28,6 +28,7 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include <maxmod7.h>
 
 unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
@@ -90,8 +91,11 @@ int main() {
 	
 	fifoInit();
 	
+	mmInstall(FIFO_MAXMOD);
+	
 	SetYtrigger(80);
 	
+	installSoundFIFO();
 	installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
