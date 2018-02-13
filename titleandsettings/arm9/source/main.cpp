@@ -325,11 +325,12 @@ int main(int argc, char **argv) {
 		if(keysHeld() & KEY_DOWN) {
 			is3DS = false;
 		}
-	}
-	if(is3DS) {
-		consoleText = "Console: Nintendo 3DS/2DS";
-	} else {
-		consoleText = "Console: Nintendo DSi";
+
+		if(is3DS) {
+			consoleText = "Console: Nintendo 3DS/2DS";
+		} else {
+			consoleText = "Console: Nintendo DSi";
+		}
 	}
 
 	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
