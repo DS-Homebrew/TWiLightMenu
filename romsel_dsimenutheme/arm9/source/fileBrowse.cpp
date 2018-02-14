@@ -580,7 +580,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 		} */
 		
-		if (pressed & KEY_B) {
+		if ((pressed & KEY_B) && !flashcardUsed) {
 			clearText(false);
 			clearText(true);
 			whiteScreen = true;

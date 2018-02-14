@@ -57,7 +57,7 @@ int grabTID(FILE* ndsFile, char *buf) {
 	return !(read == 4);
 }
 
-char arm9binary[0x100000];
+char arm9binary[0x40000];
 
 /**
  * Get SDK version from an NDS file.
@@ -71,7 +71,7 @@ u32 getSDKVersion(FILE* ndsFile) {
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
 	
 	fseek(ndsFile, NDSHeader.arm9romOffset, SEEK_SET);
-	if(NDSHeader.arm9binarySize > 0x100000) NDSHeader.arm9binarySize = 0x100000;
+	if(NDSHeader.arm9binarySize > 0x40000) NDSHeader.arm9binarySize = 0x40000;
 	fread(&arm9binary, 1, NDSHeader.arm9binarySize, ndsFile);
 
 	// Looking for moduleparams
