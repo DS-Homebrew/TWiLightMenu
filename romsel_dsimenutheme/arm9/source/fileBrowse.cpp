@@ -394,6 +394,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				usernameRenderedDone = true;
 			}
 			iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
+			for(int i = 0; i < 21; i++) {
+				printf("\n");
+			}
+			printf(" ");
+			if (pagenum != 0) {
+				printf("L: Previous");
+			} else {
+				printf("           ");
+			}
+			printf("            ");
+			if (file_count > 39+pagenum*39) {
+				printf("R: Next");
+			} else {
+				printf("       ");
+			}
 
 			//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
 			//if (file_count > 39+pagenum*39) printSmall(true, 182, 177, "Next Page");
