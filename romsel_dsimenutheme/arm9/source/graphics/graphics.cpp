@@ -105,6 +105,10 @@ extern int cursorPosition;
 int titleboxXpos;
 int titlewindowXpos;
 
+bool startBorderZoomOut = false;
+int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
+int startBorderZoomAnimNum = 0;
+
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID;
 int bipsTexID, scrollwindowTexID, scrollwindowfrontTexID, buttonarrowTexID, startTexID, startbrdTexID, braceTexID, boxfullTexID, boxemptyTexID;
 
@@ -119,7 +123,7 @@ glImage scrollwindowImage[(32 / 16) * (32 / 16)];
 glImage scrollwindowfrontImage[(32 / 16) * (32 / 16)];
 glImage buttonarrowImage[(32 / 16) * (32 / 16)];
 glImage startImage[(64 / 16) * (8 / 16)];
-glImage startbrdImage[(32 / 16) * (128 / 16)];
+glImage startbrdImage[(32 / 32) * (256 / 80)];
 glImage braceImage[(16 / 16) * (128 / 16)];
 glImage boxfullImage[(64 / 16) * (64 / 16)];
 glImage boxemptyImage[(64 / 16) * (64 / 16)];
@@ -216,6 +220,7 @@ void vBlankHandler()
 			if (titleboxXmoveleft) {
 				if (movetimer == 8) {
 					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
 				} else if (movetimer < 8) {
@@ -229,6 +234,7 @@ void vBlankHandler()
 			} else if (titleboxXmoveright) {
 				if (movetimer == 8) {
 					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
 				} else if (movetimer < 8) {
@@ -283,8 +289,8 @@ void vBlankHandler()
 			glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			if (showSTARTborder) {
 				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-				glSprite(96, 80, GL_FLIP_NONE, startbrdImage);
-				glSprite(96+32, 80, GL_FLIP_H, startbrdImage);
+				glSprite(96, 80, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+				glSprite(96+32, 80, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 				glColor(RGB15(31, 31, 31));
 			}
 			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
@@ -305,6 +311,13 @@ void vBlankHandler()
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
+	if (startBorderZoomOut) {
+		startBorderZoomAnimNum++;
+		if(startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
+			startBorderZoomAnimNum = 0;
+			startBorderZoomOut = false;
+		}
+	}
 }
 
 void topBgLoad() {
@@ -625,12 +638,12 @@ void graphicsInit()
 
 	startbrdTexID = glLoadTileSet(startbrdImage, // pointer to glImage array
 							32, // sprite width
-							128, // sprite height
+							80, // sprite height
 							32, // bitmap width
-							128, // bitmap height
+							256, // bitmap height
 							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
 							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 							16, // Length of the palette to use (16 colors)
 							(u16*) start_borderPal, // Load our 16 color tiles palette
