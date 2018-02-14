@@ -37,9 +37,11 @@
 // Graphic files
 #include "icon_unk.h"
 #include "icon_gbc.h"
+#include "icon_nes.h"
 
 static int iconTexID[40];
 static int gbcTexID;
+static int nesTexID;
 sNDSBannerExt ndsBanner;
 
 static glImage icon1[(32 / 32) * (256 / 32)];
@@ -83,6 +85,7 @@ static glImage icon38[(32 / 32) * (256 / 32)];
 static glImage icon39[(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
+static glImage nesIcon[1];
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -1430,6 +1433,25 @@ void loadGBCIcon()
 				(u8*) icon_gbcBitmap // Raw image data
 				);
 }
+void loadNESIcon()
+{
+	glDeleteTextures(1, &nesTexID);
+	
+	nesTexID =
+	glLoadTileSet(nesIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_nesPal, // Image palette
+				(u8*) icon_nesBitmap // Raw image data
+				);
+}
 
 static void clearIcon(int num)
 {
@@ -1563,6 +1585,10 @@ void drawIcon(int Xpos, int Ypos, int num)
 void drawIconGBC(int Xpos, int Ypos)
 {
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbcIcon);
+}
+void drawIconNES(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
 }
 
 void iconUpdate(bool isDir, const char* name, int num)
@@ -1721,7 +1747,9 @@ void titleUpdate(bool isDir, const char* name)
 	}
 	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 )
+				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".nes") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".fds") == 0  )
 	{
 		writeBannerText(0, name, "", "");
 	}

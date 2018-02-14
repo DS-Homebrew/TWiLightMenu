@@ -452,8 +452,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			clearText(true);
 			clearText(false);
-			if (romtype == 1) romtype = 0;
-			else romtype = 1;
+			romtype +=1;
+			if (romtype > 2) romtype = 0;
+			return "null";
+		} 
+		if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
+		{
+			mmEffectEx(&snd_switch);
+			pagenum = 0;
+			cursorPosition = 0;
+			titleboxXpos = 0;
+			titlewindowXpos = 0;
+			whiteScreen = true;
+			clearText(true);
+			clearText(false);
+			romtype -=1;
+			if (romtype < 0) romtype = 2;
 			return "null";
 		} 
 

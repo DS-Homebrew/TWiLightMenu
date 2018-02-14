@@ -69,6 +69,7 @@
 
 // Built-in icons
 #include "icon_gbc.h"
+#include "icon_nes.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -265,6 +266,7 @@ void vBlankHandler()
 				if (i < spawnedtitleboxes) {
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
 					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, 96);
+					else if (romtype == 2) drawIconNES(iconXpos-titleboxXpos, 96);
 					else drawIcon(iconXpos-titleboxXpos, 96, i);
 				} else
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxemptyImage);
@@ -282,6 +284,7 @@ void vBlankHandler()
 				}
 				glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 				if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
+				else if (romtype == 2) drawIconNES(112, 96-titleboxYmovepos);
 				else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
 				titleboxYmovepos += 5;
 				if (titleboxYmovepos > 192) whiteScreen = true;
@@ -737,6 +740,7 @@ void graphicsInit()
 	}
 	
 	loadGBCIcon();
+	loadNESIcon();
 
 	/*if (subtheme == 1) {
 		mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array

@@ -22,7 +22,9 @@
 #pragma once
 void iconTitleInit();
 void loadGBCIcon();
+void loadNESIcon();
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, const char* name);
 void drawIcon(int Xpos, int Ypos, int num);
 void drawIconGBC(int Xpos, int Ypos);
+void drawIconNES(int Xpos, int Ypos);
