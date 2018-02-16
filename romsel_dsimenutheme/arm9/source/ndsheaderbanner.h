@@ -228,7 +228,7 @@ int grabTID(FILE* ndsFile, char *buf);
 u32 getSDKVersion(FILE* ndsFile);
 
 // bnriconframenum[]
-extern int bnriconframenumX[39];
+extern int bnriconPalLine[39];
 extern int bnriconframenumY[39];
 extern int bannerFlip[39];
 

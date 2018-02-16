@@ -87,7 +87,7 @@ u32 getSDKVersion(FILE* ndsFile) {
 static u16 bnriconframeseq[39][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconframenumX[39] = {0};
+int bnriconPalLine[39] = {0};
 int bnriconframenumY[39] = {0};
 int bannerFlip[39] = {GL_FLIP_NONE};
 
@@ -124,109 +124,215 @@ void playBannerSequence(int iconnum) {
 	if(bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]] == 0x0001
 	&& bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]+1] == 0x0100) {
 		// Do nothing if icon isn't animated
-		bnriconframenumX[iconnum] = 0;
+		bnriconPalLine[iconnum] = 0;
 		bnriconframenumY[iconnum] = 0;
 		bannerFlip[iconnum] = GL_FLIP_NONE;
 	} else {
 		u16 setframeseq = bnriconframeseq[iconnum][currentbnriconframeseq[iconnum]];
 
-		if((setframeseq >= 0x0000) && (setframeseq < 0x0100)) {
+		// Check for pal line 1
+		if((setframeseq >= 0x0000)
+		&& (setframeseq < 0x0100)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 0;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0100) && (setframeseq < 0x0200)) {
+		} else if((setframeseq >= 0x0100)
+				&& (setframeseq < 0x0200)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 1;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0200) && (setframeseq < 0x0300)) {
+		} else if((setframeseq >= 0x0200)
+				&& (setframeseq < 0x0300)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 2;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0300) && (setframeseq < 0x0400)) {
+		} else if((setframeseq >= 0x0300)
+				&& (setframeseq < 0x0400)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 3;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0400) && (setframeseq < 0x0500)) {
+		} else if((setframeseq >= 0x0400)
+				&& (setframeseq < 0x0500)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 4;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0500) && (setframeseq < 0x0600)) {
+		} else if((setframeseq >= 0x0500)
+				&& (setframeseq < 0x0600)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 5;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0600) && (setframeseq < 0x0700)) {
+		} else if((setframeseq >= 0x0600)
+				&& (setframeseq < 0x0700)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 6;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
-		} else if((setframeseq >= 0x0700) && (setframeseq < 0x0800)) {
+		} else if((setframeseq >= 0x0700)
+				&& (setframeseq < 0x0800)) {
+			bnriconPalLine[iconnum] = 0;
+			bnriconframenumY[iconnum] = 7;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else // Check for pal line 2
+		if((setframeseq >= 0x0800)
+		&& (setframeseq < 0x0900)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 0;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0900)
+				&& (setframeseq < 0x0A00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 1;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0A00)
+				&& (setframeseq < 0x0B00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 2;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0B00)
+				&& (setframeseq < 0x0C00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 3;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0C00)
+				&& (setframeseq < 0x0D00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 4;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0D00)
+				&& (setframeseq < 0x0E00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 5;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0E00)
+				&& (setframeseq < 0x0F00)) {
+			bnriconPalLine[iconnum] = 1;
+			bnriconframenumY[iconnum] = 6;
+			bannerFlip[iconnum] = GL_FLIP_NONE;
+		} else if((setframeseq >= 0x0F00)
+				&& (setframeseq < 0x1000)) {
+			bnriconPalLine[iconnum] = 1;
 			bnriconframenumY[iconnum] = 7;
 			bannerFlip[iconnum] = GL_FLIP_NONE;
 		} else // Check for horizontally flipped frames
-		if((setframeseq >= 0x4000) && (setframeseq < 0x4100)) {
+		if((setframeseq >= 0x4000)
+		&& (setframeseq < 0x4100)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 0;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4100) && (setframeseq < 0x4200)) {
+		} else if((setframeseq >= 0x4100)
+				&& (setframeseq < 0x4200)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 1;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4200) && (setframeseq < 0x4300)) {
+		} else if((setframeseq >= 0x4200)
+				&& (setframeseq < 0x4300)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 2;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4300) && (setframeseq < 0x4400)) {
+		} else if((setframeseq >= 0x4300)
+				&& (setframeseq < 0x4400)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 3;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4400) && (setframeseq < 0x4500)) {
+		} else if((setframeseq >= 0x4400)
+				&& (setframeseq < 0x4500)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 4;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4500) && (setframeseq < 0x4600)) {
+		} else if((setframeseq >= 0x4500)
+				&& (setframeseq < 0x4600)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 5;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4600) && (setframeseq < 0x4700)) {
+		} else if((setframeseq >= 0x4600)
+				&& (setframeseq < 0x4700)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 6;
 			bannerFlip[iconnum] = GL_FLIP_H;
-		} else if((setframeseq >= 0x4700) && (setframeseq < 0x4800)) {
+		} else if((setframeseq >= 0x4700)
+				&& (setframeseq < 0x4800)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 7;
 			bannerFlip[iconnum] = GL_FLIP_H;
 		} else // Check for vertically flipped frames
-		if((setframeseq >= 0x8000) && (setframeseq < 0x8100)) {
+		if((setframeseq >= 0x8000)
+		&& (setframeseq < 0x8100)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 0;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8100) && (setframeseq < 0x8200)) {
+		} else if((setframeseq >= 0x8100)
+				&& (setframeseq < 0x8200)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 1;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8200) && (setframeseq < 0x8300)) {
+		} else if((setframeseq >= 0x8200)
+				&& (setframeseq < 0x8300)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 2;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8300) && (setframeseq < 0x8400)) {
+		} else if((setframeseq >= 0x8300)
+				&& (setframeseq < 0x8400)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 3;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8400) && (setframeseq < 0x8500)) {
+		} else if((setframeseq >= 0x8400)
+				&& (setframeseq < 0x8500)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 4;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8500) && (setframeseq < 0x8600)) {
+		} else if((setframeseq >= 0x8500)
+				&& (setframeseq < 0x8600)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 5;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8600) && (setframeseq < 0x8700)) {
+		} else if((setframeseq >= 0x8600)
+				&& (setframeseq < 0x8700)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 6;
 			bannerFlip[iconnum] = GL_FLIP_V;
-		} else if((setframeseq >= 0x8700) && (setframeseq < 0x8800)) {
+		} else if((setframeseq >= 0x8700)
+				&& (setframeseq < 0x8800)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 7;
 			bannerFlip[iconnum] = GL_FLIP_V;
 		} else // Check for both horizontally & vertically flipped frames
-		if((setframeseq >= 0xC000) && (setframeseq < 0xC100)) {
+		if((setframeseq >= 0xC000)
+		&& (setframeseq < 0xC100)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 0;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC100) && (setframeseq < 0xC200)) {
+		} else if((setframeseq >= 0xC100)
+				&& (setframeseq < 0xC200)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 1;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC200) && (setframeseq < 0xC300)) {
+		} else if((setframeseq >= 0xC200)
+				&& (setframeseq < 0xC300)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 2;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC300) && (setframeseq < 0xC400)) {
+		} else if((setframeseq >= 0xC300)
+				&& (setframeseq < 0xC400)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 3;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC400) && (setframeseq < 0xC500)) {
+		} else if((setframeseq >= 0xC400)
+				&& (setframeseq < 0xC500)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 4;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC500) && (setframeseq < 0xC600)) {
+		} else if((setframeseq >= 0xC500)
+				&& (setframeseq < 0xC600)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 5;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC600) && (setframeseq < 0xC700)) {
+		} else if((setframeseq >= 0xC600)
+				&& (setframeseq < 0xC700)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 6;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
-		} else if((setframeseq >= 0xC700) && (setframeseq < 0xC800)) {
+		} else if((setframeseq >= 0xC700)
+				&& (setframeseq < 0xC800)) {
+			bnriconPalLine[iconnum] = 0;
 			bnriconframenumY[iconnum] = 7;
 			bannerFlip[iconnum] = GL_FLIP_BOTH;
 		}
