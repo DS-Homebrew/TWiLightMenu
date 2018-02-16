@@ -345,7 +345,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	spawnedtitleboxes = 0;
 	for(int i = 0; i < 39; i++) {
 		if (i+pagenum*39 < file_count) {
-			if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
+			if (i < 10)
+				if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
 			spawnedtitleboxes++;
 		}
 	}
@@ -431,6 +432,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_select);
 			} else
 				mmEffectEx(&snd_wrong);
+			if(cursorPosition > 4 && cursorPosition < 34) {
+				if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition-5)+pagenum*39).isDirectory, dirContents[scrn].at((cursorPosition-5)+pagenum*39).name.c_str(), cursorPosition-5);
+			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition += 1;
 			if (cursorPosition <= 38) {
@@ -438,6 +442,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_select);
 			} else
 				mmEffectEx(&snd_wrong);
+			if(cursorPosition > 4 && cursorPosition < 34) {
+				if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+5)+pagenum*39).isDirectory, dirContents[scrn].at((cursorPosition+5)+pagenum*39).name.c_str(), cursorPosition+5);
+			}
 		}
 		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) cursorPosition += ENTRY_PAGE_LENGTH;

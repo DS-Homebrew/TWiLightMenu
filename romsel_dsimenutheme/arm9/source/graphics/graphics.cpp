@@ -261,15 +261,18 @@ void vBlankHandler()
 			glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
+			int i2 = 0;
 			for(int i = 0; i < 39; i++) {
 				if (i < spawnedtitleboxes) {
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
 					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, 96);
-					else drawIcon(iconXpos-titleboxXpos, 96, i);
+					else drawIcon(iconXpos-titleboxXpos, 96, i2);
 				} else
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxemptyImage);
 				spawnedboxXpos += 64;
 				iconXpos += 64;
+				i2++;
+				if(i2 == 10) i2 = 0;
 			}
 			if (applaunchprep) {
 				// Cover selected app
@@ -299,7 +302,7 @@ void vBlankHandler()
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {
 				// Playback animated icons
-				for (int i = 0; i < 39; i++) {
+				for (int i = 0; i < 10; i++) {
 					if(bnriconisDSi[i]==true) {
 						playBannerSequence(i);
 					}

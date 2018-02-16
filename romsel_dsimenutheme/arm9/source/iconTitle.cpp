@@ -38,11 +38,11 @@
 #include "icon_unk.h"
 #include "icon_gbc.h"
 
-static int iconTexID[39][8];
+static int iconTexID[10][8];
 static int gbcTexID;
 sNDSBannerExt ndsBanner;
 
-static glImage ndsIcon[39][8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[10][8][(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
 
@@ -102,25 +102,25 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
-	loadIcon_loopTimes = 1;
 	bnriconPalLine[num] = 0;
 	bnriconframenumY[num] = 0;
+	loadIcon_loopTimes = 1;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
 	if(twl) {
 		grabBannerSequence(num);
 		Ysize = 256;
-		loadIcon_loopTimes = 8;
 		textureSizeY = TEXTURE_SIZE_256;
+		loadIcon_loopTimes = 8;
 		bnriconisDSi[num] = true;
 	}
 
 	for (int i = 0; i < 8; i++) {
 		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	//for (int i = 0; i < loadIcon_loopTimes; i++) {
-		iconTexID[num][0] =
-		glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+	for (int i = 0; i < loadIcon_loopTimes; i++) {
+		iconTexID[num][i] =
+		glLoadTileSet(ndsIcon[num][i], // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap image width
@@ -130,10 +130,10 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 					textureSizeY, // sizeY for glTexImage2D() in videoGL.h
 					GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 					16, // Length of the palette to use (16 colors)
-					(u16*) palSrc+(0*16), // Image palette
+					(u16*) palSrc+(i*16), // Image palette
 					(u8*) tilesModified // Raw image data
 					);
-	//}
+	}
 }
 
 void loadUnkIcon(int num)
@@ -194,6 +194,15 @@ void drawIconGBC(int Xpos, int Ypos)
 
 void iconUpdate(bool isDir, const char* name, int num)
 {
+	if(num > 30) {
+		num -= 30;
+	} else if(num > 20) {
+		num -= 20;
+	} else if(num > 10) {
+		num -= 10;
+	} else if(num < 0) {
+		num += 10;
+	}
 	clearText(false);
 
 	if (isDir)
