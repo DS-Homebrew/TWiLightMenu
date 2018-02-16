@@ -584,15 +584,15 @@ int main(int argc, char **argv) {
 				if (cursorPosition >= 0) titleboxXmoveleft = true;
 			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 				cursorPosition += 1;
-				if (cursorPosition <= 38) titleboxXmoveright = true;
+				if (cursorPosition <= 39) titleboxXmoveright = true;
 			}
 			if (cursorPosition < 0)
 			{
 				cursorPosition = 0;
 			}
-			else if (cursorPosition > 38)
+			else if (cursorPosition > 39)
 			{
-				cursorPosition = 38;
+				cursorPosition = 39;
 			}
 			
 			if (pressed & KEY_A) {

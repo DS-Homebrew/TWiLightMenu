@@ -343,10 +343,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	getDirectoryContents(dirContents[scrn], extensionList);
 
 	spawnedtitleboxes = 0;
-	for(int i = 0; i < 39; i++) {
-		if (i+pagenum*39 < file_count) {
+	for(int i = 0; i < 40; i++) {
+		if (i+pagenum*40 < file_count) {
 			if (i < 10)
-				if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
+				if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+i)+pagenum*40).name.c_str(), cursorPosition+i);
+			if (romtype == 0) updateBannerSequence(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 			spawnedtitleboxes++;
 		}
 	}
@@ -371,14 +372,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		if (cursorPosition+pagenum*39 > ((int) dirContents[scrn].size() - 1)) {
+		if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
 			showbubble = false;
 			showSTARTborder = false;
 			clearText(false);	// Clear title
 		} else {
 			showbubble = true;
 			showSTARTborder = true;
-			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*39).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str());
+			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
 		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -405,14 +406,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printf("           ");
 			}
 			printf("            ");
-			if (file_count > 39+pagenum*39) {
+			if (file_count > 40+pagenum*40) {
 				printf("R: Next");
 			} else {
 				printf("       ");
 			}
 
 			//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
-			//if (file_count > 39+pagenum*39) printSmall(true, 182, 177, "Next Page");
+			//if (file_count > 40+pagenum*40) printSmall(true, 182, 177, "Next Page");
 
 			scanKeys();
 			pressed = keysDownRepeat();
@@ -430,20 +431,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (cursorPosition >= 0) {
 				titleboxXmoveleft = true;
 				mmEffectEx(&snd_select);
-			} else
+			} else {
 				mmEffectEx(&snd_wrong);
-			if(cursorPosition > 4 && cursorPosition < 34) {
-				if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition-5)+pagenum*39).isDirectory, dirContents[scrn].at((cursorPosition-5)+pagenum*39).name.c_str(), cursorPosition-5);
+			}
+			if(cursorPosition >= 3 && cursorPosition <= 36) {
+				if (cursorPosition+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition-3)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-3)+pagenum*40).name.c_str(), cursorPosition-3);
+				}
 			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition += 1;
-			if (cursorPosition <= 38) {
+			if (cursorPosition <= 39) {
 				titleboxXmoveright = true;
 				mmEffectEx(&snd_select);
-			} else
+			} else {
 				mmEffectEx(&snd_wrong);
-			if(cursorPosition > 4 && cursorPosition < 34) {
-				if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+5)+pagenum*39).isDirectory, dirContents[scrn].at((cursorPosition+5)+pagenum*39).name.c_str(), cursorPosition+5);
+			}
+			if(cursorPosition >= 7 && cursorPosition <= 36) {
+				if (cursorPosition+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+3)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+3)+pagenum*40).name.c_str(), cursorPosition+3);
+				}
 			}
 		}
 		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
@@ -468,9 +475,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			cursorPosition = 0;
 		}
-		else if (cursorPosition > 38)
+		else if (cursorPosition > 39)
 		{
-			cursorPosition = 38;
+			cursorPosition = 39;
 		}
 		// else if (cursorPosition > ((int) dirContents[scrn].size() - 1))
 		// {
@@ -479,7 +486,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -521,7 +528,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -572,7 +579,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			clearText(true);
 			clearText(false);
 			return "null";		
-		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 39+pagenum*39)
+		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 		{
 			mmEffectEx(&snd_switch);
 			pagenum += 1;
@@ -631,7 +638,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && (romtype == 0) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
-			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str();
+			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
 			printSmallCentered(false, 160, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}

@@ -38,11 +38,11 @@
 #include "icon_unk.h"
 #include "icon_gbc.h"
 
-static int iconTexID[10][8];
+static int iconTexID[11][8];
 static int gbcTexID;
 sNDSBannerExt ndsBanner;
 
-static glImage ndsIcon[10][8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[11][8][(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
 
@@ -98,21 +98,14 @@ int loadIcon_loopTimes = 1;
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-	clearBannerSequence(num);
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
-	bnriconPalLine[num] = 0;
-	bnriconframenumY[num] = 0;
 	loadIcon_loopTimes = 1;
-	bannerFlip[num] = GL_FLIP_NONE;
-	bnriconisDSi[num] = false;
 	if(twl) {
-		grabBannerSequence(num);
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
 		loadIcon_loopTimes = 8;
-		bnriconisDSi[num] = true;
 	}
 
 	for (int i = 0; i < 8; i++) {
@@ -184,7 +177,15 @@ static void clearIcon(int num)
 
 void drawIcon(int Xpos, int Ypos, int num)
 {
-	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
+	int num2 = num;
+	if(num2 >= 30) {
+		num2 -= 30;
+	} else if(num >= 20) {
+		num2 -= 20;
+	} else if(num >= 10) {
+		num2 -= 10;
+	}
+	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
 
 void drawIconGBC(int Xpos, int Ypos)
@@ -192,16 +193,146 @@ void drawIconGBC(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbcIcon);
 }
 
+void updateBannerSequence(bool isDir, const char* name, int num)
+{
+	bnriconPalLine[num] = 0;
+	bnriconframenumY[num] = 0;
+	bannerFlip[num] = GL_FLIP_NONE;
+	bnriconisDSi[num] = false;
+
+	if (isDir)
+	{
+		// banner sequence
+		clearBannerSequence(num);
+	}
+	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+	{
+		// look through the argv file for the corresponding nds file
+		FILE *fp;
+		char *line = NULL, *p = NULL;
+		// size_t size = 0;
+		ssize_t rc;
+
+		// open the argv file
+		fp = fopen(name, "rb");
+		if (fp == NULL)
+		{
+			clearBannerSequence(num);
+			fclose(fp);
+			return;
+		}
+
+		// done with the file at this point
+		fclose(fp);
+
+		if (p && *p)
+		{
+			// we found an argument
+			struct stat st;
+
+			// truncate everything after first argument
+			strtok(p, "\n\r\t ");
+
+			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
+			{
+				// this is not an nds file!
+				clearBannerSequence(num);
+			}
+			else
+			{
+				// let's see if this is a file or directory
+				rc = stat(p, &st);
+				if (rc != 0)
+				{
+					// stat failed
+					clearBannerSequence(num);
+				}
+				else if (S_ISDIR(st.st_mode))
+				{
+					// this is a directory!
+					clearBannerSequence(num);
+				}
+				else
+				{
+					updateBannerSequence(false, p, num);
+				}
+			}
+		}
+		else
+		{
+			clearBannerSequence(num);
+		}
+		// clean up the allocated line
+		free(line);
+	}
+	else
+	{
+		// this is an nds file!
+		FILE *fp;
+		unsigned int iconTitleOffset;
+		int ret;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (fp == NULL)
+		{
+			// banner sequence
+			clearBannerSequence(num);
+			fclose(fp);
+			return;
+		}
+
+		
+		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
+		if (ret == 0)
+			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
+		else
+			ret = 0; // if seek fails set to !=1
+
+		if (ret != 1)
+		{
+			fclose(fp);
+			return;
+		}
+
+		if (iconTitleOffset == 0)
+		{
+			fclose(fp);
+			return;
+		}
+		ret = fseek(fp, iconTitleOffset, SEEK_SET);
+		if (ret == 0)
+			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
+		else
+			ret = 0; // if seek fails set to !=1
+
+		if (ret != 1)
+		{
+			fclose(fp);
+			return;
+		}
+
+		// close file!
+		fclose(fp);
+
+		// banner sequence
+		DC_FlushAll();
+
+		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+			grabBannerSequence(num);
+			bnriconisDSi[num] = true;
+		}
+	}
+}
+
 void iconUpdate(bool isDir, const char* name, int num)
 {
-	if(num > 30) {
+	if(num >= 30) {
 		num -= 30;
-	} else if(num > 20) {
+	} else if(num >= 20) {
 		num -= 20;
-	} else if(num > 10) {
+	} else if(num >= 10) {
 		num -= 10;
-	} else if(num < 0) {
-		num += 10;
 	}
 	clearText(false);
 

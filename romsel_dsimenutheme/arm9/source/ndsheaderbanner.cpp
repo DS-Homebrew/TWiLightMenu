@@ -84,15 +84,15 @@ u32 getSDKVersion(FILE* ndsFile) {
 }
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[10][64] = {0x0000};
+static u16 bnriconframeseq[40][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLine[10] = {0};
-int bnriconframenumY[10] = {0};
-int bannerFlip[10] = {GL_FLIP_NONE};
+int bnriconPalLine[40] = {0};
+int bnriconframenumY[40] = {0};
+int bannerFlip[40] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool bnriconisDSi[10] = {false};
+bool bnriconisDSi[40] = {false};
 
 /**
  * Get banner sequence from banner file.
@@ -113,8 +113,8 @@ void clearBannerSequence(int iconnum) {
 	}
 }
 
-static u16 bannerDelayNum[10] = {0x0000};
-int currentbnriconframeseq[10] = {0};
+static u16 bannerDelayNum[40] = {0x0000};
+int currentbnriconframeseq[40] = {0};
 
 /**
  * Play banner sequence.
