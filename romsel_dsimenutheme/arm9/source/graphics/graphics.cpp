@@ -251,7 +251,7 @@ void vBlankHandler()
 			glColor(RGB15(31, 31, 31));
 			glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
 			int bipXpos = 30;
-			for(int i = 0; i < 39; i++) {
+			for(int i = 0; i < 40; i++) {
 				if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
 				else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 				bipXpos += 5;
@@ -262,7 +262,7 @@ void vBlankHandler()
 			glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
-			for(int i = 0; i < 39; i++) {
+			for(int i = 0; i < 40; i++) {
 				if (i < spawnedtitleboxes) {
 					glSprite(spawnedboxXpos-titleboxXpos, 84, GL_FLIP_NONE, boxfullImage);
 					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, 96);
@@ -302,7 +302,7 @@ void vBlankHandler()
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {
 				// Playback animated icons
-				for (int i = 0; i < 39; i++) {
+				for (int i = 0; i < 40; i++) {
 					if(bnriconisDSi[i]==true) {
 						playBannerSequence(i);
 					}
@@ -320,6 +320,8 @@ void vBlankHandler()
 			startBorderZoomAnimNum = 0;
 			startBorderZoomOut = false;
 		}
+	} else {
+		startBorderZoomAnimNum = 0;
 	}
 }
 

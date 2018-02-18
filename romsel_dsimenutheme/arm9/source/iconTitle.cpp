@@ -39,50 +39,12 @@
 #include "icon_gbc.h"
 #include "icon_nes.h"
 
-static int iconTexID[40];
+static int iconTexID[11][8];
 static int gbcTexID;
 static int nesTexID;
 sNDSBannerExt ndsBanner;
 
-static glImage icon1[(32 / 32) * (256 / 32)];
-static glImage icon2[(32 / 32) * (256 / 32)];
-static glImage icon3[(32 / 32) * (256 / 32)];
-static glImage icon4[(32 / 32) * (256 / 32)];
-static glImage icon5[(32 / 32) * (256 / 32)];
-static glImage icon6[(32 / 32) * (256 / 32)];
-static glImage icon7[(32 / 32) * (256 / 32)];
-static glImage icon8[(32 / 32) * (256 / 32)];
-static glImage icon9[(32 / 32) * (256 / 32)];
-static glImage icon10[(32 / 32) * (256 / 32)];
-static glImage icon11[(32 / 32) * (256 / 32)];
-static glImage icon12[(32 / 32) * (256 / 32)];
-static glImage icon13[(32 / 32) * (256 / 32)];
-static glImage icon14[(32 / 32) * (256 / 32)];
-static glImage icon15[(32 / 32) * (256 / 32)];
-static glImage icon16[(32 / 32) * (256 / 32)];
-static glImage icon17[(32 / 32) * (256 / 32)];
-static glImage icon18[(32 / 32) * (256 / 32)];
-static glImage icon19[(32 / 32) * (256 / 32)];
-static glImage icon20[(32 / 32) * (256 / 32)];
-static glImage icon21[(32 / 32) * (256 / 32)];
-static glImage icon22[(32 / 32) * (256 / 32)];
-static glImage icon23[(32 / 32) * (256 / 32)];
-static glImage icon24[(32 / 32) * (256 / 32)];
-static glImage icon25[(32 / 32) * (256 / 32)];
-static glImage icon26[(32 / 32) * (256 / 32)];
-static glImage icon27[(32 / 32) * (256 / 32)];
-static glImage icon28[(32 / 32) * (256 / 32)];
-static glImage icon29[(32 / 32) * (256 / 32)];
-static glImage icon30[(32 / 32) * (256 / 32)];
-static glImage icon31[(32 / 32) * (256 / 32)];
-static glImage icon32[(32 / 32) * (256 / 32)];
-static glImage icon33[(32 / 32) * (256 / 32)];
-static glImage icon34[(32 / 32) * (256 / 32)];
-static glImage icon35[(32 / 32) * (256 / 32)];
-static glImage icon36[(32 / 32) * (256 / 32)];
-static glImage icon37[(32 / 32) * (256 / 32)];
-static glImage icon38[(32 / 32) * (256 / 32)];
-static glImage icon39[(32 / 32) * (256 / 32)];
+static glImage ndsIcon[11][8][(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
 static glImage nesIcon[1];
@@ -94,7 +56,7 @@ u8 *tilesModified;
 void iconTitleInit()
 {
 	clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16]();
+	blackPalette = new u16[16*8]();
 	tilesModified = new u8[(32 * 256) / 2];
 }
 
@@ -134,1284 +96,61 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
+int loadIcon_loopTimes = 1;
+
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-	clearBannerSequence(num);
 
 	int Ysize = 32;
 	int textureSizeY = TEXTURE_SIZE_32;
-	bnriconframenumX[num] = 0;
-	bnriconframenumY[num] = 0;
-	bannerFlip[num] = GL_FLIP_NONE;
-	bnriconisDSi[num] = false;
+	loadIcon_loopTimes = 1;
 	if(twl) {
-		grabBannerSequence(num);
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
-		bnriconisDSi[num] = true;
+		loadIcon_loopTimes = 8;
 	}
 
-	glDeleteTextures(1, &iconTexID[num]);
-	switch (num) {
-		case 0:
-		default:
-			iconTexID[num] =
-			glLoadTileSet(icon1, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 1:
-			iconTexID[num] =
-			glLoadTileSet(icon2, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 2:
-			iconTexID[num] =
-			glLoadTileSet(icon3, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 3:
-			iconTexID[num] =
-			glLoadTileSet(icon4, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 4:
-			iconTexID[num] =
-			glLoadTileSet(icon5, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 5:
-			iconTexID[num] =
-			glLoadTileSet(icon6, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 6:
-			iconTexID[num] =
-			glLoadTileSet(icon7, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 7:
-			iconTexID[num] =
-			glLoadTileSet(icon8, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 8:
-			iconTexID[num] =
-			glLoadTileSet(icon9, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 9:
-			iconTexID[num] =
-			glLoadTileSet(icon10, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 10:
-			iconTexID[num] =
-			glLoadTileSet(icon11, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 11:
-			iconTexID[num] =
-			glLoadTileSet(icon12, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 12:
-			iconTexID[num] =
-			glLoadTileSet(icon13, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 13:
-			iconTexID[num] =
-			glLoadTileSet(icon14, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 14:
-			iconTexID[num] =
-			glLoadTileSet(icon15, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 15:
-			iconTexID[num] =
-			glLoadTileSet(icon16, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 16:
-			iconTexID[num] =
-			glLoadTileSet(icon17, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 17:
-			iconTexID[num] =
-			glLoadTileSet(icon18, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 18:
-			iconTexID[num] =
-			glLoadTileSet(icon19, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 19:
-			iconTexID[num] =
-			glLoadTileSet(icon20, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 20:
-			iconTexID[num] =
-			glLoadTileSet(icon21, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 21:
-			iconTexID[num] =
-			glLoadTileSet(icon22, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 22:
-			iconTexID[num] =
-			glLoadTileSet(icon23, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 23:
-			iconTexID[num] =
-			glLoadTileSet(icon24, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 24:
-			iconTexID[num] =
-			glLoadTileSet(icon25, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 25:
-			iconTexID[num] =
-			glLoadTileSet(icon26, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 26:
-			iconTexID[num] =
-			glLoadTileSet(icon27, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 27:
-			iconTexID[num] =
-			glLoadTileSet(icon28, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 28:
-			iconTexID[num] =
-			glLoadTileSet(icon29, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 29:
-			iconTexID[num] =
-			glLoadTileSet(icon30, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 30:
-			iconTexID[num] =
-			glLoadTileSet(icon31, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 31:
-			iconTexID[num] =
-			glLoadTileSet(icon32, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 32:
-			iconTexID[num] =
-			glLoadTileSet(icon33, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 33:
-			iconTexID[num] =
-			glLoadTileSet(icon34, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 34:
-			iconTexID[num] =
-			glLoadTileSet(icon35, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 35:
-			iconTexID[num] =
-			glLoadTileSet(icon36, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 36:
-			iconTexID[num] =
-			glLoadTileSet(icon37, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 37:
-			iconTexID[num] =
-			glLoadTileSet(icon38, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
-		case 38:
-			iconTexID[num] =
-			glLoadTileSet(icon39, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						Ysize, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) palSrc, // Image palette
-						(u8*) tilesModified // Raw image data
-						);
-			break;
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
+	}
+	for (int i = 0; i < loadIcon_loopTimes; i++) {
+		iconTexID[num][i] =
+		glLoadTileSet(ndsIcon[num][i], // pointer to glImage array
+					32, // sprite width
+					32, // sprite height
+					32, // bitmap image width
+					Ysize, // bitmap image height
+					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+					textureSizeY, // sizeY for glTexImage2D() in videoGL.h
+					GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+					16, // Length of the palette to use (16 colors)
+					(u16*) palSrc+(i*16), // Image palette
+					(u8*) tilesModified // Raw image data
+					);
 	}
 }
 
 void loadUnkIcon(int num)
 {
-	glDeleteTextures(1, &iconTexID[num]);
-	switch (num) {
-		case 0:
-		default:
-			iconTexID[num] =
-			glLoadTileSet(icon1, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 1:
-			iconTexID[num] =
-			glLoadTileSet(icon2, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 2:
-			iconTexID[num] =
-			glLoadTileSet(icon3, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 3:
-			iconTexID[num] =
-			glLoadTileSet(icon4, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 4:
-			iconTexID[num] =
-			glLoadTileSet(icon5, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 5:
-			iconTexID[num] =
-			glLoadTileSet(icon6, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 6:
-			iconTexID[num] =
-			glLoadTileSet(icon7, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 7:
-			iconTexID[num] =
-			glLoadTileSet(icon8, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 8:
-			iconTexID[num] =
-			glLoadTileSet(icon9, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 9:
-			iconTexID[num] =
-			glLoadTileSet(icon10, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 10:
-			iconTexID[num] =
-			glLoadTileSet(icon11, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 11:
-			iconTexID[num] =
-			glLoadTileSet(icon12, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 12:
-			iconTexID[num] =
-			glLoadTileSet(icon13, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 13:
-			iconTexID[num] =
-			glLoadTileSet(icon14, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 14:
-			iconTexID[num] =
-			glLoadTileSet(icon15, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 15:
-			iconTexID[num] =
-			glLoadTileSet(icon16, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 16:
-			iconTexID[num] =
-			glLoadTileSet(icon17, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 17:
-			iconTexID[num] =
-			glLoadTileSet(icon18, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 18:
-			iconTexID[num] =
-			glLoadTileSet(icon19, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 19:
-			iconTexID[num] =
-			glLoadTileSet(icon20, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 20:
-			iconTexID[num] =
-			glLoadTileSet(icon21, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 21:
-			iconTexID[num] =
-			glLoadTileSet(icon22, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 22:
-			iconTexID[num] =
-			glLoadTileSet(icon23, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 23:
-			iconTexID[num] =
-			glLoadTileSet(icon24, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 24:
-			iconTexID[num] =
-			glLoadTileSet(icon25, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 25:
-			iconTexID[num] =
-			glLoadTileSet(icon26, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 26:
-			iconTexID[num] =
-			glLoadTileSet(icon27, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 27:
-			iconTexID[num] =
-			glLoadTileSet(icon28, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 28:
-			iconTexID[num] =
-			glLoadTileSet(icon29, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 29:
-			iconTexID[num] =
-			glLoadTileSet(icon30, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 30:
-			iconTexID[num] =
-			glLoadTileSet(icon31, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 31:
-			iconTexID[num] =
-			glLoadTileSet(icon32, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 32:
-			iconTexID[num] =
-			glLoadTileSet(icon33, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 33:
-			iconTexID[num] =
-			glLoadTileSet(icon34, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 34:
-			iconTexID[num] =
-			glLoadTileSet(icon35, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 35:
-			iconTexID[num] =
-			glLoadTileSet(icon36, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 36:
-			iconTexID[num] =
-			glLoadTileSet(icon37, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 37:
-			iconTexID[num] =
-			glLoadTileSet(icon38, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
-		case 38:
-			iconTexID[num] =
-			glLoadTileSet(icon39, // pointer to glImage array
-						32, // sprite width
-						32, // sprite height
-						32, // bitmap image width
-						32, // bitmap image height
-						GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-						TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-						16, // Length of the palette to use (16 colors)
-						(u16*) icon_unkPal, // Image palette
-						(u8*) icon_unkBitmap // Raw image data
-						);
-			break;
+	for (int i = 0; i < 8; i++) {
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_unkPal, // Image palette
+				(u8*) icon_unkBitmap // Raw image data
+				);
 }
 
 void loadGBCIcon()
@@ -1460,126 +199,15 @@ static void clearIcon(int num)
 
 void drawIcon(int Xpos, int Ypos, int num)
 {
-	switch (num) {
-		case 0:
-		default:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon1[bnriconframenumY[num] & 31]);
-			break;
-		case 1:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon2[bnriconframenumY[num] & 31]);
-			break;
-		case 2:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon3[bnriconframenumY[num] & 31]);
-			break;
-		case 3:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon4[bnriconframenumY[num] & 31]);
-			break;
-		case 4:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon5[bnriconframenumY[num] & 31]);
-			break;
-		case 5:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon6[bnriconframenumY[num] & 31]);
-			break;
-		case 6:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon7[bnriconframenumY[num] & 31]);
-			break;
-		case 7:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon8[bnriconframenumY[num] & 31]);
-			break;
-		case 8:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon9[bnriconframenumY[num] & 31]);
-			break;
-		case 9:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon10[bnriconframenumY[num] & 31]);
-			break;
-		case 10:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon11[bnriconframenumY[num] & 31]);
-			break;
-		case 11:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon12[bnriconframenumY[num] & 31]);
-			break;
-		case 12:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon13[bnriconframenumY[num] & 31]);
-			break;
-		case 13:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon14[bnriconframenumY[num] & 31]);
-			break;
-		case 14:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon15[bnriconframenumY[num] & 31]);
-			break;
-		case 15:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon16[bnriconframenumY[num] & 31]);
-			break;
-		case 16:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon17[bnriconframenumY[num] & 31]);
-			break;
-		case 17:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon18[bnriconframenumY[num] & 31]);
-			break;
-		case 18:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon19[bnriconframenumY[num] & 31]);
-			break;
-		case 19:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon20[bnriconframenumY[num] & 31]);
-			break;
-		case 20:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon21[bnriconframenumY[num] & 31]);
-			break;
-		case 21:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon22[bnriconframenumY[num] & 31]);
-			break;
-		case 22:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon23[bnriconframenumY[num] & 31]);
-			break;
-		case 23:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon24[bnriconframenumY[num] & 31]);
-			break;
-		case 24:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon25[bnriconframenumY[num] & 31]);
-			break;
-		case 25:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon26[bnriconframenumY[num] & 31]);
-			break;
-		case 26:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon27[bnriconframenumY[num] & 31]);
-			break;
-		case 27:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon28[bnriconframenumY[num] & 31]);
-			break;
-		case 28:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon29[bnriconframenumY[num] & 31]);
-			break;
-		case 29:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon30[bnriconframenumY[num] & 31]);
-			break;
-		case 30:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon31[bnriconframenumY[num] & 31]);
-			break;
-		case 31:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon32[bnriconframenumY[num] & 31]);
-			break;
-		case 32:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon33[bnriconframenumY[num] & 31]);
-			break;
-		case 33:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon34[bnriconframenumY[num] & 31]);
-			break;
-		case 34:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon35[bnriconframenumY[num] & 31]);
-			break;
-		case 35:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon36[bnriconframenumY[num] & 31]);
-			break;
-		case 36:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon37[bnriconframenumY[num] & 31]);
-			break;
-		case 37:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon38[bnriconframenumY[num] & 31]);
-			break;
-		case 38:
-			glSprite(Xpos, Ypos, bannerFlip[num], &icon39[bnriconframenumY[num] & 31]);
-			break;
+	int num2 = num;
+	if(num2 >= 30) {
+		num2 -= 30;
+	} else if(num >= 20) {
+		num2 -= 20;
+	} else if(num >= 10) {
+		num2 -= 10;
 	}
+	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
 
 void drawIconGBC(int Xpos, int Ypos)
@@ -1591,8 +219,147 @@ void drawIconNES(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
 }
 
+void updateBannerSequence(bool isDir, const char* name, int num)
+{
+	bnriconPalLine[num] = 0;
+	bnriconframenumY[num] = 0;
+	bannerFlip[num] = GL_FLIP_NONE;
+	bnriconisDSi[num] = false;
+
+	if (isDir)
+	{
+		// banner sequence
+		clearBannerSequence(num);
+	}
+	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+	{
+		// look through the argv file for the corresponding nds file
+		FILE *fp;
+		char *line = NULL, *p = NULL;
+		// size_t size = 0;
+		ssize_t rc;
+
+		// open the argv file
+		fp = fopen(name, "rb");
+		if (fp == NULL)
+		{
+			clearBannerSequence(num);
+			fclose(fp);
+			return;
+		}
+
+		// done with the file at this point
+		fclose(fp);
+
+		if (p && *p)
+		{
+			// we found an argument
+			struct stat st;
+
+			// truncate everything after first argument
+			strtok(p, "\n\r\t ");
+
+			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
+			{
+				// this is not an nds file!
+				clearBannerSequence(num);
+			}
+			else
+			{
+				// let's see if this is a file or directory
+				rc = stat(p, &st);
+				if (rc != 0)
+				{
+					// stat failed
+					clearBannerSequence(num);
+				}
+				else if (S_ISDIR(st.st_mode))
+				{
+					// this is a directory!
+					clearBannerSequence(num);
+				}
+				else
+				{
+					updateBannerSequence(false, p, num);
+				}
+			}
+		}
+		else
+		{
+			clearBannerSequence(num);
+		}
+		// clean up the allocated line
+		free(line);
+	}
+	else
+	{
+		// this is an nds file!
+		FILE *fp;
+		unsigned int iconTitleOffset;
+		int ret;
+
+		// open file for reading info
+		fp = fopen(name, "rb");
+		if (fp == NULL)
+		{
+			// banner sequence
+			clearBannerSequence(num);
+			fclose(fp);
+			return;
+		}
+
+		
+		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
+		if (ret == 0)
+			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
+		else
+			ret = 0; // if seek fails set to !=1
+
+		if (ret != 1)
+		{
+			fclose(fp);
+			return;
+		}
+
+		if (iconTitleOffset == 0)
+		{
+			fclose(fp);
+			return;
+		}
+		ret = fseek(fp, iconTitleOffset, SEEK_SET);
+		if (ret == 0)
+			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
+		else
+			ret = 0; // if seek fails set to !=1
+
+		if (ret != 1)
+		{
+			fclose(fp);
+			return;
+		}
+
+		// close file!
+		fclose(fp);
+
+		// banner sequence
+		DC_FlushAll();
+
+		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+			grabBannerSequence(num);
+			bnriconisDSi[num] = true;
+		}
+	}
+}
+
 void iconUpdate(bool isDir, const char* name, int num)
 {
+	if(num >= 30) {
+		num -= 30;
+	} else if(num >= 20) {
+		num -= 20;
+	} else if(num >= 10) {
+		num -= 10;
+	}
 	clearText(false);
 
 	if (isDir)

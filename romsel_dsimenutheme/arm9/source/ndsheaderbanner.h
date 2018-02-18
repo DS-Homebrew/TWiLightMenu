@@ -228,12 +228,12 @@ int grabTID(FILE* ndsFile, char *buf);
 u32 getSDKVersion(FILE* ndsFile);
 
 // bnriconframenum[]
-extern int bnriconframenumX[39];
-extern int bnriconframenumY[39];
-extern int bannerFlip[39];
+extern int bnriconPalLine[40];
+extern int bnriconframenumY[40];
+extern int bannerFlip[40];
 
 // bnriconisDSi[]
-extern bool bnriconisDSi[39];
+extern bool bnriconisDSi[40];
 
 /**
  * Get banner sequence from banner file.

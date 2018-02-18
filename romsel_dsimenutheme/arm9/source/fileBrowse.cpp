@@ -343,10 +343,46 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	getDirectoryContents(dirContents[scrn], extensionList);
 
 	spawnedtitleboxes = 0;
-	for(int i = 0; i < 39; i++) {
-		if (i+pagenum*39 < file_count) {
-			if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*39).isDirectory, dirContents[scrn].at(i+pagenum*39).name.c_str(), i);
+	for(int i = 0; i < 40; i++) {
+		if (i+pagenum*40 < file_count) {
+			if (i < 10)
+				if (romtype == 0) iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+			if (romtype == 0) updateBannerSequence(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 			spawnedtitleboxes++;
+		}
+	}
+	if (romtype == 0) {
+		int storedNum = 0;
+		if (cursorPosition >= 7 && cursorPosition <= 11) {
+			storedNum = 7;
+			for(int i = 0; i < 5; i++) {
+				if (storedNum+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((storedNum+3+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum+3+i)+pagenum*40).name.c_str(), storedNum+3+i);
+				}
+			}
+		} else if (cursorPosition >= 12 && cursorPosition <= 36) {
+			if (cursorPosition >= 12 && cursorPosition <= 16)
+				storedNum = 12;
+			else if (cursorPosition >= 17 && cursorPosition <= 21)
+				storedNum = 17;
+			else if (cursorPosition >= 22 && cursorPosition <= 26)
+				storedNum = 22;
+			else if (cursorPosition >= 27 && cursorPosition <= 31)
+				storedNum = 27;
+			else if (cursorPosition >= 32 && cursorPosition <= 36)
+				storedNum = 32;
+			for(int i = 0; i < 10; i++) {
+				if (storedNum+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((storedNum-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum-2+i)+pagenum*40).name.c_str(), storedNum-2+i);
+				}
+			}
+		} else if (cursorPosition >= 37 && cursorPosition <= 39) {
+			storedNum = 37;
+			for(int i = 0; i < 5; i++) {
+				if (storedNum+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((storedNum-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum-2+i)+pagenum*40).name.c_str(), storedNum-2+i);
+				}
+			}
 		}
 	}
 	
@@ -370,14 +406,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		if (cursorPosition+pagenum*39 > ((int) dirContents[scrn].size() - 1)) {
+		if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
 			showbubble = false;
 			showSTARTborder = false;
 			clearText(false);	// Clear title
 		} else {
 			showbubble = true;
 			showSTARTborder = true;
-			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*39).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str());
+			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
 		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -404,14 +440,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printf("           ");
 			}
 			printf("            ");
-			if (file_count > 39+pagenum*39) {
+			if (file_count > 40+pagenum*40) {
 				printf("R: Next");
 			} else {
 				printf("       ");
 			}
 
 			//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
-			//if (file_count > 39+pagenum*39) printSmall(true, 182, 177, "Next Page");
+			//if (file_count > 40+pagenum*40) printSmall(true, 182, 177, "Next Page");
 
 			scanKeys();
 			pressed = keysDownRepeat();
@@ -429,15 +465,27 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (cursorPosition >= 0) {
 				titleboxXmoveleft = true;
 				mmEffectEx(&snd_select);
-			} else
+			} else {
 				mmEffectEx(&snd_wrong);
+			}
+			if(cursorPosition >= 2 && cursorPosition <= 36) {
+				if (cursorPosition+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
+				}
+			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition += 1;
-			if (cursorPosition <= 38) {
+			if (cursorPosition <= 39) {
 				titleboxXmoveright = true;
 				mmEffectEx(&snd_select);
-			} else
+			} else {
 				mmEffectEx(&snd_wrong);
+			}
+			if(cursorPosition >= 7 && cursorPosition <= 37) {
+				if (cursorPosition+pagenum*40 < file_count) {
+					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
+				}
+			}
 		}
 		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
 		// if (pressed & KEY_DOWN) cursorPosition += ENTRY_PAGE_LENGTH;
@@ -475,9 +523,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			cursorPosition = 0;
 		}
-		else if (cursorPosition > 38)
+		else if (cursorPosition > 39)
 		{
-			cursorPosition = 38;
+			cursorPosition = 39;
 		}
 		// else if (cursorPosition > ((int) dirContents[scrn].size() - 1))
 		// {
@@ -486,7 +534,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -528,7 +576,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*39);
+			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -579,7 +627,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			clearText(true);
 			clearText(false);
 			return "null";		
-		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 39+pagenum*39)
+		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 		{
 			mmEffectEx(&snd_switch);
 			pagenum += 1;
@@ -638,7 +686,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && (romtype == 0) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
-			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*39).name.c_str();
+			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
 			printSmallCentered(false, 160, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}
