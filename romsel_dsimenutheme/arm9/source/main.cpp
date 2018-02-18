@@ -68,6 +68,7 @@ static void RemoveTrailingSlashes(std::string& path)
 std::string romfolder;
 std::string fcromfolder;
 std::string gbromfolder;
+std::string nesromfolder;
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string slashchar = "/";
@@ -118,6 +119,8 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(romfolder);
 	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
 	RemoveTrailingSlashes(gbromfolder);
+	nesromfolder = settingsini.GetString("SRLOADER", "NESROM_FOLDER", "");
+	RemoveTrailingSlashes(nesromfolder);
 	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
@@ -620,20 +623,26 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	vector<string> gbExtensionList;
+	vector<string> nesExtensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
 	gbExtensionList.push_back(".gb");
 	gbExtensionList.push_back(".sgb");
 	gbExtensionList.push_back(".gbc");
+	nesExtensionList.push_back(".nes");
+	nesExtensionList.push_back(".fds");
 	srand(time(NULL));
 	
 	if (romfolder == "") romfolder = "roms/nds";
 	if (gbromfolder == "") gbromfolder = "roms/gb";
+	if (nesromfolder == "") nesromfolder = "roms/nes";
 	
 	char path[256];
 	snprintf (path, sizeof(path), "/%s", romfolder.c_str());
 	char gbPath[256];
 	snprintf (gbPath, sizeof(gbPath), "/%s", gbromfolder.c_str());
+	char nesPath[256];
+	snprintf (nesPath, sizeof(nesPath), "/%s", nesromfolder.c_str());
 	
 	InitSound();
 	
@@ -645,6 +654,12 @@ int main(int argc, char **argv) {
 
 			//Navigates to the file to launch
 			filename = browseForFile(gbExtensionList, username);
+		} else if (romtype == 2) {
+			// Set directory
+			chdir (nesPath);
+
+			//Navigates to the file to launch
+			filename = browseForFile(nesExtensionList, username);
 		} else {
 			// Set directory
 			chdir (path);
@@ -876,6 +891,23 @@ int main(int argc, char **argv) {
 				} else {
 					argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
 					err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+				}
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				printLarge(false, 4, 4, text);
+				stop();
+			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
+						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
+				char nesROMpath[256];
+				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", nesromfolder.c_str(), filename.c_str());
+				argarray.push_back(nesROMpath);
+				int err = 0;
+				if(flashcardUsed) {
+					argarray.at(0) = "/_nds/srloader/emulators/nesds.nds";
+					err = runNdsFile ("/_nds/srloader/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to nesDS as argument
+				} else {
+					argarray.at(0) = "sd:/_nds/srloader/emulators/nestwl.nds";
+					err = runNdsFile ("sd:/_nds/srloader/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
