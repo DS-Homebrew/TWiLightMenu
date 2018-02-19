@@ -78,6 +78,8 @@ extern bool useBootstrap;
 
 using namespace std;
 
+extern int theme;
+
 extern int spawnedtitleboxes;
 static int file_count = 0;
 extern int cursorPosition;
@@ -690,7 +692,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_SELECT) && (romtype == 0) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
-			printSmallCentered(false, 160, "Donor ROM is set.");
+			int yPos = 160;
+			if (theme == 1) yPos -= 4;
+			printSmallCentered(false, yPos, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
 		}
 
