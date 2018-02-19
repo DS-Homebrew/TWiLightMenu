@@ -469,7 +469,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_wrong);
 			}
 			if(cursorPosition >= 2 && cursorPosition <= 36) {
-				if (cursorPosition+pagenum*40 < file_count) {
+				if ((cursorPosition-2)+pagenum*40 < file_count) {
 					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
 				}
 			}
@@ -482,7 +482,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_wrong);
 			}
 			if(cursorPosition >= 7 && cursorPosition <= 37) {
-				if (cursorPosition+pagenum*40 < file_count) {
+				if ((cursorPosition+2)+pagenum*40 < file_count) {
 					if (romtype == 0) iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
 				}
 			}
