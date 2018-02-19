@@ -233,6 +233,7 @@ extern int bnriconframenumY[40];
 extern int bannerFlip[40];
 
 // bnriconisDSi[]
+extern bool isGBC[40];
 extern bool bnriconisDSi[40];
 extern bool launchable[40];
 extern bool isHomebrew[40];

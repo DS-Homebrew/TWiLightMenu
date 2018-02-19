@@ -92,6 +92,7 @@ int bnriconframenumY[40] = {0};
 int bannerFlip[40] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
+bool isGBC[40] = {false};
 bool bnriconisDSi[40] = {false};
 bool launchable[40] = {true};
 bool isHomebrew[40] = {false};

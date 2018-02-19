@@ -74,10 +74,6 @@
 #include "org_box_empty.h"
 #include "_3ds_box_empty.h"
 
-// Built-in icons
-#include "icon_gbc.h"
-#include "icon_nes.h"
-
 #include "../iconTitle.h"
 #include "graphics.h"
 #include "fontHandler.h"
@@ -277,7 +273,7 @@ void vBlankHandler()
 			for(int i = 0; i < 40; i++) {
 				if (i < spawnedtitleboxes) {
 					glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, titleboxYpos+12);
+					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, titleboxYpos+12, i);
 					else if (romtype == 2) drawIconNES(iconXpos-titleboxXpos, titleboxYpos+12);
 					else drawIcon(iconXpos-titleboxXpos, titleboxYpos+12, i);
 				} else
@@ -295,7 +291,7 @@ void vBlankHandler()
 					}
 				}
 				glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
-				if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos);
+				if (romtype == 1) drawIconGBC(112, 96-titleboxYmovepos, cursorPosition);
 				else if (romtype == 2) drawIconNES(112, 96-titleboxYmovepos);
 				else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
 				titleboxYmovepos += 5;

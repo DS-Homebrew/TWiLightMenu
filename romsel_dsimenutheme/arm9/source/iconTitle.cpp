@@ -242,9 +242,13 @@ void drawIcon(int Xpos, int Ypos, int num)
 	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
 
-void drawIconGBC(int Xpos, int Ypos)
+void drawIconGBC(int Xpos, int Ypos, int num)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbcIcon);
+	if(isGBC[num]) {
+		glSprite(Xpos, Ypos, GL_FLIP_NONE, gbcIcon);
+	} else {
+		glSprite(Xpos, Ypos, GL_FLIP_NONE, gbIcon);
+	}
 }
 void drawIconNES(int Xpos, int Ypos)
 {

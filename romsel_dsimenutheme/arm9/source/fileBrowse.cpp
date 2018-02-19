@@ -349,8 +349,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	spawnedtitleboxes = 0;
 	for(int i = 0; i < 40; i++) {
 		if (i+pagenum*40 < file_count) {
-			if (romtype == 0) getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
-			else {
+			if (romtype == 0) {
+				getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+			} else if (romtype == 1) {
+				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+					isGBC[i] = true;
+				} else {
+					isGBC[i] = false;
+				}
+				launchable[i] = true;
+				isHomebrew[i] = false;
+			} else {
 				launchable[i] = true;
 				isHomebrew[i] = false;
 			}
