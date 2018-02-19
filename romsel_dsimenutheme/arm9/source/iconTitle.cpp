@@ -32,12 +32,17 @@
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
-#define BOX_PY 13
+static int BOX_PY = 13;
+static int BOX_PY_spacing1 = 19;
+static int BOX_PY_spacing2 = 9;
+static int BOX_PY_spacing3 = 28;
 
 // Graphic files
 #include "icon_unk.h"
 #include "icon_gbc.h"
 #include "icon_nes.h"
+
+extern int theme;
 
 static int iconTexID[11][8];
 static int gbcTexID;
@@ -65,16 +70,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printLargeCentered(false, BOX_PY+19, text1);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printLargeCentered(false, BOX_PY+9, text1);
-			printLargeCentered(false, BOX_PY+28, text2);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, text1);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
 			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY+19, text2);
-			printLargeCentered(false, BOX_PY+19*2, text3);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text2);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -506,6 +511,12 @@ void iconUpdate(bool isDir, const char* name, int num)
 void titleUpdate(bool isDir, const char* name)
 {
 	clearText(false);
+	if (theme == 1) {
+		BOX_PY = 39;
+		BOX_PY_spacing1 = 17;
+		BOX_PY_spacing2 = 7;
+		BOX_PY_spacing3 = 26;
+	}
 
 	if (isDir)
 	{
@@ -677,19 +688,19 @@ void titleUpdate(bool isDir, const char* name)
 		switch(bannerlines) {
 			case 0:
 			default:
-				printLargeCentered(false, BOX_PY+19, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, p);
 				break;
 			case 1:
-				printLargeCentered(false, BOX_PY+9, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing2, p);
 				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+28, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing3, p);
 				break;
 			case 2:
 				printLargeCentered(false, BOX_PY, p);
 				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+19, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, p);
 				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+19*2, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, p);
 				break;
 		}
 		
