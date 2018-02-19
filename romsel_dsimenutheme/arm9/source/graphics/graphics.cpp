@@ -225,11 +225,6 @@ void vBlankHandler()
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
 			else if (theme==0) glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
-			if (theme==0) {
-				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
-				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
-			}
 			
 			if (titleboxXmoveleft) {
 				if (movetimer == 8) {
@@ -263,15 +258,17 @@ void vBlankHandler()
 			
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
-				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-				int bipXpos = 30;
+				glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+				int bipXpos = 27;
 				for(int i = 0; i < 40; i++) {
 					if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
 					else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 					bipXpos += 5;
 				}
 				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
+				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
 				glColor(RGB15(31, 31, 31));
 				glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 			}
