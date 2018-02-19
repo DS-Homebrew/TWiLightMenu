@@ -68,6 +68,7 @@ extern bool applaunchprep;
 extern std::string romfolder;
 
 extern std::string arm7DonorPath;
+bool donorFound = true;
 
 extern int romtype;
 
@@ -348,7 +349,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	spawnedtitleboxes = 0;
 	for(int i = 0; i < 40; i++) {
 		if (i+pagenum*40 < file_count) {
-			if (romtype == 0) updateBannerSequence(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+			if (romtype == 0) getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 			else {
 				launchable[i] = true;
 				isHomebrew[i] = false;
@@ -545,29 +546,53 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else if (launchable[cursorPosition])
 			{
-				mmEffectEx(&snd_launch);
-				applaunch = true;
-				applaunchprep = true;
-				if (!isHomebrew[cursorPosition]) {
-					useBootstrap = true;
+				donorFound = true;
+				if(!flashcardUsed && romtype == 0 && arm7DonorPath.compare("") == 0) {
+					FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
+
+					u32 SDKVersion = 0;
+					char game_TID[5];
+					grabTID(f_nds_file, game_TID);
+					game_TID[4] = 0;
+					game_TID[3] = 0;
+					if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+					fclose(f_nds_file);
+
+					if(SDKVersion > 0x3000000 && SDKVersion < 0x5000000 && (strcmp(game_TID, "AMC") != 0)) {
+						donorFound = false;
+					}
+				}
+				if(donorFound) {
+					mmEffectEx(&snd_launch);
+					applaunch = true;
+					applaunchprep = true;
+					if (!isHomebrew[cursorPosition]) {
+						useBootstrap = true;
+					} else {
+						useBootstrap = false;
+					}
+					
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
+					
+					for (int i = 0; i < 90; i++) {
+						swiWaitForVBlank();
+					}
+
+					clearText(true);
+					for (int i = 0; i < 4; i++) swiWaitForVBlank();
+					SaveSettings();
+
+					// Return the chosen file
+					return entry->name;
 				} else {
-					useBootstrap = false;
+					mmEffectEx(&snd_wrong);
+					int yPos = 160;
+					if (theme == 1) yPos -= 4;
+					printSmallCentered(false, yPos, "Please set Mario Kart DS as donor ROM.");
+					for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
 				}
-				
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
-				
-				for (int i = 0; i < 90; i++) {
-					swiWaitForVBlank();
-				}
-
-				clearText(true);
-				for (int i = 0; i < 4; i++) swiWaitForVBlank();
-				SaveSettings();
-
-				// Return the chosen file
-				return entry->name;
 			} else {
 				mmEffectEx(&snd_wrong);
 				int yPos = 160;

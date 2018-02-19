@@ -231,7 +231,7 @@ void drawIconNES(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
 }
 
-void updateBannerSequence(bool isDir, const char* name, int num)
+void getGameInfo(bool isDir, const char* name, int num)
 {
 	bnriconPalLine[num] = 0;
 	bnriconframenumY[num] = 0;
@@ -294,7 +294,7 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 				}
 				else
 				{
-					updateBannerSequence(false, p, num);
+					getGameInfo(false, p, num);
 				}
 			}
 		}
@@ -335,10 +335,11 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 		}
 
 		if(ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
-			launchable[num] = false;
+			launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
 		} else if(ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
 			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-				isHomebrew[num] = true;
+				isHomebrew[num] = true;	// If homebrew has DSi-extended header,
+											// do not use bootstrap/flashcard's ROM booter to boot it
 		}
 
 		if (ndsHeader.bannerOffset == 0)
