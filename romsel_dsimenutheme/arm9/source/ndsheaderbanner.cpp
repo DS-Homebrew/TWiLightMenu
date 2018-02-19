@@ -93,6 +93,8 @@ int bannerFlip[40] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool bnriconisDSi[40] = {false};
+bool launchable[40] = {true};
+bool isHomebrew[40] = {false};
 
 /**
  * Get banner sequence from banner file.

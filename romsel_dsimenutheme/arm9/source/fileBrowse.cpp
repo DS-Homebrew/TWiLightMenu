@@ -35,6 +35,7 @@
 
 #include "date.h"
 
+#include "ndsheaderbanner.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -348,6 +349,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	for(int i = 0; i < 40; i++) {
 		if (i+pagenum*40 < file_count) {
 			if (romtype == 0) updateBannerSequence(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+			else {
+				launchable[i] = true;
+				isHomebrew[i] = false;
+			}
 			spawnedtitleboxes++;
 		}
 	}
@@ -555,12 +560,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				screenOffset = 0;
 				cursorPosition = 0; */
 			}
-			else
+			else if (launchable[cursorPosition])
 			{
 				mmEffectEx(&snd_launch);
 				applaunch = true;
 				applaunchprep = true;
-				useBootstrap = true;
+				if (!isHomebrew[cursorPosition]) {
+					useBootstrap = true;
+				} else {
+					useBootstrap = false;
+				}
 				
 				showbubble = false;
 				showSTARTborder = false;
@@ -576,6 +585,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				// Return the chosen file
 				return entry->name;
+			} else {
+				mmEffectEx(&snd_wrong);
+				int yPos = 160;
+				if (theme == 1) yPos -= 4;
+				printSmallCentered(false, yPos, "This game cannot be launched.");
+				for (int i = 0; i < 90; i++) swiWaitForVBlank();
 			}
 		}
 
@@ -695,7 +710,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			int yPos = 160;
 			if (theme == 1) yPos -= 4;
 			printSmallCentered(false, yPos, "Donor ROM is set.");
-			for (int i = 0; i < 90; i++) swiWaitForVBlank();			
+			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 		}
 
 	}

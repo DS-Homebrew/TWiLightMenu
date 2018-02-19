@@ -47,6 +47,7 @@ extern int theme;
 static int iconTexID[10][8];
 static int gbcTexID;
 static int nesTexID;
+sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
 static glImage ndsIcon[10][8][(32 / 32) * (256 / 32)];
@@ -230,6 +231,8 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
+	launchable[num] = true;
+	isHomebrew[num] = false;
 
 	if (isDir)
 	{
@@ -300,7 +303,6 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 	{
 		// this is an nds file!
 		FILE *fp;
-		unsigned int iconTitleOffset;
 		int ret;
 
 		// open file for reading info
@@ -314,9 +316,9 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 		}
 
 		
-		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
+		ret = fseek(fp, 0, SEEK_SET);
 		if (ret == 0)
-			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
+			ret = fread(&ndsHeader, sizeof (ndsHeader), 1, fp); // read if seek succeed
 		else
 			ret = 0; // if seek fails set to !=1
 
@@ -326,12 +328,19 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if (iconTitleOffset == 0)
+		if(ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+			launchable[num] = false;
+		} else if(ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
+			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
+				isHomebrew[num] = true;
+		}
+
+		if (ndsHeader.bannerOffset == 0)
 		{
 			fclose(fp);
 			return;
 		}
-		ret = fseek(fp, iconTitleOffset, SEEK_SET);
+		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 		if (ret == 0)
 			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
 		else

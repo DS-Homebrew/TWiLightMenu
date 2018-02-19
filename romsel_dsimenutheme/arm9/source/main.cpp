@@ -872,7 +872,7 @@ int main(int argc, char **argv) {
 						stop();
 					}
 				} else {
-					iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
+					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
