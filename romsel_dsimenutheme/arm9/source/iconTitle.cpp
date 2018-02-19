@@ -39,12 +39,14 @@ static int BOX_PY_spacing3 = 28;
 
 // Graphic files
 #include "icon_unk.h"
+#include "icon_gb.h"
 #include "icon_gbc.h"
 #include "icon_nes.h"
 
 extern int theme;
 
 static int iconTexID[6][8];
+static int gbTexID;
 static int gbcTexID;
 static int nesTexID;
 sNDSHeaderExt ndsHeader;
@@ -52,6 +54,7 @@ sNDSBannerExt ndsBanner;
 
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
+static glImage gbIcon[1];
 static glImage gbcIcon[1];
 static glImage nesIcon[1];
 
@@ -161,8 +164,25 @@ void loadUnkIcon(int num)
 
 void loadGBCIcon()
 {
-	glDeleteTextures(1, &gbcTexID);
+	glDeleteTextures(1, &gbTexID);
 	
+	gbTexID =
+	glLoadTileSet(gbIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_gbPal, // Image palette
+				(u8*) icon_gbBitmap // Raw image data
+				);
+
+	glDeleteTextures(1, &gbcTexID);
+
 	gbcTexID =
 	glLoadTileSet(gbcIcon, // pointer to glImage array
 				32, // sprite width
