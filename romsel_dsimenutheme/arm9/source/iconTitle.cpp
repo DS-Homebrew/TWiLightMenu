@@ -44,12 +44,12 @@ static int BOX_PY_spacing3 = 28;
 
 extern int theme;
 
-static int iconTexID[11][8];
+static int iconTexID[10][8];
 static int gbcTexID;
 static int nesTexID;
 sNDSBannerExt ndsBanner;
 
-static glImage ndsIcon[11][8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[10][8][(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
 static glImage nesIcon[1];
