@@ -43,16 +43,20 @@
 #include "topbg_15fuchsia.h"
 #include "top.h"
 #include "org_top.h"
+#include "_3ds_top.h"
 #include "bottom.h"
 #include "org_bottom.h"
+#include "_3ds_bottom.h"
 #include "shoulder.h"
 #include "org_shoulder.h"
 #include "nintendo_dsi_menu.h"
 #include "org_nintendo_dsi_menu.h"
 #include "bubble.h"
 #include "org_bubble.h"
+#include "_3ds_bubble.h"
 #include "bubble_arrow.h"
 #include "org_bubble_arrow.h"
+#include "_3ds_bubble_arrow.h"
 #include "bips.h"
 #include "scroll_window.h"
 #include "org_scroll_window.h"
@@ -64,8 +68,10 @@
 #include "org_brace.h"
 #include "box_full.h"
 #include "org_box_full.h"
+#include "_3ds_box_full.h"
 #include "box_empty.h"
 #include "org_box_empty.h"
+#include "_3ds_box_empty.h"
 
 // Built-in icons
 #include "icon_gbc.h"
@@ -101,6 +107,7 @@ int titleboxYmovepos = 0;
 
 extern int spawnedtitleboxes;
 
+extern int theme;
 extern int subtheme;
 extern int cursorPosition;
 int titleboxXpos;
@@ -213,10 +220,12 @@ void vBlankHandler()
 		{*/
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
-			else glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
-			glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-			glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
-			glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
+			else if (theme==0) glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
+			if (theme==0) {
+				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
+				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
+			}
 			
 			if (titleboxXmoveleft) {
 				if (movetimer == 8) {
@@ -248,18 +257,20 @@ void vBlankHandler()
 				}
 			}
 			
-			glColor(RGB15(31, 31, 31));
-			glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-			int bipXpos = 30;
-			for(int i = 0; i < 40; i++) {
-				if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
-				else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
-				bipXpos += 5;
+			if (theme==0) {
+				glColor(RGB15(31, 31, 31));
+				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+				int bipXpos = 30;
+				for(int i = 0; i < 40; i++) {
+					if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
+					else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+					bipXpos += 5;
+				}
+				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				glColor(RGB15(31, 31, 31));
+				glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 			}
-			glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
-			glSprite(19+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
-			glColor(RGB15(31, 31, 31));
-			glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
 			for(int i = 0; i < 40; i++) {
@@ -273,7 +284,7 @@ void vBlankHandler()
 				spawnedboxXpos += 64;
 				iconXpos += 64;
 			}
-			if (applaunchprep) {
+			if (applaunchprep && theme==0) {
 				// Cover selected app
 				for (int y = 0; y < 4; y++)
 				{
@@ -289,7 +300,7 @@ void vBlankHandler()
 				titleboxYmovepos += 5;
 				if (titleboxYmovepos > 192) whiteScreen = true;
 			}
-			glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
+			if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			if (showSTARTborder) {
 				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
 				glSprite(96, 80, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
@@ -297,7 +308,7 @@ void vBlankHandler()
 				glColor(RGB15(31, 31, 31));
 			}
 			if (showbubble) glSprite(120, 72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
-			if (showSTARTborder) glSprite(95, 144, GL_FLIP_NONE, startImage);
+			if (showSTARTborder && theme == 0) glSprite(95, 144, GL_FLIP_NONE, startImage);
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {
@@ -431,7 +442,12 @@ void graphicsInit()
 	
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
-	topBgLoad();
+	if (theme == 1) {
+		swiDecompressLZSSVram ((void*)_3ds_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], _3ds_topPal, _3ds_topPalLen);
+	} else {
+		topBgLoad();
+	}
 
 	/*if (subtheme == 1) {
 		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
@@ -441,7 +457,49 @@ void graphicsInit()
 		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
 	}*/
 
-	if (subtheme == 1) {
+	if (theme == 1) {
+		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+								16, // sprite width
+								16, // sprite height
+								256, // bitmap width
+								256, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (256 colors)
+								(u16*) _3ds_bottomPal, // Load our 16 color tiles palette
+								(u8*) _3ds_bottomBitmap // image data generated by GRIT
+								);
+
+		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+								16, // sprite width
+								16, // sprite height
+								256, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) _3ds_bubblePal, // Load our 16 color tiles palette
+								(u8*) _3ds_bubbleBitmap // image data generated by GRIT
+								);
+
+		bubblearrowTexID = glLoadTileSet(bubblearrowImage, // pointer to glImage array
+								16, // sprite width
+								16, // sprite height
+								16, // bitmap width
+								16, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) _3ds_bubble_arrowPal, // Load our 16 color tiles palette
+								(u8*) _3ds_bubble_arrowBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 1) {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
 								16, // sprite width
 								16, // sprite height
@@ -655,7 +713,35 @@ void graphicsInit()
 							(u8*) start_borderBitmap // image data generated by GRIT
 							);
 
-	if (subtheme == 1) {
+	if (theme == 1) {
+		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) _3ds_box_fullPal, // Load our 16 color tiles palette
+								(u8*) _3ds_box_fullBitmap // image data generated by GRIT
+								);
+
+		boxemptyTexID = glLoadTileSet(boxemptyImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) _3ds_box_emptyPal, // Load our 16 color tiles palette
+								(u8*) _3ds_box_emptyBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 1) {
 		braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
 								16, // sprite width
 								128, // sprite height

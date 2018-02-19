@@ -103,7 +103,7 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Customizable UI settings.
-	//theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 
@@ -623,7 +623,7 @@ int main(int argc, char **argv) {
 							printLarge(false, 4, 4, "Sub-theme select: DSi Menu");
 							break;
 						case 1:
-							printLarge(false, 4, 4, "Sub-theme select: Aura Launcher");
+							printLarge(false, 4, 4, "Sub-theme select: 3DS HOME Menu");
 							break;
 					}
 
@@ -647,8 +647,8 @@ int main(int argc, char **argv) {
 							printSmall(false, 12, 32, "Normal Menu");
 							break;
 						case 1:
-							printSmall(false, 12, 24, "DS Menu");
-							printSmall(false, 12, 32, "3DS HOME Menu");
+							//printSmall(false, 12, 24, "DS Menu");
+							//printSmall(false, 12, 32, "3DS HOME Menu");
 							break;
 					}
 
@@ -1025,7 +1025,7 @@ int main(int argc, char **argv) {
 
 					printSmall(false, 12, 24, "Theme");
 					if(theme == 1)
-						printSmall(false, 156, 24, "Aura Launcher");
+						printSmall(false, 156, 24, "3DS Menu");
 					else
 						printSmall(false, 156, 24, "DSi Menu");
 
@@ -1083,14 +1083,16 @@ int main(int argc, char **argv) {
 						case 0:
 						default:
 							if (pressed & KEY_LEFT) {
-								//subtheme = 0;
-								//theme -= 1;
-								//if (theme < 0) theme = 1;
-								mmEffectEx(&snd_wrong);
+								subtheme = 0;
+								theme -= 1;
+								if (theme < 0) theme = 1;
+								mmEffectEx(&snd_select);
 							} else if (pressed & KEY_RIGHT) {
-								//subtheme = 0;
-								//theme += 1;
-								//if (theme > 1) theme = 0;
+								subtheme = 0;
+								theme += 1;
+								if (theme > 1) theme = 0;
+								mmEffectEx(&snd_select);
+							} else if (theme == 1) {
 								mmEffectEx(&snd_wrong);
 							} else {
 								subscreenmode = 2;
