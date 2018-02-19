@@ -688,9 +688,12 @@ void titleUpdate(bool isDir, const char* name)
 		{
 			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
 				p[i / 2] = 0;
-				bannerlines += 1;
-			} else
+				bannerlines++;
+			} else if (p[i] == 0xE9) {
+				p[i / 2] = 0x65;	// Replace bugged "é" with regular "e"
+			} else {
 				p[i / 2] = p[i];
+			}
 		}
 
 		// text
