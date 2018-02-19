@@ -358,39 +358,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	}
 	if (romtype == 0) {
 		// Load correct icons depending on cursor position
-		int storedNum = 0;
 		if (cursorPosition <= 1) {
-			storedNum = 0;
 			for(int i = 0; i < 5; i++) {
-				if ((storedNum+i)+pagenum*40 < file_count) {
-					iconUpdate(dirContents[scrn].at((storedNum+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum+i)+pagenum*40).name.c_str(), storedNum+i);
+				if (i+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 				}
 			}
 		} else if (cursorPosition >= 2 && cursorPosition <= 36) {
-			if (cursorPosition >= 2 && cursorPosition <= 6)
-				storedNum = 2;
-			else if (cursorPosition >= 7 && cursorPosition <= 11)
-				storedNum = 7;
-			else if (cursorPosition >= 12 && cursorPosition <= 16)
-				storedNum = 12;
-			else if (cursorPosition >= 17 && cursorPosition <= 21)
-				storedNum = 17;
-			else if (cursorPosition >= 22 && cursorPosition <= 26)
-				storedNum = 22;
-			else if (cursorPosition >= 27 && cursorPosition <= 31)
-				storedNum = 27;
-			else if (cursorPosition >= 32 && cursorPosition <= 36)
-				storedNum = 32;
-			for(int i = 0; i < 10; i++) {
-				if ((storedNum-2+i)+pagenum*40 < file_count) {
-					iconUpdate(dirContents[scrn].at((storedNum-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum-2+i)+pagenum*40).name.c_str(), storedNum-2+i);
+			for(int i = 0; i < 6; i++) {
+				if ((cursorPosition-2+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
 				}
 			}
 		} else if (cursorPosition >= 37 && cursorPosition <= 39) {
-			storedNum = 37;
 			for(int i = 0; i < 5; i++) {
-				if ((storedNum-2+i)+pagenum*40 < file_count) {
-					iconUpdate(dirContents[scrn].at((storedNum-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((storedNum-2+i)+pagenum*40).name.c_str(), storedNum-2+i);
+				if ((35+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
 				}
 			}
 		}

@@ -44,13 +44,13 @@ static int BOX_PY_spacing3 = 28;
 
 extern int theme;
 
-static int iconTexID[10][8];
+static int iconTexID[6][8];
 static int gbcTexID;
 static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
-static glImage ndsIcon[10][8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
 static glImage gbcIcon[1];
 static glImage nesIcon[1];
@@ -206,12 +206,18 @@ static void clearIcon(int num)
 void drawIcon(int Xpos, int Ypos, int num)
 {
 	int num2 = num;
-	if(num2 >= 30) {
+	if(num >= 36) {
+		num2 -= 36;
+	} else if(num2 >= 30) {
 		num2 -= 30;
-	} else if(num >= 20) {
-		num2 -= 20;
-	} else if(num >= 10) {
-		num2 -= 10;
+	} else if(num2 >= 24) {
+		num2 -= 24;
+	} else if(num2 >= 18) {
+		num2 -= 18;
+	} else if(num2 >= 12) {
+		num2 -= 12;
+	} else if(num2 >= 6) {
+		num2 -= 6;
 	}
 	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
@@ -367,12 +373,18 @@ void updateBannerSequence(bool isDir, const char* name, int num)
 
 void iconUpdate(bool isDir, const char* name, int num)
 {
-	if(num >= 30) {
+	if(num >= 36) {
+		num -= 36;
+	} else if(num >= 30) {
 		num -= 30;
-	} else if(num >= 20) {
-		num -= 20;
-	} else if(num >= 10) {
-		num -= 10;
+	} else if(num >= 24) {
+		num -= 24;
+	} else if(num >= 18) {
+		num -= 18;
+	} else if(num >= 12) {
+		num -= 12;
+	} else if(num >= 6) {
+		num -= 6;
 	}
 	clearText(false);
 
