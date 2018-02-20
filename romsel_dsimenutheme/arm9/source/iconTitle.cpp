@@ -543,6 +543,11 @@ void titleUpdate(bool isDir, const char* name)
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
 	}
+	
+	if (strcmp(name, "settings") == 0) {
+		writeBannerText(0, "Settings", "", "");
+		return;
+	}
 
 	if (isDir)
 	{

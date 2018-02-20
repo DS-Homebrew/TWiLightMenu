@@ -414,6 +414,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showbubble = false;
 			showSTARTborder = false;
 			clearText(false);	// Clear title
+		} else if (cursorPosition == -1) {
+			showbubble = true;
+			showSTARTborder = true;
+			titleUpdate(false, "settings");
 		} else {
 			showbubble = true;
 			showSTARTborder = true;
@@ -466,11 +470,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition -= 1;
-			if (cursorPosition >= 0) {
-				titleboxXmoveleft = true;
-				mmEffectEx(&snd_select);
+			if (pagenum == 0) {
+				if (cursorPosition >= -1) {
+					titleboxXmoveleft = true;
+					mmEffectEx(&snd_select);
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
 			} else {
-				mmEffectEx(&snd_wrong);
+				if (cursorPosition >= 0) {
+					titleboxXmoveleft = true;
+					mmEffectEx(&snd_select);
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
 			}
 			if(romtype == 0 && cursorPosition >= 2 && cursorPosition <= 36) {
 				if ((cursorPosition-2)+pagenum*40 < file_count) {
@@ -523,13 +536,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";
 		} 
 
-		if (cursorPosition < 0)
-		{
-			cursorPosition = 0;
-		}
-		else if (cursorPosition > 39)
-		{
-			cursorPosition = 39;
+		if (pagenum == 0) {
+			if (cursorPosition < -1)
+			{
+				cursorPosition = -1;
+			}
+			else if (cursorPosition > 39)
+			{
+				cursorPosition = 39;
+			}
+		} else {
+			if (cursorPosition < 0)
+			{
+				cursorPosition = 0;
+			}
+			else if (cursorPosition > 39)
+			{
+				cursorPosition = 39;
+			}
 		}
 		// else if (cursorPosition > ((int) dirContents[scrn].size() - 1))
 		// {
@@ -538,6 +562,31 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
+			if (cursorPosition == -1) {
+				// Launch settings
+
+				mmEffectEx(&snd_launch);
+				applaunch = true;
+				applaunchprep = true;
+				gotosettings = true;
+				useBootstrap = false;
+
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+
+				for (int i = 0; i < 90; i++) {
+					swiWaitForVBlank();
+				}
+
+				clearText(true);
+				for (int i = 0; i < 4; i++) swiWaitForVBlank();
+				SaveSettings();
+
+				int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
+				iprintf ("Start failed. Error %i\n", err);
+			}
+
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
 			{
@@ -612,7 +661,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_Y) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+		if ((pressed & KEY_Y) && romtype == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
 		{
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
