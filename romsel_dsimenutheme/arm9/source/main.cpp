@@ -51,6 +51,8 @@ bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 
+extern void ClearBrightness();
+
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -744,6 +746,7 @@ int main(int argc, char **argv) {
 
 						if (access(savename.c_str(), F_OK)) {
 							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
+								ClearBrightness();
 								const char* savecreate = "Creating save file...";
 								const char* savecreated = "Save file created!";
 								printLarge(false, 4, 4, savecreate);
@@ -835,6 +838,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
+						ClearBrightness();
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -853,6 +857,7 @@ int main(int argc, char **argv) {
 								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 								fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+								ClearBrightness();
 								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
 								break;
 							}
@@ -864,6 +869,7 @@ int main(int argc, char **argv) {
 								path = ReplaceAll(argarray[0], "fat:/", woodfat);
 								fcrompathini.SetString("Save Info", "lastLoaded", path);
 								fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+								ClearBrightness();
 								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
 								break;
 							}
@@ -873,6 +879,7 @@ int main(int argc, char **argv) {
 								path = ReplaceAll(argarray[0], "fat:/", woodfat);
 								fcrompathini.SetString("Save Info", "lastLoaded", path);
 								fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+								ClearBrightness();
 								err = runNdsFile ("fat:/Afwd.dat", 0, NULL);
 								break;
 							}
@@ -882,6 +889,7 @@ int main(int argc, char **argv) {
 								path = ReplaceAll(argarray[0], "fat:/", dstwofat);
 								fcrompathini.SetString("Dir Info", "fullName", path);
 								fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+								ClearBrightness();
 								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
 								break;
 							}
@@ -905,6 +913,7 @@ int main(int argc, char **argv) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
+				ClearBrightness();
 				int err = 0;
 				if(flashcardUsed) {
 					argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
@@ -922,6 +931,7 @@ int main(int argc, char **argv) {
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", nesromfolder.c_str(), filename.c_str());
 				argarray.push_back(nesROMpath);
+				ClearBrightness();
 				int err = 0;
 				if(flashcardUsed) {
 					argarray.at(0) = "/_nds/srloader/emulators/nesds.nds";
