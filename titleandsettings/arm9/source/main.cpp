@@ -189,6 +189,7 @@ void InitSound() {
 	mmLoadEffect( SFX_LAUNCH );
 	mmLoadEffect( SFX_SELECT );
 	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
 

@@ -618,6 +618,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
+				music = false;
 				mmEffectCancelAll();
 
 				clearText(true);
@@ -688,6 +689,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
+					music = false;
 					mmEffectCancelAll();
 
 					clearText(true);
@@ -748,6 +750,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
+				music = false;
 				mmEffectCancelAll();
 
 				clearText(true);
@@ -812,6 +815,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_back);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			music = false;
 			mmEffectCancelAll();
 			whiteScreen = true;
 			clearText(false);
@@ -830,6 +834,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// waitForPanesToClear();
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			music = false;
 			mmEffectCancelAll();
 			whiteScreen = true;
 			clearText(false);
