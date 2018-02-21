@@ -838,8 +838,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
-						ClearBrightness();
-						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
+						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						printLarge(false, 4, 36, text);
@@ -857,8 +856,7 @@ int main(int argc, char **argv) {
 								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 								fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-								ClearBrightness();
-								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
 								break;
 							}
 
@@ -869,8 +867,7 @@ int main(int argc, char **argv) {
 								path = ReplaceAll(argarray[0], "fat:/", woodfat);
 								fcrompathini.SetString("Save Info", "lastLoaded", path);
 								fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-								ClearBrightness();
-								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
 								break;
 							}
 
@@ -880,7 +877,7 @@ int main(int argc, char **argv) {
 								fcrompathini.SetString("Save Info", "lastLoaded", path);
 								fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 								ClearBrightness();
-								err = runNdsFile ("fat:/Afwd.dat", 0, NULL);
+								err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
 								break;
 							}
 
@@ -889,8 +886,7 @@ int main(int argc, char **argv) {
 								path = ReplaceAll(argarray[0], "fat:/", dstwofat);
 								fcrompathini.SetString("Dir Info", "fullName", path);
 								fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-								ClearBrightness();
-								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
 								break;
 							}
 						}
@@ -901,7 +897,7 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0]);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					printLarge(false, 4, 4, text);
@@ -913,14 +909,13 @@ int main(int argc, char **argv) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
-				ClearBrightness();
 				int err = 0;
 				if(flashcardUsed) {
 					argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -931,14 +926,13 @@ int main(int argc, char **argv) {
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", nesromfolder.c_str(), filename.c_str());
 				argarray.push_back(nesROMpath);
-				ClearBrightness();
 				int err = 0;
 				if(flashcardUsed) {
 					argarray.at(0) = "/_nds/srloader/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/srloader/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("/_nds/srloader/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/srloader/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/srloader/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0]);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("sd:/_nds/srloader/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

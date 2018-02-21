@@ -609,7 +609,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				if (cursorPosition == -2) {
 					// Launch settings
-					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
+					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (cursorPosition == -1) {
 					gbaMode();
@@ -814,7 +814,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			clearText(false);
 			clearText(true);
 			SaveSettings();
-			int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
+			int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 			iprintf ("Start failed. Error %i\n", err);
 		}
 

@@ -43,8 +43,6 @@
 
 bool fadeType = false;		// false = out, true = in
 
-extern void ClearBrightness();
-
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -275,13 +273,12 @@ void loadROMselect() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
+	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
 }
 
 int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
-	ClearBrightness();
 	int err = 0;
 	if(!flashcardUsed) {
 		if (!arm7SCFGLocked) {
@@ -311,24 +308,24 @@ int lastRanROM() {
 				else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
 			}
 		}
-		err = runNdsFile (bootstrapfilename.c_str(), 0, NULL);
+		err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else {
 		switch (flashcard) {
 			case 0:
 			case 1:
 			default:
-				err = runNdsFile ("fat:/YSMenu.nds", 0, NULL);
+				err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
 				break;
 			case 2:
 			case 4:
 			case 5:
-				err = runNdsFile ("fat:/Wfwd.dat", 0, NULL);
+				err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
 				break;
 			case 3:
-				err = runNdsFile ("fat:/Afwd.dat", 0, NULL);
+				err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
 				break;
 			case 6:
-				err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL);
+				err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
 				break;
 		}
 	}
@@ -415,7 +412,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 2, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 2, 1);
 
 	if (showlogo) {
 		graphicsInit();

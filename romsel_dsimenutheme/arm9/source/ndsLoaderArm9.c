@@ -265,7 +265,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright)
 {
 	char* argStart;
 	u16* argData;
@@ -347,11 +347,18 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	resetARM7(0x06000000);
 
+	if(clearMasterBright) {
+		u16 mode = 1 << 14;
+
+		*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
+		*(u16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
+	}
+
 	swiSoftReset(); 
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -379,7 +386,7 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright);
 }
 
 /*
