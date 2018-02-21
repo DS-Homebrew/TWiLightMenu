@@ -724,12 +724,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_L) && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
 		{
 			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			pagenum -= 1;
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			whiteScreen = true;
 			clearText(true);
 			clearText(false);
@@ -737,12 +737,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 		{
 			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			pagenum += 1;
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			whiteScreen = true;
 			clearText(true);
 			clearText(false);
