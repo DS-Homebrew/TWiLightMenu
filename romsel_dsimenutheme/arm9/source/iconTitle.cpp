@@ -547,6 +547,9 @@ void titleUpdate(bool isDir, const char* name)
 	if (strcmp(name, "settings") == 0) {
 		writeBannerText(0, "Settings", "", "");
 		return;
+	} else if (strcmp(name, "gba") == 0) {
+		writeBannerText(0, "Start GBA Mode", "", "");
+		return;
 	}
 
 	if (isDir)

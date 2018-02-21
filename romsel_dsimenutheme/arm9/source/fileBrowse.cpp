@@ -57,6 +57,8 @@
 
 extern bool whiteScreen;
 
+extern bool isRegularDS;
+
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -92,6 +94,8 @@ extern int titlewindowXpos;
 extern bool flashcardUsed;
 
 extern void SaveSettings();
+
+extern void gbaMode();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -414,10 +418,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showbubble = false;
 			showSTARTborder = false;
 			clearText(false);	// Clear title
-		} else if (cursorPosition == -1) {
+		} else if (cursorPosition == -2) {
 			showbubble = true;
 			showSTARTborder = true;
 			titleUpdate(false, "settings");
+		} else if (cursorPosition == -1) {
+			showbubble = true;
+			showSTARTborder = true;
+			titleUpdate(false, "gba");
 		} else {
 			showbubble = true;
 			showSTARTborder = true;
@@ -471,7 +479,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition -= 1;
 			if (pagenum == 0) {
-				if (cursorPosition >= -1) {
+				if (!isRegularDS && cursorPosition == -1) cursorPosition -= 1;	// Skip "Start GBA Mode"
+				if (cursorPosition >= -2) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
 				} else {
@@ -492,6 +501,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition += 1;
+			if (!isRegularDS && cursorPosition == -1) cursorPosition += 1;	// Skip "Start GBA Mode"
 			if (cursorPosition <= 39) {
 				titleboxXmoveright = true;
 				mmEffectEx(&snd_select);
@@ -537,9 +547,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} 
 
 		if (pagenum == 0) {
-			if (cursorPosition < -1)
+			if (cursorPosition < -2)
 			{
-				cursorPosition = -1;
+				cursorPosition = -2;
 			}
 			else if (cursorPosition > 39)
 			{
@@ -562,20 +572,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			if (cursorPosition == -1) {
-				// Launch settings
-
+			if (cursorPosition == -1 || cursorPosition == -2) {
 				mmEffectEx(&snd_launch);
 				applaunch = true;
 				applaunchprep = true;
-				gotosettings = true;
+				if (cursorPosition == -2) gotosettings = true;
 				useBootstrap = false;
 
 				showbubble = false;
 				showSTARTborder = false;
 				clearText(false);	// Clear title
 
-				for (int i = 0; i < 90; i++) {
+				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
 
@@ -583,8 +591,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
-				int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
-				iprintf ("Start failed. Error %i\n", err);
+				if (cursorPosition == -2) {
+					// Launch settings
+					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
+					iprintf ("Start failed. Error %i\n", err);
+				} else if (cursorPosition == -1) {
+					gbaMode();
+				}
 			}
 
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
@@ -635,7 +648,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					clearText(false);	// Clear title
 					
-					for (int i = 0; i < 90; i++) {
+					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
 
@@ -690,7 +703,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showSTARTborder = false;
 				clearText(false);	// Clear title
 
-				for (int i = 0; i < 90; i++) {
+				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
 				
@@ -751,7 +764,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_back);
 			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
-			fifoSendValue32(FIFO_USER_01, 1);
+			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 		}
 		
 		if (pressed & KEY_START)

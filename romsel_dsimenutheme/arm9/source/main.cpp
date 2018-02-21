@@ -53,6 +53,7 @@ const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool is3DS = false;
+bool isRegularDS = true;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -490,6 +491,17 @@ void SetMPUSettings(const char* filename) {
 	}
 }
 
+void gbaMode (void) {	// code by FAST6191
+	lcdMainOnTop();
+	if(((PERSONAL_DATA *)0x023FFC80)->gbaScreen) {
+		REG_POWERCNT &= ~POWER_SWAP_LCDS;
+	} else {
+		REG_POWERCNT |= POWER_SWAP_LCDS;
+	}
+	fifoSendValue32(FIFO_USER_01, 1);
+	while (1) swiWaitForVBlank();
+}
+
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -614,6 +626,11 @@ int main(int argc, char **argv) {
 	std::string bootstrapfilename;
 
 	LoadSettings();
+
+	fifoWaitValue32(FIFO_USER_06);
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
+	fifoSendValue32(FIFO_USER_07, 0);
 
 	graphicsInit();
 	fontInit();

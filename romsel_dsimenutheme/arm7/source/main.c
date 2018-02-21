@@ -32,6 +32,47 @@
 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
+// 2 is SPI_BAUD_1MHz
+
+//---------------------------------------------------------------------------------
+void gbaMode() {	// code by FAST6191
+//---------------------------------------------------------------------------------
+	uint8 current, backlight;
+	if(((PERSONAL_DATA *)0x023FFC80)->gbaScreen) {
+		backlight = ~PM_BACKLIGHT_TOP;
+	} else {
+		backlight = ~PM_BACKLIGHT_BOTTOM;
+	}
+	// Reset the clock if needed
+	rtcReset();
+
+	//enable sound
+	powerOn(POWER_SOUND);
+	REG_SOUNDCNT = SOUND_ENABLE | SOUND_VOL(0x7F);
+
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | 2 | SPI_CONTINUOUS;
+	REG_SPIDATA = 0x80;
+
+	SerialWaitBusy();
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | 2 ;
+	REG_SPIDATA = 0;
+
+	SerialWaitBusy();
+	current = REG_SPIDATA & 0xff;
+
+	current = current & backlight;
+
+	SerialWaitBusy();
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | 2 | SPI_CONTINUOUS;
+	REG_SPIDATA = 0;
+	SerialWaitBusy();
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | 2;
+	REG_SPIDATA = current;
+
+	SerialWaitBusy();
+	swiSwitchToGBAMode();
+}
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -43,6 +84,8 @@ void ReturntoDSiMenu() {
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	if(fifoCheckValue32(FIFO_USER_01)) {
+		gbaMode();
+	} else if(fifoCheckValue32(FIFO_USER_02)) {
 		ReturntoDSiMenu();
 	}
 }
@@ -97,6 +140,8 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
+	fifoSendValue32(FIFO_USER_06, 1);
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
