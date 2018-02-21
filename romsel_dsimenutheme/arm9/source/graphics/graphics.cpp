@@ -88,6 +88,9 @@ extern bool fadeType;
 extern bool fadeSpeed;
 int fadeDelay = 0;
 
+extern bool music;
+int musicTime = 0;
+
 extern bool isRegularDS;
 
 extern int colorRvalue;
@@ -158,6 +161,7 @@ void vramcpy_ui (void* dest, const void* src, int size)
 }
 
 extern mm_sound_effect snd_stop;
+extern mm_sound_effect mus_menu;
 
 void ClearBrightness(void) {
 	fadeType = true;
@@ -229,6 +233,14 @@ void drawBubble(glImage *images)
 
 void vBlankHandler()
 {
+	if (music) {
+		musicTime++;
+		if (musicTime == 60*50) {	// Length of music file in seconds (60*ss)
+			mmEffectEx(&mus_menu);
+			musicTime = 0;
+		}
+	}
+
 	glBegin2D();
 	{
 		if(fadeType == true) {

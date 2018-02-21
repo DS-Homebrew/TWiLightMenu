@@ -105,6 +105,7 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+mm_sound_effect mus_menu;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -112,8 +113,10 @@ void InitSound() {
 	mmLoadEffect( SFX_LAUNCH );
 	mmLoadEffect( SFX_SELECT );
 	mmLoadEffect( SFX_STOP );
+	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
+	mmLoadEffect( SFX_MENU );
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -157,7 +160,16 @@ void InitSound() {
 		255,	// volume
 		128,	// panning
 	};
+	mus_menu = {
+		{ SFX_MENU } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
 }
+
+bool music = false;
 
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
@@ -395,7 +407,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 	}
-	
+
+	if (!music) {
+		mmEffectEx(&mus_menu);
+		music = true;
+	}
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -602,6 +618,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
+				mmEffectCancelAll();
 
 				clearText(true);
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
@@ -671,6 +688,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
+					mmEffectCancelAll();
 
 					clearText(true);
 					for (int i = 0; i < 4; i++) swiWaitForVBlank();
@@ -730,7 +748,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
-				
+				mmEffectCancelAll();
+
 				clearText(true);
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
@@ -792,7 +811,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_B) && !flashcardUsed) {
 			mmEffectEx(&snd_back);
 			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			mmEffectCancelAll();
 			whiteScreen = true;
 			clearText(false);
 			clearText(true);
@@ -809,7 +829,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// Return the chosen file
 			// waitForPanesToClear();
 			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			mmEffectCancelAll();
 			whiteScreen = true;
 			clearText(false);
 			clearText(true);
