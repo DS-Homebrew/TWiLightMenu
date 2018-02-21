@@ -43,6 +43,8 @@
 
 bool fadeType = false;		// false = out, true = in
 
+extern void ClearBrightness();
+
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -277,6 +279,9 @@ void loadROMselect() {
 }
 
 int lastRanROM() {
+	fadeType = false;
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	ClearBrightness();
 	int err = 0;
 	if(!flashcardUsed) {
 		if (!arm7SCFGLocked) {

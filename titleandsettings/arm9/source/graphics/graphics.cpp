@@ -48,6 +48,13 @@ void vramcpy_ui (void* dest, const void* src, int size)
 	}
 }
 
+void ClearBrightness(void) {
+	fadeType = true;
+	screenBrightness = 0;
+	swiWaitForVBlank();
+	swiWaitForVBlank();
+}
+
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
 	u16 mode = 1 << 14;
