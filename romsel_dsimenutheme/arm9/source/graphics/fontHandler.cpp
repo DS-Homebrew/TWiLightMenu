@@ -36,6 +36,7 @@
 #include "uvcoord_large_font.h"
 #include "TextPane.h"
 
+extern int theme;
 extern int subtheme;
 
 using namespace std;
@@ -54,7 +55,7 @@ void fontInit()
 	// Set  Bank A to texture (128 kb)
 	vramSetBankA(VRAM_A_TEXTURE);
 
-	if (subtheme == 1) {
+	if (theme == 1 || subtheme == 1) {
 		smallFont.load(smallFontImages, // pointer to glImage array
 					SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
 					small_font_texcoords, // Texture packer auto-generated array
