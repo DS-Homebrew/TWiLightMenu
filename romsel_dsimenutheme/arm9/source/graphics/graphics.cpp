@@ -391,7 +391,7 @@ void vBlankHandler()
 					else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
 				}
 				titleboxYmovepos += 5;
-				if (titleboxYmovepos > 192) whiteScreen = true;
+				if (titleboxYmovepos > 240) whiteScreen = true;
 			}
 			if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			if (showSTARTborder) {
