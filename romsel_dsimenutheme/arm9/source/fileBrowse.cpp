@@ -522,6 +522,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			pagenum = 0;
 			cursorPosition = 0;
 			titleboxXpos = 0;
@@ -536,6 +538,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			pagenum = 0;
 			cursorPosition = 0;
 			titleboxXpos = 0;
