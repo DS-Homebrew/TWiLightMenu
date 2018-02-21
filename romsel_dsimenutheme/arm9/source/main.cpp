@@ -48,6 +48,7 @@
 #include "soundbank_bin.h"
 
 bool whiteScreen = true;
+bool fadeType = false;		// false = out, true = in
 
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";

@@ -84,6 +84,7 @@
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool whiteScreen;
+extern bool fadeType;
 
 extern bool isRegularDS;
 
@@ -100,6 +101,8 @@ extern bool titleboxXmoveright;
 extern bool applaunchprep;
 
 extern int romtype;
+
+int screenBrightness = 31;
 
 int movetimer = 0;
 
@@ -154,6 +157,18 @@ void vramcpy_ui (void* dest, const void* src, int size)
 
 extern mm_sound_effect snd_stop;
 
+// Ported from PAlib (obsolete)
+void SetBrightness(u8 screen, s8 bright) {
+	u16 mode = 1 << 14;
+
+	if (bright < 0) {
+		mode = 2 << 14;
+		bright = -bright;
+	}
+	if (bright > 31) bright = 31;
+	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
 //-------------------------------------------------------
 // set up a 2D layer construced of bitmap sprites
 // this holds the image when rendering to the top screen
@@ -207,6 +222,16 @@ void vBlankHandler()
 {
 	glBegin2D();
 	{
+		if(fadeType == true) {
+			screenBrightness--;
+			if (screenBrightness < 0) screenBrightness = 0;
+		} else {
+			screenBrightness++;
+			if (screenBrightness > 31) screenBrightness = 31;
+		}
+		SetBrightness(0, screenBrightness);
+		SetBrightness(1, screenBrightness);
+
 		/*if (renderingTop)
 		{
 			glBoxFilledGradient(0, -64, 256, 112,
@@ -480,6 +505,11 @@ void graphicsInit()
 		bgMapSub[i] = (u16)i;
 	}
 	
+	*(u16*)(0x0400006C) |= BIT(14);
+	*(u16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
+
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
 	if (theme == 1) {

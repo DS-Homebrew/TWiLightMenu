@@ -41,6 +41,8 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+bool fadeType = false;		// false = out, true = in
+
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -267,6 +269,8 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 }
 
 void loadROMselect() {
+	fadeType = false;
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
 	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL);
@@ -359,6 +363,7 @@ int main(int argc, char **argv) {
 	if (!fatInitDefault()) {
 		graphicsInit();
 		fontInit();
+		fadeType = true;
 		printf("\n ");
 		printf(username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
@@ -410,12 +415,14 @@ int main(int argc, char **argv) {
 	if (showlogo) {
 		graphicsInit();
 		fontInit();
+		fadeType = true;
 	}
 
 	if (gotosettings) {
 		if (!showlogo) {
 			graphicsInit();
 			fontInit();
+			fadeType = true;
 		}
 		screenmode = 1;
 		gotosettings = false;

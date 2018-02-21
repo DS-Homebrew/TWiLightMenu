@@ -32,6 +32,9 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
+extern bool fadeType;
+int screenBrightness = 31;
+
 int subBgTexID;
 glImage subBgImage[(256 / 16) * (256 / 16)];
 
@@ -43,6 +46,18 @@ void vramcpy_ui (void* dest, const void* src, int size)
 		*destination++ = *source++;
 		size-=2;
 	}
+}
+
+// Ported from PAlib (obsolete)
+void SetBrightness(u8 screen, s8 bright) {
+	u16 mode = 1 << 14;
+
+	if (bright < 0) {
+		mode = 2 << 14;
+		bright = -bright;
+	}
+	if (bright > 31) bright = 31;
+	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 //-------------------------------------------------------
@@ -87,6 +102,16 @@ void vBlankHandler()
 {
 	glBegin2D();
 	{
+		if(fadeType == true) {
+			screenBrightness--;
+			if (screenBrightness < 0) screenBrightness = 0;
+		} else {
+			screenBrightness++;
+			if (screenBrightness > 31) screenBrightness = 31;
+		}
+		SetBrightness(0, screenBrightness);
+		SetBrightness(1, screenBrightness);
+
 		/*if (renderingTop)
 		{
 			drawBG(mainBgImage);
@@ -138,6 +163,11 @@ void graphicsInit()
 		bgMapSub[i] = (u16)i;
 	}
 	
+	*(u16*)(0x0400006C) |= BIT(14);
+	*(u16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
+
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
 	swiDecompressLZSSVram ((void*)srloader_bannerTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);

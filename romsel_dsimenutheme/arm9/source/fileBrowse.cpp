@@ -56,6 +56,7 @@
 #define ENTRY_PAGE_LENGTH 10
 
 extern bool whiteScreen;
+extern bool fadeType;
 
 extern bool isRegularDS;
 
@@ -395,6 +396,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	}
 	
 	whiteScreen = false;
+	fadeType = true;	// Fade in from white
 	
 	/* clearText(false);
 	updatePath();
@@ -583,6 +585,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showSTARTborder = false;
 				clearText(false);	// Clear title
 
+				fadeType = false;	// Fade to white
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
@@ -643,11 +646,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else {
 						useBootstrap = false;
 					}
-					
+
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
-					
+
+					fadeType = false;	// Fade to white
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -703,6 +707,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showSTARTborder = false;
 				clearText(false);	// Clear title
 
+				fadeType = false;	// Fade to white
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
@@ -723,6 +728,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			whiteScreen = true;
 			clearText(true);
 			clearText(false);
@@ -734,6 +741,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			whiteScreen = true;
 			clearText(true);
 			clearText(false);
@@ -758,11 +767,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} */
 		
 		if ((pressed & KEY_B) && !flashcardUsed) {
+			mmEffectEx(&snd_back);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			whiteScreen = true;
 			clearText(false);
 			clearText(true);
-			whiteScreen = true;
-			mmEffectEx(&snd_back);
-			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 		}
@@ -775,10 +785,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// pane->slideTransition(false, true, 0, cursorPosition - screenOffset);
 			// Return the chosen file
 			// waitForPanesToClear();
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			whiteScreen = true;
 			clearText(false);
 			clearText(true);
-			whiteScreen = true;
-			for (int i = 0; i < 4; i++) swiWaitForVBlank();
 			SaveSettings();
 			int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
 			iprintf ("Start failed. Error %i\n", err);
