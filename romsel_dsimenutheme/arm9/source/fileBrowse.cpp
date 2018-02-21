@@ -397,6 +397,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	
 	/* clearText(false);
 	updatePath();
@@ -529,6 +530,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
 			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
 			romtype +=1;
@@ -545,6 +548,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
 			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
 			romtype -=1;
@@ -735,6 +740,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
 			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
 			return "null";		
@@ -748,6 +755,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			titleboxXpos = 0;
 			titlewindowXpos = 0;
 			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
 			return "null";		

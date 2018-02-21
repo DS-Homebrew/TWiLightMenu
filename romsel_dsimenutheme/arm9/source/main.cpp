@@ -269,8 +269,8 @@ bool useBootstrap = false;
 
 using namespace std;
 
-bool showbubble = true;
-bool showSTARTborder = true;
+bool showbubble = false;
+bool showSTARTborder = false;
 
 bool titleboxXmoveleft = false;
 bool titleboxXmoveright = false;
