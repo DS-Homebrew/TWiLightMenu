@@ -85,6 +85,8 @@
 
 extern bool whiteScreen;
 extern bool fadeType;
+extern bool fadeSpeed;
+bool fadeDelay = false;
 
 extern bool isRegularDS;
 
@@ -223,11 +225,19 @@ void vBlankHandler()
 	glBegin2D();
 	{
 		if(fadeType == true) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
+			if(!fadeDelay) {
+				screenBrightness--;
+				if (screenBrightness < 0) screenBrightness = 0;
+			}
+			if (!fadeSpeed) fadeDelay = !fadeDelay;
+			else fadeDelay = false;
 		} else {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
+			if(!fadeDelay) {
+				screenBrightness++;
+				if (screenBrightness > 31) screenBrightness = 31;
+			}
+			if (!fadeSpeed) fadeDelay = !fadeDelay;
+			else fadeDelay = false;
 		}
 		SetBrightness(0, screenBrightness);
 		SetBrightness(1, screenBrightness);

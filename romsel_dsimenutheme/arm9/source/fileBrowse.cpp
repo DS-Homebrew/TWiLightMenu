@@ -57,6 +57,7 @@
 
 extern bool whiteScreen;
 extern bool fadeType;
+extern bool fadeSpeed;
 
 extern bool isRegularDS;
 
@@ -590,10 +591,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (cursorPosition == -2) gotosettings = true;
 				useBootstrap = false;
 
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
+				if (theme == 0) {
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
 
+					fadeSpeed = false;	// Slow fade speed
+				}
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
@@ -656,10 +660,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						useBootstrap = false;
 					}
 
-					showbubble = false;
-					showSTARTborder = false;
-					clearText(false);	// Clear title
+					if (theme == 0) {
+						showbubble = false;
+						showSTARTborder = false;
+						clearText(false);	// Clear title
 
+						fadeSpeed = false;	// Slow fade speed
+					}
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
@@ -712,10 +719,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				applaunchprep = true;
 				useBootstrap = false;
 
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
+				if (theme == 0) {
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
 
+					fadeSpeed = false;	// Slow fade speed
+				}
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();

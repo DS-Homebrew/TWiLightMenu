@@ -49,6 +49,7 @@
 
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
+bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -564,11 +565,12 @@ int main(int argc, char **argv) {
 	LoadColor();
 
 	if (!fatInitDefault()) {
-		// showbubble = false;
-		showSTARTborder = false;
 		graphicsInit();
 		fontInit();
 		whiteScreen = false;
+		fadeType = true;
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		showbubble = true;
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 				
 		// Control the DSi Menu, but can't launch anything.
