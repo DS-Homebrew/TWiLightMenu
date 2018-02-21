@@ -86,7 +86,7 @@
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
-bool fadeDelay = false;
+int fadeDelay = 0;
 
 extern bool isRegularDS;
 
@@ -236,15 +236,23 @@ void vBlankHandler()
 				screenBrightness--;
 				if (screenBrightness < 0) screenBrightness = 0;
 			}
-			if (!fadeSpeed) fadeDelay = !fadeDelay;
-			else fadeDelay = false;
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3) fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		} else {
 			if(!fadeDelay) {
 				screenBrightness++;
 				if (screenBrightness > 31) screenBrightness = 31;
 			}
-			if (!fadeSpeed) fadeDelay = !fadeDelay;
-			else fadeDelay = false;
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3) fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		}
 		SetBrightness(0, screenBrightness);
 		SetBrightness(1, screenBrightness);
