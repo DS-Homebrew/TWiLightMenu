@@ -495,17 +495,6 @@ void SetMPUSettings(const char* filename) {
 	}
 }
 
-void gbaMode (void) {	// code by FAST6191
-	lcdMainOnTop();
-	if(((PERSONAL_DATA *)0x023FFC80)->gbaScreen) {
-		REG_POWERCNT &= ~POWER_SWAP_LCDS;
-	} else {
-		REG_POWERCNT |= POWER_SWAP_LCDS;
-	}
-	fifoSendValue32(FIFO_USER_01, 1);
-	while (1) swiWaitForVBlank();
-}
-
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------

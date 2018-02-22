@@ -97,8 +97,6 @@ extern bool flashcardUsed;
 
 extern void SaveSettings();
 
-extern void gbaMode();
-
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
@@ -625,13 +623,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
+				int err = 0;
 				if (cursorPosition == -2) {
 					// Launch settings
-					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
-					iprintf ("Start failed. Error %i\n", err);
+					err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 				} else if (cursorPosition == -1) {
-					gbaMode();
+					// Switch to GBA mode
+					err = runNdsFile ("/_nds/srloader/gbaswitch.srldr", 0, NULL, false);
 				}
+				iprintf ("Start failed. Error %i\n", err);
 			}
 
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
