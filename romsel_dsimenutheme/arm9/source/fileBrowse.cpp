@@ -628,6 +628,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// Launch settings
 					err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 				} else if (cursorPosition == -1) {
+					// Clear VRAM A and B to show black border for GBA mode
+					vramSetBankA(VRAM_A_MAIN_BG);
+					vramSetBankB(VRAM_B_MAIN_BG);
+					for (u32 i = 0; i < 0x80000; i++) {
+						*(u32*)(0x06000000+i) = 0;
+						*(u32*)(0x06200000+i) = 0;
+					}
 					// Switch to GBA mode
 					err = runNdsFile ("/_nds/srloader/gbaswitch.srldr", 0, NULL, false);
 				}
