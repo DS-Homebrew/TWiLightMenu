@@ -43,6 +43,7 @@
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
 
+#include "gbaswitch.h"
 #include "ndsLoaderArm9.h"
 
 #include "inifile.h"
@@ -623,22 +624,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
-				int err = 0;
 				if (cursorPosition == -2) {
 					// Launch settings
-					err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
+					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
+					iprintf ("Start failed. Error %i\n", err);
 				} else if (cursorPosition == -1) {
-					// Clear VRAM A and B to show black border for GBA mode
-					vramSetBankA(VRAM_A_MAIN_BG);
-					vramSetBankB(VRAM_B_MAIN_BG);
-					for (u32 i = 0; i < 0x80000; i++) {
-						*(u32*)(0x06000000+i) = 0;
-						*(u32*)(0x06200000+i) = 0;
-					}
 					// Switch to GBA mode
-					err = runNdsFile ("/_nds/srloader/gbaswitch.srldr", 0, NULL, false);
+					gbaSwitch();
 				}
-				iprintf ("Start failed. Error %i\n", err);
 			}
 
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
