@@ -413,7 +413,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 2, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 3, 0);
 
 	if (showlogo) {
 		graphicsInit();
@@ -510,6 +510,7 @@ int main(int argc, char **argv) {
 		if (keysHeld() & KEY_START) {
 			graphicsInit();
 			fontInit();
+			fadeType = true;
 			screenmode = 1;
 			for (int i = 0; i < 60; i++) {
 				swiWaitForVBlank();
