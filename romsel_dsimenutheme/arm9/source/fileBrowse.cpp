@@ -99,6 +99,8 @@ extern bool flashcardUsed;
 
 extern void SaveSettings();
 
+extern void loadGameOnFlashcard(const char* filename);
+
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
@@ -629,12 +631,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (cursorPosition == -1) {
 					// Switch to GBA mode
+					useBootstrap = true;
 					if (useGbarunner) {
 						if (flashcardUsed) {
-							int err = runNdsFile ("/_nds/GBARunner2_fc.nds", 0, NULL, true);
-							iprintf ("Start failed. Error %i\n", err);
+							loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
 						} else {
-							useBootstrap = true;
 							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 							bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );

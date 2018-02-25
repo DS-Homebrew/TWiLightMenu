@@ -528,6 +528,59 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+void loadGameOnFlashcard (const char* filename) {
+	std::string path;
+	int err = 0;
+	switch (flashcard) {
+		case 0:
+		case 1:
+		default: {
+			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+			path = ReplaceAll(filename, "fat:/", slashchar);
+			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
+			break;
+		}
+
+		case 2:
+		case 4:
+		case 5: {
+			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+			path = ReplaceAll(filename, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", path);
+			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
+			break;
+		}
+
+		case 3: {
+			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+			path = ReplaceAll(filename, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", path);
+			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+			ClearBrightness();
+			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
+			break;
+		}
+
+		case 6: {
+			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+			path = ReplaceAll(filename, "fat:/", dstwofat);
+			fcrompathini.SetString("Dir Info", "fullName", path);
+			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
+			break;
+		}
+	}
+	char text[32];
+	snprintf (text, sizeof(text), "Start failed. Error %i", err);
+	printLarge(false, 4, 36, text);
+	stop();
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -833,56 +886,7 @@ int main(int argc, char **argv) {
 						printLarge(false, 4, 36, text);
 						stop();
 					} else {
-						std::string path;
-						int err = 0;
-						switch (flashcard) {
-							case 0:
-							case 1:
-							default: {
-								CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-								path = ReplaceAll(argarray[0], "fat:/", slashchar);
-								fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-								fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-								fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-								fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-								err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
-								break;
-							}
-
-							case 2:
-							case 4:
-							case 5: {
-								CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-								path = ReplaceAll(argarray[0], "fat:/", woodfat);
-								fcrompathini.SetString("Save Info", "lastLoaded", path);
-								fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-								err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
-								break;
-							}
-
-							case 3: {
-								CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-								path = ReplaceAll(argarray[0], "fat:/", woodfat);
-								fcrompathini.SetString("Save Info", "lastLoaded", path);
-								fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-								ClearBrightness();
-								err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
-								break;
-							}
-
-							case 6: {
-								CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-								path = ReplaceAll(argarray[0], "fat:/", dstwofat);
-								fcrompathini.SetString("Dir Info", "fullName", path);
-								fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-								err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
-								break;
-							}
-						}
-						char text[32];
-						snprintf (text, sizeof(text), "Start failed. Error %i", err);
-						printLarge(false, 4, 36, text);
-						stop();
+						loadGameOnFlashcard(argarray[0]);
 					}
 				} else {
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
