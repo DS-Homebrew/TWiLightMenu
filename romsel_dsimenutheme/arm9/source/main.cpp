@@ -97,7 +97,7 @@ bool gotosettings = false;
 
 bool bootstrapFile = false;
 
-bool autorun = false;
+bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition = 0;
@@ -132,7 +132,8 @@ void LoadSettings(void) {
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
 	// Customizable UI settings.
-	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
+	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
+	if (!isRegularDS) useGbarunner = true;
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
@@ -159,7 +160,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 
 	// UI settings.
-	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -619,12 +619,12 @@ int main(int argc, char **argv) {
 	std::string filename;
 	std::string bootstrapfilename;
 
-	LoadSettings();
-
 	fifoWaitValue32(FIFO_USER_06);
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
+
+	LoadSettings();
 
 	graphicsInit();
 	fontInit();

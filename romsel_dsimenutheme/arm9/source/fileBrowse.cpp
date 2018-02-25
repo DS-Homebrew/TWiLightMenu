@@ -60,6 +60,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool useGbarunner;
 extern bool isRegularDS;
 
 extern bool showbubble;
@@ -498,7 +499,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition -= 1;
 			if (pagenum == 0) {
-				if (!isRegularDS && cursorPosition == -1) cursorPosition -= 1;	// Skip "Start GBA Mode"
 				if (cursorPosition >= -2) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
@@ -520,7 +520,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
 			cursorPosition += 1;
-			if (!isRegularDS && cursorPosition == -1) cursorPosition += 1;	// Skip "Start GBA Mode"
 			if (cursorPosition <= 39) {
 				titleboxXmoveright = true;
 				mmEffectEx(&snd_select);
@@ -630,7 +629,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (cursorPosition == -1) {
 					// Switch to GBA mode
-					gbaSwitch();
+					if (useGbarunner) {
+						if (isRegularDS) {
+							int err = runNdsFile ("/_nds/GBARunner2_fc.nds", 0, NULL, true);
+							iprintf ("Start failed. Error %i\n", err);
+						} else {
+							useBootstrap = true;
+							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+							bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+							int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+							iprintf ("Start failed. Error %i\n", err);
+						}
+					} else {
+						gbaSwitch();
+					}
 				}
 			}
 
