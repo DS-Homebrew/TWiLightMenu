@@ -630,7 +630,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} else if (cursorPosition == -1) {
 					// Switch to GBA mode
 					if (useGbarunner) {
-						if (isRegularDS) {
+						if (flashcardUsed) {
 							int err = runNdsFile ("/_nds/GBARunner2_fc.nds", 0, NULL, true);
 							iprintf ("Start failed. Error %i\n", err);
 						} else {

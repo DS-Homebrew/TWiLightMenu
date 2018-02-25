@@ -69,6 +69,7 @@ static bool bootstrapFile = false;
 
 static bool ntr_touch = true;
 
+static bool useGbarunner = false;
 static bool autorun = false;
 static int theme = 0;
 static int subtheme = 0;
@@ -97,6 +98,7 @@ void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
@@ -131,6 +133,7 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
@@ -729,6 +732,9 @@ int main(int argc, char **argv) {
 						case 6:
 							yPos = 72;
 							break;
+						case 7:
+							yPos = 80;
+							break;
 					}
 
 					int selyPos = 24;
@@ -872,14 +878,25 @@ int main(int argc, char **argv) {
 								printSmall(false, 184, selyPos, "47.61 kHz");
 							else
 								printSmall(false, 184, selyPos, "32.73 kHz");
+						} else {
+							printSmall(false, 12, selyPos, "Use GBARunner2");
+							if(useGbarunner)
+								printSmall(false, 224, selyPos, "Yes");
+							else
+								printSmall(false, 224, selyPos, "No");
 						}
 
 						if (settingscursor == 0) {
 							printSmall(false, 4, 164, "Pick a flashcard to use to");
 							printSmall(false, 4, 172, "run ROMs from it.");
 						} else if (settingscursor == 1) {
-							printSmall(false, 4, 164, "32.73 kHz: Original quality");
-							printSmall(false, 4, 172, "47.61 kHz: High quality");
+							if(soundfreqsetting) {
+								printSmall(false, 4, 164, "32.73 kHz: Original quality");
+								printSmall(false, 4, 172, "47.61 kHz: High quality");
+							} else {
+								printSmall(false, 4, 164, "Use either GBARunner2 or the");
+								printSmall(false, 4, 172, "native GBA mode to play GBA games.");
+							}
 						}
 					}
 
@@ -961,7 +978,8 @@ int main(int argc, char **argv) {
 								subscreenmode = 3;
 								break;
 							case 1:
-								soundfreq = !soundfreq;
+								if(soundfreqsetting) soundfreq = !soundfreq;
+								else useGbarunner = !useGbarunner;
 								break;
 						}
 					}
@@ -997,12 +1015,8 @@ int main(int argc, char **argv) {
 						else if (settingscursor < 0) settingscursor = 6;
 					}
 				} else {
-					if(soundfreqsetting) {
-						if (settingscursor > 1) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 1;
-					} else {
-						if (settingscursor != 0) settingscursor = 0;
-					}
+					if (settingscursor > 1) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 1;
 				}
 			} else {
 				pressed = 0;
