@@ -120,6 +120,8 @@ int titleboxXpos;
 int titleboxYpos = 84;
 int titlewindowXpos;
 
+int movecloseXpos = 0;
+
 bool startBorderZoomOut = false;
 int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
 int startBorderZoomAnimNum = 0;
@@ -176,6 +178,70 @@ void SetBrightness(u8 screen, s8 bright) {
 	}
 	if (bright > 31) bright = 31;
 	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
+void moveIconClose(int num) {
+	if (titleboxXmoveleft) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (cursorPosition-2 == num) movecloseXpos = 1;
+			else if (cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 2) {
+			if (cursorPosition-2 == num) movecloseXpos = 1;
+			else if (cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 3) {
+			if (cursorPosition-2 == num) movecloseXpos = 2;
+			else if (cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 4) {
+			if (cursorPosition-2 == num) movecloseXpos = 2;
+			else if (cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 5) {
+			if (cursorPosition-2 == num) movecloseXpos = 3;
+			else if (cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 6) {
+			if (cursorPosition-2 == num) movecloseXpos = 4;
+			else if (cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 7) {
+			if (cursorPosition-2 == num) movecloseXpos = 5;
+			else if (cursorPosition+2 == num) movecloseXpos = -6;
+		} else if(movetimer == 8) {
+			if (cursorPosition-2 == num) movecloseXpos = 6;
+			else if (cursorPosition+2 == num) movecloseXpos = -7;
+		}
+	}
+	if (titleboxXmoveright) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (cursorPosition-2 == num) movecloseXpos = 2;
+			else if (cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 2) {
+			if (cursorPosition-2 == num) movecloseXpos = 2;
+			else if (cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 3) {
+			if (cursorPosition-2 == num) movecloseXpos = 3;
+			else if (cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 4) {
+			if (cursorPosition-2 == num) movecloseXpos = 3;
+			else if (cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 5) {
+			if (cursorPosition-2 == num) movecloseXpos = 4;
+			else if (cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 6) {
+			if (cursorPosition-2 == num) movecloseXpos = 5;
+			else if (cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 7) {
+			if (cursorPosition-2 == num) movecloseXpos = 6;
+			else if (cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 8) {
+			if (cursorPosition-2 == num) movecloseXpos = 7;
+			else if (cursorPosition+2 == num) movecloseXpos = -6;
+		}
+	}
+	if(!titleboxXmoveleft || !titleboxXmoveright) {
+		if (cursorPosition-2 == num) movecloseXpos = 6;
+		else if (cursorPosition+2 == num) movecloseXpos = -6;
+		else movecloseXpos = 0;
+	}
 }
 
 //-------------------------------------------------------
@@ -316,12 +382,6 @@ void vBlankHandler()
 				}
 			}
 
-			if(pagenum == 0) {
-				glSprite(-32-titleboxXpos, titleboxYpos-1, GL_FLIP_NONE, settingsImage);
-				if (theme == 1) glSprite(32-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-				else glSprite(32-titleboxXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-				drawIconGBA(48-titleboxXpos, titleboxYpos+12);
-			}
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
 				if (cursorPosition >= 0) glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
@@ -344,16 +404,40 @@ void vBlankHandler()
 			}
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
+			if(pagenum == 0) {
+				for(int i = -2; i < 0; i++) {
+					if (theme == 0) {
+						moveIconClose(i);
+					} else {
+						movecloseXpos = 0;
+					}
+					if (i == -2) {
+						glSprite(-32-titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, settingsImage);
+					} else if (i == -1) {
+						if (theme == 1) glSprite(32-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+						else glSprite(32-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+						drawIconGBA(48-titleboxXpos+movecloseXpos, titleboxYpos+12);
+					}
+				}
+			}
 			for(int i = 0; i < 40; i++) {
+				if (theme == 0) {
+					moveIconClose(i);
+				} else {
+					movecloseXpos = 0;
+				}
 				if (i < spawnedtitleboxes) {
 					if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-					else glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos, titleboxYpos+12, i);
-					else if (romtype == 2) drawIconNES(iconXpos-titleboxXpos, titleboxYpos+12);
-					else drawIcon(iconXpos-titleboxXpos, titleboxYpos+12, i);
+					else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+					if (romtype == 1) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12, i);
+					else if (romtype == 2) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
+					else drawIcon(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12, i);
 				} else {
-					if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
-					else glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+					if (theme == 1) {
+						glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+					} else {
+						glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+					}
 				}
 				spawnedboxXpos += 64;
 				iconXpos += 64;
