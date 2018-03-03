@@ -98,6 +98,8 @@ extern int titlewindowXpos;
 
 extern bool flashcardUsed;
 
+bool settingsChanged = false;
+
 extern void SaveSettings();
 
 extern void loadGameOnFlashcard(const char* filename);
@@ -450,14 +452,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->delay = TextEntry::ACTIVE;
 
 		if (startMenu) {
-			if (startMenu_cursorPosition == 0) {
+			if (startMenu_cursorPosition < 2) {
 				showbubble = true;
 				showSTARTborder = true;
-				titleUpdate(false, "settings");
-			} else if (startMenu_cursorPosition == 1) {
-				showbubble = true;
-				showSTARTborder = true;
-				titleUpdate(false, "gba");
+				titleUpdate(false, "startMenu");
 			} else {
 				showbubble = false;
 				showSTARTborder = false;
@@ -527,6 +525,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (startMenu_cursorPosition >= 0) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
+					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
@@ -535,6 +534,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (cursorPosition >= 0) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
+					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
@@ -550,6 +550,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (startMenu_cursorPosition <= 39) {
 					titleboxXmoveright = true;
 					mmEffectEx(&snd_select);
+					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
@@ -558,6 +559,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (cursorPosition <= 39) {
 					titleboxXmoveright = true;
 					mmEffectEx(&snd_select);
+					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
@@ -619,7 +621,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectCancelAll();
 
 				clearText(true);
-				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
 				if (startMenu_cursorPosition == 0) {
@@ -664,6 +665,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				chdir(entry->name.c_str());
 				char buf[256];
 				romfolder = getcwd(buf, 256);
+				SaveSettings();
+				settingsChanged = false;
 				return "null";
 			}
 			else if (launchable[cursorPosition])
@@ -709,7 +712,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
-					for (int i = 0; i < 4; i++) swiWaitForVBlank();
 					SaveSettings();
 
 					// Return the chosen file
@@ -770,7 +772,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectCancelAll();
 
 				clearText(true);
-				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
 				// Return the chosen file
@@ -792,6 +793,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
+			SaveSettings();
+			settingsChanged = false;
 			return "null";		
 		} else 	if ((pressed & KEY_R) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 		{
@@ -807,6 +810,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showSTARTborder = false;
 			clearText(true);
 			clearText(false);
+			SaveSettings();
+			settingsChanged = false;
 			return "null";		
 		}
 
@@ -827,17 +832,31 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			cursorPosition = 0;
 		} */
 		
-		if ((pressed & KEY_B) && !flashcardUsed) {
+		if ((pressed & KEY_B)) {
 			mmEffectEx(&snd_back);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
-			music = false;
-			mmEffectCancelAll();
-			whiteScreen = true;
-			clearText(false);
-			clearText(true);
-			SaveSettings();
-			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+			if (startMenu) {
+				startMenu = false;
+				if (settingsChanged) {
+					SaveSettings();
+					settingsChanged = false;
+				}
+				whiteScreen = true;
+				clearText(false);
+				clearText(true);
+				whiteScreen = false;
+				fadeType = true;	// Fade in from white
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			} else if (!flashcardUsed) {
+				music = false;
+				mmEffectCancelAll();
+				if (settingsChanged) {
+					SaveSettings();
+					settingsChanged = false;
+				}
+				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+			}
 		}
 		
 		if (pressed & KEY_START)
@@ -846,6 +865,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			startMenu = !startMenu;
+			if (settingsChanged) {
+				SaveSettings();
+				settingsChanged = false;
+			}
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
@@ -865,6 +888,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (theme == 1) yPos -= 4;
 			printSmallCentered(false, yPos, "Donor ROM is set.");
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
+			SaveSettings();
 		}
 
 	}

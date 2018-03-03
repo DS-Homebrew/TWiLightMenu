@@ -44,6 +44,9 @@ static int BOX_PY_spacing3 = 28;
 #include "icon_gb.h"
 #include "icon_nes.h"
 
+extern bool startMenu;
+extern int startMenu_cursorPosition;
+
 extern int theme;
 extern bool useGbarunner;
 
@@ -587,14 +590,15 @@ void titleUpdate(bool isDir, const char* name)
 		BOX_PY_spacing3 = 26;
 	}
 	
-	if (strcmp(name, "settings") == 0) {
-		writeBannerText(0, "Settings", "", "");
-		return;
-	} else if (strcmp(name, "gba") == 0) {
-		if (useGbarunner) {
-			writeBannerText(0, "Start GBARunner2", "", "");
-		} else {
-			writeBannerText(0, "Start GBA Mode", "", "");
+	if (startMenu) {
+		if (startMenu_cursorPosition == 0) {
+			writeBannerText(0, "Settings", "", "");
+		} else if (startMenu_cursorPosition == 1) {
+			if (useGbarunner) {
+				writeBannerText(0, "Start GBARunner2", "", "");
+			} else {
+				writeBannerText(0, "Start GBA Mode", "", "");
+			}
 		}
 		return;
 	}
