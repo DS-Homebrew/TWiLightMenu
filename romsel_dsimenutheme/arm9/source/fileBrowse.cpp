@@ -833,10 +833,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} */
 		
 		if ((pressed & KEY_B)) {
-			mmEffectEx(&snd_back);
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 			if (startMenu) {
+				mmEffectEx(&snd_back);
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				startMenu = false;
 				if (settingsChanged) {
 					SaveSettings();
@@ -849,6 +849,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				fadeType = true;	// Fade in from white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			} else if (!flashcardUsed) {
+				mmEffectEx(&snd_back);
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				music = false;
 				mmEffectCancelAll();
 				if (settingsChanged) {
