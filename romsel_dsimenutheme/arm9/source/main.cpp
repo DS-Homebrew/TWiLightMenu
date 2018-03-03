@@ -690,7 +690,7 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 	
 	char path[256];
-	snprintf (path, sizeof(path), "/%s", romfolder.c_str());
+	snprintf (path, sizeof(path), "%s", romfolder.c_str());
 	// Set directory
 	chdir (path);
 	
@@ -868,7 +868,7 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
 				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", romfolder.c_str(), filename.c_str());
+				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(flashcardUsed) {
@@ -885,7 +885,7 @@ int main(int argc, char **argv) {
 			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
 				char nesROMpath[256];
-				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", romfolder.c_str(), filename.c_str());
+				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(flashcardUsed) {

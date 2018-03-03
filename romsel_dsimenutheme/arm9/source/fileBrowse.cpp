@@ -649,17 +649,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
-				/* chdir(entry->name.c_str());
-				updatePath();
-				pane->slideTransition(false, false, 0, cursorPosition - screenOffset);
-				pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-				getDirectoryContents(dirContents[++scrn], extensionList);
-				for (auto &i : dirContents[scrn])
-					pane->addLine(i.visibleName.c_str());
-				pane->createDefaultEntries();
-				pane->slideTransition(true, false, 20);
-				screenOffset = 0;
-				cursorPosition = 0; */
 				mmEffectEx(&snd_launch);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -673,7 +662,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText(true);
 				clearText(false);
 				chdir(entry->name.c_str());
-				romfolder = entry->name.c_str();
+				char buf[256];
+				romfolder = getcwd(buf, 256);
 				return "null";
 			}
 			else if (launchable[cursorPosition])
