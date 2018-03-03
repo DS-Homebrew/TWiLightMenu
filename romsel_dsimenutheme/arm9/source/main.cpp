@@ -71,9 +71,6 @@ static void RemoveTrailingSlashes(std::string& path)
 }
 
 std::string romfolder;
-std::string fcromfolder;
-std::string gbromfolder;
-std::string nesromfolder;
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string slashchar = "/";
@@ -88,8 +85,6 @@ bool run_timeout = true;
 
 int mpuregion = 0;
 int mpusize = 0;
-
-int romtype = 0;
 
 bool applaunch = false;
 
@@ -123,11 +118,6 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
-	gbromfolder = settingsini.GetString("SRLOADER", "GBROM_FOLDER", "");
-	RemoveTrailingSlashes(gbromfolder);
-	nesromfolder = settingsini.GetString("SRLOADER", "NESROM_FOLDER", "");
-	RemoveTrailingSlashes(nesromfolder);
-	romtype = settingsini.GetInt("SRLOADER", "ROM_TYPE", 0);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 
@@ -155,7 +145,6 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
-	settingsini.SetInt("SRLOADER", "ROM_TYPE", romtype);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 
@@ -683,55 +672,30 @@ int main(int argc, char **argv) {
 	fontInit();
 
 	iconTitleInit();
-	
+
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
-	vector<string> gbExtensionList;
-	vector<string> nesExtensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
-	gbExtensionList.push_back(".gb");
-	gbExtensionList.push_back(".sgb");
-	gbExtensionList.push_back(".gbc");
-	nesExtensionList.push_back(".nes");
-	nesExtensionList.push_back(".fds");
+	extensionList.push_back(".gb");
+	extensionList.push_back(".sgb");
+	extensionList.push_back(".gbc");
+	extensionList.push_back(".nes");
+	extensionList.push_back(".fds");
 	srand(time(NULL));
-	
-	if (romfolder == "") romfolder = "roms/nds";
-	if (gbromfolder == "") gbromfolder = "roms/gb";
-	if (nesromfolder == "") nesromfolder = "roms/nes";
 	
 	char path[256];
 	snprintf (path, sizeof(path), "/%s", romfolder.c_str());
-	char gbPath[256];
-	snprintf (gbPath, sizeof(gbPath), "/%s", gbromfolder.c_str());
-	char nesPath[256];
-	snprintf (nesPath, sizeof(nesPath), "/%s", nesromfolder.c_str());
+	// Set directory
+	chdir (path);
 	
 	InitSound();
 	
 	while(1) {
 	
-		if (romtype == 1) {
-			// Set directory
-			chdir (gbPath);
-
-			//Navigates to the file to launch
-			filename = browseForFile(gbExtensionList, username);
-		} else if (romtype == 2) {
-			// Set directory
-			chdir (nesPath);
-
-			//Navigates to the file to launch
-			filename = browseForFile(nesExtensionList, username);
-		} else {
-			// Set directory
-			chdir (path);
-
-			//Navigates to the file to launch
-			filename = browseForFile(extensionList, username);
-		}
+		//Navigates to the file to launch
+		filename = browseForFile(extensionList, username);
 
 		////////////////////////////////////
 		// Launch the item
@@ -900,7 +864,7 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
 				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", gbromfolder.c_str(), filename.c_str());
+				snprintf (gbROMpath, sizeof(gbROMpath), "/%s/%s", romfolder.c_str(), filename.c_str());
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(flashcardUsed) {
@@ -917,7 +881,7 @@ int main(int argc, char **argv) {
 			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
 				char nesROMpath[256];
-				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", nesromfolder.c_str(), filename.c_str());
+				snprintf (nesROMpath, sizeof(nesROMpath), "/%s/%s", romfolder.c_str(), filename.c_str());
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(flashcardUsed) {

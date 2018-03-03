@@ -265,13 +265,13 @@ void drawIconGBA(int Xpos, int Ypos)
 {
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaIcon);
 }
-void drawIconGBC(int Xpos, int Ypos, int num)
+void drawIconGB(int Xpos, int Ypos)
 {
-	if(isGBC[num]) {
-		glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]);
-	} else {
-		glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]);
-	}
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]);
+}
+void drawIconGBC(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]);
 }
 void drawIconNES(int Xpos, int Ypos)
 {

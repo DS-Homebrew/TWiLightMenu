@@ -92,7 +92,8 @@ int bnriconframenumY[40] = {0};
 int bannerFlip[40] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isGBC[40] = {false};
+bool isDirectory[40] = {false};
+int bnrRomType[40] = {0};
 bool bnriconisDSi[40] = {false};
 bool launchable[40] = {true};
 bool isHomebrew[40] = {false};
