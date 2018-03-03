@@ -84,11 +84,14 @@ extern bool useBootstrap;
 
 using namespace std;
 
+extern bool startMenu;
+
 extern int theme;
 
 extern int spawnedtitleboxes;
 static int file_count = 0;
 extern int cursorPosition;
+extern int startMenu_cursorPosition;
 extern int pagenum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
@@ -446,22 +449,30 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 		// cursor->delay = TextEntry::ACTIVE;
 
-		if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
-			showbubble = false;
-			showSTARTborder = false;
-			clearText(false);	// Clear title
-		} else if (cursorPosition == -2) {
-			showbubble = true;
-			showSTARTborder = true;
-			titleUpdate(false, "settings");
-		} else if (cursorPosition == -1) {
-			showbubble = true;
-			showSTARTborder = true;
-			titleUpdate(false, "gba");
+		if (startMenu) {
+			if (startMenu_cursorPosition == 0) {
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(false, "settings");
+			} else if (startMenu_cursorPosition == 1) {
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(false, "gba");
+			} else {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+			}
 		} else {
-			showbubble = true;
-			showSTARTborder = true;
-			titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+			if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+			} else {
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+			}
 		}
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
@@ -478,24 +489,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				usernameRenderedDone = true;
 			}
 			iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-			for(int i = 0; i < 21; i++) {
-				printf("\n");
-			}
-			printf(" ");
-			if (pagenum != 0) {
-				printf("L: Previous");
-			} else {
-				printf("           ");
-			}
-			printf("            ");
-			if (file_count > 40+pagenum*40) {
-				printf("R: Next");
-			} else {
-				printf("       ");
-			}
+			if (!startMenu) {
+				for(int i = 0; i < 21; i++) {
+					printf("\n");
+				}
+				printf(" ");
+				if (pagenum != 0) {
+					printf("L: Previous");
+				} else {
+					printf("           ");
+				}
+				printf("            ");
+				if (file_count > 40+pagenum*40) {
+					printf("R: Next");
+				} else {
+					printf("       ");
+				}
 
-			//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
-			//if (file_count > 40+pagenum*40) printSmall(true, 182, 177, "Next Page");
+				//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
+				//if (file_count > 40+pagenum*40) printSmall(true, 182, 177, "Next Page");
+			}
 
 			scanKeys();
 			pressed = keysDownRepeat();
@@ -509,91 +522,61 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// }
 
 		if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-			cursorPosition -= 1;
-			if (pagenum == 0) {
-				if (cursorPosition >= -2) {
+			if (startMenu) {
+				startMenu_cursorPosition -= 1;
+				if (startMenu_cursorPosition >= 0) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
 			} else {
+				cursorPosition -= 1;
 				if (cursorPosition >= 0) {
 					titleboxXmoveleft = true;
 					mmEffectEx(&snd_select);
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
-			}
-			if(cursorPosition >= 2 && cursorPosition <= 36) {
-				if (bnrRomType[cursorPosition-2] == 0 && (cursorPosition-2)+pagenum*40 < file_count) {
-					iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
+				if(cursorPosition >= 2 && cursorPosition <= 36) {
+					if (bnrRomType[cursorPosition-2] == 0 && (cursorPosition-2)+pagenum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
+					}
 				}
 			}
 		} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-			cursorPosition += 1;
-			if (cursorPosition <= 39) {
-				titleboxXmoveright = true;
-				mmEffectEx(&snd_select);
+			if (startMenu) {
+				startMenu_cursorPosition += 1;
+				if (startMenu_cursorPosition <= 39) {
+					titleboxXmoveright = true;
+					mmEffectEx(&snd_select);
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
 			} else {
-				mmEffectEx(&snd_wrong);
-			}
-			if(cursorPosition >= 3 && cursorPosition <= 37) {
-				if (bnrRomType[cursorPosition+2] == 0 && (cursorPosition+2)+pagenum*40 < file_count) {
-					iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
+				cursorPosition += 1;
+				if (cursorPosition <= 39) {
+					titleboxXmoveright = true;
+					mmEffectEx(&snd_select);
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+				if(cursorPosition >= 3 && cursorPosition <= 37) {
+					if (bnrRomType[cursorPosition+2] == 0 && (cursorPosition+2)+pagenum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
+					}
 				}
 			}
 		}
-		// if (pressed & KEY_UP) cursorPosition -= ENTRY_PAGE_LENGTH;
-		// if (pressed & KEY_DOWN) cursorPosition += ENTRY_PAGE_LENGTH;
 
-		/*if ((pressed & KEY_DOWN) && !titleboxXmoveleft && !titleboxXmoveright)
-		{
-			mmEffectEx(&snd_switch);
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			changeRomType = true;
-			pagenum = 0;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
-			whiteScreen = true;
-			showbubble = false;
-			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
-			romtype +=1;
-			if (romtype > 2) romtype = 0;
-			return "null";
-		} 
-		if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
-		{
-			mmEffectEx(&snd_switch);
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			changeRomType = true;
-			pagenum = 0;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
-			whiteScreen = true;
-			showbubble = false;
-			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
-			romtype -=1;
-			if (romtype < 0) romtype = 2;
-			return "null";
-		} */
-
-		if (pagenum == 0) {
-			if (cursorPosition < -2)
+		if (startMenu) {
+			if (startMenu_cursorPosition < 0)
 			{
-				cursorPosition = -2;
+				startMenu_cursorPosition = 0;
 			}
-			else if (cursorPosition > 39)
+			else if (startMenu_cursorPosition > 39)
 			{
-				cursorPosition = 39;
+				startMenu_cursorPosition = 39;
 			}
 		} else {
 			if (cursorPosition < 0)
@@ -612,11 +595,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
-			if (cursorPosition == -1 || cursorPosition == -2) {
+			if ((startMenu_cursorPosition == 0 && startMenu)
+			|| (startMenu_cursorPosition == 1 && startMenu))
+			{
 				mmEffectEx(&snd_launch);
 				applaunch = true;
 				applaunchprep = true;
-				if (cursorPosition == -2) gotosettings = true;
+				if (startMenu_cursorPosition == 0) gotosettings = true;
 				useBootstrap = false;
 
 				if (theme == 0) {
@@ -637,11 +622,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 4; i++) swiWaitForVBlank();
 				SaveSettings();
 
-				if (cursorPosition == -2) {
+				if (startMenu_cursorPosition == 0) {
 					// Launch settings
 					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 					iprintf ("Start failed. Error %i\n", err);
-				} else if (cursorPosition == -1) {
+				} else if (startMenu_cursorPosition == 1) {
 					// Switch to GBA mode
 					useBootstrap = true;
 					if (useGbarunner) {
@@ -688,6 +673,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText(true);
 				clearText(false);
 				chdir(entry->name.c_str());
+				romfolder = entry->name.c_str();
 				return "null";
 			}
 			else if (launchable[cursorPosition])
@@ -754,7 +740,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_Y) && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
+		if ((pressed & KEY_Y) && !startMenu && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
 		{
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
@@ -802,7 +788,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_L) && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
+		if ((pressed & KEY_L) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
 		{
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
@@ -817,7 +803,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			clearText(true);
 			clearText(false);
 			return "null";		
-		} else 	if ((pressed & KEY_R) && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
+		} else 	if ((pressed & KEY_R) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 		{
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
@@ -866,25 +852,23 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		
 		if (pressed & KEY_START)
 		{
-			applaunch = true;
-			useBootstrap = false;
-			gotosettings = true;
-			// pane->slideTransition(false, true, 0, cursorPosition - screenOffset);
-			// Return the chosen file
-			// waitForPanesToClear();
+			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
-			for (int i = 0; i < 25; i++) swiWaitForVBlank();
-			music = false;
-			mmEffectCancelAll();
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			startMenu = !startMenu;
 			whiteScreen = true;
-			clearText(false);
+			showbubble = false;
+			showSTARTborder = false;
 			clearText(true);
-			SaveSettings();
-			int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
-			iprintf ("Start failed. Error %i\n", err);
+			clearText(false);
+			whiteScreen = false;
+			fadeType = true;	// Fade in from white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		}
 
-		if ((pressed & KEY_SELECT) && (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
+		if ((pressed & KEY_SELECT) && !startMenu
+		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
+		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
 			int yPos = 160;

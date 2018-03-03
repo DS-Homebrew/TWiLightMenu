@@ -87,7 +87,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
-
+bool startMenu = false;
 bool gotosettings = false;
 
 bool bootstrapFile = false;
@@ -96,6 +96,7 @@ bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition = 0;
+int startMenu_cursorPosition = 0;
 int pagenum = 0;
 
 bool flashcardUsed = false;
@@ -120,6 +121,7 @@ void LoadSettings(void) {
 	RemoveTrailingSlashes(romfolder);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
+	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 
 	// Customizable UI settings.
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
@@ -145,8 +147,10 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
