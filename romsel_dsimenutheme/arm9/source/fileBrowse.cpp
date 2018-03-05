@@ -650,7 +650,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
-				mmEffectEx(&snd_launch);
+				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pagenum = 0;
