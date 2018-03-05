@@ -606,7 +606,7 @@ void titleUpdate(bool isDir, const char* name)
 	if (isDir)
 	{
 		// text
-		writeBannerText(1, name, "[directory]", "");
+		writeBannerText(0, name, "", "");
 	}
 	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
