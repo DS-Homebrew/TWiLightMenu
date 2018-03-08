@@ -73,6 +73,7 @@ static bool useGbarunner = false;
 static bool autorun = false;
 static int theme = 0;
 static int subtheme = 0;
+static bool showDirectories = true;
 
 static bool bstrap_boostcpu = false;	// false == NTR, true == TWL
 static bool bstrap_debug = false;
@@ -109,6 +110,7 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
+	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 
 	if(!flashcardUsed) {
@@ -144,6 +146,7 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SaveIniFile(settingsinipath);
 	
@@ -416,7 +419,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 1);
 
 	if (showlogo) {
 		graphicsInit();
@@ -1039,10 +1042,10 @@ int main(int argc, char **argv) {
 							yPos = 32;
 							break;
 						case 2:
-							yPos = 48;
+							yPos = 40;
 							break;
 						case 3:
-							yPos = 64;
+							yPos = 48;
 							break;
 					}
 
@@ -1054,17 +1057,23 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 156, 24, "DSi Menu");
 
-					printSmall(false, 12, 32, "Run last played ROM on startup");
+					printSmall(false, 12, 32, "Last played ROM on startup");
 					if(autorun)
-						printSmall(false, 224, 40, "On");
+						printSmall(false, 224, 32, "Yes");
 					else
-						printSmall(false, 224, 40, "Off");
+						printSmall(false, 224, 32, "No");
 
-					printSmall(false, 12, 48, "Show SRLoader logo on startup");
+					printSmall(false, 12, 40, "SRLoader logo on startup");
 					if(showlogo)
-						printSmall(false, 224, 56, "On");
+						printSmall(false, 216, 40, "Show");
 					else
-						printSmall(false, 224, 56, "Off");
+						printSmall(false, 216, 40, "Hide");
+
+					printSmall(false, 12, 48, "Directories/folders");
+					if(showDirectories)
+						printSmall(false, 216, 48, "Show");
+					else
+						printSmall(false, 216, 48, "Hide");
 
 
 					if (settingscursor == 0) {
@@ -1079,6 +1088,10 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "The SRLoader logo will be");
 						printSmall(false, 4, 164, "shown when you start");
 						printSmall(false, 4, 172, "SRLoader.");
+					} else if (settingscursor == 3) {
+						printSmall(false, 4, 156, "If you're in a folder where most");
+						printSmall(false, 4, 164, "of your games are, it is safe to");
+						printSmall(false, 4, 172, "hide directories/folders.");
 					}
 
 
@@ -1132,6 +1145,10 @@ int main(int argc, char **argv) {
 							showlogo = !showlogo;
 							mmEffectEx(&snd_select);
 							break;
+						case 3:
+							showDirectories = !showDirectories;
+							mmEffectEx(&snd_select);
+							break;
 					}
 					menuprinted = false;
 				}
@@ -1168,8 +1185,8 @@ int main(int argc, char **argv) {
 					break;
 				}
 				
-				if (settingscursor > 2) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 2;
+				if (settingscursor > 3) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 3;
 			}
 
 		} else {

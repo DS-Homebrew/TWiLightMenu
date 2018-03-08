@@ -88,6 +88,7 @@ extern bool startMenu;
 
 extern int theme;
 
+extern bool showDirectories;
 extern int spawnedtitleboxes;
 static int file_count = 0;
 extern int cursorPosition;
@@ -304,11 +305,18 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			else
 				dirEntry.visibleName = dirEntry.name;
 
-			if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
-			// if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList)))
-			{
-				dirContents.push_back(dirEntry);
-				file_count++;
+			if (showDirectories) {
+				if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
+				{
+					dirContents.push_back(dirEntry);
+					file_count++;
+				}
+			} else {
+				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList)))
+				{
+					dirContents.push_back(dirEntry);
+					file_count++;
+				}
 			}
 
 		}

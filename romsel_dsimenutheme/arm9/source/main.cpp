@@ -98,6 +98,7 @@ int subtheme = 0;
 int cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
+bool showDirectories = true;
 
 bool flashcardUsed = false;
 
@@ -129,6 +130,7 @@ void LoadSettings(void) {
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
+	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
