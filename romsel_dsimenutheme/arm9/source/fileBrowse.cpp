@@ -103,6 +103,8 @@ bool settingsChanged = false;
 
 extern void SaveSettings();
 
+extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
+
 extern void loadGameOnFlashcard(const char* filename);
 
 mm_sound_effect snd_launch;
@@ -895,6 +897,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
+			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
 			int yPos = 160;
 			if (theme == 1) yPos -= 4;
 			printSmallCentered(false, yPos, "Donor ROM is set.");

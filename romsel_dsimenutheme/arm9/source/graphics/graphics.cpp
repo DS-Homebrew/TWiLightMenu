@@ -543,6 +543,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
+				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 80, GL_FLIP_H, braceImage);
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -572,6 +573,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
+				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			}
 			if (applaunchprep && theme==0) {
 				// Cover selected app
@@ -603,7 +605,6 @@ void vBlankHandler()
 				titleboxYmovepos += 5;
 				if (titleboxYmovepos > 240) whiteScreen = true;
 			}
-			if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
 			if (showSTARTborder) {
 				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
 				if (theme == 1) {
