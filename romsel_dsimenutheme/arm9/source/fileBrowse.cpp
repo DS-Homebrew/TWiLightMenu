@@ -88,6 +88,7 @@ extern bool startMenu;
 
 extern int theme;
 
+extern bool showDirectories;
 extern int spawnedtitleboxes;
 static int file_count = 0;
 extern int cursorPosition;
@@ -101,6 +102,8 @@ extern bool flashcardUsed;
 bool settingsChanged = false;
 
 extern void SaveSettings();
+
+extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 extern void loadGameOnFlashcard(const char* filename);
 
@@ -304,11 +307,18 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			else
 				dirEntry.visibleName = dirEntry.name;
 
-			if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
-			// if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList)))
-			{
-				dirContents.push_back(dirEntry);
-				file_count++;
+			if (showDirectories) {
+				if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
+				{
+					dirContents.push_back(dirEntry);
+					file_count++;
+				}
+			} else {
+				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList)))
+				{
+					dirContents.push_back(dirEntry);
+					file_count++;
+				}
 			}
 
 		}
@@ -887,6 +897,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
+			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
 			int yPos = 160;
 			if (theme == 1) yPos -= 4;
 			printSmallCentered(false, yPos, "Donor ROM is set.");
