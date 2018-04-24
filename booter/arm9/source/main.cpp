@@ -31,7 +31,7 @@
 
 #include "graphics/graphics.h"
 
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 
 #include "graphics/fontHandler.h"
 
