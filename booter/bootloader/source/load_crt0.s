@@ -54,7 +54,7 @@ dldiOffset:
 dsiSD:
 	.word	0
 dsiMode:
-	.word	1
+	.word	0
 
 startUp:
 	mov	r0, #0x04000000
