@@ -159,7 +159,7 @@ clean:
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
-  @$(MAKE) -C nds-exception-stub clean
+	@$(MAKE) -C nds-exception-stub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
