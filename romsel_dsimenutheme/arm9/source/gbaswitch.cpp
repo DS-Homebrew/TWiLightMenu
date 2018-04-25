@@ -1,5 +1,5 @@
 #include "gbaswitch.h"
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 
 //#include "gbaframe.h"
 //#include "gbaframe_srloader.h"
