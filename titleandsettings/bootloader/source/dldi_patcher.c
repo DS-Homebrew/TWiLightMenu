@@ -19,7 +19,7 @@
  If you use this code, please give due credit and email me about your
  project at chishm@hotmail.com
 ------------------------------------------------------------------*/
-
+#ifndef NO_DLDI
 #include <string.h>
 #include <nds.h>
 #include "dldi_patcher.h"
@@ -205,3 +205,4 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 
 	return true;
 }
+#endif
