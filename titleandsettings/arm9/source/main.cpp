@@ -385,7 +385,7 @@ int main(int argc, char **argv) {
 	
 	swiWaitForVBlank();
 
-	swiIntrWait(0,IRQ_FIFO_NOT_EMPTY);
+  fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
