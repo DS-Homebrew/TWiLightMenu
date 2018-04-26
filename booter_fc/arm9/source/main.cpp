@@ -28,7 +28,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 
 using namespace std;
 

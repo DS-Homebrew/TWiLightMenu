@@ -32,10 +32,10 @@ CFLAGS	:=	-g -Wall -O2\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM7
+CFLAGS	+=	$(INCLUDE) -DARM7 -DNO_SDMMC
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=../ds_arm7_ram.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,--nmagic -Wl,-Map,$(notdir $*).map
 
 
 #---------------------------------------------------------------------------------

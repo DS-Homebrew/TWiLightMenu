@@ -1,0 +1,386 @@
+Archive member included to satisfy reference by file (symbol)
+
+E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+                              gurumeditation.o (symbol from plugin) (setExceptionHandler)
+E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+                              gurumeditation.o (symbol from plugin) (getCPSR)
+e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+                              display.o (symbol from plugin) (strnlen)
+e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+                              C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o (__gnu_thumb1_case_uqi)
+e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o)
+                              C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o (__aeabi_uidivmod)
+e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                              e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                              C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o (memcpy)
+
+Allocating common symbols
+Common symbol       size              file
+
+__outstr            0x100             display.o (symbol from plugin)
+
+Discarded input sections
+
+ .text          0x00000000        0x0 gurumeditation.o (symbol from plugin)
+ .text          0x00000000        0x0 display.o (symbol from plugin)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ewram            0x02000000         0x01000000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .crt0 set to 0x2ffa000
+LOAD font.bin.o
+LOAD gurumeditation.o
+LOAD C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+LOAD display.o
+LOAD start.o
+LOAD E:/devkitPro/libnds/lib\libnds9.a
+START GROUP
+LOAD e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a
+LOAD e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a
+LOAD e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libc.a
+LOAD e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libsysbase.a
+END GROUP
+
+.crt0           0x02ffa000       0x7c
+                0x02ffa000                __text_start = .
+ *(.crt0)
+ .crt0          0x02ffa000       0x7c start.o
+                0x02ffa000                _start
+                0x02ffa07c                . = ALIGN (0x4)
+
+.plt
+ *(.plt)
+
+.init
+ *(SORT(.init))
+
+.text           0x02ffa080      0xb28
+ *(EXCLUDE_FILE(*.twl* *.vectors* *.itcm*) .text)
+ .text          0x02ffa080        0x0 font.bin.o
+ .text          0x02ffa080      0x82c C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+                0x02ffa89c                installException
+ .text          0x02ffa8ac        0x0 start.o
+ .text          0x02ffa8ac        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .text          0x02ffa8ac        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+ .text          0x02ffa8ac        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+ .text          0x02ffa8ac       0x14 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+                0x02ffa8ac                __gnu_thumb1_case_uqi
+ .text          0x02ffa8c0      0x11c e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o)
+                0x02ffa8c0                __aeabi_uidiv
+                0x02ffa8c0                __udivsi3
+                0x02ffa9bc                __aeabi_uidivmod
+ .text          0x02ffa9dc        0x4 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                0x02ffa9dc                __aeabi_idiv0
+                0x02ffa9dc                __aeabi_ldiv0
+ .text          0x02ffa9e0        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ *(EXCLUDE_FILE(*.twl* *.vectors* *.itcm*) .stub)
+ *(EXCLUDE_FILE(*.twl* *.vectors* *.itcm*) .text.*)
+ .text.setExceptionHandler
+                0x02ffa9e0       0x18 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+                0x02ffa9e0                setExceptionHandler
+ .text.getCPSR  0x02ffa9f8        0x8 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+                0x02ffa9f8                getCPSR
+ .text.enterException
+                0x02ffaa00       0xd4 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+                0x02ffaa00                enterException
+                0x02ffaa74                exceptionC
+                0x02ffaa78                exceptionStack
+                0x02ffaa7c                exceptionRegisters
+ .text.strnlen  0x02ffaad4       0x24 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+                0x02ffaad4                strnlen
+ .text.memcpy   0x02ffaaf8       0x8c e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                0x02ffaaf8                memcpy
+ *fill*         0x02ffab84        0x4 ff
+ .text.memcpy.__stub
+                0x02ffab88       0x1c linker stubs
+ *(EXCLUDE_FILE(*.twl*) .gnu.warning)
+ *(EXCLUDE_FILE(*.twl*) .gnu.linkonce.t*)
+ *(.glue_7)
+ .glue_7        0x02ffaba8        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x02ffaba8        0x0 linker stubs
+                0x02ffaba8                . = ALIGN (0x4)
+
+.vfp11_veneer   0x02ffaba8        0x0
+ .vfp11_veneer  0x02ffaba8        0x0 linker stubs
+
+.v4_bx          0x02ffaba8        0x0
+ .v4_bx         0x02ffaba8        0x0 linker stubs
+
+.iplt           0x02ffaba8        0x0
+ .iplt          0x02ffaba8        0x0 start.o
+
+.fini
+ *(.fini)
+                0x02ffaba8                __text_end = .
+
+.rodata         0x02ffaba8      0x970
+ *(EXCLUDE_FILE(*.twl*) .rodata)
+ .rodata        0x02ffaba8      0x804 font.bin.o
+                0x02ffaba8                font_bin
+                0x02ffb3a8                font_bin_size
+                0x02ffb3a8                font_bin_end
+ .rodata        0x02ffb3ac       0x40 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ *all.rodata*(*)
+ *(EXCLUDE_FILE(*.twl*) .roda)
+ *(EXCLUDE_FILE(*.twl*) .rodata.*)
+ .rodata.str1.1
+                0x02ffb3ec      0x129 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ *(EXCLUDE_FILE(*.twl*) .gnu.linkonce.r*)
+                0x02ffb518                . = ALIGN (0x4)
+ *fill*         0x02ffb515        0x3 ff
+
+.rel.dyn        0x02ffb518        0x0
+ .rel.iplt      0x02ffb518        0x0 start.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x02ffb518                __exidx_start = .
+
+ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x02ffb518                __exidx_end = .
+                0x02ffb518                . = ALIGN (0x4)
+                [!provide]                PROVIDE (__preinit_array_start, .)
+
+.preinit_array
+ *(.preinit_array)
+                [!provide]                PROVIDE (__preinit_array_end, .)
+                [!provide]                PROVIDE (__init_array_start, .)
+
+.init_array
+ *(SORT(.init_array.*))
+ *(.init_array)
+                [!provide]                PROVIDE (__init_array_end, .)
+                [!provide]                PROVIDE (__fini_array_start, .)
+
+.fini_array
+ *(.fini_array)
+ *(SORT(.fini_array.*))
+                [!provide]                PROVIDE (__fini_array_end, .)
+
+.ctors          0x02ffb518        0x0
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x02ffb518                . = ALIGN (0x4)
+
+.dtors          0x02ffb518        0x0
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x02ffb518                . = ALIGN (0x4)
+
+.eh_frame       0x02ffb518        0x0
+ *(.eh_frame)
+                0x02ffb518                . = ALIGN (0x4)
+
+.gcc_except_table
+                0x02ffb518        0x0
+ *(.gcc_except_table)
+                0x02ffb518                . = ALIGN (0x4)
+
+.jcr
+ *(.jcr)
+
+.got
+ *(.got.plt)
+ *(.got)
+ *(.rel.got)
+
+.ewram          0x02ffb518        0x0
+                0x02ffb518                __ewram_start = ABSOLUTE (.)
+ *(.ewram)
+ *ewram.*(.text)
+                0x02ffb518                . = ALIGN (0x4)
+
+.data           0x02ffb518        0x0
+                0x02ffb518                __data_start = ABSOLUTE (.)
+ *(EXCLUDE_FILE(*.twl*) .data)
+ .data          0x02ffb518        0x0 font.bin.o
+ .data          0x02ffb518        0x0 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .data          0x02ffb518        0x0 start.o
+ .data          0x02ffb518        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .data          0x02ffb518        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+ .data          0x02ffb518        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+ .data          0x02ffb518        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .data          0x02ffb518        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o)
+ .data          0x02ffb518        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .data          0x02ffb518        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ *(EXCLUDE_FILE(*.twl*) .data.*)
+ *(EXCLUDE_FILE(*.twl*) .gnu.linkonce.d*)
+                0x02ffb518                . = ALIGN (0x4)
+                0x02ffb518                __data_end = ABSOLUTE (.)
+                0x02ffb518                __bss_vma = .
+
+.igot.plt       0x02ffb518        0x0
+ .igot.plt      0x02ffb518        0x0 start.o
+
+.bss            0x02ffb518      0x108
+                0x02ffb518                __bss_start = ABSOLUTE (.)
+                0x02ffb518                __bss_start__ = ABSOLUTE (.)
+ *(EXCLUDE_FILE(*.twl*) .dynbss)
+ *(EXCLUDE_FILE(*.twl*) .gnu.linkonce.b*)
+ *(EXCLUDE_FILE(*.twl*) .bss*)
+ .bss           0x02ffb518        0x0 font.bin.o
+ .bss           0x02ffb518      0x108 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .bss           0x02ffb620        0x0 start.o
+ .bss           0x02ffb620        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .bss           0x02ffb620        0x0 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+ .bss           0x02ffb620        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+ .bss           0x02ffb620        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .bss           0x02ffb620        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o)
+ .bss           0x02ffb620        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .bss           0x02ffb620        0x0 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ *(EXCLUDE_FILE(*.twl*) COMMON)
+                0x02ffb620                . = ALIGN (0x4)
+                0x02ffb620                __bss_end__ = ABSOLUTE (.)
+                0x02ffb620                __end__ = ABSOLUTE (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x44
+ *(.comment)
+ .comment       0x00000000       0x23 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .comment       0x00000000       0x22 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+                                 0x23 (size before relaxing)
+ .comment       0x00000022       0x22 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+                                 0x23 (size before relaxing)
+ .comment       0x00000044       0x23 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+
+.ARM.attributes
+                0x00000000       0x27
+ .ARM.attributes
+                0x00000000       0x14 font.bin.o
+ .ARM.attributes
+                0x00000014       0x29 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .ARM.attributes
+                0x0000003d       0x21 start.o
+ .ARM.attributes
+                0x0000005e       0x2b E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .ARM.attributes
+                0x00000089       0x1b E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+ .ARM.attributes
+                0x000000a4       0x30 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-strnlen.o)
+ .ARM.attributes
+                0x000000d4       0x16 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .ARM.attributes
+                0x000000ea       0x18 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x00000102       0x16 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x00000118       0x30 e:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/7.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0x88
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_aranges
+                0x00000020       0x20 start.o
+ .debug_aranges
+                0x00000040       0x20 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .debug_aranges
+                0x00000060       0x28 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000      0xf97
+ *(.debug_info)
+ .debug_info    0x00000000      0xd78 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_info    0x00000d78       0xd9 start.o
+ .debug_info    0x00000e51      0x124 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .debug_info    0x00000f75       0x22 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+
+.debug_abbrev   0x00000000      0x464
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x3a4 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_abbrev  0x000003a4       0x14 start.o
+ .debug_abbrev  0x000003b8       0x9a E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .debug_abbrev  0x00000452       0x12 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+
+.debug_line     0x00000000      0x7a6
+ *(.debug_line)
+ .debug_line    0x00000000      0x471 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_line    0x00000471       0xb3 start.o
+ .debug_line    0x00000524      0x1bc E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .debug_line    0x000006e0       0xc6 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+
+.debug_frame    0x00000000       0xfc
+ *(.debug_frame)
+ .debug_frame   0x00000000       0xdc C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_frame   0x000000dc       0x20 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+
+.debug_str      0x00000000      0x5b5
+ *(.debug_str)
+ .debug_str     0x00000000      0x36d C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+                                0x415 (size before relaxing)
+ .debug_str     0x0000036d      0x1de E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+                                0x22b (size before relaxing)
+ .debug_str     0x0000054b       0x6a E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)
+                                 0xae (size before relaxing)
+
+.debug_loc      0x00000000     0x1502
+ *(.debug_loc)
+ .debug_loc     0x00000000     0x1502 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.stack          0x00080000        0x0
+                0x00080000                _stack = .
+ *(.stack)
+OUTPUT(F:/Users/Nicolas/Documents/GitHub/SRLoader/titleandsettings/nds-exception-stub/nds-exception-stub.elf elf32-littlearm)
+
+.debug_ranges   0x00000000      0x290
+ .debug_ranges  0x00000000      0x260 C:\Users\nicolas\AppData\Local\Temp\ccaa5pmh.ltrans0.ltrans.o
+ .debug_ranges  0x00000260       0x10 E:/devkitPro/libnds/lib\libnds9.a(exceptions.o)
+ .debug_ranges  0x00000270       0x20 E:/devkitPro/libnds/lib\libnds9.a(exceptionHandler.o)

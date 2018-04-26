@@ -35,7 +35,8 @@ GRAPHICS	:=  gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 \
+		-ffunction-sections -fdata-sections \
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
@@ -44,7 +45,7 @@ CFLAGS	+=	$(INCLUDE) -DARM9
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++11
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=ds_arm9.specs -g -Wl,--gc-sections $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
@@ -78,7 +79,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	load.bin bootstub.bin
+BINFILES	:=	load.bin bootstub.bin exceptionstub.bin
  
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -117,9 +118,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub clean
+.PHONY: bootloader bootstub exceptionstub clean
 
-all:	bootloader bootstub $(TARGET).nds
+all:	bootloader bootstub exceptionstub $(TARGET).nds
 	
 dist:	all
 	@rm	-fr	hbmenu
@@ -132,7 +133,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-b icon.bmp "SRLoader;Robz8" \
 			-g SRLA 01 "SRLOADER" -z 80040000 -u 00030015
-	python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
+	#python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
@@ -161,6 +162,7 @@ clean:
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C BootStrap clean
+	@$(MAKE) -C nds-exception-stub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
@@ -169,6 +171,9 @@ data:
 
 bootloader: data
 	@$(MAKE) -C bootloader
+  
+exceptionstub: data
+	@$(MAKE) -C nds-exception-stub STUBBIN=$(CURDIR)/data/exceptionstub.bin
 
 bootstub: data
 	@$(MAKE) -C bootstub

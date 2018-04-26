@@ -32,7 +32,7 @@
 
 #include "graphics/graphics.h"
 
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 
 #include "graphics/fontHandler.h"
 
@@ -354,10 +354,6 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	if (fatInitDefault()) {
-		if (!access("fat:/", F_OK)) flashcardUsed = true;
-	}
-
 	// Read user name
 	char *username = (char*)PersonalData->name;
 
@@ -378,6 +374,8 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
+  
+  if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	bool soundfreqsetting = false;
 
@@ -387,7 +385,7 @@ int main(int argc, char **argv) {
 	
 	swiWaitForVBlank();
 
-	fifoWaitValue32(FIFO_USER_06);
+  fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);

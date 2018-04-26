@@ -44,7 +44,7 @@
 #include "SwitchState.h"
 
 #include "gbaswitch.h"
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 
 #include "inifile.h"
 

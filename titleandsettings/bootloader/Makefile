@@ -13,7 +13,7 @@ endif
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
 TARGET		:=	load
-BUILD		:=	build
+BUILD		?=	build
 SOURCES		:=	source source/patches 
 INCLUDES	:=	build
 SPECS		:=  specs
@@ -28,9 +28,9 @@ CFLAGS	:=	-g -Wall -Os\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM7
+CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 
-ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
 LIBS	:= 
@@ -89,7 +89,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) *.elf
+	@rm -fr $(BUILD) *.elf *.bin
  
  
 #---------------------------------------------------------------------------------
@@ -105,11 +105,17 @@ $(LOADBIN)	:	$(LOADELF)
 	@echo built ... $(notdir $@)
 
 
-$(LOADELF)	:	$(OFILES)
+$(LOADELF)	: $(OFILES)
 	@echo linking $(notdir $@)
 	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
- 
 
+arm9mpu_reset.o: mpu_reset.bin
+
+mpu_reset.bin: mpu_reset.elf
+	$(OBJCOPY) -O binary $< $@
+
+mpu_reset.elf: $(TOPDIR)/arm9code/mpu_reset.s
+	$(CC) $(ASFLAGS) -Ttext=0 -x assembler-with-cpp -nostartfiles -nostdlib $< -o $@
 
 -include $(DEPENDS)
 #---------------------------------------------------------------------------------------

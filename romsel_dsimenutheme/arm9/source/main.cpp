@@ -36,7 +36,7 @@
 #include "graphics/graphics.h"
 
 #include "ndsheaderbanner.h"
-#include "ndsLoaderArm9.h"
+#include "nds_loader_arm9.h"
 #include "fileBrowse.h"
 
 #include "iconTitle.h"
@@ -586,10 +586,6 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	if (fatInitDefault()) {
-		if (!access("fat:/", F_OK)) flashcardUsed = true;
-	}
-
 	// Read user name
 	char *username = (char*)PersonalData->name;
 		
@@ -663,6 +659,8 @@ int main(int argc, char **argv) {
 
 		}
 	}
+  
+  if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	std::string filename;
 	std::string bootstrapfilename;
