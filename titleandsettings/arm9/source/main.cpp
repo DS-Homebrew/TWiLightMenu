@@ -374,8 +374,8 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
-  
-  if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	bool soundfreqsetting = false;
 
@@ -385,7 +385,7 @@ int main(int argc, char **argv) {
 	
 	swiWaitForVBlank();
 
-  fifoWaitValue32(FIFO_USER_06);
+	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
@@ -417,7 +417,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 3);
 
 	if (autorun || showlogo) {
 		graphicsInit();
@@ -702,10 +702,10 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printf(" L/R: Switch pages    %s", vertext);
-
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printf(" L/R: Switch pages    %s", vertext);
 
 					printLarge(false, 4, 4, "Settings: Games/Apps");
 
@@ -1023,10 +1023,10 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printf(" L/R: Switch pages    %s", vertext);
-
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printf(" L/R: Switch pages    %s", vertext);
 
 					printLarge(false, 4, 4, "Settings: GUI");
 					
