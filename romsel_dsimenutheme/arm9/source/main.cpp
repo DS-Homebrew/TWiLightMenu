@@ -81,7 +81,7 @@ std::string arm7DonorPath;
 
 int donorSdkVer = 0;
 
-bool run_timeout = true;
+bool gameSoftReset = false;
 
 int mpuregion = 0;
 int mpusize = 0;
@@ -385,9 +385,9 @@ void SetDonorSDK(const char* filename) {
 }
 
 /**
- * Set compatibility check for a specific game.
+ * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
  */
-void SetCompatibilityCheck(const char* filename) {
+void SetGameSoftReset(const char* filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
@@ -396,25 +396,37 @@ void SetCompatibilityCheck(const char* filename) {
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
-	
-	run_timeout = true;
 
-	// Check for games that don't need compatibility checks.
-	static const char list[][4] = {
-		"###",	// Homebrew
-		"NTR",	// Download Play ROMs
-		"ADM",	// Animal Crossing: Wild World
-		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
-		"A2D",	// New Super Mario Bros.
-	};
+	scanKeys();
+	int pressed = keysDownRepeat();
 	
+	gameSoftReset = false;
+
+	// Check for games that have it's own reset function (OS_Reset not used).
+	static const char list[][4] = {
+		"NTR",	// Download Play ROMs
+		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"AMC",	// Mario Kart DS
+		"EKD",	// Ermii Kart DS
+		"A2D",	// New Super Mario Bros.
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
 		if (!memcmp(game_TID, list[i], 3)) {
 			// Found a match.
-			run_timeout = false;
+			gameSoftReset = true;
 			break;
 		}
+	}
+
+	if(pressed & KEY_R){
+		gameSoftReset = true;
 	}
 }
 
@@ -802,18 +814,18 @@ int main(int argc, char **argv) {
 							}
 
 						}
-						
+
 						SetDonorSDK(argarray[0]);
-						SetCompatibilityCheck(argarray[0]);
+						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						
+
 						std::string path = argarray[0];
 						std::string savepath = savename;
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CHECK_COMPATIBILITY", run_timeout);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
