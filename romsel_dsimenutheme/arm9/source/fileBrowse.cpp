@@ -71,6 +71,8 @@ extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
+extern bool showdialogbox;
+
 extern std::string romfolder;
 
 extern std::string arm7DonorPath;
@@ -896,13 +898,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
 		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
 		{
-			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
-			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
-			int yPos = 160;
-			if (theme == 1) yPos -= 4;
-			printSmallCentered(false, yPos, "Donor ROM is set.");
-			for (int i = 0; i < 90; i++) swiWaitForVBlank();
-			SaveSettings();
+			//arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
+			//arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
+			//int yPos = 160;
+			//if (theme == 1) yPos -= 4;
+			//printSmallCentered(false, yPos, "Donor ROM is set.");
+			//for (int i = 0; i < 90; i++) swiWaitForVBlank();
+			//SaveSettings();
+			
+			showdialogbox = !showdialogbox;
 		}
 
 	}
