@@ -386,12 +386,14 @@ void getGameInfo(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if(!dsiWareList && ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
-			launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
-		} else if(ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
-			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-				isHomebrew[num] = true;	// If homebrew has DSi-extended header,
-											// do not use bootstrap/flashcard's ROM booter to boot it
+		if (!dsiWareList) {
+			if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+				launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
+			} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
+				if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
+					isHomebrew[num] = true;	// If homebrew has DSi-extended header,
+												// do not use bootstrap/flashcard's ROM booter to boot it
+			}
 		}
 
 		if (ndsHeader.bannerOffset == 0)

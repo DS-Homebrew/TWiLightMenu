@@ -101,6 +101,8 @@ extern int pagenum;
 extern int dsiWarePageNum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
+extern int dsiWare_titleboxXpos;
+extern int dsiWare_titlewindowXpos;
 
 extern bool flashcardUsed;
 
@@ -312,7 +314,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			else
 				dirEntry.visibleName = dirEntry.name;
 
-			if (showDirectories) {
+			if (showDirectories && !dsiWareList) {
 				if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
 				{
 					dirContents.push_back(dirEntry);
@@ -387,56 +389,91 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 	spawnedtitleboxes = 0;
 	for(int i = 0; i < 40; i++) {
-		if (i+pagenum*40 < file_count) {
-			if (dirContents[scrn].at(i+pagenum*40).isDirectory) {
-				isDirectory[i] = true;
-			} else {
+		if (dsiWareList) {
+			if (i+dsiWarePageNum*40 < file_count) {
 				isDirectory[i] = false;
-				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
-				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+				std::string std_romsel_filename = dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str();
+				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 				{
-					getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+					getGameInfo(dirContents[scrn].at(i+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str(), i);
 					bnrRomType[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-				{
-					bnrRomType[i] = 1;
-					launchable[i] = true;
-					isHomebrew[i] = false;
-				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
-					bnrRomType[i] = 2;
-					launchable[i] = true;
-					isHomebrew[i] = false;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-				{
-					bnrRomType[i] = 3;
-					launchable[i] = true;
-					isHomebrew[i] = false;
 				}
+				spawnedtitleboxes++;
 			}
-			spawnedtitleboxes++;
+		} else {
+			if (i+pagenum*40 < file_count) {
+				if (dirContents[scrn].at(i+pagenum*40).isDirectory) {
+					isDirectory[i] = true;
+				} else {
+					isDirectory[i] = false;
+					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
+					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+					{
+						getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+						bnrRomType[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+					{
+						bnrRomType[i] = 1;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+						bnrRomType[i] = 2;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+					{
+						bnrRomType[i] = 3;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					}
+				}
+				spawnedtitleboxes++;
+			}
 		}
 	}
 	// Load correct icons depending on cursor position
-	if (cursorPosition <= 1) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && i+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+	if (dsiWareList) {
+		if (dsiWare_cursorPosition <= 1) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && i+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str(), i);
+				}
+			}
+		} else if (dsiWare_cursorPosition >= 2 && dsiWare_cursorPosition <= 36) {
+			for(int i = 0; i < 6; i++) {
+				if (bnrRomType[i] == 0 && (dsiWare_cursorPosition-2+i)+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition-2+i)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition-2+i)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition-2+i);
+				}
+			}
+		} else if (dsiWare_cursorPosition >= 37 && dsiWare_cursorPosition <= 39) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && (35+i)+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((35+i)+dsiWarePageNum*40).name.c_str(), 35+i);
+				}
 			}
 		}
-	} else if (cursorPosition >= 2 && cursorPosition <= 36) {
-		for(int i = 0; i < 6; i++) {
-			if (bnrRomType[i] == 0 && (cursorPosition-2+i)+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
+	} else {
+		if (cursorPosition <= 1) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && i+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+				}
 			}
-		}
-	} else if (cursorPosition >= 37 && cursorPosition <= 39) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && (35+i)+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
+		} else if (cursorPosition >= 2 && cursorPosition <= 36) {
+			for(int i = 0; i < 6; i++) {
+				if (bnrRomType[i] == 0 && (cursorPosition-2+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
+				}
+			}
+		} else if (cursorPosition >= 37 && cursorPosition <= 39) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && (35+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
+				}
 			}
 		}
 	}
@@ -477,6 +514,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showSTARTborder = false;
 				clearText(false);	// Clear title
 			}
+		} else if (dsiWareList) {
+			if (dsiWare_cursorPosition+dsiWarePageNum*40 > ((int) dirContents[scrn].size() - 1)) {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+			} else {
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
+			}
 		} else {
 			if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
 				showbubble = false;
@@ -503,7 +550,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				usernameRenderedDone = true;
 			}
 			iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-			if (!startMenu) {
+			if (startMenu) {
+			} else if (dsiWareList) {
+				for(int i = 0; i < 21; i++) {
+					printf("\n");
+				}
+				printf(" ");
+				if (dsiWarePageNum != 0) {
+					printf("L: Previous");
+				} else {
+					printf("           ");
+				}
+				printf("            ");
+				if (file_count > 40+dsiWarePageNum*40) {
+					printf("R: Next");
+				} else {
+					printf("       ");
+				}
+			} else {
 				for(int i = 0; i < 21; i++) {
 					printf("\n");
 				}
@@ -545,6 +609,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
+			} else if (dsiWareList) {
+				dsiWare_cursorPosition -= 1;
+				if (dsiWare_cursorPosition >= 0) {
+					titleboxXmoveleft = true;
+					mmEffectEx(&snd_select);
+					settingsChanged = true;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+				if(dsiWare_cursorPosition >= 2 && dsiWare_cursorPosition <= 36) {
+					if (bnrRomType[dsiWare_cursorPosition-2] == 0 && (dsiWare_cursorPosition-2)+dsiWarePageNum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition-2)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition-2)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition-2);
+					}
+				}
 			} else {
 				cursorPosition -= 1;
 				if (cursorPosition >= 0) {
@@ -569,6 +647,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
+				}
+			} else if (dsiWareList) {
+				dsiWare_cursorPosition += 1;
+				if (dsiWare_cursorPosition <= 39) {
+					titleboxXmoveright = true;
+					mmEffectEx(&snd_select);
+					settingsChanged = true;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+				if(dsiWare_cursorPosition >= 3 && dsiWare_cursorPosition <= 37) {
+					if (bnrRomType[dsiWare_cursorPosition+2] == 0 && (dsiWare_cursorPosition+2)+dsiWarePageNum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition+2)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition+2)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition+2);
+					}
 				}
 			} else {
 				cursorPosition += 1;
@@ -595,6 +687,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			else if (startMenu_cursorPosition > 39)
 			{
 				startMenu_cursorPosition = 39;
+			}
+		} else if (dsiWareList) {
+			if (dsiWare_cursorPosition < 0)
+			{
+				dsiWare_cursorPosition = 0;
+			}
+			else if (dsiWare_cursorPosition > 39)
+			{
+				dsiWare_cursorPosition = 39;
 			}
 		} else {
 			if (cursorPosition < 0)
@@ -662,7 +763,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
+			DirEntry* entry;
+			if (dsiWareList) {
+				entry = &dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40);
+			} else {
+				entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
+			}
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -685,10 +791,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				settingsChanged = false;
 				return "null";
 			}
-			else if (launchable[cursorPosition])
+			else if (dsiWareList || launchable[cursorPosition])
 			{
 				donorFound = true;
-				if(!flashcardUsed && bnrRomType[cursorPosition] == 0 && arm7DonorPath.compare("") == 0) {
+				if(!flashcardUsed && !dsiWareList && bnrRomType[cursorPosition] == 0 && arm7DonorPath.compare("") == 0) {
 					FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
 
 					u32 SDKVersion = 0;
@@ -748,7 +854,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_Y) && !startMenu && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
+		if ((pressed & KEY_Y) && !startMenu && !dsiWareList && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
 		{
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
@@ -800,10 +906,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			pagenum -= 1;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
+			if (dsiWareList) {
+				dsiWarePageNum -= 1;
+				dsiWare_cursorPosition = 0;
+				dsiWare_titleboxXpos = 0;
+				dsiWare_titlewindowXpos = 0;
+			} else {
+				pagenum -= 1;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+			}
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
@@ -817,10 +930,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			pagenum += 1;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
+			if (dsiWareList) {
+				dsiWarePageNum += 1;
+				dsiWare_cursorPosition = 0;
+				dsiWare_titleboxXpos = 0;
+				dsiWare_titlewindowXpos = 0;
+			} else {
+				pagenum += 1;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+			}
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;

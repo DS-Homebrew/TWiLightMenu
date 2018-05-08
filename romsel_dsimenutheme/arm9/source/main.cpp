@@ -716,7 +716,7 @@ int main(int argc, char **argv) {
 
 	while(1) {
 
-		if (dsiWareList && fifoGetValue32(FIFO_USER_03) != 0) {
+		if (dsiWareList) {
 			// Set directory
 			chdir ("sd:/title/00030004/4B513945/content");
 
@@ -735,7 +735,7 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			if (dsiWareList) {
+			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
 				sNDSHeaderExt NDSHeader;
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");

@@ -262,6 +262,70 @@ void moveIconClose(int num) {
 	}
 }
 
+void dsiWare_moveIconClose(int num) {
+	if (titleboxXmoveleft) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 2) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 3) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 4) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 5) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 6) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 7) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
+		} else if(movetimer == 8) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -7;
+		}
+	}
+	if (titleboxXmoveright) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 2) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 3) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 4) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 5) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 6) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 7) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 8) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 7;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
+		}
+	}
+	if(!titleboxXmoveleft || !titleboxXmoveright) {
+		if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+		else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
+		else movecloseXpos = 0;
+	}
+}
+
 void startMenu_moveIconClose(int num) {
 	if (titleboxXmoveleft) {
 		movecloseXpos = 0;
@@ -482,6 +546,20 @@ void vBlankHandler()
 						titleboxXmoveleft = false;
 						movetimer = 0;
 					}
+				} else if (dsiWareList) {
+					if (movetimer == 8) {
+						if (showbubble) mmEffectEx(&snd_stop);
+						startBorderZoomOut = true;
+						dsiWare_titlewindowXpos -= 1;
+						movetimer++;
+					} else if (movetimer < 8) {
+						dsiWare_titleboxXpos -= 8;
+						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos -= 1;
+						movetimer++;
+					} else {
+						titleboxXmoveleft = false;
+						movetimer = 0;
+					}
 				} else {
 					if (movetimer == 8) {
 						if (showbubble) mmEffectEx(&snd_stop);
@@ -507,6 +585,20 @@ void vBlankHandler()
 					} else if (movetimer < 8) {
 						startMenu_titleboxXpos += 8;
 						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
+						movetimer++;
+					} else {
+						titleboxXmoveright = false;
+						movetimer = 0;
+					}
+				} else if (dsiWareList) {
+					if (movetimer == 8) {
+						if (showbubble) mmEffectEx(&snd_stop);
+						startBorderZoomOut = true;
+						dsiWare_titlewindowXpos += 1;
+						movetimer++;
+					} else if (movetimer < 8) {
+						dsiWare_titleboxXpos += 8;
+						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos += 1;
 						movetimer++;
 					} else {
 						titleboxXmoveright = false;
@@ -564,10 +656,10 @@ void vBlankHandler()
 				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
 				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
 				glColor(RGB15(31, 31, 31));
-				if (dsiWareList) {
-					glSprite(72-dsiWare_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
-				} else if (startMenu) {
+				if (startMenu) {
 					glSprite(72-startMenu_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+				} else if (dsiWareList) {
+					glSprite(72-dsiWare_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 				} else {
 					glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 				}
@@ -598,6 +690,33 @@ void vBlankHandler()
 					iconXpos += 64;
 				}
 				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 80, GL_FLIP_H, braceImage);
+			} else if(dsiWareList) {
+				for(int i = 0; i < 40; i++) {
+					if (theme == 0) {
+						dsiWare_moveIconClose(i);
+					} else {
+						movecloseXpos = 0;
+					}
+					if (i < spawnedtitleboxes) {
+						if (isDirectory[i]) {
+							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
+							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos-3, GL_FLIP_NONE, folderImage);
+						} else {
+							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIcon(iconXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos+12, i);
+						}
+					} else {
+						if (theme == 1) {
+							glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+						} else {
+							glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+						}
+					}
+					spawnedboxXpos += 64;
+					iconXpos += 64;
+				}
+				if (theme == 0) glSprite(spawnedboxXpos+10-dsiWare_titleboxXpos, 80, GL_FLIP_H, braceImage);
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -645,6 +764,9 @@ void vBlankHandler()
 						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 						drawIconGBA(112, 96-titleboxYmovepos);
 					}
+				} else if (dsiWareList) {
+					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+					drawIcon(112, 96-titleboxYmovepos, dsiWare_cursorPosition);
 				} else {
 					if (isDirectory[cursorPosition]) {
 						glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, folderImage);
