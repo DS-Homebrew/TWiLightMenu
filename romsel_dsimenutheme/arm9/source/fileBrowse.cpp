@@ -93,9 +93,12 @@ extern int theme;
 extern bool showDirectories;
 extern int spawnedtitleboxes;
 static int file_count = 0;
+extern bool dsiWareList;
 extern int cursorPosition;
+extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+extern int dsiWarePageNum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
 
@@ -391,7 +394,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
 				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 				{
 					getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 					bnrRomType[i] = 0;
@@ -827,6 +831,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
+		if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
+		&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && !flashcardUsed)
+		{
+			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			dsiWareList = !dsiWareList;
+			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
+			clearText(true);
+			clearText(false);
+			SaveSettings();
+			settingsChanged = false;
+			return "null";		
+		}
 
 		/* if (pressed & KEY_B && !isTopLevel(path))
 		{

@@ -44,6 +44,7 @@ static int BOX_PY_spacing3 = 28;
 #include "icon_gb.h"
 #include "icon_nes.h"
 
+extern bool dsiWareList;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
 
@@ -355,9 +356,10 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		int ret;
 
@@ -384,7 +386,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if(ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+		if(!dsiWareList && ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
 			launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
 		} else if(ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
 			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
@@ -504,9 +506,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
 		int ret;
@@ -695,9 +698,10 @@ void titleUpdate(bool isDir, const char* name)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
 		int ret;

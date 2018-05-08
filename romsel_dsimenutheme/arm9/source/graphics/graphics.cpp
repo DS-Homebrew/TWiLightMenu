@@ -116,15 +116,20 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
+extern bool dsiWareList;
 extern int theme;
 extern int subtheme;
 extern int cursorPosition;
+extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+extern int dsiWarePageNum;
 int titleboxXpos;
+int dsiWare_titleboxXpos;
 int startMenu_titleboxXpos;
 int titleboxYpos = 84;
 int titlewindowXpos;
+int dsiWare_titlewindowXpos;
 int startMenu_titlewindowXpos;
 
 int movecloseXpos = 0;
@@ -526,9 +531,18 @@ void vBlankHandler()
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
-				if(startMenu) {
+				int bipXpos = 27;
+				if(dsiWareList) {
+					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+					for(int i = 0; i < 40; i++) {
+						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
+						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+						bipXpos += 5;
+					}
+					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				} else if(startMenu) {
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-					int bipXpos = 27;
 					for(int i = 0; i < 40; i++) {
 						if (i == 0) glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[2 & 31]);
 						else if (i == 1) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
@@ -539,7 +553,6 @@ void vBlankHandler()
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				} else {
 					glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-					int bipXpos = 27;
 					for(int i = 0; i < 40; i++) {
 						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
@@ -551,7 +564,9 @@ void vBlankHandler()
 				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
 				glSprite(224, 171, GL_FLIP_H, buttonarrowImage);
 				glColor(RGB15(31, 31, 31));
-				if (startMenu) {
+				if (dsiWareList) {
+					glSprite(72-dsiWare_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+				} else if (startMenu) {
 					glSprite(72-startMenu_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 				} else {
 					glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
@@ -762,6 +777,8 @@ void graphicsInit()
 {
 	titleboxXpos = cursorPosition*64;
 	titlewindowXpos = cursorPosition*5;
+	dsiWare_titleboxXpos = dsiWare_cursorPosition*64;
+	dsiWare_titlewindowXpos = dsiWare_cursorPosition*5;
 	startMenu_titleboxXpos = startMenu_cursorPosition*64;
 	startMenu_titlewindowXpos = startMenu_cursorPosition*5;
 	

@@ -95,9 +95,12 @@ bool bootstrapFile = false;
 bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
+bool dsiWareList = false;
 int cursorPosition = 0;
+int dsiWare_cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
+int dsiWarePageNum = 0;
 bool showDirectories = true;
 
 bool flashcardUsed = false;
@@ -120,7 +123,9 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
+	dsiWareList = settingsini.GetInt("SRLOADER", "DSIWARE_LIST", 0);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
+	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 
@@ -150,7 +155,9 @@ void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
+	settingsini.SetInt("SRLOADER", "DSIWARE_LIST", dsiWareList);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
+	settingsini.SetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", dsiWarePageNum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
@@ -671,8 +678,8 @@ int main(int argc, char **argv) {
 
 		}
 	}
-  
-  if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	std::string filename;
 	std::string bootstrapfilename;
@@ -692,6 +699,7 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
+	vector<string> dsiWareExtensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
@@ -699,24 +707,56 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".gbc");
 	extensionList.push_back(".nes");
 	extensionList.push_back(".fds");
+	dsiWareExtensionList.push_back(".app");
 	srand(time(NULL));
 	
 	char path[256];
-	snprintf (path, sizeof(path), "%s", romfolder.c_str());
-	// Set directory
-	chdir (path);
-	
+
 	InitSound();
-	
+
 	while(1) {
-	
-		//Navigates to the file to launch
-		filename = browseForFile(extensionList, username);
+
+		if (dsiWareList && fifoGetValue32(FIFO_USER_03) != 0) {
+			// Set directory
+			chdir ("sd:/title/00030004/4B513945/content");
+
+			//Navigates to the file to launch
+			filename = browseForFile(dsiWareExtensionList, username);
+		} else {
+			snprintf (path, sizeof(path), "%s", romfolder.c_str());
+			// Set directory
+			chdir (path);
+
+			//Navigates to the file to launch
+			filename = browseForFile(extensionList, username);
+		}
 
 		////////////////////////////////////
 		// Launch the item
 
 		if (applaunch) {
+			if (dsiWareList) {
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
+				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+				*(u16*)(0x02000304) = 0x1801;
+				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
+				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
+				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000318) = 0x00000017;
+				*(u32*)(0x0200031C) = 0x00000000;
+				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+
+				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+			}
+
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
