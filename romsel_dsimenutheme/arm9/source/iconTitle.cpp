@@ -301,7 +301,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
-		// size_t size = 0;
+		size_t size = 0;
 		ssize_t rc;
 
 		// open the argv file
@@ -311,6 +311,21 @@ void getGameInfo(bool isDir, const char* name, int num)
 			clearBannerSequence(num);
 			fclose(fp);
 			return;
+		}
+
+		// read each line
+		while ((rc = __getline(&line, &size, fp)) > 0)
+		{
+			// remove comments
+			if ((p = strchr(line, '#')) != NULL)
+				*p = 0;
+
+			// skip leading whitespace
+			for (p = line; *p && isspace((int) *p); ++p)
+				;
+
+			if (*p)
+				break;
 		}
 
 		// done with the file at this point
@@ -451,10 +466,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 	{
-		// look through the argv file for the corresponding nds file
+		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
-		// size_t size = 0;
+		size_t size = 0;
 		ssize_t rc;
 
 		// open the argv file
@@ -464,6 +479,21 @@ void iconUpdate(bool isDir, const char* name, int num)
 			clearIcon(num);
 			fclose(fp);
 			return;
+		}
+
+		// read each line
+		while ((rc = __getline(&line, &size, fp)) > 0)
+		{
+			// remove comments
+			if ((p = strchr(line, '#')) != NULL)
+				*p = 0;
+
+			// skip leading whitespace
+			for (p = line; *p && isspace((int) *p); ++p)
+				;
+
+			if (*p)
+				break;
 		}
 
 		// done with the file at this point
