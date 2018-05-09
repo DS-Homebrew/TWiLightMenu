@@ -56,6 +56,7 @@ extern void ClearBrightness();
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+bool arm7SCFGLocked = false;
 bool is3DS = false;
 bool isRegularDS = true;
 
@@ -124,6 +125,7 @@ void LoadSettings(void) {
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
 	dsiWareList = settingsini.GetInt("SRLOADER", "DSIWARE_LIST", 0);
+	if (flashcardUsed) dsiWareList = false;
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
@@ -159,6 +161,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
 	settingsini.SetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", dsiWarePageNum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+	settingsini.SetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", dsiWare_cursorPosition);
 	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
@@ -685,6 +688,7 @@ int main(int argc, char **argv) {
 	std::string bootstrapfilename;
 
 	fifoWaitValue32(FIFO_USER_06);
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -873,7 +877,7 @@ int main(int argc, char **argv) {
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {
-							if (fifoGetValue32(FIFO_USER_03) != 0) {
+							if (!arm7SCFGLocked) {
 								if (is3DS) {
 									if(donorSdkVer==5) {
 										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
