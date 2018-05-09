@@ -129,6 +129,7 @@ void LoadSettings(void) {
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
+	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 
 	// Customizable UI settings.
