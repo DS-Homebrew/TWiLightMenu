@@ -324,12 +324,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				clearBannerSequence(num);
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -347,6 +343,11 @@ void getGameInfo(bool isDir, const char* name, int num)
 				{
 					getGameInfo(false, p, num);
 				}
+			}
+			else
+			{
+				// this is not an nds/app file!
+				clearBannerSequence(num);
 			}
 		}
 		else
@@ -476,12 +477,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				clearIcon(num);
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -499,6 +496,11 @@ void iconUpdate(bool isDir, const char* name, int num)
 				{
 					iconUpdate(false, p, num);
 				}
+			}
+			else
+			{
+				// this is not an nds/app file!
+				clearIcon(num);
 			}
 		}
 		else
@@ -627,7 +629,7 @@ void titleUpdate(bool isDir, const char* name)
 	}
 	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 	{
-		// look through the argv file for the corresponding nds file
+		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
 		size_t size = 0;
@@ -668,12 +670,8 @@ void titleUpdate(bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				writeBannerText(0, "(invalid argv file!)", "", "");
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -685,12 +683,17 @@ void titleUpdate(bool isDir, const char* name)
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
-					writeBannerText(0, "(invalid argv file!)", "", "");
+					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
 				}
 				else
 				{
 					titleUpdate(false, p);
 				}
+			}
+			else
+			{
+				// this is not an nds/app file!
+				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
 			}
 		}
 		else

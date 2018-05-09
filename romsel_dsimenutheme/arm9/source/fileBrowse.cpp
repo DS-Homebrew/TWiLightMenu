@@ -393,7 +393,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (i+dsiWarePageNum*40 < file_count) {
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str();
-				if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 				{
 					getGameInfo(dirContents[scrn].at(i+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str(), i);
 					bnrRomType[i] = 0;

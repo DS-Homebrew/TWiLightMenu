@@ -708,6 +708,7 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".nes");
 	extensionList.push_back(".fds");
 	dsiWareExtensionList.push_back(".app");
+	dsiWareExtensionList.push_back(".argv");
 	srand(time(NULL));
 	
 	char path[256];
@@ -718,7 +719,7 @@ int main(int argc, char **argv) {
 
 		if (dsiWareList) {
 			// Set directory
-			chdir ("sd:/title/00030004/4B513945/content");
+			chdir ("sd:/_nds/srloader/dsiware");
 
 			//Navigates to the file to launch
 			filename = browseForFile(dsiWareExtensionList, username);
@@ -735,28 +736,6 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
-
-				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-				*(u16*)(0x02000304) = 0x1801;
-				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
-				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
-				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000318) = 0x00000017;
-				*(u32*)(0x0200031C) = 0x00000000;
-				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-
-				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
-			}
-
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
@@ -785,6 +764,28 @@ int main(int argc, char **argv) {
 				filename = argarray.at(0);
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
+			}
+
+			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
+				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+				*(u16*)(0x02000304) = 0x1801;
+				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
+				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
+				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000318) = 0x00000017;
+				*(u32*)(0x0200031C) = 0x00000000;
+				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+
+				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
