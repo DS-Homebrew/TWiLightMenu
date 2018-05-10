@@ -280,7 +280,11 @@ void loadROMselect() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
+	if (theme==2) {
+		runNdsFile ("/_nds/srloader/r4menu.srldr", 0, NULL, false);
+	} else {
+		runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
+	}
 }
 
 int lastRanROM() {
@@ -417,7 +421,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 3);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 0, 0);
 
 	if (autorun || showlogo) {
 		graphicsInit();
@@ -639,6 +643,9 @@ int main(int argc, char **argv) {
 							break;
 						case 1:
 							printLarge(false, 4, 4, "Sub-theme select: 3DS HOME Menu");
+							break;
+						case 2:
+							printLarge(false, 4, 4, "Sub-theme select: R4");
 							break;
 					}
 
@@ -1050,10 +1057,18 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 
 					printSmall(false, 12, 24, "Theme");
-					if(theme == 1)
-						printSmall(false, 156, 24, "3DS Menu");
-					else
-						printSmall(false, 156, 24, "DSi Menu");
+					switch (theme) {
+						case 0:
+						default:
+							printSmall(false, 156, 24, "DSi Menu");
+							break;
+						case 1:
+							printSmall(false, 156, 24, "3DS Menu");
+							break;
+						case 2:
+							printSmall(false, 156, 24, "R4");
+							break;
+					}
 
 					printSmall(false, 12, 32, "Last played ROM on startup");
 					if(autorun)
@@ -1121,12 +1136,12 @@ int main(int argc, char **argv) {
 							if (pressed & KEY_LEFT) {
 								subtheme = 0;
 								theme -= 1;
-								if (theme < 0) theme = 1;
+								if (theme < 0) theme = 2;
 								mmEffectEx(&snd_select);
 							} else if (pressed & KEY_RIGHT) {
 								subtheme = 0;
 								theme += 1;
-								if (theme > 1) theme = 0;
+								if (theme > 2) theme = 0;
 								mmEffectEx(&snd_select);
 							} else if (theme == 1) {
 								mmEffectEx(&snd_wrong);
