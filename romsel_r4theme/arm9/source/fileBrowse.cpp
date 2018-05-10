@@ -245,6 +245,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	fadeType = true;	// Fade in from white
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 
+	if (dsiWareList) {
+		fileOffset = dsiWare_cursorPosition;
+	} else {
+		fileOffset = cursorPosition;
+	}
+
 	while (true)
 	{
 		// Clear old cursors
@@ -362,6 +368,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
+					if (dsiWareList) {
+						dsiWare_cursorPosition = fileOffset;
+					} else {
+						cursorPosition = fileOffset;
+					}
 					SaveSettings();
 
 					// Return the chosen file
@@ -393,6 +404,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 60; i++) {
 					swiWaitForVBlank();
 				}
+				if (dsiWareList) {
+					dsiWare_cursorPosition = fileOffset;
+				} else {
+					cursorPosition = fileOffset;
+				}
 				SaveSettings();
 
 				// Return the chosen file
@@ -400,59 +416,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		/*if ((pressed & KEY_L) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
-		{
-			mmEffectEx(&snd_switch);
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			if (dsiWareList) {
-				dsiWarePageNum -= 1;
-				dsiWare_cursorPosition = 0;
-				dsiWare_titleboxXpos = 0;
-				dsiWare_titlewindowXpos = 0;
-			} else {
-				pagenum -= 1;
-				cursorPosition = 0;
-				titleboxXpos = 0;
-				titlewindowXpos = 0;
-			}
-			whiteScreen = true;
-			showbubble = false;
-			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
-			SaveSettings();
-			settingsChanged = false;
-			return "null";		
-		} else 	if ((pressed & KEY_R) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
-		{
-			mmEffectEx(&snd_switch);
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			if (dsiWareList) {
-				dsiWarePageNum += 1;
-				dsiWare_cursorPosition = 0;
-				dsiWare_titleboxXpos = 0;
-				dsiWare_titlewindowXpos = 0;
-			} else {
-				pagenum += 1;
-				cursorPosition = 0;
-				titleboxXpos = 0;
-				titlewindowXpos = 0;
-			}
-			whiteScreen = true;
-			showbubble = false;
-			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
-			SaveSettings();
-			settingsChanged = false;
-			return "null";		
-		}*/
-
 		if ((pressed & KEY_L) && !flashcardUsed)
 		{
 			dsiWareList = !dsiWareList;
+			if (dsiWareList) {
+				dsiWare_cursorPosition = fileOffset;
+			} else {
+				cursorPosition = fileOffset;
+			}
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -510,7 +481,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		}
 
-		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false) && !flashcardUsed)
+		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false)
+		&& !dsiWareList && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents.at(fileOffset).name.c_str();
 			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"

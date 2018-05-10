@@ -1037,7 +1037,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && !startMenu
 		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
-		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
+		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList && !flashcardUsed)
 		{
 			//arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
 			//arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
