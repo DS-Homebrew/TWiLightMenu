@@ -179,12 +179,13 @@ void vBlankHandler()
 		else
 		{*/
 
-			drawBG(subBgImage);
+			//drawBG(subBgImage);
+			glBoxFilled(0, 0, 256, 192, RGB15(148, 189, 16));
 			
-			if (bnrRomType == 3) drawIconNES(0, 0);
-			else if (bnrRomType == 2) drawIconGBC(0, 0);
-			else if (bnrRomType == 1) drawIconGB(0, 0);
-			else drawIcon(0, 0);
+			if (bnrRomType == 3) drawIconNES(8, 8);
+			else if (bnrRomType == 2) drawIconGBC(8, 8);
+			else if (bnrRomType == 1) drawIconGB(8, 8);
+			else drawIcon(8, 8);
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {

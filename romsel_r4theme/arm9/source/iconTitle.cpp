@@ -32,10 +32,10 @@
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
-static int BOX_PY = 13;
-static int BOX_PY_spacing1 = 19;
-static int BOX_PY_spacing2 = 9;
-static int BOX_PY_spacing3 = 28;
+static int BOX_PY = 24;
+static int BOX_PY_spacing1 = 8;
+static int BOX_PY_spacing2 = 4;
+static int BOX_PY_spacing3 = 12;
 
 // Graphic files
 #include "icon_unk.h"
