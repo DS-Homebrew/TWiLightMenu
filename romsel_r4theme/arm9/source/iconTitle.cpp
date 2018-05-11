@@ -32,10 +32,11 @@
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
-static int BOX_PY = 24;
-static int BOX_PY_spacing1 = 8;
-static int BOX_PY_spacing2 = 4;
-static int BOX_PY_spacing3 = 12;
+#define BOX_PX				73
+#define BOX_PY				32
+#define BOX_PY_spacing1		8
+#define BOX_PY_spacing2		4
+#define BOX_PY_spacing3		12
 
 // Graphic files
 #include "icon_unk.h"
@@ -80,16 +81,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text1);
+			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, text2);
+			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing2, text1);
+			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printSmallCentered(false, BOX_PY, text1);
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmall(false, BOX_PX, BOX_PY, text1);
+			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text2);
+			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -593,12 +594,6 @@ void iconUpdate(bool isDir, const char* name)
 void titleUpdate(bool isDir, const char* name)
 {
 	clearText(false);
-	if (theme == 1) {
-		BOX_PY = 39;
-		BOX_PY_spacing1 = 17;
-		BOX_PY_spacing2 = 7;
-		BOX_PY_spacing3 = 26;
-	}
 	
 	if (startMenu) {
 		if (startMenu_cursorPosition == 0) {
@@ -792,19 +787,19 @@ void titleUpdate(bool isDir, const char* name)
 		switch(bannerlines) {
 			case 0:
 			default:
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1, p);
+				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, p);
 				break;
 			case 1:
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing2, p);
+				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing2, p);
 				p += strlen(p) + 1;
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing3, p);
+				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing3, p);
 				break;
 			case 2:
-				printSmallCentered(false, BOX_PY, p);
+				printSmall(false, BOX_PX, BOX_PY, p);
 				p += strlen(p) + 1;
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1, p);
+				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, p);
 				p += strlen(p) + 1;
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1*2, p);
+				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, p);
 				break;
 		}
 		
