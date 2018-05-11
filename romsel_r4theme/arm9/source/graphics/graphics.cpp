@@ -61,6 +61,8 @@ extern int startMenu_cursorPosition;
 extern int pagenum;
 extern int dsiWarePageNum;
 
+bool showdialogbox = false;
+
 int subBgTexID, iconboxTexID;
 
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -190,6 +192,10 @@ void vBlankHandler()
 			else if (bnrRomType == 2) drawIconGBC(36, 28);
 			else if (bnrRomType == 1) drawIconGB(36, 28);
 			else drawIcon(36, 28);
+			if (showdialogbox) {
+				glBoxFilled(15, 95, 241, 113, RGB15(0, 0, 0));
+				glBoxFilled(16, 96, 240, 112, RGB15(31, 31, 31));
+			}
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {

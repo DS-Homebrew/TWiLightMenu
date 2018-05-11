@@ -63,14 +63,6 @@ extern bool fadeSpeed;
 extern bool useGbarunner;
 extern bool isRegularDS;
 
-extern bool showbubble;
-extern bool showSTARTborder;
-
-extern bool titleboxXmoveleft;
-extern bool titleboxXmoveright;
-
-extern bool applaunchprep;
-
 extern bool showdialogbox;
 
 extern std::string romfolder;
@@ -92,7 +84,6 @@ extern int theme;
 
 extern bool showDirectories;
 extern int spawnedtitleboxes;
-static int file_count = 0;
 extern bool dsiWareList;
 extern int cursorPosition;
 extern int dsiWare_cursorPosition;
@@ -253,6 +244,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 	while (true)
 	{
+		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
+		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
+
 		// Clear old cursors
 		for (int i = ENTRIES_START_ROW; i < ENTRIES_PER_SCREEN + ENTRIES_START_ROW; i++) {
 			iprintf ("\x1b[%d;0H ", i);
@@ -315,10 +309,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (pressed & KEY_DOWN) 	fileOffset += 1;
 		if (pressed & KEY_LEFT) 	fileOffset -= ENTRY_PAGE_LENGTH;
 		if (pressed & KEY_RIGHT)	fileOffset += ENTRY_PAGE_LENGTH;
-		
+
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
-		
+
 		// Scroll screen if needed
 		if (fileOffset < screenOffset) 	{
 			screenOffset = fileOffset;
@@ -378,14 +372,28 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// Return the chosen file
 					return entry->name;
 				} else {
-					int yPos = 160;
-					printSmallCentered(false, yPos, "Please set Mario Kart DS as donor ROM.");
-					for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
+					showdialogbox = true;
+					printSmallCentered(false, 104, "Please set Mario Kart DS as donor ROM.");
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_A));
+					showdialogbox = false;
 				}
 			} else {
-				int yPos = 160;
-				printSmallCentered(false, yPos, "This game cannot be launched.");
-				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+				showdialogbox = true;
+				printSmallCentered(false, 104, "This game cannot be launched.");
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				showdialogbox = false;
 			}
 		}
 
@@ -416,8 +424,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_L) && !flashcardUsed)
+		if ((pressed & KEY_R) && !flashcardUsed)
 		{
+			consoleClear();
+			printf("Please wait...\n");
 			dsiWareList = !dsiWareList;
 			if (dsiWareList) {
 				dsiWare_cursorPosition = fileOffset;
@@ -486,10 +496,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents.at(fileOffset).name.c_str();
 			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
-			int yPos = 160;
-			printSmallCentered(false, yPos, "Donor ROM is set.");
-			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 			SaveSettings();
+			showdialogbox = true;
+			printSmallCentered(false, 104, "Donor ROM is set.");
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			pressed = 0;
+			do {
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			} while (!(pressed & KEY_A));
+			showdialogbox = false;
 		}
 
 	}
