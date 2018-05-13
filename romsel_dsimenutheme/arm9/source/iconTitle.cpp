@@ -288,6 +288,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
+	bnrWirelessIcon[num] = 0;
 	launchable[num] = true;
 	isHomebrew[num] = false;
 
@@ -411,6 +412,9 @@ void getGameInfo(bool isDir, const char* name, int num)
 												// do not use bootstrap/flashcard's ROM booter to boot it
 			}
 		}
+
+		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;
+		else if (ndsHeader.dsi_flags == 0x0B) bnrWirelessIcon[num] = 2;
 
 		if (ndsHeader.bannerOffset == 0)
 		{

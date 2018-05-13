@@ -130,7 +130,14 @@ typedef struct {
 	u32 debugRomDestination;	//!< debug RAM destination.
 	u32 offset_0x16C;			//reserved?
 
-	u8 zero[0x90];
+	u8 zero[0x40];
+	u32 region;
+	u32 accessControl;
+	u32 arm7SCFGSettings;
+	u16 dsi_unk1;
+	u8 dsi_unk2;
+	u8 dsi_flags;
+	u8 zero2[0x40];
 
 	// 0x200
 	// TODO: More DSi-specific fields.
@@ -237,6 +244,7 @@ extern int bannerFlip;
 extern bool isDirectory;
 extern int bnrRomType;
 extern bool bnriconisDSi;
+extern int bnrWirelessIcon;	// 0 = None, 1 = Local, 2 = WiFi
 extern bool launchable;
 extern bool isHomebrew;
 
