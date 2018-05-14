@@ -188,8 +188,8 @@ void vBlankHandler()
 			//drawBG(subBgImage);
 			glBoxFilled(0, 0, 256, 192, 0x0AF2);	// R: 148, G: 189, B: 16
 			
-			glBoxFilled(32, 23, 217, 64, RGB15(0, 0, 0));
-			glBoxFilled(66, 24, 216, 63, RGB15(31, 31, 31));
+			glBoxFilled(31, 23, 217, 64, RGB15(0, 0, 0));
+			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(32, 24, GL_FLIP_NONE, iconboxImage);
 			if (bnrRomType == 3) drawIconNES(36, 28);
 			else if (bnrRomType == 2) drawIconGBC(36, 28);
