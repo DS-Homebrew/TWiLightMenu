@@ -783,8 +783,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				showbubble = false;
 				showSTARTborder = false;
-				clearText(true);
-				clearText(false);
+				clearText();
 				chdir(entry->name.c_str());
 				char buf[256];
 				romfolder = getcwd(buf, 256);
@@ -841,17 +840,37 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					return entry->name;
 				} else {
 					mmEffectEx(&snd_wrong);
-					int yPos = 160;
-					if (theme == 1) yPos -= 4;
-					printSmallCentered(false, yPos, "Please set Mario Kart DS as donor ROM.");
-					for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
+					clearText();
+					showdialogbox = true;
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					printSmallCentered(false, 88, "Please set Mario Kart DS as donor ROM.");
+					printSmall(false, 208, 166, "A: OK");
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_A));
+					clearText();
+					showdialogbox = false;
+					for (int i = 0; i < 15; i++) swiWaitForVBlank();
 				}
 			} else {
 				mmEffectEx(&snd_wrong);
-				int yPos = 160;
-				if (theme == 1) yPos -= 4;
-				printSmallCentered(false, yPos, "This game cannot be launched.");
-				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+				clearText();
+				showdialogbox = true;
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				printSmallCentered(false, 88, "This game cannot be launched.");
+				printSmall(false, 208, 166, "A: OK");
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				clearText();
+				showdialogbox = false;
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 		}
 
@@ -921,8 +940,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -945,8 +963,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -962,8 +979,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -996,8 +1012,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 				}
 				whiteScreen = true;
-				clearText(false);
-				clearText(true);
+				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -1028,8 +1043,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			whiteScreen = false;
 			fadeType = true;	// Fade in from white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -1039,15 +1053,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
 		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList && !flashcardUsed)
 		{
-			//arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
-			//arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
-			//int yPos = 160;
-			//if (theme == 1) yPos -= 4;
-			//printSmallCentered(false, yPos, "Donor ROM is set.");
-			//for (int i = 0; i < 90; i++) swiWaitForVBlank();
-			//SaveSettings();
+			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
+			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
+			SaveSettings();
+			clearText();
+			showdialogbox = true;
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			printSmallCentered(false, 88, "Donor ROM is set.");
+			printSmall(false, 208, 166, "A: OK");
+			pressed = 0;
+			do {
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			} while (!(pressed & KEY_A));
+			clearText();
+			showdialogbox = false;
+			for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			
-			showdialogbox = !showdialogbox;
 		}
 
 	}
