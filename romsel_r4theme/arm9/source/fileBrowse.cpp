@@ -342,6 +342,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				chdir (entry->name.c_str());
 				char buf[256];
 				romfolder = getcwd(buf, 256);
+				cursorPosition = 0;
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
@@ -456,11 +457,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			chdir ("..");
 			char buf[256];
 			romfolder = getcwd(buf, 256);
-			if (dsiWareList) {
-				dsiWare_cursorPosition = 0;
-			} else {
-				cursorPosition = 0;
-			}
+			cursorPosition = 0;
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -469,6 +466,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (pressed & KEY_START)
 		{
 			if (settingsChanged) {
+				if (dsiWareList) {
+					dsiWare_cursorPosition = fileOffset;
+				} else {
+					cursorPosition = fileOffset;
+				}
 				SaveSettings();
 				settingsChanged = false;
 			}
