@@ -386,7 +386,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					return entry->name;
 				} else {
 					showdialogbox = true;
+					printLargeCentered(false, 84, "Unable to launch");
 					printSmallCentered(false, 104, "Please set Mario Kart DS as donor ROM.");
+					printSmallCentered(false, 118, "A: OK");
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					pressed = 0;
 					do {
@@ -398,7 +400,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else {
 				showdialogbox = true;
+				printLargeCentered(false, 84, "Error!");
 				printSmallCentered(false, 104, "This game cannot be launched.");
+				printSmallCentered(false, 118, "A: OK");
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pressed = 0;
 				do {
@@ -487,7 +491,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
 			SaveSettings();
 			showdialogbox = true;
+			printLargeCentered(false, 84, "Done!");
 			printSmallCentered(false, 104, "Donor ROM is set.");
+			printSmallCentered(false, 118, "A: OK");
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			pressed = 0;
 			do {

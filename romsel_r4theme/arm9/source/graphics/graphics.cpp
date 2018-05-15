@@ -199,18 +199,15 @@ void vBlankHandler()
 			else if (bnrRomType == 1) drawIconGB(36, 28);
 			else drawIcon(36, 28);
 			if (bnrWirelessIcon > 0) glSprite(20, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-			if (showdialogbox) {
-				glBoxFilled(15, 95, 241, 113, RGB15(0, 0, 0));
-				glBoxFilled(16, 96, 240, 112, RGB15(31, 31, 31));
+			// Playback animated icons
+			if(bnriconisDSi==true) {
+				playBannerSequence();
 			}
-			if (whiteScreen) {
-				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			} else {
-				// Playback animated icons
-				if(bnriconisDSi==true) {
-					playBannerSequence();
-				}
-			}
+		}
+		if (showdialogbox) {
+			glBoxFilled(15, 79, 241, 129, RGB15(0, 0, 0));
+			glBoxFilledGradient(16, 80, 240, 94, RGB15(0, 0, 31), RGB15(0, 0, 15), RGB15(0, 0, 15), RGB15(0, 0, 31));
+			glBoxFilled(16, 96, 240, 128, RGB15(31, 31, 31));
 		}
 		updateText(false);
 		glColor(RGB15(31, 31, 31));
