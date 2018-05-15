@@ -452,7 +452,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
-		if ((pressed & KEY_B) && !dsiWareList) {
+		if ((pressed & KEY_B) && showDirectories && !dsiWareList) {
 			// Go up a directory
 			chdir ("..");
 			char buf[256];

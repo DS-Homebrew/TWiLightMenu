@@ -187,7 +187,7 @@ void vBlankHandler()
 
 		if (startMenu) {
 			drawBG(subBgImage);
-			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue, colorGvalue, colorBvalue));
+			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 		} else {
 			glBoxFilled(0, 0, 256, 192, 0x0AF2);	// R: 148, G: 189, B: 16
 			
