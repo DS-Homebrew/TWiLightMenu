@@ -28,11 +28,11 @@
 
 // GRIT auto-genrated arrays of images
 #include "font_si.h"
+#include "font_li.h"
 #include "large_font.h"
 
 // Texture UV coords
 #include "uvcoord_font_si.h"
-#include "uvcoord_large_font.h"
 #include "TextPane.h"
 
 extern int theme;
@@ -44,7 +44,7 @@ FontGraphic smallFont;
 FontGraphic largeFont;
 
 glImage smallFontImages[FONT_SI_NUM_IMAGES];
-glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
+glImage largeFontImages[FONT_SI_NUM_IMAGES];
 
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
@@ -68,15 +68,15 @@ void fontInit()
 
 	// Do the same with our bigger texture
 	largeFont.load(largeFontImages,
-				LARGE_FONT_NUM_IMAGES,
-				large_font_texcoords,
+				FONT_SI_NUM_IMAGES,
+				font_si_texcoords,
 				GL_RGB16,
-				TEXTURE_SIZE_512,
+				TEXTURE_SIZE_64,
 				TEXTURE_SIZE_128,
 				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16,
-				(u16*) large_fontPal,
-				(u8*) large_fontBitmap
+				(u16*) font_liPal,
+				(u8*) font_liBitmap
 				);
 }
 
