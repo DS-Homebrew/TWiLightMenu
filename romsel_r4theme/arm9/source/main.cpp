@@ -36,6 +36,7 @@
 #include "graphics/graphics.h"
 
 #include "ndsheaderbanner.h"
+#include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"
 
@@ -682,7 +683,63 @@ int main(int argc, char **argv) {
 				swiWaitForVBlank();
 			} while (!pressed);
 			
-			if (pressed & KEY_A) startMenu = false;
+			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
+			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
+			
+			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
+			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
+
+			if (pressed & KEY_A) {
+				switch (startMenu_cursorPosition) {
+					case 0:
+					default:
+						startMenu = false;
+						break;
+					case 1:
+						break;
+					case 2:
+						// Switch to GBA mode
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 60; i++) {
+							swiWaitForVBlank();
+						}
+
+						useBootstrap = true;
+						if (useGbarunner) {
+							if (flashcardUsed) {
+								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
+							} else {
+								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+								int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+								iprintf ("Start failed. Error %i\n", err);
+							}
+						} else {
+							gbaSwitch();
+						}
+						break;
+				}
+			}
+
+			if ((pressed & KEY_B) && !flashcardUsed) {
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+			}
+
+			if (pressed & KEY_START) {
+				// Launch settings
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 60; i++) {
+					swiWaitForVBlank();
+				}
+
+				gotosettings = true;
+				SaveSettings();
+				int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
+				iprintf ("Start failed. Error %i\n", err);
+			}
 		} else {
 			if (dsiWareList) {
 				// Set directory

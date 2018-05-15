@@ -304,10 +304,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (pressed & KEY_UP) 		fileOffset -= 1;
-		if (pressed & KEY_DOWN) 	fileOffset += 1;
-		if (pressed & KEY_LEFT) 	fileOffset -= ENTRY_PAGE_LENGTH;
-		if (pressed & KEY_RIGHT)	fileOffset += ENTRY_PAGE_LENGTH;
+		if (pressed & KEY_UP) {
+			fileOffset -= 1;
+			settingsChanged = true;
+		}
+		if (pressed & KEY_DOWN) {
+			fileOffset += 1;
+			settingsChanged = true;
+		}
+		if (pressed & KEY_LEFT) {
+			fileOffset -= ENTRY_PAGE_LENGTH;
+			settingsChanged = true;
+		}
+		if (pressed & KEY_RIGHT) {
+			fileOffset += ENTRY_PAGE_LENGTH;
+			settingsChanged = true;
+		}
 
 		if (fileOffset < 0) 	fileOffset = dirContents.size() - 1;		// Wrap around to bottom of list
 		if (fileOffset > ((int)dirContents.size() - 1))		fileOffset = 0;		// Wrap around to top of list
@@ -328,10 +340,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				iprintf("Entering directory\n");
 				// Enter selected directory
 				chdir (entry->name.c_str());
-				getDirectoryContents (dirContents, extensionList);
-				screenOffset = 0;
-				fileOffset = 0;
-				showDirectoryContents (dirContents, screenOffset);
+				char buf[256];
+				romfolder = getcwd(buf, 256);
+				SaveSettings();
+				settingsChanged = false;
+				return "null";
 			} else if (dsiWareList || launchable) {
 				donorFound = true;
 				if(!flashcardUsed && !dsiWareList && bnrRomType == 0 && arm7DonorPath.compare("") == 0) {
@@ -438,56 +451,31 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
-		/* if (pressed & KEY_B && !isTopLevel(path))
-		{
+		if ((pressed & KEY_B) && !dsiWareList) {
 			// Go up a directory
-			chdir("..");
-			updatePath();
-			pane->slideTransition(false, true);
-			pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-			getDirectoryContents(dirContents[++scrn], extensionList);
-			for (auto &i : dirContents[scrn])
-				pane->addLine(i.visibleName.c_str());
-			pane->createDefaultEntries();
-			pane->slideTransition(true, true, 20);
-			screenOffset = 0;
-			cursorPosition = 0;
-		} */
-		
-		if ((pressed & KEY_B)) {
-			if (startMenu) {
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				startMenu = false;
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				whiteScreen = true;
-				fadeType = true;	// Fade in from white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			} else if (!flashcardUsed) {
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+			chdir ("..");
+			char buf[256];
+			romfolder = getcwd(buf, 256);
+			if (dsiWareList) {
+				dsiWare_cursorPosition = 0;
+			} else {
+				cursorPosition = 0;
 			}
+			SaveSettings();
+			settingsChanged = false;
+			return "null";		
 		}
-		
+
 		if (pressed & KEY_START)
 		{
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			startMenu = !startMenu;
 			if (settingsChanged) {
 				SaveSettings();
 				settingsChanged = false;
 			}
-			fadeType = true;	// Fade in from white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			consoleClear();
+			clearText();
+			startMenu = true;
+			return "null";		
 		}
 
 		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false)
