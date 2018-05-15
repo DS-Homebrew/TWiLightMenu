@@ -61,6 +61,8 @@ bool arm7SCFGLocked = false;
 bool is3DS = false;
 bool isRegularDS = true;
 
+extern bool showdialogbox;
+
 /**
  * Remove trailing slashes from a pathname, if present.
  * @param path Pathname to modify.
@@ -681,7 +683,7 @@ int main(int argc, char **argv) {
 					printLargeCentered(false, 182, "Games");
 					break;
 				case 1:
-					if (arm7SCFGLocked || flashcardUsed) {
+					if (flashcardUsed) {
 						printLargeCentered(false, 182, "Not used");
 					} else {
 						printLargeCentered(false, 182, "Launch Slot-1 card");
@@ -719,6 +721,20 @@ int main(int argc, char **argv) {
 						startMenu = false;
 						break;
 					case 1:
+						if (!flashcardUsed && arm7SCFGLocked) {
+							showdialogbox = true;
+							printLargeCentered(false, 84, "Error!");
+							printSmallCentered(false, 104, "This cannot be used on DSiWarehax.");
+							printSmallCentered(false, 118, "A: OK");
+							for (int i = 0; i < 30; i++) swiWaitForVBlank();
+							pressed = 0;
+							do {
+								scanKeys();
+								pressed = keysDownRepeat();
+								swiWaitForVBlank();
+							} while (!(pressed & KEY_A));
+							showdialogbox = false;
+						}
 						break;
 					case 2:
 						// Switch to GBA mode
