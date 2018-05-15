@@ -88,7 +88,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
-bool startMenu = false;
+bool startMenu = true;
 bool gotosettings = false;
 
 bool bootstrapFile = false;
@@ -130,7 +130,7 @@ void LoadSettings(void) {
 	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
-	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
+	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 
 	// Customizable UI settings.
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
@@ -163,7 +163,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", dsiWarePageNum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
 	settingsini.SetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", dsiWare_cursorPosition);
-	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
+	//settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
@@ -669,19 +669,35 @@ int main(int argc, char **argv) {
 
 	while(1) {
 
-		if (dsiWareList) {
-			// Set directory
-			chdir ("sd:/_nds/srloader/dsiware");
+		if (startMenu) {
+			whiteScreen = false;
+			fadeType = true;	// Fade in from white
 
-			//Navigates to the file to launch
-			filename = browseForFile(dsiWareExtensionList, username);
+			int pressed = 0;
+
+			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			do {
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			} while (!pressed);
+			
+			if (pressed & KEY_A) startMenu = false;
 		} else {
-			snprintf (path, sizeof(path), "%s", romfolder.c_str());
-			// Set directory
-			chdir (path);
+			if (dsiWareList) {
+				// Set directory
+				chdir ("sd:/_nds/srloader/dsiware");
 
-			//Navigates to the file to launch
-			filename = browseForFile(extensionList, username);
+				//Navigates to the file to launch
+				filename = browseForFile(dsiWareExtensionList, username);
+			} else {
+				snprintf (path, sizeof(path), "%s", romfolder.c_str());
+				// Set directory
+				chdir (path);
+
+				//Navigates to the file to launch
+				filename = browseForFile(extensionList, username);
+			}
 		}
 
 		////////////////////////////////////

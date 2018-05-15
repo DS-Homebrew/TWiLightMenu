@@ -234,7 +234,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 
 	if (dsiWareList) {
 		fileOffset = dsiWare_cursorPosition;
