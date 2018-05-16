@@ -635,7 +635,7 @@ void vBlankHandler()
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 						bipXpos += 5;
 					}
-					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				} else if(startMenu) {
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
@@ -645,7 +645,7 @@ void vBlankHandler()
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 						bipXpos += 5;
 					}
-					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				} else {
 					glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
@@ -654,7 +654,7 @@ void vBlankHandler()
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 						bipXpos += 5;
 					}
-					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 					glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				}
 				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
@@ -801,7 +801,7 @@ void vBlankHandler()
 				if (titleboxYmovepos > 240) whiteScreen = true;
 			}
 			if (showSTARTborder) {
-				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 				if (theme == 1) {
 					glSprite(96, 92, GL_FLIP_NONE, startbrdImage);
 					glSprite(96+32, 92, GL_FLIP_H, startbrdImage);
