@@ -237,8 +237,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 	if (dsiWareList) {
 		fileOffset = dsiWare_cursorPosition;
+		if (dsiWarePageNum > 0) {
+			fileOffset += dsiWarePageNum*40;
+		}
 	} else {
 		fileOffset = cursorPosition;
+		if (pagenum > 0) {
+			fileOffset += pagenum*40;
+		}
 	}
 
 	while (true)
@@ -343,6 +349,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				char buf[256];
 				romfolder = getcwd(buf, 256);
 				cursorPosition = 0;
+				pagenum = 0;
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
@@ -377,8 +384,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					if (dsiWareList) {
 						dsiWare_cursorPosition = fileOffset;
+						dsiWarePageNum = 0;
+						for (int i = 0; i < 100; i++) {
+							if (dsiWare_cursorPosition > 39) {
+								dsiWare_cursorPosition -= 40;
+								dsiWarePageNum++;
+							} else {
+								break;
+							}
+						}
 					} else {
 						cursorPosition = fileOffset;
+						pagenum = 0;
+						for (int i = 0; i < 100; i++) {
+							if (cursorPosition > 39) {
+								cursorPosition -= 40;
+								pagenum++;
+							} else {
+								break;
+							}
+						}
 					}
 					SaveSettings();
 
@@ -414,7 +439,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_Y)&& !dsiWareList && bnrRomType == 0 && fileOffset >= 0)
+		if ((pressed & KEY_Y) && !dsiWareList && bnrRomType == 0 && fileOffset >= 0)
 		{
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory)
@@ -429,10 +454,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (dsiWareList) {
-					dsiWare_cursorPosition = fileOffset;
-				} else {
-					cursorPosition = fileOffset;
+				cursorPosition = fileOffset;
+				pagenum = 0;
+				for (int i = 0; i < 100; i++) {
+					if (cursorPosition > 39) {
+						cursorPosition -= 40;
+						pagenum++;
+					} else {
+						break;
+					}
 				}
 				SaveSettings();
 
@@ -445,12 +475,30 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			consoleClear();
 			printf("Please wait...\n");
-			dsiWareList = !dsiWareList;
 			if (dsiWareList) {
 				dsiWare_cursorPosition = fileOffset;
+				dsiWarePageNum = 0;
+				for (int i = 0; i < 100; i++) {
+					if (dsiWare_cursorPosition > 39) {
+						dsiWare_cursorPosition -= 40;
+						dsiWarePageNum++;
+					} else {
+						break;
+					}
+				}
 			} else {
 				cursorPosition = fileOffset;
+				pagenum = 0;
+				for (int i = 0; i < 100; i++) {
+					if (cursorPosition > 39) {
+						cursorPosition -= 40;
+						pagenum++;
+					} else {
+						break;
+					}
+				}
 			}
+			dsiWareList = !dsiWareList;
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -472,8 +520,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (settingsChanged) {
 				if (dsiWareList) {
 					dsiWare_cursorPosition = fileOffset;
+					dsiWarePageNum = 0;
+					for (int i = 0; i < 100; i++) {
+						if (dsiWare_cursorPosition > 39) {
+							dsiWare_cursorPosition -= 40;
+							dsiWarePageNum++;
+						} else {
+							break;
+						}
+					}
 				} else {
 					cursorPosition = fileOffset;
+					pagenum = 0;
+					for (int i = 0; i < 100; i++) {
+						if (cursorPosition > 39) {
+							cursorPosition -= 40;
+							pagenum++;
+						} else {
+							break;
+						}
+					}
 				}
 				SaveSettings();
 				settingsChanged = false;
