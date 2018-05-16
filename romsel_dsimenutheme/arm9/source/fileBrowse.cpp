@@ -991,22 +991,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
-		/* if (pressed & KEY_B && !isTopLevel(path))
-		{
-			// Go up a directory
-			chdir("..");
-			updatePath();
-			pane->slideTransition(false, true);
-			pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-			getDirectoryContents(dirContents[++scrn], extensionList);
-			for (auto &i : dirContents[scrn])
-				pane->addLine(i.visibleName.c_str());
-			pane->createDefaultEntries();
-			pane->slideTransition(true, true, 20);
-			screenOffset = 0;
-			cursorPosition = 0;
-		} */
-		
 		if ((pressed & KEY_B)) {
 			if (startMenu) {
 				mmEffectEx(&snd_back);
@@ -1022,20 +1006,41 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			} else if (!flashcardUsed) {
-				mmEffectEx(&snd_back);
+			} else if (showDirectories && !dsiWareList) {
+				// Go up a directory
+				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				music = false;
-				mmEffectCancelAll();
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				pagenum = 0;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+				whiteScreen = true;
+				showbubble = false;
+				showSTARTborder = false;
+				clearText();
+				chdir("..");
+				char buf[256];
+				romfolder = getcwd(buf, 256);
+				SaveSettings();
+				settingsChanged = false;
+				return "null";
 			}
 		}
-		
+
+		if ((pressed & KEY_X) && startMenu && !flashcardUsed) {
+			mmEffectEx(&snd_back);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			music = false;
+			mmEffectCancelAll();
+			if (settingsChanged) {
+				SaveSettings();
+				settingsChanged = false;
+			}
+			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+		}
+
 		if (pressed & KEY_START)
 		{
 			mmEffectEx(&snd_switch);
