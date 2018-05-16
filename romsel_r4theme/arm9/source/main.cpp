@@ -710,7 +710,7 @@ int main(int argc, char **argv) {
 					if (useGbarunner) {
 						printLargeCentered(false, 182, "Start GBARunner2");
 					} else {
-						printLargeCentered(false, 182, "Start GBA Game");
+						printLargeCentered(false, 182, "Start GBA Mode");
 					}
 					break;
 			}
