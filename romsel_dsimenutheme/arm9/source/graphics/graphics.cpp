@@ -117,6 +117,8 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
+extern bool flashcardUsed;
+
 extern bool dsiWareList;
 extern int theme;
 extern int subtheme;
@@ -160,7 +162,7 @@ glImage buttonarrowImage[(32 / 16) * (32 / 16)];
 glImage startImage[(64 / 16) * (8 / 16)];
 glImage startbrdImage[(32 / 32) * (256 / 80)];
 glImage braceImage[(16 / 16) * (128 / 16)];
-glImage settingsImage[(64 / 16) * (64 / 16)];
+glImage settingsImage[(64 / 16) * (128 / 64)];
 glImage boxfullImage[(64 / 16) * (128 / 64)];
 glImage boxemptyImage[(64 / 16) * (64 / 16)];
 glImage folderImage[(64 / 16) * (64 / 16)];
@@ -676,8 +678,16 @@ void vBlankHandler()
 						movecloseXpos = 0;
 					}
 					if (i == 0) {
-						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, settingsImage);
+						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (i == 1) {
+						if (!flashcardUsed) {
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+						} else {
+							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+						}
+					} else if (i == 2 && !flashcardUsed) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
@@ -761,8 +771,15 @@ void vBlankHandler()
 				}
 				if(startMenu) {
 					if (startMenu_cursorPosition == 0) {
-						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, settingsImage);
+						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (startMenu_cursorPosition == 1) {
+						if (!flashcardUsed) {
+							glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+						} else {
+							glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+							drawIconGBA(112, 96-titleboxYmovepos);
+						}
+					} else if (startMenu_cursorPosition == 2) {
 						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 						drawIconGBA(112, 96-titleboxYmovepos);
 					}
@@ -1265,10 +1282,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
@@ -1321,10 +1338,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
@@ -1377,10 +1394,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) icon_settingsPal, // Load our 16 color tiles palette

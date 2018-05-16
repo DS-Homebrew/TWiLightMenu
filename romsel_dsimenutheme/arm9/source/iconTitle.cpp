@@ -51,6 +51,8 @@ extern int startMenu_cursorPosition;
 extern int theme;
 extern bool useGbarunner;
 
+extern bool flashcardUsed;
+
 static int iconTexID[6][8];
 static int gbaTexID;
 static int gbTexID;
@@ -635,11 +637,17 @@ void titleUpdate(bool isDir, const char* name)
 		if (startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
 		} else if (startMenu_cursorPosition == 1) {
-			if (useGbarunner) {
-				writeBannerText(0, "Start GBARunner2", "", "");
+			if (!flashcardUsed) {
+				writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
 			} else {
-				writeBannerText(0, "Start GBA Mode", "", "");
+				if (useGbarunner) {
+					writeBannerText(0, "Start GBARunner2", "", "");
+				} else {
+					writeBannerText(0, "Start GBA Mode", "", "");
+				}
 			}
+		} else if (startMenu_cursorPosition == 2) {
+			writeBannerText(0, "Start GBARunner2", "", "");
 		}
 		return;
 	}

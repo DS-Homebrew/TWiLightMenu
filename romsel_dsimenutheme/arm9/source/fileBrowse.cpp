@@ -113,6 +113,7 @@ extern void SaveSettings();
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 extern void loadGameOnFlashcard(const char* filename);
+extern void dsCardLaunch();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -506,7 +507,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->delay = TextEntry::ACTIVE;
 
 		if (startMenu) {
-			if (startMenu_cursorPosition < 2) {
+			if (startMenu_cursorPosition < (3-flashcardUsed)) {
 				showbubble = true;
 				showSTARTborder = true;
 				titleUpdate(false, "startMenu");
@@ -716,7 +717,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
 			if ((startMenu_cursorPosition == 0 && startMenu)
-			|| (startMenu_cursorPosition == 1 && startMenu))
+			|| (startMenu_cursorPosition == 1 && startMenu)
+			|| (startMenu_cursorPosition == 2 && startMenu))
 			{
 				mmEffectEx(&snd_launch);
 				applaunch = true;
@@ -746,21 +748,25 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (startMenu_cursorPosition == 1) {
-					// Switch to GBA mode
-					useBootstrap = true;
-					if (useGbarunner) {
-						if (flashcardUsed) {
+					if (!flashcardUsed) {
+						dsCardLaunch();
+					} else {
+						// Switch to GBA mode
+						useBootstrap = true;
+						if (useGbarunner) {
 							loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
 						} else {
-							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-							bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-							int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
-							iprintf ("Start failed. Error %i\n", err);
+							gbaSwitch();
 						}
-					} else {
-						gbaSwitch();
 					}
+				} else if (startMenu_cursorPosition == 2) {
+					// Switch to GBA mode
+					useBootstrap = true;
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+					int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+					iprintf ("Start failed. Error %i\n", err);
 				}
 			}
 
