@@ -372,7 +372,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 60; i++) {
+					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
 					}
 					if (dsiWareList) {
@@ -426,7 +426,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				useBootstrap = false;
 
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 60; i++) {
+				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
 				if (dsiWareList) {

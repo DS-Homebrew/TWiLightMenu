@@ -602,6 +602,23 @@ void loadGameOnFlashcard (const char* filename) {
 	stop();
 }
 
+void dsCardLaunch() {
+	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u32*)(0x02000308) = 0x43415254;	// "CART"
+	*(u32*)(0x0200030C) = 0x00000000;
+	*(u32*)(0x02000310) = 0x43415254;	// "CART"
+	*(u32*)(0x02000314) = 0x00000000;
+	*(u32*)(0x02000318) = 0x00000013;
+	*(u32*)(0x0200031C) = 0x00000000;
+	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+	}
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -721,25 +738,19 @@ int main(int argc, char **argv) {
 						startMenu = false;
 						break;
 					case 1:
-						if (!flashcardUsed && arm7SCFGLocked) {
-							showdialogbox = true;
-							printLargeCentered(false, 84, "Error!");
-							printSmallCentered(false, 104, "This cannot be used on DSiWarehax.");
-							printSmallCentered(false, 118, "A: OK");
-							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-							pressed = 0;
-							do {
-								scanKeys();
-								pressed = keysDownRepeat();
+						if (!flashcardUsed) {
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
-							} while (!(pressed & KEY_A));
-							showdialogbox = false;
+							}
+
+							dsCardLaunch();
 						}
 						break;
 					case 2:
 						// Switch to GBA mode
 						fadeType = false;	// Fade to white
-						for (int i = 0; i < 60; i++) {
+						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
 
@@ -770,7 +781,7 @@ int main(int argc, char **argv) {
 			if (pressed & KEY_START) {
 				// Launch settings
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 60; i++) {
+				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
 
