@@ -775,6 +775,9 @@ int main(int argc, char **argv) {
 			if ((pressed & KEY_B) && !flashcardUsed) {
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+				*(u16*)(0x02000304) = 0x1801;
+				*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			}
 
