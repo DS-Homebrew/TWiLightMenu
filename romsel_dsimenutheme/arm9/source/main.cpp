@@ -56,6 +56,7 @@ extern void ClearBrightness();
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+bool arm7SCFGLocked = false;
 bool is3DS = false;
 bool isRegularDS = true;
 
@@ -81,7 +82,7 @@ std::string arm7DonorPath;
 
 int donorSdkVer = 0;
 
-bool run_timeout = true;
+bool gameSoftReset = false;
 
 int mpuregion = 0;
 int mpusize = 0;
@@ -95,9 +96,12 @@ bool bootstrapFile = false;
 bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
+bool dsiWareList = false;
 int cursorPosition = 0;
+int dsiWare_cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
+int dsiWarePageNum = 0;
 bool showDirectories = true;
 
 bool flashcardUsed = false;
@@ -120,8 +124,12 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
+	dsiWareList = settingsini.GetInt("SRLOADER", "DSIWARE_LIST", 0);
+	if (flashcardUsed) dsiWareList = false;
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
+	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
+	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 
 	// Customizable UI settings.
@@ -150,8 +158,11 @@ void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
+	settingsini.SetInt("SRLOADER", "DSIWARE_LIST", dsiWareList);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
+	settingsini.SetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", dsiWarePageNum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+	settingsini.SetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", dsiWare_cursorPosition);
 	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
@@ -385,9 +396,9 @@ void SetDonorSDK(const char* filename) {
 }
 
 /**
- * Set compatibility check for a specific game.
+ * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
  */
-void SetCompatibilityCheck(const char* filename) {
+void SetGameSoftReset(const char* filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
@@ -396,25 +407,37 @@ void SetCompatibilityCheck(const char* filename) {
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
-	
-	run_timeout = true;
 
-	// Check for games that don't need compatibility checks.
-	static const char list[][4] = {
-		"###",	// Homebrew
-		"NTR",	// Download Play ROMs
-		"ADM",	// Animal Crossing: Wild World
-		"AZD",	// The Legend of Zelda: Twilight Princess E3 Trailer
-		"A2D",	// New Super Mario Bros.
-	};
+	scanKeys();
+	int pressed = keysDownRepeat();
 	
+	gameSoftReset = false;
+
+	// Check for games that have it's own reset function (OS_Reset not used).
+	static const char list[][4] = {
+		"NTR",	// Download Play ROMs
+		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"AMC",	// Mario Kart DS
+		"EKD",	// Ermii Kart DS
+		"A2D",	// New Super Mario Bros.
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
 		if (!memcmp(game_TID, list[i], 3)) {
 			// Found a match.
-			run_timeout = false;
+			gameSoftReset = true;
 			break;
 		}
+	}
+
+	if(pressed & KEY_R){
+		gameSoftReset = true;
 	}
 }
 
@@ -576,6 +599,23 @@ void loadGameOnFlashcard (const char* filename) {
 	stop();
 }
 
+void dsCardLaunch() {
+	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u32*)(0x02000308) = 0x43415254;	// "CART"
+	*(u32*)(0x0200030C) = 0x00000000;
+	*(u32*)(0x02000310) = 0x43415254;	// "CART"
+	*(u32*)(0x02000314) = 0x00000000;
+	*(u32*)(0x02000318) = 0x00000013;
+	*(u32*)(0x0200031C) = 0x00000000;
+	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+	}
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -662,10 +702,13 @@ int main(int argc, char **argv) {
   
   if (!access("fat:/", F_OK)) flashcardUsed = true;
 
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
 	std::string filename;
 	std::string bootstrapfilename;
 
 	fifoWaitValue32(FIFO_USER_06);
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -680,6 +723,7 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
+	vector<string> dsiWareExtensionList;
 	extensionList.push_back(".nds");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
@@ -687,19 +731,30 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".gbc");
 	extensionList.push_back(".nes");
 	extensionList.push_back(".fds");
+	dsiWareExtensionList.push_back(".app");
+	dsiWareExtensionList.push_back(".argv");
 	srand(time(NULL));
 	
 	char path[256];
-	snprintf (path, sizeof(path), "%s", romfolder.c_str());
-	// Set directory
-	chdir (path);
-	
+
 	InitSound();
-	
+
 	while(1) {
-	
-		//Navigates to the file to launch
-		filename = browseForFile(extensionList, username);
+
+		if (dsiWareList) {
+			// Set directory
+			chdir ("sd:/_nds/srloader/dsiware");
+
+			//Navigates to the file to launch
+			filename = browseForFile(dsiWareExtensionList, username);
+		} else {
+			snprintf (path, sizeof(path), "%s", romfolder.c_str());
+			// Set directory
+			chdir (path);
+
+			//Navigates to the file to launch
+			filename = browseForFile(extensionList, username);
+		}
 
 		////////////////////////////////////
 		// Launch the item
@@ -733,6 +788,30 @@ int main(int argc, char **argv) {
 				filename = argarray.at(0);
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
+			}
+
+			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
+				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+				*(u16*)(0x02000304) = 0x1801;
+				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
+				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
+				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000318) = 0x00000017;
+				*(u32*)(0x0200031C) = 0x00000000;
+				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+				}
+
+				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
@@ -802,25 +881,25 @@ int main(int argc, char **argv) {
 							}
 
 						}
-						
+
 						SetDonorSDK(argarray[0]);
-						SetCompatibilityCheck(argarray[0]);
+						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						
+
 						std::string path = argarray[0];
 						std::string savepath = savename;
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CHECK_COMPATIBILITY", run_timeout);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {
-							if (fifoGetValue32(FIFO_USER_03) != 0) {
+							if (!arm7SCFGLocked) {
 								if (is3DS) {
 									if(donorSdkVer==5) {
 										if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";

@@ -30,6 +30,8 @@
 #include <maxmod9.h>
 #include <gl2d.h>
 
+#include "autoboot.h"
+
 #include "graphics/graphics.h"
 
 #include "nds_loader_arm9.h"
@@ -45,6 +47,7 @@ bool fadeType = false;		// false = out, true = in
 
 const char* settingsinipath = "/_nds/srloader/settings.ini";
 const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
+const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string bootstrapfilename;
@@ -280,7 +283,11 @@ void loadROMselect() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
+	if (theme==2) {
+		runNdsFile ("/_nds/srloader/r4menu.srldr", 0, NULL, false);
+	} else {
+		runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
+	}
 }
 
 int lastRanROM() {
@@ -377,6 +384,8 @@ int main(int argc, char **argv) {
   
   if (!access("fat:/", F_OK)) flashcardUsed = true;
 
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
 	bool soundfreqsetting = false;
 
 	std::string filename;
@@ -417,7 +426,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 3, 4, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 0, 0);
 
 	if (autorun || showlogo) {
 		graphicsInit();
@@ -527,6 +536,8 @@ int main(int argc, char **argv) {
 
 	bool menuprinted = false;
 	//const char* lrswitchpages = "L/R: Switch pages";
+
+	bool hiyaAutobootFound = false;
 
 	int pressed = 0;
 
@@ -640,6 +651,9 @@ int main(int argc, char **argv) {
 						case 1:
 							printLarge(false, 4, 4, "Sub-theme select: 3DS HOME Menu");
 							break;
+						case 2:
+							printLarge(false, 4, 4, "Sub-theme select: R4");
+							break;
 					}
 
 					int yPos;
@@ -702,10 +716,10 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printf(" L/R: Switch pages    %s", vertext);
-
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printf(" L/R: Switch pages    %s", vertext);
 
 					printLarge(false, 4, 4, "Settings: Games/Apps");
 
@@ -1022,11 +1036,16 @@ int main(int argc, char **argv) {
 			} else {
 				pressed = 0;
 
-				if (!menuprinted) {
-					printf(" L/R: Switch pages    %s", vertext);
+				if (!flashcardUsed) {
+					if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
+					else hiyaAutobootFound = false;
+				}
 
+				if (!menuprinted) {
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printf(" L/R: Switch pages    %s", vertext);
 
 					printLarge(false, 4, 4, "Settings: GUI");
 					
@@ -1045,15 +1064,26 @@ int main(int argc, char **argv) {
 						case 3:
 							yPos = 48;
 							break;
+						case 4:
+							yPos = 56;
+							break;
 					}
 
 					printSmall(false, 4, yPos, ">");
 
 					printSmall(false, 12, 24, "Theme");
-					if(theme == 1)
-						printSmall(false, 156, 24, "3DS Menu");
-					else
-						printSmall(false, 156, 24, "DSi Menu");
+					switch (theme) {
+						case 0:
+						default:
+							printSmall(false, 156, 24, "DSi Menu");
+							break;
+						case 1:
+							printSmall(false, 156, 24, "3DS Menu");
+							break;
+						case 2:
+							printSmall(false, 156, 24, "R4");
+							break;
+					}
 
 					printSmall(false, 12, 32, "Last played ROM on startup");
 					if(autorun)
@@ -1073,6 +1103,14 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 216, 48, "Hide");
 
+					if (!flashcardUsed) {
+						if (hiyaAutobootFound) {
+							printSmall(false, 12, 56, "Restore DSi Menu");
+						} else {
+							printSmall(false, 12, 56, "Replace DSi Menu");
+						}
+					}
+
 
 					if (settingscursor == 0) {
 						printSmall(false, 4, 164, "The theme to use in SRLoader.");
@@ -1090,6 +1128,13 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 156, "If you're in a folder where most");
 						printSmall(false, 4, 164, "of your games are, it is safe to");
 						printSmall(false, 4, 172, "hide directories/folders.");
+					} else if (settingscursor == 4) {
+						if (hiyaAutobootFound) {
+							printSmall(false, 4, 172, "Show DSi Menu on boot again.");
+						} else {
+							printSmall(false, 4, 164, "Start SRLoader on boot, instead.");
+							printSmall(false, 4, 172, "of the DSi Menu.");
+						}
 					}
 
 
@@ -1102,7 +1147,7 @@ int main(int argc, char **argv) {
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
 				} while (!pressed);
-				
+
 				if (pressed & KEY_UP) {
 					settingscursor -= 1;
 					mmEffectEx(&snd_select);
@@ -1113,7 +1158,7 @@ int main(int argc, char **argv) {
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
-					
+
 				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 					switch (settingscursor) {
 						case 0:
@@ -1121,12 +1166,12 @@ int main(int argc, char **argv) {
 							if (pressed & KEY_LEFT) {
 								subtheme = 0;
 								theme -= 1;
-								if (theme < 0) theme = 1;
+								if (theme < 0) theme = 2;
 								mmEffectEx(&snd_select);
 							} else if (pressed & KEY_RIGHT) {
 								subtheme = 0;
 								theme += 1;
-								if (theme > 1) theme = 0;
+								if (theme > 2) theme = 0;
 								mmEffectEx(&snd_select);
 							} else if (theme == 1) {
 								mmEffectEx(&snd_wrong);
@@ -1147,10 +1192,29 @@ int main(int argc, char **argv) {
 							showDirectories = !showDirectories;
 							mmEffectEx(&snd_select);
 							break;
+						case 4:
+							if (pressed & KEY_A) {
+								if (hiyaAutobootFound) {
+									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
+									} else {
+										hiyaAutobootFound = false;
+									}
+								} else {
+									FILE* ResetData = fopen("sd:/hiya/autoboot.bin","wb");
+									fwrite(autoboot_bin,1,autoboot_bin_len,ResetData);
+									fclose(ResetData);
+									hiyaAutobootFound = true;
+
+									CIniFile hiyacfwini( hiyacfwinipath );
+									hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
+									hiyacfwini.SaveIniFile(hiyacfwinipath);
+								}
+							}
+							break;
 					}
 					menuprinted = false;
 				}
-				
+
 				if ((pressed & KEY_L) || (pressed & KEY_R)) {
 					subscreenmode = 1;
 					settingscursor = 0;
@@ -1170,7 +1234,7 @@ int main(int argc, char **argv) {
 					int err = lastRanROM();
 					iprintf ("Start failed. Error %i\n", err);
 				}
-				
+
 				if (pressed & KEY_B) {
 					mmEffectEx(&snd_back);
 					clearText();
@@ -1182,9 +1246,14 @@ int main(int argc, char **argv) {
 					loadROMselect();
 					break;
 				}
-				
-				if (settingscursor > 3) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 3;
+
+				if (!flashcardUsed) {
+					if (settingscursor > 4) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 4;
+				} else {
+					if (settingscursor > 3) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 3;
+				}
 			}
 
 		} else {

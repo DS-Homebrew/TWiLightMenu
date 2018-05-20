@@ -50,8 +50,8 @@ extern const unsigned int font_16x16_texcoords[] = {
 	48, 80, CAPS_SX, TEXT_SY, // 23
 	0, 96, CAPS_SX, TEXT_SY, // 24
 	16, 96, CAPS_SX, TEXT_SY, // 25
-	32, 96, CAPS_SX, TEXT_SY, // 26
-	48, 96, CAPS_SX, TEXT_SY, // 27
+	32, 96, 8, TEXT_SY, // :
+	48, 96, 8, TEXT_SY, // ;
 	0, 112, CAPS_SX, TEXT_SY, // 28
 	16, 112, CAPS_SX, TEXT_SY, // 29
 	32, 112, CAPS_SX, TEXT_SY, // 30
