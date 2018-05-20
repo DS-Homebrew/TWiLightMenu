@@ -71,6 +71,8 @@ extern bool titleboxXmoveright;
 
 extern bool applaunchprep;
 
+extern bool showdialogbox;
+
 extern std::string romfolder;
 
 extern std::string arm7DonorPath;
@@ -91,11 +93,16 @@ extern int theme;
 extern bool showDirectories;
 extern int spawnedtitleboxes;
 static int file_count = 0;
+extern bool dsiWareList;
 extern int cursorPosition;
+extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+extern int dsiWarePageNum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
+extern int dsiWare_titleboxXpos;
+extern int dsiWare_titlewindowXpos;
 
 extern bool flashcardUsed;
 
@@ -106,6 +113,7 @@ extern void SaveSettings();
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 extern void loadGameOnFlashcard(const char* filename);
+extern void dsCardLaunch();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -307,7 +315,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			else
 				dirEntry.visibleName = dirEntry.name;
 
-			if (showDirectories) {
+			if (showDirectories && !dsiWareList) {
 				if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList)))
 				{
 					dirContents.push_back(dirEntry);
@@ -382,55 +390,92 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 	spawnedtitleboxes = 0;
 	for(int i = 0; i < 40; i++) {
-		if (i+pagenum*40 < file_count) {
-			if (dirContents[scrn].at(i+pagenum*40).isDirectory) {
-				isDirectory[i] = true;
-			} else {
+		if (dsiWareList) {
+			if (i+dsiWarePageNum*40 < file_count) {
 				isDirectory[i] = false;
-				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
-				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+				std::string std_romsel_filename = dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str();
+				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 				{
-					getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+					getGameInfo(dirContents[scrn].at(i+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str(), i);
 					bnrRomType[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-				{
-					bnrRomType[i] = 1;
-					launchable[i] = true;
-					isHomebrew[i] = false;
-				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
-					bnrRomType[i] = 2;
-					launchable[i] = true;
-					isHomebrew[i] = false;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-				{
-					bnrRomType[i] = 3;
-					launchable[i] = true;
-					isHomebrew[i] = false;
 				}
+				spawnedtitleboxes++;
 			}
-			spawnedtitleboxes++;
+		} else {
+			if (i+pagenum*40 < file_count) {
+				if (dirContents[scrn].at(i+pagenum*40).isDirectory) {
+					isDirectory[i] = true;
+				} else {
+					isDirectory[i] = false;
+					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
+					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+					{
+						getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+						bnrRomType[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+					{
+						bnrRomType[i] = 1;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+						bnrRomType[i] = 2;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+					{
+						bnrRomType[i] = 3;
+						launchable[i] = true;
+						isHomebrew[i] = false;
+					}
+				}
+				spawnedtitleboxes++;
+			}
 		}
 	}
 	// Load correct icons depending on cursor position
-	if (cursorPosition <= 1) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && i+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+	if (dsiWareList) {
+		if (dsiWare_cursorPosition <= 1) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && i+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(i+dsiWarePageNum*40).name.c_str(), i);
+				}
+			}
+		} else if (dsiWare_cursorPosition >= 2 && dsiWare_cursorPosition <= 36) {
+			for(int i = 0; i < 6; i++) {
+				if (bnrRomType[i] == 0 && (dsiWare_cursorPosition-2+i)+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition-2+i)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition-2+i)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition-2+i);
+				}
+			}
+		} else if (dsiWare_cursorPosition >= 37 && dsiWare_cursorPosition <= 39) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && (35+i)+dsiWarePageNum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((35+i)+dsiWarePageNum*40).name.c_str(), 35+i);
+				}
 			}
 		}
-	} else if (cursorPosition >= 2 && cursorPosition <= 36) {
-		for(int i = 0; i < 6; i++) {
-			if (bnrRomType[i] == 0 && (cursorPosition-2+i)+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
+	} else {
+		if (cursorPosition <= 1) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && i+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+				}
 			}
-		}
-	} else if (cursorPosition >= 37 && cursorPosition <= 39) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && (35+i)+pagenum*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
+		} else if (cursorPosition >= 2 && cursorPosition <= 36) {
+			for(int i = 0; i < 6; i++) {
+				if (bnrRomType[i] == 0 && (cursorPosition-2+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
+				}
+			}
+		} else if (cursorPosition >= 37 && cursorPosition <= 39) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && (35+i)+pagenum*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
+				}
 			}
 		}
 	}
@@ -462,7 +507,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// cursor->delay = TextEntry::ACTIVE;
 
 		if (startMenu) {
-			if (startMenu_cursorPosition < 2) {
+			if (startMenu_cursorPosition < (3-flashcardUsed)) {
 				showbubble = true;
 				showSTARTborder = true;
 				titleUpdate(false, "startMenu");
@@ -470,6 +515,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showbubble = false;
 				showSTARTborder = false;
 				clearText(false);	// Clear title
+			}
+		} else if (dsiWareList) {
+			if (dsiWare_cursorPosition+dsiWarePageNum*40 > ((int) dirContents[scrn].size() - 1)) {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+			} else {
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
 			}
 		} else {
 			if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
@@ -497,7 +552,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				usernameRenderedDone = true;
 			}
 			iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-			if (!startMenu) {
+			if (startMenu) {
+			} else if (dsiWareList) {
+				for(int i = 0; i < 21; i++) {
+					printf("\n");
+				}
+				printf(" ");
+				if (dsiWarePageNum != 0) {
+					printf("L: Previous");
+				} else {
+					printf("           ");
+				}
+				printf("            ");
+				if (file_count > 40+dsiWarePageNum*40) {
+					printf("R: Next");
+				} else {
+					printf("       ");
+				}
+			} else {
 				for(int i = 0; i < 21; i++) {
 					printf("\n");
 				}
@@ -539,6 +611,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} else {
 					mmEffectEx(&snd_wrong);
 				}
+			} else if (dsiWareList) {
+				dsiWare_cursorPosition -= 1;
+				if (dsiWare_cursorPosition >= 0) {
+					titleboxXmoveleft = true;
+					mmEffectEx(&snd_select);
+					settingsChanged = true;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+				if(dsiWare_cursorPosition >= 2 && dsiWare_cursorPosition <= 36) {
+					if (bnrRomType[dsiWare_cursorPosition-2] == 0 && (dsiWare_cursorPosition-2)+dsiWarePageNum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition-2)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition-2)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition-2);
+					}
+				}
 			} else {
 				cursorPosition -= 1;
 				if (cursorPosition >= 0) {
@@ -563,6 +649,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = true;
 				} else {
 					mmEffectEx(&snd_wrong);
+				}
+			} else if (dsiWareList) {
+				dsiWare_cursorPosition += 1;
+				if (dsiWare_cursorPosition <= 39) {
+					titleboxXmoveright = true;
+					mmEffectEx(&snd_select);
+					settingsChanged = true;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+				if(dsiWare_cursorPosition >= 3 && dsiWare_cursorPosition <= 37) {
+					if (bnrRomType[dsiWare_cursorPosition+2] == 0 && (dsiWare_cursorPosition+2)+dsiWarePageNum*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((dsiWare_cursorPosition+2)+dsiWarePageNum*40).isDirectory, dirContents[scrn].at((dsiWare_cursorPosition+2)+dsiWarePageNum*40).name.c_str(), dsiWare_cursorPosition+2);
+					}
 				}
 			} else {
 				cursorPosition += 1;
@@ -590,6 +690,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				startMenu_cursorPosition = 39;
 			}
+		} else if (dsiWareList) {
+			if (dsiWare_cursorPosition < 0)
+			{
+				dsiWare_cursorPosition = 0;
+			}
+			else if (dsiWare_cursorPosition > 39)
+			{
+				dsiWare_cursorPosition = 39;
+			}
 		} else {
 			if (cursorPosition < 0)
 			{
@@ -608,7 +717,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 		{
 			if ((startMenu_cursorPosition == 0 && startMenu)
-			|| (startMenu_cursorPosition == 1 && startMenu))
+			|| (startMenu_cursorPosition == 1 && startMenu)
+			|| (startMenu_cursorPosition == 2 && startMenu))
 			{
 				mmEffectEx(&snd_launch);
 				applaunch = true;
@@ -638,25 +748,34 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (startMenu_cursorPosition == 1) {
-					// Switch to GBA mode
-					useBootstrap = true;
-					if (useGbarunner) {
-						if (flashcardUsed) {
+					if (!flashcardUsed) {
+						dsCardLaunch();
+					} else {
+						// Switch to GBA mode
+						useBootstrap = true;
+						if (useGbarunner) {
 							loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
 						} else {
-							CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-							bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-							int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
-							iprintf ("Start failed. Error %i\n", err);
+							gbaSwitch();
 						}
-					} else {
-						gbaSwitch();
 					}
+				} else if (startMenu_cursorPosition == 2) {
+					// Switch to GBA mode
+					useBootstrap = true;
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+					int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+					iprintf ("Start failed. Error %i\n", err);
 				}
 			}
 
-			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
+			DirEntry* entry;
+			if (dsiWareList) {
+				entry = &dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40);
+			} else {
+				entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
+			}
 			if (entry->isDirectory)
 			{
 				// Enter selected directory
@@ -670,8 +789,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				showbubble = false;
 				showSTARTborder = false;
-				clearText(true);
-				clearText(false);
+				clearText();
 				chdir(entry->name.c_str());
 				char buf[256];
 				romfolder = getcwd(buf, 256);
@@ -679,10 +797,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				settingsChanged = false;
 				return "null";
 			}
-			else if (launchable[cursorPosition])
+			else if (dsiWareList || launchable[cursorPosition])
 			{
 				donorFound = true;
-				if(!flashcardUsed && bnrRomType[cursorPosition] == 0 && arm7DonorPath.compare("") == 0) {
+				if(!flashcardUsed && !dsiWareList && bnrRomType[cursorPosition] == 0 && arm7DonorPath.compare("") == 0) {
 					FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
 
 					u32 SDKVersion = 0;
@@ -728,21 +846,41 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					return entry->name;
 				} else {
 					mmEffectEx(&snd_wrong);
-					int yPos = 160;
-					if (theme == 1) yPos -= 4;
-					printSmallCentered(false, yPos, "Please set Mario Kart DS as donor ROM.");
-					for (int i = 0; i < 60*2; i++) swiWaitForVBlank();
+					clearText();
+					showdialogbox = true;
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					printSmallCentered(false, 88, "Please set Mario Kart DS as donor ROM.");
+					printSmall(false, 208, 166, "A: OK");
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_A));
+					clearText();
+					showdialogbox = false;
+					for (int i = 0; i < 15; i++) swiWaitForVBlank();
 				}
 			} else {
 				mmEffectEx(&snd_wrong);
-				int yPos = 160;
-				if (theme == 1) yPos -= 4;
-				printSmallCentered(false, yPos, "This game cannot be launched.");
-				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+				clearText();
+				showdialogbox = true;
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				printSmallCentered(false, 88, "This game cannot be launched.");
+				printSmall(false, 208, 166, "A: OK");
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				clearText();
+				showdialogbox = false;
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 		}
 
-		if ((pressed & KEY_Y) && !startMenu && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
+		if ((pressed & KEY_Y) && !startMenu && !dsiWareList && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
 		{
 			DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
 			if (entry->isDirectory)
@@ -794,15 +932,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			pagenum -= 1;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
+			if (dsiWareList) {
+				dsiWarePageNum -= 1;
+				dsiWare_cursorPosition = 0;
+				dsiWare_titleboxXpos = 0;
+				dsiWare_titlewindowXpos = 0;
+			} else {
+				pagenum -= 1;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+			}
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -811,37 +955,42 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			pagenum += 1;
-			cursorPosition = 0;
-			titleboxXpos = 0;
-			titlewindowXpos = 0;
+			if (dsiWareList) {
+				dsiWarePageNum += 1;
+				dsiWare_cursorPosition = 0;
+				dsiWare_titleboxXpos = 0;
+				dsiWare_titlewindowXpos = 0;
+			} else {
+				pagenum += 1;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+			}
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
 		}
 
-
-		/* if (pressed & KEY_B && !isTopLevel(path))
+		if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
+		&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && !flashcardUsed)
 		{
-			// Go up a directory
-			chdir("..");
-			updatePath();
-			pane->slideTransition(false, true);
-			pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-			getDirectoryContents(dirContents[++scrn], extensionList);
-			for (auto &i : dirContents[scrn])
-				pane->addLine(i.visibleName.c_str());
-			pane->createDefaultEntries();
-			pane->slideTransition(true, true, 20);
-			screenOffset = 0;
-			cursorPosition = 0;
-		} */
-		
+			mmEffectEx(&snd_switch);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			dsiWareList = !dsiWareList;
+			whiteScreen = true;
+			showbubble = false;
+			showSTARTborder = false;
+			clearText();
+			SaveSettings();
+			settingsChanged = false;
+			return "null";		
+		}
+
 		if ((pressed & KEY_B)) {
 			if (startMenu) {
 				mmEffectEx(&snd_back);
@@ -853,25 +1002,48 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 				}
 				whiteScreen = true;
-				clearText(false);
-				clearText(true);
+				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			} else if (!flashcardUsed) {
-				mmEffectEx(&snd_back);
+			} else if (showDirectories && !dsiWareList) {
+				// Go up a directory
+				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
-				music = false;
-				mmEffectCancelAll();
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				pagenum = 0;
+				cursorPosition = 0;
+				titleboxXpos = 0;
+				titlewindowXpos = 0;
+				whiteScreen = true;
+				showbubble = false;
+				showSTARTborder = false;
+				clearText();
+				chdir("..");
+				char buf[256];
+				romfolder = getcwd(buf, 256);
+				SaveSettings();
+				settingsChanged = false;
+				return "null";
 			}
 		}
-		
+
+		if ((pressed & KEY_X) && startMenu && !flashcardUsed) {
+			mmEffectEx(&snd_back);
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+			music = false;
+			mmEffectCancelAll();
+			if (settingsChanged) {
+				SaveSettings();
+				settingsChanged = false;
+			}
+			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+			*(u16*)(0x02000304) = 0x1801;
+			*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
+			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+		}
+
 		if (pressed & KEY_START)
 		{
 			mmEffectEx(&snd_switch);
@@ -885,8 +1057,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			whiteScreen = true;
 			showbubble = false;
 			showSTARTborder = false;
-			clearText(true);
-			clearText(false);
+			clearText();
 			whiteScreen = false;
 			fadeType = true;	// Fade in from white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -894,15 +1065,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && !startMenu
 		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
-		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !flashcardUsed)
+		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList && !flashcardUsed)
 		{
 			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
 			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
-			int yPos = 160;
-			if (theme == 1) yPos -= 4;
-			printSmallCentered(false, yPos, "Donor ROM is set.");
-			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 			SaveSettings();
+			clearText();
+			showdialogbox = true;
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			printSmallCentered(false, 88, "Donor ROM is set.");
+			printSmall(false, 208, 166, "A: OK");
+			pressed = 0;
+			do {
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			} while (!(pressed & KEY_A));
+			clearText();
+			showdialogbox = false;
+			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+			
 		}
 
 	}

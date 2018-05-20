@@ -130,13 +130,21 @@ typedef struct {
 	u32 debugRomDestination;	//!< debug RAM destination.
 	u32 offset_0x16C;			//reserved?
 
-	u8 zero[0x90];
+	u8 zero[0x40];
+	u32 region;
+	u32 accessControl;
+	u32 arm7SCFGSettings;
+	u16 dsi_unk1;
+	u8 dsi_unk2;
+	u8 dsi_flags;
+	u8 zero2[0x40];
 
 	// 0x200
 	// TODO: More DSi-specific fields.
 	u8 dsi1[0x30];
 	u32 dsi_tid;
-	u8 dsi2[0x180];
+	u32 dsi_tid2;
+	u8 dsi2[0x17C];
 } sNDSHeaderExt;
 
 typedef struct {
@@ -236,6 +244,7 @@ extern int bannerFlip[40];
 extern bool isDirectory[40];
 extern int bnrRomType[40];
 extern bool bnriconisDSi[40];
+extern int bnrWirelessIcon[40];	// 0 = None, 1 = Local, 2 = WiFi
 extern bool launchable[40];
 extern bool isHomebrew[40];
 

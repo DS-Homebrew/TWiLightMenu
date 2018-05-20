@@ -47,6 +47,7 @@
 #include "bottom.h"
 #include "org_bottom.h"
 #include "_3ds_bottom.h"
+#include "dialogbox.h"
 #include "shoulder.h"
 #include "org_shoulder.h"
 #include "nintendo_dsi_menu.h"
@@ -76,6 +77,7 @@
 #include "folder.h"
 #include "org_folder.h"
 #include "_3ds_folder.h"
+#include "wirelessicons.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -115,15 +117,22 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
+extern bool flashcardUsed;
+
+extern bool dsiWareList;
 extern int theme;
 extern int subtheme;
 extern int cursorPosition;
+extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+extern int dsiWarePageNum;
 int titleboxXpos;
+int dsiWare_titleboxXpos;
 int startMenu_titleboxXpos;
 int titleboxYpos = 84;
 int titlewindowXpos;
+int dsiWare_titlewindowXpos;
 int startMenu_titlewindowXpos;
 
 int movecloseXpos = 0;
@@ -132,7 +141,11 @@ bool startBorderZoomOut = false;
 int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
 int startBorderZoomAnimNum = 0;
 
-int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID;
+bool showdialogbox = false;
+float dbox_movespeed = 22;
+float dbox_Ypos = -192;
+
+int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID, dialogboxTexID, wirelessiconTexID;
 int bipsTexID, scrollwindowTexID, scrollwindowfrontTexID, buttonarrowTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -141,6 +154,7 @@ glImage subBgImage[(256 / 16) * (256 / 16)];
 glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 glImage bubbleImage[(256 / 16) * (128 / 16)];
 glImage bubblearrowImage[(16 / 16) * (16 / 16)];
+glImage dialogboxImage[(256 / 16) * (192 / 16)];
 glImage bipsImage[(8 / 8) * (32 / 8)];
 glImage scrollwindowImage[(32 / 16) * (32 / 16)];
 glImage scrollwindowfrontImage[(32 / 16) * (32 / 16)];
@@ -148,10 +162,11 @@ glImage buttonarrowImage[(32 / 16) * (32 / 16)];
 glImage startImage[(64 / 16) * (8 / 16)];
 glImage startbrdImage[(32 / 32) * (256 / 80)];
 glImage braceImage[(16 / 16) * (128 / 16)];
-glImage settingsImage[(64 / 16) * (64 / 16)];
+glImage settingsImage[(64 / 16) * (128 / 64)];
 glImage boxfullImage[(64 / 16) * (128 / 64)];
 glImage boxemptyImage[(64 / 16) * (64 / 16)];
 glImage folderImage[(64 / 16) * (64 / 16)];
+glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
 int bubbleYpos = 0;
 
@@ -247,6 +262,70 @@ void moveIconClose(int num) {
 	if(!titleboxXmoveleft || !titleboxXmoveright) {
 		if (cursorPosition-2 == num) movecloseXpos = 6;
 		else if (cursorPosition+2 == num) movecloseXpos = -6;
+		else movecloseXpos = 0;
+	}
+}
+
+void dsiWare_moveIconClose(int num) {
+	if (titleboxXmoveleft) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 2) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 3) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 4) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 5) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 6) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 7) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
+		} else if(movetimer == 8) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -7;
+		}
+	}
+	if (titleboxXmoveright) {
+		movecloseXpos = 0;
+		if(movetimer == 1) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 2) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
+		} else if(movetimer == 3) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 4) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
+		} else if(movetimer == 5) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
+		} else if(movetimer == 6) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
+		} else if(movetimer == 7) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
+		} else if(movetimer == 8) {
+			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 7;
+			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
+		}
+	}
+	if(!titleboxXmoveleft || !titleboxXmoveright) {
+		if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
+		else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
 		else movecloseXpos = 0;
 	}
 }
@@ -363,6 +442,17 @@ void drawBubble(glImage *images)
 		}
 	}
 }
+void drawDbox()
+{
+	for (int y = 0; y < 192 / 16; y++)
+	{
+		for (int x = 0; x < 256 / 16; x++)
+		{
+			int i = y * 16 + x;
+			glSprite(x * 16, dbox_Ypos+y * 16, GL_FLIP_NONE, &dialogboxImage[i & 255]);
+		}
+	}
+}
 
 void vBlankHandler()
 {
@@ -419,6 +509,28 @@ void vBlankHandler()
 		}
 		else
 		{*/
+
+		if (showdialogbox) {
+			if (dbox_movespeed <= 1) {
+				if (dbox_Ypos >= 0) {
+					dbox_movespeed = 0;
+					dbox_Ypos = 0;
+				} else
+					dbox_movespeed = 1;
+			} else {
+				dbox_movespeed -= 1.25;
+			}
+			dbox_Ypos += dbox_movespeed;
+		} else {
+			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
+				dbox_movespeed = 22;
+				dbox_Ypos = -192;
+			} else {
+				dbox_movespeed += 1;
+				dbox_Ypos += dbox_movespeed;
+			}
+		}
+
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
 			else if (theme==0) glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
@@ -433,6 +545,20 @@ void vBlankHandler()
 					} else if (movetimer < 8) {
 						startMenu_titleboxXpos -= 8;
 						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos -= 1;
+						movetimer++;
+					} else {
+						titleboxXmoveleft = false;
+						movetimer = 0;
+					}
+				} else if (dsiWareList) {
+					if (movetimer == 8) {
+						if (showbubble) mmEffectEx(&snd_stop);
+						startBorderZoomOut = true;
+						dsiWare_titlewindowXpos -= 1;
+						movetimer++;
+					} else if (movetimer < 8) {
+						dsiWare_titleboxXpos -= 8;
+						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos -= 1;
 						movetimer++;
 					} else {
 						titleboxXmoveleft = false;
@@ -468,6 +594,20 @@ void vBlankHandler()
 						titleboxXmoveright = false;
 						movetimer = 0;
 					}
+				} else if (dsiWareList) {
+					if (movetimer == 8) {
+						if (showbubble) mmEffectEx(&snd_stop);
+						startBorderZoomOut = true;
+						dsiWare_titlewindowXpos += 1;
+						movetimer++;
+					} else if (movetimer < 8) {
+						dsiWare_titleboxXpos += 8;
+						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos += 1;
+						movetimer++;
+					} else {
+						titleboxXmoveright = false;
+						movetimer = 0;
+					}
 				} else {
 					if (movetimer == 8) {
 						if (showbubble) mmEffectEx(&snd_stop);
@@ -487,26 +627,34 @@ void vBlankHandler()
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
-				if(startMenu) {
+				int bipXpos = 27;
+				if(dsiWareList) {
+					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+					for(int i = 0; i < 40; i++) {
+						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
+						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+						bipXpos += 5;
+					}
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
+					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
+				} else if(startMenu) {
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-					int bipXpos = 27;
 					for(int i = 0; i < 40; i++) {
 						if (i == 0) glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[2 & 31]);
 						else if (i == 1) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 						bipXpos += 5;
 					}
-					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				} else {
 					glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-					int bipXpos = 27;
 					for(int i = 0; i < 40; i++) {
 						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
 						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
 						bipXpos += 5;
 					}
-					glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+					glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 					glSprite(16+titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowfrontImage);
 				}
 				glSprite(0, 171, GL_FLIP_NONE, buttonarrowImage);
@@ -514,6 +662,8 @@ void vBlankHandler()
 				glColor(RGB15(31, 31, 31));
 				if (startMenu) {
 					glSprite(72-startMenu_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+				} else if (dsiWareList) {
+					glSprite(72-dsiWare_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 				} else {
 					glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
 				}
@@ -528,8 +678,16 @@ void vBlankHandler()
 						movecloseXpos = 0;
 					}
 					if (i == 0) {
-						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, settingsImage);
+						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (i == 1) {
+						if (!flashcardUsed) {
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+						} else {
+							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+						}
+					} else if (i == 2 && !flashcardUsed) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
@@ -544,6 +702,33 @@ void vBlankHandler()
 					iconXpos += 64;
 				}
 				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 80, GL_FLIP_H, braceImage);
+			} else if(dsiWareList) {
+				for(int i = 0; i < 40; i++) {
+					if (theme == 0) {
+						dsiWare_moveIconClose(i);
+					} else {
+						movecloseXpos = 0;
+					}
+					if (i < spawnedtitleboxes) {
+						if (isDirectory[i]) {
+							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
+							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos-3, GL_FLIP_NONE, folderImage);
+						} else {
+							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIcon(iconXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos+12, i);
+						}
+					} else {
+						if (theme == 1) {
+							glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+						} else {
+							glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+						}
+					}
+					spawnedboxXpos += 64;
+					iconXpos += 64;
+				}
+				if (theme == 0) glSprite(spawnedboxXpos+10-dsiWare_titleboxXpos, 80, GL_FLIP_H, braceImage);
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -586,11 +771,21 @@ void vBlankHandler()
 				}
 				if(startMenu) {
 					if (startMenu_cursorPosition == 0) {
-						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, settingsImage);
+						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (startMenu_cursorPosition == 1) {
+						if (!flashcardUsed) {
+							glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+						} else {
+							glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+							drawIconGBA(112, 96-titleboxYmovepos);
+						}
+					} else if (startMenu_cursorPosition == 2) {
 						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 						drawIconGBA(112, 96-titleboxYmovepos);
 					}
+				} else if (dsiWareList) {
+					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+					drawIcon(112, 96-titleboxYmovepos, dsiWare_cursorPosition);
 				} else {
 					if (isDirectory[cursorPosition]) {
 						glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, folderImage);
@@ -606,18 +801,37 @@ void vBlankHandler()
 				if (titleboxYmovepos > 240) whiteScreen = true;
 			}
 			if (showSTARTborder) {
-				glColor(RGB15(colorRvalue, colorGvalue, colorBvalue));
+				glColor(RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 				if (theme == 1) {
 					glSprite(96, 92, GL_FLIP_NONE, startbrdImage);
 					glSprite(96+32, 92, GL_FLIP_H, startbrdImage);
+					glColor(RGB15(31, 31, 31));
+					if (!startMenu) {
+						if (dsiWareList) {
+							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
+						} else {
+							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
+						}
+					}
 				} else {
 					glSprite(96, 80, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glSprite(96+32, 80, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glColor(RGB15(31, 31, 31));
+					if (!startMenu) {
+						if (dsiWareList) {
+							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 80, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
+						} else {
+							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 80, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
+						}
+					}
 				}
-				glColor(RGB15(31, 31, 31));
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder && theme == 0) glSprite(95, 144, GL_FLIP_NONE, startImage);
+			if (dbox_Ypos != -192) {
+				// Draw the dialog box.
+				drawDbox();
+			}
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			} else {
@@ -719,6 +933,8 @@ void graphicsInit()
 {
 	titleboxXpos = cursorPosition*64;
 	titlewindowXpos = cursorPosition*5;
+	dsiWare_titleboxXpos = dsiWare_cursorPosition*64;
+	dsiWare_titlewindowXpos = dsiWare_cursorPosition*5;
 	startMenu_titleboxXpos = startMenu_cursorPosition*64;
 	startMenu_titlewindowXpos = startMenu_cursorPosition*5;
 	
@@ -772,6 +988,20 @@ void graphicsInit()
 		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
 	}*/
+
+	dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
+							16, // sprite width
+							16, // sprite height
+							256, // bitmap width
+							192, // bitmap height
+							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+							16, // Length of the palette to use (16 colors)
+							(u16*) dialogboxPal, // Load our 16 color tiles palette
+							(u8*) dialogboxBitmap // image data generated by GRIT
+							);
 
 	if (theme == 1) {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
@@ -1052,10 +1282,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
@@ -1108,10 +1338,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
@@ -1164,10 +1394,10 @@ void graphicsInit()
 								64, // sprite width
 								64, // sprite height
 								64, // bitmap width
-								64, // bitmap height
+								128, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
 								(u16*) icon_settingsPal, // Load our 16 color tiles palette
@@ -1217,6 +1447,20 @@ void graphicsInit()
 								);
 	}
 	
+	wirelessiconTexID = glLoadTileSet(wirelessIcons, // pointer to glImage array
+							32, // sprite width
+							32, // sprite height
+							32, // bitmap width
+							64, // bitmap height
+							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+							16, // Length of the palette to use (16 colors)
+							(u16*) wirelessiconsPal, // Load our 16 color tiles palette
+							(u8*) wirelessiconsBitmap // image data generated by GRIT
+							);
+
 	loadGBCIcon();
 	loadNESIcon();
 

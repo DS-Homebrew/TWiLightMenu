@@ -95,6 +95,7 @@ int bannerFlip[40] = {GL_FLIP_NONE};
 bool isDirectory[40] = {false};
 int bnrRomType[40] = {0};
 bool bnriconisDSi[40] = {false};
+int bnrWirelessIcon[40] = {0};	// 0 = None, 1 = Local, 2 = WiFi
 bool launchable[40] = {true};
 bool isHomebrew[40] = {false};
 

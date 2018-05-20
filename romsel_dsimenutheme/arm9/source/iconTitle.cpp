@@ -44,11 +44,14 @@ static int BOX_PY_spacing3 = 28;
 #include "icon_gb.h"
 #include "icon_nes.h"
 
+extern bool dsiWareList;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
 
 extern int theme;
 extern bool useGbarunner;
+
+extern bool flashcardUsed;
 
 static int iconTexID[6][8];
 static int gbaTexID;
@@ -287,6 +290,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
 	bnriconisDSi[num] = false;
+	bnrWirelessIcon[num] = 0;
 	launchable[num] = true;
 	isHomebrew[num] = false;
 
@@ -300,7 +304,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
-		// size_t size = 0;
+		size_t size = 0;
 		ssize_t rc;
 
 		// open the argv file
@@ -310,6 +314,21 @@ void getGameInfo(bool isDir, const char* name, int num)
 			clearBannerSequence(num);
 			fclose(fp);
 			return;
+		}
+
+		// read each line
+		while ((rc = __getline(&line, &size, fp)) > 0)
+		{
+			// remove comments
+			if ((p = strchr(line, '#')) != NULL)
+				*p = 0;
+
+			// skip leading whitespace
+			for (p = line; *p && isspace((int) *p); ++p)
+				;
+
+			if (*p)
+				break;
 		}
 
 		// done with the file at this point
@@ -323,12 +342,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				clearBannerSequence(num);
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -347,6 +362,11 @@ void getGameInfo(bool isDir, const char* name, int num)
 					getGameInfo(false, p, num);
 				}
 			}
+			else
+			{
+				// this is not an nds/app file!
+				clearBannerSequence(num);
+			}
 		}
 		else
 		{
@@ -355,9 +375,10 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		int ret;
 
@@ -384,13 +405,18 @@ void getGameInfo(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if(ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
-			launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
-		} else if(ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
-			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-				isHomebrew[num] = true;	// If homebrew has DSi-extended header,
-											// do not use bootstrap/flashcard's ROM booter to boot it
+		if (!dsiWareList) {
+			if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+				launchable[num] = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
+			} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
+				if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
+					isHomebrew[num] = true;	// If homebrew has DSi-extended header,
+												// do not use bootstrap/flashcard's ROM booter to boot it
+			}
 		}
+
+		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;
+		else if (ndsHeader.dsi_flags == 0x0B) bnrWirelessIcon[num] = 2;
 
 		if (ndsHeader.bannerOffset == 0)
 		{
@@ -446,10 +472,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 	{
-		// look through the argv file for the corresponding nds file
+		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
-		// size_t size = 0;
+		size_t size = 0;
 		ssize_t rc;
 
 		// open the argv file
@@ -459,6 +485,21 @@ void iconUpdate(bool isDir, const char* name, int num)
 			clearIcon(num);
 			fclose(fp);
 			return;
+		}
+
+		// read each line
+		while ((rc = __getline(&line, &size, fp)) > 0)
+		{
+			// remove comments
+			if ((p = strchr(line, '#')) != NULL)
+				*p = 0;
+
+			// skip leading whitespace
+			for (p = line; *p && isspace((int) *p); ++p)
+				;
+
+			if (*p)
+				break;
 		}
 
 		// done with the file at this point
@@ -472,12 +513,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				clearIcon(num);
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -496,6 +533,11 @@ void iconUpdate(bool isDir, const char* name, int num)
 					iconUpdate(false, p, num);
 				}
 			}
+			else
+			{
+				// this is not an nds/app file!
+				clearIcon(num);
+			}
 		}
 		else
 		{
@@ -504,9 +546,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
 		int ret;
@@ -594,11 +637,17 @@ void titleUpdate(bool isDir, const char* name)
 		if (startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
 		} else if (startMenu_cursorPosition == 1) {
-			if (useGbarunner) {
-				writeBannerText(0, "Start GBARunner2", "", "");
+			if (!flashcardUsed) {
+				writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
 			} else {
-				writeBannerText(0, "Start GBA Mode", "", "");
+				if (useGbarunner) {
+					writeBannerText(0, "Start GBARunner2", "", "");
+				} else {
+					writeBannerText(0, "Start GBA Mode", "", "");
+				}
 			}
+		} else if (startMenu_cursorPosition == 2) {
+			writeBannerText(0, "Start GBARunner2", "", "");
 		}
 		return;
 	}
@@ -622,7 +671,7 @@ void titleUpdate(bool isDir, const char* name)
 	}
 	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 	{
-		// look through the argv file for the corresponding nds file
+		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
 		size_t size = 0;
@@ -663,12 +712,8 @@ void titleUpdate(bool isDir, const char* name)
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if (strlen(p) < 4 || strcasecmp(p + strlen(p) - 4, ".nds") != 0)
-			{
-				// this is not an nds file!
-				writeBannerText(0, "(invalid argv file!)", "", "");
-			}
-			else
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -680,12 +725,17 @@ void titleUpdate(bool isDir, const char* name)
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
-					writeBannerText(0, "(invalid argv file!)", "", "");
+					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
 				}
 				else
 				{
 					titleUpdate(false, p);
 				}
+			}
+			else
+			{
+				// this is not an nds/app file!
+				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
 			}
 		}
 		else
@@ -695,9 +745,10 @@ void titleUpdate(bool isDir, const char* name)
 		// clean up the allocated line
 		free(line);
 	}
-	else
+	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
-		// this is an nds file!
+		// this is an nds/app file!
 		FILE *fp;
 		unsigned int iconTitleOffset;
 		int ret;
