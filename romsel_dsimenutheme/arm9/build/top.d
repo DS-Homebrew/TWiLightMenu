@@ -1,1 +1,0 @@
-top.o: top.s

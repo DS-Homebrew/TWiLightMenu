@@ -1,1 +1,0 @@
-bips.o: bips.s

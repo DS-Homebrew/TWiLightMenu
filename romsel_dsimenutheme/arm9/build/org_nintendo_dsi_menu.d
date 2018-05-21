@@ -1,1 +1,0 @@
-org_nintendo_dsi_menu.o: org_nintendo_dsi_menu.s

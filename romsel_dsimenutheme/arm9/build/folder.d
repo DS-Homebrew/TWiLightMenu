@@ -1,1 +1,0 @@
-folder.o: folder.s

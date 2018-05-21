@@ -1,1 +1,0 @@
-shoulder.o: shoulder.s
