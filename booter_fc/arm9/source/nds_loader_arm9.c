@@ -31,7 +31,6 @@
 
 #ifndef _NO_BOOTSTUB_
 #include "bootstub_bin.h"
-#include "exceptionstub_bin.h"
 #endif
 
 #include "nds_loader_arm9.h"
@@ -405,8 +404,6 @@ dsiSD:
 	.word	0
 */
 
-void(*exceptionstub)(void) = (void(*)(void))0x2ffa000;
-
 bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
 	extern char *fake_heap_end;
@@ -428,10 +425,6 @@ bool installBootStub(bool havedsiSD) {
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
 	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
 	bootstub->bootsize = load_bin_size;
-
-	memcpy(exceptionstub,exceptionstub_bin,exceptionstub_bin_size);
-
-	exceptionstub();
 
 	DC_FlushAll();
 
