@@ -1,0 +1,516 @@
+Archive member included to satisfy reference by file (symbol)
+
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+                              fat.o (__aeabi_uidiv)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+                              fat.o (__aeabi_idiv)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+                              dldi_patcher.o (memcmp)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                              dldi_patcher.o (memcpy)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+                              dldi_patcher.o (memset)
+
+Allocating common symbols
+Common symbol       size              file
+
+discFileSystem      0x1               fat.o
+discBytePerClus     0x4               fat.o
+discData            0x4               fat.o
+discRootDir         0x4               fat.o
+discRootDirClus     0x4               fat.o
+discBytePerSec      0x4               fat.o
+discSecPerFAT       0x4               fat.o
+discFAT             0x4               fat.o
+globalBuffer        0x200             fat.o
+discSecPerClus      0x4               fat.o
+discNumSec          0x4               fat.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+vram             0x0000000006000000 0x0000000000020000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD dldi_patcher.o
+LOAD fat.o
+LOAD boot.o
+LOAD arm9clear.arm.o
+LOAD sdmmc.o
+LOAD io_dldi.o
+LOAD bios.o
+LOAD arm9mpu_reset.o
+LOAD load_crt0.o
+LOAD arm7clear.o
+START GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libsysbase.a
+END GROUP
+                0x0000000006000000                __vram_start = ORIGIN (vram)
+                0x0000000006020000                __vram_top = (ORIGIN (vram) + LENGTH (vram))
+                0x000000000601ffa0                __sp_irq = (__vram_top - 0x60)
+                0x000000000601fea0                __sp_svc = (__sp_irq - 0x100)
+                0x000000000601fda0                __sp_usr = (__sp_svc - 0x100)
+                0x000000000601fff8                __irq_flags = (__vram_top - 0x8)
+                0x000000000601fffc                __irq_vector = (__vram_top - 0x4)
+
+.init           0x0000000006000000       0xe8
+                0x0000000006000000                __text_start = .
+ *(.init)
+ .init          0x0000000006000000       0xe8 load_crt0.o
+                0x0000000006000000                _start
+                0x0000000006000004                storedFileCluster
+                0x0000000006000008                initDisc
+                0x000000000600000c                wantToPatchDLDI
+                0x0000000006000010                argStart
+                0x0000000006000014                argSize
+                0x000000000600001c                dsiSD
+                0x0000000006000020                dsiMode
+                0x00000000060000e8                . = ALIGN (0x4)
+
+.plt
+ *(.plt)
+
+.text           0x0000000006000100     0x5a00
+ *(.text*)
+ .text          0x0000000006000100      0x1e8 dldi_patcher.o
+                0x0000000006000100                dldiPatchBinary
+ .text          0x00000000060002e8      0x5c8 fat.o
+                0x0000000006000304                FAT_ClustToSect
+                0x0000000006000320                FAT_NextCluster
+                0x00000000060003e0                ucase
+                0x00000000060003f0                FAT_InitFiles
+                0x0000000006000618                getBootFileCluster
+                0x000000000600077c                fileRead
+ .text          0x00000000060008b0      0x424 boot.o
+                0x00000000060008ca                sdmmc_inserted
+                0x00000000060008ce                sdmmc_startup
+                0x00000000060008e4                sdmmc_readsectors
+                0x00000000060008f4                boot_readFirmware
+                0x0000000006000970                passArgs_ARM7
+                0x0000000006000a18                resetMemory_ARM7
+                0x0000000006000b9c                loadBinary_ARM7
+                0x0000000006000c84                startBinary_ARM7
+ .text.startup  0x0000000006000cd4      0x118 boot.o
+                0x0000000006000cd4                main
+ .text          0x0000000006000dec      0x174 arm9clear.arm.o
+                0x0000000006000dec                resetMemory2_ARM9
+                0x0000000006000ef4                startBinary_ARM9
+ .text          0x0000000006000f60      0x5c8 sdmmc.o
+                0x0000000006000f94                geterror
+                0x0000000006000f9c                setTarget
+                0x0000000006000fe0                sdmmc_send_command
+                0x0000000006001244                sdmmc_cardinserted
+                0x0000000006001248                sdmmc_controller_init
+                0x0000000006001354                sdmmc_sdcard_init
+                0x00000000060014c0                sdmmc_sdcard_readsectors
+ *fill*         0x0000000006001528       0x18 ff
+ .text          0x0000000006001540     0x4000 io_dldi.o
+                0x0000000006001540                _dldi_start
+                0x00000000060015a0                _io_dldi
+ .text          0x0000000006005540        0x4 bios.o
+                0x0000000006005540                swiDelay
+ .text          0x0000000006005544       0xfc arm9mpu_reset.o
+                0x0000000006005544                mpu_reset
+                0x0000000006005640                mpu_reset_end
+ .text          0x0000000006005640        0x0 load_crt0.o
+ .text          0x0000000006005640       0x7c arm7clear.o
+                0x0000000006005640                arm7clearRAM
+ .text          0x00000000060056bc      0x11c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+                0x00000000060056bc                __aeabi_uidiv
+                0x00000000060056bc                __udivsi3
+                0x00000000060057b8                __aeabi_uidivmod
+ .text          0x00000000060057d8      0x150 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+                0x00000000060057d8                __divsi3
+                0x00000000060057d8                __aeabi_idiv
+                0x0000000006005908                __aeabi_idivmod
+ .text          0x0000000006005928        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                0x0000000006005928                __aeabi_idiv0
+                0x0000000006005928                __aeabi_ldiv0
+ .text          0x000000000600592c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .text.memcmp   0x000000000600592c       0x54 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+                0x000000000600592c                memcmp
+ .text          0x0000000006005980        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .text.memcpy   0x0000000006005980       0x9c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                0x0000000006005980                memcpy
+ .text          0x0000000006005a1c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .text.memset   0x0000000006005a1c       0xb0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+                0x0000000006005a1c                memset
+ *fill*         0x0000000006005acc        0x4 ff
+ .text.memset.__stub
+                0x0000000006005ad0       0x2c linker stubs
+ *(.stub)
+ *(.gnu.warning)
+ *(.gnu.linkonce.t*)
+ *(.glue_7)
+ .glue_7        0x0000000006005b00        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x0000000006005b00        0x0 linker stubs
+                0x0000000006005b00                . = ALIGN (0x4)
+
+.vfp11_veneer   0x0000000006005b00        0x0
+ .vfp11_veneer  0x0000000006005b00        0x0 linker stubs
+
+.v4_bx          0x0000000006005b00        0x0
+ .v4_bx         0x0000000006005b00        0x0 linker stubs
+
+.iplt           0x0000000006005b00        0x0
+ .iplt          0x0000000006005b00        0x0 dldi_patcher.o
+
+.fini
+ *(.fini)
+                0x0000000006005b00                __text_end = .
+
+.rodata         0x0000000006005b00       0x24
+ *(.rodata)
+ .rodata        0x0000000006005b00        0xc dldi_patcher.o
+ *all.rodata*(*)
+ *(.roda)
+ *(.rodata.*)
+ .rodata.str1.1
+                0x0000000006005b0c        0xc dldi_patcher.o
+ .rodata.str1.1
+                0x0000000006005b18        0x9 boot.o
+ *(.gnu.linkonce.r*)
+                0x0000000006005b24                . = ALIGN (0x4)
+ *fill*         0x0000000006005b21        0x3 ff
+
+.rel.dyn        0x0000000006005b24        0x0
+ .rel.iplt      0x0000000006005b24        0x0 dldi_patcher.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x0000000006005b24                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x0000000006005b24                __exidx_end = .
+                0x0000000006005b24                . = ALIGN (0x4)
+                [!provide]                        PROVIDE (__preinit_array_start = .)
+
+.preinit_array
+ *(.preinit_array)
+                [!provide]                        PROVIDE (__preinit_array_end = .)
+                [!provide]                        PROVIDE (__init_array_start = .)
+
+.init_array
+ *(.init_array)
+                [!provide]                        PROVIDE (__init_array_end = .)
+                [!provide]                        PROVIDE (__fini_array_start = .)
+
+.fini_array
+ *(.fini_array)
+                [!provide]                        PROVIDE (__fini_array_end = .)
+
+.ctors          0x0000000006005b24        0x0
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT_BY_NAME(.ctors.*))
+ *(.ctors)
+                0x0000000006005b24                . = ALIGN (0x4)
+
+.dtors          0x0000000006005b24        0x0
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT_BY_NAME(.dtors.*))
+ *(.dtors)
+                0x0000000006005b24                . = ALIGN (0x4)
+
+.eh_frame       0x0000000006005b24        0x0
+ *(.eh_frame)
+                0x0000000006005b24                . = ALIGN (0x4)
+
+.gcc_except_table
+                0x0000000006005b24        0x0
+ *(.gcc_except_table)
+                0x0000000006005b24                . = ALIGN (0x4)
+
+.jcr
+ *(.jcr)
+
+.got
+ *(.got.plt)
+ *(.got)
+
+.vram           0x0000000006005b24        0x0
+                0x0000000006005b24                __vram_start = ABSOLUTE (.)
+ *(.vram)
+ *vram.*(.text)
+                0x0000000006005b24                . = ALIGN (0x4)
+                0x0000000006005b24                __vram_end = ABSOLUTE (.)
+
+.data           0x0000000006005b24        0x4
+                0x0000000006005b24                __data_start = ABSOLUTE (.)
+ *(.data)
+ .data          0x0000000006005b24        0x0 dldi_patcher.o
+ .data          0x0000000006005b24        0x0 fat.o
+ .data          0x0000000006005b24        0x4 boot.o
+                0x0000000006005b24                bootName
+ .data          0x0000000006005b28        0x0 arm9clear.arm.o
+ .data          0x0000000006005b28        0x0 sdmmc.o
+ .data          0x0000000006005b28        0x0 io_dldi.o
+ .data          0x0000000006005b28        0x0 bios.o
+ .data          0x0000000006005b28        0x0 arm9mpu_reset.o
+ .data          0x0000000006005b28        0x0 load_crt0.o
+ .data          0x0000000006005b28        0x0 arm7clear.o
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .data          0x0000000006005b28        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ *(.data.*)
+ *(.gnu.linkonce.d*)
+                0x0000000006005b28                . = ALIGN (0x4)
+                0x0000000006005b28                __data_end = ABSOLUTE (.)
+
+.igot.plt       0x0000000006005b28        0x0
+ .igot.plt      0x0000000006005b28        0x0 dldi_patcher.o
+
+.bss            0x0000000006005b28      0x264
+                0x0000000006005b28                __bss_start = ABSOLUTE (.)
+                0x0000000006005b28                __bss_start__ = ABSOLUTE (.)
+ *(.dynbss)
+ *(.gnu.linkonce.b*)
+ *(.bss*)
+ .bss           0x0000000006005b28        0x0 dldi_patcher.o
+ .bss           0x0000000006005b28        0x0 fat.o
+ .bss           0x0000000006005b28        0x0 boot.o
+ .bss           0x0000000006005b28        0x0 arm9clear.arm.o
+ .bss           0x0000000006005b28       0x3c sdmmc.o
+ .bss           0x0000000006005b64        0x0 io_dldi.o
+ .bss           0x0000000006005b64        0x0 bios.o
+ .bss           0x0000000006005b64        0x0 arm9mpu_reset.o
+ .bss           0x0000000006005b64        0x0 load_crt0.o
+ .bss           0x0000000006005b64        0x0 arm7clear.o
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .bss           0x0000000006005b64        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ *(COMMON)
+ COMMON         0x0000000006005b64      0x228 fat.o
+                0x0000000006005b64                discFileSystem
+                0x0000000006005b68                discBytePerClus
+                0x0000000006005b6c                discData
+                0x0000000006005b70                discRootDir
+                0x0000000006005b74                discRootDirClus
+                0x0000000006005b78                discBytePerSec
+                0x0000000006005b7c                discSecPerFAT
+                0x0000000006005b80                discFAT
+                0x0000000006005b84                globalBuffer
+                0x0000000006005d84                discSecPerClus
+                0x0000000006005d88                discNumSec
+                0x0000000006005d8c                . = ALIGN (0x4)
+                0x0000000006005d8c                __bss_end = .
+                0x0000000006005d8c                __bss_end__ = .
+                0x0000000006005d8c                _end = .
+                0x0000000006005d8c                __end__ = .
+                [!provide]                        PROVIDE (end = _end)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x22
+ *(.comment)
+ .comment       0x0000000000000000       0x22 dldi_patcher.o
+                                         0x23 (size before relaxing)
+ .comment       0x0000000000000022       0x23 fat.o
+ .comment       0x0000000000000022       0x23 boot.o
+ .comment       0x0000000000000022       0x23 arm9clear.arm.o
+ .comment       0x0000000000000022       0x23 sdmmc.o
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+
+.ARM.attributes
+                0x0000000000000000       0x28
+ .ARM.attributes
+                0x0000000000000000       0x26 dldi_patcher.o
+ .ARM.attributes
+                0x0000000000000026       0x26 fat.o
+ .ARM.attributes
+                0x000000000000004c       0x26 boot.o
+ .ARM.attributes
+                0x0000000000000072       0x26 arm9clear.arm.o
+ .ARM.attributes
+                0x0000000000000098       0x26 sdmmc.o
+ .ARM.attributes
+                0x00000000000000be       0x1a io_dldi.o
+ .ARM.attributes
+                0x00000000000000d8       0x1a bios.o
+ .ARM.attributes
+                0x00000000000000f2       0x1a arm9mpu_reset.o
+ .ARM.attributes
+                0x000000000000010c       0x1a load_crt0.o
+ .ARM.attributes
+                0x0000000000000126       0x1a arm7clear.o
+ .ARM.attributes
+                0x0000000000000140       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x000000000000015c       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x0000000000000178       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x0000000000000194       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .ARM.attributes
+                0x00000000000001be       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .ARM.attributes
+                0x00000000000001e8       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000      0x128
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000       0x20 dldi_patcher.o
+ .debug_aranges
+                0x0000000000000020       0x20 fat.o
+ .debug_aranges
+                0x0000000000000040       0x28 boot.o
+ .debug_aranges
+                0x0000000000000068       0x20 arm9clear.arm.o
+ .debug_aranges
+                0x0000000000000088       0x20 sdmmc.o
+ .debug_aranges
+                0x00000000000000a8       0x20 io_dldi.o
+ .debug_aranges
+                0x00000000000000c8       0x20 bios.o
+ .debug_aranges
+                0x00000000000000e8       0x20 load_crt0.o
+ .debug_aranges
+                0x0000000000000108       0x20 arm7clear.o
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x0000000000000000     0x46cd
+ *(.debug_info)
+ .debug_info    0x0000000000000000     0x17bf dldi_patcher.o
+ .debug_info    0x00000000000017bf      0xc4d fat.o
+ .debug_info    0x000000000000240c      0xb59 boot.o
+ .debug_info    0x0000000000002f65      0x288 arm9clear.arm.o
+ .debug_info    0x00000000000031ed     0x1448 sdmmc.o
+ .debug_info    0x0000000000004635       0x26 io_dldi.o
+ .debug_info    0x000000000000465b       0x26 bios.o
+ .debug_info    0x0000000000004681       0x26 load_crt0.o
+ .debug_info    0x00000000000046a7       0x26 arm7clear.o
+
+.debug_abbrev   0x0000000000000000      0xeca
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000      0x36a dldi_patcher.o
+ .debug_abbrev  0x000000000000036a      0x2f8 fat.o
+ .debug_abbrev  0x0000000000000662      0x35c boot.o
+ .debug_abbrev  0x00000000000009be      0x12a arm9clear.arm.o
+ .debug_abbrev  0x0000000000000ae8      0x392 sdmmc.o
+ .debug_abbrev  0x0000000000000e7a       0x14 io_dldi.o
+ .debug_abbrev  0x0000000000000e8e       0x14 bios.o
+ .debug_abbrev  0x0000000000000ea2       0x14 load_crt0.o
+ .debug_abbrev  0x0000000000000eb6       0x14 arm7clear.o
+
+.debug_line     0x0000000000000000     0x2a61
+ *(.debug_line)
+ .debug_line    0x0000000000000000      0x795 dldi_patcher.o
+ .debug_line    0x0000000000000795      0x892 fat.o
+ .debug_line    0x0000000000001027      0x859 boot.o
+ .debug_line    0x0000000000001880      0x392 arm9clear.arm.o
+ .debug_line    0x0000000000001c12      0xbc5 sdmmc.o
+ .debug_line    0x00000000000027d7       0x8d io_dldi.o
+ .debug_line    0x0000000000002864       0x88 bios.o
+ .debug_line    0x00000000000028ec       0xc9 load_crt0.o
+ .debug_line    0x00000000000029b5       0xac arm7clear.o
+
+.debug_frame    0x0000000000000000      0x31c
+ *(.debug_frame)
+ .debug_frame   0x0000000000000000       0x30 dldi_patcher.o
+ .debug_frame   0x0000000000000030       0xd0 fat.o
+ .debug_frame   0x0000000000000100      0x11c boot.o
+ .debug_frame   0x000000000000021c       0x30 arm9clear.arm.o
+ .debug_frame   0x000000000000024c       0xd0 sdmmc.o
+
+.debug_str      0x0000000000000000     0x153f
+ *(.debug_str)
+ .debug_str     0x0000000000000000      0x898 dldi_patcher.o
+                                        0x93e (size before relaxing)
+ .debug_str     0x0000000000000898      0x548 fat.o
+                                        0x714 (size before relaxing)
+ .debug_str     0x0000000000000de0      0x2e0 boot.o
+                                        0x647 (size before relaxing)
+ .debug_str     0x00000000000010c0      0x169 arm9clear.arm.o
+                                        0x2e7 (size before relaxing)
+ .debug_str     0x0000000000001229      0x19d sdmmc.o
+                                        0x3dc (size before relaxing)
+ .debug_str     0x00000000000013c6       0x67 io_dldi.o
+                                         0xb7 (size before relaxing)
+ .debug_str     0x000000000000142d       0x58 bios.o
+                                         0xb4 (size before relaxing)
+ .debug_str     0x0000000000001485       0x5d load_crt0.o
+                                         0xb9 (size before relaxing)
+ .debug_str     0x00000000000014e2       0x5d arm7clear.o
+                                         0xb9 (size before relaxing)
+
+.debug_loc      0x0000000000000000     0x2ea6
+ *(.debug_loc)
+ .debug_loc     0x0000000000000000      0xce8 dldi_patcher.o
+ .debug_loc     0x0000000000000ce8      0xc43 fat.o
+ .debug_loc     0x000000000000192b      0x639 boot.o
+ .debug_loc     0x0000000000001f64       0x75 arm9clear.arm.o
+ .debug_loc     0x0000000000001fd9      0xecd sdmmc.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.stack          0x0000000000080000        0x0
+                0x0000000000080000                _stack = .
+ *(.stack)
+OUTPUT(F:/Users/Nicolas/Documents/GitHub/SRLoader/romsel_dsimenutheme/bootloader/load.elf elf32-littlearm)
+
+.debug_ranges   0x0000000000000000      0x610
+ .debug_ranges  0x0000000000000000      0x2e0 dldi_patcher.o
+ .debug_ranges  0x00000000000002e0       0x20 fat.o
+ .debug_ranges  0x0000000000000300       0x30 boot.o
+ .debug_ranges  0x0000000000000330      0x2e0 sdmmc.o

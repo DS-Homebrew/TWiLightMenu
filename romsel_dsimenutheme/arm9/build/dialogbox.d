@@ -1,0 +1,1 @@
+dialogbox.o: dialogbox.s

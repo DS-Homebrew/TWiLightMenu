@@ -1,0 +1,1 @@
+box.o: box.s

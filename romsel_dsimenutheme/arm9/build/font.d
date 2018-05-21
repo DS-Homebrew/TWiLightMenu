@@ -1,0 +1,1 @@
+font.o: font.s

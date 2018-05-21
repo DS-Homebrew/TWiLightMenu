@@ -1,0 +1,1 @@
+wirelessicons.o: wirelessicons.s

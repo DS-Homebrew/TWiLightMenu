@@ -1,0 +1,1540 @@
+Archive member included to satisfy reference by file (symbol)
+
+C:/devkitPro/libnds/lib\libmm7.a(mm_main.o)
+                              main.o (mmInstall)
+C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_main.o) (mmResetEffects)
+C:/devkitPro/libnds/lib\libmm7.a(mm_mas_arm.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o) (mmAllocChannel)
+C:/devkitPro/libnds/lib\libmm7.a(mm_mixer_super.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_main.o) (mm_mix_channels)
+C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_main.o) (mmSetupComms)
+C:/devkitPro/libnds/lib\libmm7.a(mm_stream.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o) (mmStreamBegin)
+C:/devkitPro/libnds/lib\libmm7.a(mm_mas.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o) (mmLayerMain)
+C:/devkitPro/libnds/lib\libmm7.a(mm_reverb.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o) (mmReverbEnable)
+C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                              main.o (i2cWriteRegister)
+C:/devkitPro/libnds/lib\libnds7.a(input.o)
+                              main.o (inputGetAndSend)
+C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(input.o) (touchPenDown)
+C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(input.o) (systemSleep)
+C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+                              main.o (writePowerManagement)
+C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(touch.o) (cdcTouchInit)
+C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(system.o) (firmwareMsgHandler)
+C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+                              main.o (readUserSettings)
+C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(system.o) (resyncClock)
+C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(system.o) (twlEnableSlot1)
+C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                              main.o (installSoundFIFO)
+C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                              main.o (setPowerButtonCB)
+C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o (__libnds_exit)
+C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                              main.o (fifoSendValue32)
+C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+                              main.o (swiWaitForVBlank)
+C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(interrupts.o) (IntrMain)
+C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+                              main.o (nocashMessage)
+C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o) (swiSoftReset)
+C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o) (swiDelay)
+C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(system.o) (sdmmcMsgHandler)
+C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(audio.o) (micStartRecording)
+C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o) (systemShutDown)
+C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(microphone.o) (micSetAmp_TWL)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o) (__gnu_thumb1_case_uqi)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o) (__aeabi_uidiv)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(touch.o) (__aeabi_idiv)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o) (__aeabi_idiv0)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_call_via_rX.o)
+                              C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o) (_call_via_r1)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o (__libc_init_array)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(firmware.o) (memcmp)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(userSettings.o) (memcpy)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+                              C:/devkitPro/libnds/lib\libnds7.a(input.o) (memset)
+
+Allocating common symbols
+Common symbol       size              file
+
+fifo_datamsg_data   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_buffer         0x800             C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_value32_func   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_address_func   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_value32_data   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_value32_queue  0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_data_queue     0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+Keys                0x1               C:/devkitPro/libnds/lib\libnds7.a(input.o)
+irqTable            0xc8              C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+fifo_address_data   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_datamsg_func   0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+fifo_address_queue  0x40              C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .data.__dso_handle
+                0x0000000000000000        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_main.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_mas_arm.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_mas_arm.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_mixer_super.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_stream.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_mas.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libmm7.a(mm_reverb.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .text.i2cGetData
+                0x0000000000000000       0x14 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ COMMON         0x0000000000000000        0x1 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.touchRead
+                0x0000000000000000       0x68 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.touchReadTemperature
+                0x0000000000000000       0x34 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.touchInit
+                0x0000000000000000       0xe4 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .text.sleepEnabled
+                0x0000000000000000        0xc C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.cdcWriteRegMask
+                0x0000000000000000       0x2a C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.cdcWriteRegArray
+                0x0000000000000000       0x6c C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.cdcTouchInit
+                0x0000000000000000       0x88 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .text.integerToBCD
+                0x0000000000000000       0x2a C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .text.rtcSetTimeAndDate
+                0x0000000000000000       0x28 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .text.rtcGetTime
+                0x0000000000000000       0x48 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .text.rtcSetTime
+                0x0000000000000000       0x26 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .text.getFreeNoiseChannel
+                0x0000000000000000        0xc C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .text.irqClear
+                0x0000000000000000       0x28 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoSendAddress
+                0x0000000000000000       0x2e C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoGetAddress
+                0x0000000000000000       0x4c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoCheckAddress
+                0x0000000000000000       0x20 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoSetAddressHandler
+                0x0000000000000000       0x5c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoCheckDatamsgLength
+                0x0000000000000000       0x34 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDivide
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiRemainder
+                0x0000000000000000        0x8 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDivMod
+                0x0000000000000000        0xc C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiCopy  0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiFastCopy
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiSqrt  0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiIsDebugger
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiUnpackBits
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressLZSSWram
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressLZSSVramNTR
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressLZSSVramTWL
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressHuffman
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressRLEWram
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiDecompressRLEVram
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiHalt  0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiGetSineTable
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiGetPitchTable
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiGetVolumeTable
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiSwitchToGBAMode
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text.swiSetHaltCR
+                0x0000000000000000        0x8 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.geterror
+                0x0000000000000000        0x8 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_cardinserted
+                0x0000000000000000        0x4 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_get_cid
+                0x0000000000000000       0x6c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_sdcard_readsectors
+                0x0000000000000000       0x18 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_sdcard_writesectors
+                0x0000000000000000       0x18 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_nand_readsectors
+                0x0000000000000000       0x18 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.sdmmc_nand_writesectors
+                0x0000000000000000       0x18 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .text          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ .data          0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ .bss           0x0000000000000000        0x0 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_call_via_rX.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_call_via_rX.o)
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+ .text          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+ .data          0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+ .bss           0x0000000000000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ewram            0x0000000002380000 0x0000000000b80000
+rom              0x0000000008000000 0x0000000002000000
+iwram            0x00000000037f8000 0x0000000000018000
+twl_ewram        0x0000000002e80000 0x0000000000070000
+twl_iwram        0x0000000003000000 0x0000000000040000
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x00000000037f8000                __iwram_start = ORIGIN (iwram)
+                0x0000000003810000                __iwram_top = (ORIGIN (iwram) + LENGTH (iwram))
+                0x000000000380ff00                __sp_irq = (__iwram_top - 0x100)
+                0x000000000380fe00                __sp_svc = (__sp_irq - 0x100)
+                0x000000000380fd00                __sp_usr = (__sp_svc - 0x100)
+                0x0000000003fffff8                __irq_flags = 0x3fffff8
+                0x0000000003ffffc0                __irq_flagsaux = 0x3ffffc0
+                0x0000000003fffffc                __irq_vector = 0x3fffffc
+
+.twl            0x0000000003000000      0xfa0 load address 0x0000000002e80000
+                0x0000000002e80000                __arm7i_lma__ = LOADADDR (.twl)
+                0x0000000003000000                __arm7i_start__ = .
+ *(.twl)
+ .twl           0x0000000003000000       0xf0 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x0000000003000000                i2cIRQHandler
+                0x000000000300005a                irqSetAUX
+                0x0000000003000080                irqClearAUX
+                0x00000000030000a8                irqDisableAUX
+                0x00000000030000cc                irqEnableAUX
+ *.twl*(.text .stub .text.* .gnu.linkonce.t.*)
+ .text.i2cWaitBusy
+                0x00000000030000f0       0x10 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .text.i2cDelay
+                0x0000000003000100       0x18 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000100                i2cDelay
+ .text.i2cStop  0x0000000003000118       0x40 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000118                i2cStop
+ .text.i2cGetResult
+                0x0000000003000158       0x18 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000158                i2cGetResult
+ .text.i2cSetDelay
+                0x0000000003000170       0x14 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000170                i2cSetDelay
+ .text.i2cSelectDevice
+                0x0000000003000184       0x24 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000184                i2cSelectDevice
+ .text.i2cSelectRegister
+                0x00000000030001a8       0x24 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x00000000030001a8                i2cSelectRegister
+ .text.i2cWriteRegister
+                0x00000000030001cc       0x5c C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x00000000030001cc                i2cWriteRegister
+ .text.i2cReadRegister
+                0x0000000003000228       0x64 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                0x0000000003000228                i2cReadRegister
+ .text.writeTSC
+                0x000000000300028c       0x3c C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.bankSwitchTSC
+                0x00000000030002c8       0x28 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.readTSC  0x00000000030002f0       0x50 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .text.cdcReadReg
+                0x0000000003000340       0x14 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                0x0000000003000340                cdcReadReg
+ .text.cdcReadRegArray
+                0x0000000003000354       0x78 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                0x0000000003000354                cdcReadRegArray
+ .text.cdcWriteReg
+                0x00000000030003cc       0x18 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                0x00000000030003cc                cdcWriteReg
+ .text.cdcTouchPenDown
+                0x00000000030003e4       0x28 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                0x00000000030003e4                cdcTouchPenDown
+ .text.cdcTouchRead
+                0x000000000300040c       0x74 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                0x000000000300040c                cdcTouchRead
+ .text.twlEnableSlot1
+                0x0000000003000480       0x58 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+                0x0000000003000480                twlEnableSlot1
+ .text.twlDisableSlot1
+                0x00000000030004d8       0x4c C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+                0x00000000030004d8                twlDisableSlot1
+ .text.setckl   0x0000000003000524       0x34 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .text.calcSDSize
+                0x0000000003000558       0x5e C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ *fill*         0x00000000030005b6        0x2 
+ .text.setTarget
+                0x00000000030005b8       0x44 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x00000000030005b8                setTarget
+ .text.sdmmc_send_command
+                0x00000000030005fc      0x264 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x00000000030005fc                sdmmc_send_command
+ .text.sdmmc_controller_init
+                0x0000000003000860      0x13c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000860                sdmmc_controller_init
+ .text.sdmmc_sdcard_init
+                0x000000000300099c      0x17c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x000000000300099c                sdmmc_sdcard_init
+ .text.sdmmc_nand_init
+                0x0000000003000b18      0x128 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000b18                sdmmc_nand_init
+ .text.sdmmc_readsectors
+                0x0000000003000c40       0x70 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000c40                sdmmc_readsectors
+ .text.sdmmc_writesectors
+                0x0000000003000cb0       0x70 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000cb0                sdmmc_writesectors
+ .text.sdmmcMsgHandler
+                0x0000000003000d20       0x6c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000d20                sdmmcMsgHandler
+ .text.sdmmc_nand_startup
+                0x0000000003000d8c       0x12 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000d8c                sdmmc_nand_startup
+ .text.sdmmc_sd_startup
+                0x0000000003000d9e       0x12 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000d9e                sdmmc_sd_startup
+ .text.sdmmcValueHandler
+                0x0000000003000db0       0x68 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                0x0000000003000db0                sdmmcValueHandler
+ .text.micSetAmp_TWL
+                0x0000000003000e18       0x84 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+                0x0000000003000e18                micSetAmp_TWL
+ .text.micReadData16_TWL
+                0x0000000003000e9c       0x68 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+                0x0000000003000e9c                micReadData16_TWL
+ *fill*         0x0000000003000f04        0x4 
+ .text.micReadData16_TWL.__stub
+                0x0000000003000f08       0x8c linker stubs
+ *.twl*(.rodata)
+ *.twl*(.roda)
+ *.twl*(.rodata.*)
+ .rodata.gaintbl.4973
+                0x0000000003000f98        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ *.twl*(.data)
+ *.twl*(.data.*)
+ .data.curBank.4722
+                0x0000000003000f9c        0x1 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ *.twl*(.gnu.linkonce.d*)
+                0x0000000003000fa0                . = ALIGN (0x4)
+ *fill*         0x0000000003000f9d        0x3 
+                0x0000000003000fa0                __arm7i_end__ = .
+
+.twl_bss        0x0000000003000fa0      0x14c
+                0x0000000003000fa0                __twl_bss_start__ = .
+ *(.twl_bss)
+ .twl_bss       0x0000000003000fa0       0xcc C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x0000000003000fa4                irqTableAUX
+ *.twl.*(.dynbss)
+ *.twl.*(.gnu.linkonce.b*)
+ *.twl.*(.bss*)
+ .bss.i2cCurrentDelay
+                0x000000000300106c        0x4 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .bss.deviceNAND
+                0x0000000003001070       0x3c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .bss.deviceSD  0x00000000030010ac       0x3c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .bss.sdmmc_controller_initialised
+                0x00000000030010e8        0x1 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ *.twl.*(COMMON)
+                0x00000000030010ec                . = ALIGN (0x4)
+ *fill*         0x00000000030010e9        0x3 
+                0x00000000030010ec                __twl_bss_end__ = .
+
+.crt0           0x0000000002380000      0x1c8
+ *(.crt0)
+ .crt0          0x0000000002380000      0x1c8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+                0x0000000002380000                _start
+                0x00000000023801c8                . = ALIGN (0x4)
+
+.text           0x00000000037f8000     0x75b0 load address 0x00000000023801c8
+                0x00000000023801c8                __arm7_lma__ = LOADADDR (.text)
+                0x00000000037f8000                __arm7_start__ = .
+ *(SORT_NONE(.init))
+ .init          0x00000000037f8000        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+                0x00000000037f8000                _init
+ .init          0x00000000037f8004        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+ *(.plt)
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text.deregister_tm_clones
+                0x00000000037f800c       0x2c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .text.register_tm_clones
+                0x00000000037f8038       0x34 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .text.__do_global_dtors_aux
+                0x00000000037f806c       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .text.frame_dummy
+                0x00000000037f809c       0x28 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .text          0x00000000037f80c4       0x4c main.o
+                0x00000000037f80c4                powerButtonCB
+                0x00000000037f80d0                VcountHandler
+                0x00000000037f80dc                ReturntoDSiMenu
+                0x00000000037f80f8                VblankHandler
+ .text.startup  0x00000000037f8110      0x130 main.o
+                0x00000000037f8110                main
+ .text          0x00000000037f8240      0x1f8 C:/devkitPro/libnds/lib\libmm7.a(mm_main.o)
+                0x00000000037f8240                mpp_call_r7
+                0x00000000037f8242                mpp_call_r1
+                0x00000000037f8244                mpp_call_r2
+                0x00000000037f8246                mpp_call_r3
+                0x00000000037f8248                mmSetEventHandler
+                0x00000000037f824e                mmLockChannels
+                0x00000000037f82d8                mmUnlockChannels
+                0x00000000037f82ec                mmSuspendIRQ_t
+                0x00000000037f8308                mmRestoreIRQ_t
+                0x00000000037f8328                mmIsInitialized
+                0x00000000037f832e                mmInit7
+                0x00000000037f8390                mmInstall
+                0x00000000037f83b0                mmGetSoundBank
+                0x00000000037f83bc                mmFrame
+ .text          0x00000000037f8438      0x314 C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o)
+                0x00000000037f8438                mmResetEffects
+                0x00000000037f8464                mmEffect
+                0x00000000037f847a                mmEffectEx
+                0x00000000037f85aa                mmEffectVolume
+                0x00000000037f85c6                mmEffectPanning
+                0x00000000037f85da                mmEffectRate
+                0x00000000037f85ee                mmEffectCancel
+                0x00000000037f8628                mmEffectRelease
+                0x00000000037f864e                mmEffectScaleRate
+                0x00000000037f8662                mmSetEffectsVolume
+                0x00000000037f8670                mmEffectCancelAll
+                0x00000000037f86b0                mmUpdateEffects
+ .text          0x00000000037f874c      0x648 C:/devkitPro/libnds/lib\libmm7.a(mm_mas_arm.o)
+                0x00000000037f874c                mmAllocChannel
+                0x00000000037f87c0                mmReadPattern
+                0x00000000037f88ac                mmUpdateChannel_T0
+                0x00000000037f8aec                mmUpdateChannel_TN
+                0x00000000037f8c8c                mmGetPeriod
+                0x00000000037f8cd0                note_table_oct
+                0x00000000037f8cee                note_table_mod
+ .text          0x00000000037f8d94     0x1690 C:/devkitPro/libnds/lib\libmm7.a(mm_mixer_super.o)
+                0x00000000037f8e14                mmMixerPre
+                0x00000000037f8ee8                mmMixerMix
+                0x00000000037f9a34                mmVolumeTable
+                0x00000000037fa1aa                mmMixerSetSource
+                0x00000000037fa1c0                mmMixerSetFreq
+                0x00000000037fa1e0                mmMixerMulFreq
+                0x00000000037fa1fa                mmMixerStopChannel
+                0x00000000037fa204                mmMixerChannelActive
+                0x00000000037fa20e                mmMixerSetVolume
+                0x00000000037fa216                mmMixerSetPan
+                0x00000000037fa228                mmMixerInit
+                0x00000000037fa22a                mmSelectMode
+ .text          0x00000000037fa424      0x7ec C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o)
+                0x00000000037fa424                mmSetupComms
+                0x00000000037fa544                mmSendUpdateToARM9
+                0x00000000037fa578                mmARM9msg
+                0x00000000037fa5b8                mmProcessComms
+ .text          0x00000000037fac10      0x428 C:/devkitPro/libnds/lib\libmm7.a(mm_stream.o)
+                0x00000000037fac10                mmStreamOpen
+                0x00000000037facf0                mmStreamGetPosition
+                0x00000000037fad2a                mmStreamUpdate
+                0x00000000037faf0c                mmStreamClose
+                0x00000000037faf42                mmStreamBegin
+                0x00000000037fafd8                mmStreamEnd
+ .text          0x00000000037fb038     0x1b58 C:/devkitPro/libnds/lib\libmm7.a(mm_mas.o)
+                0x00000000037fb088                mm_reset_channels
+                0x00000000037fb0de                mmStart
+                0x00000000037fb0f2                mmJingle
+                0x00000000037fb0f8                mmPlayModule
+                0x00000000037fb1c0                mmPause
+                0x00000000037fb1dc                mmResume
+                0x00000000037fb1ec                mmActive
+                0x00000000037fb1f2                mmActiveSub
+                0x00000000037fb1f8                mmSetModuleVolume
+                0x00000000037fb208                mmSetJingleVolume
+                0x00000000037fb244                mmPosition
+                0x00000000037fb25e                mmSetModuleTempo
+                0x00000000037fb290                mmSetModulePitch
+                0x00000000037fb2d0                mmSetResolution
+                0x00000000037fb300                mmStop
+                0x00000000037fb3e8                mmPulse
+                0x00000000037fb448                mppProcessTick
+                0x00000000037fb5c4                mpp_Channel_NewNote
+                0x00000000037fb6cc                mpp_Update_ACHN_notest
+                0x00000000037fbaca                mpp_Process_VolumeCommand
+                0x00000000037fbd02                mpp_Process_Effect
+                0x00000000037fc450                ST3_FREQTABLE
+                0x00000000037fc870                IT_PitchTable
+ .text          0x00000000037fcb90      0x280 C:/devkitPro/libnds/lib\libmm7.a(mm_reverb.o)
+                0x00000000037fcb90                mmReverbEnable
+                0x00000000037fcbae                mmReverbDisable
+                0x00000000037fcbf2                mmReverbConfigure
+                0x00000000037fcd54                mmReverbStart
+                0x00000000037fcd9c                mmReverbStop
+ .text.inputGetAndSend
+                0x00000000037fce10       0xac C:/devkitPro/libnds/lib\libnds7.a(input.o)
+                0x00000000037fce10                inputGetAndSend
+ .text.SerialWaitBusy
+                0x00000000037fcebc       0x10 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.cdcIsAvailable
+                0x00000000037fcecc       0x24 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.CheckStylus
+                0x00000000037fcef0       0x88 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .text.readTouchValue
+                0x00000000037fcf78      0x16c C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                0x00000000037fcf78                readTouchValue
+ .text.UpdateRange
+                0x00000000037fd0e4       0x6c C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                0x00000000037fd0e4                UpdateRange
+ .text.touchPenDown
+                0x00000000037fd150       0x34 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                0x00000000037fd150                touchPenDown
+ .text.touchReadXY
+                0x00000000037fd184      0x198 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                0x00000000037fd184                touchReadXY
+ .text.enableSlot1
+                0x00000000037fd31c       0x18 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037fd31c                enableSlot1
+ .text.disableSlot1
+                0x00000000037fd334       0x18 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037fd334                disableSlot1
+ .text.powerValueHandler
+                0x00000000037fd34c      0x154 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037fd34c                powerValueHandler
+ .text.systemSleep
+                0x00000000037fd4a0       0x20 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037fd4a0                systemSleep
+ .text.installSystemFIFO
+                0x00000000037fd4c0       0x4c C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037fd4c0                installSystemFIFO
+ .text.writePowerManagement
+                0x00000000037fd50c       0x60 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+                0x00000000037fd50c                writePowerManagement
+ .text.ledBlink
+                0x00000000037fd56c       0x22 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+                0x00000000037fd56c                ledBlink
+ *fill*         0x00000000037fd58e        0x2 
+ .text.SerialWaitBusy
+                0x00000000037fd590       0x10 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .text.readwriteSPI
+                0x00000000037fd5a0       0x1c C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .text.readFirmware
+                0x00000000037fd5bc       0x74 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+                0x00000000037fd5bc                readFirmware
+ .text.writeFirmware
+                0x00000000037fd630      0x138 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+                0x00000000037fd630                writeFirmware
+ .text.firmwareMsgHandler
+                0x00000000037fd768       0x48 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+                0x00000000037fd768                firmwareMsgHandler
+ .text.readUserSettings
+                0x00000000037fd7b0       0xcc C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+                0x00000000037fd7b0                readUserSettings
+ .text.syncRTC  0x00000000037fd87c       0x20 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fd87c                syncRTC
+ .text.BCDToInteger
+                0x00000000037fd89c       0x24 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fd89c                BCDToInteger
+ .text.rtcTransaction
+                0x00000000037fd8c0       0xf4 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fd8c0                rtcTransaction
+ .text.rtcReset
+                0x00000000037fd9b4       0x3e C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fd9b4                rtcReset
+ .text.rtcGetTimeAndDate
+                0x00000000037fd9f2       0x48 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fd9f2                rtcGetTimeAndDate
+ *fill*         0x00000000037fda3a        0x2 
+ .text.resyncClock
+                0x00000000037fda3c       0xd4 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fda3c                resyncClock
+ .text.initClockIRQ
+                0x00000000037fdb10       0x78 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                0x00000000037fdb10                initClockIRQ
+ .text.micSwapHandler
+                0x00000000037fdb88       0x20 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdb88                micSwapHandler
+ .text.getFreeNoiseChannel.part.0
+                0x00000000037fdba8       0x20 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .text.getFreeChannel
+                0x00000000037fdbc8       0x1c C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdbc8                getFreeChannel
+ .text.getFreePSGChannel
+                0x00000000037fdbe4       0x1c C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdbe4                getFreePSGChannel
+ .text.soundDataHandler
+                0x00000000037fdc00      0x140 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdc00                soundDataHandler
+ .text.enableSound
+                0x00000000037fdd40       0x40 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdd40                enableSound
+ .text.disableSound
+                0x00000000037fdd80       0x3c C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdd80                disableSound
+ .text.soundCommandHandler
+                0x00000000037fddbc      0x100 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fddbc                soundCommandHandler
+ .text.installSoundFIFO
+                0x00000000037fdebc       0x24 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                0x00000000037fdebc                installSoundFIFO
+ .text.irqDummy
+                0x00000000037fdee0        0x2 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fdee0                irqDummy
+ *fill*         0x00000000037fdee2        0x2 
+ .text.__irqClear
+                0x00000000037fdee4       0x1c C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .text.__irqSet.part.0
+                0x00000000037fdf00       0x22 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ *fill*         0x00000000037fdf22        0x2 
+ .text.setPowerButtonCB
+                0x00000000037fdf24       0x1c C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fdf24                setPowerButtonCB
+ .text.irqSet   0x00000000037fdf40       0x5c C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fdf40                irqSet
+ .text.irqInitHandler
+                0x00000000037fdf9c       0x44 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fdf9c                irqInitHandler
+ .text.irqEnable
+                0x00000000037fdfe0       0x64 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fdfe0                irqEnable
+ .text.irqDisable
+                0x00000000037fe044       0x68 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fe044                irqDisable
+ .text.irqInit  0x00000000037fe0ac       0x58 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x00000000037fe0ac                irqInit
+ .text.systemErrorExit
+                0x00000000037fe104        0x4 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+                0x00000000037fe104                systemErrorExit
+ .text.__libnds_exit
+                0x00000000037fe108       0x54 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+                0x00000000037fe108                __libnds_exit
+ .text.fifo_allocBlock
+                0x00000000037fe15c       0x40 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifo_freeBlock
+                0x00000000037fe19c       0x30 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifo_waitBlock
+                0x00000000037fe1cc       0x40 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifo_queueBlock
+                0x00000000037fe20c       0x44 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoInternalSendInterrupt
+                0x00000000037fe250       0x64 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoInternalSend
+                0x00000000037fe2b4       0xdc C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoSendValue32
+                0x00000000037fe390       0x38 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe390                fifoSendValue32
+ .text.fifoSendDatamsg
+                0x00000000037fe3c8       0x6c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe3c8                fifoSendDatamsg
+ .text.fifoGetValue32
+                0x00000000037fe434       0x4c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe434                fifoGetValue32
+ .text.fifoGetDatamsg
+                0x00000000037fe480       0xbc C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe480                fifoGetDatamsg
+ .text.fifoInternalRecvInterrupt
+                0x00000000037fe53c      0x2c4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .text.fifoCheckDatamsg
+                0x00000000037fe800       0x20 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe800                fifoCheckDatamsg
+ .text.fifoSetDatamsgHandler
+                0x00000000037fe820       0x8c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe820                fifoSetDatamsgHandler
+ .text.fifoCheckValue32
+                0x00000000037fe8ac       0x20 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe8ac                fifoCheckValue32
+ .text.fifoSetValue32Handler
+                0x00000000037fe8cc       0x5c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe8cc                fifoSetValue32Handler
+ .text.fifoInit
+                0x00000000037fe928       0xf8 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037fe928                fifoInit
+ .text.swiWaitForVBlank
+                0x00000000037fea20       0x10 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+                0x00000000037fea20                swiWaitForVBlank
+ .text.swiIntrWait
+                0x00000000037fea30       0x44 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+                0x00000000037fea30                swiIntrWait
+ .text          0x00000000037fea74       0xec C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+                0x00000000037fea74                IntrMain
+ .text          0x00000000037feb60       0xa4 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+                0x00000000037feb60                nocashWrite
+                0x00000000037feb62                nocashMessage
+ .text.swiSoftReset
+                0x00000000037fec04       0x10 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+                0x00000000037fec04                swiSoftReset
+ .text.swiDelay
+                0x00000000037fec14        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                0x00000000037fec14                swiDelay
+ .text.swiSleep
+                0x00000000037fec18        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                0x00000000037fec18                swiSleep
+ .text.swiChangeSoundBias
+                0x00000000037fec1c        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                0x00000000037fec1c                swiChangeSoundBias
+ .text.swiCRC16
+                0x00000000037fec20        0x4 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                0x00000000037fec20                swiCRC16
+ .text.SerialWaitBusy
+                0x00000000037fec24       0x10 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .text.cdcIsAvailable
+                0x00000000037fec34       0x24 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .text.micSetAmp_NTR
+                0x00000000037fec58       0x4c C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fec58                micSetAmp_NTR
+ .text.micReadData8_NTR
+                0x00000000037feca4       0x50 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037feca4                micReadData8_NTR
+ .text.micReadData12_NTR
+                0x00000000037fecf4       0x50 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fecf4                micReadData12_NTR
+ .text.micSetAmp
+                0x00000000037fed44       0x34 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fed44                micSetAmp
+ .text.micReadData8
+                0x00000000037fed78       0x30 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fed78                micReadData8
+ .text.micReadData12
+                0x00000000037feda8       0x30 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037feda8                micReadData12
+ .text.micTimerHandler
+                0x00000000037fedd8       0x88 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fedd8                micTimerHandler
+ .text.micStartRecording
+                0x00000000037fee60       0x9c C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037fee60                micStartRecording
+ .text.micStopRecording
+                0x00000000037feefc       0x6c C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                0x00000000037feefc                micStopRecording
+ .text.systemShutDown
+                0x00000000037fef68       0x30 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+                0x00000000037fef68                systemShutDown
+ .text          0x00000000037fef98       0x14 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+                0x00000000037fef98                __gnu_thumb1_case_uqi
+ .text          0x00000000037fefac      0x11c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+                0x00000000037fefac                __aeabi_uidiv
+                0x00000000037fefac                __udivsi3
+                0x00000000037ff0a8                __aeabi_uidivmod
+ .text          0x00000000037ff0c8      0x150 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+                0x00000000037ff0c8                __divsi3
+                0x00000000037ff0c8                __aeabi_idiv
+                0x00000000037ff1f8                __aeabi_idivmod
+ .text          0x00000000037ff218        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+                0x00000000037ff218                __aeabi_idiv0
+                0x00000000037ff218                __aeabi_ldiv0
+ .text          0x00000000037ff21c       0x3c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_call_via_rX.o)
+                0x00000000037ff21c                _call_via_r0
+                0x00000000037ff220                _call_via_r1
+                0x00000000037ff224                _call_via_r2
+                0x00000000037ff228                _call_via_r3
+                0x00000000037ff22c                _call_via_r4
+                0x00000000037ff230                _call_via_r5
+                0x00000000037ff234                _call_via_r6
+                0x00000000037ff238                _call_via_r7
+                0x00000000037ff23c                _call_via_r8
+                0x00000000037ff240                _call_via_r9
+                0x00000000037ff244                _call_via_sl
+                0x00000000037ff248                _call_via_fp
+                0x00000000037ff24c                _call_via_ip
+                0x00000000037ff250                _call_via_sp
+                0x00000000037ff254                _call_via_lr
+ .text.__libc_init_array
+                0x00000000037ff258       0x50 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+                0x00000000037ff258                __libc_init_array
+ .text.memcmp   0x00000000037ff2a8       0x54 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+                0x00000000037ff2a8                memcmp
+ .text.memcpy   0x00000000037ff2fc       0x9c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+                0x00000000037ff2fc                memcpy
+ .text.memset   0x00000000037ff398       0xb0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+                0x00000000037ff398                memset
+ .text.memset.__stub
+                0x00000000037ff448      0x14c linker stubs
+ *(.text.*personality*)
+ *(.gnu.warning)
+ *(.glue_7t)
+ .glue_7t       0x00000000037ff5b0        0x0 linker stubs
+ *(.glue_7)
+ .glue_7        0x00000000037ff5b0        0x0 linker stubs
+ *(.vfp11_veneer)
+ .vfp11_veneer  0x00000000037ff5b0        0x0 linker stubs
+                0x00000000037ff5b0                . = ALIGN (0x4)
+
+.v4_bx          0x00000000037ff5b0        0x0 load address 0x0000000002387778
+ .v4_bx         0x00000000037ff5b0        0x0 linker stubs
+
+.iplt           0x00000000037ff5b0        0x0 load address 0x0000000002387778
+ .iplt          0x00000000037ff5b0        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+
+.fini           0x00000000037ff5b0        0xc load address 0x0000000002387778
+ *(.fini)
+ .fini          0x00000000037ff5b0        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+                0x00000000037ff5b0                _fini
+ .fini          0x00000000037ff5b4        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+
+.rodata         0x00000000037ff5bc       0x30 load address 0x0000000002387784
+ *(.rodata)
+ *all.rodata*(*)
+ *(.roda)
+ *(.rodata.*)
+ .rodata.str1.4
+                0x00000000037ff5bc       0x14 main.o
+                                         0x11 (size before relaxing)
+ .rodata.ydays  0x00000000037ff5d0       0x1a C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ *(.gnu.linkonce.r*)
+                0x00000000037ff5ec                . = ALIGN (0x4)
+ *fill*         0x00000000037ff5ea        0x2 
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+
+.ARM.exidx      0x00000000037ff5ec        0x0 load address 0x00000000023877b4
+                0x00000000037ff5ec                __exidx_start = .
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x00000000037ff5ec                __exidx_end = .
+
+.preinit_array  0x00000000037ff5ec        0x0 load address 0x00000000023877b4
+                0x00000000037ff5ec                . = ALIGN (0x4)
+                0x00000000037ff5ec                PROVIDE (__preinit_array_start = .)
+ *(.preinit_array)
+                0x00000000037ff5ec                PROVIDE (__preinit_array_end = .)
+
+.init_array     0x00000000037ff5ec        0x4 load address 0x00000000023877b4
+                0x00000000037ff5ec                PROVIDE (__init_array_start = .)
+ *(.init_array)
+ .init_array    0x00000000037ff5ec        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+                0x00000000037ff5f0                PROVIDE (__init_array_end = .)
+
+.fini_array     0x00000000037ff5f0        0x4 load address 0x00000000023877b8
+                [!provide]                        PROVIDE (__fini_array_start = .)
+ *(.fini_array)
+ .fini_array    0x00000000037ff5f0        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+                [!provide]                        PROVIDE (__fini_array_end = .)
+
+.ctors          0x00000000037ff5f4        0x0 load address 0x00000000023877bc
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT_BY_NAME(.ctors.*))
+ *(.ctors)
+                0x00000000037ff5f4                . = ALIGN (0x4)
+
+.dtors          0x00000000037ff5f4        0x0 load address 0x00000000023877bc
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT_BY_NAME(.dtors.*))
+ *(.dtors)
+                0x00000000037ff5f4                . = ALIGN (0x4)
+
+.eh_frame       0x00000000037ff5f4        0x4 load address 0x00000000023877bc
+ *(.eh_frame)
+ .eh_frame      0x00000000037ff5f4        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .eh_frame      0x00000000037ff5f4        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+                0x00000000037ff5f8                . = ALIGN (0x4)
+
+.rel.dyn        0x00000000037ff5f8        0x0 load address 0x00000000023877c0
+ .rel.iplt      0x00000000037ff5f8        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+
+.gcc_except_table
+                0x00000000037ff5f8        0x0 load address 0x00000000023877c0
+ *(.gcc_except_table)
+                0x00000000037ff5f8                . = ALIGN (0x4)
+
+.jcr
+ *(.jcr)
+
+.got
+ *(.got.plt)
+ *(.got)
+
+.data           0x00000000037ff5f8       0x1c load address 0x00000000023877c0
+                0x00000000037ff5f8                __data_start = ABSOLUTE (.)
+ *(.data)
+ .data          0x00000000037ff5f8        0x4 main.o
+                0x00000000037ff5f8                SCFG_EXT
+ *(.data.*)
+ .data.range    0x00000000037ff5fc        0x1 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .data.sleepIsEnabled
+                0x00000000037ff5fd        0x1 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x00000000037ff5fd                sleepIsEnabled
+ .data.fifo_buffer_free
+                0x00000000037ff5fe        0x4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037ff5fe                fifo_buffer_free
+ *fill*         0x00000000037ff602        0x2 
+ .data.fifo_freewords
+                0x00000000037ff604        0x4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037ff604                fifo_freewords
+ .data.fifo_receive_queue
+                0x00000000037ff608        0x4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037ff608                fifo_receive_queue
+ .data.fifo_send_queue
+                0x00000000037ff60c        0x4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000037ff60c                fifo_send_queue
+ .data.eightBit
+                0x00000000037ff610        0x1 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ *(.gnu.linkonce.d*)
+                0x00000000037ff614                . = ALIGN (0x4)
+ *fill*         0x00000000037ff611        0x3 
+                0x00000000037ff614                __data_end = ABSOLUTE (.)
+
+.igot.plt       0x00000000037ff614        0x0 load address 0x00000000023877dc
+ .igot.plt      0x00000000037ff614        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+
+.tm_clone_table
+                0x00000000037ff614        0x0 load address 0x00000000023877dc
+ .tm_clone_table
+                0x00000000037ff614        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .tm_clone_table
+                0x00000000037ff614        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+
+.bss            0x00000000037ff614     0x3a18
+                0x00000000037ff614                __arm7_end__ = .
+                0x00000000037ff614                __bss_start = ABSOLUTE (.)
+                0x00000000037ff614                __bss_start__ = ABSOLUTE (.)
+ *(.dynbss)
+ *(.gnu.linkonce.b*)
+ *(.bss*)
+ .bss.completed.8914
+                0x00000000037ff614        0x1 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ *fill*         0x00000000037ff615        0x3 
+ .bss.object.8919
+                0x00000000037ff618       0x18 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .bss           0x00000000037ff630        0x1 main.o
+                0x00000000037ff630                exitflag
+ *fill*         0x00000000037ff631        0x3 
+ .bss           0x00000000037ff634      0x899 C:/devkitPro/libnds/lib\libmm7.a(mm_main.o)
+                0x00000000037ff634                mmCallback
+                0x00000000037ff638                mmModuleCount
+                0x00000000037ff63c                mmModuleBank
+                0x00000000037ff640                mmSampleBank
+                0x00000000037ff644                mm_ch_mask
+                0x00000000037ff648                mm_vblank_function
+                0x00000000037ffecc                mmInitialized
+ *fill*         0x00000000037ffecd        0x3 
+ .bss           0x00000000037ffed0       0x2d C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o)
+                0x00000000037ffef4                mm_sfx_bitmask
+                0x00000000037ffef8                mm_sfx_clearmask
+ *fill*         0x00000000037ffefd        0x3 
+ .bss           0x00000000037fff00     0x2362 C:/devkitPro/libnds/lib\libmm7.a(mm_mixer_super.o)
+                0x00000000037fff00                mm_mix_channels
+                0x0000000003802261                mm_mixing_mode
+ .bss           0x0000000003802262      0x10c C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o)
+ *fill*         0x000000000380236e        0x2 
+ .bss           0x0000000003802370       0x2c C:/devkitPro/libnds/lib\libmm7.a(mm_stream.o)
+ .bss           0x000000000380239c      0x148 C:/devkitPro/libnds/lib\libmm7.a(mm_mas.o)
+                0x000000000380239c                mmLayerMain
+                0x00000000038023d4                mmLayerSub
+                0x000000000380240c                mpp_vars
+                0x000000000380241c                mpp_layerp
+                0x0000000003802420                mpp_channels
+                0x0000000003802430                mpp_nchannels
+                0x0000000003802431                mpp_clayer
+                0x0000000003802434                mm_achannels
+                0x0000000003802438                mm_pchannels
+                0x000000000380243c                mm_num_mch
+                0x0000000003802440                mm_num_ach
+                0x0000000003802444                mm_schannels
+ .bss           0x00000000038024e4        0x6 C:/devkitPro/libnds/lib\libmm7.a(mm_reverb.o)
+ .bss.penDown.4830
+                0x00000000038024ea        0x1 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ *fill*         0x00000000038024eb        0x1 
+ .bss.sleepCounter.4831
+                0x00000000038024ec        0x4 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .bss.last_time_touched
+                0x00000000038024f0        0x1 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.range_counter_1
+                0x00000000038024f1        0x1 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.range_counter_2
+                0x00000000038024f2        0x1 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ *fill*         0x00000000038024f3        0x1 
+ .bss.xoffset   0x00000000038024f4        0x4 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.xscale    0x00000000038024f8        0x4 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.yoffset   0x00000000038024fc        0x4 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.yscale    0x0000000003802500        0x4 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .bss.__dsimode
+                0x0000000003802504        0x1 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                0x0000000003802504                __dsimode
+ *fill*         0x0000000003802505        0x3 
+ .bss.processing
+                0x0000000003802508        0x4 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x0000000003802508                processing
+ .bss.micTimer  0x000000000380250c        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss.microphone_back_buffer
+                0x0000000003802510        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss.microphone_buffer_length
+                0x0000000003802514        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss.microphone_front_buffer
+                0x0000000003802518        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss.sampleCount
+                0x000000000380251c        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .bss.swapCallback
+                0x0000000003802520        0x4 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ *(COMMON)
+ COMMON         0x0000000003802524       0xc8 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                0x0000000003802524                irqTable
+ COMMON         0x00000000038025ec      0xa40 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                0x00000000038025ec                fifo_datamsg_data
+                0x000000000380262c                fifo_buffer
+                0x0000000003802e2c                fifo_value32_func
+                0x0000000003802e6c                fifo_address_func
+                0x0000000003802eac                fifo_value32_data
+                0x0000000003802eec                fifo_value32_queue
+                0x0000000003802f2c                fifo_data_queue
+                0x0000000003802f6c                fifo_address_data
+                0x0000000003802fac                fifo_datamsg_func
+                0x0000000003802fec                fifo_address_queue
+                0x000000000380302c                . = ALIGN (0x4)
+                0x000000000380302c                __bss_end__ = ABSOLUTE (.)
+                0x000000000380302c                __end__ = ABSOLUTE (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x22
+ *(.comment)
+ .comment       0x0000000000000000       0x22 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+                                         0x23 (size before relaxing)
+ .comment       0x0000000000000022       0x23 main.o
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .comment       0x0000000000000022       0x23 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .comment       0x0000000000000022       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+
+.ARM.attributes
+                0x0000000000000000       0x26
+ .ARM.attributes
+                0x0000000000000000       0x1a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+ .ARM.attributes
+                0x000000000000001a       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+ .ARM.attributes
+                0x0000000000000036       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+ .ARM.attributes
+                0x0000000000000060       0x26 main.o
+ .ARM.attributes
+                0x0000000000000086       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_main.o)
+ .ARM.attributes
+                0x00000000000000a0       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_effect.o)
+ .ARM.attributes
+                0x00000000000000ba       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_mas_arm.o)
+ .ARM.attributes
+                0x00000000000000d4       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_mixer_super.o)
+ .ARM.attributes
+                0x00000000000000ee       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_comms7.o)
+ .ARM.attributes
+                0x0000000000000108       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_stream.o)
+ .ARM.attributes
+                0x0000000000000122       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_mas.o)
+ .ARM.attributes
+                0x000000000000013c       0x1a C:/devkitPro/libnds/lib\libmm7.a(mm_reverb.o)
+ .ARM.attributes
+                0x0000000000000156       0x26 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .ARM.attributes
+                0x000000000000017c       0x26 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .ARM.attributes
+                0x00000000000001a2       0x26 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .ARM.attributes
+                0x00000000000001c8       0x26 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .ARM.attributes
+                0x00000000000001ee       0x26 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .ARM.attributes
+                0x0000000000000214       0x26 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .ARM.attributes
+                0x000000000000023a       0x26 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .ARM.attributes
+                0x0000000000000260       0x26 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .ARM.attributes
+                0x0000000000000286       0x26 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .ARM.attributes
+                0x00000000000002ac       0x26 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .ARM.attributes
+                0x00000000000002d2       0x26 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .ARM.attributes
+                0x00000000000002f8       0x26 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .ARM.attributes
+                0x000000000000031e       0x26 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .ARM.attributes
+                0x0000000000000344       0x26 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .ARM.attributes
+                0x000000000000036a       0x20 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .ARM.attributes
+                0x000000000000038a       0x1a C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .ARM.attributes
+                0x00000000000003a4       0x1a C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .ARM.attributes
+                0x00000000000003be       0x1a C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .ARM.attributes
+                0x00000000000003d8       0x1a C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .ARM.attributes
+                0x00000000000003f2       0x26 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .ARM.attributes
+                0x0000000000000418       0x26 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .ARM.attributes
+                0x000000000000043e       0x26 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .ARM.attributes
+                0x0000000000000464       0x26 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+ .ARM.attributes
+                0x000000000000048a       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_thumb1_case_uqi.o)
+ .ARM.attributes
+                0x00000000000004a6       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_udivsi3.o)
+ .ARM.attributes
+                0x00000000000004c2       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_divsi3.o)
+ .ARM.attributes
+                0x00000000000004de       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_dvmd_tls.o)
+ .ARM.attributes
+                0x00000000000004fa       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a(_call_via_rX.o)
+ .ARM.attributes
+                0x0000000000000516       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .ARM.attributes
+                0x0000000000000540       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcmp.o)
+ .ARM.attributes
+                0x000000000000056a       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memcpy-stub.o)
+ .ARM.attributes
+                0x0000000000000594       0x2a c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-memset.o)
+ .ARM.attributes
+                0x00000000000005be       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+ .ARM.attributes
+                0x00000000000005ee       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000      0x7a0
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000       0x28 main.o
+ .debug_aranges
+                0x0000000000000028       0x68 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_aranges
+                0x0000000000000090       0x20 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_aranges
+                0x00000000000000b0       0x68 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_aranges
+                0x0000000000000118       0x48 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_aranges
+                0x0000000000000160       0x28 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_aranges
+                0x0000000000000188       0x70 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_aranges
+                0x00000000000001f8       0x40 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_aranges
+                0x0000000000000238       0x20 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_aranges
+                0x0000000000000258       0x70 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_aranges
+                0x00000000000002c8       0x28 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_aranges
+                0x00000000000002f0       0x68 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_aranges
+                0x0000000000000358       0x90 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_aranges
+                0x00000000000003e8       0x28 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_aranges
+                0x0000000000000410       0xc0 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_aranges
+                0x00000000000004d0       0x28 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .debug_aranges
+                0x00000000000004f8       0x20 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .debug_aranges
+                0x0000000000000518       0x20 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .debug_aranges
+                0x0000000000000538       0x20 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .debug_aranges
+                0x0000000000000558       0xd8 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .debug_aranges
+                0x0000000000000630       0xb8 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_aranges
+                0x00000000000006e8       0x70 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_aranges
+                0x0000000000000758       0x20 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_aranges
+                0x0000000000000778       0x28 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x0000000000000000     0xf9a7
+ *(.debug_info)
+ .debug_info    0x0000000000000000      0x922 main.o
+ .debug_info    0x0000000000000922      0x46b C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_info    0x0000000000000d8d      0x62d C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_info    0x00000000000013ba     0x1cb0 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_info    0x000000000000306a      0x8e5 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_info    0x000000000000394f      0x31d C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_info    0x0000000000003c6c      0x7f0 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_info    0x000000000000445c     0x13be C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_info    0x000000000000581a      0xeaa C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_info    0x00000000000066c4     0x14c2 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_info    0x0000000000007b86      0x2c9 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_info    0x0000000000007e4f      0xb23 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_info    0x0000000000008972      0xd18 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_info    0x000000000000968a      0xc23 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_info    0x000000000000a2ad     0x1d77 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_info    0x000000000000c024       0x22 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .debug_info    0x000000000000c046       0x26 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .debug_info    0x000000000000c06c       0x26 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .debug_info    0x000000000000c092       0x26 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .debug_info    0x000000000000c0b8       0x22 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .debug_info    0x000000000000c0da     0x23a7 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_info    0x000000000000e481      0xecd C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_info    0x000000000000f34e      0x261 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_info    0x000000000000f5af      0x3f8 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_abbrev   0x0000000000000000     0x373e
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000      0x2a8 main.o
+ .debug_abbrev  0x00000000000002a8      0x212 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_abbrev  0x00000000000004ba      0x200 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_abbrev  0x00000000000006ba      0x4e9 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_abbrev  0x0000000000000ba3      0x238 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_abbrev  0x0000000000000ddb      0x1da C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_abbrev  0x0000000000000fb5      0x2a7 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_abbrev  0x000000000000125c      0x411 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_abbrev  0x000000000000166d      0x258 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_abbrev  0x00000000000018c5      0x3b0 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_abbrev  0x0000000000001c75      0x176 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_abbrev  0x0000000000001deb      0x331 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_abbrev  0x000000000000211c      0x398 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_abbrev  0x00000000000024b4      0x284 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_abbrev  0x0000000000002738      0x558 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_abbrev  0x0000000000002c90       0x12 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .debug_abbrev  0x0000000000002ca2       0x14 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .debug_abbrev  0x0000000000002cb6       0x14 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .debug_abbrev  0x0000000000002cca       0x14 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .debug_abbrev  0x0000000000002cde       0x12 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .debug_abbrev  0x0000000000002cf0      0x4cd C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_abbrev  0x00000000000031bd      0x2f5 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_abbrev  0x00000000000034b2      0x118 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_abbrev  0x00000000000035ca      0x174 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_line     0x0000000000000000     0x7d1c
+ *(.debug_line)
+ .debug_line    0x0000000000000000      0x37b main.o
+ .debug_line    0x000000000000037b      0x442 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_line    0x00000000000007bd      0x2f6 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_line    0x0000000000000ab3      0xb70 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_line    0x0000000000001623      0x4f8 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_line    0x0000000000001b1b      0x2db C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_line    0x0000000000001df6      0x67e C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_line    0x0000000000002474      0x5fc C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_line    0x0000000000002a70      0x303 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_line    0x0000000000002d73      0x833 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_line    0x00000000000035a6      0x303 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_line    0x00000000000038a9      0x603 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_line    0x0000000000003eac      0x81e C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_line    0x00000000000046ca      0x2ad C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_line    0x0000000000004977      0xfbd C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_line    0x0000000000005934       0xaa C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .debug_line    0x00000000000059de       0xd2 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+ .debug_line    0x0000000000005ab0       0xa4 C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+ .debug_line    0x0000000000005b54       0x95 C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+ .debug_line    0x0000000000005be9      0x215 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .debug_line    0x0000000000005dfe     0x1383 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_line    0x0000000000007181      0x74b C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_line    0x00000000000078cc      0x178 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_line    0x0000000000007a44      0x2d8 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_frame    0x0000000000000000     0x1054
+ *(.debug_frame)
+ .debug_frame   0x0000000000000000       0x88 main.o
+ .debug_frame   0x0000000000000088      0x104 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_frame   0x000000000000018c       0x30 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_frame   0x00000000000001bc      0x128 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_frame   0x00000000000002e4       0xa0 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_frame   0x0000000000000384       0x48 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_frame   0x00000000000003cc      0x140 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_frame   0x000000000000050c       0x9c C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_frame   0x00000000000005a8       0x34 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_frame   0x00000000000005dc      0x15c C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_frame   0x0000000000000738       0x50 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_frame   0x0000000000000788       0xfc C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_frame   0x0000000000000884      0x170 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_frame   0x00000000000009f4       0x3c C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_frame   0x0000000000000a30      0x26c C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_frame   0x0000000000000c9c      0x20c C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_frame   0x0000000000000ea8      0x140 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_frame   0x0000000000000fe8       0x28 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_frame   0x0000000000001010       0x44 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_str      0x0000000000000000     0x3192
+ *(.debug_str)
+ .debug_str     0x0000000000000000      0x7aa main.o
+                                        0x815 (size before relaxing)
+ .debug_str     0x00000000000007aa      0x223 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+                                        0x2ed (size before relaxing)
+ .debug_str     0x00000000000009cd      0x274 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+                                        0x576 (size before relaxing)
+ .debug_str     0x0000000000000c41      0xce9 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+                                        0xfb8 (size before relaxing)
+ .debug_str     0x000000000000192a      0x1ce C:/devkitPro/libnds/lib\libnds7.a(system.o)
+                                        0x740 (size before relaxing)
+ .debug_str     0x0000000000001af8       0x54 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+                                        0x36a (size before relaxing)
+ .debug_str     0x0000000000001b4c      0x120 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+                                        0x33a (size before relaxing)
+ .debug_str     0x0000000000001c6c       0xe8 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+                                        0x94f (size before relaxing)
+ .debug_str     0x0000000000001d54       0xf8 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+                                        0x859 (size before relaxing)
+ .debug_str     0x0000000000001e4c      0x226 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+                                        0x9e7 (size before relaxing)
+ .debug_str     0x0000000000002072       0x59 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+                                        0x294 (size before relaxing)
+ .debug_str     0x00000000000020cb      0x1c1 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+                                        0x87d (size before relaxing)
+ .debug_str     0x000000000000228c      0x1c3 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+                                        0x73d (size before relaxing)
+ .debug_str     0x000000000000244f      0x13c C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+                                        0x784 (size before relaxing)
+ .debug_str     0x000000000000258b      0x43e C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+                                        0xcf0 (size before relaxing)
+ .debug_str     0x00000000000029c9       0x65 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+                                         0xac (size before relaxing)
+ .debug_str     0x0000000000002a2e       0x66 C:/devkitPro/libnds/lib\libnds7.a(interruptDispatcher.o)
+                                         0xb9 (size before relaxing)
+ .debug_str     0x0000000000002a94       0x5d C:/devkitPro/libnds/lib\libnds7.a(debugprint.o)
+                                         0xb0 (size before relaxing)
+ .debug_str     0x0000000000002af1       0x5f C:/devkitPro/libnds/lib\libnds7.a(swiSoftReset.o)
+                                         0xb2 (size before relaxing)
+ .debug_str     0x0000000000002b50       0x5c C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+                                         0xaf (size before relaxing)
+ .debug_str     0x0000000000002bac      0x36e C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+                                        0x8c5 (size before relaxing)
+ .debug_str     0x0000000000002f1a      0x19e C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+                                        0xaac (size before relaxing)
+ .debug_str     0x00000000000030b8       0x5f C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+                                        0x3e2 (size before relaxing)
+ .debug_str     0x0000000000003117       0x7b C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+                                        0x3c4 (size before relaxing)
+
+.debug_loc      0x0000000000000000     0x61c3
+ *(.debug_loc)
+ .debug_loc     0x0000000000000000       0x8b main.o
+ .debug_loc     0x000000000000008b      0x1ba C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_loc     0x0000000000000245       0x22 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_loc     0x0000000000000267      0xb60 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_loc     0x0000000000000dc7      0x33d C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_loc     0x0000000000001104      0x118 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_loc     0x000000000000121c      0x4b3 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_loc     0x00000000000016cf      0x471 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_loc     0x0000000000001b40       0xd3 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_loc     0x0000000000001c13      0x72b C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_loc     0x000000000000233e       0xba C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_loc     0x00000000000023f8      0x642 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_loc     0x0000000000002a3a      0x556 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_loc     0x0000000000002f90       0x47 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_loc     0x0000000000002fd7     0x1217 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_loc     0x00000000000041ee     0x1aef C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_loc     0x0000000000005cdd      0x3b8 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_loc     0x0000000000006095      0x12e C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb/ds_arm7_crt0.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crti.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtbegin.o
+LOAD main.o
+LOAD C:/devkitPro/libnds/lib\libmm7.a
+LOAD C:/devkitPro/libnds/lib\libnds7.a
+START GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb\libgcc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libg.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/../../../../arm-none-eabi/lib/thumb\libsysbase.a
+END GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtend.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/8.1.0/thumb/crtn.o
+OUTPUT(F:/Users/Nicolas/Documents/GitHub/SRLoader/romsel_dsimenutheme/arm7/SRLoader.elf elf32-littlearm)
+
+.debug_ranges   0x0000000000000000      0xf58
+ .debug_ranges  0x0000000000000000       0x18 main.o
+ .debug_ranges  0x0000000000000018       0x58 C:/devkitPro/libnds/lib\libnds7.a(i2c.twl.o)
+ .debug_ranges  0x0000000000000070       0x10 C:/devkitPro/libnds/lib\libnds7.a(input.o)
+ .debug_ranges  0x0000000000000080       0xa8 C:/devkitPro/libnds/lib\libnds7.a(touch.o)
+ .debug_ranges  0x0000000000000128       0x70 C:/devkitPro/libnds/lib\libnds7.a(system.o)
+ .debug_ranges  0x0000000000000198       0x50 C:/devkitPro/libnds/lib\libnds7.a(spi.o)
+ .debug_ranges  0x00000000000001e8       0x80 C:/devkitPro/libnds/lib\libnds7.a(codec.twl.o)
+ .debug_ranges  0x0000000000000268       0xe8 C:/devkitPro/libnds/lib\libnds7.a(firmware.o)
+ .debug_ranges  0x0000000000000350       0x10 C:/devkitPro/libnds/lib\libnds7.a(userSettings.o)
+ .debug_ranges  0x0000000000000360       0x60 C:/devkitPro/libnds/lib\libnds7.a(clock.o)
+ .debug_ranges  0x00000000000003c0       0x58 C:/devkitPro/libnds/lib\libnds7.a(card.twl.o)
+ .debug_ranges  0x0000000000000418       0x88 C:/devkitPro/libnds/lib\libnds7.a(audio.o)
+ .debug_ranges  0x00000000000004a0      0x1e8 C:/devkitPro/libnds/lib\libnds7.a(interrupts.o)
+ .debug_ranges  0x0000000000000688       0x18 C:/devkitPro/libnds/lib\libnds7.a(libnds_exit.arm.o)
+ .debug_ranges  0x00000000000006a0      0x258 C:/devkitPro/libnds/lib\libnds7.a(fifosystem.o)
+ .debug_ranges  0x00000000000008f8       0x20 C:/devkitPro/libnds/lib\libnds7.a(intrwait.o)
+ .debug_ranges  0x0000000000000918       0xd0 C:/devkitPro/libnds/lib\libnds7.a(biosCalls.o)
+ .debug_ranges  0x00000000000009e8      0x450 C:/devkitPro/libnds/lib\libnds7.a(sdmmc.twl.o)
+ .debug_ranges  0x0000000000000e38       0xf8 C:/devkitPro/libnds/lib\libnds7.a(microphone.o)
+ .debug_ranges  0x0000000000000f30       0x10 C:/devkitPro/libnds/lib\libnds7.a(systemShutDown.o)
+ .debug_ranges  0x0000000000000f40       0x18 C:/devkitPro/libnds/lib\libnds7.a(microphone.twl.o)

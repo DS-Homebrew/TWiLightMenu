@@ -1,0 +1,1 @@
+brace.o: brace.s
