@@ -335,6 +335,7 @@ void SetDonorSDK(const char* filename) {
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"YT7",	// SEGA Superstars Tennis
 		"AZL",	// Style Savvy
+		"BKI",	// The Legend of Zelda: Spirit Tracks
 	};
 
 	static const char sdk5_list[][4] = {
@@ -913,7 +914,8 @@ int main(int argc, char **argv) {
 								}
 
 								// Set save size to 1MB for the following games
-								if (strcmp(game_TID, "AZL") == 0 )	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+								if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+									|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
 								{
 									savesize = 1048576;
 								}
