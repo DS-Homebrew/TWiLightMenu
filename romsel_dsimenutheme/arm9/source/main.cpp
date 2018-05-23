@@ -699,6 +699,8 @@ int main(int argc, char **argv) {
 
 		}
 	}
+  
+  if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
 

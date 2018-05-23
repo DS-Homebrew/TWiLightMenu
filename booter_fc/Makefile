@@ -159,7 +159,6 @@ clean:
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C BootStrap clean
-	@$(MAKE) -C nds-exception-stub clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
 
@@ -168,9 +167,6 @@ data:
 
 bootloader: data
 	@$(MAKE) -C bootloader
-  
-exceptionstub: data
-	@$(MAKE) -C nds-exception-stub STUBBIN=$(CURDIR)/data/exceptionstub.bin
 
 bootstub: data
 	@$(MAKE) -C bootstub
