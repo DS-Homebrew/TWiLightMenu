@@ -70,8 +70,6 @@ static int donorSdkVer = 0;
 
 static bool bootstrapFile = false;
 
-static bool ntr_touch = true;
-
 static bool useGbarunner = false;
 static bool autorun = false;
 static int theme = 0;
@@ -124,7 +122,6 @@ void LoadSettings(void) {
 		bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
-		ntr_touch = bootstrapini.GetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 1);
 		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
 		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
@@ -169,7 +166,6 @@ void SaveSettings(void) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", ntr_touch);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 		bootstrapini.SaveIniFile(bootstrapinipath);
@@ -381,8 +377,6 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
-  
-  if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
@@ -394,7 +388,7 @@ int main(int argc, char **argv) {
 	
 	swiWaitForVBlank();
 
-  fifoWaitValue32(FIFO_USER_06);
+	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
@@ -844,15 +838,6 @@ int main(int argc, char **argv) {
 						else
 							printSmall(false, 184, selyPos, "Release");
 
-						if(!arm7SCFGLocked && !is3DS){
-							selyPos += 8;
-							printSmall(false, 12, selyPos, "NTR Touch Screen mode");
-							if(ntr_touch)
-								printSmall(false, 224, selyPos, "On");
-							else
-								printSmall(false, 224, selyPos, "Off");
-						}
-
 
 						if (settingscursor == 0) {
 							printSmall(false, 4, 164, "Set to TWL to get rid of lags");
@@ -880,9 +865,6 @@ int main(int argc, char **argv) {
 						} else if (settingscursor == 6) {
 							printSmall(false, 4, 164, "Pick release or unofficial");
 							printSmall(false, 4, 172, "bootstrap.");
-						} else if (settingscursor == 7 && !arm7SCFGLocked && !is3DS) {
-							printSmall(false, 4, 164, "If launched from DSi Menu via");
-							printSmall(false, 4, 172, "HiyaCFW, disable this option.");
 						}
 					} else {
 						printSmall(false, 12, selyPos, "Flashcard(s) select");
@@ -982,9 +964,6 @@ int main(int argc, char **argv) {
 							case 6:
 								bootstrapFile = !bootstrapFile;
 								break;
-							case 7:
-								if (!arm7SCFGLocked && !is3DS) ntr_touch = !ntr_touch;
-								break;
 						}
 					} else {
 						switch (settingscursor) {
@@ -1022,13 +1001,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if(!arm7SCFGLocked && !is3DS) {
-						if (settingscursor > 7) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 7;
-					} else {
-						if (settingscursor > 6) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 6;
-					}
+					if (settingscursor > 6) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 6;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
