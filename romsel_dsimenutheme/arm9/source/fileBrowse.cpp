@@ -851,7 +851,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					printSmallCentered(false, 88, "Please set Mario Kart DS as donor ROM.");
+					printSmallCentered(false, 68, "This game needs a donor ROM set.");
+					printSmallCentered(false, 88, "Please set Mario Kart DS as donor ROM,");
+					printSmallCentered(false, 100, "by moving to the ROM, and press SELECT.");
 					printSmall(false, 208, 166, "A: OK");
 					pressed = 0;
 					do {
