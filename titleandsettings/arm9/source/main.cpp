@@ -291,7 +291,7 @@ int lastRanROM() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
-		if (!arm7SCFGLocked) {
+		if (!arm7SCFGLocked && !is3DS) {
 			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 			*(u16*)(0x02000304) = 0x1801;
 			*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
@@ -412,9 +412,9 @@ int main(int argc, char **argv) {
 		}
 
 		if(is3DS) {
-			consoleText = "Console: Nintendo 3DS/2DS";
+			consoleText = "Console: 3DS/2DS/Panda DSi";
 		} else {
-			consoleText = "Console: Nintendo DSi";
+			consoleText = "Console: Retail DSi";
 		}
 	}
 
@@ -426,7 +426,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 0, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 1, 0);
 
 	if (autorun || showlogo) {
 		graphicsInit();
