@@ -124,23 +124,13 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 int lastRanROM() {
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	if (!arm7SCFGLocked) {
-		if (is3DS) {
-			if(donorSdkVer==5) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-			} else {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-			}
+	if (is3DS) {
+		if(donorSdkVer==5) {
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+			else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
 		} else {
-			if(donorSdkVer==5) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
-				else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
-			} else {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
-				else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
-			}
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+			else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
 		}
 	} else {
 		if(donorSdkVer==5) {
@@ -203,6 +193,8 @@ int main(int argc, char **argv) {
 
 	int err = lastRanROM();
 	consoleDemoInit();
+	iprintf ("Start failed. Error %i", err);
+	stop();
 
 	return 0;
 }
