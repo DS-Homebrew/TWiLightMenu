@@ -23,7 +23,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	rungame
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
@@ -131,7 +131,11 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
-			-b icon.bmp "SRLoader;Last-ran ROM (NTR);Robz8"
+			-b icon.bmp "SRLoader;Last-ran ROM (NTR touch);Robz8"
+	ndstool	-u 00030015 -g SLRT -c $(TARGET)-twltouch.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
+			-b icon.bmp "SRLoader;Last-ran ROM (TWL touch);Robz8"
+	python patch_ndsheader_dsiware.py $(TARGET).nds
+	python patch_ndsheader_dsiware_twltouch.py $(TARGET)-twltouch.nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf

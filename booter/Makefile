@@ -132,8 +132,8 @@ dist:	all
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-b icon.bmp "SRLoader;Robz8" \
-			-g SRLA 01 "SRLOADER" -z 80040000 -u 00030015 -a 00000138 -p 00000001
-	#python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
+			-g SRLA 01 "SRLOADER" -z 80040000 -u 00030015 
+	python patch_ndsheader_dsiware_twltouch.py $(CURDIR)/$(TARGET).nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
