@@ -158,7 +158,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
 			if (showDirectories && !dsiWareList) {
-				if (dirEntry.name.compare(".") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					dirContents.push_back (dirEntry);
 				}
 			} else {
@@ -271,6 +271,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} else {
 			if (dirContents.at(fileOffset).isDirectory) {
 				isDirectory = true;
+				bnrWirelessIcon = 0;
 			} else {
 				isDirectory = false;
 				std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
@@ -284,16 +285,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
 				{
 					bnrRomType = 1;
+					bnrWirelessIcon = 0;
 					launchable = true;
 					isHomebrew = false;
 				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
 					bnrRomType = 2;
+					bnrWirelessIcon = 0;
 					launchable = true;
 					isHomebrew = false;
 				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
 						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
 				{
 					bnrRomType = 3;
+					bnrWirelessIcon = 0;
 					launchable = true;
 					isHomebrew = false;
 				}
