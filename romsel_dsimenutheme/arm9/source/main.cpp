@@ -44,6 +44,9 @@
 
 #include "inifile.h"
 
+#include "cheat.h"
+#include "crc.h"
+
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
@@ -834,6 +837,9 @@ int main(int argc, char **argv) {
 				if(useBootstrap) {
 					if(!flashcardUsed) {
 						char game_TID[5];
+                        char  gameid[4]; // for nitrohax cheat parsing
+                        u32 ndsHeader[0x80];
+                        uint32_t headerCRC;
 						
 						FILE *f_nds_file = fopen(argarray[0], "rb");
 
@@ -841,6 +847,16 @@ int main(int argc, char **argv) {
 						fread(game_TID, 1, 4, f_nds_file);
 						game_TID[4] = 0;
 						game_TID[3] = 0;
+                        
+                        fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+                        fread(gameid, 1, 4, f_nds_file);
+                        
+                        fseek(f_nds_file, 0, SEEK_SET);
+                        fread(gameid, 1, 0x80*4, f_nds_file);
+                        
+                        memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
+                        headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
+                         
 						fclose(f_nds_file);
 
 						std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
@@ -910,8 +926,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						// Read cheats
-						std::string cheatpath = "sd:/_nds/cheats/"+filename;
-						cheatpath = ReplaceAll(cheatpath, ".nds", ".ini");
+						std::string cheatpath = "sd:/_nds/cheats.xml";
+                        int c;
+	                    FILE* cheatFile;
+                        bool doFilter=true;
+
 						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
 							char cheatNumberTitle[8];
 							char cheatData[256];
@@ -919,23 +938,38 @@ int main(int argc, char **argv) {
 							bool cheatUse = false;
 							bool cheatsFound = false;
 							bool gotFirstCheat = false;
-							CIniFile cheatini( cheatpath );
-							for (int i = 0; i < 50; i++) {
-								snprintf (cheatNumberTitle, 8, "Cheat%i", i);
-								cheatUse = cheatini.GetInt( cheatNumberTitle, "Use", 0);
-								if (cheatUse) {
-									foundCheatData = cheatini.GetString(cheatNumberTitle, "Code", "");
-									RemoveTrailingSpaces(foundCheatData);
-									cheatsFound = true;
-									if (!gotFirstCheat) {
-										snprintf (cheatData, sizeof(cheatData), "%s ", foundCheatData.c_str());
-										gotFirstCheat = true;
-									} else {
-										snprintf (cheatData, sizeof(cheatData), "%s%s ", cheatData, foundCheatData.c_str());
-									}
-								}
-							}
-							if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+                            
+                            cheatFile = fopen (cheatpath.c_str(), "rb");
+		                    if (NULL != cheatFile) break;
+                            
+
+                            
+                            c = fgetc(cheatFile);
+                            
+                        	// TODO : implements this check and throw some error
+                            //ensure (c != 0xFF && c != 0xFE, "File is in an unsupported unicode encoding");
+                            
+                        	fseek (cheatFile, 0, SEEK_SET);
+                            
+                            CheatCodelist* codelist = new CheatCodelist();
+                            
+                            // TODO : implements this check and throw some error
+                        	//ensure (codelist->load(cheatFile, gameid, headerCRC, doFilter), "Can't read cheat list\n");
+                            codelist->load(cheatFile, gameid, headerCRC, doFilter);
+                            
+                        	fclose (cheatFile);
+                        	CheatFolder *gameCodes = codelist->getGame (gameid, headerCRC);
+                            
+                            if(!codelist->getContents().empty()) {
+                               gameCodes->enableAll(true);
+                               std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
+                               for(int i=0; i<cheatsword.size(); i++) {
+                                    cheatsFound = true;
+                                    snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
+                                    cheatsword.pop_front();
+                               }
+                               if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+                            }
 						}
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
