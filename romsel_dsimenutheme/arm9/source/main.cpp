@@ -71,6 +71,17 @@ static void RemoveTrailingSlashes(std::string& path)
 	}
 }
 
+/**
+ * Remove trailing spaces from a cheat code line, if present.
+ * @param path Code line to modify.
+ */
+static void RemoveTrailingSpaces(std::string& code)
+{
+	while (!code.empty() && code[code.size()-1] == ' ') {
+		code.resize(code.size()-1);
+	}
+}
+
 std::string romfolder;
 
 // These are used by flashcard functions and must retain their trailing slash.
@@ -897,6 +908,33 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
+						// Read cheats
+						std::string cheatpath = "sd:/_nds/cheats/"+filename;
+						cheatpath = ReplaceAll(cheatpath, ".nds", ".ini");
+						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
+							char cheatNumberTitle[8];
+							char cheatData[256];
+							std::string foundCheatData;
+							bool cheatUse = false;
+							bool cheatsFound = false;
+							CIniFile cheatini( cheatpath );
+							for (int i = 0; i < 50; i++) {
+								snprintf (cheatNumberTitle, 8, "Cheat%i", i);
+								cheatUse = cheatini.GetInt( cheatNumberTitle, "Use", 0);
+								if (cheatUse) {
+									foundCheatData = cheatini.GetString(cheatNumberTitle, "Code", "");
+									RemoveTrailingSpaces(foundCheatData);
+									cheatsFound = true;
+									if (i == 0) {
+										snprintf (cheatData, sizeof(cheatData), "%s ", foundCheatData.c_str());
+									} else {
+										snprintf (cheatData, sizeof(cheatData), "%s%s ", cheatData, foundCheatData.c_str());
+									}
+								}
+							}
+							if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+						}
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
