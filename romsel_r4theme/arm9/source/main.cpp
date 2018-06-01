@@ -972,6 +972,7 @@ int main(int argc, char **argv) {
 							std::string foundCheatData;
 							bool cheatUse = false;
 							bool cheatsFound = false;
+							bool gotFirstCheat = false;
 							CIniFile cheatini( cheatpath );
 							for (int i = 0; i < 50; i++) {
 								snprintf (cheatNumberTitle, 8, "Cheat%i", i);
@@ -980,8 +981,9 @@ int main(int argc, char **argv) {
 									foundCheatData = cheatini.GetString(cheatNumberTitle, "Code", "");
 									RemoveTrailingSpaces(foundCheatData);
 									cheatsFound = true;
-									if (i == 0) {
+									if (!gotFirstCheat) {
 										snprintf (cheatData, sizeof(cheatData), "%s ", foundCheatData.c_str());
+										gotFirstCheat = true;
 									} else {
 										snprintf (cheatData, sizeof(cheatData), "%s%s ", cheatData, foundCheatData.c_str());
 									}
