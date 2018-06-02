@@ -940,36 +940,39 @@ int main(int argc, char **argv) {
 							bool gotFirstCheat = false;
                             
                             cheatFile = fopen (cheatpath.c_str(), "rb");
-		                    if (NULL != cheatFile) break;
-                            
-
-                            
-                            c = fgetc(cheatFile);
-                            
-                        	// TODO : implements this check and throw some error
-                            //ensure (c != 0xFF && c != 0xFE, "File is in an unsupported unicode encoding");
-                            
-                        	fseek (cheatFile, 0, SEEK_SET);
-                            
-                            CheatCodelist* codelist = new CheatCodelist();
-                            
-                            // TODO : implements this check and throw some error
-                        	//ensure (codelist->load(cheatFile, gameid, headerCRC, doFilter), "Can't read cheat list\n");
-                            codelist->load(cheatFile, gameid, headerCRC, doFilter);
-                            
-                        	fclose (cheatFile);
-                        	CheatFolder *gameCodes = codelist->getGame (gameid, headerCRC);
-                            
-                            if(!codelist->getContents().empty()) {
-                               gameCodes->enableAll(true);
-                               std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
-                               for(int i=0; i<cheatsword.size(); i++) {
-                                    cheatsFound = true;
-                                    snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
-                                    cheatsword.pop_front();
-                               }
-                               if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
-                            }
+		                    if (NULL != cheatFile)  {
+                                c = fgetc(cheatFile);
+                                
+                                if(c != 0xFF && c != 0xFE) {                            
+                                    fseek (cheatFile, 0, SEEK_SET);
+                                    
+                                    CheatCodelist* codelist = new CheatCodelist();
+                                    
+                                    if(codelist->load(cheatFile, gameid, headerCRC, doFilter)) {
+                                    	CheatFolder *gameCodes = codelist->getGame (gameid, headerCRC);
+                                        
+                                        if(!codelist->getContents().empty()) {
+                                           gameCodes->enableAll(true);
+                                           std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
+                                           for(int i=0; i<cheatsword.size(); i++) {
+                                                cheatsFound = true;
+                                                snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
+                                                cheatsword.pop_front();
+                                           }
+                                           if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+                                        }
+                                    } else {
+                                        ClearBrightness();
+        								const char* error = "Can't read cheat list\n";
+        								printLarge(false, 4, 4, error);
+                                    }
+                                } else {
+                                    ClearBrightness();
+    								const char* error = "cheats.xml File is in an unsupported unicode encoding";
+    								printLarge(false, 4, 4, error);
+                                }
+                                fclose(cheatFile);
+                            } 
 						}
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
