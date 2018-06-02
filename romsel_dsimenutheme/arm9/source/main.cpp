@@ -933,7 +933,7 @@ int main(int argc, char **argv) {
 
 						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
 							char cheatNumberTitle[8];
-							char cheatData[256];
+							char cheatData[2304]; // 9*256
 							std::string foundCheatData;
 							bool cheatUse = false;
 							bool cheatsFound = false;
