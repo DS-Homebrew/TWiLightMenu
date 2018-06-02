@@ -852,7 +852,7 @@ int main(int argc, char **argv) {
                         fread(gameid, 1, 4, f_nds_file);
                         
                         fseek(f_nds_file, 0, SEEK_SET);
-                        fread(gameid, 1, 0x80*4, f_nds_file);
+                        fread(ndsHeader, 1, 0x80*4, f_nds_file);
                         
                         memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
                         headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
