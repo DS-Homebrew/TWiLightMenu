@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <nds.h>
 
 #include "cheat.h"
 #include <stdio.h>
@@ -51,6 +52,8 @@ void CheatFolder::enablingSubCode (void)
 
 std::list<CheatWord> CheatFolder::getEnabledCodeData (void)
 {
+    nocashMessage("CheatFolder::getEnabledCodeData");
+
 	std::list<CheatWord> codeData;
 	CheatCode* cheatCode;
 	
@@ -69,6 +72,8 @@ std::list<CheatWord> CheatFolder::getEnabledCodeData (void)
 
 std::list<CheatWord> CheatCode::getEnabledCodeData (void)
 {
+    nocashMessage("CheatCode::getEnabledCodeData");
+    
 	std::list<CheatWord> codeData;
 	if (enabled) {
 		codeData = cheatData;
@@ -220,6 +225,8 @@ std::string CheatCodelist::nextToken (FILE* fp, TOKEN_TYPE& tokenType)
 	
 bool CheatCodelist::load (FILE* fp, const char gameid[4], uint32_t headerCRC, bool filter)
 {
+    nocashMessage("CheatCodelist::load");
+
 	enum {state_normal, state_name, state_note, state_codes, state_gameid, state_allowedon} state = state_normal;
 	CheatBase* curItem = this;
 	CheatBase* newItem;
@@ -231,14 +238,19 @@ bool CheatCodelist::load (FILE* fp, const char gameid[4], uint32_t headerCRC, bo
 	int depth = 0;
 	bool done = false;
 	
+    nocashMessage("CheatCodelist::load : search for codelist TOKEN_TAG_START");
+    
 	do	
 	token = nextToken (fp, tokenType);
 	while (!token.empty() && (tokenType != TOKEN_TAG_START || token != "codelist")) ;
 	
-	if (token != "codelist") {
+	if (token != "codelist") {        
+        nocashMessage("CheatCodelist::load : codelist TOKEN_TAG_START not found");
 		return false;
 	}
 	depth ++;
+    
+    nocashMessage("CheatCodelist::load : codelist TOKEN_TAG_START found");
 	
 	while (!token.empty() && !done) {
 		token = nextToken (fp, tokenType);
@@ -246,24 +258,34 @@ bool CheatCodelist::load (FILE* fp, const char gameid[4], uint32_t headerCRC, bo
 			case TOKEN_DATA:
 				switch (state) {
 					case state_name:
+                        nocashMessage("CheatCodelist::load : state_name");
+                        nocashMessage(token.c_str());
 						curItem->name = token;
 						break;
 					case state_note:
+                        nocashMessage("CheatCodelist::load : state_note");
+                        nocashMessage(token.c_str());
 						curItem->note = token;
 						break;
 					case state_codes:
+                        nocashMessage("CheatCodelist::load : state_codes");
+                        nocashMessage(token.c_str());
 						cheatCode = dynamic_cast<CheatCode*>(curItem); 
 						if (cheatCode) {
 							cheatCode->setCodeData (token);
 						}
 						break;
 					case state_gameid:
+                        nocashMessage("CheatCodelist::load : state_gameid");
+                        nocashMessage(token.c_str());
 						cheatGame = dynamic_cast<CheatGame*>(curItem); 
 						if (cheatGame) {
 							cheatGame->setGameid (token);
 						}
 						break;
 					case state_allowedon:
+                        nocashMessage("CheatCodelist::load : state_allowedon");
+                        nocashMessage(token.c_str());
 						cheatFolder = dynamic_cast<CheatFolder*>(curItem); 
 						if (cheatFolder) {
 							cheatFolder->setAllowOneOnly (!(token == "0"));
@@ -347,6 +369,8 @@ bool CheatCodelist::load (FILE* fp, const char gameid[4], uint32_t headerCRC, bo
 
 CheatGame* CheatCodelist::getGame (const char gameid[4], uint32_t headerCRC)
 {
+    nocashMessage("CheatCodelist::getGame");
+
 	for (std::vector<CheatBase*>::iterator curItem = contents.begin(); curItem != contents.end(); curItem++) {
 		CheatGame* game = dynamic_cast<CheatGame*>(*curItem);
 		if (game && game->checkGameid(gameid, headerCRC)) {
@@ -354,6 +378,7 @@ CheatGame* CheatCodelist::getGame (const char gameid[4], uint32_t headerCRC)
 		}
 	}
 	
+    nocashMessage("CheatCodelist::getGame NULL");
 	return NULL;
 }
 
