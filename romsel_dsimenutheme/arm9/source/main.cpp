@@ -941,18 +941,18 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						// Read cheats
 						std::string cheatpath = "sd:/_nds/cheats.xml";
                         int c;
 	                    FILE* cheatFile;
-                        bool doFilter=false;
+                        bool doFilter=true;
+                        bool cheatsFound = false;
+                        char cheatData[2305]; // 9*256 + 1
 
 						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
-							char cheatData[2305]; // 9*256 + 1
                             cheatData[0] = 0;
                             cheatData[2304] = 0;
-							bool cheatsFound = false;
+
                             nocashMessage("cheat file present");
                             
                             cheatFile = fopen (cheatpath.c_str(), "rb");
@@ -988,8 +988,7 @@ int main(int argc, char **argv) {
                                                 nocashMessage(cheatData);
                                                 cheatsword.pop_front();
                                            }
-                                           if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
-                                           else {
+                                           if(!cheatsFound) {
                                                 //ClearBrightness();
                 								const char* error = "no cheat found\n";
                                                 nocashMessage(error);
@@ -1018,6 +1017,8 @@ int main(int argc, char **argv) {
 						} else {                            
                             nocashMessage("cheat file not present");
                         }
+                        if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+                        else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
