@@ -946,11 +946,14 @@ int main(int argc, char **argv) {
 						std::string cheatpath = "sd:/_nds/cheats.xml";
                         int c;
 	                    FILE* cheatFile;
-                        bool doFilter=true;
+                        bool doFilter=false;
 
 						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
-							char cheatData[2304]; // 9*256
+							char cheatData[2305]; // 9*256 + 1
+                            cheatData[0] = 0;
+                            cheatData[2304] = 0;
 							bool cheatsFound = false;
+                            nocashMessage("cheat file present");
                             
                             cheatFile = fopen (cheatpath.c_str(), "rb");
 		                    if (NULL != cheatFile)  {
@@ -961,18 +964,42 @@ int main(int argc, char **argv) {
                                     
                                     CheatCodelist* codelist = new CheatCodelist();
                                     
+                                    nocashMessage("parsing cheat file");
+                                    
                                     if(codelist->load(cheatFile, gameid, headerCRC, doFilter)) {
+                                        nocashMessage("cheat file parsed");
                                     	CheatFolder *gameCodes = codelist->getGame (gameid, headerCRC);
                                         
                                         if(!codelist->getContents().empty()) {
+                                           nocashMessage("cheats found");
                                            gameCodes->enableAll(true);
+                                           nocashMessage("all cheats enabled");
                                            std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
+                                           nocashMessage("cheatword list recovered");
                                            for(int i=0; i<cheatsword.size(); i++) {
                                                 cheatsFound = true;
-                                                snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
+                                                char * cheatwords;
+                                                sprintf (cheatwords,"%08X",cheatsword.front());
+                                                nocashMessage("cheatword");
+                                                nocashMessage(cheatwords);
+                                                if(i=0) snprintf (cheatData, sizeof(cheatData), "%08X ", cheatsword.front());                                               
+                                                else snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
+                                                nocashMessage("cheatData");
+                                                nocashMessage(cheatData);
                                                 cheatsword.pop_front();
                                            }
                                            if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
+                                           else {
+                                                //ClearBrightness();
+                								const char* error = "no cheat found\n";
+                                                nocashMessage(error);
+                								//printLarge(false, 4, 4, error);
+                                            }
+                                        } else {
+                                            //ClearBrightness();
+            								const char* error = "Cheat list empty\n";
+                                            nocashMessage(error);
+            								//printLarge(false, 4, 4, error);
                                         }
                                     } else {
                                         //ClearBrightness();
@@ -988,7 +1015,9 @@ int main(int argc, char **argv) {
                                 }
                                 fclose(cheatFile);
                             } 
-						}
+						} else {                            
+                            nocashMessage("cheat file not present");
+                        }
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
