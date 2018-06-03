@@ -849,13 +849,30 @@ int main(int argc, char **argv) {
 						game_TID[3] = 0;
                         
                         fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-                        fread(gameid, 1, 4, f_nds_file);
+                        int sizeread = fread(gameid, 1, 4, f_nds_file);
+                        
+                        char * sizereads;
+                        sprintf (sizereads, "%08X", sizeread);
+                        nocashMessage("gameid readed");
+                        nocashMessage(sizereads);
+                        
+                        char* gameIdS;
+                        sprintf (gameIdS, "%c%c%c%c", gameid[0], gameid[1], gameid[2], gameid[3]);
+                        nocashMessage("gameId");
+                        nocashMessage(gameIdS);
                         
                         fseek(f_nds_file, 0, SEEK_SET);
-                        fread(ndsHeader, 1, 0x80*4, f_nds_file);
+                        sizeread = fread(ndsHeader, 1, 0x80*4, f_nds_file);
+                        sprintf (sizereads, "%08X", sizeread);                        
+                        nocashMessage("ndsHeader readed");
+                        nocashMessage(sizereads);
                         
-                        memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
                         headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
+
+                        char * headerCrcS;
+                        sprintf (headerCrcS, "%08X", headerCRC);                        
+                        nocashMessage("headerCRC computed");
+                        nocashMessage(headerCrcS);
                          
 						fclose(f_nds_file);
 
@@ -932,12 +949,8 @@ int main(int argc, char **argv) {
                         bool doFilter=true;
 
 						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
-							char cheatNumberTitle[8];
 							char cheatData[2304]; // 9*256
-							std::string foundCheatData;
-							bool cheatUse = false;
 							bool cheatsFound = false;
-							bool gotFirstCheat = false;
                             
                             cheatFile = fopen (cheatpath.c_str(), "rb");
 		                    if (NULL != cheatFile)  {
@@ -962,14 +975,16 @@ int main(int argc, char **argv) {
                                            if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                                         }
                                     } else {
-                                        ClearBrightness();
+                                        //ClearBrightness();
         								const char* error = "Can't read cheat list\n";
-        								printLarge(false, 4, 4, error);
+                                        nocashMessage(error);
+        								//printLarge(false, 4, 4, error);
                                     }
                                 } else {
-                                    ClearBrightness();
+                                    //ClearBrightness();
     								const char* error = "cheats.xml File is in an unsupported unicode encoding";
-    								printLarge(false, 4, 4, error);
+                                    nocashMessage(error);
+    								//printLarge(false, 4, 4, error);
                                 }
                                 fclose(cheatFile);
                             } 
