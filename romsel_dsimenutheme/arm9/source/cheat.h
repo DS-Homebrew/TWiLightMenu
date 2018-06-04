@@ -179,7 +179,9 @@ public:
 	
 	bool checkGameid (const char gameid[4], uint32_t headerCRC)
 	{
+        #ifdef DEBUG
         nocashMessage("CheatGame::checkGameid");
+        
         
         char* gameIdS;
         sprintf (gameIdS, "%c%c%c%c", gameid[0], gameid[1], gameid[2], gameid[3]);
@@ -198,6 +200,7 @@ public:
         sprintf (headerCrcS, "%08X",  this->headerCRC);                        
         nocashMessage("this->headerCRC");
         nocashMessage(headerCrcS);
+        #endif
         
 		return (memcmp (gameid, this->gameid, sizeof(this->gameid)) == 0) &&
 			(headerCRC == this->headerCRC);

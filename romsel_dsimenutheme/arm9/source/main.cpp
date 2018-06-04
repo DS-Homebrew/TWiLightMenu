@@ -851,28 +851,37 @@ int main(int argc, char **argv) {
                         fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
                         int sizeread = fread(gameid, 1, 4, f_nds_file);
                         
+                        #ifdef DEBUG
                         char * sizereads;
                         sprintf (sizereads, "%08X", sizeread);
                         nocashMessage("gameid readed");
                         nocashMessage(sizereads);
+                        #endif
                         
+                        #ifdef DEBUG
                         char* gameIdS;
                         sprintf (gameIdS, "%c%c%c%c", gameid[0], gameid[1], gameid[2], gameid[3]);
                         nocashMessage("gameId");
                         nocashMessage(gameIdS);
+                        #endif
                         
                         fseek(f_nds_file, 0, SEEK_SET);
                         sizeread = fread(ndsHeader, 1, 0x80*4, f_nds_file);
+                        
+                        #ifdef DEBUG
                         sprintf (sizereads, "%08X", sizeread);                        
                         nocashMessage("ndsHeader readed");
                         nocashMessage(sizereads);
+                        #endif
                         
                         headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
 
+                        #ifdef DEBUG    
                         char * headerCrcS;
-                        sprintf (headerCrcS, "%08X", headerCRC);                        
+                        sprintf (headerCrcS, "%08X", headerCRC);                  
                         nocashMessage("headerCRC computed");
                         nocashMessage(headerCrcS);
+                        #endif
                          
 						fclose(f_nds_file);
 
@@ -978,15 +987,19 @@ int main(int argc, char **argv) {
                                            nocashMessage("cheatword list recovered");
                                            int count =0;
                                            for (std::list<CheatWord>::iterator it=cheatsword.begin(); it != cheatsword.end(); ++it) {
+                                                #ifdef DEBUG
                                                 char * cheatwords;
                                                 sprintf (cheatwords,"%08X",*it);
                                                 nocashMessage("cheatword");
                                                 nocashMessage(cheatwords);
+                                                #endif
                                                 if(!cheatsFound) snprintf (cheatData, sizeof(cheatData), "%08X ", *it);                                               
                                                 else snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, *it);
                                                 cheatsFound = true;
+                                                #ifdef DEBUG
                                                 nocashMessage("cheatData");
                                                 nocashMessage(cheatData);
+                                                #endif
                                                 count++;
                                            }
                                            
