@@ -976,6 +976,7 @@ int main(int argc, char **argv) {
                                            nocashMessage("all cheats enabled");
                                            std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
                                            nocashMessage("cheatword list recovered");
+                                           int count =0;
                                            for (std::list<CheatWord>::iterator it=cheatsword.begin(); it != cheatsword.end(); ++it) {
                                                 char * cheatwords;
                                                 sprintf (cheatwords,"%08X",*it);
@@ -986,6 +987,7 @@ int main(int argc, char **argv) {
                                                 cheatsFound = true;
                                                 nocashMessage("cheatData");
                                                 nocashMessage(cheatData);
+                                                count++;
                                            }
                                            
                                            if(!cheatsFound) {
@@ -993,6 +995,11 @@ int main(int argc, char **argv) {
                 								const char* error = "no cheat found\n";
                                                 nocashMessage(error);
                 								//printLarge(false, 4, 4, error);
+                                            }
+                                            if(count>256) {
+                                                const char* error = "maximum cheat data size exceeded\n";
+                                                nocashMessage(error);
+                                                cheatsFound = false;    
                                             }
                                         } else {
                                             //ClearBrightness();
