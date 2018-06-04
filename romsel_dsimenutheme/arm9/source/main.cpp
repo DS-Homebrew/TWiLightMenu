@@ -976,18 +976,18 @@ int main(int argc, char **argv) {
                                            nocashMessage("all cheats enabled");
                                            std::list<CheatWord> cheatsword = gameCodes->getEnabledCodeData();
                                            nocashMessage("cheatword list recovered");
-                                           for(int i=0; i<cheatsword.size(); i++) {
-                                                cheatsFound = true;
+                                           for (std::list<CheatWord>::iterator it=cheatsword.begin(); it != cheatsword.end(); ++it) {
                                                 char * cheatwords;
-                                                sprintf (cheatwords,"%08X",cheatsword.front());
+                                                sprintf (cheatwords,"%08X",*it);
                                                 nocashMessage("cheatword");
                                                 nocashMessage(cheatwords);
-                                                if(i=0) snprintf (cheatData, sizeof(cheatData), "%08X ", cheatsword.front());                                               
-                                                else snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, cheatsword.front());
+                                                if(!cheatsFound) snprintf (cheatData, sizeof(cheatData), "%08X ", *it);                                               
+                                                else snprintf (cheatData, sizeof(cheatData), "%s%08X ", cheatData, *it);
+                                                cheatsFound = true;
                                                 nocashMessage("cheatData");
                                                 nocashMessage(cheatData);
-                                                cheatsword.pop_front();
                                            }
+                                           
                                            if(!cheatsFound) {
                                                 //ClearBrightness();
                 								const char* error = "no cheat found\n";
