@@ -264,12 +264,10 @@ bool CheatCodelist::load (FILE* fp, const char gameid[4], uint32_t headerCRC, bo
 						break;
 					case state_note:
                         nocashMessage("CheatCodelist::load : state_note");
-                        nocashMessage(token.c_str());
 						curItem->note = token;
 						break;
 					case state_codes:
                         nocashMessage("CheatCodelist::load : state_codes");
-                        nocashMessage(token.c_str());
 						cheatCode = dynamic_cast<CheatCode*>(curItem); 
 						if (cheatCode) {
 							cheatCode->setCodeData (token);
