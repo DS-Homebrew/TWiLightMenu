@@ -8,6 +8,7 @@
 #include <vector>
 #include <list>
 #include <stdint.h>
+#include <nds.h>
 
 #define CHEAT_CODE_END	0xCF000000
 #define CHEAT_ENGINE_RELOCATE	0xCF000001
@@ -178,6 +179,29 @@ public:
 	
 	bool checkGameid (const char gameid[4], uint32_t headerCRC)
 	{
+        #ifdef DEBUG
+        nocashMessage("CheatGame::checkGameid");
+        
+        
+        char* gameIdS;
+        sprintf (gameIdS, "%c%c%c%c", gameid[0], gameid[1], gameid[2], gameid[3]);
+        nocashMessage("gameId");
+        nocashMessage(gameIdS);
+        
+        sprintf (gameIdS, "%c%c%c%c", this->gameid[0], this->gameid[1], this->gameid[2], this->gameid[3]);
+        nocashMessage("this->gameId");
+        nocashMessage(gameIdS);
+        
+        char * headerCrcS;
+        sprintf (headerCrcS, "%08X", headerCRC);                        
+        nocashMessage("headerCRC");
+        nocashMessage(headerCrcS);
+        
+        sprintf (headerCrcS, "%08X",  this->headerCRC);                        
+        nocashMessage("this->headerCRC");
+        nocashMessage(headerCrcS);
+        #endif
+        
 		return (memcmp (gameid, this->gameid, sizeof(this->gameid)) == 0) &&
 			(headerCRC == this->headerCRC);
 	}
