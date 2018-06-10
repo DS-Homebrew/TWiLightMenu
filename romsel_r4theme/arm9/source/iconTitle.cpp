@@ -51,6 +51,7 @@ extern int startMenu_cursorPosition;
 
 extern int theme;
 extern bool useGbarunner;
+extern bool animateDsiIcons;
 
 static int iconTexID[8];
 static int gbaTexID;
@@ -426,7 +427,7 @@ void getGameInfo(bool isDir, const char* name)
 		// banner sequence
 		DC_FlushAll();
 
-		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence();
 			bnriconisDSi = true;
 		}
@@ -587,7 +588,7 @@ void iconUpdate(bool isDir, const char* name)
 
 		// icon
 		DC_FlushAll();
-		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, false);

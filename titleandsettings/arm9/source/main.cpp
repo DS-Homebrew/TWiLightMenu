@@ -74,6 +74,7 @@ static bool autorun = false;
 static int theme = 0;
 static int subtheme = 0;
 static bool showDirectories = true;
+static bool animateDsiIcons = false;
 
 static bool bstrap_boostcpu = false;	// false == NTR, true == TWL
 static bool bstrap_debug = false;
@@ -111,6 +112,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 
 	if(!flashcardUsed) {
@@ -143,6 +145,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
+	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SaveIniFile(settingsinipath);
 	
@@ -1035,6 +1038,9 @@ int main(int argc, char **argv) {
 						case 4:
 							yPos = 56;
 							break;
+						case 5:
+							yPos = 64;
+							break;
 					}
 
 					printSmall(false, 4, yPos, ">");
@@ -1071,11 +1077,17 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 216, 48, "Hide");
 
+					printSmall(false, 12, 56, "Animate DSi icons");
+					if(animateDsiIcons)
+						printSmall(false, 216, 56, "Yes");
+					else
+						printSmall(false, 216, 56, "No");
+
 					if (!flashcardUsed) {
 						if (hiyaAutobootFound) {
-							printSmall(false, 12, 56, "Restore DSi Menu");
+							printSmall(false, 12, 64, "Restore DSi Menu");
 						} else {
-							printSmall(false, 12, 56, "Replace DSi Menu");
+							printSmall(false, 12, 64, "Replace DSi Menu");
 						}
 					}
 
@@ -1097,6 +1109,10 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 164, "of your games are, it is safe to");
 						printSmall(false, 4, 172, "hide directories/folders.");
 					} else if (settingscursor == 4) {
+						printSmall(false, 4, 156, "Animates DSi-enhanced icons like in");
+						printSmall(false, 4, 164, "the DSi/3DS menus. Turning this off");
+						printSmall(false, 4, 172, "will fix some icons appearing white.");
+					} else if (settingscursor == 5) {
 						if (hiyaAutobootFound) {
 							printSmall(false, 4, 172, "Show DSi Menu on boot again.");
 						} else {
@@ -1161,6 +1177,10 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 4:
+							animateDsiIcons = !animateDsiIcons;
+							mmEffectEx(&snd_select);
+							break;
+						case 5:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1216,11 +1236,11 @@ int main(int argc, char **argv) {
 				}
 
 				if (!flashcardUsed) {
+					if (settingscursor > 5) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 5;
+				} else {
 					if (settingscursor > 4) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 4;
-				} else {
-					if (settingscursor > 3) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 3;
 				}
 			}
 

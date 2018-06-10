@@ -120,6 +120,7 @@ int startMenu_cursorPosition = 0;
 int pagenum = 0;
 int dsiWarePageNum = 0;
 bool showDirectories = true;
+bool animateDsiIcons = false;
 
 bool flashcardUsed = false;
 
@@ -156,6 +157,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);

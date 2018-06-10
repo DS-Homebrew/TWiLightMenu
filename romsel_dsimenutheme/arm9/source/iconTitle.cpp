@@ -52,6 +52,7 @@ extern int theme;
 extern bool useGbarunner;
 
 extern bool flashcardUsed;
+extern bool animateDsiIcons;
 
 static int iconTexID[6][8];
 static int gbaTexID;
@@ -441,7 +442,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// banner sequence
 		DC_FlushAll();
 
-		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
 		}
@@ -615,7 +616,7 @@ void iconUpdate(bool isDir, const char* name, int num)
 
 		// icon
 		DC_FlushAll();
-		if(ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num, true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, num, false);
