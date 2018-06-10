@@ -60,7 +60,11 @@ const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool arm7SCFGLocked = false;
-bool is3DS = false;
+int consoleModel = 0;
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
 /**
@@ -146,6 +150,7 @@ void LoadSettings(void) {
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
+	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
@@ -155,18 +160,10 @@ void LoadSettings(void) {
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
-	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-
-	if(!flashcardUsed) {
-		// nds-bootstrap
-		CIniFile bootstrapini( bootstrapinipath );
-		
-		arm7DonorPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", "");
-	}
 }
 
 void SaveSettings(void) {
@@ -187,14 +184,6 @@ void SaveSettings(void) {
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
-	
-	if(!flashcardUsed) {
-		// nds-bootstrap
-		CIniFile bootstrapini( bootstrapinipath );
-		
-		bootstrapini.SetString( "NDS-BOOTSTRAP", "ARM7_DONOR_PATH", arm7DonorPath);
-		bootstrapini.SaveIniFile(bootstrapinipath);
-	}
 }
 
 int colorRvalue;
@@ -1040,41 +1029,39 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+						if (!arm7SCFGLocked) {
+							*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+							*(u16*)(0x02000304) = 0x1801;
+							*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
+							*(u32*)(0x0200030C) = 0x00030015;
+							*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
+							*(u32*)(0x02000314) = 0x00030015;
+							*(u32*)(0x02000318) = 0x00000017;
+							*(u32*)(0x0200031C) = 0x00000000;
+							while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+								*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+							}
+
+							fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
+							for (int i = 0; i < 15; i++) swiWaitForVBlank();
+						}
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
-						} else {
-							if (!arm7SCFGLocked) {
-								*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-								*(u16*)(0x02000304) = 0x1801;
-								*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
-								*(u32*)(0x0200030C) = 0x00030015;
-								*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
-								*(u32*)(0x02000314) = 0x00030015;
-								*(u32*)(0x02000318) = 0x00000017;
-								*(u32*)(0x0200031C) = 0x00000000;
-								while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-									*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-								}
-
-								fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
-								for (int i = 0; i < 15; i++) swiWaitForVBlank();
-							}
-							if (is3DS) {
-								if(donorSdkVer==5) {
-									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
-									else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-								} else {
-									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
-									else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-								}
+						} else if (consoleModel > 0) {
+							if(donorSdkVer==5) {
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+								else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
 							} else {
-								if(donorSdkVer==5) {
-									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
-									else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
-								} else {
-									if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
-									else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
-								}
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+							}
+						} else {
+							if(donorSdkVer==5) {
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
+								else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
+							} else {
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
+								else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
 							}
 						}
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);

@@ -51,9 +51,11 @@ const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string bootstrapfilename;
 
-static bool is3DS = false;
-
-const char* consoleText = "";
+static int consoleModel = 0;
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
 
 static bool showlogo = true;
 static bool gotosettings = false;
@@ -107,13 +109,13 @@ void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
-	is3DS = settingsini.GetInt("SRLOADER", "IS_3DS", 0);
 
 	if(!flashcardUsed) {
 		// nds-bootstrap
@@ -146,7 +148,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SaveIniFile(settingsinipath);
 	
 	if(!flashcardUsed) {
@@ -282,23 +283,7 @@ int lastRanROM() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
-		if (!arm7SCFGLocked && !is3DS) {
-			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-			*(u16*)(0x02000304) = 0x1801;
-			*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
-			*(u32*)(0x0200030C) = 0x00030015;
-			*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
-			*(u32*)(0x02000314) = 0x00030015;
-			*(u32*)(0x02000318) = 0x00000017;
-			*(u32*)(0x0200031C) = 0x00000000;
-			while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-			}
-
-			fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
-			for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		}
-		if (is3DS) {
+		if (consoleModel > 0) {
 			if (donorSdkVer==5) {
 				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
 				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
@@ -394,22 +379,7 @@ int main(int argc, char **argv) {
 
 	scanKeys();
 
-	if(!flashcardUsed) {
-		if(keysHeld() & KEY_UP) {
-			is3DS = true;
-		}
-		if(keysHeld() & KEY_DOWN) {
-			is3DS = false;
-		}
-
-		if(is3DS) {
-			consoleText = "Console: 3DS/2DS/Panda DSi";
-		} else {
-			consoleText = "Console: Retail DSi";
-		}
-	}
-
-	if (!gotosettings && autorun && !(keysHeld() & KEY_B)) {
+	if (arm7SCFGLocked && !gotosettings && autorun && !(keysHeld() & KEY_B)) {
 		lastRanROM();
 	}
 	
@@ -440,10 +410,9 @@ int main(int argc, char **argv) {
 		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 22; i++) {
 			printf("\n");
 		}
-		iprintf(" %s\n\n", consoleText);
 		printf("                      %s", vertext);
 		if(*SCFG_EXT>0) {
 			char text1[48],
@@ -539,10 +508,9 @@ int main(int argc, char **argv) {
 			consoleClear();
 			printf("\n ");
 			printf(username);
-			for (int i = 0; i < 19; i++) {
+			for (int i = 0; i < 21; i++) {
 				printf("\n");
 			}
-			iprintf(" %s\n\n", consoleText);
 
 			if (subscreenmode == 3) {
 				pressed = 0;

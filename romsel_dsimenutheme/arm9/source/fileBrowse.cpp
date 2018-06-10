@@ -56,6 +56,8 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+const char* SDKnumbertext;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -801,70 +803,34 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else if (dsiWareList || launchable[cursorPosition])
 			{
-				donorFound = true;
-				if(!flashcardUsed && !dsiWareList && bnrRomType[cursorPosition] == 0 && arm7DonorPath.compare("") == 0) {
-					FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
-
-					u32 SDKVersion = 0;
-					char game_TID[5];
-					grabTID(f_nds_file, game_TID);
-					game_TID[4] = 0;
-					game_TID[3] = 0;
-					if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
-					fclose(f_nds_file);
-
-					if(SDKVersion > 0x3000000 && SDKVersion < 0x5000000 && (strcmp(game_TID, "AMC") != 0)) {
-						donorFound = false;
-					}
-				}
-				if(donorFound) {
-					mmEffectEx(&snd_launch);
-					applaunch = true;
-					applaunchprep = true;
-					if (!isHomebrew[cursorPosition]) {
-						useBootstrap = true;
-					} else {
-						useBootstrap = false;
-					}
-
-					if (theme == 0) {
-						showbubble = false;
-						showSTARTborder = false;
-						clearText(false);	// Clear title
-
-						fadeSpeed = false;	// Slow fade speed
-					}
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
-					}
-					music = false;
-					mmEffectCancelAll();
-
-					clearText(true);
-					SaveSettings();
-
-					// Return the chosen file
-					return entry->name;
+				mmEffectEx(&snd_launch);
+				applaunch = true;
+				applaunchprep = true;
+				if (!isHomebrew[cursorPosition]) {
+					useBootstrap = true;
 				} else {
-					mmEffectEx(&snd_wrong);
-					clearText();
-					showdialogbox = true;
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					printSmallCentered(false, 68, "This game needs a donor ROM set.");
-					printSmallCentered(false, 88, "Please set Mario Kart DS as donor ROM,");
-					printSmallCentered(false, 100, "by moving to the ROM, and press SELECT.");
-					printSmall(false, 208, 166, "A: OK");
-					pressed = 0;
-					do {
-						scanKeys();
-						pressed = keysDownRepeat();
-						swiWaitForVBlank();
-					} while (!(pressed & KEY_A));
-					clearText();
-					showdialogbox = false;
-					for (int i = 0; i < 15; i++) swiWaitForVBlank();
+					useBootstrap = false;
 				}
+
+				if (theme == 0) {
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
+
+					fadeSpeed = false;	// Slow fade speed
+				}
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 60; i++) {
+					swiWaitForVBlank();
+				}
+				music = false;
+				mmEffectCancelAll();
+
+				clearText(true);
+				SaveSettings();
+
+				// Return the chosen file
+				return entry->name;
 			} else {
 				mmEffectEx(&snd_wrong);
 				clearText();
@@ -1069,15 +1035,36 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if ((pressed & KEY_SELECT) && !startMenu
 		&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
-		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList && !flashcardUsed)
+		&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList)
 		{
-			arm7DonorPath = "sd:/"+romfolder+"/"+dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str();
-			arm7DonorPath = ReplaceAll(arm7DonorPath, "sd:/sd:/", "sd:/");	// Fix for if romfolder has "sd:/"
-			SaveSettings();
 			clearText();
 			showdialogbox = true;
+
+			FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
+
+			u32 SDKVersion = 0;
+			char game_TID[5];
+			grabTID(f_nds_file, game_TID);
+			game_TID[4] = 0;
+			game_TID[3] = 0;
+			if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+			fclose(f_nds_file);
+
+			if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
+				SDKnumbertext = "SDK ver: 1";
+			} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
+				SDKnumbertext = "SDK ver: 2";
+			} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
+				SDKnumbertext = "SDK ver: 3";
+			} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
+				SDKnumbertext = "SDK ver: 4";
+			} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
+				SDKnumbertext = "SDK ver: 5 (TWLSDK)";
+			} else {
+				SDKnumbertext = "SDK ver: ?";
+			}
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			printSmallCentered(false, 88, "Donor ROM is set.");
+			printSmallCentered(false, 88, SDKnumbertext);
 			printSmall(false, 208, 166, "A: OK");
 			pressed = 0;
 			do {
