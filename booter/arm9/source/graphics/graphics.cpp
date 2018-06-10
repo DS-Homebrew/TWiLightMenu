@@ -136,13 +136,8 @@ void graphicsInit()
 	videoSetMode(MODE_5_3D);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE);
 
-	// Initialize OAM to capture 3D scene
-	initSubSprites();
 
-	// The sub background holds the top image when 3D directed to bottom
-	bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-
-	// Initialize GL in 3D mode
+	// Initialize gl2d
 	glScreen2D();
 
 	// Set up enough texture memory for our textures
