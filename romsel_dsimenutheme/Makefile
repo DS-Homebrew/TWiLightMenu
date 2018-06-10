@@ -129,7 +129,7 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
-  -b icon.bmp "SRLoader;DSi Menu theme;Robz8"
+  -b icon.bmp "DSiMenu++;DSi Menu theme;Robz8"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf

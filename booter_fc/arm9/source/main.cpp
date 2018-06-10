@@ -62,8 +62,6 @@ int main(int argc, char **argv) {
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 	
-	// *(u32*)0x4004008 = 0x8307F100;
-
 	// overwrite reboot stub identifier
 	//extern u64 *fake_heap_end;
 	//*fake_heap_end = 0;
@@ -76,7 +74,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	int err = runNdsFile ("fat:/_nds/srloader/main.srldr", 0, NULL);
+	int err = runNdsFile ("fat:/_nds/dsimenuplusplus/main.srldr", 0, NULL);
 	consoleDemoInit();
 	iprintf ("Start failed. Error %i\n", err);
 	stop();

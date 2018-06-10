@@ -56,7 +56,7 @@ bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "/_nds/srloader/settings.ini";
+const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 bool arm7SCFGLocked = false;
@@ -758,7 +758,7 @@ int main(int argc, char **argv) {
 
 		if (dsiWareList) {
 			// Set directory
-			chdir ("sd:/_nds/srloader/dsiware");
+			chdir ("sd:/_nds/dsimenuplusplus/dsiware");
 
 			//Navigates to the file to launch
 			filename = browseForFile(dsiWareExtensionList, username);
@@ -1101,11 +1101,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(flashcardUsed) {
-					argarray.at(0) = "/_nds/srloader/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/srloader/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/srloader/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1118,11 +1118,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(flashcardUsed) {
-					argarray.at(0) = "/_nds/srloader/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/srloader/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/srloader/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/srloader/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

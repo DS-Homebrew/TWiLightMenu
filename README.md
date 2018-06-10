@@ -1,5 +1,5 @@
-# SRLoader
-SRLoader is a frontend for nds-bootstrap for DSi, and flashcards.
+# DSiMenu++
+DSiMenu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, and flashcards.
 
 # Building
 Building this app by yourself require DEVKITARM with DEVKITPRO. You will also need [Easy GL2D](https://www.odrive.com/s/895059a5-673c-4b3c-b3dd-8dbf0cbd8c6f-5af9d7f4) ([source](https://www.odrive.com/s/eb3e676a-be1b-4a18-bc7d-67f25c80eb42-5917ab0b)). Place .a file at `devkitPro/libnds/lib`.

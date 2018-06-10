@@ -45,8 +45,7 @@
 
 bool fadeType = false;		// false = out, true = in
 
-const char* settingsinipath = "/_nds/srloader/settings.ini";
-const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
+const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -129,9 +128,6 @@ void LoadSettings(void) {
 }
 
 void SaveSettings(void) {
-	bool twldrsettingsFound = false;
-	if (!access(twldrsettingsinipath, F_OK)) twldrsettingsFound = true;
-
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
@@ -150,14 +146,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "IS_3DS", is3DS);
 	settingsini.SaveIniFile(settingsinipath);
 	
-	if(is3DS && twldrsettingsFound && !flashcardUsed) {
-		// Save some settings to TWLoader as well.
-		CIniFile twldrsettingsini( twldrsettingsinipath );
-		
-		twldrsettingsini.SetInt("TWL-MODE", "BOOTSTRAP_FILE", bootstrapFile);
-		twldrsettingsini.SaveIniFile(twldrsettingsinipath);
-	}
-
 	if(!flashcardUsed) {
 		// nds-bootstrap
 		CIniFile bootstrapini( bootstrapinipath );
@@ -280,9 +268,9 @@ void loadROMselect() {
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
 	if (theme==2) {
-		runNdsFile ("/_nds/srloader/r4menu.srldr", 0, NULL, false);
+		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
 	} else {
-		runNdsFile ("/_nds/srloader/dsimenu.srldr", 0, NULL, false);
+		runNdsFile ("/_nds/dsimenuplusplus/dsimenu.srldr", 0, NULL, false);
 	}
 }
 
@@ -426,7 +414,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 1, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 2, 0);
 
 	if (autorun || showlogo) {
 		graphicsInit();

@@ -32,8 +32,7 @@
 
 #include "inifile.h"
 
-const char* settingsinipath = "/_nds/srloader/settings.ini";
-const char* twldrsettingsinipath = "sd:/_nds/twloader/settings.ini";
+const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 

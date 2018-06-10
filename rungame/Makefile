@@ -131,9 +131,9 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
-			-b icon.bmp "SRLoader;Last-ran ROM (NTR touch);Robz8"
+			-b icon.bmp "DSiMenu++;Last-ran ROM (NTR touch);Robz8"
 	ndstool	-u 00030015 -g SLRT -c $(TARGET)-twltouch.nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
-			-b icon.bmp "SRLoader;Last-ran ROM (TWL touch);Robz8"
+			-b icon.bmp "DSiMenu++;Last-ran ROM (TWL touch);Robz8"
 	python patch_ndsheader_dsiware.py $(TARGET).nds
 	python patch_ndsheader_dsiware_twltouch.py $(TARGET)-twltouch.nds
 

@@ -1,3 +1,3 @@
 make
-copy "SRLoader.nds" "../7zfile/_nds/srloader/main.srldr"
+copy "SRLoader.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
 pause

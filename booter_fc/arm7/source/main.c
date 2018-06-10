@@ -30,19 +30,8 @@
 #include <nds.h>
 
 //---------------------------------------------------------------------------------
-void ReturntoDSiMenu() {
-//---------------------------------------------------------------------------------
-	// This will skip the power-off/sleep mode screen when returning to HOME Menu
-	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
-	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi/3DS HOME Menu
-}
-
-//---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_01)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -93,10 +82,6 @@ int main() {
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
-		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
-			exitflag = true;
-		}
-		// fifocheck();
 		swiWaitForVBlank();
 	}
 	return 0;

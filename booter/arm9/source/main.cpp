@@ -35,6 +35,8 @@
 
 #include "graphics/fontHandler.h"
 
+bool fadeType = false;		// false = out, true = in
+
 using namespace std;
 
 //---------------------------------------------------------------------------------
@@ -102,16 +104,19 @@ int main(int argc, char **argv) {
 			graphicsInit();
 			fontInit();
 			graphicsInited = true;
+			fadeType = true;
+			printf("\n ");
+			printf(username);
 		}
-		printSmall(true, 1, 2, username);
 		printSmall(false, 4, 4, "Please remove your SD Card,");
 		printSmall(false, 4, 12, "and insert one containing the");
-		printSmall(false, 4, 20, "NDS ROMs and SRLoader.");
+		printSmall(false, 4, 20, "NDS ROMs and DSiMenu++.");
 		printSmall(false, 4, 36, "After inserting it, press START");
 		printSmall(false, 4, 44, "to proceed.");
 		while(1) {
 			scanKeys();
 			if(keysHeld() & KEY_START) break;
+			swiWaitForVBlank();
 		}
 	}
 
@@ -120,25 +125,29 @@ int main(int argc, char **argv) {
 			graphicsInit();
 			fontInit();
 			graphicsInited = true;
+			fadeType = true;
+			printf("\n ");
+			printf(username);
 		}
-		printSmall(true, 1, 2, username);
+		clearText();
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
 
-	runNdsFile ("/_nds/srloader/main.srldr", 0, NULL);
+	runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL);
 
 	if(!graphicsInited) {
 		graphicsInit();
 		fontInit();
 		graphicsInited = true;
+		fadeType = true;
+		printf("\n ");
+		printf(username);
 	}
 
 	clearText();
-	printSmall(true, 1, 2, username);
-
-	printSmall(false, 4, 4, "sd:/_nds/srloader/main.srldr");
-	printSmall(false, 4, 12, "not found.");
+	printSmall(false, 4, 4, "sd:/_nds/dsimenuplusplus/");
+	printSmall(false, 4, 12, "main.srldr not found.");
 	printSmall(false, 4, 28, "Press B to return to menu.");
 	
 	while (1) {
