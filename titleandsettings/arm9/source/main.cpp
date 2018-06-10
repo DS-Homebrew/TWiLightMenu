@@ -383,7 +383,7 @@ int main(int argc, char **argv) {
 	swiWaitForVBlank();
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If SRLoader is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
@@ -1059,7 +1059,7 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 224, 32, "No");
 
-					printSmall(false, 12, 40, "SRLoader logo on startup");
+					printSmall(false, 12, 40, "DSiMenu++ logo on startup");
 					if(showlogo)
 						printSmall(false, 216, 40, "Show");
 					else
@@ -1081,7 +1081,7 @@ int main(int argc, char **argv) {
 
 
 					if (settingscursor == 0) {
-						printSmall(false, 4, 164, "The theme to use in SRLoader.");
+						printSmall(false, 4, 164, "The theme to use in DSiMenu++.");
 						printSmall(false, 4, 172, "Press A for sub-themes.");
 					} else if (settingscursor == 1) {
 						printSmall(false, 4, 148, "If turned on, hold B on");
@@ -1089,9 +1089,9 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 164, "ROM select menu.");
 						printSmall(false, 4, 172, "Press Y to start last played ROM.");
 					} else if (settingscursor == 2) {
-						printSmall(false, 4, 156, "The SRLoader logo will be");
+						printSmall(false, 4, 156, "The DSiMenu++ logo will be");
 						printSmall(false, 4, 164, "shown when you start");
-						printSmall(false, 4, 172, "SRLoader.");
+						printSmall(false, 4, 172, "DSiMenu++.");
 					} else if (settingscursor == 3) {
 						printSmall(false, 4, 156, "If you're in a folder where most");
 						printSmall(false, 4, 164, "of your games are, it is safe to");
@@ -1100,8 +1100,8 @@ int main(int argc, char **argv) {
 						if (hiyaAutobootFound) {
 							printSmall(false, 4, 172, "Show DSi Menu on boot again.");
 						} else {
-							printSmall(false, 4, 164, "Start SRLoader on boot, instead.");
-							printSmall(false, 4, 172, "of the DSi Menu.");
+							printSmall(false, 4, 164, "Start DSiMenu++ on boot, instead.");
+							printSmall(false, 4, 172, "of the regular DSi Menu.");
 						}
 					}
 
