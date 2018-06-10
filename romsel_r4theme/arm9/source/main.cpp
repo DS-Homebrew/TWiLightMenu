@@ -1099,7 +1099,7 @@ int main(int argc, char **argv) {
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {
-							if (!arm7SCFGLocked && !is3DS) {
+							if (!arm7SCFGLocked) {
 								*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 								*(u16*)(0x02000304) = 0x1801;
 								*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
