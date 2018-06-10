@@ -747,7 +747,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				if (startMenu_cursorPosition == 0) {
 					// Launch settings
-					int err = runNdsFile ("/_nds/srloader/main.srldr", 0, NULL, false);
+					int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false);
 					iprintf ("Start failed. Error %i\n", err);
 				} else if (startMenu_cursorPosition == 1) {
 					if (!flashcardUsed) {
