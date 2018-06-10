@@ -70,6 +70,7 @@ static int bstrap_loadingScreen = 1;
 static int donorSdkVer = 0;
 
 static bool bootstrapFile = false;
+static bool homebrewBootstrap = false;
 
 static bool useGbarunner = false;
 static bool autorun = false;
@@ -109,6 +110,7 @@ void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
@@ -283,7 +285,25 @@ int lastRanROM() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
-		if (consoleModel > 0) {
+		if (!arm7SCFGLocked) {
+			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+			*(u16*)(0x02000304) = 0x1801;
+			*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
+			*(u32*)(0x0200030C) = 0x00030015;
+			*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
+			*(u32*)(0x02000314) = 0x00030015;
+			*(u32*)(0x02000318) = 0x00000017;
+			*(u32*)(0x0200031C) = 0x00000000;
+			while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+			}
+
+			fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
+			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		}
+		if (homebrewBootstrap) {
+			bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+		} else if (consoleModel > 0) {
 			if (donorSdkVer==5) {
 				if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
 				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";

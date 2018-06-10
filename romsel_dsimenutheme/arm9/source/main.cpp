@@ -110,6 +110,7 @@ bool startMenu = false;
 bool gotosettings = false;
 
 bool bootstrapFile = false;
+bool homebrewBootstrap = false;
 
 bool useGbarunner = false;
 int theme = 0;
@@ -181,6 +182,7 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
+	if (!gotosettings) settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);

@@ -33,56 +33,22 @@
 #include "inifile.h"
 
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
-const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string bootstrapfilename;
 
-static bool is3DS = false;
-
-const char* consoleText = "";
-
-static bool showlogo = true;
-static bool gotosettings = false;
-
-const char* romreadled_valuetext;
-const char* useArm7Donor_valuetext;
-const char* loadingScreen_valuetext;
-
-static int bstrap_useArm7Donor = 1;
-static int bstrap_loadingScreen = 1;
+static int consoleModel = 0;
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
 
 static int donorSdkVer = 0;
 
 static bool bootstrapFile = false;
-
-static bool ntr_touch = true;
-
-static bool useGbarunner = false;
-static bool autorun = false;
-static int theme = 0;
-static int subtheme = 0;
-static bool showDirectories = true;
-
-static bool bstrap_boostcpu = false;	// false == NTR, true == TWL
-static bool bstrap_debug = false;
-static int bstrap_romreadled = 0;
-//static bool bstrap_lockARM9scfgext = false;
+static bool homebrewBootstrap = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
-
-static bool flashcardUsed = false;
-
-static int flashcard;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
 
 void LoadSettings(void) {
 	// GUI
@@ -90,6 +56,7 @@ void LoadSettings(void) {
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -123,7 +90,9 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 int lastRanROM() {
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	if (is3DS) {
+	if (homebrewBootstrap) {
+		bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+	} else if (consoleModel > 0) {
 		if(donorSdkVer==5) {
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
 			else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
@@ -147,10 +116,6 @@ int lastRanROM() {
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
-
-	// Turn on screen backlights if they're disabled
-	powerOn(PM_BACKLIGHT_TOP);
-	powerOn(PM_BACKLIGHT_BOTTOM);
 
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
@@ -178,17 +143,6 @@ int main(int argc, char **argv) {
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
 	fifoSendValue32(FIFO_USER_07, 0);
-
-	scanKeys();
-
-	if(!flashcardUsed) {
-		if(keysHeld() & KEY_UP) {
-			is3DS = true;
-		}
-		if(keysHeld() & KEY_DOWN) {
-			is3DS = false;
-		}
-	}
 
 	int err = lastRanROM();
 	consoleDemoInit();

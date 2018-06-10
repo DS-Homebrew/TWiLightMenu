@@ -62,6 +62,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern bool isRegularDS;
 
@@ -827,6 +828,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectCancelAll();
 
 				clearText(true);
+				if (!dsiWareList) {
+					FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
+
+					char game_TID[5];
+					grabTID(f_nds_file, game_TID);
+					game_TID[4] = 0;
+					game_TID[3] = 0;
+					if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
+					fclose(f_nds_file);
+				}
 				SaveSettings();
 
 				// Return the chosen file
