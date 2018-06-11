@@ -612,6 +612,25 @@ void loadGameOnFlashcard (const char* filename) {
 	stop();
 }
 
+void attemptReboot() {
+	if (!arm7SCFGLocked && !quickStartRom) {
+		*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+		*(u16*)(0x02000304) = 0x1801;
+		*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
+		*(u32*)(0x0200030C) = 0x00030015;
+		*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
+		*(u32*)(0x02000314) = 0x00030015;
+		*(u32*)(0x02000318) = 0x00000017;
+		*(u32*)(0x0200031C) = 0x00000000;
+		while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+			*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+		}
+
+		fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	}
+}
+
 void dsCardLaunch() {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
@@ -765,6 +784,8 @@ int main(int argc, char **argv) {
 						}
 
 						useBootstrap = true;
+						homebrewBootstrap = true;
+						SaveSettings();
 						if (useGbarunner) {
 							if (flashcardUsed) {
 								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
@@ -772,6 +793,7 @@ int main(int argc, char **argv) {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+								attemptReboot();
 								int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
