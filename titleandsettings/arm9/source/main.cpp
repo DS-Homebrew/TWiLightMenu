@@ -71,6 +71,7 @@ static int donorSdkVer = 0;
 
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
+static bool quickStartRom = false;
 
 static bool useGbarunner = false;
 static bool autorun = false;
@@ -111,6 +112,7 @@ void LoadSettings(void) {
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
+	quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
@@ -144,6 +146,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
+	settingsini.SetInt("SRLOADER", "QUICK_START_GAME", quickStartRom);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -159,6 +162,7 @@ void SaveSettings(void) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
@@ -285,7 +289,7 @@ int lastRanROM() {
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
-		if (!arm7SCFGLocked) {
+		if (!arm7SCFGLocked && !quickStartRom) {
 			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 			*(u16*)(0x02000304) = 0x1801;
 			*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
@@ -1029,6 +1033,9 @@ int main(int argc, char **argv) {
 						case 5:
 							yPos = 64;
 							break;
+						case 6:
+							yPos = 72;
+							break;
 					}
 
 					printSmall(false, 4, yPos, ">");
@@ -1071,11 +1078,19 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 216, 56, "No");
 
-					if (!flashcardUsed && consoleModel < 2) {
-						if (hiyaAutobootFound) {
-							printSmall(false, 12, 64, "Restore DSi Menu");
-						} else {
-							printSmall(false, 12, 64, "Replace DSi Menu");
+					if (!flashcardUsed && !arm7SCFGLocked) {
+						printSmall(false, 12, 64, "Quick-start ROM");
+						if(quickStartRom)
+							printSmall(false, 216, 64, "Yes");
+						else
+							printSmall(false, 216, 64, "No");
+
+						if (consoleModel < 2) {
+							if (hiyaAutobootFound) {
+								printSmall(false, 12, 72, "Restore DSi Menu");
+							} else {
+								printSmall(false, 12, 72, "Replace DSi Menu");
+							}
 						}
 					}
 
@@ -1101,6 +1116,17 @@ int main(int argc, char **argv) {
 						printSmall(false, 4, 164, "the DSi/3DS menus. Turning this off");
 						printSmall(false, 4, 172, "will fix some icons appearing white.");
 					} else if (settingscursor == 5) {
+						if (consoleModel < 2) {
+							printSmall(false, 4, 156, "Bypasses rebooting, in case if");
+							printSmall(false, 4, 164, "you're back in the DSi Menu,");
+							printSmall(false, 4, 172, "after launching a game.");
+						} else {
+							printSmall(false, 4, 148, "Bypasses rebooting, in case if");
+							printSmall(false, 4, 156, "you're back in the 3DS HOME Menu,");
+							printSmall(false, 4, 164, "after launching a game, or if the");
+							printSmall(false, 4, 172, "Luma exception screen appears.");
+						}
+					} else if (settingscursor == 6) {
 						if (hiyaAutobootFound) {
 							printSmall(false, 4, 172, "Show DSi Menu on boot again.");
 						} else {
@@ -1169,6 +1195,10 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 5:
+							quickStartRom = !quickStartRom;
+							mmEffectEx(&snd_select);
+							break;
+						case 6:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1223,9 +1253,14 @@ int main(int argc, char **argv) {
 					break;
 				}
 
-				if (!flashcardUsed && consoleModel < 2) {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+				if (!flashcardUsed) {
+					if (consoleModel < 2) {
+						if (settingscursor > 6) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 6;
+					} else {
+						if (settingscursor > 5) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 5;
+					}
 				} else {
 					if (settingscursor > 4) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 4;

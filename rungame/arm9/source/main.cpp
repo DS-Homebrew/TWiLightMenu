@@ -63,6 +63,10 @@ void LoadSettings(void) {
 	CIniFile bootstrapini( bootstrapinipath );
 
 	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
+
+	// Modify NTR touch setting
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 0);
+	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 static bool arm7SCFGLocked = false;
