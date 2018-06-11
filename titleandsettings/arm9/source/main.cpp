@@ -61,10 +61,8 @@ static bool showlogo = true;
 static bool gotosettings = false;
 
 const char* romreadled_valuetext;
-const char* useArm7Donor_valuetext;
 const char* loadingScreen_valuetext;
 
-static int bstrap_useArm7Donor = 1;
 static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
@@ -159,7 +157,7 @@ void SaveSettings(void) {
 		// nds-bootstrap
 		CIniFile bootstrapini( bootstrapinipath );
 
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", bstrap_useArm7Donor);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", 0);	// Disable use of donor ROM for all nds-bootstrap versions
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
@@ -747,14 +745,6 @@ int main(int argc, char **argv) {
 							printSmall(false, 156, selyPos, "67mhz (NTR)");
 						selyPos += 8;
 
-						// if (bstrap_boostcpu) {
-						// 	printSmall(false, 12, 96, "VRAM boost");
-						// 	if(bstrap_boostvram)
-						// 		printSmall(false, 224, 96, "On");
-						// 	else
-						// 		printSmall(false, 224, 96, "Off");
-						// }
-
 						printSmall(false, 12, selyPos, "Debug");
 						if(bstrap_debug)
 							printSmall(false, 224, selyPos, "On");
@@ -778,21 +768,6 @@ int main(int argc, char **argv) {
 								break;
 						}
 						printSmall(false, 208, selyPos, romreadled_valuetext);
-						selyPos += 8;
-						printSmall(false, 12, selyPos, "Use donor ROM");
-						switch(bstrap_useArm7Donor) {
-							case 0:
-							default:
-								useArm7Donor_valuetext = "Off";
-								break;
-							case 1:
-								useArm7Donor_valuetext = "On";
-								break;
-							case 2:
-								useArm7Donor_valuetext = "Force-use";
-								break;
-						}
-						printSmall(false, 184, selyPos, useArm7Donor_valuetext);
 						selyPos += 8;
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
@@ -930,18 +905,9 @@ int main(int argc, char **argv) {
 								}
 								break;
 							case 3:
-								if (pressed & KEY_LEFT) {
-									bstrap_useArm7Donor--;
-									if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_useArm7Donor++;
-									if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
-								}
-								break;
-							case 4:
 								soundfreq = !soundfreq;
 								break;
-							case 5:
+							case 4:
 								if (pressed & KEY_LEFT) {
 									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
@@ -950,7 +916,7 @@ int main(int argc, char **argv) {
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
-							case 6:
+							case 5:
 								bootstrapFile = !bootstrapFile;
 								break;
 						}
@@ -990,8 +956,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if (settingscursor > 6) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 6;
+					if (settingscursor > 5) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 5;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
