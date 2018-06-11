@@ -1,0 +1,3 @@
+@echo off
+make
+pause
