@@ -899,12 +899,12 @@ int main(int argc, char **argv) {
 				} while (!pressed);
 				
 				if (pressed & KEY_UP) {
-					settingscursor -= 1;
+					settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
-					settingscursor += 1;
+					settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
@@ -922,19 +922,19 @@ int main(int argc, char **argv) {
 							case 2:
 								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 								if (pressed & KEY_LEFT) {
-									bstrap_romreadled -= 1;
+									bstrap_romreadled--;
 									if (bstrap_romreadled < 0) bstrap_romreadled = 2;
 								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_romreadled += 1;
+									bstrap_romreadled++;
 									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
 								}
 								break;
 							case 3:
 								if (pressed & KEY_LEFT) {
-									bstrap_useArm7Donor -= 0;
+									bstrap_useArm7Donor--;
 									if (bstrap_useArm7Donor < 0) bstrap_useArm7Donor = 2;
 								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_useArm7Donor += 1;
+									bstrap_useArm7Donor++;
 									if (bstrap_useArm7Donor > 2) bstrap_useArm7Donor = 0;
 								}
 								break;
@@ -943,10 +943,10 @@ int main(int argc, char **argv) {
 								break;
 							case 5:
 								if (pressed & KEY_LEFT) {
-									bstrap_loadingScreen -= 0;
+									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
 								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_loadingScreen += 1;
+									bstrap_loadingScreen++;
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
