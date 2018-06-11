@@ -64,6 +64,7 @@ extern bool fadeSpeed;
 
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
+extern int consoleModel;
 extern bool isRegularDS;
 
 extern bool showbubble;
@@ -957,7 +958,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		}
 
 		if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
-		&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && !flashcardUsed)
+		&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && !flashcardUsed && consoleModel < 2)
 		{
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white

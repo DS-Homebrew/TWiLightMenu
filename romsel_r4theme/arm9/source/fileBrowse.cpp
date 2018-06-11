@@ -64,6 +64,7 @@ extern bool fadeSpeed;
 
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
+extern int consoleModel;
 extern bool isRegularDS;
 
 extern bool showdialogbox;
@@ -455,7 +456,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_R) && !flashcardUsed)
+		if ((pressed & KEY_R) && !flashcardUsed && consoleModel < 2)
 		{
 			consoleClear();
 			printf("Please wait...\n");

@@ -148,7 +148,7 @@ void LoadSettings(void) {
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
 	dsiWareList = settingsini.GetInt("SRLOADER", "DSIWARE_LIST", 0);
-	if (flashcardUsed) dsiWareList = false;
+	if (flashcardUsed && consoleModel > 1) dsiWareList = false;
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
