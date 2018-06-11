@@ -72,8 +72,8 @@ int main()
 	while(aptMainLoop()) {
 		offset3D[0].logo = CONFIG_3D_SLIDERSTATE * -5.0f;
 		offset3D[1].logo = CONFIG_3D_SLIDERSTATE * 5.0f;
-		offset3D[0].launchertext = CONFIG_3D_SLIDERSTATE * -3.0f;
-		offset3D[1].launchertext = CONFIG_3D_SLIDERSTATE * 3.0f;
+		//offset3D[0].launchertext = CONFIG_3D_SLIDERSTATE * -3.0f;
+		//offset3D[1].launchertext = CONFIG_3D_SLIDERSTATE * 3.0f;
 
 		// Scan hid shared memory for input events
 		hidScanInput();
@@ -86,7 +86,6 @@ int main()
 			else pp2d_draw_on(GFX_TOP, (gfx3dSide_t)topfb);
 			pp2d_draw_texture(topbgtex, 0, 0);
 			pp2d_draw_texture(logotex, offset3D[topfb].logo+400/2 - 256/2, 240/2 - 128/2);
-			pp2d_draw_text(offset3D[topfb].launchertext+224, 160, 1.00, 1.00, BLACK, "Launcher");
 			if (fadealpha > 0) pp2d_draw_rectangle(0, 0, 400, 240, RGBA8(0, 0, 0, fadealpha)); // Fade in/out effect
 		}
 		pp2d_draw_on(GFX_BOTTOM, GFX_LEFT);
