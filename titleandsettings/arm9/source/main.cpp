@@ -995,7 +995,7 @@ int main(int argc, char **argv) {
 			} else {
 				pressed = 0;
 
-				if (!flashcardUsed) {
+				if (!flashcardUsed && consoleModel < 2) {
 					if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
 					else hiyaAutobootFound = false;
 				}
