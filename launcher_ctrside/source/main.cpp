@@ -130,6 +130,7 @@ int main()
 			if (fadealpha > 255) {
 				fadealpha = 255;
 				fadeout = false;
+				SaveSettings();
 				if (menuSelection == 0) {
 					// Launch DSiMenu++
 					while(1) {
