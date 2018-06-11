@@ -1071,7 +1071,7 @@ int main(int argc, char **argv) {
 					else
 						printSmall(false, 216, 56, "No");
 
-					if (!flashcardUsed) {
+					if (!flashcardUsed && consoleModel < 2) {
 						if (hiyaAutobootFound) {
 							printSmall(false, 12, 64, "Restore DSi Menu");
 						} else {
@@ -1223,7 +1223,7 @@ int main(int argc, char **argv) {
 					break;
 				}
 
-				if (!flashcardUsed) {
+				if (!flashcardUsed && consoleModel < 2) {
 					if (settingscursor > 5) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 5;
 				} else {
