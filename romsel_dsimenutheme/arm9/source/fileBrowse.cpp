@@ -912,18 +912,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_L) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
+		if ((pressed & KEY_L) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright)
 		{
 			mmEffectEx(&snd_switch);
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			if (dsiWareList) {
 				dsiWarePageNum -= 1;
+				if (dsiWarePageNum < 0) dsiWarePageNum = 0;
 				dsiWare_cursorPosition = 0;
 				dsiWare_titleboxXpos = 0;
 				dsiWare_titlewindowXpos = 0;
 			} else {
 				pagenum -= 1;
+				if (pagenum < 0) pagenum = 0;
 				cursorPosition = 0;
 				titleboxXpos = 0;
 				titlewindowXpos = 0;
