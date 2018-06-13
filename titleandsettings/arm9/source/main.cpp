@@ -1233,6 +1233,10 @@ int main(int argc, char **argv) {
 			}
 
 		} else {
+			// Save quick-start ROM setting
+			CIniFile bootstrapini( bootstrapinipath );
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
+			bootstrapini.SaveIniFile(bootstrapinipath);
 			loadROMselect();
 		}
 
