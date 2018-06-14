@@ -79,7 +79,7 @@ static int subtheme = 0;
 static bool showDirectories = true;
 static bool animateDsiIcons = false;
 
-static bool bstrap_boostcpu = false;	// false == NTR, true == TWL
+static bool boostCpu = false;	// false == NTR, true == TWL
 static bool bstrap_debug = false;
 static int bstrap_romreadled = 0;
 //static bool bstrap_lockARM9scfgext = false;
@@ -120,16 +120,18 @@ void LoadSettings(void) {
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 
+	// Default nds-bootstrap settings
+	boostCpu = settingsini.GetInt("SRLOADER", "BOOST_CPU", 0);
+	noSoundStutter = settingsini.GetInt( "SRLOADER", "NO_SOUND_STUTTER", 1);
+
 	if(!flashcardUsed) {
 		// nds-bootstrap
 		CIniFile bootstrapini( bootstrapinipath );
 
-		bstrap_boostcpu = bootstrapini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
 		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
-		noSoundStutter = bootstrapini.GetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", 1);
 		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 	}
 }
@@ -152,19 +154,20 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+
+	// Default nds-bootstrap settings
+	settingsini.SetInt("SRLOADER", "BOOST_CPU", boostCpu);
+	settingsini.SetInt("SRLOADER", "NO_SOUND_STUTTER", noSoundStutter);
 	settingsini.SaveIniFile(settingsinipath);
-	
+
 	if(!flashcardUsed) {
 		// nds-bootstrap
 		CIniFile bootstrapini( bootstrapinipath );
 
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "USE_ARM7_DONOR", 0);	// Disable use of donor ROM for all nds-bootstrap versions
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_boostcpu);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 	}
@@ -741,7 +744,7 @@ int main(int argc, char **argv) {
 
 					if(!flashcardUsed) {
 						printSmall(false, 12, selyPos, "ARM9 CPU Speed");
-						if(bstrap_boostcpu)
+						if(boostCpu)
 							printSmall(false, 156, selyPos, "133mhz (TWL)");
 						else
 							printSmall(false, 156, selyPos, "67mhz (NTR)");
@@ -900,7 +903,7 @@ int main(int argc, char **argv) {
 						switch (settingscursor) {
 							case 0:
 							default:
-								bstrap_boostcpu = !bstrap_boostcpu;
+								boostCpu = !boostCpu;
 								break;
 							case 1:
 								bstrap_debug = !bstrap_debug;

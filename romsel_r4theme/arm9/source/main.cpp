@@ -128,6 +128,9 @@ int dsiWarePageNum = 0;
 bool showDirectories = true;
 bool animateDsiIcons = false;
 
+bool boostCpu = false;	// false == NTR, true == TWL
+bool noSoundStutter = true;
+
 bool flashcardUsed = false;
 
 int flashcard;
@@ -170,6 +173,10 @@ void LoadSettings(void) {
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+
+	// Default nds-bootstrap settings
+	boostCpu = settingsini.GetInt("SRLOADER", "BOOST_CPU", 0);
+	noSoundStutter = settingsini.GetInt( "SRLOADER", "NO_SOUND_STUTTER", 1);
 }
 
 void SaveSettings(void) {
@@ -1017,6 +1024,8 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
