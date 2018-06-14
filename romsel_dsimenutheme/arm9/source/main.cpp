@@ -38,6 +38,7 @@
 #include "ndsheaderbanner.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"
+#include "perGameSettings.h"
 
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
@@ -963,8 +964,17 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
+						loadPerGameSettings(filename);
+						if (perGameSettings_boostCpu == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+						}
+						if (perGameSettings_noSoundStutter == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", perGameSettings_noSoundStutter);
+						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);

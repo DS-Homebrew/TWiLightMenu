@@ -73,7 +73,7 @@ extern int file_count;
 
 extern bool flashcardUsed;
 
-extern std::string romfolder;
+std::string pergamefilepath;
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
@@ -89,6 +89,21 @@ extern bool usernameRenderedDone;
 
 char fileCounter[8];
 
+void loadPerGameSettings (std::string filename) {
+	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
+	CIniFile pergameini( pergamefilepath );
+	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
+	perGameSettings_noSoundStutter = pergameini.GetInt("GAMESETTINGS", "NO_SOUND_STUTTER", -1);
+}
+
+void savePerGameSettings (std::string filename) {
+	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
+	CIniFile pergameini( pergamefilepath );
+	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+	pergameini.SetInt("GAMESETTINGS", "NO_SOUND_STUTTER", perGameSettings_noSoundStutter);
+	pergameini.SaveIniFile( pergamefilepath );
+}
+
 void perGameSettings (std::string filename, const char* username) {
 	int pressed = 0;
 
@@ -97,6 +112,8 @@ void perGameSettings (std::string filename, const char* username) {
 	showdialogbox = true;
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
+	
+	loadPerGameSettings(filename);
 
 	FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
@@ -198,7 +215,10 @@ void perGameSettings (std::string filename, const char* username) {
 			}
 
 			if (pressed & KEY_B) {
-				perGameSettingsChanged = false;
+				if (perGameSettingsChanged) {
+					savePerGameSettings(filename);
+					perGameSettingsChanged = false;
+				}
 				break;
 			}
 
