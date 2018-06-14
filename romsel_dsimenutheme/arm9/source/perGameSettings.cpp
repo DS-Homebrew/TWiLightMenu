@@ -60,7 +60,12 @@ const char* SDKnumbertext;
 
 extern bool showdialogbox;
 
+bool perGameSettingsButtons = false;
 bool perGameSettingsChanged = false;
+
+int perGameSettings_cursorPosition = 0;
+int perGameSettings_boostCpu = -1;
+int perGameSettings_noSoundStutter = -1;
 
 extern int cursorPosition;
 extern int pagenum;
@@ -88,6 +93,7 @@ void perGameSettings (std::string filename, const char* username) {
 	int pressed = 0;
 
 	clearText();
+	if (!flashcardUsed) perGameSettingsButtons = true;
 	showdialogbox = true;
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
@@ -126,7 +132,24 @@ void perGameSettings (std::string filename, const char* username) {
 			printSmallCentered(false, 120, SDKnumbertext);
 			printSmall(false, 208, 166, "A: OK");
 		} else {
-			printSmallCentered(false, 150, SDKnumbertext);
+			printSmall(false, 16, 80, SDKnumbertext);
+			printSmall(false, 24, 112+(perGameSettings_cursorPosition*16), ">");
+			printSmall(false, 32, 112, "ARM9 CPU Speed:");
+			if (perGameSettings_boostCpu == -1) {
+				printSmall(false, 180, 112, "Default");
+			} else if (perGameSettings_boostCpu == 1) {
+				printSmall(false, 144, 112, "133mhz (TWL)");
+			} else {
+				printSmall(false, 156, 112, "67mhz (NTR)");
+			}
+			printSmall(false, 32, 128, "No sound stutter:");
+			if (perGameSettings_noSoundStutter == -1) {
+				printSmall(false, 180, 128, "Default");
+			} else if (perGameSettings_noSoundStutter == 1) {
+				printSmall(false, 208, 128, "Yes");
+			} else {
+				printSmall(false, 214, 128, "No");
+			}
 			printSmall(false, 200, 166, "B: Back");
 		}
 		do {
@@ -152,12 +175,39 @@ void perGameSettings (std::string filename, const char* username) {
 				break;
 			}
 		} else {
+			if (pressed & KEY_UP) {
+				perGameSettings_cursorPosition--;
+			}
+			if (pressed & KEY_DOWN) {
+				perGameSettings_cursorPosition++;
+			}
+
+			if (pressed & KEY_A) {
+				switch (perGameSettings_cursorPosition) {
+					case 0:
+					default:
+						perGameSettings_boostCpu++;
+						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						break;
+					case 1:
+						perGameSettings_noSoundStutter++;
+						if (perGameSettings_noSoundStutter > 1) perGameSettings_noSoundStutter = -1;
+						break;
+				}
+				perGameSettingsChanged = true;
+			}
+
 			if (pressed & KEY_B) {
+				perGameSettingsChanged = false;
 				break;
 			}
+
+			if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
+			if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
 		}
 	}
 	clearText();
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	if (!flashcardUsed) perGameSettingsButtons = false;
 }

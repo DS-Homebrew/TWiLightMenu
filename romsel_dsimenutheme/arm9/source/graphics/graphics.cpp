@@ -83,6 +83,7 @@
 #include "graphics.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
+#include "../perGameSettings.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -154,7 +155,7 @@ glImage subBgImage[(256 / 16) * (256 / 16)];
 glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 glImage bubbleImage[(256 / 16) * (128 / 16)];
 glImage bubblearrowImage[(16 / 16) * (16 / 16)];
-glImage dialogboxImage[(256 / 16) * (192 / 16)];
+glImage dialogboxImage[(256 / 16) * (256 / 16)];
 glImage bipsImage[(8 / 8) * (32 / 8)];
 glImage scrollwindowImage[(32 / 16) * (32 / 16)];
 glImage scrollwindowfrontImage[(32 / 16) * (32 / 16)];

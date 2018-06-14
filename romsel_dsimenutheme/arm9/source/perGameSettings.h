@@ -3,6 +3,11 @@
 
 #include <string>
 
+extern bool perGameSettingsButtons;
+
+extern int perGameSettings_boostCpu;
+extern int perGameSettings_noSoundStutter;
+
 void perGameSettings(std::string filename, const char* username);
 
 
