@@ -96,8 +96,6 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-std::string arm7DonorPath;
-
 int donorSdkVer = 0;
 
 bool gameSoftReset = false;

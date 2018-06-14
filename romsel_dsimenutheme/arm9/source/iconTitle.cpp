@@ -44,6 +44,7 @@ static int BOX_PY_spacing3 = 28;
 #include "icon_gb.h"
 #include "icon_nes.h"
 
+extern bool showdialogbox;
 extern bool dsiWareList;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
@@ -627,11 +628,21 @@ void iconUpdate(bool isDir, const char* name, int num)
 void titleUpdate(bool isDir, const char* name)
 {
 	clearText(false);
-	if (theme == 1) {
+	if (showdialogbox) {
+		BOX_PY = 13;
+		BOX_PY_spacing1 = 17;
+		BOX_PY_spacing2 = 7;
+		BOX_PY_spacing3 = 26;
+	} else if (theme == 1) {
 		BOX_PY = 39;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
+	} else {
+		BOX_PY = 13;
+		BOX_PY_spacing1 = 19;
+		BOX_PY_spacing2 = 9;
+		BOX_PY_spacing3 = 28;
 	}
 	
 	if (startMenu) {

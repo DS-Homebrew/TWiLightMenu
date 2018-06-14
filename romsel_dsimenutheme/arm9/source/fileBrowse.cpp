@@ -42,6 +42,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
+#include "perGameSettings.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -55,8 +56,6 @@
 #define ENTRIES_PER_SCREEN 15
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
-
-const char* SDKnumbertext;
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -79,7 +78,6 @@ extern bool showdialogbox;
 
 extern std::string romfolder;
 
-extern std::string arm7DonorPath;
 bool donorFound = true;
 
 extern bool applaunch;
@@ -94,9 +92,10 @@ extern bool startMenu;
 
 extern int theme;
 
+int file_count = 0;
+
 extern bool showDirectories;
 extern int spawnedtitleboxes;
-static int file_count = 0;
 extern bool dsiWareList;
 extern int cursorPosition;
 extern int dsiWare_cursorPosition;
@@ -852,7 +851,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					printSmallCentered(false, 88, "This game cannot be launched.");
+					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+					printSmallCentered(false, 112, "This game cannot be launched.");
 					printSmall(false, 208, 166, "A: OK");
 					pressed = 0;
 					do {
@@ -1055,45 +1055,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && !dsiWareList)
 			{
-				clearText();
-				showdialogbox = true;
-
-				FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
-
-				u32 SDKVersion = 0;
-				char game_TID[5];
-				grabTID(f_nds_file, game_TID);
-				game_TID[4] = 0;
-				game_TID[3] = 0;
-				if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
-				fclose(f_nds_file);
-
-				if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-					SDKnumbertext = "SDK ver: 1";
-				} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-					SDKnumbertext = "SDK ver: 2";
-				} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-					SDKnumbertext = "SDK ver: 3";
-				} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-					SDKnumbertext = "SDK ver: 4";
-				} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-					SDKnumbertext = "SDK ver: 5 (TWLSDK)";
-				} else {
-					SDKnumbertext = "SDK ver: ?";
-				}
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				printSmallCentered(false, 88, SDKnumbertext);
-				printSmall(false, 208, 166, "A: OK");
-				pressed = 0;
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					swiWaitForVBlank();
-				} while (!(pressed & KEY_A));
-				clearText();
-				showdialogbox = false;
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
-				
+				perGameSettings(dirContents[scrn].at(cursorPosition+pagenum*40).name, username);
 			}
 
 		}

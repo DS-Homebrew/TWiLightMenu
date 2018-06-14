@@ -831,6 +831,7 @@ void vBlankHandler()
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
+				drawIcon(24, dbox_Ypos+20, cursorPosition);
 			}
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
