@@ -64,6 +64,7 @@ const char* romreadled_valuetext;
 const char* loadingScreen_valuetext;
 
 static int bstrap_loadingScreen = 1;
+static bool noSoundStutter = true;
 
 static int donorSdkVer = 0;
 
@@ -128,6 +129,7 @@ void LoadSettings(void) {
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 1);
 		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
+		noSoundStutter = bootstrapini.GetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", 1);
 		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
 	}
 }
@@ -162,6 +164,7 @@ void SaveSettings(void) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
 		bootstrapini.SaveIniFile(bootstrapinipath);
 	}
@@ -757,16 +760,23 @@ int main(int argc, char **argv) {
 								romreadled_valuetext = "None";
 								break;
 							case 1:
-								romreadled_valuetext = "WiFi";
+								romreadled_valuetext = "WiFi-Power";
 								break;
 							case 2:
-								romreadled_valuetext = "Power";
+								romreadled_valuetext = "Power-Wifi";
 								break;
 							case 3:
 								romreadled_valuetext = "Camera";
 								break;
 						}
-						printSmall(false, 208, selyPos, romreadled_valuetext);
+						printSmall(false, 184, selyPos, romreadled_valuetext);
+						selyPos += 8;
+
+						printSmall(false, 12, selyPos, "No sound stutter");
+						if(noSoundStutter)
+							printSmall(false, 224, selyPos, "Yes");
+						else
+							printSmall(false, 224, selyPos, "No");
 						selyPos += 8;
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
@@ -797,9 +807,9 @@ int main(int argc, char **argv) {
 
 						printSmall(false, 12, selyPos, "Bootstrap");
 						if(bootstrapFile)
-							printSmall(false, 184, selyPos, "Unofficial");
+							printSmall(false, 176, selyPos, "Unofficial");
 						else
-							printSmall(false, 184, selyPos, "Release");
+							printSmall(false, 176, selyPos, "Release");
 
 
 						if (settingscursor == 0) {
@@ -815,10 +825,12 @@ int main(int argc, char **argv) {
 							// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
 							// printSmall(false, 4, 164, "avoiding conflict with");
 							// printSmall(false, 4, 172, "recent libnds.");
-							printSmall(false, 4, 164, "Sets LED as ROM read indicator.");
+							printSmall(false, 4, 164, "Sets read and async read");
+							printSmall(false, 4, 172, "LEDs as ROM read indicators.");
 						} else if (settingscursor == 3) {
-							printSmall(false, 4, 164, "Enable, disable, or force use of");
-							printSmall(false, 4, 172, "donor ROM.");
+							printSmall(false, 4, 156, "Disables sound stutters/pauses");
+							printSmall(false, 4, 164, "when reading data from SD card.");
+							printSmall(false, 4, 172, "Can break support for some games.");
 						} else if (settingscursor == 4) {
 							printSmall(false, 4, 164, "32.73 kHz: Original quality");
 							printSmall(false, 4, 172, "47.61 kHz: High quality");
@@ -873,7 +885,7 @@ int main(int argc, char **argv) {
 				} while (!pressed);
 				
 				if (pressed & KEY_UP) {
-					settingscursor++;
+					settingscursor--;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
@@ -904,9 +916,12 @@ int main(int argc, char **argv) {
 								}
 								break;
 							case 3:
-								soundfreq = !soundfreq;
+								noSoundStutter = !noSoundStutter;
 								break;
 							case 4:
+								soundfreq = !soundfreq;
+								break;
+							case 5:
 								if (pressed & KEY_LEFT) {
 									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
@@ -915,7 +930,7 @@ int main(int argc, char **argv) {
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
-							case 5:
+							case 6:
 								bootstrapFile = !bootstrapFile;
 								break;
 						}
@@ -955,8 +970,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+					if (settingscursor > 6) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 6;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
@@ -1136,7 +1151,7 @@ int main(int argc, char **argv) {
 								theme += 1;
 								if (theme > 2) theme = 0;
 								mmEffectEx(&snd_select);
-							} else if (theme == 1) {
+							} else if (theme > 0) {
 								mmEffectEx(&snd_wrong);
 							} else {
 								subscreenmode = 2;
