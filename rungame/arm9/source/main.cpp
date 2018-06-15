@@ -97,21 +97,13 @@ int lastRanROM() {
 	else fifoSendValue32(FIFO_USER_07, 1);
 	if (homebrewBootstrap) {
 		bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
-	} else if (consoleModel > 0) {
+	} else {
 		if(donorSdkVer==5) {
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
 			else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
 		} else {
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
 			else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-		}
-	} else {
-		if(donorSdkVer==5) {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap-sdk5.nds";
-			else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap-sdk5.nds";
-		} else {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-dsi-bootstrap.nds";
-			else bootstrapfilename = "sd:/_nds/release-dsi-bootstrap.nds";
 		}
 	}
 	
