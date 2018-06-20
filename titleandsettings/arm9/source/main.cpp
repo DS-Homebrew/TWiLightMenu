@@ -86,7 +86,7 @@ static int bstrap_romreadled = 0;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
-static bool flashcardUsed = false;
+bool flashcardUsed = false;
 
 static int flashcard;
 /* Flashcard value
@@ -424,68 +424,6 @@ int main(int argc, char **argv) {
 		gotosettings = false;
 		SaveSettings();
 	} else if (autorun || showlogo) {
-		unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
-		unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
-		unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
-		unsigned int * SCFG_MC=(unsigned int*)0x4004010;
-
-		for (int i = 0; i < 22; i++) {
-			printf("\n");
-		}
-		printf("                      %s", vertext);
-		if(*SCFG_EXT>0) {
-			char text1[48],
-				text2[48],
-				text3[48],
-				text4[48],
-				text5[48],
-				text6[48],
-				text7[48],
-				text8[32],
-				text9[32];
-			//arm9 SCFG
-			snprintf (text1, sizeof(text1), "SCFG_ROM: %x",*SCFG_ROM);
-			snprintf (text2, sizeof(text2), "SCFG_CLK: %x",*SCFG_CLK);
-			snprintf (text3, sizeof(text3), "SCFG_EXT: %x",*SCFG_EXT);			
-			snprintf (text4, sizeof(text4), "SCFG_MC: %x",*SCFG_MC);
-			if (!arm7SCFGLocked) {
-				//arm7 SCFG
-				snprintf (text5, sizeof(text5), "SCFG_ROM: %x",fifoGetValue32(FIFO_USER_01));
-				snprintf (text6, sizeof(text6), "SCFG_CLK: %x",fifoGetValue32(FIFO_USER_02));
-				snprintf (text7, sizeof(text7), "SCFG_EXT: %x",fifoGetValue32(FIFO_USER_03));
-				//ConsoleID
-				snprintf (text8, sizeof(text8), "ConsoleID: %x%x",fifoGetValue32(FIFO_USER_04),fifoGetValue32(FIFO_USER_05));
-			}
-			//snprintf (text9, sizeof(text9), "Console: %x", *(u8*)0x0DFFFFFA);
-
-			int yPos = 4;
-
-			printSmall(false, 4, yPos, "ARM9 SCFG:");
-			yPos += 16;
-			printSmall(false, 4, yPos, text1);
-			yPos += 8;
-			printSmall(false, 4, yPos, text2);
-			yPos += 8;
-			printSmall(false, 4, yPos, text3);
-			yPos += 24;
-			printSmall(false, 4, yPos, "Slot-1 Status:");
-			yPos += 16;
-			printSmall(false, 4, yPos, text4);
-			if (!arm7SCFGLocked) {
-				yPos += 24;
-				printSmall(false, 4, yPos, "ARM7 SCFG:");
-				yPos += 16;
-				printSmall(false, 4, yPos, text5);
-				yPos += 8;
-				printSmall(false, 4, yPos, text6);
-				yPos += 8;
-				printSmall(false, 4, yPos, text7);
-				yPos += 24;
-				printSmall(false, 4, yPos, text8);
-			}
-			//yPos += 24;
-			//printSmall(false, 4, yPos, text9);
-		}
 
 		for (int i = 0; i < 60*3; i++) {
 			swiWaitForVBlank();
@@ -493,9 +431,14 @@ int main(int argc, char **argv) {
 		
 		scanKeys();
 
-		if (keysHeld() & KEY_START)
+		if (keysHeld() & KEY_START) {
+			fadeType = false;
+			for (int i = 0; i < 30; i++) {
+				swiWaitForVBlank();
+			}
 			screenmode = 1;
-
+			fadeType = true;
+		}
 	} else {
 		scanKeys();
 
