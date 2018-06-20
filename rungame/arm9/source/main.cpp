@@ -99,10 +99,10 @@ int lastRanROM() {
 		bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 	} else {
 		if(donorSdkVer==5) {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
 			else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
 		} else {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
 			else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
 		}
 	}

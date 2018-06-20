@@ -6,7 +6,6 @@
 extern bool perGameSettingsButtons;
 
 extern int perGameSettings_boostCpu;
-extern int perGameSettings_noSoundStutter;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);

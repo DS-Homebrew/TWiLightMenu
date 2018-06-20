@@ -125,7 +125,6 @@ bool showDirectories = true;
 bool animateDsiIcons = false;
 
 bool boostCpu = false;	// false == NTR, true == TWL
-bool noSoundStutter = true;
 
 bool flashcardUsed = false;
 
@@ -172,7 +171,6 @@ void LoadSettings(void) {
 
 	// Default nds-bootstrap settings
 	boostCpu = settingsini.GetInt("SRLOADER", "BOOST_CPU", 0);
-	noSoundStutter = settingsini.GetInt( "SRLOADER", "NO_SOUND_STUTTER", 1);
 }
 
 void SaveSettings(void) {
@@ -970,11 +968,6 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
 						}
-						if (perGameSettings_noSoundStutter == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", noSoundStutter);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "NO_SOUND_STUTTER", perGameSettings_noSoundStutter);
-						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
@@ -1074,10 +1067,10 @@ int main(int argc, char **argv) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {
 							if(donorSdkVer==5) {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap-sdk5.nds";
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
 								else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
 							} else {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/unofficial-bootstrap.nds";
+								if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
 								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
 							}
 						}

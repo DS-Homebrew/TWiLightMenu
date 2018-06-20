@@ -65,7 +65,6 @@ bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
 int perGameSettings_boostCpu = -1;
-int perGameSettings_noSoundStutter = -1;
 
 extern int cursorPosition;
 extern int pagenum;
@@ -93,14 +92,12 @@ void loadPerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
-	perGameSettings_noSoundStutter = pergameini.GetInt("GAMESETTINGS", "NO_SOUND_STUTTER", -1);
 }
 
 void savePerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
-	pergameini.SetInt("GAMESETTINGS", "NO_SOUND_STUTTER", perGameSettings_noSoundStutter);
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
@@ -159,14 +156,6 @@ void perGameSettings (std::string filename, const char* username) {
 			} else {
 				printSmall(false, 156, 112, "67mhz (NTR)");
 			}
-			printSmall(false, 32, 128, "No sound stutter:");
-			if (perGameSettings_noSoundStutter == -1) {
-				printSmall(false, 180, 128, "Default");
-			} else if (perGameSettings_noSoundStutter == 1) {
-				printSmall(false, 208, 128, "Yes");
-			} else {
-				printSmall(false, 214, 128, "No");
-			}
 			printSmall(false, 200, 166, "B: Back");
 		}
 		do {
@@ -192,12 +181,12 @@ void perGameSettings (std::string filename, const char* username) {
 				break;
 			}
 		} else {
-			if (pressed & KEY_UP) {
-				perGameSettings_cursorPosition--;
-			}
-			if (pressed & KEY_DOWN) {
-				perGameSettings_cursorPosition++;
-			}
+			//if (pressed & KEY_UP) {
+			//	perGameSettings_cursorPosition--;
+			//}
+			//if (pressed & KEY_DOWN) {
+			//	perGameSettings_cursorPosition++;
+			//}
 
 			if (pressed & KEY_A) {
 				switch (perGameSettings_cursorPosition) {
@@ -205,10 +194,6 @@ void perGameSettings (std::string filename, const char* username) {
 					default:
 						perGameSettings_boostCpu++;
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
-						break;
-					case 1:
-						perGameSettings_noSoundStutter++;
-						if (perGameSettings_noSoundStutter > 1) perGameSettings_noSoundStutter = -1;
 						break;
 				}
 				perGameSettingsChanged = true;
@@ -222,8 +207,8 @@ void perGameSettings (std::string filename, const char* username) {
 				break;
 			}
 
-			if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
-			if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
+			//if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
+			//if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
 		}
 	}
 	clearText();
