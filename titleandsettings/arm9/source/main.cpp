@@ -43,6 +43,7 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+bool renderScreens = true;
 bool fadeType = false;		// false = out, true = in
 
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
@@ -170,8 +171,8 @@ void SaveSettings(void) {
 	}
 }
 
-static int screenmode = 0;
-static int subscreenmode = 0;
+int screenmode = 0;
+int subscreenmode = 0;
 
 static int settingscursor = 0;
 
@@ -275,6 +276,7 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	renderScreens = false;
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
 	if (theme==2) {
@@ -287,6 +289,7 @@ void loadROMselect() {
 int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	renderScreens = false;
 	int err = 0;
 	if (!flashcardUsed) {
 		if (!arm7SCFGLocked && !quickStartRom) {
@@ -532,53 +535,53 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printf("                      %s", vertext);
+					printSmall(true, 194, 176, vertext);
 
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printLarge(false, 4, 4, "Flashcard(s) select");
+					printLarge(false, 6, 4, "Flashcard(s) select");
 
-					int yPos;
+					int yPos = 32;
 					switch (flashcard) {
 						case 0:
 						default:
-							printSmall(false, 12, 24, "DSTT");
-							printSmall(false, 12, 32, "R4i Gold");
-							printSmall(false, 12, 40, "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
-							printSmall(false, 12, 48, "R4 SDHC Dual-Core");
-							printSmall(false, 12, 56, "R4 SDHC Upgrade");
-							printSmall(false, 12, 64, "SuperCard DSONE");
+							printSmall(false, 12, 32+(0*14), "DSTT");
+							printSmall(false, 12, 32+(1*14), "R4i Gold");
+							printSmall(false, 12, 32+(2*14), "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
+							printSmall(false, 12, 32+(3*14), "R4 SDHC Dual-Core");
+							printSmall(false, 12, 32+(4*14), "R4 SDHC Upgrade");
+							printSmall(false, 12, 32+(5*14), "SuperCard DSONE");
 							break;
 						case 1:
-							printSmall(false, 12, 24, "Original R4");
-							printSmall(false, 12, 32, "M3 Simply");
+							printSmall(false, 12, 32+(0*14), "Original R4");
+							printSmall(false, 12, 32+(1*14), "M3 Simply");
 							break;
 						case 2:
-							printSmall(false, 12, 24, "R4iDSN");
-							printSmall(false, 12, 32, "R4i Gold RTS");
-							printSmall(false, 12, 40, "R4 Ultra");
+							printSmall(false, 12, 32+(0*14), "R4iDSN");
+							printSmall(false, 12, 32+(1*14), "R4i Gold RTS");
+							printSmall(false, 12, 32+(2*14), "R4 Ultra");
 							break;
 						case 3:
-							printSmall(false, 12, 24, "Acekard 2(i)");
-							printSmall(false, 12, 32, "Galaxy Eagle");
-							printSmall(false, 12, 40, "M3DS Real");
+							printSmall(false, 12, 32+(0*14), "Acekard 2(i)");
+							printSmall(false, 12, 32+(1*14), "Galaxy Eagle");
+							printSmall(false, 12, 32+(2*14), "M3DS Real");
 							break;
 						case 4:
-							printSmall(false, 12, 24, "Acekard RPG");
+							printSmall(false, 12, 32, "Acekard RPG");
 							break;
 						case 5:
-							printSmall(false, 12, 24, "Ace 3DS+");
-							printSmall(false, 12, 32, "Gateway Blue Card");
-							printSmall(false, 12, 40, "R4iTT");
+							printSmall(false, 12, 32+(0*14), "Ace 3DS+");
+							printSmall(false, 12, 32+(1*14), "Gateway Blue Card");
+							printSmall(false, 12, 32+(2*14), "R4iTT");
 							break;
 						case 6:
-							printSmall(false, 12, 24, "SuperCard DSTWO");
+							printSmall(false, 12, 32, "SuperCard DSTWO");
 							break;
 					}
 
-					printSmall(false, 4, 164, "Left/Right: Select flashcard(s)");
-					printSmall(false, 4, 172, "A/B: Set and return");
+					printLargeCentered(true, 120, "Left/Right: Select flashcard(s)");
+					printLargeCentered(true, 134, "A/B: Set and return");
 
 					menuprinted = true;
 				}
@@ -613,7 +616,7 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printf("                      %s", vertext);
+					printSmall(true, 194, 176, vertext);
 
 					// Clear the screen so it doesn't over-print
 					clearText();
@@ -621,13 +624,13 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printLarge(false, 4, 4, "Sub-theme select: DSi Menu");
+							printLarge(false, 6, 4, "Sub-theme select: DSi Menu");
 							break;
 						case 1:
-							printLarge(false, 4, 4, "Sub-theme select: 3DS HOME Menu");
+							printLarge(false, 6, 4, "Sub-theme select: 3DS HOME Menu");
 							break;
 						case 2:
-							printLarge(false, 4, 4, "Sub-theme select: R4");
+							printLarge(false, 6, 4, "Sub-theme select: R4");
 							break;
 					}
 
@@ -635,10 +638,10 @@ int main(int argc, char **argv) {
 					switch (subtheme) {
 						case 0:
 						default:
-							yPos = 24;
+							yPos = 32;
 							break;
 						case 1:
-							yPos = 32;
+							yPos = 46;
 							break;
 					}
 
@@ -647,16 +650,16 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printSmall(false, 12, 24, "SD Card Menu");
-							printSmall(false, 12, 32, "Normal Menu");
+							printSmall(false, 12, 32, "SD Card Menu");
+							printSmall(false, 12, 46, "Normal Menu");
 							break;
 						case 1:
-							//printSmall(false, 12, 24, "DS Menu");
-							//printSmall(false, 12, 32, "3DS HOME Menu");
+							//printSmall(false, 12, 32, "DS Menu");
+							//printSmall(false, 12, 46, "3DS HOME Menu");
 							break;
 					}
 
-					printSmall(false, 4, 156, "A/B: Set sub-theme.");
+					printLargeCentered(true, 128, "A/B: Set sub-theme.");
 
 					menuprinted = true;
 				}
@@ -694,40 +697,19 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printf(" L/R: Switch pages    %s", vertext);
+					printSmallCentered(false, 175, "DSiMenu++");
 
-					printLarge(false, 4, 4, "Settings: Games/Apps");
+					printSmall(true, 4, 176, "^/~ Switch pages");
+					printSmall(true, 194, 176, vertext);
 
-					int yPos;
-					switch (settingscursor) {
-						case 0:
-						default:
-							yPos = 24;
-							break;
-						case 1:
-							yPos = 32;
-							break;
-						case 2:
-							yPos = 40;
-							break;
-						case 3:
-							yPos = 48;
-							break;
-						case 4:
-							yPos = 56;
-							break;
-						case 5:
-							yPos = 64;
-							break;
-						case 6:
-							yPos = 72;
-							break;
-						case 7:
-							yPos = 80;
-							break;
+					printLarge(false, 6, 4, "Games and Apps Settings");
+
+					int yPos = 32;
+					for (int i = 0; i < settingscursor; i++) {
+						yPos += 12;
 					}
 
-					int selyPos = 24;
+					int selyPos = 32;
 
 					printSmall(false, 4, yPos, ">");
 
@@ -737,14 +719,14 @@ int main(int argc, char **argv) {
 							printSmall(false, 156, selyPos, "133mhz (TWL)");
 						else
 							printSmall(false, 156, selyPos, "67mhz (NTR)");
-						selyPos += 8;
+						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Debug");
 						if(bstrap_debug)
 							printSmall(false, 224, selyPos, "On");
 						else
 							printSmall(false, 224, selyPos, "Off");
-						selyPos += 8;
+						selyPos += 12;
 						printSmall(false, 12, selyPos, "ROM read LED");
 						switch(bstrap_romreadled) {
 							case 0:
@@ -762,14 +744,14 @@ int main(int argc, char **argv) {
 								break;
 						}
 						printSmall(false, 184, selyPos, romreadled_valuetext);
-						selyPos += 8;
+						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
 						if(soundfreq)
 							printSmall(false, 184, selyPos, "47.61 kHz");
 						else
 							printSmall(false, 184, selyPos, "32.73 kHz");
-						selyPos += 8;
+						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Loading screen");
 						switch(bstrap_loadingScreen) {
@@ -788,7 +770,7 @@ int main(int argc, char **argv) {
 								break;
 						}
 						printSmall(false, 176, selyPos, loadingScreen_valuetext);
-						selyPos += 8;
+						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Bootstrap");
 						if(bootstrapFile)
@@ -798,36 +780,32 @@ int main(int argc, char **argv) {
 
 
 						if (settingscursor == 0) {
-							printSmall(false, 4, 164, "Set to TWL to get rid of lags");
-							printSmall(false, 4, 172, "in some games.");
+							printLargeCentered(true, 120, "Set to TWL to get rid of lags");
+							printLargeCentered(true, 134, "in some games.");
 						} /* else if (settingscursor == 4) {
-							printSmall(false, 4, 164, "Allows 8 bit VRAM writes");
-							printSmall(false, 4, 172, "and expands the bus to 32 bit.");
+							printLargeCentered(true, 120, "Allows 8 bit VRAM writes");
+							printLargeCentered(true, 134, "and expands the bus to 32 bit.");
 						} */ else if (settingscursor == 1) {
-							printSmall(false, 4, 164, "Displays some text before");
-							printSmall(false, 4, 172, "launched game.");
+							printLargeCentered(true, 120, "Displays some text before");
+							printLargeCentered(true, 134, "launched game.");
 						} else if (settingscursor == 2) {
-							// printSmall(false, 4, 156, "Locks the ARM9 SCFG_EXT,");
-							// printSmall(false, 4, 164, "avoiding conflict with");
-							// printSmall(false, 4, 172, "recent libnds.");
-							printSmall(false, 4, 172, "Sets LED as ROM read indicator.");
+							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
+							// printLargeCentered(true, 128, "avoiding conflict with");
+							// printLargeCentered(true, 142, "recent libnds.");
+							printLargeCentered(true, 128, "Sets LED as ROM read indicator.");
 						} else if (settingscursor == 3) {
-							printSmall(false, 4, 156, "Disables sound stutters/pauses");
-							printSmall(false, 4, 164, "when reading data from SD card.");
-							printSmall(false, 4, 172, "Can break support for some games.");
+							printLargeCentered(true, 120, "32.73 kHz: Original quality");
+							printLargeCentered(true, 134, "47.61 kHz: High quality");
 						} else if (settingscursor == 4) {
-							printSmall(false, 4, 164, "32.73 kHz: Original quality");
-							printSmall(false, 4, 172, "47.61 kHz: High quality");
+							printLargeCentered(true, 120, "Shows a loading screen before ROM");
+							printLargeCentered(true, 134, "is started in nds-bootstrap.");
 						} else if (settingscursor == 5) {
-							printSmall(false, 4, 164, "Shows a loading screen before ROM");
-							printSmall(false, 4, 172, "is started in nds-bootstrap.");
-						} else if (settingscursor == 6) {
-							printSmall(false, 4, 164, "Pick release or nightly");
-							printSmall(false, 4, 172, "bootstrap.");
+							printLargeCentered(true, 120, "Pick release or nightly");
+							printLargeCentered(true, 134, "bootstrap.");
 						}
 					} else {
 						printSmall(false, 12, selyPos, "Flashcard(s) select");
-						selyPos += 8;
+						selyPos += 12;
 						if(soundfreqsetting) {
 							printSmall(false, 12, selyPos, "Sound/Mic frequency");
 							if(soundfreq)
@@ -843,15 +821,15 @@ int main(int argc, char **argv) {
 						}
 
 						if (settingscursor == 0) {
-							printSmall(false, 4, 164, "Pick a flashcard to use to");
-							printSmall(false, 4, 172, "run ROMs from it.");
+							printLargeCentered(true, 120, "Pick a flashcard to use to");
+							printLargeCentered(true, 134, "run ROMs from it.");
 						} else if (settingscursor == 1) {
 							if(soundfreqsetting) {
-								printSmall(false, 4, 164, "32.73 kHz: Original quality");
-								printSmall(false, 4, 172, "47.61 kHz: High quality");
+								printLargeCentered(true, 120, "32.73 kHz: Original quality");
+								printLargeCentered(true, 134, "47.61 kHz: High quality");
 							} else {
-								printSmall(false, 4, 164, "Use either GBARunner2 or the");
-								printSmall(false, 4, 172, "native GBA mode to play GBA games.");
+								printLargeCentered(true, 120, "Use either GBARunner2 or the");
+								printLargeCentered(true, 134, "native GBA mode to play GBA games.");
 							}
 						}
 					}
@@ -969,130 +947,120 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printf(" L/R: Switch pages    %s", vertext);
+					printSmallCentered(false, 175, "DSiMenu++");
 
-					printLarge(false, 4, 4, "Settings: GUI");
+					printSmall(true, 4, 176, "^/~ Switch pages");
+					printSmall(true, 194, 176, vertext);
+
+					printLarge(false, 6, 4, "GUI Settings");
 					
-					int yPos;
-					switch (settingscursor) {
-						case 0:
-						default:
-							yPos = 24;
-							break;
-						case 1:
-							yPos = 32;
-							break;
-						case 2:
-							yPos = 40;
-							break;
-						case 3:
-							yPos = 48;
-							break;
-						case 4:
-							yPos = 56;
-							break;
-						case 5:
-							yPos = 64;
-							break;
-						case 6:
-							yPos = 72;
-							break;
+					int yPos = 32;
+					for (int i = 0; i < settingscursor; i++) {
+						yPos += 12;
 					}
+
+					int selyPos = 32;
 
 					printSmall(false, 4, yPos, ">");
 
-					printSmall(false, 12, 24, "Theme");
+					printSmall(false, 12, selyPos, "Theme");
 					switch (theme) {
 						case 0:
 						default:
-							printSmall(false, 156, 24, "DSi Menu");
+							printSmall(false, 224, selyPos, "DSi");
 							break;
 						case 1:
-							printSmall(false, 156, 24, "3DS Menu");
+							printSmall(false, 224, selyPos, "3DS");
 							break;
 						case 2:
-							printSmall(false, 156, 24, "R4");
+							printSmall(false, 224, selyPos, "R4");
 							break;
 					}
+					selyPos += 12;
 
-					printSmall(false, 12, 32, "Last played ROM on startup");
+					printSmall(false, 12, selyPos, "Last played ROM on startup");
 					if(autorun)
-						printSmall(false, 224, 32, "Yes");
+						printSmall(false, 224, selyPos, "Yes");
 					else
-						printSmall(false, 224, 32, "No");
+						printSmall(false, 230, selyPos, "No");
+					selyPos += 12;
 
-					printSmall(false, 12, 40, "DSiMenu++ logo on startup");
+					printSmall(false, 12, selyPos, "DSiMenu++ logo on startup");
 					if(showlogo)
-						printSmall(false, 216, 40, "Show");
+						printSmall(false, 216, selyPos, "Show");
 					else
-						printSmall(false, 216, 40, "Hide");
+						printSmall(false, 222, selyPos, "Hide");
+					selyPos += 12;
 
-					printSmall(false, 12, 48, "Directories/folders");
+					printSmall(false, 12, selyPos, "Directories/folders");
 					if(showDirectories)
-						printSmall(false, 216, 48, "Show");
+						printSmall(false, 216, selyPos, "Show");
 					else
-						printSmall(false, 216, 48, "Hide");
+						printSmall(false, 222, selyPos, "Hide");
+					selyPos += 12;
 
-					printSmall(false, 12, 56, "Animate DSi icons");
+					printSmall(false, 12, selyPos, "Animate DSi icons");
 					if(animateDsiIcons)
-						printSmall(false, 216, 56, "Yes");
+						printSmall(false, 224, selyPos, "Yes");
 					else
-						printSmall(false, 216, 56, "No");
+						printSmall(false, 230, selyPos, "No");
+					selyPos += 12;
 
 					if (!flashcardUsed && !arm7SCFGLocked) {
-						printSmall(false, 12, 64, "Quick-start ROM");
+						printSmall(false, 12, selyPos, "Quick-start ROM");
 						if(quickStartRom)
-							printSmall(false, 216, 64, "Yes");
+							printSmall(false, 224, selyPos, "Yes");
 						else
-							printSmall(false, 216, 64, "No");
+							printSmall(false, 230, selyPos, "No");
+						selyPos += 12;
 
 						if (consoleModel < 2) {
 							if (hiyaAutobootFound) {
-								printSmall(false, 12, 72, "Restore DSi Menu");
+								printSmall(false, 12, selyPos, "Restore DSi Menu");
 							} else {
-								printSmall(false, 12, 72, "Replace DSi Menu");
+								printSmall(false, 12, selyPos, "Replace DSi Menu");
 							}
 						}
 					}
 
 
 					if (settingscursor == 0) {
-						printSmall(false, 4, 164, "The theme to use in DSiMenu++.");
-						printSmall(false, 4, 172, "Press A for sub-themes.");
+						printLargeCentered(true, 120, "The theme to use in DSiMenu++.");
+						printLargeCentered(true, 134, "Press A for sub-themes.");
 					} else if (settingscursor == 1) {
-						printSmall(false, 4, 148, "If turned on, hold B on");
-						printSmall(false, 4, 156, "startup to skip to the");
-						printSmall(false, 4, 164, "ROM select menu.");
-						printSmall(false, 4, 172, "Press Y to start last played ROM.");
+						printLargeCentered(true, 106, "If turned on, hold B on");
+						printLargeCentered(true, 120, "startup to skip to the");
+						printLargeCentered(true, 134, "ROM select menu.");
+						printLargeCentered(true, 148, "Press Y to start last played ROM.");
 					} else if (settingscursor == 2) {
-						printSmall(false, 4, 156, "The DSiMenu++ logo will be");
-						printSmall(false, 4, 164, "shown when you start");
-						printSmall(false, 4, 172, "DSiMenu++.");
+						printLargeCentered(true, 114, "The DSiMenu++ logo will be");
+						printLargeCentered(true, 128, "shown when you start");
+						printLargeCentered(true, 142, "DSiMenu++.");
 					} else if (settingscursor == 3) {
-						printSmall(false, 4, 156, "If you're in a folder where most");
-						printSmall(false, 4, 164, "of your games are, it is safe to");
-						printSmall(false, 4, 172, "hide directories/folders.");
+						printLargeCentered(true, 114, "If you're in a folder where most");
+						printLargeCentered(true, 128, "of your games are, it is safe to");
+						printLargeCentered(true, 142, "hide directories/folders.");
 					} else if (settingscursor == 4) {
-						printSmall(false, 4, 156, "Animates DSi-enhanced icons like in");
-						printSmall(false, 4, 164, "the DSi/3DS menus. Turning this off");
-						printSmall(false, 4, 172, "will fix some icons appearing white.");
+						printLargeCentered(true, 114, "Animates DSi-enhanced icons like in");
+						printLargeCentered(true, 128, "the DSi/3DS menus. Turning this off");
+						printLargeCentered(true, 142, "will fix some icons appearing white.");
 					} else if (settingscursor == 5) {
 						if (consoleModel < 2) {
-							printSmall(false, 4, 156, "Bypasses rebooting, in case if");
-							printSmall(false, 4, 164, "you're back in the DSi Menu,");
-							printSmall(false, 4, 172, "after launching a game.");
+							printLargeCentered(true, 114, "Bypasses rebooting, in case if");
+							printLargeCentered(true, 128, "you're back in the DSi Menu,");
+							printLargeCentered(true, 142, "after launching a game.");
 						} else {
-							printSmall(false, 4, 148, "Bypasses rebooting, in case if");
-							printSmall(false, 4, 156, "you're back in the 3DS HOME Menu,");
-							printSmall(false, 4, 164, "after launching a game, or if the");
-							printSmall(false, 4, 172, "Luma exception screen appears.");
+							printLargeCentered(true, 106, "Bypasses rebooting, in case if");
+							printLargeCentered(true, 120, "you're back in the 3DS HOME Menu,");
+							printLargeCentered(true, 134, "after launching a game, or if the");
+							printLargeCentered(true, 148, "Luma exception screen appears.");
 						}
 					} else if (settingscursor == 6) {
 						if (hiyaAutobootFound) {
-							printSmall(false, 4, 172, "Show DSi Menu on boot again.");
+							printLargeCentered(true, 128, "Show DSi Menu on boot again.");
 						} else {
-							printSmall(false, 4, 164, "Start DSiMenu++ on boot, instead.");
-							printSmall(false, 4, 172, "of the regular DSi Menu.");
+							printLargeCentered(true, 120, "Start DSiMenu++ on boot, instead.");
+							printLargeCentered(true, 134, "of the regular DSi Menu.");
 						}
 					}
 

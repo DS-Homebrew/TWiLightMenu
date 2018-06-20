@@ -23,7 +23,7 @@
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 
-#include "dsimenupp_banner.h"
+#include "top_bg.h"
 #include "sub_bg.h"
 #include "font6x8.h"
 #include "graphics.h"
@@ -32,10 +32,15 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
+extern int screenmode;
+
+extern bool renderScreens;
 extern bool fadeType;
 int screenBrightness = 31;
 
-int subBgTexID;
+bool renderingTop = true;
+int mainBgTexID, subBgTexID;
+glImage topBgImage[(256 / 16) * (256 / 16)];
 glImage subBgImage[(256 / 16) * (256 / 16)];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
@@ -98,81 +103,94 @@ void drawBG(glImage *images)
 	}
 }
 
+void startRendering(bool top)
+{
+	if (top)
+	{
+		lcdMainOnBottom();
+		vramSetBankC(VRAM_C_LCD);
+		vramSetBankD(VRAM_D_SUB_SPRITE);
+		REG_DISPCAPCNT = DCAP_BANK(2) | DCAP_ENABLE | DCAP_SIZE(3);
+	}
+	else
+	{
+		lcdMainOnTop();
+		vramSetBankD(VRAM_D_LCD);
+		vramSetBankC(VRAM_C_SUB_BG);
+		REG_DISPCAPCNT = DCAP_BANK(3) | DCAP_ENABLE | DCAP_SIZE(3);
+	}
+}
+
+bool isRenderingTop()
+{
+	return renderingTop;
+}
+
 void vBlankHandler()
 {
-	glBegin2D();
-	{
-		if(fadeType == true) {
-			screenBrightness--;
-			if (screenBrightness < 0) screenBrightness = 0;
-		} else {
-			screenBrightness++;
-			if (screenBrightness > 31) screenBrightness = 31;
-		}
-		SetBrightness(0, screenBrightness);
-		SetBrightness(1, screenBrightness);
-
-		/*if (renderingTop)
-		{
-			drawBG(mainBgImage);
-			updateText(renderingTop);
-		}
-		else
-		{*/
-			drawBG(subBgImage);
-			glColor(RGB15(31, 31, 31));
-			updateText(false);
-		//}
+	if(fadeType == true) {
+		screenBrightness--;
+		if (screenBrightness < 0) screenBrightness = 0;
+	} else {
+		screenBrightness++;
+		if (screenBrightness > 31) screenBrightness = 31;
 	}
-	glEnd2D();
-	GFX_FLUSH = 0;
+	SetBrightness(0, screenBrightness);
+	SetBrightness(1, screenBrightness);
+
+	if (renderScreens) {
+		startRendering(renderingTop);
+		glBegin2D();
+		{
+			if (renderingTop)
+			{
+				drawBG(topBgImage);
+				glColor(RGB15(31, 31, 31));
+				updateText(renderingTop);
+			}
+			else
+			{
+				drawBG(subBgImage);
+				glColor(RGB15(31, 31, 31));
+				updateText(renderingTop);
+			}
+		}
+		glEnd2D();
+		GFX_FLUSH = 0;
+		renderingTop = !renderingTop;
+	}
 }
 
 void graphicsInit()
 {
-	irqSet(IRQ_VBLANK, vBlankHandler);
-	irqEnable(IRQ_VBLANK);
-	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE);
-
-
-	// Initialize gl2d
-	glScreen2D();
-
-	// Set up enough texture memory for our textures
-	// Bank A is just 128kb and we are using 194 kb of
-	// sprites
-	vramSetBankA(VRAM_A_TEXTURE);
-	vramSetBankB(VRAM_B_TEXTURE);
-
-	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-
-	vramSetBankE(VRAM_E_MAIN_BG);
-	lcdMainOnBottom();
-
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
-	REG_BG1CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
-	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-	bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-	
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+	irqSet(IRQ_VBLANK, vBlankHandler);
+	irqEnable(IRQ_VBLANK);
+	////////////////////////////////////////////////////////////
+	videoSetMode(MODE_5_3D);
+	videoSetModeSub(MODE_5_2D);
 
-	swiDecompressLZSSVram ((void*)dsimenupp_bannerTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE_SUB[0], dsimenupp_bannerPal, dsimenupp_bannerPalLen);
-	
+	// Initialize OAM to capture 3D scene
+	initSubSprites();
+
+	// The sub background holds the top image when 3D directed to bottom
+	bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+
+	// Initialize GL in 3D mode
+	glScreen2D();
+
+	// Set up enough texture memory for our textures
+	// Bank A is just 128kb and we are using 194 kb of
+	// sprites
+	// vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankB(VRAM_B_TEXTURE);
+	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
+	vramSetBankE(VRAM_E_MAIN_BG);
+
 	subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
 							16, // sprite width
 							16, // sprite height
@@ -181,24 +199,24 @@ void graphicsInit()
 							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
 							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
 							16, // Length of the palette to use (256 colors)
 							(u16*) sub_bgPal, // Load our 256 color tiles palette
 							(u8*) sub_bgBitmap // image data generated by GRIT
 							);
 
-	/* mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								256, // bitmap width
-								256, // bitmap height
-								GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								256, // Length of the palette to use (256 colors)
-								(u16*) dsimenupp_bannerPal, // Load our 256 color tiles palette
-								(u8*) dsimenupp_bannerBitmap // image data generated by GRIT
-								); */
+	mainBgTexID = glLoadTileSet(topBgImage, // pointer to glImage array
+							16, // sprite width
+							16, // sprite height
+							256, // bitmap width
+							256, // bitmap height
+							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+							256, // Length of the palette to use (256 colors)
+							(u16*) top_bgPal, // Load our 256 color tiles palette
+							(u8*) top_bgBitmap // image data generated by GRIT
+							);
 
 }
