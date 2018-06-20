@@ -25,22 +25,6 @@
 #include "FontGraphic.h"
 
 // Graphic files
-#include "topbg_0gray.h"
-#include "topbg_1brown.h"
-#include "topbg_2red.h"
-#include "topbg_3pink.h"
-#include "topbg_4orange.h"
-#include "topbg_5yellow.h"
-#include "topbg_6yellowgreen.h"
-#include "topbg_7green1.h"
-#include "topbg_8green2.h"
-#include "topbg_9lightgreen.h"
-#include "topbg_10skyblue.h"
-#include "topbg_11lightblue.h"
-#include "topbg_12blue.h"
-#include "topbg_13violet.h"
-#include "topbg_14purple.h"
-#include "topbg_15fuchsia.h"
 #include "top.h"
 #include "org_top.h"
 #include "_3ds_top.h"
@@ -862,72 +846,15 @@ void vBlankHandler()
 }
 
 void topBgLoad() {
-	switch (PersonalData->theme) {
-		case 0:
-		default:
-			swiDecompressLZSSVram ((void*)topbg_0grayTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_0grayPal, topbg_0grayPalLen);
-			break;
-		case 1:
-			swiDecompressLZSSVram ((void*)topbg_1brownTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_1brownPal, topbg_1brownPalLen);
-			break;
-		case 2:
-			swiDecompressLZSSVram ((void*)topbg_2redTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_2redPal, topbg_2redPalLen);
-			break;
-		case 3:
-			swiDecompressLZSSVram ((void*)topbg_3pinkTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_3pinkPal, topbg_3pinkPalLen);
-			break;
-		case 4:
-			swiDecompressLZSSVram ((void*)topbg_4orangeTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_4orangePal, topbg_4orangePalLen);
-			break;
-		case 5:
-			swiDecompressLZSSVram ((void*)topbg_5yellowTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_5yellowPal, topbg_5yellowPalLen);
-			break;
-		case 6:
-			swiDecompressLZSSVram ((void*)topbg_6yellowgreenTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_6yellowgreenPal, topbg_6yellowgreenPalLen);
-			break;
-		case 7:
-			swiDecompressLZSSVram ((void*)topbg_7green1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_7green1Pal, topbg_7green1PalLen);
-			break;
-		case 8:
-			swiDecompressLZSSVram ((void*)topbg_8green2Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_8green2Pal, topbg_8green2PalLen);
-			break;
-		case 9:
-			swiDecompressLZSSVram ((void*)topbg_9lightgreenTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_9lightgreenPal, topbg_9lightgreenPalLen);
-			break;
-		case 10:
-			swiDecompressLZSSVram ((void*)topbg_10skyblueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_10skybluePal, topbg_10skybluePalLen);
-			break;
-		case 11:
-			swiDecompressLZSSVram ((void*)topbg_11lightblueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_11lightbluePal, topbg_11lightbluePalLen);
-			break;
-		case 12:
-			swiDecompressLZSSVram ((void*)topbg_12blueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_12bluePal, topbg_12bluePalLen);
-			break;
-		case 13:
-			swiDecompressLZSSVram ((void*)topbg_13violetTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_13violetPal, topbg_13violetPalLen);
-			break;
-		case 14:
-			swiDecompressLZSSVram ((void*)topbg_14purpleTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_14purplePal, topbg_14purplePalLen);
-			break;
-		case 15:
-			swiDecompressLZSSVram ((void*)topbg_15fuchsiaTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_15fuchsiaPal, topbg_15fuchsiaPalLen);
-			break;
+	if (theme == 1) {
+		swiDecompressLZSSVram ((void*)_3ds_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], _3ds_topPal, _3ds_topPalLen);
+	} else if (subtheme == 1) {
+		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
+	} else {
+		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
 	}
 }
 
@@ -976,12 +903,7 @@ void graphicsInit()
 
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
-	if (theme == 1) {
-		swiDecompressLZSSVram ((void*)_3ds_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], _3ds_topPal, _3ds_topPalLen);
-	} else {
-		topBgLoad();
-	}
+	topBgLoad();
 
 	/*if (subtheme == 1) {
 		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);

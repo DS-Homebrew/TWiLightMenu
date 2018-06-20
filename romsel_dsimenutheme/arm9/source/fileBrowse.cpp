@@ -564,33 +564,33 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for(int i = 0; i < 21; i++) {
 						printf("\n");
 					}
-					printf(" ");
+					printf("   ");
 					if (dsiWarePageNum != 0) {
-						printf("L: Previous");
+						printf("Prev.");
 					} else {
-						printf("           ");
+						printf("     ");
 					}
-					printf("            ");
+					printf("                 ");
 					if (file_count > 40+dsiWarePageNum*40) {
-						printf("R: Next");
+						printf("Next");
 					} else {
-						printf("       ");
+						printf("    ");
 					}
 				} else {
 					for(int i = 0; i < 21; i++) {
 						printf("\n");
 					}
-					printf(" ");
+					printf("   ");
 					if (pagenum != 0) {
-						printf("L: Previous");
+						printf("Prev.");
 					} else {
-						printf("           ");
+						printf("     ");
 					}
-					printf("            ");
+					printf("                 ");
 					if (file_count > 40+pagenum*40) {
-						printf("R: Next");
+						printf("Next");
 					} else {
-						printf("       ");
+						printf("    ");
 					}
 
 					//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
