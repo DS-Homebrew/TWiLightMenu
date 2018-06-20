@@ -288,6 +288,11 @@ void topBgLoad() {
 
 void graphicsInit()
 {
+	*(u16*)(0x0400006C) |= BIT(14);
+	*(u16*)(0x0400006C) &= BIT(15);
+	SetBrightness(0, 31);
+	SetBrightness(1, 31);
+
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
@@ -316,11 +321,6 @@ void graphicsInit()
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
 		bgMapSub[i] = (u16)i;
 	}
-	
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
 
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
