@@ -43,6 +43,9 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+#include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
+#include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
+
 bool renderScreens = true;
 bool fadeType = false;		// false = out, true = in
 
@@ -111,8 +114,12 @@ void LoadSettings(void) {
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
-	quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+	if (consoleModel > 1) {
+		quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 1);
+	} else {
+		quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 0);
+	}
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -293,18 +300,7 @@ int lastRanROM() {
 	int err = 0;
 	if (!flashcardUsed) {
 		if (!arm7SCFGLocked && !quickStartRom) {
-			*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-			*(u16*)(0x02000304) = 0x1801;
-			*(u32*)(0x02000308) = 0x534C524E;	// "SLRN"
-			*(u32*)(0x0200030C) = 0x00030015;
-			*(u32*)(0x02000310) = 0x534C524E;	// "SLRN"
-			*(u32*)(0x02000314) = 0x00030015;
-			*(u32*)(0x02000318) = 0x00000017;
-			*(u32*)(0x0200031C) = 0x00000000;
-			while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-				*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-			}
-
+			memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
 			fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
 		}
