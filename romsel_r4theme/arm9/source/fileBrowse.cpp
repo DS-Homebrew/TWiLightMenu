@@ -42,6 +42,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
+#include "perGameSettings.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -55,8 +56,6 @@
 #define ENTRIES_PER_SCREEN 22
 #define ENTRIES_START_ROW 2
 #define ENTRY_PAGE_LENGTH 10
-
-const char* SDKnumbertext;
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -538,41 +537,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false)
 		&& !dsiWareList)
 		{
-			FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-
-			u32 SDKVersion = 0;
-			char game_TID[5];
-			grabTID(f_nds_file, game_TID);
-			game_TID[4] = 0;
-			game_TID[3] = 0;
-			if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
-			fclose(f_nds_file);
-
-			if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
-				SDKnumbertext = "SDK ver: 1";
-			} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
-				SDKnumbertext = "SDK ver: 2";
-			} else if((SDKVersion > 0x3000000) && (SDKVersion < 0x4000000)) {
-				SDKnumbertext = "SDK ver: 3";
-			} else if((SDKVersion > 0x4000000) && (SDKVersion < 0x5000000)) {
-				SDKnumbertext = "SDK ver: 4";
-			} else if((SDKVersion > 0x5000000) && (SDKVersion < 0x6000000)) {
-				SDKnumbertext = "SDK ver: 5 (TWLSDK)";
-			} else {
-				SDKnumbertext = "SDK ver: ?";
-			}
-			showdialogbox = true;
-			printLargeCentered(false, 84, "Info");
-			printSmallCentered(false, 104, SDKnumbertext);
-			printSmallCentered(false, 118, "A: OK");
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
-			pressed = 0;
-			do {
-				scanKeys();
-				pressed = keysDownRepeat();
-				swiWaitForVBlank();
-			} while (!(pressed & KEY_A));
-			showdialogbox = false;
+			cursorPosition = fileOffset;
+			perGameSettings(dirContents.at(fileOffset).name, username);
 		}
 
 	}
