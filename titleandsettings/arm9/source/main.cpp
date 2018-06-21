@@ -666,23 +666,25 @@ int main(int argc, char **argv) {
 						else
 							printSmall(false, 224, selyPos, "Off");
 						selyPos += 12;
-						printSmall(false, 12, selyPos, "ROM read LED");
-						switch(bstrap_romreadled) {
-							case 0:
-							default:
-								romreadled_valuetext = "None";
-								break;
-							case 1:
-								romreadled_valuetext = "WiFi";
-								break;
-							case 2:
-								romreadled_valuetext = "Power";
-								break;
-							case 3:
-								romreadled_valuetext = "Camera";
-								break;
+						if (consoleModel < 2) {
+							printSmall(false, 12, selyPos, "ROM read LED");
+							switch(bstrap_romreadled) {
+								case 0:
+								default:
+									romreadled_valuetext = "None";
+									break;
+								case 1:
+									romreadled_valuetext = "WiFi";
+									break;
+								case 2:
+									romreadled_valuetext = "Power";
+									break;
+								case 3:
+									romreadled_valuetext = "Camera";
+									break;
+							}
+							printSmall(false, 216, selyPos, romreadled_valuetext);
 						}
-						printSmall(false, 216, selyPos, romreadled_valuetext);
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
@@ -787,11 +789,13 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor--;
+					if (consoleModel > 1 && settingscursor == 2) settingscursor--;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor++;
+					if (consoleModel > 1 && settingscursor == 2) settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
