@@ -304,7 +304,7 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-char usernameRendered[10];
+char usernameRendered[11];
 bool usernameRenderedDone = false;
 
 /**

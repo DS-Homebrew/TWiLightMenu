@@ -191,7 +191,7 @@ void InitSound() {
 
 bool music = false;
 
-extern char usernameRendered[10];
+extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
 struct DirEntry
