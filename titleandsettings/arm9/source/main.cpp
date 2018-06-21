@@ -661,7 +661,7 @@ int main(int argc, char **argv) {
 						if(boostCpu)
 							printSmall(false, 156, selyPos, "133mhz (TWL)");
 						else
-							printSmall(false, 156, selyPos, "67mhz (NTR)");
+							printSmall(false, 164, selyPos, "67mhz (NTR)");
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Debug");
@@ -677,16 +677,16 @@ int main(int argc, char **argv) {
 								romreadled_valuetext = "None";
 								break;
 							case 1:
-								romreadled_valuetext = "WiFi-Power";
+								romreadled_valuetext = "WiFi";
 								break;
 							case 2:
-								romreadled_valuetext = "Power-Wifi";
+								romreadled_valuetext = "Power";
 								break;
 							case 3:
 								romreadled_valuetext = "Camera";
 								break;
 						}
-						printSmall(false, 184, selyPos, romreadled_valuetext);
+						printSmall(false, 216, selyPos, romreadled_valuetext);
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
@@ -717,9 +717,9 @@ int main(int argc, char **argv) {
 
 						printSmall(false, 12, selyPos, "Bootstrap");
 						if(bootstrapFile)
-							printSmall(false, 176, selyPos, "Nightly");
+							printSmall(false, 196, selyPos, "Nightly");
 						else
-							printSmall(false, 176, selyPos, "Release");
+							printSmall(false, 196, selyPos, "Release");
 
 
 						if (settingscursor == 0) {
