@@ -81,23 +81,6 @@ int main(int argc, char **argv) {
 	
 	bool graphicsInited = false;
 
-	// overwrite reboot stub identifier
-	extern u64 *fake_heap_end;
-	*fake_heap_end = 0;
-
-	defaultExceptionHandler();
-
-	// Read user name
-	char *username = (char*)PersonalData->name;
-		
-	// text
-	for (int i = 0; i < 10; i++) {
-		if (username[i*2] == 0x00)
-			username[i*2/2] = 0;
-		else
-			username[i*2/2] = username[i*2];
-	}
-
 	scanKeys();
 	if(keysHeld() & KEY_RIGHT) {
 		if(!graphicsInited) {
@@ -105,8 +88,6 @@ int main(int argc, char **argv) {
 			fontInit();
 			graphicsInited = true;
 			fadeType = true;
-			printf("\n ");
-			printf(username);
 		}
 		printSmall(false, 4, 4, "Please remove your SD Card,");
 		printSmall(false, 4, 12, "and insert one containing the");
@@ -126,8 +107,6 @@ int main(int argc, char **argv) {
 			fontInit();
 			graphicsInited = true;
 			fadeType = true;
-			printf("\n ");
-			printf(username);
 		}
 		clearText();
 		printSmall(false, 4, 4, "fatinitDefault failed!");
@@ -141,8 +120,6 @@ int main(int argc, char **argv) {
 		fontInit();
 		graphicsInited = true;
 		fadeType = true;
-		printf("\n ");
-		printf(username);
 	}
 
 	clearText();
