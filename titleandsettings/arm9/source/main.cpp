@@ -284,9 +284,9 @@ void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
+	for (int i = 0; i < 10; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	for (int i = 0; i < 10; i++) swiWaitForVBlank();
 	if (theme==2) {
 		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
 	} else {
@@ -298,6 +298,7 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
+	for (int i = 0; i < 10; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
 		if (!arm7SCFGLocked && !quickStartRom) {
@@ -316,10 +317,8 @@ int lastRanROM() {
 				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
 			}
 		}
-		for (int i = 0; i < 10; i++) swiWaitForVBlank();
 		err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else {
-		for (int i = 0; i < 10; i++) swiWaitForVBlank();
 		switch (flashcard) {
 			case 0:
 			case 1:
