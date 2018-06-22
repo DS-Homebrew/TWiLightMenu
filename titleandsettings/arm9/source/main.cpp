@@ -284,7 +284,6 @@ void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	for (int i = 0; i < 10; i++) swiWaitForVBlank();
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
 	if (theme==2) {
@@ -298,7 +297,6 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	for (int i = 0; i < 10; i++) swiWaitForVBlank();
 	int err = 0;
 	if (!flashcardUsed) {
 		if (!arm7SCFGLocked && !quickStartRom) {
