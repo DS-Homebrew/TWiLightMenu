@@ -46,7 +46,7 @@
 #include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
 
-bool renderScreens = true;
+bool renderScreens = false;
 bool fadeType = false;		// false = out, true = in
 
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
@@ -275,8 +275,8 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 void rebootDSiMenuPP() {
 	fadeType = false;
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
-	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
+	memcpy((u32*)0x02000300,autoboot_bin,0x020);
+	fifoSendValue32(FIFO_USER_08, 1);	// Reboot DSiMenu++ to avoid potential crashing
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
@@ -399,22 +399,16 @@ int main(int argc, char **argv) {
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 3, 2);
 
-	if (autorun || showlogo) {
+	if (gotosettings) {
 		graphicsInit();
 		fontInit();
-		fadeType = true;
-	}
-
-	if (gotosettings) {
-		if (!showlogo) {
-			graphicsInit();
-			fontInit();
-			fadeType = true;
-		}
 		screenmode = 1;
 		gotosettings = false;
 		SaveSettings();
+		fadeType = true;
 	} else if (autorun || showlogo) {
+		loadTitleGraphics();
+		fadeType = true;
 
 		for (int i = 0; i < 60*3; i++) {
 			swiWaitForVBlank();
@@ -427,6 +421,8 @@ int main(int argc, char **argv) {
 			for (int i = 0; i < 30; i++) {
 				swiWaitForVBlank();
 			}
+			graphicsInit();
+			fontInit();
 			screenmode = 1;
 			fadeType = true;
 		}

@@ -54,6 +54,9 @@ void VblankHandler(void) {
 	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
 		*(u16*)(0x4004700) = 0x800F;
 	}
+	if(fifoCheckValue32(FIFO_USER_08)) {
+		ReturntoDSiMenu();
+	}
 }
 
 //---------------------------------------------------------------------------------
