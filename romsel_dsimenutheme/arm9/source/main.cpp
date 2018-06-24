@@ -113,7 +113,6 @@ bool gotosettings = false;
 
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
-bool quickStartRom = false;
 
 bool useGbarunner = false;
 int theme = 0;
@@ -156,7 +155,6 @@ void LoadSettings(void) {
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
-	quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
@@ -616,14 +614,6 @@ void loadGameOnFlashcard (const char* filename) {
 	stop();
 }
 
-void attemptReboot() {
-	if (!arm7SCFGLocked && !quickStartRom) {
-    	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
-		fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-	}
-}
-
 void dsCardLaunch() {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
@@ -1054,7 +1044,6 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						attemptReboot();
 						if (strcmp(game_TID, "###") == 0) {
 							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 						} else {

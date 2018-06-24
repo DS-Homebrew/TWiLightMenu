@@ -73,7 +73,6 @@ static int donorSdkVer = 0;
 
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
-static bool quickStartRom = false;
 
 static bool useGbarunner = false;
 static bool autorun = false;
@@ -115,11 +114,6 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-	if (consoleModel > 1) {
-		quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 1);
-	} else {
-		quickStartRom = settingsini.GetInt("SRLOADER", "QUICK_START_GAME", 0);
-	}
 
 	// Customizable UI settings.
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
@@ -153,7 +147,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
-	settingsini.SetInt("SRLOADER", "QUICK_START_GAME", quickStartRom);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -170,7 +163,6 @@ void SaveSettings(void) {
 		CIniFile bootstrapini( bootstrapinipath );
 
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
@@ -280,6 +272,14 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+void rebootDSiMenuPP() {
+	fadeType = false;
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
 void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -299,11 +299,6 @@ int lastRanROM() {
 	renderScreens = false;
 	int err = 0;
 	if (!flashcardUsed) {
-		if (!arm7SCFGLocked && !quickStartRom) {
-			memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
-			fifoSendValue32(FIFO_USER_02, 1);	// Reboot into bootstrap with NTR touch/WiFi set
-			for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		}
 		if (homebrewBootstrap) {
 			bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 		} else {
@@ -402,7 +397,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 3, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 3, 2);
 
 	if (autorun || showlogo) {
 		graphicsInit();
@@ -867,6 +862,9 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmall(false, 4, 4, "Settings saved!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					if (!arm7SCFGLocked && consoleModel < 2) {
+						rebootDSiMenuPP();
+					}
 					loadROMselect();
 					break;
 				}
@@ -950,13 +948,6 @@ int main(int argc, char **argv) {
 					selyPos += 12;
 
 					if (!flashcardUsed && !arm7SCFGLocked) {
-						printSmall(false, 12, selyPos, "Quick-start ROM");
-						if(quickStartRom)
-							printSmall(false, 224, selyPos, "Yes");
-						else
-							printSmall(false, 230, selyPos, "No");
-						selyPos += 12;
-
 						if (consoleModel < 2) {
 							if (hiyaAutobootFound) {
 								printSmall(false, 12, selyPos, "Restore DSi Menu");
@@ -988,17 +979,6 @@ int main(int argc, char **argv) {
 						printLargeCentered(true, 128, "the DSi/3DS menus. Turning this off");
 						printLargeCentered(true, 142, "will fix some icons appearing white.");
 					} else if (settingscursor == 5) {
-						if (consoleModel < 2) {
-							printLargeCentered(true, 114, "Bypasses rebooting, in case if");
-							printLargeCentered(true, 128, "you're back in the DSi Menu,");
-							printLargeCentered(true, 142, "after launching a game.");
-						} else {
-							printLargeCentered(true, 106, "Bypasses rebooting, in case if");
-							printLargeCentered(true, 120, "you're back in the 3DS HOME Menu,");
-							printLargeCentered(true, 134, "after launching a game, or if the");
-							printLargeCentered(true, 148, "Luma exception screen appears.");
-						}
-					} else if (settingscursor == 6) {
 						if (hiyaAutobootFound) {
 							printLargeCentered(true, 128, "Show DSi Menu on boot again.");
 						} else {
@@ -1067,10 +1047,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 5:
-							quickStartRom = !quickStartRom;
-							mmEffectEx(&snd_select);
-							break;
-						case 6:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1121,17 +1097,20 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmall(false, 4, 4, "Settings saved!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					if (!arm7SCFGLocked && consoleModel < 2) {
+						rebootDSiMenuPP();
+					}
 					loadROMselect();
 					break;
 				}
 
 				if (!flashcardUsed) {
 					if (consoleModel < 2) {
-						if (settingscursor > 6) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 6;
-					} else {
 						if (settingscursor > 5) settingscursor = 0;
 						else if (settingscursor < 0) settingscursor = 5;
+					} else {
+						if (settingscursor > 4) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 4;
 					}
 				} else {
 					if (settingscursor > 4) settingscursor = 0;
@@ -1140,10 +1119,6 @@ int main(int argc, char **argv) {
 			}
 
 		} else {
-			// Save quick-start ROM setting
-			CIniFile bootstrapini( bootstrapinipath );
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", quickStartRom);
-			bootstrapini.SaveIniFile(bootstrapinipath);
 			loadROMselect();
 		}
 

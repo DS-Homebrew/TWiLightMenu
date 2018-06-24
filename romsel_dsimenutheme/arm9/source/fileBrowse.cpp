@@ -116,7 +116,6 @@ extern void SaveSettings();
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 extern void loadGameOnFlashcard(const char* filename);
-extern void attemptReboot();
 extern void dsCardLaunch();
 
 mm_sound_effect snd_launch;
@@ -773,7 +772,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						attemptReboot();
 						int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
 						iprintf ("Start failed. Error %i\n", err);
 					}
