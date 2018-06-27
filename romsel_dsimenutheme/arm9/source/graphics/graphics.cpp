@@ -143,7 +143,7 @@ glImage dialogboxImage[(256 / 16) * (256 / 16)];
 glImage bipsImage[(8 / 8) * (32 / 8)];
 glImage scrollwindowImage[(32 / 16) * (32 / 16)];
 glImage buttonarrowImage[(32 / 32) * (64 / 32)];
-glImage startImage[(64 / 16) * (16 / 16)];
+glImage startImage[(64 / 16) * (128 / 16)];
 glImage startbrdImage[(32 / 32) * (256 / 80)];
 glImage braceImage[(16 / 16) * (128 / 16)];
 glImage settingsImage[(64 / 16) * (128 / 64)];
@@ -807,7 +807,7 @@ void vBlankHandler()
 				}
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
-			if (showSTARTborder && theme == 0) glSprite(96, 143, GL_FLIP_NONE, startImage);
+			if (showSTARTborder && theme == 0) glSprite(96, 143, GL_FLIP_NONE, &startImage[PersonalData->language]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -1142,10 +1142,10 @@ void graphicsInit()
 							64, // sprite width
 							16, // sprite height
 							64, // bitmap width
-							16, // bitmap height
+							128, // bitmap height
 							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 							TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_16, // sizeY for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 							16, // Length of the palette to use (16 colors)
 							(u16*) start_textPals+((PersonalData->theme)*16), // Load our 16 color tiles palette
