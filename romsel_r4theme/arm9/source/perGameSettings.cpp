@@ -59,10 +59,12 @@
 const char* SDKnumbertext;
 
 extern bool showdialogbox;
+extern int dialogboxHeight;
 
 bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
+int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 
 extern int cursorPosition;
@@ -86,16 +88,19 @@ extern char usernameRendered[10];
 extern bool usernameRenderedDone;
 
 char fileCounter[8];
+char gameTIDText[16];
 
 void loadPerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
+	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 }
 
 void savePerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
+	pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -115,7 +120,13 @@ void perGameSettings (std::string filename, const char* username) {
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+
+	char gameTIDDisplay[5];
+	grabTID(f_nds_file, gameTIDDisplay);
+	gameTIDDisplay[4] = 0;
 	fclose(f_nds_file);
+
+	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTIDDisplay);
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
@@ -130,6 +141,11 @@ void perGameSettings (std::string filename, const char* username) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
+	if (flashcardUsed) {
+		dialogboxHeight = 0;
+	} else {
+		dialogboxHeight = 2;
+	}
 	showdialogbox = true;
 
 	while (1) {
@@ -137,21 +153,41 @@ void perGameSettings (std::string filename, const char* username) {
 		titleUpdate(isDirectory, filename.c_str());
 		if (flashcardUsed) {
 			printLargeCentered(false, 84, "Info");
-			printSmallCentered(false, 104, SDKnumbertext);
+			printSmall(false, 24, 104, SDKnumbertext);
+			printSmall(false, 172, 104, gameTIDText);
 			printSmallCentered(false, 118, "A: OK");
 		} else {
 			printLargeCentered(false, 84, "Game settings");
-			printSmallCentered(false, 134, SDKnumbertext);
-			printSmall(false, 24, 104+(perGameSettings_cursorPosition*16), ">");
-			printSmall(false, 32, 104, "ARM9 CPU Speed:");
-			if (perGameSettings_boostCpu == -1) {
-				printSmall(false, 180, 104, "Default");
-			} else if (perGameSettings_boostCpu == 1) {
-				printSmall(false, 153, 104, "133mhz (TWL)");
-			} else {
-				printSmall(false, 156, 104, "67mhz (NTR)");
+			printSmall(false, 24, 98, SDKnumbertext);
+			printSmall(false, 172, 98, gameTIDText);
+			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
+			printSmall(false, 32, 112, "Language:");
+			printSmall(false, 32, 120, "ARM9 CPU Speed:");
+			if (perGameSettings_language == -2) {
+				printSmall(false, 180, 112, "Default");
+			} else if (perGameSettings_language == -1) {
+				printSmall(false, 180, 112, "System");
+			} else if (perGameSettings_language == 0) {
+				printSmall(false, 180, 112, "Japanese");
+			} else if (perGameSettings_language == 1) {
+				printSmall(false, 180, 112, "English");
+			} else if (perGameSettings_language == 2) {
+				printSmall(false, 180, 112, "French");
+			} else if (perGameSettings_language == 3) {
+				printSmall(false, 180, 112, "German");
+			} else if (perGameSettings_language == 4) {
+				printSmall(false, 180, 112, "Italian");
+			} else if (perGameSettings_language == 5) {
+				printSmall(false, 180, 112, "Spanish");
 			}
-			printSmallCentered(false, 118, "B: Back");
+			if (perGameSettings_boostCpu == -1) {
+				printSmall(false, 180, 120, "Default");
+			} else if (perGameSettings_boostCpu == 1) {
+				printSmall(false, 153, 120, "133mhz (TWL)");
+			} else {
+				printSmall(false, 156, 120, "67mhz (NTR)");
+			}
+			printSmallCentered(false, 134, "B: Back");
 		}
 		do {
 			scanKeys();
@@ -164,17 +200,23 @@ void perGameSettings (std::string filename, const char* username) {
 				break;
 			}
 		} else {
-			//if (pressed & KEY_UP) {
-			//	perGameSettings_cursorPosition--;
-			//}
-			//if (pressed & KEY_DOWN) {
-			//	perGameSettings_cursorPosition++;
-			//}
+			if (pressed & KEY_UP) {
+				perGameSettings_cursorPosition--;
+				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
+			}
+			if (pressed & KEY_DOWN) {
+				perGameSettings_cursorPosition++;
+				if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
+			}
 
 			if (pressed & KEY_A) {
 				switch (perGameSettings_cursorPosition) {
 					case 0:
 					default:
+						perGameSettings_language++;
+						if (perGameSettings_language > 5) perGameSettings_language = -2;
+						break;
+					case 1:
 						perGameSettings_boostCpu++;
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						break;
@@ -189,11 +231,9 @@ void perGameSettings (std::string filename, const char* username) {
 				}
 				break;
 			}
-
-			//if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
-			//if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
 		}
 	}
 	clearText();
 	showdialogbox = false;
+	dialogboxHeight = 0;
 }

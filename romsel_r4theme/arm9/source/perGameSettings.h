@@ -5,6 +5,7 @@
 
 extern bool perGameSettingsButtons;
 
+extern int perGameSettings_language;
 extern int perGameSettings_boostCpu;
 
 void loadPerGameSettings(std::string filename);

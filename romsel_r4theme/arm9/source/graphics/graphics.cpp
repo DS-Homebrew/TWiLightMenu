@@ -63,6 +63,7 @@ extern int pagenum;
 extern int dsiWarePageNum;
 
 bool showdialogbox = false;
+int dialogboxHeight = 0;
 
 int subBgTexID, iconboxTexID, wirelessiconTexID;
 
@@ -205,9 +206,9 @@ void vBlankHandler()
 			}
 		}
 		if (showdialogbox) {
-			glBoxFilled(15, 79, 241, 129, RGB15(0, 0, 0));
+			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
 			glBoxFilledGradient(16, 80, 240, 94, RGB15(0, 0, 31), RGB15(0, 0, 15), RGB15(0, 0, 15), RGB15(0, 0, 31));
-			glBoxFilled(16, 96, 240, 128, RGB15(31, 31, 31));
+			glBoxFilled(16, 96, 240, 128+(dialogboxHeight*8), RGB15(31, 31, 31));
 		}
 		updateText(false);
 		glColor(RGB15(31, 31, 31));

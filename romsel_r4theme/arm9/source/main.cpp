@@ -131,6 +131,7 @@ int dsiWarePageNum = 0;
 bool showDirectories = true;
 bool animateDsiIcons = false;
 
+int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 
 bool flashcardUsed = false;
@@ -176,7 +177,8 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Default nds-bootstrap settings
-	boostCpu = settingsini.GetInt("SRLOADER", "BOOST_CPU", 0);
+	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 }
 
 void SaveSettings(void) {
@@ -1005,6 +1007,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						loadPerGameSettings(filename);
+						if (perGameSettings_language == -2) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
+						}
 						if (perGameSettings_boostCpu == -1) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 						} else {
