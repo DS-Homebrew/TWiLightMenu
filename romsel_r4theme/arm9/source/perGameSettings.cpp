@@ -168,7 +168,7 @@ void perGameSettings (std::string filename, const char* username) {
 			} else if (perGameSettings_language == -1) {
 				printSmall(false, 180, 112, "System");
 			} else if (perGameSettings_language == 0) {
-				printSmall(false, 180, 112, "Japanese");
+				printSmall(false, 172, 112, "Japanese");
 			} else if (perGameSettings_language == 1) {
 				printSmall(false, 180, 112, "English");
 			} else if (perGameSettings_language == 2) {
