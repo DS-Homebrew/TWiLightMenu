@@ -65,7 +65,6 @@ static bool showlogo = true;
 static bool gotosettings = false;
 
 const char* romreadled_valuetext;
-const char* loadingScreen_valuetext;
 
 static int bstrap_loadingScreen = 1;
 
@@ -81,6 +80,7 @@ static int subtheme = 0;
 static bool showDirectories = true;
 static bool animateDsiIcons = false;
 
+static int bstrap_language = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
 static bool bstrap_debug = false;
 static int bstrap_romreadled = 0;
@@ -122,7 +122,8 @@ void LoadSettings(void) {
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 
 	// Default nds-bootstrap settings
-	boostCpu = settingsini.GetInt("SRLOADER", "BOOST_CPU", 0);
+	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 
 	if(!flashcardUsed) {
 		// nds-bootstrap
@@ -155,7 +156,8 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 
 	// Default nds-bootstrap settings
-	settingsini.SetInt("SRLOADER", "BOOST_CPU", boostCpu);
+	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 	settingsini.SaveIniFile(settingsinipath);
 
 	if(!flashcardUsed) {
@@ -397,7 +399,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 3, 2);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 4, 4, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -632,7 +634,7 @@ int main(int argc, char **argv) {
 					printSmall(true, 4, 176, "^/~ Switch pages");
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, "Games and Apps Settings");
+					printLarge(false, 6, 4, "Games and Apps settings");
 
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
@@ -644,11 +646,38 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 
 					if(!flashcardUsed) {
+						printSmall(false, 12, selyPos, "Language");
+						switch(bstrap_language) {
+							case -1:
+							default:
+								printSmall(false, 203, selyPos, "System");
+								break;
+							case 0:
+								printSmall(false, 194, selyPos, "Japanese");
+								break;
+							case 1:
+								printSmall(false, 206, selyPos, "English");
+								break;
+							case 2:
+								printSmall(false, 207, selyPos, "French");
+								break;
+							case 3:
+								printSmall(false, 200, selyPos, "German");
+								break;
+							case 4:
+								printSmall(false, 210, selyPos, "Italian");
+								break;
+							case 5:
+								printSmall(false, 203, selyPos, "Spanish");
+								break;
+						}
+						selyPos += 12;
+
 						printSmall(false, 12, selyPos, "ARM9 CPU Speed");
 						if(boostCpu)
-							printSmall(false, 156, selyPos, "133mhz (TWL)");
+							printSmall(false, 158, selyPos, "133mhz (TWL)");
 						else
-							printSmall(false, 164, selyPos, "67mhz (NTR)");
+							printSmall(false, 170, selyPos, "67mhz (NTR)");
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Debug");
@@ -680,58 +709,61 @@ int main(int argc, char **argv) {
 
 						printSmall(false, 12, selyPos, "Sound/Mic frequency");
 						if(soundfreq)
-							printSmall(false, 184, selyPos, "47.61 kHz");
+							printSmall(false, 187, selyPos, "47.61 kHz");
 						else
-							printSmall(false, 184, selyPos, "32.73 kHz");
+							printSmall(false, 186, selyPos, "32.73 kHz");
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Loading screen");
 						switch(bstrap_loadingScreen) {
 							case 0:
 							default:
-								loadingScreen_valuetext = "None";
+								printSmall(false, 216, selyPos, "None");
 								break;
 							case 1:
-								loadingScreen_valuetext = "Regular";
+								printSmall(false, 200, selyPos, "Regular");
 								break;
 							case 2:
-								loadingScreen_valuetext = "Pong";
+								printSmall(false, 216, selyPos, "Pong");
 								break;
 							case 3:
-								loadingScreen_valuetext = "Tic-Tac-Toe";
+								printSmall(false, 172, selyPos, "Tic-Tac-Toe");
 								break;
 						}
-						printSmall(false, 176, selyPos, loadingScreen_valuetext);
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, "Bootstrap");
 						if(bootstrapFile)
-							printSmall(false, 196, selyPos, "Nightly");
+							printSmall(false, 202, selyPos, "Nightly");
 						else
-							printSmall(false, 196, selyPos, "Release");
+							printSmall(false, 200, selyPos, "Release");
 
 
 						if (settingscursor == 0) {
+							printLargeCentered(true, 114, "Avoid the limited selections");
+							printLargeCentered(true, 128, "of your console language");
+							printLargeCentered(true, 142, "by setting this option.");
+						} else if (settingscursor == 1) {
 							printLargeCentered(true, 120, "Set to TWL to get rid of lags");
 							printLargeCentered(true, 134, "in some games.");
 						} /* else if (settingscursor == 4) {
 							printLargeCentered(true, 120, "Allows 8 bit VRAM writes");
 							printLargeCentered(true, 134, "and expands the bus to 32 bit.");
-						} */ else if (settingscursor == 1) {
+						} */ else if (settingscursor == 2) {
 							printLargeCentered(true, 120, "Displays some text before");
 							printLargeCentered(true, 134, "launched game.");
-						} else if (settingscursor == 2) {
+						} else if (settingscursor == 3) {
 							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
 							// printLargeCentered(true, 128, "avoiding conflict with");
 							// printLargeCentered(true, 142, "recent libnds.");
 							printLargeCentered(true, 128, "Sets LED as ROM read indicator.");
-						} else if (settingscursor == 3) {
+						} else if (settingscursor == 4) {
 							printLargeCentered(true, 120, "32.73 kHz: Original quality");
 							printLargeCentered(true, 134, "47.61 kHz: High quality");
-						} else if (settingscursor == 4) {
+						} else if (settingscursor == 5) {
 							printLargeCentered(true, 120, "Shows a loading screen before ROM");
 							printLargeCentered(true, 134, "is started in nds-bootstrap.");
-						} else if (settingscursor == 5) {
+						} else if (settingscursor == 6) {
 							printLargeCentered(true, 120, "Pick release or nightly");
 							printLargeCentered(true, 134, "bootstrap.");
 						}
@@ -780,13 +812,13 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor--;
-					if (consoleModel > 1 && settingscursor == 2) settingscursor--;
+					if (consoleModel > 1 && settingscursor == 3) settingscursor--;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor++;
-					if (consoleModel > 1 && settingscursor == 2) settingscursor++;
+					if (consoleModel > 1 && settingscursor == 3) settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
@@ -796,12 +828,21 @@ int main(int argc, char **argv) {
 						switch (settingscursor) {
 							case 0:
 							default:
-								boostCpu = !boostCpu;
+								if (pressed & KEY_LEFT) {
+									bstrap_language--;
+									if (bstrap_language < -1) bstrap_language = 5;
+								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+									bstrap_language++;
+									if (bstrap_language > 5) bstrap_language = -1;
+								}
 								break;
 							case 1:
-								bstrap_debug = !bstrap_debug;
+								boostCpu = !boostCpu;
 								break;
 							case 2:
+								bstrap_debug = !bstrap_debug;
+								break;
+							case 3:
 								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 								if (pressed & KEY_LEFT) {
 									bstrap_romreadled--;
@@ -811,10 +852,10 @@ int main(int argc, char **argv) {
 									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
 								}
 								break;
-							case 3:
+							case 4:
 								soundfreq = !soundfreq;
 								break;
-							case 4:
+							case 5:
 								if (pressed & KEY_LEFT) {
 									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
@@ -823,7 +864,7 @@ int main(int argc, char **argv) {
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
-							case 5:
+							case 6:
 								bootstrapFile = !bootstrapFile;
 								break;
 						}
@@ -866,8 +907,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+					if (settingscursor > 6) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 6;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
@@ -889,7 +930,7 @@ int main(int argc, char **argv) {
 					printSmall(true, 4, 176, "^/~ Switch pages");
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, "GUI Settings");
+					printLarge(false, 6, 4, "GUI settings");
 					
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
