@@ -517,7 +517,7 @@ void vBlankHandler()
 
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
-			else if (theme==0) glSprite(0, 32, GL_FLIP_NONE, ndsimenutextImage);
+			else if (theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 			
 			if (titleboxXmoveleft) {
 				if(startMenu) {
