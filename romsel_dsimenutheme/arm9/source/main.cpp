@@ -343,12 +343,13 @@ void SetDonorSDK(const char* filename) {
 	static const char sdk4_list[][4] = {
 		"YKW",	// Kirby Super Star Ultra
 		"A6C",	// MegaMan Star Force: Dragon
-		"A6B",	// MegaMan Star Force: Leo Pegasus
-		"A6A",	// MegaMan Star Force: Dragon
+		"A6B",	// MegaMan Star Force: Leo
+		"A6A",	// MegaMan Star Force: Pegasus
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"YT7",	// SEGA Superstars Tennis
 		"AZL",	// Style Savvy
 		"BKI",	// The Legend of Zelda: Spirit Tracks
+		"B3R",	// Pokemon Ranger: Guardian Signs
 	};
 
 	static const char sdk5_list[][4] = {
@@ -360,7 +361,6 @@ void SetDonorSDK(const char* filename) {
 		"BQ8",	// Crafting Mama
 		"BK9",	// Kingdom Hearts: Re-Coded
 		"BRJ",	// Radiant Historia
-		"B3R",	// Pokemon Ranger: Guardian Signs
 		"IRA",	// Pokemon Black Version
 		"IRB",	// Pokemon White Version
 		"VI2",	// Fire Emblem: Shin Monshou no Nazo Hikari to Kage no Eiyuu
