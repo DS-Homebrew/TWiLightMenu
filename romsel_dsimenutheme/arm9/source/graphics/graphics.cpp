@@ -115,7 +115,7 @@ extern int dsiWarePageNum;
 int titleboxXpos;
 int dsiWare_titleboxXpos;
 int startMenu_titleboxXpos;
-int titleboxYpos = 84;
+int titleboxYpos = 85;
 int titlewindowXpos;
 int dsiWare_titlewindowXpos;
 int startMenu_titlewindowXpos;
@@ -642,11 +642,11 @@ void vBlankHandler()
 				glSprite(224, 171, GL_FLIP_H, &buttonarrowImage[0]);
 				glColor(RGB15(31, 31, 31));
 				if (startMenu) {
-					glSprite(72-startMenu_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+					glSprite(72-startMenu_titleboxXpos, 81, GL_FLIP_NONE, braceImage);
 				} else if (dsiWareList) {
-					glSprite(72-dsiWare_titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+					glSprite(72-dsiWare_titleboxXpos, 81, GL_FLIP_NONE, braceImage);
 				} else {
-					glSprite(72-titleboxXpos, 80, GL_FLIP_NONE, braceImage);
+					glSprite(72-titleboxXpos, 81, GL_FLIP_NONE, braceImage);
 				}
 			}
 			int spawnedboxXpos = 96;
@@ -682,7 +682,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 80, GL_FLIP_H, braceImage);
+				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 81, GL_FLIP_H, braceImage);
 			} else if(dsiWareList) {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -709,7 +709,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-dsiWare_titleboxXpos, 80, GL_FLIP_H, braceImage);
+				if (theme == 0) glSprite(spawnedboxXpos+10-dsiWare_titleboxXpos, 81, GL_FLIP_H, braceImage);
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -739,7 +739,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 80, GL_FLIP_H, braceImage);
+				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 81, GL_FLIP_H, braceImage);
 			}
 			if (applaunchprep && theme==0) {
 				// Cover selected app
@@ -794,20 +794,20 @@ void vBlankHandler()
 						}
 					}
 				} else {
-					glSprite(96, 80, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-					glSprite(96+32, 80, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96+32, 81, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
 						if (dsiWareList) {
-							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 80, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
+							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
 						} else {
-							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 80, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
+							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 						}
 					}
 				}
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
-			if (showSTARTborder && theme == 0) glSprite(96, 143, GL_FLIP_NONE, &startImage[PersonalData->language]);
+			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[PersonalData->language]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
