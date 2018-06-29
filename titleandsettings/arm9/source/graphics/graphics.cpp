@@ -140,7 +140,11 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	SetBrightness(0, screenBrightness);
-	SetBrightness(1, screenBrightness);
+	if (flashcardUsed) {
+		if (screenmode == 1) SetBrightness(1, screenBrightness);
+	} else {
+		SetBrightness(1, screenBrightness);
+	}
 
 	if (renderScreens) {
 		startRendering(renderingTop);
@@ -251,11 +255,11 @@ void loadTitleGraphics() {
 		bgMapSub[i] = (u16)i;
 	}
 
-	// Display Load Screen
+	// Display DSiMenu++ logo
 	swiDecompressLZSSVram ((void*)title_topTiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
+	vramcpy_ui (&BG_PALETTE[0], title_topPal, title_topPalLen);
 	if (!flashcardUsed) {
 		swiDecompressLZSSVram ((void*)title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE[0], title_topPal, title_topPalLen);
+		vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
 	}
 }
