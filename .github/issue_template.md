@@ -1,5 +1,5 @@
 <!---
-##### THIS IS THE ISSUE TRACKER FOR TWLOADER. For support please go to:
+##### THIS IS THE ISSUE TRACKER FOR DSIMENU++. For support please go to:
 ###### DSiMenu++ GBATemp thread: https://gbatemp.net/threads/ds-i-3ds-dsimenu-ds-i-menu-replacement.472200/
 ###### Also check the Wiki (https://github.com/Robz8/DSiMenuPlusPlus/wiki) before making an issue.
 ###### Keep in mind that DSiMenu++ is only a frontend for nds-bootstrap on SD card. DO NOT OPEN AN ISSUE FOR NOT LOADING GAMES THAT ARE NOT SUPPORTED BY NDS-BOOTSTRAP YET!
