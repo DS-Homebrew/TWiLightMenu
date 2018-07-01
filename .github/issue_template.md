@@ -40,7 +40,7 @@ DSi:
 - [ ]  Older CFW
 
 
-### 3DS console version (ignore, if you're using DSi)
+### 3DS console version (ignore, if you're using DS/DSi)
 
 Tell us which version do you have:
 
