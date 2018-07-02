@@ -2,7 +2,7 @@
 ##### THIS IS THE ISSUE TRACKER FOR DSIMENU++. For support please go to:
 ###### DSiMenu++ GBATemp thread: https://gbatemp.net/threads/ds-i-3ds-dsimenu-ds-i-menu-replacement.472200/
 ###### Also check the Wiki (https://github.com/Robz8/DSiMenuPlusPlus/wiki) before making an issue.
-###### Keep in mind that DSiMenu++ is only a frontend for nds-bootstrap on SD card. DO NOT OPEN AN ISSUE FOR NOT LOADING GAMES THAT ARE NOT SUPPORTED BY NDS-BOOTSTRAP YET!
+###### Keep in mind that DSiMenu++ is only a frontend for nds-bootstrap on SD card. DO NOT OPEN AN ISSUE INVOLVING GAMES or APPS! Instead, open an issue here (https://github.com/ahezard/nds-bootstrap/issues)
 ###### Issues that don't attach any log file or any reproducible method will be closed.
 ###### Issues without replies in 15 days will be closed too.
 ###### If you want to create a request, please, delete all text after this message.
