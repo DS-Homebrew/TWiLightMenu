@@ -47,6 +47,16 @@ Tell us which version do you have:
 - [ ]  >= 11.4
 - [ ]  < 11.4
 
+### DSiMenu++ Launcher version (ignore, if you're using DS/DSi)
+
+This launches DSiMenu++ on 3DS/2DS.
+
+Tell us which versions you are using:
+
+- [ ]  Latest release _[please specify version]_
+- [ ]  I've compiled myself _[insert here commit hash]_
+- [ ]  Old release _[please specify version]_
+
 ### DSiMenu++ version
 
 Tell us which versions you are using:
