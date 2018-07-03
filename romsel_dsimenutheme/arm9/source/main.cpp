@@ -111,6 +111,7 @@ bool applaunch = false;
 bool startMenu = false;
 bool gotosettings = false;
 
+bool slot1Launch = false;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
@@ -191,7 +192,10 @@ void SaveSettings(void) {
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
-	if (!gotosettings) settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+	if (!gotosettings) {
+		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCH", slot1Launch);
+		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);

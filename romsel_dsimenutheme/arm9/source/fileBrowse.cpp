@@ -61,8 +61,10 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool slot1Launch;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
+extern bool arm7SCFGLocked;
 extern int consoleModel;
 extern bool isRegularDS;
 
@@ -747,6 +749,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
+					if (startMenu_cursorPosition == 1) slot1Launch = true;
 					if (startMenu_cursorPosition == 2) homebrewBootstrap = true;
 					SaveSettings();
 
@@ -756,7 +759,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
 						if (!flashcardUsed) {
-							dsCardLaunch();
+							if (arm7SCFGLocked) {
+								dsCardLaunch();
+							} else {
+								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+								iprintf ("Start failed. Error %i\n", err);
+							}
 						} else {
 							// Switch to GBA mode
 							useBootstrap = true;
