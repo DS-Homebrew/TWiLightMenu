@@ -63,6 +63,8 @@ extern void ClearBrightness();
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string homebrewArg;
+
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -111,7 +113,7 @@ bool applaunch = false;
 bool startMenu = false;
 bool gotosettings = false;
 
-bool slot1Launch = false;
+int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
@@ -193,7 +195,8 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	if (!gotosettings) {
-		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCH", slot1Launch);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -810,6 +813,8 @@ int main(int argc, char **argv) {
 			}
 
 			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
+				SaveSettings();
+
 				sNDSHeaderExt NDSHeader;
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
@@ -1066,19 +1071,25 @@ int main(int argc, char **argv) {
 								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
 							}
 						}
+						launchType = 1;
+						SaveSettings();
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+						ClearBrightness();
 						printLarge(false, 4, 36, text);
 						stop();
 					} else {
 						loadGameOnFlashcard(argarray[0]);
 					}
 				} else {
+					launchType = 1;
+					SaveSettings();
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					ClearBrightness();
 					printLarge(false, 4, 4, text);
 					stop();
 				}
@@ -1087,6 +1098,9 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
+				homebrewArg = gbROMpath;
+				launchType = 3;
+				SaveSettings();
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(flashcardUsed) {
@@ -1104,6 +1118,9 @@ int main(int argc, char **argv) {
 						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
+				homebrewArg = nesROMpath;
+				launchType = 2;
+				SaveSettings();
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(flashcardUsed) {

@@ -61,7 +61,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
-extern bool slot1Launch;
+extern int launchType;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern bool arm7SCFGLocked;
@@ -749,7 +749,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
-					if (startMenu_cursorPosition == 1) slot1Launch = true;
+					if (startMenu_cursorPosition == 1) launchType = 0;
 					if (startMenu_cursorPosition == 2) homebrewBootstrap = true;
 					SaveSettings();
 
@@ -838,7 +838,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
-					if (!dsiWareList) {
+					if (bnrRomType[cursorPosition] == 0 && !dsiWareList) {
 						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
 
 						char game_TID[5];
@@ -848,7 +848,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
 						fclose(f_nds_file);
 					}
-					SaveSettings();
 
 					// Return the chosen file
 					return entry->name;
@@ -858,7 +857,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
-					printSmallCentered(false, 112, "This game cannot be launched.");
+					printSmallCentered(false, 112, "This game cannot be launched");
+					if (flashcardUsed) {
+						printSmallCentered(false, 128, "in DS mode.");
+					} else {
+						printSmallCentered(false, 128, "as a .nds file.");
+					}
 					printSmall(false, 208, 166, "A: OK");
 					pressed = 0;
 					do {

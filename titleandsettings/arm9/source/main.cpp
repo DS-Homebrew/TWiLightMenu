@@ -53,6 +53,7 @@ const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string homebrewArg;
 std::string bootstrapfilename;
 
 static int consoleModel = 0;
@@ -70,6 +71,7 @@ static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
 
+static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -112,6 +114,9 @@ void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+	if (flashcardUsed && launchType == 0) launchType = 1;
+	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
@@ -299,38 +304,62 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
+
+	vector<char*> argarray;
+	argarray.push_back(strdup(homebrewArg.c_str()));
+
 	int err = 0;
-	if (!flashcardUsed) {
-		if (homebrewBootstrap) {
-			bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
-		} else {
-			if (donorSdkVer==5) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+	if (launchType == 0) {
+		err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+	} else if (launchType == 1) {
+		if (!flashcardUsed) {
+			if (homebrewBootstrap) {
+				bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
 			} else {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+				if (donorSdkVer==5) {
+					if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
+					else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+				} else {
+					if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
+					else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+				}
+			}
+			err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
+		} else {
+			switch (flashcard) {
+				case 0:
+				case 1:
+				default:
+					err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
+					break;
+				case 2:
+				case 4:
+				case 5:
+					err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
+					break;
+				case 3:
+					err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
+					break;
+				case 6:
+					err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
+					break;
 			}
 		}
-		err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
-	} else {
-		switch (flashcard) {
-			case 0:
-			case 1:
-			default:
-				err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
-				break;
-			case 2:
-			case 4:
-			case 5:
-				err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
-				break;
-			case 3:
-				err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
-				break;
-			case 6:
-				err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
-				break;
+	} else if (launchType == 2) {
+		if(flashcardUsed) {
+			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
+			err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+		} else {
+			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
+			err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+		}
+	} else if (launchType == 3) {
+		if(flashcardUsed) {
+			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
+			err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+		} else {
+			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
+			err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 		}
 	}
 	
