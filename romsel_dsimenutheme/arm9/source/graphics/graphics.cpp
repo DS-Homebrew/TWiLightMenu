@@ -747,7 +747,7 @@ void vBlankHandler()
 				{
 					for (int x = 0; x < 4; x++)
 					{
-						glSprite(96+x*16, 84+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
+						glSprite(96+x*16, 86+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
 					}
 				}
 				if(startMenu) {
