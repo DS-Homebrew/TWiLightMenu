@@ -306,7 +306,10 @@ int lastRanROM() {
 	renderScreens = false;
 
 	vector<char*> argarray;
-	argarray.push_back(strdup(homebrewArg.c_str()));
+	if (launchType > 1) {
+		argarray.push_back(strdup("null"));
+		argarray.push_back(strdup(homebrewArg.c_str()));
+	}
 
 	int err = 0;
 	if (launchType == 0) {
