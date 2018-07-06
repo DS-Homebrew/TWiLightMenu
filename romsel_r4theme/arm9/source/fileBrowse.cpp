@@ -394,16 +394,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							break;
 						}
 					}
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+					if (bnrRomType == 0) {
+						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 
-					char game_TID[5];
-					grabTID(f_nds_file, game_TID);
-					game_TID[4] = 0;
-					game_TID[3] = 0;
-					if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-					fclose(f_nds_file);
+						char game_TID[5];
+						grabTID(f_nds_file, game_TID);
+						game_TID[4] = 0;
+						game_TID[3] = 0;
+						if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
+						fclose(f_nds_file);
+					}
 				}
-				SaveSettings();
 
 				// Return the chosen file
 				return entry->name;
