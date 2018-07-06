@@ -762,7 +762,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							if (arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
