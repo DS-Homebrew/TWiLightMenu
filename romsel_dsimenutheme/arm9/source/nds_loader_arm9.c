@@ -349,7 +349,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	resetARM7(0x06000000);
   
-  if(clearMasterBright) {
+	if(clearMasterBright) {
 		u16 mode = 1 << 14;
 
 		*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;

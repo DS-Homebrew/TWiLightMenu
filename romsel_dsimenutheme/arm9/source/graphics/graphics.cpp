@@ -46,6 +46,7 @@
 #include "scroll_window.h"
 #include "org_scroll_window.h"
 #include "button_arrow.h"
+#include "launch_dot.h"
 #include "start_text.h"
 #include "start_border.h"
 #include "../include/startborderpal.h"
@@ -126,12 +127,22 @@ bool startBorderZoomOut = false;
 int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
 int startBorderZoomAnimNum = 0;
 
+int launchDotX[12] = {0};
+int launchDotY[12] = {0};
+
+bool launchDotXMove[12] = {false};	// false = left, true = right
+bool launchDotYMove[12] = {false};	// false = up, true = down
+
+int launchDotFrame[12] = {0};
+int launchDotCurrentChangingFrame = 0;
+bool launchDotDoFrameChange = false;
+
 bool showdialogbox = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID, dialogboxTexID, wirelessiconTexID;
-int bipsTexID, scrollwindowTexID, buttonarrowTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
+int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
 glImage subBgImage[(256 / 16) * (256 / 16)];
 //glImage mainBgImage[(256 / 16) * (256 / 16)];
@@ -143,6 +154,7 @@ glImage dialogboxImage[(256 / 16) * (256 / 16)];
 glImage bipsImage[(8 / 8) * (32 / 8)];
 glImage scrollwindowImage[(32 / 16) * (32 / 16)];
 glImage buttonarrowImage[(32 / 32) * (64 / 32)];
+glImage launchdotImage[(16 / 16) * (96 / 16)];
 glImage startImage[(64 / 16) * (128 / 16)];
 glImage startbrdImage[(32 / 32) * (256 / 80)];
 glImage braceImage[(16 / 16) * (128 / 16)];
@@ -778,6 +790,24 @@ void vBlankHandler()
 						else drawIcon(112, 96-titleboxYmovepos, cursorPosition);
 					}
 				}
+				// Draw dots after selecting a game/app
+				for (int i = 0; i < 11; i++) {
+					glSprite(76+launchDotX[i], 69+launchDotY[i], GL_FLIP_NONE, &launchdotImage[(launchDotFrame[i]) & 15]);
+					if (launchDotX[i] == 0) launchDotXMove[i] = true;
+					if (launchDotX[i] == 88) launchDotXMove[i] = false;
+					if (launchDotY[i] == 0) launchDotYMove[i] = true;
+					if (launchDotY[i] == 88) launchDotYMove[i] = false;
+					if (launchDotXMove[i] == false) {
+						launchDotX[i]--;
+					} else if (launchDotXMove[i] == true) {
+						launchDotX[i]++;
+					}
+					if (launchDotYMove[i] == false) {
+						launchDotY[i]--;
+					} else if (launchDotYMove[i] == true) {
+						launchDotY[i]++;
+					}
+				}
 				titleboxYmovepos += 5;
 				if (titleboxYmovepos > 240) whiteScreen = true;
 			}
@@ -838,6 +868,26 @@ void vBlankHandler()
 	} else {
 		startBorderZoomAnimNum = 0;
 	}
+	if (applaunchprep && launchDotDoFrameChange) {
+		launchDotFrame[0]--;
+		if (launchDotCurrentChangingFrame >= 1) launchDotFrame[1]--;
+		if (launchDotCurrentChangingFrame >= 2) launchDotFrame[2]--;
+		if (launchDotCurrentChangingFrame >= 3) launchDotFrame[3]--;
+		if (launchDotCurrentChangingFrame >= 4) launchDotFrame[4]--;
+		if (launchDotCurrentChangingFrame >= 5) launchDotFrame[5]--;
+		if (launchDotCurrentChangingFrame >= 6) launchDotFrame[6]--;
+		if (launchDotCurrentChangingFrame >= 7) launchDotFrame[7]--;
+		if (launchDotCurrentChangingFrame >= 8) launchDotFrame[8]--;
+		if (launchDotCurrentChangingFrame >= 9) launchDotFrame[9]--;
+		if (launchDotCurrentChangingFrame >= 10) launchDotFrame[10]--;
+		if (launchDotCurrentChangingFrame >= 11) launchDotFrame[11]--;
+		for (int i = 0; i < 12; i++) {
+			if (launchDotFrame[i] < 0) launchDotFrame[i] = 0;
+		}
+		launchDotCurrentChangingFrame++;
+		if (launchDotCurrentChangingFrame > 11) launchDotCurrentChangingFrame = 11;
+	}
+	if (applaunchprep) launchDotDoFrameChange = !launchDotDoFrameChange;
 }
 
 void topBgLoad() {
@@ -855,6 +905,57 @@ void topBgLoad() {
 
 void graphicsInit()
 {
+	for (int i = 0; i < 12; i++) {
+		launchDotFrame[i] = 5;
+	}
+
+	launchDotXMove[0] = false;
+	launchDotYMove[0] = true;
+	launchDotX[0] = 44;
+	launchDotY[0] = 0;
+	launchDotXMove[1] = false;
+	launchDotYMove[1] = true;
+	launchDotX[1] = 28;
+	launchDotY[1] = 16;
+	launchDotXMove[2] = false;
+	launchDotYMove[2] = true;
+	launchDotX[2] = 12;
+	launchDotY[2] = 32;
+	launchDotXMove[3] = true;
+	launchDotYMove[3] = true;
+	launchDotX[3] = 4;
+	launchDotY[3] = 48;
+	launchDotXMove[4] = true;
+	launchDotYMove[4] = true;
+	launchDotX[4] = 20;
+	launchDotY[4] = 64;
+	launchDotXMove[5] = true;
+	launchDotYMove[5] = true;
+	launchDotX[5] = 36;
+	launchDotY[5] = 80;
+	launchDotXMove[6] = true;
+	launchDotYMove[6] = false;
+	launchDotX[6] = 52;
+	launchDotY[6] = 80;
+	launchDotXMove[7] = true;
+	launchDotYMove[7] = false;
+	launchDotX[7] = 68;
+	launchDotY[7] = 64;
+	launchDotXMove[8] = true;
+	launchDotYMove[8] = false;
+	launchDotX[8] = 84;
+	launchDotY[8] = 48;
+	launchDotXMove[9] = false;
+	launchDotYMove[9] = false;
+	launchDotX[9] = 76;
+	launchDotY[9] = 36;
+	launchDotXMove[10] = false;
+	launchDotYMove[10] = false;
+	launchDotX[10] = 60;
+	launchDotY[10] = 20;
+	launchDotX[11] = 44;
+	launchDotY[11] = 0;
+
 	titleboxXpos = cursorPosition*64;
 	titlewindowXpos = cursorPosition*5;
 	dsiWare_titleboxXpos = dsiWare_cursorPosition*64;
@@ -1136,6 +1237,20 @@ void graphicsInit()
 							16, // Length of the palette to use (16 colors)
 							(u16*) button_arrowPals+((PersonalData->theme)*16), // Load our 16 color tiles palette
 							(u8*) button_arrowBitmap // image data generated by GRIT
+							);
+
+	launchdotTexID = glLoadTileSet(launchdotImage, // pointer to glImage array
+							16, // sprite width
+							16, // sprite height
+							16, // bitmap width
+							96, // bitmap height
+							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+							16, // Length of the palette to use (16 colors)
+							(u16*) button_arrowPals+((PersonalData->theme)*16), // Load our 16 color tiles palette
+							(u8*) launch_dotBitmap // image data generated by GRIT
 							);
 
 	startTexID = glLoadTileSet(startImage, // pointer to glImage array
