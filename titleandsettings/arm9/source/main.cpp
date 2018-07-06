@@ -72,6 +72,7 @@ static int bstrap_loadingScreen = 1;
 static int donorSdkVer = 0;
 
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
+static bool resetSlot1 = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -113,6 +114,7 @@ void LoadSettings(void) {
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
+	resetSlot1 = settingsini.GetInt("SRLOADER", "RESET_SLOT1", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	if (flashcardUsed && launchType == 0) launchType = 1;
@@ -152,6 +154,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
+	settingsini.SetInt("SRLOADER", "RESET_SLOT1", resetSlot1);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
 	// UI settings.
@@ -315,7 +318,7 @@ int lastRanROM() {
 
 	int err = 0;
 	if (launchType == 0) {
-		err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+		err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
 	} else if (launchType == 1) {
 		if (!flashcardUsed) {
 			if (homebrewBootstrap) {
@@ -748,6 +751,15 @@ int main(int argc, char **argv) {
 							printSmall(false, 186, selyPos, "32.73 kHz");
 						selyPos += 12;
 
+						if (!arm7SCFGLocked) {
+							printSmall(false, 12, selyPos, "Reset Slot-1");
+							if(resetSlot1)
+								printSmall(false, 224, selyPos, "Yes");
+							else
+								printSmall(false, 230, selyPos, "No");
+						}
+						selyPos += 12;
+
 						printSmall(false, 12, selyPos, "Loading screen");
 						switch(bstrap_loadingScreen) {
 							case 0:
@@ -795,9 +807,12 @@ int main(int argc, char **argv) {
 							printLargeCentered(true, 120, "32.73 kHz: Original quality");
 							printLargeCentered(true, 134, "47.61 kHz: High quality");
 						} else if (settingscursor == 5) {
+							printLargeCentered(true, 120, "Enable this if Slot-1 cards are");
+							printLargeCentered(true, 134, "stuck on white screens.");
+						} else if (settingscursor == 6) {
 							printLargeCentered(true, 120, "Shows a loading screen before ROM");
 							printLargeCentered(true, 134, "is started in nds-bootstrap.");
-						} else if (settingscursor == 6) {
+						} else if (settingscursor == 7) {
 							printLargeCentered(true, 120, "Pick release or nightly");
 							printLargeCentered(true, 134, "bootstrap.");
 						}
@@ -847,12 +862,14 @@ int main(int argc, char **argv) {
 				if (pressed & KEY_UP) {
 					settingscursor--;
 					if (consoleModel > 1 && settingscursor == 3) settingscursor--;
+					if (arm7SCFGLocked && settingscursor == 5) settingscursor--;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor++;
 					if (consoleModel > 1 && settingscursor == 3) settingscursor++;
+					if (arm7SCFGLocked && settingscursor == 5) settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
@@ -890,6 +907,9 @@ int main(int argc, char **argv) {
 								soundfreq = !soundfreq;
 								break;
 							case 5:
+								resetSlot1 = !resetSlot1;
+								break;
+							case 6:
 								if (pressed & KEY_LEFT) {
 									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
@@ -898,7 +918,7 @@ int main(int argc, char **argv) {
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
-							case 6:
+							case 7:
 								bootstrapFile = !bootstrapFile;
 								break;
 						}
@@ -941,8 +961,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if (settingscursor > 6) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 6;
+					if (settingscursor > 7) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 7;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
