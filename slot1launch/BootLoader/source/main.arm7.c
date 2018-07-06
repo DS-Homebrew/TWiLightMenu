@@ -55,6 +55,8 @@
 extern unsigned long language;
 extern unsigned long twlClock;
 
+bool gameSoftReset = false;
+
 void arm7_clearmem (void* loc, size_t len);
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -298,6 +300,18 @@ void arm7_main (void) {
 		REG_SCFG_CLK = 0x0181;
 	} else {
 		REG_SCFG_CLK = 0x0180;
+	}
+	
+	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x4D5341	// Super Mario 64 DS
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x434D41	// Mario Kart DS
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x443241	// New Super Mario Bros.
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x5A5241	// Rockman ZX/MegaMan ZX
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x574B41	// Kirby Squeak Squad/Mouse Attack
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x585A59	// Rockman ZX Advent/MegaMan ZX Advent
+	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x5A3642)	// Rockman Zero Collection/MegaMan Zero Collection
+	{
+		gameSoftReset = true;
 	}
 
 	copyLoop (ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);

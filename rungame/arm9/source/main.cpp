@@ -35,6 +35,7 @@
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string homebrewArg;
 std::string bootstrapfilename;
 
 static int consoleModel = 0;
@@ -45,6 +46,7 @@ static int consoleModel = 0;
 
 static int donorSdkVer = 0;
 
+static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -57,16 +59,14 @@ void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
 	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
-
-	// Modify NTR touch setting
-	bootstrapini.SetInt("NDS-BOOTSTRAP", "NTR_TOUCH", 0);
-	bootstrapini.SaveIniFile(bootstrapinipath);
 }
 
 static bool arm7SCFGLocked = false;
@@ -95,19 +95,35 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 int lastRanROM() {
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
-	if (homebrewBootstrap) {
-		bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
-	} else {
-		if(donorSdkVer==5) {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
-			else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-		} else {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
-			else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-		}
+
+	vector<char*> argarray;
+	if (launchType > 1) {
+		argarray.push_back(strdup("null"));
+		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
-	
-	return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
+
+	if (launchType == 0) {
+		return runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+	} else if (launchType == 1) {
+		if (homebrewBootstrap) {
+			bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+		} else {
+			if(donorSdkVer==5) {
+				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
+				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
+			} else {
+				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
+				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
+			}
+		}
+		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
+	} else if (launchType == 2) {
+		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
+		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+	} else if (launchType == 3) {
+		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
+		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+	}
 }
 
 //---------------------------------------------------------------------------------

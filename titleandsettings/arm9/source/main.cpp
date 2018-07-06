@@ -304,6 +304,8 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
+	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+	else fifoSendValue32(FIFO_USER_07, 1);
 
 	vector<char*> argarray;
 	if (launchType > 1) {

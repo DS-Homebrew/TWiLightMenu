@@ -23,6 +23,7 @@
 #include "cardengine_arm7_bin.h"
 
 extern unsigned long language;
+extern bool gameSoftReset;
 
 extern unsigned long cheat_engine_size;
 extern unsigned long intr_orig_return_offset;
@@ -112,6 +113,7 @@ int hookNdsRetail (const tNDSHeader* ndsHeader, u32* cardEngineLocation) {
 
 	cardEngineLocation[1] = *vblankHandler;
 	cardEngineLocation[2] = language;
+	cardEngineLocation[3] = gameSoftReset;
 
 	u32* patches =  (u32*) cardEngineLocation[0];
 

@@ -15,9 +15,6 @@
 .global saveCluster
 .global saveSize
 .global language
-.global gottenSCFGExt
-.global consoleModel
-.global romread_LED
 .global gameSoftReset
 
 #define ICACHE_SIZE	0x2000
@@ -30,6 +27,8 @@ patches_offset:
 intr_vblank_orig_return:
 	.word	0x00000000
 language:
+	.word	0x00000000
+gameSoftReset:
 	.word	0x00000000
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
