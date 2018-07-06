@@ -1080,6 +1080,8 @@ int main(int argc, char **argv) {
 						printLarge(false, 4, 36, text);
 						stop();
 					} else {
+						launchType = 1;
+						SaveSettings();
 						loadGameOnFlashcard(argarray[0]);
 					}
 				} else {
