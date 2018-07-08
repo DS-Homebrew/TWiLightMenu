@@ -29,7 +29,6 @@
 // GRIT auto-genrated arrays of images
 #include "font_si.h"
 #include "font_li.h"
-#include "large_font.h"
 
 // Texture UV coords
 #include "uvcoord_font_si.h"

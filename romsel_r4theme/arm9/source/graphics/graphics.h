@@ -21,6 +21,8 @@
 
 void initSubSprites(void);
 void graphicsInit();
+void topLogoLoad();
+void topBgLoad();
 void startRendering(bool top);
 bool isRenderingTop();
 

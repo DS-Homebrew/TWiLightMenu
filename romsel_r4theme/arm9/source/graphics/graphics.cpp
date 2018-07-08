@@ -25,8 +25,21 @@
 #include "FontGraphic.h"
 
 // Graphic files
-#include "bckgrd1.h"
-#include "icons.h"
+#include "theme01_bckgrd1.h"
+#include "theme01_logo.h"
+#include "theme01_icons.h"
+#include "theme02_bckgrd1.h"
+#include "theme02_logo.h"
+#include "theme02_icons.h"
+#include "theme03_bckgrd1.h"
+#include "theme03_logo.h"
+#include "theme03_icons.h"
+#include "theme04_bckgrd1.h"
+#include "theme04_logo.h"
+#include "theme04_icons.h"
+#include "theme05_bckgrd1.h"
+#include "theme05_logo.h"
+#include "theme05_icons.h"
 #include "iconbox.h"
 #include "wirelessicons.h"
 
@@ -190,8 +203,25 @@ void vBlankHandler()
 			drawBG(subBgImage);
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
 		} else {
-			glBoxFilled(0, 0, 256, 192, 0x0AF2);	// R: 148, G: 189, B: 16
-			
+			switch (subtheme) {
+				case 0:
+				default:
+					glBoxFilled(0, 0, 256, 192, 0x6318);	// R: 192, G: 192, B: 192
+					break;
+				case 1:
+					glBoxFilled(0, 0, 256, 192, 0x431C);	// R: 224, G: 192, B: 128
+					break;
+				case 2:
+					glBoxFilled(0, 0, 256, 192, 0x2314);	// R: 160, G: 192, B: 64
+					break;
+				case 3:
+					glBoxFilled(0, 0, 256, 192, 0x621C);	// R: 224, G: 128, B: 192
+					break;
+				case 4:
+					glBoxFilled(0, 0, 256, 192, 0x0200);	// R: 0, G: 128, B: 0
+					break;
+			}
+
 			glBoxFilled(31, 23, 217, 64, RGB15(0, 0, 0));
 			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(32, 24, GL_FLIP_NONE, iconboxImage);
@@ -217,74 +247,56 @@ void vBlankHandler()
 	GFX_FLUSH = 0;
 }
 
-void topBgLoad() {
-	//switch (PersonalData->theme) {
-		//case 0:
-		//default:
-			swiDecompressLZSSVram ((void*)bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], bckgrd1Pal, bckgrd1PalLen);
-			//break;
-		/*case 1:
-			swiDecompressLZSSVram ((void*)topbg_1brownTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_1brownPal, topbg_1brownPalLen);
+void topLogoLoad() {
+	switch (subtheme) {
+		case 0:
+		default:
+			swiDecompressLZSSVram ((void*)theme01_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme01_logoPal, theme01_logoPalLen);
+			break;
+		case 1:
+			swiDecompressLZSSVram ((void*)theme02_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme02_logoPal, theme02_logoPalLen);
 			break;
 		case 2:
-			swiDecompressLZSSVram ((void*)topbg_2redTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_2redPal, topbg_2redPalLen);
+			swiDecompressLZSSVram ((void*)theme03_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme03_logoPal, theme03_logoPalLen);
 			break;
 		case 3:
-			swiDecompressLZSSVram ((void*)topbg_3pinkTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_3pinkPal, topbg_3pinkPalLen);
+			swiDecompressLZSSVram ((void*)theme04_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme04_logoPal, theme04_logoPalLen);
 			break;
 		case 4:
-			swiDecompressLZSSVram ((void*)topbg_4orangeTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_4orangePal, topbg_4orangePalLen);
+			swiDecompressLZSSVram ((void*)theme05_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme05_logoPal, theme05_logoPalLen);
 			break;
-		case 5:
-			swiDecompressLZSSVram ((void*)topbg_5yellowTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_5yellowPal, topbg_5yellowPalLen);
+	}
+}
+
+void topBgLoad() {
+	switch (subtheme) {
+		case 0:
+		default:
+			swiDecompressLZSSVram ((void*)theme01_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme01_bckgrd1Pal, theme01_bckgrd1PalLen);
 			break;
-		case 6:
-			swiDecompressLZSSVram ((void*)topbg_6yellowgreenTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_6yellowgreenPal, topbg_6yellowgreenPalLen);
+		case 1:
+			swiDecompressLZSSVram ((void*)theme02_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme02_bckgrd1Pal, theme02_bckgrd1PalLen);
 			break;
-		case 7:
-			swiDecompressLZSSVram ((void*)topbg_7green1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_7green1Pal, topbg_7green1PalLen);
+		case 2:
+			swiDecompressLZSSVram ((void*)theme03_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme03_bckgrd1Pal, theme03_bckgrd1PalLen);
 			break;
-		case 8:
-			swiDecompressLZSSVram ((void*)topbg_8green2Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_8green2Pal, topbg_8green2PalLen);
+		case 3:
+			swiDecompressLZSSVram ((void*)theme04_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme04_bckgrd1Pal, theme04_bckgrd1PalLen);
 			break;
-		case 9:
-			swiDecompressLZSSVram ((void*)topbg_9lightgreenTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_9lightgreenPal, topbg_9lightgreenPalLen);
+		case 4:
+			swiDecompressLZSSVram ((void*)theme05_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], theme05_bckgrd1Pal, theme05_bckgrd1PalLen);
 			break;
-		case 10:
-			swiDecompressLZSSVram ((void*)topbg_10skyblueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_10skybluePal, topbg_10skybluePalLen);
-			break;
-		case 11:
-			swiDecompressLZSSVram ((void*)topbg_11lightblueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_11lightbluePal, topbg_11lightbluePalLen);
-			break;
-		case 12:
-			swiDecompressLZSSVram ((void*)topbg_12blueTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_12bluePal, topbg_12bluePalLen);
-			break;
-		case 13:
-			swiDecompressLZSSVram ((void*)topbg_13violetTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_13violetPal, topbg_13violetPalLen);
-			break;
-		case 14:
-			swiDecompressLZSSVram ((void*)topbg_14purpleTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_14purplePal, topbg_14purplePalLen);
-			break;
-		case 15:
-			swiDecompressLZSSVram ((void*)topbg_15fuchsiaTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], topbg_15fuchsiaPal, topbg_15fuchsiaPalLen);
-			break;
-	}*/
+	}
 }
 
 void graphicsInit()
@@ -325,29 +337,84 @@ void graphicsInit()
 
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
-	topBgLoad();
-
-	/*if (subtheme == 1) {
-		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
-	} else {
-		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
-	}*/
-
-	subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-							16, // sprite width
-							16, // sprite height
-							256, // bitmap width
-							256, // bitmap height
-							GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							256, // Length of the palette to use (256 colors)
-							(u16*) iconsPal, // Load our 16 color tiles palette
-							(u8*) iconsBitmap // image data generated by GRIT
-							);
+	switch (subtheme) {
+		case 0:
+		default:
+			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+									16, // sprite width
+									16, // sprite height
+									256, // bitmap width
+									256, // bitmap height
+									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+									256, // Length of the palette to use (256 colors)
+									(u16*) theme01_iconsPal, // Load our 16 color tiles palette
+									(u8*) theme01_iconsBitmap // image data generated by GRIT
+									);
+			break;
+		case 1:
+			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+									16, // sprite width
+									16, // sprite height
+									256, // bitmap width
+									256, // bitmap height
+									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+									256, // Length of the palette to use (256 colors)
+									(u16*) theme02_iconsPal, // Load our 16 color tiles palette
+									(u8*) theme02_iconsBitmap // image data generated by GRIT
+									);
+			break;
+		case 2:
+			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+									16, // sprite width
+									16, // sprite height
+									256, // bitmap width
+									256, // bitmap height
+									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+									256, // Length of the palette to use (256 colors)
+									(u16*) theme03_iconsPal, // Load our 16 color tiles palette
+									(u8*) theme03_iconsBitmap // image data generated by GRIT
+									);
+			break;
+		case 3:
+			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+									16, // sprite width
+									16, // sprite height
+									256, // bitmap width
+									256, // bitmap height
+									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+									256, // Length of the palette to use (256 colors)
+									(u16*) theme04_iconsPal, // Load our 16 color tiles palette
+									(u8*) theme04_iconsBitmap // image data generated by GRIT
+									);
+			break;
+		case 4:
+			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
+									16, // sprite width
+									16, // sprite height
+									256, // bitmap width
+									256, // bitmap height
+									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+									256, // Length of the palette to use (256 colors)
+									(u16*) theme05_iconsPal, // Load our 16 color tiles palette
+									(u8*) theme05_iconsBitmap // image data generated by GRIT
+									);
+			break;
+	}
 
 	iconboxTexID = glLoadTileSet(iconboxImage, // pointer to glImage array
 							40, // sprite width

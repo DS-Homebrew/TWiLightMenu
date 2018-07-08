@@ -436,7 +436,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 0, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 1, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -603,28 +603,37 @@ int main(int argc, char **argv) {
 							break;
 					}
 
-					int yPos;
-					switch (subtheme) {
-						case 0:
-						default:
-							yPos = 32;
-							break;
-						case 1:
-							yPos = 46;
-							break;
+					int yPos = 32;
+					for (int i = 0; i < subtheme; i++) {
+						yPos += 12;
 					}
 
 					printSmall(false, 4, yPos, ">");
+
+					int selyPos = 32;
 
 					switch (theme) {
 						case 0:
 						default:
 							printSmall(false, 12, 32, "SD Card Menu");
+							selyPos += 12;
 							printSmall(false, 12, 46, "Normal Menu");
 							break;
 						case 1:
 							//printSmall(false, 12, 32, "DS Menu");
+							//selyPos += 12;
 							//printSmall(false, 12, 46, "3DS HOME Menu");
+							break;
+						case 2:
+							printSmall(false, 12, selyPos, "theme01");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "theme02");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "theme03");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "theme04");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "theme05");
 							break;
 					}
 
@@ -657,8 +666,13 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 
-				if (subtheme > 1) subtheme = 0;
-				else if (subtheme < 0) subtheme = 1;
+				if (theme == 2) {
+					if (subtheme > 4) subtheme = 0;
+					else if (subtheme < 0) subtheme = 4;
+				} else {
+					if (subtheme > 1) subtheme = 0;
+					else if (subtheme < 0) subtheme = 1;
+				}
 			} else if (subscreenmode == 1) {
 				pressed = 0;
 
@@ -1114,7 +1128,7 @@ int main(int argc, char **argv) {
 								theme += 1;
 								if (theme > 2) theme = 0;
 								mmEffectEx(&snd_select);
-							} else if (theme > 0) {
+							} else if (theme == 1) {
 								mmEffectEx(&snd_wrong);
 							} else {
 								subscreenmode = 2;

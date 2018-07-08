@@ -715,6 +715,7 @@ int main(int argc, char **argv) {
 
 		if (startMenu) {
 			whiteScreen = false;
+			topLogoLoad();
 			fadeType = true;	// Fade in from white
 
 			clearText();
@@ -760,6 +761,7 @@ int main(int argc, char **argv) {
 					default:
 						clearText();
 						startMenu = false;
+						topBgLoad();
 						break;
 					case 1:
 						if (!flashcardUsed) {
