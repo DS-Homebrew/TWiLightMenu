@@ -20,6 +20,8 @@
 #pragma once
 
 void initSubSprites(void);
+void loadBoxArt(const char* filename);
+void topBgLoad(void);
 void graphicsInit();
 void startRendering(bool top);
 bool isRenderingTop();

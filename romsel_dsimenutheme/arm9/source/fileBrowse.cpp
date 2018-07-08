@@ -514,6 +514,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 			// cursor->delay = TextEntry::ACTIVE;
 
+			char boxArtPath[256];
+
 			if (startMenu) {
 				if (startMenu_cursorPosition < (3-flashcardUsed)) {
 					showbubble = true;
@@ -524,12 +526,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					clearText(false);	// Clear title
 				}
+				topBgLoad();	// Clear box art
 			} else if (dsiWareList) {
 				if (dsiWare_cursorPosition+dsiWarePageNum*40 > ((int) dirContents[scrn].size() - 1)) {
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
+					topBgLoad();	// Clear box art
 				} else {
+					snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
+					loadBoxArt(boxArtPath);
 					showbubble = true;
 					showSTARTborder = true;
 					titleUpdate(dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
@@ -539,7 +545,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
+					topBgLoad();	// Clear box art
 				} else {
+					snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+					loadBoxArt(boxArtPath);
 					showbubble = true;
 					showSTARTborder = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());

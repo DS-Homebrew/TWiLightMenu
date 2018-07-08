@@ -35,6 +35,7 @@
 
 #include "graphics/graphics.h"
 
+#include "nitrofs.h"
 #include "ndsheaderbanner.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"
@@ -671,7 +672,7 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		showbubble = true;
 		printLarge(false, 64, 32, "fatinitDefault failed!");
-				
+
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;
 
@@ -723,8 +724,10 @@ int main(int argc, char **argv) {
 
 		}
 	}
-  
+
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
 
 	std::string filename;
 	std::string bootstrapfilename;

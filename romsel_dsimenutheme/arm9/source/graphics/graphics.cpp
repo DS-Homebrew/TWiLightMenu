@@ -25,9 +25,6 @@
 #include "FontGraphic.h"
 
 // Graphic files
-#include "top.h"
-#include "org_top.h"
-#include "_3ds_top.h"
 #include "bottom.h"
 #include "org_bottom.h"
 #include "_3ds_bottom.h"
@@ -488,24 +485,6 @@ void vBlankHandler()
 		SetBrightness(0, screenBrightness);
 		SetBrightness(1, screenBrightness);
 
-		/*if (renderingTop)
-		{
-			glBoxFilledGradient(0, -64, 256, 112,
-						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
-						);
-			glBoxFilledGradient(0, 112, 256, 192,
-						  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
-						);
-			drawBG(mainBgImage);
-			glSprite(-2, 172, GL_FLIP_NONE, &shoulderImage[0 & 31]);
-			glSprite(178, 172, GL_FLIP_NONE, &shoulderImage[1 & 31]);
-			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			updateText(renderingTop);
-			glColor(RGB15(31, 31, 31));
-		}
-		else
-		{*/
-
 		if (showdialogbox) {
 			if (dbox_movespeed <= 1) {
 				if (dbox_Ypos >= 0) {
@@ -527,99 +506,116 @@ void vBlankHandler()
 			}
 		}
 
+		if (titleboxXmoveleft) {
+			if(startMenu) {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					startMenu_titlewindowXpos -= 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					startMenu_titleboxXpos -= 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos -= 1;
+					movetimer++;
+				} else {
+					titleboxXmoveleft = false;
+					movetimer = 0;
+				}
+			} else if (dsiWareList) {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					dsiWare_titlewindowXpos -= 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					dsiWare_titleboxXpos -= 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos -= 1;
+					movetimer++;
+				} else {
+					titleboxXmoveleft = false;
+					movetimer = 0;
+				}
+			} else {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					titlewindowXpos -= 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					titleboxXpos -= 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos -= 1;
+					movetimer++;
+				} else {
+					titleboxXmoveleft = false;
+					movetimer = 0;
+				}
+			}
+		} else if (titleboxXmoveright) {
+			if(startMenu) {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					startMenu_titlewindowXpos += 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					startMenu_titleboxXpos += 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
+					movetimer++;
+				} else {
+					titleboxXmoveright = false;
+					movetimer = 0;
+				}
+			} else if (dsiWareList) {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					dsiWare_titlewindowXpos += 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					dsiWare_titleboxXpos += 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos += 1;
+					movetimer++;
+				} else {
+					titleboxXmoveright = false;
+					movetimer = 0;
+				}
+			} else {
+				if (movetimer == 8) {
+					if (showbubble) mmEffectEx(&snd_stop);
+					startBorderZoomOut = true;
+					titlewindowXpos += 1;
+					movetimer++;
+				} else if (movetimer < 8) {
+					titleboxXpos += 8;
+					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos += 1;
+					movetimer++;
+				} else {
+					titleboxXmoveright = false;
+					movetimer = 0;
+				}
+			}
+		}
+
+		//if (renderingTop)
+		//{
+			/*glBoxFilledGradient(0, -64, 256, 112,
+						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
+						);
+			glBoxFilledGradient(0, 112, 256, 192,
+						  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
+						);
+			drawBG(mainBgImage);
+			glSprite(-2, 172, GL_FLIP_NONE, &shoulderImage[0 & 31]);
+			glSprite(178, 172, GL_FLIP_NONE, &shoulderImage[1 & 31]);
+			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+			updateText(renderingTop);
+			glColor(RGB15(31, 31, 31));*/
+		//}
+		//else
+		//{
 			drawBG(subBgImage);
 			if (showbubble) drawBubble(bubbleImage);
 			else if (theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
-			
-			if (titleboxXmoveleft) {
-				if(startMenu) {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						startMenu_titlewindowXpos -= 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						startMenu_titleboxXpos -= 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos -= 1;
-						movetimer++;
-					} else {
-						titleboxXmoveleft = false;
-						movetimer = 0;
-					}
-				} else if (dsiWareList) {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						dsiWare_titlewindowXpos -= 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						dsiWare_titleboxXpos -= 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos -= 1;
-						movetimer++;
-					} else {
-						titleboxXmoveleft = false;
-						movetimer = 0;
-					}
-				} else {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						titlewindowXpos -= 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						titleboxXpos -= 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos -= 1;
-						movetimer++;
-					} else {
-						titleboxXmoveleft = false;
-						movetimer = 0;
-					}
-				}
-			} else if (titleboxXmoveright) {
-				if(startMenu) {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						startMenu_titlewindowXpos += 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						startMenu_titleboxXpos += 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
-						movetimer++;
-					} else {
-						titleboxXmoveright = false;
-						movetimer = 0;
-					}
-				} else if (dsiWareList) {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						dsiWare_titlewindowXpos += 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						dsiWare_titleboxXpos += 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos += 1;
-						movetimer++;
-					} else {
-						titleboxXmoveright = false;
-						movetimer = 0;
-					}
-				} else {
-					if (movetimer == 8) {
-						if (showbubble) mmEffectEx(&snd_stop);
-						startBorderZoomOut = true;
-						titlewindowXpos += 1;
-						movetimer++;
-					} else if (movetimer < 8) {
-						titleboxXpos += 8;
-						if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos += 1;
-						movetimer++;
-					} else {
-						titleboxXmoveright = false;
-						movetimer = 0;
-					}
-				}
-			}
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
@@ -845,13 +841,6 @@ void vBlankHandler()
 			}
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			} else {
-				// Playback animated icons
-				for (int i = 0; i < 40; i++) {
-					if(bnriconisDSi[i]==true) {
-						playBannerSequence(i);
-					}
-				}
 			}
 			updateText(false);
 			glColor(RGB15(31, 31, 31));
@@ -859,6 +848,14 @@ void vBlankHandler()
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
+	if (!whiteScreen) {
+		// Playback animated icons
+		for (int i = 0; i < 40; i++) {
+			if(bnriconisDSi[i]==true) {
+				playBannerSequence(i);
+			}
+		}
+	}
 	if (startBorderZoomOut) {
 		startBorderZoomAnimNum++;
 		if(startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
@@ -868,7 +865,7 @@ void vBlankHandler()
 	} else {
 		startBorderZoomAnimNum = 0;
 	}
-	if (applaunchprep && launchDotDoFrameChange) {
+	if (applaunchprep && theme==0 && launchDotDoFrameChange) {
 		launchDotFrame[0]--;
 		if (launchDotCurrentChangingFrame >= 1) launchDotFrame[1]--;
 		if (launchDotCurrentChangingFrame >= 2) launchDotFrame[2]--;
@@ -887,19 +884,61 @@ void vBlankHandler()
 		launchDotCurrentChangingFrame++;
 		if (launchDotCurrentChangingFrame > 11) launchDotCurrentChangingFrame = 11;
 	}
-	if (applaunchprep) launchDotDoFrameChange = !launchDotDoFrameChange;
+	if (applaunchprep && theme==0) launchDotDoFrameChange = !launchDotDoFrameChange;
+}
+
+void loadBoxArt(const char* filename) {
+	FILE* file = fopen(filename, "rb");
+	if (!file) file = fopen("nitro:/boxart_unknown.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=114; y>=0; y--) {
+			u16 buffer[128];
+			fread(buffer, 2, 0x80, file);
+			u16* src = buffer;
+			for (int i=0; i<128; i++) {
+				u16 val = *(src++);
+				BG_GFX_SUB[0x20000+(y+40)*256+(i+64)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+void loadBMP(const char* filename) {
+	FILE* file = fopen(filename, "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=191; y>=0; y--) {
+			u16 buffer[256];
+			fread(buffer, 2, 0x100, file);
+			u16* src = buffer;
+			for (int i=0; i<256; i++) {
+				u16 val = *(src++);
+				BG_GFX_SUB[0x20000+y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+		}
+	}
+
+	fclose(file);
 }
 
 void topBgLoad() {
 	if (theme == 1) {
-		swiDecompressLZSSVram ((void*)_3ds_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], _3ds_topPal, _3ds_topPalLen);
+		loadBMP("nitro:/3ds_top.bmp");
 	} else if (subtheme == 1) {
-		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
+		loadBMP("nitro:/org_top.bmp");
 	} else {
-		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
+		loadBMP("nitro:/top.bmp");
 	}
 }
 
@@ -972,8 +1011,7 @@ void graphicsInit()
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
-
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
 	glScreen2D();
@@ -983,31 +1021,23 @@ void graphicsInit()
 	// sprites
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
-
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-
 	vramSetBankE(VRAM_E_MAIN_BG);
 	lcdMainOnBottom();
 
-	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	//REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
-	REG_BG0CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
-	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-
-	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(1);
+	REG_BG3CNT_SUB = BG_MAP_BASE(16) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X_SUB = 0;
+	REG_BG3Y_SUB = 0;
+	REG_BG3PA_SUB = 1<<8;
+	REG_BG3PB_SUB = 0;
+	REG_BG3PC_SUB = 0;
+	REG_BG3PD_SUB = 1<<8;
 
 	topBgLoad();
 
-	/*if (subtheme == 1) {
-		swiDecompressLZSSVram ((void*)org_topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], org_topPal, org_topPalLen);
-	} else {
-		swiDecompressLZSSVram ((void*)topTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], topPal, topPalLen);
-	}*/
+	//consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
 	dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
 							16, // sprite width
