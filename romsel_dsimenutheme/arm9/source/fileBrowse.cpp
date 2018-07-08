@@ -80,8 +80,6 @@ extern bool showdialogbox;
 
 extern std::string romfolder;
 
-bool donorFound = true;
-
 extern bool applaunch;
 
 extern bool gotosettings;
@@ -111,6 +109,7 @@ extern int dsiWare_titlewindowXpos;
 
 extern bool flashcardUsed;
 
+bool boxArtLoaded = false;
 bool settingsChanged = false;
 
 extern void SaveSettings();
@@ -526,16 +525,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					clearText(false);	// Clear title
 				}
-				topBgLoad();	// Clear box art
 			} else if (dsiWareList) {
 				if (dsiWare_cursorPosition+dsiWarePageNum*40 > ((int) dirContents[scrn].size() - 1)) {
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
-					topBgLoad();	// Clear box art
+					if (!boxArtLoaded) {
+						topBgLoad();	// Clear box art
+						boxArtLoaded = true;
+					}
 				} else {
-					snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
-					loadBoxArt(boxArtPath);
+					if (!boxArtLoaded) {
+						snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
+						loadBoxArt(boxArtPath);
+						boxArtLoaded = true;
+					}
 					showbubble = true;
 					showSTARTborder = true;
 					titleUpdate(dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).isDirectory, dirContents[scrn].at(dsiWare_cursorPosition+dsiWarePageNum*40).name.c_str());
@@ -545,10 +549,32 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
-					topBgLoad();	// Clear box art
+					if (!boxArtLoaded) {
+						topBgLoad();	// Clear box art
+						boxArtLoaded = true;
+					}
 				} else {
-					snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
-					loadBoxArt(boxArtPath);
+					if (!boxArtLoaded) {
+						if (isDirectory[cursorPosition]) {
+							topBgLoad();	// Clear box art, if it's a directory
+						} else {
+							snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+							if (!access(boxArtPath, F_OK)) {
+								loadBoxArt(boxArtPath);	// Load box art based on game's filename
+							} else if (bnrRomType[cursorPosition] == 0) {
+								// Get game's TID
+								FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
+								char game_TID[5];
+								grabTID(f_nds_file, game_TID);
+								game_TID[4] = 0;
+								fclose(f_nds_file);
+
+								snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", game_TID);
+								loadBoxArt(boxArtPath);	// Load box art based on game's TID
+							}
+						}
+						boxArtLoaded = true;
+					}
 					showbubble = true;
 					showSTARTborder = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
@@ -633,6 +659,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (dsiWare_cursorPosition >= 0) {
 						titleboxXmoveleft = true;
 						mmEffectEx(&snd_select);
+						boxArtLoaded = false;
 						settingsChanged = true;
 					} else {
 						mmEffectEx(&snd_wrong);
@@ -647,6 +674,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (cursorPosition >= 0) {
 						titleboxXmoveleft = true;
 						mmEffectEx(&snd_select);
+						boxArtLoaded = false;
 						settingsChanged = true;
 					} else {
 						mmEffectEx(&snd_wrong);
@@ -672,6 +700,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (dsiWare_cursorPosition <= 39) {
 						titleboxXmoveright = true;
 						mmEffectEx(&snd_select);
+						boxArtLoaded = false;
 						settingsChanged = true;
 					} else {
 						mmEffectEx(&snd_wrong);
@@ -686,6 +715,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (cursorPosition <= 39) {
 						titleboxXmoveright = true;
 						mmEffectEx(&snd_select);
+						boxArtLoaded = false;
 						settingsChanged = true;
 					} else {
 						mmEffectEx(&snd_wrong);
@@ -811,6 +841,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
+					topBgLoad();	// Clear box art
+					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
 					clearText();
@@ -951,6 +983,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titlewindowXpos = 0;
 				}
 				whiteScreen = true;
+				topBgLoad();	// Clear box art
+				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
@@ -974,6 +1008,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titlewindowXpos = 0;
 				}
 				whiteScreen = true;
+				topBgLoad();	// Clear box art
+				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
@@ -990,6 +1026,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				dsiWareList = !dsiWareList;
 				whiteScreen = true;
+				topBgLoad();	// Clear box art
+				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
@@ -1023,6 +1061,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
+					topBgLoad();	// Clear box art
+					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
 					clearText();
@@ -1062,6 +1102,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 				}
 				whiteScreen = true;
+				topBgLoad();	// Clear box art
+				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
