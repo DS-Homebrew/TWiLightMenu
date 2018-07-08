@@ -107,6 +107,9 @@ extern int titlewindowXpos;
 extern int dsiWare_titleboxXpos;
 extern int dsiWare_titlewindowXpos;
 
+extern bool showLshoulder;
+extern bool showRshoulder;
+
 extern bool flashcardUsed;
 
 bool boxArtLoaded = false;
@@ -581,68 +584,37 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
+			showLshoulder = false;
+			showRshoulder = false;
+			if (startMenu) {
+			} else if (dsiWareList) {
+				if (dsiWarePageNum != 0) {
+					printSmall(false, 18, 155, "Prev.");
+					showLshoulder = true;
+				}
+				if (file_count > 40+dsiWarePageNum*40) {
+					printSmall(false, 182, 155, "Next");
+					showRshoulder = true;
+				}
+			} else {
+				if (pagenum != 0) {
+					printSmall(false, 18, 155, "Prev.");
+					showLshoulder = true;
+				}
+				if (file_count > 40+pagenum*40) {
+					printSmall(false, 182, 155, "Next");
+					showRshoulder = true;
+				}
+			}
+
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
-				consoleClear();
-				if(!usernameRenderedDone) {
-					for (int i = 0; i < 10; i++) {
-						if (username[i] == 0)
-							usernameRendered[i] = 0x20;
-						else
-							usernameRendered[i] = username[i];
-					}
-					usernameRenderedDone = true;
-				}
-				iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-				if (startMenu) {
-				} else if (dsiWareList) {
-					for(int i = 0; i < 21; i++) {
-						printf("\n");
-					}
-					printf("   ");
-					if (dsiWarePageNum != 0) {
-						printf("Prev.");
-					} else {
-						printf("     ");
-					}
-					printf("                 ");
-					if (file_count > 40+dsiWarePageNum*40) {
-						printf("Next");
-					} else {
-						printf("    ");
-					}
-				} else {
-					for(int i = 0; i < 21; i++) {
-						printf("\n");
-					}
-					printf("   ");
-					if (pagenum != 0) {
-						printf("Prev.");
-					} else {
-						printf("     ");
-					}
-					printf("                 ");
-					if (file_count > 40+pagenum*40) {
-						printf("Next");
-					} else {
-						printf("    ");
-					}
-
-					//if (pagenum != 0) printSmall(true, 16, 177, "Prev. Page");
-					//if (file_count > 40+pagenum*40) printSmall(true, 182, 177, "Next Page");
-				}
-
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
 			}
 			while (!pressed);
-			// if (cursor->fade == TextEntry::FadeType::IN)
-			// {
-			// 	cursor->fade = TextEntry::FadeType::NONE;
-			// 	cursor->invAccel = 4;
-			// }
 
 			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
 				if (startMenu) {
