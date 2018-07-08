@@ -604,6 +604,7 @@ int main(int argc, char **argv) {
 					}
 
 					int yPos = 32;
+					if (theme == 2) yPos = 24;
 					for (int i = 0; i < subtheme; i++) {
 						yPos += 12;
 					}
@@ -611,6 +612,7 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 
 					int selyPos = 32;
+					if (theme == 2) selyPos = 24;
 
 					switch (theme) {
 						case 0:
@@ -625,15 +627,29 @@ int main(int argc, char **argv) {
 							//printSmall(false, 12, 46, "3DS HOME Menu");
 							break;
 						case 2:
-							printSmall(false, 12, selyPos, "theme01");
+							printSmall(false, 12, selyPos, "01: Snow hill");
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "theme02");
+							printSmall(false, 12, selyPos, "02: Snow land");
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "theme03");
+							printSmall(false, 12, selyPos, "03: Green leaf");
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "theme04");
+							printSmall(false, 12, selyPos, "04: Pink flower");
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "theme05");
+							printSmall(false, 12, selyPos, "05: Park");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "06: Cherry blossoms");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "07: Beach");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "08: Summer sky");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "09: River");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "10: Fall trees");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "11: Christmas tree");
+							selyPos += 12;
+							printSmall(false, 12, selyPos, "12: Drawn symbol");
 							break;
 					}
 
@@ -667,8 +683,8 @@ int main(int argc, char **argv) {
 				}
 
 				if (theme == 2) {
-					if (subtheme > 4) subtheme = 0;
-					else if (subtheme < 0) subtheme = 4;
+					if (subtheme > 11) subtheme = 0;
+					else if (subtheme < 0) subtheme = 11;
 				} else {
 					if (subtheme > 1) subtheme = 0;
 					else if (subtheme < 0) subtheme = 1;
