@@ -837,8 +837,8 @@ void vBlankHandler()
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[PersonalData->language]);
-			if (showLshoulder) glSprite(-2, 150, GL_FLIP_NONE, &shoulderImage[0 & 31]);
-			if (showRshoulder) glSprite(178, 150, GL_FLIP_NONE, &shoulderImage[1 & 31]);
+			if (showLshoulder) glSprite(-2, 150+theme, GL_FLIP_NONE, &shoulderImage[0 & 31]);
+			if (showRshoulder) glSprite(178, 150+theme, GL_FLIP_NONE, &shoulderImage[1 & 31]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();

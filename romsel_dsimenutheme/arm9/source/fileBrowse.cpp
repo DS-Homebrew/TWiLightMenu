@@ -589,20 +589,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (startMenu) {
 			} else if (dsiWareList) {
 				if (dsiWarePageNum != 0) {
-					printSmall(false, 18, 155, "Prev.");
+					printSmall(false, 18, 155+theme, "Prev.");
 					showLshoulder = true;
 				}
 				if (file_count > 40+dsiWarePageNum*40) {
-					printSmall(false, 182, 155, "Next");
+					printSmall(false, 182, 155+theme, "Next");
 					showRshoulder = true;
 				}
 			} else {
 				if (pagenum != 0) {
-					printSmall(false, 18, 155, "Prev.");
+					printSmall(false, 18, 155+theme, "Prev.");
 					showLshoulder = true;
 				}
 				if (file_count > 40+pagenum*40) {
-					printSmall(false, 182, 155, "Next");
+					printSmall(false, 182, 155+theme, "Next");
 					showRshoulder = true;
 				}
 			}
