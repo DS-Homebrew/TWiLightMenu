@@ -131,7 +131,7 @@ int lastRanROM() {
 		if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
 			rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
 
-		fifoSendValue32(FIFO_USER_07, 1);	// Reboot
+		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 	} else if (launchType == 3) {
 		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
 		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
