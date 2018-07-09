@@ -64,6 +64,9 @@ extern void ClearBrightness();
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string dsiWareSrlPath;
+std::string dsiWarePubPath;
+std::string dsiWarePrvPath;
 std::string homebrewArg;
 
 bool arm7SCFGLocked = false;
@@ -123,9 +126,7 @@ bool homebrewBootstrap = false;
 bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
-bool dsiWareList = false;
 int cursorPosition = 0;
-int dsiWare_cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
 int dsiWarePageNum = 0;
@@ -155,12 +156,8 @@ void LoadSettings(void) {
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
 	RemoveTrailingSlashes(romfolder);
-	dsiWareList = settingsini.GetInt("SRLOADER", "DSIWARE_LIST", 0);
-	if (flashcardUsed && consoleModel > 1) dsiWareList = false;
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
-	dsiWarePageNum = settingsini.GetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
-	dsiWare_cursorPosition = settingsini.GetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", 0);
 	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
@@ -187,17 +184,17 @@ void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
-	settingsini.SetInt("SRLOADER", "DSIWARE_LIST", dsiWareList);
 	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-	settingsini.SetInt("SRLOADER", "DSIWARE_PAGE_NUMBER", dsiWarePageNum);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
-	settingsini.SetInt("SRLOADER", "DSIWARE_CURSOR_POSITION", dsiWare_cursorPosition);
 	//settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	if (!gotosettings) {
+		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
@@ -622,7 +619,7 @@ void loadGameOnFlashcard (const char* filename) {
 	}
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
-	printLarge(false, 4, 36, text);
+	printSmall(false, 4, 36, text);
 	stop();
 }
 
@@ -670,7 +667,7 @@ int main(int argc, char **argv) {
 		graphicsInit();
 		fontInit();
 		whiteScreen = false;
-		printLarge(false, 64, 32, "fatinitDefault failed!");
+		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		stop();
@@ -829,20 +826,12 @@ int main(int argc, char **argv) {
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
-			if (dsiWareList) {
-				// Set directory
-				chdir ("sd:/_nds/dsimenuplusplus/dsiware");
+			snprintf (path, sizeof(path), "%s", romfolder.c_str());
+			// Set directory
+			chdir (path);
 
-				//Navigates to the file to launch
-				filename = browseForFile(dsiWareExtensionList, username);
-			} else {
-				snprintf (path, sizeof(path), "%s", romfolder.c_str());
-				// Set directory
-				chdir (path);
-
-				//Navigates to the file to launch
-				filename = browseForFile(extensionList, username);
-			}
+			//Navigates to the file to launch
+			filename = browseForFile(extensionList, username);
 		}
 
 		////////////////////////////////////
@@ -879,7 +868,16 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
-			if (dsiWareList && strcasecmp (filename.c_str() + filename.size() - 4, ".app") == 0) {
+			if (isDSiWare && strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
+				char *name = argarray.at(0);
+				strcpy (filePath + pathLen, name);
+				free(argarray.at(0));
+				argarray.at(0) = filePath;
+
+				dsiWareSrlPath = argarray[0];
+				dsiWarePubPath = ReplaceAll(argarray[0], ".nds", ".pub");
+				dsiWarePrvPath = ReplaceAll(argarray[0], ".nds", ".prv");
+				launchType = 2;
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -889,16 +887,81 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-				*(u16*)(0x02000304) = 0x1801;
-				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
-				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
-				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000318) = 0x00000017;
-				*(u32*)(0x0200031C) = 0x00000000;
-				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+				if (access(dsiWarePubPath.c_str(), F_OK) && NDSHeader.pubSavSize > 0) {
+					whiteScreen = true;
+					clearText();
+					ClearBrightness();
+					const char* savecreate = "Creating public save file...";
+					const char* savecreated = "Public save file created!";
+					printSmall(false, 2, 80, savecreate);
+
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					memset(buffer, 0, sizeof(buffer));
+
+					FILE *pFile = fopen(dsiWarePubPath.c_str(), "wb");
+					if (pFile) {
+						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
+							fwrite(buffer, 1, sizeof(buffer), pFile);
+						}
+						fclose(pFile);
+					}
+					printSmall(false, 2, 88, savecreated);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+				}
+
+				if (access(dsiWarePrvPath.c_str(), F_OK) && NDSHeader.prvSavSize > 0) {
+					whiteScreen = true;
+					clearText();
+					ClearBrightness();
+					const char* savecreate = "Creating private save file...";
+					const char* savecreated = "Private save file created!";
+					printSmall(false, 2, 80, savecreate);
+
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					memset(buffer, 0, sizeof(buffer));
+
+					FILE *pFile = fopen(dsiWarePrvPath.c_str(), "wb");
+					if (pFile) {
+						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
+							fwrite(buffer, 1, sizeof(buffer), pFile);
+						}
+						fclose(pFile);
+					}
+					printSmall(false, 2, 88, savecreated);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+				}
+
+				if (access("sd:/bootthis.dsi", F_OK)) {
+					rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+				} else {
+					whiteScreen = true;
+					clearText();
+					ClearBrightness();
+					printSmall(false, 2, 80, "\"bootthis\" file(s) already exist");
+					printSmall(false, 2, 88, "on the SD root. Please back them up");
+					printSmall(false, 2, 96, "before launching DSiWare.");
+					stop();
+				}
+				if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+					rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+				if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+					rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+
+				whiteScreen = true;
+				clearText();
+				ClearBrightness();
+				printSmall(false, 2, 80, "Please press and hold the");
+				printSmall(false, 2, 88, "X button. Hold it on the");
+				printSmall(false, 2, 96, "black screen for 2 seconds.");
+
+				// Wait for X button hold
+				while (1)
+				{
+					swiWaitForVBlank();
+					scanKeys();
+					if (keysHeld() & KEY_X) break;
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
@@ -965,10 +1028,11 @@ int main(int argc, char **argv) {
 
 						if (access(savename.c_str(), F_OK)) {
 							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
+								clearText();
 								ClearBrightness();
 								const char* savecreate = "Creating save file...";
 								const char* savecreated = "Save file created!";
-								printLarge(false, 4, 4, savecreate);
+								printSmall(false, 2, 80, savecreate);
 
 								static const int BUFFER_SIZE = 4096;
 								char buffer[BUFFER_SIZE];
@@ -1008,7 +1072,7 @@ int main(int argc, char **argv) {
 									}
 									fclose(pFile);
 								}
-								printLarge(false, 4, 20, savecreated);
+								printSmall(false, 2, 88, savecreated);
 							}
 
 						}
@@ -1094,7 +1158,7 @@ int main(int argc, char **argv) {
                                                 //ClearBrightness();
                 								const char* error = "no cheat found\n";
                                                 nocashMessage(error);
-                								//printLarge(false, 4, 4, error);
+                								//printSmall(false, 4, 4, error);
                                             }
                                             if(count>256) {
                                                 const char* error = "maximum cheat data size exceeded\n";
@@ -1105,19 +1169,19 @@ int main(int argc, char **argv) {
                                             //ClearBrightness();
             								const char* error = "Cheat list empty\n";
                                             nocashMessage(error);
-            								//printLarge(false, 4, 4, error);
+            								//printSmall(false, 4, 4, error);
                                         }
                                     } else {
                                         //ClearBrightness();
         								const char* error = "Can't read cheat list\n";
                                         nocashMessage(error);
-        								//printLarge(false, 4, 4, error);
+        								//printSmall(false, 4, 4, error);
                                     }
                                 } else {
                                     //ClearBrightness();
     								const char* error = "cheats.xml File is in an unsupported unicode encoding";
                                     nocashMessage(error);
-    								//printLarge(false, 4, 4, error);
+    								//printSmall(false, 4, 4, error);
                                 }
                                 fclose(cheatFile);
                             } 
@@ -1143,8 +1207,9 @@ int main(int argc, char **argv) {
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+						clearText();
 						ClearBrightness();
-						printLarge(false, 4, 36, text);
+						printSmall(false, 4, 36, text);
 						stop();
 					} else {
 						launchType = 1;
@@ -1158,8 +1223,9 @@ int main(int argc, char **argv) {
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					clearText();
 					ClearBrightness();
-					printLarge(false, 4, 4, text);
+					printSmall(false, 4, 4, text);
 					stop();
 				}
 			} else if ( strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0 ||
@@ -1168,7 +1234,7 @@ int main(int argc, char **argv) {
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				homebrewArg = gbROMpath;
-				launchType = 3;
+				launchType = 4;
 				SaveSettings();
 				argarray.push_back(gbROMpath);
 				int err = 0;
@@ -1181,14 +1247,16 @@ int main(int argc, char **argv) {
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				printLarge(false, 4, 4, text);
+				clearText();
+				ClearBrightness();
+				printSmall(false, 4, 4, text);
 				stop();
 			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				homebrewArg = nesROMpath;
-				launchType = 2;
+				launchType = 3;
 				SaveSettings();
 				argarray.push_back(nesROMpath);
 				int err = 0;
@@ -1201,7 +1269,9 @@ int main(int argc, char **argv) {
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				printLarge(false, 4, 4, text);
+				clearText();
+				ClearBrightness();
+				printSmall(false, 4, 4, text);
 				stop();
 			}
 

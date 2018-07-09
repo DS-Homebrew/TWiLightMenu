@@ -141,7 +141,7 @@ void perGameSettings (std::string filename, const char* username) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (flashcardUsed) {
+	if (isDSiWare || flashcardUsed) {
 		dialogboxHeight = 0;
 	} else {
 		dialogboxHeight = 2;
@@ -151,7 +151,7 @@ void perGameSettings (std::string filename, const char* username) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
-		if (flashcardUsed) {
+		if (isDSiWare || flashcardUsed) {
 			printLargeCentered(false, 84, "Info");
 			printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
@@ -195,7 +195,7 @@ void perGameSettings (std::string filename, const char* username) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (flashcardUsed) {
+		if (isDSiWare || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

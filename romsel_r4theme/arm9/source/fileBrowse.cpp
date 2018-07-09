@@ -87,16 +87,9 @@ extern int theme;
 
 extern bool showDirectories;
 extern int spawnedtitleboxes;
-extern bool dsiWareList;
 extern int cursorPosition;
-extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
-extern int dsiWarePageNum;
-extern int titleboxXpos;
-extern int titlewindowXpos;
-extern int dsiWare_titleboxXpos;
-extern int dsiWare_titlewindowXpos;
 
 extern bool flashcardUsed;
 
@@ -160,7 +153,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if (showDirectories && !dsiWareList) {
+			if (showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					dirContents.push_back (dirEntry);
 				}
@@ -238,16 +231,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 
-	if (dsiWareList) {
-		fileOffset = dsiWare_cursorPosition;
-		if (dsiWarePageNum > 0) {
-			fileOffset += dsiWarePageNum*40;
-		}
-	} else {
-		fileOffset = cursorPosition;
-		if (pagenum > 0) {
-			fileOffset += pagenum*40;
-		}
+	fileOffset = cursorPosition;
+	if (pagenum > 0) {
+		fileOffset += pagenum*40;
 	}
 
 	while (true)
@@ -262,48 +248,37 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		// Show cursor
 		iprintf ("\x1b[%d;0H*", fileOffset - screenOffset + ENTRIES_START_ROW);
 
-		if (dsiWareList) {
+		if (dirContents.at(fileOffset).isDirectory) {
+			isDirectory = true;
+			bnrWirelessIcon = 0;
+		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 			{
 				getGameInfo(dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			}
-		} else {
-			if (dirContents.at(fileOffset).isDirectory) {
-				isDirectory = true;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+			{
+				bnrRomType = 1;
 				bnrWirelessIcon = 0;
-			} else {
-				isDirectory = false;
-				std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
-				{
-					getGameInfo(dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str());
-					bnrRomType = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-				{
-					bnrRomType = 1;
-					bnrWirelessIcon = 0;
-					launchable = true;
-					isHomebrew = false;
-				} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
-					bnrRomType = 2;
-					bnrWirelessIcon = 0;
-					launchable = true;
-					isHomebrew = false;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-						|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-				{
-					bnrRomType = 3;
-					bnrWirelessIcon = 0;
-					launchable = true;
-					isHomebrew = false;
-				}
+				isDSiWare = false;
+				isHomebrew = false;
+			} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+				bnrRomType = 2;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = false;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+			{
+				bnrRomType = 3;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = false;
 			}
 		}
 
@@ -360,7 +335,42 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
-			} else if (dsiWareList || launchable) {
+			} else if (isDSiWare) {
+				if (flashcardUsed || consoleModel > 1) {
+					showdialogbox = true;
+					printLargeCentered(false, 84, "Error!");
+					printSmallCentered(false, 104, "This game cannot be launched.");
+					printSmallCentered(false, 118, "A: OK");
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_A));
+					showdialogbox = false;
+				} else {
+					applaunch = true;
+
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+					cursorPosition = fileOffset;
+					pagenum = 0;
+					for (int i = 0; i < 100; i++) {
+						if (cursorPosition > 39) {
+							cursorPosition -= 40;
+							pagenum++;
+						} else {
+							break;
+						}
+					}
+
+					// Return the chosen file
+					return entry->name;
+				}
+			} else {
 				applaunch = true;
 				if (!isHomebrew) {
 					useBootstrap = true;
@@ -372,59 +382,33 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				if (dsiWareList) {
-					dsiWare_cursorPosition = fileOffset;
-					dsiWarePageNum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (dsiWare_cursorPosition > 39) {
-							dsiWare_cursorPosition -= 40;
-							dsiWarePageNum++;
-						} else {
-							break;
-						}
+				cursorPosition = fileOffset;
+				pagenum = 0;
+				for (int i = 0; i < 100; i++) {
+					if (cursorPosition > 39) {
+						cursorPosition -= 40;
+						pagenum++;
+					} else {
+						break;
 					}
-				} else {
-					cursorPosition = fileOffset;
-					pagenum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (cursorPosition > 39) {
-							cursorPosition -= 40;
-							pagenum++;
-						} else {
-							break;
-						}
-					}
-					if (bnrRomType == 0) {
-						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+				}
+				if (bnrRomType == 0) {
+					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-						fclose(f_nds_file);
-					}
+					char game_TID[5];
+					grabTID(f_nds_file, game_TID);
+					game_TID[4] = 0;
+					game_TID[3] = 0;
+					if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
+					fclose(f_nds_file);
 				}
 
 				// Return the chosen file
 				return entry->name;
-			} else {
-				showdialogbox = true;
-				printLargeCentered(false, 84, "Error!");
-				printSmallCentered(false, 104, "This game cannot be launched.");
-				printSmallCentered(false, 118, "A: OK");
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				pressed = 0;
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					swiWaitForVBlank();
-				} while (!(pressed & KEY_A));
-				showdialogbox = false;
 			}
 		}
 
-		if ((pressed & KEY_Y) && !dsiWareList && bnrRomType == 0 && fileOffset >= 0)
+		if ((pressed & KEY_Y) && bnrRomType == 0 && fileOffset >= 0)
 		{
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory)
@@ -456,7 +440,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if ((pressed & KEY_R) && !flashcardUsed && consoleModel < 2)
+		/*if ((pressed & KEY_R) && !flashcardUsed && consoleModel < 2)
 		{
 			consoleClear();
 			printf("Please wait...\n");
@@ -487,9 +471,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
-		}
+		}*/
 
-		if ((pressed & KEY_B) && showDirectories && !dsiWareList) {
+		if ((pressed & KEY_B) && showDirectories) {
 			// Go up a directory
 			chdir ("..");
 			char buf[256];
@@ -503,40 +487,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (pressed & KEY_START)
 		{
 			if (settingsChanged) {
-				if (dsiWareList) {
-					dsiWare_cursorPosition = fileOffset;
-					dsiWarePageNum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (dsiWare_cursorPosition > 39) {
-							dsiWare_cursorPosition -= 40;
-							dsiWarePageNum++;
-						} else {
-							break;
-						}
-					}
-				} else {
-					cursorPosition = fileOffset;
-					pagenum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (cursorPosition > 39) {
-							cursorPosition -= 40;
-							pagenum++;
-						} else {
-							break;
-						}
+				cursorPosition = fileOffset;
+				pagenum = 0;
+				for (int i = 0; i < 100; i++) {
+					if (cursorPosition > 39) {
+						cursorPosition -= 40;
+						pagenum++;
+					} else {
+						break;
 					}
 				}
-				SaveSettings();
-				settingsChanged = false;
 			}
+			SaveSettings();
+			settingsChanged = false;
 			consoleClear();
 			clearText();
 			startMenu = true;
 			return "null";		
 		}
 
-		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false)
-		&& !dsiWareList)
+		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
 		{
 			cursorPosition = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name, username);

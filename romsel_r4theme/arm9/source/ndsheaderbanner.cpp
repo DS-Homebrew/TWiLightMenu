@@ -96,7 +96,7 @@ bool isDirectory = false;
 int bnrRomType = 0;
 bool bnriconisDSi = false;
 int bnrWirelessIcon = 0;	// 0 = None, 1 = Local, 2 = WiFi
-bool launchable = true;
+bool isDSiWare = false;
 bool isHomebrew = false;
 
 /**

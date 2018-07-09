@@ -100,7 +100,6 @@ extern bool startMenu;
 
 extern bool flashcardUsed;
 
-extern bool dsiWareList;
 extern int theme;
 extern int subtheme;
 extern int cursorPosition;
@@ -522,20 +521,6 @@ void vBlankHandler()
 					titleboxXmoveleft = false;
 					movetimer = 0;
 				}
-			} else if (dsiWareList) {
-				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
-					startBorderZoomOut = true;
-					dsiWare_titlewindowXpos -= 1;
-					movetimer++;
-				} else if (movetimer < 8) {
-					dsiWare_titleboxXpos -= 8;
-					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos -= 1;
-					movetimer++;
-				} else {
-					titleboxXmoveleft = false;
-					movetimer = 0;
-				}
 			} else {
 				if (movetimer == 8) {
 					if (showbubble) mmEffectEx(&snd_stop);
@@ -561,20 +546,6 @@ void vBlankHandler()
 				} else if (movetimer < 8) {
 					startMenu_titleboxXpos += 8;
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
-					movetimer++;
-				} else {
-					titleboxXmoveright = false;
-					movetimer = 0;
-				}
-			} else if (dsiWareList) {
-				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
-					startBorderZoomOut = true;
-					dsiWare_titlewindowXpos += 1;
-					movetimer++;
-				} else if (movetimer < 8) {
-					dsiWare_titleboxXpos += 8;
-					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) dsiWare_titlewindowXpos += 1;
 					movetimer++;
 				} else {
 					titleboxXmoveright = false;
@@ -621,15 +592,7 @@ void vBlankHandler()
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
 				int bipXpos = 27;
-				if(dsiWareList) {
-					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
-					for(int i = 0; i < 40; i++) {
-						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
-						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
-						bipXpos += 5;
-					}
-					glSprite(16+dsiWare_titlewindowXpos, 171, GL_FLIP_NONE, &buttonarrowImage[1]);
-				} else if(startMenu) {
+				if(startMenu) {
 					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
 					for(int i = 0; i < 40; i++) {
 						if (i == 0) glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[2 & 31]);
@@ -652,8 +615,6 @@ void vBlankHandler()
 				glColor(RGB15(31, 31, 31));
 				if (startMenu) {
 					glSprite(72-startMenu_titleboxXpos, 81, GL_FLIP_NONE, braceImage);
-				} else if (dsiWareList) {
-					glSprite(72-dsiWare_titleboxXpos, 81, GL_FLIP_NONE, braceImage);
 				} else {
 					glSprite(72-titleboxXpos, 81, GL_FLIP_NONE, braceImage);
 				}
@@ -692,33 +653,6 @@ void vBlankHandler()
 					iconXpos += 64;
 				}
 				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 81, GL_FLIP_H, braceImage);
-			} else if(dsiWareList) {
-				for(int i = 0; i < 40; i++) {
-					if (theme == 0) {
-						dsiWare_moveIconClose(i);
-					} else {
-						movecloseXpos = 0;
-					}
-					if (i < spawnedtitleboxes) {
-						if (isDirectory[i]) {
-							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
-							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos-3, GL_FLIP_NONE, folderImage);
-						} else {
-							if (theme == 1) glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-							drawIcon(iconXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos+12, i);
-						}
-					} else {
-						if (theme == 1) {
-							glSprite(spawnedboxXpos-dsiWare_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
-						} else {
-							glSprite(spawnedboxXpos-dsiWare_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
-						}
-					}
-					spawnedboxXpos += 64;
-					iconXpos += 64;
-				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-dsiWare_titleboxXpos, 81, GL_FLIP_H, braceImage);
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -773,9 +707,6 @@ void vBlankHandler()
 						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
 						drawIconGBA(112, 96-titleboxYmovepos);
 					}
-				} else if (dsiWareList) {
-					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
-					drawIcon(112, 96-titleboxYmovepos, dsiWare_cursorPosition);
 				} else {
 					if (isDirectory[cursorPosition]) {
 						glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, folderImage);
@@ -814,22 +745,14 @@ void vBlankHandler()
 					glSprite(96+32, 92, GL_FLIP_H, startbrdImage);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
-						if (dsiWareList) {
-							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
-						} else {
-							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
-						}
+						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 					}
 				} else {
 					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glSprite(96+32, 81, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
-						if (dsiWareList) {
-							if (bnrWirelessIcon[dsiWare_cursorPosition] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[dsiWare_cursorPosition]-1) & 31]);
-						} else {
-							if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
-						}
+						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 					}
 				}
 			}

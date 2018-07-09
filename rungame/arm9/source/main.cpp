@@ -35,6 +35,9 @@
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string dsiWareSrlPath;
+std::string dsiWarePubPath;
+std::string dsiWarePrvPath;
 std::string homebrewArg;
 std::string bootstrapfilename;
 
@@ -46,7 +49,7 @@ static int consoleModel = 0;
 
 static int donorSdkVer = 0;
 
-static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
+static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -60,6 +63,9 @@ void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
+	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
+	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
 	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
@@ -97,7 +103,7 @@ int lastRanROM() {
 	else fifoSendValue32(FIFO_USER_07, 1);
 
 	vector<char*> argarray;
-	if (launchType > 1) {
+	if (launchType > 2) {
 		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
@@ -118,9 +124,18 @@ int lastRanROM() {
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else if (launchType == 2) {
+		if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
+			rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+		if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+			rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+		if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+			rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+
+		fifoSendValue32(FIFO_USER_07, 1);	// Reboot
+	} else if (launchType == 3) {
 		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
 		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
-	} else if (launchType == 3) {
+	} else if (launchType == 4) {
 		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
 		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 	}

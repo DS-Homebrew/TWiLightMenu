@@ -154,7 +154,7 @@ void perGameSettings (std::string filename, const char* username) {
 		printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 184, 80, gameTIDText);
 		printSmall(false, 16, 166, fileCounter);
-		if (flashcardUsed) {
+		if (isDSiWare[cursorPosition] || flashcardUsed) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {
 			printSmall(false, 24, 96+(perGameSettings_cursorPosition*16), ">");
@@ -204,7 +204,7 @@ void perGameSettings (std::string filename, const char* username) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (flashcardUsed) {
+		if (isDSiWare[cursorPosition] || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

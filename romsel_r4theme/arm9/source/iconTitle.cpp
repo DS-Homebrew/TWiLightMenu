@@ -45,7 +45,6 @@
 #include "icon_gb.h"
 #include "icon_nes.h"
 
-extern bool dsiWareList;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
 
@@ -277,7 +276,7 @@ void getGameInfo(bool isDir, const char* name)
 	bannerFlip = GL_FLIP_NONE;
 	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
-	launchable = true;
+	isDSiWare = false;
 	isHomebrew = false;
 
 	if (isDir)
@@ -391,14 +390,12 @@ void getGameInfo(bool isDir, const char* name)
 			return;
 		}
 
-		if (!dsiWareList) {
-			if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
-				launchable = false;	// Make DSi-Exclusive/DSiWare game unlaunchable
-			} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
-				if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-					isHomebrew = true;	// If homebrew has DSi-extended header,
-												// do not use bootstrap/flashcard's ROM booter to boot it
-			}
+		if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+			isDSiWare = true;	// Is a DSi-Exclusive/DSiWare game
+		} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
+			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
+				isHomebrew = true;	// If homebrew has DSi-extended header,
+											// do not use bootstrap/flashcard's ROM booter to boot it
 		}
 
 		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon = 1;

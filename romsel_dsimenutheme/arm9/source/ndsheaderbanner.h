@@ -144,7 +144,9 @@ typedef struct {
 	u8 dsi1[0x30];
 	u32 dsi_tid;
 	u32 dsi_tid2;
-	u8 dsi2[0x17C];
+	u32 pubSavSize;
+	u32 prvSavSize;
+	u8 dsi2[0x174];
 } sNDSHeaderExt;
 
 typedef struct {
@@ -245,7 +247,7 @@ extern bool isDirectory[40];
 extern int bnrRomType[40];
 extern bool bnriconisDSi[40];
 extern int bnrWirelessIcon[40];	// 0 = None, 1 = Local, 2 = WiFi
-extern bool launchable[40];
+extern bool isDSiWare[40];
 extern bool isHomebrew[40];
 
 /**
