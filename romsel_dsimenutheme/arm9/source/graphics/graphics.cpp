@@ -103,16 +103,12 @@ extern bool flashcardUsed;
 extern int theme;
 extern int subtheme;
 extern int cursorPosition;
-extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
-extern int dsiWarePageNum;
 int titleboxXpos;
-int dsiWare_titleboxXpos;
 int startMenu_titleboxXpos;
 int titleboxYpos = 85;
 int titlewindowXpos;
-int dsiWare_titlewindowXpos;
 int startMenu_titlewindowXpos;
 
 bool showLshoulder = false;
@@ -255,70 +251,6 @@ void moveIconClose(int num) {
 	if(!titleboxXmoveleft || !titleboxXmoveright) {
 		if (cursorPosition-2 == num) movecloseXpos = 6;
 		else if (cursorPosition+2 == num) movecloseXpos = -6;
-		else movecloseXpos = 0;
-	}
-}
-
-void dsiWare_moveIconClose(int num) {
-	if (titleboxXmoveleft) {
-		movecloseXpos = 0;
-		if(movetimer == 1) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 2) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 1;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 3) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 4) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 5) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
-		} else if(movetimer == 6) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
-		} else if(movetimer == 7) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
-		} else if(movetimer == 8) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -7;
-		}
-	}
-	if (titleboxXmoveright) {
-		movecloseXpos = 0;
-		if(movetimer == 1) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
-		} else if(movetimer == 2) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -1;
-		} else if(movetimer == 3) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 4) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 5) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 4;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 6) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 5;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -4;
-		} else if(movetimer == 7) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -5;
-		} else if(movetimer == 8) {
-			if (dsiWare_cursorPosition-2 == num) movecloseXpos = 7;
-			else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
-		}
-	}
-	if(!titleboxXmoveleft || !titleboxXmoveright) {
-		if (dsiWare_cursorPosition-2 == num) movecloseXpos = 6;
-		else if (dsiWare_cursorPosition+2 == num) movecloseXpos = -6;
 		else movecloseXpos = 0;
 	}
 }
@@ -1081,8 +1013,6 @@ void graphicsInit()
 
 	titleboxXpos = cursorPosition*64;
 	titlewindowXpos = cursorPosition*5;
-	dsiWare_titleboxXpos = dsiWare_cursorPosition*64;
-	dsiWare_titlewindowXpos = dsiWare_cursorPosition*5;
 	startMenu_titleboxXpos = startMenu_cursorPosition*64;
 	startMenu_titlewindowXpos = startMenu_cursorPosition*5;
 	

@@ -84,6 +84,7 @@ static bool autorun = false;
 static int theme = 0;
 static int subtheme = 0;
 static bool showDirectories = true;
+static bool showBoxArt = true;
 static bool animateDsiIcons = false;
 
 static int bstrap_language = -1;
@@ -132,6 +133,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 
 	// Default nds-bootstrap settings
@@ -167,6 +169,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "THEME", theme);
 	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
+	settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
 	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 
 	// Default nds-bootstrap settings
@@ -1084,6 +1087,13 @@ int main(int argc, char **argv) {
 						printSmall(false, 222, selyPos, "Hide");
 					selyPos += 12;
 
+					printSmall(false, 12, selyPos, "Box art/Game covers");
+					if(showBoxArt)
+						printSmall(false, 216, selyPos, "Show");
+					else
+						printSmall(false, 222, selyPos, "Hide");
+					selyPos += 12;
+
 					printSmall(false, 12, selyPos, "Animate DSi icons");
 					if(animateDsiIcons)
 						printSmall(false, 224, selyPos, "Yes");
@@ -1119,10 +1129,13 @@ int main(int argc, char **argv) {
 						printLargeCentered(true, 128, "of your games are, it is safe to");
 						printLargeCentered(true, 142, "hide directories/folders.");
 					} else if (settingscursor == 4) {
+						printLargeCentered(true, 120, "Displayed in the top screen");
+						printLargeCentered(true, 134, "of the DSi/3DS theme.");
+					} else if (settingscursor == 5) {
 						printLargeCentered(true, 114, "Animates DSi-enhanced icons like in");
 						printLargeCentered(true, 128, "the DSi/3DS menus. Turning this off");
 						printLargeCentered(true, 142, "will fix some icons appearing white.");
-					} else if (settingscursor == 5) {
+					} else if (settingscursor == 6) {
 						if (hiyaAutobootFound) {
 							printLargeCentered(true, 128, "Show DSi Menu on boot again.");
 						} else {
@@ -1187,10 +1200,14 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 4:
-							animateDsiIcons = !animateDsiIcons;
+							showBoxArt = !showBoxArt;
 							mmEffectEx(&snd_select);
 							break;
 						case 5:
+							animateDsiIcons = !animateDsiIcons;
+							mmEffectEx(&snd_select);
+							break;
+						case 6:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1250,15 +1267,15 @@ int main(int argc, char **argv) {
 
 				if (!flashcardUsed) {
 					if (consoleModel < 2) {
+						if (settingscursor > 6) settingscursor = 0;
+						else if (settingscursor < 0) settingscursor = 6;
+					} else {
 						if (settingscursor > 5) settingscursor = 0;
 						else if (settingscursor < 0) settingscursor = 5;
-					} else {
-						if (settingscursor > 4) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 4;
 					}
 				} else {
-					if (settingscursor > 4) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 4;
+					if (settingscursor > 5) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 5;
 				}
 			}
 

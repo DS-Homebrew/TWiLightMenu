@@ -125,11 +125,10 @@ bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition = 0;
-int dsiWare_cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
-int dsiWarePageNum = 0;
 bool showDirectories = true;
+bool showBoxArt = true;
 bool animateDsiIcons = false;
 
 int bstrap_language = -1;
@@ -167,6 +166,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);

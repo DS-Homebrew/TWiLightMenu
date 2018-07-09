@@ -95,16 +95,14 @@ extern int theme;
 int file_count = 0;
 
 extern bool showDirectories;
+extern bool showBoxArt;
 extern int spawnedtitleboxes;
 extern int cursorPosition;
-extern int dsiWare_cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
 extern int dsiWarePageNum;
 extern int titleboxXpos;
 extern int titlewindowXpos;
-extern int dsiWare_titleboxXpos;
-extern int dsiWare_titlewindowXpos;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -496,12 +494,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = false;
 					showSTARTborder = false;
 					clearText(false);	// Clear title
-					if (!boxArtLoaded) {
+					if (!boxArtLoaded && showBoxArt) {
 						clearBoxArt();	// Clear box art
 						boxArtLoaded = true;
 					}
 				} else {
-					if (!boxArtLoaded) {
+					if (!boxArtLoaded && showBoxArt) {
 						if (isDirectory[cursorPosition]) {
 							clearBoxArt();	// Clear box art, if it's a directory
 						} else {
@@ -703,7 +701,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
-					clearBoxArt();	// Clear box art
+					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -873,7 +871,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				titleboxXpos = 0;
 				titlewindowXpos = 0;
 				whiteScreen = true;
-				clearBoxArt();	// Clear box art
+				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -891,7 +889,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				titleboxXpos = 0;
 				titlewindowXpos = 0;
 				whiteScreen = true;
-				clearBoxArt();	// Clear box art
+				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -909,7 +907,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				dsiWareList = !dsiWareList;
 				whiteScreen = true;
-				clearBoxArt();	// Clear box art
+				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -944,7 +942,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
-					clearBoxArt();	// Clear box art
+					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -985,7 +983,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 				}
 				whiteScreen = true;
-				clearBoxArt();	// Clear box art
+				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
