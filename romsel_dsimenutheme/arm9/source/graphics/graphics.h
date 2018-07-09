@@ -21,7 +21,8 @@
 
 void initSubSprites(void);
 void loadBoxArt(const char* filename);
-void topBgLoad(void);
+void clearBoxArt();
+void loadShoulders();
 void graphicsInit();
 void startRendering(bool top);
 bool isRenderingTop();

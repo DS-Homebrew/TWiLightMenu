@@ -534,7 +534,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					clearText(false);	// Clear title
 					if (!boxArtLoaded) {
-						topBgLoad();	// Clear box art
+						clearBoxArt();	// Clear box art
 						boxArtLoaded = true;
 					}
 				} else {
@@ -553,13 +553,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					clearText(false);	// Clear title
 					if (!boxArtLoaded) {
-						topBgLoad();	// Clear box art
+						clearBoxArt();	// Clear box art
 						boxArtLoaded = true;
 					}
 				} else {
 					if (!boxArtLoaded) {
 						if (isDirectory[cursorPosition]) {
-							topBgLoad();	// Clear box art, if it's a directory
+							clearBoxArt();	// Clear box art, if it's a directory
 						} else {
 							snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
 							if (!access(boxArtPath, F_OK)) {
@@ -589,23 +589,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (startMenu) {
 			} else if (dsiWareList) {
 				if (dsiWarePageNum != 0) {
-					printSmall(false, 18, 155+theme, "Prev.");
 					showLshoulder = true;
 				}
 				if (file_count > 40+dsiWarePageNum*40) {
-					printSmall(false, 182, 155+theme, "Next");
 					showRshoulder = true;
 				}
+				loadShoulders();
 			} else {
 				if (pagenum != 0) {
-					printSmall(false, 18, 155+theme, "Prev.");
 					showLshoulder = true;
 				}
 				if (file_count > 40+pagenum*40) {
-					printSmall(false, 182, 155+theme, "Next");
 					showRshoulder = true;
 				}
 			}
+			loadShoulders();
 
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
@@ -813,7 +811,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
-					topBgLoad();	// Clear box art
+					clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -955,7 +953,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titlewindowXpos = 0;
 				}
 				whiteScreen = true;
-				topBgLoad();	// Clear box art
+				clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -980,7 +978,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titlewindowXpos = 0;
 				}
 				whiteScreen = true;
-				topBgLoad();	// Clear box art
+				clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -998,7 +996,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				dsiWareList = !dsiWareList;
 				whiteScreen = true;
-				topBgLoad();	// Clear box art
+				clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -1033,7 +1031,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos = 0;
 					titlewindowXpos = 0;
 					whiteScreen = true;
-					topBgLoad();	// Clear box art
+					clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -1074,7 +1072,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 				}
 				whiteScreen = true;
-				topBgLoad();	// Clear box art
+				clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				showbubble = false;
 				showSTARTborder = false;

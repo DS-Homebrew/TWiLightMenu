@@ -29,8 +29,6 @@
 #include "org_bottom.h"
 #include "_3ds_bottom.h"
 #include "dialogbox.h"
-#include "shoulder.h"
-#include "org_shoulder.h"
 #include "nintendo_dsi_menu.h"
 #include "org_nintendo_dsi_menu.h"
 #include "bubble.h"
@@ -146,7 +144,7 @@ int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, 
 
 glImage subBgImage[(256 / 16) * (256 / 16)];
 //glImage mainBgImage[(256 / 16) * (256 / 16)];
-glImage shoulderImage[(128 / 16) * (64 / 32)];
+//glImage shoulderImage[(128 / 16) * (64 / 32)];
 glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 glImage bubbleImage[(256 / 16) * (128 / 16)];
 glImage bubblearrowImage[(16 / 16) * (16 / 16)];
@@ -837,8 +835,6 @@ void vBlankHandler()
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
 			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[PersonalData->language]);
-			if (showLshoulder) glSprite(-2, 150+theme, GL_FLIP_NONE, &shoulderImage[0 & 31]);
-			if (showRshoulder) glSprite(178, 150+theme, GL_FLIP_NONE, &shoulderImage[1 & 31]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -915,6 +911,55 @@ void loadBoxArt(const char* filename) {
 	fclose(file);
 }
 
+void loadPhoto() {
+	FILE* file = fopen("/_nds/dsimenuplusplus/photo.bmp", "rb");
+	if (!file) file = fopen("nitro:/photo_default.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=155; y>=0; y--) {
+			u16 buffer[208];
+			fread(buffer, 2, 0xD0, file);
+			u16* src = buffer;
+			for (int i=0; i<208; i++) {
+				u16 val = *(src++);
+				BG_GFX_SUB[(y+24)*256+(i+24)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+// Load photo without overwriting shoulder button images
+void loadPhotoPart() {
+	FILE* file = fopen("/_nds/dsimenuplusplus/photo.bmp", "rb");
+	if (!file) file = fopen("nitro:/photo_default.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=155; y>=0; y--) {
+			u16 buffer[208];
+			fread(buffer, 2, 0xD0, file);
+			if (y <= 147) {
+				u16* src = buffer;
+				for (int i=0; i<208; i++) {
+					u16 val = *(src++);
+					BG_GFX_SUB[(y+24)*256+(i+24)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
+			}
+		}
+	}
+
+	fclose(file);
+}
+
 void loadBMP(const char* filename) {
 	FILE* file = fopen(filename, "rb");
 
@@ -929,7 +974,110 @@ void loadBMP(const char* filename) {
 			u16* src = buffer;
 			for (int i=0; i<256; i++) {
 				u16 val = *(src++);
-				BG_GFX_SUB[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				if (val != 0xFC1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+// Load .bmp file without overwriting shoulder button images
+void loadBMPPart(const char* filename) {
+	FILE* file = fopen(filename, "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=191; y>=0; y--) {
+			u16 buffer[256];
+			fread(buffer, 2, 0x100, file);
+			if (y <= 167) {
+				u16* src = buffer;
+				for (int i=0; i<256; i++) {
+					u16 val = *(src++);
+					if (val != 0xFC1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					}
+				}
+			}
+		}
+	}
+
+	fclose(file);
+}
+
+void loadShoulders() {
+	FILE* file;
+
+	// Draw L shoulder
+	if (theme == 1 || subtheme == 1) {
+		if (showLshoulder) {
+			file = fopen("nitro:/Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/Lshoulder_greyed.bmp", "rb");
+		}
+	} else {
+		if (showLshoulder) {
+			file = fopen("nitro:/dark_Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/dark_Lshoulder_greyed.bmp", "rb");
+		}
+	}
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=19; y>=0; y--) {
+			u16 buffer[78];
+			fread(buffer, 2, 0x4E, file);
+			u16* src = buffer;
+			for (int i=0; i<78; i++) {
+				u16 val = *(src++);
+				if (val != 0xFC1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[(y+172)*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
+			}
+		}
+	}
+
+	fclose(file);
+
+	// Draw R shoulder
+	if (theme == 1 || subtheme == 1) {
+		if (showRshoulder) {
+			file = fopen("nitro:/Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/Rshoulder_greyed.bmp", "rb");
+		}
+	} else {
+		if (showRshoulder) {
+			file = fopen("nitro:/dark_Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/dark_Rshoulder_greyed.bmp", "rb");
+		}
+	}
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=19; y>=0; y--) {
+			u16 buffer[78];
+			fread(buffer, 2, 0x4E, file);
+			u16* src = buffer;
+			for (int i=0; i<78; i++) {
+				u16 val = *(src++);
+				if (val != 0xFC1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[(y+172)*256+(i+178)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
 			}
 		}
 	}
@@ -944,6 +1092,14 @@ void topBgLoad() {
 		loadBMP("nitro:/org_top.bmp");
 	} else {
 		loadBMP("nitro:/top.bmp");
+	}
+}
+
+void clearBoxArt() {
+	if (theme == 1) {
+		loadBMPPart("nitro:/3ds_top.bmp");
+	} else {
+		loadPhotoPart();
 	}
 }
 
@@ -1039,6 +1195,7 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
+	if (theme < 1) loadPhoto();
 	topBgLoad();
 
 	dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
@@ -1515,63 +1672,5 @@ void graphicsInit()
 
 	loadGBCIcon();
 	loadNESIcon();
-
-	if (theme == 1 || subtheme == 1) {
-		/*mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-									16, // Length of the palette to use (16 colors)
-									(u16*) org_topPal, // Load our 16 color tiles palette
-									(u8*) org_topBitmap // image data generated by GRIT
-									);*/
-
-		shoulderTexID = glLoadTileSet(shoulderImage, // pointer to glImage array
-									128, // sprite width
-									32, // sprite height
-									128, // bitmap width
-									64, // bitmap height
-									GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-									16, // Length of the palette to use (16 colors)
-									(u16*) org_shoulderPal, // Load our 16 color tiles palette
-									(u8*) org_shoulderBitmap // image data generated by GRIT
-									);
-	} else {
-		/*mainBgTexID = glLoadTileSet(mainBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-									16, // Length of the palette to use (16 colors)
-									(u16*) topPal, // Load our 16 color tiles palette
-									(u8*) topBitmap // image data generated by GRIT
-									);*/
-
-		shoulderTexID = glLoadTileSet(shoulderImage, // pointer to glImage array
-									128, // sprite width
-									32, // sprite height
-									128, // bitmap width
-									64, // bitmap height
-									GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_128, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-									16, // Length of the palette to use (16 colors)
-									(u16*) shoulderPal, // Load our 16 color tiles palette
-									(u8*) shoulderBitmap // image data generated by GRIT
-									);
-	}
 
 }
