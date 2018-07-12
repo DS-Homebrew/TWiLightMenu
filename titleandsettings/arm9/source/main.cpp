@@ -40,6 +40,8 @@
 
 #include "inifile.h"
 
+#include "language.h"
+
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
@@ -67,8 +69,6 @@ static int consoleModel = 0;
 
 static bool showlogo = true;
 static bool gotosettings = false;
-
-const char* romreadled_valuetext;
 
 static int bstrap_loadingScreen = 1;
 
@@ -470,6 +470,7 @@ int main(int argc, char **argv) {
 		screenmode = 1;
 		gotosettings = false;
 		SaveSettings();
+		langInit();
 		fadeType = true;
 	} else if (autorun || showlogo) {
 		loadTitleGraphics();
@@ -489,6 +490,7 @@ int main(int argc, char **argv) {
 			graphicsInit();
 			fontInit();
 			screenmode = 1;
+			langInit();
 			fadeType = true;
 		}
 	} else {
@@ -499,6 +501,7 @@ int main(int argc, char **argv) {
 			fontInit();
 			fadeType = true;
 			screenmode = 1;
+			langInit();
 			for (int i = 0; i < 60; i++) {
 				swiWaitForVBlank();
 			}
@@ -509,7 +512,6 @@ int main(int argc, char **argv) {
 	srand(time(NULL));
 
 	bool menuprinted = false;
-	//const char* lrswitchpages = "L/R: Switch pages";
 
 	bool hiyaAutobootFound = false;
 
@@ -535,7 +537,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printLarge(false, 6, 4, "Flashcard(s) select");
+					printLarge(false, 6, 4, STR_FLASHCARD_SELECT.c_str());
 
 					int yPos = 32;
 					switch (flashcard) {
@@ -575,8 +577,8 @@ int main(int argc, char **argv) {
 							break;
 					}
 
-					printLargeCentered(true, 120, "Left/Right: Select flashcard(s)");
-					printLargeCentered(true, 134, "A/B: Set and return");
+					printLargeCentered(true, 120, STR_LEFTRIGHT_FLASHCARD.c_str());
+					printLargeCentered(true, 134, STR_AB_SETRETURN.c_str());
 
 					menuprinted = true;
 				}
@@ -648,9 +650,6 @@ int main(int argc, char **argv) {
 							printSmall(false, 12, 46, "Normal Menu");
 							break;
 						case 1:
-							//printSmall(false, 12, 32, "DS Menu");
-							//selyPos += 12;
-							//printSmall(false, 12, 46, "3DS HOME Menu");
 							break;
 						case 2:
 							printSmall(false, 12, selyPos, "01: Snow hill");
@@ -724,10 +723,10 @@ int main(int argc, char **argv) {
 
 					printSmallCentered(false, 175, "DSiMenu++");
 
-					printSmall(true, 4, 176, "^/~ Switch pages");
+					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, "Games and Apps settings");
+					printLarge(false, 6, 4, STR_GAMESAPPS_SETTINGS.c_str());
 
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
@@ -739,11 +738,11 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, yPos, ">");
 
 					if(!flashcardUsed) {
-						printSmall(false, 12, selyPos, "Language");
+						printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
 						switch(bstrap_language) {
 							case -1:
 							default:
-								printSmall(false, 203, selyPos, "System");
+								printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
 								break;
 							case 0:
 								printSmall(false, 194, selyPos, "Japanese");
@@ -766,41 +765,40 @@ int main(int argc, char **argv) {
 						}
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, "ARM9 CPU Speed");
+						printSmall(false, 12, selyPos, STR_CPUSPEED.c_str());
 						if(boostCpu)
 							printSmall(false, 158, selyPos, "133mhz (TWL)");
 						else
 							printSmall(false, 170, selyPos, "67mhz (NTR)");
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, "Debug");
+						printSmall(false, 12, selyPos, STR_DEBUG.c_str());
 						if(bstrap_debug)
-							printSmall(false, 224, selyPos, "On");
+							printSmall(false, 224, selyPos, STR_ON.c_str());
 						else
-							printSmall(false, 224, selyPos, "Off");
+							printSmall(false, 224, selyPos, STR_OFF.c_str());
 						selyPos += 12;
 						if (consoleModel < 2) {
-							printSmall(false, 12, selyPos, "ROM read LED");
+							printSmall(false, 12, selyPos, STR_ROMREADLED.c_str());
 							switch(bstrap_romreadled) {
 								case 0:
 								default:
-									romreadled_valuetext = "None";
+									printSmall(false, 216, selyPos, STR_NONE.c_str());
 									break;
 								case 1:
-									romreadled_valuetext = "WiFi";
+									printSmall(false, 216, selyPos, "WiFi");
 									break;
 								case 2:
-									romreadled_valuetext = "Power";
+									printSmall(false, 216, selyPos, STR_POWER.c_str());
 									break;
 								case 3:
-									romreadled_valuetext = "Camera";
+									printSmall(false, 216, selyPos, STR_CAMERA.c_str());
 									break;
 							}
-							printSmall(false, 216, selyPos, romreadled_valuetext);
 						}
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, "Sound/Mic frequency");
+						printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
 						if(soundfreq)
 							printSmall(false, 187, selyPos, "47.61 kHz");
 						else
@@ -808,22 +806,22 @@ int main(int argc, char **argv) {
 						selyPos += 12;
 
 						if (!arm7SCFGLocked) {
-							printSmall(false, 12, selyPos, "Reset Slot-1");
+							printSmall(false, 12, selyPos, STR_RESETSLOT1.c_str());
 							if(resetSlot1)
-								printSmall(false, 224, selyPos, "Yes");
+								printSmall(false, 224, selyPos, STR_YES.c_str());
 							else
-								printSmall(false, 230, selyPos, "No");
+								printSmall(false, 230, selyPos, STR_NO.c_str());
 						}
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, "Loading screen");
+						printSmall(false, 12, selyPos, STR_LOADINGSCREEN.c_str());
 						switch(bstrap_loadingScreen) {
 							case 0:
 							default:
-								printSmall(false, 216, selyPos, "None");
+								printSmall(false, 216, selyPos, STR_NONE.c_str());
 								break;
 							case 1:
-								printSmall(false, 200, selyPos, "Regular");
+								printSmall(false, 200, selyPos, STR_REGULAR.c_str());
 								break;
 							case 2:
 								printSmall(false, 216, selyPos, "Pong");
@@ -834,71 +832,71 @@ int main(int argc, char **argv) {
 						}
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, "Bootstrap");
+						printSmall(false, 12, selyPos, STR_BOOTSTRAP.c_str());
 						if(bootstrapFile)
-							printSmall(false, 202, selyPos, "Nightly");
+							printSmall(false, 202, selyPos, STR_NIGHTLY.c_str());
 						else
-							printSmall(false, 200, selyPos, "Release");
+							printSmall(false, 200, selyPos, STR_RELEASE.c_str());
 
 
 						if (settingscursor == 0) {
-							printLargeCentered(true, 114, "Avoid the limited selections");
-							printLargeCentered(true, 128, "of your console language");
-							printLargeCentered(true, 142, "by setting this option.");
+							printLargeCentered(true, 114, STR_DESCRIPTION_LANGUAGE_1.c_str());
+							printLargeCentered(true, 128, STR_DESCRIPTION_LANGUAGE_2.c_str());
+							printLargeCentered(true, 142, STR_DESCRIPTION_LANGUAGE_3.c_str());
 						} else if (settingscursor == 1) {
-							printLargeCentered(true, 120, "Set to TWL to get rid of lags");
-							printLargeCentered(true, 134, "in some games.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_CPUSPEED_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_CPUSPEED_2.c_str());
 						} /* else if (settingscursor == 4) {
 							printLargeCentered(true, 120, "Allows 8 bit VRAM writes");
 							printLargeCentered(true, 134, "and expands the bus to 32 bit.");
 						} */ else if (settingscursor == 2) {
-							printLargeCentered(true, 120, "Displays some text before");
-							printLargeCentered(true, 134, "launched game.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_DEBUG_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_DEBUG_2.c_str());
 						} else if (settingscursor == 3) {
 							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
 							// printLargeCentered(true, 128, "avoiding conflict with");
 							// printLargeCentered(true, 142, "recent libnds.");
-							printLargeCentered(true, 128, "Sets LED as ROM read indicator.");
+							printLargeCentered(true, 128, STR_DESCRIPTION_ROMREADLED_1.c_str());
 						} else if (settingscursor == 4) {
-							printLargeCentered(true, 120, "32.73 kHz: Original quality");
-							printLargeCentered(true, 134, "47.61 kHz: High quality");
+							printLargeCentered(true, 120, STR_DESCRIPTION_SNDFREQ_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_SNDFREQ_2.c_str());
 						} else if (settingscursor == 5) {
-							printLargeCentered(true, 120, "Enable this if Slot-1 cards are");
-							printLargeCentered(true, 134, "stuck on white screens.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_RESETSLOT1_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_RESETSLOT1_2.c_str());
 						} else if (settingscursor == 6) {
-							printLargeCentered(true, 120, "Shows a loading screen before ROM");
-							printLargeCentered(true, 134, "is started in nds-bootstrap.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
 						} else if (settingscursor == 7) {
-							printLargeCentered(true, 120, "Pick release or nightly");
-							printLargeCentered(true, 134, "bootstrap.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
 						}
 					} else {
-						printSmall(false, 12, selyPos, "Flashcard(s) select");
+						printSmall(false, 12, selyPos, STR_FLASHCARD_SELECT.c_str());
 						selyPos += 12;
 						if(soundfreqsetting) {
-							printSmall(false, 12, selyPos, "Sound/Mic frequency");
+							printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
 							if(soundfreq)
 								printSmall(false, 184, selyPos, "47.61 kHz");
 							else
 								printSmall(false, 184, selyPos, "32.73 kHz");
 						} else {
-							printSmall(false, 12, selyPos, "Use GBARunner2");
+							printSmall(false, 12, selyPos, STR_USEGBARUNNER2.c_str());
 							if(useGbarunner)
-								printSmall(false, 224, selyPos, "Yes");
+								printSmall(false, 224, selyPos, STR_YES.c_str());
 							else
-								printSmall(false, 224, selyPos, "No");
+								printSmall(false, 224, selyPos, STR_NO.c_str());
 						}
 
 						if (settingscursor == 0) {
-							printLargeCentered(true, 120, "Pick a flashcard to use to");
-							printLargeCentered(true, 134, "run ROMs from it.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_FLASHCARD_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_FLASHCARD_2.c_str());
 						} else if (settingscursor == 1) {
 							if(soundfreqsetting) {
-								printLargeCentered(true, 120, "32.73 kHz: Original quality");
-								printLargeCentered(true, 134, "47.61 kHz: High quality");
+								printLargeCentered(true, 120, STR_DESCRIPTION_SNDFREQ_1.c_str());
+								printLargeCentered(true, 134, STR_DESCRIPTION_SNDFREQ_2.c_str());
 							} else {
-								printLargeCentered(true, 120, "Use either GBARunner2 or the");
-								printLargeCentered(true, 134, "native GBA mode to play GBA games.");
+								printLargeCentered(true, 120, STR_DESCRIPTION_GBARUNNER2_1.c_str());
+								printLargeCentered(true, 134, STR_DESCRIPTION_GBARUNNER2_2.c_str());
 							}
 						}
 					}
@@ -1004,10 +1002,10 @@ int main(int argc, char **argv) {
 				if (pressed & KEY_B) {
 					mmEffectEx(&snd_back);
 					clearText();
-					printSmall(false, 4, 4, "Saving settings...");
+					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, "Settings saved!");
+					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					if (!arm7SCFGLocked) {
 						rebootDSiMenuPP();
@@ -1037,10 +1035,10 @@ int main(int argc, char **argv) {
 
 					printSmallCentered(false, 175, "DSiMenu++");
 
-					printSmall(true, 4, 176, "^/~ Switch pages");
+					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, "GUI settings");
+					printLarge(false, 6, 4, STR_GUI_SETTINGS.c_str());
 					
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
@@ -1051,7 +1049,7 @@ int main(int argc, char **argv) {
 
 					printSmall(false, 4, yPos, ">");
 
-					printSmall(false, 12, selyPos, "Theme");
+					printSmall(false, 12, selyPos, STR_THEME.c_str());
 					switch (theme) {
 						case 0:
 						default:
@@ -1066,81 +1064,81 @@ int main(int argc, char **argv) {
 					}
 					selyPos += 12;
 
-					printSmall(false, 12, selyPos, "Last played ROM on startup");
+					printSmall(false, 12, selyPos, STR_LASTPLAYEDROM.c_str());
 					if(autorun)
-						printSmall(false, 224, selyPos, "Yes");
+						printSmall(false, 224, selyPos, STR_YES.c_str());
 					else
-						printSmall(false, 230, selyPos, "No");
+						printSmall(false, 230, selyPos, STR_NO.c_str());
 					selyPos += 12;
 
-					printSmall(false, 12, selyPos, "DSiMenu++ logo on startup");
+					printSmall(false, 12, selyPos, STR_DSIMENUPPLOGO.c_str());
 					if(showlogo)
-						printSmall(false, 216, selyPos, "Show");
+						printSmall(false, 216, selyPos, STR_SHOW.c_str());
 					else
-						printSmall(false, 222, selyPos, "Hide");
+						printSmall(false, 222, selyPos, STR_HIDE.c_str());
 					selyPos += 12;
 
-					printSmall(false, 12, selyPos, "Directories/folders");
+					printSmall(false, 12, selyPos, STR_DIRECTORIES.c_str());
 					if(showDirectories)
-						printSmall(false, 216, selyPos, "Show");
+						printSmall(false, 216, selyPos, STR_SHOW.c_str());
 					else
-						printSmall(false, 222, selyPos, "Hide");
+						printSmall(false, 222, selyPos, STR_HIDE.c_str());
 					selyPos += 12;
 
-					printSmall(false, 12, selyPos, "Box art/Game covers");
+					printSmall(false, 12, selyPos, STR_BOXART.c_str());
 					if(showBoxArt)
-						printSmall(false, 216, selyPos, "Show");
+						printSmall(false, 216, selyPos, STR_SHOW.c_str());
 					else
-						printSmall(false, 222, selyPos, "Hide");
+						printSmall(false, 222, selyPos, STR_HIDE.c_str());
 					selyPos += 12;
 
-					printSmall(false, 12, selyPos, "Animate DSi icons");
+					printSmall(false, 12, selyPos, STR_ANIMATEDSIICONS.c_str());
 					if(animateDsiIcons)
-						printSmall(false, 224, selyPos, "Yes");
+						printSmall(false, 224, selyPos, STR_YES.c_str());
 					else
-						printSmall(false, 230, selyPos, "No");
+						printSmall(false, 230, selyPos, STR_NO.c_str());
 					selyPos += 12;
 
 					if (!flashcardUsed && !arm7SCFGLocked) {
 						if (consoleModel < 2) {
 							if (hiyaAutobootFound) {
-								printSmall(false, 12, selyPos, "Restore DSi Menu");
+								printSmall(false, 12, selyPos, STR_RESTOREDSIMENU.c_str());
 							} else {
-								printSmall(false, 12, selyPos, "Replace DSi Menu");
+								printSmall(false, 12, selyPos, STR_REPLACEDSIMENU.c_str());
 							}
 						}
 					}
 
 
 					if (settingscursor == 0) {
-						printLargeCentered(true, 120, "The theme to use in DSiMenu++.");
-						printLargeCentered(true, 134, "Press A for sub-themes.");
+						printLargeCentered(true, 120, STR_DESCRIPTION_THEME_1.c_str());
+						printLargeCentered(true, 134, STR_DESCRIPTION_THEME_2.c_str());
 					} else if (settingscursor == 1) {
-						printLargeCentered(true, 106, "If turned on, hold B on");
-						printLargeCentered(true, 120, "startup to skip to the");
-						printLargeCentered(true, 134, "ROM select menu.");
-						printLargeCentered(true, 148, "Press Y to start last played ROM.");
+						printLargeCentered(true, 106, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
+						printLargeCentered(true, 120, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
+						printLargeCentered(true, 134, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
+						printLargeCentered(true, 148, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
 					} else if (settingscursor == 2) {
-						printLargeCentered(true, 114, "The DSiMenu++ logo will be");
-						printLargeCentered(true, 128, "shown when you start");
-						printLargeCentered(true, 142, "DSiMenu++.");
+						printLargeCentered(true, 114, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
+						printLargeCentered(true, 128, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());
+						printLargeCentered(true, 142, STR_DESCRIPTION_DSIMENUPPLOGO_3.c_str());
 					} else if (settingscursor == 3) {
-						printLargeCentered(true, 114, "If you're in a folder where most");
-						printLargeCentered(true, 128, "of your games are, it is safe to");
-						printLargeCentered(true, 142, "hide directories/folders.");
+						printLargeCentered(true, 114, STR_DESCRIPTION_DIRECTORIES_1.c_str());
+						printLargeCentered(true, 128, STR_DESCRIPTION_DIRECTORIES_2.c_str());
+						printLargeCentered(true, 142, STR_DESCRIPTION_DIRECTORIES_3.c_str());
 					} else if (settingscursor == 4) {
-						printLargeCentered(true, 120, "Displayed in the top screen");
-						printLargeCentered(true, 134, "of the DSi/3DS theme.");
+						printLargeCentered(true, 120, STR_DESCRIPTION_BOXART_1.c_str());
+						printLargeCentered(true, 134, STR_DESCRIPTION_BOXART_2.c_str());
 					} else if (settingscursor == 5) {
-						printLargeCentered(true, 114, "Animates DSi-enhanced icons like in");
-						printLargeCentered(true, 128, "the DSi/3DS menus. Turning this off");
-						printLargeCentered(true, 142, "will fix some icons appearing white.");
+						printLargeCentered(true, 114, STR_DESCRIPTION_ANIMATEDSIICONS_1.c_str());
+						printLargeCentered(true, 128, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
+						printLargeCentered(true, 142, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
 					} else if (settingscursor == 6) {
 						if (hiyaAutobootFound) {
-							printLargeCentered(true, 128, "Show DSi Menu on boot again.");
+							printLargeCentered(true, 128, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
 						} else {
-							printLargeCentered(true, 120, "Start DSiMenu++ on boot, instead.");
-							printLargeCentered(true, 134, "of the regular DSi Menu.");
+							printLargeCentered(true, 120, STR_DESCRIPTION_REPLACEDSIMENU_1.c_str());
+							printLargeCentered(true, 134, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
 						}
 					}
 
@@ -1241,10 +1239,10 @@ int main(int argc, char **argv) {
 					screenmode = 0;
 					mmEffectEx(&snd_launch);
 					clearText();
-					printSmall(false, 4, 4, "Saving settings...");
+					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, "Settings saved!");
+					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					int err = lastRanROM();
 					iprintf ("Start failed. Error %i\n", err);
@@ -1253,10 +1251,10 @@ int main(int argc, char **argv) {
 				if (pressed & KEY_B) {
 					mmEffectEx(&snd_back);
 					clearText();
-					printSmall(false, 4, 4, "Saving settings...");
+					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, "Settings saved!");
+					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					if (!arm7SCFGLocked) {
 						rebootDSiMenuPP();
