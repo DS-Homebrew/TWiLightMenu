@@ -992,7 +992,8 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 				
-				if ((pressed & KEY_L) || (pressed & KEY_R)) {
+				if ((pressed & KEY_L) || (pressed & KEY_R)
+				|| (pressed & KEY_Y) || (pressed & KEY_X)) {
 					subscreenmode = 0;
 					settingscursor = 0;
 					mmEffectEx(&snd_switch);
@@ -1228,7 +1229,8 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 
-				if ((pressed & KEY_L) || (pressed & KEY_R)) {
+				if ((pressed & KEY_L) || (pressed & KEY_R)
+				|| (pressed & KEY_Y) || (pressed & KEY_X)) {
 					subscreenmode = 1;
 					settingscursor = 0;
 					mmEffectEx(&snd_switch);
