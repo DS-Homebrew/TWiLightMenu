@@ -133,6 +133,7 @@ int dsiWarePageNum = 0;
 bool showDirectories = true;
 bool animateDsiIcons = false;
 
+int guiLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 
@@ -162,6 +163,7 @@ void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	// Customizable UI settings.
+	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);

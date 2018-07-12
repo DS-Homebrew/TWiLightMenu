@@ -28,6 +28,7 @@
 #include <gl2d.h>
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
+#include "language.h"
 
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
@@ -771,9 +772,9 @@ void titleUpdate(bool isDir, const char* name)
 
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
-		char *p = (char*) ndsBanner.titles[PersonalData->language];
+		char *p = (char*) ndsBanner.titles[setGameLanguage];
 		int bannerlines = 0;
-		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[PersonalData->language]); i += 2)
+		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[setGameLanguage]); i += 2)
 		{
 			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
 				p[i / 2] = 0;
