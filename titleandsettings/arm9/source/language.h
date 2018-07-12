@@ -109,6 +109,26 @@ extern std::string STR_FLASHCARD_SELECT;
 extern std::string STR_LEFTRIGHT_FLASHCARD;
 extern std::string STR_AB_SETRETURN;
 
+// Sub-theme select
+extern std::string STR_SUBTHEMESEL_DSI;
+extern std::string STR_SUBTHEMESEL_3DS;
+extern std::string STR_SUBTHEMESEL_R4;
+extern std::string STR_AB_SETSUBTHEME;
+extern std::string STR_DSI_DARKMENU;
+extern std::string STR_DSI_NORMALMENU;
+extern std::string STR_R4_THEME01;
+extern std::string STR_R4_THEME02;
+extern std::string STR_R4_THEME03;
+extern std::string STR_R4_THEME04;
+extern std::string STR_R4_THEME05;
+extern std::string STR_R4_THEME06;
+extern std::string STR_R4_THEME07;
+extern std::string STR_R4_THEME08;
+extern std::string STR_R4_THEME09;
+extern std::string STR_R4_THEME10;
+extern std::string STR_R4_THEME11;
+extern std::string STR_R4_THEME12;
+
 
 /**
  * Initialize translations.

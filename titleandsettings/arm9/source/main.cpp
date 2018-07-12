@@ -621,13 +621,13 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printLarge(false, 6, 4, "Sub-theme select: DSi Menu");
+							printLarge(false, 6, 4, STR_SUBTHEMESEL_DSI.c_str());
 							break;
 						case 1:
-							printLarge(false, 6, 4, "Sub-theme select: 3DS HOME Menu");
+							printLarge(false, 6, 4, STR_SUBTHEMESEL_3DS.c_str());
 							break;
 						case 2:
-							printLarge(false, 6, 4, "Sub-theme select: R4");
+							printLarge(false, 6, 4, STR_SUBTHEMESEL_R4.c_str());
 							break;
 					}
 
@@ -645,40 +645,40 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printSmall(false, 12, 32, "SD Card Menu");
+							printSmall(false, 12, 32, STR_DSI_DARKMENU.c_str());
 							selyPos += 12;
-							printSmall(false, 12, 46, "Normal Menu");
+							printSmall(false, 12, 46, STR_DSI_NORMALMENU.c_str());
 							break;
 						case 1:
 							break;
 						case 2:
-							printSmall(false, 12, selyPos, "01: Snow hill");
+							printSmall(false, 12, selyPos, STR_R4_THEME01.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "02: Snow land");
+							printSmall(false, 12, selyPos, STR_R4_THEME02.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "03: Green leaf");
+							printSmall(false, 12, selyPos, STR_R4_THEME03.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "04: Pink flower");
+							printSmall(false, 12, selyPos, STR_R4_THEME04.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "05: Park");
+							printSmall(false, 12, selyPos, STR_R4_THEME05.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "06: Cherry blossoms");
+							printSmall(false, 12, selyPos, STR_R4_THEME06.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "07: Beach");
+							printSmall(false, 12, selyPos, STR_R4_THEME07.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "08: Summer sky");
+							printSmall(false, 12, selyPos, STR_R4_THEME08.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "09: River");
+							printSmall(false, 12, selyPos, STR_R4_THEME09.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "10: Fall trees");
+							printSmall(false, 12, selyPos, STR_R4_THEME10.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "11: Christmas tree");
+							printSmall(false, 12, selyPos, STR_R4_THEME11.c_str());
 							selyPos += 12;
-							printSmall(false, 12, selyPos, "12: Drawn symbol");
+							printSmall(false, 12, selyPos, STR_R4_THEME12.c_str());
 							break;
 					}
 
-					printLargeCentered(true, 128, "A/B: Set sub-theme.");
+					printLargeCentered(true, 128, STR_AB_SETSUBTHEME.c_str());
 
 					menuprinted = true;
 				}
