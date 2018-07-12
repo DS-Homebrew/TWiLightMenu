@@ -63,6 +63,7 @@
 #include "graphics.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
+#include "../language.h"
 #include "../perGameSettings.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
@@ -689,7 +690,7 @@ void vBlankHandler()
 				}
 			}
 			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
-			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[PersonalData->language]);
+			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();

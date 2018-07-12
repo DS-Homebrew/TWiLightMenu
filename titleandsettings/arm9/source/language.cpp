@@ -136,14 +136,47 @@ std::string STR_R4_THEME11 = "STR_R4_THEME11";
 std::string STR_R4_THEME12 = "STR_R4_THEME12";
 
 
+const char* languageIniPath;
+
+extern int guiLanguage;
+int setLanguage = 0;
+
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.
  */
 void langInit(void)
 {
+	if (guiLanguage == -1) {
+		setLanguage = PersonalData->language;
+	} else {
+		setLanguage = guiLanguage;
+	}
+
 	if (nitroFSInit("/_nds/dsimenuplusplus/main.srldr")) {	// Init Nitro FS
-		CIniFile languageini( "nitro:/languages/english.ini" );
+		switch (setLanguage) {
+			case 0:
+			default:
+				languageIniPath = "nitro:/languages/japanese.ini";
+				break;
+			case 1:
+				languageIniPath = "nitro:/languages/english.ini";
+				break;
+			case 2:
+				languageIniPath = "nitro:/languages/french.ini";
+				break;
+			case 3:
+				languageIniPath = "nitro:/languages/german.ini";
+				break;
+			case 4:
+				languageIniPath = "nitro:/languages/italian.ini";
+				break;
+			case 5:
+				languageIniPath = "nitro:/languages/spanish.ini";
+				break;
+		}
+
+		CIniFile languageini( languageIniPath );
 
 		STR_SAVING_SETTINGS = languageini.GetString("LANGUAGE", "SAVING_SETTINGS", "");
 		STR_SETTINGS_SAVED = languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "");

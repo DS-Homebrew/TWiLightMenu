@@ -70,6 +70,7 @@ static int consoleModel = 0;
 static bool showlogo = true;
 static bool gotosettings = false;
 
+int guiLanguage = -1;
 static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
@@ -112,6 +113,7 @@ void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
@@ -156,6 +158,7 @@ void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
@@ -1051,6 +1054,33 @@ int main(int argc, char **argv) {
 
 					printSmall(false, 4, yPos, ">");
 
+					printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
+					switch(guiLanguage) {
+						case -1:
+						default:
+							printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
+							break;
+						case 0:
+							printSmall(false, 194, selyPos, "Japanese");
+							break;
+						case 1:
+							printSmall(false, 206, selyPos, "English");
+							break;
+						case 2:
+							printSmall(false, 207, selyPos, "French");
+							break;
+						case 3:
+							printSmall(false, 200, selyPos, "German");
+							break;
+						case 4:
+							printSmall(false, 210, selyPos, "Italian");
+							break;
+						case 5:
+							printSmall(false, 203, selyPos, "Spanish");
+							break;
+					}
+					selyPos += 12;
+
 					printSmall(false, 12, selyPos, STR_THEME.c_str());
 					switch (theme) {
 						case 0:
@@ -1171,6 +1201,15 @@ int main(int argc, char **argv) {
 						case 0:
 						default:
 							if (pressed & KEY_LEFT) {
+								guiLanguage--;
+								if (guiLanguage < -1) guiLanguage = 5;
+							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+								guiLanguage++;
+								if (guiLanguage > 5) guiLanguage = -1;
+							}
+							break;
+						case 1:
+							if (pressed & KEY_LEFT) {
 								subtheme = 0;
 								theme -= 1;
 								if (theme < 0) theme = 2;
@@ -1187,27 +1226,27 @@ int main(int argc, char **argv) {
 								mmEffectEx(&snd_select);
 							}
 							break;
-						case 1:
+						case 2:
 							autorun = !autorun;
 							mmEffectEx(&snd_select);
 							break;
-						case 2:
+						case 3:
 							showlogo = !showlogo;
 							mmEffectEx(&snd_select);
 							break;
-						case 3:
+						case 4:
 							showDirectories = !showDirectories;
 							mmEffectEx(&snd_select);
 							break;
-						case 4:
+						case 5:
 							showBoxArt = !showBoxArt;
 							mmEffectEx(&snd_select);
 							break;
-						case 5:
+						case 6:
 							animateDsiIcons = !animateDsiIcons;
 							mmEffectEx(&snd_select);
 							break;
-						case 6:
+						case 7:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1238,7 +1277,7 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 
-				if (pressed & KEY_Y && settingscursor == 1) {
+				if (pressed & KEY_Y && settingscursor == 2) {
 					screenmode = 0;
 					mmEffectEx(&snd_launch);
 					clearText();
@@ -1266,17 +1305,12 @@ int main(int argc, char **argv) {
 					break;
 				}
 
-				if (!flashcardUsed) {
-					if (consoleModel < 2) {
-						if (settingscursor > 6) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 6;
-					} else {
-						if (settingscursor > 5) settingscursor = 0;
-						else if (settingscursor < 0) settingscursor = 5;
-					}
+				if (!flashcardUsed && consoleModel < 2) {
+					if (settingscursor > 7) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 7;
 				} else {
-					if (settingscursor > 5) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 5;
+					if (settingscursor > 6) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 6;
 				}
 			}
 
