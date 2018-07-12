@@ -302,14 +302,6 @@ void rebootDSiMenuPP() {
 void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
-	if (launchType == 2) {
-		if (!access("sd:/bootthis.dsi", F_OK) && access(dsiWareSrlPath.c_str(), F_OK))
-			rename ("sd:/bootthis.dsi", dsiWareSrlPath.c_str());	// Rename "bootthis.dsi" back to original .nds filename
-		if (!access("sd:/bootthis.pub", F_OK) && access(dsiWarePubPath.c_str(), F_OK))
-			rename ("sd:/bootthis.pub", dsiWarePubPath.c_str());
-		if (!access("sd:/bootthis.prv", F_OK) && access(dsiWarePrvPath.c_str(), F_OK))
-			rename ("sd:/bootthis.prv", dsiWarePrvPath.c_str());
-	}
 	renderScreens = false;
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
@@ -458,11 +450,20 @@ int main(int argc, char **argv) {
 		lastRanROM();
 	}
 	
+	if (launchType == 2) {
+		if (!access("sd:/bootthis.dsi", F_OK) && access(dsiWareSrlPath.c_str(), F_OK))
+			rename ("sd:/bootthis.dsi", dsiWareSrlPath.c_str());	// Rename "bootthis.dsi" back to original .nds filename
+		if (!access("sd:/bootthis.pub", F_OK) && access(dsiWarePubPath.c_str(), F_OK))
+			rename ("sd:/bootthis.pub", dsiWarePubPath.c_str());
+		if (!access("sd:/bootthis.prv", F_OK) && access(dsiWarePrvPath.c_str(), F_OK))
+			rename ("sd:/bootthis.prv", dsiWarePrvPath.c_str());
+	}
+
 	InitSound();
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 1, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 2, 0);
 
 	if (gotosettings) {
 		graphicsInit();
