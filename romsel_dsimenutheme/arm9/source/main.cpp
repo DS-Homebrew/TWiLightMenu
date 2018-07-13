@@ -46,6 +46,8 @@
 
 #include "inifile.h"
 
+#include "language.h"
+
 #include "cheat.h"
 #include "crc.h"
 
@@ -728,6 +730,8 @@ int main(int argc, char **argv) {
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
 
 	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
+	
+	langInit();
 
 	std::string filename;
 	std::string bootstrapfilename;
