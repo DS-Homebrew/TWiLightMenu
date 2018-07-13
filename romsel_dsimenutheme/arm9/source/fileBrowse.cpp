@@ -955,6 +955,57 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
+			if ((pressed & KEY_X) && !startMenu
+			&& strcmp(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "..") != 0)
+			{
+				clearText();
+				showdialogbox = true;
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
+				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+				printSmall(false, 16, 166, fileCounter);
+				printSmallCentered(false, 112, "Are you sure you want to");
+				if (isDirectory[cursorPosition]) {
+					printSmallCentered(false, 128, "delete this folder?");
+				} else {
+					printSmallCentered(false, 128, "delete this game?");
+				}
+				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+				printSmall(false, 160, 166, "A: Yes");
+				printSmall(false, 208, 166, "B: No");
+				while (1) {
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!pressed);
+					
+					if (pressed & KEY_A) {
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 30; i++) swiWaitForVBlank();
+						whiteScreen = true;
+						remove(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str()); // Remove game/folder
+						if (showBoxArt) clearBoxArt();	// Clear box art
+						boxArtLoaded = false;
+						showbubble = false;
+						showSTARTborder = false;
+						clearText();
+						showdialogbox = false;
+						SaveSettings();
+						settingsChanged = false;
+						return "null";
+					}
+
+					if (pressed & KEY_B) {
+						break;
+					}
+				}
+				clearText();
+				showdialogbox = false;
+				for (int i = 0; i < 20; i++) swiWaitForVBlank();
+			}
+
 			if ((pressed & KEY_X) && startMenu && !flashcardUsed) {
 				mmEffectEx(&snd_back);
 				fadeType = false;	// Fade to white

@@ -187,18 +187,6 @@ void perGameSettings (std::string filename, const char* username) {
 			printSmall(false, 200, 166, "B: Back");
 		}
 		do {
-			consoleClear();
-			if(!usernameRenderedDone) {
-				for (int i = 0; i < 10; i++) {
-					if (username[i] == 0)
-						usernameRendered[i] = 0x20;
-					else
-						usernameRendered[i] = username[i];
-				}
-				usernameRenderedDone = true;
-			}
-			iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-
 			scanKeys();
 			pressed = keysDownRepeat();
 			swiWaitForVBlank();
