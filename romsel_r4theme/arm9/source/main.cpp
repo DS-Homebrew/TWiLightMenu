@@ -46,6 +46,8 @@
 
 #include "inifile.h"
 
+#include "language.h"
+
 #include "cheat.h"
 #include "crc.h"
 
@@ -676,6 +678,8 @@ int main(int argc, char **argv) {
 	}
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	langInit();
 
 	std::string filename;
 	std::string bootstrapfilename;

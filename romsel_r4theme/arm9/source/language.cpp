@@ -11,7 +11,7 @@
 const char* languageIniPath;
 
 extern int guiLanguage;
-extern int bstrap_Language;
+extern int bstrap_language;
 int setLanguage = 0;
 int setGameLanguage = 0;
 
@@ -27,9 +27,9 @@ void langInit(void)
 		setLanguage = guiLanguage;
 	}
 
-	if (bstrap_Language == -1) {
+	if (bstrap_language == -1) {
 		setGameLanguage = PersonalData->language;
 	} else {
-		setGameLanguage = bstrap_Language;
+		setGameLanguage = bstrap_language;
 	}
 }
