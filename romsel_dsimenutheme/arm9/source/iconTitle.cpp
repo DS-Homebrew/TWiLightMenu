@@ -33,7 +33,7 @@
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
-static int BOX_PY = 13;
+static int BOX_PY = 11;
 static int BOX_PY_spacing1 = 19;
 static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
@@ -627,17 +627,17 @@ void titleUpdate(bool isDir, const char* name)
 {
 	clearText(false);
 	if (showdialogbox) {
-		BOX_PY = 13;
+		BOX_PY = 11;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
 	} else if (theme == 1) {
-		BOX_PY = 39;
+		BOX_PY = 37;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
 	} else {
-		BOX_PY = 13;
+		BOX_PY = 11;
 		BOX_PY_spacing1 = 19;
 		BOX_PY_spacing2 = 9;
 		BOX_PY_spacing3 = 28;
@@ -830,8 +830,8 @@ void titleUpdate(bool isDir, const char* name)
 			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
 				p[i / 2] = 0;
 				bannerlines++;
-			} else if (p[i] == 0xE9) {
-				p[i / 2] = 0x65;	// Replace bugged "é" with regular "e"
+			} else if (p[i] == 0x22 && p[i+1] == 0x21) {
+				p[i / 2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
 			} else {
 				p[i / 2] = p[i];
 			}
