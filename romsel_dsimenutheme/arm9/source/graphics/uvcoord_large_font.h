@@ -57,40 +57,40 @@ extern const unsigned int large_font_texcoords[] = {
 	32, 16, 6, TEXT_LY, // "
 	48, 16, 10, TEXT_LY, // #
 	64, 16, 9, TEXT_LY, // $
-	80, 16, 12, TEXT_LY, // %
-	96, 16, 0, TEXT_LY, // NULL
+	80, 16, 13, TEXT_LY, // %
+	96, 16, 11, TEXT_LY, // &
 	112, 16, 3, TEXT_LY, // '
-	128, 16, 4, TEXT_LY, // (
-	144, 16, 4, TEXT_LY, // )
-	160, 16, 3, TEXT_LY, // '
+	128, 16, 5, TEXT_LY, // (
+	144, 16, 5, TEXT_LY, // )
+	160, 16, 9, TEXT_LY, // *
 	178, 16, 9, TEXT_LY, // +
-	192, 16, 5, TEXT_LY, // ,
-	208, 16, 5, TEXT_LY, // -
-	224, 16, 3, TEXT_LY, // .
-	240, 16, 8, TEXT_LY, // /
-	256, 16, 8, TEXT_LY, // 0
-	272, 16, 8, TEXT_LY, // 1
-	288, 16, 8, TEXT_LY, // 2
-	304, 16, 8, TEXT_LY, // 3
-	320, 16, 9, TEXT_LY, // 4
-	336, 16, 8, TEXT_LY, // 5
-	352, 16, 8, TEXT_LY, // 6
-	368, 16, 8, TEXT_LY, // 7
-	384, 16, 8, TEXT_LY, // 8
-	400, 16, 8, TEXT_LY, // 9
-	416, 16, 4, TEXT_LY, // :
-	432, 16, 5, TEXT_LY, // ;
-	448, 16, 9, TEXT_LY, // <
-	464, 16, 8, TEXT_LY, // =
-	480, 16, 9, TEXT_LY, // >
-	496, 16, 8, TEXT_LY, // ?
+	192, 16, 4, TEXT_LY, // ,
+	208, 16, 6, TEXT_LY, // -
+	224, 16, 4, TEXT_LY, // .
+	240, 16, 6, TEXT_LY, // /
+	256, 16, 9, TEXT_LY, // 0
+	272, 16, 5, TEXT_LY, // 1
+	288, 16, 9, TEXT_LY, // 2
+	304, 16, 9, TEXT_LY, // 3
+	320, 16, 10, TEXT_LY, // 4
+	336, 16, 9, TEXT_LY, // 5
+	352, 16, 9, TEXT_LY, // 6
+	368, 16, 9, TEXT_LY, // 7
+	384, 16, 9, TEXT_LY, // 8
+	400, 16, 9, TEXT_LY, // 9
+	416, 16, 3, TEXT_LY, // :
+	432, 16, 3, TEXT_LY, // ;
+	448, 16, 8, TEXT_LY, // <
+	464, 16, 9, TEXT_LY, // =
+	480, 16, 8, TEXT_LY, // >
+	496, 16, 9, TEXT_LY, // ?
 	0, 32, 13, TEXT_LY, // @
-	16, 32, 11, TEXT_LY, // A
-	32, 32, 10, TEXT_LY, // B
+	16, 32, 10, TEXT_LY, // A
+	32, 32, 9, TEXT_LY, // B
 	48, 32, 9, TEXT_LY, // C
 	64, 32, 10, TEXT_LY, // D
 	80, 32, 9, TEXT_LY, // E
-	96, 32, 9, TEXT_LY, // F
+	96, 32, 8, TEXT_LY, // F
 	112, 32, 10, TEXT_LY, // G
 	128, 32, 10, TEXT_LY, // H
 	144, 32, 3, TEXT_LY, // I
@@ -104,49 +104,49 @@ extern const unsigned int large_font_texcoords[] = {
 	272, 32, 10, TEXT_LY, // Q
 	288, 32, 9, TEXT_LY, // R
 	304, 32, 9, TEXT_LY, // S
-	320, 32, 10, TEXT_LY, // T
+	320, 32, 9, TEXT_LY, // T
 	336, 32, 10, TEXT_LY, // U
 	352, 32, 10, TEXT_LY, // V
-	368, 32, 14, TEXT_LY, // W
-	384, 32, 10, TEXT_LY, // X
-	400, 32, 10, TEXT_LY, // Y
+	368, 32, 13, TEXT_LY, // W
+	384, 32, 9, TEXT_LY, // X
+	400, 32, 9, TEXT_LY, // Y
 	416, 32, 9, TEXT_LY, // Z
 	432, 32, 5, TEXT_LY, // [
-	448, 32, 8, TEXT_LY, // /
+	448, 32, 6, TEXT_LY, // "\"
 	464, 32, 5, TEXT_LY, // ]
-	480, 32, 8, TEXT_LY, // ^
-	496, 32, 10, TEXT_LY, // _
-	0, 48, 3, TEXT_LY, // NULL
-	16, 48, 7, TEXT_LY, // a
+	480, 32, 7, TEXT_LY, // ^
+	496, 32, 8, TEXT_LY, // _
+	0, 48, 5, TEXT_LY, // `
+	16, 48, 8, TEXT_LY, // a
 	32, 48, 8, TEXT_LY, // b
 	48, 48, 7, TEXT_LY, // c
 	64, 48, 8, TEXT_LY, // d
 	80, 48, 8, TEXT_LY, // e
-	96, 48, 7, TEXT_LY, // f
-	112, 48, 9, TEXT_LY, // g
+	96, 48, 6, TEXT_LY, // f
+	112, 48, 8, TEXT_LY, // g
 	128, 48, 8, TEXT_LY, // h
-	144, 48, 4, TEXT_LY, // i
-	160, 48, 6, TEXT_LY, // j
+	144, 48, 3, TEXT_LY, // i
+	160, 48, 5, TEXT_LY, // j
 	176, 48, 7, TEXT_LY, // k
 	192, 48, 3, TEXT_LY, // l
-	208, 48, 13, TEXT_LY, // m
+	208, 48, 11, TEXT_LY, // m
 	224, 48, 8, TEXT_LY, // n
 	240, 48, 8, TEXT_LY, // o
 	256, 48, 8, TEXT_LY, // p
 	272, 48, 8, TEXT_LY, // q
-	288, 48, 6, TEXT_LY, // r
-	304, 48, 6, TEXT_LY, // s
+	288, 48, 5, TEXT_LY, // r
+	304, 48, 7, TEXT_LY, // s
 	320, 48, 6, TEXT_LY, // t
 	336, 48, 8, TEXT_LY, // u
-	352, 48, 9, TEXT_LY, // v
-	368, 48, 13, TEXT_LY, // w
-	384, 48, 9, TEXT_LY, // x
-	400, 48, 9, TEXT_LY, // y
-	416, 48, 6, TEXT_LY, // z
-	432, 48, 6, TEXT_LY, // {
+	352, 48, 8, TEXT_LY, // v
+	368, 48, 11, TEXT_LY, // w
+	384, 48, 8, TEXT_LY, // x
+	400, 48, 8, TEXT_LY, // y
+	416, 48, 7, TEXT_LY, // z
+	432, 48, 5, TEXT_LY, // {
 	448, 48, 3, TEXT_LY, // |
 	464, 48, 5, TEXT_LY, // }
-	480, 48, 8, TEXT_LY, // "
+	480, 48, 9, TEXT_LY, // ~
 	496, 48, 0, TEXT_LY, // NULL
 };
 
