@@ -87,8 +87,8 @@ extern const unsigned int large_font_texcoords[] = {
 	0, 32, 13, TEXT_LY, // @
 	16, 32, 11, TEXT_LY, // A
 	32, 32, 10, TEXT_LY, // B
-	48, 32, 10, TEXT_LY, // C
-	64, 32, 11, TEXT_LY, // D
+	48, 32, 9, TEXT_LY, // C
+	64, 32, 10, TEXT_LY, // D
 	80, 32, 9, TEXT_LY, // E
 	96, 32, 9, TEXT_LY, // F
 	112, 32, 10, TEXT_LY, // G
@@ -99,14 +99,14 @@ extern const unsigned int large_font_texcoords[] = {
 	192, 32, 8, TEXT_LY, // L
 	208, 32, 12, TEXT_LY, // M
 	224, 32, 10, TEXT_LY, // N
-	240, 32, 12, TEXT_LY, // O
+	240, 32, 10, TEXT_LY, // O
 	256, 32, 9, TEXT_LY, // P
-	272, 32, 11, TEXT_LY, // Q
-	288, 32, 10, TEXT_LY, // R
+	272, 32, 10, TEXT_LY, // Q
+	288, 32, 9, TEXT_LY, // R
 	304, 32, 9, TEXT_LY, // S
 	320, 32, 10, TEXT_LY, // T
 	336, 32, 10, TEXT_LY, // U
-	352, 32, 11, TEXT_LY, // V
+	352, 32, 10, TEXT_LY, // V
 	368, 32, 14, TEXT_LY, // W
 	384, 32, 10, TEXT_LY, // X
 	400, 32, 10, TEXT_LY, // Y
