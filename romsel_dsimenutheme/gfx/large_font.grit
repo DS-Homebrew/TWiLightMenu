@@ -8,7 +8,7 @@
 -gB4
 
 #The Transperant colour of 0xFF00FF
--gT FF00FF
+#-gT FF00FF
 
 ##################
 # Old Parameters
