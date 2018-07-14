@@ -541,7 +541,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printLarge(false, 6, 4, STR_FLASHCARD_SELECT.c_str());
+					printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
 
 					int yPos = 32;
 					switch (flashcard) {
@@ -581,8 +581,8 @@ int main(int argc, char **argv) {
 							break;
 					}
 
-					printLargeCentered(true, 120, STR_LEFTRIGHT_FLASHCARD.c_str());
-					printLargeCentered(true, 134, STR_AB_SETRETURN.c_str());
+					printLargeCentered(true, 118, STR_LEFTRIGHT_FLASHCARD.c_str());
+					printLargeCentered(true, 132, STR_AB_SETRETURN.c_str());
 
 					menuprinted = true;
 				}
@@ -625,13 +625,13 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printLarge(false, 6, 4, STR_SUBTHEMESEL_DSI.c_str());
+							printLarge(false, 6, 2, STR_SUBTHEMESEL_DSI.c_str());
 							break;
 						case 1:
-							printLarge(false, 6, 4, STR_SUBTHEMESEL_3DS.c_str());
+							printLarge(false, 6, 2, STR_SUBTHEMESEL_3DS.c_str());
 							break;
 						case 2:
-							printLarge(false, 6, 4, STR_SUBTHEMESEL_R4.c_str());
+							printLarge(false, 6, 2, STR_SUBTHEMESEL_R4.c_str());
 							break;
 					}
 
@@ -730,7 +730,7 @@ int main(int argc, char **argv) {
 					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, STR_GAMESAPPS_SETTINGS.c_str());
+					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
 
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
@@ -844,35 +844,35 @@ int main(int argc, char **argv) {
 
 
 						if (settingscursor == 0) {
-							printLargeCentered(true, 114, STR_DESCRIPTION_LANGUAGE_1.c_str());
-							printLargeCentered(true, 128, STR_DESCRIPTION_LANGUAGE_2.c_str());
-							printLargeCentered(true, 142, STR_DESCRIPTION_LANGUAGE_3.c_str());
+							printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
+							printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
+							printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
 						} else if (settingscursor == 1) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_CPUSPEED_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_CPUSPEED_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_CPUSPEED_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_CPUSPEED_2.c_str());
 						} /* else if (settingscursor == 4) {
 							printLargeCentered(true, 120, "Allows 8 bit VRAM writes");
 							printLargeCentered(true, 134, "and expands the bus to 32 bit.");
 						} */ else if (settingscursor == 2) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_DEBUG_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_DEBUG_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
 						} else if (settingscursor == 3) {
 							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
 							// printLargeCentered(true, 128, "avoiding conflict with");
 							// printLargeCentered(true, 142, "recent libnds.");
-							printLargeCentered(true, 128, STR_DESCRIPTION_ROMREADLED_1.c_str());
+							printLargeCentered(true, 126, STR_DESCRIPTION_ROMREADLED_1.c_str());
 						} else if (settingscursor == 4) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_SNDFREQ_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_SNDFREQ_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
 						} else if (settingscursor == 5) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_RESETSLOT1_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_RESETSLOT1_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_RESETSLOT1_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_RESETSLOT1_2.c_str());
 						} else if (settingscursor == 6) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
 						} else if (settingscursor == 7) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
 						}
 					} else {
 						printSmall(false, 12, selyPos, STR_FLASHCARD_SELECT.c_str());
@@ -892,15 +892,15 @@ int main(int argc, char **argv) {
 						}
 
 						if (settingscursor == 0) {
-							printLargeCentered(true, 120, STR_DESCRIPTION_FLASHCARD_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_FLASHCARD_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_FLASHCARD_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_FLASHCARD_2.c_str());
 						} else if (settingscursor == 1) {
 							if(soundfreqsetting) {
-								printLargeCentered(true, 120, STR_DESCRIPTION_SNDFREQ_1.c_str());
-								printLargeCentered(true, 134, STR_DESCRIPTION_SNDFREQ_2.c_str());
+								printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
+								printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
 							} else {
-								printLargeCentered(true, 120, STR_DESCRIPTION_GBARUNNER2_1.c_str());
-								printLargeCentered(true, 134, STR_DESCRIPTION_GBARUNNER2_2.c_str());
+								printLargeCentered(true, 118, STR_DESCRIPTION_GBARUNNER2_1.c_str());
+								printLargeCentered(true, 132, STR_DESCRIPTION_GBARUNNER2_2.c_str());
 							}
 						}
 					}
@@ -1043,7 +1043,7 @@ int main(int argc, char **argv) {
 					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
 					printSmall(true, 194, 176, vertext);
 
-					printLarge(false, 6, 4, STR_GUI_SETTINGS.c_str());
+					printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
 					
 					int yPos = 32;
 					for (int i = 0; i < settingscursor; i++) {
@@ -1143,34 +1143,38 @@ int main(int argc, char **argv) {
 
 
 					if (settingscursor == 0) {
-						printLargeCentered(true, 120, STR_DESCRIPTION_THEME_1.c_str());
-						printLargeCentered(true, 134, STR_DESCRIPTION_THEME_2.c_str());
+						printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
+						printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
+						printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
 					} else if (settingscursor == 1) {
-						printLargeCentered(true, 106, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
-						printLargeCentered(true, 120, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
-						printLargeCentered(true, 134, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
-						printLargeCentered(true, 148, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
+						printLargeCentered(true, 118, STR_DESCRIPTION_THEME_1.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_THEME_2.c_str());
 					} else if (settingscursor == 2) {
-						printLargeCentered(true, 114, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
-						printLargeCentered(true, 128, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());
-						printLargeCentered(true, 142, STR_DESCRIPTION_DSIMENUPPLOGO_3.c_str());
+						printLargeCentered(true, 104, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
+						printLargeCentered(true, 118, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
+						printLargeCentered(true, 144, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
 					} else if (settingscursor == 3) {
-						printLargeCentered(true, 114, STR_DESCRIPTION_DIRECTORIES_1.c_str());
-						printLargeCentered(true, 128, STR_DESCRIPTION_DIRECTORIES_2.c_str());
-						printLargeCentered(true, 142, STR_DESCRIPTION_DIRECTORIES_3.c_str());
+						printLargeCentered(true, 112, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
+						printLargeCentered(true, 126, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());
+						printLargeCentered(true, 140, STR_DESCRIPTION_DSIMENUPPLOGO_3.c_str());
 					} else if (settingscursor == 4) {
-						printLargeCentered(true, 120, STR_DESCRIPTION_BOXART_1.c_str());
-						printLargeCentered(true, 134, STR_DESCRIPTION_BOXART_2.c_str());
+						printLargeCentered(true, 112, STR_DESCRIPTION_DIRECTORIES_1.c_str());
+						printLargeCentered(true, 126, STR_DESCRIPTION_DIRECTORIES_2.c_str());
+						printLargeCentered(true, 140, STR_DESCRIPTION_DIRECTORIES_3.c_str());
 					} else if (settingscursor == 5) {
-						printLargeCentered(true, 114, STR_DESCRIPTION_ANIMATEDSIICONS_1.c_str());
-						printLargeCentered(true, 128, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
-						printLargeCentered(true, 142, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
+						printLargeCentered(true, 118, STR_DESCRIPTION_BOXART_1.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_BOXART_2.c_str());
 					} else if (settingscursor == 6) {
+						printLargeCentered(true, 112, STR_DESCRIPTION_ANIMATEDSIICONS_1.c_str());
+						printLargeCentered(true, 126, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
+						printLargeCentered(true, 140, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
+					} else if (settingscursor == 7) {
 						if (hiyaAutobootFound) {
-							printLargeCentered(true, 128, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
+							printLargeCentered(true, 126, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
 						} else {
-							printLargeCentered(true, 120, STR_DESCRIPTION_REPLACEDSIMENU_1.c_str());
-							printLargeCentered(true, 134, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_REPLACEDSIMENU_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
 						}
 					}
 
