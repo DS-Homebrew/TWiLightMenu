@@ -63,7 +63,7 @@ extern const unsigned int large_font_texcoords[] = {
 	128, 20, 5, TEXT_LY, // (
 	144, 20, 5, TEXT_LY, // )
 	160, 20, 9, TEXT_LY, // *
-	178, 20, 9, TEXT_LY, // +
+	176, 20, 9, TEXT_LY, // +
 	192, 20, 4, TEXT_LY, // ,
 	208, 20, 6, TEXT_LY, // -
 	224, 20, 4, TEXT_LY, // .

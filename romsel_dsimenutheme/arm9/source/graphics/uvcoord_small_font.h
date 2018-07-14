@@ -63,7 +63,7 @@ extern const unsigned int small_font_texcoords[] = {
 	128, 16, 4, TEXT_SY, // (
 	144, 16, 4, TEXT_SY, // )
 	160, 16, 3, TEXT_SY, // '
-	178, 16, 8, TEXT_SY, // +
+	176, 16, 8, TEXT_SY, // +
 	192, 16, 4, TEXT_SY, // ,
 	208, 16, 5, TEXT_SY, // -
 	224, 16, 3, TEXT_SY, // .
