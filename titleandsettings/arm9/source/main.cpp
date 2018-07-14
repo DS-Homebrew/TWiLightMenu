@@ -576,7 +576,7 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printSmall(true, 194, 176, vertext);
+					printSmall(true, 194, 174, vertext);
 
 					// Clear the screen so it doesn't over-print
 					clearText();
@@ -587,37 +587,37 @@ int main(int argc, char **argv) {
 					switch (flashcard) {
 						case 0:
 						default:
-							printSmall(false, 12, 32+(0*14), "DSTT");
-							printSmall(false, 12, 32+(1*14), "R4i Gold");
-							printSmall(false, 12, 32+(2*14), "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
-							printSmall(false, 12, 32+(3*14), "R4 SDHC Dual-Core");
-							printSmall(false, 12, 32+(4*14), "R4 SDHC Upgrade");
-							printSmall(false, 12, 32+(5*14), "SuperCard DSONE");
+							printSmall(false, 12, 30+(0*14), "DSTT");
+							printSmall(false, 12, 30+(1*14), "R4i Gold");
+							printSmall(false, 12, 30+(2*14), "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
+							printSmall(false, 12, 30+(3*14), "R4 SDHC Dual-Core");
+							printSmall(false, 12, 30+(4*14), "R4 SDHC Upgrade");
+							printSmall(false, 12, 30+(5*14), "SuperCard DSONE");
 							break;
 						case 1:
-							printSmall(false, 12, 32+(0*14), "Original R4");
-							printSmall(false, 12, 32+(1*14), "M3 Simply");
+							printSmall(false, 12, 30+(0*14), "Original R4");
+							printSmall(false, 12, 30+(1*14), "M3 Simply");
 							break;
 						case 2:
-							printSmall(false, 12, 32+(0*14), "R4iDSN");
-							printSmall(false, 12, 32+(1*14), "R4i Gold RTS");
-							printSmall(false, 12, 32+(2*14), "R4 Ultra");
+							printSmall(false, 12, 30+(0*14), "R4iDSN");
+							printSmall(false, 12, 30+(1*14), "R4i Gold RTS");
+							printSmall(false, 12, 30+(2*14), "R4 Ultra");
 							break;
 						case 3:
-							printSmall(false, 12, 32+(0*14), "Acekard 2(i)");
-							printSmall(false, 12, 32+(1*14), "Galaxy Eagle");
-							printSmall(false, 12, 32+(2*14), "M3DS Real");
+							printSmall(false, 12, 30+(0*14), "Acekard 2(i)");
+							printSmall(false, 12, 30+(1*14), "Galaxy Eagle");
+							printSmall(false, 12, 30+(2*14), "M3DS Real");
 							break;
 						case 4:
-							printSmall(false, 12, 32, "Acekard RPG");
+							printSmall(false, 12, 30, "Acekard RPG");
 							break;
 						case 5:
-							printSmall(false, 12, 32+(0*14), "Ace 3DS+");
-							printSmall(false, 12, 32+(1*14), "Gateway Blue Card");
-							printSmall(false, 12, 32+(2*14), "R4iTT");
+							printSmall(false, 12, 30+(0*14), "Ace 3DS+");
+							printSmall(false, 12, 30+(1*14), "Gateway Blue Card");
+							printSmall(false, 12, 30+(2*14), "R4iTT");
 							break;
 						case 6:
-							printSmall(false, 12, 32, "SuperCard DSTWO");
+							printSmall(false, 12, 30, "SuperCard DSTWO");
 							break;
 					}
 
@@ -657,7 +657,7 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printSmall(true, 194, 176, vertext);
+					printSmall(true, 194, 174, vertext);
 
 					// Clear the screen so it doesn't over-print
 					clearText();
@@ -675,23 +675,23 @@ int main(int argc, char **argv) {
 							break;
 					}
 
-					int yPos = 32;
-					if (theme == 2) yPos = 24;
+					int yPos = 30;
+					if (theme == 2) yPos = 22;
 					for (int i = 0; i < subtheme; i++) {
 						yPos += 12;
 					}
 
 					printSmall(false, 4, yPos, ">");
 
-					int selyPos = 32;
-					if (theme == 2) selyPos = 24;
+					int selyPos = 30;
+					if (theme == 2) selyPos = 22;
 
 					switch (theme) {
 						case 0:
 						default:
-							printSmall(false, 12, 32, STR_DSI_DARKMENU.c_str());
+							printSmall(false, 12, 30, STR_DSI_DARKMENU.c_str());
 							selyPos += 12;
-							printSmall(false, 12, 46, STR_DSI_NORMALMENU.c_str());
+							printSmall(false, 12, 44, STR_DSI_NORMALMENU.c_str());
 							break;
 						case 1:
 							break;
@@ -765,19 +765,19 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 175, "DSiMenu++");
+					printSmallCentered(false, 173, "DSiMenu++");
 
-					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
-					printSmall(true, 194, 176, vertext);
+					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+					printSmall(true, 194, 174, vertext);
 
 					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
 
-					int yPos = 32;
+					int yPos = 30;
 					for (int i = 0; i < settingscursor; i++) {
 						yPos += 12;
 					}
 
-					int selyPos = 32;
+					int selyPos = 30;
 
 					printSmall(false, 4, yPos, ">");
 
@@ -1047,10 +1047,10 @@ int main(int argc, char **argv) {
 				if (pressed & KEY_B) {
 					mmEffectEx(&snd_back);
 					clearText();
-					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
+					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
+					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					if (!arm7SCFGLocked) {
 						rebootDSiMenuPP();
@@ -1078,19 +1078,19 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 175, "DSiMenu++");
+					printSmallCentered(false, 173, "DSiMenu++");
 
-					printSmall(true, 4, 176, STR_LR_SWITCH.c_str());
-					printSmall(true, 194, 176, vertext);
+					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+					printSmall(true, 194, 174, vertext);
 
 					printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
 					
-					int yPos = 32;
+					int yPos = 30;
 					for (int i = 0; i < settingscursor; i++) {
 						yPos += 12;
 					}
 
-					int selyPos = 32;
+					int selyPos = 30;
 
 					printSmall(false, 4, yPos, ">");
 
@@ -1299,10 +1299,10 @@ int main(int argc, char **argv) {
 							screenmode = 0;
 							mmEffectEx(&snd_launch);
 							clearText();
-							printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
+							printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
 							SaveSettings();
 							clearText();
-							printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
+							printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
 							for (int i = 0; i < 60; i++) swiWaitForVBlank();
 							launchSystemSettings();
 							break;
@@ -1341,10 +1341,10 @@ int main(int argc, char **argv) {
 					screenmode = 0;
 					mmEffectEx(&snd_launch);
 					clearText();
-					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
+					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
+					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					int err = lastRanROM();
 					iprintf ("Start failed. Error %i\n", err);
@@ -1353,10 +1353,10 @@ int main(int argc, char **argv) {
 				if (pressed & KEY_B) {
 					mmEffectEx(&snd_back);
 					clearText();
-					printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
+					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
 					SaveSettings();
 					clearText();
-					printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
+					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					if (!arm7SCFGLocked) {
 						rebootDSiMenuPP();
