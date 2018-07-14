@@ -294,6 +294,46 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+void launchSystemSettings() {
+	fadeType = false;
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	renderScreens = false;
+
+	char tmdpath[256];
+	u8 titleID[4];
+	for (u8 i = 0x41; i <= 0x5A; i++) {
+		snprintf (tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+		if (!access(tmdpath, F_OK)) {
+			titleID[0] = i;
+			titleID[1] = 0x42;
+			titleID[2] = 0x4e;
+			titleID[3] = 0x48;
+			break;
+		}
+	}
+
+	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u8*)(0x02000308) = titleID[0];
+	*(u8*)(0x02000309) = titleID[1];
+	*(u8*)(0x0200030A) = titleID[2];
+	*(u8*)(0x0200030B) = titleID[3];
+	*(u32*)(0x0200030C) = 0x00030015;
+	*(u8*)(0x02000310) = titleID[0];
+	*(u8*)(0x02000311) = titleID[1];
+	*(u8*)(0x02000312) = titleID[2];
+	*(u8*)(0x02000313) = titleID[3];
+	*(u32*)(0x02000314) = 0x00030015;
+	*(u32*)(0x02000318) = 0x00000017;
+	*(u32*)(0x0200031C) = 0x00000000;
+	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+	}
+
+	fifoSendValue32(FIFO_USER_08, 1);	// Reboot into System Settings
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
 void rebootDSiMenuPP() {
 	fadeType = false;
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
@@ -1133,6 +1173,8 @@ int main(int argc, char **argv) {
 
 					if (!flashcardUsed && !arm7SCFGLocked) {
 						if (consoleModel < 2) {
+							printSmall(false, 12, selyPos, STR_SYSTEMSETTINGS.c_str());
+							selyPos += 12;
 							if (hiyaAutobootFound) {
 								printSmall(false, 12, selyPos, STR_RESTOREDSIMENU.c_str());
 							} else {
@@ -1170,6 +1212,9 @@ int main(int argc, char **argv) {
 						printLargeCentered(true, 126, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
 						printLargeCentered(true, 140, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
 					} else if (settingscursor == 7) {
+						printLargeCentered(true, 118, STR_DESCRIPTION_SYSTEMSETTINGS_1.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_SYSTEMSETTINGS_2.c_str());
+					} else if (settingscursor == 8) {
 						if (hiyaAutobootFound) {
 							printLargeCentered(true, 126, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
 						} else {
@@ -1251,6 +1296,17 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 7:
+							screenmode = 0;
+							mmEffectEx(&snd_launch);
+							clearText();
+							printSmall(false, 4, 4, STR_SAVING_SETTINGS.c_str());
+							SaveSettings();
+							clearText();
+							printSmall(false, 4, 4, STR_SETTINGS_SAVED.c_str());
+							for (int i = 0; i < 60; i++) swiWaitForVBlank();
+							launchSystemSettings();
+							break;
+						case 8:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1310,8 +1366,8 @@ int main(int argc, char **argv) {
 				}
 
 				if (!flashcardUsed && consoleModel < 2) {
-					if (settingscursor > 7) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 7;
+					if (settingscursor > 8) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 8;
 				} else {
 					if (settingscursor > 6) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 6;

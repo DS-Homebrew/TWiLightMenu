@@ -17,6 +17,7 @@ extern std::string STR_DSIMENUPPLOGO;
 extern std::string STR_DIRECTORIES;
 extern std::string STR_BOXART;
 extern std::string STR_ANIMATEDSIICONS;
+extern std::string STR_SYSTEMSETTINGS;
 extern std::string STR_REPLACEDSIMENU;
 extern std::string STR_RESTOREDSIMENU;
 
@@ -45,6 +46,9 @@ extern std::string STR_DESCRIPTION_BOXART_2;
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_1;
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_2;
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_3;
+
+extern std::string STR_DESCRIPTION_SYSTEMSETTINGS_1;
+extern std::string STR_DESCRIPTION_SYSTEMSETTINGS_2;
 
 extern std::string STR_DESCRIPTION_REPLACEDSIMENU_1;
 extern std::string STR_DESCRIPTION_REPLACEDSIMENU_2;
