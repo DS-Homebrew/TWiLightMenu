@@ -948,6 +948,61 @@ void topBgLoad() {
 	} else {
 		loadBMP("nitro:/top.bmp");
 	}
+
+	// Load username
+	FILE* file = fopen("nitro:/top_small_font.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=15; y>=0; y--) {
+			u16 buffer[512];
+			fread(buffer, 2, 0x200, file);
+			u16* src = buffer;
+			for (int i=0; i<16; i++) {
+				u16 val = *(src++);
+				if (val != 0xFC1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[(y+1)*256+(i+28)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
+				/*switch (val) {
+					case 0xFC1F:
+					default:
+						break;
+					case 0xA108:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[1];
+						break;
+					case 0xA96A:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[2];
+						break;
+					case 0xB5AD:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[3];
+						break;
+					case 0xBDEF:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[4];
+						break;
+					case 0xC651:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[5];
+						break;
+					case 0xD294:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[6];
+						break;
+					case 0xDAD6:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[7];
+						break;
+					case 0xE338:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[8];
+						break;
+					case 0xEF7B:
+						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[9];
+						break;
+				}*/
+			}
+		}
+	}
+
+	fclose(file);
 }
 
 void clearBoxArt() {
@@ -1050,7 +1105,7 @@ void graphicsInit()
 
 	if (theme < 1) loadPhoto();
 	topBgLoad();
-
+	
 	dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
 							16, // sprite width
 							16, // sprite height
