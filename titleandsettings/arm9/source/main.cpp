@@ -76,7 +76,7 @@ static int bstrap_loadingScreen = 1;
 static int donorSdkVer = 0;
 
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-static bool resetSlot1 = true;
+static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -120,7 +120,7 @@ void LoadSettings(void) {
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
-	resetSlot1 = settingsini.GetInt("SRLOADER", "RESET_SLOT1", 1);
+	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	if (flashcardUsed && launchType == 0) launchType = 1;
@@ -165,7 +165,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
-	settingsini.SetInt("SRLOADER", "RESET_SLOT1", resetSlot1);
+	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
 
 	// UI settings.
@@ -850,11 +850,11 @@ int main(int argc, char **argv) {
 						selyPos += 12;
 
 						if (!arm7SCFGLocked) {
-							printSmall(false, 12, selyPos, STR_RESETSLOT1.c_str());
-							if(resetSlot1)
-								printSmall(false, 224, selyPos, STR_YES.c_str());
+							printSmall(false, 12, selyPos, STR_SLOT1LAUNCHMETHOD.c_str());
+							if(slot1LaunchMethod)
+								printSmall(false, 210, selyPos, STR_DIRECT.c_str());
 							else
-								printSmall(false, 230, selyPos, STR_NO.c_str());
+								printSmall(false, 202, selyPos, STR_REBOOT.c_str());
 						}
 						selyPos += 12;
 
@@ -905,8 +905,10 @@ int main(int argc, char **argv) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
 						} else if (settingscursor == 5) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_RESETSLOT1_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_RESETSLOT1_2.c_str());
+							printLargeCentered(true, 104, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3.c_str());
+							printLargeCentered(true, 146, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4.c_str());
 						} else if (settingscursor == 6) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
@@ -1005,7 +1007,7 @@ int main(int argc, char **argv) {
 								soundfreq = !soundfreq;
 								break;
 							case 5:
-								resetSlot1 = !resetSlot1;
+								slot1LaunchMethod = !slot1LaunchMethod;
 								break;
 							case 6:
 								if (pressed & KEY_LEFT) {
@@ -1195,7 +1197,7 @@ int main(int argc, char **argv) {
 						printLargeCentered(true, 104, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
 						printLargeCentered(true, 118, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
 						printLargeCentered(true, 132, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
-						printLargeCentered(true, 144, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
+						printLargeCentered(true, 146, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
 					} else if (settingscursor == 3) {
 						printLargeCentered(true, 112, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
 						printLargeCentered(true, 126, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());

@@ -62,6 +62,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 
 extern int launchType;
+extern bool slot1LaunchMethod;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern bool arm7SCFGLocked;
@@ -663,7 +664,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
 						if (!flashcardUsed) {
-							if (arm7SCFGLocked) {
+							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
 								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);

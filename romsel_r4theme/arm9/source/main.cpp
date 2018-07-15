@@ -122,6 +122,7 @@ bool startMenu = true;
 bool gotosettings = false;
 
 int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
+bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
@@ -176,6 +177,7 @@ void LoadSettings(void) {
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
+	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Default nds-bootstrap settings
@@ -775,7 +777,7 @@ int main(int argc, char **argv) {
 
 							launchType = 0;
 							SaveSettings();
-							if (arm7SCFGLocked) {
+							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
 								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
