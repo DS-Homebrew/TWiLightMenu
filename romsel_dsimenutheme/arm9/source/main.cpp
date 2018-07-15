@@ -137,6 +137,7 @@ bool animateDsiIcons = false;
 int guiLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
+bool bstrap_asyncPrefetch = true;
 
 bool flashcardUsed = false;
 
@@ -182,6 +183,7 @@ void LoadSettings(void) {
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 }
 
 void SaveSettings(void) {
@@ -1042,6 +1044,11 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+						}
+						if (perGameSettings_asyncPrefetch == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
 						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);

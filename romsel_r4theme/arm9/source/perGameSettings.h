@@ -7,6 +7,7 @@ extern bool perGameSettingsButtons;
 
 extern int perGameSettings_language;
 extern int perGameSettings_boostCpu;
+extern int perGameSettings_asyncPrefetch;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);

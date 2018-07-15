@@ -66,6 +66,7 @@ bool perGameSettingsChanged = false;
 int perGameSettings_cursorPosition = 0;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
+int perGameSettings_asyncPrefetch = -1;
 
 extern int cursorPosition;
 extern int pagenum;
@@ -95,6 +96,7 @@ void loadPerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
+	perGameSettings_asyncPrefetch = pergameini.GetInt("GAMESETTINGS", "ASYNC_PREFETCH", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -102,6 +104,7 @@ void savePerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+	pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
@@ -160,6 +163,7 @@ void perGameSettings (std::string filename, const char* username) {
 			printSmall(false, 24, 96+(perGameSettings_cursorPosition*16), ">");
 			printSmall(false, 32, 96, "Language:");
 			printSmall(false, 32, 112, "ARM9 CPU Speed:");
+			printSmall(false, 32, 128, "Async prefetch:");
 			if (perGameSettings_language == -2) {
 				printSmall(false, 180, 96, "Default");
 			} else if (perGameSettings_language == -1) {
@@ -184,6 +188,13 @@ void perGameSettings (std::string filename, const char* username) {
 			} else {
 				printSmall(false, 156, 112, "67mhz (NTR)");
 			}
+			if (perGameSettings_asyncPrefetch == -1) {
+				printSmall(false, 180, 128, "Default");
+			} else if (perGameSettings_asyncPrefetch == 1) {
+				printSmall(false, 180, 128, "On");
+			} else {
+				printSmall(false, 180, 128, "Off");
+			}
 			printSmall(false, 200, 166, "B: Back");
 		}
 		do {
@@ -199,11 +210,11 @@ void perGameSettings (std::string filename, const char* username) {
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
+				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 2;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
+				if (perGameSettings_cursorPosition > 2) perGameSettings_cursorPosition = 0;
 			}
 
 			if (pressed & KEY_A) {
@@ -216,6 +227,10 @@ void perGameSettings (std::string filename, const char* username) {
 					case 1:
 						perGameSettings_boostCpu++;
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						break;
+					case 2:
+						perGameSettings_asyncPrefetch++;
+						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
 						break;
 				}
 				perGameSettingsChanged = true;

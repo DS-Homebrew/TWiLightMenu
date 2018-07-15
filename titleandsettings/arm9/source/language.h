@@ -60,6 +60,7 @@ extern std::string STR_LANGUAGE;
 extern std::string STR_CPUSPEED;
 extern std::string STR_DEBUG;
 extern std::string STR_ROMREADLED;
+extern std::string STR_ASYNCPREFETCH;
 extern std::string STR_SNDFREQ;
 extern std::string STR_SLOT1LAUNCHMETHOD;
 extern std::string STR_LOADINGSCREEN;
@@ -91,6 +92,10 @@ extern std::string STR_DESCRIPTION_DEBUG_1;
 extern std::string STR_DESCRIPTION_DEBUG_2;
 
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
+
+extern std::string STR_DESCRIPTION_ASYNCPREFETCH_1;
+extern std::string STR_DESCRIPTION_ASYNCPREFETCH_2;
+extern std::string STR_DESCRIPTION_ASYNCPREFETCH_3;
 
 extern std::string STR_DESCRIPTION_SNDFREQ_1;
 extern std::string STR_DESCRIPTION_SNDFREQ_2;
