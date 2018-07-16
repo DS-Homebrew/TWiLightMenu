@@ -568,21 +568,15 @@ int main(int argc, char **argv) {
 	
 		if (screenmode == 1) {
 
-			consoleClear();
-			printf("\n ");
-			printf(username);
-			for (int i = 0; i < 21; i++) {
-				printf("\n");
-			}
-
 			if (subscreenmode == 3) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printSmall(true, 194, 174, vertext);
-
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printSmall(true, 28, 1, username);
+					printSmall(true, 194, 174, vertext);
 
 					printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
 
@@ -660,10 +654,11 @@ int main(int argc, char **argv) {
 				pressed = 0;
 
 				if (!menuprinted) {
-					printSmall(true, 194, 174, vertext);
-
 					// Clear the screen so it doesn't over-print
 					clearText();
+
+					printSmall(true, 28, 1, username);
+					printSmall(true, 194, 174, vertext);
 
 					switch (theme) {
 						case 0:
@@ -771,6 +766,7 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 173, "DSiMenu++");
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+					printSmall(true, 28, 1, username);
 					printSmall(true, 194, 174, vertext);
 
 					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
@@ -1100,6 +1096,7 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 173, "DSiMenu++");
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+					printSmall(true, 28, 1, username);
 					printSmall(true, 194, 174, vertext);
 
 					printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
