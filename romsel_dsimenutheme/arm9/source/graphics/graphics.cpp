@@ -849,7 +849,7 @@ void loadBMP(const char* filename) {
 	fclose(file);
 }
 
-// Load .bmp file without overwriting shoulder button images
+// Load .bmp file without overwriting shoulder button images or username
 void loadBMPPart(const char* filename) {
 	FILE* file = fopen(filename, "rb");
 
@@ -858,7 +858,7 @@ void loadBMPPart(const char* filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		for (int y=191; y>=0; y--) {
+		for (int y=191; y>=32; y--) {
 			u16 buffer[256];
 			fread(buffer, 2, 0x100, file);
 			if (y <= 167) {
