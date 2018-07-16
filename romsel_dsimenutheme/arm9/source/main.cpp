@@ -173,7 +173,7 @@ void LoadSettings(void) {
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
-	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
+	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 	
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
