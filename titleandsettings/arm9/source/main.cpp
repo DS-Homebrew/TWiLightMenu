@@ -678,8 +678,10 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < subtheme; i++) {
 						yPos += 12;
 					}
+					if (subtheme == 12) yPos = 30;
 
-					printSmall(false, 4, yPos, ">");
+					if (subtheme == 12) printSmall(false, 126, yPos, ">");
+					else printSmall(false, 4, yPos, ">");
 
 					int selyPos = 30;
 					if (theme == 2) selyPos = 22;
@@ -717,6 +719,8 @@ int main(int argc, char **argv) {
 							printSmall(false, 12, selyPos, STR_R4_THEME11.c_str());
 							selyPos += 12;
 							printSmall(false, 12, selyPos, STR_R4_THEME12.c_str());
+							selyPos = 30;
+							printSmall(false, 134, selyPos, STR_R4_THEME13.c_str());
 							break;
 					}
 
@@ -750,8 +754,8 @@ int main(int argc, char **argv) {
 				}
 
 				if (theme == 2) {
-					if (subtheme > 11) subtheme = 0;
-					else if (subtheme < 0) subtheme = 11;
+					if (subtheme > 12) subtheme = 0;
+					else if (subtheme < 0) subtheme = 12;
 				} else {
 					if (subtheme > 1) subtheme = 0;
 					else if (subtheme < 0) subtheme = 1;

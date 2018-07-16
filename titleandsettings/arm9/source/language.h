@@ -141,6 +141,7 @@ extern std::string STR_R4_THEME09;
 extern std::string STR_R4_THEME10;
 extern std::string STR_R4_THEME11;
 extern std::string STR_R4_THEME12;
+extern std::string STR_R4_THEME13;
 
 
 /**

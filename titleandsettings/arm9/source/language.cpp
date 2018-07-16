@@ -147,6 +147,7 @@ std::string STR_R4_THEME09 = "STR_R4_THEME09";
 std::string STR_R4_THEME10 = "STR_R4_THEME10";
 std::string STR_R4_THEME11 = "STR_R4_THEME11";
 std::string STR_R4_THEME12 = "STR_R4_THEME12";
+std::string STR_R4_THEME13 = "STR_R4_THEME13";
 
 
 const char* languageIniPath;
@@ -329,5 +330,6 @@ void langInit(void)
 		STR_R4_THEME10 = languageini.GetString("LANGUAGE", "R4_THEME10", "");
 		STR_R4_THEME11 = languageini.GetString("LANGUAGE", "R4_THEME11", "");
 		STR_R4_THEME12 = languageini.GetString("LANGUAGE", "R4_THEME12", "");
+		STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "");
 	}
 }
