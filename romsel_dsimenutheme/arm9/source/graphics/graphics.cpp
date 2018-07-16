@@ -699,6 +699,12 @@ void vBlankHandler()
 				drawDbox();
 				if (!isDirectory[cursorPosition]) drawIcon(24, dbox_Ypos+20, cursorPosition);
 			}
+			// Show button_arrowPals (debug feature)
+			/*for (int i = 0; i < 16; i++) {
+				for (int i2 = 0; i2 < 16; i2++) {
+					glBox(i2,i,i2,i,button_arrowPals[(i*16)+i2]);
+				}
+			}*/
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 			}
@@ -988,41 +994,41 @@ void topBgLoad() {
 				u16* src = buffer+(small_font_texcoords[0+(4*usernameRendered[c])]);
 				for (int i=0; i<small_font_texcoords[2+(4*usernameRendered[c])]; i++) {
 					u16 val = *(src++);
-					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-					}
-					/*switch (val) {
+					switch (val) {
 						case 0xFC1F:
 						default:
 							break;
 						case 0xA108:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[1];
+							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
 						case 0xA96A:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[2];
+							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
 							break;
 						case 0xB5AD:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[3];
+							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
 							break;
 						case 0xBDEF:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[4];
+							val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
 							break;
 						case 0xC651:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[5];
+							val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
 							break;
 						case 0xD294:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[6];
+							val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
 							break;
 						case 0xDAD6:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[7];
+							val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
 							break;
 						case 0xE338:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[8];
+							val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
 							break;
 						case 0xEF7B:
-							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[9];
+							val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
 							break;
-					}*/
+					}
+					if (val != 0xFC1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					}
 				}
 			}
 			x += small_font_texcoords[2+(4*usernameRendered[c])];
