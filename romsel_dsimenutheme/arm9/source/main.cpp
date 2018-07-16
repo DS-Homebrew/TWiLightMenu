@@ -668,6 +668,8 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 	
+	snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
+	
 	LoadColor();
 
 	if (!fatInitDefault()) {

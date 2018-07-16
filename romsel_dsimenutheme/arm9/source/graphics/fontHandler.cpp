@@ -56,7 +56,7 @@ void fontInit()
 
 	smallFont.load(smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
-				small_font_texcoords, // Texture packer auto-generated array
+				small_font_texcoords+(32*4), // Texture packer auto-generated array
 				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_512, // sizeX for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h

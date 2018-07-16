@@ -59,6 +59,8 @@
 #include "_3ds_folder.h"
 #include "wirelessicons.h"
 
+#include "uvcoord_small_font.h"
+
 #include "../iconTitle.h"
 #include "graphics.h"
 #include "fontHandler.h"
@@ -68,6 +70,8 @@
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
+
+extern char usernameRendered[11];
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -948,61 +952,84 @@ void topBgLoad() {
 	} else {
 		loadBMP("nitro:/top.bmp");
 	}
-
+	
 	// Load username
-	FILE* file = fopen("nitro:/top_small_font.bmp", "rb");
+	const char* fontPath;
+	FILE* file;
+	int x = 28;
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		for (int y=15; y>=0; y--) {
-			u16 buffer[512];
-			fread(buffer, 2, 0x200, file);
-			u16* src = buffer;
-			for (int i=0; i<16; i++) {
-				u16 val = *(src++);
-				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+1)*256+(i+28)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-				}
-				/*switch (val) {
-					case 0xFC1F:
-					default:
-						break;
-					case 0xA108:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[1];
-						break;
-					case 0xA96A:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[2];
-						break;
-					case 0xB5AD:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[3];
-						break;
-					case 0xBDEF:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[4];
-						break;
-					case 0xC651:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[5];
-						break;
-					case 0xD294:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[6];
-						break;
-					case 0xDAD6:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[7];
-						break;
-					case 0xE338:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[8];
-						break;
-					case 0xEF7B:
-						BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[9];
-						break;
-				}*/
-			}
+	for (int c = 0; c < 10; c++) {
+		fontPath = "nitro:/top_small_font_0x20.bmp";
+		if (usernameRendered[c] == 0x00) {
+			break;
+		} else if (usernameRendered[c] >= 0x40 && usernameRendered[c] < 0x60) {
+			fontPath = "nitro:/top_small_font_0x40.bmp";
+		} else if (usernameRendered[c] >= 0x60 && usernameRendered[c] < 0x80) {
+			fontPath = "nitro:/top_small_font_0x60.bmp";
+		} else if (usernameRendered[c] >= 0x80 && usernameRendered[c] < 0xA0) {
+			fontPath = "nitro:/top_small_font_0x80.bmp";
+		} else if (usernameRendered[c] >= 0xA0 && usernameRendered[c] < 0xC0) {
+			fontPath = "nitro:/top_small_font_0xA0.bmp";
+		} else if (usernameRendered[c] >= 0xC0 && usernameRendered[c] < 0xE0) {
+			fontPath = "nitro:/top_small_font_0xC0.bmp";
+		} else if (usernameRendered[c] >= 0xE0 && usernameRendered[c] <= 0xFF) {
+			fontPath = "nitro:/top_small_font_0xE0.bmp";
 		}
-	}
+		file = fopen(fontPath, "rb");
 
-	fclose(file);
+		if (file) {
+			// Start loading
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			for (int y=15; y>=0; y--) {
+				u16 buffer[512];
+				fread(buffer, 2, 0x200, file);
+				u16* src = buffer+(small_font_texcoords[0+(4*usernameRendered[c])]);
+				for (int i=0; i<small_font_texcoords[2+(4*usernameRendered[c])]; i++) {
+					u16 val = *(src++);
+					if (val != 0xFC1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					}
+					/*switch (val) {
+						case 0xFC1F:
+						default:
+							break;
+						case 0xA108:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[1];
+							break;
+						case 0xA96A:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[2];
+							break;
+						case 0xB5AD:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[3];
+							break;
+						case 0xBDEF:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[4];
+							break;
+						case 0xC651:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[5];
+							break;
+						case 0xD294:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[6];
+							break;
+						case 0xDAD6:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[7];
+							break;
+						case 0xE338:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[8];
+							break;
+						case 0xEF7B:
+							BG_GFX_SUB[(y+1)*256+(i+28)] = button_arrowPals[9];
+							break;
+					}*/
+				}
+			}
+			x += small_font_texcoords[2+(4*usernameRendered[c])];
+		}
+
+		fclose(file);
+	}
 }
 
 void clearBoxArt() {
