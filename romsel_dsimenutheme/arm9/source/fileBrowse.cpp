@@ -113,6 +113,7 @@ extern bool flashcardUsed;
 char boxArtPath[40][256];
 
 bool boxArtLoaded = false;
+bool shouldersRendered = false;
 bool settingsChanged = false;
 
 extern void SaveSettings();
@@ -530,18 +531,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			showLshoulder = false;
-			showRshoulder = false;
-			if (startMenu) {
-			} else {
-				if (pagenum != 0) {
-					showLshoulder = true;
+			if (!shouldersRendered) {
+				showLshoulder = false;
+				showRshoulder = false;
+				if (startMenu) {
+				} else {
+					if (pagenum != 0) {
+						showLshoulder = true;
+					}
+					if (file_count > 40+pagenum*40) {
+						showRshoulder = true;
+					}
 				}
-				if (file_count > 40+pagenum*40) {
-					showRshoulder = true;
-				}
+				loadShoulders();
+				shouldersRendered = true;
 			}
-			loadShoulders();
 
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
@@ -707,6 +711,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
 					clearText();
@@ -876,6 +881,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
@@ -894,6 +900,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
@@ -930,6 +937,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						SaveSettings();
 						settingsChanged = false;
 					}
+					shouldersRendered = false;
 					whiteScreen = true;
 					clearText();
 					whiteScreen = false;
@@ -947,6 +955,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
 					clearText();
@@ -992,6 +1001,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						remove(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str()); // Remove game/folder
 						if (showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
+						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
 						clearText();
@@ -1039,6 +1049,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();

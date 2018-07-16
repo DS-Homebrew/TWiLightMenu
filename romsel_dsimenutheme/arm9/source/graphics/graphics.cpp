@@ -1121,7 +1121,7 @@ void graphicsInit()
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
 	// sprites
-	vramSetBankA(VRAM_A_TEXTURE);
+	//vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
