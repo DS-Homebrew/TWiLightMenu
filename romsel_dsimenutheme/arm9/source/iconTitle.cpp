@@ -127,7 +127,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 	if(twl) {
 		Ysize = 256;
 		textureSizeY = TEXTURE_SIZE_256;
-		loadIcon_loopTimes = 8;
+		//loadIcon_loopTimes = 8;
 	}
 
 	for (int i = 0; i < 8; i++) {
@@ -266,7 +266,8 @@ void drawIcon(int Xpos, int Ypos, int num)
 	} else if(num2 >= 6) {
 		num2 -= 6;
 	}
-	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
+	//glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
+	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][0][bnriconframenumY[num] & 31]);
 }
 
 void drawIconGBA(int Xpos, int Ypos)
