@@ -110,6 +110,8 @@ extern bool showRshoulder;
 
 extern bool flashcardUsed;
 
+char boxArtPath[40][256];
+
 bool boxArtLoaded = false;
 bool settingsChanged = false;
 
@@ -427,6 +429,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						isDSiWare[i] = false;
 						isHomebrew[i] = false;
 					}
+
+					if (showBoxArt) {
+						// Store box art path
+						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(i+pagenum*40).name.c_str());
+						if (!access(boxArtPath[i], F_OK)) {
+						} else if (bnrRomType[i] == 0) {
+							// Get game's TID
+							FILE *f_nds_file = fopen(dirContents[scrn].at(i+pagenum*40).name.c_str(), "rb");
+							char game_TID[5];
+							grabTID(f_nds_file, game_TID);
+							game_TID[4] = 0;
+							fclose(f_nds_file);
+
+							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/dsimenuplusplus/boxart/%s.bmp", game_TID);
+						}
+					}
 				}
 				spawnedtitleboxes++;
 			}
@@ -478,8 +496,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->finalY = 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW);
 			// cursor->delay = TextEntry::ACTIVE;
 
-			char boxArtPath[256];
-
 			if (startMenu) {
 				if (startMenu_cursorPosition < (3-flashcardUsed)) {
 					showbubble = true;
@@ -504,20 +520,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (isDirectory[cursorPosition]) {
 							clearBoxArt();	// Clear box art, if it's a directory
 						} else {
-							snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
-							if (!access(boxArtPath, F_OK)) {
-								loadBoxArt(boxArtPath);	// Load box art based on game's filename
-							} else if (bnrRomType[cursorPosition] == 0) {
-								// Get game's TID
-								FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
-								char game_TID[5];
-								grabTID(f_nds_file, game_TID);
-								game_TID[4] = 0;
-								fclose(f_nds_file);
-
-								snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/dsimenuplusplus/boxart/%s.bmp", game_TID);
-								loadBoxArt(boxArtPath);	// Load box art based on game's TID
-							}
+							loadBoxArt(boxArtPath[cursorPosition]);	// Load box art
 						}
 						boxArtLoaded = true;
 					}
