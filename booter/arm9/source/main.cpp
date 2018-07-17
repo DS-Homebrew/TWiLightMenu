@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL);
+	int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL);
 
 	if(!graphicsInited) {
 		graphicsInit();
@@ -123,8 +123,15 @@ int main(int argc, char **argv) {
 	}
 
 	clearText();
-	printSmall(false, 4, 4, "sd:/_nds/dsimenuplusplus/");
-	printSmall(false, 4, 12, "main.srldr not found.");
+	if (err == 1) {
+		printSmall(false, 4, 4, "sd:/_nds/dsimenuplusplus/");
+		printSmall(false, 4, 12, "main.srldr not found.");
+	} else {
+		char errorText[16];
+		snprintf(errorText, sizeof(errorText), "Error %i", err);
+		printSmall(false, 4, 4, "Unable to start main.srldr");
+		printSmall(false, 4, 12, errorText);
+	}
 	printSmall(false, 4, 28, "Press B to return to menu.");
 	
 	while (1) {
