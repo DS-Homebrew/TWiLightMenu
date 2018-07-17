@@ -180,7 +180,7 @@ void SaveSettings(void) {
 	// Default nds-bootstrap settings
 	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", bstrap_asyncPrefetch);
+	settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
 	settingsini.SaveIniFile(settingsinipath);
 
 	if(!flashcardUsed) {
