@@ -69,6 +69,8 @@ extern bool arm7SCFGLocked;
 extern int consoleModel;
 extern bool isRegularDS;
 
+extern bool dropDown;
+extern bool redoDropDown;
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -386,6 +388,15 @@ bool isTopLevel(const char *path)
 #endif
 }
 
+void waitForFadeOut (void) {
+	if (!dropDown && theme == 0) {
+		dropDown = true;
+		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+	} else {
+		for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	}
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	int pressed = 0;
@@ -471,14 +482,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
+		whiteScreen = false;
+		fadeType = true;	// Fade in from white
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
 		if (!music) {
 			mmEffectEx(&mus_menu);
 			music = true;
 		}
-		whiteScreen = false;
-		fadeType = true;	// Fade in from white
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		
+		waitForFadeOut();
+
 		/* clearText(false);
 		updatePath();
 		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -711,6 +723,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -881,6 +894,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				redoDropDown = true;
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -900,6 +914,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				redoDropDown = true;
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
@@ -937,12 +952,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						SaveSettings();
 						settingsChanged = false;
 					}
-					shouldersRendered = false;
 					whiteScreen = true;
+					redoDropDown = true;
+					shouldersRendered = false;
+					showbubble = false;
+					showSTARTborder = false;
 					clearText();
 					whiteScreen = false;
 					fadeType = true;	// Fade in from white
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 5; i++) swiWaitForVBlank();
+					waitForFadeOut();
 				} else if (showDirectories) {
 					// Go up a directory
 					mmEffectEx(&snd_select);
@@ -955,6 +974,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -1049,13 +1069,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				redoDropDown = true;
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
 				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for (int i = 0; i < 5; i++) swiWaitForVBlank();
+				waitForFadeOut();
 			}
 
 			if ((pressed & KEY_SELECT) && !startMenu

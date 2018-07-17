@@ -308,6 +308,8 @@ bool useBootstrap = false;
 
 using namespace std;
 
+bool dropDown = false;
+bool redoDropDown = false;
 bool showbubble = false;
 bool showSTARTborder = false;
 

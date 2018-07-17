@@ -85,6 +85,12 @@ extern int colorRvalue;
 extern int colorGvalue;
 extern int colorBvalue;
 
+extern bool dropDown;
+extern bool redoDropDown;
+int dropTime = 0;
+int dropSeq = 0;
+int dropSpeed = 5;
+int dropSpeedChange = 0;
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -112,7 +118,7 @@ extern int startMenu_cursorPosition;
 extern int pagenum;
 int titleboxXpos;
 int startMenu_titleboxXpos;
-int titleboxYpos = 85;
+int titleboxYpos = -80;	// 85, when dropped down
 int titlewindowXpos;
 int startMenu_titlewindowXpos;
 
@@ -502,6 +508,50 @@ void vBlankHandler()
 					titleboxXmoveright = false;
 					movetimer = 0;
 				}
+			}
+		}
+
+		if (redoDropDown && theme == 0) {
+			dropTime = 0;
+			dropSeq = 0;
+			dropSpeed = 5;
+			dropSpeedChange = 0;
+			titleboxYpos = -80;	// 85, when dropped down
+			dropDown = false;
+			redoDropDown = false;
+		}
+
+		if (dropDown && theme == 0) {
+			if (dropSeq == 0) {
+				titleboxYpos += dropSpeed;
+				if (titleboxYpos > 85) dropSeq = 1;
+			} else if (dropSeq == 1) {
+				titleboxYpos -= dropSpeed;
+				dropTime++;
+				dropSpeedChange++;
+				if (dropTime >= 15) {
+					dropSpeedChange = -1;
+					dropSeq = 2;
+				}
+				if (dropSpeedChange == 2) {
+					dropSpeed--;
+					if (dropSpeed < 0) dropSpeed = 0;
+					dropSpeedChange = -1;
+				}
+			} else if (dropSeq == 2) {
+				titleboxYpos += dropSpeed;
+				if (titleboxYpos >= 85) {
+					dropSeq = 3;
+					titleboxYpos = 85;
+				}
+				dropSpeedChange++;
+				if (dropSpeedChange == 1) {
+					dropSpeed++;
+					if (dropSpeed > 4) dropSpeed = 4;
+					dropSpeedChange = -1;
+				}
+			} else if (dropSeq == 3) {
+				titleboxYpos = 85;
 			}
 		}
 
