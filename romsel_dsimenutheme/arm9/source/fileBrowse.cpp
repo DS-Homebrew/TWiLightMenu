@@ -61,6 +61,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool startButtonLaunch;
 extern int launchType;
 extern bool slot1LaunchMethod;
 extern bool homebrewBootstrap;
@@ -667,12 +668,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition = 39;
 				}
 			}
-			// else if (cursorPosition > ((int) dirContents[scrn].size() - 1))
-			// {
-			// 	cursorPosition = dirContents[scrn].size() - 1;
-			// }
-			
-			if ((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+
+			int pressedToLaunch = 0;
+			if (startButtonLaunch) {
+				pressedToLaunch = (pressed & KEY_START);
+			} else {
+				pressedToLaunch = (pressed & KEY_A);
+			}
+
+			if (pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{
 				if ((startMenu_cursorPosition == 0 && startMenu)
 				|| (startMenu_cursorPosition == 1 && startMenu)
@@ -1106,7 +1110,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				waitForFadeOut();
 			}
 
-			if ((pressed & KEY_SELECT) && !startMenu
+			int pressedForPerGameSettings = 0;
+			if (startButtonLaunch) {
+				pressedForPerGameSettings = (pressed & KEY_A);
+			} else {
+				pressedForPerGameSettings = (pressed & KEY_START);
+			}
+
+			if (pressedForPerGameSettings && !startMenu
 			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{

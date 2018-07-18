@@ -61,6 +61,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool startButtonLaunch;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
@@ -322,8 +323,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
 			showDirectoryContents (dirContents, screenOffset);
 		}
-		
-		if (pressed & KEY_A) {
+
+		int pressedToLaunch = 0;
+		if (startButtonLaunch) {
+			pressedToLaunch = (pressed & KEY_START);
+		} else {
+			pressedToLaunch = (pressed & KEY_A);
+		}
+
+		if (pressedToLaunch) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				iprintf("Entering directory\n");
@@ -557,7 +565,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
-		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
+		int pressedForPerGameSettings = 0;
+		if (startButtonLaunch) {
+			pressedForPerGameSettings = (pressed & KEY_A);
+		} else {
+			pressedForPerGameSettings = (pressed & KEY_START);
+		}
+
+		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
 		{
 			cursorPosition = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);

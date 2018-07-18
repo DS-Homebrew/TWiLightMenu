@@ -121,7 +121,8 @@ bool applaunch = false;
 bool startMenu = true;
 bool gotosettings = false;
 
-int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = NES, 3 = (S)GB(C)
+bool startButtonLaunch = false;
+int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
@@ -132,7 +133,6 @@ int subtheme = 0;
 int cursorPosition = 0;
 int startMenu_cursorPosition = 0;
 int pagenum = 0;
-int dsiWarePageNum = 0;
 bool showDirectories = true;
 bool animateDsiIcons = false;
 
@@ -180,6 +180,7 @@ void LoadSettings(void) {
 
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
