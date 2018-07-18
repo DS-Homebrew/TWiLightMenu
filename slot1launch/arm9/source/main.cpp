@@ -89,7 +89,7 @@ int main() {
 		// 	fifoSendValue32(FIFO_USER_06, 1);
 		// }
 
-		if(settingsini.GetInt("SRLOADER","RESET_SLOT1",0) == 1) {
+		if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 			fifoSendValue32(FIFO_USER_02, 1);
 			fifoSendValue32(FIFO_USER_07, 1);
 		}
