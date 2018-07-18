@@ -1,0 +1,7 @@
+*.nds
+*.NDS
+*.srldr
+*.elf
+
+build/
+data/
