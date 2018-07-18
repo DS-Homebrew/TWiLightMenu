@@ -846,7 +846,7 @@ int main(int argc, char **argv) {
 						selyPos += 12;
 
 						printSmall(false, 12, selyPos, STR_ASYNCPREFETCH.c_str());
-						if(soundfreq)
+						if(bstrap_asyncPrefetch)
 							printSmall(false, 224, selyPos, STR_ON.c_str());
 						else
 							printSmall(false, 224, selyPos, STR_OFF.c_str());
