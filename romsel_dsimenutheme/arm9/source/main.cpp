@@ -760,16 +760,14 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
-	vector<string> dsiWareExtensionList;
 	extensionList.push_back(".nds");
+	extensionList.push_back(".launcharg");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
 	extensionList.push_back(".sgb");
 	extensionList.push_back(".gbc");
 	extensionList.push_back(".nes");
 	extensionList.push_back(".fds");
-	dsiWareExtensionList.push_back(".app");
-	dsiWareExtensionList.push_back(".argv");
 	srand(time(NULL));
 	
 	char path[256];
@@ -793,6 +791,55 @@ int main(int argc, char **argv) {
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
+
+			// Launch DSiWare via launcharg
+			if ( strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0) {
+
+				FILE *argfile = fopen(filename.c_str(),"rb");
+					char str[PATH_MAX], *pstr;
+				const char seps[]= "\n\r\t ";
+
+				while( fgets(str, PATH_MAX, argfile) ) {
+					// Find comment and end string there
+					if( (pstr = strchr(str, '#')) )
+						*pstr= '\0';
+
+					// Tokenize arguments
+					pstr= strtok(str, seps);
+
+					while( pstr != NULL ) {
+						argarray.push_back(strdup(pstr));
+						pstr= strtok(NULL, seps);
+					}
+				}
+				fclose(argfile);
+				filename = argarray.at(0);
+
+				launchType = 0;	// No launch type for launcharg
+				SaveSettings();
+
+				sNDSHeaderExt NDSHeader;
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
+				fclose(f_nds_file);
+
+				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+				*(u16*)(0x02000304) = 0x1801;
+				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
+				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
+				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
+				*(u32*)(0x02000318) = 0x00000017;
+				*(u32*)(0x0200031C) = 0x00000000;
+				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+				}
+
+				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+			}
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
 
@@ -819,6 +866,7 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
+			// Launch DSiWare .nds via Unlaunch
 			if (isDSiWare[cursorPosition] && strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
@@ -919,6 +967,7 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
+			// Launch .nds directly or via nds-bootstrap
 			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);

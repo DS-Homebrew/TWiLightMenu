@@ -256,9 +256,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
 			{
-				getGameInfo(dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str());
+				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")

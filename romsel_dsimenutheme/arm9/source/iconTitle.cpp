@@ -302,7 +302,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// banner sequence
 		clearBannerSequence(num);
 	}
-	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0))
 	{
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
@@ -471,7 +472,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 		// icon
 		clearIcon(num);
 	}
-	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
@@ -680,7 +682,8 @@ void titleUpdate(bool isDir, const char* name)
 	{
 		writeBannerText(0, name, "", "");
 	}
-	else if (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;

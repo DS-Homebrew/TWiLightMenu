@@ -417,9 +417,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
 					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
 					{
-						getGameInfo(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+						getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 						bnrRomType[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
@@ -447,8 +448,33 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(i+pagenum*40).name.c_str());
 						if (!access(boxArtPath[i], F_OK)) {
 						} else if (bnrRomType[i] == 0) {
+							if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
+							{
+								vector<char*> argarray;
+
+								FILE *argfile = fopen(std_romsel_filename.c_str(),"rb");
+									char str[PATH_MAX], *pstr;
+								const char seps[]= "\n\r\t ";
+
+								while( fgets(str, PATH_MAX, argfile) ) {
+									// Find comment and end string there
+									if( (pstr = strchr(str, '#')) )
+										*pstr= '\0';
+
+									// Tokenize arguments
+									pstr= strtok(str, seps);
+
+									while( pstr != NULL ) {
+										argarray.push_back(strdup(pstr));
+										pstr= strtok(NULL, seps);
+									}
+								}
+								fclose(argfile);
+								std_romsel_filename = argarray.at(0);
+							}
 							// Get game's TID
-							FILE *f_nds_file = fopen(dirContents[scrn].at(i+pagenum*40).name.c_str(), "rb");
+							FILE *f_nds_file = fopen(std_romsel_filename.c_str(), "rb");
 							char game_TID[5];
 							grabTID(f_nds_file, game_TID);
 							game_TID[4] = 0;
