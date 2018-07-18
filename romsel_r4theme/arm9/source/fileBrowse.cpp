@@ -543,7 +543,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showdialogbox = false;
 		}
 
-		if (pressed & KEY_START)
+		int pressedForStartMenu = 0;
+		if (startButtonLaunch) {
+			pressedForStartMenu = (pressed & KEY_SELECT);
+		} else {
+			pressedForStartMenu = (pressed & KEY_START);
+		}
+
+		if (pressedForStartMenu)
 		{
 			if (settingsChanged) {
 				cursorPosition = fileOffset;
@@ -569,7 +576,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (startButtonLaunch) {
 			pressedForPerGameSettings = (pressed & KEY_A);
 		} else {
-			pressedForPerGameSettings = (pressed & KEY_START);
+			pressedForPerGameSettings = (pressed & KEY_SELECT);
 		}
 
 		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))

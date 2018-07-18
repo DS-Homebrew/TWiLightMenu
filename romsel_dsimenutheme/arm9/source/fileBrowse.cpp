@@ -1086,7 +1086,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			}
 
-			if (pressed & KEY_START)
+			int pressedForStartMenu = 0;
+			if (startButtonLaunch) {
+				pressedForStartMenu = (pressed & KEY_SELECT);
+			} else {
+				pressedForStartMenu = (pressed & KEY_START);
+			}
+
+			if (pressedForStartMenu)
 			{
 				mmEffectEx(&snd_switch);
 				fadeType = false;	// Fade to white
@@ -1114,7 +1121,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (startButtonLaunch) {
 				pressedForPerGameSettings = (pressed & KEY_A);
 			} else {
-				pressedForPerGameSettings = (pressed & KEY_START);
+				pressedForPerGameSettings = (pressed & KEY_SELECT);
 			}
 
 			if (pressedForPerGameSettings && !startMenu
