@@ -11,7 +11,7 @@ extern int perGameSettings_asyncPrefetch;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);
-void perGameSettings(std::string filename, const char* username);
+void perGameSettings(std::string filename);
 
 
 

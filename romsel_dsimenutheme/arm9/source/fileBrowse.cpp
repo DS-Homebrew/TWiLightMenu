@@ -1110,7 +1110,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{
-				perGameSettings(dirContents[scrn].at(cursorPosition+pagenum*40).name, username);
+				perGameSettings(dirContents[scrn].at(cursorPosition+pagenum*40).name);
 			}
 
 		}
