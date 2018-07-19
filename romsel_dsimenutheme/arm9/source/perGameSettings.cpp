@@ -179,7 +179,7 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		titleUpdate(isDirectory[cursorPosition], filename.c_str());
+		titleUpdate(isDirectory[cursorPosition], filename.c_str(), cursorPosition);
 		printSmall(false, 16, 64, filename.c_str());
 		printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 184, 80, gameTIDText);

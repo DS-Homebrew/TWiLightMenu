@@ -62,6 +62,9 @@ static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
+static u16 cachedTitle[40][128];
+static char titleToDisplay[3][128];
+
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
 static glImage gbaIcon[1];
@@ -507,6 +510,10 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// banner sequence
 		DC_FlushAll();
 
+		for (int i = 0; i < 128; i++) {
+			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+		}
+
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
@@ -692,7 +699,7 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
-void titleUpdate(bool isDir, const char* name)
+void titleUpdate(bool isDir, const char* name, int num)
 {
 	clearText(false);
 	if (showdialogbox) {
@@ -748,164 +755,26 @@ void titleUpdate(bool isDir, const char* name)
 	{
 		writeBannerText(0, name, "", "");
 	}
-	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0))
-	{
-		// look through the argv file for the corresponding nds/app file
-		FILE *fp;
-		char *line = NULL, *p = NULL;
-		size_t size = 0;
-		ssize_t rc;
-
-		// open the argv file
-		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
-			writeBannerText(0, "(can't open file!)", "", "");
-			fclose(fp);
-			return;
-		}
-
-		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
-			// remove comments
-			if ((p = strchr(line, '#')) != NULL)
-				*p = 0;
-
-			// skip leading whitespace
-			for (p = line; *p && isspace((int) *p); ++p)
-				;
-
-			if (*p)
-				break;
-		}
-
-		// done with the file at this point
-		fclose(fp);
-
-		if (p && *p)
-		{
-			// we found an argument
-			struct stat st;
-
-			// truncate everything after first argument
-			strtok(p, "\n\r\t ");
-
-			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
-			{
-				// let's see if this is a file or directory
-				rc = stat(p, &st);
-				if (rc != 0)
-				{
-					// stat failed
-					writeBannerText(0, "(can't find argument!)", "", "");
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
-					// this is a directory!
-					writeBannerText(1, "(invalid argv file!)", "This is a directory.", "");
-				}
-				else
-				{
-					titleUpdate(false, p);
-				}
-			}
-			else
-			{
-				// this is not an nds/app file!
-				writeBannerText(1, "(invalid argv file!)", "No .nds/.app file.", "");
-			}
-		}
-		else
-		{
-			writeBannerText(0, "(no argument!)", "", "");
-		}
-		// clean up the allocated line
-		free(line);
-	}
-	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+	else
 	{
 		// this is an nds/app file!
-		FILE *fp;
-		unsigned int iconTitleOffset;
-		int ret;
-
-		// open file for reading info
-		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
-			// text
-			writeBannerText(0, "(can't open file!)", "", "");
-			fclose(fp);
-			return;
-		}
-
-		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
-		if (ret == 0)
-			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
-		{
-			// text
-			writeBannerText(0, "(can't read file!)", "", "");
-			fclose(fp);
-			return;
-		}
-
-		if (iconTitleOffset == 0)
-		{
-			// text
-			writeBannerText(1, name, "(no title/icon)", "");
-			fclose(fp);
-			return;
-		}
-		ret = fseek(fp, iconTitleOffset, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
-		{
-			// try again, but using regular banner size
-			ret = fseek(fp, iconTitleOffset, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1)
-			{
-				// text
-				writeBannerText(1, name, "(can't read icon/title!)", "");
-				fclose(fp);
-				return;
-			}
-		}
-
-		// close file!
-		fclose(fp);
-
-		loadFixedBanner();
 
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
-		char *p = (char*) ndsBanner.titles[setGameLanguage];
 		int bannerlines = 0;
-		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[setGameLanguage]); i += 2)
+		int i2 = 0;
+		for (int i = 0; i < 128; i++)
 		{
-			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
-				p[i / 2] = 0;
+			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
+				titleToDisplay[bannerlines][i2] = 0;
 				bannerlines++;
-			} else if (p[i] == 0x22 && p[i+1] == 0x21) {
-				p[i / 2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
+				i2 = 0;
+			} else if (cachedTitle[num][i] == 0x2122) {
+				titleToDisplay[bannerlines][i2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
+				i2++;
 			} else {
-				p[i / 2] = p[i];
+				titleToDisplay[bannerlines][i2] = cachedTitle[num][i];
+				i2++;
 			}
 		}
 
@@ -913,19 +782,16 @@ void titleUpdate(bool isDir, const char* name)
 		switch(bannerlines) {
 			case 0:
 			default:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
 				break;
 			case 1:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing2, p);
-				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing3, p);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
 				break;
 			case 2:
-				printLargeCentered(false, BOX_PY, p);
-				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, p);
-				p += strlen(p) + 1;
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, p);
+				printLargeCentered(false, BOX_PY, titleToDisplay[0]);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
+				printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
 				break;
 		}
 		

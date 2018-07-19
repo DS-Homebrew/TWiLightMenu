@@ -25,7 +25,7 @@ void loadGBCIcon();
 void loadNESIcon();
 void getGameInfo(bool isDir, const char* name, int num);
 void iconUpdate(bool isDir, const char* name, int num);
-void titleUpdate(bool isDir, const char* name);
+void titleUpdate(bool isDir, const char* name, int num);
 void drawIcon(int Xpos, int Ypos, int num);
 void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);

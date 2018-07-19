@@ -392,7 +392,7 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+		for (int i = 0; i < 62; i++) swiWaitForVBlank();
 	} else {
 		for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	}
@@ -540,7 +540,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (startMenu_cursorPosition < (3-flashcardUsed)) {
 					showbubble = true;
 					showSTARTborder = true;
-					titleUpdate(false, "startMenu");
+					titleUpdate(false, "startMenu", startMenu_cursorPosition);
 				} else {
 					showbubble = false;
 					showSTARTborder = false;
@@ -556,6 +556,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						boxArtLoaded = true;
 					}
 				} else {
+					showbubble = true;
+					showSTARTborder = true;
+					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 					if (!boxArtLoaded && showBoxArt) {
 						if (isDirectory[cursorPosition]) {
 							clearBoxArt();	// Clear box art, if it's a directory
@@ -564,9 +567,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						boxArtLoaded = true;
 					}
-					showbubble = true;
-					showSTARTborder = true;
-					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
 				}
 			}
 
@@ -772,7 +772,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						clearText();
 						showdialogbox = true;
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
-						titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+						titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 						printSmallCentered(false, 112, "This game cannot be launched");
 						if (flashcardUsed) {
 							printSmallCentered(false, 128, "in DS mode.");
@@ -1025,7 +1025,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showdialogbox = true;
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
-				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
