@@ -788,7 +788,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						} while (!(pressed & KEY_A));
 						clearText();
 						showdialogbox = false;
-						for (int i = 0; i < 20; i++) swiWaitForVBlank();
+						for (int i = 0; i < 15; i++) swiWaitForVBlank();
 					} else {
 						mmEffectEx(&snd_launch);
 						applaunch = true;
@@ -1067,7 +1067,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				clearText();
 				showdialogbox = false;
-				for (int i = 0; i < 20; i++) swiWaitForVBlank();
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			if ((pressed & KEY_X) && startMenu && !flashcardUsed) {

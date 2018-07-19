@@ -274,6 +274,6 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 20; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	if (!flashcardUsed) perGameSettingsButtons = false;
 }
