@@ -360,6 +360,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showdialogbox = false;
 				} else {
 					applaunch = true;
+					useBootstrap = true;
 
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 25; i++) {

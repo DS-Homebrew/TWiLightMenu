@@ -793,6 +793,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						mmEffectEx(&snd_launch);
 						applaunch = true;
 						applaunchprep = true;
+						useBootstrap = true;
 
 						if (theme == 0) {
 							showbubble = false;

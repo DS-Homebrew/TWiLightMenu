@@ -930,7 +930,8 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiWare && strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
+			if (!flashcardUsed && isDSiWare && useBootstrap
+			&& strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
