@@ -14,10 +14,10 @@ include $(DEVKITARM)/ds_rules
 # DATA is a list of directories containing binary files
 # all directories are relative to this makefile
 #---------------------------------------------------------------------------------
+TARGET		:=	slot1launch
 BUILD		:=	build
 SOURCES		:=	source  
 INCLUDES	:=	include build
-DATA		:=
  
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -53,8 +53,8 @@ LIBDIRS	:=	$(LIBNDS)
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
  
-export ARM7BIN	:=	$(TOPDIR)/$(TARGET).arm7
-export ARM7ELF	:=	$(CURDIR)/$(TARGET).arm7.elf
+# export ARM7BIN	:=	$(TOPDIR)/$(TARGET).arm7
+export ARM7ELF	:=	$(CURDIR)/$(TARGET).elf
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir))
@@ -108,9 +108,9 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 # main targets
 #---------------------------------------------------------------------------------
-$(ARM7BIN)	:	$(ARM7ELF)
-	@$(OBJCOPY) -O binary $< $@
-	@echo built ... $(notdir $@)
+# $(ARM7BIN)	:	$(ARM7ELF)
+# 	@$(OBJCOPY) -O binary $< $@
+# 	@echo built ... $(notdir $@)
 
 
 $(ARM7ELF)	:	$(OFILES)

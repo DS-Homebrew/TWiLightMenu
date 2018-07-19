@@ -1,0 +1,16 @@
+# Binary File
+*.nds
+*.NDS
+*.cia
+*.app
+*.srldr
+*.elf
+*.arm7
+*.arm9
+
+# Build Directory
+build/
+data/
+
+# Project Files
+.idea/
