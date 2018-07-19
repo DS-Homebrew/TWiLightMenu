@@ -133,7 +133,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-b icon.bmp "DSiMenu++;Robz8" \
 			-g SRLA 01 "DSIMENUPP" -z 80040000 -u 00030015 
-	python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
+	python2 patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
@@ -156,7 +156,8 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
+	@rm -rf data
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds.orig.nds $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean

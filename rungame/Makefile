@@ -130,15 +130,15 @@ dist:	all
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf \
+	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 			-b icon.bmp "DSiMenu++;Last-ran ROM;Robz8"
-	python patch_ndsheader_dsiware.py $(TARGET).nds
+	python2 patch_ndsheader_dsiware.py $(TARGET).nds
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
 
 $(TARGET).arm9: arm9/$(TARGET).elf
-	cp arm9/$(TARGET).elf $(TARGET).arm9i.elf
+	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
 
 #---------------------------------------------------------------------------------
 arm7/$(TARGET).elf:
@@ -155,7 +155,8 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
+	@rm -rf data
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds.orig.nds $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean

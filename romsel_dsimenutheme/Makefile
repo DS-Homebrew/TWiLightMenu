@@ -134,14 +134,14 @@ dist:	all
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
-	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9i.elf -d $(NITRODATA) \
+	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
   -b icon.bmp "DSiMenu++;DSi Menu theme;Robz8"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
 
 $(TARGET).arm9: arm9/$(TARGET).elf
-	cp arm9/$(TARGET).elf $(TARGET).arm9i.elf
+	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
 
 #---------------------------------------------------------------------------------
 arm7/$(TARGET).elf:

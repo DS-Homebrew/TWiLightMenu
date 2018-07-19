@@ -39,7 +39,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 arm7/$(TARGET).arm7.elf -9 arm9/$(TARGET).arm9.elf \
 			-b $(CURDIR)/icon.bmp "DSiMenu++;Slot-1 Launcher;Apache Thunder, Robz8" \
 			-g TWL1 01 "DSIMENUPP-S1" -z 80040000 -u 00030004
-	python patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds --accessControl 0x00000038
+	python2 patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds --accessControl 0x00000038
 
 $(TARGET).arm7	: arm7/$(TARGET).elf
 $(TARGET).arm9	: arm9/$(TARGET).elf
@@ -59,9 +59,11 @@ cardengine_arm7: data
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).nds.orig.nds $(TARGET).arm9 data
-	@rm -fr slot1launch.arm7.elf
-	@rm -fr slot1launch.arm9.elf
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).nds.orig.nds data
+	@rm -fr $(TARGET).arm7
+	@rm -fr $(TARGET).arm9
+	@rm -fr $(TARGET).arm7.elf
+	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C arm9 clean
 	@$(MAKE) -C arm7 clean
