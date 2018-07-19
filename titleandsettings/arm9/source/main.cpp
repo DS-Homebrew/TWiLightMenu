@@ -75,6 +75,7 @@ static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
 
+static bool startButtonLaunch = false;
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 static bool bootstrapFile = false;
@@ -123,6 +124,7 @@ void LoadSettings(void) {
 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
 	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	if (flashcardUsed && launchType == 0) launchType = 1;
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
@@ -169,6 +171,7 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
+	settingsini.SetInt("SRLOADER", "START_BUTTON_LAUNCH", startButtonLaunch);
 
 	// UI settings.
 	settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -509,7 +512,7 @@ int main(int argc, char **argv) {
 	
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 2, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 3, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -1191,6 +1194,13 @@ int main(int argc, char **argv) {
 						printSmall(false, 230, selyPos, STR_NO.c_str());
 					selyPos += 12;
 
+					printSmall(false, 12, selyPos, STR_STARTBUTTONLAUNCH.c_str());
+					if(startButtonLaunch)
+						printSmall(false, 224, selyPos, STR_YES.c_str());
+					else
+						printSmall(false, 230, selyPos, STR_NO.c_str());
+					selyPos += 12;
+
 					if (!flashcardUsed && !arm7SCFGLocked) {
 						if (consoleModel < 2) {
 							printSmall(false, 12, selyPos, STR_SYSTEMSETTINGS.c_str());
@@ -1232,9 +1242,13 @@ int main(int argc, char **argv) {
 						printLargeCentered(true, 126, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
 						printLargeCentered(true, 140, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
 					} else if (settingscursor == 7) {
+						printLargeCentered(true, 112, STR_DESCRIPTION_STARTBUTTONLAUNCH_1.c_str());
+						printLargeCentered(true, 126, STR_DESCRIPTION_STARTBUTTONLAUNCH_2.c_str());
+						printLargeCentered(true, 140, STR_DESCRIPTION_STARTBUTTONLAUNCH_3.c_str());
+					} else if (settingscursor == 8) {
 						printLargeCentered(true, 118, STR_DESCRIPTION_SYSTEMSETTINGS_1.c_str());
 						printLargeCentered(true, 132, STR_DESCRIPTION_SYSTEMSETTINGS_2.c_str());
-					} else if (settingscursor == 8) {
+					} else if (settingscursor == 9) {
 						if (hiyaAutobootFound) {
 							printLargeCentered(true, 126, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
 						} else {
@@ -1316,6 +1330,10 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_select);
 							break;
 						case 7:
+							startButtonLaunch = !startButtonLaunch;
+							mmEffectEx(&snd_select);
+							break;
+						case 8:
 							screenmode = 0;
 							mmEffectEx(&snd_launch);
 							clearText();
@@ -1326,7 +1344,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) swiWaitForVBlank();
 							launchSystemSettings();
 							break;
-						case 8:
+						case 9:
 							if (pressed & KEY_A) {
 								if (hiyaAutobootFound) {
 									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
@@ -1386,11 +1404,11 @@ int main(int argc, char **argv) {
 				}
 
 				if (!flashcardUsed && consoleModel < 2) {
-					if (settingscursor > 8) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 8;
+					if (settingscursor > 9) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 9;
 				} else {
-					if (settingscursor > 6) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 6;
+					if (settingscursor > 7) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 7;
 				}
 			}
 

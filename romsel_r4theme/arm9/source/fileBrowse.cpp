@@ -61,6 +61,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool startButtonLaunch;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
@@ -256,9 +257,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
 			{
-				getGameInfo(dirContents.at(fileOffset).isDirectory, dirContents.at(fileOffset).name.c_str());
+				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
@@ -321,8 +323,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			screenOffset = fileOffset - ENTRIES_PER_SCREEN + 1;
 			showDirectoryContents (dirContents, screenOffset);
 		}
-		
-		if (pressed & KEY_A) {
+
+		int pressedToLaunch = 0;
+		if (startButtonLaunch) {
+			pressedToLaunch = (pressed & KEY_START);
+		} else {
+			pressedToLaunch = (pressed & KEY_A);
+		}
+
+		if (pressedToLaunch) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				iprintf("Entering directory\n");
@@ -534,7 +543,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showdialogbox = false;
 		}
 
-		if (pressed & KEY_START)
+		int pressedForStartMenu = 0;
+		if (startButtonLaunch) {
+			pressedForStartMenu = (pressed & KEY_SELECT);
+		} else {
+			pressedForStartMenu = (pressed & KEY_START);
+		}
+
+		if (pressedForStartMenu)
 		{
 			if (settingsChanged) {
 				cursorPosition = fileOffset;
@@ -556,10 +572,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";		
 		}
 
-		if ((pressed & KEY_SELECT) && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
+		int pressedForPerGameSettings = 0;
+		if (startButtonLaunch) {
+			pressedForPerGameSettings = (pressed & KEY_A);
+		} else {
+			pressedForPerGameSettings = (pressed & KEY_SELECT);
+		}
+
+		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
 		{
 			cursorPosition = fileOffset;
-			perGameSettings(dirContents.at(fileOffset).name, username);
+			perGameSettings(dirContents.at(fileOffset).name);
 		}
 
 	}

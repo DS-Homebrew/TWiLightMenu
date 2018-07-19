@@ -108,7 +108,7 @@ void savePerGameSettings (std::string filename) {
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
-void perGameSettings (std::string filename, const char* username) {
+void perGameSettings (std::string filename) {
 	int pressed = 0;
 
 	clearText();
@@ -119,7 +119,34 @@ void perGameSettings (std::string filename, const char* username) {
 	
 	loadPerGameSettings(filename);
 
-	FILE *f_nds_file = fopen(filename.c_str(), "rb");
+	std::string filenameForInfo = filename;
+	if((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg"))
+	{
+		std::vector<char*> argarray;
+
+		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");
+			char str[PATH_MAX], *pstr;
+		const char seps[]= "\n\r\t ";
+
+		while( fgets(str, PATH_MAX, argfile) ) {
+			// Find comment and end string there
+			if( (pstr = strchr(str, '#')) )
+				*pstr= '\0';
+
+			// Tokenize arguments
+			pstr= strtok(str, seps);
+
+			while( pstr != NULL ) {
+				argarray.push_back(strdup(pstr));
+				pstr= strtok(NULL, seps);
+			}
+		}
+		fclose(argfile);
+		filenameForInfo = argarray.at(0);
+	}
+
+	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
 	u32 SDKVersion = 0;
 	char game_TID[5];
