@@ -5,6 +5,12 @@ cd ..
 cd "booter_fc"
 make clean
 cd ..
+cd "rungame"
+make clean
+cd ..
+cd "slot1launch"
+make clean
+cd ..
 cd "titleandsettings"
 make clean
 cd ..

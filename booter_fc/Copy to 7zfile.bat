@@ -1,2 +1,2 @@
 @echo off
-copy "SRLoader.nds" "../7zfile/BOOT_fc.nds"
+copy "booter_fc.nds" "../7zfile/BOOT_fc.nds"

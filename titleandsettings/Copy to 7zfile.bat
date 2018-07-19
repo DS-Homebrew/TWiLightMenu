@@ -1,2 +1,2 @@
 @echo off
-copy "SRLoader.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
+copy "titleandsettings.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"

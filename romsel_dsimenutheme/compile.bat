@@ -1,3 +1,3 @@
 make
-copy "SRLoader.nds" "../7zfile/_nds/srloader/dsimenu.srldr"
+copy "romsel_dsimenutheme.nds" "../7zfile/_nds/dsimenuplusplus/dsimenu.srldr"
 pause
