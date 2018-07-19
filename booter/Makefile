@@ -23,7 +23,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
@@ -121,7 +121,7 @@ export GAME_TITLE := $(TARGET)
 .PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
 all:	bootloader bootstub $(TARGET).nds
-	
+
 dist:	all
 	@rm	-fr	hbmenu
 	@mkdir hbmenu

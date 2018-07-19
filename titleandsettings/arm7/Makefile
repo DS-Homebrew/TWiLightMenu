@@ -17,7 +17,7 @@ include $(DEVKITARM)/ds_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	titleandsettings
 BUILD		:=	build
 SOURCES		:=	source
 INCLUDES	:=	include build

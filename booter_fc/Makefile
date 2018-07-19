@@ -23,7 +23,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	booter_fc
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
@@ -153,7 +153,8 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
+	@rm -fr data
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean

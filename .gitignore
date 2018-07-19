@@ -2,6 +2,7 @@
 *.nds
 *.NDS
 *.cia
+*.app
 *.srldr
 *.elf
 *.arm7

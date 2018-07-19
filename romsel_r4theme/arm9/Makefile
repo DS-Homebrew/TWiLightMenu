@@ -17,7 +17,7 @@ include $(DEVKITARM)/ds_rules
 # GRAPHICS is a list of directories containing image files to be converted with grit
 # MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	romsel_r4theme
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include

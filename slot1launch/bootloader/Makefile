@@ -65,7 +65,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.bin)))
+BINFILES	:=	cardengine_arm7.bin
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
  
@@ -115,7 +115,7 @@ $(LOADELF)	:	$(OFILES)
 cardengine_arm7.bin.o : cardengine_arm7.bin
 
 cardengine_arm7.bin:
-	cp $(CURDIR)/../../data/cardengine_arm7.bin cardengine_arm7.bin
+	@cp $(CURDIR)/../../data/cardengine_arm7.bin cardengine_arm7.bin
 
 -include $(DEPENDS)
 

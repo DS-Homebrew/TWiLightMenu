@@ -118,9 +118,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub exceptionstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
+.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
-all:	bootloader bootstub exceptionstub $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
 	@rm	-fr	hbmenu

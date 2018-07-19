@@ -23,7 +23,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
-TARGET		:=	SRLoader
+TARGET		:=	romsel_dsimenutheme
 BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
@@ -122,9 +122,9 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub exceptionstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
+.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
-all:	bootloader bootstub exceptionstub $(TARGET).nds
+all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
 	@rm	-fr	hbmenu
@@ -158,7 +158,8 @@ arm9/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).arm9 data
+	@rm -fr data
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
 	@$(MAKE) -C bootloader clean
