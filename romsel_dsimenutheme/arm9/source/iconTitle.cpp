@@ -287,6 +287,68 @@ void drawIconNES(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
 }
 
+void loadFixedBanner(void) {
+	/* Banner fixes start here */
+	u32 bannersize = 0;
+
+	// Fire Emblem - Heroes of Light and Shadow (English Translation)
+	if(ndsBanner.crc[0] == 0xECF9
+	&& ndsBanner.crc[1] == 0xD18F
+	&& ndsBanner.crc[2] == 0xE22A
+	&& ndsBanner.crc[3] == 0xD8F4)
+	{
+		// Use fixed banner.
+		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Pokemon Blaze Black (Clean Version)
+	if(ndsBanner.crc[0] == 0x4683
+	&& ndsBanner.crc[1] == 0x40AD
+	&& ndsBanner.crc[2] == 0x5641
+	&& ndsBanner.crc[3] == 0xEE5D)
+	{
+		// Use fixed banner.
+		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Pokemon Blaze Black (Full Version)
+	if(ndsBanner.crc[0] == 0xA251
+	&& ndsBanner.crc[1] == 0x40AD
+	&& ndsBanner.crc[2] == 0x5641
+	&& ndsBanner.crc[3] == 0xEE5D)
+	{
+		// Use fixed banner.
+		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Pokemon Volt White (Clean Version)
+	if(ndsBanner.crc[0] == 0x77F4
+	&& ndsBanner.crc[1] == 0x5C94
+	&& ndsBanner.crc[2] == 0xBF18
+	&& ndsBanner.crc[3] == 0x0C88)
+	{
+		// Use fixed banner.
+		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Pokemon Volt White (Full Version)
+	if(ndsBanner.crc[0] == 0x9CA8
+	&& ndsBanner.crc[1] == 0x5C94
+	&& ndsBanner.crc[2] == 0xBF18
+	&& ndsBanner.crc[3] == 0x0C88)
+	{
+		// Use fixed banner.
+		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	}
+}
+
 void getGameInfo(bool isDir, const char* name, int num)
 {
 	bnriconPalLine[num] = 0;
@@ -439,6 +501,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		// close file!
 		fclose(fp);
+
+		loadFixedBanner();
 
 		// banner sequence
 		DC_FlushAll();
@@ -615,6 +679,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 
 		// close file!
 		fclose(fp);
+
+		loadFixedBanner();
 
 		// icon
 		DC_FlushAll();
@@ -824,6 +890,8 @@ void titleUpdate(bool isDir, const char* name)
 
 		// close file!
 		fclose(fp);
+
+		loadFixedBanner();
 
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00

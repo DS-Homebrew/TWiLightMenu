@@ -805,7 +805,7 @@ void vBlankHandler()
 
 void loadBoxArt(const char* filename) {
 	FILE* file = fopen(filename, "rb");
-	if (!file) file = fopen("nitro:/boxart_unknown.bmp", "rb");
+	if (!file) file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -828,7 +828,7 @@ void loadBoxArt(const char* filename) {
 
 void loadPhoto() {
 	FILE* file = fopen("/_nds/dsimenuplusplus/photo.bmp", "rb");
-	if (!file) file = fopen("nitro:/photo_default.bmp", "rb");
+	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -852,7 +852,7 @@ void loadPhoto() {
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
 	FILE* file = fopen("/_nds/dsimenuplusplus/photo.bmp", "rb");
-	if (!file) file = fopen("nitro:/photo_default.bmp", "rb");
+	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -932,15 +932,15 @@ void loadShoulders() {
 	// Draw L shoulder
 	if (theme == 1 || subtheme == 1) {
 		if (showLshoulder) {
-			file = fopen("nitro:/Lshoulder.bmp", "rb");
+			file = fopen("nitro:/graphics/Lshoulder.bmp", "rb");
 		} else {
-			file = fopen("nitro:/Lshoulder_greyed.bmp", "rb");
+			file = fopen("nitro:/graphics/Lshoulder_greyed.bmp", "rb");
 		}
 	} else {
 		if (showLshoulder) {
-			file = fopen("nitro:/dark_Lshoulder.bmp", "rb");
+			file = fopen("nitro:/graphics/dark_Lshoulder.bmp", "rb");
 		} else {
-			file = fopen("nitro:/dark_Lshoulder_greyed.bmp", "rb");
+			file = fopen("nitro:/graphics/dark_Lshoulder_greyed.bmp", "rb");
 		}
 	}
 
@@ -967,15 +967,15 @@ void loadShoulders() {
 	// Draw R shoulder
 	if (theme == 1 || subtheme == 1) {
 		if (showRshoulder) {
-			file = fopen("nitro:/Rshoulder.bmp", "rb");
+			file = fopen("nitro:/graphics/Rshoulder.bmp", "rb");
 		} else {
-			file = fopen("nitro:/Rshoulder_greyed.bmp", "rb");
+			file = fopen("nitro:/graphics/Rshoulder_greyed.bmp", "rb");
 		}
 	} else {
 		if (showRshoulder) {
-			file = fopen("nitro:/dark_Rshoulder.bmp", "rb");
+			file = fopen("nitro:/graphics/dark_Rshoulder.bmp", "rb");
 		} else {
-			file = fopen("nitro:/dark_Rshoulder_greyed.bmp", "rb");
+			file = fopen("nitro:/graphics/dark_Rshoulder_greyed.bmp", "rb");
 		}
 	}
 
@@ -1002,11 +1002,11 @@ void loadShoulders() {
 
 void topBgLoad() {
 	if (theme == 1) {
-		loadBMP("nitro:/3ds_top.bmp");
+		loadBMP("nitro:/graphics/3ds_top.bmp");
 	} else if (subtheme == 1) {
-		loadBMP("nitro:/org_top.bmp");
+		loadBMP("nitro:/graphics/org_top.bmp");
 	} else {
-		loadBMP("nitro:/top.bmp");
+		loadBMP("nitro:/graphics/top.bmp");
 	}
 	
 	// Load username
@@ -1015,21 +1015,21 @@ void topBgLoad() {
 	int x = 28;
 
 	for (int c = 0; c < 10; c++) {
-		fontPath = "nitro:/top_small_font_0x20.bmp";
+		fontPath = "nitro:/graphics/top_small_font_0x20.bmp";
 		if (usernameRendered[c] == 0x00) {
 			break;
 		} else if (usernameRendered[c] >= 0x40 && usernameRendered[c] < 0x60) {
-			fontPath = "nitro:/top_small_font_0x40.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0x40.bmp";
 		} else if (usernameRendered[c] >= 0x60 && usernameRendered[c] < 0x80) {
-			fontPath = "nitro:/top_small_font_0x60.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0x60.bmp";
 		} else if (usernameRendered[c] >= 0x80 && usernameRendered[c] < 0xA0) {
-			fontPath = "nitro:/top_small_font_0x80.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0x80.bmp";
 		} else if (usernameRendered[c] >= 0xA0 && usernameRendered[c] < 0xC0) {
-			fontPath = "nitro:/top_small_font_0xA0.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0xA0.bmp";
 		} else if (usernameRendered[c] >= 0xC0 && usernameRendered[c] < 0xE0) {
-			fontPath = "nitro:/top_small_font_0xC0.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0xC0.bmp";
 		} else if (usernameRendered[c] >= 0xE0 && usernameRendered[c] <= 0xFF) {
-			fontPath = "nitro:/top_small_font_0xE0.bmp";
+			fontPath = "nitro:/graphics/top_small_font_0xE0.bmp";
 		}
 		file = fopen(fontPath, "rb");
 
@@ -1090,7 +1090,7 @@ void topBgLoad() {
 
 void clearBoxArt() {
 	if (theme == 1) {
-		loadBMPPart("nitro:/3ds_top.bmp");
+		loadBMPPart("nitro:/graphics/3ds_top.bmp");
 	} else {
 		loadPhotoPart();
 	}

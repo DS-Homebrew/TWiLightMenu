@@ -35,6 +35,7 @@
 
 #include "graphics/graphics.h"
 
+#include "nitrofs.h"
 #include "ndsheaderbanner.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -683,6 +684,8 @@ int main(int argc, char **argv) {
 	}
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	nitroFSInit("/_nds/dsimenuplusplus/r4menu.srldr");
 
 	langInit();
 
