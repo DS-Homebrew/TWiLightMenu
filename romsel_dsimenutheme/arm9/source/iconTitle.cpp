@@ -62,6 +62,7 @@ static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
+static bool infoFound[40] = {false};
 static u16 cachedTitle[40][128];
 static char titleToDisplay[3][128];
 
@@ -352,6 +353,12 @@ void loadFixedBanner(void) {
 	}
 }
 
+void clearTitle(int num) {
+	for (int i = 0; i < 128; i++) {
+		cachedTitle[num][i] = 0;
+	}
+}
+
 void getGameInfo(bool isDir, const char* name, int num)
 {
 	bnriconPalLine[num] = 0;
@@ -361,11 +368,12 @@ void getGameInfo(bool isDir, const char* name, int num)
 	bnrWirelessIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = false;
+	infoFound[num] = false;
 
 	if (isDir)
 	{
-		// banner sequence
-		clearBannerSequence(num);
+		clearTitle(num);
+		clearBannerSequence(num);	// banner sequence
 	}
 	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0))
@@ -380,6 +388,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		fp = fopen(name, "rb");
 		if (fp == NULL)
 		{
+			clearTitle(num);
 			clearBannerSequence(num);
 			fclose(fp);
 			return;
@@ -419,11 +428,13 @@ void getGameInfo(bool isDir, const char* name, int num)
 				if (rc != 0)
 				{
 					// stat failed
+					clearTitle(num);
 					clearBannerSequence(num);
 				}
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
+					clearTitle(num);
 					clearBannerSequence(num);
 				}
 				else
@@ -434,11 +445,13 @@ void getGameInfo(bool isDir, const char* name, int num)
 			else
 			{
 				// this is not an nds/app file!
+				clearTitle(num);
 				clearBannerSequence(num);
 			}
 		}
 		else
 		{
+			clearTitle(num);
 			clearBannerSequence(num);
 		}
 		// clean up the allocated line
@@ -455,8 +468,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 		fp = fopen(name, "rb");
 		if (fp == NULL)
 		{
-			// banner sequence
-			clearBannerSequence(num);
+			clearTitle(num);
+			clearBannerSequence(num);	// banner sequence
 			fclose(fp);
 			return;
 		}
@@ -470,6 +483,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		if (ret != 1)
 		{
+			clearTitle(num);
+			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
@@ -488,6 +503,15 @@ void getGameInfo(bool isDir, const char* name, int num)
 		if (ndsHeader.bannerOffset == 0)
 		{
 			fclose(fp);
+
+			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+			fclose(bannerFile);
+
+			for (int i = 0; i < 128; i++) {
+				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+			}
+
 			return;
 		}
 		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
@@ -498,8 +522,27 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		if (ret != 1)
 		{
-			fclose(fp);
-			return;
+			// try again, but using regular banner size
+			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+			if (ret == 0)
+				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
+			else
+				ret = 0; // if seek fails set to !=1
+
+			if (ret != 1)
+			{
+				fclose(fp);
+
+				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+				fclose(bannerFile);
+
+				for (int i = 0; i < 128; i++) {
+					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+				}
+
+				return;
+			}
 		}
 
 		// close file!
@@ -507,13 +550,14 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		loadFixedBanner();
 
-		// banner sequence
 		DC_FlushAll();
 
 		for (int i = 0; i < 128; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 		}
+		infoFound[num] = true;
 
+		// banner sequence
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
@@ -779,20 +823,25 @@ void titleUpdate(bool isDir, const char* name, int num)
 		}
 
 		// text
-		switch(bannerlines) {
-			case 0:
-			default:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
-				break;
-			case 1:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
-				break;
-			case 2:
-				printLargeCentered(false, BOX_PY, titleToDisplay[0]);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
-				break;
+		if (showdialogbox || infoFound[num]) {
+			switch(bannerlines) {
+				case 0:
+				default:
+					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
+					break;
+				case 1:
+					printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
+					printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
+					break;
+				case 2:
+					printLargeCentered(false, BOX_PY, titleToDisplay[0]);
+					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
+					printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
+					break;
+			}
+		} else {
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}
