@@ -44,8 +44,6 @@ romsel_r4theme:
 	@$(MAKE) -C romsel_r4theme
 
 titleandsettings:
-	@mkdir -p "titleandsettings/arm9/build/"
-	@cp "romsel_dsimenutheme/arm9/build/font6x8.h" "titleandsettings/arm9/build/"
 	@$(MAKE) -C titleandsettings
 
 clean:
@@ -59,10 +57,10 @@ clean:
 	@$(MAKE) -C romsel_r4theme clean
 
 	@echo clean package files
-	@rm "$(PACKAGE)/BOOT.NDS"
-	@rm "$(PACKAGE)/BOOT_FC.NDS"
-	@rm "$(PACKAGE)/CFW - SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@rm "$(PACKAGE)/_nds/dsimenuplusplus/slot1launch.srldr"
-	@rm "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
-	@rm "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
-	@rm "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
+	@rm -rf "$(PACKAGE)/BOOT.NDS"
+	@rm -rf "$(PACKAGE)/BOOT_FC.NDS"
+	@rm -rf "$(PACKAGE)/CFW - SDNAND root/title/00030015/534c524e/content/00000000.app"
+	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/slot1launch.srldr"
+	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
+	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
