@@ -333,9 +333,15 @@ void SetDonorSDK(const char* filename) {
 
 	u32 SDKVersion = 0;
 	char game_TID[5];
+	char game_TID_letter1[5];
 	grabTID(f_nds_file, game_TID);
+	grabTID(f_nds_file, game_TID_letter1);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
+	game_TID_letter1[4] = 0;
+	game_TID_letter1[3] = 0;
+	game_TID_letter1[2] = 0;
+	game_TID_letter1[1] = 0;
 	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
 	fclose(f_nds_file);
 	
@@ -416,7 +422,7 @@ void SetDonorSDK(const char* filename) {
 		}
 	}
 
-	if(SDKVersion > 0x5000000) {
+	if(strcmp(game_TID_letter1, "V") == 0 || SDKVersion > 0x5000000) {
 		donorSdkVer = 5;
 	} else {
 		// TODO: If the list gets large enough, switch to bsearch().
