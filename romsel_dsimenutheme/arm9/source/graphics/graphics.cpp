@@ -803,6 +803,13 @@ void vBlankHandler()
 	if (applaunchprep && theme==0) launchDotDoFrameChange = !launchDotDoFrameChange;
 }
 
+void clearBmpScreen() {
+	u16 val = 0xFFFF;
+	for (int i = 0; i < 256*192; i++) {
+		BG_GFX_SUB[i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+	}
+}
+
 void loadBoxArt(const char* filename) {
 	FILE* file = fopen(filename, "rb");
 	if (!file) file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
