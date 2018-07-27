@@ -39,6 +39,7 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
+#include "nitrofs.h"
 
 #include "language.h"
 
@@ -69,6 +70,9 @@ static int consoleModel = 0;
 
 static bool showlogo = true;
 static bool gotosettings = false;
+
+int appName = 0;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
+const char* appNameText = "";
 
 int guiLanguage = -1;
 static int bstrap_loadingScreen = 1;
@@ -118,6 +122,7 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
+	appName = settingsini.GetInt("SRLOADER", "APP_NAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
@@ -470,13 +475,14 @@ int main(int argc, char **argv) {
 		graphicsInit();
 		fontInit();
 		fadeType = true;
-		printf("\n ");
-		printf(username);
+		printSmall(true, 28, 1, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
 
 	bool soundfreqsetting = false;
 
@@ -560,6 +566,19 @@ int main(int argc, char **argv) {
 
 
 	srand(time(NULL));
+
+	switch (appName) {
+		case 0:
+		default:
+			appNameText = "DSiMenu++";
+			break;
+		case 1:
+			appNameText = "SRLoader";
+			break;
+		case 2:
+			appNameText = "DSisionX";
+			break;
+	}
 
 	bool menuprinted = false;
 
@@ -770,7 +789,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 173, "DSiMenu++");
+					printSmallCentered(false, 173, appNameText);
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
 					printSmall(true, 28, 1, username);
@@ -1100,7 +1119,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 173, "DSiMenu++");
+					printSmallCentered(false, 173, appNameText);
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
 					printSmall(true, 28, 1, username);
