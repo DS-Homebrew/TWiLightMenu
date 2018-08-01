@@ -89,10 +89,13 @@ extern int colorBvalue;
 
 extern bool dropDown;
 extern bool redoDropDown;
-int dropTime = 0;
-int dropSeq = 0;
-int dropSpeed = 5;
-int dropSpeedChange = 0;
+int dropTime[5] = {0};
+int dropSeq[5] = {0};
+int dropSpeed[5] = {5};
+int dropSpeedChange[5] = {0};
+int titleboxYposDropDown[5] = {-85-80};
+int allowedTitleboxForDropDown = 0;
+int delayForTitleboxToDropDown = 0;
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -120,7 +123,7 @@ extern int startMenu_cursorPosition;
 extern int pagenum;
 int titleboxXpos;
 int startMenu_titleboxXpos;
-int titleboxYpos = -80;	// 85, when dropped down
+int titleboxYpos = 85;	// 85, when dropped down
 int titlewindowXpos;
 int startMenu_titlewindowXpos;
 
@@ -514,46 +517,59 @@ void vBlankHandler()
 		}
 
 		if (redoDropDown && theme == 0) {
-			dropTime = 0;
-			dropSeq = 0;
-			dropSpeed = 5;
-			dropSpeedChange = 0;
-			titleboxYpos = -80;	// 85, when dropped down
+			for (int i = 0; i < 5; i++) {
+				dropTime[i] = 0;
+				dropSeq[i] = 0;
+				dropSpeed[i] = 5;
+				dropSpeedChange[i] = 0;
+				titleboxYposDropDown[i] = -85-80;
+			}
+			allowedTitleboxForDropDown = 0;
+			delayForTitleboxToDropDown = 0;
 			dropDown = false;
 			redoDropDown = false;
 		}
 
-		if (dropDown && theme == 0) {
-			if (dropSeq == 0) {
-				titleboxYpos += dropSpeed;
-				if (titleboxYpos > 85) dropSeq = 1;
-			} else if (dropSeq == 1) {
-				titleboxYpos -= dropSpeed;
-				dropTime++;
-				dropSpeedChange++;
-				if (dropTime >= 15) {
-					dropSpeedChange = -1;
-					dropSeq = 2;
+		if (!whiteScreen && dropDown && theme == 0) {
+			for (int i = 0; i <= allowedTitleboxForDropDown; i++) {
+				if (dropSeq[i] == 0) {
+					titleboxYposDropDown[i] += dropSpeed[i];
+					if (titleboxYposDropDown[i] > 0) dropSeq[i] = 1;
+				} else if (dropSeq[i] == 1) {
+					titleboxYposDropDown[i] -= dropSpeed[i];
+					dropTime[i]++;
+					dropSpeedChange[i]++;
+					if (dropTime[i] >= 15) {
+						dropSpeedChange[i] = -1;
+						dropSeq[i] = 2;
+					}
+					if (dropSpeedChange[i] == 2) {
+						dropSpeed[i]--;
+						if (dropSpeed[i] < 0) dropSpeed[i] = 0;
+						dropSpeedChange[i] = -1;
+					}
+				} else if (dropSeq[i] == 2) {
+					titleboxYposDropDown[i] += dropSpeed[i];
+					if (titleboxYposDropDown[i] >= 0) {
+						dropSeq[i] = 3;
+						titleboxYposDropDown[i] = 0;
+					}
+					dropSpeedChange[i]++;
+					if (dropSpeedChange[i] == 1) {
+						dropSpeed[i]++;
+						if (dropSpeed[i] > 4) dropSpeed[i] = 4;
+						dropSpeedChange[i] = -1;
+					}
+				} else if (dropSeq[i] == 3) {
+					titleboxYposDropDown[i] = 0;
 				}
-				if (dropSpeedChange == 2) {
-					dropSpeed--;
-					if (dropSpeed < 0) dropSpeed = 0;
-					dropSpeedChange = -1;
-				}
-			} else if (dropSeq == 2) {
-				titleboxYpos += dropSpeed;
-				if (titleboxYpos >= 85) {
-					dropSeq = 3;
-					titleboxYpos = 85;
-				}
-				dropSpeedChange++;
-				if (dropSpeedChange == 1) {
-					dropSpeed++;
-					if (dropSpeed > 4) dropSpeed = 4;
-					dropSpeedChange = -1;
-				}
-			} else if (dropSeq == 3) {
-				titleboxYpos = 85;
+			}
+
+			delayForTitleboxToDropDown++;
+			if (delayForTitleboxToDropDown >= 5) {
+				allowedTitleboxForDropDown++;
+				if (allowedTitleboxForDropDown > 4) allowedTitleboxForDropDown = 4;
+				delayForTitleboxToDropDown = 0;
 			}
 		}
 
@@ -618,24 +634,24 @@ void vBlankHandler()
 						movecloseXpos = 0;
 					}
 					if (i == 0) {
-						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, &settingsImage[1 & 63]);
+						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (i == 1) {
 						if (!flashcardUsed) {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
 					} else if (i == 2 && !flashcardUsed) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 					} else {
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
 						} else {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[1 & 63]);
 						}
 					}
 					spawnedboxXpos += 64;
@@ -652,20 +668,20 @@ void vBlankHandler()
 					if (i < spawnedtitleboxes) {
 						if (isDirectory[i]) {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos-3, GL_FLIP_NONE, folderImage);
+							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, folderImage);
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12, i);
+							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						}
 					} else {
 						if (theme == 1) {
-							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, boxemptyImage);
 						} else {
-							glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+							glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[1 & 63]);
 						}
 					}
 					spawnedboxXpos += 64;
@@ -1110,6 +1126,19 @@ void graphicsInit()
 	for (int i = 0; i < 12; i++) {
 		launchDotFrame[i] = 5;
 	}
+
+	for (int i = 0; i < 5; i++) {
+		dropTime[i] = 0;
+		dropSeq[i] = 0;
+		dropSpeed[i] = 5;
+		dropSpeedChange[i] = 0;
+		if (theme == 1) titleboxYposDropDown[i] = 0;
+		else titleboxYposDropDown[i] = -85-80;
+	}
+	allowedTitleboxForDropDown = 0;
+	delayForTitleboxToDropDown = 0;
+	dropDown = false;
+	redoDropDown = false;
 
 	launchDotXMove[0] = false;
 	launchDotYMove[0] = true;
