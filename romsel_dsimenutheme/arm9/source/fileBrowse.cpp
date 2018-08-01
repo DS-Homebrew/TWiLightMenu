@@ -196,7 +196,7 @@ void InitSound() {
 	};
 }
 
-bool music = false;
+extern bool music;
 
 extern char usernameRendered[11];
 extern bool usernameRenderedDone;
@@ -512,10 +512,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
 		for (int i = 0; i < 5; i++) swiWaitForVBlank();
-		if (!music) {
-			mmEffectEx(&mus_menu);
-			music = true;
-		}
 		waitForFadeOut();
 
 		/* clearText(false);

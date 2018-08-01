@@ -101,6 +101,9 @@ static void RemoveTrailingSpaces(std::string& code)
 	}
 }
 
+bool music = false;
+extern mm_sound_effect mus_menu;
+
 std::string romfolder;
 
 // These are used by flashcard functions and must retain their trailing slash.
@@ -781,6 +784,11 @@ int main(int argc, char **argv) {
 	char path[256];
 
 	InitSound();
+
+	if (!music) {
+		mmEffectEx(&mus_menu);
+		music = true;
+	}
 
 	while(1) {
 
