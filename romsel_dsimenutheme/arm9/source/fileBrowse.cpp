@@ -113,6 +113,8 @@ extern int titlewindowXpos;
 extern bool showLshoulder;
 extern bool showRshoulder;
 
+extern bool showProgressIcon;
+
 extern bool flashcardUsed;
 
 char boxArtPath[40][256];
@@ -407,6 +409,7 @@ void displayNowLoading(void) {
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
 	for (int i = 0; i < 35; i++) swiWaitForVBlank();
+	showProgressIcon = true;
 	controlTopBright = false;
 }
 
@@ -524,6 +527,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		}
 
 		if (nowLoadingDisplaying) {
+			showProgressIcon = false;
 			fadeType = false;	// Fade to white
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
 			nowLoadingDisplaying = false;
@@ -699,6 +703,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				|| (startMenu_cursorPosition == 2 && startMenu))
 				{
 					mmEffectEx(&snd_launch);
+					controlTopBright = true;
 					applaunch = true;
 					applaunchprep = true;
 					if (startMenu_cursorPosition == 0) gotosettings = true;
@@ -807,6 +812,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						for (int i = 0; i < 15; i++) swiWaitForVBlank();
 					} else {
 						mmEffectEx(&snd_launch);
+						controlTopBright = true;
 						applaunch = true;
 						applaunchprep = true;
 						useBootstrap = true;
@@ -837,6 +843,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				else
 				{
 					mmEffectEx(&snd_launch);
+					controlTopBright = true;
 					applaunch = true;
 					applaunchprep = true;
 					if (!isHomebrew[cursorPosition]) {
@@ -900,6 +907,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				else
 				{
 					mmEffectEx(&snd_launch);
+					controlTopBright = true;
 					applaunch = true;
 					applaunchprep = true;
 					useBootstrap = false;

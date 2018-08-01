@@ -692,7 +692,13 @@ int main(int argc, char **argv) {
 		fontInit();
 		whiteScreen = false;
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
+		if (!dropDown && theme == 0) {
+			dropDown = true;
+			for (int i = 0; i < 72; i++) swiWaitForVBlank();
+		} else {
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+		}
 		showbubble = true;
 		printLarge(false, 64, 32, "fatinitDefault failed!");
 
@@ -703,18 +709,6 @@ int main(int argc, char **argv) {
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
-				consoleClear();
-				if(!usernameRenderedDone) {
-					for (int i = 0; i < 10; i++) {
-						if (username[i] == 0)
-							usernameRendered[i] = 0x20;
-						else
-							usernameRendered[i] = username[i];
-					}
-					usernameRenderedDone = true;
-				}
-				iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
@@ -736,15 +730,6 @@ int main(int argc, char **argv) {
 			{
 				cursorPosition = 39;
 			}
-			
-			if (pressed & KEY_A) {
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
-
-				applaunchprep = true;
-			}
-
 		}
 	}
 
