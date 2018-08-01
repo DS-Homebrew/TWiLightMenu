@@ -60,6 +60,8 @@
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
+bool controlTopBright = true;
+bool controlBottomBright = true;
 
 extern void ClearBrightness();
 

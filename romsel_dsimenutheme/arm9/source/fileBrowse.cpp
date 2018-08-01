@@ -60,6 +60,8 @@
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool controlTopBright;
+extern bool controlBottomBright;
 
 extern bool startButtonLaunch;
 extern int launchType;
@@ -398,8 +400,20 @@ void waitForFadeOut (void) {
 	}
 }
 
+bool nowLoadingDisplaying = false;
+
+void displayNowLoading(void) {
+	fadeType = true;	// Fade in from white
+	printLargeCentered(false, 88, "Now Loading...");
+	nowLoadingDisplaying = true;
+	for (int i = 0; i < 35; i++) swiWaitForVBlank();
+	controlTopBright = false;
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
+	displayNowLoading();
+
 	int pressed = 0;
 	SwitchState scrn(3);
 	vector<DirEntry> dirContents[scrn.SIZE];
@@ -509,6 +523,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
+		if (nowLoadingDisplaying) {
+			fadeType = false;	// Fade to white
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			nowLoadingDisplaying = false;
+			clearText(false);
+		}
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
 		for (int i = 0; i < 5; i++) swiWaitForVBlank();
@@ -928,6 +948,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				SaveSettings();
 				settingsChanged = false;
+				displayNowLoading();
 				break;		
 			} else 	if ((pressed & KEY_R) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
 			{
@@ -948,6 +969,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				SaveSettings();
 				settingsChanged = false;
+				displayNowLoading();
 				break;		
 			}
 
@@ -1095,13 +1117,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_switch);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				if (showBoxArt && !startMenu) clearBoxArt();	// Clear box art
 				startMenu = !startMenu;
 				if (settingsChanged) {
 					SaveSettings();
 					settingsChanged = false;
 				}
 				whiteScreen = true;
-				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				redoDropDown = true;
 				shouldersRendered = false;

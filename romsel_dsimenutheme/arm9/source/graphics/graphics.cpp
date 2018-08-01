@@ -76,6 +76,8 @@ extern char usernameRendered[11];
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool controlTopBright;
+extern bool controlBottomBright;
 int fadeDelay = 0;
 
 extern bool music;
@@ -425,8 +427,8 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		SetBrightness(0, screenBrightness);
-		SetBrightness(1, screenBrightness);
+		if (controlBottomBright) SetBrightness(0, screenBrightness);
+		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (showdialogbox) {
 			if (dbox_movespeed <= 1) {
