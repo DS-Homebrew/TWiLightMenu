@@ -591,8 +591,7 @@ void vBlankHandler()
 		//else
 		//{
 			drawBG(subBgImage);
-			if (showbubble) drawBubble(bubbleImage);
-			else if (theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
+			if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
@@ -760,7 +759,7 @@ void vBlankHandler()
 					}
 				}
 			}
-			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
+			if (showbubble) drawBubble(bubbleImage);
 			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.

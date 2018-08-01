@@ -394,7 +394,7 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 62; i++) swiWaitForVBlank();
+		for (int i = 0; i < 72; i++) swiWaitForVBlank();
 	} else {
 		for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	}
