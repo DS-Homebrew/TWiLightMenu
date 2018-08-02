@@ -1045,7 +1045,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			if ((pressed & KEY_X) && !startMenu
+			if ((pressed & KEY_X) && !startMenu && showSTARTborder
 			&& strcmp(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "..") != 0)
 			{
 				clearText();
