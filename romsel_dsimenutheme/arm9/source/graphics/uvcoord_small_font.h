@@ -18,38 +18,38 @@
 		//	U,V,Width,Height
 
 static constexpr unsigned int small_font_texcoords[] = {
-	0, 0, 0, TEXT_SY, // 0
-	16, 0, 0, TEXT_SY, // 1
-	32, 0, 0, TEXT_SY, // 2
-	48, 0, 0, TEXT_SY, // 3
-	64, 0, 0, TEXT_SY, // 4
-	80, 0, 0, TEXT_SY, // 5
-	96, 0, 0, TEXT_SY, // 6
-	112, 0, 0, TEXT_SY, // 7
-	128, 0, 0, TEXT_SY, // 8
-	144, 0, 0, TEXT_SY, // 9
-	160, 0, 0, TEXT_SY, // 10
-	176, 0, 0, TEXT_SY, // 11
-	192, 0, 0, TEXT_SY, // 12
-	208, 0, 0, TEXT_SY, // 13
-	224, 0, 0, TEXT_SY, // 14
-	240, 0, 0, TEXT_SY, // 15
-	256, 0, 0, TEXT_SY, // 16
-	272, 0, 0, TEXT_SY, // 17
-	288, 0, 0, TEXT_SY, // 18
-	304, 0, 0, TEXT_SY, // 19
-	320, 0, 0, TEXT_SY, // 20
-	336, 0, 0, TEXT_SY, // 21
-	352, 0, 0, TEXT_SY, // 22
-	368, 0, 0, TEXT_SY, // 23
-	384, 0, 0, TEXT_SY, // 24
-	400, 0, 0, TEXT_SY, // 25
-	416, 0, 0, TEXT_SY, // 26
-	432, 0, 0, TEXT_SY, // 27
-	448, 0, 0, TEXT_SY, // 28
-	464, 0, 0, TEXT_SY, // 29
-	480, 0, 0, TEXT_SY, // 30
-	496, 0, 0, TEXT_SY, // 31
+	// 0, 0, 0, TEXT_SY, // 0
+	// 16, 0, 0, TEXT_SY, // 1
+	// 32, 0, 0, TEXT_SY, // 2
+	// 48, 0, 0, TEXT_SY, // 3
+	// 64, 0, 0, TEXT_SY, // 4
+	// 80, 0, 0, TEXT_SY, // 5
+	// 96, 0, 0, TEXT_SY, // 6
+	// 112, 0, 0, TEXT_SY, // 7
+	// 128, 0, 0, TEXT_SY, // 8
+	// 144, 0, 0, TEXT_SY, // 9
+	// 160, 0, 0, TEXT_SY, // 10
+	// 176, 0, 0, TEXT_SY, // 11
+	// 192, 0, 0, TEXT_SY, // 12
+	// 208, 0, 0, TEXT_SY, // 13
+	// 224, 0, 0, TEXT_SY, // 14
+	// 240, 0, 0, TEXT_SY, // 15
+	// 256, 0, 0, TEXT_SY, // 16
+	// 272, 0, 0, TEXT_SY, // 17
+	// 288, 0, 0, TEXT_SY, // 18
+	// 304, 0, 0, TEXT_SY, // 19
+	// 320, 0, 0, TEXT_SY, // 20
+	// 336, 0, 0, TEXT_SY, // 21
+	// 352, 0, 0, TEXT_SY, // 22
+	// 368, 0, 0, TEXT_SY, // 23
+	// 384, 0, 0, TEXT_SY, // 24
+	// 400, 0, 0, TEXT_SY, // 25
+	// 416, 0, 0, TEXT_SY, // 26
+	// 432, 0, 0, TEXT_SY, // 27
+	// 448, 0, 0, TEXT_SY, // 28
+	// 464, 0, 0, TEXT_SY, // 29
+	// 480, 0, 0, TEXT_SY, // 30
+	// 496, 0, 0, TEXT_SY, // 31
 	0, 16, 4, TEXT_SY, // Space
 	16, 16, 2, TEXT_SY, // !
 	32, 16, 5, TEXT_SY, // "

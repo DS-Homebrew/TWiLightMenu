@@ -1041,8 +1041,10 @@ void topBgLoad() {
 			for (int y=15; y>=0; y--) {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
-				u16* src = buffer+(small_font_texcoords[0+(4*usernameRendered[c])]);
-				for (int i=0; i<small_font_texcoords[2+(4*usernameRendered[c])]; i++) {
+				// Temporary hack! should be replaced with a lookup table and coordinates.
+				u16* src = buffer+(small_font_texcoords[0+(4*(usernameRendered[c]-0x20))]);
+				// Temporary hack!
+				for (int i=0; i<small_font_texcoords[2+(4*(usernameRendered[c]-0x20))]; i++) {
 					u16 val = *(src++);
 					switch (val) {
 						case 0xFC1F:
