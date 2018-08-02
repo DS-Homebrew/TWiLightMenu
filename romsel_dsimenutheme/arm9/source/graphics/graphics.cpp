@@ -119,6 +119,8 @@ extern int subtheme;
 extern int cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+//int titleboxXmovespeed[8] = {8};
+int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 int titleboxXpos;
 int startMenu_titleboxXpos;
 int titleboxYpos = 85;	// 85, when dropped down
@@ -462,12 +464,12 @@ void vBlankHandler()
 		if (titleboxXmoveleft) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos -= 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					startMenu_titleboxXpos -= 8;
+					startMenu_titleboxXpos -= titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos -= 1;
 					movetimer++;
 				} else {
@@ -476,12 +478,12 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					titleboxXpos -= 8;
+					titleboxXpos -= titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos -= 1;
 					movetimer++;
 				} else {
@@ -492,12 +494,12 @@ void vBlankHandler()
 		} else if (titleboxXmoveright) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos += 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					startMenu_titleboxXpos += 8;
+					startMenu_titleboxXpos += titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
 					movetimer++;
 				} else {
@@ -506,12 +508,12 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					titleboxXpos += 8;
+					titleboxXpos += titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos += 1;
 					movetimer++;
 				} else {
