@@ -17,7 +17,7 @@
 #-gT!
 
 # use lz77 compression
-#-gzl
+-gzl
 
 # 16 bit bitmap
 #-gB16
