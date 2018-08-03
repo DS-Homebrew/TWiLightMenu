@@ -25,6 +25,7 @@
 #include "TextPane.h"
 #include "fontHandler.h"
 #include "FontGraphic.h"
+
 using namespace std;
 
 void TextPane::wrapTransition()
@@ -147,7 +148,7 @@ void TextPane::scroll(bool up)
 		shownText.push_front(newEntry);
 }
 
-void TextPane::addLine(const u16 *line)
+void TextPane::addLine(const char *line)
 {
 	text.emplace_back(line);
 }

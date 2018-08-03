@@ -20,7 +20,6 @@
 
 #include "TextEntry.h"
 #include <algorithm>
-#include <nds/ndstypes.h>
 
 using namespace std;
 
@@ -91,7 +90,7 @@ bool TextEntry::update()
 	return false;
 }
 
-TextEntry::TextEntry(bool large, int x, int y, const u16 *message)
+TextEntry::TextEntry(bool large, int x, int y, const char* message)
 : large(large), immune(false), delayShown(false), fade(FadeType::NONE)
 , anim(AnimType::IN), initX(x), initY(y)
 , x(x*PRECISION), y(y*PRECISION), finalX(x), finalY(y)

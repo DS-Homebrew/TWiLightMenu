@@ -20,7 +20,6 @@
 #ifndef TEXTPANE_H
 #define	TEXTPANE_H
 
-#include <nds/ndstypes.h>
 #include <list>
 #include <vector>
 #include <string>
@@ -33,13 +32,13 @@ class TextPane
 	const int START_PX, START_PY, SHOWN_ELEMENTS;
 	int startIndex;
 	std::list<TextEntry> shownText;
-	std::vector<const u16 *> text;
+	std::vector<const char *> text;
 	void wrapTransition();
 public:
 	void createDefaultEntries();
 	void slideTransition(bool transitionIn, bool right = true, int delay = 0, int clickedIndex = -1);
 	void scroll(bool up);
-	void addLine(const u16 *line);
+	void addLine(const char *line);
 	bool update(bool top);
 	TextPane(int startPX, int startPY, int shownElements);
 };

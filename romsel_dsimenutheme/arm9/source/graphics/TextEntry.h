@@ -18,7 +18,6 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-#include <nds/ndstypes.h>
 
 template <typename T> int sign(T val)
 {
@@ -54,10 +53,10 @@ public:
 	int invAccel;
 	int delay;
 	int polyID;
-	const u16 *message;
+	const char *message;
 
 	int calcAlpha();
 	bool update(); //Returns true to delete itself
 
-	TextEntry(bool large, int x, int y, const u16 *message);
+	TextEntry(bool large, int x, int y, const char *message);
 };

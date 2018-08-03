@@ -25,7 +25,7 @@
 #include <nds/ndstypes.h>
 #include <nds/bios.h>
 #include <nds/arm9/decompress.h>
-#include <memory>
+
 #include "FontGraphic.h"
 #include "fontHandler.h"
 #include "TextEntry.h"
@@ -127,7 +127,6 @@ void updateText(bool top)
 			glPolyFmt(POLY_ALPHA(alpha) | POLY_CULL_NONE | POLY_ID(1));
 			// if (top)
 			// 	glColor(RGB15(0, 0, 0));
-			// This is where the font drawing routine is.
 			getFont(it->large).print(it->x / TextEntry::PRECISION, it->y / TextEntry::PRECISION, it->message);
 		}
 	}
@@ -160,105 +159,34 @@ void clearText()
 	clearText(false);
 }
 
-void printSmall(bool top, int x, int y, const u16 *message)
+void printSmall(bool top, int x, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(false, x, y, message);
 }
 
-void printSmallCentered(bool top, int y, const u16 *message)
+void printSmallCentered(bool top, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(false, smallFont.getCenteredX(message), y, message);
 }
 
-void printLarge(bool top, int x, int y, const u16 *message)
+void printLarge(bool top, int x, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(true, x, y, message);
 }
 
-void printLargeCentered(bool top, int y, const u16 *message)
+void printLargeCentered(bool top, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(true, largeFont.getCenteredX(message), y, message);
 }
 
-int calcSmallFontWidth(const u16 *text)
+int calcSmallFontWidth(const char *text)
 {
 	return smallFont.calcWidth(text);
 }
 
-int calcLargeFontWidth(const u16 *text)
+int calcLargeFontWidth(const char *text)
 {
 	return largeFont.calcWidth(text);
-}
-
-#define WIDE_BUFFER_SIZE 32
-u16 wideBufferCache[24][WIDE_BUFFER_SIZE];
-int latestUsedBuffer = 0;
-
-int getWideBuffer() {
-	if (latestUsedBuffer > 32) {
-		latestUsedBuffer = 0;
-		return latestUsedBuffer;
-	}
-	int nextBuffer = latestUsedBuffer;
-	latestUsedBuffer++;
-	return nextBuffer;
-}
-
-void fillAsciiBuffer(const char* message, u16 *wideBuffer) {
-	int counter = 0;
-	while (*message) {
-		wideBuffer[counter] = *message;
-		message++;
-		counter++;
-	}
-	while (counter < WIDE_BUFFER_SIZE) {
-		wideBuffer[counter] = NULL;
-		counter++;
-	}
-}
-
-void printSmallAscii(bool top, int x, int y, const char* message)
-{
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(message, wideBufferCache[bufferAlloc]);
-	getTextQueue(top).emplace_back(false, x, y, wideBufferCache[bufferAlloc]);
-}
-
-void printSmallCenteredAscii(bool top, int y, const char* message)
-{
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(message, wideBufferCache[bufferAlloc]);
-	getTextQueue(top).emplace_back(false, smallFont.getCenteredX(wideBufferCache[bufferAlloc]), y, 
-		wideBufferCache[bufferAlloc]);
-}
-
-void printLargeAscii(bool top, int x, int y, const char* message)
-{
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(message, wideBufferCache[bufferAlloc]);
-	getTextQueue(top).emplace_back(true, x, y, wideBufferCache[bufferAlloc]);
-}
-
-void printLargeCenteredAscii(bool top, int y, const char* message)
-{
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(message, wideBufferCache[bufferAlloc]);
-	getTextQueue(top).emplace_back(true, largeFont.getCenteredX(wideBufferCache[bufferAlloc]), y, wideBufferCache[bufferAlloc]);
-}
-
-int calcSmallFontWidthAscii(const char* text)
-{
-	
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(text, wideBufferCache[bufferAlloc]);
-	return smallFont.calcWidth(wideBufferCache[bufferAlloc]);
-}
-
-int calcLargeFontWidthAscii(const char* text)
-{
-	int bufferAlloc = getWideBuffer();
-	fillAsciiBuffer(text, wideBufferCache[bufferAlloc]);
-	return largeFont.calcWidth(wideBufferCache[bufferAlloc]);
 }
 
 TextEntry *getPreviousTextEntry(bool top)
