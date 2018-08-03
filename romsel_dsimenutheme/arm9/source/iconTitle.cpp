@@ -29,6 +29,7 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
+#include "graphics/unicode_font_lut.h"
 
 #define ICON_POS_X	112
 #define ICON_POS_Y	96

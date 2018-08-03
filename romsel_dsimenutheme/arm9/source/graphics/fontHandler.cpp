@@ -85,7 +85,7 @@ void fontInit()
 				GL_RGB16,
 				TEXTURE_SIZE_512,
 				TEXTURE_SIZE_256,
-				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF ,
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				16,
 				(u16*) large_fontPal,
 				(const u8*) large_fontBitmap
