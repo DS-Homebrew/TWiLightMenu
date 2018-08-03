@@ -1,2 +1,8 @@
 {
+    "files.associations": {
+        "*.partial": "nunjucks",
+        "*.html": "html",
+        "system_error": "cpp",
+        "xtr1common": "cpp"
+    }
 }

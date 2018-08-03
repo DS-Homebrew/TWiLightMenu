@@ -64,7 +64,7 @@ sNDSBannerExt ndsBanner;
 
 static bool infoFound[40] = {false};
 static u16 cachedTitle[40][128];
-static char titleToDisplay[3][128];
+static char titleToDisplay[3][320]; // 1920 Bytes 
 
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
@@ -806,19 +806,30 @@ void titleUpdate(bool isDir, const char* name, int num)
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
 		int bannerlines = 0;
-		int i2 = 0;
+
+		// The index of the character array
+		int charIndex = 0;
 		for (int i = 0; i < 128; i++)
 		{
 			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
-				titleToDisplay[bannerlines][i2] = 0;
+				titleToDisplay[bannerlines][charIndex] = 0;
 				bannerlines++;
-				i2 = 0;
-			} else if (cachedTitle[num][i] == 0x2122) {
-				titleToDisplay[bannerlines][i2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
-				i2++;
+				charIndex = 0;
+			} else if (cachedTitle[num][i] <= 0x00FF) { // ASCII+Latin Extended Range is 0x0 to 0xFF.
+				// Handle ASCII here
+				titleToDisplay[bannerlines][charIndex] = cachedTitle[num][i];
+				charIndex++;
 			} else {
-				titleToDisplay[bannerlines][i2] = cachedTitle[num][i];
-				i2++;
+				// We need to split U16 into two characters here.
+				char lowerBits = cachedTitle[num][i] & 0xFF;
+ 				char higherBits = cachedTitle[num][i] >> 8;
+				// Since we have UTF16LE, assemble in FontGraphic the other way.
+				// We will need to peek in FontGraphic.cpp since the higher bit is significant.
+				titleToDisplay[bannerlines][charIndex] = UTF16_SIGNAL_BYTE; 
+				// 0x0F signal bit to treat the next two characters as UTF
+				titleToDisplay[bannerlines][charIndex+1] = lowerBits;
+				titleToDisplay[bannerlines][charIndex+2] = higherBits;
+				charIndex += 2;
 			}
 		}
 
