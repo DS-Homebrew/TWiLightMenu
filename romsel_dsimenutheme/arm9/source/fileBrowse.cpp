@@ -305,7 +305,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	if (pdir == NULL)
 	{
 		// iprintf("Unable to open the directory.\n");
-		printSmall (false, 4, 4, "Unable to open the directory.");
+		printSmallAscii(false, 4, 4, "Unable to open the directory.");
 	}
 	else
 	{
@@ -367,7 +367,7 @@ void updatePath()
 #endif
 	if (pathText == nullptr)
 	{
-		printLarge(false, 2 * FONT_SX, 1 * FONT_SY, path);
+		printLargeAscii(false, 2 * FONT_SX, 1 * FONT_SY, path);
 		pathText = getPreviousTextEntry(false);
 		pathText->anim = TextEntry::AnimType::IN;
 		pathText->fade = TextEntry::FadeType::NONE;
@@ -375,7 +375,7 @@ void updatePath()
 		pathText->immune = true;
 	}
 
-	int pathWidth = calcLargeFontWidth(path);
+	int pathWidth = calcLargeFontWidthAscii(path);
 	pathText->delay = TextEntry::ACTIVE;
 	pathText->finalX = min(2 * FONT_SX, -(pathWidth + 2 * FONT_SX - 256));
 }
@@ -526,7 +526,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		pane->createDefaultEntries();
 		pane->slideTransition(true);
 
-		printSmall(false, 12 - 16, 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW), ">");
+		printSmallAscii(false, 12 - 16, 4 + 10 * (cursorPosition - screenOffset + ENTRIES_START_ROW), ">");
 		TextEntry *cursor = getPreviousTextEntry(false);
 		cursor->fade = TextEntry::FadeType::IN;
 		cursor->finalX += 16; */
@@ -773,13 +773,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						showdialogbox = true;
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
-						printSmallCentered(false, 112, "This game cannot be launched");
+						printSmallCenteredAscii(false, 112, "This game cannot be launched");
 						if (flashcardUsed) {
-							printSmallCentered(false, 128, "in DS mode.");
+							printSmallCenteredAscii(false, 128, "in DS mode.");
 						} else {
-							printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
+							printSmallCenteredAscii(false, 128, "as a .nds file on 3DS/2DS.");
 						}
-						printSmall(false, 208, 166, "A: OK");
+						printSmallAscii(false, 208, 166, "A: OK");
 						pressed = 0;
 						do {
 							scanKeys();
@@ -1027,17 +1027,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
 				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
-				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
-				printSmall(false, 16, 166, fileCounter);
-				printSmallCentered(false, 112, "Are you sure you want to");
+				printSmallAscii(false, 16, 64, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
+				printSmallAscii(false, 16, 166, fileCounter);
+				printSmallCenteredAscii(false, 112, "Are you sure you want to");
 				if (isDirectory[cursorPosition]) {
-					printSmallCentered(false, 128, "delete this folder?");
+					printSmallCenteredAscii(false, 128, "delete this folder?");
 				} else {
-					printSmallCentered(false, 128, "delete this game?");
+					printSmallCenteredAscii(false, 128, "delete this game?");
 				}
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
-				printSmall(false, 160, 166, "A: Yes");
-				printSmall(false, 208, 166, "B: No");
+				printSmallAscii(false, 160, 166, "A: Yes");
+				printSmallAscii(false, 208, 166, "B: No");
 				while (1) {
 					do {
 						scanKeys();

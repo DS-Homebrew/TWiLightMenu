@@ -16,8 +16,8 @@ class FontGraphic
 {
 private:
 	glImage *fontSprite;
-	char buffer[256];
-	char buffer2[256];
+	u16 buffer[256];
+	u16 buffer2[256];
 	
 public:
 
@@ -33,10 +33,10 @@ public:
 			const u16 *palette,
 			const uint8 *texture
 			);
-	void print(int x, int y, const char *text);
-	int calcWidth(const char *text);
+	void print(int x, int y, const u16 *text);
+	int calcWidth(const u16 *text);
 	void print(int x, int y, int value);
-	int getCenteredX(const char *text);
-	void printCentered(int y, const char *text);
+	int getCenteredX(const u16 *text);
+	void printCentered(int y, const u16 *text);
 	void printCentered(int y, int value);
 };

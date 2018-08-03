@@ -180,49 +180,49 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[cursorPosition], filename.c_str(), cursorPosition);
-		printSmall(false, 16, 64, filename.c_str());
-		printSmall(false, 16, 80, SDKnumbertext);
-		printSmall(false, 184, 80, gameTIDText);
-		printSmall(false, 16, 166, fileCounter);
+		printSmallAscii(false, 16, 64, filename.c_str());
+		printSmallAscii(false, 16, 80, SDKnumbertext);
+		printSmallAscii(false, 184, 80, gameTIDText);
+		printSmallAscii(false, 16, 166, fileCounter);
 		if (isDSiWare[cursorPosition] || flashcardUsed) {
-			printSmall(false, 208, 166, "A: OK");
+			printSmallAscii(false, 208, 166, "A: OK");
 		} else {
-			printSmall(false, 24, 96+(perGameSettings_cursorPosition*16), ">");
-			printSmall(false, 32, 96, "Language:");
-			printSmall(false, 32, 112, "ARM9 CPU Speed:");
-			printSmall(false, 32, 128, "Async prefetch:");
+			printSmallAscii(false, 24, 96+(perGameSettings_cursorPosition*16), ">");
+			printSmallAscii(false, 32, 96, "Language:");
+			printSmallAscii(false, 32, 112, "ARM9 CPU Speed:");
+			printSmallAscii(false, 32, 128, "Async prefetch:");
 			if (perGameSettings_language == -2) {
-				printSmall(false, 180, 96, "Default");
+				printSmallAscii(false, 180, 96, "Default");
 			} else if (perGameSettings_language == -1) {
-				printSmall(false, 180, 96, "System");
+				printSmallAscii(false, 180, 96, "System");
 			} else if (perGameSettings_language == 0) {
-				printSmall(false, 180, 96, "Japanese");
+				printSmallAscii(false, 180, 96, "Japanese");
 			} else if (perGameSettings_language == 1) {
-				printSmall(false, 180, 96, "English");
+				printSmallAscii(false, 180, 96, "English");
 			} else if (perGameSettings_language == 2) {
-				printSmall(false, 180, 96, "French");
+				printSmallAscii(false, 180, 96, "French");
 			} else if (perGameSettings_language == 3) {
-				printSmall(false, 180, 96, "German");
+				printSmallAscii(false, 180, 96, "German");
 			} else if (perGameSettings_language == 4) {
-				printSmall(false, 180, 96, "Italian");
+				printSmallAscii(false, 180, 96, "Italian");
 			} else if (perGameSettings_language == 5) {
-				printSmall(false, 180, 96, "Spanish");
+				printSmallAscii(false, 180, 96, "Spanish");
 			}
 			if (perGameSettings_boostCpu == -1) {
-				printSmall(false, 180, 112, "Default");
+				printSmallAscii(false, 180, 112, "Default");
 			} else if (perGameSettings_boostCpu == 1) {
-				printSmall(false, 144, 112, "133mhz (TWL)");
+				printSmallAscii(false, 144, 112, "133mhz (TWL)");
 			} else {
-				printSmall(false, 156, 112, "67mhz (NTR)");
+				printSmallAscii(false, 156, 112, "67mhz (NTR)");
 			}
 			if (perGameSettings_asyncPrefetch == -1) {
-				printSmall(false, 180, 128, "Default");
+				printSmallAscii(false, 180, 128, "Default");
 			} else if (perGameSettings_asyncPrefetch == 1) {
-				printSmall(false, 180, 128, "On");
+				printSmallAscii(false, 180, 128, "On");
 			} else {
-				printSmall(false, 180, 128, "Off");
+				printSmallAscii(false, 180, 128, "Off");
 			}
-			printSmall(false, 200, 166, "B: Back");
+			printSmallAscii(false, 200, 166, "B: Back");
 		}
 		do {
 			scanKeys();

@@ -636,7 +636,7 @@ void loadGameOnFlashcard (const char* filename) {
 	}
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
-	printLarge(false, 4, 36, text);
+	printLargeAscii(false, 4, 36, text);
 	stop();
 }
 
@@ -689,7 +689,8 @@ int main(int argc, char **argv) {
 		fadeType = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		showbubble = true;
-		printLarge(false, 64, 32, "fatinitDefault failed!");
+		
+		printLargeAscii(false, 64, 32, "fatinitDefault failed!");
 
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;
@@ -901,7 +902,7 @@ int main(int argc, char **argv) {
 					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
-					printLarge(false, 4, 4, savecreate);
+					printLargeAscii(false, 4, 4, savecreate);
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -914,7 +915,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printLarge(false, 4, 20, savecreated);
+					printLargeAscii(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -924,7 +925,7 @@ int main(int argc, char **argv) {
 					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
 					const char* savecreated = "Private save file created!";
-					printLarge(false, 4, 4, savecreate);
+					printLargeAscii(false, 4, 4, savecreate);
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -937,7 +938,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printLarge(false, 4, 20, savecreated);
+					printLargeAscii(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -947,9 +948,9 @@ int main(int argc, char **argv) {
 					whiteScreen = true;
 					clearText();
 					ClearBrightness();
-					printLarge(false, 4, 4, "\"bootthis\" file(s) already exist");
-					printLarge(false, 4, 20, "on the SD root. Please back them up");
-					printLarge(false, 4, 36, "before launching DSiWare.");
+					printLargeAscii(false, 4, 4, "\"bootthis\" file(s) already exist");
+					printLargeAscii(false, 4, 20, "on the SD root. Please back them up");
+					printLargeAscii(false, 4, 36, "before launching DSiWare.");
 					stop();
 				}
 				if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
@@ -960,9 +961,9 @@ int main(int argc, char **argv) {
 				whiteScreen = true;
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, "Please press and hold the X button.");
-				printLarge(false, 4, 20, "Hold it on the black screen for");
-				printLarge(false, 4, 36, "2 seconds.");
+				printLargeAscii(false, 4, 4, "Please press and hold the X button.");
+				printLargeAscii(false, 4, 20, "Hold it on the black screen for");
+				printLargeAscii(false, 4, 36, "2 seconds.");
 
 				// Wait for X button hold
 				while (1)
@@ -1042,7 +1043,7 @@ int main(int argc, char **argv) {
 								ClearBrightness();
 								const char* savecreate = "Creating save file...";
 								const char* savecreated = "Save file created!";
-								printLarge(false, 4, 4, savecreate);
+								printLargeAscii(false, 4, 4, savecreate);
 
 								static const int BUFFER_SIZE = 4096;
 								char buffer[BUFFER_SIZE];
@@ -1082,7 +1083,7 @@ int main(int argc, char **argv) {
 									}
 									fclose(pFile);
 								}
-								printLarge(false, 4, 20, savecreated);
+								printLargeAscii(false, 4, 20, savecreated);
 							}
 
 						}
@@ -1173,7 +1174,7 @@ int main(int argc, char **argv) {
                                                 //ClearBrightness();
                 								const char* error = "no cheat found\n";
                                                 nocashMessage(error);
-                								//printLarge(false, 4, 4, error);
+                								//printLargeAscii(false, 4, 4, error);
                                             }
                                             if(count>256) {
                                                 const char* error = "maximum cheat data size exceeded\n";
@@ -1184,19 +1185,19 @@ int main(int argc, char **argv) {
                                             //ClearBrightness();
             								const char* error = "Cheat list empty\n";
                                             nocashMessage(error);
-            								//printLarge(false, 4, 4, error);
+            								//printLargeAscii(false, 4, 4, error);
                                         }
                                     } else {
                                         //ClearBrightness();
         								const char* error = "Can't read cheat list\n";
                                         nocashMessage(error);
-        								//printLarge(false, 4, 4, error);
+        								//printLargeAscii(false, 4, 4, error);
                                     }
                                 } else {
                                     //ClearBrightness();
     								const char* error = "cheats.xml File is in an unsupported unicode encoding";
                                     nocashMessage(error);
-    								//printLarge(false, 4, 4, error);
+    								//printLargeAscii(false, 4, 4, error);
                                 }
                                 fclose(cheatFile);
                             } 
@@ -1225,7 +1226,7 @@ int main(int argc, char **argv) {
 						whiteScreen = true;
 						clearText();
 						ClearBrightness();
-						printLarge(false, 4, 36, text);
+						printLargeAscii(false, 4, 36, text);
 						stop();
 					} else {
 						launchType = 1;
@@ -1242,7 +1243,7 @@ int main(int argc, char **argv) {
 					whiteScreen = true;
 					clearText();
 					ClearBrightness();
-					printLarge(false, 4, 4, text);
+					printLargeAscii(false, 4, 4, text);
 					stop();
 				}
 			} else if ( strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0 ||
@@ -1267,7 +1268,7 @@ int main(int argc, char **argv) {
 				whiteScreen = true;
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printLargeAscii(false, 4, 4, text);
 				stop();
 			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
 						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
@@ -1290,7 +1291,7 @@ int main(int argc, char **argv) {
 				whiteScreen = true;
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printLargeAscii(false, 4, 4, text);
 				stop();
 			}
 

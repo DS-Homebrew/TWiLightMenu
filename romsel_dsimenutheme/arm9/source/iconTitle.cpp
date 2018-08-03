@@ -85,19 +85,20 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	//todo: use printLargeCentered
 	switch(textlines) {
 		case 0:
 		default:
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text1);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, text1);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, text2);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing2, text1);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text2);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
+			printLargeCenteredAscii(false, BOX_PY, text1);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1, text2);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -814,7 +815,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 				bannerlines++;
 				i2 = 0;
 			} else if (cachedTitle[num][i] == 0x2122) {
-				titleToDisplay[bannerlines][i2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
+				titleToDisplay[bannerlines][i2] = 0x99;	// Replace bugged ï¿½ shown as ", with correct ï¿½
 				i2++;
 			} else {
 				titleToDisplay[bannerlines][i2] = cachedTitle[num][i];
@@ -827,21 +828,21 @@ void titleUpdate(bool isDir, const char* name, int num)
 			switch(bannerlines) {
 				case 0:
 				default:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
+					printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
 					break;
 				case 1:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
+					printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
+					printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
 					break;
 				case 2:
-					printLargeCentered(false, BOX_PY, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
+					printLargeCenteredAscii(false, BOX_PY, titleToDisplay[0]);
+					printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
+					printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
 					break;
 			}
 		} else {
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing2, name);
+			printLargeCenteredAscii(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}
