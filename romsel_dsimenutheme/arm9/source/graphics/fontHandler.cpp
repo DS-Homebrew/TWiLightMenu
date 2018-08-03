@@ -52,12 +52,12 @@ glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
 
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
-unsigned int large_fontBitmapBuffer[large_fontBitmapLen];
+//unsigned int large_fontBitmapBuffer[large_fontBitmapLen];
 unsigned int small_fontBitmapBuffer[small_fontBitmapLen];
 
 void fontInit()
 {
-    decompress(large_fontBitmap, large_fontBitmapBuffer, LZ77Vram);
+    //decompress(large_fontBitmap, large_fontBitmapBuffer, LZ77Vram);
     decompress(small_fontBitmap, small_fontBitmapBuffer, LZ77Vram);
 
 	//small 8192
@@ -66,7 +66,6 @@ void fontInit()
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	
-
 	smallFont.load(smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
 				small_font_texcoords, // Texture packer auto-generated array
@@ -86,10 +85,10 @@ void fontInit()
 				GL_RGB16,
 				TEXTURE_SIZE_512,
 				TEXTURE_SIZE_256,
-				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF,
 				16,
 				(u16*) large_fontPal,
-				(const u8*) large_fontBitmapBuffer
+				(const u8*) large_fontBitmap
 				);
 }
 
