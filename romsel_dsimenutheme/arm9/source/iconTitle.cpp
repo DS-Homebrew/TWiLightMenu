@@ -830,7 +830,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 				// 0x0F signal bit to treat the next two characters as UTF
 				titleToDisplay[bannerlines][charIndex+1] = lowerBits;
 				titleToDisplay[bannerlines][charIndex+2] = higherBits;
-				charIndex += 2;
+				charIndex += 3;
 			}
 		}
 

@@ -13,30 +13,31 @@
 #include "FontGraphic.h"
 #include "uvcoord_large_font.h"
 
-#define LARGE_FONT_NUM_BANKS  4
+#define LARGE_FONT_NUM_BANKS 4
 
 class LargeFont : public FontGraphic
 {
-private:
-	std::array<glImage*, LARGE_FONT_NUM_BANKS> fontSpriteBanks;
-    int fontSpriteBankId[LARGE_FONT_NUM_BANKS]; 
-	const unsigned int* texBitmaps[LARGE_FONT_NUM_TEXTURES];
-    const short unsigned int* texPalettes[LARGE_FONT_NUM_TEXTURES];
+  private:
+    std::array<glImage *, LARGE_FONT_NUM_BANKS> fontSpritesheetBanks;
+    int fontSpritesheetBankId[LARGE_FONT_NUM_BANKS];
+    const unsigned int *texBitmaps[LARGE_FONT_NUM_TEXTURES];
+    const short unsigned int *texPalettes[LARGE_FONT_NUM_TEXTURES];
 
-	int loadedSprites[LARGE_FONT_NUM_TEXTURES];
+    int fontSpritesheetStatus[LARGE_FONT_NUM_TEXTURES];
     int spriteBankStatus[LARGE_FONT_NUM_BANKS];
 
     char nextFontBank;
     int initFontBank(int index, int into);
-   // int freeFontBank(int index);
+    int getFontBankIndex(unsigned short int spriteIndex);
+    // int freeFontBank(int index);
 
-public:
-	LargeFont() { };
+  public:
+    LargeFont(){};
     int initFont();
 
-	// todo: inline this virtual once both fonts are ported to dynamic paging.
-	void print(int x, int y, const char *text) override;
-	int calcWidth(const char *text) override;
-	int getCenteredX(const char *text) override;
-	void printCentered(int y, const char *text) override;
+    // todo: inline this virtual once both fonts are ported to dynamic paging.
+    void print(int x, int y, const char *text) override;
+    int calcWidth(const char *text) override;
+    int getCenteredX(const char *text) override;
+    void printCentered(int y, const char *text) override;
 };

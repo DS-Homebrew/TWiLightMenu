@@ -689,7 +689,8 @@ int main(int argc, char **argv) {
 		fadeType = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		showbubble = true;
-		char message[] = {0xFF, 0x0F, 0x52, 0x01, 0x0F, 0x29, 0x04, 0x0F, 0x42, 0x30}; // this should print y with diaresis, then OE
+		// this should print y with diaresis, then katakana Bo, then katakana Po if font is correct.
+		char message[] = {0xFF, 0x0F, 0xDC, 0x30, 0x0F, 0xDD, 0x30, 0xFF}; 
 		printLargeCentered(false, 32, message);
 
 		// Control the DSi Menu, but can't launch anything.
