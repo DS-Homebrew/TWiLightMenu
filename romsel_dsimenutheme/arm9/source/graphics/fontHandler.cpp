@@ -81,7 +81,7 @@ void fontInit()
 	// Do the same with our bigger texture
 	largeFont.load(largeFontImages,
 				LARGE_FONT_NUM_IMAGES,
-				large_font_texcoords,
+				large_font_0_texcoords,
 				GL_RGB16,
 				TEXTURE_SIZE_512,
 				TEXTURE_SIZE_256,

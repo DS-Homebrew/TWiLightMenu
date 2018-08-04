@@ -689,7 +689,7 @@ int main(int argc, char **argv) {
 		fadeType = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		showbubble = true;
-		char message[] = {0xFF, 0x0F, 0x52, 0x01, 0x0F, 0x29, 0x04}; // this should print y with diaresis, then OE
+		char message[] = {0xFF, 0x0F, 0x52, 0x01, 0x0F, 0x29, 0x04, 0x0F, 0x42, 0x30}; // this should print y with diaresis, then OE
 		printLargeCentered(false, 32, message);
 
 		// Control the DSi Menu, but can't launch anything.
