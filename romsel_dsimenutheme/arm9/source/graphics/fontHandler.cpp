@@ -29,10 +29,12 @@
 #include "FontGraphic.h"
 #include "fontHandler.h"
 #include "TextEntry.h"
+#include "LargeFont.h"
 
 // GRIT auto-genrated arrays of images
 #include "small_font.h"
-#include "large_font.h"
+#include "large_font_0.h"
+
 
 // Texture UV coords
 #include "uvcoord_small_font.h"
@@ -45,19 +47,19 @@ extern int subtheme;
 using namespace std;
 
 FontGraphic smallFont;
-FontGraphic largeFont;
+LargeFont largeFont;
 
 glImage smallFontImages[SMALL_FONT_NUM_IMAGES];
 glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
 
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
-unsigned int large_fontBitmapBuffer[large_fontBitmapLen];
+unsigned int large_fontBitmapBuffer[large_font_0BitmapLen];
 unsigned int small_fontBitmapBuffer[small_fontBitmapLen];
 
 void fontInit()
 {
-    decompress(large_fontBitmap, large_fontBitmapBuffer, LZ77Vram);
+   // decompress(large_font_0Bitmap, large_fontBitmapBuffer, LZ77Vram);
     decompress(small_fontBitmap, small_fontBitmapBuffer, LZ77Vram);
 
 	//small 8192
@@ -79,17 +81,18 @@ void fontInit()
 				);
 
 	// Do the same with our bigger texture
-	largeFont.load(largeFontImages,
-				LARGE_FONT_NUM_IMAGES,
-				large_font_0_texcoords,
-				GL_RGB16,
-				TEXTURE_SIZE_512,
-				TEXTURE_SIZE_256,
-				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16,
-				(u16*) large_fontPal,
-				(const u8*) large_fontBitmapBuffer
-				);
+	// largeFont.load(largeFontImages,
+	// 			LARGE_FONT_NUM_IMAGES,
+	// 			large_font_texcoords[0],
+	// 			GL_RGB16,
+	// 			TEXTURE_SIZE_512,
+	// 			TEXTURE_SIZE_256,
+	// 			GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+	// 			16,
+	// 			(u16*) large_font_0Pal,
+	// 			(const u8*) large_font_0Bitmap
+	// 			);
+	largeFont.initFont();
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

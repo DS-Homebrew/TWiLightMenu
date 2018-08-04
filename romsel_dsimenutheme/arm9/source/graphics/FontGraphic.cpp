@@ -14,6 +14,7 @@
 #include "FontGraphic.h"
 #include "unicode_font_lut.h"
 #include <nds/debug.h>
+
 int FontGraphic::load(glImage *_font_sprite,
 				  const unsigned int numframes,
 				  const unsigned int *texcoords,
@@ -46,7 +47,7 @@ int FontGraphic::load(glImage *_font_sprite,
 
 }
 
-unsigned short int getSpriteIndex(const u16 letter) {
+unsigned short int FontGraphic::getSpriteIndex(const u16 letter) {
 	return utf16_lookup_table[letter];
 }
 

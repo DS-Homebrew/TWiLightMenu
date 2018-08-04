@@ -14,13 +14,13 @@
 
 class FontGraphic
 {
-private:
+protected:
 	glImage *fontSprite;
 	char buffer[256];
 	char buffer2[256];
-	
-public:
+	static unsigned short int getSpriteIndex(const u16 letter);
 
+public:
 	FontGraphic() { };
 	int load(glImage *_font_sprite,
 			const unsigned int numframes,
@@ -33,10 +33,11 @@ public:
 			const u16 *palette,
 			const uint8 *texture
 			);
-	void print(int x, int y, const char *text);
-	int calcWidth(const char *text);
-	void print(int x, int y, int value);
-	int getCenteredX(const char *text);
-	void printCentered(int y, const char *text);
+	// todo: remove this virtual once both fonts are ported to dynamic paging.
+	virtual void print(int x, int y, const char *text);
+	virtual int calcWidth(const char *text);
+    void print(int x, int y, int value);
+	virtual int getCenteredX(const char *text);
+	virtual void printCentered(int y, const char *text);
 	void printCentered(int y, int value);
 };
