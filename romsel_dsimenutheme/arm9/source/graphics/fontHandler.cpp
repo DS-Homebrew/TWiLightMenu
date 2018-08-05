@@ -33,12 +33,10 @@
 
 // GRIT auto-genrated arrays of images
 #include "small_font.h"
-#include "large_font_0.h"
 
 
 // Texture UV coords
 #include "uvcoord_small_font.h"
-#include "uvcoord_large_font.h"
 #include "TextPane.h"
 
 extern int theme;
@@ -50,11 +48,9 @@ FontGraphic smallFont;
 LargeFont largeFont;
 
 glImage smallFontImages[SMALL_FONT_NUM_IMAGES];
-glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
 
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
-unsigned int large_fontBitmapBuffer[large_font_0BitmapLen];
 unsigned int small_fontBitmapBuffer[small_fontBitmapLen];
 
 void fontInit()
@@ -65,7 +61,7 @@ void fontInit()
 	//small 8192
 	//large 10240
 	// Set  Bank A to texture (128 kb)
-	// vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankA(VRAM_A_TEXTURE);
 	// vramSetBankB(VRAM_B_TEXTURE);
 	
 	smallFont.load(smallFontImages, // pointer to glImage array

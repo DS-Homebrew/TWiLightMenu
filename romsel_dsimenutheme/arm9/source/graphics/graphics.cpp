@@ -1176,7 +1176,7 @@ void graphicsInit()
 	//vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	//vramSetBankD(VRAM_D_TEXTURE_SLOT2);
+//	vramSetBankD(VRAM_D_TEXTURE_SLOT2);
 	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
 	vramSetBankE(VRAM_E_MAIN_BG);
 	lcdMainOnBottom();

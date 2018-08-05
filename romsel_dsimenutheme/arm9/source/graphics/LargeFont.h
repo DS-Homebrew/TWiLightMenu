@@ -13,7 +13,7 @@
 #include "FontGraphic.h"
 #include "uvcoord_large_font.h"
 
-#define LARGE_FONT_NUM_BANKS 4
+#define LARGE_FONT_NUM_BANKS 2
 
 class LargeFont : public FontGraphic
 {

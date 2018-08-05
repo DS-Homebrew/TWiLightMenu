@@ -64,8 +64,8 @@ sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
 static bool infoFound[40] = {false};
-static u16 cachedTitle[40][128];
-static char titleToDisplay[3][320]; // 1920 Bytes 
+static u16 cachedTitle[40][0x100]; 
+static char titleToDisplay[3][384]; // 1920 Bytes 
 
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
@@ -812,6 +812,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 		int charIndex = 0;
 		for (int i = 0; i < 128; i++)
 		{
+			// todo: fix crash on titles that are too long (homebrew)
 			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
 				titleToDisplay[bannerlines][charIndex] = 0;
 				bannerlines++;

@@ -690,7 +690,7 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		showbubble = true;
 		// this should print y with diaresis, then katakana Bo, then katakana Po if font is correct.
-		char message[] = {0xFF, 0x0F, 0xDC, 0x30, 0x0F, 0xDD, 0x30, 0xFF}; 
+		char message[] = {0xFF, 0x0F, 0xDC, 0x30, 0x0F, 0xDD, 0x30, 0x0F, 0xF3, 0x30}; 
 		printLargeCentered(false, 32, message);
 
 		// Control the DSi Menu, but can't launch anything.
