@@ -63,9 +63,11 @@ static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
+#define TITLE_CACHE_SIZE 0x80
+
 static bool infoFound[40] = {false};
-static u16 cachedTitle[40][0x100]; 
-static char titleToDisplay[3][384]; // 1920 Bytes 
+static u16 cachedTitle[40][TITLE_CACHE_SIZE]; 
+static char titleToDisplay[3][384]; 
 
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
@@ -86,6 +88,7 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	refreshAllFontBanks();
 	switch(textlines) {
 		case 0:
 		default:
@@ -355,7 +358,7 @@ void loadFixedBanner(void) {
 }
 
 void clearTitle(int num) {
-	for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 		cachedTitle[num][i] = 0;
 	}
 }
@@ -538,7 +541,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				for (int i = 0; i < 128; i++) {
+				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 				}
 
@@ -553,7 +556,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		DC_FlushAll();
 
-		for (int i = 0; i < 128; i++) {
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 		}
 		infoFound[num] = true;
@@ -807,10 +810,9 @@ void titleUpdate(bool isDir, const char* name, int num)
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
 		int bannerlines = 0;
-
 		// The index of the character array
 		int charIndex = 0;
-		for (int i = 0; i < 128; i++)
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
 		{
 			// todo: fix crash on titles that are too long (homebrew)
 			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
@@ -837,21 +839,25 @@ void titleUpdate(bool isDir, const char* name, int num)
 
 		// text
 		if (showdialogbox || infoFound[num]) {
-			switch(bannerlines) {
-				case 0:
-				default:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
-					break;
-				case 1:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
-					break;
-				case 2:
-					printLargeCentered(false, BOX_PY, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
-					break;
-			}
+			//refreshAllFontBanks();
+			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			// switch(bannerlines) {
+			// 	case 0:
+			// 	default:
+			// 		//writeBannerText(1, titleToDisplay[0], "", "");
+			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
+			// 		break;
+			// 	case 1:
+				
+			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
+			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
+			// 		break;
+			// 	case 2:
+			// 		printLargeCentered(false, BOX_PY, titleToDisplay[0]);
+			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
+			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
+			// 		break;
+			// }
 		} else {
 			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
 			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);

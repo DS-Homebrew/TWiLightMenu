@@ -9,6 +9,7 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "xmemory0": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "list": "cpp"
     }
 }

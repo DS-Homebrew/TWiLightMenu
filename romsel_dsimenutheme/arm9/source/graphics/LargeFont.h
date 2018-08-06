@@ -18,7 +18,7 @@
 class LargeFont : public FontGraphic
 {
   private:
-    std::array<glImage *, LARGE_FONT_NUM_BANKS> fontSpritesheetBanks;
+    glImage* fontSpritesheetBanks[2];
     int fontSpritesheetBankId[LARGE_FONT_NUM_BANKS];
     const unsigned int *texBitmaps[LARGE_FONT_NUM_TEXTURES];
     const short unsigned int *texPalettes[LARGE_FONT_NUM_TEXTURES];
@@ -34,7 +34,7 @@ class LargeFont : public FontGraphic
   public:
     LargeFont(){};
     int initFont();
-
+    void refreshFontBanks();
     // todo: inline this virtual once both fonts are ported to dynamic paging.
     void print(int x, int y, const char *text) override;
     int calcWidth(const char *text) override;

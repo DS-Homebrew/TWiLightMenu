@@ -27,7 +27,6 @@ glImage largeFontImagesAscii[LARGE_FONT_NUM_IMAGES];
 glImage largeFontImages_1[LARGE_FONT_NUM_IMAGES];
 // glImage largeFontImages_2[LARGE_FONT_NUM_IMAGES];
 // glImage largeFontImages_3[LARGE_FONT_NUM_IMAGES];
-
 int LargeFont::initFont()
 {
 
@@ -62,33 +61,22 @@ int LargeFont::initFont()
    // nextFontBank = 2; // font bank 0 will always be the first texture
 
     // Initialize font sprite 0 into font bank 0.
-    initFontBank(1, 1); // Initialize font sprite 2 into font bank 1. (test occupied)
-    initFontBank(0, 0);
+     // Initialize font sprite 2 into font bank 1. (test occupied)
+    refreshFontBanks();
     return 0;
+}
+
+void LargeFont::refreshFontBanks() {
+    vramSetBankA(VRAM_A_TEXTURE);
+    vramSetBankD(VRAM_D_TEXTURE);
+    glDeleteTextures(2, fontSpritesheetBankId);
+    initFontBank(0, 0);
+    initFontBank(1, 1);
 }
 
 int LargeFont::initFontBank(int index, int into)
 {
-    // Do nothing if the sprite index is already loaded into the bank.
-    //  if (fontSpritesheetStatus[index] == into)
-    //      return fontSpritesheetBankId[into];
-  //  vramSetBankB(VRAM_B_TEXTURE);
-
-    int bankOccupiedIndex = spriteBankStatus[into];
-    if (bankOccupiedIndex > -1)
-    { 
-        int texturesToDelete[1];
-        nocashMessage("occupied!");
-        // We are replacing a bank
-        // todo: unload the old sprite with glDelete
-        // int previousTextureId = fontSpritesheetBankId[into];
-        // fontSpritesheetStatus[bankOccupiedIndex] = -1;
-        // texturesToDelete[0] = previousTextureId; //can probably optimize
-        // glDeleteTextures(1, texturesToDelete);
-    }
-
     glImage *sprite = fontSpritesheetBanks[into];
-    vramSetBankD(VRAM_D_TEXTURE);
     int textureID = glLoadSpriteSet(
         sprite,
         LARGE_FONT_NUM_IMAGES,
@@ -119,14 +107,6 @@ int LargeFont::getFontBankIndex(unsigned short int spriteIndex)
     nocashMessage(msgBuffer);
     sprintf(msgBuffer, "Size of font sheet: %i", sizeof(fontSpritesheetBanks[fontSheetIdx]));
     nocashMessage(msgBuffer);
-
-    if (fontSpritesheetStatus[fontSheetIdx] < 0) { // this font is not loaded in any bank.
-      sprintf(msgBuffer, "Status of font sheet: %i", fontSpritesheetStatus[fontSheetIdx]);
-        nocashMessage(msgBuffer);
-        nocashMessage("new font bank to be loaded in");
-        initFontBank(fontSheetIdx, nextFontBank);
-        nextFontBank = (nextFontBank % (LARGE_FONT_NUM_BANKS - 1)) + 1; // font bank 0 is never unloaded.
-    } 
     return fontSpritesheetStatus[fontSheetIdx];
 }
 
@@ -166,7 +146,7 @@ void LargeFont::print(int x, int y, const char *text)
 
         sprintf(msgBuffer, "Width: %i", fontSpritesheetBanks[fontBankIndex][fontChar].width);
         nocashMessage(msgBuffer);
-
+       
         glSprite(x, y, GL_FLIP_NONE, &fontSpritesheetBanks[fontBankIndex][fontChar]);
         x += fontSpritesheetBanks[fontBankIndex][fontChar].width;
     }

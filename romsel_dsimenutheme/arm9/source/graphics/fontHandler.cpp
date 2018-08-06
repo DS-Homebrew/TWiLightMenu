@@ -150,6 +150,12 @@ void clearText(bool top)
 		it = text.erase(it);
 		--it;
 	}
+//	refreshAllFontBanks();
+}
+
+void refreshAllFontBanks() {
+	waitForPanesToClear();
+	largeFont.refreshFontBanks();
 }
 
 void clearText()
