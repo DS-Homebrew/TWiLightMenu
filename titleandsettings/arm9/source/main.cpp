@@ -52,6 +52,8 @@
 bool renderScreens = false;
 bool fadeType = false;		// false = out, true = in
 
+bool soundfreqsettingChanged = false;
+
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* hiyacfwinipath = "sd:/hiya/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -357,8 +359,10 @@ void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
+	if (soundfreqsettingChanged) {
+		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+		else fifoSendValue32(FIFO_USER_07, 1);
+	}
 	if (theme==2) {
 		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
 	} else {
@@ -370,8 +374,10 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
+	if (soundfreqsettingChanged) {
+		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+		else fifoSendValue32(FIFO_USER_07, 1);
+	}
 
 	vector<char*> argarray;
 	if (launchType > 2) {
@@ -499,6 +505,9 @@ int main(int argc, char **argv) {
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
 	fifoSendValue32(FIFO_USER_07, 0);
 
+	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+	else fifoSendValue32(FIFO_USER_07, 1);
+
 	scanKeys();
 
 	if (arm7SCFGLocked && !gotosettings && autorun && !(keysHeld() & KEY_B)) {
@@ -515,7 +524,7 @@ int main(int argc, char **argv) {
 	}
 
 	InitSound();
-	
+
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 4, 0);
@@ -1044,6 +1053,7 @@ int main(int argc, char **argv) {
 								break;
 							case 5:
 								soundfreq = !soundfreq;
+								soundfreqsettingChanged = !soundfreqsettingChanged;
 								break;
 							case 6:
 								slot1LaunchMethod = !slot1LaunchMethod;
@@ -1068,8 +1078,12 @@ int main(int argc, char **argv) {
 								subscreenmode = 3;
 								break;
 							case 1:
-								if(soundfreqsetting) soundfreq = !soundfreq;
-								else useGbarunner = !useGbarunner;
+								if(soundfreqsetting) {
+									soundfreq = !soundfreq;
+									soundfreqsettingChanged = !soundfreqsettingChanged;
+								} else {
+									useGbarunner = !useGbarunner;
+								}
 								break;
 						}
 					}
