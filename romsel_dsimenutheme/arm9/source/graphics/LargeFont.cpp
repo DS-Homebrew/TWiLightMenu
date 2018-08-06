@@ -69,9 +69,13 @@ int LargeFont::initFont()
 void LargeFont::refreshFontBanks() {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankD(VRAM_D_TEXTURE);
-    glDeleteTextures(2, fontSpritesheetBankId);
+    clearFontBanks();
     initFontBank(0, 0);
     initFontBank(1, 1);
+}
+
+void LargeFont::clearFontBanks() {
+    glDeleteTextures(2, fontSpritesheetBankId);
 }
 
 int LargeFont::initFontBank(int index, int into)
