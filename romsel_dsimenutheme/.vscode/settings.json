@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "*.partial": "nunjucks",
+        "*.html": "html",
+        "system_error": "cpp",
+        "xtr1common": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xmemory0": "cpp",
+        "xutility": "cpp",
+        "list": "cpp",
+        "xiosbase": "cpp"
+    }
+}

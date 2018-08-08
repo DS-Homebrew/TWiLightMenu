@@ -36,6 +36,7 @@ int calcSmallFontWidth(const char *text);
 int calcLargeFontWidth(const char *text);
 void animateTextIn(bool top);
 void scrollTextVert(bool top, bool up, TextEntry &newEntry);
+void refreshAllFontBanks();
 TextEntry *getPreviousTextEntry(bool top);
 TextPane &createTextPane(int startX, int startY, int shownElements);
 FontGraphic &getFont(bool large);
