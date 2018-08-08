@@ -31,6 +31,7 @@
 #include "language.h"
 #include "graphics/unicode_font_lut.h"
 
+#define LEFT_ALIGN 70
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
@@ -746,11 +747,9 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
-#define LEFT_ALIGN 70
 static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
 {
 	refreshAllFontBanks();
-	swiWaitForVBlank();
 	switch(textlines) {
 		case 0:
 		default:
