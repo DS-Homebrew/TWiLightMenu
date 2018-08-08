@@ -13,28 +13,9 @@
 #include "FontGraphic.h"
 #include "uvcoord_large_font.h"
 
-
-// There are 22 auxillary font textures 
-// Auxillary font banks have indices starting at 1, since the primary font bank
-// has index 0.
-#define LARGE_FONT_NUM_AUX_BANKS 8
-
 class LargeFont : public FontGraphic
 {
   private:
-   // glImage* fontSpritesheetBanks[2];
-    // int fontSpritesheetBankId[LARGE_FONT_NUM_BANKS];
-    // const unsigned int *texBitmaps[LARGE_FONT_NUM_TEXTURES];
-    // const short unsigned int *texPalettes[LARGE_FONT_NUM_TEXTURES];
-
-    // /**
-    //  * Stores which font texture index is loaded into which
-    //  * font bank.
-    //  * 
-    //  * The primary ASCII texture is always loaded into bank 0.
-    //  */
-    // int auxFontBankState[LARGE_FONT_NUM_AUX_BANKS];
-
     /**
      * Stores which font texture is loaded into which font
      * bank. -1 if not loaded.
@@ -44,8 +25,8 @@ class LargeFont : public FontGraphic
     /**
      * Stores the texture IDs of loaded banks.
      */
-   // int fontBankTexID[LARGE_FONT_NUM_AUX_BANKS + 1];
 
+    std::vector<int> textureIds;
     glImage* getFontBankImage(int fontTexIndex);
     int adjustFontChar(unsigned short int fontChar, int fontTexIndex);
     int getFontTextureIndex(unsigned short int spriteIndex);

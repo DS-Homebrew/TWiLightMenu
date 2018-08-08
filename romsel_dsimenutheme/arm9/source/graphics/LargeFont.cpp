@@ -26,10 +26,7 @@
 
 glImage largeFontPrmImage[LARGE_FONT_PRM_NUM_IMAGES];
 std::vector<std::array<glImage, LARGE_FONT_AUX_NUM_IMAGES>> largeFontAuxImages;
-std::vector<int> textureIds;
 
-
-int nextAuxFontBank = 1;
 int LargeFont::initFont()
 {
   //  consoleDemoInit();
@@ -93,10 +90,6 @@ int LargeFont::initAuxillaryFontBank(int fontTextureIndex)
         (const u8 *)large_fontBitmaps[fontTextureIndex]);
     textureIds.push_back(textureID);
     texBankMap[fontTextureIndex] = auxIndex;
-
-    //fontBankTexID[fontBankIndex] = textureID;
-   // auxFontBankState[fontBankIndex] = fontTextureIndex;
-    //auxFontTexBankMap[fontTextureIndex - 1] = fontBankIndex;
     return textureID;
 }
 
