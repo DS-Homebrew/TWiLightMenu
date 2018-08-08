@@ -32,7 +32,13 @@ LARGE_FONT
 #include "large_font_20.h"
 #include "large_font_21.h"
 #include "large_font_22.h"
-
+#include "large_font_23.h"
+#include "large_font_24.h"
+#include "large_font_25.h"
+#include "large_font_26.h"
+#include "large_font_27.h"
+#include "large_font_28.h"
+#include "large_font_29.h"
 
 static constexpr const unsigned int *large_fontBitmaps[] = {
     large_font_0Bitmap,
@@ -58,6 +64,14 @@ static constexpr const unsigned int *large_fontBitmaps[] = {
     large_font_20Bitmap,
     large_font_21Bitmap,
     large_font_22Bitmap,
+    large_font_23Bitmap,
+    large_font_24Bitmap,
+    large_font_25Bitmap,
+    large_font_26Bitmap,
+    large_font_27Bitmap,
+    large_font_28Bitmap,
+    large_font_29Bitmap,
+
 };
 static constexpr const unsigned short int *large_fontPal[] = {
     large_font_0Pal,
@@ -83,6 +97,13 @@ static constexpr const unsigned short int *large_fontPal[] = {
     large_font_20Pal,
     large_font_21Pal,
     large_font_22Pal,
+    large_font_23Pal,
+    large_font_24Pal,
+    large_font_25Pal,
+    large_font_26Pal,
+    large_font_27Pal,
+    large_font_28Pal,
+    large_font_29Pal,
 };
 
 #endif
