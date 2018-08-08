@@ -406,10 +406,13 @@ bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
 	fadeType = true;	// Fade in from white
+	refreshAllFontBanks();
+	// Wait for font banks to clear from VRAM...
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
-	for (int i = 0; i < 35; i++) swiWaitForVBlank();
 	showProgressIcon = true;
+	for (int i = 0; i < 35; i++) swiWaitForVBlank();
 	controlTopBright = false;
 }
 

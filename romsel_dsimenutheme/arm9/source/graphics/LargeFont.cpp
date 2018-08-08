@@ -32,11 +32,7 @@ std::vector<int> textureIds;
 int nextAuxFontBank = 1;
 int LargeFont::initFont()
 {
-    consoleDemoInit();
-    for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX; i++)
-    {
-         texBankMap[i] = -1;
-    }
+  //  consoleDemoInit();
     refreshFontBanks();
     return 0;
 }
@@ -45,11 +41,11 @@ void LargeFont::refreshFontBanks()
 {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankD(VRAM_D_TEXTURE);
-    clearFontBanks(false);
+    clearFontBanks();
     initPrimaryFontBank();
 }
 
-void LargeFont::clearFontBanks(bool clearState)
+void LargeFont::clearFontBanks()
 {
     // nextAuxFontBank = 0;
     // if (clearState)
@@ -188,7 +184,7 @@ glImage *LargeFont::getFontBankImage(int fontTexIndex)
         int glImageIndex = texBankMap[fontTexIndex];   
         return largeFontAuxImages[glImageIndex].data();
     } else {
-        printf("AUX FONT NEEDS LOAD\n");
+    //    printf("AUX FONT NEEDS LOAD\n");
         initAuxillaryFontBank(fontTexIndex);
         return getFontBankImage(fontTexIndex);
     }

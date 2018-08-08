@@ -150,7 +150,7 @@ void clearText(bool top)
 		it = text.erase(it);
 		--it;
 	}
-	largeFont.clearFontBanks(true);
+	largeFont.clearFontBanks();
 }
 
 void refreshAllFontBanks() {

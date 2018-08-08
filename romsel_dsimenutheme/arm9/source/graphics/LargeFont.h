@@ -57,7 +57,7 @@ class LargeFont : public FontGraphic
     LargeFont(){};
     int initFont();
     void refreshFontBanks();
-    void clearFontBanks(bool clearState);
+    void clearFontBanks();
     // todo: inline this virtual once both fonts are ported to dynamic paging.
     void setFontBankState(char *text1, char *text2, char *text3);
     void print(int x, int y, const char *text) override;
