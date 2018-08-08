@@ -584,7 +584,6 @@ void iconUpdate(bool isDir, const char* name, int num)
 	} else if(num >= 6) {
 		num -= 6;
 	}
-	clearText(false);
 
 	if (isDir)
 	{

@@ -6,7 +6,8 @@
 #include <unistd.h>
 
 #include "inifile.h"
-#include "nitrofs.h"
+
+extern int appName;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
 
 // Strings
 std::string STR_SAVING_SETTINGS = "STR_SAVING_SETTINGS";
@@ -172,174 +173,224 @@ void langInit(void)
 		setLanguage = guiLanguage;
 	}
 
-	if (nitroFSInit("/_nds/dsimenuplusplus/main.srldr")) {	// Init Nitro FS
-		switch (setLanguage) {
-			case 0:
-			default:
-				languageIniPath = "nitro:/languages/japanese.ini";
-				break;
-			case 1:
-				languageIniPath = "nitro:/languages/english.ini";
-				break;
-			case 2:
-				languageIniPath = "nitro:/languages/french.ini";
-				break;
-			case 3:
-				languageIniPath = "nitro:/languages/german.ini";
-				break;
-			case 4:
-				languageIniPath = "nitro:/languages/italian.ini";
-				break;
-			case 5:
-				languageIniPath = "nitro:/languages/spanish.ini";
-				break;
-		}
-
-		CIniFile languageini( languageIniPath );
-
-		STR_SAVING_SETTINGS = languageini.GetString("LANGUAGE", "SAVING_SETTINGS", "");
-		STR_SETTINGS_SAVED = languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "");
-
-		STR_LR_SWITCH = languageini.GetString("LANGUAGE", "LR_SWITCH", "");
-		STR_GUI_SETTINGS = languageini.GetString("LANGUAGE", "GUI_SETTINGS", "");
-		STR_GAMESAPPS_SETTINGS = languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "");
-
-		// GUI settings
-		STR_THEME = languageini.GetString("LANGUAGE", "THEME", "");
-		STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "");
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "");
-		STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "");
-		STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "");
-		STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "");
-		STR_STARTBUTTONLAUNCH = languageini.GetString("LANGUAGE", "STARTBUTTONLAUNCH", "");
-		STR_SYSTEMSETTINGS = languageini.GetString("LANGUAGE", "SYSTEMSETTINGS", "");
-		STR_REPLACEDSIMENU = languageini.GetString("LANGUAGE", "REPLACEDSIMENU", "");
-		STR_RESTOREDSIMENU = languageini.GetString("LANGUAGE", "RESTOREDSIMENU", "");
-
-		STR_SHOW = languageini.GetString("LANGUAGE", "SHOW", "");
-		STR_HIDE = languageini.GetString("LANGUAGE", "HIDE", "");
-
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "");
-		STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
-
-		STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "");
-		STR_DESCRIPTION_LASTPLAYEDROM_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_2", "");
-		STR_DESCRIPTION_LASTPLAYEDROM_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_3", "");
-		STR_DESCRIPTION_LASTPLAYEDROM_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_4", "");
-
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "");
-		STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_2", "");
-		STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_3", "");
-
-		STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "");
-		STR_DESCRIPTION_DIRECTORIES_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_2", "");
-		STR_DESCRIPTION_DIRECTORIES_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_3", "");
-
-		STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "");
-		STR_DESCRIPTION_BOXART_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_2", "");
-
-		STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "");
-		STR_DESCRIPTION_ANIMATEDSIICONS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_2", "");
-		STR_DESCRIPTION_ANIMATEDSIICONS_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_3", "");
-
-		STR_DESCRIPTION_STARTBUTTONLAUNCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_1", "");
-		STR_DESCRIPTION_STARTBUTTONLAUNCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_2", "");
-		STR_DESCRIPTION_STARTBUTTONLAUNCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_3", "");
-
-		STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "");
-		STR_DESCRIPTION_SYSTEMSETTINGS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_2", "");
-
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "");
-		STR_DESCRIPTION_REPLACEDSIMENU_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_2", "");
-
-		STR_DESCRIPTION_RESTOREDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "");
-
-		// Games/Apps settings
-		STR_LANGUAGE = languageini.GetString("LANGUAGE", "LANGUAGE", "");
-		STR_CPUSPEED = languageini.GetString("LANGUAGE", "CPUSPEED", "");
-		STR_DEBUG = languageini.GetString("LANGUAGE", "DEBUG", "");
-		STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "");
-		STR_ASYNCPREFETCH = languageini.GetString("LANGUAGE", "ASYNCPREFETCH", "");
-		STR_SNDFREQ = languageini.GetString("LANGUAGE", "SNDFREQ", "");
-		STR_SLOT1LAUNCHMETHOD = languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "");
-		STR_LOADINGSCREEN = languageini.GetString("LANGUAGE", "LOADINGSCREEN", "");
-		STR_BOOTSTRAP = languageini.GetString("LANGUAGE", "BOOTSTRAP", "");
-		STR_USEGBARUNNER2 = languageini.GetString("LANGUAGE", "USEGBARUNNER2", "");
-
-		STR_SYSTEM = languageini.GetString("LANGUAGE", "SYSTEM", "");
-		STR_ON = languageini.GetString("LANGUAGE", "ON", "");
-		STR_OFF = languageini.GetString("LANGUAGE", "OFF", "");
-		STR_YES = languageini.GetString("LANGUAGE", "YES", "");
-		STR_NO = languageini.GetString("LANGUAGE", "NO", "");
-		STR_NONE = languageini.GetString("LANGUAGE", "NONE", "");
-		STR_POWER = languageini.GetString("LANGUAGE", "POWER", "");
-		STR_CAMERA = languageini.GetString("LANGUAGE", "CAMERA", "");
-		STR_REBOOT = languageini.GetString("LANGUAGE", "REBOOT", "");
-		STR_DIRECT = languageini.GetString("LANGUAGE", "DIRECT", "");
-		STR_REGULAR = languageini.GetString("LANGUAGE", "REGULAR", "");
-		STR_RELEASE = languageini.GetString("LANGUAGE", "RELEASE", "");
-		STR_NIGHTLY = languageini.GetString("LANGUAGE", "NIGHTLY", "");
-
-		STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "");
-		STR_DESCRIPTION_LANGUAGE_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_2", "");
-		STR_DESCRIPTION_LANGUAGE_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_3", "");
-
-		STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "");
-		STR_DESCRIPTION_CPUSPEED_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_2", "");
-
-		STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "");
-		STR_DESCRIPTION_DEBUG_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_2", "");
-
-		STR_DESCRIPTION_ROMREADLED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "");
-
-		STR_DESCRIPTION_ASYNCPREFETCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_1", "");
-		STR_DESCRIPTION_ASYNCPREFETCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_2", "");
-		STR_DESCRIPTION_ASYNCPREFETCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_3", "");
-
-		STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "");
-		STR_DESCRIPTION_SNDFREQ_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_2", "");
-
-		STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1", "");
-		STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_2", "");
-		STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_3", "");
-		STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_4", "");
-
-		STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "");
-		STR_DESCRIPTION_LOADINGSCREEN_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_2", "");
-
-		STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "");
-		STR_DESCRIPTION_BOOTSTRAP_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_2", "");
-
-		STR_DESCRIPTION_FLASHCARD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", "");
-		STR_DESCRIPTION_FLASHCARD_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_2", "");
-
-		STR_DESCRIPTION_GBARUNNER2_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_1", "");
-		STR_DESCRIPTION_GBARUNNER2_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_2", "");
-
-		// Flashcard settings
-		STR_FLASHCARD_SELECT = languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "");
-		STR_LEFTRIGHT_FLASHCARD = languageini.GetString("LANGUAGE", "LEFTRIGHT_FLASHCARD", "");
-		STR_AB_SETRETURN = languageini.GetString("LANGUAGE", "AB_SETRETURN", "");
-
-		// Sub-theme select
-		STR_SUBTHEMESEL_DSI = languageini.GetString("LANGUAGE", "SUBTHEMESEL_DSI", "");
-		STR_SUBTHEMESEL_3DS = languageini.GetString("LANGUAGE", "SUBTHEMESEL_3DS", "");
-		STR_SUBTHEMESEL_R4 = languageini.GetString("LANGUAGE", "SUBTHEMESEL_R4", "");
-		STR_AB_SETSUBTHEME = languageini.GetString("LANGUAGE", "AB_SETSUBTHEME", "");
-		STR_DSI_DARKMENU = languageini.GetString("LANGUAGE", "DSI_DARKMENU", "");
-		STR_DSI_NORMALMENU = languageini.GetString("LANGUAGE", "DSI_NORMALMENU", "");
-		STR_R4_THEME01 = languageini.GetString("LANGUAGE", "R4_THEME01", "");
-		STR_R4_THEME02 = languageini.GetString("LANGUAGE", "R4_THEME02", "");
-		STR_R4_THEME03 = languageini.GetString("LANGUAGE", "R4_THEME03", "");
-		STR_R4_THEME04 = languageini.GetString("LANGUAGE", "R4_THEME04", "");
-		STR_R4_THEME05 = languageini.GetString("LANGUAGE", "R4_THEME05", "");
-		STR_R4_THEME06 = languageini.GetString("LANGUAGE", "R4_THEME06", "");
-		STR_R4_THEME07 = languageini.GetString("LANGUAGE", "R4_THEME07", "");
-		STR_R4_THEME08 = languageini.GetString("LANGUAGE", "R4_THEME08", "");
-		STR_R4_THEME09 = languageini.GetString("LANGUAGE", "R4_THEME09", "");
-		STR_R4_THEME10 = languageini.GetString("LANGUAGE", "R4_THEME10", "");
-		STR_R4_THEME11 = languageini.GetString("LANGUAGE", "R4_THEME11", "");
-		STR_R4_THEME12 = languageini.GetString("LANGUAGE", "R4_THEME12", "");
-		STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "");
+	switch (setLanguage) {
+		case 0:
+		default:
+			languageIniPath = "nitro:/languages/japanese.ini";
+			break;
+		case 1:
+			languageIniPath = "nitro:/languages/english.ini";
+			break;
+		case 2:
+			languageIniPath = "nitro:/languages/french.ini";
+			break;
+		case 3:
+			languageIniPath = "nitro:/languages/german.ini";
+			break;
+		case 4:
+			languageIniPath = "nitro:/languages/italian.ini";
+			break;
+		case 5:
+			languageIniPath = "nitro:/languages/spanish.ini";
+			break;
 	}
+
+	CIniFile languageini( languageIniPath );
+
+	STR_SAVING_SETTINGS = languageini.GetString("LANGUAGE", "SAVING_SETTINGS", "");
+	STR_SETTINGS_SAVED = languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "");
+
+	STR_LR_SWITCH = languageini.GetString("LANGUAGE", "LR_SWITCH", "");
+	STR_GUI_SETTINGS = languageini.GetString("LANGUAGE", "GUI_SETTINGS", "");
+	STR_GAMESAPPS_SETTINGS = languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "");
+
+	// GUI settings
+	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "");
+	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "");
+	switch (appName) {
+		case 0:
+		default:
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "");
+			break;
+		case 1:
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "");
+			break;
+		case 2:
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "");
+			break;
+	}
+	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "");
+	STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "");
+	STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "");
+	STR_STARTBUTTONLAUNCH = languageini.GetString("LANGUAGE", "STARTBUTTONLAUNCH", "");
+	STR_SYSTEMSETTINGS = languageini.GetString("LANGUAGE", "SYSTEMSETTINGS", "");
+	STR_REPLACEDSIMENU = languageini.GetString("LANGUAGE", "REPLACEDSIMENU", "");
+	STR_RESTOREDSIMENU = languageini.GetString("LANGUAGE", "RESTOREDSIMENU", "");
+
+	STR_SHOW = languageini.GetString("LANGUAGE", "SHOW", "");
+	STR_HIDE = languageini.GetString("LANGUAGE", "HIDE", "");
+
+	switch (appName) {
+		case 0:
+		default:
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "");
+			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
+			break;
+		case 1:
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "");
+			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
+			break;
+		case 2:
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "");
+			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
+			break;
+	}
+
+	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "");
+	STR_DESCRIPTION_LASTPLAYEDROM_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_2", "");
+	STR_DESCRIPTION_LASTPLAYEDROM_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_3", "");
+	STR_DESCRIPTION_LASTPLAYEDROM_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_4", "");
+
+	switch (appName) {
+		case 0:
+		default:
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_2", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_3", "");
+			break;
+		case 1:
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_2", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_3", "");
+			break;
+		case 2:
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_2", "");
+			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_3", "");
+			break;
+	}
+
+	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "");
+	STR_DESCRIPTION_DIRECTORIES_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_2", "");
+	STR_DESCRIPTION_DIRECTORIES_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_3", "");
+
+	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "");
+	STR_DESCRIPTION_BOXART_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_2", "");
+
+	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "");
+	STR_DESCRIPTION_ANIMATEDSIICONS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_2", "");
+	STR_DESCRIPTION_ANIMATEDSIICONS_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_3", "");
+
+	STR_DESCRIPTION_STARTBUTTONLAUNCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_1", "");
+	STR_DESCRIPTION_STARTBUTTONLAUNCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_2", "");
+	STR_DESCRIPTION_STARTBUTTONLAUNCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_3", "");
+
+	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "");
+	STR_DESCRIPTION_SYSTEMSETTINGS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_2", "");
+
+	switch (appName) {
+		case 0:
+		default:
+			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "");
+			STR_DESCRIPTION_REPLACEDSIMENU_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_2", "");
+			break;
+		case 1:
+			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_SRLOADER", "");
+			STR_DESCRIPTION_REPLACEDSIMENU_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_2", "");
+			break;
+		case 2:
+			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_DSISIONX", "");
+			STR_DESCRIPTION_REPLACEDSIMENU_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_2", "");
+			break;
+	}
+
+	STR_DESCRIPTION_RESTOREDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "");
+
+	// Games/Apps settings
+	STR_LANGUAGE = languageini.GetString("LANGUAGE", "LANGUAGE", "");
+	STR_CPUSPEED = languageini.GetString("LANGUAGE", "CPUSPEED", "");
+	STR_DEBUG = languageini.GetString("LANGUAGE", "DEBUG", "");
+	STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "");
+	STR_ASYNCPREFETCH = languageini.GetString("LANGUAGE", "ASYNCPREFETCH", "");
+	STR_SNDFREQ = languageini.GetString("LANGUAGE", "SNDFREQ", "");
+	STR_SLOT1LAUNCHMETHOD = languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "");
+	STR_LOADINGSCREEN = languageini.GetString("LANGUAGE", "LOADINGSCREEN", "");
+	STR_BOOTSTRAP = languageini.GetString("LANGUAGE", "BOOTSTRAP", "");
+	STR_USEGBARUNNER2 = languageini.GetString("LANGUAGE", "USEGBARUNNER2", "");
+
+	STR_SYSTEM = languageini.GetString("LANGUAGE", "SYSTEM", "");
+	STR_ON = languageini.GetString("LANGUAGE", "ON", "");
+	STR_OFF = languageini.GetString("LANGUAGE", "OFF", "");
+	STR_YES = languageini.GetString("LANGUAGE", "YES", "");
+	STR_NO = languageini.GetString("LANGUAGE", "NO", "");
+	STR_NONE = languageini.GetString("LANGUAGE", "NONE", "");
+	STR_POWER = languageini.GetString("LANGUAGE", "POWER", "");
+	STR_CAMERA = languageini.GetString("LANGUAGE", "CAMERA", "");
+	STR_REBOOT = languageini.GetString("LANGUAGE", "REBOOT", "");
+	STR_DIRECT = languageini.GetString("LANGUAGE", "DIRECT", "");
+	STR_REGULAR = languageini.GetString("LANGUAGE", "REGULAR", "");
+	STR_RELEASE = languageini.GetString("LANGUAGE", "RELEASE", "");
+	STR_NIGHTLY = languageini.GetString("LANGUAGE", "NIGHTLY", "");
+
+	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "");
+	STR_DESCRIPTION_LANGUAGE_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_2", "");
+	STR_DESCRIPTION_LANGUAGE_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_3", "");
+
+	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "");
+	STR_DESCRIPTION_CPUSPEED_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_2", "");
+
+	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "");
+	STR_DESCRIPTION_DEBUG_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_2", "");
+
+	STR_DESCRIPTION_ROMREADLED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "");
+
+	STR_DESCRIPTION_ASYNCPREFETCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_1", "");
+	STR_DESCRIPTION_ASYNCPREFETCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_2", "");
+	STR_DESCRIPTION_ASYNCPREFETCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_3", "");
+
+	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "");
+	STR_DESCRIPTION_SNDFREQ_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_2", "");
+
+	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1", "");
+	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_2", "");
+	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_3", "");
+	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_4", "");
+
+	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "");
+	STR_DESCRIPTION_LOADINGSCREEN_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_2", "");
+
+	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "");
+	STR_DESCRIPTION_BOOTSTRAP_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_2", "");
+
+	STR_DESCRIPTION_FLASHCARD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", "");
+	STR_DESCRIPTION_FLASHCARD_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_2", "");
+
+	STR_DESCRIPTION_GBARUNNER2_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_1", "");
+	STR_DESCRIPTION_GBARUNNER2_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_2", "");
+
+	// Flashcard settings
+	STR_FLASHCARD_SELECT = languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "");
+	STR_LEFTRIGHT_FLASHCARD = languageini.GetString("LANGUAGE", "LEFTRIGHT_FLASHCARD", "");
+	STR_AB_SETRETURN = languageini.GetString("LANGUAGE", "AB_SETRETURN", "");
+
+	// Sub-theme select
+	STR_SUBTHEMESEL_DSI = languageini.GetString("LANGUAGE", "SUBTHEMESEL_DSI", "");
+	STR_SUBTHEMESEL_3DS = languageini.GetString("LANGUAGE", "SUBTHEMESEL_3DS", "");
+	STR_SUBTHEMESEL_R4 = languageini.GetString("LANGUAGE", "SUBTHEMESEL_R4", "");
+	STR_AB_SETSUBTHEME = languageini.GetString("LANGUAGE", "AB_SETSUBTHEME", "");
+	STR_DSI_DARKMENU = languageini.GetString("LANGUAGE", "DSI_DARKMENU", "");
+	STR_DSI_NORMALMENU = languageini.GetString("LANGUAGE", "DSI_NORMALMENU", "");
+	STR_R4_THEME01 = languageini.GetString("LANGUAGE", "R4_THEME01", "");
+	STR_R4_THEME02 = languageini.GetString("LANGUAGE", "R4_THEME02", "");
+	STR_R4_THEME03 = languageini.GetString("LANGUAGE", "R4_THEME03", "");
+	STR_R4_THEME04 = languageini.GetString("LANGUAGE", "R4_THEME04", "");
+	STR_R4_THEME05 = languageini.GetString("LANGUAGE", "R4_THEME05", "");
+	STR_R4_THEME06 = languageini.GetString("LANGUAGE", "R4_THEME06", "");
+	STR_R4_THEME07 = languageini.GetString("LANGUAGE", "R4_THEME07", "");
+	STR_R4_THEME08 = languageini.GetString("LANGUAGE", "R4_THEME08", "");
+	STR_R4_THEME09 = languageini.GetString("LANGUAGE", "R4_THEME09", "");
+	STR_R4_THEME10 = languageini.GetString("LANGUAGE", "R4_THEME10", "");
+	STR_R4_THEME11 = languageini.GetString("LANGUAGE", "R4_THEME11", "");
+	STR_R4_THEME12 = languageini.GetString("LANGUAGE", "R4_THEME12", "");
+	STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "");
 }

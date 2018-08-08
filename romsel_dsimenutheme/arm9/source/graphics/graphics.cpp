@@ -34,9 +34,7 @@
 #include "bubble.h"
 #include "org_bubble.h"
 #include "_3ds_bubble.h"
-#include "bubble_arrow.h"
-#include "org_bubble_arrow.h"
-#include "_3ds_bubble_arrow.h"
+#include "progress.h"
 #include "bips.h"
 #include "scroll_window.h"
 #include "org_scroll_window.h"
@@ -76,6 +74,8 @@ extern char usernameRendered[11];
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool controlTopBright;
+extern bool controlBottomBright;
 int fadeDelay = 0;
 
 extern bool music;
@@ -87,10 +87,13 @@ extern int colorBvalue;
 
 extern bool dropDown;
 extern bool redoDropDown;
-int dropTime = 0;
-int dropSeq = 0;
-int dropSpeed = 5;
-int dropSpeedChange = 0;
+int dropTime[5] = {0};
+int dropSeq[5] = {0};
+int dropSpeed[5] = {5};
+int dropSpeedChange[5] = {0};
+int titleboxYposDropDown[5] = {-85-80};
+int allowedTitleboxForDropDown = 0;
+int delayForTitleboxToDropDown = 0;
 extern bool showbubble;
 extern bool showSTARTborder;
 
@@ -116,9 +119,11 @@ extern int subtheme;
 extern int cursorPosition;
 extern int startMenu_cursorPosition;
 extern int pagenum;
+//int titleboxXmovespeed[8] = {8};
+int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 int titleboxXpos;
 int startMenu_titleboxXpos;
-int titleboxYpos = -80;	// 85, when dropped down
+int titleboxYpos = 85;	// 85, when dropped down
 int titlewindowXpos;
 int startMenu_titlewindowXpos;
 
@@ -127,9 +132,15 @@ bool showRshoulder = false;
 
 int movecloseXpos = 0;
 
+bool showProgressIcon = false;
+
+int progressAnimNum = 0;
+int progressAnimDelay = 0;
+
 bool startBorderZoomOut = false;
 int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
 int startBorderZoomAnimNum = 0;
+int startBorderZoomAnimDelay = 0;
 
 int launchDotX[12] = {0};
 int launchDotY[12] = {0};
@@ -145,7 +156,7 @@ bool showdialogbox = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 
-int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, bubblearrowTexID, dialogboxTexID, wirelessiconTexID;
+int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
 int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
 glImage subBgImage[(256 / 16) * (256 / 16)];
@@ -153,7 +164,7 @@ glImage subBgImage[(256 / 16) * (256 / 16)];
 //glImage shoulderImage[(128 / 16) * (64 / 32)];
 glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 glImage bubbleImage[(256 / 16) * (128 / 16)];
-glImage bubblearrowImage[(16 / 16) * (16 / 16)];
+glImage progressImage[(16 / 16) * (128 / 16)];
 glImage dialogboxImage[(256 / 16) * (256 / 16)];
 glImage bipsImage[(8 / 8) * (32 / 8)];
 glImage scrollwindowImage[(32 / 16) * (32 / 16)];
@@ -161,6 +172,7 @@ glImage buttonarrowImage[(32 / 32) * (64 / 32)];
 glImage launchdotImage[(16 / 16) * (96 / 16)];
 glImage startImage[(64 / 16) * (128 / 16)];
 glImage startbrdImage[(32 / 32) * (256 / 80)];
+glImage _3dsstartbrdImage[(32 / 32) * (192 / 64)];
 glImage braceImage[(16 / 16) * (128 / 16)];
 glImage settingsImage[(64 / 16) * (128 / 64)];
 glImage boxfullImage[(64 / 16) * (128 / 64)];
@@ -425,8 +437,8 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		SetBrightness(0, screenBrightness);
-		SetBrightness(1, screenBrightness);
+		if (controlBottomBright) SetBrightness(0, screenBrightness);
+		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (showdialogbox) {
 			if (dbox_movespeed <= 1) {
@@ -452,12 +464,12 @@ void vBlankHandler()
 		if (titleboxXmoveleft) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos -= 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					startMenu_titleboxXpos -= 8;
+					startMenu_titleboxXpos -= titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos -= 1;
 					movetimer++;
 				} else {
@@ -466,12 +478,12 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					titleboxXpos -= 8;
+					titleboxXpos -= titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos -= 1;
 					movetimer++;
 				} else {
@@ -482,12 +494,12 @@ void vBlankHandler()
 		} else if (titleboxXmoveright) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos += 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					startMenu_titleboxXpos += 8;
+					startMenu_titleboxXpos += titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) startMenu_titlewindowXpos += 1;
 					movetimer++;
 				} else {
@@ -496,12 +508,12 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble) mmEffectEx(&snd_stop);
+					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
 				} else if (movetimer < 8) {
-					titleboxXpos += 8;
+					titleboxXpos += titleboxXmovespeed[movetimer];
 					if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos += 1;
 					movetimer++;
 				} else {
@@ -512,46 +524,59 @@ void vBlankHandler()
 		}
 
 		if (redoDropDown && theme == 0) {
-			dropTime = 0;
-			dropSeq = 0;
-			dropSpeed = 5;
-			dropSpeedChange = 0;
-			titleboxYpos = -80;	// 85, when dropped down
+			for (int i = 0; i < 5; i++) {
+				dropTime[i] = 0;
+				dropSeq[i] = 0;
+				dropSpeed[i] = 5;
+				dropSpeedChange[i] = 0;
+				titleboxYposDropDown[i] = -85-80;
+			}
+			allowedTitleboxForDropDown = 0;
+			delayForTitleboxToDropDown = 0;
 			dropDown = false;
 			redoDropDown = false;
 		}
 
-		if (dropDown && theme == 0) {
-			if (dropSeq == 0) {
-				titleboxYpos += dropSpeed;
-				if (titleboxYpos > 85) dropSeq = 1;
-			} else if (dropSeq == 1) {
-				titleboxYpos -= dropSpeed;
-				dropTime++;
-				dropSpeedChange++;
-				if (dropTime >= 15) {
-					dropSpeedChange = -1;
-					dropSeq = 2;
+		if (!whiteScreen && dropDown && theme == 0) {
+			for (int i = 0; i <= allowedTitleboxForDropDown; i++) {
+				if (dropSeq[i] == 0) {
+					titleboxYposDropDown[i] += dropSpeed[i];
+					if (titleboxYposDropDown[i] > 0) dropSeq[i] = 1;
+				} else if (dropSeq[i] == 1) {
+					titleboxYposDropDown[i] -= dropSpeed[i];
+					dropTime[i]++;
+					dropSpeedChange[i]++;
+					if (dropTime[i] >= 15) {
+						dropSpeedChange[i] = -1;
+						dropSeq[i] = 2;
+					}
+					if (dropSpeedChange[i] == 2) {
+						dropSpeed[i]--;
+						if (dropSpeed[i] < 0) dropSpeed[i] = 0;
+						dropSpeedChange[i] = -1;
+					}
+				} else if (dropSeq[i] == 2) {
+					titleboxYposDropDown[i] += dropSpeed[i];
+					if (titleboxYposDropDown[i] >= 0) {
+						dropSeq[i] = 3;
+						titleboxYposDropDown[i] = 0;
+					}
+					dropSpeedChange[i]++;
+					if (dropSpeedChange[i] == 1) {
+						dropSpeed[i]++;
+						if (dropSpeed[i] > 4) dropSpeed[i] = 4;
+						dropSpeedChange[i] = -1;
+					}
+				} else if (dropSeq[i] == 3) {
+					titleboxYposDropDown[i] = 0;
 				}
-				if (dropSpeedChange == 2) {
-					dropSpeed--;
-					if (dropSpeed < 0) dropSpeed = 0;
-					dropSpeedChange = -1;
-				}
-			} else if (dropSeq == 2) {
-				titleboxYpos += dropSpeed;
-				if (titleboxYpos >= 85) {
-					dropSeq = 3;
-					titleboxYpos = 85;
-				}
-				dropSpeedChange++;
-				if (dropSpeedChange == 1) {
-					dropSpeed++;
-					if (dropSpeed > 4) dropSpeed = 4;
-					dropSpeedChange = -1;
-				}
-			} else if (dropSeq == 3) {
-				titleboxYpos = 85;
+			}
+
+			delayForTitleboxToDropDown++;
+			if (delayForTitleboxToDropDown >= 5) {
+				allowedTitleboxForDropDown++;
+				if (allowedTitleboxForDropDown > 4) allowedTitleboxForDropDown = 4;
+				delayForTitleboxToDropDown = 0;
 			}
 		}
 
@@ -573,8 +598,7 @@ void vBlankHandler()
 		//else
 		//{
 			drawBG(subBgImage);
-			if (showbubble) drawBubble(bubbleImage);
-			else if (theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
+			if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
@@ -616,24 +640,24 @@ void vBlankHandler()
 						movecloseXpos = 0;
 					}
 					if (i == 0) {
-						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos-1, GL_FLIP_NONE, &settingsImage[1 & 63]);
+						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (i == 1) {
 						if (!flashcardUsed) {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
 					} else if (i == 2 && !flashcardUsed) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+12);
+						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 					} else {
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
 						} else {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[1 & 63]);
 						}
 					}
 					spawnedboxXpos += 64;
@@ -650,20 +674,20 @@ void vBlankHandler()
 					if (i < spawnedtitleboxes) {
 						if (isDirectory[i]) {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos-3, GL_FLIP_NONE, folderImage);
+							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, folderImage);
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[0 & 63]);
-							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12);
-							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, titleboxYpos+12, i);
+							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						}
 					} else {
 						if (theme == 1) {
-							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, boxemptyImage);
 						} else {
-							glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, &boxfullImage[1 & 63]);
+							glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[1 & 63]);
 						}
 					}
 					spawnedboxXpos += 64;
@@ -727,8 +751,8 @@ void vBlankHandler()
 			}
 			if (showSTARTborder) {
 				if (theme == 1) {
-					glSprite(96, 92, GL_FLIP_NONE, startbrdImage);
-					glSprite(96+32, 92, GL_FLIP_H, startbrdImage);
+					glSprite(96, 92, GL_FLIP_NONE, &_3dsstartbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+					glSprite(96+32, 92, GL_FLIP_H, &_3dsstartbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
 						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
@@ -742,7 +766,7 @@ void vBlankHandler()
 					}
 				}
 			}
-			if (showbubble) glSprite(120, bubbleYpos+72, GL_FLIP_NONE, bubblearrowImage);	// Make the bubble look like it's over the START border
+			if (showbubble) drawBubble(bubbleImage);
 			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
@@ -757,6 +781,7 @@ void vBlankHandler()
 			}*/
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &progressImage[progressAnimNum]);
 			}
 			updateText(false);
 			glColor(RGB15(31, 31, 31));
@@ -764,6 +789,15 @@ void vBlankHandler()
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
+
+	if (showProgressIcon) {
+		progressAnimDelay++;
+		if (progressAnimDelay == 3) {
+			progressAnimNum++;
+			if (progressAnimNum > 7) progressAnimNum = 0;
+			progressAnimDelay = 0;
+		}
+	}
 	if (!whiteScreen) {
 		// Playback animated icons
 		for (int i = 0; i < 40; i++) {
@@ -772,7 +806,16 @@ void vBlankHandler()
 			}
 		}
 	}
-	if (startBorderZoomOut) {
+	if (theme == 1) {
+		startBorderZoomAnimDelay++;
+		if (startBorderZoomAnimDelay == 8) {
+			startBorderZoomAnimNum++;
+			if(startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
+				startBorderZoomAnimNum = 0;
+			}
+			startBorderZoomAnimDelay = 0;
+		}
+	} else if (startBorderZoomOut) {
 		startBorderZoomAnimNum++;
 		if(startBorderZoomAnimSeq[startBorderZoomAnimNum] == 0) {
 			startBorderZoomAnimNum = 0;
@@ -801,6 +844,13 @@ void vBlankHandler()
 		if (launchDotCurrentChangingFrame > 11) launchDotCurrentChangingFrame = 11;
 	}
 	if (applaunchprep && theme==0) launchDotDoFrameChange = !launchDotDoFrameChange;
+}
+
+void clearBmpScreen() {
+	u16 val = 0xFFFF;
+	for (int i = 0; i < 256*192; i++) {
+		BG_GFX_SUB[i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+	}
 }
 
 void loadBoxArt(const char* filename) {
@@ -1104,6 +1154,19 @@ void graphicsInit()
 		launchDotFrame[i] = 5;
 	}
 
+	for (int i = 0; i < 5; i++) {
+		dropTime[i] = 0;
+		dropSeq[i] = 0;
+		dropSpeed[i] = 5;
+		dropSpeedChange[i] = 0;
+		if (theme == 1) titleboxYposDropDown[i] = 0;
+		else titleboxYposDropDown[i] = -85-80;
+	}
+	allowedTitleboxForDropDown = 0;
+	delayForTitleboxToDropDown = 0;
+	dropDown = false;
+	redoDropDown = false;
+
 	launchDotXMove[0] = false;
 	launchDotYMove[0] = true;
 	launchDotX[0] = 44;
@@ -1192,6 +1255,20 @@ void graphicsInit()
 	if (theme < 1) loadPhoto();
 	topBgLoad();
 	
+	progressTexID = glLoadTileSet(progressImage, // pointer to glImage array
+							16, // sprite width
+							16, // sprite height
+							16, // bitmap width
+							128, // bitmap height
+							GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+							TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+							9, // Length of the palette to use (16 colors)
+							(u16*) progressPal, // Load our 16 color tiles palette
+							(u8*) progressBitmap // image data generated by GRIT
+							);
+
 	dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
 							16, // sprite width
 							16, // sprite height
@@ -1236,20 +1313,6 @@ void graphicsInit()
 								(u16*) _3ds_bubblePal, // Load our 16 color tiles palette
 								(u8*) _3ds_bubbleBitmap // image data generated by GRIT
 								);
-
-		bubblearrowTexID = glLoadTileSet(bubblearrowImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								16, // bitmap width
-								16, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) _3ds_bubble_arrowPal, // Load our 16 color tiles palette
-								(u8*) _3ds_bubble_arrowBitmap // image data generated by GRIT
-								);
 	} else if (subtheme == 1) {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
 								16, // sprite width
@@ -1292,20 +1355,6 @@ void graphicsInit()
 								(u16*) org_bubblePal, // Load our 16 color tiles palette
 								(u8*) org_bubbleBitmap // image data generated by GRIT
 								);
-
-		bubblearrowTexID = glLoadTileSet(bubblearrowImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								16, // bitmap width
-								16, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) org_bubble_arrowPal, // Load our 16 color tiles palette
-								(u8*) org_bubble_arrowBitmap // image data generated by GRIT
-								);
 	} else {
 		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
 								16, // sprite width
@@ -1347,20 +1396,6 @@ void graphicsInit()
 								16, // Length of the palette to use (16 colors)
 								(u16*) bubblePal, // Load our 16 color tiles palette
 								(u8*) bubbleBitmap // image data generated by GRIT
-								);
-
-		bubblearrowTexID = glLoadTileSet(bubblearrowImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								16, // bitmap width
-								16, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_16, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) bubble_arrowPal, // Load our 16 color tiles palette
-								(u8*) bubble_arrowBitmap // image data generated by GRIT
 								);
 	}
 
@@ -1451,16 +1486,16 @@ void graphicsInit()
 							);
 
 	if (theme == 1) {
-		startbrdTexID = glLoadTileSet(startbrdImage, // pointer to glImage array
+		startbrdTexID = glLoadTileSet(_3dsstartbrdImage, // pointer to glImage array
 								32, // sprite width
 								64, // sprite height
 								32, // bitmap width
-								64, // bitmap height
+								192, // bitmap height
 								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
 								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
+								6, // Length of the palette to use (16 colors)
 								(u16*) _3ds_cursorPal, // Load our 16 color tiles palette
 								(u8*) _3ds_cursorBitmap // image data generated by GRIT
 								);

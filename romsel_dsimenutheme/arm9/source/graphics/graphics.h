@@ -20,6 +20,7 @@
 #pragma once
 
 void initSubSprites(void);
+void clearBmpScreen();
 void loadBoxArt(const char* filename);
 void clearBoxArt();
 void loadShoulders();

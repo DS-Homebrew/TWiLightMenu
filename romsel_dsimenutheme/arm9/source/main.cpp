@@ -60,6 +60,8 @@
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
+bool controlTopBright = true;
+bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
@@ -100,6 +102,9 @@ static void RemoveTrailingSpaces(std::string& code)
 		code.resize(code.size()-1);
 	}
 }
+
+bool music = false;
+extern mm_sound_effect mus_menu;
 
 std::string romfolder;
 
@@ -687,7 +692,13 @@ int main(int argc, char **argv) {
 		fontInit();
 		whiteScreen = false;
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
+		if (!dropDown && theme == 0) {
+			dropDown = true;
+			for (int i = 0; i < 72; i++) swiWaitForVBlank();
+		} else {
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
+		}
 		showbubble = true;
 		// this should print y with diaresis, then katakana Bo, then katakana Po if font is correct.
 		char message[] = {0xFF, 0x0F, 0xDC, 0x30, 0x0F, 0xDD, 0x30, 0x0F, 0xF3, 0x30}; 
@@ -700,18 +711,6 @@ int main(int argc, char **argv) {
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
-				consoleClear();
-				if(!usernameRenderedDone) {
-					for (int i = 0; i < 10; i++) {
-						if (username[i] == 0)
-							usernameRendered[i] = 0x20;
-						else
-							usernameRendered[i] = username[i];
-					}
-					usernameRenderedDone = true;
-				}
-				iprintf("\n   %s           %s", usernameRendered, RetTime().c_str());
-
 				scanKeys();
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
@@ -733,15 +732,6 @@ int main(int argc, char **argv) {
 			{
 				cursorPosition = 39;
 			}
-			
-			if (pressed & KEY_A) {
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
-
-				applaunchprep = true;
-			}
-
 		}
 	}
 
@@ -784,6 +774,11 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
+	if (!music) {
+		mmEffectEx(&mus_menu);
+		music = true;
+	}
+
 	while(1) {
 
 		snprintf (path, sizeof(path), "%s", romfolder.c_str());
@@ -797,6 +792,11 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
+			// Clear screen with white
+			whiteScreen = true;
+			clearText();
+			clearBmpScreen();
+
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
@@ -898,8 +898,6 @@ int main(int argc, char **argv) {
 				fclose(f_nds_file);
 
 				if (access(dsiWarePubPath.c_str(), F_OK) && NDSHeader.pubSavSize > 0) {
-					whiteScreen = true;
-					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
@@ -918,11 +916,10 @@ int main(int argc, char **argv) {
 					}
 					printLarge(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					clearText();
 				}
 
 				if (access(dsiWarePrvPath.c_str(), F_OK) && NDSHeader.prvSavSize > 0) {
-					whiteScreen = true;
-					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
 					const char* savecreated = "Private save file created!";
@@ -941,13 +938,12 @@ int main(int argc, char **argv) {
 					}
 					printLarge(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					clearText();
 				}
 
 				if (access("sd:/bootthis.dsi", F_OK)) {
 					rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
 				} else {
-					whiteScreen = true;
-					clearText();
 					ClearBrightness();
 					printLarge(false, 4, 4, "\"bootthis\" file(s) already exist");
 					printLarge(false, 4, 20, "on the SD root. Please back them up");
@@ -959,8 +955,6 @@ int main(int argc, char **argv) {
 				if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
 					rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
 
-				whiteScreen = true;
-				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 4, "Please press and hold the X button.");
 				printLarge(false, 4, 20, "Hold it on the black screen for");
@@ -974,6 +968,7 @@ int main(int argc, char **argv) {
 					if (keysHeld() & KEY_X) break;
 				}
 
+				clearText();
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
@@ -1039,8 +1034,6 @@ int main(int argc, char **argv) {
 
 						if (access(savename.c_str(), F_OK)) {
 							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
-								whiteScreen = true;
-								clearText();
 								ClearBrightness();
 								const char* savecreate = "Creating save file...";
 								const char* savecreated = "Save file created!";
@@ -1224,7 +1217,6 @@ int main(int argc, char **argv) {
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
-						whiteScreen = true;
 						clearText();
 						ClearBrightness();
 						printLarge(false, 4, 36, text);
@@ -1241,8 +1233,6 @@ int main(int argc, char **argv) {
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
-					whiteScreen = true;
-					clearText();
 					ClearBrightness();
 					printLarge(false, 4, 4, text);
 					stop();
@@ -1266,8 +1256,6 @@ int main(int argc, char **argv) {
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				whiteScreen = true;
-				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
@@ -1289,8 +1277,6 @@ int main(int argc, char **argv) {
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				whiteScreen = true;
-				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();

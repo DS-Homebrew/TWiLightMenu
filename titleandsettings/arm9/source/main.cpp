@@ -39,6 +39,7 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
+#include "nitrofs.h"
 
 #include "language.h"
 
@@ -50,6 +51,8 @@
 
 bool renderScreens = false;
 bool fadeType = false;		// false = out, true = in
+
+bool soundfreqsettingChanged = false;
 
 const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char* hiyacfwinipath = "sd:/hiya/settings.ini";
@@ -69,6 +72,9 @@ static int consoleModel = 0;
 
 static bool showlogo = true;
 static bool gotosettings = false;
+
+int appName = 0;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
+const char* appNameText = "";
 
 int guiLanguage = -1;
 static int bstrap_loadingScreen = 1;
@@ -118,6 +124,7 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
+	appName = settingsini.GetInt("SRLOADER", "APP_NAME", 0);
 	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
@@ -352,8 +359,10 @@ void loadROMselect() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
+	if (soundfreqsettingChanged) {
+		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+		else fifoSendValue32(FIFO_USER_07, 1);
+	}
 	if (theme==2) {
 		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
 	} else {
@@ -365,8 +374,10 @@ int lastRanROM() {
 	fadeType = false;
 	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 	renderScreens = false;
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
+	if (soundfreqsettingChanged) {
+		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+		else fifoSendValue32(FIFO_USER_07, 1);
+	}
 
 	vector<char*> argarray;
 	if (launchType > 2) {
@@ -470,13 +481,14 @@ int main(int argc, char **argv) {
 		graphicsInit();
 		fontInit();
 		fadeType = true;
-		printf("\n ");
-		printf(username);
+		printSmall(true, 28, 1, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
 
 	if (!access("fat:/", F_OK)) flashcardUsed = true;
+
+	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
 
 	bool soundfreqsetting = false;
 
@@ -492,6 +504,9 @@ int main(int argc, char **argv) {
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
 	fifoSendValue32(FIFO_USER_07, 0);
+
+	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
+	else fifoSendValue32(FIFO_USER_07, 1);
 
 	scanKeys();
 
@@ -509,10 +524,10 @@ int main(int argc, char **argv) {
 	}
 
 	InitSound();
-	
+
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 3, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 4, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -560,6 +575,19 @@ int main(int argc, char **argv) {
 
 
 	srand(time(NULL));
+
+	switch (appName) {
+		case 0:
+		default:
+			appNameText = "DSiMenu++";
+			break;
+		case 1:
+			appNameText = "SRLoader";
+			break;
+		case 2:
+			appNameText = "DSisionX";
+			break;
+	}
 
 	bool menuprinted = false;
 
@@ -770,7 +798,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 173, "DSiMenu++");
+					printSmallCentered(false, 173, appNameText);
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
 					printSmall(true, 28, 1, username);
@@ -1025,6 +1053,7 @@ int main(int argc, char **argv) {
 								break;
 							case 5:
 								soundfreq = !soundfreq;
+								soundfreqsettingChanged = !soundfreqsettingChanged;
 								break;
 							case 6:
 								slot1LaunchMethod = !slot1LaunchMethod;
@@ -1049,8 +1078,12 @@ int main(int argc, char **argv) {
 								subscreenmode = 3;
 								break;
 							case 1:
-								if(soundfreqsetting) soundfreq = !soundfreq;
-								else useGbarunner = !useGbarunner;
+								if(soundfreqsetting) {
+									soundfreq = !soundfreq;
+									soundfreqsettingChanged = !soundfreqsettingChanged;
+								} else {
+									useGbarunner = !useGbarunner;
+								}
 								break;
 						}
 					}
@@ -1100,7 +1133,7 @@ int main(int argc, char **argv) {
 					// Clear the screen so it doesn't over-print
 					clearText();
 
-					printSmallCentered(false, 173, "DSiMenu++");
+					printSmallCentered(false, 173, appNameText);
 
 					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
 					printSmall(true, 28, 1, username);
