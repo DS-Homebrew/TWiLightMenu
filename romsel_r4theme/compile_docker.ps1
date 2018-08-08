@@ -9,7 +9,11 @@ docker image inspect dsimenuplusplus >$null 2>&1
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t dsimenuplusplus --label dsimenuplusplus ./docker
+    docker build -t dsimenuplusplus --label dsimenuplusplus ../docker
 }
 
 docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
+
+if($args.Count -eq 0 -and $?) {
+    Copy-Item "romsel_r4theme.nds" "../7zfile/_nds/dsimenuplusplus/r4menu.srldr"
+}

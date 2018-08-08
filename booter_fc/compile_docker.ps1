@@ -9,7 +9,11 @@ docker image inspect dsimenuplusplus >$null 2>&1
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t dsimenuplusplus --label dsimenuplusplus ./docker
+    docker build -t dsimenuplusplus --label dsimenuplusplus ../docker
 }
 
 docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
+
+if($args.Count -eq 0 -and $?) {
+    Copy-Item "booter_fc.nds" "../7zfile/BOOT_fc.nds"
+}
