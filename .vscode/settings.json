@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.partial": "nunjucks",
+        "*.html": "html",
+        "xstring": "cpp"
+    }
+}
