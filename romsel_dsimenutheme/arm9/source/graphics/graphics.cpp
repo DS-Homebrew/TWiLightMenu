@@ -1092,9 +1092,9 @@ void topBgLoad() {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
 				// Temporary hack! should be replaced with a lookup table and coordinates.
-				u16* src = buffer+(small_font_texcoords[0+(4*(usernameRendered[c]-0x20))]);
+				u16* src = buffer+(legacy_small_font_texcoords[0+(4*(usernameRendered[c]-0x20))]);
 				// Temporary hack!
-				for (int i=0; i<small_font_texcoords[2+(4*(usernameRendered[c]-0x20))]; i++) {
+				for (int i=0; i<legacy_small_font_texcoords[2+(4*(usernameRendered[c]-0x20))]; i++) {
 					u16 val = *(src++);
 					switch (val) {
 						case 0xFC1F:
@@ -1133,7 +1133,7 @@ void topBgLoad() {
 					}
 				}
 			}
-			x += small_font_texcoords[2+(4*usernameRendered[c])];
+			x += legacy_small_font_texcoords[2+(4*usernameRendered[c])];
 		}
 
 		fclose(file);

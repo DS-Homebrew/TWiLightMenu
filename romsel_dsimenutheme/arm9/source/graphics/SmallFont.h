@@ -9,18 +9,19 @@
  ******************************************************************************/
 #pragma once
 #include <gl2d.h>
+#include <array>
 #include "FontGraphic.h"
-#include "uvcoord_large_font.h"
+#include "uvcoord_small_font.h"
 #include <vector>
 
-class LargeFont : public FontGraphic
+class SmallFont : public FontGraphic
 {
   private:
     /**
      * Stores which font texture is loaded into which font
      * bank. -1 if not loaded.
      */
-    int texBankMap[LARGE_FONT_NUM_AUX_TEX + 1];
+    int texBankMap[SMALL_FONT_NUM_AUX_TEX + 1];
     
     /**
      * Stores the texture IDs of loaded banks.
@@ -35,7 +36,7 @@ class LargeFont : public FontGraphic
     // int freeFontBank(int index);
 
   public:
-    LargeFont(){};
+    SmallFont(){};
     int initFont();
     void refreshFontBanks();
     void clearFontBanks();

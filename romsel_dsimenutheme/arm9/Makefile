@@ -22,7 +22,7 @@ BUILD		:=	build
 SOURCES		:=	source source/graphics
 INCLUDES	:=	include
 DATA		:=	../data  
-GRAPHICS	:=  ../gfx ../gfx/large_font
+GRAPHICS	:=  ../gfx ../gfx/large_font ../gfx/small_font
 MUSIC       :=  ../music
 
 #---------------------------------------------------------------------------------
