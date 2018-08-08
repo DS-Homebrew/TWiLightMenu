@@ -88,6 +88,7 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	
 	refreshAllFontBanks();
 	switch(textlines) {
 		case 0:

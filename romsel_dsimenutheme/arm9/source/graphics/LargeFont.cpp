@@ -11,6 +11,8 @@
 #include <nds.h>
 #include <nds/arm9/decompress.h>
 
+#include <vector>
+#include <array>
 #include <stdio.h>
 #include <gl2d.h>
 #include "FontGraphic.h"
@@ -18,106 +20,177 @@
 #include "unicode_font_lut.h"
 #include <nds/debug.h>
 
-#include "large_font_0.h"
-#include "large_font_1.h"
+#include "large_font.h"
 
 #include "uvcoord_large_font.h"
 
-glImage largeFontImagesAscii[LARGE_FONT_NUM_IMAGES];
-glImage largeFontImages_1[LARGE_FONT_NUM_IMAGES];
-// glImage largeFontImages_2[LARGE_FONT_NUM_IMAGES];
-// glImage largeFontImages_3[LARGE_FONT_NUM_IMAGES];
+glImage largeFontPrmImage[LARGE_FONT_PRM_NUM_IMAGES];
+//glImage largeFontAuxImageBanks[LARGE_FONT_NUM_AUX_BANKS][LARGE_FONT_AUX_NUM_IMAGES];
+std::vector<std::array<glImage, LARGE_FONT_AUX_NUM_IMAGES>> largeFontAuxImages;
+std::vector<int> textureIds;
+
+
+int nextAuxFontBank = 1;
 int LargeFont::initFont()
 {
-
-    // Initialize the font sprite banks.
-    fontSpritesheetBanks[0] = largeFontImagesAscii;
-    fontSpritesheetBanks[1] = largeFontImages_1;
-    // fontSpritesheetBanks[2] = largeFontImages_2;
-    // fontSpritesheetBanks[3] = largeFontImages_3;
-
-    // Indicate none of the textures have been initialized..
-    // -1 if uninitialized, otherwise the index of the font bank
-    // the sprite is loaded in.
-    for (int i = 0; i < LARGE_FONT_NUM_TEXTURES; i++)
+    consoleDemoInit();
+    for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX; i++)
     {
-        fontSpritesheetStatus[i] = -1;
+         texBankMap[i] = -1;
     }
-
-    // Indicate none of the font banks are loaded.
-    // -1 if unloaded, otherwise the index of the font sprite.
-    for (int i = 0; i < LARGE_FONT_NUM_BANKS; i++)
-    {
-        spriteBankStatus[i] = -1;
-    }
-
-    texBitmaps[0] = large_font_0Bitmap;
-    texBitmaps[1] = large_font_1Bitmap;
-
-    // todo: see if we can share a single palette
-    texPalettes[0] = large_font_0Pal;
-    texPalettes[1] = large_font_1Pal;
-
-   // nextFontBank = 2; // font bank 0 will always be the first texture
-
-    // Initialize font sprite 0 into font bank 0.
-     // Initialize font sprite 2 into font bank 1. (test occupied)
     refreshFontBanks();
     return 0;
 }
 
-void LargeFont::refreshFontBanks() {
+void LargeFont::refreshFontBanks()
+{
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankD(VRAM_D_TEXTURE);
-    clearFontBanks();
-    initFontBank(0, 0);
-    initFontBank(1, 1);
+    clearFontBanks(false);
+    initPrimaryFontBank();
 }
 
-void LargeFont::clearFontBanks() {
-    glDeleteTextures(2, fontSpritesheetBankId);
-}
-
-int LargeFont::initFontBank(int index, int into)
+void LargeFont::clearFontBanks(bool clearState)
 {
-    glImage *sprite = fontSpritesheetBanks[into];
+    // nextAuxFontBank = 0;
+    // if (clearState)
+    // {
+    //     for (int i = 0; i < LARGE_FONT_NUM_AUX_BANKS; i++)
+    //     {
+    //         auxFontBankState[i] = -1;
+    //     }
+
+    //     for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX; i++)
+    //     {
+    //         auxFontTexBankMap[i] = -1;
+    //     }
+    // }
+    // // Deletes all the textures.
+    glDeleteTextures(textureIds.size(), textureIds.data());
+    textureIds.clear();
+    for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX + 1; i++)
+    {
+         texBankMap[i] = -1;
+    }
+    texBankMap[0] = 0;
+}
+
+int LargeFont::initPrimaryFontBank()
+{
+    glImage *sprite = largeFontPrmImage;
     int textureID = glLoadSpriteSet(
         sprite,
-        LARGE_FONT_NUM_IMAGES,
-        large_font_texcoords[index],
+        LARGE_FONT_PRM_NUM_IMAGES,
+        large_font_texcoords[0],
         GL_RGB16,
         TEXTURE_SIZE_512,
-        TEXTURE_SIZE_256,
+        TEXTURE_SIZE_128,
         TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
         16,
-        (u16 *)texPalettes[index],
-        (const u8 *)texBitmaps[index]);
-    
-    spriteBankStatus[into] = index;
-    fontSpritesheetBankId[into] = textureID;
-    fontSpritesheetStatus[index] = into;
+        (u16 *)large_fontPal[0],
+        (const u8 *)large_fontBitmaps[0]);
+    textureIds.push_back(textureID);
     return textureID;
 }
 
-// Algorithm to get correct font sprite index
-// floor(spriteIndex/characters per texture)
-
-int LargeFont::getFontBankIndex(unsigned short int spriteIndex)
+int LargeFont::initAuxillaryFontBank(int fontTextureIndex)
 {
-    int fontSheetIdx;
-    char msgBuffer[256];
-    fontSheetIdx = spriteIndex / LARGE_FONT_NUM_IMAGES; // truncated division works fine here.
-    sprintf(msgBuffer, "Trying to load font sheet: %i", fontSheetIdx);
-    nocashMessage(msgBuffer);
-    sprintf(msgBuffer, "Size of font sheet: %i", sizeof(fontSpritesheetBanks[fontSheetIdx]));
-    nocashMessage(msgBuffer);
-    return fontSpritesheetStatus[fontSheetIdx];
+    std::array<glImage, LARGE_FONT_AUX_NUM_IMAGES> _sprite;
+    int auxIndex = largeFontAuxImages.size();
+    largeFontAuxImages.push_back(std::move(_sprite));
+    glImage *sprite = (glImage*) largeFontAuxImages[auxIndex].data();
+    int textureID = glLoadSpriteSet(
+        sprite,
+        LARGE_FONT_PRM_NUM_IMAGES,
+        large_font_texcoords[fontTextureIndex],
+        GL_RGB16,
+        TEXTURE_SIZE_128,
+        TEXTURE_SIZE_64,
+        TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+        16,
+        (u16 *)large_fontPal[fontTextureIndex],
+        (const u8 *)large_fontBitmaps[fontTextureIndex]);
+    textureIds.push_back(textureID);
+    texBankMap[fontTextureIndex] = auxIndex;
+
+    //fontBankTexID[fontBankIndex] = textureID;
+   // auxFontBankState[fontBankIndex] = fontTextureIndex;
+    //auxFontTexBankMap[fontTextureIndex - 1] = fontBankIndex;
+    return textureID;
+}
+
+int LargeFont::getFontTextureIndex(unsigned short int spriteIndex)
+{
+        // Anything falling within extended ASCII range (192 characters)
+    // will be in the primary sheet.
+    if (spriteIndex < LARGE_FONT_PRM_NUM_IMAGES)
+    {
+        return 0;
+    }
+
+    // Calculated the adjusted font sheet by subtracting the
+    // sprite index by 192 and dividing by the number of images
+    // in each auxillary to get a 0-based index.
+    // Since auxillary textures are indexed at 1, add one.
+    int fontTexIndex;
+    spriteIndex = spriteIndex - LARGE_FONT_PRM_NUM_IMAGES;
+    fontTexIndex = spriteIndex / LARGE_FONT_AUX_NUM_IMAGES; // truncated division works fine here.
+    return fontTexIndex + 1;
+}
+
+int LargeFont::adjustFontChar(unsigned short int fontChar, int fontTexIndex)
+{
+    if (fontTexIndex == 0)
+    {
+        return fontChar;
+    }
+    else
+    {
+        // It is in one of the auxillary font banks!
+
+        // Subtract the primary image offset.
+        fontChar = fontChar - LARGE_FONT_PRM_NUM_IMAGES;
+
+        // Subtract the previous auxillary counts to get an index
+        // relative to the font texture of this character.
+        fontChar = fontChar - (LARGE_FONT_AUX_NUM_IMAGES * (fontTexIndex - 1));
+        return fontChar;
+    }
+}
+
+/**
+ * Gets the glImage pointer to the given index
+ * if it does not load, load it.
+ */
+glImage *LargeFont::getFontBankImage(int fontTexIndex)
+{    
+    if (fontTexIndex == 0) {
+        //printf("PRIMARY FONT BANK\n");
+        return largeFontPrmImage;
+    }
+
+    if (texBankMap[fontTexIndex] != -1) {
+        int glImageIndex = texBankMap[fontTexIndex];   
+        return largeFontAuxImages[glImageIndex].data();
+    } else {
+        printf("AUX FONT NEEDS LOAD\n");
+        initAuxillaryFontBank(fontTexIndex);
+        return getFontBankImage(fontTexIndex);
+    }
+    // if (auxFontTexBankMap[fontTexIndex - 1] != -1)
+    // {
+    //  //   printf("AUX FONT BANK LOADED\n");
+    //     int glImageIndex = auxFontTexBankMap[fontTexIndex - 1];
+    //     return largeFontAuxImageBanks[glImageIndex];
+    // } else {
+    //     
+    // }
 }
 
 void LargeFont::print(int x, int y, const char *text)
 {
     unsigned short int fontChar;
-    unsigned int fontBankIndex;
+    unsigned int fontTexIndex;
     unsigned char lowBits;
     unsigned char highBits;
     char msgBuffer[256];
@@ -133,33 +206,24 @@ void LargeFont::print(int x, int y, const char *text)
             lowBits = *(unsigned char *)text++;  // LSB
             highBits = *(unsigned char *)text++; // HSB
             u16 assembled = (u16)(lowBits | highBits << 8);
+            if (assembled == 0xFF5E) {
+                assembled = 0x007E;
+            }
             fontChar = getSpriteIndex(assembled);
         }
 
-        fontBankIndex = getFontBankIndex(fontChar);
-
-        sprintf(msgBuffer, "FontBank: %i", fontBankIndex);
-        nocashMessage(msgBuffer);
-        sprintf(msgBuffer, "Character: %i", fontChar);
-        nocashMessage(msgBuffer);
-
-        fontChar = fontChar - (LARGE_FONT_NUM_IMAGES * fontBankIndex);
-        
-        sprintf(msgBuffer, "Adjusted: %i", fontChar);
-        nocashMessage(msgBuffer);
-
-        sprintf(msgBuffer, "Width: %i", fontSpritesheetBanks[fontBankIndex][fontChar].width);
-        nocashMessage(msgBuffer);
-       
-        glSprite(x, y, GL_FLIP_NONE, &fontSpritesheetBanks[fontBankIndex][fontChar]);
-        x += fontSpritesheetBanks[fontBankIndex][fontChar].width;
+        fontTexIndex = getFontTextureIndex(fontChar);
+        fontChar = adjustFontChar(fontChar, fontTexIndex);
+        glImage *fontImage = getFontBankImage(fontTexIndex);
+        glSprite(x, y, GL_FLIP_NONE, &fontImage[fontChar]);
+        x += fontImage[fontChar].width;
     }
 }
 
 int LargeFont::calcWidth(const char *text)
 {
     unsigned short int fontChar;
-    unsigned int fontBankIndex;
+    unsigned int fontTexIndex;
     unsigned char lowBits;
     unsigned char highBits;
     int x = 0;
@@ -178,9 +242,10 @@ int LargeFont::calcWidth(const char *text)
             fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
         }
 
-        fontBankIndex = getFontBankIndex(fontChar);
-        fontChar = fontChar - (LARGE_FONT_NUM_IMAGES * fontBankIndex);
-        x += fontSpritesheetBanks[fontBankIndex][fontChar].width;
+        fontTexIndex = getFontTextureIndex(fontChar);
+        fontChar = adjustFontChar(fontChar, fontTexIndex);
+        glImage *fontImage = getFontBankImage(fontTexIndex);
+        x += fontImage[fontChar].width;
     }
     return x;
 }
@@ -190,8 +255,7 @@ int LargeFont::getCenteredX(const char *text)
     unsigned short int fontChar;
     unsigned char lowBits;
     unsigned char highBits;
-    unsigned int fontBankIndex;
-    
+    unsigned int fontTexIndex;
 
     int total_width = 0;
     while (*text)
@@ -207,11 +271,11 @@ int LargeFont::getCenteredX(const char *text)
             highBits = *(unsigned char *)text++;
             fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
         }
-        
-    
-        fontBankIndex = getFontBankIndex(fontChar);
-        fontChar = fontChar - (LARGE_FONT_NUM_IMAGES * fontBankIndex);
-        total_width += fontSpritesheetBanks[fontBankIndex][fontChar].width;
+
+        fontTexIndex = getFontTextureIndex(fontChar);
+        fontChar = adjustFontChar(fontChar, fontTexIndex);
+        glImage *fontImage = getFontBankImage(fontTexIndex);
+        total_width += fontImage[fontChar].width;
     }
     return (SCREEN_WIDTH - total_width) / 2;
 }
@@ -221,7 +285,7 @@ void LargeFont::printCentered(int y, const char *text)
     unsigned short int fontChar;
     unsigned char lowBits;
     unsigned char highBits;
-    unsigned int fontBankIndex;
+    unsigned int fontTexIndex;
     int x = getCenteredX(text);
     while (*text)
     {
@@ -237,9 +301,10 @@ void LargeFont::printCentered(int y, const char *text)
             fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
         }
 
-        fontBankIndex = getFontBankIndex(fontChar);
-        fontChar = fontChar - (LARGE_FONT_NUM_IMAGES * fontBankIndex);
-        glSprite(x, y, GL_FLIP_NONE, &fontSpritesheetBanks[fontBankIndex][fontChar]);
-        x += fontSpritesheetBanks[fontBankIndex][fontChar].width;
+        fontTexIndex = getFontTextureIndex(fontChar);
+        fontChar = adjustFontChar(fontChar, fontTexIndex);
+        glImage *fontImage = getFontBankImage(fontTexIndex);
+        glSprite(x, y, GL_FLIP_NONE, &fontImage[fontChar]);
+        x += fontImage[fontChar].width;
     }
 }

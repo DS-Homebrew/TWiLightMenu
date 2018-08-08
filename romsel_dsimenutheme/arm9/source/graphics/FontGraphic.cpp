@@ -48,6 +48,7 @@ int FontGraphic::load(glImage *_font_sprite,
 }
 
 unsigned short int FontGraphic::getSpriteIndex(const u16 letter) {
+//	if (letter == 0xFF5E) return getSpriteIndex(0x007E); //tilde hack todo: implement fullwidth.
 	return utf16_lookup_table[letter];
 }
 
