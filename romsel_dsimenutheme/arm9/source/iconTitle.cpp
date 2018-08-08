@@ -88,7 +88,6 @@ void iconTitleInit()
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
-	
 	refreshAllFontBanks();
 	switch(textlines) {
 		case 0:
@@ -747,11 +746,34 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
+#define LEFT_ALIGN 70
+static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
+{
+	refreshAllFontBanks();
+	swiWaitForVBlank();
+	switch(textlines) {
+		case 0:
+		default:
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text1);
+			break;
+		case 1:
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing2, text1);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing3, text2);
+			break;
+		case 2:
+			printLarge(false, LEFT_ALIGN, BOX_PY, text1);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text2);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1*2, text3);
+			break;
+	}
+}
+
+
 void titleUpdate(bool isDir, const char* name, int num)
 {
 	clearText(false);
 	if (showdialogbox) {
-		BOX_PY = 11;
+		BOX_PY = 10;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
@@ -840,24 +862,11 @@ void titleUpdate(bool isDir, const char* name, int num)
 		// text
 		if (showdialogbox || infoFound[num]) {
 			//refreshAllFontBanks();
-			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-			// switch(bannerlines) {
-			// 	case 0:
-			// 	default:
-			// 		//writeBannerText(1, titleToDisplay[0], "", "");
-			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
-			// 		break;
-			// 	case 1:
-				
-			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
-			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
-			// 		break;
-			// 	case 2:
-			// 		printLargeCentered(false, BOX_PY, titleToDisplay[0]);
-			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
-			// 		printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
-			// 		break;
-			// }
+			if (!showdialogbox) {
+				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			} else {
+				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			}
 		} else {
 			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
 			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);

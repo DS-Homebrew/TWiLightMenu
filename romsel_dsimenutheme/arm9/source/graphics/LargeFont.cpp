@@ -47,20 +47,6 @@ void LargeFont::refreshFontBanks()
 
 void LargeFont::clearFontBanks()
 {
-    // nextAuxFontBank = 0;
-    // if (clearState)
-    // {
-    //     for (int i = 0; i < LARGE_FONT_NUM_AUX_BANKS; i++)
-    //     {
-    //         auxFontBankState[i] = -1;
-    //     }
-
-    //     for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX; i++)
-    //     {
-    //         auxFontTexBankMap[i] = -1;
-    //     }
-    // }
-    // // Deletes all the textures.
     glDeleteTextures(textureIds.size(), textureIds.data());
     textureIds.clear();
     for (int i = 0; i < LARGE_FONT_NUM_AUX_TEX + 1; i++)
