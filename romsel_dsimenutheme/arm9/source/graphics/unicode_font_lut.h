@@ -8,6 +8,7 @@ UTF16LE to UVCoord Mapping
 #define FONT_LOOKUP__H
 
 #define UTF16_SIGNAL_BYTE  0x0F
+#define FULLWIDTH_BEGIN_INDEX 7202
 
 static constexpr unsigned short int utf16_lookup_table[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

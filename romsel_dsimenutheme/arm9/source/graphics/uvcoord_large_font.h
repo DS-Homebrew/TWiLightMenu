@@ -13,6 +13,7 @@ LARGE_FONT texture coordinates
 #define LARGE_FONT_PRM_NUM_IMAGES  0xC0
 #define LARGE_FONT_AUX_NUM_IMAGES  0x18
 #define LARGE_FONT_NUM_AUX_TEX 29
+#define LARGE_FONT_FULLWIDTH_BEGIN 23
 // U,V,Width,Height
 
 #define TEXT_LY 21

@@ -25,7 +25,6 @@
 #include "uvcoord_large_font.h"
 
 glImage largeFontPrmImage[LARGE_FONT_PRM_NUM_IMAGES];
-//glImage largeFontAuxImageBanks[LARGE_FONT_NUM_AUX_BANKS][LARGE_FONT_AUX_NUM_IMAGES];
 std::vector<std::array<glImage, LARGE_FONT_AUX_NUM_IMAGES>> largeFontAuxImages;
 std::vector<int> textureIds;
 
@@ -121,11 +120,20 @@ int LargeFont::initAuxillaryFontBank(int fontTextureIndex)
 
 int LargeFont::getFontTextureIndex(unsigned short int spriteIndex)
 {
-        // Anything falling within extended ASCII range (192 characters)
+    // Anything falling within extended ASCII range (192 characters)
     // will be in the primary sheet.
     if (spriteIndex < LARGE_FONT_PRM_NUM_IMAGES)
     {
         return 0;
+    }
+
+    // Anything above FULLWIDTH_BEGIN_INDEX is a full width character
+    // large texes 23-29
+    if (spriteIndex > FULLWIDTH_BEGIN_INDEX) {
+        int fontTexIndex;
+        spriteIndex = spriteIndex - FULLWIDTH_BEGIN_INDEX;
+        fontTexIndex = spriteIndex / LARGE_FONT_AUX_NUM_IMAGES; // truncated division works fine here.
+        return fontTexIndex + LARGE_FONT_FULLWIDTH_BEGIN;
     }
 
     // Calculated the adjusted font sheet by subtracting the
@@ -144,13 +152,20 @@ int LargeFont::adjustFontChar(unsigned short int fontChar, int fontTexIndex)
     {
         return fontChar;
     }
+    else if (fontTexIndex >= LARGE_FONT_FULLWIDTH_BEGIN) 
+    {
+        // Subtract FULLWIDTH_BEGIN_INDEX characters.
+        fontChar = fontChar - FULLWIDTH_BEGIN_INDEX;
+        // font char relative to the fullwidth block start.
+        fontChar = fontChar - (LARGE_FONT_AUX_NUM_IMAGES * (fontTexIndex - LARGE_FONT_FULLWIDTH_BEGIN));
+        return fontChar;
+    }
     else
     {
         // It is in one of the auxillary font banks!
 
         // Subtract the primary image offset.
         fontChar = fontChar - LARGE_FONT_PRM_NUM_IMAGES;
-
         // Subtract the previous auxillary counts to get an index
         // relative to the font texture of this character.
         fontChar = fontChar - (LARGE_FONT_AUX_NUM_IMAGES * (fontTexIndex - 1));
@@ -193,7 +208,6 @@ void LargeFont::print(int x, int y, const char *text)
     unsigned int fontTexIndex;
     unsigned char lowBits;
     unsigned char highBits;
-    char msgBuffer[256];
     while (*text)
     {
         lowBits = *(unsigned char *)text++;
@@ -206,9 +220,6 @@ void LargeFont::print(int x, int y, const char *text)
             lowBits = *(unsigned char *)text++;  // LSB
             highBits = *(unsigned char *)text++; // HSB
             u16 assembled = (u16)(lowBits | highBits << 8);
-            if (assembled == 0xFF5E) {
-                assembled = 0x007E;
-            }
             fontChar = getSpriteIndex(assembled);
         }
 
