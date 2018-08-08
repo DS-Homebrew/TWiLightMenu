@@ -702,7 +702,7 @@ int main(int argc, char **argv) {
 		showbubble = true;
 		// this should print y with diaresis, then katakana Bo, then katakana Po if font is correct.
 	//	char message[] = {0xFF, 0x0F, 0xDC, 0x30, 0x0F, 0xDD, 0x30, 0x0F, 0xF3, 0x30}; 
-		printLargeCentered(false, 32, "A");
+		printLargeCentered(false, 32, "fatInitDefault failed!");
 
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;
