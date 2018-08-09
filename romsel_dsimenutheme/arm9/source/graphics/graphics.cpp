@@ -1058,7 +1058,6 @@ void topBgLoad() {
 	} else {
 		loadBMP("nitro:/graphics/top.bmp");
 	}
-	
 	// Load username
 	const char* fontPath;
 	FILE* file;

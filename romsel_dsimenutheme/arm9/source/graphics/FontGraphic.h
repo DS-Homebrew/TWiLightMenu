@@ -17,7 +17,7 @@ class FontGraphic
 {
 private:
 	glImage *fontSprite;
-	const unsigned int *mapping;
+	const unsigned short int *mapping;
 	unsigned int imageCount;
 	char buffer[256];
 	char buffer2[256];
@@ -36,7 +36,7 @@ public:
 			int pallette_width,
 			const u16 *palette,
 			const uint8 *texture,
-			const unsigned int *_mapping
+			const unsigned short int *_mapping
 			);
 	void print(int x, int y, const char *text);
 	int calcWidth(const char *text);

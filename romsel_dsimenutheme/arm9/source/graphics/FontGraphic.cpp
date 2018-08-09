@@ -24,11 +24,10 @@ int FontGraphic::load(glImage *_font_sprite,
 				  int pallette_width,
 				  const u16 *palette,
 				  const uint8 *texture,
-				  const unsigned int *_mapping
+				  const unsigned short int *_mapping
 				  )
 
 {
-	consoleDemoInit();
 	fontSprite = _font_sprite;
 	imageCount = numframes;
 	mapping = _mapping;
