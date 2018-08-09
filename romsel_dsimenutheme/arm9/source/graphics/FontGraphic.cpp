@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <gl2d.h>
 #include "FontGraphic.h"
+#include "unicode_font_lut.h"
 
 int FontGraphic::load(glImage *_font_sprite,
 				  const unsigned int numframes,
@@ -45,27 +46,53 @@ int FontGraphic::load(glImage *_font_sprite,
 
 }
 
+unsigned short int getSpriteIndex(const u16 letter) {
+//	if (letter == 0xFF5E) return getSpriteIndex(0x007E); //tilde hack todo: implement fullwidth.
+	return utf16_lookup_table[letter];
+}
+
 void FontGraphic::print(int x, int y, const char *text)
 {
-	unsigned char font_char;
-
+	unsigned short int fontChar;
+	unsigned char lowBits;
+	unsigned char highBits;
 	while (*text)
 	{
-		font_char = (*(unsigned char*) text++) - 32;
-		glSprite(x, y, GL_FLIP_NONE, &fontSprite[font_char]);
-		x += fontSprite[font_char].width;
+		lowBits = *(unsigned char*) text++;
+		if (lowBits != UTF16_SIGNAL_BYTE) { // check if the lower bits is the signal bits.
+			fontChar = getSpriteIndex(lowBits);
+		} else {
+			lowBits = *(unsigned char*) text++; // LSB
+			highBits = *(unsigned char*) text++; // HSB
+			u16 assembled = (u16)(lowBits | highBits << 8);
+			
+			fontChar = getSpriteIndex(assembled);
+		}
+		
+		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
+		x += fontSprite[fontChar].width;
 	}
 }
 
 int FontGraphic::calcWidth(const char *text)
 {
-	unsigned char font_char;
+	unsigned short int fontChar;
+	unsigned char lowBits;
+	unsigned char highBits;
 	int x = 0;
 
 	while (*text)
 	{
-		font_char = (*(unsigned char*) text++) - 32;
-		x += fontSprite[font_char].width;
+		lowBits = *(unsigned char*) text++;
+		if (lowBits != UTF16_SIGNAL_BYTE) {
+			fontChar = getSpriteIndex(lowBits);
+		} else {
+			lowBits = *(unsigned char*) text++;
+			highBits = *(unsigned char*) text++;
+			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		}
+
+		x += fontSprite[fontChar].width;
 	}
 	return x;
 }
@@ -78,11 +105,21 @@ void FontGraphic::print(int x, int y, int value)
 
 int FontGraphic::getCenteredX(const char *text)
 {
-	unsigned char fontChar;
+	unsigned short int fontChar;
+	unsigned char lowBits;
+	unsigned char highBits;
 	int total_width = 0;
 	while (*text)
 	{
-		fontChar = (*(unsigned char*) text++) - 32;
+		lowBits = *(unsigned char*) text++;
+		if (lowBits != UTF16_SIGNAL_BYTE) {
+			fontChar = getSpriteIndex(lowBits);
+		} else {
+			lowBits = *(unsigned char*) text++;
+			highBits = *(unsigned char*) text++;
+			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		}
+
 		total_width += fontSprite[fontChar].width;
 	}
 	return (SCREEN_WIDTH - total_width) / 2;
@@ -90,11 +127,23 @@ int FontGraphic::getCenteredX(const char *text)
 
 void FontGraphic::printCentered(int y, const char *text)
 {
-	unsigned char fontChar;
+	unsigned short int fontChar;
+	unsigned char lowBits;
+	unsigned char highBits;	
+
 	int x = getCenteredX(text);
 	while (*text)
 	{
-		fontChar = (*(unsigned char*) text++) - 32;
+		lowBits = *(unsigned char*) text++;
+		if (lowBits != UTF16_SIGNAL_BYTE) {
+			fontChar = getSpriteIndex(lowBits);
+		} else {
+			lowBits = *(unsigned char*) text++;
+			highBits = *(unsigned char*) text++;
+			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		}
+
+		fontChar = getSpriteIndex(*(unsigned char*) text++);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}

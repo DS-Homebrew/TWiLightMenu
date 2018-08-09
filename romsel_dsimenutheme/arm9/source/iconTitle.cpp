@@ -29,7 +29,9 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
+#include "graphics/unicode_font_lut.h"
 
+#define LEFT_ALIGN 70
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
@@ -62,9 +64,11 @@ static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
+#define TITLE_CACHE_SIZE 0x80
+
 static bool infoFound[40] = {false};
-static u16 cachedTitle[40][128];
-static char titleToDisplay[3][128];
+static u16 cachedTitle[40][TITLE_CACHE_SIZE]; 
+static char titleToDisplay[3][384]; 
 
 static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
 
@@ -354,7 +358,7 @@ void loadFixedBanner(void) {
 }
 
 void clearTitle(int num) {
-	for (int i = 0; i < 128; i++) {
+	for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 		cachedTitle[num][i] = 0;
 	}
 }
@@ -537,7 +541,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				for (int i = 0; i < 128; i++) {
+				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 				}
 
@@ -552,7 +556,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		DC_FlushAll();
 
-		for (int i = 0; i < 128; i++) {
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 		}
 		infoFound[num] = true;
@@ -742,11 +746,31 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
+static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
+{
+	switch(textlines) {
+		case 0:
+		default:
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text1);
+			break;
+		case 1:
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing2, text1);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing3, text2);
+			break;
+		case 2:
+			printLarge(false, LEFT_ALIGN, BOX_PY, text1);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text2);
+			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1*2, text3);
+			break;
+	}
+}
+
+
 void titleUpdate(bool isDir, const char* name, int num)
 {
 	clearText(false);
 	if (showdialogbox) {
-		BOX_PY = 11;
+		BOX_PY = 10;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
@@ -805,38 +829,39 @@ void titleUpdate(bool isDir, const char* name, int num)
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
 		int bannerlines = 0;
-		int i2 = 0;
-		for (int i = 0; i < 128; i++)
+		// The index of the character array
+		int charIndex = 0;
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
 		{
+			// todo: fix crash on titles that are too long (homebrew)
 			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
-				titleToDisplay[bannerlines][i2] = 0;
+				titleToDisplay[bannerlines][charIndex] = 0;
 				bannerlines++;
-				i2 = 0;
-			} else if (cachedTitle[num][i] == 0x2122) {
-				titleToDisplay[bannerlines][i2] = 0x99;	// Replace bugged ™ shown as ", with correct ™
-				i2++;
+				charIndex = 0;
+			} else if (cachedTitle[num][i] <= 0x00FF) { // ASCII+Latin Extended Range is 0x0 to 0xFF.
+				// Handle ASCII here
+				titleToDisplay[bannerlines][charIndex] = cachedTitle[num][i];
+				charIndex++;
 			} else {
-				titleToDisplay[bannerlines][i2] = cachedTitle[num][i];
-				i2++;
+				// We need to split U16 into two characters here.
+				char lowerBits = cachedTitle[num][i] & 0xFF;
+ 				char higherBits = cachedTitle[num][i] >> 8;
+				// Since we have UTF16LE, assemble in FontGraphic the other way.
+				// We will need to peek in FontGraphic.cpp since the higher bit is significant.
+				titleToDisplay[bannerlines][charIndex] = UTF16_SIGNAL_BYTE; 
+				// 0x0F signal bit to treat the next two characters as UTF
+				titleToDisplay[bannerlines][charIndex+1] = lowerBits;
+				titleToDisplay[bannerlines][charIndex+2] = higherBits;
+				charIndex += 3;
 			}
 		}
 
 		// text
 		if (showdialogbox || infoFound[num]) {
-			switch(bannerlines) {
-				case 0:
-				default:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[0]);
-					break;
-				case 1:
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing2, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[1]);
-					break;
-				case 2:
-					printLargeCentered(false, BOX_PY, titleToDisplay[0]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1, titleToDisplay[1]);
-					printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, titleToDisplay[2]);
-					break;
+			if (!showdialogbox) {
+				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			} else {
+				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
 		} else {
 			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
