@@ -700,7 +700,7 @@ int main(int argc, char **argv) {
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 		showbubble = true;
-		printLarge(false, 64, 32, "fatinitDefault failed!");
+		printLargeCentered(false, 32, "fatInitDefault failed!");
 
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;

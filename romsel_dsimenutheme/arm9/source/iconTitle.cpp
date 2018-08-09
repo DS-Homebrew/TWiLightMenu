@@ -29,7 +29,7 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
-#include "graphics/unicode_font_lut.h"
+
 
 #define LEFT_ALIGN 70
 #define ICON_POS_X	112

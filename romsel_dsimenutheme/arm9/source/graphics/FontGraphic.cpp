@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <gl2d.h>
 #include "FontGraphic.h"
-#include "unicode_font_lut.h"
+
 
 int FontGraphic::load(glImage *_font_sprite,
 				  const unsigned int numframes,
@@ -23,12 +23,15 @@ int FontGraphic::load(glImage *_font_sprite,
 				  int param,
 				  int pallette_width,
 				  const u16 *palette,
-				  const uint8 *texture
+				  const uint8 *texture,
+				  const unsigned int *_mapping
 				  )
 
 {
+	consoleDemoInit();
 	fontSprite = _font_sprite;
-
+	imageCount = numframes;
+	mapping = _mapping;
 	int textureID =
 			glLoadSpriteSet(fontSprite,
 							numframes,
@@ -46,9 +49,14 @@ int FontGraphic::load(glImage *_font_sprite,
 
 }
 
-unsigned short int getSpriteIndex(const u16 letter) {
-//	if (letter == 0xFF5E) return getSpriteIndex(0x007E); //tilde hack todo: implement fullwidth.
-	return utf16_lookup_table[letter];
+unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 1;
+	for (unsigned int i = 0; i < imageCount; i++) {
+		if (mapping[i] == letter) {
+			spriteIndex = i;
+		}
+	}
+	return spriteIndex;
 }
 
 void FontGraphic::print(int x, int y, const char *text)
