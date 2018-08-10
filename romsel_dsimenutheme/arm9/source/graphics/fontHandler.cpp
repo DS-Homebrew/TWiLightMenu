@@ -55,7 +55,8 @@ void fontInit()
 	
 	vramSetBankA(VRAM_A_TEXTURE);
 	// Put font textures into VRAM D and VRAM G
-	vramSetBankD(VRAM_D_TEXTURE);
+
+	// Allocate enough palette RAM for transparency.
 	vramSetBankG(VRAM_G_TEX_PALETTE);
 	// vramSetBankF(VRAM_F_TEX_PALETTE);
 	smallFont.load(smallFontImages, // pointer to glImage array
@@ -63,7 +64,7 @@ void fontInit()
 				small_font_texcoords, // Texture packer auto-generated array
 				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
 				TEXTURE_SIZE_512, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 				16, // Length of the palette (16 colors)
 				(u16*) small_fontPal, // Palette Data
