@@ -55,9 +55,9 @@ void fontInit()
 	
 	vramSetBankA(VRAM_A_TEXTURE);
 	// Put font textures into VRAM D and VRAM G
+	vramSetBankD(VRAM_D_TEXTURE);
+	//vramSetBankG(VRAM_G_TEX_PALETTE);
 
-	// Allocate enough palette RAM for transparency.
-	vramSetBankG(VRAM_G_TEX_PALETTE);
 	// vramSetBankF(VRAM_F_TEX_PALETTE);
 	smallFont.load(smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define

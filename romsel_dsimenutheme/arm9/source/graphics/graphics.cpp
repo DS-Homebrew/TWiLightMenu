@@ -1070,7 +1070,7 @@ void topBgLoad() {
 	}
 
 	// Load username
-	char* fontPath;
+	char fontPath[64];
 	FILE* file;
 	int x = 24; 
 
@@ -1096,48 +1096,51 @@ void topBgLoad() {
 					// Apply palette here.
 					// TODO: can we do some math here to shift the difference
 					// |0xA108 - N| units towards the main palette color?
-					// The palette in personal data is 
 					switch (val) {
 						// #ff00ff
 						case 0xFC1F:
-						default:
 							break;
 						// #414141
 						case 0xA108:
 							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
-						// 525A52
-						case 0xA96A:
+						// workaround for now.
+						default:
 							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
 							break;
-						// 6A6A6A
-						case 0xB5AD:
-							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
-							break;
-						// 7B7B7B
-						case 0xBDEF:
-							val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
-							break;
-						// 8B948B
-						case 0xC651:
-							val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
-							break;
-						// A4A4A4
-						case 0xD294:
-							val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
-							break;
-						// B4B4B4
-						case 0xDAD6:
-							val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
-							break;
-						// C5CDC5
-						case 0xE338:
-							val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
-							break;
-						// DEDEDE
-						case 0xEF7B:
-							val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
-							break;
+						
+						// // 525A52
+						// case 0xA96A:
+						// 	val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
+						// 	break;
+						// // 6A6A6A
+						// case 0xB5AD:
+						// 	val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
+						// 	break;
+						// // 7B7B7B
+						// case 0xBDEF:
+						// 	val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
+						// 	break;
+						// // 848484
+						// case 0x4210:
+						// 	val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
+						// 	break;
+						// // A4A4A4
+						// case 0xD294:
+						// 	val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
+						// 	break;
+						// // BDBDBD
+						// case 0x5AD6:
+						// 	val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
+						// 	break;
+						// // C5CDC5
+						// case 0xE338:
+						// 	val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
+						// 	break;
+						// // DEDEDE
+						// case 0xEF7B:
+						// 	val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
+						// 	break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
 						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
@@ -1251,9 +1254,12 @@ void graphicsInit()
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-	vramSetBankE(VRAM_E_MAIN_BG);
-	lcdMainOnBottom();
+	vramSetBankG(VRAM_G_TEX_PALETTE); // Need more palette memory for fonts.
 
+	vramSetBankE(VRAM_E_MAIN_BG);
+//	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything... 
+	lcdMainOnBottom();
+	
 	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
