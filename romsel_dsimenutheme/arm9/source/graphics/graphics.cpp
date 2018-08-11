@@ -1146,7 +1146,7 @@ void topBgLoad() {
 							break;
 						case 0xC210:
 							// blend the colors with the background to make it look better.
-							val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 64);
+							val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
 							break;
 						case 0xDEF7:
 							val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
