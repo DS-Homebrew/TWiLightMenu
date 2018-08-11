@@ -1050,6 +1050,9 @@ void loadShoulders() {
 	fclose(file);
 }
 
+/**
+ * Get the index in the UV coordinate array where the letter appears
+ */
 unsigned int getTopFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
 	for (unsigned int i = 0; i < TOP_FONT_NUM_IMAGES; i++) {
@@ -1130,8 +1133,6 @@ void topBgLoad() {
 					u16 val = *(src++);
 					u16 bg = BG_GFX_SUB[(y+1)*256+(i+x)]; //grab the background pixel
 					// Apply palette here.
-					// TODO: can we do some math here to shift the difference
-					// |0xA108 - N| units towards the main palette color?
 					
 					// Magic numbers were found by dumping val to stdout
 					// on case default.
@@ -1151,39 +1152,6 @@ void topBgLoad() {
 							val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
 						default:
 							break;
-						
-						// // 525A52
-						// case 0xA96A:
-						// 	val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
-						// 	break;
-						// // 6A6A6A
-						// case 0xB5AD:
-						// 	val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
-						// 	break;
-						// // 7B7B7B
-						// case 0xBDEF:
-						// 	val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
-						// 	break;
-						// // 848484
-						// case 0x4210:
-						// 	val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
-						// 	break;
-						// // A4A4A4
-						// case 0xD294:
-						// 	val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
-						// 	break;
-						// // BDBDBD
-						// case 0x5AD6:
-						// 	val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
-						// 	break;
-						// // C5CDC5
-						// case 0xE338:
-						// 	val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
-						// 	break;
-						// // DEDEDE
-						// case 0xEF7B:
-						// 	val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
-						// 	break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
 						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);

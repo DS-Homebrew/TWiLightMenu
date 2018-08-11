@@ -48,6 +48,9 @@ int FontGraphic::load(glImage *_font_sprite,
 
 }
 
+/**
+ * Get the index in the UV coordinate array where the letter appears
+ */
 unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
 	for (unsigned int i = 0; i < imageCount; i++) {
