@@ -1060,6 +1060,40 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
+//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
+#define MASK_RB      0b0111110000011111
+#define MASK_G       0b0000001111100000 // 0b0000011111100000
+#define MASK_MUL_RB  0b0111110000011111000000 // 0b1111100000011111000000
+#define MASK_MUL_G   0b0000001111100000000000 // 0b0000 0111 1110 0000 0000 00
+#define MAX_ALPHA        64 // 6bits+1 with rounding
+
+/**
+ * Adapted from https://stackoverflow.com/questions/18937701/
+ * applies alphablending with the given
+ * RGB555 foreground, RGB555 background, and alpha from 
+ * 0 to 128 (0, 1.0).
+ * The lower the alpha the more transparent, but
+ * this function does not produce good results at the extremes 
+ * (near 0 or 128).
+ */
+inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
+{
+
+	// alpha for foreground multiplication
+	// convert from 8bit to (6bit+1) with rounding
+	// will be in [0..64] inclusive
+	alpha = (alpha + 2) >> 2;
+	// "beta" for background multiplication; (6bit+1);
+	// will be in [0..64] inclusive
+	u8 beta = MAX_ALPHA - alpha;
+	// so (0..64)*alpha + (0..64)*beta always in 0..64
+
+	return (u16)((
+					 ((alpha * (u32)(fg & MASK_RB) + beta * (u32)(bg & MASK_RB)) & MASK_MUL_RB) |
+					 ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >>
+				 5);
+}
+
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
@@ -1091,8 +1125,10 @@ void topBgLoad() {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
 				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+
 				for (int i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
+					u16 bg = BG_GFX_SUB[(y+1)*256+(i+x)]; //grab the background pixel
 					// Apply palette here.
 					// TODO: can we do some math here to shift the difference
 					// |0xA108 - N| units towards the main palette color?
@@ -1107,14 +1143,13 @@ void topBgLoad() {
 						case 0xA108:
 							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
-						// workaround for now.
 						case 0xC210:
-							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
+							// blend the colors with the background to make it look better.
+							val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 64);
 							break;
 						case 0xDEF7:
-							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
+							val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
 						default:
-							//val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
 							break;
 						
 						// // 525A52
