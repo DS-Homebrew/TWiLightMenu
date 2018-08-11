@@ -1065,9 +1065,9 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 
 //   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
 #define MASK_RB      0b0111110000011111
-#define MASK_G       0b0000001111100000 // 0b0000011111100000
-#define MASK_MUL_RB  0b0111110000011111000000 // 0b1111100000011111000000
-#define MASK_MUL_G   0b0000001111100000000000 // 0b0000 0111 1110 0000 0000 00
+#define MASK_G       0b0000001111100000 
+#define MASK_MUL_RB  0b0111110000011111000000 
+#define MASK_MUL_G   0b0000001111100000000000 
 #define MAX_ALPHA        64 // 6bits+1 with rounding
 
 /**
