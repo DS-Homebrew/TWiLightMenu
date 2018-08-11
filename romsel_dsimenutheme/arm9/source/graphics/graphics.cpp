@@ -1096,6 +1096,9 @@ void topBgLoad() {
 					// Apply palette here.
 					// TODO: can we do some math here to shift the difference
 					// |0xA108 - N| units towards the main palette color?
+					
+					// Magic numbers were found by dumping val to stdout
+					// on case default.
 					switch (val) {
 						// #ff00ff
 						case 0xFC1F:
@@ -1105,8 +1108,13 @@ void topBgLoad() {
 							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
 						// workaround for now.
-						default:
+						case 0xC210:
 							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
+							break;
+						case 0xDEF7:
+							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
+						default:
+							//val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
 							break;
 						
 						// // 525A52
