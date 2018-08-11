@@ -69,7 +69,7 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-extern char usernameRendered[11];
+extern u16 usernameRendered[10];
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -1050,6 +1050,45 @@ void loadShoulders() {
 	fclose(file);
 }
 
+unsigned int getTopFontSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 0;
+	for (unsigned int i = 0; i < SMALL_FONT_NUM_IMAGES; i++) {
+		if (small_utf16_lookup_table[i] == letter) {
+			spriteIndex = i;
+		}
+	}
+	return spriteIndex;
+}
+
+#define MASK_RB       63519 // 0b1111100000011111
+#define MASK_G         2016 // 0b0000011111100000
+#define MASK_MUL_RB 4065216 // 0b1111100000011111000000
+#define MASK_MUL_G   129024 // 0b0000011111100000000000
+#define MAX_ALPHA        64 // 6bits+1 with rounding
+
+u16 alphablend(u16 fg, u16 bg, u8 alpha ){
+
+  // alpha for foreground multiplication
+  // convert from 8bit to (6bit+1) with rounding
+  // will be in [0..64] inclusive
+  alpha = ( alpha + 2 ) >> 2;
+  // "beta" for background multiplication; (6bit+1);
+  // will be in [0..64] inclusive
+  uint8 beta = MAX_ALPHA - alpha;
+  // so (0..64)*alpha + (0..64)*beta always in 0..64
+
+  return (uint16)((
+            (  ( alpha * (uint32)( fg & MASK_RB )
+                + beta * (uint32)( bg & MASK_RB )
+            ) & MASK_MUL_RB )
+          |
+            (  ( alpha * ( fg & MASK_G )
+                + beta * ( bg & MASK_G )
+            ) & MASK_MUL_G )
+         ) >> 6 );
+}
+
+
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
@@ -1058,28 +1097,18 @@ void topBgLoad() {
 	} else {
 		loadBMP("nitro:/graphics/top.bmp");
 	}
+
 	// Load username
-	const char* fontPath;
+	char* fontPath;
 	FILE* file;
-	int x = 28;
+	int x = 24; 
 
 	for (int c = 0; c < 10; c++) {
-		fontPath = "nitro:/graphics/top_small_font_0x20.bmp";
-		if (usernameRendered[c] == 0x00) {
-			break;
-		} else if (usernameRendered[c] >= 0x40 && usernameRendered[c] < 0x60) {
-			fontPath = "nitro:/graphics/top_small_font_0x40.bmp";
-		} else if (usernameRendered[c] >= 0x60 && usernameRendered[c] < 0x80) {
-			fontPath = "nitro:/graphics/top_small_font_0x60.bmp";
-		} else if (usernameRendered[c] >= 0x80 && usernameRendered[c] < 0xA0) {
-			fontPath = "nitro:/graphics/top_small_font_0x80.bmp";
-		} else if (usernameRendered[c] >= 0xA0 && usernameRendered[c] < 0xC0) {
-			fontPath = "nitro:/graphics/top_small_font_0xA0.bmp";
-		} else if (usernameRendered[c] >= 0xC0 && usernameRendered[c] < 0xE0) {
-			fontPath = "nitro:/graphics/top_small_font_0xC0.bmp";
-		} else if (usernameRendered[c] >= 0xE0 && usernameRendered[c] <= 0xFF) {
-			fontPath = "nitro:/graphics/top_small_font_0xE0.bmp";
-		}
+		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
+		// 42 characters per line.
+		unsigned int texIndex = charIndex / 42;
+		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+		
 		file = fopen(fontPath, "rb");
 
 		if (file) {
@@ -1090,37 +1119,50 @@ void topBgLoad() {
 			for (int y=15; y>=0; y--) {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
-				u16* src = buffer+(legacy_small_font_texcoords[0+(4*usernameRendered[c])]);
-				for (int i=0; i<legacy_small_font_texcoords[2+(4*usernameRendered[c])]; i++) {
+				u16* src = buffer+(small_font_texcoords[0+(4*charIndex)]);
+				for (int i=0; i < small_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
+					// Apply palette here.
+					// TODO: can we do some math here to shift the difference
+					// |0xA108 - N| units towards the main palette color?
 					switch (val) {
+						// #ff00ff
 						case 0xFC1F:
 						default:
 							break;
+						// #414141
 						case 0xA108:
 							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
+						// 525A52
 						case 0xA96A:
 							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
 							break;
+						// 6A6A6A
 						case 0xB5AD:
 							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
 							break;
+						// 7B7B7B
 						case 0xBDEF:
 							val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
 							break;
+						// 8B948B
 						case 0xC651:
 							val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
 							break;
+						// A4A4A4
 						case 0xD294:
 							val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
 							break;
+						// B4B4B4
 						case 0xDAD6:
 							val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
 							break;
+						// C5CDC5
 						case 0xE338:
 							val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
 							break;
+						// DEDEDE
 						case 0xEF7B:
 							val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
 							break;
@@ -1130,7 +1172,7 @@ void topBgLoad() {
 					}
 				}
 			}
-			x += legacy_small_font_texcoords[2+(4*usernameRendered[c])];
+			x += small_font_texcoords[2+(4*charIndex)];
 		}
 
 		fclose(file);

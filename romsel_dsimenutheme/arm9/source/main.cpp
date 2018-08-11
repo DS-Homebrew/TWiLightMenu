@@ -327,7 +327,7 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-char usernameRendered[11];
+u16 usernameRendered[10];
 bool usernameRenderedDone = false;
 
 /**
@@ -672,8 +672,12 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	// TODO: turn this into swiCopy
+	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
+	//swiCopy(PersonalData->name, usernameRendered, )
+	
 	// Read user name
-	char *username = (char*)PersonalData->name;
+  	char *username = (char*)PersonalData->name;
 		
 	// text
 	for (int i = 0; i < 10; i++) {
@@ -683,7 +687,7 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 	
-	snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
+	//snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
 	
 	LoadColor();
 

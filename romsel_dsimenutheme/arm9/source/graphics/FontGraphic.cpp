@@ -49,7 +49,7 @@ int FontGraphic::load(glImage *_font_sprite,
 }
 
 unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 1;
+	unsigned int spriteIndex = 0;
 	for (unsigned int i = 0; i < imageCount; i++) {
 		if (mapping[i] == letter) {
 			spriteIndex = i;
