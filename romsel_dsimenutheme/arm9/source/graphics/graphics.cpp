@@ -57,7 +57,7 @@
 #include "_3ds_folder.h"
 #include "wirelessicons.h"
 
-#include "uvcoord_small_font.h"
+#include "uvcoord_top_font.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -1052,42 +1052,13 @@ void loadShoulders() {
 
 unsigned int getTopFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
-	for (unsigned int i = 0; i < SMALL_FONT_NUM_IMAGES; i++) {
-		if (small_utf16_lookup_table[i] == letter) {
+	for (unsigned int i = 0; i < TOP_FONT_NUM_IMAGES; i++) {
+		if (top_utf16_lookup_table[i] == letter) {
 			spriteIndex = i;
 		}
 	}
 	return spriteIndex;
 }
-
-#define MASK_RB       63519 // 0b1111100000011111
-#define MASK_G         2016 // 0b0000011111100000
-#define MASK_MUL_RB 4065216 // 0b1111100000011111000000
-#define MASK_MUL_G   129024 // 0b0000011111100000000000
-#define MAX_ALPHA        64 // 6bits+1 with rounding
-
-u16 alphablend(u16 fg, u16 bg, u8 alpha ){
-
-  // alpha for foreground multiplication
-  // convert from 8bit to (6bit+1) with rounding
-  // will be in [0..64] inclusive
-  alpha = ( alpha + 2 ) >> 2;
-  // "beta" for background multiplication; (6bit+1);
-  // will be in [0..64] inclusive
-  uint8 beta = MAX_ALPHA - alpha;
-  // so (0..64)*alpha + (0..64)*beta always in 0..64
-
-  return (uint16)((
-            (  ( alpha * (uint32)( fg & MASK_RB )
-                + beta * (uint32)( bg & MASK_RB )
-            ) & MASK_MUL_RB )
-          |
-            (  ( alpha * ( fg & MASK_G )
-                + beta * ( bg & MASK_G )
-            ) & MASK_MUL_G )
-         ) >> 6 );
-}
-
 
 void topBgLoad() {
 	if (theme == 1) {
@@ -1119,12 +1090,13 @@ void topBgLoad() {
 			for (int y=15; y>=0; y--) {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
-				u16* src = buffer+(small_font_texcoords[0+(4*charIndex)]);
-				for (int i=0; i < small_font_texcoords[2+(4*charIndex)]; i++) {
+				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+				for (int i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					// Apply palette here.
 					// TODO: can we do some math here to shift the difference
 					// |0xA108 - N| units towards the main palette color?
+					// The palette in personal data is 
 					switch (val) {
 						// #ff00ff
 						case 0xFC1F:
@@ -1172,7 +1144,7 @@ void topBgLoad() {
 					}
 				}
 			}
-			x += small_font_texcoords[2+(4*charIndex)];
+			x += top_font_texcoords[2+(4*charIndex)];
 		}
 
 		fclose(file);
