@@ -57,7 +57,7 @@ int main() {
 	if (fatInitDefault()) {
 		CIniFile settingsini( settingsinipath );
 
-		if(settingsini.GetInt("SRLOADER","TWL_CLOCK",0) == 0) { TWLCLK = false; }
+		if(settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0) == 0) { TWLCLK = false; }
 
 		//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 		//	consoleOn = true;
