@@ -1264,8 +1264,8 @@ void graphicsInit()
 	//vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-	vramSetBankG(VRAM_G_TEX_PALETTE); // Need more palette memory for fonts.
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT0); // Allocate VRAM bank for all the palettes
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT1); // Need more palette memory for fonts.
 
 	vramSetBankE(VRAM_E_MAIN_BG);
 //	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything... 
