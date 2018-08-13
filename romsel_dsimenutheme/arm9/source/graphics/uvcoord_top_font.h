@@ -31,7 +31,7 @@ static constexpr unsigned int top_font_texcoords[] = {
     168, 0, 3, TEXT_TY, // FULL STOP
     180, 0, 6, TEXT_TY, // SOLIDUS
     192, 0, 9, TEXT_TY, // DIGIT ZERO
-    204, 0, 9, TEXT_TY, // DIGIT ONE
+    204, 0, 7, TEXT_TY, // DIGIT ONE
     216, 0, 9, TEXT_TY, // DIGIT TWO
     228, 0, 9, TEXT_TY, // DIGIT THREE
     240, 0, 9, TEXT_TY, // DIGIT FOUR

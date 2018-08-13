@@ -32,7 +32,7 @@ static constexpr unsigned int large_font_texcoords[] = {
     196, 0, 5, TEXT_LY, // FULL STOP
     210, 0, 6, TEXT_LY, // SOLIDUS
     224, 0, 11, TEXT_LY, // DIGIT ZERO
-    238, 0, 11, TEXT_LY, // DIGIT ONE
+    238, 0, 8, TEXT_LY, // DIGIT ONE
     252, 0, 11, TEXT_LY, // DIGIT TWO
     266, 0, 11, TEXT_LY, // DIGIT THREE
     280, 0, 11, TEXT_LY, // DIGIT FOUR

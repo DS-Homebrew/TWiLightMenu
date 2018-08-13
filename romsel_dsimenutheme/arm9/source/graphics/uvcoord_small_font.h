@@ -294,7 +294,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     168, 0, 3, TEXT_SY, // FULL STOP
     180, 0, 6, TEXT_SY, // SOLIDUS
     192, 0, 9, TEXT_SY, // DIGIT ZERO
-    204, 0, 9, TEXT_SY, // DIGIT ONE
+    204, 0, 7, TEXT_SY, // DIGIT ONE
     216, 0, 9, TEXT_SY, // DIGIT TWO
     228, 0, 9, TEXT_SY, // DIGIT THREE
     240, 0, 9, TEXT_SY, // DIGIT FOUR
