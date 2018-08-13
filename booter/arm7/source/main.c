@@ -63,6 +63,8 @@ void powerButtonCB() {
 int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
+
+	*(u16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);

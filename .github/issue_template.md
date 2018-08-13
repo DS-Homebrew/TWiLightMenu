@@ -30,6 +30,7 @@ Tell us which CFW do you have:
 DSi:
 
 - [ ]  HiyaCFW
+- [ ]  Not using CFW / Unlaunch only
 - [ ]  Not using CFW / DSiWarehax
 
 3DS/2DS:
