@@ -291,7 +291,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     132, 0, 9, TEXT_SY, // PLUS SIGN
     144, 0, 5, TEXT_SY, // COMMA
     156, 0, 6, TEXT_SY, // HYPHEN-MINUS
-    168, 0, 5, TEXT_SY, // FULL STOP
+    168, 0, 3, TEXT_SY, // FULL STOP
     180, 0, 6, TEXT_SY, // SOLIDUS
     192, 0, 9, TEXT_SY, // DIGIT ZERO
     204, 0, 9, TEXT_SY, // DIGIT ONE
@@ -343,13 +343,13 @@ static constexpr unsigned int small_font_texcoords[] = {
     252, 16, 6, TEXT_SY, // LOW LINE
     264, 16, 5, TEXT_SY, // GRAVE ACCENT
     276, 16, 7, TEXT_SY, // LATIN SMALL LETTER A
-    288, 16, 8, TEXT_SY, // LATIN SMALL LETTER B
+    288, 16, 7, TEXT_SY, // LATIN SMALL LETTER B
     300, 16, 7, TEXT_SY, // LATIN SMALL LETTER C
     312, 16, 8, TEXT_SY, // LATIN SMALL LETTER D
     324, 16, 7, TEXT_SY, // LATIN SMALL LETTER E
-    336, 16, 5, TEXT_SY, // LATIN SMALL LETTER F
+    336, 16, 4, TEXT_SY, // LATIN SMALL LETTER F
     348, 16, 7, TEXT_SY, // LATIN SMALL LETTER G
-    360, 16, 8, TEXT_SY, // LATIN SMALL LETTER H
+    360, 16, 7, TEXT_SY, // LATIN SMALL LETTER H
     372, 16, 3, TEXT_SY, // LATIN SMALL LETTER I
     384, 16, 5, TEXT_SY, // LATIN SMALL LETTER J
     396, 16, 7, TEXT_SY, // LATIN SMALL LETTER K
@@ -362,7 +362,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     480, 16, 5, TEXT_SY, // LATIN SMALL LETTER R
     492, 16, 7, TEXT_SY, // LATIN SMALL LETTER S
     0, 32, 5, TEXT_SY, // LATIN SMALL LETTER T
-    12, 32, 8, TEXT_SY, // LATIN SMALL LETTER U
+    12, 32, 7, TEXT_SY, // LATIN SMALL LETTER U
     24, 32, 7, TEXT_SY, // LATIN SMALL LETTER V
     36, 32, 10, TEXT_SY, // LATIN SMALL LETTER W
     48, 32, 7, TEXT_SY, // LATIN SMALL LETTER X
