@@ -11,14 +11,18 @@
 #include <gl2d.h>
 #define FONT_SX 8
 #define FONT_SY 10
+#define UTF16_SIGNAL_BYTE  0x0F
 
 class FontGraphic
 {
 private:
 	glImage *fontSprite;
+	const unsigned short int *mapping;
+	unsigned int imageCount;
 	char buffer[256];
 	char buffer2[256];
-	
+	unsigned int getSpriteIndex(const u16 letter);
+
 public:
 
 	FontGraphic() { };
@@ -31,7 +35,8 @@ public:
 			int param,
 			int pallette_width,
 			const u16 *palette,
-			const uint8 *texture
+			const uint8 *texture,
+			const unsigned short int *_mapping
 			);
 	void print(int x, int y, const char *text);
 	int calcWidth(const char *text);

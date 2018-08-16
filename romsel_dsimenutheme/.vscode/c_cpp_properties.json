@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "NDS",
+      "includePath": [
+        "c:/devkitPro/devkitARM/arm-none-eabi/include",
+        "c:/devkitPro/libnds/include",
+        "c:/devkitPro/libnds/include/**/"
+      ],
+      "browse": {
+        "limitSymbolsToIncludedHeaders": true,
+        "databaseFilename": ""
+      },
+      "intelliSenseMode": "clang-x64",
+      "compilerPath": "c:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++11"
+    }
+  ],
+  "version": 4
+}

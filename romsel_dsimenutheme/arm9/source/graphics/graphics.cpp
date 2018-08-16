@@ -57,7 +57,7 @@
 #include "_3ds_folder.h"
 #include "wirelessicons.h"
 
-#include "uvcoord_small_font.h"
+#include "uvcoord_top_font.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -69,7 +69,7 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-extern char usernameRendered[11];
+extern u16 usernameRendered[10];
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -1050,6 +1050,53 @@ void loadShoulders() {
 	fclose(file);
 }
 
+/**
+ * Get the index in the UV coordinate array where the letter appears
+ */
+unsigned int getTopFontSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 0;
+	for (unsigned int i = 0; i < TOP_FONT_NUM_IMAGES; i++) {
+		if (top_utf16_lookup_table[i] == letter) {
+			spriteIndex = i;
+		}
+	}
+	return spriteIndex;
+}
+
+//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
+#define MASK_RB      0b0111110000011111
+#define MASK_G       0b0000001111100000 
+#define MASK_MUL_RB  0b0111110000011111000000 
+#define MASK_MUL_G   0b0000001111100000000000 
+#define MAX_ALPHA        64 // 6bits+1 with rounding
+
+/**
+ * Adapted from https://stackoverflow.com/questions/18937701/
+ * applies alphablending with the given
+ * RGB555 foreground, RGB555 background, and alpha from 
+ * 0 to 128 (0, 1.0).
+ * The lower the alpha the more transparent, but
+ * this function does not produce good results at the extremes 
+ * (near 0 or 128).
+ */
+inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
+{
+
+	// alpha for foreground multiplication
+	// convert from 8bit to (6bit+1) with rounding
+	// will be in [0..64] inclusive
+	alpha = (alpha + 2) >> 2;
+	// "beta" for background multiplication; (6bit+1);
+	// will be in [0..64] inclusive
+	u8 beta = MAX_ALPHA - alpha;
+	// so (0..64)*alpha + (0..64)*beta always in 0..64
+
+	return (u16)((
+					 ((alpha * (u32)(fg & MASK_RB) + beta * (u32)(bg & MASK_RB)) & MASK_MUL_RB) |
+					 ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >>
+				 5);
+}
+
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
@@ -1058,29 +1105,18 @@ void topBgLoad() {
 	} else {
 		loadBMP("nitro:/graphics/top.bmp");
 	}
-	
+
 	// Load username
-	const char* fontPath;
+	char fontPath[64];
 	FILE* file;
-	int x = 28;
+	int x = 24; 
 
 	for (int c = 0; c < 10; c++) {
-		fontPath = "nitro:/graphics/top_small_font_0x20.bmp";
-		if (usernameRendered[c] == 0x00) {
-			break;
-		} else if (usernameRendered[c] >= 0x40 && usernameRendered[c] < 0x60) {
-			fontPath = "nitro:/graphics/top_small_font_0x40.bmp";
-		} else if (usernameRendered[c] >= 0x60 && usernameRendered[c] < 0x80) {
-			fontPath = "nitro:/graphics/top_small_font_0x60.bmp";
-		} else if (usernameRendered[c] >= 0x80 && usernameRendered[c] < 0xA0) {
-			fontPath = "nitro:/graphics/top_small_font_0x80.bmp";
-		} else if (usernameRendered[c] >= 0xA0 && usernameRendered[c] < 0xC0) {
-			fontPath = "nitro:/graphics/top_small_font_0xA0.bmp";
-		} else if (usernameRendered[c] >= 0xC0 && usernameRendered[c] < 0xE0) {
-			fontPath = "nitro:/graphics/top_small_font_0xC0.bmp";
-		} else if (usernameRendered[c] >= 0xE0 && usernameRendered[c] <= 0xFF) {
-			fontPath = "nitro:/graphics/top_small_font_0xE0.bmp";
-		}
+		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
+		// 42 characters per line.
+		unsigned int texIndex = charIndex / 42;
+		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+		
 		file = fopen(fontPath, "rb");
 
 		if (file) {
@@ -1091,39 +1127,30 @@ void topBgLoad() {
 			for (int y=15; y>=0; y--) {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
-				u16* src = buffer+(small_font_texcoords[0+(4*usernameRendered[c])]);
-				for (int i=0; i<small_font_texcoords[2+(4*usernameRendered[c])]; i++) {
+				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+
+				for (int i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
+					u16 bg = BG_GFX_SUB[(y+1)*256+(i+x)]; //grab the background pixel
+					// Apply palette here.
+					
+					// Magic numbers were found by dumping val to stdout
+					// on case default.
 					switch (val) {
+						// #ff00ff
 						case 0xFC1F:
-						default:
 							break;
+						// #414141
 						case 0xA108:
 							val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
 							break;
-						case 0xA96A:
-							val = bmpPal_topSmallFont[2+((PersonalData->theme)*16)];
+						case 0xC210:
+							// blend the colors with the background to make it look better.
+							val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
 							break;
-						case 0xB5AD:
-							val = bmpPal_topSmallFont[3+((PersonalData->theme)*16)];
-							break;
-						case 0xBDEF:
-							val = bmpPal_topSmallFont[4+((PersonalData->theme)*16)];
-							break;
-						case 0xC651:
-							val = bmpPal_topSmallFont[5+((PersonalData->theme)*16)];
-							break;
-						case 0xD294:
-							val = bmpPal_topSmallFont[6+((PersonalData->theme)*16)];
-							break;
-						case 0xDAD6:
-							val = bmpPal_topSmallFont[7+((PersonalData->theme)*16)];
-							break;
-						case 0xE338:
-							val = bmpPal_topSmallFont[8+((PersonalData->theme)*16)];
-							break;
-						case 0xEF7B:
-							val = bmpPal_topSmallFont[9+((PersonalData->theme)*16)];
+						case 0xDEF7:
+							val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
+						default:
 							break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
@@ -1131,7 +1158,7 @@ void topBgLoad() {
 					}
 				}
 			}
-			x += small_font_texcoords[2+(4*usernameRendered[c])];
+			x += top_font_texcoords[2+(4*charIndex)];
 		}
 
 		fclose(file);
@@ -1237,10 +1264,13 @@ void graphicsInit()
 	//vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-	vramSetBankE(VRAM_E_MAIN_BG);
-	lcdMainOnBottom();
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT0); // Allocate VRAM bank for all the palettes
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT1); // Need more palette memory for fonts.
 
+	vramSetBankE(VRAM_E_MAIN_BG);
+//	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything... 
+	lcdMainOnBottom();
+	
 	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
