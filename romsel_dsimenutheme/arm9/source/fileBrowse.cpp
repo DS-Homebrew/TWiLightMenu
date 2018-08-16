@@ -66,6 +66,7 @@ extern bool controlBottomBright;
 extern bool startButtonLaunch;
 extern int launchType;
 extern bool slot1LaunchMethod;
+extern bool bootstrapFile;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern bool arm7SCFGLocked;
@@ -755,7 +756,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+						int err = 0;
+						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true);
+						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true);
 						iprintf ("Start failed. Error %i\n", err);
 					}
 				}

@@ -812,7 +812,9 @@ int main(int argc, char **argv) {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-								int err = runNdsFile ("sd:/_nds/hb-bootstrap.nds", 0, NULL, true);
+								int err = 0;
+								if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true);
+								else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
@@ -1267,15 +1269,11 @@ int main(int argc, char **argv) {
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (strcmp(game_TID, "###") == 0) {
-							bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
+							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 						} else {
-							if(donorSdkVer==5) {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
-								else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-							} else {
-								if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
-								else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-							}
+							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
+							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 						}
 						launchType = 1;
 						SaveSettings();

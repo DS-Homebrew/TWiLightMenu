@@ -112,15 +112,11 @@ int lastRanROM() {
 		return runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
 	} else if (launchType == 1) {
 		if (homebrewBootstrap) {
-			bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
+			else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 		} else {
-			if(donorSdkVer==5) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-			} else {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
-				else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-			}
+			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
+			else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else if (launchType == 2) {

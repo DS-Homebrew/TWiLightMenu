@@ -391,15 +391,11 @@ int lastRanROM() {
 	} else if (launchType == 1) {
 		if (!flashcardUsed) {
 			if (homebrewBootstrap) {
-				bootstrapfilename = "sd:/_nds/hb-bootstrap.nds";
+				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
+				else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 			} else {
-				if (donorSdkVer==5) {
-					if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap-sdk5.nds";
-					else bootstrapfilename = "sd:/_nds/release-bootstrap-sdk5.nds";
-				} else {
-					if (bootstrapFile) bootstrapfilename = "sd:/_nds/nightly-bootstrap.nds";
-					else bootstrapfilename = "sd:/_nds/release-bootstrap.nds";
-				}
+				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
+				else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 			}
 			err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 		} else {
@@ -527,7 +523,7 @@ int main(int argc, char **argv) {
 
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 4, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 5, 0);
 
 	if (gotosettings) {
 		graphicsInit();
