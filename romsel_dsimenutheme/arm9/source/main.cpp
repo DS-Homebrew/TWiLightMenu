@@ -763,7 +763,7 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
-	extensionList.push_back(".launcharg");
+	if (consoleModel < 2) extensionList.push_back(".launcharg");	// Display .launcharg files, if on a DSi
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
 	extensionList.push_back(".sgb");
