@@ -249,6 +249,10 @@ void loadBinary_ARM7 (u32 fileCluster)
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
 
+		if (REG_SCFG_EXT != 0) {
+			*(u8*)(TWL_HEAD+0x1BF) = 0x00;		// Tell homebrew to use NTR touch
+		}
+
 		u32 ARM9i_SRC = *(u32*)(TWL_HEAD+0x1C0);
 		char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
 		u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
