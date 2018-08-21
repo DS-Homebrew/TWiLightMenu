@@ -324,6 +324,8 @@ int spawnedtitleboxes = 0;
 char usernameRendered[10];
 bool usernameRenderedDone = false;
 
+touchPosition touch;
+
 /**
  * Set donor SDK version for a specific game.
  */
@@ -715,7 +717,7 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
-	extensionList.push_back(".launcharg");
+	if (consoleModel < 2) extensionList.push_back(".launcharg");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
 	extensionList.push_back(".sgb");
@@ -723,6 +725,8 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".nes");
 	extensionList.push_back(".fds");
 	srand(time(NULL));
+	
+	bool menuButtonPressed = false;
 	
 	char path[256];
 
@@ -761,16 +765,43 @@ int main(int argc, char **argv) {
 			do {
 				scanKeys();
 				pressed = keysDownRepeat();
+				touchRead(&touch);
 				swiWaitForVBlank();
 			} while (!pressed);
 			
 			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
 			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
-			
+
+			if ((pressed & KEY_TOUCH) && touch.py >= 62 && touch.py <= 133) {
+				if (touch.px >= 10 && touch.px <= 82) {
+					if (startMenu_cursorPosition != 0) {
+						startMenu_cursorPosition = 0;
+					} else {
+						menuButtonPressed = true;
+					}
+				} else if (touch.px >= 92 && touch.px <= 164) {
+					if (startMenu_cursorPosition != 1) {
+						startMenu_cursorPosition = 1;
+					} else {
+						menuButtonPressed = true;
+					}
+				} else if (touch.px >= 174 && touch.px <= 246) {
+					if (startMenu_cursorPosition != 2) {
+						startMenu_cursorPosition = 2;
+					} else {
+						menuButtonPressed = true;
+					}
+				}
+			}
+
+			if (pressed & KEY_A) {
+				menuButtonPressed = true;
+			}
+
 			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
 			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
 
-			if (pressed & KEY_A) {
+			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
@@ -822,6 +853,8 @@ int main(int argc, char **argv) {
 						}
 						break;
 				}
+
+				menuButtonPressed = false;
 			}
 
 			if ((pressed & KEY_B) && !flashcardUsed) {
