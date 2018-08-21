@@ -620,8 +620,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			while (!pressed);
 
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96
-				&& !titleboxXmoveleft && !titleboxXmoveright))
+			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
+			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				if (startMenu) {
 					startMenu_cursorPosition -= 1;
@@ -649,8 +649,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
-					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160
-						&& !titleboxXmoveleft && !titleboxXmoveright))
+					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
+					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				if (startMenu) {
 					startMenu_cursorPosition += 1;
@@ -707,8 +707,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160
-				&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder))
+			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder))											// START button/text (3DS theme)
 			{
 				if ((startMenu_cursorPosition == 0 && startMenu)
 				|| (startMenu_cursorPosition == 1 && startMenu)
