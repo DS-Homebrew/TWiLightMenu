@@ -26,7 +26,7 @@ private:
 public:
 
 	FontGraphic() { };
-	int load(glImage *_font_sprite,
+	int load(int textureID, glImage *_font_sprite,
 			const unsigned int numframes,
 			const unsigned int *texcoords,
 			GL_TEXTURE_TYPE_ENUM type,

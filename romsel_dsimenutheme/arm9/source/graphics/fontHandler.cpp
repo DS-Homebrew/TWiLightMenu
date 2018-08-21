@@ -59,7 +59,7 @@ void fontInit()
 	//vramSetBankG(VRAM_G_TEX_PALETTE);
 
 	// vramSetBankF(VRAM_F_TEX_PALETTE);
-	smallFont.load(smallFontImages, // pointer to glImage array
+	smallFont.load(0, smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
 				small_font_texcoords, // Texture packer auto-generated array
 				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
@@ -73,7 +73,7 @@ void fontInit()
 				);
 
 	//Do the same with our bigger texture
-	largeFont.load(largeFontImages,
+	largeFont.load(1, largeFontImages,
 				LARGE_FONT_NUM_IMAGES,
 				large_font_texcoords,
 				GL_RGB16,

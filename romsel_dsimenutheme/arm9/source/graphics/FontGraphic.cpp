@@ -13,8 +13,10 @@
 #include <gl2d.h>
 #include "FontGraphic.h"
 
+int fontTextureID[2];
 
-int FontGraphic::load(glImage *_font_sprite,
+
+int FontGraphic::load(int textureID, glImage *_font_sprite,
 				  const unsigned int numframes,
 				  const unsigned int *texcoords,
 				  GL_TEXTURE_TYPE_ENUM type,
@@ -31,7 +33,8 @@ int FontGraphic::load(glImage *_font_sprite,
 	fontSprite = _font_sprite;
 	imageCount = numframes;
 	mapping = _mapping;
-	int textureID =
+	if (fontTextureID[textureID]) glDeleteTextures(1, &fontTextureID[textureID]);
+	fontTextureID[textureID] =
 			glLoadSpriteSet(fontSprite,
 							numframes,
 							texcoords,
@@ -44,7 +47,7 @@ int FontGraphic::load(glImage *_font_sprite,
 							texture
 							);
 
-	return textureID;
+	return fontTextureID[textureID];
 
 }
 
