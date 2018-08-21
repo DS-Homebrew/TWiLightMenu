@@ -7,6 +7,9 @@
 # Set the bit depth to 4 (16 colors)
 -gB4
 
+# Reduce the palette to 4 colors
+-pn4
+
 #The Transperant colour of 0xFF00FF
 -gT FF00FF
 
