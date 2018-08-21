@@ -330,6 +330,8 @@ int spawnedtitleboxes = 0;
 u16 usernameRendered[10];
 bool usernameRenderedDone = false;
 
+touchPosition touch;
+
 /**
  * Set donor SDK version for a specific game.
  */
