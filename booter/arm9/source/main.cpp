@@ -81,26 +81,6 @@ int main(int argc, char **argv) {
 	
 	bool graphicsInited = false;
 
-	scanKeys();
-	if(keysHeld() & KEY_RIGHT) {
-		if(!graphicsInited) {
-			graphicsInit();
-			fontInit();
-			graphicsInited = true;
-			fadeType = true;
-		}
-		printSmall(false, 4, 4, "Please remove your SD Card,");
-		printSmall(false, 4, 12, "and insert one containing the");
-		printSmall(false, 4, 20, "NDS ROMs and DSiMenu++.");
-		printSmall(false, 4, 36, "After inserting it, press START");
-		printSmall(false, 4, 44, "to proceed.");
-		while(1) {
-			scanKeys();
-			if(keysHeld() & KEY_START) break;
-			swiWaitForVBlank();
-		}
-	}
-
 	if (!fatInitDefault()) {
 		if(!graphicsInited) {
 			graphicsInit();
