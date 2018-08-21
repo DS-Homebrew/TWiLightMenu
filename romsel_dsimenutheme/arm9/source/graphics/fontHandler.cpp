@@ -83,17 +83,20 @@ void fontInit()
 }
 
 void reloadFontPalettes() {
-	u16 cmpFontPal[4];
+
+	uint16 cmpFontPal[4];
+
 	glBindTexture(0, fontTextureID[0]);
-	glGetColorTableEXT(0,0,0,cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, sizeof(cmpFontPal)) != 0) {
-		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
+	glGetColorTableEXT(0,0,0, cmpFontPal);
+
+	if (memcmp(cmpFontPal, small_fontPal, 4) != 0) {
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 	}
 
 	glBindTexture(0, fontTextureID[1]);
 	glGetColorTableEXT(0,0,0,cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, sizeof(cmpFontPal)) != 0) {
-		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
+	if (memcmp(cmpFontPal, large_fontPal, 4) != 0) {
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 	}
 }
 
