@@ -42,6 +42,7 @@
 #include "perGameSettings.h"
 
 #include "iconTitle.h"
+#include "graphics/iconHandler.h"
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
@@ -758,7 +759,7 @@ int main(int argc, char **argv) {
 
 	graphicsInit();
 	fontInit();
-
+	iconManagerInit();
 	iconTitleInit();
 
 	keysSetRepeat(25,5);
