@@ -210,6 +210,8 @@ int subscreenmode = 0;
 
 static int settingscursor = 0;
 
+touchPosition touch;
+
 static bool arm7SCFGLocked = false;
 
 using namespace std;
@@ -523,7 +525,7 @@ int main(int argc, char **argv) {
 
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 5, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 5, 1);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -997,6 +999,7 @@ int main(int argc, char **argv) {
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
+					touchRead(&touch);
 					swiWaitForVBlank();
 				} while (!pressed);
 				
@@ -1095,7 +1098,7 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 
-				if (pressed & KEY_B) {
+				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
 					mmEffectEx(&snd_back);
 					clearText();
 					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
@@ -1294,6 +1297,7 @@ int main(int argc, char **argv) {
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
+					touchRead(&touch);
 					swiWaitForVBlank();
 				} while (!pressed);
 
@@ -1417,7 +1421,7 @@ int main(int argc, char **argv) {
 					iprintf ("Start failed. Error %i\n", err);
 				}
 
-				if (pressed & KEY_B) {
+				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
 					mmEffectEx(&snd_back);
 					clearText();
 					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
