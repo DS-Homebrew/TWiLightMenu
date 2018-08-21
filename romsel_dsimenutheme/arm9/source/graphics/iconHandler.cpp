@@ -23,10 +23,10 @@ int _gbcTexID;
 int _nesTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
-
 glImage _gbaIcon[1];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
+
 
 extern bool useGbarunner;
 
@@ -159,6 +159,21 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight) {
  */
 void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, bool init)
 {
+    if (!init && !BAD_ICON_IDX(num)) {
+        // Check if the NDS icon to be loaded is already loaded in the
+        // slot. If so, only reload the palette if necessary.
+        void* texPtr = glGetTexturePointer(_iconTexID[num]);
+        if (texPtr && memcmp(_tiles, texPtr, sizeof(*_tiles)) == 0) {
+            uint16 cmpPal[sizeof(*_palette)];
+            glBindTexture(0, _iconTexID[num]);
+            glGetColorTableEXT(0,0,0, cmpPal);
+            if (memcmp(cmpPal, _palette, sizeof(*_palette)) != 0) {
+                glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) _palette);
+            }
+            return;
+        }
+    }
+
     glLoadTileSetIntoSlot(
         num,
         32,               // sprite width
@@ -201,6 +216,7 @@ void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight)
  */
 void iconManagerInit()
 {
+    consoleDemoInit();
     // Allocate texture memory for 6 textures.
     glGenTextures(6, _iconTexID);
     
