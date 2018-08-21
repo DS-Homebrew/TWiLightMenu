@@ -597,10 +597,10 @@ void vBlankHandler()
 		//}
 		//else
 		//{
+
+
 		//	drawBG(subBgImage);
-
-
-        //			if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
+		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
@@ -641,9 +641,9 @@ void vBlankHandler()
 					} else {
 						movecloseXpos = 0;
 					}
-					if (i == 0) {
+					if (i == 0 &&  (!applaunchprep || startMenu_cursorPosition != i)) {
 						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
-					} else if (i == 1) {
+					} else if (i == 1 && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (!flashcardUsed) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
@@ -651,11 +651,11 @@ void vBlankHandler()
 							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
-					} else if (i == 2 && !flashcardUsed) {
+					} else if (i == 2 && !flashcardUsed && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-					} else {
+					} else if (!applaunchprep || startMenu_cursorPosition != i){
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
 						} else {
@@ -677,15 +677,20 @@ void vBlankHandler()
 						if (isDirectory[i]) {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
 							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, folderImage);
-						} else {
-							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+						} else if (!applaunchprep || cursorPosition != i){ // Only draw the icon if we're not launching the selcted app
+							if (theme == 1) {
+								glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							} else { 
+								glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							}
 							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							
 							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						}
 					} else {
+						// Empty box
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, boxemptyImage);
 						} else {
@@ -698,14 +703,7 @@ void vBlankHandler()
 				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 81, GL_FLIP_H, braceImage);
 			}
 			if (applaunchprep && theme==0) {
-				// Cover selected app
-				for (int y = 0; y < 4; y++)
-				{
-					for (int x = 0; x < 4; x++)
-					{
-						glSprite(96+x*16, 86+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
-					}
-				}
+				
 				if(startMenu) {
 					if (startMenu_cursorPosition == 0) {
 						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
