@@ -37,6 +37,7 @@
 
 extern int theme;
 extern int subtheme;
+extern int fontTextureID[2];
 
 using namespace std;
 
@@ -79,6 +80,21 @@ void fontInit()
 				(u8*) large_fontBitmap,
 				large_utf16_lookup_table
 				);
+}
+
+void reloadFontPalettes() {
+	u16 cmpFontPal[4];
+	glBindTexture(0, fontTextureID[0]);
+	glGetColorTableEXT(0,0,0,cmpFontPal);
+	if (memcmp(cmpFontPal, large_fontPal, sizeof(cmpFontPal)) != 0) {
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
+	}
+
+	glBindTexture(0, fontTextureID[1]);
+	glGetColorTableEXT(0,0,0,cmpFontPal);
+	if (memcmp(cmpFontPal, large_fontPal, sizeof(cmpFontPal)) != 0) {
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
+	}
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

@@ -645,7 +645,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if(cursorPosition >= 2 && cursorPosition <= 36) {
 						if (bnrRomType[cursorPosition-2] == 0 && (cursorPosition-2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
-							fontInit();		// Reload font to avoid font corruption
+							reloadFontPalettes();		// Reload font to avoid font corruption
 						}
 					}
 				}
@@ -675,7 +675,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if(cursorPosition >= 3 && cursorPosition <= 37) {
 						if (bnrRomType[cursorPosition+2] == 0 && (cursorPosition+2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
-							fontInit();		// Reload font to avoid font corruption
+							reloadFontPalettes();		// Reload font to avoid font corruption	// Reload font to avoid font corruption
 						}
 					}
 				}
