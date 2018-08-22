@@ -30,6 +30,11 @@ glImage _nesIcon[1];
 
 extern bool useGbarunner;
 
+
+u8 *clearTiles;
+u16 *blackPalette;
+
+
 /**
  * Gets the current icon stored at the specified index.
  * If the index is out of bounds or the icon manager is not
@@ -159,21 +164,6 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight) {
  */
 void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, bool init)
 {
-    if (!init && !BAD_ICON_IDX(num)) {
-        // Check if the NDS icon to be loaded is already loaded in the
-        // slot. If so, only reload the palette if necessary.
-        void* texPtr = glGetTexturePointer(_iconTexID[num]);
-        if (texPtr && memcmp(_tiles, texPtr, sizeof(*_tiles)) == 0) {
-            uint16 cmpPal[sizeof(*_palette)];
-            glBindTexture(0, _iconTexID[num]);
-            glGetColorTableEXT(0,0,0, cmpPal);
-            if (memcmp(cmpPal, _palette, sizeof(*_palette)) != 0) {
-                glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) _palette);
-            }
-            return;
-        }
-    }
-
     glLoadTileSetIntoSlot(
         num,
         32,               // sprite width
@@ -211,12 +201,23 @@ void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight)
 }
 
 /**
+ * Clears an icon from the bank. 
+ */
+void glClearIcon(int num) 
+{
+    glLoadIcon(num, blackPalette, clearTiles, 256, true);
+}
+
+/**
  * Allocates and initializes the VRAM locations for
  * icons. Must be called before the icon manager is used.
  */
 void iconManagerInit()
 {
-    consoleDemoInit();
+    clearTiles = new u8[(32 * 256) / 2]();
+	blackPalette = new u16[16*8]();
+
+   // consoleDemoInit();
     // Allocate texture memory for 6 textures.
     glGenTextures(6, _iconTexID);
     

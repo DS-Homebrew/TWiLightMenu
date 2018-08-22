@@ -62,21 +62,11 @@ static bool infoFound[40] = {false};
 static u16 cachedTitle[40][TITLE_CACHE_SIZE]; 
 static char titleToDisplay[3][384]; 
 
+u8 *tilesModified = new u8[(32 * 256) / 2];
 
-u8 *clearTiles;
-u16 *blackPalette;
-u8 *tilesModified;
-
-void iconTitleInit()
-{
-	clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16*8]();
-	tilesModified = new u8[(32 * 256) / 2];
-}
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
-	reloadFontPalettes();
 	switch(textlines) {
 		case 0:
 		default:
@@ -132,7 +122,7 @@ void loadUnkIcon(int num)
 
 static void clearIcon(int num)
 {
-	loadIcon(clearTiles, blackPalette, num, true);
+	glClearIcon(num);
 }
 
 

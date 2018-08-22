@@ -42,3 +42,8 @@ void iconManagerInit();
  */
 void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight = 32);
 
+
+/**
+ * Clears an icon in the bank.
+ */
+void glClearIcon(int num);

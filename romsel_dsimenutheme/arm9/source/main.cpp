@@ -760,7 +760,6 @@ int main(int argc, char **argv) {
 	graphicsInit();
 	fontInit();
 	iconManagerInit();
-	iconTitleInit();
 
 	keysSetRepeat(25,5);
 
