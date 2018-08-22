@@ -47,3 +47,15 @@ void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight = 32
  * Clears an icon in the bank.
  */
 void glClearIcon(int num);
+
+/**
+ * Reloads the palette of the icon in the 
+ * numth slot, if it has been corrupted.
+ */
+void glReloadIconPalette(int num);
+
+/**
+ * Reloads the palette of all the icons in a slot, if
+ * they have been corrupted.
+ */
+void reloadIconPalettes();

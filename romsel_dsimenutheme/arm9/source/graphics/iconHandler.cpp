@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 #include <gl2d.h>
 
-
 // Graphic files
 #include "icon_unk.h"
 #include "icon_gbamode.h"
@@ -13,10 +12,10 @@
 #include "icon_gb.h"
 #include "icon_nes.h"
 
-
 bool initialized;
 
 int _iconTexID[NDS_ICON_BANK_COUNT];
+u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
 
 int _gbaTexID;
 int _gbcTexID;
@@ -27,13 +26,10 @@ glImage _gbaIcon[1];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
 
-
 extern bool useGbarunner;
-
 
 u8 *clearTiles;
 u16 *blackPalette;
-
 
 /**
  * Gets the current icon stored at the specified index.
@@ -42,10 +38,14 @@ u16 *blackPalette;
  */
 const glImage *getIcon(int num)
 {
-    if (num == GBA_ICON) return _gbaIcon;
-    if (num == GBC_ICON) return _gbcIcon;
-    if (num == NES_ICON) return _nesIcon;
-    if (BAD_ICON_IDX(num) || !initialized) return NULL;
+    if (num == GBA_ICON)
+        return _gbaIcon;
+    if (num == GBC_ICON)
+        return _gbcIcon;
+    if (num == NES_ICON)
+        return _nesIcon;
+    if (BAD_ICON_IDX(num) || !initialized)
+        return NULL;
     return _ndsIcon[num];
 }
 
@@ -76,24 +76,26 @@ void glLoadTileSetIntoSlot(
     int textureID;
     glImage *sprite;
 
-    switch (num) {
-        case GBA_ICON:
-            textureID = _gbaTexID;
-            sprite = _gbaIcon;
-            break;
-        case GBC_ICON:
-            textureID = _gbcTexID;
-            sprite = _gbcIcon;
-            break;
-        case NES_ICON:
-            textureID = _nesTexID;
-            sprite = _nesIcon;
-            break;
-        default:
-            if (BAD_ICON_IDX(num)) return;
-            textureID = _iconTexID[num];
-            sprite = _ndsIcon[num];
-            break;
+    switch (num)
+    {
+    case GBA_ICON:
+        textureID = _gbaTexID;
+        sprite = _gbaIcon;
+        break;
+    case GBC_ICON:
+        textureID = _gbcTexID;
+        sprite = _gbcIcon;
+        break;
+    case NES_ICON:
+        textureID = _nesTexID;
+        sprite = _nesIcon;
+        break;
+    default:
+        if (BAD_ICON_IDX(num))
+            return;
+        textureID = _iconTexID[num];
+        sprite = _ndsIcon[num];
+        break;
     }
 
     glBindTexture(0, textureID);
@@ -126,26 +128,28 @@ void glLoadTileSetIntoSlot(
     }
 }
 
-static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight) {
-    switch (texHeight) {
-        case 8:
-            return TEXTURE_SIZE_8;
-        case 16:
-            return TEXTURE_SIZE_16;
-        case 32:
-            return TEXTURE_SIZE_32;
-        case 64:
-            return TEXTURE_SIZE_64;
-        case 128:
-            return TEXTURE_SIZE_128;
-        case 256:
-            return TEXTURE_SIZE_256;
-        case 512:
-            return TEXTURE_SIZE_512;
-        case 1024:
-            return TEXTURE_SIZE_1024;
-        default:
-            return TEXTURE_SIZE_8;
+static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight)
+{
+    switch (texHeight)
+    {
+    case 8:
+        return TEXTURE_SIZE_8;
+    case 16:
+        return TEXTURE_SIZE_16;
+    case 32:
+        return TEXTURE_SIZE_32;
+    case 64:
+        return TEXTURE_SIZE_64;
+    case 128:
+        return TEXTURE_SIZE_128;
+    case 256:
+        return TEXTURE_SIZE_256;
+    case 512:
+        return TEXTURE_SIZE_512;
+    case 1024:
+        return TEXTURE_SIZE_1024;
+    default:
+        return TEXTURE_SIZE_8;
     }
 }
 
@@ -164,24 +168,81 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight) {
  */
 void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, bool init)
 {
+    if (!BAD_ICON_IDX(num))
+        swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
+
     glLoadTileSetIntoSlot(
         num,
-        32,               // sprite width
-        32,               // sprite height
-        32,               // bitmap image width
-        texHeight,              // bitmap image height
-        GL_RGB16,         // texture type for glTexImage2D() in videoGL.h
-        TEXTURE_SIZE_32,  // sizeX for glTexImage2D() in videoGL.h
+        32,                    // sprite width
+        32,                    // sprite height
+        32,                    // bitmap image width
+        texHeight,             // bitmap image height
+        GL_RGB16,              // texture type for glTexImage2D() in videoGL.h
+        TEXTURE_SIZE_32,       // sizeX for glTexImage2D() in videoGL.h
         tex_height(texHeight), // sizeY for glTexImage2D() in videoGL.h
         TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
         16,              // Length of the palette to use (16 colors)
         (u16 *)_palette, // Image palette
         (u8 *)_tiles,    // Raw image data
-        init
-    );
+        init);
 }
 
+/**
+ * Reloads the palette in the given slot from
+ * the palette cache.
+ */
+void glReloadIconPalette(int num)
+{
 
+    int textureID;
+    u16 *cachedPalette;
+    switch (num)
+    {
+    case GBA_ICON:
+        textureID = _gbaTexID;
+        cachedPalette = useGbarunner ? (u16 *)icon_gbaPal : (u16 *)icon_gbamodePal;
+        break;
+    case GBC_ICON:
+        textureID = _gbcTexID;
+        cachedPalette = (u16 *)icon_gbPal;
+        break;
+    case NES_ICON:
+        textureID = _nesTexID;
+        cachedPalette = (u16 *)icon_nesPal;
+        break;
+    default:
+        if (BAD_ICON_IDX(num))
+            return;
+        textureID = _iconTexID[num];
+        cachedPalette = _paletteCache[num];
+        break;
+    }
+
+    glBindTexture(0, textureID);
+    u16 cmpPal[16];
+    glGetColorTableEXT(0, 0, 0, (u16 *)cmpPal);
+    if (memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0)
+    {
+        // Only refresh the palette if it changed.
+        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
+    }
+}
+
+/**
+ * Reloads all the palettes in the palette cache if
+ * they have been corrupted.
+ */
+void reloadIconPalettes()
+{
+    glReloadIconPalette(GBA_ICON);
+    glReloadIconPalette(GBC_ICON);
+    glReloadIconPalette(NES_ICON);
+
+    for (int i = 0; i < NDS_ICON_BANK_COUNT; i++)
+    {
+        glReloadIconPalette(i);
+    }
+}
 /**
  * Loads an icon into one of 6 existing banks, overwritting 
  * the previous data.
@@ -203,7 +264,7 @@ void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight)
 /**
  * Clears an icon from the bank. 
  */
-void glClearIcon(int num) 
+void glClearIcon(int num)
 {
     glLoadIcon(num, blackPalette, clearTiles, 256, true);
 }
@@ -215,12 +276,12 @@ void glClearIcon(int num)
 void iconManagerInit()
 {
     clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16*8]();
+    blackPalette = new u16[16 * 8]();
 
-   // consoleDemoInit();
+    // consoleDemoInit();
     // Allocate texture memory for 6 textures.
     glGenTextures(6, _iconTexID);
-    
+
     // Allocate texture memory for GBA/GBC/NES icons.
     glGenTextures(1, &_gbaTexID);
     glGenTextures(1, &_gbcTexID);
@@ -234,17 +295,19 @@ void iconManagerInit()
     }
 
     // Load GB Icon
-	glLoadIcon(GBC_ICON, (u16*) icon_gbPal,(u8*) icon_gbBitmap, 64, true);
+    glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64, true);
 
-	glLoadIcon(NES_ICON, (u16*) icon_nesPal,(u8*) icon_nesBitmap, 32, true);
-    
-    if (useGbarunner) {
-        glLoadIcon(GBA_ICON, (u16*) icon_gbaPal,(u8*) icon_gbaBitmap, 32, true);
-    } else {
-        glLoadIcon(GBA_ICON, (u16*) icon_gbamodePal,(u8*) icon_gbamodeBitmap, 32, true);
+    glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32, true);
+
+    if (useGbarunner)
+    {
+        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 32, true);
+    }
+    else
+    {
+        glLoadIcon(GBA_ICON, (u16 *)icon_gbamodePal, (u8 *)icon_gbamodeBitmap, 32, true);
     }
 
     // set initialized.
     initialized = true;
 }
-
