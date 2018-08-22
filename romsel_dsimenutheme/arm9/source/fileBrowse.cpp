@@ -956,48 +956,56 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			if ((pressed & KEY_L) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0)
+			if (pressed & KEY_L)
 			{
-				mmEffectEx(&snd_switch);
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				pagenum -= 1;
-				cursorPosition = 0;
-				titleboxXpos = 0;
-				titlewindowXpos = 0;
-				whiteScreen = true;
-				if (showBoxArt) clearBoxArt();	// Clear box art
-				boxArtLoaded = false;
-				redoDropDown = true;
-				shouldersRendered = false;
-				showbubble = false;
-				showSTARTborder = false;
-				clearText();
-				SaveSettings();
-				settingsChanged = false;
-				displayNowLoading();
-				break;		
-			} else 	if ((pressed & KEY_R) && !startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40)
+				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0) {
+					mmEffectEx(&snd_switch);
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					pagenum -= 1;
+					cursorPosition = 0;
+					titleboxXpos = 0;
+					titlewindowXpos = 0;
+					whiteScreen = true;
+					if (showBoxArt) clearBoxArt();	// Clear box art
+					boxArtLoaded = false;
+					redoDropDown = true;
+					shouldersRendered = false;
+					showbubble = false;
+					showSTARTborder = false;
+					clearText();
+					SaveSettings();
+					settingsChanged = false;
+					displayNowLoading();
+					break;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+			} else 	if (pressed & KEY_R)
 			{
-				mmEffectEx(&snd_switch);
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				pagenum += 1;
-				cursorPosition = 0;
-				titleboxXpos = 0;
-				titlewindowXpos = 0;
-				whiteScreen = true;
-				if (showBoxArt) clearBoxArt();	// Clear box art
-				boxArtLoaded = false;
-				redoDropDown = true;
-				shouldersRendered = false;
-				showbubble = false;
-				showSTARTborder = false;
-				clearText();
-				SaveSettings();
-				settingsChanged = false;
-				displayNowLoading();
-				break;		
+				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40) {
+					mmEffectEx(&snd_switch);
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					pagenum += 1;
+					cursorPosition = 0;
+					titleboxXpos = 0;
+					titlewindowXpos = 0;
+					whiteScreen = true;
+					if (showBoxArt) clearBoxArt();	// Clear box art
+					boxArtLoaded = false;
+					redoDropDown = true;
+					shouldersRendered = false;
+					showbubble = false;
+					showSTARTborder = false;
+					clearText();
+					SaveSettings();
+					settingsChanged = false;
+					displayNowLoading();
+					break;
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
 			}
 
 			/*if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
