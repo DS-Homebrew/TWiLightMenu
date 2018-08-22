@@ -90,7 +90,7 @@ void reloadFontPalettes(bool forceRefresh) {
 	glGetColorTableEXT(0,0,0, cmpFontPal);
 
 	if (memcmp(cmpFontPal, small_fontPal, 4) != 0 || forceRefresh || cmpFontPal == NULL) {
-		if (!forceRefresh) {
+		if (!forceRefresh && cmpFontPal != NULL) {
 			glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 		} else {
 			glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
@@ -100,7 +100,7 @@ void reloadFontPalettes(bool forceRefresh) {
 	glBindTexture(0, fontTextureID[1]);
 	glGetColorTableEXT(0,0,0,cmpFontPal);
 	if (memcmp(cmpFontPal, large_fontPal, 4) != 0 || forceRefresh || cmpFontPal == NULL) {
-		if (!forceRefresh) {
+		if (!forceRefresh && cmpFontPal != NULL) {
 			glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 		} else {
 			glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
