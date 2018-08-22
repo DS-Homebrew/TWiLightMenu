@@ -159,10 +159,10 @@ float dbox_Ypos = -192;
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
 int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
-glImage subBgImage[(256 / 16) * (256 / 16)];
+//glImage subBgImage[(256 / 16) * (256 / 16)];
 //glImage mainBgImage[(256 / 16) * (256 / 16)];
 //glImage shoulderImage[(128 / 16) * (64 / 32)];
-glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
+//glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 glImage bubbleImage[(256 / 16) * (128 / 16)];
 glImage progressImage[(16 / 16) * (128 / 16)];
 glImage dialogboxImage[(256 / 16) * (256 / 16)];
@@ -597,8 +597,10 @@ void vBlankHandler()
 		//}
 		//else
 		//{
-			drawBG(subBgImage);
-			if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
+
+
+		//	drawBG(subBgImage);
+		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
@@ -639,9 +641,9 @@ void vBlankHandler()
 					} else {
 						movecloseXpos = 0;
 					}
-					if (i == 0) {
+					if (i == 0 &&  (!applaunchprep || startMenu_cursorPosition != i)) {
 						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
-					} else if (i == 1) {
+					} else if (i == 1 && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (!flashcardUsed) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
@@ -649,11 +651,11 @@ void vBlankHandler()
 							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
-					} else if (i == 2 && !flashcardUsed) {
+					} else if (i == 2 && !flashcardUsed && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-					} else {
+					} else if (!applaunchprep || startMenu_cursorPosition != i){
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
 						} else {
@@ -675,15 +677,20 @@ void vBlankHandler()
 						if (isDirectory[i]) {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
 							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, folderImage);
-						} else {
-							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
-							else glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+						} else if (!applaunchprep || cursorPosition != i){ // Only draw the icon if we're not launching the selcted app
+							if (theme == 1) {
+								glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							} else { 
+								glSprite(spawnedboxXpos-titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
+							}
 							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							
 							else drawIcon(iconXpos-titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						}
 					} else {
+						// Empty box
 						if (theme == 1) {
 							glSprite(spawnedboxXpos-titleboxXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, boxemptyImage);
 						} else {
@@ -696,14 +703,7 @@ void vBlankHandler()
 				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos, 81, GL_FLIP_H, braceImage);
 			}
 			if (applaunchprep && theme==0) {
-				// Cover selected app
-				for (int y = 0; y < 4; y++)
-				{
-					for (int x = 0; x < 4; x++)
-					{
-						glSprite(96+x*16, 86+y*16, GL_FLIP_NONE, &subBgImage[2 & 255]);
-					}
-				}
+				
 				if(startMenu) {
 					if (startMenu_cursorPosition == 0) {
 						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
@@ -1173,6 +1173,25 @@ void clearBoxArt() {
 	}
 }
 
+void bottomBgLoad() {
+	int bg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+	if (theme == 1) {
+		dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bg), _3ds_bottomTilesLen);
+		dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
+		dmaCopy(_3ds_bottomMap, bgGetMapPtr(bg), _3ds_bottomMapLen);
+	}
+	else if (subtheme == 1) {
+		dmaCopy(org_bottomTiles, bgGetGfxPtr(bg), org_bottomTilesLen);
+		dmaCopy(org_bottomPal, BG_PALETTE, org_bottomPalLen);
+		dmaCopy(org_bottomMap, bgGetMapPtr(bg), org_bottomMapLen);
+	} else {
+		dmaCopy(bottomTiles, bgGetGfxPtr(bg), bottomTilesLen);
+		dmaCopy(bottomPal, BG_PALETTE, bottomPalLen);
+		dmaCopy(bottomMap, bgGetMapPtr(bg), bottomMapLen);
+	}
+	
+}
+
 void graphicsInit()
 {
 	for (int i = 0; i < 12; i++) {
@@ -1252,22 +1271,27 @@ void graphicsInit()
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D);
+	videoSetMode(MODE_5_3D | DISPLAY_BG2_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
 	glScreen2D();
-
+	// Make gl2d render on transparent stage.
+	glClearColor(0,0,0,0);
+	glDisable(GL_CLEAR_BMP);
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
 	// sprites
-	//vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT0); // Allocate VRAM bank for all the palettes
-	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT1); // Need more palette memory for fonts.
+	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
-	vramSetBankE(VRAM_E_MAIN_BG);
 //	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything... 
 	lcdMainOnBottom();
 	
@@ -1281,6 +1305,7 @@ void graphicsInit()
 
 	if (theme < 1) loadPhoto();
 	topBgLoad();
+	bottomBgLoad();
 	
 	progressTexID = glLoadTileSet(progressImage, // pointer to glImage array
 							16, // sprite width
@@ -1305,26 +1330,13 @@ void graphicsInit()
 							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
 							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
 							TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-							16, // Length of the palette to use (16 colors)
+							4, // Length of the palette to use (16 colors)
 							(u16*) dialogboxPal, // Load our 16 color tiles palette
 							(u8*) dialogboxBitmap // image data generated by GRIT
 							);
 
 	if (theme == 1) {
-		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								256, // bitmap width
-								256, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (256 colors)
-								(u16*) _3ds_bottomPal, // Load our 16 color tiles palette
-								(u8*) _3ds_bottomBitmap // image data generated by GRIT
-								);
-
+	
 		titleboxYpos = 96;
 		bubbleYpos = 16;
 		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
@@ -1341,33 +1353,6 @@ void graphicsInit()
 								(u8*) _3ds_bubbleBitmap // image data generated by GRIT
 								);
 	} else if (subtheme == 1) {
-		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								256, // bitmap width
-								256, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) org_bottomPal, // Load our 16 color tiles palette
-								(u8*) org_bottomBitmap // image data generated by GRIT
-								);
-
-		ndsimenutextTexID = glLoadTileSet(ndsimenutextImage, // pointer to glImage array
-								256, // sprite width
-								32, // sprite height
-								256, // bitmap width
-								32, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) org_nintendo_dsi_menuPal, // Load our 16 color tiles palette
-								(u8*) org_nintendo_dsi_menuBitmap // image data generated by GRIT
-								);
 
 		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
 								16, // sprite width
@@ -1383,33 +1368,6 @@ void graphicsInit()
 								(u8*) org_bubbleBitmap // image data generated by GRIT
 								);
 	} else {
-		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								256, // bitmap width
-								256, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) bottomPal, // Load our 16 color tiles palette
-								(u8*) bottomBitmap // image data generated by GRIT
-								);
-
-		ndsimenutextTexID = glLoadTileSet(ndsimenutextImage, // pointer to glImage array
-								256, // sprite width
-								32, // sprite height
-								256, // bitmap width
-								32, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
-								(u16*) nintendo_dsi_menuPal, // Load our 16 color tiles palette
-								(u8*) nintendo_dsi_menuBitmap // image data generated by GRIT
-								);
 
 		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
 								16, // sprite width
@@ -1622,7 +1580,7 @@ void graphicsInit()
 								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
+								4, // Length of the palette to use (16 colors)
 								(u16*) org_bracePal, // Load our 16 color tiles palette
 								(u8*) org_braceBitmap // image data generated by GRIT
 								);
@@ -1678,7 +1636,7 @@ void graphicsInit()
 								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
 								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (16 colors)
+								4, // Length of the palette to use (16 colors)
 								(u16*) bracePal, // Load our 16 color tiles palette
 								(u8*) braceBitmap // image data generated by GRIT
 								);
@@ -1725,8 +1683,5 @@ void graphicsInit()
 							(u16*) wirelessiconsPal, // Load our 16 color tiles palette
 							(u8*) wirelessiconsBitmap // image data generated by GRIT
 							);
-
-	loadGBCIcon();
-	loadNESIcon();
 
 }

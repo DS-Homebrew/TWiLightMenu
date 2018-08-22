@@ -20,7 +20,6 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-void iconTitleInit();
 void loadGBCIcon();
 void loadNESIcon();
 void getGameInfo(bool isDir, const char* name, int num);

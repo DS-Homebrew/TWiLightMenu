@@ -29,7 +29,9 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
+#include "graphics/iconHandler.h"
 
+#include "icon_unk.h"
 
 #define LEFT_ALIGN 70
 #define ICON_POS_X	112
@@ -40,12 +42,6 @@ static int BOX_PY_spacing1 = 19;
 static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
 
-// Graphic files
-#include "icon_unk.h"
-#include "icon_gbamode.h"
-#include "icon_gba.h"
-#include "icon_gb.h"
-#include "icon_nes.h"
 
 extern bool showdialogbox;
 extern bool startMenu;
@@ -57,10 +53,6 @@ extern bool useGbarunner;
 extern bool flashcardUsed;
 extern bool animateDsiIcons;
 
-static int iconTexID[6][8];
-static int gbaTexID;
-static int gbTexID;
-static int nesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -70,22 +62,8 @@ static bool infoFound[40] = {false};
 static u16 cachedTitle[40][TITLE_CACHE_SIZE]; 
 static char titleToDisplay[3][384]; 
 
-static glImage ndsIcon[6][8][(32 / 32) * (256 / 32)];
+u8 *tilesModified = new u8[(32 * 256) / 2];
 
-static glImage gbaIcon[1];
-static glImage gbIcon[(32 / 32) * (64 / 32)];
-static glImage nesIcon[1];
-
-u8 *clearTiles;
-u16 *blackPalette;
-u8 *tilesModified;
-
-void iconTitleInit()
-{
-	clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16*8]();
-	tilesModified = new u8[(32 * 256) / 2];
-}
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
@@ -123,140 +101,30 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
-int loadIcon_loopTimes = 1;
-
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 
-	int Ysize = 32;
-	int textureSizeY = TEXTURE_SIZE_32;
-	loadIcon_loopTimes = 1;
-	if(twl) {
-		Ysize = 256;
-		textureSizeY = TEXTURE_SIZE_256;
-		//loadIcon_loopTimes = 8;
-	}
+	// int Ysize = 32;
+	// int textureSizeY = TEXTURE_SIZE_32;
+	// if(twl) {
+	// 	Ysize = 256;
+	// 	textureSizeY = TEXTURE_SIZE_256;
+	// }
 
-	for (int i = 0; i < 8; i++) {
-		if (iconTexID[num][i]) glDeleteTextures(1, &iconTexID[num][i]);
-	}
-	for (int i = 0; i < loadIcon_loopTimes; i++) {
-		iconTexID[num][i] =
-		glLoadTileSet(ndsIcon[num][i], // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					Ysize, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					textureSizeY, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) palSrc+(i*16), // Image palette
-					(u8*) tilesModified // Raw image data
-					);
-	}
+	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
 }
 
 void loadUnkIcon(int num)
 {
-	for (int i = 0; i < 8; i++) {
-		if (iconTexID[num][i]) glDeleteTextures(1, &iconTexID[num][i]);
-	}
-	iconTexID[num][0] =
-	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) icon_unkPal, // Image palette
-				(u8*) icon_unkBitmap // Raw image data
-				);
-}
-
-void loadGBCIcon()
-{
-	glDeleteTextures(1, &gbTexID);
-	
-	gbTexID =
-	glLoadTileSet(gbIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				64, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) icon_gbPal, // Image palette
-				(u8*) icon_gbBitmap // Raw image data
-				);
-}
-void loadNESIcon()
-{
-	if (gbaTexID) glDeleteTextures(1, &gbaTexID);
-	
-	if (useGbarunner) {
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					32, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) icon_gbaPal, // Image palette
-					(u8*) icon_gbaBitmap // Raw image data
-					);
-	} else {
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap width
-					32, // bitmap height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-					16, // Length of the palette to use (16 colors)
-					(u16*) icon_gbamodePal, // Load our 16 color tiles palette
-					(u8*) icon_gbamodeBitmap // image data generated by GRIT
-					);
-	}
-
-	if (nesTexID) glDeleteTextures(1, &nesTexID);
-	
-	nesTexID =
-	glLoadTileSet(nesIcon, // pointer to glImage array
-				32, // sprite width
-				32, // sprite height
-				32, // bitmap image width
-				32, // bitmap image height
-				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-				GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-				16, // Length of the palette to use (16 colors)
-				(u16*) icon_nesPal, // Image palette
-				(u8*) icon_nesBitmap // Raw image data
-				);
+	glLoadIcon(num, (u16*) icon_unkPal, (u8*) icon_unkBitmap);
 }
 
 static void clearIcon(int num)
 {
-	loadIcon(clearTiles, blackPalette, num, true);
+	glClearIcon(num);
 }
+
 
 void drawIcon(int Xpos, int Ypos, int num)
 {
@@ -275,24 +143,24 @@ void drawIcon(int Xpos, int Ypos, int num)
 		num2 -= 6;
 	}
 	//glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
-	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][0][bnriconframenumY[num] & 31]);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num] & 31]);
 }
 
 void drawIconGBA(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaIcon);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(GBA_ICON));
 }
 void drawIconGB(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[0 & 31]);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[0 & 31]);
 }
 void drawIconGBC(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &gbIcon[1 & 31]);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[1 & 31]);
 }
 void drawIconNES(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, nesIcon);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NES_ICON));
 }
 
 void loadFixedBanner(void) {

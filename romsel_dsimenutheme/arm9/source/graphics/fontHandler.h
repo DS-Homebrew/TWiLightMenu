@@ -40,3 +40,4 @@ TextEntry *getPreviousTextEntry(bool top);
 TextPane &createTextPane(int startX, int startY, int shownElements);
 FontGraphic &getFont(bool large);
 void waitForPanesToClear();
+void reloadFontPalettes();
