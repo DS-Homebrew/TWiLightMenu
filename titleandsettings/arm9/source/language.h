@@ -64,6 +64,7 @@ extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 extern std::string STR_LANGUAGE;
 extern std::string STR_CPUSPEED;
 extern std::string STR_DEBUG;
+extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
 extern std::string STR_ASYNCPREFETCH;
 extern std::string STR_SNDFREQ;
@@ -95,6 +96,9 @@ extern std::string STR_DESCRIPTION_CPUSPEED_2;
 
 extern std::string STR_DESCRIPTION_DEBUG_1;
 extern std::string STR_DESCRIPTION_DEBUG_2;
+
+extern std::string STR_DESCRIPTION_LOGGING_1;
+extern std::string STR_DESCRIPTION_LOGGING_2;
 
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
 

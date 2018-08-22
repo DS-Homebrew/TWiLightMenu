@@ -98,6 +98,7 @@ static bool animateDsiIcons = false;
 static int bstrap_language = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
 static bool bstrap_debug = false;
+static bool bstrap_logging = false;
 static int bstrap_romreadled = 0;
 static bool bstrap_asyncPrefetch = true;
 //static bool bstrap_lockARM9scfgext = false;
@@ -158,6 +159,7 @@ void LoadSettings(void) {
 		CIniFile bootstrapini( bootstrapinipath );
 
 		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
+		bstrap_logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", 0);
 		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 0);
 		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
@@ -198,6 +200,7 @@ void SaveSettings(void) {
 		CIniFile bootstrapini( bootstrapinipath );
 
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 		// bootstrapini.SetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", bstrap_lockARM9scfgext);
@@ -854,6 +857,14 @@ int main(int argc, char **argv) {
 						else
 							printSmall(false, 224, selyPos, STR_OFF.c_str());
 						selyPos += 12;
+
+						printSmall(false, 12, selyPos, STR_LOGGING.c_str());
+						if(bstrap_logging)
+							printSmall(false, 224, selyPos, STR_ON.c_str());
+						else
+							printSmall(false, 224, selyPos, STR_OFF.c_str());
+						selyPos += 12;
+
 						if (consoleModel < 2) {
 							printSmall(false, 12, selyPos, STR_ROMREADLED.c_str());
 							switch(bstrap_romreadled) {
@@ -936,26 +947,29 @@ int main(int argc, char **argv) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
 						} else if (settingscursor == 3) {
+							printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
+						} else if (settingscursor == 4) {
 							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
 							// printLargeCentered(true, 128, "avoiding conflict with");
 							// printLargeCentered(true, 142, "recent libnds.");
 							printLargeCentered(true, 126, STR_DESCRIPTION_ROMREADLED_1.c_str());
-						} else if (settingscursor == 4) {
+						} else if (settingscursor == 5) {
 							printLargeCentered(true, 112, STR_DESCRIPTION_ASYNCPREFETCH_1.c_str());
 							printLargeCentered(true, 126, STR_DESCRIPTION_ASYNCPREFETCH_2.c_str());
 							printLargeCentered(true, 140, STR_DESCRIPTION_ASYNCPREFETCH_3.c_str());
-						} else if (settingscursor == 5) {
+						} else if (settingscursor == 6) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
-						} else if (settingscursor == 6) {
+						} else if (settingscursor == 7) {
 							printLargeCentered(true, 104, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1.c_str());
 							printLargeCentered(true, 118, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3.c_str());
 							printLargeCentered(true, 146, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4.c_str());
-						} else if (settingscursor == 7) {
+						} else if (settingscursor == 8) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
-						} else if (settingscursor == 8) {
+						} else if (settingscursor == 9) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
 						}
@@ -1005,15 +1019,15 @@ int main(int argc, char **argv) {
 				
 				if (pressed & KEY_UP) {
 					settingscursor--;
-					if (consoleModel > 1 && settingscursor == 3) settingscursor--;
-					if (arm7SCFGLocked && settingscursor == 6) settingscursor--;
+					if (consoleModel > 1 && settingscursor == 4) settingscursor--;
+					if (arm7SCFGLocked && settingscursor == 7) settingscursor--;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
 				if (pressed & KEY_DOWN) {
 					settingscursor++;
-					if (consoleModel > 1 && settingscursor == 3) settingscursor++;
-					if (arm7SCFGLocked && settingscursor == 6) settingscursor++;
+					if (consoleModel > 1 && settingscursor == 4) settingscursor++;
+					if (arm7SCFGLocked && settingscursor == 7) settingscursor++;
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
@@ -1038,6 +1052,9 @@ int main(int argc, char **argv) {
 								bstrap_debug = !bstrap_debug;
 								break;
 							case 3:
+								bstrap_logging = !bstrap_logging;
+								break;
+							case 4:
 								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
 								if (pressed & KEY_LEFT) {
 									bstrap_romreadled--;
@@ -1047,17 +1064,17 @@ int main(int argc, char **argv) {
 									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
 								}
 								break;
-							case 4:
+							case 5:
 								bstrap_asyncPrefetch = !bstrap_asyncPrefetch;
 								break;
-							case 5:
+							case 6:
 								soundfreq = !soundfreq;
 								soundfreqsettingChanged = !soundfreqsettingChanged;
 								break;
-							case 6:
+							case 7:
 								slot1LaunchMethod = !slot1LaunchMethod;
 								break;
-							case 7:
+							case 8:
 								if (pressed & KEY_LEFT) {
 									bstrap_loadingScreen--;
 									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
@@ -1066,7 +1083,7 @@ int main(int argc, char **argv) {
 									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
 								}
 								break;
-							case 8:
+							case 9:
 								bootstrapFile = !bootstrapFile;
 								break;
 						}
@@ -1114,8 +1131,8 @@ int main(int argc, char **argv) {
 				}
 
 				if(!flashcardUsed) {
-					if (settingscursor > 8) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 8;
+					if (settingscursor > 9) settingscursor = 0;
+					else if (settingscursor < 0) settingscursor = 9;
 				} else {
 					if (settingscursor > 1) settingscursor = 0;
 					else if (settingscursor < 0) settingscursor = 1;
