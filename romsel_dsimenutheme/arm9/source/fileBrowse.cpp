@@ -414,7 +414,7 @@ void displayNowLoading(void) {
 	nowLoadingDisplaying = true;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	reloadFontPalettes(true);
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 20; i++) swiWaitForVBlank();
 	showProgressIcon = true;
 	controlTopBright = false;
 }
