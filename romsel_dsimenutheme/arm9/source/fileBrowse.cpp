@@ -412,7 +412,9 @@ void displayNowLoading(void) {
 	fadeType = true;	// Fade in from white
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
-	for (int i = 0; i < 35; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	reloadFontPalettes(true);
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	showProgressIcon = true;
 	controlTopBright = false;
 }
