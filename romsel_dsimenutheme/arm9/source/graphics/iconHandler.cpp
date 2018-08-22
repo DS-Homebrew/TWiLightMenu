@@ -278,7 +278,6 @@ void iconManagerInit()
     clearTiles = new u8[(32 * 256) / 2]();
     blackPalette = new u16[16 * 8]();
 
-    // consoleDemoInit();
     // Allocate texture memory for 6 textures.
     glGenTextures(6, _iconTexID);
 
