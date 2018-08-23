@@ -71,7 +71,7 @@
 #include "../ndsheaderbanner.h"
 #include "../language.h"
 #include "../perGameSettings.h"
-
+#include "iconHandler.h"
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
@@ -441,6 +441,12 @@ void drawDbox()
 	}
 }
 
+
+void reloadDboxPalette() {
+	glBindTexture(0, dialogboxTexID);
+	glColorTableEXT(0, 0, 4, 0, 0, (u16*) dialogboxPal);
+}
+
 void vBlankHandler()
 {
 	if (music) {
@@ -480,17 +486,33 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (showdialogbox) {
+			if (dbox_Ypos == -192) {
+				// Reload the dialog box palettes here...
+				reloadDboxPalette();
+				reloadFontPalettes();
+			}
+			// Dialogbox moving up...
 			if (dbox_movespeed <= 1) {
 				if (dbox_Ypos >= 0) {
+					// dbox stopped
 					dbox_movespeed = 0;
 					dbox_Ypos = 0;
-				} else
+				} else {
+					// dbox moving up
 					dbox_movespeed = 1;
+				}
 			} else {
+				// Dbox decel
 				dbox_movespeed -= 1.25;
 			}
 			dbox_Ypos += dbox_movespeed;
 		} else {
+			if (dbox_Ypos == 0) {
+				// Reload the icon palettes...
+				reloadIconPalettes();
+				reloadFontPalettes();
+			}
+			// Dialogbox moving down...
 			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
 				dbox_movespeed = 22;
 				dbox_Ypos = -192;
