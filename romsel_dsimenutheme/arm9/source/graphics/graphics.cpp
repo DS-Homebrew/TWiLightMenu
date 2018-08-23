@@ -26,8 +26,14 @@
 
 // Graphic files
 #include "bottom.h"
+#include "bottom_bubble.h"
+
 #include "org_bottom.h"
+#include "org_bottom_bubble.h"
+
 #include "_3ds_bottom.h"
+#include "_3ds_bottom_bubble.h"
+
 #include "dialogbox.h"
 #include "nintendo_dsi_menu.h"
 #include "org_nintendo_dsi_menu.h"
@@ -155,6 +161,8 @@ bool launchDotDoFrameChange = false;
 bool showdialogbox = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
+
+int bottomBg;
 
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
 int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
@@ -366,6 +374,40 @@ void initSubSprites(void)
 	swiWaitForVBlank();
 
 	oamUpdate(&oamSub);
+}
+
+void bottomBgLoad() {
+	if (!showbubble) {
+		if (theme == 1) {
+			dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bottomBg), _3ds_bottomTilesLen);
+			dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
+			dmaCopy(_3ds_bottomMap, bgGetMapPtr(bottomBg), _3ds_bottomMapLen);
+		}
+		else if (subtheme == 1) {
+			dmaCopy(org_bottomTiles, bgGetGfxPtr(bottomBg), org_bottomTilesLen);
+			dmaCopy(org_bottomPal, BG_PALETTE, org_bottomPalLen);
+			dmaCopy(org_bottomMap, bgGetMapPtr(bottomBg), org_bottomMapLen);
+		} else {
+			dmaCopy(bottomTiles, bgGetGfxPtr(bottomBg), bottomTilesLen);
+			dmaCopy(bottomPal, BG_PALETTE, bottomPalLen);
+			dmaCopy(bottomMap, bgGetMapPtr(bottomBg), bottomMapLen);
+		}
+	} else {
+		if (theme == 1) {
+			dmaCopy(_3ds_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), _3ds_bottom_bubbleTilesLen);
+			dmaCopy(_3ds_bottom_bubblePal, BG_PALETTE, _3ds_bottom_bubblePalLen);
+			dmaCopy(_3ds_bottom_bubbleMap, bgGetMapPtr(bottomBg), _3ds_bottom_bubbleMapLen);
+		}
+		else if (subtheme == 1) {
+			dmaCopy(org_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), org_bottom_bubbleTilesLen);
+			dmaCopy(org_bottom_bubblePal, BG_PALETTE, org_bottom_bubblePalLen);
+			dmaCopy(org_bottom_bubbleMap, bgGetMapPtr(bottomBg), org_bottom_bubbleMapLen);
+		} else {
+			dmaCopy(bottom_bubbleTiles, bgGetGfxPtr(bottomBg), bottom_bubbleTilesLen);
+			dmaCopy(bottom_bubblePal, BG_PALETTE, bottom_bubblePalLen);
+			dmaCopy(bottom_bubbleMap, bgGetMapPtr(bottomBg), bottom_bubbleMapLen);
+		}
+	}
 }
 
 void drawBG(glImage *images)
@@ -766,6 +808,9 @@ void vBlankHandler()
 					}
 				}
 			}
+			
+			// Refresh the background layer.
+			bottomBgLoad();
 			if (showbubble) drawBubble(bubbleImage);
 			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
@@ -1173,25 +1218,6 @@ void clearBoxArt() {
 	}
 }
 
-void bottomBgLoad() {
-	int bg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
-	if (theme == 1) {
-		dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bg), _3ds_bottomTilesLen);
-		dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
-		dmaCopy(_3ds_bottomMap, bgGetMapPtr(bg), _3ds_bottomMapLen);
-	}
-	else if (subtheme == 1) {
-		dmaCopy(org_bottomTiles, bgGetGfxPtr(bg), org_bottomTilesLen);
-		dmaCopy(org_bottomPal, BG_PALETTE, org_bottomPalLen);
-		dmaCopy(org_bottomMap, bgGetMapPtr(bg), org_bottomMapLen);
-	} else {
-		dmaCopy(bottomTiles, bgGetGfxPtr(bg), bottomTilesLen);
-		dmaCopy(bottomPal, BG_PALETTE, bottomPalLen);
-		dmaCopy(bottomMap, bgGetMapPtr(bg), bottomMapLen);
-	}
-	
-}
-
 void graphicsInit()
 {
 	for (int i = 0; i < 12; i++) {
@@ -1305,6 +1331,9 @@ void graphicsInit()
 
 	if (theme < 1) loadPhoto();
 	topBgLoad();
+	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+
+
 	bottomBgLoad();
 	
 	progressTexID = glLoadTileSet(progressImage, // pointer to glImage array
