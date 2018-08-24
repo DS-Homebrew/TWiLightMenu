@@ -52,8 +52,6 @@ list<TextEntry> topText, bottomText;
 list<TextPane> panes;
 
 
-#define FONT_MAX_LIFETIME 10
-int lifetime = 0;
 u16 cmpFontPal[16];
 
 
@@ -94,27 +92,21 @@ void reloadFontPalettes(bool forceRefresh) {
 	
 	// Reloading the font texture is an expensive operation, and doing so
 	// too often will cause screen tearing effects.
-	// Instead we only reload the font if the palette is corrupted, 
-	// after every 10 calls of this method, or
-	// if the refresh is force.
+	// Instead we only reload the font if the palette is corrupted, or if the refresh is forced.
 
 	glBindTexture(0, fontTextureID[0]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
-		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
-		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
-		lifetime = 0;
+	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
+		//glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
+		glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 	}
 
 	glBindTexture(0, fontTextureID[1]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
-		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
-		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
-		lifetime = 0;
+	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
+		//glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
+		glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 	}
-
-	lifetime++;
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

@@ -190,6 +190,9 @@ glImage boxemptyImage[(64 / 16) * (64 / 16)];
 glImage folderImage[(64 / 16) * (64 / 16)];
 glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
+
+int vblankRefreshCounter = 0;
+
 int bubbleYpos = 80;
 int bubbleXpos = 122;
 
@@ -492,11 +495,6 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (showdialogbox) {
-			if (dbox_Ypos == -192) {
-				// Reload the dialog box palettes here...
-				reloadDboxPalette();
-				reloadFontPalettes();
-			}
 			// Dialogbox moving up...
 			if (dbox_movespeed <= 1) {
 				if (dbox_Ypos >= 0) {
@@ -513,11 +511,6 @@ void vBlankHandler()
 			}
 			dbox_Ypos += dbox_movespeed;
 		} else {
-			if (dbox_Ypos == 0) {
-				// Reload the icon palettes...
-				reloadIconPalettes();
-				reloadFontPalettes();
-			}
 			// Dialogbox moving down...
 			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
 				dbox_movespeed = 22;
@@ -852,6 +845,19 @@ void vBlankHandler()
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &progressImage[progressAnimNum]);
+			}
+			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
+				if (showdialogbox && dbox_Ypos == -192) {
+					// Reload the dialog box palettes here...
+					reloadDboxPalette();
+					reloadFontPalettes(true);
+				} else {
+					reloadIconPalettes();
+					reloadFontPalettes(true);
+				}
+				vblankRefreshCounter = 0;
+			} else {
+				vblankRefreshCounter++;
 			}
 			updateText(false);
 			glColor(RGB15(31, 31, 31));

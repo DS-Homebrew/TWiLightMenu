@@ -229,12 +229,8 @@ void glReloadIconPalette(int num)
     if ((memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0))
     {
         // Only refresh the palette if it changed.
-        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
-    } else if (cmpPal[0] == NULL) {
-        // Assume that the palette data is corrupted
-        // if the first color is 0x00
         glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
-    }
+    } 
 }
 
 /**
