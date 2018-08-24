@@ -444,7 +444,7 @@ void drawDbox()
 
 void reloadDboxPalette() {
 	glBindTexture(0, dialogboxTexID);
-	glColorTableEXT(0, 0, 4, 0, 0, (u16*) dialogboxPal);
+	glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) dialogboxPal);
 }
 
 void vBlankHandler()
