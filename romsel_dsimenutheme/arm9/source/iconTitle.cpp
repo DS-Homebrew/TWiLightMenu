@@ -30,6 +30,7 @@
 #include "ndsheaderbanner.h"
 #include "language.h"
 #include "graphics/iconHandler.h"
+#include "graphics/queueControl.h"
 
 #include "icon_unk.h"
 
@@ -614,6 +615,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
+void queueIconUpdate(bool isDir, const char* name, int num) {
+	queue([&]() { iconUpdate(isDir, name, num); });
+}
+
 static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
 {
 	// Ensure that the font isn't corrupted.
@@ -738,4 +743,9 @@ void titleUpdate(bool isDir, const char* name, int num)
 		}
 		
 	}
+}
+
+
+void queueTitleUpdate(bool isDir, const char* name, int num) {
+	queue([&]() { titleUpdate(isDir, name, num); });
 }

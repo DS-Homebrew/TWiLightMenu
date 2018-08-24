@@ -54,6 +54,8 @@ list<TextPane> panes;
 
 u16 cmpFontPal[16];
 
+int vblankCallCount = 0;
+#define VBLANK_FULL_REINIT 600;
 
 void fontInit()
 {
@@ -94,19 +96,27 @@ void reloadFontPalettes(bool forceRefresh) {
 	// too often will cause screen tearing effects.
 	// Instead we only reload the font if the palette is corrupted, or if the refresh is forced.
 
+
 	glBindTexture(0, fontTextureID[0]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
 	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
-		//glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
 		glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 	}
 
 	glBindTexture(0, fontTextureID[1]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
 	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
-		//glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
 		glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 	}
+}
+
+void reloadFontTextures() {
+	glBindTexture(0, fontTextureID[0]);
+	glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
+
+	glBindTexture(0, fontTextureID[1]);
+	glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
+
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

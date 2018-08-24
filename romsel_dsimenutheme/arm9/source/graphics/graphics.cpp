@@ -63,6 +63,7 @@
 #include "_3ds_folder.h"
 #include "wirelessicons.h"
 
+#include "queueControl.h"
 #include "uvcoord_top_font.h"
 
 #include "../iconTitle.h"
@@ -846,6 +847,8 @@ void vBlankHandler()
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &progressImage[progressAnimNum]);
 			}
+			
+			exec_queue(); // execute any queued actions
 			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
 				if (showdialogbox && dbox_Ypos == -192) {
 					// Reload the dialog box palettes here...
