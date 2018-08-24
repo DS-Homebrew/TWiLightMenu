@@ -518,19 +518,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (cursorPosition <= 1) {
 			for(int i = 0; i < 5; i++) {
 				if (bnrRomType[i] == 0 && i+pagenum*40 < file_count) {
-					queueIconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
+					iconUpdate(dirContents[scrn].at(i+pagenum*40).isDirectory, dirContents[scrn].at(i+pagenum*40).name.c_str(), i);
 				}
 			}
 		} else if (cursorPosition >= 2 && cursorPosition <= 36) {
 			for(int i = 0; i < 6; i++) {
 				if (bnrRomType[i] == 0 && (cursorPosition-2+i)+pagenum*40 < file_count) {
-					queueIconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
+					iconUpdate(dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2+i)+pagenum*40).name.c_str(), cursorPosition-2+i);
 				}
 			}
 		} else if (cursorPosition >= 37 && cursorPosition <= 39) {
 			for(int i = 0; i < 5; i++) {
 				if (bnrRomType[i] == 0 && (35+i)+pagenum*40 < file_count) {
-					queueIconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
+					iconUpdate(dirContents[scrn].at((35+i)+pagenum*40).isDirectory, dirContents[scrn].at((35+i)+pagenum*40).name.c_str(), 35+i);
 				}
 			}
 		}
@@ -654,7 +654,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (bnrRomType[cursorPosition-2] == 0 && (cursorPosition-2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
 							queue(reloadFontTextures);
-							vblankRefreshCounter = REFRESH_EVERY_VBLANKS;
 						}
 					}
 				}
@@ -685,7 +684,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (bnrRomType[cursorPosition+2] == 0 && (cursorPosition+2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
 							queue(reloadFontTextures);
-							vblankRefreshCounter = REFRESH_EVERY_VBLANKS;
 						}
 					}
 				}

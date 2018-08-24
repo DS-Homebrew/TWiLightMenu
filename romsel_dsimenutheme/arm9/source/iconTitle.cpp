@@ -54,6 +54,8 @@ extern bool useGbarunner;
 extern bool flashcardUsed;
 extern bool animateDsiIcons;
 
+extern bool showbubble;
+
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -104,7 +106,6 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
-	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 
 	// int Ysize = 32;
 	// int textureSizeY = TEXTURE_SIZE_32;
@@ -113,7 +114,24 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 	// 	textureSizeY = TEXTURE_SIZE_256;
 	// }
 
-	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
+	if(showbubble) {
+		// This is a hack to prevent icons from being duplicated.
+		// The actual intent of this if condition is
+		// to immediately draw icon times on startup instead of
+		// waiting for the end of the vblank handler,
+		// as using queue would do.
+
+		// Otherwise, once we've already loaded all the icons,
+		// we can use queue without fear of duplicate icons showing up.
+		queue([=]() { 
+			convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+			glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+		});
+
+	} else {
+		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+		glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+	}
 }
 
 void loadUnkIcon(int num)
@@ -123,7 +141,7 @@ void loadUnkIcon(int num)
 
 static void clearIcon(int num)
 {
-	glClearIcon(num);
+ 	glClearIcon(num);
 }
 
 
@@ -615,9 +633,6 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
-void queueIconUpdate(bool isDir, const char* name, int num) {
-	queue([&]() { iconUpdate(isDir, name, num); });
-}
 
 static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
 {
@@ -743,9 +758,4 @@ void titleUpdate(bool isDir, const char* name, int num)
 		}
 		
 	}
-}
-
-
-void queueTitleUpdate(bool isDir, const char* name, int num) {
-	queue([&]() { titleUpdate(isDir, name, num); });
 }
