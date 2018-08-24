@@ -100,7 +100,7 @@ void reloadFontPalettes(bool forceRefresh) {
 
 	glBindTexture(0, fontTextureID[0]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || &cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
+	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
 		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
 		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 		lifetime = 0;
@@ -108,7 +108,7 @@ void reloadFontPalettes(bool forceRefresh) {
 
 	glBindTexture(0, fontTextureID[1]);
 	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || &cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
+	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL || lifetime == FONT_MAX_LIFETIME) {
 		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
 		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 		lifetime = 0;
