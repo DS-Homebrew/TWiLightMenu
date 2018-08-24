@@ -616,6 +616,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 
 static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	// Ensure that the font isn't corrupted.
+	reloadFontPalettes();
 	switch(textlines) {
 		case 0:
 		default:
