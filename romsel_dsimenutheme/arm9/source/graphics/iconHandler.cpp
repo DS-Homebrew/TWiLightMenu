@@ -221,10 +221,10 @@ void glReloadIconPalette(int num)
 
     glBindTexture(0, textureID);
     glGetColorTableEXT(0, 0, 0, (u16 *)cmpPal);
-    if ((memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0))
+    if ((memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0) || &cmpPal[0] == NULL)
     {
         // Only refresh the palette if it changed.
-        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
+        glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
     }
 }
 
