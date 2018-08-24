@@ -50,6 +50,10 @@ glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
 
+int lifetime = 0;
+
+#define FONT_MAX_LIFETIME 40
+
 void fontInit()
 {
 	// Set Bank A to texture (128 kb)
@@ -85,21 +89,19 @@ void fontInit()
 
 void reloadFontPalettes(bool forceRefresh) {
 	
-	
+	if (lifetime == FONT_MAX_LIFETIME) {
 	// If the textures themselves get corrupted, there's no going back.
-	if (glGetTexturePointer(fontTextureID[1]) == NULL || glGetTexturePointer(fontTextureID[0]) == NULL) {
 		fontInit();
 		return;
 	}
 
-
 	glBindTexture(0, fontTextureID[0]);
 	glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 
-
-
 	glBindTexture(0, fontTextureID[1]);
 	glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
+	
+	lifetime++;
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)
