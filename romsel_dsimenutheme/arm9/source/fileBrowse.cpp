@@ -542,6 +542,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
 		for (int i = 0; i < 5; i++) swiWaitForVBlank();
+		reloadIconPalettes();
+		reloadFontPalettes();
 		waitForFadeOut();
 
 		/* clearText(false);
