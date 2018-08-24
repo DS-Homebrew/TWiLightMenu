@@ -25,6 +25,7 @@
 #include "FontGraphic.h"
 #include "fontHandler.h"
 #include "TextEntry.h"
+#include <nds.h>
 
 // GRIT auto-genrated arrays of images
 #include "small_font.h"
@@ -51,12 +52,13 @@ list<TextEntry> topText, bottomText;
 list<TextPane> panes;
 
 int lifetime = 0;
+u16 cmpFontPal[16];
 
 #define FONT_MAX_LIFETIME 40
 
 void fontInit()
 {
-	// Set Bank A to texture (128 kb)
+	
 	if (fontTextureID[0]) glDeleteTextures(1, &fontTextureID[0]);
 	smallFont.load(0, smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
@@ -89,19 +91,19 @@ void fontInit()
 
 void reloadFontPalettes(bool forceRefresh) {
 	
-	if (lifetime == FONT_MAX_LIFETIME) {
-	// If the textures themselves get corrupted, there's no going back.
-		fontInit();
-		return;
+	glBindTexture(0, fontTextureID[0]);
+	glGetColorTableEXT(0,0,0, cmpFontPal);
+	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || &cmpFontPal[0] == NULL) {
+		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 	}
 
-	glBindTexture(0, fontTextureID[0]);
-	glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
-
 	glBindTexture(0, fontTextureID[1]);
-	glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
-	
-	lifetime++;
+	glGetColorTableEXT(0,0,0, cmpFontPal);
+	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || &cmpFontPal[0] == NULL) {
+		glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
+		glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
+	}
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

@@ -30,6 +30,7 @@ extern bool useGbarunner;
 
 u8 *clearTiles;
 u16 *blackPalette;
+u16 cmpPal[24];
 
 /**
  * Gets the current icon stored at the specified index.
@@ -219,8 +220,12 @@ void glReloadIconPalette(int num)
     }
 
     glBindTexture(0, textureID);
-    glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
-
+    glGetColorTableEXT(0, 0, 0, (u16 *)cmpPal);
+    if ((memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0))
+    {
+        // Only refresh the palette if it changed.
+        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
+    }
 }
 
 /**

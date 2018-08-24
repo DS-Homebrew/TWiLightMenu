@@ -1329,7 +1329,8 @@ void graphicsInit()
 	glClearColor(31,31,31,0);
 	glDisable(GL_CLEAR_BMP);
 
-	setBackdropColor(RGB15(31,31,31));
+	// Clear the GL texture state
+	glResetTextures();
 
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
