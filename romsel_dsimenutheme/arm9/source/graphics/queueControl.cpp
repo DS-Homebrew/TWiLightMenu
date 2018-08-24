@@ -6,7 +6,7 @@
 std::vector<std::function<void()>> queuedFunctors;
 
 
-void queue(std::function<void()> function) {
+void defer(std::function<void()> function) {
     queuedFunctors.push_back(function);
 }
 

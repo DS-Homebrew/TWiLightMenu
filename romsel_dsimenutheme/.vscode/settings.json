@@ -2,6 +2,9 @@
     "files.associations": {
         "*.partial": "nunjucks",
         "*.html": "html",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "array": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }

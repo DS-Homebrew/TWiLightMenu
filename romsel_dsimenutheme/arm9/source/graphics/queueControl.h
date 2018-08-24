@@ -3,9 +3,9 @@
 #pragma once
 
 /**
- * Queues a lambda to be executed at the end of the VBlank Handler.
+ * Defer the execution of a lambda until the end of the VBlank Handler.
  */
-void queue(std::function<void()> function);
+void defer(std::function<void()> function);
 
 /**
  * Executes all the functions in the queue, and clears it.

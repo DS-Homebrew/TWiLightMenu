@@ -119,11 +119,11 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 		// The actual intent of this if condition is
 		// to immediately draw icon times on startup instead of
 		// waiting for the end of the vblank handler,
-		// as using queue would do.
+		// as using defer would do.
 
 		// Otherwise, once we've already loaded all the icons,
-		// we can use queue without fear of duplicate icons showing up.
-		queue([=]() { 
+		// we can use defer without fear of duplicate icons showing up.
+		defer([=]() { 
 			convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 			glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
 		});
