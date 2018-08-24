@@ -70,7 +70,8 @@ void glLoadTileSetIntoSlot(
     int param,
     int pallette_width,
     const u16 *_palette,
-    const uint8 *_texture)
+    const uint8 *_texture,
+    bool init)
 {
     int textureID;
     glImage *sprite;
@@ -100,7 +101,14 @@ void glLoadTileSetIntoSlot(
     glBindTexture(0, textureID);
     glTexImage2D(0, 0, type, sizeX, sizeY, 0, param, _texture);
 
-    glColorTableEXT(0, 0, pallette_width, 0, 0, _palette);
+    if (!init)
+    {
+        glColorSubTableEXT(0, 0, pallette_width, 0, 0, _palette);
+    }
+    else
+    {
+        glColorTableEXT(0, 0, pallette_width, 0, 0, _palette);
+    }
 
     int i = 0;
     int x, y;
@@ -151,8 +159,14 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight)
  * num must be in the range [0, 5], OR ONE OF
  * GBA_ICON, GBC_ICON, or NES_ICON
  * 
+ * If init is true, then the palettes will be copied into
+ * texture memory before being bound with
+ * glColorTableEXT. 
+ * 
+ * Otherwise, they will be replacing the existing palette
+ * using glColorTableSubEXT at the same memory location.
  */
-void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight)
+void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, bool init)
 {
     if (!BAD_ICON_IDX(num))
         swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
@@ -169,8 +183,8 @@ void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight)
         TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
         16,              // Length of the palette to use (16 colors)
         (u16 *)_palette, // Image palette
-        (u8 *)_tiles    // Raw image data
-        );
+        (u8 *)_tiles,    // Raw image data
+        init);
 }
 
 /**
@@ -210,7 +224,7 @@ void glReloadIconPalette(int num)
     if (memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0)
     {
         // Only refresh the palette if it changed.
-        glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
+        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
     }
 }
 
@@ -229,14 +243,30 @@ void reloadIconPalettes()
         glReloadIconPalette(i);
     }
 }
-
+/**
+ * Loads an icon into one of 6 existing banks, overwritting 
+ * the previous data.
+ * num must be in the range [0, 5], or else this function
+ * does nothing.
+ * 
+ * If init is true, then the palettes will be copied into
+ * texture memory before being bound with
+ * glColorTableEXT. 
+ * 
+ * Otherwise, they will be replacing the existing palette
+ * using glColorTableSubEXT at the same memory location.
+ */
+void glLoadIcon(int num, const u16 *palette, const u8 *tiles, int texHeight)
+{
+    glLoadIcon(num, palette, tiles, texHeight, false);
+}
 
 /**
  * Clears an icon from the bank. 
  */
 void glClearIcon(int num)
 {
-    glLoadIcon(num, blackPalette, clearTiles, 256);
+    glLoadIcon(num, blackPalette, clearTiles, 256, true);
 }
 
 /**
@@ -260,21 +290,21 @@ void iconManagerInit()
     for (int i = 0; i < 6; i++)
     {
         // Todo: Check if this is too much VRAM for NDS icons.
-        glLoadIcon(i, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap, TWL_TEX_HEIGHT);
+        glLoadIcon(i, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap, TWL_TEX_HEIGHT, true);
     }
 
     // Load GB Icon
-    glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64);
+    glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64, true);
 
-    glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32);
+    glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32, true);
 
     if (useGbarunner)
     {
-        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 32);
+        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 32, true);
     }
     else
     {
-        glLoadIcon(GBA_ICON, (u16 *)icon_gbamodePal, (u8 *)icon_gbamodeBitmap, 32);
+        glLoadIcon(GBA_ICON, (u16 *)icon_gbamodePal, (u8 *)icon_gbamodeBitmap, 32, true);
     }
 
     // set initialized.
