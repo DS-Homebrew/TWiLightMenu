@@ -164,8 +164,6 @@ float dbox_Ypos = -192;
 
 int bottomBg;
 
-int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
-
 int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
 int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
@@ -380,7 +378,7 @@ void initSubSprites(void)
 }
 
 void bottomBgLoad(bool drawBubble) {
-	if ((!drawBubble && bottomBgState == 2) || bottomBgState == 0) {
+	if (!drawBubble) {
 		if (theme == 1) {
 			dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bottomBg), _3ds_bottomTilesLen);
 			dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
@@ -395,9 +393,7 @@ void bottomBgLoad(bool drawBubble) {
 			dmaCopy(bottomPal, BG_PALETTE, bottomPalLen);
 			dmaCopy(bottomMap, bgGetMapPtr(bottomBg), bottomMapLen);
 		}
-		// Set that we've not drawn the bubble.
-		bottomBgState = 1;
-	} else if (drawBubble && bottomBgState == 1){
+	} else {
 		if (theme == 1) {
 			dmaCopy(_3ds_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), _3ds_bottom_bubbleTilesLen);
 			dmaCopy(_3ds_bottom_bubblePal, BG_PALETTE, _3ds_bottom_bubblePalLen);
@@ -412,8 +408,6 @@ void bottomBgLoad(bool drawBubble) {
 			dmaCopy(bottom_bubblePal, BG_PALETTE, bottom_bubblePalLen);
 			dmaCopy(bottom_bubbleMap, bgGetMapPtr(bottomBg), bottom_bubbleMapLen);
 		}
-		// Set that we've drawn the bubble.
-		bottomBgState = 2;
 	}
 }
 
