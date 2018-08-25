@@ -10,5 +10,4 @@ void defer(std::function<void()> function);
 /**
  * Executes all the functions in the queue, and clears it.
  */
-void exec_queue();
-
+void execQueue();

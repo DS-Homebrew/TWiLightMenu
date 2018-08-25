@@ -1,5 +1,6 @@
 #include "queueControl.h"
 
+#include <nds.h>
 #include <vector>
 #include <functional>
 
@@ -10,7 +11,8 @@ void defer(std::function<void()> function) {
     queuedFunctors.push_back(function);
 }
 
-void exec_queue() {
+
+void execQueue() {
     for (auto functor : queuedFunctors) {
         functor();
     }

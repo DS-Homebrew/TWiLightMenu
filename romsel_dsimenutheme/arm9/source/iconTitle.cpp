@@ -67,6 +67,7 @@ static char titleToDisplay[3][384];
 
 u8 *tilesModified = new u8[(32 * 256) / 2];
 
+std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
@@ -104,6 +105,25 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
+
+/**
+ * We want to reduce the use of stack space as much as possible.
+ * Instead of copying the pointers, we store the arguments in 
+ * a vector allocated on the heap, and only copy a pointer to
+ * the element on the vector. 
+ */
+void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
+	queuedIconUpdateCache.emplace_back(std::move(std::make_tuple(tilesSrc, palSrc, num, twl)));
+	auto& ref = queuedIconUpdateCache.back();
+	defer([ref]() { 
+		auto& [tileSrc, palSrc, num, twl]  = ref;
+		convertIconTilesToRaw(tileSrc, tilesModified, twl);
+		glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+		queuedIconUpdateCache.pop_back();
+	});
+}
+
+
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 
@@ -123,10 +143,11 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 
 
 		// Otherwise, once we've already loaded all the icons,
 		// we can use defer without fear of duplicate icons showing up.
-		defer([=]() { 
-			convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-			glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
-		});
+		// defer([=]() { 
+		// 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+		// 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+		// });
+		deferLoadIcon(tilesSrc, palSrc, num, twl);
 
 	} else {
 		convertIconTilesToRaw(tilesSrc, tilesModified, twl);

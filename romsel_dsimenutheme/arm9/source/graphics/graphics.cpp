@@ -459,6 +459,7 @@ void reloadDboxPalette() {
 
 void vBlankHandler()
 {
+	execQueue(); // Execute any actions queued during last vblank.
 	if (music) {
 		musicTime++;
 		if (musicTime == 60*50) {	// Length of music file in seconds (60*ss)
@@ -848,7 +849,6 @@ void vBlankHandler()
 				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &progressImage[progressAnimNum]);
 			}
 			
-			exec_queue(); // execute any queued actions
 			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
 				if (showdialogbox && dbox_Ypos == -192) {
 					// Reload the dialog box palettes here...
