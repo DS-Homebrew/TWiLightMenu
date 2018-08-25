@@ -113,6 +113,10 @@ void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	queuedIconUpdateCache.emplace_back(std::move(std::make_tuple(tilesSrc, palSrc, num, twl)));
 }
 
+/**
+ * This is called in graphics/vblank handler to process
+ * any deferred updates.
+ */
 void execDeferredIconUpdates() {
 	for (auto arg : queuedIconUpdateCache) {
 		auto& [tileSrc, palSrc, num, twl] = arg;
@@ -122,7 +126,8 @@ void execDeferredIconUpdates() {
 	queuedIconUpdateCache.clear();
 }
 
-void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)
 {
 	deferLoadIcon(tilesSrc, palSrc, num, twl);
 }
