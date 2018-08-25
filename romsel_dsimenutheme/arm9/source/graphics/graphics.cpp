@@ -853,10 +853,10 @@ void vBlankHandler()
 			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
 				if (showdialogbox && dbox_Ypos == -192) {
 					// Reload the dialog box palettes here...
-					defer(reloadDboxPalette);
+					reloadDboxPalette();
 				} else if (!showdialogbox) {
-					defer(reloadIconPalettes);
-					defer(reloadFontPalettes);
+					reloadIconPalettes();
+					reloadFontPalettes();
 				}
 				vblankRefreshCounter = 0;
 			} else {
