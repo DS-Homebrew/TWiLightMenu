@@ -4,10 +4,11 @@
 #include <vector>
 #include <functional>
 
-std::vector<std::function<void()>> queuedFunctors;
+
+std::vector<graphics_callback> queuedFunctors;
 
 
-void defer(std::function<void()> function) {
+void defer(graphics_callback function) {
     queuedFunctors.push_back(function);
 }
 
