@@ -25,6 +25,7 @@
 #include "FontGraphic.h"
 #include "fontHandler.h"
 #include "TextEntry.h"
+#include <nds.h>
 
 // GRIT auto-genrated arrays of images
 #include "small_font.h"
@@ -50,10 +51,11 @@ glImage largeFontImages[LARGE_FONT_NUM_IMAGES];
 list<TextEntry> topText, bottomText;
 list<TextPane> panes;
 
+
 void fontInit()
 {
-	// Set  Bank A to texture (128 kb)
 	
+	if (fontTextureID[0]) glDeleteTextures(1, &fontTextureID[0]);
 	smallFont.load(0, smallFontImages, // pointer to glImage array
 				SMALL_FONT_NUM_IMAGES, // Texture packer auto-generated #define
 				small_font_texcoords, // Texture packer auto-generated array
@@ -68,6 +70,7 @@ void fontInit()
 				);
 
 	//Do the same with our bigger texture
+	if (fontTextureID[1]) glDeleteTextures(1, &fontTextureID[1]);
 	largeFont.load(1, largeFontImages,
 				LARGE_FONT_NUM_IMAGES,
 				large_font_texcoords,
@@ -82,22 +85,23 @@ void fontInit()
 				);
 }
 
-void reloadFontPalettes(bool forceRefresh) {
-
-	uint16 cmpFontPal[4];
+void reloadFontPalettes() {
 
 	glBindTexture(0, fontTextureID[0]);
-	glGetColorTableEXT(0,0,0, cmpFontPal);
+	glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
 
-	if (memcmp(cmpFontPal, small_fontPal, 4) != 0 || forceRefresh || cmpFontPal == NULL) {
-		glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
-	}
 
 	glBindTexture(0, fontTextureID[1]);
-	glGetColorTableEXT(0,0,0,cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, 4) != 0 || forceRefresh || cmpFontPal == NULL) {
-		glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
-	}
+	glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
+}
+
+void reloadFontTextures() {
+	glBindTexture(0, fontTextureID[0]);
+	glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_128, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) small_fontBitmap);
+
+	glBindTexture(0, fontTextureID[1]);
+	glTexImage2D(0, 0, GL_RGB16, TEXTURE_SIZE_512, TEXTURE_SIZE_256, 0, TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, (u8*) large_fontBitmap);
+
 }
 
 TextPane &createTextPane(int startX, int startY, int shownElements)

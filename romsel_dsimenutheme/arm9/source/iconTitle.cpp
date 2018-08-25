@@ -30,6 +30,7 @@
 #include "ndsheaderbanner.h"
 #include "language.h"
 #include "graphics/iconHandler.h"
+#include "graphics/queueControl.h"
 
 #include "icon_unk.h"
 
@@ -53,6 +54,8 @@ extern bool useGbarunner;
 extern bool flashcardUsed;
 extern bool animateDsiIcons;
 
+extern bool showbubble;
+
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -64,6 +67,7 @@ static char titleToDisplay[3][384];
 
 u8 *tilesModified = new u8[(32 * 256) / 2];
 
+std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
 
 static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
@@ -101,18 +105,31 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 	}
 }
 
-void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+
+/**
+ * Queue the icon update.
+ */
+void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
+	queuedIconUpdateCache.emplace_back(std::move(std::make_tuple(tilesSrc, palSrc, num, twl)));
+}
+
+/**
+ * This is called in graphics/vblank handler to process
+ * any deferred updates.
+ */
+void execDeferredIconUpdates() {
+	for (auto arg : queuedIconUpdateCache) {
+		auto& [tileSrc, palSrc, num, twl] = arg;
+     	convertIconTilesToRaw(tileSrc, tilesModified, twl);
+	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+	}
+	queuedIconUpdateCache.clear();
+}
+
+//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)
 {
-	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-
-	// int Ysize = 32;
-	// int textureSizeY = TEXTURE_SIZE_32;
-	// if(twl) {
-	// 	Ysize = 256;
-	// 	textureSizeY = TEXTURE_SIZE_256;
-	// }
-
-	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
+	deferLoadIcon(tilesSrc, palSrc, num, twl);
 }
 
 void loadUnkIcon(int num)
@@ -122,7 +139,7 @@ void loadUnkIcon(int num)
 
 static void clearIcon(int num)
 {
-	glClearIcon(num);
+ 	glClearIcon(num);
 }
 
 
@@ -614,8 +631,10 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
+
 static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
 {
+	// Ensure that the font isn't corrupted.
 	switch(textlines) {
 		case 0:
 		default:

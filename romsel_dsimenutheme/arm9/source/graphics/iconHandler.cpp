@@ -100,15 +100,8 @@ void glLoadTileSetIntoSlot(
 
     glBindTexture(0, textureID);
     glTexImage2D(0, 0, type, sizeX, sizeY, 0, param, _texture);
+    glColorTableEXT(0, 0, pallette_width, 0, 0, _palette);
 
-    if (!init)
-    {
-        glColorSubTableEXT(0, 0, pallette_width, 0, 0, _palette);
-    }
-    else
-    {
-        glColorTableEXT(0, 0, pallette_width, 0, 0, _palette);
-    }
 
     int i = 0;
     int x, y;
@@ -219,13 +212,8 @@ void glReloadIconPalette(int num)
     }
 
     glBindTexture(0, textureID);
-    u16 cmpPal[16];
-    glGetColorTableEXT(0, 0, 0, (u16 *)cmpPal);
-    if (memcmp(cmpPal, cachedPalette, 16 * sizeof(u16)) != 0)
-    {
-        // Only refresh the palette if it changed.
-        glColorSubTableEXT(0, 0, 16, 0, 0, cachedPalette);
-    }
+    glColorTableEXT(0, 0, 16, 0, 0, cachedPalette);
+
 }
 
 /**

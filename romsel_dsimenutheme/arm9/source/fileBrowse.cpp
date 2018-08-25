@@ -42,6 +42,7 @@
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
+#include "graphics/graphics.h"
 #include "SwitchState.h"
 #include "perGameSettings.h"
 
@@ -52,6 +53,8 @@
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
+
+#include "graphics/queueControl.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -95,7 +98,7 @@ extern bool applaunch;
 extern bool gotosettings;
 
 extern bool useBootstrap;
-
+extern int vblankRefreshCounter;
 using namespace std;
 
 extern bool startMenu;
@@ -413,7 +416,7 @@ void displayNowLoading(void) {
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
-	reloadFontPalettes(true);
+	reloadFontPalettes();
 	for (int i = 0; i < 20; i++) swiWaitForVBlank();
 	showProgressIcon = true;
 	controlTopBright = false;
@@ -542,6 +545,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
 		for (int i = 0; i < 5; i++) swiWaitForVBlank();
+		reloadIconPalettes();
+		reloadFontPalettes();
 		waitForFadeOut();
 
 		/* clearText(false);
@@ -648,8 +653,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if(cursorPosition >= 2 && cursorPosition <= 36) {
 						if (bnrRomType[cursorPosition-2] == 0 && (cursorPosition-2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition-2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition-2)+pagenum*40).name.c_str(), cursorPosition-2);
-							reloadIconPalettes();
-							reloadFontPalettes();
+							defer(reloadFontTextures);
 						}
 					}
 				}
@@ -679,8 +683,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if(cursorPosition >= 3 && cursorPosition <= 37) {
 						if (bnrRomType[cursorPosition+2] == 0 && (cursorPosition+2)+pagenum*40 < file_count) {
 							iconUpdate(dirContents[scrn].at((cursorPosition+2)+pagenum*40).isDirectory, dirContents[scrn].at((cursorPosition+2)+pagenum*40).name.c_str(), cursorPosition+2);
-							reloadIconPalettes();
-							reloadFontPalettes(); 	// Reload font to avoid font corruption
+							defer(reloadFontTextures);
 						}
 					}
 				}

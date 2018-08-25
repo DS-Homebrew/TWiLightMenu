@@ -41,7 +41,6 @@
 #include "fileBrowse.h"
 #include "perGameSettings.h"
 
-#include "iconTitle.h"
 #include "graphics/iconHandler.h"
 #include "graphics/fontHandler.h"
 
