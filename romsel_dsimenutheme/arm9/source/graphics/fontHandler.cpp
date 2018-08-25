@@ -52,8 +52,6 @@ list<TextEntry> topText, bottomText;
 list<TextPane> panes;
 
 
-u16 cmpFontPal[16];
-
 void fontInit()
 {
 	
@@ -87,24 +85,14 @@ void fontInit()
 				);
 }
 
-void reloadFontPalettes(bool forceRefresh) {
-	
-	// Reloading the font texture is an expensive operation, and doing so
-	// too often will cause screen tearing effects.
-	// Instead we only reload the font if the palette is corrupted, or if the refresh is forced.
-
+void reloadFontPalettes() {
 
 	glBindTexture(0, fontTextureID[0]);
-	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, small_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
-		glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
-	}
+	glColorTableEXT(0, 0, 4, 0, 0, (u16*) small_fontPal);
+
 
 	glBindTexture(0, fontTextureID[1]);
-	glGetColorTableEXT(0,0,0, cmpFontPal);
-	if (memcmp(cmpFontPal, large_fontPal, 4 * sizeof(u16)) != 0 || forceRefresh || cmpFontPal[0] == NULL) {
-		glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
-	}
+	glColorTableEXT(0, 0, 4, 0, 0, (u16*) large_fontPal);
 }
 
 void reloadFontTextures() {

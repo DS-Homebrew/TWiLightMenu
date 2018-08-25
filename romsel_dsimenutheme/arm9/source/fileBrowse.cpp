@@ -416,7 +416,7 @@ void displayNowLoading(void) {
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
-	reloadFontPalettes(true);
+	reloadFontPalettes();
 	for (int i = 0; i < 20; i++) swiWaitForVBlank();
 	showProgressIcon = true;
 	controlTopBright = false;
