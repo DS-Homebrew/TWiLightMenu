@@ -54,9 +54,6 @@ list<TextPane> panes;
 
 u16 cmpFontPal[16];
 
-int vblankCallCount = 0;
-#define VBLANK_FULL_REINIT 600;
-
 void fontInit()
 {
 	
