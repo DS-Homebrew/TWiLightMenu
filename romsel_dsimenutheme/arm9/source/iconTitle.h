@@ -30,3 +30,4 @@ void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);
 void drawIconGBC(int Xpos, int Ypos);
 void drawIconNES(int Xpos, int Ypos);
+void execDeferredIconUpdates();

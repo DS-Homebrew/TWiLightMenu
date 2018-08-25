@@ -460,6 +460,7 @@ void reloadDboxPalette() {
 void vBlankHandler()
 {
 	execQueue(); // Execute any actions queued during last vblank.
+	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 	if (music) {
 		musicTime++;
 		if (musicTime == 60*50) {	// Length of music file in seconds (60*ss)

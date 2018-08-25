@@ -107,52 +107,24 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 
 
 /**
- * We want to reduce the use of stack space as much as possible.
- * Instead of copying the pointers, we store the arguments in 
- * a vector allocated on the heap, and only copy a pointer to
- * the element on the vector. 
+ * Queue the icon update.
  */
 void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	queuedIconUpdateCache.emplace_back(std::move(std::make_tuple(tilesSrc, palSrc, num, twl)));
-	auto& ref = queuedIconUpdateCache.back();
-	defer([ref]() { 
-		auto& [tileSrc, palSrc, num, twl]  = ref;
-		convertIconTilesToRaw(tileSrc, tilesModified, twl);
-		glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
-		queuedIconUpdateCache.pop_back();
-	});
 }
 
+void execDeferredIconUpdates() {
+	for (auto arg : queuedIconUpdateCache) {
+		auto& [tileSrc, palSrc, num, twl] = arg;
+     	convertIconTilesToRaw(tileSrc, tilesModified, twl);
+	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+	}
+	queuedIconUpdateCache.clear();
+}
 
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
-
-	// int Ysize = 32;
-	// int textureSizeY = TEXTURE_SIZE_32;
-	// if(twl) {
-	// 	Ysize = 256;
-	// 	textureSizeY = TEXTURE_SIZE_256;
-	// }
-
-	if(showbubble) {
-		// This is a hack to prevent icons from being duplicated.
-		// The actual intent of this if condition is
-		// to immediately draw icon times on startup instead of
-		// waiting for the end of the vblank handler,
-		// as using defer would do.
-
-		// Otherwise, once we've already loaded all the icons,
-		// we can use defer without fear of duplicate icons showing up.
-		// defer([=]() { 
-		// 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-		// 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
-		// });
-		deferLoadIcon(tilesSrc, palSrc, num, twl);
-
-	} else {
-		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-		glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
-	}
+	deferLoadIcon(tilesSrc, palSrc, num, twl);
 }
 
 void loadUnkIcon(int num)
