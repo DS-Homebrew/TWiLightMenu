@@ -22,6 +22,11 @@
 #include <nds.h>
 #include <maxmod9.h>
 
+//-- AK Start -----------
+#include "akmenu/gdi.h"
+#include "akmenu/systemfilenames.h"
+// -- AK End ------------
+
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -30,6 +35,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <gl2d.h>
+
+
+
 
 #include "date.h"
 
@@ -57,6 +65,8 @@
 
 #include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
+
+
 
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
@@ -658,8 +668,60 @@ void dsCardLaunch() {
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
-//---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
+	extern u64 *fake_heap_end;
+	*fake_heap_end = 0;
+	nocashMessage("ARM9 main.cpp");
+	defaultExceptionHandler();
+
+	// Read user name
+	char *username = (char*)PersonalData->name;
+		
+	// text
+	for (int i = 0; i < 10; i++) {
+		if (username[i*2] == 0x00)
+			username[i*2/2] = 0;
+		else
+			username[i*2/2] = username[i*2];
+	}
+	
+	if (!fatInitDefault()) {
+		consoleDemoInit();
+		printf("fatInitDefault failed!");
+		stop();
+	}
+
+	nitroFSInit("/_nds/dsimenuplusplus/r4menu.srldr");
+
+	langInit();
+
+	std::string filename;
+	std::string bootstrapfilename;
+
+	fifoWaitValue32(FIFO_USER_06);
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
+	fifoSendValue32(FIFO_USER_07, 0);
+
+	LoadSettings();
+
+
+	*(u16*)(0x0400006C) |= BIT(14);
+	*(u16*)(0x0400006C) &= BIT(15);
+
+	irqEnable(IRQ_VBLANK);
+  	
+	gdi().init();
+	gdi().initBg(SFN_LOWER_SCREEN_BG);
+
+	while(1) {
+		swiWaitForVBlank();
+	}
+}
+
+//---------------------------------------------------------------------------------
+int _main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
 	// overwrite reboot stub identifier

@@ -1,0 +1,455 @@
+﻿[font]
+main = tahoma.pcf
+language = 9
+
+[start menu]
+Start = START
+Copy = Kopieer
+Cut = Knip
+Paste = Plak
+Delete = Verwijder
+Save Type = Save Type
+Patches = Patches
+Setting = Systeem Opties
+Info = Eigenschappen
+Help = Hulp
+More = Meer ->
+3in1 = 3in1
+Cheats = Cheats
+Back = <- Terug
+
+[message box]
+yes = Ja
+no = Nee
+ok = OK
+cancel = Terug
+
+[cheats]
+title = Cheats: SELECT = Selectie Opslaan
+error_title = Error
+error_text = Cheat bestand is niet gevonden.
+selectrom = Selecteer een .NDS bestand
+noxml = Cheat Database Bestand niet gevonden
+ccexists = .CC bestaat al, een nieuwe aanmaken?
+nonefound = Geen cheats gevonden in Database
+xmlselect = Selecteer Cheat Database:
+confirm = Bevestigen
+confirm_rebuild = .CC bestand opnieuw opbouwen?
+invalid cheatdb = Ongeldige Cheat Database
+Rebuild = Herbouw
+Sel. DB = Sel. DB
+
+[progress window]
+processing save = Verwerken... Niet uitschakelen!
+processing copy = Kopiëren... Niet uitschakelen, %c=Annuleren!
+first use sd = SD-kaart controleren voor het eerste gebruik...
+gba load = GBA game laden...
+gba save load = GBA save laden...
+gba save store = GBA save verwerken... Niet uitschakelen!
+erase nor = NOR flash wissen... Niet uitschakelen!
+rebuilding cheat data = Cheat bestand herbouwen...
+
+[copy file error]
+title = Fout bij Kopiëren van Map of Bestand
+text = Bestand of map bestaat niet.
+
+[copy file exists]
+title = Vervangen van Bestand Bevestigen
+text = Deze map bevat al een bestand met dezelfde naam. Wilt u het bestaande bestand vervangen door dit bestand?
+
+[copy dest is directory]
+title = Fout bij Kopiëren van Map of Bestand
+text = Deze map bevat al een map met dezelfde naam. Het is niet mogelijk om het bestand te kopieren.
+
+[move dest is directory]
+title = Fout bij Verplaatsen van Map of Bestand
+text = Deze map bevat al een map met dezelfde naam. Het is niet mogelijk om het bestand te verplaatsen.
+
+[no copy dir]
+title = Fout bij Kopiëren/Knippen Map
+text = Map kopiëren/knippen wordt op dit moment niet ondersteunt!
+
+[stop copying file]
+title = Bestand Kopiëren Annuleren Bevestigen
+text = Weet u zeker dat u het kopiëren wilt annuleren?
+
+[confirm delete file]
+title = Verwijderen van Bestand/Map Bevestigen
+text = Bestand/Map wordt permanent verwijderd, weet u zeker dat u '%s' wilt verwijderen?
+text2 = Als je door wilt gaan, druk op "Ja".
+
+[do not delete directory]
+title = Fout bij Verwijderen Map
+text = Deze map is niet leeg, verwijder eerst inhoud van de map en probeer dan opnieuw.
+
+[unknown save type]
+title = Onbekend Save Type
+text = Het save type van dit programma is onbekend, druk op "A" om handmatig het type te bepalen.
+
+[no savelist]
+title = Fout bij Laden Save Lijst
+text = De save lijst kon niet geladen worden, "savelist.bin" is niet aanwezig.
+
+[restore save fail]
+title = Herstel van Save Data Mislukt
+text = De save data kon niet hersteld worden, negeren en verder gaan?
+
+[backup save fail]
+title = Bewaren van Save Data Mislukt
+text = De save data kon niet bewaard worden, betreffende disk heeft wellicht niet genoeg ruimte.
+
+[language changed]
+title = Systeem Taal Wijziging Bevestigen
+text = Weet u zeker dat u nu wilt herstarten om de systeem taal te wijzigen? Kies "Nee" om later te herstarten.
+
+[ui style changed]
+title = Interface Thema Wijziging Bevestigen
+text = Weet u zeker dat u nu wilt herstarten om de interface thema te wijzigen? Kies "Nee" om huidige thema te behouden. 
+
+[save type]
+title = Save Type Instellen
+text = Save Type
+Unknown = Onbekend/Auto
+No Save = Geen Save
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Snel
+Medium = Gemiddeld
+Slow = Langzaam
+
+[system setting]
+title = Systeem Opties
+
+[disk info]
+total = Capaciteit: %s
+used = Gebruikte Ruimte: %s
+free = Beschikbare Ruimte: %s
+
+[no free space]
+title = Onvoldoende Vrije Ruimte
+text = Er is onvoldoende vrije ruimte op de doel disk, kan bestand niet kopiëren.
+
+
+[sd speed]
+text = Bepaal MicroSD snelheid
+item0 = Extreem
+item1 = Snel
+item2 = Gemiddeld
+item3 = Langzaam
+
+[unsupported sd]
+title = MicroSD Kaart Wordt Niet Ondersteund
+text = Deze MicroSD kaart(Model:%s) kan geen officiële DS spellen laden, kopieer het programma van de SD kaart naar het interne flash geheugen van de Acekard.
+
+[sd card error]
+title = Kan MicroSD Kaart Niet Benaderen
+text = MicroSD kaart kan niet worden benaderd, zorg ervoor dat MicroSD kaart geformatteerd is en correct is geplaatst.
+
+[no sd for save]
+title = Geen MicroSD Kaart voor Save Data
+text = MicroSD kaart kan niet worden benaderd, save data van eerder gestart programma zal geschreven worden naar bestand '%s'.
+
+[no gba card]
+title = Fout: Geen GBA Kaart
+text = Er is geen apparaat in Slot-2.
+
+[filelist type]
+text = Zichtbare Bestandstypen
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = ALLES
+
+[rom trim]
+text = Trim ROM bij kopiëren
+item0 = Uit
+item1 = Aan
+
+[cheat]
+text = Gebruik Cheat Codes
+item0 = Uit
+Item1 = Aan
+
+[autorun]
+text = Autorun
+item0 = Uit
+item1 = Aan
+
+[language]
+text = Interface Taal
+item0 = English
+item1 = S.Chinese
+item2 = T.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+
+[brightness]
+text = Helderheid
+
+[ui style]
+text = Interface Thema
+
+[help window]
+title = Hulp
+item0 = %c  Omhoog/Omlaag/PgOmhoog/PgOmlaag
+item1 = %c  Ja/Start/OK
+item2 = %c  Nee/Terug/Annuleer
+item3 = %c  Bestands Info/Selecteer save type
+item4 = %c  Geheugen selectie: MicroSD/Flash
+item5 = %c  Terug naar bovenliggende map
+item6 = %c  Helderheid instellen: 1/2/3/4
+item7 = %s  Open "START" Menu
+item8 = %s  Lijst stijl: Animatie/Nummer
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Save Verwerking Annuleren
+text = Weet je zeker dat je deze save verwerking wilt annuleren?
+
+[gba warn]
+title = GBA ROM Formaat Waarschuwing
+text = GBA ROMs groter dan 32MB worden op dit moment niet ondersteund!
+
+[shortcut overwrite]
+title = Snelkoppeling Bevestigen
+text = Weet je zeker dat je een snelkoppeling wilt aanmaken/overschrijven?
+
+[shortcut delete]
+title = Snelkoppeling Verwijderen Bevestigen
+text = Weet je zeker dat je deze snelkoppeling wilt verwijderen?
+
+[slot2]
+gbamode = Boot in GBA mode
+passme = Boot in NDS mode (PassMe)
+backupsramq = Back-up SRAM Bank1 (FAS1)
+
+[fas1]
+question = Error
+title = FAS1 Opties
+useFAS1 = Gebruik FlashAdvance functies.
+listgba = Lijst GBA/BIN bestanden
+verifyFAS1 = Controleer geschreven blokken
+item0 = Nee
+item1 = Ja
+StartMenuDescription = FAS1
+prompt = Schrijven ROM
+flashquestion = ROM naar Flash Advance kaart flashen? (%.2fMB / about %.1f min.)
+writeprompt = Schrijf Save naar Bank 1?
+backupsramq = Backup Slot-1 of FlashAdvance Cartridge
+backupsram = Backup maken van Bank 1 [%iKB] (%c voor Annuleren)
+saveerror = Geen 64KB SAV bestand, doorgaan?
+unsupported = FAS1: Niet Ondersteunde Kaart
+writingpercent = %iKB van %iKB geschreven, (%c voor Annuleren)
+savebytes = %i bytes geschreven (%c voor Annuleren)
+
+[save backup]
+question = Back up save?
+backing up = Back-up maken van .SAV met extentie .BAK
+overwrite = Back-up bestaat al, overschrijven?
+
+[save restore]
+question = Save terugzetten van back-up?
+restoring save = Terugzetten van .SAV van .BAK extentie
+overwrite = Save bestaat al, overschrijven?
+
+[textview]
+confirm = Bevestig 
+exit = Weet je zeker dat je het programma wilt afsluiten?
+error = Kan Tekst Bestand Niet Openen
+file open error = Dit tekst bestand kan niet geopend worden. Terug naar OS Menu.
+screen angle = Scherm oriëntatie
+normal = Normaal
+rotate 90 = Roteer 90
+rotate 270 = Roteer 270
+screen mode = Scherm Mode
+dual = Dual Scherm
+dual copy = Kloon Scherm
+lower = Alleen Onder
+upper = Alleen Boven
+add bookmark = Weet u zeker dat u nieuwe markering wilt plaatsen op deze positie?
+remove bookmark = Weet u zeker dat u deze markering wilt verwijderen?
+goto toppage? = Weet u zeker dat u naar de top van de pagina wilt springen?
+
+[save slot]
+title = Kies Save Slot
+default = Standaard
+text = Selecteer Save Slot
+
+[romnametype]
+Normal = Normaal
+HideExtName = Verberg ROM Extensie
+BannerTitle = Interne Naam
+
+[cheat]
+text = Cheat code gebruik
+item0 = Uitgeschakeld
+Item1 = Ingeschakeld
+
+[setting window]
+ok = OK
+savetype = Save Type
+cancel = Terug
+confirm = Bevestig Save Opties
+confirm text = Weet je zeker dat je de instellingen wilt opslaan?
+shortcut = Snelkoppeling
+delete shortcut = Verwijderen
+rominfo = Rom Info
+
+[switches]
+Default = Standaard
+Enable = Ingeschakeld
+Disable = Uitgeschakeld
+auto menu = Auto Menu
+
+[rom info]
+title = Eigenschappen
+title_copywnd = Kopieer Save Slot
+file date = Gewijzigd: %d/%d/%d %02d:%02d:%02d (GMT)
+file size = Bestandsgrootte: %s
+save type = Save Type: %s
+game code = Game Code: %s
+save slot = Selecteer Save Slot
+save slot copy = Van %s naar:
+Slot = Slot
+cheat menu = Cheat Menu
+copy menu = Slot Copy
+save extension = Save Extensie
+convert text = Convert saves
+convert text = Convert saves van %s naar %s ?
+
+[patches]
+title = Standaard Patch Opties
+download play = DS Download Play
+cheating system = Cheat/Action Replay
+slow motion = In-Game Slow Motion
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 loader
+altloadernotfound = Alternatieve Loader niet gevonden, boot ROM direct?
+patching loader = Alternatieve Loader patchen voor gebruik met AKAIO
+IRQ Hook = IRQ Hook
+SWI Hook = SWI Hook
+bypass antipiracy = Omzeil AntiPiracy
+
+[advanced setting]
+title = Geavanceerde Opties
+Advanced = Geavanceerde
+Show Hidden Files = Toon Verborgen Best.
+Hide Extension Name = Verberg ROM Extensie
+Scrolling Speed = Scroll Snelheid
+CopyCut Saves Too = Kopieer/Knip SAV en ROM
+Delete Saves Too = Delete SAV en ROM
+Cheat Scrolling = Cheat Scrollen
+Cheat Scrolling Speed = Cheat Scrol Snelheid
+Homebrew Reset Type = Homebrew Reset Type
+
+[cheatupdate]
+DATorXML = Wat te Downloaden 
+updateDB = Wifi Update
+cheatDBbutton = Update DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO Updater
+get whatsnew = Bekijk WhatsNew.txt
+startupdatequestion = Updaten Starten?
+WFCConnection = Verbinden via WFC, %c om te annuleren
+cantconnect = Geen verbinding, controleer WFC instellingen
+stopconnectquestion = Wil je stoppen met het verbinden via Wifi?
+stopconnecttitle = Stop Verbinding
+getwhatsnew = What's New Laden
+downloadthisfile = Download Cheat Bestand van %s?
+downloaderror = Fout bij downloaden file
+downloadstart = Downloaden bestand, %c Annuleren
+stopdownloadquestion = Wil je stoppen met downloaden?
+stopdownloadtitle = Gestopt met downloaden
+downloading = Downloaden %.0fKb/%.0fKb, %c Annuleren
+unzipstop = Wil je stoppen met uitpakken?
+unzipstoptitle = Uitpakken Gepauzeerd
+unzipping = Uitpakken bestand, %c om te Annuleren
+unziperror = Fout met uitpakken bestand
+success = Veel plezier met de laatste %s
+error = Fout met updaten, opnieuw proberen?
+resumeupdatetitle = Hervat Onderbroken Download
+resumethisfile = Hetstel Download van %s op %.0fKb?
+deletepartial = Delete Gedeeltelijk Gedownloaded Bestand?
+previousdates = Vorige Datums
+previousfiles = Vorige Bestanden
+previous date notice = Alleen Wifi en Loader Updates
+cheats = Cheats
+loader = Update Loader
+wifi = Wifi Plugin
+3version = 3 versies
+5version = 5 versies
+Checking Site = AKAIO Site Checken
+whatsnew notice = Alleen Officiele Site
+site = Welke Cheat DB?
+site1 = Officiele Site
+site2 = AKAIO (yusuo)
+
+[text viewer]
+text = TXT Lezer
+item0 = Plugin
+item1 = Intern
+title = Plugin Instellingen
+
+[interface settings]
+title = Interface Instellingen
+oldschool = Tekst Lijst
+modern = Bestandsnaam
+internal = Interne Naam
+filelist style = Bestandslijst Style
+Hide File Extensions = Verberg Extentsies
+Icon Animation = Pictogram Animaties
+
+[exp window]
+title = Slot 2 Cardridge Instellingen
+ram = RAM
+sram = Dump SRAM
+off = Uit
+low = Laag
+mid = Gemiddeld
+high = Hoog
+strength = Tril Sterkte
+NOR Mode = NOR Mode
+auto = Auto
+always = Altijd
+notdetected = 3in1/EWin niet gevonden! 
+NOR Flash = Flash naar NOR
+norquestion = Flash naar NOR?
+norblank = NOR Wissen
+erasenor = Wil je de NOR wissen?
+
+[gba settings]
+gbabutton = GBA Instellingen
+gbasleepdescription = (L+R+Start: Slaap/ Select+Start: Word Wakker)
+title = GBA Instellingen
+sleephack = GBA Universele Slaap
+autosave = Backup GBA Save tijdens opstarten
+gbaSavePrompt = Vraag voor Save/Load
+Load Save = Laad Save
+Load File = Laad %s?
+Backup Save = Backup Save
+Backup File = Backup %s?
+
+[ram allocation]
+title = Error
+memory allocation error = Fout met toewijzen van geheugen
+
+[LShortcuts]
+CheatOn = Cheats zijn ingeschakeld voor dit spel.
+CheatOff = Cheats zijn uitgeschakeld voor dit spel.
+SoftresetOn = Soft-Reset is ingeschakeld voor dit spel.
+SoftresetOff = Soft-Reset is uitgeschakeld voor dit spel.
+[clone card error]
+title = Kloon
+text = Dit is misschien geen echte Acekard.     Neem contact op met uw verkoper.
+
+[end]

@@ -1,0 +1,455 @@
+﻿[font]
+main = tahoma.pcf
+
+[start menu]
+Start = START
+Copy = Kopier
+Cut = Klip
+Paste = Sæt ind
+Delete = Slet
+Save Type = Format
+Patches = Patch
+Setting = Systemindstillinger
+Info = Egenskaber
+Help = Hjælp
+More = Mere ->
+3in1 = 3in1/FAS1
+Cheats = Cheats
+Back = <- Tilbage
+
+[message box]
+yes = Ja
+no = Nej
+ok = OK
+cancel = Anuller
+
+[cheats]
+title = Cheats: SELECT = Gem dine valg
+error_title = Fejl
+error_text = Cheat fil ikke fundet.
+selectrom = Vælg venligst en .NDS fil
+noxml = Cheat DB fil ikke fundet
+ccexists = .CC findes, Dan ny?
+nonefound = Ingen Cheats i DB
+xmlselect = Vælg Cheat database:
+confirm = Bekræft
+confirm_rebuild = Gendan .CC fil?
+invalid cheatdb = Ugyldig Cheat database
+Rebuild = Genopbyg
+Sel. DB = Sel. DB
+
+[progress window]
+processing save = Arbejder... Sluk ikke for strømmen!
+processing copy = Kopierer... Sluk ikke for strømmen, %c=Anuller!
+first use sd = Kontrollerer SD kort før brug...
+gba load = Indlæser GBA spil...
+gba save load = Indlæser gemt GBA spil...
+gba save store = Behandler gemt GBA spil... Sluk ikke for strømmen!
+erase nor = Sletter NOR flash... Sluk ikke for strømmen!
+rebuilding cheat data = Gendanner Cheat fil.
+
+[copy file error]
+title = Fejl under kopiering
+text = Filen eller mappen findes ikke.
+
+[copy file exists]
+title = Bekræft overskrivning
+text = Mappen indeholder allerede en fil med samme navn. Vil du overskrive den?
+
+[copy dest is directory]
+title = Fejl under kopiering
+text = Mappen indeholder allerede en mappe med samme navn. Kopiering afbrudt.
+
+[move dest is directory]
+title = Fejl under flytning
+text = Mappen indeholder allerede en mappe med samme navn. Flytning afbrudt.
+
+[no copy dir]
+title = Fejl under kopiering/flytning
+text = Kopiering/flytning af mapper understøttes ikke p.t.!
+
+[stop copying file]
+title = Bekræft anullering af kopiering
+text = Er du sikker på du vil anullere kopiering af fil?
+
+[confirm delete file]
+title = Bekræft sletning
+text = Sletning af fil/mappe kan ikke fortrydes. Er du sikker på at du vil slette '%s'?
+text2 = Tryk Ja for at slette eller Nej for at anullere.
+
+[do not delete directory]
+title = Fejl under sletning
+text = Mappen er ikke tom. Slet først indholdet i mappen og prøv igen.
+
+[unknown save type]
+title = Ukendt format
+text = Formatet for dette program er ukendt, Tryk "A" for at angive typen manuelt.
+
+[no savelist]
+title = Fejl under indlæsning af Save liste
+text = Save listen kunne ikke indlæses. "savelist.bin" blev ikke fundet.
+
+[restore save fail]
+title = Fejl under læsning af gemte data
+text = Gemte data kunne ikke indlæses, ignorer og fortsæt alligevel?
+
+[backup save fail]
+title = Fejl under backup af gemte data
+text = Fejl under backup af gemte data, der er muligvis ikke nok fri plads.
+
+[language changed]
+title = Bekræft skift af systemsprog
+text = Er du sikker på at du vil genstarte for at skifte systemsprog nu? Vælg "Nej" for at genstarte senere.
+
+[ui style changed]
+title = Bekræft skift af tema
+text = Er du sikker på at du vil genstarte for at skifte tema nu? Vælg "Nej" for at beholde nuværende tema. 
+
+[save type]
+title = Sæt format
+text = Format
+Unknown = Ukendt/Auto
+No Save = Ingen Save
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Hurtig
+Medium = Mellem
+Slow = Langsom
+
+[system setting]
+title = Systemindstillinger
+
+[disk info]
+total = Disk kapacitet: %s
+used = Brugt plads: %s
+free = Fri plads: %s
+
+[no free space]
+title = Fejl - Ikke nok plads
+text = Der er ikke nok plads på disken, filen kan ikke kopieres.
+
+
+[sd speed]
+text = Sæt MicroSD hastighed
+item0 = Ekstrem
+item1 = Hurtig
+item2 = Mellem
+item3 = Langsom
+
+[unsupported sd]
+title = Ikke supporteret MicroSD kort
+text = Dette MicroSD kort(Model:%s) er ikke egnet til at køre officielle DS programmer, kopier program fra SD kort til Acekard intern Flash Memory og prøv igen.
+
+[sd card error]
+title = Fejl under tilgang til MicroSD kort
+text = Kunne ikke tilgå MicroSD kort, kontroller at MicroSD kort er formatteret og korrekt isat.
+
+[no sd for save]
+title = Ingen MicroSD til Save data
+text = Kunne ikke tilgå MicroSD kort, save data fra det startede program bliver skrevet i filen '%s'.
+
+[no gba card]
+title = Ingen GBA kort
+text = Der er ingen GBA i Slot-2.
+
+[filelist type]
+text = Sæt liste type
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = ALL
+
+[rom trim]
+text = Optimer ROM under kopiering
+item0 = Slået fra
+item1 = Slået til
+
+[cheat]
+text = Cheat koder
+item0 = Slået fra
+Item1 = Slået til
+
+[autorun]
+text = Automatisk start
+item0 = Slået fra
+item1 = Slået til
+
+[language]
+text = Grænsefladesprog
+item0 = English
+item1 = Simple Chinese
+item2 = Trad.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+item9 = Dansk
+
+[brightness]
+text = Lysstyrke
+
+[ui style]
+text = Grænsefladetema
+
+[help window]
+title = Hjælp
+item0 = %c  Op/Ned/SideOp/SideNed
+item1 = %c  Ja/Start/OK
+item2 = %c  Nej/Tilbage/Anuller
+item3 = %c  Vis fil info/Vælg format
+item4 = %c  Memory valg: MicroSD/Flash
+item5 = %c  Tilbage til forrige mappe
+item6 = %c  Indstil lysstyrke: 1/2/3/4
+item7 = %s  Åbn "START" menu
+item8 = %s  Liste type: Animeret/Tal
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Anullere Save
+text = Er du sikker på at du vil anullere udførelse af Save?
+
+[gba warn]
+title = Advarsel - GBA ROM størrelse
+text = GBA ROM's større end 32M understøttes ikke p.t.!
+
+[shortcut overwrite]
+title = Bekræft genvej
+text = Er du sikker på at du vil oprette/overskrive genvej?
+
+[shortcut delete]
+title = Bekræft sletning
+text = Er du sikker på at du vil slette genvej?
+
+[slot2]
+gbamode = Boot i GBA mode
+passme = Boot i NDS mode (PassMe)
+backupsramq = Sikkerhedskopier SRAM Bank1 (FAS1)
+
+[fas1]
+question = Spørgsmål
+title = FAS1 indstillinger
+useFAS1 = Brug FlashAdvance funktioner
+listgba = List GBA/BIN filer
+verifyFAS1 = Verificer skrevne data
+item0 = Nej
+item1 = Ja
+StartMenuDescription = FAS1
+prompt = Skriv ROM
+flashquestion = Skriv ROM til Flash Advance kort? (%.2fMB / ca. %.1f min.)
+writeprompt = Skriv Save til Bank 1?
+backupsramq = Sikkerhedskopier Slot-1 fra FlashAdvance Cartridge
+backupsram = Tager sikkerhedskopi af Bank 1 [%iKB] (%c for at anullere)
+saveerror = Ikke en 64KB SAV fil, fortsæt?
+unsupported = FAS1: Cartridge ikke understøttet
+writingpercent = Skrevet %iKB af %iKB, (%c for at anullere)
+savebytes = Skrevet %i bytes (%c for at anullere)
+
+[save backup]
+question = Sikkerhedskopier save?
+backing up = Tager sikkerhedskopi af .SAV til .BAK
+overwrite = Sikkerhedskopi findes allerede. Overskrive?
+
+[save restore]
+question = Indlæs Save fra sikkerhedskopi?
+restoring save = Indlæser .SAV fra .BAK
+overwrite = Save fil findes allerede. Overskriv?
+
+[textview]
+confirm = Bekræft
+exit = Ønsker du virkelig at afslutte?
+error = Fejl under åbning af fil
+file open error = Kan ikke åbne denne tekstfil. Retur til OS menu.
+screen angle = Skærmorientering
+normal = Normal
+rotate 90 = Roter 90
+rotate 270 = Roter 270
+screen mode = Skærmtilstand
+dual = Dobbelt skærm
+dual copy = Samme på begge skærme
+lower = Kun nederste skærm
+upper = Kun øverste skærm
+add bookmark = Er du sikker på at du vil tilføje en ny genvej her?
+remove bookmark = Er du sikker på at du vil fjerne denne genvej?
+goto toppage? = Er du sikker på at du vil gå til toppen af siden?
+
+[save slot]
+title = Vælg Save Slot
+default = Standard
+text = Vælg Save Slot du vil bruge
+
+[romnametype]
+Normal = Normal
+HideExtName = Skjul ROM type
+BannerTitle = Internt navn
+
+[cheat]
+text = Brug af Cheat koder
+item0 = Slået fra
+Item1 = Slået til
+
+[setting window]
+ok = OK
+savetype = Format
+cancel = Anullere
+confirm = Bekræft gem indstillinger
+confirm text = Er du sikker på at du vil gemme indstillinger?
+shortcut = Genvej
+delete shortcut = Slet
+rominfo = Rom indstillinger
+
+[switches]
+Default = Standard
+Enable = Slået til
+Disable = Slået fra
+auto menu = Auto menu
+
+[rom info]
+title = Egenskaber
+title_copywnd = Kopier Save Slot
+file date = Sidst ændret: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Fil størrelse: %s
+save type = Format: %s
+game code = Spil kode: %s
+save slot = Vælg Save Slot
+save slot copy = Fra %s til:
+Slot = Slot
+cheat menu = Cheat menu
+copy menu = Slot kopi
+save extension = Save type
+convert text = Konverter Saves
+convert text = Konverter Saves fra %s til %s ?
+
+[patches]
+title = Standard Patch indstillinger
+download play = DS Download Play
+cheating system = Cheat/Action Replay
+slow motion = In-Game Slow Motion
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Alternativ loader ikke fundet, boot ROM direkte?
+patching loader = Patcher alternativ Loader til brug med AKAIO
+IRQ Hook = IRQ Hook
+SWI Hook = SWI Hook
+bypass antipiracy = Omgå anti-piratsikring
+
+[advanced setting]
+title = Filsystem indstillinger
+Advanced = Avanceret
+Show Hidden Files = Vis skjulte filer
+Hide Extension Name = Skjul ROM type
+Scrolling Speed = Rullehastighed
+CopyCut Saves Too = Kopier/Klip SAV med ROM
+Delete Saves Too = Slet SAV med ROM
+Cheat Scrolling = Cheat rullefunktion
+Cheat Scrolling Speed = Cheat rullehastighed
+Homebrew Reset Type = Homebrew reset type
+
+[cheatupdate]
+DATorXML = Fil der skal hentes
+updateDB = Wifi opdatering
+cheatDBbutton = Opdatere DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO opdatering
+get whatsnew = Hent WhatsNew.txt
+startupdatequestion = Ønsker du at starte opdatering?
+WFCConnection = Forbinder ved hjælp af WFC, %c for at anullere
+cantconnect = Kunne ikke forbinde, kontroller WFC indstillinger
+stopconnectquestion = Ønsker du at lukke Wifi forbindelse?
+stopconnecttitle = Luk forbindelse
+getwhatsnew = Henter nyheder
+downloadthisfile = Download cheat fil dateret %s?
+downloaderror = Fejl under download af fil
+downloadstart = Henter fil, %c for at anullere
+stopdownloadquestion = Ønsker du at stoppe download?
+stopdownloadtitle = Stop download
+downloading = Downloader %.0fKb/%.0fKb, %c for at anullere
+unzipstop = Ønsker du at stoppe udpakning?
+unzipstoptitle = Udpakning på pause
+unzipping = Udpakker fil, %c for at anullere
+unziperror = Fejl under udpakning af fil
+success = Nyd nyeste %s
+error = Fejl under opdatering, prøv igen?
+resumeupdatetitle = Fortsæt afbrudt download
+resumethisfile = Fortsæt download af %s ved %.0fKb?
+deletepartial = Slet delvis downloadet fil?
+previousdates = Forrige datoer
+previousfiles = Forrige filer
+previous date notice = KUN Wifi og Loader opdateringer
+cheats = Cheats
+loader = Opdatere Loader
+wifi = Wifi Plugin
+3version = 3 versioner
+5version = 5 versioner
+Checking Site = Kontrollerer AKAIO hjemmeside
+whatsnew notice = KUN officiel hjemmeside
+site = Hvilken Cheat database?
+site1 = Officiel hjemmeside
+site2 = AKAIO (yusuo)
+
+[text viewer]
+text = TXT viser
+item0 = Plugin
+item1 = Intern
+title = Pluginindstillinger
+
+[interface settings]
+title = Grænsefladeindstillinger
+oldschool = Tekst liste
+modern = Filnavn
+internal = Internt navn
+filelist style = Filliste
+Hide File Extensions = Skjul fil endelser
+Icon Animation = Ikon animering
+
+[exp window]
+title = Indstillinger for Slot 2 Cartridge
+ram = RAM
+sram = Dump SRAM
+off = Fra
+low = Lav
+mid = Mellem
+high = Høj
+strength = Rumble niveau
+NOR Mode = NOR tilstand
+auto = Auto
+always = Altid
+notdetected = 3in1/EWin/FlashAdvance ikke fundet!
+NOR Flash = Flash til NOR
+norquestion = Flash til NOR?
+norblank = Blank NOR
+erasenor = Ønsker du at slette NOR?
+
+[gba settings]
+gbabutton = GBA indstillinger
+gbasleepdescription = (L+R+Start: slumre/ Select+Start: gendan)
+title = GBA indstillinger
+sleephack = GBA Universal slumre
+autosave = Sikkerhedskopier GBA Save ved start
+gbaSavePrompt = Spørg før Save/Load
+Load Save = Indlæs Save
+Load File = Indlæs %s?
+Backup Save = Sikkerhedskopier Save
+Backup File = Sikkerhedskopier %s?
+
+[ram allocation]
+title = Fejl
+memory allocation error = Fejl ved allokering af hukommelse
+
+[LShortcuts]
+CheatOn = Cheats er blevet slået til for dette spil.
+CheatOff = Cheats er blevet slået fra for dette spil.
+SoftresetOn = Soft-Reset er blevet slået til for dette spil.
+SoftresetOff = Soft-Reset er blevet slået til fra dette spil.
+[clone card error]
+title = Klon
+text = Det er måske ikke et ægte Acekard. Kontakt venligst din leverandør.
+
+[end]
