@@ -104,6 +104,7 @@ static void RemoveTrailingSpaces(std::string& code)
 }
 
 bool music = false;
+extern mm_sound_effect mus_startup;
 extern mm_sound_effect mus_menu;
 
 std::string romfolder;
@@ -778,7 +779,11 @@ int main(int argc, char **argv) {
 	InitSound();
 
 	if (!music) {
-		mmEffectEx(&mus_menu);
+		if (theme == 1) {
+			mmEffectEx(&mus_startup);
+		} else {
+			mmEffectEx(&mus_menu);
+		}
 		music = true;
 	}
 

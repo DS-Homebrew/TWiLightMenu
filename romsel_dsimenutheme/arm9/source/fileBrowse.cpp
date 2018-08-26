@@ -143,6 +143,7 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+mm_sound_effect mus_startup;
 mm_sound_effect mus_menu;
 
 void InitSound() {
@@ -154,6 +155,7 @@ void InitSound() {
 	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
+	mmLoadEffect( SFX_STARTUP );
 	mmLoadEffect( SFX_MENU );
 
 	snd_launch = {
@@ -193,6 +195,13 @@ void InitSound() {
 	};
 	snd_switch = {
 		{ SFX_SWITCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	mus_startup = {
+		{ SFX_STARTUP } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
