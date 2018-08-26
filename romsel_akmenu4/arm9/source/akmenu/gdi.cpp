@@ -83,11 +83,11 @@ void cGdi::initBg(const std::string &aFileName)
     _sprites = new cSprite[12];
     _background = createBMP15FromFile(aFileName);
     nocashMessage("ARM9 GDI BMP15 Created");
-
     if (_background.width() < SCREEN_WIDTH && _background.height() < SCREEN_WIDTH)
     {
+        nocashMessage("BG Width too small");
         _background = createBMP15(SCREEN_WIDTH, SCREEN_HEIGHT);
-        zeroMemory(_background.buffer(), _background.height() * _background.pitch());
+       // zeroMemory(_background.buffer(), _background.height() * _background.pitch());
     }
     u32 pitch = _background.pitch() >> 1;
     for (size_t ii = 0; ii < 3; ++ii)

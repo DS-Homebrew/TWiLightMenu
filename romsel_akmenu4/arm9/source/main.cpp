@@ -775,9 +775,7 @@ int main(int argc, char **argv)
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
 	nocashMessage("LOWER_BG");
 	nocashMessage(SFN_LOWER_SCREEN_BG);
-	do {
-		swiWaitForVBlank();
-	} while(1);
+	stop();
 }
 
 //---------------------------------------------------------------------------------
