@@ -18,14 +18,16 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <nds.h>
-#include "../singleton.h"
-#include "font.h"
-
 
 #pragma once
 #ifndef _FONT_FACTORY_H_
 #define _FONT_FACTORY_H_
+
+#include <nds.h>
+#include "../singleton.h"
+#include "akfont.h"
+
+
 
 class cFontFactory
 {

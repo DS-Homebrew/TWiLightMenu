@@ -18,7 +18,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "font.h"
+#include "akfont.h"
 
 #include <nds.h>
 #include <string>

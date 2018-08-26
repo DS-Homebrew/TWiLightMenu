@@ -27,7 +27,7 @@
 #ifndef __FONT_PCF_H__
 #define __FONT_PCF_H__
 
-#include "font.h"
+#include "akfont.h"
 
 //#define SMALL 1
 
