@@ -131,7 +131,8 @@ bool shouldersRendered = false;
 bool settingsChanged = false;
 
 bool isScrolling = false;
-bool needToPlayStopSound = true;
+bool needToPlayStopSound = false;
+bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
 
 extern void SaveSettings();
@@ -634,6 +635,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
+			if (!stopSoundPlayed) {
+				if (theme == 0 && !startMenu && cursorPosition+pagenum*40 <= ((int) dirContents[scrn].size() - 1)
+				|| theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardUsed)) {
+					needToPlayStopSound = true;
+				}
+				stopSoundPlayed = true;
+			}
+
 			if (!shouldersRendered) {
 				showLshoulder = false;
 				showRshoulder = false;
@@ -839,6 +848,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					chdir(entry->name.c_str());
 					char buf[256];
@@ -1017,6 +1027,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
 					settingsChanged = false;
@@ -1042,6 +1053,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
 					settingsChanged = false;
@@ -1085,6 +1097,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					whiteScreen = false;
 					fadeType = true;	// Fade in from white
@@ -1106,6 +1119,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					chdir("..");
 					char buf[256];
@@ -1152,6 +1166,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
+						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
 						SaveSettings();
@@ -1208,6 +1223,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
+				stopSoundPlayed = false;
 				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
