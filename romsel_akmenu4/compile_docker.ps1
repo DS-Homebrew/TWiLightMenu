@@ -15,5 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "romsel_r4theme.nds" "../7zfile/_nds/dsimenuplusplus/r4menu.srldr"
+    Copy-Item "romsel_aktheme.nds" "../7zfile/_nds/dsimenuplusplus/akmenu.srldr"
 }
