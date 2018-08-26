@@ -765,7 +765,7 @@ int main(int argc, char **argv) {
 	fontInit();
 	iconManagerInit();
 
-	keysSetRepeat(25,5);
+	keysSetRepeat(25, 5);
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
