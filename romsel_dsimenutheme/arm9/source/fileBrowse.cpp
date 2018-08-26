@@ -130,6 +130,9 @@ bool boxArtLoaded = false;
 bool shouldersRendered = false;
 bool settingsChanged = false;
 
+bool isScrolling = false;
+bool needToPlayStopSound = true;
+
 extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
@@ -431,11 +434,31 @@ void displayNowLoading(void) {
 	controlTopBright = false;
 }
 
+void updateScrollingState(u32 held, u32 pressed) {
+
+	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT);
+	bool isPressed = (pressed & KEY_LEFT) || (pressed & KEY_RIGHT);
+	
+	// If we were scrolling before, but now let go of all keys, stop scrolling.
+	 if (isHeld && !isPressed 
+	 	&&(
+			startMenu ? 
+			(startMenu_cursorPosition != 0 && startMenu_cursorPosition != 39) 
+			: (cursorPosition != 0 && cursorPosition != 39) 
+		)){
+		isScrolling = true;
+	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
+		isScrolling = false; 
+	} 
+
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	displayNowLoading();
 
 	int pressed = 0;
+	int held = 0;
 	SwitchState scrn(3);
 	vector<DirEntry> dirContents[scrn.SIZE];
 
@@ -630,13 +653,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			do
 			{
 				scanKeys();
-				pressed = keysDownRepeat();
+				pressed = keysDown();
+				held = keysDownRepeat();
 				touchRead(&touch);
+				updateScrollingState(held, pressed);
 				swiWaitForVBlank();
 			}
-			while (!pressed);
-
+			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
@@ -644,6 +669,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition -= 1;
 					if (startMenu_cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -653,6 +679,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition -= 1;
 					if (cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -667,6 +694,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
+					|| ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
 					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
@@ -674,6 +702,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition += 1;
 					if (startMenu_cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -683,6 +712,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition += 1;
 					if (cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -725,6 +755,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pressedToLaunch = (pressed & KEY_A);
 			}
 
+			// Startup...
 			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder))											// START button/text (3DS theme)
@@ -969,6 +1000,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					return entry->name;
 				}
 			}
+
+			// page switch
 
 			if (pressed & KEY_L)
 			{

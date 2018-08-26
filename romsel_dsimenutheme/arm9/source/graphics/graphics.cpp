@@ -105,6 +105,8 @@ int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
 extern bool showbubble;
 extern bool showSTARTborder;
+extern bool isScrolling;
+extern bool needToPlayStopSound;
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -540,7 +542,7 @@ void vBlankHandler()
 		if (titleboxXmoveleft) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos -= 1;
 					movetimer++;
@@ -554,7 +556,7 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
@@ -570,7 +572,7 @@ void vBlankHandler()
 		} else if (titleboxXmoveright) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					// if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos += 1;
 					movetimer++;
@@ -584,7 +586,7 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
 					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
@@ -833,7 +835,11 @@ void vBlankHandler()
 					if (!startMenu) {
 						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 					}
-				} else {
+				} else if (!isScrolling) {
+					if (showbubble && theme == 0 && needToPlayStopSound) {
+ 						mmEffectEx(&snd_stop);
+						needToPlayStopSound = false;
+					}
 					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glSprite(96+32, 81, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
@@ -846,7 +852,7 @@ void vBlankHandler()
 			// Refresh the background layer.
 			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(bubbleImage);
-			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
+			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -1267,6 +1273,7 @@ void clearBoxArt() {
 
 void graphicsInit()
 {
+	
 	for (int i = 0; i < 12; i++) {
 		launchDotFrame[i] = 5;
 	}
@@ -1765,5 +1772,7 @@ void graphicsInit()
 							);
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+	//consoleDemoInit();
+
 
 }
