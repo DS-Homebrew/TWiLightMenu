@@ -22,6 +22,8 @@
 #include <cstdio>
 #include <nds.h>
 #include <nds/arm9/cache.h>
+#include <nds/system.h>
+#include <nds/arm9/background.h>
 #include "gdi.h"
 #include "aksprite.h"
 #include "../memtool.h"
@@ -61,16 +63,27 @@ cGdi::~cGdi()
 
 void cGdi::init()
 {
+    nocashMessage("ARM9 gdi.cpp init");
     swapLCD();
+    nocashMessage("ARM9 gdi.cpp init/swapLCD");
+
     activeFbMain();
+    nocashMessage("ARM9 gdi.cpp init/Main");
+
     activeFbSub();
+    nocashMessage("ARM9 gdi.cpp init/Sub");
+
     cSprite::sysinit();
+    nocashMessage("ARM9 gdi.cpp sysInit");
 }
 
 void cGdi::initBg(const std::string &aFileName)
 {
+    nocashMessage("ARM9 GDI InitBG");
     _sprites = new cSprite[12];
     _background = createBMP15FromFile(aFileName);
+    nocashMessage("ARM9 GDI BMP15 Created");
+
     if (_background.width() < SCREEN_WIDTH && _background.height() < SCREEN_WIDTH)
     {
         _background = createBMP15(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -106,14 +119,15 @@ void cGdi::swapLCD(void)
 
 void cGdi::activeFbMain(void)
 {
+    vramSetBankA(VRAM_A_MAIN_SPRITE_0x06400000);
     vramSetBankB(VRAM_B_MAIN_BG_0x06000000);
     vramSetBankD(VRAM_D_MAIN_BG_0x06020000);
 
-    vramSetBankA(VRAM_A_MAIN_SPRITE_0x06400000);
+    nocashMessage("ARM9 activeFBMain/vramOK");
 
     REG_BG2CNT = BG_BMP16_256x256 | BG_BMP_BASE(0) | BG_PRIORITY_1;
-    REG_BG2PA = 1 << 8; // 2 =�Ŵ���
-    REG_BG2PD = 1 << 8; // 2 =�Ŵ���
+    REG_BG2PA = 1 << 8;
+    REG_BG2PD = 1 << 8;
     REG_BG2PB = 0;
     REG_BG2PC = 0;
     REG_BG2Y = 0;
@@ -127,20 +141,21 @@ void cGdi::activeFbMain(void)
     REG_BG3Y = 0;
     REG_BG3X = 0;
 
+    nocashMessage("ARM9 bgSetupOK");
+
     _bufferMain1 = (u16 *)0x06000000;
     _bufferMain2 = (u16 *)new u32[256 * 192];
     _bufferMain3 = (u16 *)0x06020000;
 
     setMainEngineLayer(MEL_UP);
+    nocashMessage("ARM9 MEL OK");
 
-    zeroMemory(_bufferMain1, 0x20000);
-    //fillMemory( _bufferMain3, 0x20000, 0x8f008f00 );
-    fillMemory(_bufferMain3, 0x20000, 0xffffffff);
+    nocashMessage("FREE");
 
     REG_BLDCNT = BLEND_ALPHA | BLEND_DST_BG2 | BLEND_DST_BG3;
     REG_BLDALPHA = (4 << 8) | 7;
 
-    swiWaitForVBlank(); //remove tearing at bottop screen
+    // swiWaitForVBlank(); //remove tearing at bottop screen
     videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D_BMP_SIZE_128 | DISPLAY_SPR_1D_BMP);
 }
 
@@ -171,9 +186,9 @@ void cGdi::activeFbSub(void)
     _bufferSub2 = (u16 *)new u32[256 * 192 / 2];
 
     //fillMemory( _bufferSub2, 0x18000, 0xfc00fc00 );
-    //fillMemory( _bufferSub1, 0x18000, 0xfc00fc00 );
-    fillMemory(_bufferSub2, 0x18000, 0xffffffff);
-    fillMemory(_bufferSub1, 0x18000, 0xffffffff);
+    // //fillMemory( _bufferSub1, 0x18000, 0xfc00fc00 );
+    // fillMemory(_bufferSub2, 0x18000, 0xffffffff);
+    // fillMemory(_bufferSub1, 0x18000, 0xffffffff);
 
     // text BG
     // text bg ����ģռ�� 32(�ֽ�/��ģ) * 256(��ascii��) = 8192 �ֽ��Դ棬
@@ -186,8 +201,7 @@ void cGdi::activeFbSub(void)
     REG_BG0CNT_SUB = BG_TILE_BASE(0) | BG_MAP_BASE(8) | BG_PRIORITY_2;
 #endif
 
-    swiWaitForVBlank(); //remove tearing at top screen
-    // ģʽ5��������BG��һ��BMP��һ������(���ڵ���)��bmp������Ĭ�Ϲر�
+    // swiWaitForVBlank(); //remove tearing at top screen
     videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE); // | DISPLAY_BG2_ACTIVE );
 }
 
@@ -621,7 +635,7 @@ void cGdi::textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_EN
 void cGdi::present(GRAPHICS_ENGINE engine)
 {
     if (GE_MAIN == engine)
-    { 
+    {
         // ��ת������
         //u16 * temp = _bufferMain1;
         //_bufferMain1 = _bufferMain2;
@@ -634,7 +648,7 @@ void cGdi::present(GRAPHICS_ENGINE engine)
         fillMemory((void *)(_bufferMain2 + _layerPitch), 256 * 192 * 2, 0);
     }
     else if (GE_SUB == engine)
-    { 
+    {
         // ��ת������
         if (SEM_GRAPHICS == _subEngineMode)
             dmaCopyWordsGdi(3, (void *)_bufferSub2, (void *)_bufferSub1, 256 * 192 * 2);
@@ -653,4 +667,3 @@ void cGdi::present(void)
     dmaCopyWordsGdi(3, _bufferMain2 + (256 * 192), _bufferMain1 + (1 << 16), 256 * 192 * 2);
     fillMemory((void *)_bufferMain2, 256 * 192 * 4, 0);
 }
-
