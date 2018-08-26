@@ -97,6 +97,8 @@ static bool animateDsiIcons = false;
 
 static int bstrap_language = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
+static bool boostVram = false;
+static bool soundFix = false;
 static bool bstrap_debug = false;
 static bool bstrap_logging = false;
 static int bstrap_romreadled = 0;
@@ -152,6 +154,8 @@ void LoadSettings(void) {
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 
 	if(!flashcardUsed) {
@@ -192,6 +196,8 @@ void SaveSettings(void) {
 	// Default nds-bootstrap settings
 	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
 	settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
 	settingsini.SaveIniFile(settingsinipath);
 
@@ -600,7 +606,7 @@ int main(int argc, char **argv) {
 	
 		if (screenmode == 1) {
 
-			if (subscreenmode == 3) {
+			if (subscreenmode == 4) {
 				pressed = 0;
 
 				if (!menuprinted) {
@@ -682,7 +688,7 @@ int main(int argc, char **argv) {
 
 				if (flashcard > 6) flashcard = 0;
 				else if (flashcard < 0) flashcard = 6;
-			} else if (subscreenmode == 2) {
+			} else if (subscreenmode == 3) {
 				pressed = 0;
 
 				if (!menuprinted) {
@@ -792,6 +798,122 @@ int main(int argc, char **argv) {
 					if (subtheme > 1) subtheme = 0;
 					else if (subtheme < 0) subtheme = 1;
 				}
+			} else if (subscreenmode == 2) {
+				pressed = 0;
+
+				if (!menuprinted) {
+					// Clear the screen so it doesn't over-print
+					clearText();
+
+					printSmallCentered(false, 173, appNameText);
+
+					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+					printSmall(true, 28, 1, username);
+					printSmall(true, 194, 174, vertext);
+
+					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
+
+					int yPos = 30;
+					for (int i = 0; i < settingscursor; i++) {
+						yPos += 12;
+					}
+
+					int selyPos = 30;
+
+					printSmall(false, 4, yPos, ">");
+
+					printSmall(false, 12, selyPos, STR_DEBUG.c_str());
+					if(bstrap_debug)
+						printSmall(false, 224, selyPos, STR_ON.c_str());
+					else
+						printSmall(false, 224, selyPos, STR_OFF.c_str());
+					selyPos += 12;
+
+					printSmall(false, 12, selyPos, STR_LOGGING.c_str());
+					if(bstrap_logging)
+						printSmall(false, 224, selyPos, STR_ON.c_str());
+					else
+						printSmall(false, 224, selyPos, STR_OFF.c_str());
+					selyPos += 12;
+
+
+					if (settingscursor == 0) {
+						printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
+					} else if (settingscursor == 1) {
+						printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
+						printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
+					}
+
+
+
+					menuprinted = true;
+				}
+
+				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					touchRead(&touch);
+					swiWaitForVBlank();
+				} while (!pressed);
+				
+				if (pressed & KEY_UP) {
+					settingscursor--;
+					mmEffectEx(&snd_select);
+					menuprinted = false;
+				}
+				if (pressed & KEY_DOWN) {
+					settingscursor++;
+					mmEffectEx(&snd_select);
+					menuprinted = false;
+				}
+					
+				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+					switch (settingscursor) {
+						case 0:
+						default:
+							bstrap_debug = !bstrap_debug;
+							break;
+						case 2:
+							bstrap_logging = !bstrap_logging;
+							break;
+					}
+					mmEffectEx(&snd_select);
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
+					subscreenmode = 1;
+					settingscursor = 0;
+					mmEffectEx(&snd_switch);
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_R) || (pressed & KEY_X)) {
+					subscreenmode = 0;
+					settingscursor = 0;
+					mmEffectEx(&snd_switch);
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
+					mmEffectEx(&snd_back);
+					clearText();
+					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+					SaveSettings();
+					clearText();
+					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					if (!arm7SCFGLocked) {
+						rebootDSiMenuPP();
+					}
+					loadROMselect();
+					break;
+				}
+
+				if (settingscursor > 1) settingscursor = 0;
+				else if (settingscursor < 0) settingscursor = 1;
 			} else if (subscreenmode == 1) {
 				pressed = 0;
 
@@ -851,15 +973,15 @@ int main(int argc, char **argv) {
 							printSmall(false, 170, selyPos, "67mhz (NTR)");
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_DEBUG.c_str());
-						if(bstrap_debug)
+						printSmall(false, 12, selyPos, STR_VRAMBOOST.c_str());
+						if(boostVram)
 							printSmall(false, 224, selyPos, STR_ON.c_str());
 						else
 							printSmall(false, 224, selyPos, STR_OFF.c_str());
 						selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_LOGGING.c_str());
-						if(bstrap_logging)
+						printSmall(false, 12, selyPos, STR_SOUNDFIX.c_str());
+						if(soundFix)
 							printSmall(false, 224, selyPos, STR_ON.c_str());
 						else
 							printSmall(false, 224, selyPos, STR_OFF.c_str());
@@ -940,15 +1062,12 @@ int main(int argc, char **argv) {
 						} else if (settingscursor == 1) {
 							printLargeCentered(true, 118, STR_DESCRIPTION_CPUSPEED_1.c_str());
 							printLargeCentered(true, 132, STR_DESCRIPTION_CPUSPEED_2.c_str());
-						} /* else if (settingscursor == 4) {
-							printLargeCentered(true, 120, "Allows 8 bit VRAM writes");
-							printLargeCentered(true, 134, "and expands the bus to 32 bit.");
-						} */ else if (settingscursor == 2) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
+						} else if (settingscursor == 2) {
+							printLargeCentered(true, 118, STR_DESCRIPTION_VRAMBOOST_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_VRAMBOOST_2.c_str());
 						} else if (settingscursor == 3) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
+							printLargeCentered(true, 118, STR_DESCRIPTION_SOUNDFIX_1.c_str());
+							printLargeCentered(true, 132, STR_DESCRIPTION_SOUNDFIX_2.c_str());
 						} else if (settingscursor == 4) {
 							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
 							// printLargeCentered(true, 128, "avoiding conflict with");
@@ -1049,10 +1168,10 @@ int main(int argc, char **argv) {
 								boostCpu = !boostCpu;
 								break;
 							case 2:
-								bstrap_debug = !bstrap_debug;
+								boostVram = !boostVram;
 								break;
 							case 3:
-								bstrap_logging = !bstrap_logging;
+								soundFix = !soundFix;
 								break;
 							case 4:
 								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
@@ -1091,7 +1210,7 @@ int main(int argc, char **argv) {
 						switch (settingscursor) {
 							case 0:
 							default:
-								subscreenmode = 3;
+								subscreenmode = 4;
 								break;
 							case 1:
 								if(soundfreqsetting) {
@@ -1106,10 +1225,20 @@ int main(int argc, char **argv) {
 					mmEffectEx(&snd_select);
 					menuprinted = false;
 				}
-				
-				if ((pressed & KEY_L) || (pressed & KEY_R)
-				|| (pressed & KEY_Y) || (pressed & KEY_X)) {
+
+				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
 					subscreenmode = 0;
+					settingscursor = 0;
+					mmEffectEx(&snd_switch);
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_R) || (pressed & KEY_X)) {
+					if (flashcardUsed) {
+						subscreenmode = 0;
+					} else {
+						subscreenmode = 2;
+					}
 					settingscursor = 0;
 					mmEffectEx(&snd_switch);
 					menuprinted = false;
@@ -1355,7 +1484,7 @@ int main(int argc, char **argv) {
 							} else if (theme == 1) {
 								mmEffectEx(&snd_wrong);
 							} else {
-								subscreenmode = 2;
+								subscreenmode = 3;
 								mmEffectEx(&snd_select);
 							}
 							break;
@@ -1417,14 +1546,6 @@ int main(int argc, char **argv) {
 					menuprinted = false;
 				}
 
-				if ((pressed & KEY_L) || (pressed & KEY_R)
-				|| (pressed & KEY_Y) || (pressed & KEY_X)) {
-					subscreenmode = 1;
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
-
 				if (pressed & KEY_Y && settingscursor == 2) {
 					screenmode = 0;
 					mmEffectEx(&snd_launch);
@@ -1436,6 +1557,24 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					int err = lastRanROM();
 					iprintf ("Start failed. Error %i\n", err);
+				}
+
+				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
+					if (flashcardUsed) {
+						subscreenmode = 1;
+					} else {
+						subscreenmode = 2;
+					}
+					settingscursor = 0;
+					mmEffectEx(&snd_switch);
+					menuprinted = false;
+				}
+
+				if ((pressed & KEY_R) || (pressed & KEY_X)) {
+					subscreenmode = 1;
+					settingscursor = 0;
+					mmEffectEx(&snd_switch);
+					menuprinted = false;
 				}
 
 				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {

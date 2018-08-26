@@ -182,45 +182,45 @@ void perGameSettings (std::string filename) {
 		titleUpdate(isDirectory[cursorPosition], filename.c_str(), cursorPosition);
 		printSmall(false, 16, 64, filename.c_str());
 		printSmall(false, 16, 80, SDKnumbertext);
-		printSmall(false, 184, 80, gameTIDText);
+		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 166, fileCounter);
 		if (isDSiWare[cursorPosition] || flashcardUsed) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {
-			printSmall(false, 24, 96+(perGameSettings_cursorPosition*16), ">");
-			printSmall(false, 32, 96, "Language:");
-			printSmall(false, 32, 112, "ARM9 CPU Speed:");
-			printSmall(false, 32, 128, "Async prefetch:");
+			printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+			printSmall(false, 24, 96, "Language:");
+			printSmall(false, 24, 112, "ARM9 CPU Speed:");
+			printSmall(false, 24, 128, "Async prefetch:");
 			if (perGameSettings_language == -2) {
-				printSmall(false, 180, 96, "Default");
+				printSmall(false, 188, 96, "Default");
 			} else if (perGameSettings_language == -1) {
-				printSmall(false, 180, 96, "System");
+				printSmall(false, 188, 96, "System");
 			} else if (perGameSettings_language == 0) {
-				printSmall(false, 180, 96, "Japanese");
+				printSmall(false, 188, 96, "Japanese");
 			} else if (perGameSettings_language == 1) {
-				printSmall(false, 180, 96, "English");
+				printSmall(false, 188, 96, "English");
 			} else if (perGameSettings_language == 2) {
-				printSmall(false, 180, 96, "French");
+				printSmall(false, 188, 96, "French");
 			} else if (perGameSettings_language == 3) {
-				printSmall(false, 180, 96, "German");
+				printSmall(false, 188, 96, "German");
 			} else if (perGameSettings_language == 4) {
-				printSmall(false, 180, 96, "Italian");
+				printSmall(false, 188, 96, "Italian");
 			} else if (perGameSettings_language == 5) {
-				printSmall(false, 180, 96, "Spanish");
+				printSmall(false, 188, 96, "Spanish");
 			}
 			if (perGameSettings_boostCpu == -1) {
-				printSmall(false, 180, 112, "Default");
+				printSmall(false, 188, 112, "Default");
 			} else if (perGameSettings_boostCpu == 1) {
-				printSmall(false, 144, 112, "133mhz (TWL)");
+				printSmall(false, 146, 112, "133mhz (TWL)");
 			} else {
 				printSmall(false, 156, 112, "67mhz (NTR)");
 			}
 			if (perGameSettings_asyncPrefetch == -1) {
-				printSmall(false, 180, 128, "Default");
+				printSmall(false, 188, 128, "Default");
 			} else if (perGameSettings_asyncPrefetch == 1) {
-				printSmall(false, 180, 128, "On");
+				printSmall(false, 188, 128, "On");
 			} else {
-				printSmall(false, 180, 128, "Off");
+				printSmall(false, 188, 128, "Off");
 			}
 			printSmall(false, 200, 166, "B: Back");
 		}
