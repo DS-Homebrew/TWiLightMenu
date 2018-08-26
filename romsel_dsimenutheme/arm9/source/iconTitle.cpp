@@ -119,8 +119,8 @@ void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
  */
 void execDeferredIconUpdates() {
 	for (auto arg : queuedIconUpdateCache) {
-		auto& [tileSrc, palSrc, num, twl] = arg;
-     	convertIconTilesToRaw(tileSrc, tilesModified, twl);
+		auto& [tilesSrc, palSrc, num, twl] = arg;
+     	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
 	}
 	queuedIconUpdateCache.clear();
@@ -129,7 +129,13 @@ void execDeferredIconUpdates() {
 //(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)
 {
-	deferLoadIcon(tilesSrc, palSrc, num, twl);
+	// Hack to prevent glitched icons on startup.
+	if (showbubble) {
+		deferLoadIcon(tilesSrc, palSrc, num, twl);
+	} else {
+ 		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+	}
 }
 
 void loadUnkIcon(int num)

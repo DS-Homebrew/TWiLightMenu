@@ -66,6 +66,8 @@ bool perGameSettingsChanged = false;
 int perGameSettings_cursorPosition = 0;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
+int perGameSettings_boostVram = -1;
+int perGameSettings_soundFix = -1;
 int perGameSettings_asyncPrefetch = -1;
 
 extern int cursorPosition;
@@ -96,6 +98,8 @@ void loadPerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
+	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
+	perGameSettings_soundFix = pergameini.GetInt("GAMESETTINGS", "SOUND_FIX", -1);
 	perGameSettings_asyncPrefetch = pergameini.GetInt("GAMESETTINGS", "ASYNC_PREFETCH", -1);
 }
 
@@ -104,6 +108,8 @@ void savePerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+	pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+	pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
 	pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -148,12 +154,16 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
+	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+	if(strcmp(game_TID, "###") != 0 || !isHomebrew[cursorPosition]) {
+		SDKVersion = getSDKVersion(f_nds_file);
+		showSDKVersion = true;
+	}
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -181,46 +191,66 @@ void perGameSettings (std::string filename) {
 		clearText();
 		titleUpdate(isDirectory[cursorPosition], filename.c_str(), cursorPosition);
 		printSmall(false, 16, 64, filename.c_str());
-		printSmall(false, 16, 80, SDKnumbertext);
+		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 166, fileCounter);
-		if (isDSiWare[cursorPosition] || flashcardUsed) {
+		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] || flashcardUsed) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {
-			printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
-			printSmall(false, 24, 96, "Language:");
-			printSmall(false, 24, 112, "ARM9 CPU Speed:");
-			printSmall(false, 24, 128, "Async prefetch:");
-			if (perGameSettings_language == -2) {
-				printSmall(false, 188, 96, "Default");
-			} else if (perGameSettings_language == -1) {
-				printSmall(false, 188, 96, "System");
-			} else if (perGameSettings_language == 0) {
-				printSmall(false, 188, 96, "Japanese");
-			} else if (perGameSettings_language == 1) {
-				printSmall(false, 188, 96, "English");
-			} else if (perGameSettings_language == 2) {
-				printSmall(false, 188, 96, "French");
-			} else if (perGameSettings_language == 3) {
-				printSmall(false, 188, 96, "German");
-			} else if (perGameSettings_language == 4) {
-				printSmall(false, 188, 96, "Italian");
-			} else if (perGameSettings_language == 5) {
-				printSmall(false, 188, 96, "Spanish");
-			}
-			if (perGameSettings_boostCpu == -1) {
-				printSmall(false, 188, 112, "Default");
-			} else if (perGameSettings_boostCpu == 1) {
-				printSmall(false, 146, 112, "133mhz (TWL)");
+			if (perGameSettings_cursorPosition >= 0 && perGameSettings_cursorPosition < 4) {
+				printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+				printSmall(false, 24, 96, "Language:");
+				printSmall(false, 24, 112, "ARM9 CPU Speed:");
+				printSmall(false, 24, 128, "VRAM boost:");
+				printSmall(false, 24, 144, "Sound fix:");
+				if (perGameSettings_language == -2) {
+					printSmall(false, 188, 96, "Default");
+				} else if (perGameSettings_language == -1) {
+					printSmall(false, 188, 96, "System");
+				} else if (perGameSettings_language == 0) {
+					printSmall(false, 188, 96, "Japanese");
+				} else if (perGameSettings_language == 1) {
+					printSmall(false, 188, 96, "English");
+				} else if (perGameSettings_language == 2) {
+					printSmall(false, 188, 96, "French");
+				} else if (perGameSettings_language == 3) {
+					printSmall(false, 188, 96, "German");
+				} else if (perGameSettings_language == 4) {
+					printSmall(false, 188, 96, "Italian");
+				} else if (perGameSettings_language == 5) {
+					printSmall(false, 188, 96, "Spanish");
+				}
+				if (perGameSettings_boostCpu == -1) {
+					printSmall(false, 188, 112, "Default");
+				} else if (perGameSettings_boostCpu == 1) {
+					printSmall(false, 146, 112, "133mhz (TWL)");
+				} else {
+					printSmall(false, 156, 112, "67mhz (NTR)");
+				}
+				if (perGameSettings_boostVram == -1) {
+					printSmall(false, 188, 128, "Default");
+				} else if (perGameSettings_boostVram == 1) {
+					printSmall(false, 188, 128, "On");
+				} else {
+					printSmall(false, 188, 128, "Off");
+				}
+				if (perGameSettings_soundFix == -1) {
+					printSmall(false, 188, 144, "Default");
+				} else if (perGameSettings_soundFix == 1) {
+					printSmall(false, 188, 144, "On");
+				} else {
+					printSmall(false, 188, 144, "Off");
+				}
 			} else {
-				printSmall(false, 156, 112, "67mhz (NTR)");
-			}
-			if (perGameSettings_asyncPrefetch == -1) {
-				printSmall(false, 188, 128, "Default");
-			} else if (perGameSettings_asyncPrefetch == 1) {
-				printSmall(false, 188, 128, "On");
-			} else {
-				printSmall(false, 188, 128, "Off");
+				printSmall(false, 16, 96, ">");
+				printSmall(false, 24, 96, "Async prefetch:");
+				if (perGameSettings_asyncPrefetch == -1) {
+					printSmall(false, 188, 96, "Default");
+				} else if (perGameSettings_asyncPrefetch == 1) {
+					printSmall(false, 188, 96, "On");
+				} else {
+					printSmall(false, 188, 96, "Off");
+				}
 			}
 			printSmall(false, 200, 166, "B: Back");
 		}
@@ -230,18 +260,18 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare[cursorPosition] || flashcardUsed) {
+		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 2;
+				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (perGameSettings_cursorPosition > 2) perGameSettings_cursorPosition = 0;
+				if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 			}
 
 			if (pressed & KEY_A) {
@@ -256,6 +286,14 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						break;
 					case 2:
+						perGameSettings_boostVram++;
+						if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
+						break;
+					case 3:
+						perGameSettings_soundFix++;
+						if (perGameSettings_soundFix > 1) perGameSettings_soundFix = -1;
+						break;
+					case 4:
 						perGameSettings_asyncPrefetch++;
 						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
 						break;

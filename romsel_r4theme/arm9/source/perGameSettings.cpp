@@ -66,6 +66,8 @@ bool perGameSettingsChanged = false;
 int perGameSettings_cursorPosition = 0;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
+int perGameSettings_boostVram = -1;
+int perGameSettings_soundFix = -1;
 int perGameSettings_asyncPrefetch = -1;
 
 extern int cursorPosition;
@@ -144,12 +146,16 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
+	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+	if(strcmp(game_TID, "###") != 0 || !isHomebrew) {
+		SDKVersion = getSDKVersion(f_nds_file);
+		showSDKVersion = true;
+	}
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -171,29 +177,31 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (isDSiWare || flashcardUsed) {
+	if (isDSiWare || isHomebrew || flashcardUsed) {
 		dialogboxHeight = 0;
 	} else {
-		dialogboxHeight = 3;
+		dialogboxHeight = 5;
 	}
 	showdialogbox = true;
 
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
-		if (isDSiWare || flashcardUsed) {
+		if (isDSiWare || isHomebrew || flashcardUsed) {
 			printLargeCentered(false, 84, "Info");
-			printSmall(false, 24, 104, SDKnumbertext);
+			if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
 			printSmallCentered(false, 118, "A: OK");
 		} else {
 			printLargeCentered(false, 84, "Game settings");
-			printSmall(false, 24, 98, SDKnumbertext);
+			if (showSDKVersion) printSmall(false, 24, 98, SDKnumbertext);
 			printSmall(false, 172, 98, gameTIDText);
 			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
 			printSmall(false, 32, 112, "Language:");
 			printSmall(false, 32, 120, "ARM9 CPU Speed:");
-			printSmall(false, 32, 128, "Async prefetch:");
+			printSmall(false, 32, 128, "VRAM boost:");
+			printSmall(false, 32, 136, "Sound fix:");
+			printSmall(false, 32, 144, "Async prefetch:");
 			if (perGameSettings_language == -2) {
 				printSmall(false, 180, 112, "Default");
 			} else if (perGameSettings_language == -1) {
@@ -218,14 +226,28 @@ void perGameSettings (std::string filename) {
 			} else {
 				printSmall(false, 156, 120, "67mhz (NTR)");
 			}
-			if (perGameSettings_asyncPrefetch == -1) {
+			if (perGameSettings_boostVram == -1) {
 				printSmall(false, 180, 128, "Default");
-			} else if (perGameSettings_asyncPrefetch == 1) {
+			} else if (perGameSettings_boostVram == 1) {
 				printSmall(false, 180, 128, "On");
 			} else {
 				printSmall(false, 180, 128, "Off");
 			}
-			printSmallCentered(false, 142, "B: Back");
+			if (perGameSettings_soundFix == -1) {
+				printSmall(false, 180, 136, "Default");
+			} else if (perGameSettings_soundFix == 1) {
+				printSmall(false, 180, 136, "On");
+			} else {
+				printSmall(false, 180, 136, "Off");
+			}
+			if (perGameSettings_asyncPrefetch == -1) {
+				printSmall(false, 180, 144, "Default");
+			} else if (perGameSettings_asyncPrefetch == 1) {
+				printSmall(false, 180, 144, "On");
+			} else {
+				printSmall(false, 180, 144, "Off");
+			}
+			printSmallCentered(false, 158, "B: Back");
 		}
 		do {
 			scanKeys();
@@ -233,18 +255,18 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare || flashcardUsed) {
+		if (isDSiWare || isHomebrew || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 2;
+				if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (perGameSettings_cursorPosition > 2) perGameSettings_cursorPosition = 0;
+				if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 			}
 
 			if (pressed & KEY_A) {
@@ -259,6 +281,14 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						break;
 					case 2:
+						perGameSettings_asyncPrefetch++;
+						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
+						break;
+					case 3:
+						perGameSettings_soundFix++;
+						if (perGameSettings_soundFix > 1) perGameSettings_soundFix = -1;
+						break;
+					case 4:
 						perGameSettings_asyncPrefetch++;
 						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
 						break;

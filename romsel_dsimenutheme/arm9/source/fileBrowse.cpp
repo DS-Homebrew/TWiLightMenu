@@ -1226,7 +1226,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if (pressedForPerGameSettings && !startMenu
-			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
+			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition+pagenum*40).name);

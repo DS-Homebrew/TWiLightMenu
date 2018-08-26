@@ -140,6 +140,8 @@ bool animateDsiIcons = false;
 int guiLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
+bool boostVram = false;
+bool soundFix = false;
 bool bstrap_asyncPrefetch = true;
 
 bool flashcardUsed = false;
@@ -186,6 +188,8 @@ void LoadSettings(void) {
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 }
 
@@ -1201,6 +1205,16 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+						}
+						if (perGameSettings_boostVram == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+						}
+						if (perGameSettings_soundFix == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", perGameSettings_soundFix);
 						}
 						if (perGameSettings_asyncPrefetch == -1) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);

@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-#define REFRESH_EVERY_VBLANKS 15
+#define REFRESH_EVERY_VBLANKS 60
 
 void initSubSprites(void);
 void clearBmpScreen();
