@@ -43,7 +43,8 @@ bool consoleOn = false;
 
 int main() {
 
-	bool TWLCLK = true;	// false == NTR, true == TWL
+	bool TWLCLK = false;	// false == NTR, true == TWL
+	bool TWLVRAM = false;
 	bool EnableSD = false;
 	int language = -1;
 
@@ -57,7 +58,8 @@ int main() {
 	if (fatInitDefault()) {
 		CIniFile settingsini( settingsinipath );
 
-		if(settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0) == 0) { TWLCLK = false; }
+		TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
+		TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
 
 		//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 		//	consoleOn = true;
@@ -120,7 +122,7 @@ int main() {
 	while(1) {
 		if(REG_SCFG_MC == 0x11) {
 		break; } else {
-			runLaunchEngine (EnableSD, language, TWLCLK);
+			runLaunchEngine (EnableSD, language, TWLCLK, TWLVRAM);
 		}
 	}
 	return 0;

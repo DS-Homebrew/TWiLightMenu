@@ -49,7 +49,7 @@ void vramcpy (void* dst, const void* src, int len)
 }	
 
 // Basic engine with no cheat related code.
-void runLaunchEngine (bool EnableSD, int language, bool TWLCLK)
+void runLaunchEngine (bool EnableSD, int language, bool TWLCLK, bool TWLVRAM)
 {
 
 	nocashMessage("runLaunchEngine");
@@ -77,10 +77,18 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLCLK)
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
 	
-	if( EnableSD ) {
-		REG_SCFG_EXT=0x83000000;
+	if (EnableSD) {
+		if (TWLVRAM) {
+			REG_SCFG_EXT=0x83002000;
+		} else {
+			REG_SCFG_EXT=0x83000000;
+		}
 	} else {
-		REG_SCFG_EXT=0x03000000;
+		if (TWLVRAM) {
+			REG_SCFG_EXT=0x03002000;
+		} else {
+			REG_SCFG_EXT=0x03000000;
+		}
 	}
 	
 	nocashMessage("Reset into a passme loop");
