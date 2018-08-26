@@ -146,12 +146,16 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
+	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
+	if(strcmp(game_TID, "###") != 0 || !isHomebrew) {
+		SDKVersion = getSDKVersion(f_nds_file);
+		showSDKVersion = true;
+	}
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -183,14 +187,14 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
-		if (isDSiWare || flashcardUsed) {
+		if (isDSiWare || isHomebrew || flashcardUsed) {
 			printLargeCentered(false, 84, "Info");
-			printSmall(false, 24, 104, SDKnumbertext);
+			if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
 			printSmallCentered(false, 118, "A: OK");
 		} else {
 			printLargeCentered(false, 84, "Game settings");
-			printSmall(false, 24, 98, SDKnumbertext);
+			if (showSDKVersion) printSmall(false, 24, 98, SDKnumbertext);
 			printSmall(false, 172, 98, gameTIDText);
 			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
 			printSmall(false, 32, 112, "Language:");
@@ -251,7 +255,7 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare || flashcardUsed) {
+		if (isDSiWare || isHomebrew || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
