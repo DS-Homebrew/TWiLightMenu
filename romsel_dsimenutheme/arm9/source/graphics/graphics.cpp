@@ -107,6 +107,7 @@ extern bool showbubble;
 extern bool showSTARTborder;
 extern bool isScrolling;
 extern bool needToPlayStopSound;
+extern int waitForNeedToPlayStopSound;
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -484,6 +485,14 @@ void vBlankHandler()
 		}
 	}
 
+	if (waitForNeedToPlayStopSound > 0) {
+		waitForNeedToPlayStopSound++;
+		if (waitForNeedToPlayStopSound == 5) {
+			waitForNeedToPlayStopSound = 0;
+		}
+		needToPlayStopSound = false;
+	}
+
 	glBegin2D();
 	{
 		if(fadeType == true) {
@@ -543,6 +552,7 @@ void vBlankHandler()
 			if(startMenu) {
 				if (movetimer == 8) {
 				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos -= 1;
 					movetimer++;
@@ -557,6 +567,7 @@ void vBlankHandler()
 			} else {
 				if (movetimer == 8) {
 				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
@@ -573,6 +584,7 @@ void vBlankHandler()
 			if(startMenu) {
 				if (movetimer == 8) {
 					// if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos += 1;
 					movetimer++;
@@ -587,6 +599,7 @@ void vBlankHandler()
 			} else {
 				if (movetimer == 8) {
 				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
@@ -836,8 +849,9 @@ void vBlankHandler()
 						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 					}
 				} else if (!isScrolling) {
-					if (showbubble && theme == 0 && needToPlayStopSound) {
+					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
  						mmEffectEx(&snd_stop);
+						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
 					}
 					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
@@ -848,7 +862,7 @@ void vBlankHandler()
 					}
 				}
 			}
-			
+
 			// Refresh the background layer.
 			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(bubbleImage);

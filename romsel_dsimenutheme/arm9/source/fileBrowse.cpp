@@ -132,6 +132,7 @@ bool settingsChanged = false;
 
 bool isScrolling = false;
 bool needToPlayStopSound = true;
+int waitForNeedToPlayStopSound = 0;
 
 extern void SaveSettings();
 
@@ -611,17 +612,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else {
 				if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
-					showbubble = false;
-					showSTARTborder = false;
-					clearText(false);	// Clear title
 					if (!boxArtLoaded && showBoxArt) {
 						clearBoxArt();	// Clear box art
 						boxArtLoaded = true;
 					}
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
 				} else {
-					showbubble = true;
-					showSTARTborder = true;
-					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 					if (!boxArtLoaded && showBoxArt) {
 						if (isDirectory[cursorPosition]) {
 							clearBoxArt();	// Clear box art, if it's a directory
@@ -630,6 +628,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						boxArtLoaded = true;
 					}
+					showbubble = true;
+					showSTARTborder = true;
+					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 				}
 			}
 
@@ -669,7 +670,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition -= 1;
 					if (startMenu_cursorPosition >= 0) {
 						titleboxXmoveleft = true;
-						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -679,7 +679,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition -= 1;
 					if (cursorPosition >= 0) {
 						titleboxXmoveleft = true;
-						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -702,7 +701,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition += 1;
 					if (startMenu_cursorPosition <= 39) {
 						titleboxXmoveright = true;
-						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -712,7 +710,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition += 1;
 					if (cursorPosition <= 39) {
 						titleboxXmoveright = true;
-						needToPlayStopSound = true;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
