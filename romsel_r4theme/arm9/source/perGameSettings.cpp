@@ -177,7 +177,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (isDSiWare || flashcardUsed) {
+	if (isDSiWare || isHomebrew || flashcardUsed) {
 		dialogboxHeight = 0;
 	} else {
 		dialogboxHeight = 5;
@@ -247,7 +247,7 @@ void perGameSettings (std::string filename) {
 			} else {
 				printSmall(false, 180, 144, "Off");
 			}
-			printSmallCentered(false, 142, "B: Back");
+			printSmallCentered(false, 158, "B: Back");
 		}
 		do {
 			scanKeys();
