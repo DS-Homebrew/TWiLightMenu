@@ -19,7 +19,7 @@
 
 #include "font_pcf.h"
 #include "font_pcf_internals.h"
-#include "../aklanguage.h"
+#include "../akmenu/aklanguage.h"
 #include <fcntl.h>
 #include <unistd.h>
 

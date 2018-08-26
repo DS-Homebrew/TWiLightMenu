@@ -25,7 +25,17 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../systemfilenames.h"
+#include "../akmenu/gdi.h"
+#include "../akmenu/systemfilenames.h"
+
+
+cFont::cFont()
+{
+}
+
+cFont::~cFont()
+{
+}
 
 u32 cFont::getStringScreenWidth(const char *str, size_t len)
 {

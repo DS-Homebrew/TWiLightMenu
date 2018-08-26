@@ -16,11 +16,11 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
+#include <nds.h>
 #pragma once
 #ifndef __FONT_PCF_INTERNALS_H__
 #define __FONT_PCF_INTERNALS_H__
 
-#include <nds.h>
 
 #define PCF_COMPRESSED_METRICS  0x00000100UL
 

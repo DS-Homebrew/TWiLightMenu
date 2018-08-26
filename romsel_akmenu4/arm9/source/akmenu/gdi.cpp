@@ -25,7 +25,7 @@
 #include "gdi.h"
 #include "aksprite.h"
 #include "../memtool.h"
-#include "font/fontfactory.h"
+#include "../akfont/fontfactory.h"
 
 #define FONT_HEIGHT 12
 

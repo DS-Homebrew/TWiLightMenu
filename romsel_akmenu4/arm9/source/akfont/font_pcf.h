@@ -22,12 +22,12 @@
   supported only fonts with ...
 */
 
-#include "font.h"
 
 #pragma once
 #ifndef __FONT_PCF_H__
 #define __FONT_PCF_H__
 
+#include "font.h"
 
 //#define SMALL 1
 

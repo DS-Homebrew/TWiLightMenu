@@ -24,8 +24,7 @@
 
 #include <nds.h>
 #include <vector>
-#include "singleton.h"
-#include "gdi.h"
+#include "../singleton.h"
 #include "bmp15.h"
 
 #define SYSTEM_FONT_HEIGHT 12

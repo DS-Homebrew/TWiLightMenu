@@ -1,5 +1,5 @@
 /*
-    fontfactory.cpp
+    singleton.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,25 +18,48 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "fontfactory.h"
-#include "font_pcf.h"
-#include "../systemfilenames.h"
-#include "../aklanguage.h"
+#pragma once
+#ifndef _SINGLETON_H_
+#define _SINGLETON_H_
+#include <cstdlib>
 
-cFontFactory::cFontFactory() : _font( NULL )
+template <class T>
+class t_singleton
 {
-}
 
-cFontFactory::~cFontFactory()
-{
-    if( NULL != _font )
-        delete _font;
-}
+  public:
+    static T &instance()
+    {
+        if (NULL == _instance)
+        {
+            create_instance();
+           
+        }
+        return *_instance;
+    }
 
+  private:
+    static void create_instance()
+    {
+        if (NULL == _instance)
+        {
+            _instance = new T();
+        }
+    }
 
-void cFontFactory::makeFont(void)
-{
-  std::string filename(SFN_FONTS_DIRECTORY+lang().GetString("font","main",SFN_DEFAULT_FONT));
-  _font=new cFontPcf();
-  _font->Load(filename.c_str());
-}
+    static void release_instance()
+    {
+        if (NULL != _instance)
+        {
+            delete _instance;
+            _instance = NULL;
+        }
+    }
+
+  private:
+    static T *_instance;
+};
+
+template <class T>
+T *t_singleton<T>::_instance = NULL;
+#endif //_AGL_SINGLETON_H_

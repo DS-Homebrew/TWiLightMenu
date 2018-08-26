@@ -18,24 +18,24 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-#include "../singleton.h"
-#include "../gdi.h"
-
 #pragma once
-#ifndef _FONT_H_
-#define _FONT_H_
+#ifndef __FONT_H__
+#define __FONT_H__
+
+#include <nds.h>
+#include <string>
 
 class cFont
 {
 public:
-  cFont(){};
-  virtual ~cFont(){};
+  cFont();
+  virtual ~cFont();
 
 public:
   u32 getStringScreenWidth(const char *str, size_t len);
   std::string breakLine(const std::string &text, u32 maxLineWidth);
 
+public:
   virtual void Info(const char *aString, u32 *aWidth, u32 *aSymbolCount) = 0;
   virtual void Draw(u16 *mem, s16 x, s16 y, const u8 *aText, u16 color) = 0;
   virtual bool Load(const char *aFileName) = 0;

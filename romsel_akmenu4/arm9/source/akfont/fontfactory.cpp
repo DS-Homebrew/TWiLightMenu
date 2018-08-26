@@ -1,5 +1,5 @@
 /*
-    language.h
+    fontfactory.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,29 +18,25 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _AK_LANGUAGE_H_
-#define _AK_LANGUAGE_H_
+#include "fontfactory.h"
+#include "font_pcf.h"
+#include "../akmenu/systemfilenames.h"
+#include "../akmenu/aklanguage.h"
 
-#include "../singleton.h"
-#include "systemfilenames.h"
-#include "../inifile.h"
 
-class cLanguageFile : public CIniFile
+cFontFactory::cFontFactory() : _font(NULL)
 {
-public:
-  cLanguageFile()
-  {
-    m_bReadOnly = true;
-    LoadIniFile(SFN_LANGUAGE_TEXT);
-  }
-  ~cLanguageFile(){};
-};
+}
 
-typedef t_singleton<cLanguageFile> languageFile_s;
-inline cLanguageFile &lang() { return languageFile_s::instance(); }
-#define LANG(i, t) lang().GetString(i, t, t)
+cFontFactory::~cFontFactory()
+{
+    if (NULL != _font)
+        delete _font;
+}
 
-bool stringComp(const std::string &item1, const std::string &item2);
-
-#endif//_AK_LANGUAGE_H_
+void cFontFactory::makeFont(void)
+{
+    std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
+    _font = new cFontPcf();
+    _font->Load(filename.c_str());
+}
