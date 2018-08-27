@@ -36,7 +36,7 @@
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
 #include "windows/diskicon.h"
-
+#include "windows/userwnd.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -48,7 +48,18 @@
 #include <unistd.h>
 #include <gl2d.h>
 
+#include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
+#include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
+
 using namespace akui;
+
+bool arm7SCFGLocked = false;
+int consoleModel = 0;
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
+bool isRegularDS = true;
 
 //---------------------------------------------------------------------------------
 void stop(void)
@@ -83,31 +94,38 @@ int main(int argc, char **argv)
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	nocashMessage("ARM9 main.cpp");
+	// consoleDemoInit();
+	// printf("Ok...");
+	// stop();
+
 	defaultExceptionHandler();
 
+	// fifoWaitValue32(FIFO_USER_06);
+	// if (fifoGetValue32(FIFO_USER_03) == 0)
+	// 	arm7SCFGLocked = true; // If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	// if (arm7_SNDEXCNT != 0)
+	// 	isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
+	// fifoSendValue32(FIFO_USER_07, 0);
+
 	irq().init();
-	nocashMessage("ARM9 main.cpp IRQ Init");
 
 	windowManager();
-	nocashMessage("ARM9 main.cpp WindowManager Init");
 
 	// init basic system
-	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
+	//	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
 
 	// init tick timer/fps counter
 	timer().initTimer();
-	nocashMessage("Timer Init!");
 
 	initInput();
-	nocashMessage("ARM9 main.cpp Input Init");
 
 	// init graphics
 	gdi().init();
 #ifdef DEBUG
-	//gdi().switchSubEngineMode();
+	gdi().switchSubEngineMode();
 #endif
-	nocashMessage("GDI Init!");
+	dbg_printf("GDI Init!");
 
 	bool fatInitOk = fatInitDefault();
 	if (!fatInitOk)
@@ -137,6 +155,9 @@ int main(int argc, char **argv)
 	calendar().draw();
 	bigClock().init();
 	bigClock().draw();
+
+	userWindow().draw();
+
 	//---- END Top Screen--
 
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
@@ -145,16 +166,14 @@ int main(int argc, char **argv)
 
 	irq().vblankStart();
 
-	// fifoWaitValue32(FIFO_USER_06);
-	// if (fifoGetValue32(FIFO_USER_03) == 0)
-	// 	arm7SCFGLocked = true; // If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	// if (arm7_SNDEXCNT != 0)
-	// 	isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
-	// fifoSendValue32(FIFO_USER_07, 0);
-
-	// gdi().initBg(SFN_LOWER_SCREEN_BG);
-	// nocashMessage("LOWER_BG");
-	// nocashMessage(SFN_LOWER_SCREEN_BG);
-	stop();
+	while (1)
+	{
+		timer().updateFps();
+		INPUT &inputs = updateInput();
+		processInput(inputs);
+		swiWaitForVBlank();
+		windowManager().update();
+		gdi().present(GE_MAIN);
+	}
+	return 0;
 }

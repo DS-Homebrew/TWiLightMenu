@@ -28,6 +28,7 @@
 #include "windows/calendarwnd.h"
 #include "windows/calendar.h"
 #include "windows/bigclock.h"
+#include "windows/userwnd.h"
 // #include "timer.h"
 // #include "animation.h"
 // #include "files.h"
@@ -85,7 +86,7 @@ void cIRQ::vBlank()
         calendarWnd().draw();
         calendar().draw();
         bigClock().draw();
-        // userWindow().draw();
+       userWindow().draw();
 #if 0
         char fpsText[16];
         sprintf( fpsText, "fps %.2f\n", timer().getFps() );
