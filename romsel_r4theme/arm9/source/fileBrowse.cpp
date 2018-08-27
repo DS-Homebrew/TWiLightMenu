@@ -580,7 +580,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			pressedForPerGameSettings = (pressed & KEY_SELECT);
 		}
 
-		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0) && (isHomebrew == false))
+		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0))
 		{
 			cursorPosition = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);

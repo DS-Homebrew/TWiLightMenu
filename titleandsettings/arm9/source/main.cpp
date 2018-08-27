@@ -534,7 +534,7 @@ int main(int argc, char **argv) {
 
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 5, 5, 1);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 0, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -727,9 +727,11 @@ int main(int argc, char **argv) {
 					switch (theme) {
 						case 0:
 						default:
-							printSmall(false, 12, 30, STR_DSI_DARKMENU.c_str());
+							printSmall(false, 12, selyPos, STR_DSI_DARKMENU.c_str());
 							selyPos += 12;
-							printSmall(false, 12, 44, STR_DSI_NORMALMENU.c_str());
+							printSmall(false, 12, selyPos, STR_DSI_NORMALMENU.c_str());
+							selyPos += 12;
+							printSmall(false, 12, selyPos, STR_DSI_RED.c_str());
 							break;
 						case 1:
 							break;
@@ -795,8 +797,8 @@ int main(int argc, char **argv) {
 					if (subtheme > 12) subtheme = 0;
 					else if (subtheme < 0) subtheme = 12;
 				} else {
-					if (subtheme > 1) subtheme = 0;
-					else if (subtheme < 0) subtheme = 1;
+					if (subtheme > 2) subtheme = 0;
+					else if (subtheme < 0) subtheme = 2;
 				}
 			} else if (subscreenmode == 2) {
 				pressed = 0;

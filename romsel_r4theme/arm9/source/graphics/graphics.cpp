@@ -226,7 +226,7 @@ void vBlankHandler()
 
 		if (startMenu) {
 			drawBG(subBgImage);
-			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
+			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8));
 		} else {
 			switch (subtheme) {
 				case 0:
@@ -419,8 +419,6 @@ void graphicsInit()
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	irqSet(IRQ_VBLANK, vBlankHandler);
-	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
@@ -428,6 +426,9 @@ void graphicsInit()
 
 	// Initialize gl2d
 	glScreen2D();
+
+	// Clear the GL texture state
+	glResetTextures();
 
 	// Set up enough texture memory for our textures
 	// Bank A is just 128kb and we are using 194 kb of
@@ -693,4 +694,6 @@ void graphicsInit()
 	loadGBCIcon();
 	loadNESIcon();
 
+	irqSet(IRQ_VBLANK, vBlankHandler);
+	irqEnable(IRQ_VBLANK);
 }

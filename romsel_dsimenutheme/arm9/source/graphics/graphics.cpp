@@ -31,6 +31,9 @@
 #include "org_bottom.h"
 #include "org_bottom_bubble.h"
 
+#include "red_bottom.h"
+#include "red_bottom_bubble.h"
+
 #include "_3ds_bottom.h"
 #include "_3ds_bottom_bubble.h"
 
@@ -56,6 +59,7 @@
 #include "org_icon_settings.h"
 #include "box.h"
 #include "org_box.h"
+#include "red_box.h"
 #include "_3ds_box_full.h"
 #include "_3ds_box_empty.h"
 #include "folder.h"
@@ -105,6 +109,9 @@ int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
 extern bool showbubble;
 extern bool showSTARTborder;
+extern bool isScrolling;
+extern bool needToPlayStopSound;
+extern int waitForNeedToPlayStopSound;
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -392,7 +399,11 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 			dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
 			dmaCopy(_3ds_bottomMap, bgGetMapPtr(bottomBg), _3ds_bottomMapLen);
 		}
-		else if (subtheme == 1) {
+		else if (subtheme == 2) {
+			dmaCopy(red_bottomTiles, bgGetGfxPtr(bottomBg), red_bottomTilesLen);
+			dmaCopy(red_bottomPal, BG_PALETTE, red_bottomPalLen);
+			dmaCopy(red_bottomMap, bgGetMapPtr(bottomBg), red_bottomMapLen);
+		} else if (subtheme == 1) {
 			dmaCopy(org_bottomTiles, bgGetGfxPtr(bottomBg), org_bottomTilesLen);
 			dmaCopy(org_bottomPal, BG_PALETTE, org_bottomPalLen);
 			dmaCopy(org_bottomMap, bgGetMapPtr(bottomBg), org_bottomMapLen);
@@ -409,7 +420,11 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 			dmaCopy(_3ds_bottom_bubblePal, BG_PALETTE, _3ds_bottom_bubblePalLen);
 			dmaCopy(_3ds_bottom_bubbleMap, bgGetMapPtr(bottomBg), _3ds_bottom_bubbleMapLen);
 		}
-		else if (subtheme == 1) {
+		else if (subtheme == 2) {
+			dmaCopy(red_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), red_bottom_bubbleTilesLen);
+			dmaCopy(red_bottom_bubblePal, BG_PALETTE, red_bottom_bubblePalLen);
+			dmaCopy(red_bottom_bubbleMap, bgGetMapPtr(bottomBg), red_bottom_bubbleMapLen);
+		} else if (subtheme == 1) {
 			dmaCopy(org_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), org_bottom_bubbleTilesLen);
 			dmaCopy(org_bottom_bubblePal, BG_PALETTE, org_bottom_bubblePalLen);
 			dmaCopy(org_bottom_bubbleMap, bgGetMapPtr(bottomBg), org_bottom_bubbleMapLen);
@@ -482,6 +497,14 @@ void vBlankHandler()
 		}
 	}
 
+	if (waitForNeedToPlayStopSound > 0) {
+		waitForNeedToPlayStopSound++;
+		if (waitForNeedToPlayStopSound == 5) {
+			waitForNeedToPlayStopSound = 0;
+		}
+		needToPlayStopSound = false;
+	}
+
 	glBegin2D();
 	{
 		if(fadeType == true) {
@@ -540,7 +563,8 @@ void vBlankHandler()
 		if (titleboxXmoveleft) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos -= 1;
 					movetimer++;
@@ -554,7 +578,8 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					titlewindowXpos -= 1;
 					movetimer++;
@@ -570,7 +595,8 @@ void vBlankHandler()
 		} else if (titleboxXmoveright) {
 			if(startMenu) {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					// if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					startMenu_titlewindowXpos += 1;
 					movetimer++;
@@ -584,7 +610,8 @@ void vBlankHandler()
 				}
 			} else {
 				if (movetimer == 8) {
-					if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+					needToPlayStopSound = true;
 					startBorderZoomOut = true;
 					titlewindowXpos += 1;
 					movetimer++;
@@ -833,7 +860,12 @@ void vBlankHandler()
 					if (!startMenu) {
 						if (bnrWirelessIcon[cursorPosition] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition]-1) & 31]);
 					}
-				} else {
+				} else if (!isScrolling) {
+					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
+						mmEffectEx(&snd_stop);
+						waitForNeedToPlayStopSound = 1;
+						needToPlayStopSound = false;
+					}
 					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glSprite(96+32, 81, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
@@ -842,11 +874,11 @@ void vBlankHandler()
 					}
 				}
 			}
-			
+
 			// Refresh the background layer.
 			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(bubbleImage);
-			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
+			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -1267,6 +1299,7 @@ void clearBoxArt() {
 
 void graphicsInit()
 {
+	
 	for (int i = 0; i < 12; i++) {
 		launchDotFrame[i] = 5;
 	}
@@ -1636,6 +1669,62 @@ void graphicsInit()
 								(u16*) _3ds_folderPal, // Load our 16 color tiles palette
 								(u8*) _3ds_folderBitmap // image data generated by GRIT
 								);
+	} else if (subtheme == 2) {
+		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
+								(u8*) org_icon_settingsBitmap // image data generated by GRIT
+								);
+
+		braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+								16, // sprite width
+								128, // sprite height
+								16, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								4, // Length of the palette to use (16 colors)
+								(u16*) org_bracePal, // Load our 16 color tiles palette
+								(u8*) org_braceBitmap // image data generated by GRIT
+								);
+
+		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) red_boxPal, // Load our 16 color tiles palette
+								(u8*) red_boxBitmap // image data generated by GRIT
+								);
+
+		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_folderPal, // Load our 16 color tiles palette
+								(u8*) org_folderBitmap // image data generated by GRIT
+								);
 	} else if (subtheme == 1) {
 		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
 								64, // sprite width
@@ -1765,5 +1854,7 @@ void graphicsInit()
 							);
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+	//consoleDemoInit();
+
 
 }

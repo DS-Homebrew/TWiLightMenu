@@ -130,6 +130,11 @@ bool boxArtLoaded = false;
 bool shouldersRendered = false;
 bool settingsChanged = false;
 
+bool isScrolling = false;
+bool needToPlayStopSound = false;
+bool stopSoundPlayed = false;
+int waitForNeedToPlayStopSound = 0;
+
 extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
@@ -431,11 +436,31 @@ void displayNowLoading(void) {
 	controlTopBright = false;
 }
 
+void updateScrollingState(u32 held, u32 pressed) {
+
+	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT);
+	bool isPressed = (pressed & KEY_LEFT) || (pressed & KEY_RIGHT);
+	
+	// If we were scrolling before, but now let go of all keys, stop scrolling.
+	 if (isHeld && !isPressed 
+	 	&&(
+			startMenu ? 
+			(startMenu_cursorPosition != 0 && startMenu_cursorPosition != 39) 
+			: (cursorPosition != 0 && cursorPosition != 39) 
+		)){
+		isScrolling = true;
+	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
+		isScrolling = false; 
+	} 
+
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	displayNowLoading();
 
 	int pressed = 0;
+	int held = 0;
 	SwitchState scrn(3);
 	vector<DirEntry> dirContents[scrn.SIZE];
 
@@ -588,17 +613,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else {
 				if (cursorPosition+pagenum*40 > ((int) dirContents[scrn].size() - 1)) {
-					showbubble = false;
-					showSTARTborder = false;
-					clearText(false);	// Clear title
 					if (!boxArtLoaded && showBoxArt) {
 						clearBoxArt();	// Clear box art
 						boxArtLoaded = true;
 					}
+					showbubble = false;
+					showSTARTborder = false;
+					clearText(false);	// Clear title
 				} else {
-					showbubble = true;
-					showSTARTborder = true;
-					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 					if (!boxArtLoaded && showBoxArt) {
 						if (isDirectory[cursorPosition]) {
 							clearBoxArt();	// Clear box art, if it's a directory
@@ -607,7 +629,18 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						boxArtLoaded = true;
 					}
+					showbubble = true;
+					showSTARTborder = true;
+					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 				}
+			}
+
+			if (!stopSoundPlayed) {
+				if ((theme == 0 && !startMenu && cursorPosition+pagenum*40 <= ((int) dirContents[scrn].size() - 1))
+				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardUsed))) {
+					needToPlayStopSound = true;
+				}
+				stopSoundPlayed = true;
 			}
 
 			if (!shouldersRendered) {
@@ -630,13 +663,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			do
 			{
 				scanKeys();
-				pressed = keysDownRepeat();
+				pressed = keysDown();
+				held = keysDownRepeat();
 				touchRead(&touch);
+				updateScrollingState(held, pressed);
 				swiWaitForVBlank();
 			}
-			while (!pressed);
-
+			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
@@ -644,6 +679,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition -= 1;
 					if (startMenu_cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -653,6 +689,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition -= 1;
 					if (cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -667,6 +704,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
+					|| ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
 					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
@@ -674,6 +712,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition += 1;
 					if (startMenu_cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -683,6 +722,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition += 1;
 					if (cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -725,6 +765,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pressedToLaunch = (pressed & KEY_A);
 			}
 
+			// Startup...
 			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder))											// START button/text (3DS theme)
@@ -811,6 +852,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					chdir(entry->name.c_str());
 					char buf[256];
@@ -970,6 +1012,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
+			// page switch
+
 			if (pressed & KEY_L)
 			{
 				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0) {
@@ -987,6 +1031,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
 					settingsChanged = false;
@@ -1012,6 +1057,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
 					settingsChanged = false;
@@ -1055,6 +1101,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					whiteScreen = false;
 					fadeType = true;	// Fade in from white
@@ -1076,6 +1123,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					stopSoundPlayed = false;
 					clearText();
 					chdir("..");
 					char buf[256];
@@ -1122,6 +1170,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
+						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
 						SaveSettings();
@@ -1178,6 +1227,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
+				stopSoundPlayed = false;
 				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
@@ -1193,7 +1243,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if (pressedForPerGameSettings && !startMenu
-			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0) && (isHomebrew[cursorPosition] == false)
+			&& (isDirectory[cursorPosition] == false) && (bnrRomType[cursorPosition] == 0)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition+pagenum*40).name);
