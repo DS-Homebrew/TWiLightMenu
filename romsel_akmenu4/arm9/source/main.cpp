@@ -34,6 +34,7 @@
 #include "globalsettings.h"
 #include "windows/calendar.h"
 #include "windows/calendarwnd.h"
+#include "windows/bigclock.h"
 
 // -- AK End ------------
 
@@ -126,10 +127,14 @@ int main(int argc, char **argv)
     windowManager().update();
     timer().updateFps();
 
+	//---- Top Screen ---
     calendarWnd().init();
     calendarWnd().draw();
     calendar().init();
     calendar().draw();
+    bigClock().init();
+    bigClock().draw();
+	//---- END Top Screen--
 
 
 	gdi().initBg(SFN_LOWER_SCREEN_BG);

@@ -27,7 +27,7 @@
 // #include "diskicon.h"
 #include "windows/calendarwnd.h"
 #include "windows/calendar.h"
-// #include "bigclock.h"
+#include "windows/bigclock.h"
 // #include "timer.h"
 // #include "animation.h"
 // #include "files.h"
@@ -81,10 +81,10 @@ void cIRQ::vBlank()
     if (vBlankCounter++ > 30)
     {
         vBlankCounter = 0;
-        // bigClock().blinkColon();
+        bigClock().blinkColon();
         calendarWnd().draw();
         calendar().draw();
-        // bigClock().draw();
+        bigClock().draw();
         // userWindow().draw();
 #if 0
         char fpsText[16];
