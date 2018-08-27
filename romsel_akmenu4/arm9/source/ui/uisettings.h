@@ -22,8 +22,8 @@
 #define _UISETTINGS_H_
 
 #include <nds.h>
-#include "../gdi.h"
-#include "../singleton.h"
+#include "gdi.h"
+#include "singleton.h"
 
 class cUISettings
 {

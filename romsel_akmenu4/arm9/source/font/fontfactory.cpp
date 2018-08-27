@@ -20,8 +20,8 @@
 
 #include "fontfactory.h"
 #include "font_pcf.h"
-#include "../systemfilenames.h"
-#include "../language.h"
+#include "systemfilenames.h"
+#include "language.h"
 
 
 cFontFactory::cFontFactory() : _font(NULL)

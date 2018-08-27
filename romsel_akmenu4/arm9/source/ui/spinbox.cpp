@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "spinbox.h"
-#include "../font/fontfactory.h"
+#include "font/fontfactory.h"
 
 //#include "windowmanager.h"
 

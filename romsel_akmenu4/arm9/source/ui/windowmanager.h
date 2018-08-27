@@ -24,7 +24,7 @@
 #include <string>
 #include <list>
 #include "window.h"
-#include "../userinput.h"
+#include "userinput.h"
 
 namespace akui
 {

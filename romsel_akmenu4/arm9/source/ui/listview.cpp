@@ -22,9 +22,9 @@
 
 #include "ui.h"
 #include "listview.h"
-#include "../gdi.h"
+#include "gdi.h"
 // #include "files.h"
-#include "dbgtool.h"
+#include "tool/dbgtool.h"
 
 namespace akui
 {

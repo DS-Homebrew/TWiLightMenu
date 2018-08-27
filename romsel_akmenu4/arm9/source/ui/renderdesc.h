@@ -21,7 +21,7 @@
 #ifndef _AKUI_RENDERDESC_H_
 #define _AKUI_RENDERDESC_H_
 
-#include "../gdi.h"
+#include "gdi.h"
 #include "rectangle.h"
 
 namespace akui

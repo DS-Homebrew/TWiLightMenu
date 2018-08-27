@@ -25,8 +25,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "../gdi.h"
-#include "../systemfilenames.h"
+#include "gdi.h"
+#include "systemfilenames.h"
 
 
 cFont::cFont()

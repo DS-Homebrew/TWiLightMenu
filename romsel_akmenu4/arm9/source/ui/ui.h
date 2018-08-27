@@ -22,11 +22,11 @@
 #define _AKUI_H_
 
 #include <nds.h>
-#include "../gdi.h"
-#include "../dbgtool.h"
-#include "../tool/memtool.h"
-#include "../tool/stringtool.h"
-#include "../tool/timetool.h"
+#include "gdi.h"
+#include "tool/dbgtool.h"
+#include "tool/memtool.h"
+#include "tool/stringtool.h"
+#include "tool/timetool.h"
 
 #include "sigslot.h"
 
@@ -57,8 +57,8 @@
 #include "popmenu.h"
 #include "msgbox.h"
 
-#include "../globalsettings.h"
+#include "globalsettings.h"
 #include "uisettings.h"
-#include "../systemfilenames.h"
+#include "systemfilenames.h"
 
 #endif //_AKUI_H_

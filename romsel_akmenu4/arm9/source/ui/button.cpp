@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "button.h"
-#include "../font/fontfactory.h"
+#include "font/fontfactory.h"
 #include "window.h"
 
 namespace akui

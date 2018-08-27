@@ -22,14 +22,14 @@
 #define _AKUI_WINDOW_H_
 
 #include <string>
-#include "../userinput.h"
-#include "../gdi.h"
+#include "userinput.h"
+#include "gdi.h"
 #include "point.h"
 #include "rectangle.h"
 #include "sigslot.h"
 #include "keymessage.h"
 #include "touchmessage.h"
-#include "../dbgtool.h"
+#include "tool/dbgtool.h"
 
 namespace akui
 {

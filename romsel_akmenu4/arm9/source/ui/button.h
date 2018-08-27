@@ -24,7 +24,7 @@
 #include "rectangle.h"
 #include "window.h"
 #include "renderdesc.h"
-#include "../bmp15.h"
+#include "bmp15.h"
 
 namespace akui
 {

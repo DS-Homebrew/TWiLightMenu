@@ -26,7 +26,7 @@
 #include "singleton.h"
 #include "gdi.h"
 #include "bmp15.h"
-#include "dbgtool.h"
+#include "tool/dbgtool.h"
 
 #define SYSTEM_FONT_HEIGHT 12
 #define COLOR               u16

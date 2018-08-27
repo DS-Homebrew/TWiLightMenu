@@ -24,7 +24,7 @@
 #define _FONT_FACTORY_H_
 
 #include <nds.h>
-#include "../singleton.h"
+#include "singleton.h"
 #include "font.h"
 
 

@@ -20,8 +20,8 @@
 
 #include "ui.h"
 #include "msgbox.h"
-#include "../font/fontfactory.h"
-#include "../language.h"
+#include "font/fontfactory.h"
+#include "language.h"
 
 namespace akui
 {

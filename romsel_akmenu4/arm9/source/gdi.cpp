@@ -28,7 +28,7 @@
 #include "sprite.h"
 #include "tool/memtool.h"
 #include "font/fontfactory.h"
-#include "dbgtool.h"
+#include "tool/dbgtool.h"
 
 
 #ifdef DEBUG

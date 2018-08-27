@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "uisettings.h"
-#include "../inifile.h"
+#include "inifile.h"
 
 cUISettings::cUISettings()
 {

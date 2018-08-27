@@ -21,7 +21,7 @@
 #include "ui.h"
 #include "form.h"
 #include "timer.h"
-#include "../dbgtool.h"
+#include "tool/dbgtool.h"
 #include "windowmanager.h"
 
 namespace akui

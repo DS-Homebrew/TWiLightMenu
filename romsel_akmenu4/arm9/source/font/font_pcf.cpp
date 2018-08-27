@@ -19,7 +19,7 @@
 
 #include "font_pcf.h"
 #include "font_pcf_internals.h"
-#include "../language.h"
+#include "language.h"
 #include <fcntl.h>
 #include <unistd.h>
 
