@@ -673,11 +673,20 @@ void dsCardLaunch() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
-	// overwrite reboot stub identifier
+	//overwrite reboot stub identifier
+	
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+
+	// consoleDemoInit();
+	// iprintf("Hello World");
+	
+	// while(1) {
+	// 	swiWaitForVBlank();
+	// }
+	// return 0;
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));

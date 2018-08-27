@@ -37,6 +37,7 @@
 #include "windows/bigclock.h"
 #include "windows/diskicon.h"
 #include "windows/userwnd.h"
+#include "ui/progresswnd.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -89,10 +90,26 @@ void doPause()
 	scanKeys();
 }
 
+// Ported from PAlib (obsolete)
+void SetBrightness(u8 screen, s8 bright) {
+	u16 mode = 1 << 14;
+
+	if (bright < 0) {
+		mode = 2 << 14;
+		bright = -bright;
+	}
+	if (bright > 31) bright = 31;
+	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
+
 int main(int argc, char **argv)
 {
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
+
+	SetBrightness(0, 0);
+	SetBrightness(1, 0);
 
 	// consoleDemoInit();
 	// printf("Ok...");
@@ -113,17 +130,20 @@ int main(int argc, char **argv)
 	windowManager();
 
 	// init basic system
-	//	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
+	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
 
 	// init tick timer/fps counter
 	timer().initTimer();
 
 	initInput();
 
+    //turn led on
+    ledBlink(PM_LED_ON);
+
 	// init graphics
 	gdi().init();
 #ifdef DEBUG
-	gdi().switchSubEngineMode();
+	//gdi().switchSubEngineMode();
 #endif
 	dbg_printf("GDI Init!");
 
@@ -134,6 +154,12 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
+	 // setting scripts
+    gs().loadSettings();
+
+    // init unicode
+    //if( initUnicode() )
+    //    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
 	lang(); // load language file
@@ -147,6 +173,8 @@ int main(int argc, char **argv)
 
 	windowManager().update();
 	timer().updateFps();
+
+    progressWnd().init();
 
 	//---- Top Screen ---
 	calendarWnd().init();
@@ -164,13 +192,14 @@ int main(int argc, char **argv)
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
+
 	irq().vblankStart();
 
 	while (1)
 	{
 		timer().updateFps();
-		INPUT &inputs = updateInput();
-		processInput(inputs);
+		// INPUT &inputs = updateInput();
+		// processInput(inputs);
 		swiWaitForVBlank();
 		windowManager().update();
 		gdi().present(GE_MAIN);

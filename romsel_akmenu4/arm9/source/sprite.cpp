@@ -32,7 +32,7 @@ cSprite::~cSprite()
 
 void cSprite::sysinit()
 {
-    oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
+    oamInit(&oamMain, SpriteMapping_Bmp_1D_128, true);
 
    // SpriteEntry *psprites = (SpriteEntry *)OAM;
     //SpriteRotation * pspriteRotations = (SpriteRotation * )OAM;
@@ -90,15 +90,15 @@ void cSprite::init(u16 id)
 
 void cSprite::show()
 {
-    oamSetHidden(&oamMain, _id, false);
+    //oamSetHidden(&oamMain, _id, false);
 
-    //_entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_BMP;
+    _entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_ROTSCALE | ATTR0_BMP;
 }
 
 void cSprite::hide()
 {
-    oamSetHidden(&oamMain, _id, true);
-   // _entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_DISABLED;
+   // oamSetHidden(&oamMain, _id, true);
+    _entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_DISABLED;
 }
 
 void cSprite::setAlpha(u8 alpha)

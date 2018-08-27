@@ -685,6 +685,8 @@ void cGdi::present(GRAPHICS_ENGINE engine)
                         _bufferMain1 + (_mainEngineLayer << 16), 256 * 192 * 2);
 
         fillMemory((void *)(_bufferMain2 + _layerPitch), 256 * 192 * 2, 0);
+        oamUpdate(&oamMain);
+
     }
     else if (GE_SUB == engine)
     {
