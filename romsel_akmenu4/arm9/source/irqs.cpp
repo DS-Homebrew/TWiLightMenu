@@ -25,8 +25,8 @@
 // #include "userinput.h"
 // #include "windowmanager.h"
 // #include "diskicon.h"
-// #include "calendarwnd.h"
-// #include "calendar.h"
+#include "windows/calendarwnd.h"
+#include "windows/calendar.h"
 // #include "bigclock.h"
 // #include "timer.h"
 // #include "animation.h"
@@ -37,8 +37,8 @@ bool cIRQ::_vblankStarted(false);
 
 void cIRQ::init()
 {
-    irqSet( IRQ_VBLANK, vBlank );
-    irqSet( IRQ_CARD_LINE, cardMC );
+    irqSet(IRQ_VBLANK, vBlank);
+    irqSet(IRQ_CARD_LINE, cardMC);
 }
 
 void cIRQ::cardMC()
@@ -60,7 +60,7 @@ void cIRQ::vblankStop()
 
 void cIRQ::vBlank()
 {
-    if( !_vblankStarted )
+    if (!_vblankStarted)
         return;
 
     // // get inputs when file copying because the main route
@@ -78,11 +78,12 @@ void cIRQ::vBlank()
 
     static u32 vBlankCounter = 0;
 
-    if( vBlankCounter++ > 30 ) {
+    if (vBlankCounter++ > 30)
+    {
         vBlankCounter = 0;
         // bigClock().blinkColon();
-        // calendarWnd().draw();
-        // calendar().draw();
+        calendarWnd().draw();
+        calendar().draw();
         // bigClock().draw();
         // userWindow().draw();
 #if 0
@@ -92,9 +93,9 @@ void cIRQ::vBlank()
         gdi().textOut( 40, 178, fpsText, GE_SUB );
 #endif
 
-  	gdi().present( GE_MAIN );
+        gdi().present(GE_MAIN);
 
-    gdi().present( GE_SUB );
+        gdi().present(GE_SUB);
     }
 
     // animationManager().update();

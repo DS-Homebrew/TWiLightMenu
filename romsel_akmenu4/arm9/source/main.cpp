@@ -28,6 +28,13 @@
 #include "timer.h"
 #include "font/fontfactory.h"
 #include "irqs.h"
+#include "ui/ui.h"
+#include "userinput.h"
+#include "language.h"
+#include "globalsettings.h"
+#include "windows/calendar.h"
+#include "windows/calendarwnd.h"
+
 // -- AK End ------------
 
 #include <stdio.h>
@@ -38,6 +45,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <gl2d.h>
+
+using namespace akui;
 
 //---------------------------------------------------------------------------------
 void stop(void)
@@ -67,7 +76,6 @@ void doPause()
 	scanKeys();
 }
 
-
 int main(int argc, char **argv)
 {
 	extern u64 *fake_heap_end;
@@ -79,7 +87,8 @@ int main(int argc, char **argv)
 	irq().init();
 	nocashMessage("ARM9 main.cpp IRQ Init");
 
-	//windowManager();
+	windowManager();
+	nocashMessage("ARM9 main.cpp WindowManager Init");
 
 	// init basic system
 	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
@@ -88,27 +97,46 @@ int main(int argc, char **argv)
 	timer().initTimer();
 	nocashMessage("Timer Init!");
 
+	initInput();
+	nocashMessage("ARM9 main.cpp Input Init");
+
 	// init graphics
 	gdi().init();
+#ifdef DEBUG
+	//gdi().switchSubEngineMode();
+#endif
 	nocashMessage("GDI Init!");
 
 	bool fatInitOk = fatInitDefault();
-	if (!fatInitOk) {
+	if (!fatInitOk)
+	{
 		consoleDemoInit();
 		printf("Failed to Init FAT");
 		stop();
 	}
 
-    fontFactory().makeFont(); // load font file
+	lang(); // load language file
+	gs().language = lang().GetInt("font", "language", gs().language);
 
-   // lang(); // load language file
+	fontFactory().makeFont(); // load font file
+	uiSettings().loadSettings();
 
-	consoleDemoInit();
-    gdi().initBg(SFN_LOWER_SCREEN_BG);
-  	gdi().present( GE_MAIN );
-    gdi().present( GE_SUB );
 
-    irq().vblankStart();
+
+    windowManager().update();
+    timer().updateFps();
+
+    calendarWnd().init();
+    calendarWnd().draw();
+    calendar().init();
+    calendar().draw();
+
+
+	gdi().initBg(SFN_LOWER_SCREEN_BG);
+	gdi().present(GE_MAIN);
+	gdi().present(GE_SUB);
+
+	irq().vblankStart();
 
 	// fifoWaitValue32(FIFO_USER_06);
 	// if (fifoGetValue32(FIFO_USER_03) == 0)

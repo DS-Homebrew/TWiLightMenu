@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    ui.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,47 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#ifndef _AKUI_H_
+#define _AKUI_H_
 
-template <class T>
-class t_singleton
-{
+#include <nds.h>
+#include "../gdi.h"
+#include "../dbgtool.h"
+#include "../tool/memtool.h"
+#include "../tool/stringtool.h"
+#include "../tool/timetool.h"
 
-  public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
+#include "sigslot.h"
 
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
+#include "point.h"
+#include "rectangle.h"
 
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
+#include "window.h"
+#include "windowmanager.h"
 
-  private:
-    static T *_instance;
-};
+#include "message.h"
+#include "keymessage.h"
+#include "touchmessage.h"
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+#include "renderdesc.h"
+#include "bitmapdesc.h"
 
-#endif //_AGL_SINGLETON_H_
+#include "button.h"
+#include "listview.h"
+#include "statictext.h"
+
+#include "form.h"
+#include "formdesc.h"
+#include "spinbox.h"
+
+//#include "progressbar.h"
+//#include "progresswnd.h"
+
+#include "popmenu.h"
+#include "msgbox.h"
+
+#include "../globalsettings.h"
+#include "uisettings.h"
+#include "../systemfilenames.h"
+
+#endif //_AKUI_H_

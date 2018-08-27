@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    bitmapdesc.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,45 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#ifndef _BMPWINDOWDESC_H_
+#define _BMPWINDOWDESC_H_
 
-template <class T>
-class t_singleton
+#include <string>
+#include "renderdesc.h"
+#include "../bmp15.h"
+
+namespace akui
 {
 
-  public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
-
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
-
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
-
-  private:
-    static T *_instance;
+// bitmap desc��ֻ���𻭱���
+enum BLTMODE
+{
+    BM_BITBLT,
+    BM_MASKBLT
 };
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+class cBitmapDesc : public cRenderDesc
+{
+  public:
+    cBitmapDesc();
 
-#endif //_AGL_SINGLETON_H_
+    ~cBitmapDesc();
+
+  public:
+    void setBltMode(BLTMODE bltmode) { _bltmode = bltmode; }
+
+    void draw(const cRect &area, GRAPHICS_ENGINE engine) const;
+
+    void loadData(const std::string &filename);
+
+    cSize size();
+
+  protected:
+    cBMP15 _background;
+
+    BLTMODE _bltmode;
+};
+
+} // namespace akui
+
+#endif //_BMPWINDOWDESC_H_

@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    datetime.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,40 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#ifndef _DATETIME_H_
+#define _DATETIME_H_
 
-template <class T>
-class t_singleton
+#include <nds.h>
+#include <time.h>
+#include "singleton.h"
+#include "tool/stringtool.h"
+
+class cDateTime
 {
-
+  private:
+    tm iTimeParts;
+  private:
+    void FillTimeParts(void);
   public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
+    cDateTime() {}
+    ~cDateTime() {}
+  public:
+    static const char * weekdayStrings[];
+    u16 year(void);
+    u8 month(void);
+    u8 day(void);
+    u8 weekday(void);
 
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
+    u8 hours(void);
+    u8 minutes(void);
+    u8 seconds(void);
 
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
-
-  private:
-    static T *_instance;
+    std::string getDateString(void);
+    std::string getTimeString(void);
+    std::string getTimeStampString(void);
 };
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+typedef t_singleton< cDateTime > dateTime_s;
+inline cDateTime & datetime() { return dateTime_s::instance(); }
 
-#endif //_AGL_SINGLETON_H_
+#endif//_DATETIME_H_

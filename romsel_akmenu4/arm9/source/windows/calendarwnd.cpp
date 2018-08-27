@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    calendarwnd.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,39 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#include "calendarwnd.h"
+#include "gdi.h"
+#include "bmp15.h"
+#include "systemfilenames.h"
+#include "globalsettings.h"
 
-template <class T>
-class t_singleton
+using namespace akui;
+
+cCalendarWnd::cCalendarWnd() : cForm( 0, 0, 256, 192, NULL, "calendar window" )
 {
 
-  public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
+}
 
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
+cCalendarWnd::~cCalendarWnd()
+{
 
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
+}
 
-  private:
-    static T *_instance;
-};
+void cCalendarWnd::init()
+{
+    setEngine( GE_SUB );
+    loadAppearance( SFN_UPPER_SCREEN_BG );
+}
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+cWindow& cCalendarWnd::loadAppearance(const std::string& aFileName )
+{
+    _background = createBMP15FromFile( aFileName );
+    return *this;
+}
 
-#endif //_AGL_SINGLETON_H_
+
+void cCalendarWnd::draw()
+{
+    if( _background.valid() )
+        gdi().bitBlt( _background.buffer(), 0, 0, 256, 192, selectedEngine() );
+}

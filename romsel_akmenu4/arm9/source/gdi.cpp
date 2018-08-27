@@ -28,8 +28,48 @@
 #include "sprite.h"
 #include "tool/memtool.h"
 #include "font/fontfactory.h"
+#include "dbgtool.h"
 
-#define FONT_HEIGHT 12
+
+#ifdef DEBUG
+PrintConsole custom_console;
+
+static void MyInitConsole(u16 *aBufferSub1, u16 *aBufferSub2)
+{
+    custom_console = *consoleGetDefault();
+
+    custom_console.loadGraphics = false;
+
+    consoleInit(&custom_console, custom_console.bgLayer, BgType_Text4bpp, BgSize_T_256x256, custom_console.mapBase, custom_console.gfxBase, false, false);
+
+    custom_console.fontBgMap = aBufferSub1;
+    custom_console.fontBgGfx = aBufferSub2;
+
+    dmaCopy(custom_console.font.gfx, custom_console.fontBgGfx, custom_console.font.numChars * 64 / 2);
+    custom_console.fontCurPal = 15 << 12;
+
+    u16 *palette = BG_PALETTE_SUB;
+    palette[1 * 16 - 15] = RGB15(0, 0, 0);   //30 normal black
+    palette[2 * 16 - 15] = RGB15(15, 0, 0);  //31 normal red
+    palette[3 * 16 - 15] = RGB15(0, 15, 0);  //32 normal green
+    palette[4 * 16 - 15] = RGB15(15, 15, 0); //33 normal yellow
+
+    palette[5 * 16 - 15] = RGB15(0, 0, 15);   //34 normal blue
+    palette[6 * 16 - 15] = RGB15(15, 0, 15);  //35 normal magenta
+    palette[7 * 16 - 15] = RGB15(0, 15, 15);  //36 normal cyan
+    palette[8 * 16 - 15] = RGB15(24, 24, 24); //37 normal white
+
+    palette[9 * 16 - 15] = RGB15(15, 15, 15); //40 bright black
+    palette[10 * 16 - 15] = RGB15(31, 0, 0);  //41 bright red
+    palette[11 * 16 - 15] = RGB15(0, 31, 0);  //42 bright green
+    palette[12 * 16 - 15] = RGB15(31, 31, 0); //43 bright yellow
+
+    palette[13 * 16 - 15] = RGB15(0, 0, 31);   //44 bright blue
+    palette[14 * 16 - 15] = RGB15(31, 0, 31);  //45 bright magenta
+    palette[15 * 16 - 15] = RGB15(0, 31, 31);  //46 bright cyan
+    palette[16 * 16 - 15] = RGB15(31, 31, 31); //47 & 39 bright white
+}
+#endif
 
 static inline void dmaCopyWordsGdi(uint8 channel, const void *src, void *dest, uint32 size)
 {
@@ -57,6 +97,10 @@ cGdi::~cGdi()
         delete[] _bufferMain2;
     if (NULL != _bufferSub2)
         delete[] _bufferSub2;
+#ifdef DEBUG
+    if (NULL != _bufferSub3)
+        delete[] _bufferSub3;
+#endif
     if (NULL != _sprites)
         delete[] _sprites;
 }
@@ -83,7 +127,7 @@ void cGdi::initBg(const std::string &aFileName)
     _sprites = new cSprite[12];
     _background = createBMP15FromFile(aFileName);
     nocashMessage("ARM9 GDI BMP15 Created");
-    printf("%X", _background.buffer());
+    dbg_printf("Hello %X", _background.buffer());
     if (_background.width() < SCREEN_WIDTH && _background.height() < SCREEN_WIDTH)
     {
         nocashMessage("BG Width too small");
@@ -97,7 +141,6 @@ void cGdi::initBg(const std::string &aFileName)
         for (size_t x = 0; x < 4; ++x)
         {
             size_t index = y * 4 + x;
-
 
             _sprites[index].init(2 + index);
             _sprites[index].setSize(SS_SIZE_64);
@@ -140,7 +183,7 @@ void cGdi::activeFbMain(void)
 
     REG_BG3CNT = BG_BMP16_256x256 | BG_BMP_BASE(8) | BG_PRIORITY_2;
     REG_BG3PA = 1 << 8;
-    REG_BG3PD = 1 << 8; 
+    REG_BG3PD = 1 << 8;
     REG_BG3PB = 0;
     REG_BG3PC = 0;
     REG_BG3Y = 0;
@@ -603,12 +646,12 @@ void cGdi::maskBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u1
 
 void cGdi::textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_ENGINE engine)
 {
-    const s16 originX = x, limitY = y + h - FONT_HEIGHT;
+    const s16 originX = x, limitY = y + h - SYSTEM_FONT_HEIGHT;
     while (*text)
     {
         if ('\r' == *text || '\n' == *text)
         {
-            y += FONT_HEIGHT; //FIXME
+            y += SYSTEM_FONT_HEIGHT; //FIXME
             x = originX;
             ++text;
             if (y > limitY)
@@ -663,3 +706,26 @@ void cGdi::present(void)
     dmaCopyWordsGdi(3, _bufferMain2 + (256 * 192), _bufferMain1 + (1 << 16), 256 * 192 * 2);
     fillMemory((void *)_bufferMain2, 256 * 192 * 4, 0);
 }
+
+#ifdef DEBUG
+void cGdi::switchSubEngineMode()
+{
+    // ��Ҫ����ͻָ��ı�ģʽ���ֳ�
+    switch (_subEngineMode)
+    {
+    case SEM_GRAPHICS: // ��ǰ��ͼ��ģʽ�Ļ����ͻָ��ղŵ�text�ֳ�
+        videoSetModeSub(MODE_5_2D | DISPLAY_BG0_ACTIVE);
+        custom_console.fontBgMap = (u16 *)0x6204000;
+        custom_console.fontBgGfx = (u16 *)0x6200000;
+        dmaCopyWordsGdi(3, (void *)_bufferSub3, (void *)_bufferSub1, 0x4800);
+        break;
+    case SEM_TEXT: // ��ǰ������ģʽ�Ļ��������ֳ����е�ͼ��ģʽ
+        videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
+        custom_console.fontBgMap = _bufferSub3 + 0x2000;
+        custom_console.fontBgGfx = _bufferSub3;
+        dmaCopyWordsGdi(3, (void *)_bufferSub1, (void *)_bufferSub3, 0x4800);
+        break;
+    };
+    _subEngineMode = (SUB_ENGINE_MODE)(_subEngineMode ^ 1);
+}
+#endif

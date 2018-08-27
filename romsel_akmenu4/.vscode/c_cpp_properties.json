@@ -6,7 +6,8 @@
                 "c:/devkitPro/libnds/include",
                 "c:/devkitPro/libnds/include/**/",
                 "C:/devkitPro/devkitARM/arm-none-eabi/include",
-                "C:/devkitPro/devkitARM/arm-none-eabi/include/**/"
+                "C:/devkitPro/devkitARM/arm-none-eabi/include/**/",
+                "${workspaceFolder}/arm9/source"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,

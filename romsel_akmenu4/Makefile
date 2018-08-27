@@ -25,8 +25,8 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/font 
-INCLUDES	:=	include
+SOURCES		:=	source source/graphics source/tool source/font source/ui source/windows
+INCLUDES	:=	include source
 DATA		:=	data  
 NITRODATA	:=	nitrofiles
 GRAPHICS	:=  gfx

@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    statictext.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,41 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#include "ui.h"
+#include "statictext.h"
+#include "../gdi.h"
 
-template <class T>
-class t_singleton
+namespace akui
 {
 
-  public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
+cStaticText::cStaticText(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
+    : cWindow(parent, text)
+{
+    _position.x = x;
+    _position.y = y;
+    _size.x = w;
+    _size.y = h;
+    _textColor = uiSettings().formTextColor; //(RGB15(31,31,31))
+}
 
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
+cStaticText::~cStaticText()
+{
+}
 
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
+void cStaticText::draw()
+{
+    gdi().setPenColor(_textColor, _engine);
+    gdi().textOutRect(_position.x, _position.y, _size.x, _size.y, _text.c_str(), selectedEngine());
+}
 
-  private:
-    static T *_instance;
-};
+cWindow &cStaticText::loadAppearance(const std::string &aFileName)
+{
+    return *this;
+}
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+void cStaticText::setTextColor(COLOR color)
+{
+    _textColor = color;
+}
 
-#endif //_AGL_SINGLETON_H_
+} // namespace akui

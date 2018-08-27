@@ -1,5 +1,5 @@
 /*
-    singleton.h
+    statictext.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,48 +18,33 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-#ifndef _SINGLETON_H_
-#define _SINGLETON_H_
-#include <cstdlib>
+#ifndef _STATICTEXT_H_
+#define _STATICTEXT_H_
 
-template <class T>
-class t_singleton
+#include "window.h"
+#include "../bmp15.h"
+
+namespace akui
 {
 
+class cStaticText : public cWindow
+{
   public:
-    static T &instance()
-    {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
-        return *_instance;
-    }
+    cStaticText(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
 
-  private:
-    static void create_instance()
-    {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
-    }
+    ~cStaticText();
 
-    static void release_instance()
-    {
-        if (NULL != _instance)
-        {
-            delete _instance;
-            _instance = NULL;
-        }
-    }
+  public:
+    void draw();
 
-  private:
-    static T *_instance;
+    cWindow &loadAppearance(const std::string &aFileName);
+
+    void setTextColor(COLOR color);
+
+  protected:
+    COLOR _textColor;
 };
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+} // namespace akui
 
-#endif //_AGL_SINGLETON_H_
+#endif //_STATICTEXT_H_

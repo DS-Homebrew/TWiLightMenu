@@ -18,14 +18,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
 #ifndef _GDI_H_
 #define _GDI_H_
 
 #include <nds.h>
 #include <vector>
 #include "singleton.h"
+#include "gdi.h"
 #include "bmp15.h"
+#include "dbgtool.h"
 
 #define SYSTEM_FONT_HEIGHT 12
 #define COLOR               u16
@@ -55,6 +56,7 @@ class cGdi
 public:
 
     cGdi();
+
     virtual ~cGdi();
 
 public:
@@ -113,6 +115,10 @@ public:
 
     void present( void );
 
+#ifdef DEBUG
+    void switchSubEngineMode();
+#endif
+
 protected:
     void swapLCD(void);
     void activeFbMain(void);        // fb = frame buffer
@@ -132,11 +138,15 @@ private:
     u32 _layerPitch;
     u16 * _bufferSub1;
     u16 * _bufferSub2;
+#ifdef DEBUG
+    u16 * _bufferSub3;
+#endif
     cSprite* _sprites;
     cBMP15 _background;
 };
 
 typedef t_singleton< cGdi > cGdi_s;
 inline cGdi & gdi() { return cGdi_s::instance(); }
-#endif//_GDI_H_
 
+
+#endif//_GDI_H_
