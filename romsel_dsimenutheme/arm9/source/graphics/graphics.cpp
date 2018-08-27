@@ -1104,7 +1104,13 @@ void loadShoulders() {
 	FILE* file;
 
 	// Draw L shoulder
-	if (theme == 1 || subtheme == 1) {
+	if (subtheme == 2) {
+		if (showLshoulder) {
+			file = fopen("nitro:/graphics/red_Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/red_Lshoulder_greyed.bmp", "rb");
+		}
+	} else if (theme == 1 || subtheme == 1) {
 		if (showLshoulder) {
 			file = fopen("nitro:/graphics/Lshoulder.bmp", "rb");
 		} else {
@@ -1139,7 +1145,13 @@ void loadShoulders() {
 	fclose(file);
 
 	// Draw R shoulder
-	if (theme == 1 || subtheme == 1) {
+	if (subtheme == 2) {
+		if (showRshoulder) {
+			file = fopen("nitro:/graphics/red_Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/red_Rshoulder_greyed.bmp", "rb");
+		}
+	} else if (theme == 1 || subtheme == 1) {
 		if (showRshoulder) {
 			file = fopen("nitro:/graphics/Rshoulder.bmp", "rb");
 		} else {
@@ -1224,6 +1236,8 @@ inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
+	} else if (subtheme == 2) {
+		loadBMP("nitro:/graphics/red_top.bmp");
 	} else if (subtheme == 1) {
 		loadBMP("nitro:/graphics/org_top.bmp");
 	} else {
