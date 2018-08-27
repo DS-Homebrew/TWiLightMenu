@@ -636,8 +636,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if (!stopSoundPlayed) {
-				if (theme == 0 && !startMenu && cursorPosition+pagenum*40 <= ((int) dirContents[scrn].size() - 1)
-				|| theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardUsed)) {
+				if ((theme == 0 && !startMenu && cursorPosition+pagenum*40 <= ((int) dirContents[scrn].size() - 1))
+				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardUsed))) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;
@@ -679,6 +679,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition -= 1;
 					if (startMenu_cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -688,6 +689,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition -= 1;
 					if (cursorPosition >= 0) {
 						titleboxXmoveleft = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;
@@ -710,6 +712,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					startMenu_cursorPosition += 1;
 					if (startMenu_cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						settingsChanged = true;
 					} else {
@@ -719,6 +722,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					cursorPosition += 1;
 					if (cursorPosition <= 39) {
 						titleboxXmoveright = true;
+						waitForNeedToPlayStopSound = 1;
 						mmEffectEx(&snd_select);
 						boxArtLoaded = false;
 						settingsChanged = true;

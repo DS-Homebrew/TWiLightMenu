@@ -850,7 +850,7 @@ void vBlankHandler()
 					}
 				} else if (!isScrolling) {
 					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
- 						mmEffectEx(&snd_stop);
+						mmEffectEx(&snd_stop);
 						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
 					}
