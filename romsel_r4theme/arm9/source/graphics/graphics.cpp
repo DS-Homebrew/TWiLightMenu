@@ -226,7 +226,7 @@ void vBlankHandler()
 
 		if (startMenu) {
 			drawBG(subBgImage);
-			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/3, colorGvalue/3, colorBvalue/3));
+			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8));
 		} else {
 			switch (subtheme) {
 				case 0:
