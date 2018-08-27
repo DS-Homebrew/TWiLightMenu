@@ -35,6 +35,7 @@
 #include "windows/calendar.h"
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
+#include "windows/diskicon.h"
 
 // -- AK End ------------
 
@@ -115,6 +116,7 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
+	cwl();
 
 	lang(); // load language file
 	gs().language = lang().GetInt("font", "language", gs().language);
@@ -122,20 +124,20 @@ int main(int argc, char **argv)
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
 
+	diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
+	diskIcon().show();
 
-
-    windowManager().update();
-    timer().updateFps();
+	windowManager().update();
+	timer().updateFps();
 
 	//---- Top Screen ---
-    calendarWnd().init();
-    calendarWnd().draw();
-    calendar().init();
-    calendar().draw();
-    bigClock().init();
-    bigClock().draw();
+	calendarWnd().init();
+	calendarWnd().draw();
+	calendar().init();
+	calendar().draw();
+	bigClock().init();
+	bigClock().draw();
 	//---- END Top Screen--
-
 
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
 	gdi().present(GE_MAIN);
