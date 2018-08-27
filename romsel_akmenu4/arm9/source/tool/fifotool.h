@@ -1,7 +1,5 @@
 /*
-    language.cpp
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
+    fifotool.h
     Copyright (C) 2009 yellow wood goblin
 
     This program is free software: you can redistribute it and/or modify
@@ -18,12 +16,19 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "language.h"
-#include <nds.h>
-#include <string>
-#include <strings.h>
+#ifndef __FIFOTOOL_H__
+#define __FIFOTOOL_H__
 
-bool stringComp(const std::string &item1, const std::string &item2)
-{
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
-}
+#define MENU_MSG_GBA             1
+#define MENU_MSG_ARM7_REBOOT     2
+#define MENU_MSG_ARM7_READY_BOOT 3
+#define MENU_MSG_BRIGHTNESS_NEXT 4
+#define MENU_MSG_SYSTEM          5
+#define MENU_MSG_BRIGHTNESS_GET  7
+#define MENU_MSG_BRIGHTNESS_SET0 8
+#define MENU_MSG_BRIGHTNESS_SET1 9
+#define MENU_MSG_BRIGHTNESS_SET2 10
+#define MENU_MSG_BRIGHTNESS_SET3 11
+#define MENU_MSG_SHUTDOWN        12
+
+#endif

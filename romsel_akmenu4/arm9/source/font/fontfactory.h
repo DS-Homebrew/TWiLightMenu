@@ -1,5 +1,5 @@
 /*
-    language.cpp
+    fontfactory.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,12 +18,36 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "language.h"
-#include <nds.h>
-#include <string>
-#include <strings.h>
 
-bool stringComp(const std::string &item1, const std::string &item2)
+#pragma once
+#ifndef _FONT_FACTORY_H_
+#define _FONT_FACTORY_H_
+
+#include <nds.h>
+#include "../singleton.h"
+#include "font.h"
+
+
+
+class cFontFactory
 {
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
-}
+public:
+
+    cFontFactory();
+
+    ~cFontFactory();
+
+    void makeFont(void);
+
+    cFont & font() { return *_font; }
+
+protected:
+
+    cFont * _font;
+};
+
+typedef t_singleton< cFontFactory > fontFactory_s;
+inline cFontFactory & fontFactory() { return fontFactory_s::instance(); }
+inline cFont & font() { return fontFactory_s::instance().font(); }
+
+#endif

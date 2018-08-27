@@ -1,5 +1,5 @@
 /*
-    language.cpp
+    timer.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,12 +18,46 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "language.h"
-#include <nds.h>
-#include <string>
-#include <strings.h>
+#pragma once
+#ifndef _TIMER_H_
+#define _TIMER_H_
 
-bool stringComp(const std::string &item1, const std::string &item2)
+#include <nds.h>
+#include "singleton.h"
+
+class cTimer
 {
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
-}
+  public:
+    cTimer();
+
+    ~cTimer() {}
+
+  public:
+    void initTimer();
+
+    double updateTimer();
+
+    double updateFps();
+
+    double getFps();
+
+    double getTime();
+
+    vu64 getTick();
+
+    double tickToUs(u64 tick);
+
+  private:
+    static void timerInterruptHandler();
+    double _lastTime;
+    double _currentTime;
+    static vu64 _overFlow;
+    static constexpr double _factor = 1.f / (33.514 * 1000000.f);
+    double _fps;
+    u32 _fpsCounter;
+};
+
+typedef t_singleton<cTimer> timer_s;
+inline cTimer &timer() { return timer_s::instance(); }
+
+#endif //_TIMER_H_

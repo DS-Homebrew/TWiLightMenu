@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_aktheme
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/akmenu source/akfont
+SOURCES		:=	source source/graphics source/tool source/font
 INCLUDES	:=	include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

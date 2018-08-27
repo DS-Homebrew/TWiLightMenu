@@ -1,5 +1,5 @@
 /*
-    language.cpp
+    fontfactory.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,12 +18,25 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "language.h"
-#include <nds.h>
-#include <string>
-#include <strings.h>
+#include "fontfactory.h"
+#include "font_pcf.h"
+#include "../systemfilenames.h"
+#include "../language.h"
 
-bool stringComp(const std::string &item1, const std::string &item2)
+
+cFontFactory::cFontFactory() : _font(NULL)
 {
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
+}
+
+cFontFactory::~cFontFactory()
+{
+    if (NULL != _font)
+        delete _font;
+}
+
+void cFontFactory::makeFont(void)
+{
+    std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
+    _font = new cFontPcf();
+    _font->Load(filename.c_str());
 }

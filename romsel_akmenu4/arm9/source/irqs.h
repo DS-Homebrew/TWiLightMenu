@@ -1,5 +1,5 @@
 /*
-    language.cpp
+    irqs.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,12 +18,40 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "language.h"
-#include <nds.h>
-#include <string>
-#include <strings.h>
+#ifndef _IRQS_H_
+#define _IRQS_H_
 
-bool stringComp(const std::string &item1, const std::string &item2)
+#include <nds.h>
+#include "singleton.h"
+
+
+class cIRQ
 {
-  return strcasecmp(item1.c_str(), item2.c_str()) < 0;
-}
+public:
+
+    cIRQ() {}
+
+    ~cIRQ() {}
+
+public:
+
+    void init();
+
+    void vblankStart();
+
+    void vblankStop();
+
+    static void cardMC();
+
+    static void vBlank();
+
+    static bool _vblankStarted;
+
+};
+
+typedef t_singleton< cIRQ > irq_s;
+
+inline cIRQ & irq() { return irq_s::instance(); }
+
+
+#endif//_IRQS_H_

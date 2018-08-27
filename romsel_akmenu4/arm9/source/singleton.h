@@ -23,25 +23,26 @@
 #define _SINGLETON_H_
 #include <cstdlib>
 
-template <class T>
+template< class T >
 class t_singleton
 {
 
-  public:
-    static T &instance()
+public:
+
+    static T & instance()
     {
-        if (NULL == _instance)
+        if( NULL == _instance )
         {
             create_instance();
-           
         }
         return *_instance;
     }
 
-  private:
+private:
+
     static void create_instance()
     {
-        if (NULL == _instance)
+        if( NULL == _instance )
         {
             _instance = new T();
         }
@@ -49,17 +50,19 @@ class t_singleton
 
     static void release_instance()
     {
-        if (NULL != _instance)
+        if( NULL != _instance )
         {
             delete _instance;
             _instance = NULL;
         }
     }
 
-  private:
-    static T *_instance;
+private:
+
+    static T * _instance;
 };
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
+template< class T >
+T * t_singleton< T >::_instance = NULL;
+
 #endif //_AGL_SINGLETON_H_
