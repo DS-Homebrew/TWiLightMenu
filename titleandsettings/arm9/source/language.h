@@ -146,6 +146,7 @@ extern std::string STR_SUBTHEMESEL_R4;
 extern std::string STR_AB_SETSUBTHEME;
 extern std::string STR_DSI_DARKMENU;
 extern std::string STR_DSI_NORMALMENU;
+extern std::string STR_DSI_RED;
 extern std::string STR_R4_THEME01;
 extern std::string STR_R4_THEME02;
 extern std::string STR_R4_THEME03;
