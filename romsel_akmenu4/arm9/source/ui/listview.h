@@ -58,7 +58,7 @@ class ListItem
 class ListView : public Window
 {
   public:
-    ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
+    ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text, int scrollSpeed);
 
     virtual ~ListView() {}
 
@@ -80,6 +80,7 @@ class ListView : public Window
     };
 
   public:
+
     void draw();
 
     bool insertColumn(size_t index, const std::string &text, u8 width);
@@ -122,6 +123,8 @@ class ListView : public Window
     void scrollTo(int id);
 
     u32 visibleRowCount() { return _visibleRowCount; }
+
+    void setScrollSpeed(int scrollSpeed);
 
     Window &loadAppearance(const std::string &aFileName);
 
@@ -173,6 +176,8 @@ class ListView : public Window
     u32 _visibleRowCount;
     u16 _rowsPerpage;
     bool _touchMovedAfterTouchDown;
+
+    int _scrollSpeed;
 
     std::vector<ListColumn> _columns;
     std::vector<itemVector> _rows;

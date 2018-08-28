@@ -44,7 +44,7 @@
 using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
-    : ListView(x, y, w, h, parent, text), _showAllFiles(false)
+    : ListView(x, y, w, h, parent, text, gs().scrollSpeed), _showAllFiles(false)
 {
     _viewMode = VM_LIST;
     _activeIconScale = 1;

@@ -18,7 +18,6 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "ui.h"
 #include "listview.h"
 #include "drawing/gdi.h"
@@ -39,8 +38,8 @@ void ListItem::setText(const std::string &text)
     }
 }
 
-ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
-    : Window(parent, text)
+ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text, int scrollSpeed)
+    : Window(parent, text), _scrollSpeed(scrollSpeed)
 {
     _size = Size(w, h);
     _position = Point(x, y);
@@ -298,14 +297,14 @@ bool ListView::processTouchMessage(const TouchMessage &msg)
         {
             sumOfMoveY += msg.position().y;
         }
-        if (sumOfMoveY > gs().scrollSpeed)
+        if (sumOfMoveY > _scrollSpeed)
         {
             selectNext();
             scrollTo(_firstVisibleRowId + 1);
             sumOfMoveY = 0;
             _touchMovedAfterTouchDown = true;
         }
-        else if (sumOfMoveY < -gs().scrollSpeed)
+        else if (sumOfMoveY < -_scrollSpeed)
         {
             selectPrev();
             scrollTo(_firstVisibleRowId - 1);
@@ -346,6 +345,10 @@ bool ListView::processTouchMessage(const TouchMessage &msg)
     }
 
     return ret;
+}
+
+void ListView::setScrollSpeed(int scrollSpeed) {
+    _scrollSpeed = scrollSpeed;
 }
 
 } // namespace akui
