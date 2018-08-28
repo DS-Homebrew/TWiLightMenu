@@ -36,12 +36,15 @@
 #include "nand_banner_bin.h"
 #include "microsd_banner_bin.h"
 #include "gba_banner_bin.h"
+#include "gbarom_banner_bin.h"
 #include "folder_banner_bin.h"
 #include "ui/progresswnd.h"
 #include "language.h"
 #include "unicode.h"
 
 using namespace akui;
+
+extern bool flashcardUsed;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
     : ListView(x, y, w, h, parent, text, gs().scrollSpeed), _showAllFiles(false)
@@ -145,8 +148,10 @@ bool MainList::enterDir(const std::string &dirName)
         _romInfoList.clear();
 
         addDirEntry(0, LANG("mainlist", "microsd card"), "", SD_ROOT, "usd", microsd_banner_bin);
-        addDirEntry(1, "GBARunner2", "", SD_ROOT, "usd", microsd_banner_bin);
-        addDirEntry(2, "SLOT-1 Card", "", SD_ROOT, "usd", microsd_banner_bin);
+        addDirEntry(1, "GBARunner2", "", SD_ROOT, "usd", gbarom_banner_bin);
+        if (!flashcardUsed) {
+			addDirEntry(2, "SLOT-1 Card", "", SD_ROOT, "usd", nand_banner_bin);
+		}
 
         _currentDir = "~";
         directoryChanged();

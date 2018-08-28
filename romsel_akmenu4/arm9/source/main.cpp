@@ -63,6 +63,8 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
+bool flashcardUsed = false;
+
 //---------------------------------------------------------------------------------
 void stop(void)
 {
@@ -162,6 +164,7 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
+	if (!access("fat:/", F_OK)) flashcardUsed = true;
 	// setting scripts
 	gs().loadSettings();
 
