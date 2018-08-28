@@ -20,36 +20,36 @@
 
 #include "animation.h"
 
-cAnimation::cAnimation()
+Animation::Animation()
 {
     _visible = false;
 }
 
-cAnimation::~cAnimation()
+Animation::~Animation()
 {
 }
 
-void cAnimation::show()
+void Animation::show()
 {
     _visible = true;
 }
 
-void cAnimation::hide()
+void Animation::hide()
 {
     _visible = false;
 }
 
-cAnimationManager::cAnimationManager()
+AnimationManager::AnimationManager()
 {
 }
 
-cAnimationManager::~cAnimationManager()
+AnimationManager::~AnimationManager()
 {
 }
 
-void cAnimationManager::update()
+void AnimationManager::update()
 {
-    std::list<cAnimation *>::iterator itr = _animations.begin();
+    std::list<Animation *>::iterator itr = _animations.begin();
     while (itr != _animations.end())
     {
         (*itr)->update();
@@ -57,12 +57,12 @@ void cAnimationManager::update()
     }
 }
 
-void cAnimationManager::addAnimation(cAnimation *animation)
+void AnimationManager::addAnimation(Animation *animation)
 {
     _animations.push_back(animation);
 }
 
-void cAnimationManager::removeAnimation(cAnimation *animation)
+void AnimationManager::removeAnimation(Animation *animation)
 {
     _animations.remove(animation);
 }

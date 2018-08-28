@@ -29,30 +29,30 @@
 namespace akui
 {
 
-class cForm : public cWindow
+class Form : public Window
 {
 
   public:
-    cForm(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    Form(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~cForm();
+    ~Form();
 
   public:
     u32 doModal();
 
-    cForm &addChildWindow(cWindow *aWindow);
+    Form &addChildWindow(Window *aWindow);
 
-    cForm &removeChildWindow(cWindow *aWindow);
+    Form &removeChildWindow(Window *aWindow);
 
-    cForm &arrangeChildren();
+    Form &arrangeChildren();
 
     void draw();
 
     //cWindow& loadAppearance(const std::string& aFileName );
 
-    bool process(const cMessage &msg);
+    bool process(const Message &msg);
 
-    cWindow *windowBelow(const cPoint &p);
+    Window *windowBelow(const Point &p);
 
     u32 modalRet();
 
@@ -60,7 +60,7 @@ class cForm : public cWindow
 
     bool isActive(void) const;
 
-    cWindow &disableFocus(void);
+    Window &disableFocus(void);
 
   protected:
     virtual void onOK();
@@ -71,9 +71,9 @@ class cForm : public cWindow
 
     void onMove();
 
-    bool processKeyMessage(const cKeyMessage &msg);
+    bool processKeyMessage(const KeyMessage &msg);
 
-    std::list<cWindow *> _childWindows;
+    std::list<Window *> _childWindows;
 
     //cFormDesc * _renderDesc;
     u32 _modalRet;

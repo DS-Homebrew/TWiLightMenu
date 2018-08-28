@@ -25,8 +25,8 @@
 namespace akui
 {
 
-cStaticText::cStaticText(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cWindow(parent, text)
+StaticText::StaticText(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Window(parent, text)
 {
     _position.x = x;
     _position.y = y;
@@ -35,22 +35,22 @@ cStaticText::cStaticText(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
     _textColor = uiSettings().formTextColor; //(RGB15(31,31,31))
 }
 
-cStaticText::~cStaticText()
+StaticText::~StaticText()
 {
 }
 
-void cStaticText::draw()
+void StaticText::draw()
 {
     gdi().setPenColor(_textColor, _engine);
     gdi().textOutRect(_position.x, _position.y, _size.x, _size.y, _text.c_str(), selectedEngine());
 }
 
-cWindow &cStaticText::loadAppearance(const std::string &aFileName)
+Window &StaticText::loadAppearance(const std::string &aFileName)
 {
     return *this;
 }
 
-void cStaticText::setTextColor(COLOR color)
+void StaticText::setTextColor(COLOR color)
 {
     _textColor = color;
 }

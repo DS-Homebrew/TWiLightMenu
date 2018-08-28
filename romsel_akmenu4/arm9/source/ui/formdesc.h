@@ -28,15 +28,15 @@
 namespace akui
 {
 
-class cFormDesc : public cRenderDesc
+class FormDesc : public RenderDesc
 {
   public:
-    cFormDesc();
+    FormDesc();
 
-    ~cFormDesc();
+    ~FormDesc();
 
   public:
-    void draw(const cRect &area, GRAPHICS_ENGINE engine) const;
+    void draw(const Rect &area, GRAPHICS_ENGINE engine) const;
 
     void loadData(const std::string &topleftBmpFile,
                   const std::string &toprightBmpFile,
@@ -45,9 +45,9 @@ class cFormDesc : public cRenderDesc
     void setTitleText(const std::string &text);
 
   protected:
-    cBMP15 _topleft;
-    cBMP15 _middle;
-    cBMP15 _topright;
+    BMP15 _topleft;
+    BMP15 _middle;
+    BMP15 _topright;
 
     COLOR _bodyColor;
     COLOR _frameColor;

@@ -31,19 +31,19 @@
 #include <string>
 #include "dsrom.h"
 
-class cRomInfoWnd : public akui::cForm
+class RomInfoWnd : public akui::Form
 {
   public:
-    cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~cRomInfoWnd();
+    ~RomInfoWnd();
 
   public:
     void draw();
 
-    bool process(const akui::cMessage &msg);
+    bool process(const akui::Message &msg);
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
     void setFileInfo(const std::string &fullName, const std::string &showName);
 
@@ -67,7 +67,7 @@ class cRomInfoWnd : public akui::cForm
 
     // void pressCopySlot(void);
 
-    bool processKeyMessage(const akui::cKeyMessage &msg);
+    bool processKeyMessage(const akui::KeyMessage &msg);
 
     void onOK();
 
@@ -75,17 +75,17 @@ class cRomInfoWnd : public akui::cForm
 
     void addCode(void);
 
-    akui::cButton _buttonOK;
+    akui::Button _buttonOK;
 
-    akui::cButton _buttonGameSettings;
+    akui::Button _buttonGameSettings;
 
-    // akui::cButton _buttonFlash;
+    // akui::Button _buttonFlash;
 
-    // akui::cButton _buttonCopy;
+    // akui::Button _buttonCopy;
 
-    // akui::cButton _buttonCheats;
+    // akui::Button _buttonCheats;
 
-    akui::cFormDesc _renderDesc;
+    akui::FormDesc _renderDesc;
 
     DSRomInfo _romInfo;
 
@@ -103,7 +103,7 @@ class cRomInfoWnd : public akui::cForm
 
     u32 _size;
 
-    cSettingWnd *_settingWnd;
+    SettingWnd *_settingWnd;
 };
 
 #endif //_ROMINFOWND_H_

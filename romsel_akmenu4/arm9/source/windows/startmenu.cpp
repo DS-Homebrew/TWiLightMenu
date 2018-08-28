@@ -26,7 +26,7 @@
 
 using namespace akui;
 
-void cStartMenu::init()
+void StartMenu::init()
 {
     // addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
     // addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
@@ -42,21 +42,21 @@ void cStartMenu::init()
     dbg_printf("startmenu ok\n");
 }
 
-bool cStartMenu::process(const cMessage &msg)
+bool StartMenu::process(const Message &msg)
 {
-    if (msg.id() == cMessage::keyDown)
+    if (msg.id() == Message::keyDown)
     {
-        cKeyMessage &kmsg = (cKeyMessage &)msg;
-        if (kmsg.keyCode() == cKeyMessage::UI_KEY_START)
+        KeyMessage &kmsg = (KeyMessage &)msg;
+        if (kmsg.keyCode() == KeyMessage::UI_KEY_START)
         {
             hide();
             return false;
         }
     }
-    return cPopMenu::process(msg);
+    return PopMenu::process(msg);
 }
 
-cWindow &cStartMenu::loadAppearance(const std::string &aFileName)
+Window &StartMenu::loadAppearance(const std::string &aFileName)
 {
     _renderDesc->loadData(SFN_STARTMENU_BG);
     _size = _renderDesc->size();
@@ -67,8 +67,8 @@ cWindow &cStartMenu::loadAppearance(const std::string &aFileName)
     int iy = ini.GetInt("start menu", "itemY", 12);
     int x = ini.GetInt("start menu", "x", 4);
     int y = ini.GetInt("start menu", "y", 4);
-    setPosition(cPoint(x, y));
-    _itemTopLeftPoint = cPoint(ix, iy);
+    setPosition(Point(x, y));
+    _itemTopLeftPoint = Point(ix, iy);
     _itemHeight = ini.GetInt("start menu", "itemHeight", 16);
     _itemWidth = ini.GetInt("start menu", "itemWidth", 0);
     _barLeft = ini.GetInt("start menu", "barLeft", 2);

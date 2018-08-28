@@ -27,22 +27,22 @@
 #include "time/datetime.h"
 #include "singleton.h"
 
-class cUserWindow : public akui::cWindow
+class UserWindow : public akui::Window
 {
   public:
-    cUserWindow();
+    UserWindow();
 
-    ~cUserWindow() {}
+    ~UserWindow() {}
 
   public:
     void draw();
 
-    akui::cWindow &loadAppearance(const std::string &aFileName) { return *this; }
+    akui::Window &loadAppearance(const std::string &aFileName) { return *this; }
 
   protected:
     void init();
 
-    cBMP15 _userPicture;
+    BMP15 _userPicture;
     int _px;
     int _py;
     std::string _userText;
@@ -60,7 +60,7 @@ class cUserWindow : public akui::cWindow
     bool _showCustomPic;
 };
 
-typedef t_singleton<cUserWindow> UserWindow_s;
-inline cUserWindow &userWindow() { return UserWindow_s::instance(); }
+typedef t_singleton<UserWindow> UserWindow_s;
+inline UserWindow &userWindow() { return UserWindow_s::instance(); }
 
 #endif //_UserWindow_H_

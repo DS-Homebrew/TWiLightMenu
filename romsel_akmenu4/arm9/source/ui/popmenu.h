@@ -31,17 +31,17 @@
 namespace akui
 {
 
-class cPopMenu : public cWindow
+class PopMenu : public Window
 {
   public:
-    cPopMenu(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    PopMenu(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~cPopMenu();
+    ~PopMenu();
 
   public:
     void draw();
 
-    bool process(const cMessage &msg);
+    bool process(const Message &msg);
 
     // ����ѡ�е���
     void popup();
@@ -59,17 +59,17 @@ class cPopMenu : public cWindow
   protected:
     void onShow();
 
-    bool processKeyMessage(const cKeyMessage &msg);
+    bool processKeyMessage(const KeyMessage &msg);
 
-    bool processTouchMessage(const cTouchMessage &msg);
+    bool processTouchMessage(const TouchMessage &msg);
 
-    u32 itemBelowPoint(const cPoint &pt);
+    u32 itemBelowPoint(const Point &pt);
 
     void drawItems();
 
     s16 barWidth(void);
 
-    cPoint _itemTopLeftPoint;
+    Point _itemTopLeftPoint;
 
     std::vector<std::string> _items;
 
@@ -83,7 +83,7 @@ class cPopMenu : public cWindow
     COLOR _textHighLightColor;
     COLOR _barColor;
 
-    cBitmapDesc *_renderDesc;
+    BitmapDesc *_renderDesc;
     bool _skipTouch;
 };
 

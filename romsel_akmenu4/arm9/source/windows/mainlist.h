@@ -31,7 +31,7 @@
 
 #define SD_ROOT "/"
 
-class cMainList : public akui::cListView
+class MainList : public akui::ListView
 {
 public:
   enum VIEW_MODE
@@ -52,9 +52,9 @@ public:
   };
 
 public:
-  cMainList(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+  MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-  ~cMainList();
+  ~MainList();
 
 public:
   int init();
@@ -124,7 +124,7 @@ protected:
 
   std::vector<DSRomInfo> _romInfoList;
 
-  cZoomingIcon _activeIcon;
+  ZoomingIcon _activeIcon;
 
   float _activeIconScale;
 

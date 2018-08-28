@@ -27,11 +27,11 @@
 namespace akui
 {
 
-cPopMenu::cPopMenu(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cWindow(parent, text)
+PopMenu::PopMenu(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Window(parent, text)
 {
-    _size = cSize(w, h);
-    _position = cPoint(x, y);
+    _size = Size(w, h);
+    _position = Point(x, y);
 
     _selectedItemIndex = 0;
     _itemHeight = 0;
@@ -42,55 +42,55 @@ cPopMenu::cPopMenu(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::strin
     _textHighLightColor = uiSettings().popMenuTextHighLightColor;
     _barColor = uiSettings().popMenuBarColor;
 
-    _renderDesc = new cBitmapDesc();
+    _renderDesc = new BitmapDesc();
     _renderDesc->setBltMode(BM_MASKBLT);
 
     _skipTouch = false;
 }
 
-cPopMenu::~cPopMenu()
+PopMenu::~PopMenu()
 {
     if (NULL != _renderDesc)
         delete _renderDesc;
 }
 
-void cPopMenu::popup()
+void PopMenu::popup()
 {
     show();
     return;
 }
 
-void cPopMenu::addItem(size_t index, const std::string &itemText)
+void PopMenu::addItem(size_t index, const std::string &itemText)
 {
     if (index > _items.size())
         index = _items.size();
     _items.insert(_items.begin() + index, itemText);
 }
 
-void cPopMenu::removeItem(size_t index)
+void PopMenu::removeItem(size_t index)
 {
     if (index > _items.size() - 1)
         index = _items.size() - 1;
     _items.erase(_items.begin() + index);
 }
 
-size_t cPopMenu::itemCount()
+size_t PopMenu::itemCount()
 {
     return _items.size();
 }
 
-void cPopMenu::clearItem()
+void PopMenu::clearItem()
 {
     _items.clear();
 }
 
-void cPopMenu::draw()
+void PopMenu::draw()
 {
     _renderDesc->draw(windowRectangle(), selectedEngine());
     drawItems();
 }
 
-void cPopMenu::drawItems()
+void PopMenu::drawItems()
 {
     // ѭ������item���֣����� selected ���־��Ȼ���ѡ����
     for (size_t i = 0; i < _items.size(); ++i)
@@ -113,56 +113,56 @@ void cPopMenu::drawItems()
     }
 }
 
-s16 cPopMenu::barWidth(void)
+s16 PopMenu::barWidth(void)
 {
     return _itemWidth ? _itemWidth : (_size.x - 2 * _barLeft);
 }
 
-bool cPopMenu::process(const cMessage &msg)
+bool PopMenu::process(const Message &msg)
 {
     bool ret = false;
     if (isVisible())
     {
-        //ret = cForm::process( msg );
-        if (msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd)
+        //ret = Form::process( msg );
+        if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
         {
-            ret = processKeyMessage((cKeyMessage &)msg);
+            ret = processKeyMessage((KeyMessage &)msg);
         }
-        else if (msg.id() > cMessage::touchMessageStart && msg.id() < cMessage::touchMessageEnd)
+        else if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
         {
-            ret = processTouchMessage((cTouchMessage &)msg);
+            ret = processTouchMessage((TouchMessage &)msg);
         }
     }
 
-    // cPopMenu process all KEY messages while it is showing
+    // PopMenu process all KEY messages while it is showing
     // derived classes can override this feature
     return ret;
 }
 
-bool cPopMenu::processKeyMessage(const cKeyMessage &msg)
+bool PopMenu::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false;
     switch (msg.keyCode())
     {
-    case cKeyMessage::UI_KEY_DOWN:
+    case KeyMessage::UI_KEY_DOWN:
         _selectedItemIndex += 1;
         if (_selectedItemIndex > (s16)_items.size() - 1)
             _selectedItemIndex = 0;
         ret = true;
         break;
-    case cKeyMessage::UI_KEY_UP:
+    case KeyMessage::UI_KEY_UP:
         _selectedItemIndex -= 1;
         if (_selectedItemIndex < 0)
             _selectedItemIndex = (s16)_items.size() - 1;
         ret = true;
         break;
-    case cKeyMessage::UI_KEY_A:
+    case KeyMessage::UI_KEY_A:
         // do something by ( _selectedItemIndex )
         hide();
         itemClicked(_selectedItemIndex);
         ret = true;
         break;
-    case cKeyMessage::UI_KEY_B:
+    case KeyMessage::UI_KEY_B:
         hide();
         ret = true;
         break;
@@ -171,12 +171,12 @@ bool cPopMenu::processKeyMessage(const cKeyMessage &msg)
     return ret;
 }
 
-bool cPopMenu::processTouchMessage(const cTouchMessage &msg)
+bool PopMenu::processTouchMessage(const TouchMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == cMessage::touchUp)
+    if (msg.id() == Message::touchUp)
     {
-        if (windowBelow(cPoint(msg.position().x, msg.position().y)) && !_skipTouch)
+        if (windowBelow(Point(msg.position().x, msg.position().y)) && !_skipTouch)
         {
             hide();
             itemClicked(_selectedItemIndex);
@@ -187,10 +187,10 @@ bool cPopMenu::processTouchMessage(const cTouchMessage &msg)
         _skipTouch = false;
         ret = true;
     }
-    if (msg.id() == cMessage::touchMove || msg.id() == cMessage::touchDown)
+    if (msg.id() == Message::touchMove || msg.id() == Message::touchDown)
     {
         const INPUT &input = getInput();
-        size_t item = itemBelowPoint(cPoint(input.touchPt.px, input.touchPt.py));
+        size_t item = itemBelowPoint(Point(input.touchPt.px, input.touchPt.py));
         if ((size_t)-1 == item)
             _skipTouch = true;
         else
@@ -201,11 +201,11 @@ bool cPopMenu::processTouchMessage(const cTouchMessage &msg)
     return ret;
 }
 
-u32 cPopMenu::itemBelowPoint(const cPoint &pt)
+u32 PopMenu::itemBelowPoint(const Point &pt)
 {
-    cPoint menuPos(position().x + _barLeft, position().y + _itemTopLeftPoint.y - 2);
-    cSize menuSize(barWidth(), _itemHeight * _items.size());
-    cRect rect(menuPos, menuPos + menuSize);
+    Point menuPos(position().x + _barLeft, position().y + _itemTopLeftPoint.y - 2);
+    Size menuSize(barWidth(), _itemHeight * _items.size());
+    Rect rect(menuPos, menuPos + menuSize);
 
     if (rect.surrounds(pt))
     {
@@ -217,7 +217,7 @@ u32 cPopMenu::itemBelowPoint(const cPoint &pt)
     return (u32)-1;
 }
 
-void cPopMenu::onShow()
+void PopMenu::onShow()
 {
     _selectedItemIndex = 0;
 }

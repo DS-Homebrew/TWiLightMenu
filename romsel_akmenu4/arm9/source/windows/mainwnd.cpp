@@ -53,12 +53,12 @@
 
 using namespace akui;
 
-cMainWnd::cMainWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text) : cForm(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
+MainWnd::MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text) : Form(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
                                                                                            _brightnessButton(NULL), _folderUpButton(NULL), _folderText(NULL), _processL(false)
 {
 }
 
-cMainWnd::~cMainWnd()
+MainWnd::~MainWnd()
 {
     delete _folderText;
     delete _folderUpButton;
@@ -69,7 +69,7 @@ cMainWnd::~cMainWnd()
     windowManager().removeWindow(this);
 }
 
-void cMainWnd::init()
+void MainWnd::init()
 {
     int x = 0;
     int y = 0;
@@ -87,14 +87,14 @@ void cMainWnd::init()
 
     // init game file list
     //waitMs( 2000 );
-    _mainList = new cMainList(4, 20, 248, 152, this, "main list");
-    _mainList->setRelativePosition(cPoint(4, 20));
+    _mainList = new MainList(4, 20, 248, 152, this, "main list");
+    _mainList->setRelativePosition(Point(4, 20));
     _mainList->init();
-    _mainList->selectChanged.connect(this, &cMainWnd::listSelChange);
-    _mainList->selectedRowClicked.connect(this, &cMainWnd::onMainListSelItemClicked);
-    _mainList->selectedRowHeadClicked.connect(this, &cMainWnd::onMainListSelItemHeadClicked);
-    _mainList->directoryChanged.connect(this, &cMainWnd::onFolderChanged);
-    _mainList->animateIcons.connect(this, &cMainWnd::onAnimation);
+    _mainList->selectChanged.connect(this, &MainWnd::listSelChange);
+    _mainList->selectedRowClicked.connect(this, &MainWnd::onMainListSelItemClicked);
+    _mainList->selectedRowHeadClicked.connect(this, &MainWnd::onMainListSelItemHeadClicked);
+    _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
+    _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
     addChildWindow(_mainList);
     dbg_printf("mainlist %08x\n", _mainList);
@@ -117,12 +117,12 @@ void cMainWnd::init()
     {
         text = LANG("start menu", "START");
     }
-    //_startButton = new cButton( 0, 172, 48, 18, this, " Start" );
-    _startButton = new cButton(x, y, w, h, this, text);
-    _startButton->setStyle(cButton::press);
-    _startButton->setRelativePosition(cPoint(x, y));
+    //_startButton = new Button( 0, 172, 48, 18, this, " Start" );
+    _startButton = new Button(x, y, w, h, this, text);
+    _startButton->setStyle(Button::press);
+    _startButton->setRelativePosition(Point(x, y));
     _startButton->loadAppearance(file);
-    _startButton->clicked.connect(this, &cMainWnd::startButtonClicked);
+    _startButton->clicked.connect(this, &MainWnd::startButtonClicked);
     _startButton->setTextColor(color | BIT(15));
     if (!ini.GetInt("start button", "show", 1))
         _startButton->hide();
@@ -133,37 +133,37 @@ void cMainWnd::init()
     // y = ini.GetInt("brightness btn", "y", 1);
     // w = ini.GetInt("brightness btn", "w", 16);
     // h = ini.GetInt("brightness btn", "h", 16);
-    // _brightnessButton = new cButton(x, y, w, h, this, "");
-    // _brightnessButton->setRelativePosition(cPoint(x, y));
+    // _brightnessButton = new Button(x, y, w, h, this, "");
+    // _brightnessButton->setRelativePosition(Point(x, y));
     // _brightnessButton->loadAppearance(SFN_BRIGHTNESS_BUTTON);
-    // _brightnessButton->pressed.connect(this, &cMainWnd::brightnessButtonClicked);
+    // _brightnessButton->pressed.connect(this, &MainWnd::brightnessButtonClicked);
     // addChildWindow(_brightnessButton);
 
     x = ini.GetInt("folderup btn", "x", 0);
     y = ini.GetInt("folderup btn", "y", 2);
     w = ini.GetInt("folderup btn", "w", 32);
     h = ini.GetInt("folderup btn", "h", 16);
-    _folderUpButton = new cButton(x, y, w, h, this, "");
-    _folderUpButton->setRelativePosition(cPoint(x, y));
+    _folderUpButton = new Button(x, y, w, h, this, "");
+    _folderUpButton->setRelativePosition(Point(x, y));
     _folderUpButton->loadAppearance(SFN_FOLDERUP_BUTTON);
-    _folderUpButton->setSize(cSize(w, h));
-    _folderUpButton->pressed.connect(_mainList, &cMainList::backParentDir);
+    _folderUpButton->setSize(Size(w, h));
+    _folderUpButton->pressed.connect(_mainList, &MainList::backParentDir);
     addChildWindow(_folderUpButton);
 
     x = ini.GetInt("folder text", "x", 20);
     y = ini.GetInt("folder text", "y", 2);
     w = ini.GetInt("folder text", "w", 160);
     h = ini.GetInt("folder text", "h", 16);
-    _folderText = new cStaticText(x, y, w, h, this, "");
-    _folderText->setRelativePosition(cPoint(x, y));
+    _folderText = new StaticText(x, y, w, h, this, "");
+    _folderText->setRelativePosition(Point(x, y));
     _folderText->setTextColor(ini.GetInt("folder text", "color", 0));
     addChildWindow(_folderText);
 
     // init startmenu
-    _startMenu = new cStartMenu(160, 40, 61, 108, this, "start menu");
-    //_startMenu->setRelativePosition( cPoint(160, 40) );
+    _startMenu = new StartMenu(160, 40, 61, 108, this, "start menu");
+    //_startMenu->setRelativePosition( Point(160, 40) );
     _startMenu->init();
-    _startMenu->itemClicked.connect(this, &cMainWnd::startMenuItemClicked);
+    _startMenu->itemClicked.connect(this, &MainWnd::startMenuItemClicked);
     _startMenu->hide();
     _startMenu->setRelativePosition(_startMenu->position());
     addChildWindow(_startMenu);
@@ -173,12 +173,12 @@ void cMainWnd::init()
     arrangeChildren();
 }
 
-void cMainWnd::draw()
+void MainWnd::draw()
 {
-    cForm::draw();
+    Form::draw();
 }
 
-void cMainWnd::listSelChange(u32 i)
+void MainWnd::listSelChange(u32 i)
 {
 // #ifdef DEBUG
 //     //dbg_printf( "main list item %d\n", i );
@@ -197,7 +197,7 @@ void cMainWnd::listSelChange(u32 i)
 // #endif //DEBUG
 }
 
-void cMainWnd::startMenuItemClicked(s16 i)
+void MainWnd::startMenuItemClicked(s16 i)
 {
     dbg_printf("start menu item %d\n", i);
     //messageBox( this, "Power Off", "Are you sure you want to turn off ds?", MB_YES | MB_NO );
@@ -238,7 +238,7 @@ void cMainWnd::startMenuItemClicked(s16 i)
     //     bool ret = false;
     //     if (_mainList->IsFavorites())
     //     {
-    //         ret = cFavorites::AddToFavorites(getSrcFile());
+    //         ret = Favorites::AddToFavorites(getSrcFile());
     //     }
     //     else
     //     {
@@ -256,7 +256,7 @@ void cMainWnd::startMenuItemClicked(s16 i)
     //         bool ret = false;
     //         if (_mainList->IsFavorites())
     //         {
-    //             ret = cFavorites::RemoveFromFavorites(fullPath);
+    //             ret = Favorites::RemoveFromFavorites(fullPath);
     //         }
     //         else
     //         {
@@ -285,7 +285,7 @@ void cMainWnd::startMenuItemClicked(s16 i)
     //     u32 h = 160;
     //     w = ini.GetInt("help window", "w", w);
     //     h = ini.GetInt("help window", "h", h);
-    //     cHelpWnd *helpWnd = new cHelpWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("help window", "title"));
+    //     HelpWnd *helpWnd = new HelpWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("help window", "title"));
     //     helpWnd->doModal();
     //     delete helpWnd;
     // }
@@ -293,12 +293,12 @@ void cMainWnd::startMenuItemClicked(s16 i)
     // {
     //     u32 w = 250;
     //     u32 h = 130;
-    //     cExpWnd expWnd((256 - w) / 2, (192 - h) / 2, w, h, NULL, LANG("exp window", "title"));
+    //     ExpWnd expWnd((256 - w) / 2, (192 - h) / 2, w, h, NULL, LANG("exp window", "title"));
     //     expWnd.doModal();
     // }
 }
 
-void cMainWnd::startButtonClicked()
+void MainWnd::startButtonClicked()
 {
     if (_startMenu->isVisible())
     {
@@ -311,70 +311,70 @@ void cMainWnd::startButtonClicked()
     }
 }
 
-cWindow &cMainWnd::loadAppearance(const std::string &aFileName)
+Window &MainWnd::loadAppearance(const std::string &aFileName)
 {
     return *this;
 }
 
-bool cMainWnd::process(const cMessage &msg)
+bool MainWnd::process(const Message &msg)
 {
     if (_startMenu->isVisible())
         return _startMenu->process(msg);
 
     bool ret = false;
 
-    ret = cForm::process(msg);
+    ret = Form::process(msg);
 
     if (!ret)
     {
-        if (msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd)
+        if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
         {
-            ret = processKeyMessage((cKeyMessage &)msg);
+            ret = processKeyMessage((KeyMessage &)msg);
         }
 
-        if (msg.id() > cMessage::touchMessageStart && msg.id() < cMessage::touchMessageEnd)
+        if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
         {
-            ret = processTouchMessage((cTouchMessage &)msg);
+            ret = processTouchMessage((TouchMessage &)msg);
         }
     }
     return ret;
 }
 
-bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
+bool MainWnd::processKeyMessage(const KeyMessage &msg)
 {
-    bool ret = false, isL = msg.shift() & cKeyMessage::UI_SHIFT_L;
+    bool ret = false, isL = msg.shift() & KeyMessage::UI_SHIFT_L;
     bool allow = !gs().safeMode;
-    if (msg.id() == cMessage::keyDown)
+    if (msg.id() == Message::keyDown)
     {
         switch (msg.keyCode())
         {
-        case cKeyMessage::UI_KEY_DOWN:
+        case KeyMessage::UI_KEY_DOWN:
             _mainList->selectNext();
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_UP:
+        case KeyMessage::UI_KEY_UP:
             _mainList->selectPrev();
             ret = true;
             break;
 
-        case cKeyMessage::UI_KEY_LEFT:
+        case KeyMessage::UI_KEY_LEFT:
             _mainList->selectRow(_mainList->selectedRowId() - _mainList->visibleRowCount());
             ret = true;
             break;
 
-        case cKeyMessage::UI_KEY_RIGHT:
+        case KeyMessage::UI_KEY_RIGHT:
             _mainList->selectRow(_mainList->selectedRowId() + _mainList->visibleRowCount());
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_A:
+        case KeyMessage::UI_KEY_A:
             onKeyAPressed();
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_B:
+        case KeyMessage::UI_KEY_B:
             onKeyBPressed();
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_Y:
+        case KeyMessage::UI_KEY_Y:
             if (isL)
             {
                 showSettings();
@@ -386,7 +386,7 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
             }
             ret = true;
             break;
-//         case cKeyMessage::UI_KEY_X:
+//         case KeyMessage::UI_KEY_X:
 //         {
 //             if (isL)
 //             {
@@ -395,7 +395,7 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
 //                     DSRomInfo rominfo;
 //                     if (_mainList->getRomInfo(_mainList->selectedRowId(), rominfo) && rominfo.isDSRom() && !rominfo.isHomebrew())
 //                     {
-//                         cRomInfoWnd::showCheats(_mainList->getSelectedFullPath());
+//                         RomInfoWnd::showCheats(_mainList->getSelectedFullPath());
 //                     }
 //                 }
 //                 _processL = false;
@@ -423,11 +423,11 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
 //             ret = true;
 //             break;
 //         }
-        case cKeyMessage::UI_KEY_START:
+        case KeyMessage::UI_KEY_START:
             startButtonClicked();
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_SELECT:
+        case KeyMessage::UI_KEY_SELECT:
             if (isL)
             {
                 if (allow)
@@ -437,15 +437,15 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
             else
             {
                 if (allow)
-                    _mainList->setViewMode((cMainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
+                    _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
             }
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_L:
+        case KeyMessage::UI_KEY_L:
             _processL = true;
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_R:
+        case KeyMessage::UI_KEY_R:
            // brightnessButtonClicked();
 #ifdef DEBUG
             gdi().switchSubEngineMode();
@@ -458,11 +458,11 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
         }
         };
     }
-    if (msg.id() == cMessage::keyUp)
+    if (msg.id() == Message::keyUp)
     {
         switch (msg.keyCode())
         {
-        case cKeyMessage::UI_KEY_L:
+        case KeyMessage::UI_KEY_L:
             if (_processL)
             {
                 _mainList->backParentDir();
@@ -475,36 +475,36 @@ bool cMainWnd::processKeyMessage(const cKeyMessage &msg)
     return ret;
 }
 
-bool cMainWnd::processTouchMessage(const cTouchMessage &msg)
+bool MainWnd::processTouchMessage(const TouchMessage &msg)
 {
     bool ret = false;
 
     return ret;
 }
 
-void cMainWnd::onKeyYPressed()
+void MainWnd::onKeyYPressed()
 {
     if (gs().safeMode)
         return;
     showFileInfo();
 }
 
-void cMainWnd::onMainListSelItemClicked(u32 index)
+void MainWnd::onMainListSelItemClicked(u32 index)
 {
     onKeyAPressed();
 }
 
-void cMainWnd::onMainListSelItemHeadClicked(u32 index)
+void MainWnd::onMainListSelItemHeadClicked(u32 index)
 {
     onKeyAPressed();
 }
 
-void cMainWnd::onKeyAPressed()
+void MainWnd::onKeyAPressed()
 {
     launchSelected();
 }
 
-void cMainWnd::launchSelected()
+void MainWnd::launchSelected()
 {
     dbg_printf("Launch.");
     std::string fullPath = _mainList->getSelectedFullPath();
@@ -569,15 +569,15 @@ void cMainWnd::launchSelected()
 //         messageBox(this, title, text, MB_OK);
 }
 
-void cMainWnd::onKeyBPressed()
+void MainWnd::onKeyBPressed()
 {
     _mainList->backParentDir();
 }
 
-void cMainWnd::setParam(void)
+void MainWnd::setParam(void)
 {
     /*
-    cSettingWnd settingWnd(0, 0, 252, 188, NULL, LANG("system setting", "title"));
+    SettingWnd settingWnd(0, 0, 252, 188, NULL, LANG("system setting", "title"));
 
     //page 1: system
     std::string currentUIStyle = gs().uiName;
@@ -662,13 +662,13 @@ void cMainWnd::setParam(void)
     size_t scrollSpeed = 0;
     switch (gs().scrollSpeed)
     {
-    case cGlobalSettings::EScrollFast:
+    case GlobalSettings::EScrollFast:
         scrollSpeed = 0;
         break;
-    case cGlobalSettings::EScrollMedium:
+    case GlobalSettings::EScrollMedium:
         scrollSpeed = 1;
         break;
-    case cGlobalSettings::EScrollSlow:
+    case GlobalSettings::EScrollSlow:
         scrollSpeed = 2;
         break;
     }
@@ -742,13 +742,13 @@ void cMainWnd::setParam(void)
     switch (settingWnd.getItemSelection(1, 0))
     {
     case 0:
-        gs().scrollSpeed = cGlobalSettings::EScrollFast;
+        gs().scrollSpeed = GlobalSettings::EScrollFast;
         break;
     case 1:
-        gs().scrollSpeed = cGlobalSettings::EScrollMedium;
+        gs().scrollSpeed = GlobalSettings::EScrollMedium;
         break;
     case 2:
-        gs().scrollSpeed = cGlobalSettings::EScrollSlow;
+        gs().scrollSpeed = GlobalSettings::EScrollSlow;
         break;
     }
     gs().viewMode = settingWnd.getItemSelection(1, 1);
@@ -820,11 +820,12 @@ void cMainWnd::setParam(void)
     }
 
     gs().saveSettings();
-    _mainList->setViewMode((cMainList::VIEW_MODE)gs().viewMode);*/
+    _mainList->setViewMode((MainList::VIEW_MODE)gs().viewMode);*/
 }
 
-void cMainWnd::showSettings(void)
+void MainWnd::showSettings(void)
 {
+    dbg_printf("Launch titleandsettings...");
 //     // if (gs().safeMode)
 //     //     return;
 //     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
@@ -835,7 +836,7 @@ void cMainWnd::showSettings(void)
 //     }
 }
 
-void cMainWnd::showFileInfo()
+void MainWnd::showFileInfo()
 {
     DSRomInfo rominfo;
     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
@@ -851,7 +852,7 @@ void cMainWnd::showFileInfo()
     w = ini.GetInt("rom info window", "w", w);
     h = ini.GetInt("rom info window", "h", h);
 
-    cRomInfoWnd *romInfoWnd = new cRomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
+    RomInfoWnd *romInfoWnd = new RomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
     std::string showName = _mainList->getSelectedShowName();
     std::string fullPath = _mainList->getSelectedFullPath();
     romInfoWnd->setFileInfo(fullPath, showName);
@@ -863,7 +864,7 @@ void cMainWnd::showFileInfo()
     delete romInfoWnd;
 }
 
-void cMainWnd::onFolderChanged()
+void MainWnd::onFolderChanged()
 {
     resetInputIdle();
     std::string dirShowName = _mainList->getCurrentDir();
@@ -877,7 +878,7 @@ void cMainWnd::onFolderChanged()
     _folderText->setText(dirShowName);
 }
 
-void cMainWnd::onAnimation(bool &anAllow)
+void MainWnd::onAnimation(bool &anAllow)
 {
     if (_startMenu->isVisible())
         anAllow = false;
@@ -885,9 +886,9 @@ void cMainWnd::onAnimation(bool &anAllow)
         anAllow = false;
 }
 
-cWindow *cMainWnd::windowBelow(const cPoint &p)
+Window *MainWnd::windowBelow(const Point &p)
 {
-    cWindow *wbp = cForm::windowBelow(p);
+    Window *wbp = Form::windowBelow(p);
     if (_startMenu->isVisible() && wbp != _startButton)
         wbp = _startMenu;
     return wbp;

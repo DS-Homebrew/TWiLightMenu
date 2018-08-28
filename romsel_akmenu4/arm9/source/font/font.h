@@ -25,11 +25,11 @@
 #include <nds.h>
 #include <string>
 
-class cFont
+class Font
 {
 public:
-  cFont();
-  virtual ~cFont();
+  Font();
+  virtual ~Font();
 
 public:
   u32 getStringScreenWidth(const char *str, size_t len);

@@ -28,19 +28,19 @@ namespace akui
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //! Message caused by interevent with the keyboard
-class cKeyMessage : public cMessage
+class KeyMessage : public Message
 {
     // ---------------------------------------------------------------------------------------------
     //  Construction / Destruction
     // ---------------------------------------------------------------------------------------------
   public:
     //! constructor
-    cKeyMessage(Id anId, unsigned char aKeyCode, unsigned char aShift) : cMessage(anId),
+    KeyMessage(Id anId, unsigned char aKeyCode, unsigned char aShift) : Message(anId),
                                                                          _keyCode(aKeyCode),
                                                                          _shift(aShift) {}
 
     //! destructor
-    virtual ~cKeyMessage() {}
+    virtual ~KeyMessage() {}
 
     // ---------------------------------------------------------------------------------------------
     //  Accessors
@@ -78,20 +78,20 @@ class cKeyMessage : public cMessage
     unsigned char _shift;
 };
 
-//const unsigned char cKeyMessage::UI_KEY_A            =    1;  //!< Keypad A button.
-//const unsigned char cKeyMessage::UI_KEY_B            =    2;  //!< Keypad B button.
-//const unsigned char cKeyMessage::UI_KEY_SELECT        =    3;  //!< Keypad SELECT button.
-//const unsigned char cKeyMessage::UI_KEY_START        =    4;  //!< Keypad START button.
-//const unsigned char cKeyMessage::UI_KEY_RIGHT        =    5;  //!< Keypad RIGHT button.
-//const unsigned char cKeyMessage::UI_KEY_LEFT        =    6;  //!< Keypad LEFT button.
-//const unsigned char cKeyMessage::UI_KEY_UP            =    7;  //!< Keypad UP button.
-//const unsigned char cKeyMessage::UI_KEY_DOWN        =    8;  //!< Keypad DOWN button.
-//const unsigned char cKeyMessage::UI_KEY_R            =    9;  //!< Right shoulder button.
-//const unsigned char cKeyMessage::UI_KEY_L            =    10; //!< Left shoulder button.
-//const unsigned char cKeyMessage::UI_KEY_X            =    11; //!< Keypad X button.
-//const unsigned char cKeyMessage::UI_KEY_Y            =    12; //!< Keypad Y button.
-//const unsigned char cKeyMessage::UI_KEY_TOUCH        =    13; //!< Touchscreen pendown.
-//const unsigned char cKeyMessage::UI_KEY_LID            =    14; //!< Lid state.
+//const unsigned char KeyMessage::UI_KEY_A            =    1;  //!< Keypad A button.
+//const unsigned char KeyMessage::UI_KEY_B            =    2;  //!< Keypad B button.
+//const unsigned char KeyMessage::UI_KEY_SELECT        =    3;  //!< Keypad SELECT button.
+//const unsigned char KeyMessage::UI_KEY_START        =    4;  //!< Keypad START button.
+//const unsigned char KeyMessage::UI_KEY_RIGHT        =    5;  //!< Keypad RIGHT button.
+//const unsigned char KeyMessage::UI_KEY_LEFT        =    6;  //!< Keypad LEFT button.
+//const unsigned char KeyMessage::UI_KEY_UP            =    7;  //!< Keypad UP button.
+//const unsigned char KeyMessage::UI_KEY_DOWN        =    8;  //!< Keypad DOWN button.
+//const unsigned char KeyMessage::UI_KEY_R            =    9;  //!< Right shoulder button.
+//const unsigned char KeyMessage::UI_KEY_L            =    10; //!< Left shoulder button.
+//const unsigned char KeyMessage::UI_KEY_X            =    11; //!< Keypad X button.
+//const unsigned char KeyMessage::UI_KEY_Y            =    12; //!< Keypad Y button.
+//const unsigned char KeyMessage::UI_KEY_TOUCH        =    13; //!< Touchscreen pendown.
+//const unsigned char KeyMessage::UI_KEY_LID            =    14; //!< Lid state.
 
 } // namespace akui
 

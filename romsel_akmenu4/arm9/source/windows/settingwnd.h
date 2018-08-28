@@ -28,16 +28,16 @@
 #include "ui/message.h"
 #include <string>
 
-class cSettingWnd : public akui::cForm
+class SettingWnd : public akui::Form
 {
 public:
-  cSettingWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
-  ~cSettingWnd();
+  SettingWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
+  ~SettingWnd();
 
 public:
   void draw(void);
-  bool process(const akui::cMessage &msg);
-  cWindow &loadAppearance(const std::string &aFileName);
+  bool process(const akui::Message &msg);
+  Window &loadAppearance(const std::string &aFileName);
   void addSettingTab(const std::string &text);
   void addSettingItem(const std::string &text, const std::vector<std::string> &itemTexts, size_t defaultValue);
   ssize_t getItemSelection(size_t tabId, size_t itemId);
@@ -53,9 +53,9 @@ public:
 protected:
   struct sSetingItem
   {
-    akui::cStaticText *_label;
-    akui::cSpinBox *_item;
-    sSetingItem(akui::cStaticText *label, akui::cSpinBox *item) : _label(label), _item(item){};
+    akui::StaticText *_label;
+    akui::SpinBox *_item;
+    sSetingItem(akui::StaticText *label, akui::SpinBox *item) : _label(label), _item(item){};
   };
   struct sSetingTab
   {
@@ -74,10 +74,10 @@ protected:
   void onUIKeyRIGHT(void);
   void onUIKeyL(void);
   void onUIKeyR(void);
-  bool processKeyMessage(const akui::cKeyMessage &msg);
-  void onItemChanged(akui::cSpinBox *item);
+  bool processKeyMessage(const akui::KeyMessage &msg);
+  void onItemChanged(akui::SpinBox *item);
   ssize_t focusedItemId(void);
-  akui::cSpinBox *focusedItem(void);
+  akui::SpinBox *focusedItem(void);
 
   void HideTab(size_t index);
   void ShowTab(size_t index);
@@ -93,11 +93,11 @@ protected:
   size_t _maxTabSize;
   std::string _confirmMessage;
 
-  akui::cSpinBox _tabSwitcher;
-  akui::cButton _buttonOK;
-  akui::cButton _buttonCancel;
-  akui::cFormDesc _renderDesc;
-  akui::cButton _buttonY;
+  akui::SpinBox _tabSwitcher;
+  akui::Button _buttonOK;
+  akui::Button _buttonCancel;
+  akui::FormDesc _renderDesc;
+  akui::Button _buttonY;
 };
 
 #endif //_SETTINGWND_H_

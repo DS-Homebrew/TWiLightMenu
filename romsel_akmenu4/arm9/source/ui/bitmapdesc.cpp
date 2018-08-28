@@ -26,16 +26,16 @@ namespace akui
 {
 
 ///////////////////////////////// desc ////////////////
-cBitmapDesc::cBitmapDesc()
+BitmapDesc::BitmapDesc()
 {
     _bltmode = BM_BITBLT;
 }
 
-cBitmapDesc::~cBitmapDesc()
+BitmapDesc::~BitmapDesc()
 {
 }
 
-void cBitmapDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
+void BitmapDesc::draw(const Rect &area, GRAPHICS_ENGINE engine) const
 {
     if (_background.valid())
     {
@@ -50,7 +50,7 @@ void cBitmapDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
     }
 }
 
-void cBitmapDesc::loadData(const std::string &filename)
+void BitmapDesc::loadData(const std::string &filename)
 {
     if (!_background.valid())
     {
@@ -58,12 +58,12 @@ void cBitmapDesc::loadData(const std::string &filename)
     }
 }
 
-cSize cBitmapDesc::size()
+Size BitmapDesc::size()
 {
     if (_background.valid())
-        return cSize(_background.width(), _background.height());
+        return Size(_background.width(), _background.height());
     else
-        return cSize(0, 0);
+        return Size(0, 0);
 }
 
 } // namespace akui

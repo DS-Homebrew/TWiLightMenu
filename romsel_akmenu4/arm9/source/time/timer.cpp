@@ -21,18 +21,18 @@
 #include <nds.h>
 #include "time/timer.h"
 
-vu64 cTimer::_overFlow = 0;
-cTimer::cTimer()
+vu64 Timer::_overFlow = 0;
+Timer::Timer()
 {
     //initTimer();
 }
 
-void cTimer::timerInterruptHandler()
+void Timer::timerInterruptHandler()
 {
     _overFlow += 65536;
 }
 
-void cTimer::initTimer()
+void Timer::initTimer()
 {
     _lastTime = 0;
     _currentTime = 0;
@@ -40,18 +40,18 @@ void cTimer::initTimer()
     _fps = 0.f;
     _fpsCounter = 0;
     irqEnable( IRQ_TIMER0 );
-    irqSet( IRQ_TIMER0, cTimer::timerInterruptHandler );
+    irqSet( IRQ_TIMER0, Timer::timerInterruptHandler );
     TIMER0_DATA = 0; // set reload value
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
 }
 
-double cTimer::updateTimer()
+double Timer::updateTimer()
 {
     _currentTime = (_overFlow + TIMER0_DATA) * _factor;
     return _currentTime;
 }
 
-double cTimer::updateFps()
+double Timer::updateFps()
 {
     if( _fpsCounter++ > 60 )
     {
@@ -63,12 +63,12 @@ double cTimer::updateFps()
     return _fps;
 }
 
-double cTimer::getTime()
+double Timer::getTime()
 {
     return _currentTime;
 }
 
-vu64 cTimer::getTick()
+vu64 Timer::getTick()
 {
     irqDisable( IRQ_TIMER0 );
     DC_FlushAll();
@@ -81,12 +81,12 @@ vu64 cTimer::getTick()
     return tick;
 }
 
-double cTimer::tickToUs( u64 tick )
+double Timer::tickToUs( u64 tick )
 {
     return tick * 1.f/(33.514*1000000.f) * 1000 * 1000;
 }
 
-double cTimer::getFps()
+double Timer::getFps()
 {
     return _fps;
 }

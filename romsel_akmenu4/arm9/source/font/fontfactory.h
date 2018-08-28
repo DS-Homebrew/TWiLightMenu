@@ -29,25 +29,25 @@
 
 
 
-class cFontFactory
+class FontFactory
 {
 public:
 
-    cFontFactory();
+    FontFactory();
 
-    ~cFontFactory();
+    ~FontFactory();
 
     void makeFont(void);
 
-    cFont & font() { return *_font; }
+    Font & font() { return *_font; }
 
 protected:
 
-    cFont * _font;
+    Font * _font;
 };
 
-typedef t_singleton< cFontFactory > fontFactory_s;
-inline cFontFactory & fontFactory() { return fontFactory_s::instance(); }
-inline cFont & font() { return fontFactory_s::instance().font(); }
+typedef t_singleton< FontFactory > fontFactory_s;
+inline FontFactory & fontFactory() { return fontFactory_s::instance(); }
+inline Font & font() { return fontFactory_s::instance().font(); }
 
 #endif

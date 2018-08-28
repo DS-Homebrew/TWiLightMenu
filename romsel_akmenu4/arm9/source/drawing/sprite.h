@@ -41,15 +41,15 @@ enum SPRITE_SHAPE
 };
 
 
-class cSprite
+class Sprite
 {
 public:
 
-    cSprite() { init(0); }
+    Sprite() { init(0); }
 
-    cSprite( u8 id );
+    Sprite( u8 id );
 
-    ~cSprite();
+    ~Sprite();
 
     static void sysinit();
     void init( u16 id );
@@ -68,7 +68,7 @@ public:
 
     u16 * buffer();
 
-    //cSprite & operator=( const cSprite & src );
+    //cSprite & operator=( const Sprite & src );
 
 protected:
 
@@ -88,12 +88,12 @@ protected:
 };
 
 
-//class cSpritePool
+//class SpritePool
 //{
 //public:
-//    cSprite * createSprite( SPRITE_SIZE size, SPRITE_SHAPE shape );
+//    Sprite * createSprite( SPRITE_SIZE size, SPRITE_SHAPE shape );
 //
-//    void destroySprite( cSprite * pointer );
+//    void destroySprite( Sprite * pointer );
 //
 //};
 

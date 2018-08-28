@@ -28,10 +28,10 @@
 
 using namespace akui;
 
-cCalendar::cCalendar() : cWindow(NULL, "calendar")
+Calendar::Calendar() : Window(NULL, "calendar")
 {
-    _size = cSize(0, 0);
-    _position = cPoint(134, 34);
+    _size = Size(0, 0);
+    _position = Point(134, 34);
     _engine = GE_SUB;
 
     _showYear = false;
@@ -40,12 +40,12 @@ cCalendar::cCalendar() : cWindow(NULL, "calendar")
     _showDay = false;
 }
 
-void cCalendar::init()
+void Calendar::init()
 {
     loadAppearance(SFN_UI_SETTINGS);
 }
 
-cWindow &cCalendar::loadAppearance(const std::string &aFileName)
+Window &Calendar::loadAppearance(const std::string &aFileName)
 {
     // load day number
     _dayNumbers = createBMP15FromFile(SFN_DAY_NUMBERS);
@@ -82,7 +82,7 @@ static u8 daysOfMonth()
     return (28 | (((IS_LEAP(datetime().year()) ? 62648028 : 62648012) >> (datetime().month() * 2)) & 3));
 }
 
-void cCalendar::drawDayNumber(u8 day)
+void Calendar::drawDayNumber(u8 day)
 {
     if (day > 31)
         return;
@@ -107,12 +107,12 @@ void cCalendar::drawDayNumber(u8 day)
     }
 }
 
-u8 cCalendar::weekDayOfFirstDay()
+u8 Calendar::weekDayOfFirstDay()
 {
     return (datetime().weekday() + 7 - ((datetime().day() - 1) % 7)) % 7;
 }
 
-void cCalendar::drawNumber(const akui::cPoint &position, u32 index, u32 value)
+void Calendar::drawNumber(const akui::Point &position, u32 index, u32 value)
 {
     if (!_yearNumbers.valid())
         return;
@@ -126,7 +126,7 @@ void cCalendar::drawNumber(const akui::cPoint &position, u32 index, u32 value)
     gdi().maskBlt(_yearNumbers.buffer() + value * pitch * h / 2, x, y, w, h, selectedEngine());
 }
 
-void cCalendar::drawText(const akui::cPoint &position, u32 value, u32 factor)
+void Calendar::drawText(const akui::Point &position, u32 value, u32 factor)
 {
     u32 ii = 0;
     while (true)
@@ -141,7 +141,7 @@ void cCalendar::drawText(const akui::cPoint &position, u32 value, u32 factor)
     }
 }
 
-void cCalendar::draw()
+void Calendar::draw()
 {
     if (_showDay)
     {

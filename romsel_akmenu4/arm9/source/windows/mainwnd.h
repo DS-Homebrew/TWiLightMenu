@@ -30,27 +30,27 @@
 #include "settingwnd.h"
 #include "startmenu.h"
 
-class cMainWnd : public akui::cForm
+class MainWnd : public akui::Form
 {
 public:
 
-    cMainWnd( s32 x, s32 y, u32 w, u32 h, cWindow * parent, const std::string & text );
+    MainWnd( s32 x, s32 y, u32 w, u32 h, Window * parent, const std::string & text );
 
-    ~cMainWnd();
+    ~MainWnd();
 
 public:
 
-    bool process( const akui::cMessage & msg );
+    bool process( const akui::Message & msg );
 
-    cWindow& loadAppearance(const std::string& aFileName );
+    Window& loadAppearance(const std::string& aFileName );
 
     void init();
 
     void draw();
 
-    cWindow* windowBelow(const akui::cPoint & p);
+    Window* windowBelow(const akui::Point & p);
 
-    cMainList * _mainList;
+    MainList * _mainList;
 
 protected:
 
@@ -74,9 +74,9 @@ protected:
 
     void brightnessButtonClicked();
 
-    bool processKeyMessage( const akui::cKeyMessage & msg );
+    bool processKeyMessage( const akui::KeyMessage & msg );
 
-    bool processTouchMessage( const akui::cTouchMessage & msg );
+    bool processTouchMessage( const akui::TouchMessage & msg );
 
     void setParam(void);
 
@@ -90,15 +90,15 @@ protected:
 
     void launchSelected();
 
-    cStartMenu * _startMenu;
+    StartMenu * _startMenu;
 
-    akui::cButton * _startButton;
+    akui::Button * _startButton;
 
-    akui::cButton * _brightnessButton;
+    akui::Button * _brightnessButton;
 
-    akui::cButton * _folderUpButton;
+    akui::Button * _folderUpButton;
 
-    akui::cStaticText * _folderText;
+    akui::StaticText * _folderText;
 
     bool _processL;
 };

@@ -27,22 +27,22 @@
 namespace akui
 {
 
-cForm::cForm(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cWindow(parent, text)
+Form::Form(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Window(parent, text)
 //_renderDesc(NULL)
 {
-    _size = cSize(w, h);
-    _position = cPoint(x, y);
+    _size = Size(w, h);
+    _position = Point(x, y);
     _modalRet = -1;
 }
 
-cForm::~cForm()
+Form::~Form()
 {
     //if( _renderDesc )
     //    delete _renderDesc;
 }
 
-cForm &cForm::addChildWindow(cWindow *aWindow)
+Form &Form::addChildWindow(Window *aWindow)
 {
     _childWindows.push_back(aWindow);
     aWindow->setPosition(_position + aWindow->relativePosition());
@@ -50,16 +50,16 @@ cForm &cForm::addChildWindow(cWindow *aWindow)
     return *this;
 }
 
-cForm &cForm::removeChildWindow(cWindow *aWindow)
+Form &Form::removeChildWindow(Window *aWindow)
 {
     _childWindows.remove(aWindow);
     //layouter_->removeWindow(aWindow);
     return *this;
 }
 
-cForm &cForm::arrangeChildren()
+Form &Form::arrangeChildren()
 {
-    std::list<cWindow *>::iterator it;
+    std::list<Window *>::iterator it;
     for (it = _childWindows.begin(); it != _childWindows.end(); ++it)
     {
         (*it)->setPosition(_position + (*it)->relativePosition());
@@ -67,27 +67,27 @@ cForm &cForm::arrangeChildren()
     return *this;
 }
 
-void cForm::draw()
+void Form::draw()
 {
-    std::list<cWindow *>::iterator it;
+    std::list<Window *>::iterator it;
     for (it = _childWindows.begin(); it != _childWindows.end(); ++it)
     {
         (*it)->render();
     }
 }
 
-bool cForm::process(const cMessage &msg)
+bool Form::process(const Message &msg)
 {
     dbg_printf("cForm::process\n");
     bool ret = false;
     if (isVisible())
     {
-        if (msg.id() > cMessage::touchMessageStart && msg.id() < cMessage::touchMessageEnd)
+        if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
         {
-            std::list<cWindow *>::iterator it;
+            std::list<Window *>::iterator it;
             for (it = _childWindows.begin(); it != _childWindows.end(); ++it)
             {
-                cWindow *window = *it;
+                Window *window = *it;
                 ret = window->process(msg);
                 if (ret)
                 {
@@ -98,39 +98,39 @@ bool cForm::process(const cMessage &msg)
         }
     }
 
-    // NOTE: cForm does not translate key messages to children in this case
+    // NOTE: Form does not translate key messages to children in this case
 
     //if( !ret ) {
     //    dbg_printf("change child focus\n");
-    //    if( msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd ) {
-    //        ret = processKeyMessage( (cKeyMessage &)msg );
+    //    if( msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd ) {
+    //        ret = processKeyMessage( (KeyMessage &)msg );
     //    }
     //}
 
     if (!ret)
     {
-        ret = cWindow::process(msg);
+        ret = Window::process(msg);
     }
 
     return ret;
 }
 
-bool cForm::processKeyMessage(const cKeyMessage &msg)
+bool Form::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == cMessage::keyDown)
+    if (msg.id() == Message::keyDown)
     {
 
         if (msg.keyCode() >= 5 && msg.keyCode() <= 8)
         {
 
-            std::list<cWindow *>::iterator it = _childWindows.begin();
+            std::list<Window *>::iterator it = _childWindows.begin();
             for (it = _childWindows.begin(); it != _childWindows.end(); ++it)
             {
-                cWindow *window = *it;
+                Window *window = *it;
                 if (window->isFocused())
                 {
-                    if (msg.keyCode() == cKeyMessage::UI_KEY_DOWN || msg.keyCode() == cKeyMessage::UI_KEY_RIGHT)
+                    if (msg.keyCode() == KeyMessage::UI_KEY_DOWN || msg.keyCode() == KeyMessage::UI_KEY_RIGHT)
                     {
                         ++it;
                         if (it == _childWindows.end())
@@ -142,7 +142,7 @@ bool cForm::processKeyMessage(const cKeyMessage &msg)
                             break;
                         }
                     }
-                    else if (msg.keyCode() == cKeyMessage::UI_KEY_UP || msg.keyCode() == cKeyMessage::UI_KEY_LEFT)
+                    else if (msg.keyCode() == KeyMessage::UI_KEY_UP || msg.keyCode() == KeyMessage::UI_KEY_LEFT)
                     {
                         if (it == _childWindows.begin())
                         {
@@ -171,17 +171,17 @@ bool cForm::processKeyMessage(const cKeyMessage &msg)
     return ret;
 }
 
-cWindow *cForm::windowBelow(const cPoint &p)
+Window *Form::windowBelow(const Point &p)
 {
-    cWindow *ret = cWindow::windowBelow(p); // �ȿ��Լ��ڲ��ڵ�����
+    Window *ret = Window::windowBelow(p); // �ȿ��Լ��ڲ��ڵ�����
 
     if (ret != 0)
     {
-        std::list<cWindow *>::reverse_iterator it;
+        std::list<Window *>::reverse_iterator it;
         for (it = _childWindows.rbegin(); it != _childWindows.rend(); ++it)
         {
-            cWindow *window = *it;
-            cWindow *cw = window->windowBelow(p);
+            Window *window = *it;
+            Window *cw = window->windowBelow(p);
             //dbg_printf( "check child (%s)\n", window->text().c_str() );
             if (cw != 0)
             {
@@ -194,22 +194,22 @@ cWindow *cForm::windowBelow(const cPoint &p)
     return ret;
 }
 
-void cForm::onResize()
+void Form::onResize()
 {
     arrangeChildren();
 }
 
-void cForm::onMove()
+void Form::onMove()
 {
     arrangeChildren();
 }
 
-u32 cForm::modalRet()
+u32 Form::modalRet()
 {
     return _modalRet;
 }
 
-u32 cForm::doModal()
+u32 Form::doModal()
 {
     windowManager().addWindow(this);
     show();
@@ -228,39 +228,39 @@ u32 cForm::doModal()
     return modalRet();
 }
 
-void cForm::onOK()
+void Form::onOK()
 {
     _modalRet = 1;
 }
 
-void cForm::onCancel()
+void Form::onCancel()
 {
     _modalRet = 0;
 }
 
-void cForm::centerScreen()
+void Form::centerScreen()
 {
     _position.x = (SCREEN_WIDTH - _size.x) / 2;
     _position.y = (SCREEN_HEIGHT - _size.y) / 2;
 }
 
-bool cForm::isActive(void) const
+bool Form::isActive(void) const
 {
     bool result = isFocused();
-    for (std::list<cWindow *>::const_iterator it = _childWindows.begin(); !result && it != _childWindows.end(); ++it)
+    for (std::list<Window *>::const_iterator it = _childWindows.begin(); !result && it != _childWindows.end(); ++it)
     {
         result = result || (*it)->isFocused();
     }
     return result;
 }
 
-cWindow &cForm::disableFocus(void)
+Window &Form::disableFocus(void)
 {
-    for (std::list<cWindow *>::iterator it = _childWindows.begin(); it != _childWindows.end(); ++it)
+    for (std::list<Window *>::iterator it = _childWindows.begin(); it != _childWindows.end(); ++it)
     {
         (*it)->disableFocus();
     }
-    return cWindow::disableFocus();
+    return Window::disableFocus();
 }
 
 } // namespace akui

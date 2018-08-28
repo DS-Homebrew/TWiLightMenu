@@ -25,13 +25,13 @@
 #include "singleton.h"
 
 
-class cIRQ
+class IRQ
 {
 public:
 
-    cIRQ() {}
+    IRQ() {}
 
-    ~cIRQ() {}
+    ~IRQ() {}
 
 public:
 
@@ -49,9 +49,9 @@ public:
 
 };
 
-typedef t_singleton< cIRQ > irq_s;
+typedef t_singleton< IRQ > irq_s;
 
-inline cIRQ & irq() { return irq_s::instance(); }
+inline IRQ & irq() { return irq_s::instance(); }
 
 
 #endif//_IRQS_H_

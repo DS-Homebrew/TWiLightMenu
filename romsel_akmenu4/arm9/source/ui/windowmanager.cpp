@@ -23,15 +23,15 @@
 
 namespace akui
 {
-cWindowManager::cWindowManager() : _currentWindow(NULL, NULL), _focusedWindow(NULL), _windowBelowPen(NULL), _capturedWindow(NULL)
+WindowManager::WindowManager() : _currentWindow(NULL, NULL), _focusedWindow(NULL), _windowBelowPen(NULL), _capturedWindow(NULL)
 {
 }
 
-cWindowManager::~cWindowManager()
+WindowManager::~WindowManager()
 {
 }
 
-void cWindowManager::setFocusedWindow(cWindow *aWindow)
+void WindowManager::setFocusedWindow(Window *aWindow)
 {
   if (aWindow != focusedWindow() && (!aWindow || aWindow->isFocusable()))
   {
@@ -43,26 +43,26 @@ void cWindowManager::setFocusedWindow(cWindow *aWindow)
   }
 }
 
-cWindowManager &cWindowManager::addWindow(cWindow *aWindow)
+WindowManager &WindowManager::addWindow(Window *aWindow)
 {
   if (_currentWindow())
   {
     _currentWindow._focused = focusedWindow();
     _backgroundWindows.push_back(_currentWindow);
   }
-  _currentWindow = cWindowRec(aWindow);
+  _currentWindow = WindowRec(aWindow);
   setFocusedWindow(aWindow);
   updateBackground();
   return *this;
 }
 
-cWindowManager &cWindowManager::removeWindow(cWindow *aWindow)
+WindowManager &WindowManager::removeWindow(Window *aWindow)
 {
   if (aWindow == _currentWindow())
   {
     if (_backgroundWindows.empty())
     {
-      _currentWindow = cWindowRec(NULL, NULL);
+      _currentWindow = WindowRec(NULL, NULL);
     }
     else
     {
@@ -73,7 +73,7 @@ cWindowManager &cWindowManager::removeWindow(cWindow *aWindow)
   }
   else
   {
-    for (cWindows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
+    for (Windows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
     {
       if ((*it)() == aWindow)
       {
@@ -90,10 +90,10 @@ cWindowManager &cWindowManager::removeWindow(cWindow *aWindow)
   return *this;
 }
 
-const cWindowManager &cWindowManager::update(void)
+const WindowManager &WindowManager::update(void)
 {
 #if 0
-    for(cWindows::iterator it=_backgroundWindows.begin();it!=_backgroundWindows.end();++it)
+    for(Windows::iterator it=_backgroundWindows.begin();it!=_backgroundWindows.end();++it)
     {
       dbg_printf("background (%s)\n",(*it)()->text().c_str());
     }
@@ -107,14 +107,14 @@ const cWindowManager &cWindowManager::update(void)
   return *this;
 }
 
-const cWindowManager &cWindowManager::updateBackground(void)
+const WindowManager &WindowManager::updateBackground(void)
 {
   gdi().setMainEngineLayer(MEL_DOWN);
-  for (cWindows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
+  for (Windows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
   {
     (*it)()->update();
   }
-  for (cWindows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
+  for (Windows::iterator it = _backgroundWindows.begin(); it != _backgroundWindows.end(); ++it)
   {
     (*it)()->render();
   }
@@ -124,33 +124,33 @@ const cWindowManager &cWindowManager::updateBackground(void)
   return *this;
 }
 
-bool cWindowManager::process(cMessage &message) const
+bool WindowManager::process(Message &message) const
 {
   return _currentWindow()->process(message);
 }
 
-cWindowManager &cWindowManager::checkForWindowBelowPen(const cPoint &touchPoint)
+WindowManager &WindowManager::checkForWindowBelowPen(const Point &touchPoint)
 {
   _windowBelowPen = NULL;
   if (_currentWindow()->isVisible())
   {
-    cWindow *wbp = _currentWindow()->windowBelow(touchPoint);
+    Window *wbp = _currentWindow()->windowBelow(touchPoint);
     if (wbp)
       _windowBelowPen = wbp;
   }
   return *this;
 }
 
-void cWindowManager::updateFocusIfNecessary(const cPoint &touchPoint)
+void WindowManager::updateFocusIfNecessary(const Point &touchPoint)
 {
-  cWindow *wbp = windowBelowPen();
+  Window *wbp = windowBelowPen();
   if (wbp != focusedWindow())
     setFocusedWindow(wbp);
   if (wbp && !wbp->isFocusable())
     _capturedWindow = wbp;
 }
 
-bool cWindowManager::processTouchMessage(cTouchMessage &message)
+bool WindowManager::processTouchMessage(TouchMessage &message)
 {
   bool isHandled = false;
   if (windowBelowPen())
@@ -166,32 +166,32 @@ bool cWindowManager::processTouchMessage(cTouchMessage &message)
   return isHandled;
 }
 
-bool cWindowManager::onKeyDown(unsigned char keyCode, unsigned char shift)
+bool WindowManager::onKeyDown(unsigned char keyCode, unsigned char shift)
 {
-  cKeyMessage msg(cMessage::keyDown, keyCode, shift);
+  KeyMessage msg(Message::keyDown, keyCode, shift);
   return process(msg);
 }
 
-bool cWindowManager::onKeyUp(unsigned char keyCode, unsigned char shift)
+bool WindowManager::onKeyUp(unsigned char keyCode, unsigned char shift)
 {
-  cKeyMessage msg(cMessage::keyUp, keyCode, shift);
+  KeyMessage msg(Message::keyUp, keyCode, shift);
   return process(msg);
 }
 
-bool cWindowManager::onTouchDown(int x, int y)
+bool WindowManager::onTouchDown(int x, int y)
 {
   _capturedWindow = NULL;
-  checkForWindowBelowPen(cPoint(x, y));
-  cTouchMessage msg(cMessage::touchDown, cPoint(x, y));
+  checkForWindowBelowPen(Point(x, y));
+  TouchMessage msg(Message::touchDown, Point(x, y));
   bool isHandled = processTouchMessage(msg);
-  updateFocusIfNecessary(cPoint(x, y));
+  updateFocusIfNecessary(Point(x, y));
   return isHandled;
 }
 
-bool cWindowManager::onTouchUp(int x, int y)
+bool WindowManager::onTouchUp(int x, int y)
 {
-  checkForWindowBelowPen(cPoint(x, y));
-  cTouchMessage msg(cMessage::touchUp, cPoint(x, y));
+  checkForWindowBelowPen(Point(x, y));
+  TouchMessage msg(Message::touchUp, Point(x, y));
   dbg_printf("window below pen (%s)\n", _windowBelowPen ? _windowBelowPen->text().c_str() : "NULL");
   dbg_printf("focusedWindow (%s)\n", focusedWindow() ? focusedWindow()->text().c_str() : "NULL");
   if (_capturedWindow)
@@ -205,11 +205,11 @@ bool cWindowManager::onTouchUp(int x, int y)
   return processTouchMessage(msg);
 }
 
-bool cWindowManager::onTouchMove(int x, int y)
+bool WindowManager::onTouchMove(int x, int y)
 {
   const INPUT &input = getInput();
-  cTouchMessage msg(cMessage::touchMove, cPoint(x, y));
-  checkForWindowBelowPen(cPoint(input.touchPt.px, input.touchPt.py));
+  TouchMessage msg(Message::touchMove, Point(x, y));
+  checkForWindowBelowPen(Point(input.touchPt.px, input.touchPt.py));
   dbg_printf("touch move %d %d\n", x, y);
   return processTouchMessage(msg);
 }

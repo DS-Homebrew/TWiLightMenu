@@ -27,8 +27,8 @@
 namespace akui
 {
 
-cSpinBox::cSpinBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cForm(x, y, w, h, parent, text),
+SpinBox::SpinBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Form(x, y, w, h, parent, text),
       _prevButton(0, 0, 0, 0, this, ""),
       _nextButton(0, 0, 0, 0, this, ""),
       _itemText(0, 0, 0, 0, this, "spinbox")
@@ -38,10 +38,10 @@ cSpinBox::cSpinBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::strin
     _frameColor = uiSettings().spinBoxFrameColor;
     _itemText.setTextColor(uiSettings().spinBoxTextColor);
 
-    _prevButton.pressed.connect(this, &cSpinBox::selectPrev);
-    _prevButton.pressed.connect(this, &cSpinBox::onCmponentClicked);
-    _nextButton.pressed.connect(this, &cSpinBox::selectNext);
-    _nextButton.pressed.connect(this, &cSpinBox::onCmponentClicked);
+    _prevButton.pressed.connect(this, &SpinBox::selectPrev);
+    _prevButton.pressed.connect(this, &SpinBox::onCmponentClicked);
+    _nextButton.pressed.connect(this, &SpinBox::selectNext);
+    _nextButton.pressed.connect(this, &SpinBox::onCmponentClicked);
 
     addChildWindow(&_itemText);
     addChildWindow(&_prevButton);
@@ -50,27 +50,27 @@ cSpinBox::cSpinBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::strin
     _itemText.setTextColor(RGB15(31, 31, 31));
 
     u8 cx = 0;
-    _prevButton.setSize(cSize(18, 18));
-    _prevButton.setRelativePosition(cPoint(cx, 0));
+    _prevButton.setSize(Size(18, 18));
+    _prevButton.setRelativePosition(Point(cx, 0));
 
     cx = 0 + _prevButton.windowRectangle().width();
-    _itemText.setRelativePosition(cPoint(cx, 0));
-    _itemText.setSize(cSize(w - 18 * 2, 18));
+    _itemText.setRelativePosition(Point(cx, 0));
+    _itemText.setSize(Size(w - 18 * 2, 18));
 
     cx = windowRectangle().width() - _nextButton.windowRectangle().width();
-    _nextButton.setSize(cSize(18, 18));
-    _nextButton.setRelativePosition(cPoint(cx, 0));
+    _nextButton.setSize(Size(18, 18));
+    _nextButton.setRelativePosition(Point(cx, 0));
 
     selectItem(0);
 }
 
-cSpinBox::~cSpinBox()
+SpinBox::~SpinBox()
 {
 }
 
-void cSpinBox::selectItem(u32 id)
+void SpinBox::selectItem(u32 id)
 {
-    // danger !!!! it may cause system halt when cSpinBox destruct
+    // danger !!!! it may cause system halt when SpinBox destruct
     //windowManager().setFocusedWindow( this );
     _selectedItemId = id;
     if (_selectedItemId >= _items.size())
@@ -80,7 +80,7 @@ void cSpinBox::selectItem(u32 id)
 
     //s32 textWidth = _items[_selectedItemId].length() * 6;
     //s32 textHeight = 12;
-    //_itemText.setRelativePosition( cPoint((_size.x - textWidth) >> 1, (_size.y - textHeight) >> 1) );
+    //_itemText.setRelativePosition( Point((_size.x - textWidth) >> 1, (_size.y - textHeight) >> 1) );
 
     arrangeButton();
     arrangeText();
@@ -88,7 +88,7 @@ void cSpinBox::selectItem(u32 id)
     changed(this);
 }
 
-void cSpinBox::selectNext()
+void SpinBox::selectNext()
 {
     if (_items.size() - 1 == _selectedItemId)
         return;
@@ -96,7 +96,7 @@ void cSpinBox::selectNext()
     selectItem(_selectedItemId + 1);
 }
 
-void cSpinBox::selectPrev()
+void SpinBox::selectPrev()
 {
     if (0 == _selectedItemId)
         return;
@@ -104,7 +104,7 @@ void cSpinBox::selectPrev()
     selectItem(_selectedItemId - 1);
 }
 
-void cSpinBox::insertItem(const std::string &item, u32 position)
+void SpinBox::insertItem(const std::string &item, u32 position)
 {
     if (position > _items.size())
         return;
@@ -112,7 +112,7 @@ void cSpinBox::insertItem(const std::string &item, u32 position)
     _items.insert(_items.begin() + position, item);
 }
 
-void cSpinBox::removeItem(u32 position)
+void SpinBox::removeItem(u32 position)
 {
     if (position > _items.size() - 1)
         return;
@@ -120,11 +120,11 @@ void cSpinBox::removeItem(u32 position)
     _items.erase(_items.begin() + position);
 }
 
-void cSpinBox::setTextColor(COLOR color)
+void SpinBox::setTextColor(COLOR color)
 {
 }
 
-void cSpinBox::draw()
+void SpinBox::draw()
 {
     // draw bar
     u16 barColor = _normalColor;
@@ -155,7 +155,7 @@ void cSpinBox::draw()
     _nextButton.draw();
 }
 
-cWindow &cSpinBox::loadAppearance(const std::string &aFileName)
+Window &SpinBox::loadAppearance(const std::string &aFileName)
 {
     _prevButton.loadAppearance(SFN_SPINBUTTON_L);
     _nextButton.loadAppearance(SFN_SPINBUTTON_R);
@@ -163,11 +163,11 @@ cWindow &cSpinBox::loadAppearance(const std::string &aFileName)
     return *this;
 }
 
-void cSpinBox::onGainedFocus()
+void SpinBox::onGainedFocus()
 {
 }
 
-void cSpinBox::onResize()
+void SpinBox::onResize()
 {
     dbg_printf("spin box on resize\n");
     arrangeButton();
@@ -175,38 +175,38 @@ void cSpinBox::onResize()
     arrangeChildren();
 }
 
-void cSpinBox::onMove()
+void SpinBox::onMove()
 {
     arrangeButton();
     arrangeText();
     arrangeChildren();
 }
 
-void cSpinBox::arrangeText()
+void SpinBox::arrangeText()
 {
     s32 textWidth = _items.size() ? font().getStringScreenWidth(_items[_selectedItemId].c_str(), _items[_selectedItemId].length()) : 0;
     s32 textHeight = SYSTEM_FONT_HEIGHT;
     if (textWidth > _itemText.size().x)
         textWidth = _itemText.size().x;
 
-    _itemText.setRelativePosition(cPoint((_size.x - textWidth) >> 1, (_size.y - textHeight) >> 1));
+    _itemText.setRelativePosition(Point((_size.x - textWidth) >> 1, (_size.y - textHeight) >> 1));
 }
 
-void cSpinBox::arrangeButton()
+void SpinBox::arrangeButton()
 {
     u8 x = 0;
-    _prevButton.setSize(cSize(_prevButton.size().x, _size.y));
-    _prevButton.setRelativePosition(cPoint(x, (_size.y - _prevButton.size().y) / 2));
+    _prevButton.setSize(Size(_prevButton.size().x, _size.y));
+    _prevButton.setRelativePosition(Point(x, (_size.y - _prevButton.size().y) / 2));
 
     x = _prevButton.size().x;
-    _itemText.setRelativePosition(cPoint(x, (_size.y - SYSTEM_FONT_HEIGHT) / 2));
+    _itemText.setRelativePosition(Point(x, (_size.y - SYSTEM_FONT_HEIGHT) / 2));
 
     x = size().x - _nextButton.size().x;
-    _nextButton.setSize(cSize(_nextButton.size().x, _size.y));
-    _nextButton.setRelativePosition(cPoint(x, (_size.y - _nextButton.size().y)));
+    _nextButton.setSize(Size(_nextButton.size().x, _size.y));
+    _nextButton.setRelativePosition(Point(x, (_size.y - _nextButton.size().y)));
 }
 
-void cSpinBox::onCmponentClicked()
+void SpinBox::onCmponentClicked()
 {
     componentClicked(this);
 }

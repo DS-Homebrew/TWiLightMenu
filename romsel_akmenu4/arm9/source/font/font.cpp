@@ -29,15 +29,15 @@
 #include "systemfilenames.h"
 
 
-cFont::cFont()
+Font::Font()
 {
 }
 
-cFont::~cFont()
+Font::~Font()
 {
 }
 
-u32 cFont::getStringScreenWidth(const char *str, size_t len)
+u32 Font::getStringScreenWidth(const char *str, size_t len)
 {
     if (NULL == str || 0 == len)
         return 0;
@@ -59,7 +59,7 @@ u32 cFont::getStringScreenWidth(const char *str, size_t len)
     return width;
 }
 
-std::string cFont::breakLine(const std::string &text, u32 maxLineWidth)
+std::string Font::breakLine(const std::string &text, u32 maxLineWidth)
 {
     if (0 == maxLineWidth)
         return text;
@@ -105,7 +105,7 @@ std::string cFont::breakLine(const std::string &text, u32 maxLineWidth)
     return ret;
 }
 
-u32 cFont::FontRAM(void)
+u32 Font::FontRAM(void)
 {
     return 0;
 }

@@ -26,7 +26,7 @@
 #include "singleton.h"
 #include "tool/fifotool.h"
 
-class cGlobalSettings
+class GlobalSettings
 {
 public:
   enum TScrollSpeed
@@ -49,9 +49,9 @@ public:
   };
 public:
 
-    cGlobalSettings();
+    GlobalSettings();
 
-    ~cGlobalSettings();
+    ~GlobalSettings();
 
 public:
 
@@ -90,7 +90,7 @@ public:
 };
 
 
-typedef t_singleton< cGlobalSettings > globalSettings_s;
-inline cGlobalSettings & gs() { return globalSettings_s::instance(); }
+typedef t_singleton< GlobalSettings > globalSettings_s;
+inline GlobalSettings & gs() { return globalSettings_s::instance(); }
 
 #endif//_GLOBALSETTINGS_H_

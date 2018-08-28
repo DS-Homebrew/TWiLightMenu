@@ -26,66 +26,66 @@
 namespace akui
 {
 
-cButton::cButton(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cWindow(parent, text),
+Button::Button(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Window(parent, text),
       _renderDesc(NULL)
 {
     _captured = false;
     _state = up;
-    _size = cSize(w, h);
-    _position = cPoint(x, y);
+    _size = Size(w, h);
+    _position = Point(x, y);
     _textColor = uiSettings().buttonTextColor; //RGB15(0,0,0) | BIT(15);
     _style = single;
     _alignment = center;
 }
 
-cButton::~cButton()
+Button::~Button()
 {
     if (_renderDesc)
         delete _renderDesc;
 }
 
-void cButton::draw()
+void Button::draw()
 {
     if (NULL == _renderDesc)
-        _renderDesc = new cButtonDesc();
-    const cPoint topLeft = position();
-    const cPoint bottomRight = position() + size();
+        _renderDesc = new ButtonDesc();
+    const Point topLeft = position();
+    const Point bottomRight = position() + size();
 
-    cRect rect(topLeft, bottomRight);
+    Rect rect(topLeft, bottomRight);
     _renderDesc->draw(rect, selectedEngine());
 }
 
-cWindow &cButton::loadAppearance(const std::string &aFileName)
+Window &Button::loadAppearance(const std::string &aFileName)
 {
-    _renderDesc = new cButtonDesc();
+    _renderDesc = new ButtonDesc();
     _renderDesc->setButton(this);
     _renderDesc->loadData(aFileName);
 
     return *this;
 }
 
-bool cButton::process(const cMessage &msg)
+bool Button::process(const Message &msg)
 {
     //dbg_printf("cButton::process %s\n", _text.c_str() );
     bool ret = false;
     if (isVisible())
     {
-        if (msg.id() > cMessage::touchMessageStart && msg.id() < cMessage::touchMessageEnd)
+        if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
         {
-            ret = processTouchMessage((cTouchMessage &)msg);
+            ret = processTouchMessage((TouchMessage &)msg);
         }
     }
     return ret;
 }
 
-bool cButton::processTouchMessage(const cTouchMessage &msg)
+bool Button::processTouchMessage(const TouchMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == cMessage::touchUp)
+    if (msg.id() == Message::touchUp)
     {
         //cPoint clickedPt( msg.touchPt.x, inputs.touchPt.y );
-        cRect myRect(_position.x, _position.y, _position.x + _size.x, _position.y + _size.y);
+        Rect myRect(_position.x, _position.y, _position.x + _size.x, _position.y + _size.y);
         if (_captured)
         {
             if (myRect.surrounds(msg.position()))
@@ -102,10 +102,10 @@ bool cButton::processTouchMessage(const cTouchMessage &msg)
         }
         _state = up;
     }
-    if (msg.id() == cMessage::touchDown)
+    if (msg.id() == Message::touchDown)
     {
         //cPoint clickedPt( inputs.touchPt.x, inputs.touchPt.y );
-        cRect myRect(_position.x, _position.y, _position.x + _size.x, _position.y + _size.y);
+        Rect myRect(_position.x, _position.y, _position.x + _size.x, _position.y + _size.y);
         if (myRect.surrounds(msg.position()))
         {
             onPressed();
@@ -116,8 +116,8 @@ bool cButton::processTouchMessage(const cTouchMessage &msg)
         }
     }
     //    if( inputs.touchDown ) {
-    //        cPoint clickedPt( inputs.touchPt.px, inputs.touchPt.py );
-    //        cRect myRect( _position.x, _position.y, _position.x + _size.x, _position.y + _size.y );
+    //        Point clickedPt( inputs.touchPt.px, inputs.touchPt.py );
+    //        Rect myRect( _position.x, _position.y, _position.x + _size.x, _position.y + _size.y );
     ////        dbg_printf("%d %d %d %d, %d %d\n",
     ////            _position.x, _position.y, _position.x + _size.x, _position.y + _size.y, clickedPt.x, clickedPt.y );
     //        if( myRect.surrounds( clickedPt ) ) {
@@ -131,32 +131,32 @@ bool cButton::processTouchMessage(const cTouchMessage &msg)
     return ret;
 }
 
-void cButton::onPressed()
+void Button::onPressed()
 {
 }
 
-void cButton::onReleased()
+void Button::onReleased()
 {
 }
 
-void cButton::onClicked()
+void Button::onClicked()
 {
 }
 
 ///////////////////////////////// desc ////////////////
-cButtonDesc::cButtonDesc()
+ButtonDesc::ButtonDesc()
 {
     _button = NULL;
     _textColor = RGB15(31, 31, 31);
 }
 
-cButtonDesc::~cButtonDesc()
+ButtonDesc::~ButtonDesc()
 {
     //if( NULL != _background )
     //    destroyBMP15( _background );
 }
 
-void cButtonDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
+void ButtonDesc::draw(const Rect &area, GRAPHICS_ENGINE engine) const
 {
     const u32 *pBuffer = NULL;
     u32 height = 0;
@@ -164,10 +164,10 @@ void cButtonDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
     {
         pBuffer = _background.buffer();
         height = _background.height();
-        if (_button->style() != cButton::single)
+        if (_button->style() != Button::single)
         {
             height /= 2;
-            if (cButton::down == _button->state())
+            if (Button::down == _button->state())
                 pBuffer += _background.width() * _background.height() / 4;
         }
     }
@@ -183,10 +183,10 @@ void cButtonDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
     u32 textX = 0, textY = area.position().y + ((area.size().y - SYSTEM_FONT_HEIGHT) >> 1) + 1;
     switch (_button->alignment())
     {
-    case cButton::center:
+    case Button::center:
         textX = area.position().x + ((area.size().x - textPixels) >> 1);
         break;
-    case cButton::right:
+    case Button::right:
         textX = area.position().x + (area.size().x - textPixels - 4);
         break;
     default:
@@ -194,7 +194,7 @@ void cButtonDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
         break;
     }
 
-    if (cButton::down == _button->state())
+    if (Button::down == _button->state())
     {
         textX++;
         textY++;
@@ -204,7 +204,7 @@ void cButtonDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
                       _button->text().c_str(), _button->selectedEngine());
 }
 
-void cButtonDesc::loadData(const std::string &filename)
+void ButtonDesc::loadData(const std::string &filename)
 {
     int width = 40;
     int height = 16;
@@ -219,11 +219,11 @@ void cButtonDesc::loadData(const std::string &filename)
         _background = createBMP15FromFile(filename);
         if (_background.valid())
         {
-            if (_button->style() == cButton::single)
+            if (_button->style() == Button::single)
                 height = _background.height();
             else
                 height = _background.height() / 2;
-            _button->setSize(cSize(_background.width(), height));
+            _button->setSize(Size(_background.width(), height));
         }
     }
 }

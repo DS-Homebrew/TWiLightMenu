@@ -22,7 +22,7 @@
 #include "uisettings.h"
 #include "inifile.h"
 
-cUISettings::cUISettings()
+UISettings::UISettings()
 {
     showCalendar = true;
     formFrameColor = RGB15(23,25,4);
@@ -45,11 +45,11 @@ cUISettings::cUISettings()
     thickness = 1;
 }
 
-cUISettings::~cUISettings()
+UISettings::~UISettings()
 {
 }
 
-void cUISettings::loadSettings()
+void UISettings::loadSettings()
 {
     CIniFile ini( SFN_UI_SETTINGS );
 

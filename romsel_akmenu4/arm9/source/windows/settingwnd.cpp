@@ -29,12 +29,12 @@
 
 using namespace akui;
 
-cSettingWnd::cSettingWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text) : cForm(x, y, w, h, parent, text), _tabSwitcher(0, 0, w, 18, this, "spin"),
+SettingWnd::SettingWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text) : Form(x, y, w, h, parent, text), _tabSwitcher(0, 0, w, 18, this, "spin"),
                                                                                                  _buttonOK(0, 0, 46, 18, this, "\x01 OK"), _buttonCancel(0, 0, 48, 18, this, "\x02 Cancel"),
                                                                                                  _buttonY(0, 0, 76, 18, this, "\x04 Common")
 {
   _tabSwitcher.loadAppearance("");
-  _tabSwitcher.changed.connect(this, &cSettingWnd::onItemChanged);
+  _tabSwitcher.changed.connect(this, &SettingWnd::onItemChanged);
   addChildWindow(&_tabSwitcher);
   _tabSwitcher.insertItem(_text, 0);
   _tabSwitcher.selectItem(0);
@@ -43,21 +43,21 @@ cSettingWnd::cSettingWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
 
   s16 buttonY = size().y - _buttonCancel.size().y - 4;
 
-  _buttonCancel.setStyle(cButton::press);
+  _buttonCancel.setStyle(Button::press);
   _buttonCancel.setText("\x02 " + LANG("setting window", "cancel"));
   _buttonCancel.setTextColor(uis().buttonTextColor);
   _buttonCancel.loadAppearance(SFN_BUTTON3);
-  _buttonCancel.clicked.connect(this, &cSettingWnd::onCancel);
+  _buttonCancel.clicked.connect(this, &SettingWnd::onCancel);
   addChildWindow(&_buttonCancel);
 
-  _buttonOK.setStyle(cButton::press);
+  _buttonOK.setStyle(Button::press);
   _buttonOK.setText("\x01 " + LANG("setting window", "ok"));
   _buttonOK.setTextColor(uis().buttonTextColor);
   _buttonOK.loadAppearance(SFN_BUTTON3);
-  _buttonOK.clicked.connect(this, &cSettingWnd::onOK);
+  _buttonOK.clicked.connect(this, &SettingWnd::onOK);
   addChildWindow(&_buttonOK);
 
-  _buttonY.setStyle(cButton::press);
+  _buttonY.setStyle(Button::press);
   _buttonY.setTextColor(uis().buttonTextColor);
   _buttonY.loadAppearance(SFN_BUTTON4);
   addChildWindow(&_buttonY);
@@ -67,15 +67,15 @@ cSettingWnd::cSettingWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
   s16 nextButtonX = size().x;
   s16 buttonPitch = _buttonCancel.size().x + 8;
   nextButtonX -= buttonPitch;
-  _buttonCancel.setRelativePosition(cPoint(nextButtonX, buttonY));
+  _buttonCancel.setRelativePosition(Point(nextButtonX, buttonY));
 
   buttonPitch = _buttonOK.size().x + 8;
   nextButtonX -= buttonPitch;
-  _buttonOK.setRelativePosition(cPoint(nextButtonX, buttonY));
+  _buttonOK.setRelativePosition(Point(nextButtonX, buttonY));
 
   buttonPitch = _buttonY.size().x + 8;
   nextButtonX -= buttonPitch;
-  _buttonY.setRelativePosition(cPoint(nextButtonX, buttonY));
+  _buttonY.setRelativePosition(Point(nextButtonX, buttonY));
 
   loadAppearance("");
   arrangeChildren();
@@ -91,12 +91,12 @@ cSettingWnd::cSettingWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
   _confirmMessage = LANG("setting window", "confirm text");
 }
 
-void cSettingWnd::setConfirmMessage(const std::string &text)
+void SettingWnd::setConfirmMessage(const std::string &text)
 {
   _confirmMessage = text;
 }
 
-cSettingWnd::~cSettingWnd()
+SettingWnd::~SettingWnd()
 {
   for (size_t ii = 0; ii < _tabs.size(); ii++)
   {
@@ -109,32 +109,32 @@ cSettingWnd::~cSettingWnd()
   }
 }
 
-void cSettingWnd::draw(void)
+void SettingWnd::draw(void)
 {
   _renderDesc.draw(windowRectangle(), _engine);
-  cForm::draw();
+  Form::draw();
   swiWaitForVBlank();
 }
 
-bool cSettingWnd::process(const akui::cMessage &msg)
+bool SettingWnd::process(const akui::Message &msg)
 {
   bool ret = false;
-  ret = cForm::process(msg);
+  ret = Form::process(msg);
   if (!ret)
   {
-    if (msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd)
+    if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
     {
-      ret = processKeyMessage((cKeyMessage &)msg);
+      ret = processKeyMessage((KeyMessage &)msg);
     }
-    //if(msg.id()>cMessage::touchMessageStart&&msg.id()<cMessage::touchMessageEnd)
+    //if(msg.id()>cMessage::touchMessageStart&&msg.id()<Message::touchMessageEnd)
     //{
-    //  ret=processTouchMessage((cTouchMessage&)msg);
+    //  ret=processTouchMessage((TouchMessage&)msg);
     //}
   }
   return ret;
 }
 
-void cSettingWnd::onOK(void)
+void SettingWnd::onOK(void)
 {
   u32 ret = messageBox(this, LANG("setting window", "confirm"), _confirmMessage, MB_OK | MB_CANCEL);
   if (ID_OK != ret)
@@ -142,53 +142,53 @@ void cSettingWnd::onOK(void)
   _modalRet = 1;
 }
 
-void cSettingWnd::onCancel(void)
+void SettingWnd::onCancel(void)
 {
   _modalRet = 0;
 }
 
-bool cSettingWnd::processKeyMessage(const cKeyMessage &msg)
+bool SettingWnd::processKeyMessage(const KeyMessage &msg)
 {
   bool ret = false;
-  if (msg.id() == cMessage::keyDown)
+  if (msg.id() == Message::keyDown)
   {
     switch (msg.keyCode())
     {
-    case cKeyMessage::UI_KEY_DOWN:
+    case KeyMessage::UI_KEY_DOWN:
       onUIKeyDOWN();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_UP:
+    case KeyMessage::UI_KEY_UP:
       onUIKeyUP();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_LEFT:
+    case KeyMessage::UI_KEY_LEFT:
       onUIKeyLEFT();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_RIGHT:
+    case KeyMessage::UI_KEY_RIGHT:
       onUIKeyRIGHT();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_A:
+    case KeyMessage::UI_KEY_A:
       onOK();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_B:
+    case KeyMessage::UI_KEY_B:
       onCancel();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_Y:
+    case KeyMessage::UI_KEY_Y:
     {
       _buttonY.clicked();
     }
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_L:
+    case KeyMessage::UI_KEY_L:
       onUIKeyL();
       ret = true;
       break;
-    case cKeyMessage::UI_KEY_R:
+    case KeyMessage::UI_KEY_R:
       onUIKeyR();
       ret = true;
       break;
@@ -199,14 +199,14 @@ bool cSettingWnd::processKeyMessage(const cKeyMessage &msg)
   return ret;
 }
 
-cWindow &cSettingWnd::loadAppearance(const std::string &aFileName)
+Window &SettingWnd::loadAppearance(const std::string &aFileName)
 {
   _renderDesc.loadData(SFN_FORM_TITLE_L, SFN_FORM_TITLE_R, SFN_FORM_TITLE_M);
   _renderDesc.setTitleText(_text);
   return *this;
 }
 
-void cSettingWnd::addSettingTab(const std::string &text)
+void SettingWnd::addSettingTab(const std::string &text)
 {
   if (1 == _tabs.size())
   {
@@ -219,7 +219,7 @@ void cSettingWnd::addSettingTab(const std::string &text)
   _tabSwitcher.show();
 }
 
-void cSettingWnd::addSettingItem(const std::string &text, const std::vector<std::string> &itemTexts, size_t defaultValue)
+void SettingWnd::addSettingItem(const std::string &text, const std::vector<std::string> &itemTexts, size_t defaultValue)
 {
   if (0 == itemTexts.size())
     return;
@@ -233,7 +233,7 @@ void cSettingWnd::addSettingItem(const std::string &text, const std::vector<std:
   if (_maxTabSize < (items(lastTab).size() + 1))
   {
     _maxTabSize = (items(lastTab).size() + 1);
-    setSize(cSize(_size.x, _maxTabSize * 20 + 41 + TOP_MARGIN));
+    setSize(Size(_size.x, _maxTabSize * 20 + 41 + TOP_MARGIN));
     _position.x = (SCREEN_WIDTH - _size.x) / 2;
     _position.y = (SCREEN_HEIGHT - _size.y) / 2;
   }
@@ -242,24 +242,24 @@ void cSettingWnd::addSettingItem(const std::string &text, const std::vector<std:
   s32 itemY = items(lastTab).size() * 20 + 18 + TOP_MARGIN;
   s32 itemX = 8;
 
-  cSpinBox *item = new cSpinBox(0, 0, 108, 18, this, "spin");
+  SpinBox *item = new SpinBox(0, 0, 108, 18, this, "spin");
   for (size_t ii = 0; ii < itemTexts.size(); ++ii)
   {
     item->insertItem(itemTexts[ii], ii);
   }
 
   item->loadAppearance("");
-  item->setSize(cSize(_spinBoxWidth, 18));
-  item->setRelativePosition(cPoint(_size.x - _spinBoxWidth - 4, itemY));
+  item->setSize(Size(_spinBoxWidth, 18));
+  item->setRelativePosition(Point(_size.x - _spinBoxWidth - 4, itemY));
   item->hide();
   addChildWindow(item);
   item->selectItem(defaultValue);
 
-  cStaticText *label = new cStaticText(0, 0, _maxLabelLength * 6, gs().fontHeight, this, text);
+  StaticText *label = new StaticText(0, 0, _maxLabelLength * 6, gs().fontHeight, this, text);
   itemY += (item->windowRectangle().height() - label->windowRectangle().height()) / 2;
-  label->setRelativePosition(cPoint(itemX, itemY));
+  label->setRelativePosition(Point(itemX, itemY));
   label->setTextColor(uis().formTextColor);
-  label->setSize(cSize(_size.x / 2 + 8, 12));
+  label->setSize(Size(_size.x / 2 + 8, 12));
   label->hide();
   addChildWindow(label);
 
@@ -268,19 +268,19 @@ void cSettingWnd::addSettingItem(const std::string &text, const std::vector<std:
   // recompute button position
   s16 buttonY = size().y - _buttonCancel.size().y - 4;
 
-  _buttonCancel.setRelativePosition(cPoint(_buttonCancel.relativePosition().x, buttonY));
-  _buttonOK.setRelativePosition(cPoint(_buttonOK.relativePosition().x, buttonY));
-  _buttonY.setRelativePosition(cPoint(_buttonY.relativePosition().x, buttonY));
+  _buttonCancel.setRelativePosition(Point(_buttonCancel.relativePosition().x, buttonY));
+  _buttonOK.setRelativePosition(Point(_buttonOK.relativePosition().x, buttonY));
+  _buttonY.setRelativePosition(Point(_buttonY.relativePosition().x, buttonY));
 
   arrangeChildren();
 }
 
-void cSettingWnd::onShow(void)
+void SettingWnd::onShow(void)
 {
   ShowTab(_currentTab);
 }
 
-void cSettingWnd::onUIKeyUP(void)
+void SettingWnd::onUIKeyUP(void)
 {
   ssize_t focusItem = focusedItemId();
   if (--focusItem < 0)
@@ -288,7 +288,7 @@ void cSettingWnd::onUIKeyUP(void)
   windowManager().setFocusedWindow(items(_currentTab)[focusItem]._item);
 }
 
-void cSettingWnd::onUIKeyDOWN(void)
+void SettingWnd::onUIKeyDOWN(void)
 {
   ssize_t focusItem = focusedItemId();
   if (++focusItem >= (ssize_t)items(_currentTab).size())
@@ -296,31 +296,31 @@ void cSettingWnd::onUIKeyDOWN(void)
   windowManager().setFocusedWindow(items(_currentTab)[focusItem]._item);
 }
 
-void cSettingWnd::onUIKeyLEFT(void)
+void SettingWnd::onUIKeyLEFT(void)
 {
-  cSpinBox *item = focusedItem();
+  SpinBox *item = focusedItem();
   if (item)
     item->selectPrev();
 }
 
-void cSettingWnd::onUIKeyRIGHT(void)
+void SettingWnd::onUIKeyRIGHT(void)
 {
-  cSpinBox *item = focusedItem();
+  SpinBox *item = focusedItem();
   if (item)
     item->selectNext();
 }
 
-void cSettingWnd::onUIKeyL(void)
+void SettingWnd::onUIKeyL(void)
 {
   _tabSwitcher.selectPrev();
 }
 
-void cSettingWnd::onUIKeyR(void)
+void SettingWnd::onUIKeyR(void)
 {
   _tabSwitcher.selectNext();
 }
 
-ssize_t cSettingWnd::getItemSelection(size_t tabId, size_t itemId)
+ssize_t SettingWnd::getItemSelection(size_t tabId, size_t itemId)
 {
   if (tabId >= _tabs.size())
     return -1;
@@ -333,7 +333,7 @@ ssize_t cSettingWnd::getItemSelection(size_t tabId, size_t itemId)
 0.. - item focused
 -1 - something else focused
 */
-ssize_t cSettingWnd::focusedItemId(void)
+ssize_t SettingWnd::focusedItemId(void)
 {
   ssize_t focusItem = -1;
   for (size_t ii = 0; ii < items(_currentTab).size(); ++ii)
@@ -347,7 +347,7 @@ ssize_t cSettingWnd::focusedItemId(void)
   return focusItem;
 }
 
-cSpinBox *cSettingWnd::focusedItem(void)
+SpinBox *SettingWnd::focusedItem(void)
 {
   ssize_t focusItem = focusedItemId();
   if (focusItem >= 0)
@@ -355,7 +355,7 @@ cSpinBox *cSettingWnd::focusedItem(void)
   return NULL;
 }
 
-void cSettingWnd::HideTab(size_t index)
+void SettingWnd::HideTab(size_t index)
 {
   if (index >= _tabs.size())
     return;
@@ -366,7 +366,7 @@ void cSettingWnd::HideTab(size_t index)
   }
 }
 
-void cSettingWnd::ShowTab(size_t index)
+void SettingWnd::ShowTab(size_t index)
 {
   if (index >= _tabs.size())
     return;
@@ -379,13 +379,13 @@ void cSettingWnd::ShowTab(size_t index)
     windowManager().setFocusedWindow(items(index)[0]._item);
 }
 
-void cSettingWnd::SwitchTab(size_t oldIndex, size_t newIndex)
+void SettingWnd::SwitchTab(size_t oldIndex, size_t newIndex)
 {
   HideTab(oldIndex);
   ShowTab(newIndex);
 }
 
-void cSettingWnd::onItemChanged(akui::cSpinBox *item)
+void SettingWnd::onItemChanged(akui::SpinBox *item)
 {
   size_t newTab = item->selectedItemId();
   SwitchTab(_currentTab, newTab);

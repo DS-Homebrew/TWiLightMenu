@@ -26,17 +26,17 @@
 #include <memory>
 #include <string>
 
-class cBMP15
+class BMP15
 {
-    friend cBMP15 createBMP15(u32 width, u32 height);
-    friend cBMP15 createBMP15FromFile(const std::string &filename);
-    friend cBMP15 createBMP15FromMem(void *mem);
-    //friend void destroyBMP15( cBMP15 * bmp );
+    friend BMP15 createBMP15(u32 width, u32 height);
+    friend BMP15 createBMP15FromFile(const std::string &filename);
+    friend BMP15 createBMP15FromMem(void *mem);
+    //friend void destroyBMP15( BMP15 * bmp );
 
   public:
-    explicit cBMP15();
-    explicit cBMP15(u32 width, u32 height);
-    ~cBMP15();
+    explicit BMP15();
+    explicit BMP15(u32 width, u32 height);
+    ~BMP15();
 
   public:
     u32 width() const { return _width; } // width is memory bitmap's width
@@ -61,9 +61,9 @@ class cBMP15
     u32 *_buffer; // �� 32 λ��ַ���룬������ bitblt ��ʱ��ӿ��ٶ�
 };
 
-cBMP15 createBMP15(u32 width, u32 height);
-cBMP15 createBMP15FromFile(const std::string &filename);
-cBMP15 createBMP15FromMem(void *mem);
-//void destroyBMP15( cBMP15 * bmp );
+BMP15 createBMP15(u32 width, u32 height);
+BMP15 createBMP15FromFile(const std::string &filename);
+BMP15 createBMP15FromMem(void *mem);
+//void destroyBMP15( BMP15 * bmp );
 //void destroyBMP15ByFilename( const char * filename );
 #endif//_BMP15_H_

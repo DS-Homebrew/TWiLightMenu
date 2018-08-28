@@ -25,12 +25,12 @@
 #include "drawing/gdi.h"
 #include "singleton.h"
 
-class cUISettings
+class UISettings
 {
   public:
-    cUISettings();
+    UISettings();
 
-    ~cUISettings();
+    ~UISettings();
 
   public:
     void loadSettings();
@@ -59,8 +59,8 @@ class cUISettings
     u32 thickness;
 };
 
-typedef t_singleton<cUISettings> uiSettings_s;
-inline cUISettings &uiSettings() { return uiSettings_s::instance(); }
-inline cUISettings &uis() { return uiSettings_s::instance(); }
+typedef t_singleton<UISettings> uiSettings_s;
+inline UISettings &uiSettings() { return uiSettings_s::instance(); }
+inline UISettings &uis() { return uiSettings_s::instance(); }
 
 #endif //_UISETTINGS_H_

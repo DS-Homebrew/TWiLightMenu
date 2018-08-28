@@ -30,7 +30,7 @@
 
 using namespace akui;
 
-cUserWindow::cUserWindow() : cWindow(NULL, "UserWindow")
+UserWindow::UserWindow() : Window(NULL, "UserWindow")
 {
     _px = _py = 0;
     _tx = _ty = _tw = _th = 0;
@@ -38,14 +38,14 @@ cUserWindow::cUserWindow() : cWindow(NULL, "UserWindow")
     _userTextColor = 0;
     _userNameColor = 0;
     _showUserName = false;
-    _size = cSize(1, 1);
-    _position = cPoint(0, 0);
+    _size = Size(1, 1);
+    _position = Point(0, 0);
     _engine = GE_SUB;
 
     init();
 }
 
-void cUserWindow::init()
+void UserWindow::init()
 {
     CIniFile ini(SFN_USER_CUSTOM);
     std::string pictureFilename = ini.GetString("custom picture", "file", "");
@@ -78,7 +78,7 @@ void cUserWindow::init()
     _userName = unicode_to_local_string((u16 *)PersonalData->name, PersonalData->nameLen, NULL);
 }
 
-void cUserWindow::draw()
+void UserWindow::draw()
 {
     if (_showCustomPic && _userPicture.valid())
     {

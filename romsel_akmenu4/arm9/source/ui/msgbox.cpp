@@ -26,8 +26,8 @@
 namespace akui
 {
 
-cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &title, const std::string &msg, u32 style)
-    : cForm(x, y, w, h, parent, title)
+MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &title, const std::string &msg, u32 style)
+    : Form(x, y, w, h, parent, title)
 {
     u32 largestLineWidth = 0;
     size_t pos1 = 0;
@@ -75,39 +75,39 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
     _buttonYES = NULL;
     _buttonNO = NULL;
 
-    _buttonOK = new cButton(0, 0, 46, 18, this, "\x01 OK");
+    _buttonOK = new Button(0, 0, 46, 18, this, "\x01 OK");
     _buttonOK->setText("\x01 " + LANG("message box", "ok"));
-    _buttonOK->setStyle(cButton::press);
+    _buttonOK->setStyle(Button::press);
     _buttonOK->hide();
 
     _buttonOK->loadAppearance(SFN_BUTTON3);
-    _buttonOK->setStyle(cButton::press);
-    _buttonOK->clicked.connect(this, &cMessageBox::onOK);
+    _buttonOK->setStyle(Button::press);
+    _buttonOK->clicked.connect(this, &MessageBox::onOK);
     addChildWindow(_buttonOK);
 
-    _buttonCANCEL = new cButton(0, 0, 46, 18, this, "\x02 Cancel");
+    _buttonCANCEL = new Button(0, 0, 46, 18, this, "\x02 Cancel");
     _buttonCANCEL->setText("\x02 " + LANG("message box", "cancel"));
-    _buttonCANCEL->setStyle(cButton::press);
+    _buttonCANCEL->setStyle(Button::press);
     _buttonCANCEL->hide();
     _buttonCANCEL->loadAppearance(SFN_BUTTON3);
-    _buttonCANCEL->clicked.connect(this, &cMessageBox::onCANCEL);
+    _buttonCANCEL->clicked.connect(this, &MessageBox::onCANCEL);
     addChildWindow(_buttonCANCEL);
 
-    _buttonYES = new cButton(0, 0, 46, 18, this, "\x01 Yes");
+    _buttonYES = new Button(0, 0, 46, 18, this, "\x01 Yes");
     _buttonYES->setText("\x01 " + LANG("message box", "yes"));
-    _buttonYES->setStyle(cButton::press);
+    _buttonYES->setStyle(Button::press);
     _buttonYES->hide();
     _buttonYES->loadAppearance(SFN_BUTTON3);
-    _buttonYES->clicked.connect(this, &cMessageBox::onOK);
+    _buttonYES->clicked.connect(this, &MessageBox::onOK);
     addChildWindow(_buttonYES);
 
-    _buttonNO = new cButton(0, 0, 46, 18, this, "\x02 No");
+    _buttonNO = new Button(0, 0, 46, 18, this, "\x02 No");
     _buttonNO->setText("\x02 " + LANG("message box", "no"));
-    _buttonNO->setStyle(cButton::press);
+    _buttonNO->setStyle(Button::press);
     _buttonNO->hide();
     //_buttonNO->setTextColor( RGB15(20,14,0) );
     _buttonNO->loadAppearance(SFN_BUTTON3);
-    _buttonNO->clicked.connect(this, &cMessageBox::onCANCEL);
+    _buttonNO->clicked.connect(this, &MessageBox::onCANCEL);
     addChildWindow(_buttonNO);
 
     s16 nextButtonX = size().x;
@@ -120,7 +120,7 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
         // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonNO->size().x + 8;
         nextButtonX -= buttonPitch;
-        _buttonNO->setRelativePosition(cPoint(nextButtonX, buttonY));
+        _buttonNO->setRelativePosition(Point(nextButtonX, buttonY));
         _buttonNO->show();
     }
 
@@ -130,7 +130,7 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
         // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonYES->size().x + 8;
         nextButtonX -= buttonPitch;
-        _buttonYES->setRelativePosition(cPoint(nextButtonX, buttonY));
+        _buttonYES->setRelativePosition(Point(nextButtonX, buttonY));
         _buttonYES->show();
     }
 
@@ -140,7 +140,7 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
         // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonCANCEL->size().x + 8;
         nextButtonX -= buttonPitch;
-        _buttonCANCEL->setRelativePosition(cPoint(nextButtonX, buttonY));
+        _buttonCANCEL->setRelativePosition(Point(nextButtonX, buttonY));
         _buttonCANCEL->show();
     }
 
@@ -150,7 +150,7 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
         // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonOK->size().x + 8;
         nextButtonX -= buttonPitch;
-        _buttonOK->setRelativePosition(cPoint(nextButtonX, buttonY));
+        _buttonOK->setRelativePosition(Point(nextButtonX, buttonY));
         _buttonOK->show();
     }
 
@@ -159,7 +159,7 @@ cMessageBox::cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
     loadAppearance("");
 }
 
-cMessageBox::~cMessageBox()
+MessageBox::~MessageBox()
 {
     delete _buttonOK;
     delete _buttonCANCEL;
@@ -167,31 +167,31 @@ cMessageBox::~cMessageBox()
     delete _buttonNO;
 }
 
-void cMessageBox::onOK()
+void MessageBox::onOK()
 {
     _modalRet = ID_OK;
 }
 
-void cMessageBox::onCANCEL()
+void MessageBox::onCANCEL()
 {
     _modalRet = ID_CANCEL;
 }
 
-bool cMessageBox::process(const cMessage &msg)
+bool MessageBox::process(const Message &msg)
 {
     bool ret = false;
     if (isVisible())
     {
-        ret = cForm::process(msg);
+        ret = Form::process(msg);
         if (!ret)
         {
-            if (msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd)
+            if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
             {
-                ret = processKeyMessage((cKeyMessage &)msg);
+                ret = processKeyMessage((KeyMessage &)msg);
             }
-            else if (msg.id() > cMessage::touchMessageStart && msg.id() < cMessage::touchMessageEnd)
+            else if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
             {
-                ret = processTouchMessage((cTouchMessage &)msg);
+                ret = processTouchMessage((TouchMessage &)msg);
             }
         }
     }
@@ -199,19 +199,19 @@ bool cMessageBox::process(const cMessage &msg)
     return ret;
 }
 
-bool cMessageBox::processKeyMessage(const cKeyMessage &msg)
+bool MessageBox::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == cMessage::keyDown)
+    if (msg.id() == Message::keyDown)
     {
         switch (msg.keyCode())
         {
-        case cKeyMessage::UI_KEY_A:
+        case KeyMessage::UI_KEY_A:
             onOK();
             ret = true;
             return true;
             break;
-        case cKeyMessage::UI_KEY_B:
+        case KeyMessage::UI_KEY_B:
             onCANCEL();
             ret = true;
             return true;
@@ -221,22 +221,22 @@ bool cMessageBox::processKeyMessage(const cKeyMessage &msg)
     return ret;
 }
 
-bool cMessageBox::processTouchMessage(const cTouchMessage &msg)
+bool MessageBox::processTouchMessage(const TouchMessage &msg)
 {
     return false;
 }
 
-void cMessageBox::draw()
+void MessageBox::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
-    cForm::draw();
+    Form::draw();
 
     // draw message text
     gdi().setPenColor(uiSettings().formTextColor, _engine);
     gdi().textOut(_textPoision.x, _textPoision.y, _msg.c_str(), _engine);
 }
 
-cWindow &cMessageBox::loadAppearance(const std::string &aFileName)
+Window &MessageBox::loadAppearance(const std::string &aFileName)
 {
     _renderDesc.loadData(
         SFN_FORM_TITLE_L, SFN_FORM_TITLE_R, SFN_FORM_TITLE_M);
@@ -245,10 +245,10 @@ cWindow &cMessageBox::loadAppearance(const std::string &aFileName)
     return *this;
 }
 
-u32 messageBox(cWindow *parent, const std::string &title, const std::string &msg, u32 style)
+u32 messageBox(Window *parent, const std::string &title, const std::string &msg, u32 style)
 {
     // check point ���������ֵĶԻ�����ʧ����ͼ������
-    cMessageBox msgbox(12, 36, 232, 120, parent, title, msg, style);
+    MessageBox msgbox(12, 36, 232, 120, parent, title, msg, style);
     //cMessageBox msgbox( 0, 0, 256, 192, parent, text, style );
 
     return msgbox.doModal();

@@ -26,15 +26,15 @@
 #include "singleton.h"
 #include "tool/stringtool.h"
 
-class cDateTime
+class DateTime
 {
   private:
     tm iTimeParts;
   private:
     void FillTimeParts(void);
   public:
-    cDateTime() {}
-    ~cDateTime() {}
+    DateTime() {}
+    ~DateTime() {}
   public:
     static const char * weekdayStrings[];
     u16 year(void);
@@ -51,7 +51,7 @@ class cDateTime
     std::string getTimeStampString(void);
 };
 
-typedef t_singleton< cDateTime > dateTime_s;
-inline cDateTime & datetime() { return dateTime_s::instance(); }
+typedef t_singleton< DateTime > dateTime_s;
+inline DateTime & datetime() { return dateTime_s::instance(); }
 
 #endif//_DATETIME_H_

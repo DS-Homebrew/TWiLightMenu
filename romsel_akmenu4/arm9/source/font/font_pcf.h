@@ -31,7 +31,7 @@
 
 //#define SMALL 1
 
-class cFontPcf: public cFont
+class FontPcf: public Font
 {
   private:
 #ifdef SMALL
@@ -77,8 +77,8 @@ class cFontPcf: public cFont
     void DrawInternal(u16* mem,s16 x,s16 y,const u8* data,u16 color,u32 width,u32 height);
     static int Compare(const void* a,const void* b);
   public:
-    cFontPcf();
-    ~cFontPcf();
+    FontPcf();
+    ~FontPcf();
     bool Load(const char* aFileName);
     void Draw(u16* mem,s16 x,s16 y,const u8* aText,u16 color);
     void Info(const char* aString,u32* aWidth,u32* aSymbolCount);

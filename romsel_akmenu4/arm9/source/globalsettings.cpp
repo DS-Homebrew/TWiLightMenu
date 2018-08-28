@@ -25,7 +25,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-cGlobalSettings::cGlobalSettings()
+GlobalSettings::GlobalSettings()
 {
     fontHeight = 12;
     language = 1;
@@ -55,7 +55,7 @@ cGlobalSettings::cGlobalSettings()
     homebrewreset = false;
 }
 
-void cGlobalSettings::loadSettings()
+void GlobalSettings::loadSettings()
 {
     std::string temp;
     CIniFile ini(SFN_GLOBAL_SETTINGS);
@@ -100,7 +100,7 @@ void cGlobalSettings::loadSettings()
     updateSafeMode();
 }
 
-void cGlobalSettings::saveSettings()
+void GlobalSettings::saveSettings()
 {
     // the commented code means those parameters are not allow to change in menu
     CIniFile ini(SFN_GLOBAL_SETTINGS);
@@ -130,7 +130,7 @@ void cGlobalSettings::saveSettings()
     updateSafeMode();
 }
 
-void cGlobalSettings::updateSafeMode(void)
+void GlobalSettings::updateSafeMode(void)
 {
     if (safeMode)
     {
@@ -140,14 +140,14 @@ void cGlobalSettings::updateSafeMode(void)
     }
 }
 
-u32 cGlobalSettings::CopyBufferSize(void)
+u32 GlobalSettings::CopyBufferSize(void)
 {
     if (font().FontRAM() < 300 * 1024)
         return 1024 * 1024;
     return 512 * 1024;
 }
 
-void cGlobalSettings::nextBrightness(void)
+void GlobalSettings::nextBrightness(void)
 {
 
 }

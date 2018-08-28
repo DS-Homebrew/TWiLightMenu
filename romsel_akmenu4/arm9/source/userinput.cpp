@@ -118,35 +118,35 @@ bool processInput(INPUT &inputs)
     unsigned char shift = 0;
 
     if (inputs.keysHeld & KEY_L)
-        shift |= cKeyMessage::UI_SHIFT_L;
+        shift |= KeyMessage::UI_SHIFT_L;
 
     if (inputs.keysDown & KEY_A)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_A, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_A, shift);
     if (inputs.keysDown & KEY_B)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_B, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_B, shift);
     if (inputs.keysDown & KEY_X)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_X, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_X, shift);
     if (inputs.keysDown & KEY_Y)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_Y, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_Y, shift);
     if (inputs.keysDown & KEY_R)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_R, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_R, shift);
     if (inputs.keysDown & KEY_L)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_L, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_L, shift);
     if (inputs.keysDown & KEY_START || inputs.keysDownRepeat & KEY_START)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_START, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_START, shift);
     if (inputs.keysDown & KEY_SELECT)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_SELECT, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_SELECT, shift);
     if (inputs.keysDown & KEY_LEFT || inputs.keysDownRepeat & KEY_LEFT)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_LEFT, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_LEFT, shift);
     if (inputs.keysDown & KEY_RIGHT || inputs.keysDownRepeat & KEY_RIGHT)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_RIGHT, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_RIGHT, shift);
     if (inputs.keysDown & KEY_UP || inputs.keysDownRepeat & KEY_UP)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_UP, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_UP, shift);
     if (inputs.keysDown & KEY_DOWN || inputs.keysDownRepeat & KEY_DOWN)
-        ret = ret || windowManager().onKeyDown(cKeyMessage::UI_KEY_DOWN, shift);
+        ret = ret || windowManager().onKeyDown(KeyMessage::UI_KEY_DOWN, shift);
 
     if (inputs.keysUp & KEY_L)
-        ret = ret || windowManager().onKeyUp(cKeyMessage::UI_KEY_L, shift);
+        ret = ret || windowManager().onKeyUp(KeyMessage::UI_KEY_L, shift);
 
     if (inputs.touchDown)
         ret = ret || windowManager().onTouchDown(inputs.touchPt.px, inputs.touchPt.py);

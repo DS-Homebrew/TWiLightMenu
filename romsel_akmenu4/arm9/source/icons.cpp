@@ -18,7 +18,7 @@
 
 #include "icons.h"
 
-void cIcons::maskBlt(const u16 *aSrc, u16 *aDst)
+void Icons::maskBlt(const u16 *aSrc, u16 *aDst)
 {
   for (u32 ii = 0; ii < 32; ++ii)
   {

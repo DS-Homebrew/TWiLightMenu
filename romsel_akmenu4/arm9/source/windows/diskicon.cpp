@@ -28,10 +28,10 @@
 
 using namespace akui;
 
-cDiskIcon::cDiskIcon() : cWindow(NULL, "diskicon")
+DiskIcon::DiskIcon() : Window(NULL, "diskicon")
 {
-    _size = cSize(0, 0);
-    _position = cPoint(0, 0);
+    _size = Size(0, 0);
+    _position = Point(0, 0);
     _engine = GE_MAIN;
     _icon.init(1);
     _icon.setPosition(226, 174);
@@ -42,12 +42,12 @@ cDiskIcon::cDiskIcon() : cWindow(NULL, "diskicon")
     fillMemory(_icon.buffer(), 32 * 32 * 2, 0x00000000);
 }
 
-void cDiskIcon::draw()
+void DiskIcon::draw()
 {
     // do nothing
 }
 
-cWindow &cDiskIcon::loadAppearance(const std::string &aFileName)
+Window &DiskIcon::loadAppearance(const std::string &aFileName)
 {
 
     CIniFile ini(SFN_UI_SETTINGS);
@@ -56,7 +56,7 @@ cWindow &cDiskIcon::loadAppearance(const std::string &aFileName)
     u16 y = ini.GetInt("disk icon", "y", 172);
     _icon.setPosition(x, y);
 
-    cBMP15 icon = createBMP15FromFile(aFileName);
+    BMP15 icon = createBMP15FromFile(aFileName);
 
     u32 pitch = icon.pitch() >> 1;
     for (u8 i = 0; i < icon.height(); ++i)
@@ -70,7 +70,7 @@ cWindow &cDiskIcon::loadAppearance(const std::string &aFileName)
     return *this;
 }
 
-void cDiskIcon::blink(void)
+void DiskIcon::blink(void)
 {
     if (_icon.visible())
         _icon.hide();
@@ -78,12 +78,12 @@ void cDiskIcon::blink(void)
         _icon.show();
 }
 
-void cDiskIcon::turnOn()
+void DiskIcon::turnOn()
 {
     _icon.show();
 }
 
-void cDiskIcon::turnOff()
+void DiskIcon::turnOff()
 {
     _icon.hide();
 }

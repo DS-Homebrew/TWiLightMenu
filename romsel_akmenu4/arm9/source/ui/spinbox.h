@@ -30,17 +30,17 @@
 namespace akui
 {
 
-class cSpinBox : public cForm
+class SpinBox : public Form
 {
 
   public:
-    cSpinBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
-    ~cSpinBox();
+    SpinBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
+    ~SpinBox();
 
   public:
     void draw();
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
     u32 selectedItemId() { return _selectedItemId; }
 
@@ -57,8 +57,8 @@ class cSpinBox : public cForm
     void setTextColor(COLOR color);
 
     void onCmponentClicked();
-    Signal1<cSpinBox *> componentClicked;
-    Signal1<cSpinBox *> changed;
+    Signal1<SpinBox *> componentClicked;
+    Signal1<SpinBox *> changed;
 
   protected:
     void onResize();
@@ -75,9 +75,9 @@ class cSpinBox : public cForm
     COLOR _focusedColor;
     COLOR _normalColor;
     COLOR _frameColor;
-    cButton _prevButton;
-    cButton _nextButton;
-    cStaticText _itemText;
+    Button _prevButton;
+    Button _nextButton;
+    StaticText _itemText;
     u32 _selectedItemId;
     std::vector<std::string> _items;
 };

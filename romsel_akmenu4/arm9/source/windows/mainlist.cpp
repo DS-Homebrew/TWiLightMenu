@@ -43,8 +43,8 @@
 
 using namespace akui;
 
-cMainList::cMainList(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cListView(x, y, w, h, parent, text), _showAllFiles(false)
+MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : ListView(x, y, w, h, parent, text), _showAllFiles(false)
 {
     _viewMode = VM_LIST;
     _activeIconScale = 1;
@@ -54,11 +54,11 @@ cMainList::cMainList(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::str
     dbg_printf("_activeIcon.init\n");
 }
 
-cMainList::~cMainList()
+MainList::~MainList()
 {
 }
 
-int cMainList::init()
+int MainList::init()
 {
     CIniFile ini(SFN_UI_SETTINGS);
     _textColor = ini.GetInt("main list", "textColor", RGB15(7, 7, 7));
@@ -74,17 +74,17 @@ int cMainList::init()
     insertColumn(SAVETYPE_COLUMN, "saveType", 0);
     insertColumn(FILESIZE_COLUMN, "fileSize", 0);
 
-    setViewMode((cMainList::VIEW_MODE)gs().viewMode);
+    setViewMode((MainList::VIEW_MODE)gs().viewMode);
 
     _activeIcon.hide();
 
     return 1;
 }
 
-static bool itemSortComp(const cListView::itemVector &item1, const cListView::itemVector &item2)
+static bool itemSortComp(const ListView::itemVector &item1, const ListView::itemVector &item2)
 {
-    const std::string &fn1 = item1[cMainList::REALNAME_COLUMN].text();
-    const std::string &fn2 = item2[cMainList::REALNAME_COLUMN].text();
+    const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
+    const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
     if ("../" == fn1)
         return true;
     if ("../" == fn2)
@@ -117,7 +117,7 @@ static bool extnameFilter(const std::vector<std::string> &extNames, std::string 
     return false;
 }
 
-void cMainList::addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner)
+void MainList::addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner)
 {
     std::vector<std::string> a_row;
     a_row.push_back(""); // make a space for icon
@@ -136,7 +136,7 @@ void cMainList::addDirEntry(int pos, const std::string row1, const std::string r
     _romInfoList.push_back(rominfo);
 }
 
-bool cMainList::enterDir(const std::string &dirName)
+bool MainList::enterDir(const std::string &dirName)
 {
     dbg_printf("Enter Dir: %s\n", dirName.c_str());
     if ("~" == dirName) // select RPG or SD card
@@ -281,12 +281,12 @@ bool cMainList::enterDir(const std::string &dirName)
     return true;
 }
 
-void cMainList::onSelectChanged(u32 index)
+void MainList::onSelectChanged(u32 index)
 {
     dbg_printf("%s\n", _rows[index][3].text().c_str());
 }
 
-void cMainList::onSelectedRowClicked(u32 index)
+void MainList::onSelectedRowClicked(u32 index)
 {
     const INPUT &input = getInput();
     //dbg_printf("%d %d", input.touchPt.px, _position.x );
@@ -294,13 +294,13 @@ void cMainList::onSelectedRowClicked(u32 index)
         selectedRowHeadClicked(index);
 }
 
-void cMainList::onScrolled(u32 index)
+void MainList::onScrolled(u32 index)
 {
     _activeIconScale = 1;
     //updateActiveIcon( CONTENT );
 }
 
-void cMainList::backParentDir()
+void MainList::backParentDir()
 {
     if ("..." == _currentDir)
         return;
@@ -331,21 +331,21 @@ void cMainList::backParentDir()
     }
 }
 
-std::string cMainList::getSelectedFullPath()
+std::string MainList::getSelectedFullPath()
 {
     if (!_rows.size())
         return std::string("");
     return _rows[_selectedRowId][REALNAME_COLUMN].text();
 }
 
-std::string cMainList::getSelectedShowName()
+std::string MainList::getSelectedShowName()
 {
     if (!_rows.size())
         return std::string("");
     return _rows[_selectedRowId][SHOWNAME_COLUMN].text();
 }
 
-bool cMainList::getRomInfo(u32 rowIndex, DSRomInfo &info) const
+bool MainList::getRomInfo(u32 rowIndex, DSRomInfo &info) const
 {
     if (rowIndex < _romInfoList.size())
     {
@@ -358,7 +358,7 @@ bool cMainList::getRomInfo(u32 rowIndex, DSRomInfo &info) const
     }
 }
 
-void cMainList::setRomInfo(u32 rowIndex, const DSRomInfo &info)
+void MainList::setRomInfo(u32 rowIndex, const DSRomInfo &info)
 {
     if (!_romInfoList[rowIndex].isDSRom())
         return;
@@ -369,15 +369,15 @@ void cMainList::setRomInfo(u32 rowIndex, const DSRomInfo &info)
     }
 }
 
-void cMainList::draw()
+void MainList::draw()
 {
     updateInternalNames();
-    cListView::draw();
+    ListView::draw();
     updateActiveIcon(POSITION);
     drawIcons();
 }
 
-void cMainList::drawIcons()
+void MainList::drawIcons()
 {
     if (VM_LIST != _viewMode)
     {
@@ -401,7 +401,7 @@ void cMainList::drawIcons()
     }
 }
 
-void cMainList::setViewMode(VIEW_MODE mode)
+void MainList::setViewMode(VIEW_MODE mode)
 {
     if (!_columns.size())
         return;
@@ -433,7 +433,7 @@ void cMainList::setViewMode(VIEW_MODE mode)
     scrollTo(_selectedRowId - _visibleRowCount + 1);
 }
 
-void cMainList::updateActiveIcon(bool updateContent)
+void MainList::updateActiveIcon(bool updateContent)
 {
     const INPUT &temp = getInput();
     bool allowAnimation = true;
@@ -470,12 +470,12 @@ void cMainList::updateActiveIcon(bool updateContent)
     }
 }
 
-std::string cMainList::getCurrentDir()
+std::string MainList::getCurrentDir()
 {
     return _currentDir;
 }
 
-void cMainList::updateInternalNames(void)
+void MainList::updateInternalNames(void)
 {
     if (_viewMode == VM_INTERNAL)
     {
@@ -499,7 +499,7 @@ void cMainList::updateInternalNames(void)
     }
 }
 
-void cMainList::SwitchShowAllFiles(void)
+void MainList::SwitchShowAllFiles(void)
 {
     _showAllFiles = !_showAllFiles;
     enterDir(getCurrentDir());

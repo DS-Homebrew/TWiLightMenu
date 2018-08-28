@@ -26,13 +26,13 @@
 #include "time/datetime.h"
 #include "singleton.h"
 
-//class cClockNumber : public
-class cBigClock : public akui::cWindow
+//class ClockNumber : public
+class BigClock : public akui::Window
 {
   public:
-    cBigClock();
+    BigClock();
 
-    ~cBigClock() {}
+    ~BigClock() {}
 
   public:
     void init();
@@ -41,24 +41,24 @@ class cBigClock : public akui::cWindow
 
     void blinkColon();
 
-    akui::cWindow &loadAppearance(const std::string &aFileName);
+    akui::Window &loadAppearance(const std::string &aFileName);
 
   protected:
     void drawNumber(u8 id, u8 number);
 
     void drawColon();
 
-    cBMP15 _numbers;
-    cBMP15 _colon;
+    BMP15 _numbers;
+    BMP15 _colon;
 
     bool _show;
     bool _colonShow;
     bool _ampmShow;
-    akui::cPoint _ampmPosition;
+    akui::Point _ampmPosition;
     COLOR _ampmColor;
 };
 
-typedef t_singleton<cBigClock> bigClock_s;
-inline cBigClock &bigClock() { return bigClock_s::instance(); }
+typedef t_singleton<BigClock> bigClock_s;
+inline BigClock &bigClock() { return bigClock_s::instance(); }
 
 #endif //_BIGCLOCK_H_

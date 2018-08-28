@@ -31,8 +31,8 @@
 
 using namespace akui;
 
-cRomInfoWnd::cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cForm(x, y, w, h, parent, text),
+RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Form(x, y, w, h, parent, text),
       _buttonOK(0, 0, 46, 18, this, "\x01 OK"),
       _buttonGameSettings(0, 0, 76, 18, this, "\x04 Save Type"),
       _settingWnd(NULL)
@@ -40,11 +40,11 @@ cRomInfoWnd::cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
 {
     s16 buttonY = size().y - _buttonOK.size().y - 4;
 
-    _buttonOK.setStyle(cButton::press);
+    _buttonOK.setStyle(Button::press);
     _buttonOK.setText("\x01 " + LANG("setting window", "ok"));
     _buttonOK.setTextColor(uis().buttonTextColor);
     _buttonOK.loadAppearance(SFN_BUTTON3);
-    _buttonOK.clicked.connect(this, &cRomInfoWnd::onOK);
+    _buttonOK.clicked.connect(this, &RomInfoWnd::onOK);
     addChildWindow(&_buttonOK);
 
     s16 nextButtonX = size().x;
@@ -52,65 +52,28 @@ cRomInfoWnd::cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
     s16 buttonPitch = _buttonOK.size().x + 8;
     nextButtonX -= buttonPitch;
 
-    _buttonOK.setRelativePosition(cPoint(nextButtonX, buttonY));
-    _buttonGameSettings.setStyle(cButton::press);
+    _buttonOK.setRelativePosition(Point(nextButtonX, buttonY));
+    _buttonGameSettings.setStyle(Button::press);
     _buttonGameSettings.setText("\x04 " + LANG("setting window", "Settings"));
     _buttonGameSettings.setTextColor(uis().buttonTextColor);
     _buttonGameSettings.loadAppearance(SFN_BUTTON3);
-    _buttonGameSettings.clicked.connect(this, &cRomInfoWnd::pressSaveType);
+    _buttonGameSettings.clicked.connect(this, &RomInfoWnd::pressSaveType);
     addChildWindow(&_buttonGameSettings);
 
-    
     buttonPitch = _buttonGameSettings.size().x + 8;
     s16 nextButtonXone = nextButtonX - buttonPitch;
 
-    _buttonGameSettings.setRelativePosition(cPoint(nextButtonXone, buttonY));
-
-    // _buttonCheats.setStyle(cButton::press);
-    // _buttonCheats.setText("\x03 " + LANG("cheats", "title"));
-    // _buttonCheats.setTextColor(uis().buttonTextColor);
-    // _buttonCheats.loadAppearance(SFN_BUTTON3);
-    // _buttonCheats.clicked.connect(this, &cRomInfoWnd::pressCheats);
-    // addChildWindow(&_buttonCheats);
-
-    // buttonPitch = _buttonCheats.size().x + 8;
-    // nextButtonXone -= buttonPitch;
-
-    // _buttonCheats.setRelativePosition(cPoint(nextButtonXone, buttonY));
-
-    // _buttonFlash.setStyle(cButton::press);
-    // _buttonFlash.setText("\x03 " + LANG("exp window", "flash to nor"));
-    // _buttonFlash.setTextColor(uis().buttonTextColor);
-    // _buttonFlash.loadAppearance(SFN_BUTTON3);
-    // _buttonFlash.clicked.connect(this, &cRomInfoWnd::pressFlash);
-    // addChildWindow(&_buttonFlash);
-
-    // buttonPitch = _buttonFlash.size().x + 8;
-    // nextButtonX -= buttonPitch;
-
-    // _buttonFlash.setRelativePosition(cPoint(nextButtonX, buttonY));
-
-    // _buttonCopy.setStyle(cButton::press);
-    // _buttonCopy.setText("\x05 " + LANG("exp window", "copy to psram"));
-    // _buttonCopy.setTextColor(uis().buttonTextColor);
-    // _buttonCopy.loadAppearance(SFN_BUTTON3);
-    // _buttonCopy.clicked.connect(this, &cRomInfoWnd::pressCopy);
-    // addChildWindow(&_buttonCopy);
-
-    // buttonPitch = _buttonCopy.size().x + 8;
-    // nextButtonX -= buttonPitch;
-
-    // _buttonCopy.setRelativePosition(cPoint(nextButtonX, buttonY));
+    _buttonGameSettings.setRelativePosition(Point(nextButtonXone, buttonY));
 
     loadAppearance("");
     arrangeChildren();
 }
 
-cRomInfoWnd::~cRomInfoWnd()
+RomInfoWnd::~RomInfoWnd()
 {
 }
 
-void cRomInfoWnd::draw()
+void RomInfoWnd::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
 
@@ -124,44 +87,44 @@ void cRomInfoWnd::draw()
     gdi().textOutRect(position().x + 8, position().y + 64 + 14 + 14, size().x - 8, 40, _fileSizeText.c_str(), selectedEngine());
     gdi().textOutRect(position().x + 8, position().y + 64 + 14 + 14 + 14, size().x - 8, 40, _saveTypeText.c_str(), selectedEngine());
 
-    cForm::draw();
+    Form::draw();
     // Powersaving loop
     swiWaitForVBlank();
 }
 
-bool cRomInfoWnd::process(const akui::cMessage &msg)
+bool RomInfoWnd::process(const akui::Message &msg)
 {
     bool ret = false;
 
-    ret = cForm::process(msg);
+    ret = Form::process(msg);
 
     if (!ret)
     {
-        if (msg.id() > cMessage::keyMessageStart && msg.id() < cMessage::keyMessageEnd)
+        if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
         {
-            ret = processKeyMessage((cKeyMessage &)msg);
+            ret = processKeyMessage((KeyMessage &)msg);
         }
     }
     return ret;
 }
 
-bool cRomInfoWnd::processKeyMessage(const cKeyMessage &msg)
+bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == cMessage::keyDown)
+    if (msg.id() == Message::keyDown)
     {
         switch (msg.keyCode())
         {
-        case cKeyMessage::UI_KEY_A:
-        case cKeyMessage::UI_KEY_B:
+        case KeyMessage::UI_KEY_A:
+        case KeyMessage::UI_KEY_B:
             onOK();
             ret = true;
             break;
-        case cKeyMessage::UI_KEY_Y:
+        case KeyMessage::UI_KEY_Y:
             pressSaveType();
             ret = true;
             break;
-        // case cKeyMessage::UI_KEY_X:
+        // case KeyMessage::UI_KEY_X:
         //     // if (_buttonCheats.isVisible())
         //     // {
         //     //     pressCheats();
@@ -172,7 +135,7 @@ bool cRomInfoWnd::processKeyMessage(const cKeyMessage &msg)
         //     // }
         //     ret = true;
         //     break;
-        // case cKeyMessage::UI_KEY_L:
+        // case KeyMessage::UI_KEY_L:
         //     pressCopy();
         //     ret = true;
         //     break;
@@ -185,12 +148,12 @@ bool cRomInfoWnd::processKeyMessage(const cKeyMessage &msg)
     return ret;
 }
 
-void cRomInfoWnd::pressSaveType(void)
+void RomInfoWnd::pressSaveType(void)
 {
     if (!_romInfo.isDSRom() || _romInfo.isHomebrew())
         return;
 
-    cSettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");
+    SettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");
 
     std::vector<std::string> _values;
     _values.push_back(LANG("game settings", "Default"));
@@ -201,7 +164,7 @@ void cRomInfoWnd::pressSaveType(void)
     _values.push_back(LANG("game settings", "German"));
     _values.push_back(LANG("game settings", "Italian"));
     _values.push_back(LANG("game settings", "Spanish"));
-   
+
     settingWnd.addSettingItem(LANG("game settings", "Language"), _values, 0);
     _values.clear();
 
@@ -233,17 +196,14 @@ void cRomInfoWnd::pressSaveType(void)
     settingWnd.addSettingItem(LANG("game settings", "Async Prefetch"), _values, 0);
     _values.clear();
 
-
-
     _settingWnd = &settingWnd;
     u32 ret = settingWnd.doModal();
     _settingWnd = NULL;
-    if( ID_CANCEL == ret )
+    if (ID_CANCEL == ret)
         return;
-
 }
 
-cWindow &cRomInfoWnd::loadAppearance(const std::string &aFileName)
+Window &RomInfoWnd::loadAppearance(const std::string &aFileName)
 {
     _renderDesc.loadData(SFN_FORM_TITLE_L, SFN_FORM_TITLE_R, SFN_FORM_TITLE_M);
     _renderDesc.setTitleText(_text);
@@ -282,7 +242,7 @@ static std::string getFriendlyFileSizeString(u64 size)
     return fileSize + sizeUnit;
 }
 
-void cRomInfoWnd::setFileInfo(const std::string &fullName, const std::string &showName)
+void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &showName)
 {
     _fullName = fullName;
 
@@ -331,7 +291,7 @@ void cRomInfoWnd::setFileInfo(const std::string &fullName, const std::string &sh
     _size = st.st_size;
 }
 
-void cRomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
+void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 {
     _romInfo = romInfo;
 
@@ -339,34 +299,32 @@ void cRomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 
     _buttonGameSettings.hide();
 
-    // _buttonFlash.hide();
-    // _buttonCopy.hide();
-    // _buttonCheats.hide();
     if (_romInfo.isDSRom() && !_romInfo.isHomebrew())
     {
         addCode();
     }
-    if (_romInfo.isDSRom() || _romInfo.isHomebrew()) {
+    if (_romInfo.isDSRom() || _romInfo.isHomebrew())
+    {
         _buttonGameSettings.show();
     }
 }
 
-const DSRomInfo &cRomInfoWnd::getRomInfo()
+const DSRomInfo &RomInfoWnd::getRomInfo()
 {
     return _romInfo;
 }
 
-void cRomInfoWnd::onOK()
+void RomInfoWnd::onOK()
 {
-    cForm::onOK();
+    Form::onOK();
 }
 
-void cRomInfoWnd::onShow()
+void RomInfoWnd::onShow()
 {
     centerScreen();
 }
 
-void cRomInfoWnd::addCode(void)
+void RomInfoWnd::addCode(void)
 {
     char gameCode[5];
     memcpy(gameCode, _romInfo.saveInfo().gameCode, sizeof(_romInfo.saveInfo().gameCode));

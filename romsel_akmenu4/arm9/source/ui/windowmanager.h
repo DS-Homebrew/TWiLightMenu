@@ -28,41 +28,41 @@
 
 namespace akui
 {
-class cWindowManager
+class WindowManager
 {
 private:
-  struct cWindowRec
+  struct WindowRec
   {
-    cWindow *_window;
-    cWindow *_focused;
-    cWindowRec(cWindow *window, cWindow *focused = NULL) : _window(window), _focused(focused) {}
-    cWindow *operator()(void) const { return _window; }
+    Window *_window;
+    Window *_focused;
+    WindowRec(Window *window, Window *focused = NULL) : _window(window), _focused(focused) {}
+    Window *operator()(void) const { return _window; }
   };
-  typedef std::list<cWindowRec> cWindows;
+  typedef std::list<WindowRec> Windows;
 
 private:
-  cWindows _backgroundWindows;
-  cWindowRec _currentWindow;
-  cWindow *_focusedWindow;
-  cWindow *_windowBelowPen;
-  cWindow *_capturedWindow; //process touch for non-focusable window
+  Windows _backgroundWindows;
+  WindowRec _currentWindow;
+  Window *_focusedWindow;
+  Window *_windowBelowPen;
+  Window *_capturedWindow; //process touch for non-focusable window
 protected:
-  cWindowManager &checkForWindowBelowPen(const cPoint &touchPoint);
-  cWindow *windowBelowPen(void) const { return _windowBelowPen; }
-  void updateFocusIfNecessary(const cPoint &touchPoint);
-  bool process(cMessage &message) const;
-  bool processTouchMessage(cTouchMessage &message);
-  const cWindowManager &updateBackground(void);
+  WindowManager &checkForWindowBelowPen(const Point &touchPoint);
+  Window *windowBelowPen(void) const { return _windowBelowPen; }
+  void updateFocusIfNecessary(const Point &touchPoint);
+  bool process(Message &message) const;
+  bool processTouchMessage(TouchMessage &message);
+  const WindowManager &updateBackground(void);
 
 public:
-  cWindowManager();
-  ~cWindowManager();
-  cWindow *focusedWindow(void) const { return _focusedWindow; }
-  void setFocusedWindow(cWindow *aWindow);
-  cWindowManager &addWindow(cWindow *aWindow);
-  cWindowManager &removeWindow(cWindow *aWindow);
-  cWindow *currentWindow(void) const { return _currentWindow(); }
-  const cWindowManager &update(void);
+  WindowManager();
+  ~WindowManager();
+  Window *focusedWindow(void) const { return _focusedWindow; }
+  void setFocusedWindow(Window *aWindow);
+  WindowManager &addWindow(Window *aWindow);
+  WindowManager &removeWindow(Window *aWindow);
+  Window *currentWindow(void) const { return _currentWindow(); }
+  const WindowManager &update(void);
   bool onKeyDown(unsigned char keyCode, unsigned char shift);
   bool onKeyUp(unsigned char keyCode, unsigned char shift);
   bool onTouchDown(int x, int y);
@@ -70,8 +70,8 @@ public:
   bool onTouchMove(int x, int y);
 };
 
-typedef t_singleton<cWindowManager> cWindowManager_s;
-inline cWindowManager &windowManager(void) { return cWindowManager_s::instance(); }
+typedef t_singleton<WindowManager> WindowManager_s;
+inline WindowManager &windowManager(void) { return WindowManager_s::instance(); }
 } // namespace akui
 
 #endif //_AKUI_WINDOWMANAGER_H_

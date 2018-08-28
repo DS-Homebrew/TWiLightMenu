@@ -31,17 +31,17 @@ namespace akui
 // ���ڱ���ɫ��eeebae
 // 30, 29, 22
 
-cFormDesc::cFormDesc()
+FormDesc::FormDesc()
 {
     _bodyColor = uiSettings().formBodyColor;   //RGB15(30,29,22);
     _frameColor = uiSettings().formFrameColor; //RGB15(23,25,4);
 }
 
-cFormDesc::~cFormDesc()
+FormDesc::~FormDesc()
 {
 }
 
-void cFormDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
+void FormDesc::draw(const Rect &area, GRAPHICS_ENGINE engine) const
 {
     if (_topleft.valid())
     {
@@ -86,7 +86,7 @@ void cFormDesc::draw(const cRect &area, GRAPHICS_ENGINE engine) const
                     area.width(), area.height() - _topleft.height(), uiSettings().thickness, engine);
 }
 
-void cFormDesc::loadData(const std::string &topleftBmpFile,
+void FormDesc::loadData(const std::string &topleftBmpFile,
                          const std::string &toprightBmpFile,
                          const std::string &middleBmpFile)
 {
@@ -95,7 +95,7 @@ void cFormDesc::loadData(const std::string &topleftBmpFile,
     _middle = createBMP15FromFile(middleBmpFile);
 }
 
-void cFormDesc::setTitleText(const std::string &text)
+void FormDesc::setTitleText(const std::string &text)
 {
     _titleText = text;
 }

@@ -21,16 +21,16 @@
 #include "drawing/sprite.h"
 #include <nds.h>
 
-cSprite::cSprite(u8 id)
+Sprite::Sprite(u8 id)
 {
     init(id);
 }
 
-cSprite::~cSprite()
+Sprite::~Sprite()
 {
 }
 
-void cSprite::sysinit()
+void Sprite::sysinit()
 {
     oamInit(&oamMain, SpriteMapping_Bmp_1D_128, true);
 
@@ -52,7 +52,7 @@ void cSprite::sysinit()
     //dmaCopy( _sprites, OAM, 128 * sizeof(SpriteEntry) );
 }
 
-void cSprite::init(u16 id)
+void Sprite::init(u16 id)
 {
     //_alpha = 0;
     _id = id;
@@ -88,62 +88,62 @@ void cSprite::init(u16 id)
     //update();
 }
 
-void cSprite::show()
+void Sprite::show()
 {
     //oamSetHidden(&oamMain, _id, false);
 
     _entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_ROTSCALE | ATTR0_BMP;
 }
 
-void cSprite::hide()
+void Sprite::hide()
 {
    // oamSetHidden(&oamMain, _id, true);
     _entry->attribute[0] = (_entry->attribute[0] & (~0x0300)) | ATTR0_DISABLED;
 }
 
-void cSprite::setAlpha(u8 alpha)
+void Sprite::setAlpha(u8 alpha)
 {
     oamSetAlpha(&oamMain, _id, alpha);
     // _alpha = alpha & 0x1f;
     // _entry->attribute[2] = (_entry->attribute[2] & (~0xf000)) | ATTR2_ALPHA(_alpha);
 }
 
-void cSprite::setPosition(u16 x, u8 y)
+void Sprite::setPosition(u16 x, u8 y)
 {
     oamSetXY(&oamMain, _id, x, y);
 }
 
-void cSprite::setSize(SPRITE_SIZE size)
+void Sprite::setSize(SPRITE_SIZE size)
 {
     _size = size;
     _entry->attribute[1] = (_entry->attribute[1] & (~0xC000)) | _size;
 }
 
-void cSprite::setShape(SPRITE_SHAPE shape)
+void Sprite::setShape(SPRITE_SHAPE shape)
 {
     _shape = shape;
     _entry->attribute[1] = (_entry->attribute[0] & (~0xC000)) | _shape;
 }
 
-u16 *cSprite::buffer()
+u16 *Sprite::buffer()
 {
     return SPRITE_GFX + (_bufferOffset * 64);
 }
 
-//void cSprite::update()
+//void Sprite::update()
 //{
 //    //DC_FlushRange( _sprites, 128 * sizeof(SpriteEntry) );
 //    SpriteEntry * psprites = (SpriteEntry * )OAM;
 //    dmaCopy( _sprites, &psprites[_id], sizeof(SpriteEntry) );
 //}
 
-void cSprite::setBufferOffset(u32 offset)
+void Sprite::setBufferOffset(u32 offset)
 {
     _bufferOffset = offset;
     _entry->attribute[2] = (_entry->attribute[2] & (~0x3FF)) | offset;
 }
 
-void cSprite::setScale(float scaleX, float scaleY)
+void Sprite::setScale(float scaleX, float scaleY)
 {
     _scaleX = scaleX;
     _scaleY = scaleY;
@@ -162,14 +162,14 @@ void cSprite::setScale(float scaleX, float scaleY)
     _affine->vdy = (integerY << 8) | decimalY;
 }
 
-void cSprite::setPriority(u8 priority)
+void Sprite::setPriority(u8 priority)
 {
     oamSetPriority(&oamMain, _id, priority);
     _priority = priority;
     //_entry->attribute[2] = (_entry->attribute[2] & (~0x0C00)) | ATTR2_PRIORITY(_priority);
 }
 
-bool cSprite::visible()
+bool Sprite::visible()
 {
     return (_entry->attribute[0] & 0x0300) != 0x0200;
 }

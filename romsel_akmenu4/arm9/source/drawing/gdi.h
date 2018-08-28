@@ -49,15 +49,15 @@ enum SUB_ENGINE_MODE
     SEM_GRAPHICS = 1
 };
 
-class cSprite;
+class Sprite;
 
-class cGdi
+class Gdi
 {
 public:
 
-    cGdi();
+    Gdi();
 
-    virtual ~cGdi();
+    virtual ~Gdi();
 
 public:
 
@@ -141,12 +141,12 @@ private:
 #ifdef DEBUG
     u16 * _bufferSub3;
 #endif
-    cSprite* _sprites;
-    cBMP15 _background;
+    Sprite* _sprites;
+    BMP15 _background;
 };
 
-typedef t_singleton< cGdi > cGdi_s;
-inline cGdi & gdi() { return cGdi_s::instance(); }
+typedef t_singleton< Gdi > Gdi_s;
+inline Gdi & gdi() { return Gdi_s::instance(); }
 
 
 #endif//_GDI_H_

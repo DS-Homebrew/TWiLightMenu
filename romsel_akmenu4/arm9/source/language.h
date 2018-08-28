@@ -26,19 +26,19 @@
 #include "systemfilenames.h"
 #include "inifile.h"
 
-class cLanguageFile : public CIniFile
+class LanguageFile : public CIniFile
 {
 public:
-  cLanguageFile()
+  LanguageFile()
   {
     m_bReadOnly = true;
     LoadIniFile(SFN_LANGUAGE_TEXT);
   }
-  ~cLanguageFile(){};
+  ~LanguageFile(){};
 };
 
-typedef t_singleton<cLanguageFile> languageFile_s;
-inline cLanguageFile &lang() { return languageFile_s::instance(); }
+typedef t_singleton<LanguageFile> languageFile_s;
+inline LanguageFile &lang() { return languageFile_s::instance(); }
 #define LANG(i, t) lang().GetString(i, t, t)
 
 bool stringComp(const std::string &item1, const std::string &item2);

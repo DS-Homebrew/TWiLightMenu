@@ -29,9 +29,9 @@
 namespace akui
 {
 
-class cButtonDesc;
+class ButtonDesc;
 
-class cButton : public cWindow
+class Button : public Window
 {
 
   public:
@@ -55,16 +55,16 @@ class cButton : public cWindow
         right
     };
 
-    cButton(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    Button(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~cButton();
+    ~Button();
 
   public:
     void draw();
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
-    bool process(const cMessage &msg);
+    bool process(const Message &msg);
 
     State state() { return _state; }
 
@@ -91,7 +91,7 @@ class cButton : public cWindow
     Signal0 pressed;
 
   protected:
-    bool processTouchMessage(const akui::cTouchMessage &msg);
+    bool processTouchMessage(const akui::TouchMessage &msg);
 
     bool _captured;
 
@@ -99,7 +99,7 @@ class cButton : public cWindow
 
     COLOR _textColor;
 
-    cButtonDesc *_renderDesc;
+    ButtonDesc *_renderDesc;
 
     Style _style;
 
@@ -107,27 +107,27 @@ class cButton : public cWindow
 };
 
 // form desc��ֻ���𻭱���
-class cButtonDesc : public cRenderDesc
+class ButtonDesc : public RenderDesc
 {
   public:
-    cButtonDesc();
+    ButtonDesc();
 
-    ~cButtonDesc();
+    ~ButtonDesc();
 
   public:
-    cButtonDesc &setButton(cButton *button)
+    ButtonDesc &setButton(Button *button)
     {
         _button = button;
         return *this;
     }
 
-    void draw(const cRect &area, GRAPHICS_ENGINE engine) const;
+    void draw(const Rect &area, GRAPHICS_ENGINE engine) const;
 
     void loadData(const std::string &filename);
 
   protected:
-    cButton *_button;
-    cBMP15 _background;
+    Button *_button;
+    BMP15 _background;
     COLOR _textColor;
 };
 } // namespace akui

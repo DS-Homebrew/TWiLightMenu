@@ -27,10 +27,10 @@
 
 namespace akui
 {
-class cListColumn
+class ListColumn
 {
   public:
-    cListColumn() : index(0), width(0), offset(0), text("") {}
+    ListColumn() : index(0), width(0), offset(0), text("") {}
 
     u32 index;
     u16 width;
@@ -38,14 +38,14 @@ class cListColumn
     std::string text;
 };
 
-class cListItem
+class ListItem
 {
   protected:
     std::string _text;
     u32 _lines;
 
   public:
-    cListItem() : _text(""), _lines(1), index(0), column(0), imageId(0), param(0) {}
+    ListItem() : _text(""), _lines(1), index(0), column(0), imageId(0), param(0) {}
     u32 index;
     u32 column;
     u32 imageId;
@@ -55,28 +55,28 @@ class cListItem
     void setText(const std::string &text);
 };
 
-class cListView : public cWindow
+class ListView : public Window
 {
   public:
-    cListView(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    virtual ~cListView() {}
+    virtual ~ListView() {}
 
-    typedef std::vector<cListItem> itemVector; // a column
+    typedef std::vector<ListItem> itemVector; // a column
 
   public:
-    class cOwnerDraw
+    class OwnerDraw
     {
       public:
         size_t _row;
         size_t _col;
-        cPoint _position;
-        cSize _size;
+        Point _position;
+        Size _size;
         s16 _textY;
         u16 _textHeight;
         const char *_text;
         GRAPHICS_ENGINE _engine;
-        cOwnerDraw(size_t row, size_t col, const cPoint &position, const cSize &size, s16 textY, u16 textHeight, const char *text, GRAPHICS_ENGINE engine) : _row(row), _col(col), _position(position), _size(size), _textY(textY), _textHeight(textHeight), _text(text), _engine(engine){};
+        OwnerDraw(size_t row, size_t col, const Point &position, const Size &size, s16 textY, u16 textHeight, const char *text, GRAPHICS_ENGINE engine) : _row(row), _col(col), _position(position), _size(size), _textY(textY), _textHeight(textHeight), _text(text), _engine(engine){};
     };
 
   public:
@@ -100,7 +100,7 @@ class cListView : public cWindow
 
     void setListViewSize(u16 w, u16 h)
     {
-        setSize(cSize(w, h));
+        setSize(Size(w, h));
         _visibleRowCount = h / _rowHeight;
         //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
     }
@@ -117,15 +117,15 @@ class cListView : public cWindow
 
     void selectPrev() { selectRow(_selectedRowId - 1); }
 
-    u32 rowBelowPoint(const cPoint &pt);
+    u32 rowBelowPoint(const Point &pt);
 
     void scrollTo(int id);
 
     u32 visibleRowCount() { return _visibleRowCount; }
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
-    bool process(const akui::cMessage &msg);
+    bool process(const akui::Message &msg);
 
     inline void setColors(u16 textColor, u16 textColorHilight, u16 selectionBarColor1, u16 selectionBarColor2)
     {
@@ -143,7 +143,7 @@ class cListView : public cWindow
 
     Signal1<u32> scrolled;
 
-    Signal1<const cOwnerDraw &> ownerDraw;
+    Signal1<const OwnerDraw &> ownerDraw;
 
   protected:
     virtual void onSelectChanged(u32 index) {}
@@ -152,7 +152,7 @@ class cListView : public cWindow
 
     virtual void onScrolled(u32 index) {}
 
-    bool processTouchMessage(const akui::cTouchMessage &msg);
+    bool processTouchMessage(const akui::TouchMessage &msg);
 
   protected:
     void drawSelectionBar();
@@ -174,7 +174,7 @@ class cListView : public cWindow
     u16 _rowsPerpage;
     bool _touchMovedAfterTouchDown;
 
-    std::vector<cListColumn> _columns;
+    std::vector<ListColumn> _columns;
     std::vector<itemVector> _rows;
 };
 

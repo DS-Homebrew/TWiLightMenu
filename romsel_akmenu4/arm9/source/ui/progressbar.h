@@ -27,24 +27,24 @@
 namespace akui
 {
 
-class cProgressBar : public cWindow
+class ProgressBar : public Window
 {
   public:
-    cProgressBar(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text);
+    ProgressBar(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~cProgressBar();
+    ~ProgressBar();
 
   public:
     void draw();
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
     void setPercent(u8 percent);
 
   protected:
     u8 _percent;
 
-    cBMP15 _barBmp;
+    BMP15 _barBmp;
 };
 
 } // namespace akui

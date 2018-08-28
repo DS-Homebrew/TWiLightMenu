@@ -21,7 +21,7 @@
 #include "zoomingicon.h"
 #include "drawing/gdi.h"
 
-cZoomingIcon::cZoomingIcon()
+ZoomingIcon::ZoomingIcon()
 {
     _x = 0;
     _y = 0;
@@ -34,27 +34,27 @@ cZoomingIcon::cZoomingIcon()
     _sprite.show();
 }
 
-cZoomingIcon::~cZoomingIcon()
+ZoomingIcon::~ZoomingIcon()
 {
 }
 
-void cZoomingIcon::setScale(float scale)
+void ZoomingIcon::setScale(float scale)
 {
     _scale = scale;
 }
 
-void cZoomingIcon::setPosition(u8 x, u8 y)
+void ZoomingIcon::setPosition(u8 x, u8 y)
 {
     _x = x;
     _y = y;
 }
 
-void cZoomingIcon::setBufferChanged()
+void ZoomingIcon::setBufferChanged()
 {
     _needUpdateBuffer = true;
 }
 
-void cZoomingIcon::update()
+void ZoomingIcon::update()
 {
     static float scaleFactor = 0.015;
     if (_visible)
@@ -87,7 +87,7 @@ void cZoomingIcon::update()
     }
 }
 
-void cZoomingIcon::show()
+void ZoomingIcon::show()
 {
     if (!_visible)
     {
@@ -96,7 +96,7 @@ void cZoomingIcon::show()
     }
 }
 
-void cZoomingIcon::hide()
+void ZoomingIcon::hide()
 {
     if (_visible)
     {
@@ -105,7 +105,7 @@ void cZoomingIcon::hide()
     }
 }
 
-void cZoomingIcon::reset()
+void ZoomingIcon::reset()
 {
     _scale = 1.f;
 }

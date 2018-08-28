@@ -26,30 +26,30 @@
 
 using namespace akui;
 
-cCalendarWnd::cCalendarWnd() : cForm( 0, 0, 256, 192, NULL, "calendar window" )
+CalendarWnd::CalendarWnd() : Form( 0, 0, 256, 192, NULL, "calendar window" )
 {
 
 }
 
-cCalendarWnd::~cCalendarWnd()
+CalendarWnd::~CalendarWnd()
 {
 
 }
 
-void cCalendarWnd::init()
+void CalendarWnd::init()
 {
     setEngine( GE_SUB );
     loadAppearance( SFN_UPPER_SCREEN_BG );
 }
 
-cWindow& cCalendarWnd::loadAppearance(const std::string& aFileName )
+Window& CalendarWnd::loadAppearance(const std::string& aFileName )
 {
     _background = createBMP15FromFile( aFileName );
     return *this;
 }
 
 
-void cCalendarWnd::draw()
+void CalendarWnd::draw()
 {
     if( _background.valid() )
         gdi().bitBlt( _background.buffer(), 0, 0, 256, 192, selectedEngine() );

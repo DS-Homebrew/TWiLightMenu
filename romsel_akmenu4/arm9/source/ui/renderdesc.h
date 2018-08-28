@@ -27,24 +27,24 @@
 namespace akui
 {
 
-class cRenderDesc
+class RenderDesc
 {
     // ----------------------------------------------------------------------------------------------
     //  Xstruction
     // ----------------------------------------------------------------------------------------------
   public:
     //! Default Constructor
-    cRenderDesc() {}
+    RenderDesc() {}
 
     //! Destructor
-    virtual ~cRenderDesc() {}
+    virtual ~RenderDesc() {}
 
     // ----------------------------------------------------------------------------------------------
     //  Public Interface
     // ----------------------------------------------------------------------------------------------
   public:
     //! draws on the passed in area according to the descriptor
-    virtual void draw(const cRect &area, GRAPHICS_ENGINE engine) const = 0;
+    virtual void draw(const Rect &area, GRAPHICS_ENGINE engine) const = 0;
 };
 
 } // namespace akui

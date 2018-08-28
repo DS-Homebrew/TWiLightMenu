@@ -34,16 +34,16 @@
 namespace akui
 {
 
-class cWindow : public SlotHolder
+class Window : public SlotHolder
 {
   public:
-    explicit cWindow(cWindow *aParent = 0, const std::string &aText = "");
-    virtual ~cWindow();
+    explicit Window(Window *aParent = 0, const std::string &aText = "");
+    virtual ~Window();
 
   public:
-    cWindow &setWindowRectangle(const cRect &rect);
+    Window &setWindowRectangle(const Rect &rect);
 
-    cRect windowRectangle() const;
+    Rect windowRectangle() const;
 
     //! The window text is a string with a context sensitive interpretation. It can be the
     //! label of a button or the title of a frame window etc.
@@ -52,35 +52,35 @@ class cWindow : public SlotHolder
     //! \brief Sets the window text; a string with a context sensitive
     //! interpretation. It can be the label of a button or the title of a
     //! frame window etc.
-    cWindow &setText(const std::string &aText);
+    Window &setText(const std::string &aText);
 
     //! returns the dimensions of the window in pixels
-    cSize size() const { return _size; }
+    Size size() const { return _size; }
 
     //! sets the dimensions of the window in pixels
-    cWindow &setSize(const cSize &aSize);
+    Window &setSize(const Size &aSize);
 
     //! returns the position of the window in app window coords
-    const cPoint &position() const { return _position; }
+    const Point &position() const { return _position; }
 
-    const cPoint &relativePosition() const { return _relative_position; }
-    cWindow &setRelativePosition(const cPoint &rPosition)
+    const Point &relativePosition() const { return _relative_position; }
+    Window &setRelativePosition(const Point &rPosition)
     {
         _relative_position = rPosition;
         return *this;
     }
 
     //! sets the position of the window in app window coords
-    cWindow &setPosition(const cPoint &aPosition);
+    Window &setPosition(const Point &aPosition);
 
     //! returns \c true if this window currently has the focus
     bool isFocused() const;
 
     //! sets the focus to this window
-    cWindow &enableFocused();
+    Window &enableFocused();
 
     //! removes the focus from this window
-    cWindow &disableFocused();
+    Window &disableFocused();
 
   public:
     //! \brief Returns a pointer to the window below the passed in point
@@ -89,13 +89,13 @@ class cWindow : public SlotHolder
     //! which window is currently below the mouse cursor. Each derived class
     //! which has child windows must overwrite this and pass the call on to
     //! the children.
-    virtual cWindow *windowBelow(const cPoint &p);
+    virtual Window *windowBelow(const Point &p);
 
     //! makes the window visible \sa hide
-    cWindow &show();
+    Window &show();
 
     //! makes the window invisible \sa show
-    cWindow &hide();
+    Window &hide();
 
     //! returns true iff the window is currently visible
     bool isVisible() const { return _isVisible; }
@@ -105,32 +105,32 @@ class cWindow : public SlotHolder
     //!
     //! Each derived class that has child windows must overwrite this and
     //! pass the call on to the children.
-    virtual bool doesHierarchyContain(cWindow *aWindow) const;
+    virtual bool doesHierarchyContain(Window *aWindow) const;
 
     //! returns the top level window belonging to this window
-    cWindow *topLevelWindow() const;
+    Window *topLevelWindow() const;
 
     //! returns a pointer to this window's parent
-    cWindow *parent() const { return _parent; }
+    Window *parent() const { return _parent; }
 
-    void setParent(cWindow *parent) { _parent = parent; }
+    void setParent(Window *parent) { _parent = parent; }
 
     //! Loads a descriptor for this individual window instance from an xml file
-    virtual cWindow &loadAppearance(const std::string &aFileName) = 0;
+    virtual Window &loadAppearance(const std::string &aFileName) = 0;
 
     virtual void update() {}
 
-    virtual bool process(const cMessage &msg);
+    virtual bool process(const Message &msg);
 
     bool isFocusable() { return _isFocusable; }
 
-    virtual cWindow &disableFocus(void)
+    virtual Window &disableFocus(void)
     {
         _isFocusable = false;
         return *this;
     }
 
-    cWindow &render();
+    Window &render();
 
     void setEngine(GRAPHICS_ENGINE engine) { _engine = engine; }
 
@@ -174,14 +174,14 @@ class cWindow : public SlotHolder
     virtual void onTextChanged() {}
 
   protected:
-    cWindow *_parent; //!< The window's parent (or 0 if this window has no parent)
+    Window *_parent; //!< The window's parent (or 0 if this window has no parent)
 
     //MessageListeners messageListeners_; //!< The message listeners attached to this window
 
     std::string _text;         //!< The window text
-    cSize _size;               //!< The size of the window
-    cPoint _position;          //!< The position of the window
-    cPoint _relative_position; //!< The position of the window
+    Size _size;               //!< The size of the window
+    Point _position;          //!< The position of the window
+    Point _relative_position; //!< The position of the window
     bool _isVisible;           //!< The visiblility flag
     bool _isSizeSetByUser;     //!< Whether the user has explicitly set the window's size
     bool _isFocusable;

@@ -26,13 +26,13 @@
 #include "drawing/sprite.h"
 #include "singleton.h"
 
-class cDiskIcon : public akui::cWindow
+class DiskIcon : public akui::Window
 {
 
   public:
-    cDiskIcon();
+    DiskIcon();
 
-    ~cDiskIcon() {}
+    ~DiskIcon() {}
 
   public:
     void draw();
@@ -41,7 +41,7 @@ class cDiskIcon : public akui::cWindow
 
     void turnOff();
 
-    akui::cWindow &loadAppearance(const std::string &aFileName);
+    akui::Window &loadAppearance(const std::string &aFileName);
 
     void blink(void);
 
@@ -50,10 +50,10 @@ class cDiskIcon : public akui::cWindow
 
     float _lightTime;
 
-    cSprite _icon;
+    Sprite _icon;
 };
 
-typedef t_singleton<cDiskIcon> diskIcon_s;
-inline cDiskIcon &diskIcon() { return diskIcon_s::instance(); }
+typedef t_singleton<DiskIcon> diskIcon_s;
+inline DiskIcon &diskIcon() { return diskIcon_s::instance(); }
 
 #endif //_DISKIOICON_H_

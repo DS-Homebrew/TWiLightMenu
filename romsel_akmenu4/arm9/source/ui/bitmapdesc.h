@@ -35,24 +35,24 @@ enum BLTMODE
     BM_MASKBLT
 };
 
-class cBitmapDesc : public cRenderDesc
+class BitmapDesc : public RenderDesc
 {
   public:
-    cBitmapDesc();
+    BitmapDesc();
 
-    ~cBitmapDesc();
+    ~BitmapDesc();
 
   public:
     void setBltMode(BLTMODE bltmode) { _bltmode = bltmode; }
 
-    void draw(const cRect &area, GRAPHICS_ENGINE engine) const;
+    void draw(const Rect &area, GRAPHICS_ENGINE engine) const;
 
     void loadData(const std::string &filename);
 
-    cSize size();
+    Size size();
 
   protected:
-    cBMP15 _background;
+    BMP15 _background;
 
     BLTMODE _bltmode;
 };

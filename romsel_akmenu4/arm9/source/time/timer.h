@@ -25,12 +25,12 @@
 #include <nds.h>
 #include "singleton.h"
 
-class cTimer
+class Timer
 {
   public:
-    cTimer();
+    Timer();
 
-    ~cTimer() {}
+    ~Timer() {}
 
   public:
     void initTimer();
@@ -57,7 +57,7 @@ class cTimer
     u32 _fpsCounter;
 };
 
-typedef t_singleton<cTimer> timer_s;
-inline cTimer &timer() { return timer_s::instance(); }
+typedef t_singleton<Timer> timer_s;
+inline Timer &timer() { return timer_s::instance(); }
 
 #endif //_TIMER_H_

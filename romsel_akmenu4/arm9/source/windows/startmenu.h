@@ -34,20 +34,20 @@
 #define START_MENU_ITEM_INFO 1
 #define START_MENU_ITEM_TOOLS 2
 
-class cStartMenu : public akui::cPopMenu
+class StartMenu : public akui::PopMenu
 {
   public:
-    cStartMenu(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text) : cPopMenu(x, y, w, h, parent, text)
+    StartMenu(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text) : PopMenu(x, y, w, h, parent, text)
     {
     }
 
-    ~cStartMenu() {}
+    ~StartMenu() {}
 
     void init();
 
-    bool process(const akui::cMessage &msg);
+    bool process(const akui::Message &msg);
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 };
 
 #endif //_STARTMENU_H_

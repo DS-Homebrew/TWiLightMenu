@@ -35,32 +35,32 @@
 // #include "files.h"
 // #include "userwnd.h"
 
-bool cIRQ::_vblankStarted(false);
+bool IRQ::_vblankStarted(false);
 
-void cIRQ::init()
+void IRQ::init()
 {
     irqSet(IRQ_VBLANK, vBlank);
     irqSet(IRQ_CARD_LINE, cardMC);
 }
 
-void cIRQ::cardMC()
+void IRQ::cardMC()
 {
     dbg_printf("cardMC\n");
     diskIcon().blink();
     REG_IF &= ~IRQ_CARD_LINE;
 }
 
-void cIRQ::vblankStart()
+void IRQ::vblankStart()
 {
     _vblankStarted = true;
 }
 
-void cIRQ::vblankStop()
+void IRQ::vblankStop()
 {
     _vblankStarted = false;
 }
 
-void cIRQ::vBlank()
+void IRQ::vBlank()
 {
     if (!_vblankStarted)
         return;

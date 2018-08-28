@@ -72,10 +72,10 @@ class t_point
 };
 
 //point
-typedef t_point<int> cPoint;
-typedef t_point<float> cPointf;
+typedef t_point<int> Point;
+typedef t_point<float> Pointf;
 //size
-typedef t_point<int> cSize;
+typedef t_point<int> Size;
 
 } // namespace akui
 

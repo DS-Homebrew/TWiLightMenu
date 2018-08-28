@@ -24,7 +24,7 @@
 namespace akui
 {
 
-class cMessage
+class Message
 {
     // ---------------------------------------------------------------------------------------------
     //  public enumerations
@@ -50,10 +50,10 @@ class cMessage
     // ---------------------------------------------------------------------------------------------
   public:
     //! constructor requires id
-    cMessage(Id anId) : _id(anId) {}
+    Message(Id anId) : _id(anId) {}
 
     //! destructor
-    virtual ~cMessage() {}
+    virtual ~Message() {}
 
     // ---------------------------------------------------------------------------------------------
     //  Accessors

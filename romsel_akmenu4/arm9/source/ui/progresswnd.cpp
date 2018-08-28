@@ -23,48 +23,48 @@
 namespace akui
 {
 
-cProgressWnd::cProgressWnd() // s32 x, s32 y, u32 w, u32 h, cWindow * parent, const std::string & text )
-    : cForm(0, 0, 0, 0, NULL, ""),
+ProgressWnd::ProgressWnd() // s32 x, s32 y, u32 w, u32 h, Window * parent, const std::string & text )
+    : Form(0, 0, 0, 0, NULL, ""),
       _bar(0, 0, 180, 24, this, ""),
       _tip(0, 0, 180, 20, this, "")
 {
     _renderDesc.setBltMode(BM_MASKBLT);
-    setSize(cSize(226, 62));
-    setPosition(cPoint(14, 64));
+    setSize(Size(226, 62));
+    setPosition(Point(14, 64));
 }
 
-cProgressWnd::~cProgressWnd()
+ProgressWnd::~ProgressWnd()
 {
 }
 
-void cProgressWnd::init()
+void ProgressWnd::init()
 {
     loadAppearance(SFN_PROGRESS_WND_BG);
     addChildWindow(&_bar);
-    _bar.setRelativePosition(cPoint(4, 9));
+    _bar.setRelativePosition(Point(4, 9));
     _bar.setPercent(0);
 
     addChildWindow(&_tip);
     _tip.setTextColor(uiSettings().formTextColor);
-    _tip.setRelativePosition(cPoint(4, _size.y - 24));
-    _tip.setSize(cSize(_size.x - 8, 12));
+    _tip.setRelativePosition(Point(4, _size.y - 24));
+    _tip.setSize(Size(_size.x - 8, 12));
     arrangeChildren();
     hide();
 }
 
-void cProgressWnd::draw()
+void ProgressWnd::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
-    cForm::draw();
+    Form::draw();
 }
 
-bool cProgressWnd::process(const cMessage &msg)
+bool ProgressWnd::process(const Message &msg)
 {
     bool ret = false;
     return ret;
 }
 
-cWindow &cProgressWnd::loadAppearance(const std::string &aFileName)
+Window &ProgressWnd::loadAppearance(const std::string &aFileName)
 {
     _renderDesc.loadData(aFileName);
     _bar.loadAppearance(SFN_PROGRESS_BAR_BG);
@@ -72,25 +72,25 @@ cWindow &cProgressWnd::loadAppearance(const std::string &aFileName)
     return *this;
 }
 
-void cProgressWnd::setPercent(u8 percent)
+void ProgressWnd::setPercent(u8 percent)
 {
     _bar.setPercent(percent);
     windowManager().update();
     gdi().present(GE_MAIN);
 }
 
-void cProgressWnd::setTipText(const std::string &tipText)
+void ProgressWnd::setTipText(const std::string &tipText)
 {
     _tip.setText(tipText);
 }
 
-void cProgressWnd::onShow()
+void ProgressWnd::onShow()
 {
     _bar.setPercent(0);
     windowManager().addWindow(this);
 }
 
-void cProgressWnd::onHide()
+void ProgressWnd::onHide()
 {
     _bar.setPercent(0);
     windowManager().removeWindow(this);

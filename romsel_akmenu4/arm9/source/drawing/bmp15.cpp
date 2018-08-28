@@ -24,11 +24,11 @@
 #include <string>
 #include "drawing/bmp15.h"
 
-cBMP15::cBMP15() : _width(0), _height(0), _pitch(0), _buffer(NULL)
+BMP15::BMP15() : _width(0), _height(0), _pitch(0), _buffer(NULL)
 {
 }
 
-cBMP15::cBMP15(u32 width, u32 height) : _width(0), _height(0), _pitch(0), _buffer(NULL)
+BMP15::BMP15(u32 width, u32 height) : _width(0), _height(0), _pitch(0), _buffer(NULL)
 {
     _width = width;
     _height = height;
@@ -36,14 +36,14 @@ cBMP15::cBMP15(u32 width, u32 height) : _width(0), _height(0), _pitch(0), _buffe
     //u32 pitch = (((width*16)+31)>>5)<<2;            // ͨ���㷨��
 }
 
-cBMP15::~cBMP15()
+BMP15::~BMP15()
 {
     // dbg_printf( "cBMP15 %08x destructed\n", this );
 }
 
-cBMP15 createBMP15(u32 width, u32 height)
+BMP15 createBMP15(u32 width, u32 height)
 {
-    cBMP15 bmp(width, height);
+    BMP15 bmp(width, height);
 
     u32 pitch = bmp.pitch(); // 15bit bmp pitch �㷨
     //dbg_printf( "pitch: %d bytes\n", pitch );
@@ -56,16 +56,16 @@ cBMP15 createBMP15(u32 width, u32 height)
     return bmp;
 }
 
-typedef std::pair<std::string, cBMP15> str_bmp_pair;
+typedef std::pair<std::string, BMP15> str_bmp_pair;
 typedef std::list<str_bmp_pair> str_bmp_list;
 static str_bmp_list _bmpPool;
 
-cBMP15 createBMP15FromMem(void *mem)
+BMP15 createBMP15FromMem(void *mem)
 {
-    return cBMP15();
+    return BMP15();
 }
 
-cBMP15 createBMP15FromFile(const std::string &filename)
+BMP15 createBMP15FromFile(const std::string &filename)
 {
     //dbg_printf( "createBMP15FromFile (%s)\n", filename );
 
@@ -82,7 +82,7 @@ cBMP15 createBMP15FromFile(const std::string &filename)
     if (NULL == f)
     {
        // dbg_printf("(%s) file does not exist\n", filename.c_str());
-        return cBMP15();
+        return BMP15();
     }
 
     // ��ȡ�ļ�����
@@ -92,7 +92,7 @@ cBMP15 createBMP15FromFile(const std::string &filename)
     if (-1 == fileSize)
     {
         fclose(f);
-        return cBMP15();
+        return BMP15();
     }
 
     u16 bmMark = 0;
@@ -102,7 +102,7 @@ cBMP15 createBMP15FromFile(const std::string &filename)
     { // 'B' 'M' header
         //dbg_printf("not a bmp file\n");
         fclose(f);
-        return cBMP15();
+        return BMP15();
     }
 
     // �ҳ�bmp�ߺͿ�
@@ -114,7 +114,7 @@ cBMP15 createBMP15FromFile(const std::string &filename)
     fread(&height, 1, 4, f);
     //dbg_printf( "w:%d h:%d\n", width, height );
 
-    cBMP15 bmp = createBMP15(width, height);
+    BMP15 bmp = createBMP15(width, height);
 
     u32 bmpDataOffset = 0;
     fseek(f, 0x0a, SEEK_SET);

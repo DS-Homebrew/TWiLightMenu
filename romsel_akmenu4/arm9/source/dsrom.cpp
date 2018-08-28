@@ -188,7 +188,7 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
         skiptransparent = true;
         break;
     case SAVE_INFO_EX_ICON_FIRMWARE:
-        cIcons::maskBlt((const u16 *)icon_bg_bin, pmem);
+        Icons::maskBlt((const u16 *)icon_bg_bin, pmem);
         break;
     }
     for (int tile = 0; tile < 16; ++tile)

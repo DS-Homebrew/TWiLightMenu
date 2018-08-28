@@ -24,17 +24,17 @@
 #include <sys/dirent.h>
 #include <sys/iosupport.h>
 #include <sys/fcntl.h>
-cFileIconItem::cFileIconItem(const std::string &aFolderName, const std::string &aFileName) : _loaded(false), _foldername(aFolderName), _filename(aFileName)
+FileIconItem::FileIconItem(const std::string &aFolderName, const std::string &aFileName) : _loaded(false), _foldername(aFolderName), _filename(aFileName)
 {
 }
 
-cBMP15 &cFileIconItem::Icon(void)
+BMP15 &FileIconItem::Icon(void)
 {
   Load();
   return _icon;
 }
 
-void cFileIconItem::Load(void)
+void FileIconItem::Load(void)
 {
   if (!_loaded)
   {
@@ -43,29 +43,29 @@ void cFileIconItem::Load(void)
   }
 }
 
-static bool Comp(const cFileIconItem &item1, const cFileIconItem &item2)
+static bool Comp(const FileIconItem &item1, const FileIconItem &item2)
 {
   return strcasecmp(item1.FileName().c_str(), item2.FileName().c_str()) < 0;
 }
 
-bool cFileIconItem::operator<(const cFileIconItem &aValue) const
+bool FileIconItem::operator<(const FileIconItem &aValue) const
 {
   return Comp(*this, aValue);
 }
 
-cFileIcons::cFileIcons()
+FileIcons::FileIcons()
 {
-  cIconPaths *paths = new cIconPaths;
+  IconPaths *paths = new IconPaths;
   LoadFolder(*paths, SFN_UI_ICONS_DIRECTORY);
   LoadFolder(*paths, SFN_ICONS_DIRECTORY);
-  for (cIconPaths::const_iterator it = paths->begin(); it != paths->end(); ++it)
+  for (IconPaths::const_iterator it = paths->begin(); it != paths->end(); ++it)
   {
     _icons.push_back(*it);
   }
   delete paths;
 }
 
-void cFileIcons::LoadFolder(cIconPaths &aPaths, const std::string &aFolder)
+void FileIcons::LoadFolder(IconPaths &aPaths, const std::string &aFolder)
 {
   DIR *dir = opendir(aFolder.c_str());
   if (NULL != dir)
@@ -88,7 +88,7 @@ void cFileIcons::LoadFolder(cIconPaths &aPaths, const std::string &aFolder)
           if (strcasecmp(extName, ".bmp") == 0)
           {
             *extName = 0;
-            aPaths.insert(cFileIconItem(aFolder, std::string(lfn)));
+            aPaths.insert(FileIconItem(aFolder, std::string(lfn)));
           }
         }
       }
@@ -97,25 +97,25 @@ void cFileIcons::LoadFolder(cIconPaths &aPaths, const std::string &aFolder)
   }
 }
 
-s32 cFileIcons::Icon(const std::string &aValue)
+s32 FileIcons::Icon(const std::string &aValue)
 {
   if (!_icons.size())
     return -1;
-  std::vector<cFileIconItem>::iterator result = akui::binary_find(_icons.begin(), _icons.end(), cFileIconItem("", aValue), Comp);
+  std::vector<FileIconItem>::iterator result = akui::binary_find(_icons.begin(), _icons.end(), FileIconItem("", aValue), Comp);
   if (result == _icons.end())
   {
     return -1;
   }
-  cBMP15 &image = (*result).Icon();
+  BMP15 &image = (*result).Icon();
   return ((image.valid() && image.width() == 32 && image.height() == 32) ? (result - _icons.begin()) : -1);
 }
 
-void cFileIcons::Draw(s32 idx, u8 x, u8 y, GRAPHICS_ENGINE engine)
+void FileIcons::Draw(s32 idx, u8 x, u8 y, GRAPHICS_ENGINE engine)
 {
   gdi().maskBlt(_icons[idx].Icon().buffer(), x, y, 32, 32, engine);
 }
 
-void cFileIcons::DrawMem(s32 idx, void *mem)
+void FileIcons::DrawMem(s32 idx, void *mem)
 {
-  cIcons::maskBlt((const u16 *)_icons[idx].Icon().buffer(), (u16 *)mem);
+  Icons::maskBlt((const u16 *)_icons[idx].Icon().buffer(), (u16 *)mem);
 }

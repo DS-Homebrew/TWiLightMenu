@@ -25,15 +25,15 @@
 #include "drawing/bmp15.h"
 #include "drawing/gdi.h"
 
-class cFileIconItem
+class FileIconItem
 {
 public:
-  cFileIconItem() : _loaded(false){};
-  cFileIconItem(const std::string &aFolderName, const std::string &aFileName);
+  FileIconItem() : _loaded(false){};
+  FileIconItem(const std::string &aFolderName, const std::string &aFileName);
   const std::string &FileName(void) const { return _filename; };
   const std::string &FolderName(void) const { return _foldername; };
-  cBMP15 &Icon(void);
-  bool operator<(const cFileIconItem &aValue) const;
+  BMP15 &Icon(void);
+  bool operator<(const FileIconItem &aValue) const;
 
 private:
   void Load(void);
@@ -42,26 +42,26 @@ private:
   bool _loaded;
   std::string _foldername;
   std::string _filename;
-  cBMP15 _icon;
+  BMP15 _icon;
 };
 
-class cFileIcons
+class FileIcons
 {
 public:
-  cFileIcons();
+  FileIcons();
   s32 Icon(const std::string &aValue);
   void Draw(s32 idx, u8 x, u8 y, GRAPHICS_ENGINE engine);
   void DrawMem(s32 idx, void *mem);
 
 private:
-  std::vector<cFileIconItem> _icons;
+  std::vector<FileIconItem> _icons;
 
 private:
-  typedef std::set<cFileIconItem> cIconPaths;
-  static void LoadFolder(cIconPaths &aPaths, const std::string &aFolder);
+  typedef std::set<FileIconItem> IconPaths;
+  static void LoadFolder(IconPaths &aPaths, const std::string &aFolder);
 };
 
-typedef t_singleton<cFileIcons> fileIcons_s;
-inline cFileIcons &fileIcons() { return fileIcons_s::instance(); }
+typedef t_singleton<FileIcons> fileIcons_s;
+inline FileIcons &fileIcons() { return fileIcons_s::instance(); }
 
 #endif

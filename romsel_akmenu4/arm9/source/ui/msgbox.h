@@ -41,21 +41,21 @@ namespace akui
 #define ID_YES 1
 #define ID_NO 0
 
-class cMessageBox : public cForm
+class MessageBox : public Form
 {
   public:
-    friend u32 messageBox(cWindow *parent, const std::string &title, const std::string &msg, u32 style);
+    friend u32 messageBox(Window *parent, const std::string &title, const std::string &msg, u32 style);
 
-    cMessageBox(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &title, const std::string &msg, u32 style);
+    MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &title, const std::string &msg, u32 style);
 
-    ~cMessageBox();
+    ~MessageBox();
 
   public:
     void draw();
 
-    bool process(const cMessage &msg);
+    bool process(const Message &msg);
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
     //u32 doModal();
 
@@ -70,24 +70,24 @@ class cMessageBox : public cForm
 
     void onNO() { onCANCEL(); }
 
-    bool processKeyMessage(const cKeyMessage &msg);
+    bool processKeyMessage(const KeyMessage &msg);
 
-    bool processTouchMessage(const cTouchMessage &msg);
+    bool processTouchMessage(const TouchMessage &msg);
 
     std::string _msg;
 
-    cPoint _textPoision;
+    Point _textPoision;
 
     u32 _style;
 
-    cButton *_buttonOK;
-    cButton *_buttonCANCEL;
-    cButton *_buttonYES;
-    cButton *_buttonNO;
-    cFormDesc _renderDesc;
+    Button *_buttonOK;
+    Button *_buttonCANCEL;
+    Button *_buttonYES;
+    Button *_buttonNO;
+    FormDesc _renderDesc;
 };
 
-u32 messageBox(cWindow *parent, const std::string &title, const std::string &msg, u32 style);
+u32 messageBox(Window *parent, const std::string &title, const std::string &msg, u32 style);
 
 } // namespace akui
 

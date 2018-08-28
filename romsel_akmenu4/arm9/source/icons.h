@@ -21,7 +21,7 @@
 
 #include <nds.h>
 
-class cIcons
+class Icons
 {
   public:
     static void maskBlt(const u16* aSrc,u16* aDst);

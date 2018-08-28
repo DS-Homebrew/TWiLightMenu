@@ -276,7 +276,7 @@ std::string CIniFile::GetFileString(const std::string &Section, const std::strin
 
   if (m_bReadOnly)
   {
-    cSectionCache::iterator it = m_Cache.find(Section);
+    SectionCache::iterator it = m_Cache.find(Section);
     if ((it != m_Cache.end()))
       ii = it->second;
   }

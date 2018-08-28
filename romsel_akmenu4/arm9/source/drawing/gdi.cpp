@@ -78,7 +78,7 @@ static inline void dmaCopyWordsGdi(uint8 channel, const void *src, void *dest, u
     DC_InvalidateRange(dest, size);
 }
 
-cGdi::cGdi()
+Gdi::Gdi()
 {
     _transColor = 0;
     _mainEngineLayer = MEL_UP;
@@ -91,7 +91,7 @@ cGdi::cGdi()
     _sprites = NULL;
 }
 
-cGdi::~cGdi()
+Gdi::~Gdi()
 {
     if (NULL != _bufferMain2)
         delete[] _bufferMain2;
@@ -105,7 +105,7 @@ cGdi::~cGdi()
         delete[] _sprites;
 }
 
-void cGdi::init()
+void Gdi::init()
 {
     nocashMessage("ARM9 gdi.cpp init");
     swapLCD();
@@ -117,14 +117,14 @@ void cGdi::init()
     activeFbSub();
     nocashMessage("ARM9 gdi.cpp init/Sub");
 
-    cSprite::sysinit();
+    Sprite::sysinit();
     nocashMessage("ARM9 gdi.cpp sysInit");
 }
 
-void cGdi::initBg(const std::string &aFileName)
+void Gdi::initBg(const std::string &aFileName)
 {
     nocashMessage("ARM9 GDI InitBG");
-    _sprites = new cSprite[12];
+    _sprites = new Sprite[12];
     _background = createBMP15FromFile(aFileName);
     nocashMessage("ARM9 GDI BMP15 Created");
     dbg_printf("Hello %X", _background.buffer());
@@ -160,12 +160,12 @@ void cGdi::initBg(const std::string &aFileName)
     oamUpdate(&oamMain);
 }
 
-void cGdi::swapLCD(void)
+void Gdi::swapLCD(void)
 {
     lcdSwap();
 }
 
-void cGdi::activeFbMain(void)
+void Gdi::activeFbMain(void)
 {
     vramSetBankA(VRAM_A_MAIN_SPRITE_0x06400000);
     vramSetBankB(VRAM_B_MAIN_BG_0x06000000);
@@ -207,7 +207,7 @@ void cGdi::activeFbMain(void)
     videoSetMode(MODE_5_2D | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D_BMP_SIZE_128 | DISPLAY_SPR_1D_BMP);
 }
 
-void cGdi::activeFbSub(void)
+void Gdi::activeFbSub(void)
 {
 #ifdef DEBUG
     _bufferSub3 = (u16 *)new u32[0x1200];
@@ -244,7 +244,7 @@ void cGdi::activeFbSub(void)
     videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE); // | DISPLAY_BG2_ACTIVE );
 }
 
-void cGdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
+void Gdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
 {
     if ((x1 == x2) && (y1 == y2))
         return;
@@ -360,7 +360,7 @@ void cGdi::drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine)
     }
 }
 
-void cGdi::frameRect(s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine)
+void Gdi::frameRect(s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine)
 {
     drawLine(x, y, x + w - 1, y, engine);
     drawLine(x + w - 1, y, x + w - 1, y + h - 1, engine);
@@ -368,7 +368,7 @@ void cGdi::frameRect(s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine)
     drawLine(x, y + h - 1, x, y, engine);
 }
 
-void cGdi::frameRect(s16 x, s16 y, u16 w, u16 h, u16 thickness, GRAPHICS_ENGINE engine)
+void Gdi::frameRect(s16 x, s16 y, u16 w, u16 h, u16 thickness, GRAPHICS_ENGINE engine)
 {
     for (size_t ii = 0; ii < thickness; ++ii)
     {
@@ -382,7 +382,7 @@ void cGdi::frameRect(s16 x, s16 y, u16 w, u16 h, u16 thickness, GRAPHICS_ENGINE 
     }
 }
 
-void cGdi::fillRect(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine)
+void Gdi::fillRect(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine)
 {
     ALIGN(4)
     u16 color[2] = {BIT(15) | color1, BIT(15) | color2};
@@ -420,7 +420,7 @@ void cGdi::fillRect(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS
         }
 }
 
-void cGdi::fillRectBlend(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine, u16 opacity)
+void Gdi::fillRectBlend(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine, u16 opacity)
 {
     if (opacity == 0)
         return;
@@ -448,7 +448,7 @@ void cGdi::fillRectBlend(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRA
     }
 }
 
-void cGdi::bitBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
+void Gdi::bitBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
 {
     if (destW <= 0)
         return;
@@ -489,7 +489,7 @@ void cGdi::bitBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16
     }
 }
 
-void cGdi::bitBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
+void Gdi::bitBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
 {
     //dbg_printf("x %d y %d w %d h %d\n", destX, destY, destW, destH );
     u16 *pSrc = (u16 *)src;
@@ -518,7 +518,7 @@ void cGdi::bitBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, G
 
 // maskBlt ҪdestW��ż�����ٶȿ��Կ�һ��
 // ����ż��Ҳ���ԣ���Ҫ�����ڴ��� src �� pitch �ճ�ż��
-void cGdi::maskBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
+void Gdi::maskBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
 {
     //dbg_printf("x %d y %d w %d h %d\n", destX, destY, destW, destH );
     u16 *pSrc = (u16 *)src;
@@ -573,7 +573,7 @@ void cGdi::maskBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, 
         }
 }
 
-void cGdi::maskBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
+void Gdi::maskBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
 {
     if (destW <= 0)
         return;
@@ -644,7 +644,7 @@ void cGdi::maskBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u1
         }
 }
 
-void cGdi::textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_ENGINE engine)
+void Gdi::textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_ENGINE engine)
 {
     const s16 originX = x, limitY = y + h - SYSTEM_FONT_HEIGHT;
     while (*text)
@@ -671,7 +671,7 @@ void cGdi::textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_EN
     }
 }
 
-void cGdi::present(GRAPHICS_ENGINE engine)
+void Gdi::present(GRAPHICS_ENGINE engine)
 {
     if (GE_MAIN == engine)
     {
@@ -699,7 +699,7 @@ void cGdi::present(GRAPHICS_ENGINE engine)
 }
 
 //special version for window switching
-void cGdi::present(void)
+void Gdi::present(void)
 {
     swiWaitForVBlank();
     dmaCopyWordsGdi(3, _bufferMain2, _bufferMain1, 256 * 192 * 2);
@@ -708,7 +708,7 @@ void cGdi::present(void)
 }
 
 #ifdef DEBUG
-void cGdi::switchSubEngineMode()
+void Gdi::switchSubEngineMode()
 {
     switch (_subEngineMode)
     {

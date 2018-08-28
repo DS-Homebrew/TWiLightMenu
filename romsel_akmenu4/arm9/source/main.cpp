@@ -181,7 +181,7 @@ int main(int argc, char **argv)
 
 	timer().updateFps();
 
-	cMainWnd *wnd = new cMainWnd(0, 0, 256, 192, NULL, "main window");
+	MainWnd *wnd = new MainWnd(0, 0, 256, 192, NULL, "main window");
 	wnd->init();
 
 	progressWnd().init();

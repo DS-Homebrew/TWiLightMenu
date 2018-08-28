@@ -27,10 +27,10 @@
 
 using namespace akui;
 
-cBigClock::cBigClock() : cWindow(NULL, "big clock")
+BigClock::BigClock() : Window(NULL, "big clock")
 {
-    _size = cSize(0, 0);
-    _position = cPoint(8, 80);
+    _size = Size(0, 0);
+    _position = Point(8, 80);
     _engine = GE_SUB;
     _show = false;
     _colonShow = false;
@@ -38,12 +38,12 @@ cBigClock::cBigClock() : cWindow(NULL, "big clock")
     _ampmColor = RGB15(17, 12, 0);
 }
 
-void cBigClock::init()
+void BigClock::init()
 {
     loadAppearance(SFN_UI_SETTINGS);
 }
 
-cWindow &cBigClock::loadAppearance(const std::string &aFileName)
+Window &BigClock::loadAppearance(const std::string &aFileName)
 {
     CIniFile ini(aFileName);
     _position.x = ini.GetInt("big clock", "x", 8);
@@ -61,7 +61,7 @@ cWindow &cBigClock::loadAppearance(const std::string &aFileName)
     return *this;
 }
 
-void cBigClock::drawNumber(u8 id, u8 number)
+void BigClock::drawNumber(u8 id, u8 number)
 {
     if (number > 10)
         return;
@@ -80,7 +80,7 @@ void cBigClock::drawNumber(u8 id, u8 number)
     }
 }
 
-void cBigClock::drawColon()
+void BigClock::drawColon()
 {
     u8 x = _position.x + 2 * _numbers.width();
     if (_colon.valid())
@@ -90,7 +90,7 @@ void cBigClock::drawColon()
     }
 }
 
-void cBigClock::draw()
+void BigClock::draw()
 {
     if (!_show)
         return;
@@ -125,7 +125,7 @@ void cBigClock::draw()
     }
 }
 
-void cBigClock::blinkColon()
+void BigClock::blinkColon()
 {
     _colonShow = !_colonShow;
 }

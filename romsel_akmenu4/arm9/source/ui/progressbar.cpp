@@ -23,18 +23,18 @@
 namespace akui
 {
 
-cProgressBar::cProgressBar(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
-    : cWindow(parent, text)
+ProgressBar::ProgressBar(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Window(parent, text)
 {
-    setSize(cSize(w, h));
-    setPosition(cPoint(x, y));
+    setSize(Size(w, h));
+    setPosition(Point(x, y));
 }
 
-cProgressBar::~cProgressBar()
+ProgressBar::~ProgressBar()
 {
 }
 
-void cProgressBar::draw()
+void ProgressBar::draw()
 {
     //draw frame
 
@@ -66,14 +66,14 @@ void cProgressBar::draw()
     }
 }
 
-cWindow &cProgressBar::loadAppearance(const std::string &aFileName)
+Window &ProgressBar::loadAppearance(const std::string &aFileName)
 {
     _barBmp = createBMP15FromFile(aFileName);
-    setSize(cSize(_barBmp.width(), _barBmp.height()));
+    setSize(Size(_barBmp.width(), _barBmp.height()));
     return *this;
 }
 
-void cProgressBar::setPercent(u8 percent)
+void ProgressBar::setPercent(u8 percent)
 {
     _percent = percent;
 }

@@ -23,19 +23,19 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-cFontPcf::cFontPcf() : cFont(), iGlyphs(NULL), iData(NULL), iCount(0), iDataSize(0), iHeight(0), iAscent(0), iDescent(0)
+FontPcf::FontPcf() : Font(), iGlyphs(NULL), iData(NULL), iCount(0), iDataSize(0), iHeight(0), iAscent(0), iDescent(0)
 {
   //FIXME: test on nds
-  //printf("%d\n",sizeof(cFontPcf::SGlyph));
+  //printf("%d\n",sizeof(FontPcf::SGlyph));
 }
 
-cFontPcf::~cFontPcf()
+FontPcf::~FontPcf()
 {
   delete[] iGlyphs;
   delete[] iData;
 }
 
-void cFontPcf::Info(const char *aString, u32 *aWidth, u32 *aSymbolCount)
+void FontPcf::Info(const char *aString, u32 *aWidth, u32 *aSymbolCount)
 {
   u32 len;
   u32 code = utf8toucs2((const u8 *)aString, &len);
@@ -48,7 +48,7 @@ void cFontPcf::Info(const char *aString, u32 *aWidth, u32 *aSymbolCount)
   }
 }
 
-bool cFontPcf::ParseAccels(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseAccels(int aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
   if (lseek(aFont, aOffset, SEEK_SET) < 0)
@@ -63,7 +63,7 @@ bool cFontPcf::ParseAccels(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool cFontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
   if (lseek(aFont, aOffset, SEEK_SET) < 0)
@@ -102,7 +102,7 @@ bool cFontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool cFontPcf::ParseMetrics(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseMetrics(int aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
   if (lseek(aFont, aOffset, SEEK_SET) < 0)
@@ -137,7 +137,7 @@ bool cFontPcf::ParseMetrics(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool cFontPcf::ParseEncodings(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseEncodings(int aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
   if (lseek(aFont, aOffset, SEEK_SET) < 0)
@@ -164,12 +164,12 @@ bool cFontPcf::ParseEncodings(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-int cFontPcf::Compare(const void *a, const void *b)
+int FontPcf::Compare(const void *a, const void *b)
 {
   return (static_cast<const SGlyph *>(a)->iCode - static_cast<const SGlyph *>(b)->iCode);
 }
 
-bool cFontPcf::Load(const char *aFileName)
+bool FontPcf::Load(const char *aFileName)
 {
   bool res = false;
   int font = open(aFileName, O_RDONLY);
@@ -217,7 +217,7 @@ bool cFontPcf::Load(const char *aFileName)
   return res;
 }
 
-s32 cFontPcf::Search(u16 aCode)
+s32 FontPcf::Search(u16 aCode)
 {
   s32 result = SearchInternal(aCode);
   if (result < 0 && aCode > ' ')
@@ -225,7 +225,7 @@ s32 cFontPcf::Search(u16 aCode)
   return result;
 }
 
-s32 cFontPcf::SearchInternal(u16 aCode)
+s32 FontPcf::SearchInternal(u16 aCode)
 {
   s32 low = 0, high = iCount - 1, curr;
   while (true)
@@ -249,7 +249,7 @@ s32 cFontPcf::SearchInternal(u16 aCode)
   }
 }
 
-void cFontPcf::DrawInternal(u16 *mem, s16 x, s16 y, const u8 *data, u16 color, u32 width, u32 height)
+void FontPcf::DrawInternal(u16 *mem, s16 x, s16 y, const u8 *data, u16 color, u32 width, u32 height)
 {
   u32 byteW = width;
   byteW = byteW / 8 + (byteW & 7 ? 1 : 0);
@@ -275,7 +275,7 @@ void cFontPcf::DrawInternal(u16 *mem, s16 x, s16 y, const u8 *data, u16 color, u
   }
 }
 
-void cFontPcf::Draw(u16 *mem, s16 x, s16 y, const u8 *aText, u16 color)
+void FontPcf::Draw(u16 *mem, s16 x, s16 y, const u8 *aText, u16 color)
 {
   if (!(iData && iGlyphs))
     return;
@@ -433,7 +433,7 @@ void cFontPcf::Draw(u16 *mem, s16 x, s16 y, const u8 *aText, u16 color)
 #define SECOND_BYTE 0xff00
 #define THIRD_BYTE 0xff0000
 
-u32 cFontPcf::utf8toucs2(const u8 *aSource, u32 *aLength)
+u32 FontPcf::utf8toucs2(const u8 *aSource, u32 *aLength)
 {
   u32 data = aSource[0], len = 1, res = '?';
   if ((data & ONE_BYTE_MASK) == ONE_BYTE_SIGN)
@@ -465,7 +465,7 @@ u32 cFontPcf::utf8toucs2(const u8 *aSource, u32 *aLength)
   return res;
 }
 
-u32 cFontPcf::FontRAM(void)
+u32 FontPcf::FontRAM(void)
 {
   return iDataSize + sizeof(SGlyph) * iCount;
 }

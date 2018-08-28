@@ -25,13 +25,13 @@
 #include "drawing/sprite.h"
 #include "animation.h"
 
-class cZoomingIcon : public cAnimation
+class ZoomingIcon : public Animation
 {
 public:
 
-    cZoomingIcon();
+    ZoomingIcon();
 
-    ~cZoomingIcon();
+    ~ZoomingIcon();
 
 public:
 
@@ -53,7 +53,7 @@ public:
 
 public:
 
-    cSprite _sprite;
+    Sprite _sprite;
 
     u16 _buffer[32*32];
     u16 _x;

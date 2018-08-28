@@ -24,19 +24,19 @@
 #include "language.h"
 
 
-cFontFactory::cFontFactory() : _font(NULL)
+FontFactory::FontFactory() : _font(NULL)
 {
 }
 
-cFontFactory::~cFontFactory()
+FontFactory::~FontFactory()
 {
     if (NULL != _font)
         delete _font;
 }
 
-void cFontFactory::makeFont(void)
+void FontFactory::makeFont(void)
 {
     std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
-    _font = new cFontPcf();
+    _font = new FontPcf();
     _font->Load(filename.c_str());
 }

@@ -28,22 +28,22 @@
 namespace akui
 {
 
-class cProgressWnd : public cForm
+class ProgressWnd : public Form
 {
 
   public:
-    cProgressWnd(); // s32 x, s32 y, u32 w, u32 h, cWindow * parent, const std::string & text );
+    ProgressWnd(); // s32 x, s32 y, u32 w, u32 h, Window * parent, const std::string & text );
 
-    ~cProgressWnd();
+    ~ProgressWnd();
 
   public:
     void init();
 
     void draw();
 
-    bool process(const cMessage &msg);
+    bool process(const Message &msg);
 
-    cWindow &loadAppearance(const std::string &aFileName);
+    Window &loadAppearance(const std::string &aFileName);
 
     void setPercent(u8 percent);
 
@@ -54,16 +54,16 @@ class cProgressWnd : public cForm
 
     void onHide();
 
-    cProgressBar _bar;
+    ProgressBar _bar;
 
-    cStaticText _tip;
+    StaticText _tip;
 
-    cBitmapDesc _renderDesc;
+    BitmapDesc _renderDesc;
 };
 
 } // namespace akui
 
-typedef t_singleton<akui::cProgressWnd> progressWnd_s;
-inline akui::cProgressWnd &progressWnd() { return progressWnd_s::instance(); }
+typedef t_singleton<akui::ProgressWnd> progressWnd_s;
+inline akui::ProgressWnd &progressWnd() { return progressWnd_s::instance(); }
 
 #endif //_PROGRESSWND_H_

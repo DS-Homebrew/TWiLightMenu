@@ -1,8 +1,6 @@
 /*
-    statictext.h
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
-    Copyright (C) 2009 yellow wood goblin
+    subsystem.h
+    Copyright (C) 2018 RonnChyran
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,34 +15,3 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifndef _STATICTEXT_H_
-#define _STATICTEXT_H_
-
-#include "window.h"
-#include "drawing/bmp15.h"
-
-namespace akui
-{
-
-class StaticText : public Window
-{
-  public:
-    StaticText(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
-
-    ~StaticText();
-
-  public:
-    void draw();
-
-    Window &loadAppearance(const std::string &aFileName);
-
-    void setTextColor(COLOR color);
-
-  protected:
-    COLOR _textColor;
-};
-
-} // namespace akui
-
-#endif //_STATICTEXT_H_
