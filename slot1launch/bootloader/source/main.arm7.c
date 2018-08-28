@@ -52,8 +52,10 @@
 #include "hook.h"
 
 
-extern unsigned long language;
-extern unsigned long twlClock;
+extern u32 language;
+extern u32 twlMode;
+extern u32 twlClock;
+extern u32 runCardEngine;
 
 bool gameSoftReset = false;
 
@@ -274,7 +276,9 @@ void initMBK() {
 
 void arm7_main (void) {
 	
-	initMBK(); 
+	if (runCardEngine) {
+		initMBK(); 
+	}
 
 	int errorCode;
 	
@@ -294,12 +298,14 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 	
-	REG_SCFG_ROM = 0x703;
+	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 
-	if (twlClock == 1) {
-		REG_SCFG_CLK = 0x0181;
-	} else {
-		REG_SCFG_CLK = 0x0180;
+	if (!twlMode) {
+		if (twlClock) {
+			REG_SCFG_CLK = 0x0181;
+		} else {
+			REG_SCFG_CLK = 0x0180;
+		}
 	}
 	
 	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs
@@ -314,19 +320,23 @@ void arm7_main (void) {
 		gameSoftReset = true;
 	}
 
-	copyLoop (ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
-	errorCode = hookNdsRetail(NDS_HEAD, (u32*)ENGINE_LOCATION_ARM7);
-	if(errorCode == ERR_NONE) {
-		nocashMessage("card hook Sucessfull");
-	} else {
-		nocashMessage("error during card hook");
-		debugOutput(errorCode);
+	if (runCardEngine) {
+		copyLoop (ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
+		errorCode = hookNdsRetail(NDS_HEAD, (u32*)ENGINE_LOCATION_ARM7);
+		if(errorCode == ERR_NONE) {
+			nocashMessage("card hook Sucessfull");
+		} else {
+			nocashMessage("error during card hook");
+			debugOutput(errorCode);
+		}
 	}
 
 	debugOutput (ERR_STS_START);
 
-    // lock SCFG
-    REG_SCFG_EXT &= ~(1UL << 31);
+	if (!twlMode) {
+		// lock SCFG
+		REG_SCFG_EXT &= ~(1UL << 31);
+	}
 
 	arm7_startBinary();
 	

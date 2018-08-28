@@ -28,7 +28,7 @@ CFLAGS	:=	-g -Wall -Os\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7 -DNO_SDMMC
+CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 
 ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map

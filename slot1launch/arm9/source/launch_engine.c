@@ -25,7 +25,9 @@
 #define LCDC_BANK_C (u16*)0x06840000
 
 #define LANGUAGE_OFFSET 4
-#define TWLCLOCK_OFFSET 8
+#define TWLMODE_OFFSET 8
+#define TWLCLOCK_OFFSET 12
+#define RUNCARDENGINE_OFFSET 16
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -49,7 +51,7 @@ void vramcpy (void* dst, const void* src, int len)
 }	
 
 // Basic engine with no cheat related code.
-void runLaunchEngine (bool EnableSD, int language, bool TWLCLK, bool TWLVRAM)
+void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool runCardEngine)
 {
 
 	nocashMessage("runLaunchEngine");
@@ -67,7 +69,9 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLCLK, bool TWLVRAM)
 
 	// Set the parameters for the loader
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
+	writeAddr ((data_t*) LCDC_BANK_C, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLCLOCK_OFFSET, TWLCLK);
+	writeAddr ((data_t*) LCDC_BANK_C, RUNCARDENGINE_OFFSET, runCardEngine);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
 
@@ -77,7 +81,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLCLK, bool TWLVRAM)
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
 	
-	if (EnableSD) {
+	if (TWLMODE || EnableSD) {
 		if (TWLVRAM) {
 			REG_SCFG_EXT=0x83002000;
 		} else {

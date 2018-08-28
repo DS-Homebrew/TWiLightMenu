@@ -43,8 +43,10 @@ bool consoleOn = false;
 
 int main() {
 
+	bool TWLMODE = false;
 	bool TWLCLK = false;	// false == NTR, true == TWL
 	bool TWLVRAM = false;
+	bool runCardEngine = false;
 	bool EnableSD = false;
 	int language = -1;
 
@@ -60,6 +62,7 @@ int main() {
 
 		TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
 		TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
+		runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 
 		//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 		//	consoleOn = true;
@@ -82,14 +85,9 @@ int main() {
 			//	printf("SD access ON\n");		
 			//}
 			EnableSD = true;
-			// Tell Arm7 to use alternate SCFG_EXT values.
-			fifoSendValue32(FIFO_USER_05, 1);
 		}
-
-		// if(ntrlauncher_config.GetInt("NTRLAUNCHER","TWLMODE",0) == 1) {
-		// 	// Tell Arm7 not to switch into NTR mode (this will only work on alt build of NTR Launcher)
-		// 	fifoSendValue32(FIFO_USER_06, 1);
-		// }
+		
+		TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_TWLMODE",0);
 
 		if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 			fifoSendValue32(FIFO_USER_02, 1);
@@ -122,7 +120,7 @@ int main() {
 	while(1) {
 		if(REG_SCFG_MC == 0x11) {
 		break; } else {
-			runLaunchEngine (EnableSD, language, TWLCLK, TWLVRAM);
+			runLaunchEngine (EnableSD, language, TWLMODE, TWLCLK, TWLVRAM, runCardEngine);
 		}
 	}
 	return 0;

@@ -68,6 +68,10 @@ int main(int argc, char **argv) {
 
 	//defaultExceptionHandler();
 	
+	// Go back into DSi mode, if possible
+	REG_SCFG_CLK = 0x85;
+	REG_SCFG_EXT = 0x8307F100;
+
 	if (!fatInitDefault()) {
 		consoleDemoInit();
 		printf ("fatInitDefault failed!");
