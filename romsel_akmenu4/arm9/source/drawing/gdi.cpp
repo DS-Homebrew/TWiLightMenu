@@ -675,7 +675,6 @@ void cGdi::present(GRAPHICS_ENGINE engine)
 {
     if (GE_MAIN == engine)
     {
-        // ��ת������
         // u16 * temp = _bufferMain1;
         // _bufferMain1 = _bufferMain2;
         // _bufferMain2 = temp;
@@ -690,7 +689,6 @@ void cGdi::present(GRAPHICS_ENGINE engine)
     }
     else if (GE_SUB == engine)
     {
-        // ��ת������
         if (SEM_GRAPHICS == _subEngineMode)
             dmaCopyWordsGdi(3, (void *)_bufferSub2, (void *)_bufferSub1, 256 * 192 * 2);
         //else if( SEM_TEXT == _subEngineMode )
@@ -712,16 +710,15 @@ void cGdi::present(void)
 #ifdef DEBUG
 void cGdi::switchSubEngineMode()
 {
-    // ��Ҫ����ͻָ��ı�ģʽ���ֳ�
     switch (_subEngineMode)
     {
-    case SEM_GRAPHICS: // ��ǰ��ͼ��ģʽ�Ļ����ͻָ��ղŵ�text�ֳ�
+    case SEM_GRAPHICS: 
         videoSetModeSub(MODE_5_2D | DISPLAY_BG0_ACTIVE);
         custom_console.fontBgMap = (u16 *)0x6204000;
         custom_console.fontBgGfx = (u16 *)0x6200000;
         dmaCopyWordsGdi(3, (void *)_bufferSub3, (void *)_bufferSub1, 0x4800);
         break;
-    case SEM_TEXT: // ��ǰ������ģʽ�Ļ��������ֳ����е�ͼ��ģʽ
+    case SEM_TEXT: 
         videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
         custom_console.fontBgMap = _bufferSub3 + 0x2000;
         custom_console.fontBgGfx = _bufferSub3;

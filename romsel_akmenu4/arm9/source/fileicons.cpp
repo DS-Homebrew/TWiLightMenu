@@ -72,10 +72,13 @@ void cFileIcons::LoadFolder(cIconPaths &aPaths, const std::string &aFolder)
   {
     struct stat st;
     struct dirent *entry;
+    char lfn[256]; 
 
     // char longFilename[MAX_FILENAME_LENGTH];
     while ((entry = readdir(dir)) != NULL)
     {
+      snprintf(lfn, sizeof(lfn), "%s/%s", aFolder.c_str(), entry->d_name);
+      stat(lfn, &st);
       if ((st.st_mode & S_IFDIR) == 0)
       {
         size_t len = sizeof(entry->d_name);
@@ -85,7 +88,7 @@ void cFileIcons::LoadFolder(cIconPaths &aPaths, const std::string &aFolder)
           if (strcasecmp(extName, ".bmp") == 0)
           {
             *extName = 0;
-            aPaths.insert(cFileIconItem(aFolder, std::string(entry->d_name)));
+            aPaths.insert(cFileIconItem(aFolder, std::string(lfn)));
           }
         }
       }

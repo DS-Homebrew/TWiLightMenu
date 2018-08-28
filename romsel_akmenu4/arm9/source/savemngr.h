@@ -21,6 +21,7 @@
 #ifndef _SAVEMNGR_H_
 #define _SAVEMNGR_H_
 
+// todo: remove globalSettings dependency.
 #include <nds.h>
 #include <vector>
 #include <string>

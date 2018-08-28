@@ -18,12 +18,10 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-//�
 
 #include "ui.h"
 #include "listview.h"
 #include "drawing/gdi.h"
-// #include "files.h"
 #include "tool/dbgtool.h"
 
 namespace akui

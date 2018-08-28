@@ -28,13 +28,15 @@ using namespace akui;
 
 void cStartMenu::init()
 {
-    addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
-    addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
-    addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
-    addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
+    // addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
+    // addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
+    //addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
+    //addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
+    //addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
+
+
     addItem(START_MENU_ITEM_SETTING, LANG("start menu", "Setting"));
     addItem(START_MENU_ITEM_INFO, LANG("start menu", "Info"));
-    addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
     addItem(START_MENU_ITEM_TOOLS, LANG("start menu", "Tools"));
     loadAppearance(SFN_UI_SETTINGS);
     dbg_printf("startmenu ok\n");

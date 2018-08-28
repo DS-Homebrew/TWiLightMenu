@@ -38,7 +38,7 @@
 #include "windows/diskicon.h"
 #include "windows/userwnd.h"
 #include "ui/progresswnd.h"
-
+#include "windows/mainwnd.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -146,10 +146,10 @@ int main(int argc, char **argv)
 
 	// Prevent the black screen from showing
 	setBackdropColor(RGB15(31,31,31));
-	setBackdropColorSub(RGB15(31,31,31));
-	
+	//setBackdropColorSub(RGB15(31,31,31));
+
 #ifdef DEBUG
-	//gdi().switchSubEngineMode();
+	gdi().switchSubEngineMode();
 #endif
 	dbg_printf("GDI Init!");
 
@@ -177,9 +177,11 @@ int main(int argc, char **argv)
 	diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
 	diskIcon().show();
 
-	windowManager().update();
 	timer().updateFps();
 
+	cMainWnd * wnd = new cMainWnd( 0, 0, 256, 192, NULL, "main window" );
+    wnd->init();
+	
     progressWnd().init();
 
 	//---- Top Screen ---
@@ -191,10 +193,12 @@ int main(int argc, char **argv)
 	bigClock().draw();
 
 	userWindow().draw();
+	windowManager().update();
 
 	//---- END Top Screen--
 
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
+
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
@@ -204,8 +208,8 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		timer().updateFps();
-		// INPUT &inputs = updateInput();
-		// processInput(inputs);
+		INPUT &inputs = updateInput();
+		processInput(inputs);
 		swiWaitForVBlank();
 		windowManager().update();
 		gdi().present(GE_MAIN);
