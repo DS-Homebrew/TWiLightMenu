@@ -24,13 +24,14 @@
 
 // #include "userinput.h"
 // #include "windowmanager.h"
-// #include "diskicon.h"
+#include "windows/diskicon.h"
 #include "windows/calendarwnd.h"
 #include "windows/calendar.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
+#include "ui/animation.h"
+
 // #include "timer.h"
-// #include "animation.h"
 // #include "files.h"
 // #include "userwnd.h"
 
@@ -44,9 +45,9 @@ void cIRQ::init()
 
 void cIRQ::cardMC()
 {
-    // dbg_printf("cardMC\n");
-    // diskIcon().blink();
-    // REG_IF &= ~IRQ_CARD_LINE;
+    dbg_printf("cardMC\n");
+    diskIcon().blink();
+    REG_IF &= ~IRQ_CARD_LINE;
 }
 
 void cIRQ::vblankStart()
@@ -86,7 +87,7 @@ void cIRQ::vBlank()
         calendarWnd().draw();
         calendar().draw();
         bigClock().draw();
-       userWindow().draw();
+        userWindow().draw();
 #if 0
         char fpsText[16];
         sprintf( fpsText, "fps %.2f\n", timer().getFps() );
@@ -99,10 +100,10 @@ void cIRQ::vBlank()
         gdi().present(GE_SUB);
     }
 
-    // animationManager().update();
+    animationManager().update();
 
-    // if( REG_ROMCTRL & CARD_BUSY )
-    //     diskIcon().turnOn();
-    // else
-    //     diskIcon().turnOff();
+    if( REG_ROMCTRL & CARD_BUSY )
+        diskIcon().turnOn();
+    else
+        diskIcon().turnOff();
 }

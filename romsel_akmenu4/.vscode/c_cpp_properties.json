@@ -8,7 +8,8 @@
                 "C:/devkitPro/devkitARM/arm-none-eabi/include",
                 "C:/devkitPro/devkitARM/arm-none-eabi/include/**/",
                 "${workspaceFolder}/arm9/source",
-                "${workspaceFolder}/arm9/include"
+                "${workspaceFolder}/arm9/include",
+                "${workspaceFolder}/arm9/build"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
