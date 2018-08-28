@@ -137,7 +137,7 @@ int lastRanROM() {
 
 			if (access(savename.c_str(), F_OK) && strcmp(game_TID, "###") != 0) {
 				consoleDemoInit();
-				printf("Creating save file...");
+				printf("Creating save file...\n");
 
 				static const int BUFFER_SIZE = 4096;
 				char buffer[BUFFER_SIZE];
@@ -177,7 +177,7 @@ int lastRanROM() {
 					}
 					fclose(pFile);
 				}
-				printf("Save file created!");
+				printf("Save file created!\n");
 				
 				for (int i = 0; i < 30; i++) {
 					swiWaitForVBlank();
