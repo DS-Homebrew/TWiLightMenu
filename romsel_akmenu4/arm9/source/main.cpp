@@ -143,6 +143,11 @@ int main(int argc, char **argv)
 
 	// init graphics
 	gdi().init();
+
+	// Prevent the black screen from showing
+	setBackdropColor(RGB15(31,31,31));
+	setBackdropColorSub(RGB15(31,31,31));
+	
 #ifdef DEBUG
 	//gdi().switchSubEngineMode();
 #endif
