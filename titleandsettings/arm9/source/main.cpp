@@ -374,7 +374,9 @@ void loadROMselect() {
 		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 		else fifoSendValue32(FIFO_USER_07, 1);
 	}
-	if (theme==2) {
+	if (theme == 3) {
+		runNdsFile ("/_nds/dsimenuplusplus/akmenu.srldr", 0, NULL, false);
+	} else if (theme == 2) {
 		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
 	} else {
 		runNdsFile ("/_nds/dsimenuplusplus/dsimenu.srldr", 0, NULL, false);
@@ -1340,6 +1342,9 @@ int main(int argc, char **argv) {
 						case 2:
 							printSmall(false, 224, selyPos, "R4");
 							break;
+						case 3:
+							printSmall(false, 200, selyPos, "akMenu");
+							break;
 					}
 					selyPos += 12;
 
@@ -1480,14 +1485,14 @@ int main(int argc, char **argv) {
 							if (pressed & KEY_LEFT) {
 								subtheme = 0;
 								theme -= 1;
-								if (theme < 0) theme = 2;
+								if (theme < 0) theme = 3;
 								mmEffectEx(&snd_select);
 							} else if (pressed & KEY_RIGHT) {
 								subtheme = 0;
 								theme += 1;
-								if (theme > 2) theme = 0;
+								if (theme > 3) theme = 0;
 								mmEffectEx(&snd_select);
-							} else if (theme == 1) {
+							} else if (theme == 1 || theme == 3) {
 								mmEffectEx(&snd_wrong);
 							} else {
 								subscreenmode = 3;
