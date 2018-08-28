@@ -40,6 +40,12 @@ std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 std::string homebrewArg;
 std::string bootstrapfilename;
+std::string ndsPath;
+
+typedef struct {
+	char gameTitle[12];			//!< 12 characters for the game title.
+	char gameCode[4];			//!< 4 characters for the game code.
+} sNDSHeadertitlecodeonly;
 
 static int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -72,6 +78,7 @@ void LoadSettings(void) {
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
 
+	ndsPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
 	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 }
 
@@ -115,6 +122,69 @@ int lastRanROM() {
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
 			else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 		} else {
+			char game_TID[5];
+
+			FILE *f_nds_file = fopen(ndsPath.c_str(), "rb");
+
+			fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+			fread(game_TID, 1, 4, f_nds_file);
+			game_TID[4] = 0;
+			game_TID[3] = 0;
+
+			fclose(f_nds_file);
+
+			std::string savename = ReplaceAll(ndsPath, ".nds", ".sav");
+
+			if (access(savename.c_str(), F_OK) && strcmp(game_TID, "###") != 0) {
+				consoleDemoInit();
+				printf("Creating save file...");
+
+				static const int BUFFER_SIZE = 4096;
+				char buffer[BUFFER_SIZE];
+				memset(buffer, 0, sizeof(buffer));
+
+				int savesize = 524288;	// 512KB (default size for most games)
+
+				// Set save size to 8KB for the following games
+				if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+				{
+					savesize = 8192;
+				}
+
+				// Set save size to 256KB for the following games
+				if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+				{
+					savesize = 262144;
+				}
+
+				// Set save size to 1MB for the following games
+				if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+					|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+				{
+					savesize = 1048576;
+				}
+
+				// Set save size to 32MB for the following games
+				if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+				{
+					savesize = 1048576*32;
+				}
+
+				FILE *pFile = fopen(savename.c_str(), "wb");
+				if (pFile) {
+					for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+					}
+					fclose(pFile);
+				}
+				printf("Save file created!");
+				
+				for (int i = 0; i < 30; i++) {
+					swiWaitForVBlank();
+				}
+
+			}
+
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
 			else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 		}
@@ -155,8 +225,6 @@ int main(int argc, char **argv) {
 
 	bool soundfreqsetting = false;
 
-	std::string filename;
-	
 	LoadSettings();
 	
 	swiWaitForVBlank();
