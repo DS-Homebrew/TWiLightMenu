@@ -27,7 +27,7 @@ TARGET		:=	romsel_aktheme
 BUILD		:=	build
 SOURCES		:=	source source/graphics source/tool source/drawing source/font source/time source/ui source/windows
 INCLUDES	:=	include source
-DATA		:=	data  
+DATA		:=	data gfx_bin
 NITRODATA	:=	nitrofiles
 GRAPHICS	:=  gfx
 
