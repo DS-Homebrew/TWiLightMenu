@@ -24,14 +24,15 @@
 
 #include "ui/popmenu.h"
 
-#define START_MENU_ITEM_COPY 0
-#define START_MENU_ITEM_CUT 1
-#define START_MENU_ITEM_DELETE 2
-#define START_MENU_ITEM_PASTE 3
-#define START_MENU_ITEM_SETTING 4
-#define START_MENU_ITEM_INFO 5
-#define START_MENU_ITEM_HELP 6
-#define START_MENU_ITEM_TOOLS 7
+// #define START_MENU_ITEM_COPY 0
+// #define START_MENU_ITEM_CUT 1
+// #define START_MENU_ITEM_DELETE 2
+// #define START_MENU_ITEM_PASTE 3
+//#define START_MENU_ITEM_HELP 6
+
+#define START_MENU_ITEM_SETTING 0
+#define START_MENU_ITEM_INFO 1
+#define START_MENU_ITEM_TOOLS 2
 
 class cStartMenu : public akui::cPopMenu
 {

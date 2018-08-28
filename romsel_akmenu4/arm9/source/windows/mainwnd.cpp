@@ -37,7 +37,7 @@
 #include "inifile.h"
 #include "language.h"
 
-// #include "rominfownd.h"
+#include "windows/rominfownd.h"
 // #include "helpwnd.h"
 // #include "expwnd.h"
 // #include "gbaloader.h"
@@ -851,17 +851,16 @@ void cMainWnd::showFileInfo()
     w = ini.GetInt("rom info window", "w", w);
     h = ini.GetInt("rom info window", "h", h);
 
-    // cRomInfoWnd *romInfoWnd = new cRomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
-    // std::string showName = _mainList->getSelectedShowName();
-    // std::string fullPath = _mainList->getSelectedFullPath();
-    // romInfoWnd->setFileInfo(fullPath, showName);
-    // romInfoWnd->setRomInfo(rominfo);
-    // romInfoWnd->setSaves(_mainList->Saves());
-    // romInfoWnd->doModal();
-    // rominfo = romInfoWnd->getRomInfo();
-    // _mainList->setRomInfo(_mainList->selectedRowId(), rominfo);
+    cRomInfoWnd *romInfoWnd = new cRomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
+    std::string showName = _mainList->getSelectedShowName();
+    std::string fullPath = _mainList->getSelectedFullPath();
+    romInfoWnd->setFileInfo(fullPath, showName);
+    romInfoWnd->setRomInfo(rominfo);
+    romInfoWnd->doModal();
+    rominfo = romInfoWnd->getRomInfo();
+    _mainList->setRomInfo(_mainList->selectedRowId(), rominfo);
 
-    // delete romInfoWnd;
+    delete romInfoWnd;
 }
 
 void cMainWnd::onFolderChanged()
