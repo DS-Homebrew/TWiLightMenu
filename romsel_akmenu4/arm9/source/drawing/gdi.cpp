@@ -24,8 +24,8 @@
 #include <nds/arm9/cache.h>
 #include <nds/system.h>
 #include <nds/arm9/background.h>
-#include "gdi.h"
-#include "sprite.h"
+#include "drawing/gdi.h"
+#include "drawing/sprite.h"
 #include "tool/memtool.h"
 #include "font/fontfactory.h"
 #include "tool/dbgtool.h"

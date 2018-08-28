@@ -23,7 +23,7 @@
 
 #include <string>
 #include "userinput.h"
-#include "gdi.h"
+#include "drawing/gdi.h"
 #include "point.h"
 #include "rectangle.h"
 #include "sigslot.h"

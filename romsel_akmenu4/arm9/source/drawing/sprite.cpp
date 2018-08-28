@@ -18,7 +18,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "sprite.h"
+#include "drawing/sprite.h"
 #include <nds.h>
 
 cSprite::cSprite(u8 id)

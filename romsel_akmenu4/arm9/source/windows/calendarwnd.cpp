@@ -19,8 +19,8 @@
 */
 
 #include "calendarwnd.h"
-#include "gdi.h"
-#include "bmp15.h"
+#include "drawing/gdi.h"
+#include "drawing/bmp15.h"
 #include "systemfilenames.h"
 #include "globalsettings.h"
 

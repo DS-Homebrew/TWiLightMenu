@@ -22,7 +22,7 @@
 #define _AKUI_H_
 
 #include <nds.h>
-#include "gdi.h"
+#include "drawing/gdi.h"
 #include "tool/dbgtool.h"
 #include "tool/memtool.h"
 #include "tool/stringtool.h"

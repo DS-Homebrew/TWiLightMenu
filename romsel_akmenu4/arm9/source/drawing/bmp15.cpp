@@ -22,7 +22,7 @@
 
 #include <list>
 #include <string>
-#include "bmp15.h"
+#include "drawing/bmp15.h"
 
 cBMP15::cBMP15() : _width(0), _height(0), _pitch(0), _buffer(NULL)
 {

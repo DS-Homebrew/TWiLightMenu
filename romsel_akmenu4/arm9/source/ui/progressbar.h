@@ -22,7 +22,7 @@
 #define _PROGRESSBAR_H_
 
 #include "ui.h"
-#include "bmp15.h"
+#include "drawing/bmp15.h"
 
 namespace akui
 {

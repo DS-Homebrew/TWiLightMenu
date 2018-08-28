@@ -23,7 +23,7 @@
 #include "userinput.h"
 #include "ui/windowmanager.h"
 #include "ui/keymessage.h"
-#include "timer.h"
+#include "time/timer.h"
 
 using namespace akui;
 

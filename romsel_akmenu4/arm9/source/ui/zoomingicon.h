@@ -22,7 +22,7 @@
 #define _ZOOMINGICON_H_
 
 #include <nds.h>
-#include "sprite.h"
+#include "drawing/sprite.h"
 #include "animation.h"
 
 class cZoomingIcon : public cAnimation

@@ -23,9 +23,9 @@
 #include <maxmod9.h>
 
 //-- AK Start -----------
-#include "gdi.h"
+#include "drawing/gdi.h"
 #include "systemfilenames.h"
-#include "timer.h"
+#include "time/timer.h"
 #include "font/fontfactory.h"
 #include "irqs.h"
 #include "ui/ui.h"

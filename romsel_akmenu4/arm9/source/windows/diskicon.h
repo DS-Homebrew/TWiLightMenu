@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include "ui/window.h"
-#include "sprite.h"
+#include "drawing/sprite.h"
 #include "singleton.h"
 
 class cDiskIcon : public akui::cWindow

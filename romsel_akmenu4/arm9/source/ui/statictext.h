@@ -22,7 +22,7 @@
 #define _STATICTEXT_H_
 
 #include "window.h"
-#include "bmp15.h"
+#include "drawing/bmp15.h"
 
 namespace akui
 {

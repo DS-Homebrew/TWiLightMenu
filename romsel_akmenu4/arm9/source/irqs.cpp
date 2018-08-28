@@ -19,8 +19,8 @@
 */
 
 #include "irqs.h"
-#include "gdi.h"
-#include "timer.h"
+#include "drawing/gdi.h"
+#include "time/timer.h"
 
 // #include "userinput.h"
 // #include "windowmanager.h"
@@ -31,7 +31,7 @@
 #include "windows/userwnd.h"
 #include "ui/animation.h"
 
-// #include "timer.h"
+// #include "time/timer.h"
 // #include "files.h"
 // #include "userwnd.h"
 

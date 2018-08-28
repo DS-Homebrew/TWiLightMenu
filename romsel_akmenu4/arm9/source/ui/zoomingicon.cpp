@@ -19,7 +19,7 @@
 */
 
 #include "zoomingicon.h"
-#include "gdi.h"
+#include "drawing/gdi.h"
 
 cZoomingIcon::cZoomingIcon()
 {

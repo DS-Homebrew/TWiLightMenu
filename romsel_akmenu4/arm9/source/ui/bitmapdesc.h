@@ -23,7 +23,7 @@
 
 #include <string>
 #include "renderdesc.h"
-#include "bmp15.h"
+#include "drawing/bmp15.h"
 
 namespace akui
 {

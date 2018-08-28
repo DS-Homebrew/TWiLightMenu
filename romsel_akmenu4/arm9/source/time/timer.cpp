@@ -19,7 +19,7 @@
 */
 
 #include <nds.h>
-#include "timer.h"
+#include "time/timer.h"
 
 vu64 cTimer::_overFlow = 0;
 cTimer::cTimer()

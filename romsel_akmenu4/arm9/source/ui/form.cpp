@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "form.h"
-#include "timer.h"
+#include "time/timer.h"
 #include "tool/dbgtool.h"
 #include "windowmanager.h"
 

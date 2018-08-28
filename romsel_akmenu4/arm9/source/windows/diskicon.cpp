@@ -19,7 +19,7 @@
 */
 
 #include "diskicon.h"
-#include "bmp15.h"
+#include "drawing/bmp15.h"
 #include "inifile.h"
 #include "systemfilenames.h"
 #include "tool/memtool.h"

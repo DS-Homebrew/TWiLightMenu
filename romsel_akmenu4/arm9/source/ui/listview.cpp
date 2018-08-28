@@ -22,7 +22,7 @@
 
 #include "ui.h"
 #include "listview.h"
-#include "gdi.h"
+#include "drawing/gdi.h"
 // #include "files.h"
 #include "tool/dbgtool.h"
 

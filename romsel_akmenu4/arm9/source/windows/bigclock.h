@@ -22,8 +22,8 @@
 #define _BIGCLOCK_H_
 
 #include "ui/window.h"
-#include "bmp15.h"
-#include "datetime.h"
+#include "drawing/bmp15.h"
+#include "time/datetime.h"
 #include "singleton.h"
 
 //class cClockNumber : public

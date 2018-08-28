@@ -22,7 +22,7 @@
 #define _UISETTINGS_H_
 
 #include <nds.h>
-#include "gdi.h"
+#include "drawing/gdi.h"
 #include "singleton.h"
 
 class cUISettings

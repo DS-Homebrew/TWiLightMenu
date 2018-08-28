@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "statictext.h"
-#include "gdi.h"
+#include "drawing/gdi.h"
 
 namespace akui
 {
