@@ -871,49 +871,7 @@ void cMainWnd::onFolderChanged()
 
     if (dirShowName.substr(0, 5) == SD_ROOT)
         dirShowName.replace(0, 4, "SD");
-    else if ("favorites:/" != dirShowName && "slot2:/" == _mainList->getSelectedFullPath())
-    {
-        u8 chk = 0;
-        for (u32 i = 0xA0; i < 0xBD; ++i)
-        {
-            chk = chk - *(u8 *)(0x8000000 + i);
-        }
-        chk = (chk - 0x19) & 0xff;
-        if (chk != GBA_HEADER.complement)
-        {
-            dbg_printf("chk %02x header checksum %02x\n", chk, GBA_HEADER.complement);
-            std::string title = LANG("no gba card", "title");
-            std::string text = LANG("no gba card", "text");
-            messageBox(NULL, title, text, MB_OK);
-            _mainList->enterDir("...");
-            return;
-        }
-
-        int mode = gs().slot2mode;
-        if (mode == cGlobalSettings::ESlot2Ask)
-        {
-            if (ID_YES == messageBox(NULL, LANG("gba settings", "mode"), LANG("gba settings", "modetext"), MB_YES_NO))
-            {
-                mode = cGlobalSettings::ESlot2Nds;
-            }
-            else
-            {
-                mode = cGlobalSettings::ESlot2Gba;
-            }
-        }
-//         if (mode == cGlobalSettings::ESlot2Nds)
-//         {
-// #if defined(_STORAGE_rpg)
-//             loadRom("slot2:/", 0, 0, 0);
-// #elif defined(_STORAGE_r4) || defined(_STORAGE_ak2i) || defined(_STORAGE_r4idsn)
-//             loadRom("slot2:/", "", 0, 0, 0);
-// #endif
-//         }
-//         else
-//         {
-//             CGbaLoader::StartGBA();
-//         }
-    }
+    
 
     dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
 

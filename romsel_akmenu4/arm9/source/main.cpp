@@ -50,8 +50,8 @@
 #include <unistd.h>
 #include <gl2d.h>
 
-#include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
+#include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
+#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 
 using namespace akui;
 
@@ -92,17 +92,19 @@ void doPause()
 }
 
 // Ported from PAlib (obsolete)
-void SetBrightness(u8 screen, s8 bright) {
+void SetBrightness(u8 screen, s8 bright)
+{
 	u16 mode = 1 << 14;
 
-	if (bright < 0) {
+	if (bright < 0)
+	{
 		mode = 2 << 14;
 		bright = -bright;
 	}
-	if (bright > 31) bright = 31;
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	if (bright > 31)
+		bright = 31;
+	*(u16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -138,14 +140,14 @@ int main(int argc, char **argv)
 
 	initInput();
 
-    //turn led on
-    ledBlink(PM_LED_ON);
+	//turn led on
+	ledBlink(PM_LED_ON);
 
 	// init graphics
 	gdi().init();
 
 	// Prevent the black screen from showing
-	setBackdropColor(RGB15(31,31,31));
+	setBackdropColor(RGB15(31, 31, 31));
 	//setBackdropColorSub(RGB15(31,31,31));
 
 #ifdef DEBUG
@@ -160,12 +162,12 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
-	 // setting scripts
-    gs().loadSettings();
+	// setting scripts
+	gs().loadSettings();
 
-    // init unicode
-    //if( initUnicode() )
-    //    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
+	// init unicode
+	//if( initUnicode() )
+	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
 	lang(); // load language file
@@ -179,10 +181,10 @@ int main(int argc, char **argv)
 
 	timer().updateFps();
 
-	cMainWnd * wnd = new cMainWnd( 0, 0, 256, 192, NULL, "main window" );
-    wnd->init();
-	
-    progressWnd().init();
+	cMainWnd *wnd = new cMainWnd(0, 0, 256, 192, NULL, "main window");
+	wnd->init();
+
+	progressWnd().init();
 
 	//---- Top Screen ---
 	calendarWnd().init();
@@ -202,6 +204,8 @@ int main(int argc, char **argv)
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
+	//if (!wnd->_mainList->enterDir("~" != lastDirectory ? lastDirectory : gs().startupFolder))
+	wnd->_mainList->enterDir("~");
 
 	irq().vblankStart();
 
