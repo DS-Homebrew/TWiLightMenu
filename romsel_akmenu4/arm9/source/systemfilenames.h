@@ -24,7 +24,7 @@
 
 #define UI_LANG "lang_en"
 
-#define SFN_SYSTEM_DIR              "sd:/__rpg/"
+#define SFN_SYSTEM_DIR              "/__rpg/"
 #define SFN_OFFICIAL_SAVELIST       SFN_SYSTEM_DIR"savelist.bin"
 #define SFN_CUSTOM_SAVELIST         SFN_SYSTEM_DIR"gamedata.bin"
 #define SFN_LAST_SAVEINFO           SFN_SYSTEM_DIR"lastsave.ini"
