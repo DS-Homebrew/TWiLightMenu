@@ -95,8 +95,6 @@ void cIRQ::vBlank()
         gdi().textOut( 40, 178, fpsText, GE_SUB );
 #endif
 
-        gdi().present(GE_MAIN);
-
         gdi().present(GE_SUB);
     }
 
