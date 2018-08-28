@@ -57,7 +57,7 @@ RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     _buttonGameSettings.setText("\x04 " + LANG("setting window", "Settings"));
     _buttonGameSettings.setTextColor(uis().buttonTextColor);
     _buttonGameSettings.loadAppearance(SFN_BUTTON3);
-    _buttonGameSettings.clicked.connect(this, &RomInfoWnd::pressSaveType);
+    _buttonGameSettings.clicked.connect(this, &RomInfoWnd::pressGameSettings);
     addChildWindow(&_buttonGameSettings);
 
     buttonPitch = _buttonGameSettings.size().x + 8;
@@ -121,7 +121,7 @@ bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
             ret = true;
             break;
         case KeyMessage::UI_KEY_Y:
-            pressSaveType();
+            pressGameSettings();
             ret = true;
             break;
         // case KeyMessage::UI_KEY_X:
@@ -148,9 +148,9 @@ bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
     return ret;
 }
 
-void RomInfoWnd::pressSaveType(void)
+void RomInfoWnd::pressGameSettings(void)
 {
-    if (!_romInfo.isDSRom() || _romInfo.isHomebrew())
+    if (!_romInfo.isDSRom() || !_romInfo.isHomebrew())
         return;
 
     SettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");

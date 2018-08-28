@@ -59,7 +59,7 @@ class RomInfoWnd : public akui::Form
 
     // void pressFlash(void);
 
-    void pressSaveType(void);
+    void pressGameSettings(void);
 
     // void pressCopy(void);
 
