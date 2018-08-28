@@ -128,6 +128,8 @@ void cRomInfoWnd::draw()
     gdi().textOutRect(position().x + 8, position().y + 64 + 14 + 14 + 14, size().x - 8, 40, _saveTypeText.c_str(), selectedEngine());
 
     cForm::draw();
+    // Powersaving loop
+    swiWaitForVBlank();
 }
 
 bool cRomInfoWnd::process(const akui::cMessage &msg)
