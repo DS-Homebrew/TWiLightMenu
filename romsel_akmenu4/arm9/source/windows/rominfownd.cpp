@@ -150,7 +150,7 @@ bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
 
 void RomInfoWnd::pressGameSettings(void)
 {
-    if (!_romInfo.isDSRom() || !_romInfo.isHomebrew())
+    if (!_romInfo.isDSRom() && !_romInfo.isHomebrew())
         return;
 
     SettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");

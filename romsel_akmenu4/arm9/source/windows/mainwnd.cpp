@@ -53,8 +53,9 @@
 
 using namespace akui;
 
-MainWnd::MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text) : Form(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
-                                                                                           _brightnessButton(NULL), _folderUpButton(NULL), _folderText(NULL), _processL(false)
+MainWnd::MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Form(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
+      _brightnessButton(NULL), _folderUpButton(NULL), _folderText(NULL), _processL(false)
 {
 }
 
@@ -180,28 +181,27 @@ void MainWnd::draw()
 
 void MainWnd::listSelChange(u32 i)
 {
-// #ifdef DEBUG
-//     //dbg_printf( "main list item %d\n", i );
-//     DSRomInfo info;
-//     if (_mainList->getRomInfo(i, info))
-//     {
-//         char title[13] = {};
-//         memcpy(title, info.saveInfo().gameTitle, 12);
-//         char code[5] = {};
-//         memcpy(code, info.saveInfo().gameCode, 4);
-//         u16 crc = swiCRC16(0xffff, ((unsigned char *)&(info.banner())) + 32, 0x840 - 32);
-//         dbg_printf("%s %s %04x %d %04x/%04x\n",
-//                    title, code, info.saveInfo().gameCRC, info.isDSRom(), info.banner().crc, crc);
-//         //dbg_printf("sizeof banner %08x\n", sizeof( info.banner() ) );
-//     }
-// #endif //DEBUG
+    // #ifdef DEBUG
+    //     //dbg_printf( "main list item %d\n", i );
+    //     DSRomInfo info;
+    //     if (_mainList->getRomInfo(i, info))
+    //     {
+    //         char title[13] = {};
+    //         memcpy(title, info.saveInfo().gameTitle, 12);
+    //         char code[5] = {};
+    //         memcpy(code, info.saveInfo().gameCode, 4);
+    //         u16 crc = swiCRC16(0xffff, ((unsigned char *)&(info.banner())) + 32, 0x840 - 32);
+    //         dbg_printf("%s %s %04x %d %04x/%04x\n",
+    //                    title, code, info.saveInfo().gameCRC, info.isDSRom(), info.banner().crc, crc);
+    //         //dbg_printf("sizeof banner %08x\n", sizeof( info.banner() ) );
+    //     }
+    // #endif //DEBUG
 }
 
 void MainWnd::startMenuItemClicked(s16 i)
 {
     dbg_printf("start menu item %d\n", i);
     //messageBox( this, "Power Off", "Are you sure you want to turn off ds?", MB_YES | MB_NO );
-
 
 #pragma region copypaste
     // ------------------- Copy and Paste ---
@@ -267,7 +267,7 @@ void MainWnd::startMenuItemClicked(s16 i)
     //     }
     // }
 #pragma endregion
-    
+
     if (START_MENU_ITEM_SETTING == i)
     {
         showSettings();
@@ -386,43 +386,43 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             }
             ret = true;
             break;
-//         case KeyMessage::UI_KEY_X:
-//         {
-//             if (isL)
-//             {
-//                 if (allow)
-//                 {
-//                     DSRomInfo rominfo;
-//                     if (_mainList->getRomInfo(_mainList->selectedRowId(), rominfo) && rominfo.isDSRom() && !rominfo.isHomebrew())
-//                     {
-//                         RomInfoWnd::showCheats(_mainList->getSelectedFullPath());
-//                     }
-//                 }
-//                 _processL = false;
-//             }
-//             else
-//             {
-// // #if defined(_STORAGE_rpg)
-// //                 const std::string dir = _mainList->getCurrentDir();
-// //                 if (dir.length() < 5)
-// //                 {
-// //                     _mainList->enterDir("sd:/");
-// //                 }
-// //                 else if (dir.substr(0, 5) == "sd:")
-// //                 {
-// //                     _mainList->enterDir("fat1:/");
-// //                 }
-// //                 else
-// //                 {
-// //                     _mainList->enterDir("sd:/");
-// //                 }
-// // #elif defined(_STORAGE_r4) || defined(_STORAGE_ak2i) || defined(_STORAGE_r4idsn)
-// //                 _mainList->enterDir("favorites:/");
-// // #endif
-//             }
-//             ret = true;
-//             break;
-//         }
+            //         case KeyMessage::UI_KEY_X:
+            //         {
+            //             if (isL)
+            //             {
+            //                 if (allow)
+            //                 {
+            //                     DSRomInfo rominfo;
+            //                     if (_mainList->getRomInfo(_mainList->selectedRowId(), rominfo) && rominfo.isDSRom() && !rominfo.isHomebrew())
+            //                     {
+            //                         RomInfoWnd::showCheats(_mainList->getSelectedFullPath());
+            //                     }
+            //                 }
+            //                 _processL = false;
+            //             }
+            //             else
+            //             {
+            // // #if defined(_STORAGE_rpg)
+            // //                 const std::string dir = _mainList->getCurrentDir();
+            // //                 if (dir.length() < 5)
+            // //                 {
+            // //                     _mainList->enterDir("sd:/");
+            // //                 }
+            // //                 else if (dir.substr(0, 5) == "sd:")
+            // //                 {
+            // //                     _mainList->enterDir("fat1:/");
+            // //                 }
+            // //                 else
+            // //                 {
+            // //                     _mainList->enterDir("sd:/");
+            // //                 }
+            // // #elif defined(_STORAGE_r4) || defined(_STORAGE_ak2i) || defined(_STORAGE_r4idsn)
+            // //                 _mainList->enterDir("favorites:/");
+            // // #endif
+            //             }
+            //             ret = true;
+            //             break;
+            //         }
         case KeyMessage::UI_KEY_START:
             startButtonClicked();
             ret = true;
@@ -437,7 +437,11 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             else
             {
                 if (allow)
+                {
                     _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
+                    gs().viewMode = _mainList->getViewMode();
+                    gs().saveSettings();
+                }
             }
             ret = true;
             break;
@@ -446,7 +450,7 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             ret = true;
             break;
         case KeyMessage::UI_KEY_R:
-           // brightnessButtonClicked();
+            // brightnessButtonClicked();
 #ifdef DEBUG
             gdi().switchSubEngineMode();
             gdi().present(GE_SUB);
@@ -515,58 +519,58 @@ void MainWnd::launchSelected()
         return;
     }
 
-//     DSRomInfo rominfo;
-//     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
-//         return;
+    //     DSRomInfo rominfo;
+    //     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
+    //         return;
 
-//     //rominfo.loadDSRomInfo( fullPath, false );
+    //     //rominfo.loadDSRomInfo( fullPath, false );
 
-//     if (rominfo.isGbaRom())
-//     {
-//         CGbaLoader(fullPath).Load(false, false);
-//         return;
-//     }
+    //     if (rominfo.isGbaRom())
+    //     {
+    //         CGbaLoader(fullPath).Load(false, false);
+    //         return;
+    //     }
 
-//     if (!rominfo.isDSRom())
-//         return;
+    //     if (!rominfo.isDSRom())
+    //         return;
 
-//     dbg_printf("(%s)\n", fullPath.c_str());
-//     dbg_printf("%d\n", fullPath[fullPath.size() - 1]);
+    //     dbg_printf("(%s)\n", fullPath.c_str());
+    //     dbg_printf("%d\n", fullPath[fullPath.size() - 1]);
 
-//     std::string title, text;
-//     bool show = true;
-//     switch (launchRom(fullPath, rominfo, rominfo.isHomebrew() && "akmenu4.nds" == _mainList->getSelectedShowName()))
-//     {
-// #if defined(_STORAGE_rpg)
-//     case ELaunchSDOnly:
-//         title = LANG("sd save", "title");
-//         text = LANG("sd save", "text");
-//         break;
-//     case ELaunchRestoreFail:
-//         title = LANG("restore save fail", "title");
-//         text = LANG("restore save fail", "text");
-//         break;
-// #endif
-// #if defined(_STORAGE_rpg) || defined(_STORAGE_ak2i)
-//     case ELaunchSlowSD:
-//     {
-//         std::string model = sdidGetSDManufacturerName() + " " + sdidGetSDName();
-//         title = LANG("unsupported sd", "title");
-//         text = LANG("unsupported sd", "text");
-//         text = formatString(text.c_str(), model.c_str());
-//     }
-//     break;
-// #endif
-//     case ELaunchNoFreeSpace:
-//         title = LANG("no free space", "title");
-//         text = LANG("no free space", "text");
-//         break;
-//     default:
-//         show = false;
-//         break;
-//     }
-//     if (show)
-//         messageBox(this, title, text, MB_OK);
+    //     std::string title, text;
+    //     bool show = true;
+    //     switch (launchRom(fullPath, rominfo, rominfo.isHomebrew() && "akmenu4.nds" == _mainList->getSelectedShowName()))
+    //     {
+    // #if defined(_STORAGE_rpg)
+    //     case ELaunchSDOnly:
+    //         title = LANG("sd save", "title");
+    //         text = LANG("sd save", "text");
+    //         break;
+    //     case ELaunchRestoreFail:
+    //         title = LANG("restore save fail", "title");
+    //         text = LANG("restore save fail", "text");
+    //         break;
+    // #endif
+    // #if defined(_STORAGE_rpg) || defined(_STORAGE_ak2i)
+    //     case ELaunchSlowSD:
+    //     {
+    //         std::string model = sdidGetSDManufacturerName() + " " + sdidGetSDName();
+    //         title = LANG("unsupported sd", "title");
+    //         text = LANG("unsupported sd", "text");
+    //         text = formatString(text.c_str(), model.c_str());
+    //     }
+    //     break;
+    // #endif
+    //     case ELaunchNoFreeSpace:
+    //         title = LANG("no free space", "title");
+    //         text = LANG("no free space", "text");
+    //         break;
+    //     default:
+    //         show = false;
+    //         break;
+    //     }
+    //     if (show)
+    //         messageBox(this, title, text, MB_OK);
 }
 
 void MainWnd::onKeyBPressed()
@@ -826,14 +830,14 @@ void MainWnd::setParam(void)
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch titleandsettings...");
-//     // if (gs().safeMode)
-//     //     return;
-//     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
-//    // setParam();
-//     if (gs().fileListType != currentFileListType || gs().showHiddenFiles != currentShowHiddenFiles)
-//     {
-//         _mainList->enterDir(_mainList->getCurrentDir());
-//     }
+    //     // if (gs().safeMode)
+    //     //     return;
+    //     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
+    //    // setParam();
+    //     if (gs().fileListType != currentFileListType || gs().showHiddenFiles != currentShowHiddenFiles)
+    //     {
+    //         _mainList->enterDir(_mainList->getCurrentDir());
+    //     }
 }
 
 void MainWnd::showFileInfo()
@@ -869,9 +873,8 @@ void MainWnd::onFolderChanged()
     resetInputIdle();
     std::string dirShowName = _mainList->getCurrentDir();
 
-    if (dirShowName.substr(0, 5) == SD_ROOT)
-        dirShowName.replace(0, 4, "SD");
-    
+    if (dirShowName.substr(0, 1) == SD_ROOT)
+        dirShowName.replace(0, 1, "SD:/");
 
     dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
 
