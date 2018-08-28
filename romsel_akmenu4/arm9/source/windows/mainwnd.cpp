@@ -886,7 +886,6 @@ void cMainWnd::onFolderChanged()
             std::string text = LANG("no gba card", "text");
             messageBox(NULL, title, text, MB_OK);
             _mainList->enterDir("...");
-            _mainList->selectRow(_mainList->Slot2());
             return;
         }
 

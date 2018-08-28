@@ -83,8 +83,8 @@ int cMainList::init()
 
 static bool itemSortComp(const cListView::itemVector &item1, const cListView::itemVector &item2)
 {
-    const std::string &fn1 = item1[cMainList::SHOWNAME_COLUMN].text();
-    const std::string &fn2 = item2[cMainList::SHOWNAME_COLUMN].text();
+    const std::string &fn1 = item1[cMainList::REALNAME_COLUMN].text();
+    const std::string &fn2 = item2[cMainList::REALNAME_COLUMN].text();
     if ("../" == fn1)
         return true;
     if ("../" == fn2)
@@ -126,7 +126,11 @@ void cMainList::addDirEntry(int pos, const std::string row1, const std::string r
     a_row.push_back(row1);
     a_row.push_back(row2);
     a_row.push_back(path);
-    rominfo.setBanner(bannerKey, banner);
+
+    if (!bannerKey.empty())
+    {
+        rominfo.setBanner(bannerKey, banner);
+    }
 
     insertRow(pos, a_row);
     _romInfoList.push_back(rominfo);
@@ -213,31 +217,20 @@ bool cMainList::enterDir(const std::string &dirName)
                 if (showThis)
                 {
                     u32 row_count = getRowCount();
-                    std::vector<std::string> a_row;
-                    a_row.push_back("");  // make a space for icon
-                    a_row.push_back(lfn); //show name
-                    a_row.push_back("");  // make a space for internal name
+                    size_t insertPos(row_count);
 
-                    a_row.push_back(dirName + lfn); //real name
+                    std::string real_name = dirName + lfn;
                     if (st.st_mode & S_IFDIR)
                     {
-                        a_row[SHOWNAME_COLUMN] += "/";
-                        a_row[REALNAME_COLUMN] += "/";
+                        real_name += "/";
                     }
-                    size_t insertPos(row_count);
-                    insertRow(insertPos, a_row);
-                    DSRomInfo rominfo;
-                    _romInfoList.push_back(rominfo);
-                }
-                if (extnameFilter(savNames, extName))
-                {
-                    _saves.push_back(dirName + lfn);
+
+                    addDirEntry(insertPos, lfn, "", real_name, "", NULL);
                 }
             }
             closedir(dir);
         }
         std::sort(_rows.begin(), _rows.end(), itemSortComp);
-        std::sort(_saves.begin(), _saves.end(), stringComp);
 
         for (size_t ii = 0; ii < _rows.size(); ++ii)
         {
@@ -504,16 +497,6 @@ void cMainList::updateInternalNames(void)
             }
         }
     }
-}
-
-bool cMainList::IsFavorites(void)
-{
-    return ("favorites:/" == _currentDir);
-}
-
-const std::vector<std::string> *cMainList::Saves(void)
-{
-    return IsFavorites() ? NULL : &_saves;
 }
 
 void cMainList::SwitchShowAllFiles(void)

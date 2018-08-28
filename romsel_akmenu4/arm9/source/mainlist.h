@@ -59,8 +59,8 @@ public:
 public:
   int init();
 
-  void addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string& bannerKey, const u8* banner);
-  
+  void addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner);
+
   bool enterDir(const std::string &dirName);
 
   void backParentDir();
@@ -93,8 +93,6 @@ public:
   bool IsFavorites(void);
 
   void SwitchShowAllFiles(void);
-
-  const std::vector<std::string> *Saves(void);
 
 protected:
   void draw();
@@ -131,17 +129,6 @@ protected:
   float _activeIconScale;
 
   bool _showAllFiles;
-
-  std::vector<std::string> _saves;
-
-protected:
-  u32 _topCount;
-  u32 _topuSD;
-  u32 _topSlot2;
-  u32 _topFavorites;
-
-public:
-  u32 Slot2(void) { return _topSlot2; }
 };
 
 #endif //_MAINLIST_H_
