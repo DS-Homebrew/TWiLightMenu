@@ -27,7 +27,7 @@
 #include "ui/keymessage.h"
 #include "ui/touchmessage.h"
 #include "ui/spinbox.h"
-//#include "settingwnd.h"
+#include "settingwnd.h"
 #include "startmenu.h"
 
 class cMainWnd : public akui::cForm

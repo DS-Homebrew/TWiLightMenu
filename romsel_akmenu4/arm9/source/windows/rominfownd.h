@@ -26,6 +26,7 @@
 #include "ui/spinbox.h"
 #include "ui/statictext.h"
 #include "ui/message.h"
+#include "settingwnd.h"
 #include "tool/stringtool.h"
 #include <string>
 #include "dsrom.h"
@@ -50,18 +51,15 @@ class cRomInfoWnd : public akui::cForm
 
     const DSRomInfo &getRomInfo();
 
-    void setSaves(const std::vector<std::string> *saves);
-
-    bool SlotExists(u8 slot);
-
-    static void showCheats(const std::string &aFileName);
+   // static void showPerGameSettings(const std::string &aFileName);
+    // static void showCheats(const std::string &aFileName);
 
   protected:
     void setDiskInfo(void);
 
     // void pressFlash(void);
 
-    // void pressSaveType(void);
+    void pressSaveType(void);
 
     // void pressCopy(void);
 
@@ -79,13 +77,13 @@ class cRomInfoWnd : public akui::cForm
 
     akui::cButton _buttonOK;
 
-    akui::cButton _buttonSaveType;
+    akui::cButton _buttonGameSettings;
 
-    akui::cButton _buttonFlash;
+    // akui::cButton _buttonFlash;
 
-    akui::cButton _buttonCopy;
+    // akui::cButton _buttonCopy;
 
-    akui::cButton _buttonCheats;
+    // akui::cButton _buttonCheats;
 
     akui::cFormDesc _renderDesc;
 
@@ -105,9 +103,7 @@ class cRomInfoWnd : public akui::cForm
 
     u32 _size;
 
-    //cSettingWnd *_settingWnd;
-
-    const std::vector<std::string> *_saves;
+    cSettingWnd *_settingWnd;
 };
 
 #endif //_ROMINFOWND_H_

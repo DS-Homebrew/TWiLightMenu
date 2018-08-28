@@ -34,12 +34,9 @@ using namespace akui;
 cRomInfoWnd::cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std::string &text)
     : cForm(x, y, w, h, parent, text),
       _buttonOK(0, 0, 46, 18, this, "\x01 OK"),
-      _buttonSaveType(0, 0, 76, 18, this, "\x04 Save Type"),
-      _buttonFlash(0, 0, 46, 18, this, "\x03 to NOR"),
-      _buttonCopy(0, 0, 46, 18, this, "\x05 to RAM"),
-      _buttonCheats(0, 0, 46, 18, this, "\x03 Cheats"),
-      //  _settingWnd(NULL),
-      _saves(NULL)
+      _buttonGameSettings(0, 0, 76, 18, this, "\x04 Save Type"),
+      _settingWnd(NULL)
+//   _saves(NULL)
 {
     s16 buttonY = size().y - _buttonOK.size().y - 4;
 
@@ -56,18 +53,18 @@ cRomInfoWnd::cRomInfoWnd(s32 x, s32 y, u32 w, u32 h, cWindow *parent, const std:
     nextButtonX -= buttonPitch;
 
     _buttonOK.setRelativePosition(cPoint(nextButtonX, buttonY));
+    _buttonGameSettings.setStyle(cButton::press);
+    _buttonGameSettings.setText("\x04 " + LANG("setting window", "Settings"));
+    _buttonGameSettings.setTextColor(uis().buttonTextColor);
+    _buttonGameSettings.loadAppearance(SFN_BUTTON3);
+    _buttonGameSettings.clicked.connect(this, &cRomInfoWnd::pressSaveType);
+    addChildWindow(&_buttonGameSettings);
 
-    _buttonSaveType.setStyle(cButton::press);
-    _buttonSaveType.setText("\x04 " + LANG("setting window", "savetype"));
-    _buttonSaveType.setTextColor(uis().buttonTextColor);
-    _buttonSaveType.loadAppearance(SFN_BUTTON4);
-    //   _buttonSaveType.clicked.connect(this, &cRomInfoWnd::pressSaveType);
-    addChildWindow(&_buttonSaveType);
-
-    buttonPitch = _buttonSaveType.size().x + 8;
+    
+    buttonPitch = _buttonGameSettings.size().x + 8;
     s16 nextButtonXone = nextButtonX - buttonPitch;
 
-    _buttonSaveType.setRelativePosition(cPoint(nextButtonXone, buttonY));
+    _buttonGameSettings.setRelativePosition(cPoint(nextButtonXone, buttonY));
 
     // _buttonCheats.setStyle(cButton::press);
     // _buttonCheats.setText("\x03 " + LANG("cheats", "title"));
@@ -160,10 +157,10 @@ bool cRomInfoWnd::processKeyMessage(const cKeyMessage &msg)
             onOK();
             ret = true;
             break;
-        // case cKeyMessage::UI_KEY_Y:
-        //     pressSaveType();
-        //     ret = true;
-        //     break;
+        case cKeyMessage::UI_KEY_Y:
+            pressSaveType();
+            ret = true;
+            break;
         // case cKeyMessage::UI_KEY_X:
         //     // if (_buttonCheats.isVisible())
         //     // {
@@ -186,6 +183,64 @@ bool cRomInfoWnd::processKeyMessage(const cKeyMessage &msg)
     }
 
     return ret;
+}
+
+void cRomInfoWnd::pressSaveType(void)
+{
+    if (!_romInfo.isDSRom() || _romInfo.isHomebrew())
+        return;
+
+    cSettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");
+
+    std::vector<std::string> _values;
+    _values.push_back(LANG("game settings", "Default"));
+    _values.push_back(LANG("game settings", "System"));
+    _values.push_back(LANG("game settings", "Japanese"));
+    _values.push_back(LANG("game settings", "English"));
+    _values.push_back(LANG("game settings", "French"));
+    _values.push_back(LANG("game settings", "German"));
+    _values.push_back(LANG("game settings", "Italian"));
+    _values.push_back(LANG("game settings", "Spanish"));
+   
+    settingWnd.addSettingItem(LANG("game settings", "Language"), _values, 0);
+    _values.clear();
+
+    _values.push_back(LANG("game settings", "Default"));
+    _values.push_back(LANG("game settings", "133MHz (TWL)"));
+    _values.push_back(LANG("game settings", "67MHz (NTR)"));
+
+    settingWnd.addSettingItem(LANG("game settings", "Boost CPU"), _values, 0);
+    _values.clear();
+
+    _values.push_back(LANG("game settings", "Default"));
+    _values.push_back(LANG("game settings", "On"));
+    _values.push_back(LANG("game settings", "Off"));
+
+    settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, 0);
+    _values.clear();
+
+    _values.push_back(LANG("game settings", "Default"));
+    _values.push_back(LANG("game settings", "On"));
+    _values.push_back(LANG("game settings", "Off"));
+
+    settingWnd.addSettingItem(LANG("game settings", "Sound Fix"), _values, 0);
+    _values.clear();
+
+    _values.push_back(LANG("game settings", "Default"));
+    _values.push_back(LANG("game settings", "On"));
+    _values.push_back(LANG("game settings", "Off"));
+
+    settingWnd.addSettingItem(LANG("game settings", "Async Prefetch"), _values, 0);
+    _values.clear();
+
+
+
+    _settingWnd = &settingWnd;
+    u32 ret = settingWnd.doModal();
+    _settingWnd = NULL;
+    if( ID_CANCEL == ret )
+        return;
+
 }
 
 cWindow &cRomInfoWnd::loadAppearance(const std::string &aFileName)
@@ -282,13 +337,17 @@ void cRomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 
     _romInfoText = unicode_to_local_string(_romInfo.banner().titles[gs().language], 128, NULL);
 
-    _buttonSaveType.hide();
-    _buttonFlash.hide();
-    _buttonCopy.hide();
-    _buttonCheats.hide();
+    _buttonGameSettings.hide();
+
+    // _buttonFlash.hide();
+    // _buttonCopy.hide();
+    // _buttonCheats.hide();
     if (_romInfo.isDSRom() && !_romInfo.isHomebrew())
     {
-         addCode();
+        addCode();
+    }
+    if (_romInfo.isDSRom() || _romInfo.isHomebrew()) {
+        _buttonGameSettings.show();
     }
 }
 

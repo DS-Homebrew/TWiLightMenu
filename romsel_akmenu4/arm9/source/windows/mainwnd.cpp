@@ -825,14 +825,14 @@ void cMainWnd::setParam(void)
 
 void cMainWnd::showSettings(void)
 {
-    // if (gs().safeMode)
-    //     return;
-    // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
-    // setParam();
-    // if (gs().fileListType != currentFileListType || gs().showHiddenFiles != currentShowHiddenFiles)
-    // {
-    //     _mainList->enterDir(_mainList->getCurrentDir());
-    // }
+//     // if (gs().safeMode)
+//     //     return;
+//     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
+//    // setParam();
+//     if (gs().fileListType != currentFileListType || gs().showHiddenFiles != currentShowHiddenFiles)
+//     {
+//         _mainList->enterDir(_mainList->getCurrentDir());
+//     }
 }
 
 void cMainWnd::showFileInfo()
