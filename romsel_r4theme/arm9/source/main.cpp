@@ -1133,55 +1133,52 @@ int main(int argc, char **argv) {
 
 						std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
-						if (access(savename.c_str(), F_OK)) {
-							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
-								clearText();
-								ClearBrightness();
-								const char* savecreate = "Creating save file...";
-								const char* savecreated = "Save file created!";
-								printSmall(false, 2, 80, savecreate);
+						if (access(savename.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
+							clearText();
+							ClearBrightness();
+							const char* savecreate = "Creating save file...";
+							const char* savecreated = "Save file created!";
+							printSmall(false, 2, 80, savecreate);
 
-								static const int BUFFER_SIZE = 4096;
-								char buffer[BUFFER_SIZE];
-								memset(buffer, 0, sizeof(buffer));
+							static const int BUFFER_SIZE = 4096;
+							char buffer[BUFFER_SIZE];
+							memset(buffer, 0, sizeof(buffer));
 
-								int savesize = 524288;	// 512KB (default size for most games)
+							int savesize = 524288;	// 512KB (default size for most games)
 
-								// Set save size to 8KB for the following games
-								if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
-								{
-									savesize = 8192;
-								}
-
-								// Set save size to 256KB for the following games
-								if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
-								{
-									savesize = 262144;
-								}
-
-								// Set save size to 1MB for the following games
-								if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-									|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
-								{
-									savesize = 1048576;
-								}
-
-								// Set save size to 32MB for the following games
-								if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
-								{
-									savesize = 1048576*32;
-								}
-
-								FILE *pFile = fopen(savename.c_str(), "wb");
-								if (pFile) {
-									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-										fwrite(buffer, 1, sizeof(buffer), pFile);
-									}
-									fclose(pFile);
-								}
-								printSmall(false, 2, 88, savecreated);
+							// Set save size to 8KB for the following games
+							if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+							{
+								savesize = 8192;
 							}
 
+							// Set save size to 256KB for the following games
+							if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+							{
+								savesize = 262144;
+							}
+
+							// Set save size to 1MB for the following games
+							if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+								|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+							{
+								savesize = 1048576;
+							}
+
+							// Set save size to 32MB for the following games
+							if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+							{
+								savesize = 1048576*32;
+							}
+
+							FILE *pFile = fopen(savename.c_str(), "wb");
+							if (pFile) {
+								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+									fwrite(buffer, 1, sizeof(buffer), pFile);
+								}
+								fclose(pFile);
+							}
+							printSmall(false, 2, 88, savecreated);
 						}
 
 						SetDonorSDK(argarray[0]);
@@ -1231,7 +1228,7 @@ int main(int argc, char **argv) {
                         bool cheatsFound = false;
                         char cheatData[2305]; // 9*256 + 1
 
-						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
+						if ((!access(cheatpath.c_str(), F_OK)) && isHomebrew == 0) {
                             cheatData[0] = 0;
                             cheatData[2304] = 0;
 
@@ -1313,7 +1310,7 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						if (strcmp(game_TID, "###") == 0) {
+						if (isHomebrew > 0) {
 							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
 							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 						} else {
