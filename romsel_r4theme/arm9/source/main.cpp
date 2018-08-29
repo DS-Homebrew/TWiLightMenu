@@ -336,7 +336,6 @@ touchPosition touch;
 void SetDonorSDK(const char* filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
-	u32 SDKVersion = 0;
 	char game_TID[5];
 	char game_TID_letter1[5];
 	grabTID(f_nds_file, game_TID);
@@ -347,7 +346,6 @@ void SetDonorSDK(const char* filename) {
 	game_TID_letter1[3] = 0;
 	game_TID_letter1[2] = 0;
 	game_TID_letter1[1] = 0;
-	if(strcmp(game_TID, "###") != 0) SDKVersion = getSDKVersion(f_nds_file);
 	fclose(f_nds_file);
 	
 	donorSdkVer = 0;
@@ -427,7 +425,7 @@ void SetDonorSDK(const char* filename) {
 		}
 	}
 
-	if(strcmp(game_TID_letter1, "V") == 0 || SDKVersion > 0x5000000) {
+	if(strcmp(game_TID_letter1, "V") == 0) {
 		donorSdkVer = 5;
 	} else {
 		// TODO: If the list gets large enough, switch to bsearch().
@@ -721,6 +719,8 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
+	extensionList.push_back(".dsi");
+	extensionList.push_back(".ids");
 	if (consoleModel < 2) extensionList.push_back(".launcharg");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
@@ -975,16 +975,22 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (!flashcardUsed && isDSiWare && useBootstrap
-			&& strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
+			if (!flashcardUsed && isDSiWare) {
+				const char *typeToReplace = ".nds";
+				if (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0) {
+					typeToReplace = ".dsi";
+				} else if (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0) {
+					typeToReplace = ".ids";
+				}
+
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
 				dsiWareSrlPath = argarray[0];
-				dsiWarePubPath = ReplaceAll(argarray[0], ".nds", ".pub");
-				dsiWarePrvPath = ReplaceAll(argarray[0], ".nds", ".prv");
+				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
+				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				launchType = 2;
 				SaveSettings();
 
@@ -1077,7 +1083,25 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
+			if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)) {
+				if (isHomebrew == 2) {
+					useBootstrap = false;	// Bypass nds-bootstrap
+					homebrewBootstrap = true;
+				} else if (isHomebrew == 1) {
+					loadPerGameSettings(filename);
+					if (perGameSettings_directBoot) {
+						useBootstrap = false;	// Bypass nds-bootstrap
+					} else {
+						useBootstrap = true;
+					}
+					homebrewBootstrap = true;
+				} else {
+					useBootstrap = true;
+					homebrewBootstrap = false;
+				}
+
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
@@ -1135,55 +1159,52 @@ int main(int argc, char **argv) {
 
 						std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
 
-						if (access(savename.c_str(), F_OK)) {
-							if (strcmp(game_TID, "###") != 0) {	// Create save if game isn't homebrew
-								clearText();
-								ClearBrightness();
-								const char* savecreate = "Creating save file...";
-								const char* savecreated = "Save file created!";
-								printSmall(false, 2, 80, savecreate);
+						if (access(savename.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
+							clearText();
+							ClearBrightness();
+							const char* savecreate = "Creating save file...";
+							const char* savecreated = "Save file created!";
+							printSmall(false, 2, 80, savecreate);
 
-								static const int BUFFER_SIZE = 4096;
-								char buffer[BUFFER_SIZE];
-								memset(buffer, 0, sizeof(buffer));
+							static const int BUFFER_SIZE = 4096;
+							char buffer[BUFFER_SIZE];
+							memset(buffer, 0, sizeof(buffer));
 
-								int savesize = 524288;	// 512KB (default size for most games)
+							int savesize = 524288;	// 512KB (default size for most games)
 
-								// Set save size to 8KB for the following games
-								if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
-								{
-									savesize = 8192;
-								}
-
-								// Set save size to 256KB for the following games
-								if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
-								{
-									savesize = 262144;
-								}
-
-								// Set save size to 1MB for the following games
-								if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-									|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
-								{
-									savesize = 1048576;
-								}
-
-								// Set save size to 32MB for the following games
-								if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
-								{
-									savesize = 1048576*32;
-								}
-
-								FILE *pFile = fopen(savename.c_str(), "wb");
-								if (pFile) {
-									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-										fwrite(buffer, 1, sizeof(buffer), pFile);
-									}
-									fclose(pFile);
-								}
-								printSmall(false, 2, 88, savecreated);
+							// Set save size to 8KB for the following games
+							if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+							{
+								savesize = 8192;
 							}
 
+							// Set save size to 256KB for the following games
+							if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+							{
+								savesize = 262144;
+							}
+
+							// Set save size to 1MB for the following games
+							if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+								|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+							{
+								savesize = 1048576;
+							}
+
+							// Set save size to 32MB for the following games
+							if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+							{
+								savesize = 1048576*32;
+							}
+
+							FILE *pFile = fopen(savename.c_str(), "wb");
+							if (pFile) {
+								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+									fwrite(buffer, 1, sizeof(buffer), pFile);
+								}
+								fclose(pFile);
+							}
+							printSmall(false, 2, 88, savecreated);
 						}
 
 						SetDonorSDK(argarray[0]);
@@ -1233,7 +1254,7 @@ int main(int argc, char **argv) {
                         bool cheatsFound = false;
                         char cheatData[2305]; // 9*256 + 1
 
-						if ((!access(cheatpath.c_str(), F_OK)) && (strcmp(game_TID, "###") != 0)) {
+						if ((!access(cheatpath.c_str(), F_OK)) && isHomebrew == 0) {
                             cheatData[0] = 0;
                             cheatData[2304] = 0;
 
@@ -1315,7 +1336,7 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						if (strcmp(game_TID, "###") == 0) {
+						if (homebrewBootstrap) {
 							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
 							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 						} else {

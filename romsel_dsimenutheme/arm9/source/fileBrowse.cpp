@@ -477,6 +477,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					isDirectory[i] = false;
 					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum*40).name.c_str();
 					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
@@ -489,19 +491,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						bnrRomType[i] = 1;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
 						bnrRomType[i] = 2;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
 							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
 					{
 						bnrRomType[i] = 3;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					}
 
 					if (showBoxArt) {
@@ -861,59 +863,30 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 					return "null";
 				}
-				else if (isDSiWare[cursorPosition])
+				else if ((isDSiWare[cursorPosition] && flashcardUsed)
+						|| (isDSiWare[cursorPosition] && consoleModel > 1))
 				{
-					if (flashcardUsed || consoleModel > 1) {
-						mmEffectEx(&snd_wrong);
-						clearText();
-						showdialogbox = true;
-						for (int i = 0; i < 30; i++) swiWaitForVBlank();
-						titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
-						printSmallCentered(false, 112, "This game cannot be launched");
-						if (flashcardUsed) {
-							printSmallCentered(false, 128, "in DS mode.");
-						} else {
-							printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
-						}
-						printSmall(false, 208, 166, "A: OK");
-						pressed = 0;
-						do {
-							scanKeys();
-							pressed = keysDownRepeat();
-							swiWaitForVBlank();
-						} while (!(pressed & KEY_A));
-						clearText();
-						showdialogbox = false;
-						for (int i = 0; i < 15; i++) swiWaitForVBlank();
+					mmEffectEx(&snd_wrong);
+					clearText();
+					showdialogbox = true;
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
+					printSmallCentered(false, 112, "This game cannot be launched");
+					if (flashcardUsed) {
+						printSmallCentered(false, 128, "in DS mode.");
 					} else {
-						mmEffectEx(&snd_launch);
-						controlTopBright = true;
-						applaunch = true;
-						applaunchprep = true;
-						useBootstrap = true;
-
-						if (theme == 0) {
-							showbubble = false;
-							showSTARTborder = false;
-							clearText(false);	// Clear title
-
-							fadeSpeed = false;	// Slow fade speed
-							for (int i = 0; i < 5; i++) {
-								swiWaitForVBlank();
-							}
-						}
-						fadeType = false;	// Fade to white
-						for (int i = 0; i < 60; i++) {
-							swiWaitForVBlank();
-						}
-						music = false;
-						mmEffectCancelAll();
-
-						clearText(true);
-
-						// Return the chosen file
-						return entry->name;
+						printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
 					}
+					printSmall(false, 208, 166, "A: OK");
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_A));
+					clearText();
+					showdialogbox = false;
+					for (int i = 0; i < 15; i++) swiWaitForVBlank();
 				}
 				else
 				{
@@ -921,11 +894,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					controlTopBright = true;
 					applaunch = true;
 					applaunchprep = true;
-					if (!isHomebrew[cursorPosition]) {
-						useBootstrap = true;
-					} else {
-						useBootstrap = false;
-					}
 
 					if (theme == 0) {
 						showbubble = false;
@@ -945,67 +913,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
-					if (bnrRomType[cursorPosition] == 0) {
-						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
-
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-						fclose(f_nds_file);
-					}
-
-					// Return the chosen file
-					return entry->name;
-				}
-			}
-
-			if ((pressed & KEY_Y) && !startMenu && bnrRomType[cursorPosition] == 0 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder && cursorPosition >= 0)
-			{
-				DirEntry* entry = &dirContents[scrn].at(cursorPosition+pagenum*40);
-				if (entry->isDirectory)
-				{
-					// Enter selected directory
-					/* chdir(entry->name.c_str());
-					updatePath();
-					pane->slideTransition(false, false, 0, cursorPosition - screenOffset);
-					pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-					getDirectoryContents(dirContents[++scrn], extensionList);
-					for (auto &i : dirContents[scrn])
-						pane->addLine(i.visibleName.c_str());
-					pane->createDefaultEntries();
-					pane->slideTransition(true, false, 20);
-					screenOffset = 0;
-					cursorPosition = 0; */
-				}
-				else
-				{
-					mmEffectEx(&snd_launch);
-					controlTopBright = true;
-					applaunch = true;
-					applaunchprep = true;
-					useBootstrap = false;
-
-					if (theme == 0) {
-						showbubble = false;
-						showSTARTborder = false;
-						clearText(false);	// Clear title
-
-						fadeSpeed = false;	// Slow fade speed
-						for (int i = 0; i < 5; i++) {
-							swiWaitForVBlank();
-						}
-					}
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
-					}
-					music = false;
-					mmEffectCancelAll();
-
-					clearText(true);
-					SaveSettings();
 
 					// Return the chosen file
 					return entry->name;

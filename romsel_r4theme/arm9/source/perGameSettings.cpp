@@ -64,6 +64,7 @@ extern int dialogboxHeight;
 bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
+bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
@@ -96,17 +97,26 @@ char gameTIDText[16];
 void loadPerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", flashcardUsed);	// Homebrew only
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
+	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
+	perGameSettings_soundFix = pergameini.GetInt("GAMESETTINGS", "SOUND_FIX", -1);
 	perGameSettings_asyncPrefetch = pergameini.GetInt("GAMESETTINGS", "ASYNC_PREFETCH", -1);
 }
 
 void savePerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
-	pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-	pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
-	pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
+	if (isHomebrew == 1) {
+		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
+	} else {
+		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+		pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
+		pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
+	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
@@ -148,11 +158,7 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0 || !isHomebrew) {
+	if(isHomebrew == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
@@ -177,7 +183,9 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (isDSiWare || isHomebrew || flashcardUsed) {
+	if (isHomebrew == 1) {
+		dialogboxHeight = 1;
+	} else if (isDSiWare || isHomebrew == 2 || flashcardUsed) {
 		dialogboxHeight = 0;
 	} else {
 		dialogboxHeight = 5;
@@ -187,7 +195,18 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
-		if (isDSiWare || isHomebrew || flashcardUsed) {
+		if (isHomebrew == 1) {
+			printLargeCentered(false, 84, "Game settings");
+			printSmall(false, 172, 104, gameTIDText);
+			printSmall(false, 24, 112, ">");
+			printSmall(false, 32, 112, "Direct boot:");
+			if (perGameSettings_directBoot) {
+				printSmall(false, 208, 112, "Yes");
+			} else {
+				printSmall(false, 208, 112, "No");
+			}
+			printSmallCentered(false, 126, "B: Back");
+		} else if (isDSiWare || isHomebrew == 2 || flashcardUsed) {
 			printLargeCentered(false, 84, "Info");
 			if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
@@ -255,7 +274,20 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare || isHomebrew || flashcardUsed) {
+		if (isHomebrew == 1) {
+			if (pressed & KEY_A) {
+				perGameSettings_directBoot = !perGameSettings_directBoot;
+				perGameSettingsChanged = !perGameSettingsChanged;
+			}
+
+			if (pressed & KEY_B) {
+				if (perGameSettingsChanged) {
+					savePerGameSettings(filename);
+					perGameSettingsChanged = false;
+				}
+				break;
+			}
+		} else if (isDSiWare || isHomebrew == 2 || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

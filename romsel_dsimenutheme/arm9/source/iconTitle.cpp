@@ -262,7 +262,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
 	isDSiWare[num] = false;
-	isHomebrew[num] = false;
+	isHomebrew[num] = 0;
 	infoFound[num] = false;
 
 	if (isDir)
@@ -316,6 +316,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
@@ -353,6 +355,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
 		// this is an nds/app file!
@@ -384,12 +388,14 @@ void getGameInfo(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
-			isDSiWare[num] = true;	// Make DSi-Exclusive/DSiWare game unlaunchable
-		} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
-			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-				isHomebrew[num] = true;	// If homebrew has DSi-extended header,
-											// do not use bootstrap/flashcard's ROM booter to boot it
+		if (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000) {
+			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
+		} else if ((ndsHeader.unitCode >= 0x02
+		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
+		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
+			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
+		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
 		}
 
 		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;
@@ -526,6 +532,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
@@ -559,6 +567,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
 		// this is an nds/app file!

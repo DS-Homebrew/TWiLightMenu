@@ -256,6 +256,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
@@ -268,19 +270,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				bnrRomType = 1;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
 				bnrRomType = 2;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
 					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
 			{
 				bnrRomType = 3;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			}
 		}
 
@@ -344,49 +346,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
-			} else if (isDSiWare) {
-				if (flashcardUsed || consoleModel > 1) {
-					showdialogbox = true;
-					printLargeCentered(false, 84, "Error!");
-					printSmallCentered(false, 104, "This game cannot be launched.");
-					printSmallCentered(false, 118, "A: OK");
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					pressed = 0;
-					do {
-						scanKeys();
-						pressed = keysDownRepeat();
-						swiWaitForVBlank();
-					} while (!(pressed & KEY_A));
-					showdialogbox = false;
-				} else {
-					applaunch = true;
-					useBootstrap = true;
-
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
-					}
-					cursorPosition = fileOffset;
-					pagenum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (cursorPosition > 39) {
-							cursorPosition -= 40;
-							pagenum++;
-						} else {
-							break;
-						}
-					}
-
-					// Return the chosen file
-					return entry->name;
-				}
+			} else if ((isDSiWare && flashcardUsed)
+					|| (isDSiWare && consoleModel > 1)) {
+				showdialogbox = true;
+				printLargeCentered(false, 84, "Error!");
+				printSmallCentered(false, 104, "This game cannot be launched.");
+				printSmallCentered(false, 118, "A: OK");
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				showdialogbox = false;
 			} else {
 				applaunch = true;
-				if (!isHomebrew) {
-					useBootstrap = true;
-				} else {
-					useBootstrap = false;
-				}
 
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {
@@ -402,48 +377,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						break;
 					}
 				}
-				if (bnrRomType == 0) {
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-
-					char game_TID[5];
-					grabTID(f_nds_file, game_TID);
-					game_TID[4] = 0;
-					game_TID[3] = 0;
-					if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-					fclose(f_nds_file);
-				}
-
-				// Return the chosen file
-				return entry->name;
-			}
-		}
-
-		if ((pressed & KEY_Y) && bnrRomType == 0 && fileOffset >= 0)
-		{
-			DirEntry* entry = &dirContents.at(fileOffset);
-			if (entry->isDirectory)
-			{
-			}
-			else
-			{
-				applaunch = true;
-				useBootstrap = false;
-
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) {
-					swiWaitForVBlank();
-				}
-				cursorPosition = fileOffset;
-				pagenum = 0;
-				for (int i = 0; i < 100; i++) {
-					if (cursorPosition > 39) {
-						cursorPosition -= 40;
-						pagenum++;
-					} else {
-						break;
-					}
-				}
-				SaveSettings();
 
 				// Return the chosen file
 				return entry->name;
