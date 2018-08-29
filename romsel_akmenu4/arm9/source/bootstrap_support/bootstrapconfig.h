@@ -5,11 +5,11 @@
 #include <tuple>
 #include <functional>
 
-#include "dsrom.h"
+#include "bootstrappaths.h"
 
 #pragma once
 #ifndef __BOOTSTRAP_CONFIG__
-#define __BOOTSRAP_CONFIG__
+#define __BOOTSTRAP_CONFIG__
 
 class BootstrapConfig
 {

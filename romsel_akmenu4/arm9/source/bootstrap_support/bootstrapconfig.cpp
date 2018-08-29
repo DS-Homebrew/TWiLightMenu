@@ -330,16 +330,16 @@ int BootstrapConfig::launch()
 
 	std::string bootstrapPath;
 	if (_useNightlyBootstrap && _isHomebrew)
-		bootstrapPath = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
+		bootstrapPath = BOOTSTRAP_NIGHTLY_HB;
 	if (_useNightlyBootstrap && !_isHomebrew)
-		bootstrapPath = "sd:/_nds/nds-bootstrap-nightly.nds";
+		bootstrapPath = BOOTSTRAP_NIGHTLY;
 
 	if (!_useNightlyBootstrap && _isHomebrew)
-		bootstrapPath = "sd:/_nds/nds-bootstrap-hb-release.nds";
+		bootstrapPath = BOOTSTRAP_RELEASE_HB;
 	if (!_useNightlyBootstrap && !_isHomebrew)
-		bootstrapPath = "sd:/_nds/nds-bootstrap-release.nds";
+		bootstrapPath = BOOTSTRAP_RELEASE;
 
-	LoaderConfig loader(bootstrapPath, "sd:/_nds/nds-bootstrap.ini");
+	LoaderConfig loader(bootstrapPath, BOOTSTRAP_INI);
 
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fileName)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savename)

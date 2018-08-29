@@ -30,6 +30,15 @@
 #include "ui/zoomingicon.h"
 
 #define SD_ROOT "/"
+// Note that ^*:: is an impossible file name on 
+// FAT32. This makes it safe for special paths.
+#define SPATH_ROOT "^*::~"
+#define SPATH_GBARUNNER "^*::gbarunner:/"
+#define SPATH_SYSMENU "^*::sysmenu:/"
+#define SPATH_TITLEANDSETTINGS "^*::titleandsettings:/"
+#define SPATH_SLOT1 "^*::slot1:/"
+#define SPATH_SYSTEMSETTINGS "^*::syssettings:/"
+
 
 class MainList : public akui::ListView
 {

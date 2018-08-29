@@ -32,6 +32,9 @@
 
 #include "ui/progresswnd.h"
 #include "bootstrap_support/bootstrapconfig.h"
+#include "bootstrap_support/loaderconfig.h"
+#include "bootstrap_support/cardlaunch.h"
+#include "bootstrap_support/systemdetails.h"
 //#include "files.h"
 
 #include "inifile.h"
@@ -537,25 +540,23 @@ void MainWnd::launchSelected()
 
     if (rominfo.isDSRom())
     {
-        BootstrapConfig config(fullPath, std::string((char*)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
+        BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
         config.onSaveCreated(bootstrapSaveHandler)
             .onConfigSaved(bootstrapLaunchHandler);
-        
+
         progressWnd().setText("Creating save...");
         progressWnd().update();
         progressWnd().show();
 
         int err = config.launch();
-        if (err) 
+        if (err)
         {
             std::string errorString = formatString("Error %i", err);
             messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
             progressWnd().hide();
         }
     }
-    
-
 
     //     dbg_printf("(%s)\n", fullPath.c_str());
     //     dbg_printf("%d\n", fullPath[fullPath.size() - 1]);
@@ -853,6 +854,14 @@ void MainWnd::setParam(void)
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch titleandsettings...");
+    LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);
+    settingsLoader.option("SRLOADER", "GOTOSETTINGS", true);
+
+    if (int err = settingsLoader.launch())
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
+    }
     //     // if (gs().safeMode)
     //     //     return;
     //     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
@@ -861,6 +870,29 @@ void MainWnd::showSettings(void)
     //     {
     //         _mainList->enterDir(_mainList->getCurrentDir());
     //     }
+}
+
+
+void MainWnd::bootSlot1(void)
+{
+    dbg_printf("Launch Slot1...");
+    LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
+
+    if (int err = slot1Loader.launch())
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
+    }
+}
+
+void MainWnd::bootGbaRunner(void)
+{
+    BootstrapConfig gbaRunner(GBARUNNER_BOOTSTRAP, "", 0);
+    if (int err =  gbaRunner.launch())
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
+    }   
 }
 
 void MainWnd::showFileInfo()
@@ -899,9 +931,48 @@ void MainWnd::onFolderChanged()
     if (dirShowName.substr(0, 1) == SD_ROOT)
         dirShowName.replace(0, 1, "SD:/");
 
+
+    if (!strncmp(dirShowName.c_str(), "^*::", 2)) {
+
+        if (dirShowName == SPATH_TITLEANDSETTINGS) 
+        {
+            showSettings();
+        }
+
+        // todo: SLOT1 Launch Method SRLOADER Settings.
+        if (dirShowName == SPATH_SLOT1)
+        {
+            if (sys().arm7SCFGLocked()) {
+                cardLaunch();
+            } else {
+                bootSlot1();
+            }
+        }
+
+        if (dirShowName == SPATH_GBARUNNER)
+        {
+            //todo: SLOT2 boot + flashcard gbarunner
+            bootGbaRunner();
+        }
+
+        if (dirShowName == SPATH_SYSMENU)
+        {
+            dsiSysMenuLaunch();
+        }
+
+        if (dirShowName == SPATH_SYSTEMSETTINGS)
+        {
+            dsiLaunchSystemSettings();
+        }
+        dirShowName.clear();
+
+    }
+    
     dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
 
     _folderText->setText(dirShowName);
+
+
 }
 
 void MainWnd::onAnimation(bool &anAllow)

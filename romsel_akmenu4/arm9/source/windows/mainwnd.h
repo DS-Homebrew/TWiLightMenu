@@ -82,6 +82,10 @@ protected:
 
     void showSettings(void);
 
+    void bootSlot1(void);
+    
+    void bootGbaRunner(void);
+
     void onFolderChanged();
 
     void onAnimation(bool& anAllow);

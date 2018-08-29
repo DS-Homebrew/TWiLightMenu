@@ -26,6 +26,7 @@
 //#include "files.h"
 #include "windows/startmenu.h"
 #include "systemfilenames.h"
+#include "bootstrap_support/systemdetails.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
 #include "tool/memtool.h"
@@ -44,9 +45,9 @@
 #include "language.h"
 #include "unicode.h"
 
-using namespace akui;
 
-extern bool flashcardUsed;
+
+using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
     : ListView(x, y, w, h, parent, text, gs().scrollSpeed), _showAllFiles(false)
@@ -144,23 +145,29 @@ void MainList::addDirEntry(int pos, const std::string row1, const std::string ro
 bool MainList::enterDir(const std::string &dirName)
 {
     dbg_printf("Enter Dir: %s\n", dirName.c_str());
-    if ("~" == dirName) // select RPG or SD card
+    if (SPATH_ROOT == dirName) // select RPG or SD card
     {
         removeAllRows();
         _romInfoList.clear();
 
         addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-        addDirEntry(1, "GBARunner2", "", SD_ROOT, "usd", gbarom_banner_bin);
-        if (!flashcardUsed) {
-			addDirEntry(2, "SLOT-1 Card", "", SD_ROOT, "usd", nand_banner_bin);
-			addDirEntry(3, "Settings", "", SD_ROOT, "usd", settings_banner_bin);
-			addDirEntry(4, "System Settings", "", SD_ROOT, "usd", settings_banner_bin);
-			addDirEntry(5, "System Menu", "", SD_ROOT, "usd", sysmenu_banner_bin);
+        addDirEntry(1, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
+        if (!sys().flashcardUsed()) {
+			addDirEntry(2, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+            addDirEntry(3, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
+			addDirEntry(4, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+			//addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
 		} else {
-			addDirEntry(2, "Settings", "", SD_ROOT, "usd", settings_banner_bin);
+			addDirEntry(2, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
 		}
+        _currentDir = SPATH_ROOT;
+        directoryChanged();
+        return true;
+    }
 
-        _currentDir = "~";
+    if (!strncmp(dirName.c_str(), "^*::", 2)) {
+        dbg_printf("Special directory entered");
+        _currentDir = dirName;
         directoryChanged();
         return true;
     }
@@ -321,7 +328,7 @@ void MainList::backParentDir()
     if ("" == _currentDir || SD_ROOT == _currentDir)
     {
         dbg_printf("Entering HOME\n");
-        enterDir("~");
+        enterDir(SPATH_ROOT);
         return;
     }
 

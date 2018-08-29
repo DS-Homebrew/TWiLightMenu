@@ -39,6 +39,7 @@
 #include "windows/userwnd.h"
 #include "ui/progresswnd.h"
 #include "windows/mainwnd.h"
+#include "bootstrap_support/systemdetails.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -54,16 +55,6 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 
 using namespace akui;
-
-bool arm7SCFGLocked = false;
-int consoleModel = 0;
-/*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
-bool isRegularDS = true;
-
-bool flashcardUsed = false;
 
 //---------------------------------------------------------------------------------
 void stop(void)
@@ -113,6 +104,8 @@ int main(int argc, char **argv)
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
+	sys();
+
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
@@ -121,14 +114,6 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-
-	// fifoWaitValue32(FIFO_USER_06);
-	// if (fifoGetValue32(FIFO_USER_03) == 0)
-	// 	arm7SCFGLocked = true; // If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	// if (arm7_SNDEXCNT != 0)
-	// 	isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
-	// fifoSendValue32(FIFO_USER_07, 0);
 
 	irq().init();
 
@@ -164,7 +149,6 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
 	// setting scripts
 	gs().loadSettings();
 
@@ -207,8 +191,8 @@ int main(int argc, char **argv)
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
-	//if (!wnd->_mainList->enterDir("~" != lastDirectory ? lastDirectory : gs().startupFolder))
-	wnd->_mainList->enterDir("~");
+	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
+	wnd->_mainList->enterDir(SPATH_ROOT);
 
 	irq().vblankStart();
 
