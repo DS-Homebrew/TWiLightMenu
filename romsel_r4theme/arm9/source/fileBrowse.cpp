@@ -346,49 +346,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
-			} else if (isDSiWare) {
-				if (flashcardUsed || consoleModel > 1) {
-					showdialogbox = true;
-					printLargeCentered(false, 84, "Error!");
-					printSmallCentered(false, 104, "This game cannot be launched.");
-					printSmallCentered(false, 118, "A: OK");
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					pressed = 0;
-					do {
-						scanKeys();
-						pressed = keysDownRepeat();
-						swiWaitForVBlank();
-					} while (!(pressed & KEY_A));
-					showdialogbox = false;
-				} else {
-					applaunch = true;
-					useBootstrap = true;
-
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
-					}
-					cursorPosition = fileOffset;
-					pagenum = 0;
-					for (int i = 0; i < 100; i++) {
-						if (cursorPosition > 39) {
-							cursorPosition -= 40;
-							pagenum++;
-						} else {
-							break;
-						}
-					}
-
-					// Return the chosen file
-					return entry->name;
-				}
+			} else if ((isDSiWare && flashcardUsed)
+					|| (isDSiWare && consoleModel > 1)) {
+				showdialogbox = true;
+				printLargeCentered(false, 84, "Error!");
+				printSmallCentered(false, 104, "This game cannot be launched.");
+				printSmallCentered(false, 118, "A: OK");
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				showdialogbox = false;
 			} else {
 				applaunch = true;
-				if (isHomebrew < 2) {
-					useBootstrap = true;
-				} else {
-					useBootstrap = false;
-				}
 
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {
@@ -404,41 +377,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						break;
 					}
 				}
-				if (bnrRomType == 0 && isHomebrew > 0) {
-					homebrewBootstrap = true;
-				}
-
-				// Return the chosen file
-				return entry->name;
-			}
-		}
-
-		if ((pressed & KEY_Y) && bnrRomType == 0 && fileOffset >= 0)
-		{
-			DirEntry* entry = &dirContents.at(fileOffset);
-			if (entry->isDirectory)
-			{
-			}
-			else
-			{
-				applaunch = true;
-				useBootstrap = false;
-
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) {
-					swiWaitForVBlank();
-				}
-				cursorPosition = fileOffset;
-				pagenum = 0;
-				for (int i = 0; i < 100; i++) {
-					if (cursorPosition > 39) {
-						cursorPosition -= 40;
-						pagenum++;
-					} else {
-						break;
-					}
-				}
-				SaveSettings();
 
 				// Return the chosen file
 				return entry->name;

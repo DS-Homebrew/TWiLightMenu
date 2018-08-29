@@ -889,16 +889,22 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (!flashcardUsed && isDSiWare[cursorPosition]
-			&& strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
+			if (!flashcardUsed && isDSiWare[cursorPosition]) {
+				const char *typeToReplace = ".nds";
+				if (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0) {
+					typeToReplace = ".dsi";
+				} else if (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0) {
+					typeToReplace = ".ids";
+				}
+
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
 				dsiWareSrlPath = argarray[0];
-				dsiWarePubPath = ReplaceAll(argarray[0], ".nds", ".pub");
-				dsiWarePrvPath = ReplaceAll(argarray[0], ".nds", ".prv");
+				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
+				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				launchType = 2;
 				SaveSettings();
 
@@ -986,7 +992,9 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
+			if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)) {
 				if (isHomebrew[cursorPosition] == 2) {
 					useBootstrap = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
