@@ -22,6 +22,7 @@
 #include "tool/dbgtool.h"
 #include "fileicons.h"
 #include "icons.h"
+#include "bootstrap_support/module_params.h"
 
 #include "nds_banner_bin.h"
 #include "unknown_nds_banner_bin.h"
@@ -53,7 +54,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     }
 
     tNDSHeader header;
-    if (512 != fread(&header, 1, 512, f)) // ���ļ�ͷʧ��
+    if (512 != fread(&header, 1, 512, f))
     {
         dbg_printf("read rom header fail\n");
         memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
@@ -63,7 +64,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 
     ///////// ROM Header /////////
     u16 crc = header.headerCRC16;
-    if (crc != header.headerCRC16) // �ļ�ͷ CRC ���󣬲���nds��Ϸ
+    if (crc != header.headerCRC16) 
     {
         dbg_printf("%s rom header crc error\n", filename.c_str());
         memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
@@ -82,10 +83,18 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     ///////// saveInfo /////////
     memcpy(_saveInfo.gameTitle, header.gameTitle, 12);
     memcpy(_saveInfo.gameCode, header.gameCode, 4);
+    ///// SDK Version /////
+
+    if (_isHomebrew == EFalse) {
+        _saveInfo.gameSdkVersion = getModuleParams(&header, f)->sdk_version;
+        dbg_printf("SDK: %X\n", _saveInfo.gameSdkVersion);
+    } else {
+        _saveInfo.gameSdkVersion = 0;
+    }
+
     _saveInfo.gameCRC = header.headerCRC16;
     _romVersion = header.romversion;
 
-    //dbg_printf( "save type %d\n", _saveInfo.saveType );
 
     ///////// banner /////////
     if (header.bannerOffset != 0)
@@ -119,6 +128,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     }
 
     fclose(f);
+
     return true;
 }
 

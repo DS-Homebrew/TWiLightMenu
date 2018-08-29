@@ -336,6 +336,8 @@ void RomInfoWnd::addCode(void)
     {
         _saveTypeText += formatString("v%02d", _romInfo.version());
     }
+    _saveTypeText += formatString(" SDK %X", (_romInfo.saveInfo().gameSdkVersion >> 16));
+
 }
 
 // #if defined(_STORAGE_rpg)
