@@ -390,7 +390,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
 		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
 			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
-		} else if (ndsHeader.arm7destination >= 0x037F8000) {
+		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
 		}
 
