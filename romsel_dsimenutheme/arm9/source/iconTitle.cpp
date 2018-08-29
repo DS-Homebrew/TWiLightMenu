@@ -316,6 +316,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
@@ -353,6 +355,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
 		// this is an nds/app file!
@@ -528,6 +532,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
 			{
 				// let's see if this is a file or directory
@@ -561,6 +567,8 @@ void iconUpdate(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
 	{
 		// this is an nds/app file!
