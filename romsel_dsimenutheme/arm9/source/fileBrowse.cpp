@@ -489,19 +489,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						bnrRomType[i] = 1;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
 						bnrRomType[i] = 2;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
 							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
 					{
 						bnrRomType[i] = 3;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
-						isHomebrew[i] = false;
+						isHomebrew[i] = 0;
 					}
 
 					if (showBoxArt) {
@@ -921,7 +921,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					controlTopBright = true;
 					applaunch = true;
 					applaunchprep = true;
-					if (!isHomebrew[cursorPosition]) {
+					if (isHomebrew[cursorPosition] < 2) {
 						useBootstrap = true;
 					} else {
 						useBootstrap = false;
@@ -945,15 +945,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectCancelAll();
 
 					clearText(true);
-					if (bnrRomType[cursorPosition] == 0) {
-						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), "rb");
-
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-						fclose(f_nds_file);
+					if (bnrRomType[cursorPosition] == 0 && isHomebrew[cursorPosition] > 0) {
+						homebrewBootstrap = true;
 					}
 
 					// Return the chosen file

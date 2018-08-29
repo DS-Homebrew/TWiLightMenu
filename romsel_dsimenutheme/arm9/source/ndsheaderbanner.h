@@ -248,7 +248,7 @@ extern int bnrRomType[40];
 extern bool bnriconisDSi[40];
 extern int bnrWirelessIcon[40];	// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare[40];
-extern bool isHomebrew[40];
+extern int isHomebrew[40];		// 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

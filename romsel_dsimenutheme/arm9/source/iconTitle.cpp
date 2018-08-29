@@ -262,7 +262,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
 	isDSiWare[num] = false;
-	isHomebrew[num] = false;
+	isHomebrew[num] = 0;
 	infoFound[num] = false;
 
 	if (isDir)
@@ -384,12 +384,14 @@ void getGameInfo(bool isDir, const char* name, int num)
 			return;
 		}
 
-		if (ndsHeader.unitCode == 0x03 && strcmp(ndsHeader.gameCode, "####") != 0) {
+		if (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000) {
 			isDSiWare[num] = true;	// Make DSi-Exclusive/DSiWare game unlaunchable
-		} else if (ndsHeader.unitCode == 0x02 || ndsHeader.unitCode == 0x03) {
-			if(ndsHeader.arm9romOffset == 0x4000 && strcmp(ndsHeader.gameCode, "####") == 0)
-				isHomebrew[num] = true;	// If homebrew has DSi-extended header,
-											// do not use bootstrap/flashcard's ROM booter to boot it
+		} else if ((ndsHeader.unitCode >= 0x02
+		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
+		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
+			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
+		} else if (ndsHeader.arm7destination >= 0x037F8000) {
+			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
 		}
 
 		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;

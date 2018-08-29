@@ -156,11 +156,7 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0 || !isHomebrew[cursorPosition]) {
+	if(!isHomebrew[cursorPosition] != 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
@@ -194,7 +190,7 @@ void perGameSettings (std::string filename) {
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 166, fileCounter);
-		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] || flashcardUsed) {
+		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] != 0 || flashcardUsed) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {
 			if (perGameSettings_cursorPosition >= 0 && perGameSettings_cursorPosition < 4) {
@@ -260,7 +256,7 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] || flashcardUsed) {
+		if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] != 0 || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
