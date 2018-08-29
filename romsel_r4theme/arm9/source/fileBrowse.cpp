@@ -256,6 +256,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))

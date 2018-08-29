@@ -719,6 +719,8 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	extensionList.push_back(".nds");
+	extensionList.push_back(".dsi");
+	extensionList.push_back(".ids");
 	if (consoleModel < 2) extensionList.push_back(".launcharg");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
