@@ -889,7 +889,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (!flashcardUsed && isDSiWare[cursorPosition] && useBootstrap
+			if (!flashcardUsed && isDSiWare[cursorPosition]
 			&& strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0) {
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
@@ -987,6 +987,22 @@ int main(int argc, char **argv) {
 
 			// Launch .nds directly or via nds-bootstrap
 			if ( strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0 ) {
+				if (isHomebrew[cursorPosition] == 2) {
+					useBootstrap = false;	// Bypass nds-bootstrap
+					homebrewBootstrap = true;
+				} else if (isHomebrew[cursorPosition] == 1) {
+					loadPerGameSettings(filename);
+					if (perGameSettings_directBoot) {
+						useBootstrap = false;	// Bypass nds-bootstrap
+					} else {
+						useBootstrap = true;
+					}
+					homebrewBootstrap = true;
+				} else {
+					useBootstrap = true;
+					homebrewBootstrap = false;
+				}
+
 				char *name = argarray.at(0);
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
@@ -1220,7 +1236,7 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						if (isHomebrew[cursorPosition] > 0) {
+						if (homebrewBootstrap) {
 							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
 							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 						} else {
