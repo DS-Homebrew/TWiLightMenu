@@ -104,8 +104,6 @@ int main(int argc, char **argv)
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	sys();
-
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
@@ -114,6 +112,10 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
+
+	bool fatInitOk = fatInitDefault();
+
+	sys();
 
 	irq().init();
 
@@ -142,7 +144,6 @@ int main(int argc, char **argv)
 #endif
 	dbg_printf("GDI Init!");
 
-	bool fatInitOk = fatInitDefault();
 	if (!fatInitOk)
 	{
 		consoleDemoInit();
