@@ -5,45 +5,17 @@
 #include <gl2d.h>
 
 #include "ndsheaderbanner.h"
+#include "module_params.h"
 
 extern sNDSBannerExt ndsBanner;
+
+// Needed to test if homebrew
+char tidBuf[4];
 
 typedef enum
 {
 	GL_FLIP_BOTH	= (1 << 3)
 } GL_FLIP_MODE_XTRA;
-
-// Subroutine function signatures arm9
-u32 moduleParamsSignature[2]   = {0xDEC00621, 0x2106C0DE};
-
-//
-// Look in @data for @find and return the position of it.
-//
-u32 getOffset(u32* addr, size_t size, u32* find, size_t sizeofFind, int direction)
-{
-	u32* end = addr + size/sizeof(u32);
-
-    //u32 result = 0;
-	bool found = false;
-
-	do {
-		for(int i=0;i<(int)sizeofFind;i++) {
-			if (addr[i] != find[i]) 
-			{
-				break;
-			} else if(i==(int)sizeofFind-1) {
-				found = true;
-			}
-		}
-		if(!found) addr+=direction;
-	} while (addr != end && !found);
-
-	if (addr == end) {
-		return NULL;
-	}
-
-	return (u32)addr;
-}
 
 /**
  * Get the title ID.
@@ -57,8 +29,6 @@ int grabTID(FILE* ndsFile, char *buf) {
 	return !(read == 4);
 }
 
-char arm9binary[0x40000];
-
 /**
  * Get SDK version from an NDS file.
  * @param ndsFile NDS file.
@@ -69,19 +39,10 @@ u32 getSDKVersion(FILE* ndsFile) {
 	sNDSHeaderExt NDSHeader;
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
-	
-	fseek(ndsFile, NDSHeader.arm9romOffset, SEEK_SET);
-	if(NDSHeader.arm9binarySize > 0x40000) NDSHeader.arm9binarySize = 0x40000;
-	fread(&arm9binary, 1, NDSHeader.arm9binarySize, ndsFile);
-
-	// Looking for moduleparams
-	uint32_t moduleparams = getOffset((u32*)arm9binary, NDSHeader.arm9binarySize, (u32*)moduleParamsSignature, 2, 1);
-	if(!moduleparams) {
-		return 0;
-	}
-
-	return ((module_params_t*)(moduleparams - 0x1C))->sdk_version;
+	if (NDSHeader.arm7destination >= 0x037F8000 || grabTID(ndsFile, tidBuf) != 0) return 0;
+	return getModuleParams(&NDSHeader, ndsFile)->sdk_version;
 }
+
 
 // bnriconframeseq[]
 static u16 bnriconframeseq[64] = {0x0000};
