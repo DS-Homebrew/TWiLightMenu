@@ -37,6 +37,8 @@
 #include "microsd_banner_bin.h"
 #include "gba_banner_bin.h"
 #include "gbarom_banner_bin.h"
+#include "sysmenu_banner_bin.h"
+#include "settings_banner_bin.h"
 #include "folder_banner_bin.h"
 #include "ui/progresswnd.h"
 #include "language.h"
@@ -151,6 +153,11 @@ bool MainList::enterDir(const std::string &dirName)
         addDirEntry(1, "GBARunner2", "", SD_ROOT, "usd", gbarom_banner_bin);
         if (!flashcardUsed) {
 			addDirEntry(2, "SLOT-1 Card", "", SD_ROOT, "usd", nand_banner_bin);
+			addDirEntry(3, "Settings", "", SD_ROOT, "usd", settings_banner_bin);
+			addDirEntry(4, "System Settings", "", SD_ROOT, "usd", settings_banner_bin);
+			addDirEntry(5, "System Menu", "", SD_ROOT, "usd", sysmenu_banner_bin);
+		} else {
+			addDirEntry(2, "Settings", "", SD_ROOT, "usd", settings_banner_bin);
 		}
 
         _currentDir = "~";
