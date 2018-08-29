@@ -268,19 +268,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				bnrRomType = 1;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
 				bnrRomType = 2;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
 					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
 			{
 				bnrRomType = 3;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
-				isHomebrew = false;
+				isHomebrew = 0;
 			}
 		}
 
@@ -382,7 +382,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else {
 				applaunch = true;
-				if (!isHomebrew) {
+				if (isHomebrew < 2) {
 					useBootstrap = true;
 				} else {
 					useBootstrap = false;
@@ -402,15 +402,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						break;
 					}
 				}
-				if (bnrRomType == 0) {
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-
-					char game_TID[5];
-					grabTID(f_nds_file, game_TID);
-					game_TID[4] = 0;
-					game_TID[3] = 0;
-					if(strcmp(game_TID, "###") == 0) homebrewBootstrap = true;
-					fclose(f_nds_file);
+				if (bnrRomType == 0 && isHomebrew > 0) {
+					homebrewBootstrap = true;
 				}
 
 				// Return the chosen file

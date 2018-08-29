@@ -148,11 +148,7 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	if(strcmp(game_TID, "###") != 0 || !isHomebrew) {
+	if(isHomebrew != 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
@@ -177,7 +173,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (isDSiWare || isHomebrew || flashcardUsed) {
+	if (isDSiWare || isHomebrew != 0 || flashcardUsed) {
 		dialogboxHeight = 0;
 	} else {
 		dialogboxHeight = 5;
@@ -255,7 +251,7 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isDSiWare || isHomebrew || flashcardUsed) {
+		if (isDSiWare || isHomebrew != 0 || flashcardUsed) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

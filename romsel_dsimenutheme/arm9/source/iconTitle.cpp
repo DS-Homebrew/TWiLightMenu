@@ -389,7 +389,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 		}
 
 		if (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000) {
-			isDSiWare[num] = true;	// Make DSi-Exclusive/DSiWare game unlaunchable
+			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
 		} else if ((ndsHeader.unitCode >= 0x02
 		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
 		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {

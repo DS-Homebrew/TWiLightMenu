@@ -156,7 +156,7 @@ void perGameSettings (std::string filename) {
 
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	if(!isHomebrew[cursorPosition] != 0) {
+	if(isHomebrew[cursorPosition] != 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
