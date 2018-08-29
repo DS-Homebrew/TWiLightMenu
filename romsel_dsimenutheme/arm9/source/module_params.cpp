@@ -35,6 +35,11 @@ u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 			}
 		}
 		offset += sizeof(u32) * 2;
+
+		// Stop searching, if past the arm9 binary
+		if (offset > ndsHeader->arm9binarySize) {
+			break;
+		}
 	}
 
 	if (!found)
