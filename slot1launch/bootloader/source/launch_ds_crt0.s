@@ -2,7 +2,9 @@
 	.section ".init"
 	.global _start
 	.global language
+	.global twlMode
 	.global twlClock
+	.global runCardEngine
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -13,7 +15,11 @@ _start:
 
 language:
 	.word	0x00000000
+twlMode:
+	.word	0x00000000
 twlClock:
+	.word	0x00000000
+runCardEngine:
 	.word	0x00000000
 
 startUp:

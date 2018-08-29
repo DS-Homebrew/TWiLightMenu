@@ -42,6 +42,8 @@
 
 #include "common.h"
 
+extern u32 runCardEngine;
+
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
 volatile bool arm9_errorClearBG = false;
@@ -170,7 +172,9 @@ void arm9_main (void) {
 	WRAM_CR = 0x03;
 	REG_EXMEMCNT = 0xE880;
 
-	initMBKARM9();
+	if (runCardEngine) {
+		initMBKARM9();
+	}
 
 	arm9_stateFlag = ARM9_START;
 	

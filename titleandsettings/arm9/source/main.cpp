@@ -297,10 +297,10 @@ void stop (void) {
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
-void doPause(int x, int y) {
+void doPause(void) {
 //---------------------------------------------------------------------------------
-	// iprintf("Press start...\n");
-	printSmall(false, x, y, "Press start...");
+	printf("Press start...\n");
+	//printSmall(false, x, y, "Press start...");
 	while(1) {
 		scanKeys();
 		if(keysDown() & KEY_START)
@@ -468,6 +468,22 @@ int main(int argc, char **argv) {
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
+	
+	//consoleDemoInit();
+
+	bool fatInited = fatInitDefault();
+
+	/* if (!isDSiMode() && REG_SCFG_EXT == 0x8307F100) {
+		// Force-enable DSi mode
+		extern bool __dsimode;
+		__dsimode = true;
+	}
+
+	fifoWaitValue32(FIFO_USER_06);
+	
+	iprintf("ARM7 SCFG_ROM: %x\n", fifoGetValue32(FIFO_USER_01));
+	
+	doPause(); */
 
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
@@ -486,7 +502,7 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 
-	if (!fatInitDefault()) {
+	if (!fatInited) {
 		graphicsInit();
 		fontInit();
 		fadeType = true;
@@ -508,7 +524,7 @@ int main(int argc, char **argv) {
 	swiWaitForVBlank();
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard (in DS mode), then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
