@@ -56,6 +56,7 @@ void ProgressWnd::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
     Form::draw();
+    swiWaitForVBlank();
 }
 
 bool ProgressWnd::process(const Message &msg)

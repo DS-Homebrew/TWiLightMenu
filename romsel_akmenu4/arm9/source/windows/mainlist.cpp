@@ -149,7 +149,7 @@ bool MainList::enterDir(const std::string &dirName)
         removeAllRows();
         _romInfoList.clear();
 
-        addDirEntry(0, LANG("mainlist", "microsd card"), "", SD_ROOT, "usd", microsd_banner_bin);
+        addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
         addDirEntry(1, "GBARunner2", "", SD_ROOT, "usd", gbarom_banner_bin);
         if (!flashcardUsed) {
 			addDirEntry(2, "SLOT-1 Card", "", SD_ROOT, "usd", nand_banner_bin);

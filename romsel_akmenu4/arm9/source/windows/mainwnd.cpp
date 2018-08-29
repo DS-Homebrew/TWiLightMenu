@@ -31,7 +31,7 @@
 #include "tool/fifotool.h"
 
 #include "ui/progresswnd.h"
-
+#include "bootstrap_support/bootstrapconfig.h"
 //#include "files.h"
 
 #include "inifile.h"
@@ -508,6 +508,18 @@ void MainWnd::onKeyAPressed()
     launchSelected();
 }
 
+void bootstrapSaveHandler()
+{
+    progressWnd().setPercent(50);
+    progressWnd().update();
+}
+
+void bootstrapLaunchHandler()
+{
+    progressWnd().setPercent(100);
+    progressWnd().update();
+}
+
 void MainWnd::launchSelected()
 {
     dbg_printf("Launch.");
@@ -519,20 +531,31 @@ void MainWnd::launchSelected()
         return;
     }
 
-    //     DSRomInfo rominfo;
-    //     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
-    //         return;
+    DSRomInfo rominfo;
+    if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
+        return;
 
-    //     //rominfo.loadDSRomInfo( fullPath, false );
+    if (rominfo.isDSRom())
+    {
+        BootstrapConfig config(fullPath, std::string((char*)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
-    //     if (rominfo.isGbaRom())
-    //     {
-    //         CGbaLoader(fullPath).Load(false, false);
-    //         return;
-    //     }
+        config.onSaveCreated(bootstrapSaveHandler)
+            .onConfigSaved(bootstrapLaunchHandler);
+        
+        progressWnd().setText("Creating save...");
+        progressWnd().update();
+        progressWnd().show();
 
-    //     if (!rominfo.isDSRom())
-    //         return;
+        int err = config.launch();
+        if (err) 
+        {
+            std::string errorString = formatString("Error %i", err);
+            messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
+            progressWnd().hide();
+        }
+    }
+    
+
 
     //     dbg_printf("(%s)\n", fullPath.c_str());
     //     dbg_printf("%d\n", fullPath[fullPath.size() - 1]);
