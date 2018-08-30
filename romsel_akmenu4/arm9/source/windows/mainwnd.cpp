@@ -519,7 +519,7 @@ void bootstrapSaveHandler()
 
 void bootstrapLaunchHandler()
 {
-    progressWnd().setPercent(100);
+    progressWnd().setPercent(90);
     progressWnd().update();
 }
 
@@ -545,7 +545,7 @@ void MainWnd::launchSelected()
         config.onSaveCreated(bootstrapSaveHandler)
             .onConfigSaved(bootstrapLaunchHandler);
 
-        progressWnd().setText("Creating save...");
+        progressWnd().setTipText("Please wait...");
         progressWnd().update();
         progressWnd().show();
 
