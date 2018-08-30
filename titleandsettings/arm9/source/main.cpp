@@ -752,6 +752,8 @@ int main(int argc, char **argv) {
 							printSmall(false, 12, selyPos, STR_DSI_BLUE.c_str());
 							selyPos += 12;
 							printSmall(false, 12, selyPos, STR_DSI_GREEN.c_str());
+							selyPos += 12;
+							printSmall(false, 12, selyPos, STR_DSI_YELLOW.c_str());
 							break;
 						case 1:
 							break;
@@ -817,8 +819,8 @@ int main(int argc, char **argv) {
 					if (subtheme > 12) subtheme = 0;
 					else if (subtheme < 0) subtheme = 12;
 				} else {
-					if (subtheme > 4) subtheme = 0;
-					else if (subtheme < 0) subtheme = 4;
+					if (subtheme > 5) subtheme = 0;
+					else if (subtheme < 0) subtheme = 5;
 				}
 			} else if (subscreenmode == 2) {
 				pressed = 0;

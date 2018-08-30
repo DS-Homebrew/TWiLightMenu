@@ -156,6 +156,7 @@ std::string STR_DSI_NORMALMENU = "STR_DSI_NORMALMENU";
 std::string STR_DSI_RED = "STR_DSI_RED";
 std::string STR_DSI_BLUE = "STR_DSI_BLUE";
 std::string STR_DSI_GREEN = "STR_DSI_GREEN";
+std::string STR_DSI_YELLOW = "STR_DSI_YELLOW";
 std::string STR_R4_THEME01 = "STR_R4_THEME01";
 std::string STR_R4_THEME02 = "STR_R4_THEME02";
 std::string STR_R4_THEME03 = "STR_R4_THEME03";
@@ -410,6 +411,7 @@ void langInit(void)
 	STR_DSI_RED = languageini.GetString("LANGUAGE", "DSI_RED", "");
 	STR_DSI_BLUE = languageini.GetString("LANGUAGE", "DSI_BLUE", "");
 	STR_DSI_GREEN = languageini.GetString("LANGUAGE", "DSI_GREEN", "");
+	STR_DSI_YELLOW = languageini.GetString("LANGUAGE", "DSI_YELLOW", "");
 	STR_R4_THEME01 = languageini.GetString("LANGUAGE", "R4_THEME01", "");
 	STR_R4_THEME02 = languageini.GetString("LANGUAGE", "R4_THEME02", "");
 	STR_R4_THEME03 = languageini.GetString("LANGUAGE", "R4_THEME03", "");

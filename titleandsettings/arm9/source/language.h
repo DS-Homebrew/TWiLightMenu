@@ -149,6 +149,7 @@ extern std::string STR_DSI_NORMALMENU;
 extern std::string STR_DSI_RED;
 extern std::string STR_DSI_BLUE;
 extern std::string STR_DSI_GREEN;
+extern std::string STR_DSI_YELLOW;
 extern std::string STR_R4_THEME01;
 extern std::string STR_R4_THEME02;
 extern std::string STR_R4_THEME03;
