@@ -150,7 +150,16 @@ bool MainList::enterDir(const std::string &dirName)
         removeAllRows();
         _romInfoList.clear();
 
-        addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+		if (!sys().flashcardUsed()) {
+			// TODO: Show "SD Card" if consoleModel is < 3, else show "microSD Card"
+			addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+		} else {
+			if (sys().isRegularDS()) {
+				addDirEntry(0, LANG("mainlist", "microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+			} else {
+				addDirEntry(0, LANG("mainlist", "SLOT-1 microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+			}
+		}
         addDirEntry(1, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
         if (!sys().flashcardUsed()) {
 			addDirEntry(2, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
