@@ -60,7 +60,7 @@ class UserWindow : public akui::Window
     bool _showCustomPic;
 };
 
-typedef t_singleton<UserWindow> UserWindow_s;
+typedef singleton<UserWindow> UserWindow_s;
 inline UserWindow &userWindow() { return UserWindow_s::instance(); }
 
 #endif //_UserWindow_H_

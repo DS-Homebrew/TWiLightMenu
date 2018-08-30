@@ -20,7 +20,7 @@ class SystemDetails
 };
 
 
-typedef t_singleton<SystemDetails> systemDetails_s;
+typedef singleton<SystemDetails> systemDetails_s;
 
 inline SystemDetails & sys() { return systemDetails_s::instance(); }
 #endif

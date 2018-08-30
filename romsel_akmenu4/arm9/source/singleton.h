@@ -1,54 +1,54 @@
 /*
     singleton.h
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
-    Copyright (C) 2009 yellow wood goblin
+    Copyright (c) 2018 RonnChyran
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
 */
 
 #pragma once
 #ifndef _SINGLETON_H_
 #define _SINGLETON_H_
 #include <cstdlib>
+#include <utility>
 
-template <class T>
-class t_singleton
+template <typename T, typename... Args>
+class singleton
 {
 
   public:
-    static T &instance()
+    static inline T &instance(Args &&... args)
     {
-        if (NULL == _instance)
-        {
-            create_instance();
-        }
+        if (!_instance)
+            make(args...);
         return *_instance;
     }
 
   private:
-    static void create_instance()
+    static inline void make(Args &&... args)
     {
-        if (NULL == _instance)
-        {
-            _instance = new T();
-        }
+        if (!_instance)
+            _instance = new T(std::forward<Args>(args)...);
     }
 
-    static void release_instance()
+    static inline void reset()
     {
-        if (NULL != _instance)
+        if (_instance)
         {
             delete _instance;
             _instance = NULL;
@@ -56,10 +56,7 @@ class t_singleton
     }
 
   private:
-    static T *_instance;
+    static inline T *_instance = NULL;
 };
 
-template <class T>
-T *t_singleton<T>::_instance = NULL;
-
-#endif //_AGL_SINGLETON_H_
+#endif //_SINGLETON_H_

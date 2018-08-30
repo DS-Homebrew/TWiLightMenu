@@ -57,7 +57,7 @@ class Timer
     u32 _fpsCounter;
 };
 
-typedef t_singleton<Timer> timer_s;
+typedef singleton<Timer> timer_s;
 inline Timer &timer() { return timer_s::instance(); }
 
 #endif //_TIMER_H_

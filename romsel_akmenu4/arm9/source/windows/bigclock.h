@@ -58,7 +58,7 @@ class BigClock : public akui::Window
     COLOR _ampmColor;
 };
 
-typedef t_singleton<BigClock> bigClock_s;
+typedef singleton<BigClock> bigClock_s;
 inline BigClock &bigClock() { return bigClock_s::instance(); }
 
 #endif //_BIGCLOCK_H_

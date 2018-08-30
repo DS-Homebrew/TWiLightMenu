@@ -63,7 +63,7 @@ class ProgressWnd : public Form
 
 } // namespace akui
 
-typedef t_singleton<akui::ProgressWnd> progressWnd_s;
+typedef singleton<akui::ProgressWnd> progressWnd_s;
 inline akui::ProgressWnd &progressWnd() { return progressWnd_s::instance(); }
 
 #endif //_PROGRESSWND_H_

@@ -53,7 +53,7 @@ class DiskIcon : public akui::Window
     Sprite _icon;
 };
 
-typedef t_singleton<DiskIcon> diskIcon_s;
+typedef singleton<DiskIcon> diskIcon_s;
 inline DiskIcon &diskIcon() { return diskIcon_s::instance(); }
 
 #endif //_DISKIOICON_H_

@@ -65,7 +65,7 @@ class AnimationManager
     std::list<Animation *> _animations;
 };
 
-typedef t_singleton<AnimationManager> animationManager_s;
+typedef singleton<AnimationManager> animationManager_s;
 inline AnimationManager &animationManager() { return animationManager_s::instance(); }
 
 #endif //_ANIMATION_H_

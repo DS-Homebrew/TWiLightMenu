@@ -48,7 +48,7 @@ protected:
 };
 
 
-typedef t_singleton< CalendarWnd > calendarWnd_s;
+typedef singleton< CalendarWnd > calendarWnd_s;
 inline CalendarWnd & calendarWnd() { return calendarWnd_s::instance(); }
 
 

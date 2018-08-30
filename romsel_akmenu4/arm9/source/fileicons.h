@@ -61,7 +61,7 @@ private:
   static void LoadFolder(IconPaths &aPaths, const std::string &aFolder);
 };
 
-typedef t_singleton<FileIcons> fileIcons_s;
+typedef singleton<FileIcons> fileIcons_s;
 inline FileIcons &fileIcons() { return fileIcons_s::instance(); }
 
 #endif

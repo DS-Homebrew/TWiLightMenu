@@ -46,7 +46,7 @@ protected:
     Font * _font;
 };
 
-typedef t_singleton< FontFactory > fontFactory_s;
+typedef singleton< FontFactory > fontFactory_s;
 inline FontFactory & fontFactory() { return fontFactory_s::instance(); }
 inline Font & font() { return fontFactory_s::instance().font(); }
 

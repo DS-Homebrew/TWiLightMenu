@@ -37,7 +37,7 @@ public:
   ~LanguageFile(){};
 };
 
-typedef t_singleton<LanguageFile> languageFile_s;
+typedef singleton<LanguageFile> languageFile_s;
 inline LanguageFile &lang() { return languageFile_s::instance(); }
 #define LANG(i, t) lang().GetString(i, t, t)
 

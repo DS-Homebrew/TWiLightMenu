@@ -70,7 +70,7 @@ public:
   bool onTouchMove(int x, int y);
 };
 
-typedef t_singleton<WindowManager> WindowManager_s;
+typedef singleton<WindowManager> WindowManager_s;
 inline WindowManager &windowManager(void) { return WindowManager_s::instance(); }
 } // namespace akui
 

@@ -51,7 +51,7 @@ class DateTime
     std::string getTimeStampString(void);
 };
 
-typedef t_singleton< DateTime > dateTime_s;
+typedef singleton< DateTime > dateTime_s;
 inline DateTime & datetime() { return dateTime_s::instance(); }
 
 #endif//_DATETIME_H_

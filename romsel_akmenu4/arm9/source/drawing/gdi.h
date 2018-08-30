@@ -145,7 +145,7 @@ private:
     BMP15 _background;
 };
 
-typedef t_singleton< Gdi > Gdi_s;
+typedef singleton< Gdi > Gdi_s;
 inline Gdi & gdi() { return Gdi_s::instance(); }
 
 

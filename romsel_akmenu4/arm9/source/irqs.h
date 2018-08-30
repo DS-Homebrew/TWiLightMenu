@@ -49,7 +49,7 @@ public:
 
 };
 
-typedef t_singleton< IRQ > irq_s;
+typedef singleton< IRQ > irq_s;
 
 inline IRQ & irq() { return irq_s::instance(); }
 

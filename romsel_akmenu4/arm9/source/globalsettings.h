@@ -90,7 +90,7 @@ public:
 };
 
 
-typedef t_singleton< GlobalSettings > globalSettings_s;
+typedef singleton< GlobalSettings > globalSettings_s;
 inline GlobalSettings & gs() { return globalSettings_s::instance(); }
 
 #endif//_GLOBALSETTINGS_H_

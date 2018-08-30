@@ -59,7 +59,7 @@ class UISettings
     u32 thickness;
 };
 
-typedef t_singleton<UISettings> uiSettings_s;
+typedef singleton<UISettings> uiSettings_s;
 inline UISettings &uiSettings() { return uiSettings_s::instance(); }
 inline UISettings &uis() { return uiSettings_s::instance(); }
 

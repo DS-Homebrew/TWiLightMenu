@@ -70,7 +70,7 @@ protected:
 };
 
 
-typedef t_singleton< Calendar > calendar_s;
+typedef singleton< Calendar > calendar_s;
 inline Calendar & calendar() { return calendar_s::instance(); }
 
 
