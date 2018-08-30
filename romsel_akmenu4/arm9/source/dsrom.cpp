@@ -114,26 +114,50 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     if (header.bannerOffset != 0)
     {
         fseek(f, header.bannerOffset, SEEK_SET);
-        tNDSBanner banner;
-        u32 readed = fread(&banner, 1, 0x840, f);
-        if (sizeof(tNDSBanner) != readed)
+        sNDSBannerExt banner;
+        int bannerSize;
+        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner))
+        || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
         {
+              memcpy(&_banner, &banner, sizeof(_banner));
+              if (bannerSize == NDS_BANNER_SIZE_DSi) 
+              {
+                dbg_printf("DSi Banner Found!");
+                memcpy(_dsiIcon.icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
+                memcpy(_dsiIcon.palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
+                memcpy(_dsiIcon.sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
+              }
+
+        } else {
             memcpy(&_banner, nds_banner_bin, sizeof(_banner));
         }
-        else
-        {
-            crc = banner.crc;
 
-            if (crc != banner.crc)
-            {
-                dbg_printf("banner crc error, %04x/%04x\n", banner.crc, crc);
-                memcpy(&_banner, nds_banner_bin, sizeof(_banner));
-            }
-            else
-            {
-                memcpy(&_banner, &banner, sizeof(_banner));
-            }
-        }
+        // int readed = fread(&banner, sizeof(banner), 1, f);
+        // if (readed != 1)
+        // {
+          
+        // }
+
+
+
+        // if (sizeof(tNDSBanner) != readed)
+        // {
+          
+        // }
+        // else
+        // {
+        //     crc = banner.crc;
+
+        //     if (crc != banner.crc)
+        //     {
+        //         dbg_printf("banner crc error, %04x/%04x\n", banner.crc, crc);
+        //         memcpy(&_banner, nds_banner_bin, sizeof(_banner));
+        //     }
+        //     else
+        //     {
+        //         memcpy(&_banner, &banner, sizeof(_banner));
+        //     }
+        // }
     }
     else
     {
@@ -277,7 +301,7 @@ void DSRomInfo::load(void)
 tNDSBanner &DSRomInfo::banner(void)
 {
     load();
-    return _banner;
+    return (tNDSBanner&) _banner;
 }
 
 SAVE_INFO_EX &DSRomInfo::saveInfo(void)

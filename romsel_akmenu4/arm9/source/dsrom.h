@@ -25,8 +25,14 @@
 #include <string.h>
 #include "savemngr.h"
 #include "drawing/gdi.h"
+#include "bootstrap_support/ndsheader.h"
 
 
+typedef struct {
+  u8 icon_frames[8][512];
+  u16 palette_frames[8][16];	//!< Palette for each DSi icon frame.
+	u16 sequence[64];
+} tDSiAnimatedIcon;
 
 class DSRomInfo
 {
@@ -48,6 +54,8 @@ private:
   std::string _fileName;
   s32 _extIcon;
   u8 _romVersion;
+  tDSiAnimatedIcon _dsiIcon;
+  
 
 private:
   void load(void);
@@ -60,6 +68,10 @@ public:
     //memcpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
     memset(&_banner, 0, sizeof(_banner));
     memset(&_saveInfo, 0, sizeof(_saveInfo));
+    memset(&_dsiIcon, 0, sizeof(_dsiIcon));
+    // memset(&_dsiPalette, 0, sizeof(_dsiPalette));
+    // memset(&_dsiIcon, 0, sizeof(_dsiIcon));
+
   }
 
 public:
