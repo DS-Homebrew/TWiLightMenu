@@ -8,7 +8,7 @@ char moduleParamsBuf[sizeof(module_params_t)];
 
 static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
 
-u32 findModuleParamsOffset(const tNDSHeader *ndsHeader, FILE *ndsFile)
+u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 {
 	dbg_printf("findModuleParamsOffset:\n");
 	fseek(ndsFile, ndsHeader->arm9romOffset, SEEK_SET);
@@ -53,7 +53,7 @@ u32 findModuleParamsOffset(const tNDSHeader *ndsHeader, FILE *ndsFile)
 	return ndsHeader->arm9romOffset + offset - 0x1C;
 }
 
-module_params_t *getModuleParams(const tNDSHeader *ndsHeader, FILE *ndsFile)
+module_params_t *getModuleParams(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 {
 
 	u32 moduleParamsOffset = findModuleParamsOffset(ndsHeader, ndsFile);

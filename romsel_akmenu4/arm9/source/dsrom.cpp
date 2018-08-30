@@ -23,6 +23,7 @@
 #include "fileicons.h"
 #include "icons.h"
 #include "bootstrap_support/module_params.h"
+#include "bootstrap_support/ndsheader.h"
 
 #include "nds_banner_bin.h"
 #include "unknown_nds_banner_bin.h"
@@ -53,8 +54,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         return false;
     }
 
-    tNDSHeader header;
-    if (512 != fread(&header, 1, 512, f))
+    sNDSHeaderExt header;
+    if (1 != fread(&header, sizeof (header), 1, f))
     {
         dbg_printf("read rom header fail\n");
         memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));

@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include "ndsheader.h"
 #pragma once
 #ifndef __MODULE_PARAM__
 #define __MODULE_PARAM__
@@ -16,5 +17,5 @@ typedef struct
 	u32 nitro_code_le;
 } module_params_t;
 
-module_params_t* getModuleParams(const tNDSHeader* ndsHeader, FILE* ndsFile);
+module_params_t* getModuleParams(const sNDSHeaderExt* ndsHeader, FILE* ndsFile);
 #endif
