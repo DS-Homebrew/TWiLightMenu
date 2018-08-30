@@ -899,7 +899,7 @@ int main(int argc, char **argv) {
 						default:
 							bstrap_debug = !bstrap_debug;
 							break;
-						case 2:
+						case 1:
 							bstrap_logging = !bstrap_logging;
 							break;
 					}
