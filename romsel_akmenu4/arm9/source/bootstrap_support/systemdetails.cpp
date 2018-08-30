@@ -7,7 +7,7 @@ SystemDetails::SystemDetails()
 
     _flashcardUsed = false;
     _arm7SCFGLocked = false;
-    _isRegularDS = false;
+    _isRegularDS = true;
 
     fifoWaitValue32(FIFO_USER_06);
     if (fifoGetValue32(FIFO_USER_03) == 0)
