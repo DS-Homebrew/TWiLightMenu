@@ -1372,6 +1372,8 @@ inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
+	} else if (subtheme == 7) {
+		loadBMP("nitro:/graphics/purple_top.bmp");
 	} else if (subtheme == 6) {
 		loadBMP("nitro:/graphics/pink_top.bmp");
 	} else if (subtheme == 5) {
