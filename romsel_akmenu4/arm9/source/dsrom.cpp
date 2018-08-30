@@ -76,17 +76,17 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
 
-        if (header.unitCode == 0x03 && header.arm7binarySize >  0x20000)
+        if (header.unitCode == 0x03 && header.arm7binarySize > 0x20000)
         {
             _isDSiWare = ETrue;
         } else if ((header.unitCode >= 0x02 && header.arm9romOffset == 0x4000 && header.arm7binarySize < 0x20000)
-            || (header.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000))
+            || (header.arm9romOffset == 0x200 && (u32)header.arm7destination == 0x02380000))
         {
             // Homebrew with DSiWare Extended header
             _isDSiWare = ETrue;
             _isHomebrew = ETrue;
-        } else if ((u32)header.arm7destination >= 0x037F0000 && header.arm7executeAddress >= 0x037F0000 
-            || 0x23232323 == gamecode(header.gameCode)) // ####
+        } else if (((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
+            || (0x23232323 == gamecode(header.gameCode))) // ####
         { 
             _isDSiWare = EFalse;
             _isHomebrew = ETrue;
