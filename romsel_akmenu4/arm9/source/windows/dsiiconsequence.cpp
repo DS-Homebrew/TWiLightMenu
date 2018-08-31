@@ -14,7 +14,7 @@ DSiIconSequence::DSiIconSequence()
     _paletteIndex = 0;
 }
 
-DSiIconSequence::update()
+void DSiIconSequence::update()
 {
     if (!_visible || (_sequence[0] == 0x0001 && _sequence[1] == 0x0100))
         return;
@@ -40,8 +40,7 @@ DSiIconSequence::update()
         _flipV = SEQ_FLIPV(_sequence[_currentSequenceIndex]);
         _bitmapIndex = SEQ_BMP(_sequence[_currentSequenceIndex]);
         _paletteIndex = SEQ_PAL(_sequence[_currentSequenceIndex]);
-
-
+        return;
     }
     else
     {
@@ -50,7 +49,7 @@ DSiIconSequence::update()
     }
 }
 
-DSiIconSequence::reset()
+void DSiIconSequence::reset()
 {
     _currentSequenceIndex = -1;
     _updatesUntilNewIndex = 0;

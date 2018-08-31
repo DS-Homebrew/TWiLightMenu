@@ -22,6 +22,7 @@
 #define _DSI_SEQUENCE_H_
 
 #include <nds.h>
+#include "ui/animation.h"
 #include "drawing/sprite.h"
 
 // Bitmasks from 
@@ -44,8 +45,6 @@ class DSiIconSequence : public Animation
 
     void reset();
 
-    void setSequenceChanged();
-
     u16 *sequence() { return _sequence; }
 
     u8 *gameTid() { return _gameTid; }
@@ -62,4 +61,31 @@ class DSiIconSequence : public Animation
     bool _needUpdateSequence;
 };
 
-#endif //_ZOOMINGICON_H_
+class IconSequenceManager
+{
+  public:
+    std::array<DSiIconSequence, 4> _dsiIconSequence;
+
+    IconSequenceManager() {
+      _dsiIconSequence[0].hide();
+      animationManager().addAnimation(&_dsiIconSequence[0]);
+
+      _dsiIconSequence[1].hide();
+      animationManager().addAnimation(&_dsiIconSequence[1]);
+
+      _dsiIconSequence[2].hide();
+      animationManager().addAnimation(&_dsiIconSequence[2]);
+
+      _dsiIconSequence[3].hide();
+      animationManager().addAnimation(&_dsiIconSequence[3]);
+
+    }
+
+    ~IconSequenceManager(){}
+};
+
+
+typedef singleton<IconSequenceManager> iconSequenceManager_s;
+inline IconSequenceManager &seq() { return iconSequenceManager_s::instance(); }
+
+#endif 

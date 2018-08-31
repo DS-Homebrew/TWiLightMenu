@@ -57,6 +57,7 @@ MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     _activeIcon.hide();
     _activeIcon.update();
     animationManager().addAnimation(&_activeIcon);
+    seq();
     dbg_printf("_activeIcon.init\n");
 }
 
@@ -424,7 +425,7 @@ void MainList::drawIcons()
             }
             s32 itemX = _position.x + 1;
             s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, 2, 2, _engine);
+            _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
         }
     }
 }
@@ -516,11 +517,33 @@ void MainList::updateInternalNames(void)
             {
                 if (_romInfoList[_firstVisibleRowId + ii].isDSRom())
                 {
-                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN].setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[gs().language], 128, NULL));
+                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
+                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[gs().language], 128, NULL));
+                    if (_romInfoList[_firstVisibleRowId + ii].isBannerAnimated())
+                    {
+                        dbg_printf("Found animated DSi ROM\n");
+                        if (memcmp(_romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode, seq()._dsiIconSequence[ii].gameTid(), 4) != 0) 
+                        {
+                            dbg_printf("Found ANIM NOT IN CACHE\n");
+
+                            memcpy(seq()._dsiIconSequence[ii].sequence(),
+                                 _romInfoList[_firstVisibleRowId + ii].animatedIcon().sequence,
+                                 sizeof(_romInfoList[_firstVisibleRowId + ii].animatedIcon().sequence));
+
+                            memcpy(seq()._dsiIconSequence[ii].gameTid(),
+                                 _romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode,
+                                 sizeof(_romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode));
+                            
+                            seq()._dsiIconSequence[ii].reset();
+                            seq()._dsiIconSequence[ii].show();
+
+                        }
+                    }
                 }
                 else
                 {
-                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN].setText(_rows[_firstVisibleRowId + ii][SHOWNAME_COLUMN].text());
+                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
+                        .setText(_rows[_firstVisibleRowId + ii][SHOWNAME_COLUMN].text());
                 }
             }
         }

@@ -131,6 +131,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
               if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi) 
               {
                 dbg_printf("DSi Banner Found!");
+                _isBannerAnimated = ETrue;
                 memcpy(_dsiIcon.icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
                 memcpy(_dsiIcon.palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
                 memcpy(_dsiIcon.sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
@@ -209,7 +210,7 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
     }
     load();
 
-    if (_banner.version != NDS_BANNER_VER_DSi) {
+    if (_isBannerAnimated != ETrue) {
         return drawDSRomIcon(x, y, engine);
     }
 
@@ -230,7 +231,7 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
     {
         for (int pixel = 0; pixel < 32; ++pixel)
         {
-            u8 a_byte = _banner.icon[(tile << 5) + pixel];
+            u8 a_byte = _dsiIcon.icon_frames[frame][(tile << 5) + pixel];
 
             //int px = (tile & 3) * 8 + (2 * pixel & 7);
             //int py = (tile / 4) * 8 + (2 * pixel / 8);
@@ -240,14 +241,14 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
             u8 idx1 = (a_byte & 0xf0) >> 4;
             if (skiptransparent || 0 != idx1)
             {
-                gdi().setPenColor(_banner.palette[idx1], engine);
+                gdi().setPenColor(_dsiIcon.palette_frames[palette][idx1], engine);
                 gdi().drawPixel(px + 1 + x, py + y, engine);
             }
 
             u8 idx2 = (a_byte & 0x0f);
             if (skiptransparent || 0 != idx2)
             {
-                gdi().setPenColor(_banner.palette[idx2], engine);
+                gdi().setPenColor(_dsiIcon.palette_frames[palette][idx2], engine);
                 gdi().drawPixel(px + x, py + y, engine);
             }
         }
@@ -340,6 +341,13 @@ tNDSBanner &DSRomInfo::banner(void)
     return (tNDSBanner&) _banner;
 }
 
+
+tDSiAnimatedIcon &DSRomInfo::animatedIcon(void)
+{
+    load();
+    return _dsiIcon;
+}
+
 SAVE_INFO_EX &DSRomInfo::saveInfo(void)
 {
     load();
@@ -362,6 +370,13 @@ bool DSRomInfo::isDSiWare(void)
 {
     load();
     return (_isDSiWare == ETrue) ? true : false;
+}
+
+
+bool DSRomInfo::isBannerAnimated(void)
+{
+    load();
+    return (_isBannerAnimated == ETrue) ? true : false;
 }
 
 

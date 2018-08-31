@@ -28,6 +28,7 @@
 #include "ui/touchmessage.h"
 #include "dsrom.h"
 #include "windows/zoomingicon.h"
+#include "windows/dsiiconsequence.h"
 
 #define SD_ROOT "/"
 // Note that ^*:: is an impossible file name on 
