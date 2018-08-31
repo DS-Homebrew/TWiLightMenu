@@ -40,6 +40,15 @@
 #include "green_bottom.h"
 #include "green_bottom_bubble.h"
 
+#include "yellow_bottom.h"
+#include "yellow_bottom_bubble.h"
+
+#include "pink_bottom.h"
+#include "pink_bottom_bubble.h"
+
+#include "purple_bottom.h"
+#include "purple_bottom_bubble.h"
+
 #include "_3ds_bottom.h"
 #include "_3ds_bottom_bubble.h"
 
@@ -51,6 +60,9 @@
 #include "red_bubble.h"
 #include "blue_bubble.h"
 #include "green_bubble.h"
+#include "yellow_bubble.h"
+#include "pink_bubble.h"
+#include "purple_bubble.h"
 #include "_3ds_bubble.h"
 #include "progress.h"
 #include "bips.h"
@@ -59,6 +71,9 @@
 #include "red_scroll_window.h"
 #include "blue_scroll_window.h"
 #include "green_scroll_window.h"
+#include "yellow_scroll_window.h"
+#include "pink_scroll_window.h"
+#include "purple_scroll_window.h"
 #include "button_arrow.h"
 #include "launch_dot.h"
 #include "start_text.h"
@@ -70,6 +85,9 @@
 #include "red_brace.h"
 #include "blue_brace.h"
 #include "green_brace.h"
+#include "yellow_brace.h"
+#include "pink_brace.h"
+#include "purple_brace.h"
 #include "icon_settings.h"
 #include "org_icon_settings.h"
 #include "box.h"
@@ -77,6 +95,9 @@
 #include "red_box.h"
 #include "blue_box.h"
 #include "green_box.h"
+#include "yellow_box.h"
+#include "pink_box.h"
+#include "purple_box.h"
 #include "_3ds_box_full.h"
 #include "_3ds_box_empty.h"
 #include "folder.h"
@@ -415,6 +436,18 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 			dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bottomBg), _3ds_bottomTilesLen);
 			dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
 			dmaCopy(_3ds_bottomMap, bgGetMapPtr(bottomBg), _3ds_bottomMapLen);
+		} else if (subtheme == 7) {
+			dmaCopy(purple_bottomTiles, bgGetGfxPtr(bottomBg), purple_bottomTilesLen);
+			dmaCopy(purple_bottomPal, BG_PALETTE, purple_bottomPalLen);
+			dmaCopy(purple_bottomMap, bgGetMapPtr(bottomBg), purple_bottomMapLen);
+		} else if (subtheme == 6) {
+			dmaCopy(pink_bottomTiles, bgGetGfxPtr(bottomBg), pink_bottomTilesLen);
+			dmaCopy(pink_bottomPal, BG_PALETTE, pink_bottomPalLen);
+			dmaCopy(pink_bottomMap, bgGetMapPtr(bottomBg), pink_bottomMapLen);
+		} else if (subtheme == 5) {
+			dmaCopy(yellow_bottomTiles, bgGetGfxPtr(bottomBg), yellow_bottomTilesLen);
+			dmaCopy(yellow_bottomPal, BG_PALETTE, yellow_bottomPalLen);
+			dmaCopy(yellow_bottomMap, bgGetMapPtr(bottomBg), yellow_bottomMapLen);
 		} else if (subtheme == 4) {
 			dmaCopy(green_bottomTiles, bgGetGfxPtr(bottomBg), green_bottomTilesLen);
 			dmaCopy(green_bottomPal, BG_PALETTE, green_bottomPalLen);
@@ -443,6 +476,18 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 			dmaCopy(_3ds_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), _3ds_bottom_bubbleTilesLen);
 			dmaCopy(_3ds_bottom_bubblePal, BG_PALETTE, _3ds_bottom_bubblePalLen);
 			dmaCopy(_3ds_bottom_bubbleMap, bgGetMapPtr(bottomBg), _3ds_bottom_bubbleMapLen);
+		} else if (subtheme == 7) {
+			dmaCopy(purple_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), purple_bottom_bubbleTilesLen);
+			dmaCopy(purple_bottom_bubblePal, BG_PALETTE, purple_bottom_bubblePalLen);
+			dmaCopy(purple_bottom_bubbleMap, bgGetMapPtr(bottomBg), purple_bottom_bubbleMapLen);
+		} else if (subtheme == 6) {
+			dmaCopy(pink_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), pink_bottom_bubbleTilesLen);
+			dmaCopy(pink_bottom_bubblePal, BG_PALETTE, pink_bottom_bubblePalLen);
+			dmaCopy(pink_bottom_bubbleMap, bgGetMapPtr(bottomBg), pink_bottom_bubbleMapLen);
+		} else if (subtheme == 5) {
+			dmaCopy(yellow_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), yellow_bottom_bubbleTilesLen);
+			dmaCopy(yellow_bottom_bubblePal, BG_PALETTE, yellow_bottom_bubblePalLen);
+			dmaCopy(yellow_bottom_bubbleMap, bgGetMapPtr(bottomBg), yellow_bottom_bubbleMapLen);
 		} else if (subtheme == 4) {
 			dmaCopy(green_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), green_bottom_bubbleTilesLen);
 			dmaCopy(green_bottom_bubblePal, BG_PALETTE, green_bottom_bubblePalLen);
@@ -1135,7 +1180,25 @@ void loadShoulders() {
 	FILE* file;
 
 	// Draw L shoulder
-	if (subtheme == 4) {
+	if (subtheme == 7) {
+		if (showLshoulder) {
+			file = fopen("nitro:/graphics/purple_Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/purple_Lshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 6) {
+		if (showLshoulder) {
+			file = fopen("nitro:/graphics/pink_Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/pink_Lshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 5) {
+		if (showLshoulder) {
+			file = fopen("nitro:/graphics/yellow_Lshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/yellow_Lshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 4) {
 		if (showLshoulder) {
 			file = fopen("nitro:/graphics/green_Lshoulder.bmp", "rb");
 		} else {
@@ -1188,7 +1251,25 @@ void loadShoulders() {
 	fclose(file);
 
 	// Draw R shoulder
-	if (subtheme == 4) {
+	if (subtheme == 7) {
+		if (showRshoulder) {
+			file = fopen("nitro:/graphics/purple_Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/purple_Rshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 6) {
+		if (showRshoulder) {
+			file = fopen("nitro:/graphics/pink_Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/pink_Rshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 5) {
+		if (showRshoulder) {
+			file = fopen("nitro:/graphics/yellow_Rshoulder.bmp", "rb");
+		} else {
+			file = fopen("nitro:/graphics/yellow_Rshoulder_greyed.bmp", "rb");
+		}
+	} else if (subtheme == 4) {
 		if (showRshoulder) {
 			file = fopen("nitro:/graphics/green_Rshoulder.bmp", "rb");
 		} else {
@@ -1291,6 +1372,12 @@ inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
 void topBgLoad() {
 	if (theme == 1) {
 		loadBMP("nitro:/graphics/3ds_top.bmp");
+	} else if (subtheme == 7) {
+		loadBMP("nitro:/graphics/purple_top.bmp");
+	} else if (subtheme == 6) {
+		loadBMP("nitro:/graphics/pink_top.bmp");
+	} else if (subtheme == 5) {
+		loadBMP("nitro:/graphics/yellow_top.bmp");
 	} else if (subtheme == 4) {
 		loadBMP("nitro:/graphics/green_top.bmp");
 	} else if (subtheme == 3) {
@@ -1538,6 +1625,51 @@ void graphicsInit()
 								(u16*) _3ds_bubblePal, // Load our 16 color tiles palette
 								(u8*) _3ds_bubbleBitmap // image data generated by GRIT
 								);
+	} else if (subtheme == 7) {
+
+		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+								11, // sprite width
+								8, // sprite height
+								16, // bitmap width
+								8, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_8, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								12, // Length of the palette to use (16 colors)
+								(u16*) purple_bubblePal, // Load our 16 color tiles palette
+								(u8*) purple_bubbleBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 6) {
+
+		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+								11, // sprite width
+								8, // sprite height
+								16, // bitmap width
+								8, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_8, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								12, // Length of the palette to use (16 colors)
+								(u16*) pink_bubblePal, // Load our 16 color tiles palette
+								(u8*) pink_bubbleBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 5) {
+
+		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+								11, // sprite width
+								8, // sprite height
+								16, // bitmap width
+								8, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_8, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								12, // Length of the palette to use (16 colors)
+								(u16*) yellow_bubblePal, // Load our 16 color tiles palette
+								(u8*) yellow_bubbleBitmap // image data generated by GRIT
+								);
 	} else if (subtheme == 4) {
 
 		bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
@@ -1629,7 +1761,49 @@ void graphicsInit()
 							(u8*) bipsBitmap // image data generated by GRIT
 							);
 
-	if (subtheme == 4) {
+	if (subtheme == 7) {
+		scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+								32, // sprite width
+								32, // sprite height
+								32, // bitmap width
+								32, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) purple_scroll_windowPal, // Load our 16 color tiles palette
+								(u8*) purple_scroll_windowBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 6) {
+		scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+								32, // sprite width
+								32, // sprite height
+								32, // bitmap width
+								32, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) pink_scroll_windowPal, // Load our 16 color tiles palette
+								(u8*) pink_scroll_windowBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 5) {
+		scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+								32, // sprite width
+								32, // sprite height
+								32, // bitmap width
+								32, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) yellow_scroll_windowPal, // Load our 16 color tiles palette
+								(u8*) yellow_scroll_windowBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 4) {
 		scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
 								32, // sprite width
 								32, // sprite height
@@ -1829,7 +2003,7 @@ void graphicsInit()
 								(u16*) _3ds_folderPal, // Load our 16 color tiles palette
 								(u8*) _3ds_folderBitmap // image data generated by GRIT
 								);
-	} else if (subtheme == 3) {
+	} else if (subtheme == 7) {
 		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
 								64, // sprite width
 								64, // sprite height
@@ -1854,8 +2028,8 @@ void graphicsInit()
 								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								4, // Length of the palette to use (16 colors)
-								(u16*) blue_bracePal, // Load our 16 color tiles palette
-								(u8*) blue_braceBitmap // image data generated by GRIT
+								(u16*) purple_bracePal, // Load our 16 color tiles palette
+								(u8*) purple_braceBitmap // image data generated by GRIT
 								);
 
 		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
@@ -1868,8 +2042,120 @@ void graphicsInit()
 								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
 								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
 								16, // Length of the palette to use (16 colors)
-								(u16*) blue_boxPal, // Load our 16 color tiles palette
-								(u8*) blue_boxBitmap // image data generated by GRIT
+								(u16*) purple_boxPal, // Load our 16 color tiles palette
+								(u8*) purple_boxBitmap // image data generated by GRIT
+								);
+
+		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_folderPal, // Load our 16 color tiles palette
+								(u8*) org_folderBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 6) {
+		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
+								(u8*) org_icon_settingsBitmap // image data generated by GRIT
+								);
+
+		braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+								16, // sprite width
+								128, // sprite height
+								16, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								4, // Length of the palette to use (16 colors)
+								(u16*) pink_bracePal, // Load our 16 color tiles palette
+								(u8*) pink_braceBitmap // image data generated by GRIT
+								);
+
+		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) pink_boxPal, // Load our 16 color tiles palette
+								(u8*) pink_boxBitmap // image data generated by GRIT
+								);
+
+		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_folderPal, // Load our 16 color tiles palette
+								(u8*) org_folderBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 5) {
+		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
+								(u8*) org_icon_settingsBitmap // image data generated by GRIT
+								);
+
+		braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+								16, // sprite width
+								128, // sprite height
+								16, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								4, // Length of the palette to use (16 colors)
+								(u16*) yellow_bracePal, // Load our 16 color tiles palette
+								(u8*) yellow_braceBitmap // image data generated by GRIT
+								);
+
+		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) yellow_boxPal, // Load our 16 color tiles palette
+								(u8*) yellow_boxBitmap // image data generated by GRIT
 								);
 
 		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
@@ -1926,6 +2212,62 @@ void graphicsInit()
 								16, // Length of the palette to use (16 colors)
 								(u16*) green_boxPal, // Load our 16 color tiles palette
 								(u8*) green_boxBitmap // image data generated by GRIT
+								);
+
+		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								64, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_folderPal, // Load our 16 color tiles palette
+								(u8*) org_folderBitmap // image data generated by GRIT
+								);
+	} else if (subtheme == 3) {
+		settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) org_icon_settingsPal, // Load our 16 color tiles palette
+								(u8*) org_icon_settingsBitmap // image data generated by GRIT
+								);
+
+		braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+								16, // sprite width
+								128, // sprite height
+								16, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_16, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								4, // Length of the palette to use (16 colors)
+								(u16*) blue_bracePal, // Load our 16 color tiles palette
+								(u8*) blue_braceBitmap // image data generated by GRIT
+								);
+
+		boxfullTexID = glLoadTileSet(boxfullImage, // pointer to glImage array
+								64, // sprite width
+								64, // sprite height
+								64, // bitmap width
+								128, // bitmap height
+								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_128, // sizeY for glTexImage2D() in videoGL.h
+								TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+								16, // Length of the palette to use (16 colors)
+								(u16*) blue_boxPal, // Load our 16 color tiles palette
+								(u8*) blue_boxBitmap // image data generated by GRIT
 								);
 
 		folderTexID = glLoadTileSet(folderImage, // pointer to glImage array

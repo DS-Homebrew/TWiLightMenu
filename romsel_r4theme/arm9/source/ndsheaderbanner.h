@@ -34,6 +34,14 @@
 
 #include <nds.h>
 
+// Bitmasks from 
+// http://problemkaputt.de/gbatek.htm#dscartridgeicontitle
+#define SEQ_FLIPV(i) ((i & 0b1000000000000000) >> 15)
+#define SEQ_FLIPH(i) ((i & 0b0100000000000000) >> 14)
+#define SEQ_PAL(i) ((i & 0b0011100000000000) >> 11)
+#define SEQ_BMP(i) ((i & 0b0000011100000000) >> 8)
+#define SEQ_DUR(i) ((i & 0b0000000011111111) >> 0)
+
 typedef struct 
 {
 	u32 auto_load_list_offset;
