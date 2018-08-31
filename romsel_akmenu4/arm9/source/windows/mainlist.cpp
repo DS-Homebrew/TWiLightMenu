@@ -217,6 +217,8 @@ bool MainList::enterDir(const std::string &dirName)
     extNames.push_back(".gba");
     extNames.push_back(".nes");
 
+    extNames.push_back(".launcharg");
+    extNames.push_back(".argv");
 
     if (_showAllFiles)
         extNames.clear();
@@ -292,6 +294,13 @@ bool MainList::enterDir(const std::string &dirName)
                 if (".gba" == extName)
                 {
                     rominfo.MayBeGbaRom(filename);
+                }
+                else if (".launcharg" == extName || ".argv" == extName)
+                {
+                    dbg_printf("May be launcharg!");
+                    memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    rominfo.MayBeArgv(filename);
+                    allowUnknown = true;
                 }
                 else if (".nds" != extName && ".ids" != extName)
                 {

@@ -52,6 +52,7 @@ private:
   TBool _isDSiWare;
   TBool _isGbaRom;
   TBool _isBannerAnimated;
+  TBool _isArgv;
   std::string _fileName;
   s32 _extIcon;
   u8 _romVersion;
@@ -61,12 +62,14 @@ private:
 private:
   void load(void);
   bool loadGbaRomInfo(const std::string &filename);
+  bool loadArgv(const std::string &filename);
   bool loadDSRomInfo(const std::string &filename, bool loadBanner);
 
 public:
   DSRomInfo() : _isDSRom(EFalse), _isHomebrew(EFalse), _isGbaRom(EFalse), _extIcon(-1), _romVersion(0), 
   _isDSiWare(EFalse), 
-  _isBannerAnimated(EFalse)
+  _isBannerAnimated(EFalse),
+  _isArgv(EFalse)
   {
     //memcpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
     memset(&_banner, 0, sizeof(_banner));
@@ -96,6 +99,14 @@ public:
   bool isDSiWare(void);
   bool isBannerAnimated(void);
   DSRomInfo &operator=(const DSRomInfo &src);
+  void MayBeArgv(const std::string &filename)
+  {
+    _isDSRom = EMayBe;
+    _isHomebrew = EMayBe;
+    _isDSiWare = EMayBe;
+    _isArgv = EMayBe;
+    _fileName = filename;
+  }
   void MayBeDSRom(const std::string &filename)
   {
     _isDSRom = EMayBe;

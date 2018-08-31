@@ -24,6 +24,7 @@
 #include "icons.h"
 #include "bootstrap_support/module_params.h"
 #include "bootstrap_support/ndsheader.h"
+#include "bootstrap_support/dsargv.h"
 
 #include "nds_banner_bin.h"
 #include "unknown_nds_banner_bin.h"
@@ -45,6 +46,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _extIcon = src._extIcon;
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
+    _isArgv = src._isArgv;
     
     return *this;
 }
@@ -384,10 +386,30 @@ bool DSRomInfo::loadGbaRomInfo(const std::string &filename)
     return false;
 }
 
+bool DSRomInfo::loadArgv(const std::string &filename)
+{
+    _isArgv = EFalse;
+    _isDSRom = EMayBe;
+    _isDSiWare = EMayBe;
+    ArgvFile argv(filename);
+    if (argv.launchPath().empty()) 
+    {
+        dbg_printf("empty launch path!\n");
+        return false;
+    }
+    _isArgv = ETrue;
+    dbg_printf("launcharg found %s\n", argv.launchPath().c_str());
+    return loadDSRomInfo(argv.launchPath(), true);
+}
+
 void DSRomInfo::load(void)
 {
-    if (_isDSRom == EMayBe)
+    if (_isArgv == EMayBe)
+        loadArgv(_fileName);
+
+    else if (_isDSRom == EMayBe)
         loadDSRomInfo(_fileName, true);
+
     if (_isGbaRom == EMayBe)
         loadGbaRomInfo(_fileName);
 }

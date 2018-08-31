@@ -59,7 +59,8 @@
         "xstddef": "cpp",
         "xtree": "cpp",
         "xutility": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "xhash": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled",
     "C_Cpp.errorSquiggles": "Disabled"
