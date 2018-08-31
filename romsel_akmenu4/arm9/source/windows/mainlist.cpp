@@ -70,7 +70,7 @@ int MainList::init()
     _textColorHilight = ini.GetInt("main list", "textColorHilight", RGB15(31, 0, 31));
     _selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
     _selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0));
-    _selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 48);
+    _selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
 
     insertColumn(ICON_COLUMN, "icon", 0);
     insertColumn(SHOWNAME_COLUMN, "showName", 0);
