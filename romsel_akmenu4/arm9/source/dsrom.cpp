@@ -214,7 +214,6 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
         return drawDSRomIcon(x, y, engine);
     }
 
-    dbg_printf("drawing dsi...\n");
     bool skiptransparent = false;
     switch (_saveInfo.getIcon())
     {

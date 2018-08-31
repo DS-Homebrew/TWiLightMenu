@@ -45,8 +45,6 @@
 #include "language.h"
 #include "unicode.h"
 
-
-
 using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
@@ -151,31 +149,41 @@ bool MainList::enterDir(const std::string &dirName)
         removeAllRows();
         _romInfoList.clear();
 
-		if (!sys().flashcardUsed()) {
-			// TODO: Show "SD Card" if consoleModel is < 3, else show "microSD Card"
-			addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-		} else {
-			if (sys().isRegularDS()) {
-				addDirEntry(0, LANG("mainlist", "microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-			} else {
-				addDirEntry(0, LANG("mainlist", "SLOT-1 microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-			}
-		}
+        if (!sys().flashcardUsed())
+        {
+            // TODO: Show "SD Card" if consoleModel is < 3, else show "microSD Card"
+            addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+        }
+        else
+        {
+            if (sys().isRegularDS())
+            {
+                addDirEntry(0, LANG("mainlist", "microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+            }
+            else
+            {
+                addDirEntry(0, LANG("mainlist", "SLOT-1 microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+            }
+        }
         addDirEntry(1, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
-        if (!sys().flashcardUsed()) {
-			addDirEntry(2, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+        if (!sys().flashcardUsed())
+        {
+            addDirEntry(2, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
             addDirEntry(3, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
-			addDirEntry(4, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-			//addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
-		} else {
-			addDirEntry(2, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-		}
+            addDirEntry(4, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+            //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
+        }
+        else
+        {
+            addDirEntry(2, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+        }
         _currentDir = SPATH_ROOT;
         directoryChanged();
         return true;
     }
 
-    if (!strncmp(dirName.c_str(), "^*::", 2)) {
+    if (!strncmp(dirName.c_str(), "^*::", 2))
+    {
         dbg_printf("Special directory entered");
         _currentDir = dirName;
         directoryChanged();
@@ -425,7 +433,22 @@ void MainList::drawIcons()
             }
             s32 itemX = _position.x + 1;
             s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
+            if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated())
+            {
+                int seqIdx = seq().allocate_sequence(
+                    _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
+                    _romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
+                
+
+                int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+                int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+                // todo: fliph flipv
+                _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, _engine);
+            }
+            else
+            {
+                _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
+            }
         }
     }
 }
@@ -519,26 +542,6 @@ void MainList::updateInternalNames(void)
                 {
                     _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
                         .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[gs().language], 128, NULL));
-                    if (_romInfoList[_firstVisibleRowId + ii].isBannerAnimated())
-                    {
-                        dbg_printf("Found animated DSi ROM\n");
-                        if (memcmp(_romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode, seq()._dsiIconSequence[ii].gameTid(), 4) != 0) 
-                        {
-                            dbg_printf("Found ANIM NOT IN CACHE\n");
-
-                            memcpy(seq()._dsiIconSequence[ii].sequence(),
-                                 _romInfoList[_firstVisibleRowId + ii].animatedIcon().sequence,
-                                 sizeof(_romInfoList[_firstVisibleRowId + ii].animatedIcon().sequence));
-
-                            memcpy(seq()._dsiIconSequence[ii].gameTid(),
-                                 _romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode,
-                                 sizeof(_romInfoList[_firstVisibleRowId + ii].saveInfo().gameCode));
-                            
-                            seq()._dsiIconSequence[ii].reset();
-                            seq()._dsiIconSequence[ii].show();
-
-                        }
-                    }
                 }
                 else
                 {

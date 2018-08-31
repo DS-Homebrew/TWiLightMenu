@@ -33,6 +33,8 @@
 #define SEQ_BMP(i) ((i & 0b0000011100000000) >> 8)
 #define SEQ_DUR(i) ((i & 0b0000000011111111) >> 0)
 
+#define SIZE_GAMETID 4
+#define SIZE_SEQUENCE 128
 class DSiIconSequence : public Animation
 {
   public:
@@ -55,17 +57,16 @@ class DSiIconSequence : public Animation
     bool _flipH;
     bool _flipV;
     size_t _currentSequenceIndex;
-    size_t _updatesUntilNewIndex;
+    size_t _updatesSinceNewIndex;
     size_t _bitmapIndex;
     size_t _paletteIndex;
-    bool _needUpdateSequence;
 };
 
 class IconSequenceManager
 {
   public:
-    std::array<DSiIconSequence, 4> _dsiIconSequence;
-
+    std::array<DSiIconSequence, 5> _dsiIconSequence;
+    
     IconSequenceManager() {
       _dsiIconSequence[0].hide();
       animationManager().addAnimation(&_dsiIconSequence[0]);
@@ -79,7 +80,13 @@ class IconSequenceManager
       _dsiIconSequence[3].hide();
       animationManager().addAnimation(&_dsiIconSequence[3]);
 
+      _dsiIconSequence[4].hide();
+      animationManager().addAnimation(&_dsiIconSequence[4]);
+
     }
+
+    int allocate_sequence(u8* gameTid, u16 *sequence);
+    int is_cached(u8* gameTid);
 
     ~IconSequenceManager(){}
 };
