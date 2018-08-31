@@ -22,7 +22,6 @@
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
 #include "inifile.h"
-#include "globalsettings.h"
 #include "tool/stringtool.h"
 #include "tool/memtool.h"
 

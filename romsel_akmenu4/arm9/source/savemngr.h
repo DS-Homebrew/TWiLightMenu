@@ -26,7 +26,6 @@
 #include <vector>
 #include <string>
 #include "singleton.h"
-#include "globalsettings.h"
 
 typedef struct _SAVE_INFO_T
 {
@@ -120,12 +119,9 @@ typedef struct SAVE_INFO_EX_T
   u8 getSDSave(void) { return getFlag(SAVE_INFO_EX_SD_SAVE, SAVE_INFO_EX_GLOBAL_SD_SAVE, true); };
   u8 getLanguage(void) { return (flags2 & SAVE_INFO_EX_LANGUAGE_MASK) >> SAVE_INFO_EX_LANGUAGE_SHIFT; }
   bool isDownloadPlay(void) { return getState(SAVE_INFO_EX_DOWNLOAD_PLAY, SAVE_INFO_EX_GLOBAL_DOWNLOAD_PLAY, false, false); };
-  bool isSoftReset(void) { return getState(SAVE_INFO_EX_SOFT_RESET, SAVE_INFO_EX_GLOBAL_SOFT_RESET, gs().softreset, false); };
-  bool isCheat(void) { return getState(SAVE_INFO_EX_CHEAT, SAVE_INFO_EX_GLOBAL_CHEAT, gs().cheats, false); };
-  bool isDMA(void) { return getState(SAVE_INFO_EX_DMA, SAVE_INFO_EX_GLOBAL_DMA, gs().dma, false); };
+  
   bool isProtection(void) { return (flags2 & SAVE_INFO_EX_PROTECTION) ? true : false; };
   bool isLinkage(void) { return (flags2 & SAVE_INFO_EX_LINKAGE) ? true : false; };
-  bool isSDSave(void) { return getState(SAVE_INFO_EX_SD_SAVE, SAVE_INFO_EX_GLOBAL_SD_SAVE, gs().sdsave, true); };
   void setFlags(u8 rumble, u8 downloadplay, u8 reset, u8 cheat, u8 slot, u8 dma, u8 protection, u8 linkage, u8 icon, u8 sdsave, u8 language)
   {
     flags = rumble & SAVE_INFO_EX_RUMBLE;

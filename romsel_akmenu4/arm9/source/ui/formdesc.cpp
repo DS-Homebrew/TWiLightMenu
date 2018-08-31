@@ -21,7 +21,6 @@
 #include "ui.h"
 #include "formdesc.h"
 
-//#include "globalsettings.h"
 
 namespace akui
 {

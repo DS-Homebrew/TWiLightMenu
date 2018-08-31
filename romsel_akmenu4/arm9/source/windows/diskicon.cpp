@@ -24,7 +24,6 @@
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
-#include "globalsettings.h"
 
 using namespace akui;
 

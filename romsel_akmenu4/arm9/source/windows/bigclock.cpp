@@ -23,7 +23,7 @@
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
 #include "inifile.h"
-#include "globalsettings.h"
+#include "bootstrap_support/dsimenusettings.h"
 
 using namespace akui;
 
@@ -97,7 +97,7 @@ void BigClock::draw()
     u8 hours = datetime().hours();
     u8 minutes = datetime().minutes();
     const char *ampm = (hours < 12) ? "AM" : "PM";
-    if (gs().show12hrClock)
+    if (ms().show12hrClock)
     {
         if (hours > 12)
             hours -= 12;
@@ -118,7 +118,7 @@ void BigClock::draw()
     drawNumber(4, number4);
     if (_colonShow)
         drawColon();
-    if (gs().show12hrClock && _ampmShow)
+    if (ms().show12hrClock && _ampmShow)
     {
         gdi().setPenColor(_ampmColor, _engine);
         gdi().textOut(_ampmPosition.x, _ampmPosition.y, ampm, _engine);

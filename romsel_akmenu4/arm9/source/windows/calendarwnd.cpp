@@ -22,7 +22,6 @@
 #include "drawing/gdi.h"
 #include "drawing/bmp15.h"
 #include "systemfilenames.h"
-#include "globalsettings.h"
 
 using namespace akui;
 

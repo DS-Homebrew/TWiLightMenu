@@ -39,7 +39,7 @@
 
 #include "inifile.h"
 #include "language.h"
-
+#include "bootstrap_support/dsimenusettings.h"
 #include "windows/rominfownd.h"
 // #include "helpwnd.h"
 // #include "expwnd.h"
@@ -309,8 +309,7 @@ void MainWnd::startButtonClicked()
     }
     else
     {
-        if (!gs().safeMode)
-            _startMenu->show();
+        _startMenu->show();
     }
 }
 
@@ -346,7 +345,7 @@ bool MainWnd::process(const Message &msg)
 bool MainWnd::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false, isL = msg.shift() & KeyMessage::UI_SHIFT_L;
-    bool allow = !gs().safeMode;
+    bool allow = true; // todo: remove redudant.
     if (msg.id() == Message::keyDown)
     {
         switch (msg.keyCode())
@@ -442,8 +441,8 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
                 if (allow)
                 {
                     _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
-                    gs().viewMode = _mainList->getViewMode();
-                    gs().saveSettings();
+                    ms().ak_viewMode = _mainList->getViewMode();
+                    ms().saveSettings();
                 }
             }
             ret = true;
@@ -491,8 +490,6 @@ bool MainWnd::processTouchMessage(const TouchMessage &msg)
 
 void MainWnd::onKeyYPressed()
 {
-    if (gs().safeMode)
-        return;
     showFileInfo();
 }
 
@@ -602,255 +599,6 @@ void MainWnd::onKeyBPressed()
     _mainList->backParentDir();
 }
 
-void MainWnd::setParam(void)
-{
-    /*
-    SettingWnd settingWnd(0, 0, 252, 188, NULL, LANG("system setting", "title"));
-
-    //page 1: system
-    std::string currentUIStyle = gs().uiName;
-    std::vector<std::string> _values;
-    u32 uiIndex = 0, langIndex = 0;
-    //user interface style
-    _values.clear();
-    std::vector<std::string> uiNames;
-    DIR_ITER *dir = diropen(SFN_UI_DIRECTORY);
-    if (NULL != dir)
-    {
-        struct stat st;
-        char longFilename[MAX_FILENAME_LENGTH];
-        while (dirnext(dir, longFilename, &st) == 0)
-        {
-            std::string lfn(longFilename);
-            if (lfn != ".." && lfn != ".")
-                _values.push_back(lfn);
-        }
-        dirclose(dir);
-        dir = NULL;
-    }
-    else
-    {
-        _values.push_back(gs().uiName);
-    }
-    std::sort(_values.begin(), _values.end());
-    for (size_t ii = 0; ii < _values.size(); ++ii)
-    {
-        if (0 == stricmp(_values[ii].c_str(), gs().uiName.c_str()))
-            uiIndex = ii;
-    }
-    uiNames = _values;
-    settingWnd.addSettingItem(LANG("ui style", "text"), _values, uiIndex);
-
-    //language
-    _values.clear();
-    std::vector<std::string> langNames;
-    dir = diropen(SFN_LANGUAGE_DIRECTORY);
-    if (NULL != dir)
-    {
-        struct stat st;
-        char longFilename[MAX_FILENAME_LENGTH];
-        while (dirnext(dir, longFilename, &st) == 0)
-        {
-            std::string lfn(longFilename);
-            if (lfn != ".." && lfn != ".")
-                _values.push_back(lfn);
-        }
-        dirclose(dir);
-        dir = NULL;
-    }
-    else
-    {
-        _values.push_back(gs().langDirectory);
-    }
-    std::sort(_values.begin(), _values.end());
-    for (size_t ii = 0; ii < _values.size(); ++ii)
-    {
-        if (0 == stricmp(_values[ii].c_str(), gs().langDirectory.c_str()))
-            langIndex = ii;
-    }
-    langNames = _values;
-    settingWnd.addSettingItem(LANG("language", "text"), _values, langIndex);
-
-    //file list type
-    _values.clear();
-    for (size_t ii = 0; ii < 3; ++ii)
-    {
-        std::string itemName = formatString("item%d", ii);
-        _values.push_back(LANG("filelist type", itemName));
-    }
-    settingWnd.addSettingItem(LANG("filelist type", "text"), _values, gs().fileListType);
-
-    _values.clear();
-    _values.push_back(LANG("switches", "Disable"));
-    _values.push_back(LANG("switches", "Enable"));
-    settingWnd.addSettingItem(LANG("system setting", "safe mode"), _values, gs().safeMode);
-
-    //page 2: interface
-    settingWnd.addSettingTab(LANG("interface settings", "title"));
-    size_t scrollSpeed = 0;
-    switch (gs().scrollSpeed)
-    {
-    case GlobalSettings::EScrollFast:
-        scrollSpeed = 0;
-        break;
-    case GlobalSettings::EScrollMedium:
-        scrollSpeed = 1;
-        break;
-    case GlobalSettings::EScrollSlow:
-        scrollSpeed = 2;
-        break;
-    }
-    _values.clear();
-    _values.push_back(LANG("scrolling", "fast"));
-    _values.push_back(LANG("scrolling", "medium"));
-    _values.push_back(LANG("scrolling", "slow"));
-    settingWnd.addSettingItem(LANG("interface settings", "scrolling speed"), _values, scrollSpeed);
-    _values.clear();
-    _values.push_back(LANG("interface settings", "oldschool"));
-    _values.push_back(LANG("interface settings", "modern"));
-    _values.push_back(LANG("interface settings", "internal"));
-    settingWnd.addSettingItem(LANG("interface settings", "filelist style"), _values, gs().viewMode);
-    _values.clear();
-    _values.push_back(LANG("switches", "Disable"));
-    _values.push_back(LANG("switches", "Enable"));
-    settingWnd.addSettingItem(LANG("interface settings", "animation"), _values, gs().Animation);
-    settingWnd.addSettingItem(LANG("interface settings", "12 hour"), _values, gs().show12hrClock);
-
-    //page 3: filesystem
-    settingWnd.addSettingTab(LANG("file settings", "title"));
-    _values.clear();
-    _values.push_back(LANG("switches", "Disable"));
-    _values.push_back(LANG("switches", "Enable"));
-    settingWnd.addSettingItem(LANG("file settings", "show hidden files"), _values, gs().showHiddenFiles);
-    settingWnd.addSettingItem(LANG("rom trim", "text"), _values, gs().romTrim);
-    _values.clear();
-    _values.push_back(".nds.sav");
-    _values.push_back(".sav");
-    settingWnd.addSettingItem(LANG("file settings", "save extension"), _values, gs().saveExt);
-
-    //page 4: patches
-    settingWnd.addSettingTab(LANG("setting window", "patches"));
-    _values.clear();
-    _values.push_back(LANG("switches", "Disable"));
-    _values.push_back(LANG("switches", "Enable"));
-    settingWnd.addSettingItem(LANG("patches", "cheating system"), _values, gs().cheats);
-    settingWnd.addSettingItem(LANG("patches", "reset in game"), _values, gs().softreset);
-    settingWnd.addSettingItem(LANG("patches", "homebrew reset"), _values, gs().homebrewreset);
-#if defined(_STORAGE_rpg) || defined(_STORAGE_ak2i)
-    settingWnd.addSettingItem(LANG("patches", "dma"), _values, gs().dma);
-#endif
-#if defined(_STORAGE_rpg)
-    settingWnd.addSettingItem(LANG("patches", "sd save"), _values, gs().sdsave);
-#endif
-
-    //page 5: gba
-    settingWnd.addSettingTab(LANG("gba settings", "title"));
-    _values.clear();
-    _values.push_back(LANG("switches", "Disable"));
-    _values.push_back(LANG("switches", "Enable"));
-    settingWnd.addSettingItem(LANG("gba settings", "sleephack"), _values, gs().gbaSleepHack);
-    settingWnd.addSettingItem(LANG("gba settings", "autosave"), _values, gs().gbaAutoSave);
-    _values.clear();
-    _values.push_back(LANG("gba settings", "modeask"));
-    _values.push_back(LANG("gba settings", "modegba"));
-    _values.push_back(LANG("gba settings", "modends"));
-    settingWnd.addSettingItem(LANG("gba settings", "mode"), _values, gs().slot2mode);
-
-    u32 ret = settingWnd.doModal();
-    if (ID_CANCEL == ret)
-        return;
-
-    //page 1: system
-    u32 uiIndexAfter = settingWnd.getItemSelection(0, 0);
-    u32 langIndexAfter = settingWnd.getItemSelection(0, 1);
-    gs().fileListType = settingWnd.getItemSelection(0, 2);
-    gs().safeMode = settingWnd.getItemSelection(0, 3);
-
-    //page 2: interface
-    switch (settingWnd.getItemSelection(1, 0))
-    {
-    case 0:
-        gs().scrollSpeed = GlobalSettings::EScrollFast;
-        break;
-    case 1:
-        gs().scrollSpeed = GlobalSettings::EScrollMedium;
-        break;
-    case 2:
-        gs().scrollSpeed = GlobalSettings::EScrollSlow;
-        break;
-    }
-    gs().viewMode = settingWnd.getItemSelection(1, 1);
-    gs().Animation = settingWnd.getItemSelection(1, 2);
-    gs().show12hrClock = settingWnd.getItemSelection(1, 3);
-
-    //page 3: filesystem
-    gs().showHiddenFiles = settingWnd.getItemSelection(2, 0);
-    gs().romTrim = settingWnd.getItemSelection(2, 1);
-    gs().saveExt = settingWnd.getItemSelection(2, 2);
-
-    //page 4: patches
-    gs().cheats = settingWnd.getItemSelection(3, 0);
-    gs().softreset = settingWnd.getItemSelection(3, 1);
-    gs().homebrewreset = settingWnd.getItemSelection(3, 2);
-#if defined(_STORAGE_rpg) || defined(_STORAGE_ak2i)
-    gs().dma = settingWnd.getItemSelection(3, 3);
-#endif
-#if defined(_STORAGE_rpg)
-    gs().sdsave = settingWnd.getItemSelection(3, 4);
-#endif
-
-    //page 5: gba
-    gs().gbaSleepHack = settingWnd.getItemSelection(4, 0);
-    gs().gbaAutoSave = settingWnd.getItemSelection(4, 1);
-    gs().slot2mode = settingWnd.getItemSelection(4, 2);
-
-    if (uiIndex != uiIndexAfter)
-    {
-        u32 ret = messageBox(this,
-                             LANG("ui style changed", "title"),
-                             LANG("ui style changed", "text"), MB_YES | MB_NO);
-        if (ID_YES == ret)
-        {
-            gs().uiName = uiNames[uiIndexAfter];
-            gs().langDirectory = langNames[langIndexAfter];
-            gs().saveSettings();
-#if defined(_STORAGE_rpg)
-            loadRom("sd:/akmenu4.nds", 0, 0, 0);
-#elif defined(_STORAGE_r4)
-            loadRom("sd:/_ds_menu.dat", "", 0, 0, 0);
-#elif defined(_STORAGE_ak2i)
-            loadRom("sd:/akmenu4.nds", "", 0, 0, 0);
-#elif defined(_STORAGE_r4idsn)
-            loadRom("sd:/_dsmenu.dat", "", 0, 0, 0);
-#endif
-        }
-    }
-
-    if (langIndex != langIndexAfter)
-    {
-        u32 ret = messageBox(this,
-                             LANG("language changed", "title"),
-                             LANG("language changed", "text"), MB_YES | MB_NO);
-        if (ID_YES == ret)
-        {
-            gs().langDirectory = langNames[langIndexAfter];
-            gs().saveSettings();
-#if defined(_STORAGE_rpg)
-            loadRom("sd:/akmenu4.nds", 0, 0, 0);
-#elif defined(_STORAGE_r4)
-            loadRom("sd:/_ds_menu.dat", "", 0, 0, 0);
-#elif defined(_STORAGE_ak2i)
-            loadRom("sd:/akmenu4.nds", "", 0, 0, 0);
-#elif defined(_STORAGE_r4idsn)
-            loadRom("sd:/_dsmenu.dat", "", 0, 0, 0);
-#endif
-        }
-    }
-
-    gs().saveSettings();
-    _mainList->setViewMode((MainList::VIEW_MODE)gs().viewMode);*/
-}
-
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch titleandsettings...");
@@ -862,16 +610,7 @@ void MainWnd::showSettings(void)
         std::string errorString = formatString("Error %i", err);
         messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
     }
-    //     // if (gs().safeMode)
-    //     //     return;
-    //     // u8 currentFileListType = gs().fileListType, currentShowHiddenFiles = gs().showHiddenFiles;
-    //    // setParam();
-    //     if (gs().fileListType != currentFileListType || gs().showHiddenFiles != currentShowHiddenFiles)
-    //     {
-    //         _mainList->enterDir(_mainList->getCurrentDir());
-    //     }
 }
-
 
 void MainWnd::bootSlot1(void)
 {
@@ -888,11 +627,11 @@ void MainWnd::bootSlot1(void)
 void MainWnd::bootGbaRunner(void)
 {
     BootstrapConfig gbaRunner(GBARUNNER_BOOTSTRAP, "", 0);
-    if (int err =  gbaRunner.launch())
+    if (int err = gbaRunner.launch())
     {
         std::string errorString = formatString("Error %i", err);
         messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
-    }   
+    }
 }
 
 void MainWnd::showFileInfo()
@@ -931,10 +670,10 @@ void MainWnd::onFolderChanged()
     if (dirShowName.substr(0, 1) == SD_ROOT)
         dirShowName.replace(0, 1, "SD:/");
 
+    if (!strncmp(dirShowName.c_str(), "^*::", 2))
+    {
 
-    if (!strncmp(dirShowName.c_str(), "^*::", 2)) {
-
-        if (dirShowName == SPATH_TITLEANDSETTINGS) 
+        if (dirShowName == SPATH_TITLEANDSETTINGS)
         {
             showSettings();
         }
@@ -942,9 +681,12 @@ void MainWnd::onFolderChanged()
         // todo: SLOT1 Launch Method SRLOADER Settings.
         if (dirShowName == SPATH_SLOT1)
         {
-            if (sys().arm7SCFGLocked()) {
+            if (sys().arm7SCFGLocked())
+            {
                 cardLaunch();
-            } else {
+            }
+            else
+            {
                 bootSlot1();
             }
         }
@@ -965,14 +707,11 @@ void MainWnd::onFolderChanged()
             dsiLaunchSystemSettings();
         }
         dirShowName.clear();
-
     }
-    
+
     dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
 
     _folderText->setText(dirShowName);
-
-
 }
 
 void MainWnd::onAnimation(bool &anAllow)

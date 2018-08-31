@@ -27,6 +27,7 @@
 #include "windows/startmenu.h"
 #include "systemfilenames.h"
 #include "bootstrap_support/systemdetails.h"
+#include "bootstrap_support/dsimenusettings.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
 #include "tool/memtool.h"
@@ -48,7 +49,7 @@
 using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
-    : ListView(x, y, w, h, parent, text, gs().scrollSpeed), _showAllFiles(false)
+    : ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
 {
     _viewMode = VM_LIST;
     _activeIconScale = 1;
@@ -79,7 +80,7 @@ int MainList::init()
     insertColumn(SAVETYPE_COLUMN, "saveType", 0);
     insertColumn(FILESIZE_COLUMN, "fileSize", 0);
 
-    setViewMode((MainList::VIEW_MODE)gs().viewMode);
+    setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
 
     _activeIcon.hide();
 
@@ -213,12 +214,11 @@ bool MainList::enterDir(const std::string &dirName)
     // Push launchargs here.
     extNames.push_back(".nds");
     extNames.push_back(".ids");
+    extNames.push_back(".gba");
+    extNames.push_back(".nes");
 
-    if (gs().showGbaRoms > 0)
-        extNames.push_back(".gba");
-    if (gs().fileListType > 0)
-        extNames.push_back(".sav");
-    if (_showAllFiles || gs().fileListType > 1)
+
+    if (_showAllFiles)
         extNames.clear();
     std::vector<std::string> savNames;
     savNames.push_back(".sav");
@@ -249,7 +249,7 @@ bool MainList::enterDir(const std::string &dirName)
 
                 dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
                 bool showThis = (st.st_mode & S_IFDIR) ? (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..")) : extnameFilter(extNames, extName);
-                showThis = showThis && (_showAllFiles || gs().showHiddenFiles || !(attr & ATTRIB_HID));
+                showThis = showThis && (_showAllFiles || !(attr & ATTRIB_HID));
 
                 if (showThis)
                 {
@@ -491,7 +491,7 @@ void MainList::updateActiveIcon(bool updateContent)
     animateIcons(allowAnimation);
 
     //do not show active icon when hold key to list files. Otherwise the icon will not show correctly.
-    if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && gs().Animation)
+    if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && ms().ak_zoomIcons)
     {
         if (!_activeIcon.visible())
         {
@@ -540,7 +540,7 @@ void MainList::updateInternalNames(void)
                 if (_romInfoList[_firstVisibleRowId + ii].isDSRom())
                 {
                     _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
-                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[gs().language], 128, NULL));
+                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[ms().guiLanguage()], 128, NULL));
                 }
                 else
                 {

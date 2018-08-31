@@ -20,7 +20,6 @@
 #include "systemfilenames.h"
 #include "ui/binaryfind.h"
 #include "icons.h"
-#include "globalsettings.h"
 #include <sys/dirent.h>
 #include <sys/iosupport.h>
 #include <sys/fcntl.h>

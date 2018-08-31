@@ -23,8 +23,8 @@
 #include "systemfilenames.h"
 #include "ui/msgbox.h"
 #include "windows/dsiiconsequence.h"
+#include "bootstrap_support/dsimenusettings.h"
 #include "ui/windowmanager.h"
-#include "globalsettings.h"
 #include "ui/uisettings.h"
 #include "language.h"
 #include "unicode.h"
@@ -309,7 +309,7 @@ void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 {
     _romInfo = romInfo;
 
-    _romInfoText = unicode_to_local_string(_romInfo.banner().titles[gs().language], 128, NULL);
+    _romInfoText = unicode_to_local_string(_romInfo.banner().titles[ms().guiLanguage()], 128, NULL);
 
     _buttonGameSettings.hide();
 

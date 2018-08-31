@@ -57,7 +57,6 @@
 #include "popmenu.h"
 #include "msgbox.h"
 
-#include "globalsettings.h"
 #include "uisettings.h"
 #include "systemfilenames.h"
 

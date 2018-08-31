@@ -22,7 +22,6 @@
 #include "systemfilenames.h"
 #include "ui/msgbox.h"
 #include "ui/windowmanager.h"
-#include "globalsettings.h"
 #include "ui/uisettings.h"
 #include "language.h"
 #define TOP_MARGIN 4
@@ -255,7 +254,7 @@ void SettingWnd::addSettingItem(const std::string &text, const std::vector<std::
   addChildWindow(item);
   item->selectItem(defaultValue);
 
-  StaticText *label = new StaticText(0, 0, _maxLabelLength * 6, gs().fontHeight, this, text);
+  StaticText *label = new StaticText(0, 0, _maxLabelLength * 6, SYSTEM_FONT_HEIGHT, this, text);
   itemY += (item->windowRectangle().height() - label->windowRectangle().height()) / 2;
   label->setRelativePosition(Point(itemX, itemY));
   label->setTextColor(uis().formTextColor);

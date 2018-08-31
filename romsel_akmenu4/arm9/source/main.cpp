@@ -31,7 +31,6 @@
 #include "ui/ui.h"
 #include "userinput.h"
 #include "language.h"
-#include "globalsettings.h"
 #include "windows/calendar.h"
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
@@ -40,6 +39,7 @@
 #include "ui/progresswnd.h"
 #include "windows/mainwnd.h"
 #include "bootstrap_support/systemdetails.h"
+#include "bootstrap_support/dsimenusettings.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 	// init graphics
 	gdi().init();
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
-
+	ms().loadSettings();
 	windowManager();
 
 	// init basic system
@@ -151,16 +151,15 @@ int main(int argc, char **argv)
 		printf("Failed to Init FAT");
 		stop();
 	}
-	// setting scripts
-	gs().loadSettings();
 
+	
 	// init unicode
 	//if( initUnicode() )
 	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
 	lang(); // load language file
-	gs().language = lang().GetInt("font", "language", gs().language);
+	//gs().language = lang().GetInt("font", "language", gs().language);
 
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
