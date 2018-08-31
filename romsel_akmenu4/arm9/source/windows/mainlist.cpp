@@ -321,8 +321,6 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.setExtIcon("unknown");
             }
         }
-        ms().romfolder = _currentDir;
-        ms().saveSettings();
         _currentDir = dirName;
     }
 
