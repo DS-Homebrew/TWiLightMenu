@@ -27,7 +27,7 @@
 #include "ui/keymessage.h"
 #include "ui/touchmessage.h"
 #include "dsrom.h"
-#include "ui/zoomingicon.h"
+#include "windows/zoomingicon.h"
 
 #define SD_ROOT "/"
 // Note that ^*:: is an impossible file name on 

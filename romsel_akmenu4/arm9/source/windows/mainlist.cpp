@@ -424,7 +424,7 @@ void MainList::drawIcons()
             }
             s32 itemX = _position.x + 1;
             s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
+            _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, 2, 2, _engine);
         }
     }
 }

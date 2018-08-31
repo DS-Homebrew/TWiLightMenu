@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include "drawing/sprite.h"
-#include "animation.h"
+#include "ui/animation.h"
 
 class ZoomingIcon : public Animation
 {

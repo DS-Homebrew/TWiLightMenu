@@ -116,11 +116,19 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         fseek(f, header.bannerOffset, SEEK_SET);
         sNDSBannerExt banner;
         int bannerSize;
-        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner))
-        || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
+
+        // Rely on short-circuiting to get a clean if statement.
+
+        // If we get a full size banner, then continue as so, setting bannerSize appropriately.
+        // Otherwise, if we read an invalid amount of bytes, read a DS size header.
+        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 
+            && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner))
+        || (fseek(f, header.bannerOffset, SEEK_SET) == 0
+            && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
         {
               memcpy(&_banner, &banner, sizeof(_banner));
-              if (bannerSize == NDS_BANNER_SIZE_DSi) 
+              // Check for DSi Banner.
+              if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi) 
               {
                 dbg_printf("DSi Banner Found!");
                 memcpy(_dsiIcon.icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
@@ -131,33 +139,6 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         } else {
             memcpy(&_banner, nds_banner_bin, sizeof(_banner));
         }
-
-        // int readed = fread(&banner, sizeof(banner), 1, f);
-        // if (readed != 1)
-        // {
-          
-        // }
-
-
-
-        // if (sizeof(tNDSBanner) != readed)
-        // {
-          
-        // }
-        // else
-        // {
-        //     crc = banner.crc;
-
-        //     if (crc != banner.crc)
-        //     {
-        //         dbg_printf("banner crc error, %04x/%04x\n", banner.crc, crc);
-        //         memcpy(&_banner, nds_banner_bin, sizeof(_banner));
-        //     }
-        //     else
-        //     {
-        //         memcpy(&_banner, &banner, sizeof(_banner));
-        //     }
-        // }
     }
     else
     {
@@ -178,6 +159,61 @@ void DSRomInfo::drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine)
         return;
     }
     load();
+    bool skiptransparent = false;
+    switch (_saveInfo.getIcon())
+    {
+    case SAVE_INFO_EX_ICON_TRANSPARENT:
+        break;
+    case SAVE_INFO_EX_ICON_AS_IS:
+        skiptransparent = true;
+        break;
+    case SAVE_INFO_EX_ICON_FIRMWARE:
+        gdi().maskBlt(icon_bg_bin, x, y, 32, 32, engine);
+        break;
+    }
+    for (int tile = 0; tile < 16; ++tile)
+    {
+        for (int pixel = 0; pixel < 32; ++pixel)
+        {
+            u8 a_byte = _banner.icon[(tile << 5) + pixel];
+
+            //int px = (tile & 3) * 8 + (2 * pixel & 7);
+            //int py = (tile / 4) * 8 + (2 * pixel / 8);
+            int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
+            int py = ((tile >> 2) << 3) + (pixel >> 2);
+
+            u8 idx1 = (a_byte & 0xf0) >> 4;
+            if (skiptransparent || 0 != idx1)
+            {
+                gdi().setPenColor(_banner.palette[idx1], engine);
+                gdi().drawPixel(px + 1 + x, py + y, engine);
+            }
+
+            u8 idx2 = (a_byte & 0x0f);
+            if (skiptransparent || 0 != idx2)
+            {
+                gdi().setPenColor(_banner.palette[idx2], engine);
+                gdi().drawPixel(px + x, py + y, engine);
+            }
+        }
+    }
+}
+
+
+void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHICS_ENGINE engine)
+{
+    if (_extIcon >= 0)
+    {
+        fileIcons().Draw(_extIcon, x, y, engine);
+        return;
+    }
+    load();
+
+    if (_banner.version != NDS_BANNER_VER_DSi) {
+        return drawDSRomIcon(x, y, engine);
+    }
+
+    dbg_printf("drawing dsi...\n");
     bool skiptransparent = false;
     switch (_saveInfo.getIcon())
     {

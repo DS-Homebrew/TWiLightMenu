@@ -76,6 +76,8 @@ public:
 
 public:
   void drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine);
+  void drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHICS_ENGINE engine);
+
   void drawDSRomIconMem(void *mem);
   tNDSBanner &banner(void);
   SAVE_INFO_EX &saveInfo(void);
