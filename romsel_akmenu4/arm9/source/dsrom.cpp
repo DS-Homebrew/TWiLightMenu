@@ -87,6 +87,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         if (header.unitCode == 0x03 && header.arm7binarySize > 0x20000)
         {
             _isDSiWare = ETrue;
+            _saveInfo.dsiTid[0] = header.dsi_tid;
+            _saveInfo.dsiTid[1] = header.dsi_tid2;
         }
         else if ((header.unitCode >= 0x02 && header.arm9romOffset == 0x4000 && header.arm7binarySize < 0x20000) || (header.arm9romOffset == 0x200 && (u32)header.arm7destination == 0x02380000))
         {
@@ -448,6 +450,12 @@ bool DSRomInfo::isDSiWare(void)
 {
     load();
     return (_isDSiWare == ETrue) ? true : false;
+}
+
+bool DSRomInfo::isArgv(void)
+{
+    load();
+    return (_isArgv == ETrue) ? true : false;
 }
 
 bool DSRomInfo::isBannerAnimated(void)

@@ -98,6 +98,8 @@ public:
   bool isGbaRom(void);
   bool isDSiWare(void);
   bool isBannerAnimated(void);
+  bool isArgv(void);
+  
   DSRomInfo &operator=(const DSRomInfo &src);
   void MayBeArgv(const std::string &filename)
   {

@@ -165,6 +165,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
+    settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
 DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::guiLanguage()

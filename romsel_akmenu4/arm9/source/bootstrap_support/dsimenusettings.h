@@ -83,6 +83,17 @@ class DSiMenuPlusPlusSettings
         EGameYobLaunch = 4
     };
 
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
+    enum TConsoleModel
+    {  
+        EDSiRetail = 0,
+        EDSiDebug = 1,
+        E3DSOriginal = 2,
+        E3DSNew = 3
+    };
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();

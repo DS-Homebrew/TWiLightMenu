@@ -211,14 +211,15 @@ bool MainList::enterDir(const std::string &dirName)
     _romInfoList.clear();
 
     std::vector<std::string> extNames;
-    // Push launchargs here.
+
     extNames.push_back(".nds");
     extNames.push_back(".ids");
     extNames.push_back(".gba");
     extNames.push_back(".nes");
 
-    extNames.push_back(".launcharg");
     extNames.push_back(".argv");
+
+    extNames.push_back(".launcharg");
 
     if (_showAllFiles)
         extNames.clear();
@@ -235,6 +236,7 @@ bool MainList::enterDir(const std::string &dirName)
         cwl();
         if (dir)
         {
+            
             while ((direntry = readdir(dir)) != NULL)
             {
                 snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
@@ -319,11 +321,12 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.setExtIcon("unknown");
             }
         }
+        ms().romfolder = _currentDir;
+        ms().saveSettings();
         _currentDir = dirName;
     }
 
-    ms().romfolder = _currentDir;
-    ms().saveSettings();
+   
     directoryChanged();
 
     return true;

@@ -31,6 +31,7 @@ typedef struct _SAVE_INFO_T
 {
   u8 gameTitle[12];
   u8 gameCode[4];
+  u32 dsiTid[2];
   PACKED u16 gameCRC;
   u32 gameSdkVersion;
   u8 saveType;
@@ -102,11 +103,14 @@ typedef struct SAVE_INFO_EX_T
   u8 gameTitle[12];
   u8 gameCode[4];
   u16 gameCRC;
-  u32 gameSdkVersion;
   u8 saveType;
   u8 flags;
   u32 flags2;
   u32 reserved[2];
+
+  u32 dsiTid[2];
+  u32 gameSdkVersion;
+
   u8 getRumble(void) { return flags & SAVE_INFO_EX_RUMBLE; };
   u8 getDownloadPlay(void) { return getFlag(SAVE_INFO_EX_DOWNLOAD_PLAY, SAVE_INFO_EX_GLOBAL_DOWNLOAD_PLAY, false); };
   u8 getSoftReset(void) { return getFlag(SAVE_INFO_EX_SOFT_RESET, SAVE_INFO_EX_GLOBAL_SOFT_RESET, false); };

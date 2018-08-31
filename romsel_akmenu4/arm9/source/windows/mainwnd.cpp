@@ -522,6 +522,9 @@ void bootstrapLaunchHandler()
 
 void MainWnd::launchSelected()
 {
+    ms().romfolder = _mainList->getCurrentDir();
+    ms().saveSettings();
+
     dbg_printf("Launch.");
     std::string fullPath = _mainList->getSelectedFullPath();
 
@@ -534,6 +537,14 @@ void MainWnd::launchSelected()
     DSRomInfo rominfo;
     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
         return;
+
+    // Launch DSiWare 
+    if (rominfo.isDSiWare() && rominfo.isArgv())
+    {
+        dsiLaunch(rominfo.saveInfo().dsiTid);
+        return;
+    }
+
 
     if (rominfo.isDSRom())
     {
