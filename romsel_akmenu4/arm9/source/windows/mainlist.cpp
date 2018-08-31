@@ -313,6 +313,8 @@ bool MainList::enterDir(const std::string &dirName)
         _currentDir = dirName;
     }
 
+    ms().romfolder = _currentDir;
+    ms().saveSettings();
     directoryChanged();
 
     return true;

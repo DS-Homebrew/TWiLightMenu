@@ -192,7 +192,7 @@ int main(int argc, char **argv)
 	gdi().present(GE_SUB);
 
 	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
-	wnd->_mainList->enterDir(SPATH_ROOT);
+	wnd->_mainList->enterDir(ms().romfolder);
 
 	irq().vblankStart();
 
