@@ -438,7 +438,6 @@ void MainList::drawIcons()
                 int seqIdx = seq().allocate_sequence(
                     _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
                     _romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
-                
 
                 int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
                 int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;

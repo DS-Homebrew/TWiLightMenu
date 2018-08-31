@@ -22,6 +22,7 @@
 #include "rominfownd.h"
 #include "systemfilenames.h"
 #include "ui/msgbox.h"
+#include "windows/dsiiconsequence.h"
 #include "ui/windowmanager.h"
 #include "globalsettings.h"
 #include "ui/uisettings.h"
@@ -77,7 +78,20 @@ void RomInfoWnd::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
 
-    _romInfo.drawDSRomIcon(position().x + 8, position().y + 24, selectedEngine());
+    if (_romInfo.isBannerAnimated())
+    {
+        int seqIdx = seq().allocate_sequence(
+            _romInfo.saveInfo().gameCode,
+            _romInfo.animatedIcon().sequence);
+
+        int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+        int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+        _romInfo.drawDSiAnimatedRomIcon(position().x + 8, position().y + 24, bmpIdx, palIdx, selectedEngine());
+    }
+    else
+    {
+        _romInfo.drawDSRomIcon(position().x + 8, position().y + 24, selectedEngine());
+    }
 
     gdi().setPenColor(uiSettings().formTextColor, selectedEngine());
     gdi().textOutRect(position().x + 48, position().y + 22, size().x - 40, 40, _romInfoText.c_str(), selectedEngine());
@@ -336,8 +350,7 @@ void RomInfoWnd::addCode(void)
     {
         _saveTypeText += formatString("v%02d", _romInfo.version());
     }
-    _saveTypeText += formatString(" SDK %X", (_romInfo.saveInfo().gameSdkVersion >> 16));
-
+    _saveTypeText += formatString(", SDK %X", (_romInfo.saveInfo().gameSdkVersion & 0xF000000) >> 0x18);
 }
 
 // #if defined(_STORAGE_rpg)

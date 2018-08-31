@@ -35,12 +35,17 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 {
     memcpy(&_banner, &src._banner, sizeof(_banner));
     memcpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
+    memcpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
+
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;
     _isGbaRom = src._isGbaRom;
     _fileName = src._fileName;
     _romVersion = src._romVersion;
     _extIcon = src._extIcon;
+    _isDSiWare = src._isDSiWare;
+    _isBannerAnimated = src._isBannerAnimated;
+    
     return *this;
 }
 
@@ -55,7 +60,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     }
 
     sNDSHeaderExt header;
-    if (1 != fread(&header, sizeof (header), 1, f))
+    if (1 != fread(&header, sizeof(header), 1, f))
     {
         dbg_printf("read rom header fail\n");
         memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
@@ -65,7 +70,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 
     ///////// ROM Header /////////
     u16 crc = header.headerCRC16;
-    if (crc != header.headerCRC16) 
+    if (crc != header.headerCRC16)
     {
         dbg_printf("%s rom header crc error\n", filename.c_str());
         memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
@@ -80,15 +85,15 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         if (header.unitCode == 0x03 && header.arm7binarySize > 0x20000)
         {
             _isDSiWare = ETrue;
-        } else if ((header.unitCode >= 0x02 && header.arm9romOffset == 0x4000 && header.arm7binarySize < 0x20000)
-            || (header.arm9romOffset == 0x200 && (u32)header.arm7destination == 0x02380000))
+        }
+        else if ((header.unitCode >= 0x02 && header.arm9romOffset == 0x4000 && header.arm7binarySize < 0x20000) || (header.arm9romOffset == 0x200 && (u32)header.arm7destination == 0x02380000))
         {
             // Homebrew with DSiWare Extended header
             _isDSiWare = ETrue;
             _isHomebrew = ETrue;
-        } else if (((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
-            || (0x23232323 == gamecode(header.gameCode))) // ####
-        { 
+        }
+        else if (((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000) || (0x23232323 == gamecode(header.gameCode))) // ####
+        {
             _isDSiWare = EFalse;
             _isHomebrew = ETrue;
         }
@@ -99,16 +104,18 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     memcpy(_saveInfo.gameCode, header.gameCode, 4);
     ///// SDK Version /////
 
-    if (_isHomebrew == EFalse) {
+    if (_isHomebrew == EFalse)
+    {
         _saveInfo.gameSdkVersion = getModuleParams(&header, f)->sdk_version;
         dbg_printf("SDK: %X\n", _saveInfo.gameSdkVersion);
-    } else {
+    }
+    else
+    {
         _saveInfo.gameSdkVersion = 0;
     }
 
     _saveInfo.gameCRC = header.headerCRC16;
     _romVersion = header.romversion;
-
 
     ///////// banner /////////
     if (header.bannerOffset != 0)
@@ -121,23 +128,21 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 
         // If we get a full size banner, then continue as so, setting bannerSize appropriately.
         // Otherwise, if we read an invalid amount of bytes, read a DS size header.
-        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 
-            && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner))
-        || (fseek(f, header.bannerOffset, SEEK_SET) == 0
-            && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
+        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner)) || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
         {
-              memcpy(&_banner, &banner, sizeof(_banner));
-              // Check for DSi Banner.
-              if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi) 
-              {
+            memcpy(&_banner, &banner, sizeof(_banner));
+            // Check for DSi Banner.
+            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi)
+            {
                 dbg_printf("DSi Banner Found!");
                 _isBannerAnimated = ETrue;
                 memcpy(_dsiIcon.icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
                 memcpy(_dsiIcon.palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
                 memcpy(_dsiIcon.sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
-              }
-
-        } else {
+            }
+        }
+        else
+        {
             memcpy(&_banner, nds_banner_bin, sizeof(_banner));
         }
     }
@@ -159,7 +164,6 @@ void DSRomInfo::drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine)
         fileIcons().Draw(_extIcon, x, y, engine);
         return;
     }
-    load();
     bool skiptransparent = false;
     switch (_saveInfo.getIcon())
     {
@@ -200,7 +204,6 @@ void DSRomInfo::drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine)
     }
 }
 
-
 void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHICS_ENGINE engine)
 {
     if (_extIcon >= 0)
@@ -208,9 +211,8 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
         fileIcons().Draw(_extIcon, x, y, engine);
         return;
     }
-    load();
-
-    if (_isBannerAnimated != ETrue) {
+    if (_isBannerAnimated != ETrue)
+    {
         return drawDSRomIcon(x, y, engine);
     }
 
@@ -261,7 +263,6 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
         fileIcons().DrawMem(_extIcon, mem);
         return;
     }
-    load();
     u16 *pmem = (u16 *)mem;
     bool skiptransparent = false;
     switch (_saveInfo.getIcon())
@@ -305,6 +306,63 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
     }
 }
 
+void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette)
+{
+    if (_extIcon >= 0)
+    {
+        fileIcons().DrawMem(_extIcon, mem);
+        return;
+    }
+    load();
+
+    if (_isBannerAnimated != ETrue)
+    {
+        return drawDSRomIconMem(mem);
+    }
+
+    u16 *pmem = (u16 *)mem;
+    bool skiptransparent = false;
+    switch (_saveInfo.getIcon())
+    {
+    case SAVE_INFO_EX_ICON_TRANSPARENT:
+        break;
+    case SAVE_INFO_EX_ICON_AS_IS:
+        skiptransparent = true;
+        break;
+    case SAVE_INFO_EX_ICON_FIRMWARE:
+        Icons::maskBlt((const u16 *)icon_bg_bin, pmem);
+        break;
+    }
+    for (int tile = 0; tile < 16; ++tile)
+    {
+        for (int pixel = 0; pixel < 32; ++pixel)
+        {
+            u8 a_byte = _dsiIcon.icon_frames[frame][(tile << 5) + pixel];
+
+            //int px = (tile & 3) * 8 + (2 * pixel & 7);
+            //int py = (tile / 4) * 8 + (2 * pixel / 8);
+            int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
+            int py = ((tile >> 2) << 3) + (pixel >> 2);
+
+            u8 idx1 = (a_byte & 0xf0) >> 4;
+            if (skiptransparent || 0 != idx1)
+            {
+                pmem[py * 32 + px + 1] = _dsiIcon.palette_frames[palette][idx1] | BIT(15);
+                //gdi().setPenColor( _banner.palette[idx1] );
+                //gdi().drawPixel( px+1+x, py+y, engine );
+            }
+
+            u8 idx2 = (a_byte & 0x0f);
+            if (skiptransparent || 0 != idx2)
+            {
+                pmem[py * 32 + px] = _dsiIcon.palette_frames[palette][idx2] | BIT(15);
+                //gdi().setPenColor( _banner.palette[idx2] );
+                //gdi().drawPixel( px+x, py+y, engine );
+            }
+        }
+    }
+}
+
 bool DSRomInfo::loadGbaRomInfo(const std::string &filename)
 {
     _isGbaRom = EFalse;
@@ -337,9 +395,8 @@ void DSRomInfo::load(void)
 tNDSBanner &DSRomInfo::banner(void)
 {
     load();
-    return (tNDSBanner&) _banner;
+    return (tNDSBanner &)_banner;
 }
-
 
 tDSiAnimatedIcon &DSRomInfo::animatedIcon(void)
 {
@@ -371,13 +428,11 @@ bool DSRomInfo::isDSiWare(void)
     return (_isDSiWare == ETrue) ? true : false;
 }
 
-
 bool DSRomInfo::isBannerAnimated(void)
 {
     load();
     return (_isBannerAnimated == ETrue) ? true : false;
 }
-
 
 bool DSRomInfo::isHomebrew(void)
 {

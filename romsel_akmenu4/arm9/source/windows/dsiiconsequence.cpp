@@ -38,9 +38,6 @@ void DSiIconSequence::update()
 void DSiIconSequence::reset()
 {
     _currentSequenceIndex = 0;
-    // _updatesUntilNewIndex = 0;
-    // _bitmapIndex = 0;
-    // _paletteIndex = 0;
 }
 
 DSiIconSequence::~DSiIconSequence()
@@ -67,7 +64,6 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
     memcpy(seq()._dsiIconSequence[index].gameTid(), gameTid, SIZE_GAMETID);
     memcpy(seq()._dsiIconSequence[index].sequence(), sequence, SIZE_SEQUENCE);
 
-    
     seq()._dsiIconSequence[index].reset();
     seq()._dsiIconSequence[index].show();
 
