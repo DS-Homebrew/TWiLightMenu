@@ -69,6 +69,7 @@ dsiMode:
 #define ARG_SIZE_OFFSET 20
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
+#define CLEAR_MASTER_BRIGHT_OFFSET 36
 
 
 typedef signed int addr_t;
@@ -293,6 +294,8 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
+	writeAddr ((data_t*) LCDC_BANK_C, CLEAR_MASTER_BRIGHT_OFFSET, clearMasterBright);
+
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
 	// Give arguments to loader
@@ -348,13 +351,6 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;
 
 	resetARM7(0x06000000);
-  
-	if(clearMasterBright) {
-		u16 mode = 1 << 14;
-
-		*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
-		*(u16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
-	}
 
 	swiSoftReset(); 
 	return true;
