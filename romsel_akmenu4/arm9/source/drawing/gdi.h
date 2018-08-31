@@ -29,7 +29,7 @@
 #include "tool/dbgtool.h"
 
 #define SYSTEM_FONT_HEIGHT 12
-#define COLOR               u16
+#define COLOR u16
 
 enum GRAPHICS_ENGINE
 {
@@ -53,100 +53,108 @@ class Sprite;
 
 class Gdi
 {
-public:
-
+  public:
     Gdi();
 
     virtual ~Gdi();
 
-public:
-
+  public:
     void init();
 
-    void initBg(const std::string& aFileName);
+    void initBg(const std::string &aFileName);
 
-    void drawPixel( u8 x, u8 y, GRAPHICS_ENGINE engine ) {
+    void drawPixel(u8 x, u8 y, GRAPHICS_ENGINE engine)
+    {
         //if( y > (u8)SCREEN_HEIGHT - 1 ) y = (u8)SCREEN_WIDTH - 1;
-        if( GE_MAIN == engine )
-            *(_bufferMain2 + ((u32)y << 8) + x + _layerPitch ) = _penColor;        //_bufferMain2[y * SCREEN_WIDTH + x] = _penColor;
+        if (GE_MAIN == engine)
+            *(_bufferMain2 + ((u32)y << 8) + x + _layerPitch) = _penColor; //_bufferMain2[y * SCREEN_WIDTH + x] = _penColor;
         else
-            _bufferSub2[((u32)y << 8) + x] = _penColor;        //_bufferSub2[y * SCREEN_WIDTH + x] = _penColor;
+            _bufferSub2[((u32)y << 8) + x] = _penColor; //_bufferSub2[y * SCREEN_WIDTH + x] = _penColor;
     }
 
-    void drawLine( s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine );
+    void drawLine(s16 x1, s16 y1, s16 x2, s16 y2, GRAPHICS_ENGINE engine);
 
-    void frameRect( s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine );
+    void frameRect(s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine);
 
-    void frameRect( s16 x, s16 y, u16 w, u16 h, u16 thickness, GRAPHICS_ENGINE engine );
+    void frameRect(s16 x, s16 y, u16 w, u16 h, u16 thickness, GRAPHICS_ENGINE engine);
 
-    void fillRect( u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine );
+    void fillRect(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine);
 
-    void fillRectBlend( u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine, u16 opacity);
+    void fillRectBlend(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAPHICS_ENGINE engine, u16 opacity);
 
-    void maskBlt( const void * src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine );
+    void maskBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine);
 
-    void maskBlt( const void * src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine );
+    void maskBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine);
 
-    void bitBlt( const void * src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine );
+    void bitBlt(const void *src, s16 srcW, s16 srcH, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine);
 
-    void bitBlt( const void * src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine );
+    void bitBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine);
 
-    u16 getPenColor( GRAPHICS_ENGINE engine ) {
-        if( GE_MAIN == engine )  return _penColor & ~BIT(15);
-        else return  _penColorSub & ~BIT(15);
+    u16 getPenColor(GRAPHICS_ENGINE engine)
+    {
+        if (GE_MAIN == engine)
+            return _penColor & ~BIT(15);
+        else
+            return _penColorSub & ~BIT(15);
     }
 
-    void setPenColor( u16 color, GRAPHICS_ENGINE engine ) {
-        if( GE_MAIN == engine )  _penColor = color | BIT(15);
-        else _penColorSub = color | BIT(15);
+    void setPenColor(u16 color, GRAPHICS_ENGINE engine)
+    {
+        if (GE_MAIN == engine)
+            _penColor = color | BIT(15);
+        else
+            _penColorSub = color | BIT(15);
     }
 
-    void setTransColor( u16 color ) { _transColor = color | BIT(15); }
+    void setTransColor(u16 color) { _transColor = color | BIT(15); }
 
-    void textOutRect( s16 x, s16 y, u16 w, u16 h, const char * text, GRAPHICS_ENGINE engine );
+    void textOutRect(s16 x, s16 y, u16 w, u16 h, const char *text, GRAPHICS_ENGINE engine);
 
-    inline void textOut( s16 x, s16 y, const char * text, GRAPHICS_ENGINE engine ) {
-        textOutRect( x, y, 256, 192, text, engine );
+    inline void textOut(s16 x, s16 y, const char *text, GRAPHICS_ENGINE engine)
+    {
+        textOutRect(x, y, 256, 192, text, engine);
     }
 
-    void setMainEngineLayer( MAIN_ENGINE_LAYER layer ) { _mainEngineLayer = layer; _layerPitch = layer * 256 * 192; }
+    void setMainEngineLayer(MAIN_ENGINE_LAYER layer)
+    {
+        _mainEngineLayer = layer;
+        _layerPitch = layer * 256 * 192;
+    }
 
-    void present( GRAPHICS_ENGINE engine );
+    void present(GRAPHICS_ENGINE engine);
 
-    void present( void );
+    void present(void);
 
 #ifdef DEBUG
     void switchSubEngineMode();
 #endif
 
-protected:
+  protected:
     void swapLCD(void);
-    void activeFbMain(void);        // fb = frame buffer
+    void activeFbMain(void); // fb = frame buffer
     void activeFbSub(void);
 
-private:
-
-    std::vector< u16 > _penColorStack;
+  private:
+    std::vector<u16> _penColorStack;
     u16 _penColor;
     u16 _penColorSub;
     u16 _transColor;
-    u16 * _bufferMain1;
-    u16 * _bufferMain2;
-    u16 * _bufferMain3;
+    u16 *_bufferMain1;
+    u16 *_bufferMain2;
+    u16 *_bufferMain3;
     MAIN_ENGINE_LAYER _mainEngineLayer;
     SUB_ENGINE_MODE _subEngineMode;
     u32 _layerPitch;
-    u16 * _bufferSub1;
-    u16 * _bufferSub2;
+    u16 *_bufferSub1;
+    u16 *_bufferSub2;
 #ifdef DEBUG
-    u16 * _bufferSub3;
+    u16 *_bufferSub3;
 #endif
-    Sprite* _sprites;
+    Sprite *_sprites;
     BMP15 _background;
 };
 
-typedef singleton< Gdi > Gdi_s;
-inline Gdi & gdi() { return Gdi_s::instance(); }
+typedef singleton<Gdi> Gdi_s;
+inline Gdi &gdi() { return Gdi_s::instance(); }
 
-
-#endif//_GDI_H_
+#endif //_GDI_H_

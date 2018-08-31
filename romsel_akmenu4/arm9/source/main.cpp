@@ -119,6 +119,10 @@ int main(int argc, char **argv)
 
 	irq().init();
 
+	// init graphics
+	gdi().init();
+	gdi().initBg(SFN_LOWER_SCREEN_BG);
+
 	windowManager();
 
 	// init basic system
@@ -132,11 +136,8 @@ int main(int argc, char **argv)
 	//turn led on
 	ledBlink(PM_LED_ON);
 
-	// init graphics
-	gdi().init();
-
 	// Prevent the black screen from showing
-	setBackdropColor(RGB15(31, 31, 31));
+	//setBackdropColor(RGB15(31, 31, 31));
 	//setBackdropColorSub(RGB15(31,31,31));
 
 #ifdef DEBUG
@@ -187,7 +188,6 @@ int main(int argc, char **argv)
 
 	//---- END Top Screen--
 
-	gdi().initBg(SFN_LOWER_SCREEN_BG);
 
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);

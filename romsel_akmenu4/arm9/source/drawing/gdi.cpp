@@ -30,7 +30,6 @@
 #include "font/fontfactory.h"
 #include "tool/dbgtool.h"
 
-
 #ifdef DEBUG
 PrintConsole custom_console;
 
@@ -433,6 +432,7 @@ void Gdi::fillRectBlend(u16 color1, u16 color2, s16 x, s16 y, u16 w, u16 h, GRAP
     u16 *pDest = ((GE_MAIN == engine) ? (_bufferMain2 + _layerPitch) : _bufferSub2) + (y << 8) + x;
     u32 alpha = (opacity * 32) / 100;
     u32 destInc = 256 - w;
+
     for (u32 ii = 0; ii < h; ++ii)
     {
         for (u32 jj = 0; jj < w; ++jj)
@@ -516,8 +516,6 @@ void Gdi::bitBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GR
     }
 }
 
-// maskBlt ҪdestW��ż�����ٶȿ��Կ�һ��
-// ����ż��Ҳ���ԣ���Ҫ�����ڴ��� src �� pitch �ճ�ż��
 void Gdi::maskBlt(const void *src, s16 destX, s16 destY, u16 destW, u16 destH, GRAPHICS_ENGINE engine)
 {
     //dbg_printf("x %d y %d w %d h %d\n", destX, destY, destW, destH );
@@ -685,7 +683,6 @@ void Gdi::present(GRAPHICS_ENGINE engine)
 
         fillMemory((void *)(_bufferMain2 + _layerPitch), 256 * 192 * 2, 0);
         oamUpdate(&oamMain);
-
     }
     else if (GE_SUB == engine)
     {
@@ -712,13 +709,13 @@ void Gdi::switchSubEngineMode()
 {
     switch (_subEngineMode)
     {
-    case SEM_GRAPHICS: 
+    case SEM_GRAPHICS:
         videoSetModeSub(MODE_5_2D | DISPLAY_BG0_ACTIVE);
         custom_console.fontBgMap = (u16 *)0x6204000;
         custom_console.fontBgGfx = (u16 *)0x6200000;
         dmaCopyWordsGdi(3, (void *)_bufferSub3, (void *)_bufferSub1, 0x4800);
         break;
-    case SEM_TEXT: 
+    case SEM_TEXT:
         videoSetModeSub(MODE_5_2D | DISPLAY_BG2_ACTIVE);
         custom_console.fontBgMap = _bufferSub3 + 0x2000;
         custom_console.fontBgGfx = _bufferSub3;
