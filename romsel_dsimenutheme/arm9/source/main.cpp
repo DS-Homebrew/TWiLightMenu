@@ -81,16 +81,16 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
-/**
- * Remove trailing slashes from a pathname, if present.
- * @param path Pathname to modify.
- */
-static void RemoveTrailingSlashes(std::string& path)
-{
-	while (!path.empty() && path[path.size()-1] == '/') {
-		path.resize(path.size()-1);
-	}
-}
+// /**
+//  * Remove trailing slashes from a pathname, if present.
+//  * @param path Pathname to modify.
+//  */
+// static void RemoveTrailingSlashes(std::string& path)
+// {
+// 	while (!path.empty() && path[path.size()-1] == '/') {
+// 		path.resize(path.size()-1);
+// 	}
+// }
 
 /**
  * Remove trailing spaces from a cheat code line, if present.
@@ -167,7 +167,6 @@ void LoadSettings(void) {
 
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
-	RemoveTrailingSlashes(romfolder);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);

@@ -69,7 +69,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     // UI settings.
     romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
-    RemoveTrailingSlashes(romfolder);
 
     pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum);
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
