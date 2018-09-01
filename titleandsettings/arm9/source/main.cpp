@@ -225,12 +225,15 @@ static bool arm7SCFGLocked = false;
 
 using namespace std;
 
+bool music = false;
+
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+mm_sound_effect mus_settings;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -241,6 +244,7 @@ void InitSound() {
 	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
+	mmLoadEffect( SFX_SETTINGS );
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -284,6 +288,13 @@ void InitSound() {
 		255,	// volume
 		128,	// panning
 	};
+	mus_settings = {
+		{ SFX_SETTINGS } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
 }
 
 //---------------------------------------------------------------------------------
@@ -320,8 +331,12 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 
 void launchSystemSettings() {
 	fadeType = false;
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	renderScreens = false;
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
 
 	char tmdpath[256];
 	u8 titleID[4];
@@ -360,7 +375,9 @@ void launchSystemSettings() {
 
 void rebootDSiMenuPP() {
 	fadeType = false;
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	music = false;
 	memcpy((u32*)0x02000300,autoboot_bin,0x020);
 	fifoSendValue32(FIFO_USER_08, 1);	// Reboot DSiMenu++ to avoid potential crashing
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
@@ -368,8 +385,12 @@ void rebootDSiMenuPP() {
 
 void loadROMselect() {
 	fadeType = false;
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	renderScreens = false;
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
 	if (soundfreqsettingChanged) {
 		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 		else fifoSendValue32(FIFO_USER_07, 1);
@@ -383,8 +404,12 @@ void loadROMselect() {
 
 int lastRanROM() {
 	fadeType = false;
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	renderScreens = false;
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
 	if (soundfreqsettingChanged) {
 		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 		else fifoSendValue32(FIFO_USER_07, 1);
@@ -550,7 +575,7 @@ int main(int argc, char **argv) {
 
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 0, 0);
+	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 1, 0);
 
 	if (gotosettings) {
 		graphicsInit();
@@ -621,6 +646,11 @@ int main(int argc, char **argv) {
 	while(1) {
 	
 		if (screenmode == 1) {
+
+			if (!music) {
+				mmEffectEx(&mus_settings);	// Play settings music
+				music = true;
+			}
 
 			if (subscreenmode == 4) {
 				pressed = 0;
