@@ -37,6 +37,7 @@
 #include "common/systemdetails.h"
 #include "common/dsargv.h"
 #include "common/flashcardlaunch.h"
+#include "common/gbaswitch.h"
 //#include "files.h"
 
 #include "common/inifile.h"
@@ -565,7 +566,6 @@ void MainWnd::bootFlashcard(const std::string &fullPath)
     {
         std::string errorString = formatString("Error %i", err);
         messageBox(this, "Flashcard Error", errorString, MB_OK);
-        progressWnd().hide();
     }
 }
 
@@ -655,7 +655,19 @@ void MainWnd::bootSlot1(void)
 }
 
 void MainWnd::bootGbaRunner(void)
-{
+{ 
+    if (sys().flashcardUsed() && ms().useGbarunner) 
+    {
+        bootFlashcard("fat:/_nds/GBARunner2_fc.nds");
+        return;
+    }
+
+    if (sys().flashcardUsed() && !ms().useGbarunner)
+    {
+        gbaSwitch();
+        return;
+    }
+
     BootstrapConfig gbaRunner(GBARUNNER_BOOTSTRAP, "", 0);
     if (int err = gbaRunner.launch())
     {
