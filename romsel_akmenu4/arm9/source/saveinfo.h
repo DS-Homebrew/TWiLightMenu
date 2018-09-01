@@ -1,5 +1,5 @@
 /*
-    savemngr.h
+    saveinfo.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,8 +18,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _SAVEMNGR_H_
-#define _SAVEMNGR_H_
+#ifndef _SAVEINFO_H_
+#define _SAVEINFO_H_
 
 // todo: remove globalSettings dependency.
 #include <nds.h>
@@ -126,45 +126,12 @@ typedef struct SAVE_INFO_EX_T
   
   bool isProtection(void) { return (flags2 & SAVE_INFO_EX_PROTECTION) ? true : false; };
   bool isLinkage(void) { return (flags2 & SAVE_INFO_EX_LINKAGE) ? true : false; };
-  void setFlags(u8 rumble, u8 downloadplay, u8 reset, u8 cheat, u8 slot, u8 dma, u8 protection, u8 linkage, u8 icon, u8 sdsave, u8 language)
-  {
-    flags = rumble & SAVE_INFO_EX_RUMBLE;
-    flags2 = 0;
-    setFlag(SAVE_INFO_EX_DOWNLOAD_PLAY, SAVE_INFO_EX_GLOBAL_DOWNLOAD_PLAY, downloadplay, false);
-    setFlag(SAVE_INFO_EX_SOFT_RESET, SAVE_INFO_EX_GLOBAL_SOFT_RESET, reset, false);
-    setFlag(SAVE_INFO_EX_CHEAT, SAVE_INFO_EX_GLOBAL_CHEAT, cheat, false);
-    setFlag(SAVE_INFO_EX_DMA, SAVE_INFO_EX_GLOBAL_DMA, dma, false);
-    flags |= (slot << SAVE_INFO_EX_SLOT_SHIFT) & SAVE_INFO_EX_SLOT_MASK;
-    flags2 |= (protection ? SAVE_INFO_EX_PROTECTION : 0);
-    flags2 |= (linkage ? SAVE_INFO_EX_LINKAGE : 0);
-    flags2 |= (icon << SAVE_INFO_EX_ICON_SHIFT) & SAVE_INFO_EX_ICON_MASK;
-    setFlag(SAVE_INFO_EX_SD_SAVE, SAVE_INFO_EX_GLOBAL_SD_SAVE, sdsave, true);
-    flags2 |= (language << SAVE_INFO_EX_LANGUAGE_SHIFT) & SAVE_INFO_EX_LANGUAGE_MASK;
-  };
+ 
   u8 getFlag(u32 personal, u32 global, bool style)
   {
     return (flags2 & global) ? 2 : ((style ? (flags2 & personal) : (flags & personal)) ? 1 : 0);
   }
-  void setFlag(u32 personal, u32 global, u8 value, bool style)
-  {
-    switch (value)
-    {
-    case 0:
-      //do nothing;
-      break;
-    case 1:
-    {
-      if (style)
-        flags2 |= personal;
-      else
-        flags |= personal;
-    }
-    break;
-    default:
-      flags2 |= global;
-      break;
-    }
-  }
+ 
   bool getState(u32 personal, u32 global, bool globalState, bool style)
   {
     switch (getFlag(personal, global, style))
@@ -177,14 +144,7 @@ typedef struct SAVE_INFO_EX_T
       return globalState;
     }
   }
-  void defaults(void)
-  {
-    // Can be removed.
-    saveType = ST_UNKNOWN;
-    flags = 0;
-    flags2 = SAVE_INFO_EX_GLOBAL_SOFT_RESET | SAVE_INFO_EX_GLOBAL_CHEAT | SAVE_INFO_EX_GLOBAL_DMA | SAVE_INFO_EX_GLOBAL_SD_SAVE;
-    reserved[0] = reserved[1] = 0;
-  };
+  
 } SAVE_INFO_EX;
 
 #define SAVE_INFO_EX_HEADER_MAGIC 0x42474b41
@@ -197,4 +157,4 @@ typedef struct SAVE_INFO_EX_HEADER_T
   u32 reserved;
 } SAVE_INFO_EX_HEADER;
 
-#endif //_SAVEMNGR_H_
+#endif //_SAVEINFO_H_

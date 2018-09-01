@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include <string.h>
-#include "savemngr.h"
+#include "saveinfo.h"
 #include "drawing/gdi.h"
 #include "bootstrap_support/ndsheader.h"
 
@@ -99,7 +99,7 @@ public:
   bool isDSiWare(void);
   bool isBannerAnimated(void);
   bool isArgv(void);
-  
+
   DSRomInfo &operator=(const DSRomInfo &src);
   void MayBeArgv(const std::string &filename)
   {
