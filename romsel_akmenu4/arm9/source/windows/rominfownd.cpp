@@ -24,6 +24,7 @@
 #include "ui/msgbox.h"
 #include "windows/dsiiconsequence.h"
 #include "bootstrap_support/dsimenusettings.h"
+#include "bootstrap_support/pergamesettings.h"
 #include "ui/windowmanager.h"
 #include "ui/uisettings.h"
 #include "language.h"
@@ -166,54 +167,90 @@ void RomInfoWnd::pressGameSettings(void)
 {
     if (!_romInfo.isDSRom() && !_romInfo.isHomebrew())
         return;
+    if (_romInfo.isDSiWare())
+        return;
 
     SettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");
 
+    PerGameSettings settingsIni(_filenameText);
     std::vector<std::string> _values;
-    _values.push_back(LANG("game settings", "Default"));
-    _values.push_back(LANG("game settings", "System"));
-    _values.push_back(LANG("game settings", "Japanese"));
-    _values.push_back(LANG("game settings", "English"));
-    _values.push_back(LANG("game settings", "French"));
-    _values.push_back(LANG("game settings", "German"));
-    _values.push_back(LANG("game settings", "Italian"));
-    _values.push_back(LANG("game settings", "Spanish"));
 
-    settingWnd.addSettingItem(LANG("game settings", "Language"), _values, 0);
-    _values.clear();
+    if (!_romInfo.isHomebrew())
+    {
+        _values.push_back(LANG("game settings", "Default")); // -2 => 0
+        _values.push_back(LANG("game settings", "System")); // -1 => 1
+        _values.push_back(LANG("game settings", "Japanese"));
+        _values.push_back(LANG("game settings", "English"));
+        _values.push_back(LANG("game settings", "French"));
+        _values.push_back(LANG("game settings", "German"));
+        _values.push_back(LANG("game settings", "Italian"));
+        _values.push_back(LANG("game settings", "Spanish"));
 
-    _values.push_back(LANG("game settings", "Default"));
-    _values.push_back(LANG("game settings", "133MHz (TWL)"));
-    _values.push_back(LANG("game settings", "67MHz (NTR)"));
+        settingWnd.addSettingItem(LANG("game settings", "Language"), _values, settingsIni.language + 2); // Default is -2
+        _values.clear();
 
-    settingWnd.addSettingItem(LANG("game settings", "Boost CPU"), _values, 0);
-    _values.clear();
+        _values.push_back(LANG("game settings", "Default")); // -1 => 0
+        _values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
+        _values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
 
-    _values.push_back(LANG("game settings", "Default"));
-    _values.push_back(LANG("game settings", "On"));
-    _values.push_back(LANG("game settings", "Off"));
+        settingWnd.addSettingItem(LANG("game settings", "CPU Frequency"), _values, settingsIni.boostCpu + 1);
+        _values.clear();
 
-    settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, 0);
-    _values.clear();
+        _values.push_back(LANG("game settings", "Default")); // -1 => 0
+        _values.push_back(LANG("game settings", "Off")); // 0 => 1
+        _values.push_back(LANG("game settings", "On")); // 1 => 2
 
-    _values.push_back(LANG("game settings", "Default"));
-    _values.push_back(LANG("game settings", "On"));
-    _values.push_back(LANG("game settings", "Off"));
+        settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
+        _values.clear();
 
-    settingWnd.addSettingItem(LANG("game settings", "Sound Fix"), _values, 0);
-    _values.clear();
+        _values.push_back(LANG("game settings", "Default")); // -1 => 0
+        _values.push_back(LANG("game settings", "Off")); // 0 => 1
+        _values.push_back(LANG("game settings", "On")); // 1 => 2
 
-    _values.push_back(LANG("game settings", "Default"));
-    _values.push_back(LANG("game settings", "On"));
-    _values.push_back(LANG("game settings", "Off"));
+        settingWnd.addSettingItem(LANG("game settings", "Sound Fix"), _values, settingsIni.soundFix + 1);
+        _values.clear();
 
-    settingWnd.addSettingItem(LANG("game settings", "Async Prefetch"), _values, 0);
-    _values.clear();
+        _values.push_back(LANG("game settings", "Default")); // -1 => 0
+        _values.push_back(LANG("game settings", "Off")); // 0 => 1
+        _values.push_back(LANG("game settings", "On")); // 1 => 2
+
+        settingWnd.addSettingItem(LANG("game settings", "Async Prefetch"), _values, settingsIni.asyncPrefetch + 1);
+        _values.clear();
+    }
+    else
+    {
+
+        _values.push_back(LANG("game settings", "Default"));
+        _values.push_back(LANG("game settings", "Use Bootstrap"));
+        _values.push_back(LANG("game settings", "Direct Boot"));
+
+        settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
+        _values.clear();
+    }
 
     _settingWnd = &settingWnd;
     u32 ret = settingWnd.doModal();
+
+    dbg_printf("SETRET %i\n", ret);
+    if (ret == ID_OK)
+    {
+        dbg_printf("FN: %s\n", _filenameText.c_str());
+        if (!_romInfo.isHomebrew())
+        {
+            settingsIni.language = (PerGameSettings::TLanguage)(settingWnd.getItemSelection(0, 0) - 2);
+            settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 1) - 1);
+            settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 2) - 1);
+            settingsIni.soundFix = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 3) - 1);
+            settingsIni.asyncPrefetch = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 4) - 1);
+        }
+        else
+        {
+            settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 0) - 1);
+        }
+        settingsIni.saveSettings();
+    }
     _settingWnd = NULL;
-    if (ID_CANCEL == ret)
+    if (ret == ID_CANCEL)
         return;
 }
 
@@ -317,7 +354,7 @@ void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
     {
         addCode();
     }
-    if (_romInfo.isDSRom() || _romInfo.isHomebrew())
+    if (!_romInfo.isDSiWare() && (_romInfo.isDSRom() || _romInfo.isHomebrew()))
     {
         _buttonGameSettings.show();
     }

@@ -14,6 +14,8 @@
 #define DSIMENUPP_INI "/_nds/dsimenuplusplus/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/dsimenuplusplus/main.srldr"
 
+#define PERGAMESETTINGS_PATH "/_nds/dsimenuplusplus/gamesettings/%s.ini"
+
 #define SLOT1_SRL "/_nds/dsimenuplusplus/slot1launch.srldr"
 
 #define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"

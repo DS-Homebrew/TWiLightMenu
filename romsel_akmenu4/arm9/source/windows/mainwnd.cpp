@@ -35,6 +35,7 @@
 #include "bootstrap_support/loaderconfig.h"
 #include "bootstrap_support/cardlaunch.h"
 #include "bootstrap_support/systemdetails.h"
+#include "bootstrap_support/pergamesettings.h"
 //#include "files.h"
 
 #include "inifile.h"
@@ -522,7 +523,6 @@ void bootstrapLaunchHandler()
 
 void MainWnd::launchSelected()
 {
-  
 
     dbg_printf("Launch.");
     std::string fullPath = _mainList->getSelectedFullPath();
@@ -540,18 +540,43 @@ void MainWnd::launchSelected()
     if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
         return;
 
-    // Launch DSiWare 
+    // Launch DSiWare
     if (rominfo.isDSiWare() && rominfo.isArgv())
     {
         dsiLaunch(rominfo.saveInfo().dsiTid);
         return;
     }
 
-
     if (rominfo.isDSRom())
     {
         BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
+        PerGameSettings gameConfig(_mainList->getSelectedShowName());
 
+        dbg_printf("%s", _mainList->getSelectedShowName().c_str());
+
+        config.asyncPrefetch(gameConfig.asyncPrefetch == PerGameSettings::EDefault ? ms().bstrap_asyncPrefetch : (bool)gameConfig.asyncPrefetch)
+            .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
+            .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
+            .soundFix(gameConfig.soundFix == PerGameSettings::EDefault ? ms().soundFix : (bool)gameConfig.soundFix)
+            .nightlyBootstrap(ms().bootstrapFile);
+
+        // GameConfig is default, global is not default
+        if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
+        {
+            config.language(ms().bstrap_language);
+        }
+        // GameConfig is system, or global is defaut
+        else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == DSiMenuPlusPlusSettings::ELangDefault)
+        {
+            config.language(PersonalData->language);
+        }
+        else 
+        // gameConfig is not default
+        {
+            config.language(gameConfig.language);
+        }
+
+        // Event handlers for progress window.
         config.onSaveCreated(bootstrapSaveHandler)
             .onConfigSaved(bootstrapLaunchHandler);
 
