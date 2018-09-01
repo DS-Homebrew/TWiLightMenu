@@ -42,6 +42,9 @@
 #include "sysmenu_banner_bin.h"
 #include "settings_banner_bin.h"
 #include "folder_banner_bin.h"
+#include "nesrom_banner_bin.h"
+#include "gbcrom_banner_bin.h"
+#include "gbrom_banner_bin.h"
 #include "ui/progresswnd.h"
 #include "language.h"
 #include "unicode.h"
@@ -237,7 +240,7 @@ bool MainList::enterDir(const std::string &dirName)
         cwl();
         if (dir)
         {
-            
+
             while ((direntry = readdir(dir)) != NULL)
             {
                 snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
@@ -304,7 +307,19 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
-                else if (".nds" != extName && ".ids" != extName)
+                else if (".gb" == extName)
+                {
+                    rominfo.setBanner("gb", gbrom_banner_bin);
+                }
+                else if (".gbc" == extName)
+                {
+                    rominfo.setBanner("gbc", gbcrom_banner_bin);
+                }
+                else if (".nes" == extName)
+                {
+                    rominfo.setBanner("nes", nesrom_banner_bin);
+                }
+                else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
                 {
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     allowUnknown = true;
@@ -324,7 +339,6 @@ bool MainList::enterDir(const std::string &dirName)
         _currentDir = dirName;
     }
 
-   
     directoryChanged();
 
     return true;
@@ -520,7 +534,7 @@ void MainList::updateActiveIcon(bool updateContent)
 
             //     _romInfoList[_selectedRowId].drawDSiAnimatedRomIconMem(backBuffer, bmpIdx, palIdx);
             // }
-            
+
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
             memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * 2);
             _activeIcon.setBufferChanged();
