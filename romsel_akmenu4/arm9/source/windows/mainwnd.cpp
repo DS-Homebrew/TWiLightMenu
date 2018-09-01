@@ -571,7 +571,7 @@ void MainWnd::launchSelected()
             progressWnd().show();
 
             int err = config.launch(0, cargv.data());
-            
+
             if (err)
             {
                 std::string errorString = formatString("Error %i", err);
@@ -686,8 +686,12 @@ void MainWnd::showSettings(void)
 void MainWnd::bootSlot1(void)
 {
     dbg_printf("Launch Slot1...");
-    LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
+    if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
+        cardLaunch();
+        return;
+    } 
 
+    LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
     if (int err = slot1Loader.launch())
     {
         std::string errorString = formatString("Error %i", err);
