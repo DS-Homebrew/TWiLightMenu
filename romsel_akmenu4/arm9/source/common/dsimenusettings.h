@@ -1,7 +1,7 @@
 
 #include <nds.h>
 #include <string>
-#include "singleton.h"
+#include "common/singleton.h"
 
 #pragma once
 #ifndef _DSIMENUPPSETTINGS_H_

@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include <time.h>
-#include "singleton.h"
+#include "common/singleton.h"
 #include "tool/stringtool.h"
 
 class DateTime

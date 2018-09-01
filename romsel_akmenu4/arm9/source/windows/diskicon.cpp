@@ -20,7 +20,7 @@
 
 #include "diskicon.h"
 #include "drawing/bmp15.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"

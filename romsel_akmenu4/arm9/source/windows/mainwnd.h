@@ -30,33 +30,33 @@
 #include "settingwnd.h"
 #include "startmenu.h"
 
+#include "common/pergamesettings.h"
+#include "dsrom.h"
+
 class MainWnd : public akui::Form
 {
-public:
-
-    MainWnd( s32 x, s32 y, u32 w, u32 h, Window * parent, const std::string & text );
+  public:
+    MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
     ~MainWnd();
 
-public:
+  public:
+    bool process(const akui::Message &msg);
 
-    bool process( const akui::Message & msg );
-
-    Window& loadAppearance(const std::string& aFileName );
+    Window &loadAppearance(const std::string &aFileName);
 
     void init();
 
     void draw();
 
-    Window* windowBelow(const akui::Point & p);
+    Window *windowBelow(const akui::Point &p);
 
-    MainList * _mainList;
+    MainList *_mainList;
 
-protected:
+  protected:
+    void onMainListSelItemClicked(u32 index);
 
-    void onMainListSelItemClicked( u32 index );
-
-    void onMainListSelItemHeadClicked( u32 index );
+    void onMainListSelItemHeadClicked(u32 index);
 
     void onKeyAPressed();
 
@@ -66,47 +66,49 @@ protected:
 
     void onKeyYPressed();
 
-    void listSelChange( u32 i );
+    void listSelChange(u32 i);
 
-    void startMenuItemClicked( s16 i );
+    void startMenuItemClicked(s16 i);
 
     void startButtonClicked();
 
     void brightnessButtonClicked();
 
-    bool processKeyMessage( const akui::KeyMessage & msg );
+    bool processKeyMessage(const akui::KeyMessage &msg);
 
-    bool processTouchMessage( const akui::TouchMessage & msg );
+    bool processTouchMessage(const akui::TouchMessage &msg);
 
     void setParam(void);
 
     void showSettings(void);
 
     void bootSlot1(void);
-    
+
     void bootGbaRunner(void);
 
     void onFolderChanged();
 
-    void onAnimation(bool& anAllow);
+    void onAnimation(bool &anAllow);
 
     void showFileInfo();
 
     void launchSelected();
 
-    StartMenu * _startMenu;
+    void bootArgv(DSRomInfo& rominfo);
 
-    akui::Button * _startButton;
+    void bootBootstrap(PerGameSettings &gameConfig, DSRomInfo& rominfo);
 
-    akui::Button * _brightnessButton;
+    StartMenu *_startMenu;
 
-    akui::Button * _folderUpButton;
+    akui::Button *_startButton;
 
-    akui::StaticText * _folderText;
+    akui::Button *_brightnessButton;
+
+    akui::Button *_folderUpButton;
+
+    akui::StaticText *_folderText;
 
     bool _processL;
 };
 
-
-
-#endif//_MAINWND_H_
+#endif //_MAINWND_H_

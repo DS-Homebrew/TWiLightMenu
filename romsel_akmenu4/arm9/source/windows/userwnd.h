@@ -25,7 +25,7 @@
 #include "ui/point.h"
 #include "drawing/bmp15.h"
 #include "time/datetime.h"
-#include "singleton.h"
+#include "common/singleton.h"
 
 class UserWindow : public akui::Window
 {

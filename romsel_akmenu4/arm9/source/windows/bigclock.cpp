@@ -22,8 +22,8 @@
 #include "tool/stringtool.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "inifile.h"
-#include "bootstrap_support/dsimenusettings.h"
+#include "common/inifile.h"
+#include "common/dsimenusettings.h"
 
 using namespace akui;
 

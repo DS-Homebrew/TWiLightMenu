@@ -26,13 +26,13 @@
 //#include "files.h"
 #include "windows/startmenu.h"
 #include "systemfilenames.h"
-#include "bootstrap_support/systemdetails.h"
-#include "bootstrap_support/dsimenusettings.h"
+#include "common/systemdetails.h"
+#include "common/dsimenusettings.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
 #include "tool/memtool.h"
 #include "tool/dbgtool.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "unknown_banner_bin.h"
 #include "nds_save_banner_bin.h"
 #include "nand_banner_bin.h"
@@ -215,10 +215,11 @@ bool MainList::enterDir(const std::string &dirName)
     extNames.push_back(".nds");
     extNames.push_back(".ids");
     extNames.push_back(".gba");
+    extNames.push_back(".gb");
+    extNames.push_back(".gbc");
     extNames.push_back(".nes");
 
     extNames.push_back(".argv");
-
     extNames.push_back(".launcharg");
 
     if (_showAllFiles)
@@ -299,7 +300,6 @@ bool MainList::enterDir(const std::string &dirName)
                 }
                 else if (".launcharg" == extName || ".argv" == extName)
                 {
-                    dbg_printf("May be launcharg!");
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
@@ -509,6 +509,7 @@ void MainList::updateActiveIcon(bool updateContent)
         {
             u8 backBuffer[32 * 32 * 2];
             zeroMemory(backBuffer, 32 * 32 * 2);
+
             // if (_romInfoList[_selectedRowId].isBannerAnimated()) {
             //       int seqIdx = seq().allocate_sequence(
             //         _romInfoList[_selectedRowId].saveInfo().gameCode,
@@ -519,6 +520,7 @@ void MainList::updateActiveIcon(bool updateContent)
 
             //     _romInfoList[_selectedRowId].drawDSiAnimatedRomIconMem(backBuffer, bmpIdx, palIdx);
             // }
+            
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
             memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * 2);
             _activeIcon.setBufferChanged();

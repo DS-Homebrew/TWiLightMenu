@@ -20,9 +20,27 @@ SystemDetails::SystemDetails()
     }
     fifoSendValue32(FIFO_USER_07, 0);
 
-    if (!access("fat:/", F_OK)) {
+    if (!access("fat:/", F_OK))
+    {
         _flashcardUsed = true;
         dbg_printf("flahcart used..\n");
-    } 
+    }
 }
 
+void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
+{
+    if (_fatInitOk)
+        return;
+
+    _fatInitOk = fatInitDefault();
+    _nitroFsInitOk = (bool)nitroFSInit(nitrofsPath);
+
+    if (!_nitroFsInitOk && runningPath != NULL)
+    {
+        _nitroFsInitOk = (bool)nitroFSInit(runningPath);
+    }
+    else
+    {
+        _nitroFsInitOk = false;
+    }
+}

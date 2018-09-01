@@ -25,7 +25,7 @@
 #include <nds.h>
 #include <vector>
 #include <string>
-#include "singleton.h"
+#include "common/singleton.h"
 
 typedef struct _SAVE_INFO_T
 {

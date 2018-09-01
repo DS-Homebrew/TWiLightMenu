@@ -23,7 +23,7 @@
 
 #include "ui.h"
 #include "progressbar.h"
-#include "singleton.h"
+#include "common/singleton.h"
 
 namespace akui
 {

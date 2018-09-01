@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include "ui/form.h"
-#include "singleton.h"
+#include "common/singleton.h"
 
 class CalendarWnd : public akui::Form
 {

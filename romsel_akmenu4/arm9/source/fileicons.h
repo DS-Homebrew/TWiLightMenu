@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <set>
-#include "singleton.h"
+#include "common/singleton.h"
 #include "drawing/bmp15.h"
 #include "drawing/gdi.h"
 

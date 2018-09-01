@@ -24,7 +24,7 @@
 #include <nds.h>
 #include "ui/window.h"
 #include "drawing/sprite.h"
-#include "singleton.h"
+#include "common/singleton.h"
 
 class DiskIcon : public akui::Window
 {

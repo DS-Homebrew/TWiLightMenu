@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include "drawing/gdi.h"
-#include "singleton.h"
+#include "common/singleton.h"
 
 class UISettings
 {

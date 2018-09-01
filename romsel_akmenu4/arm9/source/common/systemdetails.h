@@ -1,4 +1,4 @@
-#include "singleton.h"
+#include "common/singleton.h"
 #include <fat.h>
 #include "nitrofs.h"
 #pragma once
@@ -16,18 +16,7 @@ class SystemDetails
         bool isRegularDS() { return _isRegularDS; }
         bool fatInitOk() { return _fatInitOk; }
         bool useNitroFS() { return _nitroFsInitOk; }
-        inline void initFilesystem(const char* nitrofsPath, const char* runningPath = NULL) {
-            if (_fatInitOk) return;
-
-            _fatInitOk = fatInitDefault();
-            _nitroFsInitOk = (bool)nitroFSInit(nitrofsPath);
-
-            if (!_nitroFsInitOk && runningPath != NULL) {
-                _nitroFsInitOk = (bool)nitroFSInit(runningPath);
-            } else {
-                _nitroFsInitOk = false;
-            }
-        }
+        void initFilesystem(const char *nitrofsPath, const char *runningPath = NULL);
     private:
         bool _arm7SCFGLocked;
         bool _flashcardUsed;

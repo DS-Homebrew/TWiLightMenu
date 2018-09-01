@@ -22,10 +22,10 @@
 #ifndef _AK_LANGUAGE_H_
 #define _AK_LANGUAGE_H_
 
-#include "singleton.h"
+#include "common/singleton.h"
 #include "systemfilenames.h"
-#include "inifile.h"
-#include "bootstrap_support/dsimenusettings.h"
+#include "common/inifile.h"
+#include "common/dsimenusettings.h"
 #include <nds.h>
 #include "tool/stringtool.h"
 

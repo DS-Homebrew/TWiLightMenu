@@ -23,7 +23,7 @@
 
 #include <nds.h>
 #include <vector>
-#include "singleton.h"
+#include "common/singleton.h"
 #include "drawing/gdi.h"
 #include "drawing/bmp15.h"
 #include "tool/dbgtool.h"

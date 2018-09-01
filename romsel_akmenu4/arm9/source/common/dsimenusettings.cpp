@@ -2,7 +2,7 @@
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "systemfilenames.h"
 #include <string.h>
 
@@ -49,18 +49,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
-}
-
-/**
- * Remove trailing slashes from a pathname, if present.
- * @param path Pathname to modify.
- */
-static void RemoveTrailingSlashes(std::string &path)
-{
-    while (!path.empty() && path[path.size() - 1] == '/')
-    {
-        path.resize(path.size() - 1);
-    }
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()

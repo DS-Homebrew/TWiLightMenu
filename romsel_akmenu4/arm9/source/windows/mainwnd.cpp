@@ -31,17 +31,16 @@
 #include "tool/fifotool.h"
 
 #include "ui/progresswnd.h"
-#include "bootstrap_support/bootstrapconfig.h"
-#include "bootstrap_support/loaderconfig.h"
-#include "bootstrap_support/cardlaunch.h"
-#include "bootstrap_support/systemdetails.h"
-#include "bootstrap_support/pergamesettings.h"
-#include "bootstrap_support/dsargv.h"
+#include "common/bootstrapconfig.h"
+#include "common/loaderconfig.h"
+#include "common/cardlaunch.h"
+#include "common/systemdetails.h"
+#include "common/dsargv.h"
 //#include "files.h"
 
-#include "inifile.h"
+#include "common/inifile.h"
 #include "language.h"
-#include "bootstrap_support/dsimenusettings.h"
+#include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
 // #include "helpwnd.h"
 // #include "expwnd.h"
@@ -282,25 +281,6 @@ void MainWnd::startMenuItemClicked(s16 i)
     {
         showFileInfo();
     }
-
-    // else if (START_MENU_ITEM_HELP == i)
-    // {
-    //     CIniFile ini(SFN_UI_SETTINGS); //(256-)/2,(192-128)/2, 220, 128
-    //     u32 w = 200;
-    //     u32 h = 160;
-    //     w = ini.GetInt("help window", "w", w);
-    //     h = ini.GetInt("help window", "h", h);
-    //     HelpWnd *helpWnd = new HelpWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("help window", "title"));
-    //     helpWnd->doModal();
-    //     delete helpWnd;
-    // }
-    // else if (START_MENU_ITEM_TOOLS == i)
-    // {
-    //     u32 w = 250;
-    //     u32 h = 130;
-    //     ExpWnd expWnd((256 - w) / 2, (192 - h) / 2, w, h, NULL, LANG("exp window", "title"));
-    //     expWnd.doModal();
-    // }
 }
 
 void MainWnd::startButtonClicked()
@@ -406,27 +386,7 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             //             }
             //             else
             //             {
-            // // #if defined(_STORAGE_rpg)
-            // //                 const std::string dir = _mainList->getCurrentDir();
-            // //                 if (dir.length() < 5)
-            // //                 {
-            // //                     _mainList->enterDir("sd:/");
-            // //                 }
-            // //                 else if (dir.substr(0, 5) == "sd:")
-            // //                 {
-            // //                     _mainList->enterDir("fat1:/");
-            // //                 }
-            // //                 else
-            // //                 {
-            // //                     _mainList->enterDir("sd:/");
-            // //                 }
-            // // #elif defined(_STORAGE_r4) || defined(_STORAGE_ak2i) || defined(_STORAGE_r4idsn)
-            // //                 _mainList->enterDir("favorites:/");
-            // // #endif
-            //             }
-            //             ret = true;
-            //             break;
-            //         }
+
         case KeyMessage::UI_KEY_START:
             startButtonClicked();
             ret = true;
@@ -522,6 +482,80 @@ void bootstrapLaunchHandler()
     progressWnd().update();
 }
 
+void MainWnd::bootArgv(DSRomInfo &rominfo)
+{
+    std::string fullPath = _mainList->getSelectedFullPath();
+    std::string launchPath = fullPath;
+    std::vector<const char *> cargv{};
+
+    if (rominfo.isArgv())
+    {
+        ArgvFile argv(fullPath);
+        launchPath = argv.launchPath();
+        for (auto &string : argv.launchArgs())
+            cargv.push_back(&string.front());
+    }
+
+    LoaderConfig config(fullPath, "");
+    progressWnd().setTipText("Please wait...");
+    progressWnd().update();
+    progressWnd().show();
+
+    int err = config.launch(0, cargv.data());
+
+    if (err)
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "ROM Start Error", errorString, MB_OK);
+        progressWnd().hide();
+    }
+}
+
+void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
+{
+    dbg_printf("%s", _mainList->getSelectedShowName().c_str());
+    std::string fullPath = _mainList->getSelectedFullPath();
+
+    BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
+
+    config.asyncPrefetch(gameConfig.asyncPrefetch == PerGameSettings::EDefault ? ms().bstrap_asyncPrefetch : (bool)gameConfig.asyncPrefetch)
+        .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
+        .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
+        .soundFix(gameConfig.soundFix == PerGameSettings::EDefault ? ms().soundFix : (bool)gameConfig.soundFix)
+        .nightlyBootstrap(ms().bootstrapFile);
+
+    // GameConfig is default, global is not default
+    if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
+    {
+        config.language(ms().bstrap_language);
+    }
+    // GameConfig is system, or global is defaut
+    else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == DSiMenuPlusPlusSettings::ELangDefault)
+    {
+        config.language(PersonalData->language);
+    }
+    else
+    // gameConfig is not default
+    {
+        config.language(gameConfig.language);
+    }
+
+    // Event handlers for progress window.
+    config.onSaveCreated(bootstrapSaveHandler)
+        .onConfigSaved(bootstrapLaunchHandler);
+
+    progressWnd().setTipText("Please wait...");
+    progressWnd().update();
+    progressWnd().show();
+
+    int err = config.launch();
+    if (err)
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
+        progressWnd().hide();
+    }
+}
 void MainWnd::launchSelected()
 {
 
@@ -554,115 +588,20 @@ void MainWnd::launchSelected()
         // Direct Boot for homebrew.
         if (gameConfig.directBoot && rominfo.isHomebrew())
         {
-            std::string launchPath = fullPath;
-            std::vector<const char *> cargv{};
-
-            if (rominfo.isArgv())
-            {
-                ArgvFile argv(fullPath);
-                launchPath = argv.launchPath();
-                for (auto &string : argv.launchArgs())
-                    cargv.push_back(&string.front());
-            }
-
-            LoaderConfig config(fullPath, "");
-            progressWnd().setTipText("Please wait...");
-            progressWnd().update();
-            progressWnd().show();
-
-            int err = config.launch(0, cargv.data());
-
-            if (err)
-            {
-                std::string errorString = formatString("Error %i", err);
-                messageBox(this, "ROM Start Error", errorString, MB_OK);
-                progressWnd().hide();
-            }
+            bootArgv(rominfo);
             return;
         }
-
-        //todo: Flashcart boot
-
-        // Bootstrap Boot
-        dbg_printf("%s", _mainList->getSelectedShowName().c_str());
-        BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
-
-        config.asyncPrefetch(gameConfig.asyncPrefetch == PerGameSettings::EDefault ? ms().bstrap_asyncPrefetch : (bool)gameConfig.asyncPrefetch)
-            .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
-            .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
-            .soundFix(gameConfig.soundFix == PerGameSettings::EDefault ? ms().soundFix : (bool)gameConfig.soundFix)
-            .nightlyBootstrap(ms().bootstrapFile);
-
-        // GameConfig is default, global is not default
-        if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
+        else if (sys().flashcardUsed())
         {
-            config.language(ms().bstrap_language);
-        }
-        // GameConfig is system, or global is defaut
-        else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == DSiMenuPlusPlusSettings::ELangDefault)
-        {
-            config.language(PersonalData->language);
+            dbg_printf("%s",fullPath.c_str());
+            return;
         }
         else
-        // gameConfig is not default
         {
-            config.language(gameConfig.language);
-        }
-
-        // Event handlers for progress window.
-        config.onSaveCreated(bootstrapSaveHandler)
-            .onConfigSaved(bootstrapLaunchHandler);
-
-        progressWnd().setTipText("Please wait...");
-        progressWnd().update();
-        progressWnd().show();
-
-        int err = config.launch();
-        if (err)
-        {
-            std::string errorString = formatString("Error %i", err);
-            messageBox(this, "NDS Bootstrap Error", errorString, MB_OK);
-            progressWnd().hide();
+            bootBootstrap(gameConfig, rominfo);
+            return;
         }
     }
-
-    //     dbg_printf("(%s)\n", fullPath.c_str());
-    //     dbg_printf("%d\n", fullPath[fullPath.size() - 1]);
-
-    //     std::string title, text;
-    //     bool show = true;
-    //     switch (launchRom(fullPath, rominfo, rominfo.isHomebrew() && "akmenu4.nds" == _mainList->getSelectedShowName()))
-    //     {
-    // #if defined(_STORAGE_rpg)
-    //     case ELaunchSDOnly:
-    //         title = LANG("sd save", "title");
-    //         text = LANG("sd save", "text");
-    //         break;
-    //     case ELaunchRestoreFail:
-    //         title = LANG("restore save fail", "title");
-    //         text = LANG("restore save fail", "text");
-    //         break;
-    // #endif
-    // #if defined(_STORAGE_rpg) || defined(_STORAGE_ak2i)
-    //     case ELaunchSlowSD:
-    //     {
-    //         std::string model = sdidGetSDManufacturerName() + " " + sdidGetSDName();
-    //         title = LANG("unsupported sd", "title");
-    //         text = LANG("unsupported sd", "text");
-    //         text = formatString(text.c_str(), model.c_str());
-    //     }
-    //     break;
-    // #endif
-    //     case ELaunchNoFreeSpace:
-    //         title = LANG("no free space", "title");
-    //         text = LANG("no free space", "text");
-    //         break;
-    //     default:
-    //         show = false;
-    //         break;
-    //     }
-    //     if (show)
-    //         messageBox(this, title, text, MB_OK);
 }
 
 void MainWnd::onKeyBPressed()
@@ -686,10 +625,11 @@ void MainWnd::showSettings(void)
 void MainWnd::bootSlot1(void)
 {
     dbg_printf("Launch Slot1...");
-    if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
+    if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
+    {
         cardLaunch();
         return;
-    } 
+    }
 
     LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
     if (int err = slot1Loader.launch())

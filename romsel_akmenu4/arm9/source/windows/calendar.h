@@ -24,7 +24,7 @@
 #include "ui/window.h"
 #include "drawing/bmp15.h"
 #include "time/datetime.h"
-#include "singleton.h"
+#include "common/singleton.h"
 #include "ui/point.h"
 
 

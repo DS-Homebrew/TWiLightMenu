@@ -1,7 +1,7 @@
 
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "nds_loader_arm9.h"
 #include "tool/dbgtool.h"
 

@@ -34,12 +34,11 @@
 #include "windows/calendar.h"
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
-#include "windows/diskicon.h"
 #include "windows/userwnd.h"
 #include "ui/progresswnd.h"
 #include "windows/mainwnd.h"
-#include "bootstrap_support/systemdetails.h"
-#include "bootstrap_support/dsimenusettings.h"
+#include "common/systemdetails.h"
+#include "common/dsimenusettings.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -168,8 +167,8 @@ int main(int argc, char **argv)
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
 
-	diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
-	diskIcon().show();
+	// diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
+	// diskIcon().show();
 
 	timer().updateFps();
 

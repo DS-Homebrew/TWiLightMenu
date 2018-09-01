@@ -22,7 +22,7 @@
 #include "userwnd.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "unicode.h"
 #include "tool/stringtool.h"
 #include "tool/memtool.h"

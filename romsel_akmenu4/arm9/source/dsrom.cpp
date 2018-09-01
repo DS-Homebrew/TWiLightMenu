@@ -22,10 +22,10 @@
 #include "tool/dbgtool.h"
 #include "fileicons.h"
 #include "icons.h"
-#include "bootstrap_support/module_params.h"
-#include "bootstrap_support/ndsheader.h"
-#include "bootstrap_support/dsargv.h"
-#include "bootstrap_support/fixedbanners.h"
+#include "common/module_params.h"
+#include "common/ndsheader.h"
+#include "common/dsargv.h"
+#include "common/fixedbanners.h"
 
 #include "nds_banner_bin.h"
 #include "unknown_nds_banner_bin.h"
@@ -404,7 +404,6 @@ bool DSRomInfo::loadArgv(const std::string &filename)
         return false;
     }
     _isArgv = ETrue;
-    dbg_printf("launcharg found %s\n", argv.launchPath().c_str());
     return loadDSRomInfo(argv.launchPath(), true);
 }
 

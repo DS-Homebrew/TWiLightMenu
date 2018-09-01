@@ -40,15 +40,15 @@ bool IRQ::_vblankStarted(false);
 void IRQ::init()
 {
     irqSet(IRQ_VBLANK, vBlank);
-    irqSet(IRQ_CARD_LINE, cardMC);
+  //  irqSet(IRQ_CARD_LINE, cardMC);
 }
 
-void IRQ::cardMC()
-{
-    dbg_printf("cardMC\n");
-    diskIcon().blink();
-    REG_IF &= ~IRQ_CARD_LINE;
-}
+// void IRQ::cardMC()
+// {
+//     dbg_printf("cardMC\n");
+//     diskIcon().blink();
+//     REG_IF &= ~IRQ_CARD_LINE;
+// }
 
 void IRQ::vblankStart()
 {
@@ -100,8 +100,8 @@ void IRQ::vBlank()
 
     animationManager().update();
 
-    if( REG_ROMCTRL & CARD_BUSY )
-        diskIcon().turnOn();
-    else
-        diskIcon().turnOff();
+    // if( REG_ROMCTRL & CARD_BUSY )
+    //     diskIcon().turnOn();
+    // else
+    //     diskIcon().turnOff();
 }

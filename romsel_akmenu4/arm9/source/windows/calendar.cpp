@@ -21,7 +21,7 @@
 #include "windows/calendar.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "tool/stringtool.h"
 #include "tool/memtool.h"
 

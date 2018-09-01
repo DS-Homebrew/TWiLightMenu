@@ -22,7 +22,7 @@
 #define _IRQS_H_
 
 #include <nds.h>
-#include "singleton.h"
+#include "common/singleton.h"
 
 
 class IRQ

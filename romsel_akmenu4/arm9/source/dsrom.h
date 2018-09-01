@@ -25,7 +25,7 @@
 #include <string.h>
 #include "saveinfo.h"
 #include "drawing/gdi.h"
-#include "bootstrap_support/ndsheader.h"
+#include "common/ndsheader.h"
 
 
 typedef struct {

@@ -1,5 +1,5 @@
 #include "pergamesettings.h"
-#include "inifile.h"
+#include "common/inifile.h"
 #include "tool/stringtool.h"
 #include "bootstrappaths.h"
 #include <string.h>
