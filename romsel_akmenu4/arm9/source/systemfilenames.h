@@ -64,7 +64,7 @@
 #define SFN_UI_ICONS_DIRECTORY      SFN_UI_DIRECTORY"/icons/"
 
 #define SFN_LANGUAGE_DIRECTORY      SFN_SYSTEM_DIR"language/"
-#define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY UI_LANG"/language.txt"
+#define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
 
 #define SFN_FONTS_DIRECTORY         SFN_SYSTEM_DIR"fonts/"
 #define SFN_DEFAULT_FONT            "liberation.pcf"

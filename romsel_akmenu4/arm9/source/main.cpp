@@ -164,7 +164,6 @@ int main(int argc, char **argv)
 	cwl();
 
 	lang(); // load language file
-	//gs().language = lang().GetInt("font", "language", gs().language);
 
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();

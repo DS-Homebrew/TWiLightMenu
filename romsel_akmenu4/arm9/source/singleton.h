@@ -35,12 +35,12 @@ class singleton
     static inline T &instance(Args &&... args)
     {
         if (!_instance)
-            make(args...);
+            make(std::forward<Args>(args)...);
         return *_instance;
     }
 
   private:
-    static inline void make(Args &&... args)
+    static inline void make(Args... args)
     {
         if (!_instance)
             _instance = new T(std::forward<Args>(args)...);
