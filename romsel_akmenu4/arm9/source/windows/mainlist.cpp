@@ -509,6 +509,16 @@ void MainList::updateActiveIcon(bool updateContent)
         {
             u8 backBuffer[32 * 32 * 2];
             zeroMemory(backBuffer, 32 * 32 * 2);
+            // if (_romInfoList[_selectedRowId].isBannerAnimated()) {
+            //       int seqIdx = seq().allocate_sequence(
+            //         _romInfoList[_selectedRowId].saveInfo().gameCode,
+            //         _romInfoList[_selectedRowId].animatedIcon().sequence);
+
+            //     int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+            //     int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+
+            //     _romInfoList[_selectedRowId].drawDSiAnimatedRomIconMem(backBuffer, bmpIdx, palIdx);
+            // }
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
             memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * 2);
             _activeIcon.setBufferChanged();

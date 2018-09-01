@@ -53,7 +53,6 @@ private:
     case DSiMenuPlusPlusSettings::ELangChinese:
       return "lang_zh";
     default:
-      dbg_printf("Default language set.");
       return "lang_en";
     }
   }
