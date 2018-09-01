@@ -19,6 +19,11 @@
 #define SLOT1_SRL "/_nds/dsimenuplusplus/slot1launch.srldr"
 
 #define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
+#define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
 
+#define GAMEYOB_SD "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds"
+#define GAMEYOB_FC "/_nds/dsimenuplusplus/emulators/gameyob.nds"
 
+#define NESDS_FC  "/_nds/dsimenuplusplus/emulators/nesds.nds"
+#define NESDS_SD "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds"
 #endif

@@ -569,6 +569,21 @@ void MainWnd::bootFlashcard(const std::string &fullPath)
     }
 }
 
+void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
+{
+    LoaderConfig config(loader, "");
+    std::vector<const char *> argv{};
+    argv.emplace_back(loader.c_str());
+    argv.emplace_back(fullPath.c_str());
+    int err = config.launch(argv.size(), argv.data());
+    if (err)
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "Launch Error", errorString, MB_OK);
+        progressWnd().hide();
+    }
+}
+
 void MainWnd::launchSelected()
 {
 
@@ -617,6 +632,38 @@ void MainWnd::launchSelected()
             return;
         }
     }
+
+    std::string extension;
+    size_t lastDotPos = fullPath.find_last_of('.');
+    if (fullPath.npos != lastDotPos)
+        extension = fullPath.substr(lastDotPos);
+
+    // NES Launch
+    if (extension == ".nes")
+    {
+        if (sys().flashcardUsed())
+        {
+            bootFile(NESDS_FC, fullPath);
+        }
+        else
+        {
+            bootFile(NESDS_SD, fullPath);
+        }
+    }
+
+    // GB Launch
+    if (extension == ".gb" || extension == ".gbc")
+    {
+        if (sys().flashcardUsed())
+        {
+            bootFile(GAMEYOB_FC, fullPath);
+        }
+        else
+        {
+            bootFile(GAMEYOB_SD, fullPath);
+        }
+        // gb
+    }
 }
 
 void MainWnd::onKeyBPressed()
@@ -639,7 +686,7 @@ void MainWnd::showSettings(void)
 
 void MainWnd::bootSlot1(void)
 {
-    dbg_printf("Launch Slot1...");
+    dbg_printf("Launch Slot1..\n");
     if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
     {
         cardLaunch();
@@ -655,10 +702,10 @@ void MainWnd::bootSlot1(void)
 }
 
 void MainWnd::bootGbaRunner(void)
-{ 
-    if (sys().flashcardUsed() && ms().useGbarunner) 
+{
+    if (sys().flashcardUsed() && ms().useGbarunner)
     {
-        bootFlashcard("fat:/_nds/GBARunner2_fc.nds");
+        bootFlashcard(GBARUNNER_FC);
         return;
     }
 
