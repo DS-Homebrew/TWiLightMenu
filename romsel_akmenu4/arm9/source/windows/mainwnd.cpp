@@ -36,6 +36,7 @@
 #include "bootstrap_support/cardlaunch.h"
 #include "bootstrap_support/systemdetails.h"
 #include "bootstrap_support/pergamesettings.h"
+#include "bootstrap_support/dsargv.h"
 //#include "files.h"
 
 #include "inifile.h"
@@ -549,10 +550,42 @@ void MainWnd::launchSelected()
 
     if (rominfo.isDSRom())
     {
-        BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
+        // Direct Boot for homebrew.
+        if (gameConfig.directBoot && rominfo.isHomebrew())
+        {
+            std::string launchPath = fullPath;
+            std::vector<const char *> cargv{};
 
+            if (rominfo.isArgv())
+            {
+                ArgvFile argv(fullPath);
+                launchPath = argv.launchPath();
+                for (auto &string : argv.launchArgs())
+                    cargv.push_back(&string.front());
+            }
+
+            LoaderConfig config(fullPath, "");
+            progressWnd().setTipText("Please wait...");
+            progressWnd().update();
+            progressWnd().show();
+
+            int err = config.launch(0, cargv.data());
+            
+            if (err)
+            {
+                std::string errorString = formatString("Error %i", err);
+                messageBox(this, "ROM Start Error", errorString, MB_OK);
+                progressWnd().hide();
+            }
+            return;
+        }
+
+        //todo: Flashcart boot
+
+        // Bootstrap Boot
         dbg_printf("%s", _mainList->getSelectedShowName().c_str());
+        BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
         config.asyncPrefetch(gameConfig.asyncPrefetch == PerGameSettings::EDefault ? ms().bstrap_asyncPrefetch : (bool)gameConfig.asyncPrefetch)
             .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
@@ -570,7 +603,7 @@ void MainWnd::launchSelected()
         {
             config.language(PersonalData->language);
         }
-        else 
+        else
         // gameConfig is not default
         {
             config.language(gameConfig.language);
