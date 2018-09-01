@@ -21,7 +21,6 @@
 #ifndef _SAVEINFO_H_
 #define _SAVEINFO_H_
 
-// todo: remove globalSettings dependency.
 #include <nds.h>
 #include <vector>
 #include <string>
@@ -34,6 +33,8 @@ typedef struct _SAVE_INFO_T
   u32 dsiTid[2];
   PACKED u16 gameCRC;
   u32 gameSdkVersion;
+  u32 dsiPubSavSize;
+  u32 dsiPrvSavSize;
   u8 saveType;
 } SAVE_INFO;
 
@@ -109,6 +110,8 @@ typedef struct SAVE_INFO_EX_T
   u32 reserved[2];
 
   u32 dsiTid[2];
+  u32 dsiPubSavSize;
+  u32 dsiPrvSavSize;
   u32 gameSdkVersion;
 
   u8 getRumble(void) { return flags & SAVE_INFO_EX_RUMBLE; };

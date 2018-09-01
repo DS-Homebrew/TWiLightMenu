@@ -329,7 +329,6 @@ bool MainWnd::process(const Message &msg)
 bool MainWnd::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false, isL = msg.shift() & KeyMessage::UI_SHIFT_L;
-    bool allow = true; // todo: remove redudant.
     if (msg.id() == Message::keyDown)
     {
         switch (msg.keyCode())
@@ -396,18 +395,15 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
         case KeyMessage::UI_KEY_SELECT:
             if (isL)
             {
-                if (allow)
-                    _mainList->SwitchShowAllFiles();
+                _mainList->SwitchShowAllFiles();
                 _processL = false;
             }
             else
             {
-                if (allow)
-                {
-                    _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
-                    ms().ak_viewMode = _mainList->getViewMode();
-                    ms().saveSettings();
-                }
+
+                _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
+                ms().ak_viewMode = _mainList->getViewMode();
+                ms().saveSettings();
             }
             ret = true;
             break;
@@ -584,9 +580,13 @@ void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
     }
 }
 
+// void MainWnd::bootUnlaunch(DSRomInfo& rominfo)
+// {
+
+// }
+
 void MainWnd::launchSelected()
 {
-
     dbg_printf("Launch.");
     std::string fullPath = _mainList->getSelectedFullPath();
 
@@ -607,6 +607,13 @@ void MainWnd::launchSelected()
     if (rominfo.isDSiWare() && rominfo.isArgv())
     {
         dsiLaunch(rominfo.saveInfo().dsiTid);
+        return;
+    }
+
+    // Todo: Don't boot on 3DS.
+    if (rominfo.isDSiWare() && !sys().flashcardUsed())
+    {
+
         return;
     }
 
@@ -767,10 +774,9 @@ void MainWnd::onFolderChanged()
             showSettings();
         }
 
-        // todo: SLOT1 Launch Method SRLOADER Settings.
         if (dirShowName == SPATH_SLOT1)
         {
-            if (sys().arm7SCFGLocked())
+            if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
             {
                 cardLaunch();
             }
@@ -782,7 +788,6 @@ void MainWnd::onFolderChanged()
 
         if (dirShowName == SPATH_GBARUNNER)
         {
-            //todo: SLOT2 boot + flashcard gbarunner
             bootGbaRunner();
         }
 
