@@ -43,7 +43,6 @@
 // -- AK End ------------
 
 #include <stdio.h>
-#include <fat.h>
 #include <sys/stat.h>
 #include <limits.h>
 
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
 {
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
-
+	
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
@@ -112,11 +111,8 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-
-	bool fatInitOk = fatInitDefault();
-
-	sys();
-
+	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
+	
 	irq().init();
 
 	// init graphics
@@ -144,13 +140,22 @@ int main(int argc, char **argv)
 	gdi().switchSubEngineMode();
 #endif
 	dbg_printf("GDI Init!");
-
-	if (!fatInitOk)
+	// if (argc >= 1) dbg_printf(argv[0]);
+	// stop();
+	if (!sys().fatInitOk())
 	{
 		consoleDemoInit();
 		printf("Failed to Init FAT");
 		stop();
 	}
+
+	// if (!nitroFSInitOk)
+	// {
+	// 	consoleDemoInit();
+	// 	printf("Failed to init NitroFS");
+	// 	stop();
+	// }
+
 
 	
 	// init unicode
