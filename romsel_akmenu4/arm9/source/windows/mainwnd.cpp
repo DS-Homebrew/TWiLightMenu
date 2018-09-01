@@ -36,6 +36,7 @@
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
 #include "common/dsargv.h"
+#include "common/flashcardlaunch.h"
 //#include "files.h"
 
 #include "common/inifile.h"
@@ -556,6 +557,18 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         progressWnd().hide();
     }
 }
+
+void MainWnd::bootFlashcard(const std::string &fullPath)
+{
+    int err = loadGameOnFlashcard(fullPath.c_str());
+    if (err)
+    {
+        std::string errorString = formatString("Error %i", err);
+        messageBox(this, "Flashcard Error", errorString, MB_OK);
+        progressWnd().hide();
+    }
+}
+
 void MainWnd::launchSelected()
 {
 
@@ -591,9 +604,11 @@ void MainWnd::launchSelected()
             bootArgv(rominfo);
             return;
         }
+
         else if (sys().flashcardUsed())
         {
-            dbg_printf("%s",fullPath.c_str());
+            dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
+            bootFlashcard(fullPath);
             return;
         }
         else

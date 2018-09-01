@@ -98,6 +98,8 @@ class MainWnd : public akui::Form
 
     void bootBootstrap(PerGameSettings &gameConfig, DSRomInfo& rominfo);
 
+    void bootFlashcard(const std::string& filename);
+    
     StartMenu *_startMenu;
 
     akui::Button *_startButton;
