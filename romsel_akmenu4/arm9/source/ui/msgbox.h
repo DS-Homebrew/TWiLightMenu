@@ -29,17 +29,19 @@
 namespace akui
 {
 
-#define MB_OK 1
-#define MB_CANCEL 2
-#define MB_OK_CANCEL 3
-#define MB_YES 4
-#define MB_NO 8
-#define MB_YES_NO 12
+#define MB_OK 1        // 0b00000001
+#define MB_CANCEL 2    // 0b00000010
+#define MB_OK_CANCEL 3 // 0b00000011
+#define MB_YES 4       // 0b00000100
+#define MB_NO 8        // 0b00001000
+#define MB_YES_NO 12   // 0b00001100
+#define MB_HOLD_X 16    // 0b00010000
 
 #define ID_OK 1
 #define ID_CANCEL 0
 #define ID_YES 1
 #define ID_NO 0
+#define ID_HOLD_X 0x10
 
 class MessageBox : public Form
 {
@@ -70,6 +72,8 @@ class MessageBox : public Form
 
     void onNO() { onCANCEL(); }
 
+    void onHOLDX();
+
     bool processKeyMessage(const KeyMessage &msg);
 
     bool processTouchMessage(const TouchMessage &msg);
@@ -84,6 +88,7 @@ class MessageBox : public Form
     Button *_buttonCANCEL;
     Button *_buttonYES;
     Button *_buttonNO;
+    Button *_buttonHOLD_X;
     FormDesc _renderDesc;
 };
 

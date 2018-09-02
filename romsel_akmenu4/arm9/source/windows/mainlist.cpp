@@ -217,6 +217,8 @@ bool MainList::enterDir(const std::string &dirName)
 
     extNames.push_back(".nds");
     extNames.push_back(".ids");
+    extNames.push_back(".dsi");
+
     extNames.push_back(".gba");
     extNames.push_back(".gb");
     extNames.push_back(".gbc");

@@ -69,17 +69,17 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     _text = title;
     _msg = breakedMsg;
     _style = style;
-    //_msgRet = -1;
+
     _buttonOK = NULL;
     _buttonCANCEL = NULL;
     _buttonYES = NULL;
     _buttonNO = NULL;
+    _buttonHOLD_X = NULL;
 
     _buttonOK = new Button(0, 0, 46, 18, this, "\x01 OK");
     _buttonOK->setText("\x01 " + LANG("message box", "ok"));
     _buttonOK->setStyle(Button::press);
     _buttonOK->hide();
-
     _buttonOK->loadAppearance(SFN_BUTTON3);
     _buttonOK->setStyle(Button::press);
     _buttonOK->clicked.connect(this, &MessageBox::onOK);
@@ -105,19 +105,25 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     _buttonNO->setText("\x02 " + LANG("message box", "no"));
     _buttonNO->setStyle(Button::press);
     _buttonNO->hide();
-    //_buttonNO->setTextColor( RGB15(20,14,0) );
     _buttonNO->loadAppearance(SFN_BUTTON3);
     _buttonNO->clicked.connect(this, &MessageBox::onCANCEL);
     addChildWindow(_buttonNO);
 
+    _buttonHOLD_X = new Button(0, 0, 46, 18, this, "\x01 OK");
+    _buttonHOLD_X->setText("\x03 " + LANG("message box", "Hold X"));
+    _buttonHOLD_X->setStyle(Button::press);
+    _buttonHOLD_X->hide();
+    _buttonHOLD_X->loadAppearance(SFN_BUTTON4);
+    _buttonHOLD_X->setStyle(Button::toggle);
+    //_buttonHOLD_X->clicked.connect(this, &MessageBox::onHOLDX);
+    addChildWindow(_buttonHOLD_X);
+
     s16 nextButtonX = size().x;
     s16 buttonPitch = 60;
     s16 buttonY = size().y - _buttonNO->size().y - 4;
-    // ��һ��Ҫ���İ�ť��λ��
+
     if (_style & MB_NO)
     {
-        // ��nextButtonXλ�û� NO ��ť
-        // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonNO->size().x + 8;
         nextButtonX -= buttonPitch;
         _buttonNO->setRelativePosition(Point(nextButtonX, buttonY));
@@ -126,8 +132,6 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
 
     if (_style & MB_YES)
     {
-        // ��nextButtonXλ�û� YES ��ť
-        // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonYES->size().x + 8;
         nextButtonX -= buttonPitch;
         _buttonYES->setRelativePosition(Point(nextButtonX, buttonY));
@@ -136,8 +140,6 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
 
     if (_style & MB_CANCEL)
     {
-        // ��nextButtonXλ�û� CANCEL ��ť
-        // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonCANCEL->size().x + 8;
         nextButtonX -= buttonPitch;
         _buttonCANCEL->setRelativePosition(Point(nextButtonX, buttonY));
@@ -146,12 +148,18 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
 
     if (_style & MB_OK)
     {
-        // ��nextButtonXλ�û� OK ��ť
-        // nextButtonX -= ��ť��� + �հ������
         buttonPitch = _buttonOK->size().x + 8;
         nextButtonX -= buttonPitch;
         _buttonOK->setRelativePosition(Point(nextButtonX, buttonY));
         _buttonOK->show();
+    }
+
+    if (_style & MB_HOLD_X)
+    {
+        buttonPitch = _buttonHOLD_X->size().x + 8;
+        nextButtonX -= buttonPitch;
+        _buttonHOLD_X->setRelativePosition(Point(nextButtonX, buttonY));
+        _buttonHOLD_X->show();
     }
 
     arrangeChildren();
@@ -165,11 +173,17 @@ MessageBox::~MessageBox()
     delete _buttonCANCEL;
     delete _buttonYES;
     delete _buttonNO;
+    delete _buttonHOLD_X;
 }
 
 void MessageBox::onOK()
 {
     _modalRet = ID_OK;
+}
+
+void MessageBox::onHOLDX()
+{
+    _modalRet = ID_HOLD_X;
 }
 
 void MessageBox::onCANCEL()
@@ -202,7 +216,7 @@ bool MessageBox::process(const Message &msg)
 bool MessageBox::processKeyMessage(const KeyMessage &msg)
 {
     bool ret = false;
-    if (msg.id() == Message::keyDown)
+    if (msg.id() == Message::keyDown && !(_style & MB_HOLD_X))
     {
         switch (msg.keyCode())
         {
@@ -213,6 +227,17 @@ bool MessageBox::processKeyMessage(const KeyMessage &msg)
             break;
         case KeyMessage::UI_KEY_B:
             onCANCEL();
+            ret = true;
+            return true;
+            break;
+        }
+    }
+    else if (msg.id() == Message::keyDown && (_style & MB_HOLD_X))
+    {
+        switch (msg.keyCode())
+        {
+        case KeyMessage::UI_KEY_X:
+            onHOLDX();
             ret = true;
             return true;
             break;

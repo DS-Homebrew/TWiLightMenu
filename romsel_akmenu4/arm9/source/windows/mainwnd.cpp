@@ -38,6 +38,7 @@
 #include "common/dsargv.h"
 #include "common/flashcardlaunch.h"
 #include "common/gbaswitch.h"
+#include "common/unlaunchboot.h"
 //#include "files.h"
 
 #include "common/inifile.h"
@@ -613,8 +614,28 @@ void MainWnd::launchSelected()
     // Todo: Don't boot on 3DS.
     if (rominfo.isDSiWare() && !sys().flashcardUsed())
     {
+        // Unlaunch boot here....
+        UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
 
-        return;
+        // Roughly associated with 50%, 90%
+        unlaunch.onPrvSavCreated(bootstrapSaveHandler)
+            .onPubSavCreated(bootstrapLaunchHandler);
+
+            
+        progressWnd().setPercent(0);
+        progressWnd().setTipText("Preparing Unlaunch Boot...");
+        progressWnd().update();
+        progressWnd().show();
+
+        if (!unlaunch.prepare())
+        {
+            messageBox(this, "Unlaunch Error", "\"bootthis\" file(s) already exist on the SD root. Please back them up before launching DSiWare.", MB_OK);
+            progressWnd().hide();
+            return;
+        }
+        progressWnd().hide();
+        messageBox(this, "Boot DSiWare with Unlaunch", "Please press and hold the X button. Hold it on the black screen for 2 seconds.", MB_HOLD_X);
+        unlaunch.launch();
     }
 
     if (rominfo.isDSRom())
