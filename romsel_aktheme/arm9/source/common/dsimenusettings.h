@@ -94,6 +94,12 @@ class DSiMenuPlusPlusSettings
         E3DSOriginal = 2,
         E3DSNew = 3
     };
+
+    enum TSoundFreq
+    {
+        EFreq32KHz = 0,
+        EFreq47KHz = 1
+    };
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();
@@ -144,7 +150,8 @@ class DSiMenuPlusPlusSettings
     int launchType;
     std::string homebrewArg;
     bool homebrewBootstrap;
-
+    bool soundfreq;
+    bool showlogo;
     // unused...
     std::string r4_theme;
 };

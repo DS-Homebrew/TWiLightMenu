@@ -40,6 +40,7 @@
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
 #include "common/nitrofs.h"
+#include "common/dsimenusettings.h"
 
 #include "language.h"
 
@@ -64,14 +65,14 @@ std::string dsiWarePrvPath;
 std::string homebrewArg;
 std::string bootstrapfilename;
 
-static int consoleModel = 0;
-/*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
+// static int consoleModel = 0;
+// /*	0 = Nintendo DSi (Retail)
+// 	1 = Nintendo DSi (Dev/Panda)
+// 	2 = Nintendo 3DS
+// 	3 = New Nintendo 3DS	*/
 
-static bool showlogo = true;
-static bool gotosettings = false;
+// static bool showlogo = true;
+// static bool gotosettings = false;
 
 int appName = 0;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
 const char* appNameText = "";
@@ -81,19 +82,19 @@ static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
 
-static bool startButtonLaunch = false;
-static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
-static bool bootstrapFile = false;
-static bool homebrewBootstrap = false;
+// static bool startButtonLaunch = false;
+// static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+// static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
+// static bool bootstrapFile = false;
+// static bool homebrewBootstrap = false;
 
-static bool useGbarunner = false;
-static bool autorun = false;
-static int theme = 0;
-static int subtheme = 0;
-static bool showDirectories = true;
-static bool showBoxArt = true;
-static bool animateDsiIcons = false;
+// static bool useGbarunner = false;
+// static bool autorun = false;
+// static int theme = 0;
+// static int subtheme = 0;
+// static bool showDirectories = true;
+// static bool showBoxArt = true;
+// static bool animateDsiIcons = false;
 
 static int bstrap_language = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
@@ -122,41 +123,41 @@ static int flashcard;
 
 void LoadSettings(void) {
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	//CIniFile settingsini( settingsinipath );
 
-	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
-	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
-	autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
-	appName = settingsini.GetInt("SRLOADER", "APP_NAME", 0);
-	showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
-	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
-	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
-	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
-	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
-	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-	startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
-	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
-	if (flashcardUsed && launchType == 0) launchType = 1;
-	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
-	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
-	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
-	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
-	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
-	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+	// guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
+	// useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
+	// autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", 0);
+	// appName = settingsini.GetInt("SRLOADER", "APP_NAME", 0);
+	// showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
+	// gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
+	// soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
+	// flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
+	// slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
+	// bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	// startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
+	// launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+	// if (flashcardUsed && launchType == 0) launchType = 1;
+	// dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
+	// dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
+	// dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
+	// homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
+	// homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
+	// consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
-	// Customizable UI settings.
-	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
-	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
-	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
-	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
-	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
+	// // Customizable UI settings.
+	// theme = settingsini.GetInt("SRLOADER", "THEME", 0);
+	// subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
+	// showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	// showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
+	// animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 
-	// Default nds-bootstrap settings
-	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
-	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
-	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
+	// // Default nds-bootstrap settings
+	// bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	// boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	// boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+	// soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
+	// bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 
 	if(!flashcardUsed) {
 		// nds-bootstrap
@@ -172,34 +173,35 @@ void LoadSettings(void) {
 }
 
 void SaveSettings(void) {
+	ms().saveSettings();
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	// CIniFile settingsini( settingsinipath );
 
-	settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
-	settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-	settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
-	settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
-	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
-	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
-	settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
-	settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
-	settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
-	settingsini.SetInt("SRLOADER", "START_BUTTON_LAUNCH", startButtonLaunch);
+	// settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
+	// settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+	// settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
+	// settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
+	// settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+	// settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
+	// settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
+	// settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
+	// settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
+	// settingsini.SetInt("SRLOADER", "START_BUTTON_LAUNCH", startButtonLaunch);
 
-	// UI settings.
-	settingsini.SetInt("SRLOADER", "THEME", theme);
-	settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
-	settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
-	settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
-	settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+	// // UI settings.
+	// settingsini.SetInt("SRLOADER", "THEME", theme);
+	// settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+	// settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
+	// settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
+	// settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 
-	// Default nds-bootstrap settings
-	settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-	settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
-	settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
-	settingsini.SaveIniFile(settingsinipath);
+	// // Default nds-bootstrap settings
+	// settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+	// settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+	// settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+	// settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
+	// settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
+	// settingsini.SaveIniFile(settingsinipath);
 
 	if(!flashcardUsed) {
 		// nds-bootstrap
@@ -221,7 +223,7 @@ static int settingscursor = 0;
 
 touchPosition touch;
 
-static bool arm7SCFGLocked = false;
+//static bool arm7SCFGLocked = false;
 
 using namespace std;
 
@@ -472,7 +474,7 @@ int main(int argc, char **argv) {
 	//consoleDemoInit();
 
 	bool fatInited = fatInitDefault();
-
+	
 	/* if (!isDSiMode() && REG_SCFG_EXT == 0x8307F100) {
 		// Force-enable DSi mode
 		extern bool __dsimode;
@@ -519,7 +521,8 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 	
-	LoadSettings();
+	ms().loadSettings();
+	//LoadSettings();
 	
 	swiWaitForVBlank();
 

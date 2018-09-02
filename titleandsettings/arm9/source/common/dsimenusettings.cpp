@@ -48,6 +48,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
+    soundfreq = EFreq32KHz;
+    showlogo = true;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -67,6 +69,9 @@ void DSiMenuPlusPlusSettings::loadSettings()
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS())
         useGbarunner = true;
+
+	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
+    showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
 
     gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
