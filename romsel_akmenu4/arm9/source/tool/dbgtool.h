@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 static inline int dbg_printf( const char* format, ... )

@@ -469,8 +469,9 @@ void MainList::drawIcons()
 
                 int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
                 int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
-                // todo: fliph flipv
-                _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, _engine);
+                bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
+                bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
+                _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, flipH, flipV, _engine);
             }
             else
             {

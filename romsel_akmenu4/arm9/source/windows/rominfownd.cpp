@@ -87,7 +87,10 @@ void RomInfoWnd::draw()
 
         int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
         int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
-        _romInfo.drawDSiAnimatedRomIcon(position().x + 8, position().y + 24, bmpIdx, palIdx, selectedEngine());
+        bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
+        bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
+
+        _romInfo.drawDSiAnimatedRomIcon(position().x + 8, position().y + 24, bmpIdx, palIdx, flipH, flipV, selectedEngine());
     }
     else
     {

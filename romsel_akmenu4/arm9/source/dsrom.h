@@ -82,10 +82,10 @@ public:
 
 public:
   void drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine);
-  void drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHICS_ENGINE engine);
+  void drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool flipH, bool flipV, GRAPHICS_ENGINE engine);
 
   void drawDSRomIconMem(void *mem);
-  void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette);
+  void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV);
 
   tNDSBanner &banner(void);
   tDSiAnimatedIcon &animatedIcon(void);

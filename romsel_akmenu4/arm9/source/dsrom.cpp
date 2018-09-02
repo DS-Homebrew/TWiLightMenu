@@ -216,7 +216,7 @@ void DSRomInfo::drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine)
     }
 }
 
-void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHICS_ENGINE engine)
+void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool flipH, bool flipV, GRAPHICS_ENGINE engine)
 {
     if (_extIcon >= 0)
     {
@@ -250,19 +250,23 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, GRAPHIC
             //int py = (tile / 4) * 8 + (2 * pixel / 8);
             int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
             int py = ((tile >> 2) << 3) + (pixel >> 2);
-
+            int drawX = flipH ? 39 - (px + x) : (px + x);
+            int drawY = flipV ? 31 + (-py + y) : (py + y);
+            // 32 by 32.
             u8 idx1 = (a_byte & 0xf0) >> 4;
             if (skiptransparent || 0 != idx1)
             {
+                
                 gdi().setPenColor(_dsiIcon.palette_frames[palette][idx1], engine);
-                gdi().drawPixel(px + 1 + x, py + y, engine);
+
+                gdi().drawPixel(drawX, drawY, engine);
             }
 
             u8 idx2 = (a_byte & 0x0f);
             if (skiptransparent || 0 != idx2)
             {
                 gdi().setPenColor(_dsiIcon.palette_frames[palette][idx2], engine);
-                gdi().drawPixel(px + x, py + y, engine);
+                gdi().drawPixel(drawX + (flipH ? 1 : - 1), drawY, engine);
             }
         }
     }
@@ -299,10 +303,11 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
             int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
             int py = ((tile >> 2) << 3) + (pixel >> 2);
 
+         
             u8 idx1 = (a_byte & 0xf0) >> 4;
             if (skiptransparent || 0 != idx1)
             {
-                pmem[py * 32 + px + 1] = _banner.palette[idx1] | BIT(15);
+              pmem[py * 32 + px + 1] = _banner.palette[idx1] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx1] );
                 //gdi().drawPixel( px+1+x, py+y, engine );
             }
@@ -310,7 +315,7 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
             u8 idx2 = (a_byte & 0x0f);
             if (skiptransparent || 0 != idx2)
             {
-                pmem[py * 32 + px] = _banner.palette[idx2] | BIT(15);
+                pmem[py * 32 + px]  = _banner.palette[idx2] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx2] );
                 //gdi().drawPixel( px+x, py+y, engine );
             }
@@ -318,7 +323,7 @@ void DSRomInfo::drawDSRomIconMem(void *mem)
     }
 }
 
-void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette)
+void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV)
 {
     if (_extIcon >= 0)
     {
@@ -356,10 +361,13 @@ void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette)
             int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
             int py = ((tile >> 2) << 3) + (pixel >> 2);
 
+            int drawX =  flipH ? 30 - (px) : px + 1;
+            int drawY =  flipV ? 31 + (-py) : py;
+
             u8 idx1 = (a_byte & 0xf0) >> 4;
             if (skiptransparent || 0 != idx1)
             {
-                pmem[py * 32 + px + 1] = _dsiIcon.palette_frames[palette][idx1] | BIT(15);
+                pmem[drawY * 32 + drawX] = _dsiIcon.palette_frames[palette][idx1] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx1] );
                 //gdi().drawPixel( px+1+x, py+y, engine );
             }
@@ -367,7 +375,8 @@ void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette)
             u8 idx2 = (a_byte & 0x0f);
             if (skiptransparent || 0 != idx2)
             {
-                pmem[py * 32 + px] = _dsiIcon.palette_frames[palette][idx2] | BIT(15);
+                 
+                pmem[drawY * 32 + drawX + (flipH ? 1 : - 1)] = _dsiIcon.palette_frames[palette][idx2] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx2] );
                 //gdi().drawPixel( px+x, py+y, engine );
             }
