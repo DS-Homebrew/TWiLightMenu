@@ -1365,7 +1365,7 @@ int main(int argc, char **argv) {
 							printSmall(false, 224, selyPos, "R4");
 							break;
 						case 3:
-							printSmall(false, 200, selyPos, "akMenu");
+							printSmall(false, 200, selyPos, "Acekard");
 							break;
 					}
 					selyPos += 12;
