@@ -79,7 +79,7 @@ void RomInfoWnd::draw()
 {
     _renderDesc.draw(windowRectangle(), _engine);
 
-    if (_romInfo.isBannerAnimated())
+    if (_romInfo.isBannerAnimated() && ms().animateDsiIcons)
     {
         int seqIdx = seq().allocate_sequence(
             _romInfo.saveInfo().gameCode,

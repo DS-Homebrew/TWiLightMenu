@@ -461,7 +461,7 @@ void MainList::drawIcons()
             }
             s32 itemX = _position.x + 1;
             s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated())
+            if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
             {
                 int seqIdx = seq().allocate_sequence(
                     _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
