@@ -214,7 +214,6 @@ bool FontPcf::Load(const char *aFileName)
     } while (false);
     fclose(font);
   }
-  dbg
   return res;
 }
 
