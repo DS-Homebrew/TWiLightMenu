@@ -1,3 +1,4 @@
+#include <string>
 #pragma once
 #ifndef __PER_GAME_SETTINGS_H__
 #define __PER_GAME_SETTINGS_H__

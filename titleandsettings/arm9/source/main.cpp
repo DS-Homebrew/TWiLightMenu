@@ -34,12 +34,12 @@
 
 #include "graphics/graphics.h"
 
-#include "nds_loader_arm9.h"
 
 #include "graphics/fontHandler.h"
 
-#include "inifile.h"
-#include "nitrofs.h"
+#include "common/nds_loader_arm9.h"
+#include "common/inifile.h"
+#include "common/nitrofs.h"
 
 #include "language.h"
 

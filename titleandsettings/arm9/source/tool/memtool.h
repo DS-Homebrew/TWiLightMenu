@@ -24,22 +24,25 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------------*/
 
-#include "stringtool.h"
-#include <cstdarg>
-#include <cstdio>
-#include <malloc.h>
 
-std::string formatString( const char* fmt, ... )
+
+
+
+
+
+
+
+#ifndef _MEMTOOL_H_
+#define _MEMTOOL_H_
+
+inline void fillMemory( void * addr, u32 count, u32 value )
 {
-    const char * f = fmt;
-    va_list argList;
-    va_start(argList, fmt);
-    char * ptempStr = NULL;
-    size_t max_len = vasiprintf( &ptempStr, f, argList);
-    std::string str( ptempStr );
-    str.resize( max_len );
-    free( ptempStr );
-    va_end(argList);
-    return str;
+    swiFastCopy( (void*)(&value), addr, (count>>2) | COPY_MODE_WORD | COPY_MODE_FILL);
 }
 
+inline void zeroMemory( void * addr, u32 count )
+{
+    fillMemory( addr, count, 0 );
+}
+
+#endif//_MEMTOOL_H_

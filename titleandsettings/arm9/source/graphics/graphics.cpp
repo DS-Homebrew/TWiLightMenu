@@ -22,7 +22,7 @@
 #include <gl2d.h>
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
-#include "../inifile.h"
+#include "common/inifile.h"
 
 #include "title_sub.h"
 #include "top_bg.h"

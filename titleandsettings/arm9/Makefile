@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	titleandsettings
 BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
+SOURCES		:=	source source/graphics source/tool source/common
+INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

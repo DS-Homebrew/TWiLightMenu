@@ -1,5 +1,5 @@
 /*
-    inifile.h
+    common/inifile.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009-2010 yellow wood goblin
@@ -45,13 +45,13 @@ class CIniFile
     void SetStringVector(const std::string& Section,const std::string& Item,std::vector<std::string>& strings,char delimiter=',');
   protected:
     std::string m_sFileName;
-    typedef std::vector<std::string> cStringArray;
-    cStringArray m_FileContainer;
+    typedef std::vector<std::string> StringArray;
+    StringArray m_FileContainer;
     bool m_bLastResult;
     bool m_bModified;
     bool m_bReadOnly;
-    typedef std::map<std::string,size_t> cSectionCache;
-    cSectionCache m_Cache;
+    typedef std::map<std::string,size_t> SectionCache;
+    SectionCache m_Cache;
 
     bool InsertLine(size_t line,const std::string& str);
     bool ReplaceLine(size_t line,const std::string& str);

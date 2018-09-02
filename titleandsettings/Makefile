@@ -25,8 +25,8 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 TARGET		:=	titleandsettings
 BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
+SOURCES		:=	source source/graphics source/tool source/common
+INCLUDES	:=	include source
 DATA		:=	data  
 NITRODATA	:=	nitrofiles
 GRAPHICS	:=  gfx
