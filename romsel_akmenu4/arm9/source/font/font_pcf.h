@@ -28,6 +28,7 @@
 #define __FONT_PCF_H__
 
 #include "font.h"
+#include <cstdio>
 
 //#define SMALL 1
 
@@ -67,10 +68,10 @@ class FontPcf: public Font
     u32 iAscent;
     u32 iDescent;
   private:
-    bool ParseAccels(int aFont,u32 aSize,u32 aOffset);
-    bool ParseBitmaps(int aFont,u32 aSize,u32 aOffset);
-    bool ParseMetrics(int aFont,u32 aSize,u32 aOffset);
-    bool ParseEncodings(int aFont,u32 aSize,u32 aOffset);
+    bool ParseAccels(FILE* aFont,u32 aSize,u32 aOffset);
+    bool ParseBitmaps(FILE* aFont,u32 aSize,u32 aOffset);
+    bool ParseMetrics(FILE* aFont,u32 aSize,u32 aOffset);
+    bool ParseEncodings(FILE* aFont,u32 aSize,u32 aOffset);
     s32 SearchInternal(u16 aCode);
     s32 Search(u16 aCode);
     static u32 utf8toucs2(const u8* aSource,u32* aLength);

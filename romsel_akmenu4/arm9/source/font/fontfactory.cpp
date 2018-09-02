@@ -45,7 +45,7 @@ void FontFactory::makeFont(void)
     }
     else if (sys().useNitroFS())
     {   
-        // This doesn't work so far, but we'll keep it anyways.
+        // This doesn't work so far due to bug in nitrofs, but we'll keep it anyways.
         _font->Load(SFN_FALLBACK_FONT);
     }
 }

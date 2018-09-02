@@ -48,13 +48,13 @@ void FontPcf::Info(const char *aString, u32 *aWidth, u32 *aSymbolCount)
   }
 }
 
-bool FontPcf::ParseAccels(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseAccels(FILE *aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
-  if (lseek(aFont, aOffset, SEEK_SET) < 0)
+  if (fseek(aFont, aOffset, SEEK_SET) != 0)
     return false;
   SPcfAccel header;
-  if (read(aFont, &header, sizeof(header)) != sizeof(header))
+  if (fread(&header, sizeof(header), 1, aFont) != 1)
     return false;
   res = true;
   iAscent = header.iFontAscent;
@@ -63,13 +63,13 @@ bool FontPcf::ParseAccels(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool FontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseBitmaps(FILE* aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
-  if (lseek(aFont, aOffset, SEEK_SET) < 0)
+  if (fseek(aFont, aOffset, SEEK_SET) != 0)
     return false;
   SPcfBitmapsHeader header;
-  if (read(aFont, &header, sizeof(header)) != sizeof(header))
+  if (fread(&header, sizeof(header), 1, aFont) != 1)
     return false;
   iGlyphs = new (std::nothrow) SGlyph[header.iCount];
   if (!iGlyphs)
@@ -84,15 +84,15 @@ bool FontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
     {
       do
       {
-        if (read(aFont, offsets, sizeof(u32) * header.iCount) != (ssize_t)(sizeof(u32) * header.iCount))
+        if (fread(offsets, sizeof(u32) * header.iCount, 1, aFont) != 1)
           break;
         for (u32 ii = 0; ii < header.iCount; ii++)
         {
           iGlyphs[ii].iOffset = offsets[ii];
         }
-        if (lseek(aFont, 16, SEEK_CUR) < 0)
+        if (fseek(aFont, 16, SEEK_CUR) != 0)
           break;
-        if (read(aFont, iData, iDataSize) != (ssize_t)iDataSize)
+        if (fread(iData, iDataSize, 1, aFont) != 1)
           break;
         res = true;
       } while (false);
@@ -102,15 +102,15 @@ bool FontPcf::ParseBitmaps(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool FontPcf::ParseMetrics(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseMetrics(FILE *aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
-  if (lseek(aFont, aOffset, SEEK_SET) < 0)
+  if (fseek(aFont, aOffset, SEEK_SET) != 0)
     return false;
   u8 *buffer = new (std::nothrow) u8[aSize];
   if (buffer)
   {
-    if (read(aFont, buffer, aSize) == (ssize_t)aSize)
+    if (fread(buffer, aSize, 1, aFont) == 1)
     {
       u32 format = *(u32 *)buffer;
       if (format & PCF_COMPRESSED_METRICS)
@@ -137,15 +137,15 @@ bool FontPcf::ParseMetrics(int aFont, u32 aSize, u32 aOffset)
   return res;
 }
 
-bool FontPcf::ParseEncodings(int aFont, u32 aSize, u32 aOffset)
+bool FontPcf::ParseEncodings(FILE *aFont, u32 aSize, u32 aOffset)
 {
   bool res = false;
-  if (lseek(aFont, aOffset, SEEK_SET) < 0)
+  if (fseek(aFont, aOffset, SEEK_SET) != 0)
     return false;
   u8 *buffer = new (std::nothrow) u8[aSize];
   if (buffer)
   {
-    if (read(aFont, buffer, aSize) == (ssize_t)aSize)
+    if (fread(buffer, aSize, 1, aFont) == 1)
     {
       SPcfEncodingsHeader &header = *(SPcfEncodingsHeader *)(buffer);
       u32 nencoding = (header.iLastCol - header.iFirstCol + 1) * (header.iLastRow - header.iFirstRow + 1);
@@ -172,18 +172,18 @@ int FontPcf::Compare(const void *a, const void *b)
 bool FontPcf::Load(const char *aFileName)
 {
   bool res = false;
-  int font = open(aFileName, O_RDONLY);
-  if (font >= 0)
+  FILE *font = fopen(aFileName, "rb");
+  if (font)
   {
     do
     {
       SPcfHeader header;
-      if (read(font, &header, sizeof(header)) != sizeof(header))
+      if (fread(&header, sizeof(header), 1, font) != 1)
         break;
       if (header.iVersion != PCF_FILE_VERSION)
         break;
       SPcfEntry entries[header.iCount];
-      if (read(font, entries, sizeof(SPcfEntry) * header.iCount) != (ssize_t)(sizeof(SPcfEntry) * header.iCount))
+      if (fread(entries, sizeof(SPcfEntry) * header.iCount, 1, font) != 1)
         break;
       s32 accelsIndex = -1, bitmapsIndex = -1, metricsIndex = -1, encodingsIndex = -1;
       for (u32 ii = 0; ii < header.iCount; ii++)
@@ -212,7 +212,7 @@ bool FontPcf::Load(const char *aFileName)
         res = true;
       }
     } while (false);
-    close(font);
+    fclose(font);
   }
   return res;
 }
