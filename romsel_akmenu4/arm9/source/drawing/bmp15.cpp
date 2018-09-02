@@ -23,6 +23,7 @@
 #include <list>
 #include <string>
 #include "drawing/bmp15.h"
+#include "tool/dbgtool.h"
 
 BMP15::BMP15() : _width(0), _height(0), _pitch(0), _buffer(NULL)
 {
@@ -50,7 +51,7 @@ BMP15 createBMP15(u32 width, u32 height)
     //dbg_printf( "buffer %08x\n", bmp.buffer() );
 
     u32 bufferSize = height * pitch;
-    if (bufferSize & 3) // ��� bufferSize ���ǰ�4�ֽڶ��룬�Ͱ�������������
+    if (bufferSize & 3)
         bufferSize += 4 - (bufferSize & 3);
     bmp._buffer = new u32[bufferSize >> 2];
     return bmp;
@@ -67,7 +68,7 @@ BMP15 createBMP15FromMem(void *mem)
 
 BMP15 createBMP15FromFile(const std::string &filename)
 {
-    //dbg_printf( "createBMP15FromFile (%s)\n", filename );
+    dbg_printf("createBMP15FromFile (%s)\n", filename.c_str());
 
     str_bmp_list::iterator it;
     for (it = _bmpPool.begin(); it != _bmpPool.end(); ++it)
@@ -81,19 +82,21 @@ BMP15 createBMP15FromFile(const std::string &filename)
     FILE *f = fopen(filename.c_str(), "rb");
     if (NULL == f)
     {
-       // dbg_printf("(%s) file does not exist\n", filename.c_str());
+        dbg_printf("(%s) file does not exist\n", filename.c_str());
         return BMP15();
     }
 
-    // ��ȡ�ļ�����
     fseek(f, 0, SEEK_END);
-    int fileSize = ftell(f);
+    // Commented out to allow NitroFS Fallback.
+    // int fileSize = ftell(f);
 
-    if (-1 == fileSize)
-    {
-        fclose(f);
-        return BMP15();
-    }
+    // if (-1 == fileSize && !sys)
+    // {
+    //     dbg_printf("(%s) file bad filesize\n", filename.c_str());
+
+    //     fclose(f);
+    //     return BMP15();
+    // }
 
     u16 bmMark = 0;
     fseek(f, 0, SEEK_SET);
@@ -105,7 +108,6 @@ BMP15 createBMP15FromFile(const std::string &filename)
         return BMP15();
     }
 
-    // �ҳ�bmp�ߺͿ�
     u32 width = 0;
     u32 height = 0;
     fseek(f, 0x12, SEEK_SET);

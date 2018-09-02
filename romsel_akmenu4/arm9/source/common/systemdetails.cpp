@@ -8,6 +8,8 @@ SystemDetails::SystemDetails()
     _flashcardUsed = false;
     _arm7SCFGLocked = false;
     _isRegularDS = true;
+    _nitroFsInitOk = false;
+    _fatInitOk = false;
 
     fifoWaitValue32(FIFO_USER_06);
     if (fifoGetValue32(FIFO_USER_03) == 0)
@@ -33,14 +35,11 @@ void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningP
         return;
 
     _fatInitOk = fatInitDefault();
-    _nitroFsInitOk = (bool)nitroFSInit(nitrofsPath);
+    int ntr = nitroFSInit(nitrofsPath);
+    _nitroFsInitOk = (ntr == 1);
 
     if (!_nitroFsInitOk && runningPath != NULL)
     {
-        _nitroFsInitOk = (bool)nitroFSInit(runningPath);
-    }
-    else
-    {
-        _nitroFsInitOk = false;
+        _nitroFsInitOk = nitroFSInit(runningPath) == 1;
     }
 }

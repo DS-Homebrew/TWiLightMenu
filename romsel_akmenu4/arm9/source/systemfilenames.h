@@ -21,8 +21,9 @@
 #pragma once
 #ifndef _SYSTEMFILENAMES_H_
 #define _SYSTEMFILENAMES_H_
+#include <string>
+#include "common/singleton.h"
 
-#define UI_LANG "lang_en"
 
 #define SFN_SYSTEM_DIR              "/__rpg/"
 #define SFN_OFFICIAL_SAVELIST       SFN_SYSTEM_DIR"savelist.bin"
@@ -36,7 +37,10 @@
 #define SFN_BACKLIGHT               SFN_SYSTEM_DIR"backlight.ini"
 #endif
 
-#define SFN_UI_DIRECTORY            SFN_SYSTEM_DIR"ui/zelda"
+#define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
+#define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"ui/zelda"
+#define SFN_UI_DIRECTORY           sfn().uiDirectory() + 
+
 #define SFN_UI_CURRENT_DIRECTORY    SFN_UI_DIRECTORY"/"
 #define SFN_USER_CUSTOM             SFN_UI_DIRECTORY"/custom.ini"
 #define SFN_UI_SETTINGS             SFN_UI_DIRECTORY"/uisettings.ini"
@@ -72,4 +76,20 @@
 #define SFN_ICONS_DIRECTORY         SFN_SYSTEM_DIR"icons/"
 
 #define SFN_CHEATS                  SFN_SYSTEM_DIR"cheats/usrcheat.dat"
+
+class SystemFilenames
+{
+    private:
+        std::string _uiDirectory;
+    public:
+        SystemFilenames();
+        
+        ~SystemFilenames(){}
+    public: 
+        inline const std::string& uiDirectory() { return _uiDirectory; }
+  
+};
+
+typedef singleton<SystemFilenames> sysFilenames_s;
+inline SystemFilenames &sfn() { return sysFilenames_s::instance(); }
 #endif//_SYSTEMFILENAMES_H_

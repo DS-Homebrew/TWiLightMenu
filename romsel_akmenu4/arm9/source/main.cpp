@@ -39,6 +39,7 @@
 #include "windows/mainwnd.h"
 #include "common/systemdetails.h"
 #include "common/dsimenusettings.h"
+
 // -- AK End ------------
 
 #include <stdio.h>
@@ -110,18 +111,23 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
 	
+	
+	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
+
+	// init basic system
+	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
+
+
+	sfn().uiDirectory();
 	irq().init();
 
-	// init graphics
 	gdi().init();
+	// init graphics
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
 	ms().loadSettings();
 	windowManager();
 
-	// init basic system
-	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
 
 	// init tick timer/fps counter
 	timer().initTimer();
@@ -138,16 +144,15 @@ int main(int argc, char **argv)
 #ifdef DEBUG
 	gdi().switchSubEngineMode();
 #endif
-	dbg_printf("GDI Init!");
-	// if (argc >= 1) dbg_printf(argv[0]);
-	// stop();
+
 	if (!sys().fatInitOk())
 	{
 		consoleDemoInit();
 		printf("Failed to Init FAT");
 		stop();
 	}
-
+	dbg_printf("UISETTINGS: %s\n", SFN_BUTTON2);
+	//stop();
 	// if (!nitroFSInitOk)
 	// {
 	// 	consoleDemoInit();
