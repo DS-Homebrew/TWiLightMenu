@@ -76,7 +76,7 @@ class DSiMenuPlusPlusSettings
     
     enum TLaunchType
     {
-        ESlot1Launch = 0,
+        ENoLaunch = 0,
         ESDFlashcardLaunch = 1,
         EDSiWareLaunch = 2,
         ENESDSLaunch = 3,

@@ -607,6 +607,8 @@ void MainWnd::launchSelected()
     // Launch DSiWare
     if (rominfo.isDSiWare() && rominfo.isArgv())
     {
+        ms().launchType = DSiMenuPlusPlusSettings::ENoLaunch;
+        ms().saveSettings();
         dsiLaunch(rominfo.saveInfo().dsiTid);
         return;
     }
@@ -633,6 +635,8 @@ void MainWnd::launchSelected()
             progressWnd().hide();
             return;
         }
+        ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
+        ms().saveSettings();
         progressWnd().hide();
         messageBox(this, "Boot DSiWare with Unlaunch", "Please press and hold the X button. Hold it on the black screen for 2 seconds.", MB_HOLD_X);
         unlaunch.launch();
@@ -640,6 +644,8 @@ void MainWnd::launchSelected()
 
     if (rominfo.isDSRom())
     {
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
         // Direct Boot for homebrew.
         if (gameConfig.directBoot && rominfo.isHomebrew())
@@ -669,6 +675,8 @@ void MainWnd::launchSelected()
     // NES Launch
     if (extension == ".nes")
     {
+        ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
+        ms().saveSettings();
         if (sys().flashcardUsed())
         {
             bootFile(NESDS_FC, fullPath);
@@ -682,6 +690,8 @@ void MainWnd::launchSelected()
     // GB Launch
     if (extension == ".gb" || extension == ".gbc")
     {
+        ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
+        ms().saveSettings();
         if (sys().flashcardUsed())
         {
             bootFile(GAMEYOB_FC, fullPath);
