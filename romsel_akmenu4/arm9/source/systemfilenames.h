@@ -25,20 +25,11 @@
 #include "common/singleton.h"
 
 
-#define SFN_SYSTEM_DIR              "/__rpg/"
-#define SFN_OFFICIAL_SAVELIST       SFN_SYSTEM_DIR"savelist.bin"
-#define SFN_CUSTOM_SAVELIST         SFN_SYSTEM_DIR"gamedata.bin"
-#define SFN_LAST_SAVEINFO           SFN_SYSTEM_DIR"lastsave.ini"
-#define SFN_LAST_GBA_SAVEINFO       SFN_SYSTEM_DIR"lastgba.ini"
-#define SFN_SDCARD_LIST             SFN_SYSTEM_DIR"sdlist.ini"
-#define SFN_GLOBAL_SETTINGS         SFN_SYSTEM_DIR"globalsettings.ini"
-#define SFN_FAVORITES               SFN_SYSTEM_DIR"favorites.ini"
-#if defined(_STORAGE_r4)
-#define SFN_BACKLIGHT               SFN_SYSTEM_DIR"backlight.ini"
-#endif
+#define SFN_SYSTEM_DIR              "/_nds/dsimenuplusplus/akmenu/"
+
 
 #define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
-#define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"ui/zelda"
+#define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"themes/zelda"
 #define SFN_UI_DIRECTORY           sfn().uiDirectory() + 
 
 #define SFN_UI_CURRENT_DIRECTORY    SFN_UI_DIRECTORY"/"

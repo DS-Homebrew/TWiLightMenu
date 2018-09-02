@@ -1,0 +1,451 @@
+﻿[font]
+main = tahoma.pcf
+language = 6
+
+[start menu]
+Start = START
+Copy = Kopieren
+Cut = Ausschneiden
+Paste = Einfügen
+Delete = Löschen
+Save Type = Speicher-Typ
+Patches = Patches
+Setting = Einstellungen
+Info = Eigenschaften
+Help = Hilfe
+More = Mehr ->
+3in1 = 3in1/FAS1
+Cheats = Cheats
+Back = <- Zurück
+
+[message box]
+yes = Ja
+no = Nein
+ok = OK
+cancel = Abbr.
+
+[cheats]
+title = Cheats: SELECT = Auswahl speichern
+error_title = Fehler
+error_text = Cheat-Datei wurde nicht gefunden.
+selectrom = Bitte wähle eine .NDS-Datei aus
+noxml = Cheat DB-Datei nicht gefunden
+ccexists = .CC-Datei ist bereits vorhanden - möchtest Du sie neu erstellen?
+nonefound = Keine Cheats in der DB gefunden
+xmlselect = Cheat-Datenbank
+confirm = Bestätigen
+confirm_rebuild = Möchtest Du die .CC-Datei neu erstellen?
+invalid cheatdb = Ungültige Cheat-Datenbank
+Rebuild = Erneuern
+Sel. DB = DB ausw
+
+[progress window]
+processing save = Verarbeite... nicht ausschalten!
+processing copy = Kopiere... nicht ausschalten, %c=Abbrechen!
+first use sd = Überprüfe SD-Karte vor der ersten Verwendung...
+gba load = Lade GBA Spiel...
+gba save load = Lade GBA Spielstand...
+gba save store = Verarbeite GBA Spielstand... nicht ausschalten!
+erase nor = Lösche NOR-Speicher... nicht ausschalten!
+rebuilding cheat data = Erstelle Cheat-Datei neu.
+
+[copy file error]
+title = Fehler beim Kopieren
+text = Datei oder Ordner ist nicht vorhanden.
+
+[copy file exists]
+title = Ersetzen bestätigen
+text = Dieser Ordner enthält bereits eine Datei mit demselben Namen. Möchtest Du die vorhandene Datei ersetzen?
+
+[copy dest is directory]
+title = Fehler beim Kopieren
+text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Kopieren ist nicht möglich.
+
+[move dest is directory]
+title = Fehler beim Verschieben
+text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Verschieben ist nicht möglich.
+
+[no copy dir]
+title = Fehler beim Kopieren/Verschieben
+text = Das Kopieren/Verschieben von Ordnern ist noch nicht möglich!
+
+[stop copying file]
+title = Abbrechen bestätigen
+text = Möchtest Du den Kopiervorgang wirklich abbrechen??
+
+[confirm delete file]
+title = Löschen bestätigen
+text = Gelöschte Dateien/Ordner können nicht wiederhergestellt werden, möchtest Du '%s' wirklich löschen?
+
+[do not delete directory]
+title = Löschen fehlgeschlagen
+text = Dieser Ordner ist nicht leer, lösche zunächst den Ordnerinhalt und versuche es dann erneut.
+
+[unknown save type]
+title = Unbekannter Spielstand-Typ
+text = Der Spielstand-Typ dieses Programms ist unbekannt, drücke "A" um ihn manuell einzustellen.
+
+[no savelist]
+title = Fehler beim Laden der Liste der Spielstände
+text = Die Liste der Spielstände konnte nicht geladen werden, "savelist.bin" ist nicht vorhanden.
+
+[restore save fail]
+title = Fehler beim Wiederherstellen des Spielstands
+text = Der Spielstand konnte nicht wiederhergestellt werden, ignorieren und trotzdem fortfahren?
+
+[backup save fail]
+title = Fehler beim Sichern des Spielstandes
+text = Der Spielstand konnte nicht gesichert werden, evtl. ist nicht genug freier Speicher auf dem Zieldatenträger verfügbar.
+
+[language changed]
+title = Sprachänderung bestätigen
+text = Möchtest Du jetzt neu starten um die Änderung der Systemsprache zu übernehmen? Wähle "Nein" um später neu zu starten.
+
+[ui style changed]
+title = Themeänderung bestätigen
+text = Möchtest Du jetzt neu starten um die Änderung des Themes zu übernehmen? Wähle "Nein" um das aktuelle Theme zu behalten. 
+
+[save type]
+title = Spielstands-Typ einstellen
+text = Spielstands-Typ
+Unknown = Unbekannt/Automatisch
+No Save = Kein Spielstand
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Schnell
+Medium = Mittel
+Slow = Langsam
+
+[system setting]
+title = Systemeinstellungen
+
+[disk info]
+total = Speicherkapazität: %s
+used = Belegter Speicher: %s
+free = Freier Speicher: %s
+
+[no free space]
+title = Fehler - nicht genug freier Speicher
+text = Auf dem Zieldatenträger ist nicht genug freier Speicher verfügbar, die Datei kann nicht kopiert werden.
+
+
+[sd speed]
+text = MicroSD-Geschwindigkeit einstellen
+item0 = Extrem
+item1 = Schnell
+item2 = Mittel
+item3 = Langsam
+
+[unsupported sd]
+title = MicroSD-Karte wird nicht unterstützt
+text = Diese MicroSD-Karte(Modell:%s) ist nicht dafür geeignet offizielle DS-Programme auszuführen, bitte kopiere das Programm von der SD-Karte in den internen Speicher der Acekard und versuche es erneut.
+
+[sd card error]
+title = Fehler beim Zugriff auf die MicroSD-Karte
+text = Auf die MicroSD-Karte konnte nicht zugegriffen werden, bitte überprüfe ob die MicroSD-Karte formatiert und korrekt eingelegt ist.
+
+[no sd for save]
+title = Keine MicroSD-Karte für Spielstände vorhanden
+text = Auf die MicroSD-Karte konnte nicht zugegriffe nwerden, Spielstände des zuvor ausgeführten Programms werden in Datei '%s' geschrieben.
+
+[no gba card]
+title = Keine GBA-Karte vorhanden
+text = Es befindet sich keine GBA-Karte in Slot-2.
+
+[filelist type]
+text = Dateilisten-Filter einstellen
+item0 = NDS
+item1 = NDS + SAV
+item2 = NDS/SAV/BAK
+item3 = ALLE
+
+[rom trim]
+text = ROM beim Kopieren trimmen
+item0 = Deaktiviert
+item1 = Aktiviert
+
+[cheat]
+text = Cheat-Codes
+item0 = Deaktiviert
+Item1 = Aktiviert
+
+[autorun]
+text = Autostart
+item0 = Deaktiviert
+item1 = Aktiviert
+
+[language]
+text = Sprache
+item0 = English
+item1 = S.Chinese
+item2 = T.Chinese
+item3 = Japanese
+item4 = Francais
+item5 = Italiano
+item6 = Deutsch
+item7 = Español
+item8 = Nederlands
+
+[brightness]
+text = Helligkeit
+
+[ui style]
+text = Theme
+
+[help window]
+title = Hilfe
+item0 = %c  Hoch/Runter/SeiteHo./SeiteRu.
+item1 = %c  Ja/Start/OK
+item2 = %c  Nein/Zurück/Abbrechen
+item3 = %c  Dateiinfo/Speicher-Typ auswählen
+item4 = %c  Umschalten zwischen MicroSD/Flash
+item5 = %c  Ein Verzeichnis hoch
+item6 = %c  Helligkeit einstellen: 1/2/3/4
+item7 = %s  Startmenü öffnen
+item8 = %s  Dateilisten-Stil: Intern/Nummer
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Verarbeitung des Spielstands abbrechen
+text = Möchtest Du die Verarbeitung des Spielstandes wirklich abbrechen?
+
+[gba warn]
+title = Warnung wg. GBA-ROM Größe
+text = GBA-ROMs die größer als 32MB sind werden z.Zt. nicht unterstützt!
+
+[shortcut overwrite]
+title = Verknüpfung bestätigen
+text = Möchtest Du die Verknüpfung wirklich erstellen/überschreiben?
+
+[shortcut delete]
+title = Löschen der Verknüpfung bestätigen
+text = Möchtest Du die Verknüpfung wirklich löschen?
+
+[slot2]
+gbamode = Im GBA-Modus starten
+passme = Im NDS-Modus starten (PassMe)
+backupsramq = Sicherung des SRAM Bank1 (FAS1) erstellen
+
+[fas1]
+question = Frage
+title = FAS1-Einstellungen
+useFAS1 = FlashAdvance-Features verwenden
+listgba = GBA/BIN Dateien auflisten
+verifyFAS1 = Geschriebene Blöcke überprüfen
+item0 = Nein
+item1 = Ja
+StartMenuDescription = FAS1
+prompt = ROM schreiben
+flashquestion = Möchtest Du die ROM auf die Flash Advance Cart schreiben? (%.2fMB / ca. %.1fmin.)
+writeprompt = Möchtest Du den Spielstand auf Bank 1 schreiben?
+backupsramq = Slot-1 der FlashAdvance Cartridge sichern
+backupsram = Sichere Bank 1 [%iKB] (%c zum Abbrechen)
+saveerror = Keine 64KB SAV-Datei, trotzdem fortfahren?
+unsupported = FAS1: Nicht unterstützte Cartridge
+writingpercent = %iKB von %iKB geschrieben, (%c zum Abbrechen)
+savebytes = %i Bytes geschrieben (%c zum Abbrechen)
+
+[save backup]
+question = Möchtest Du den Spielstand sichern?
+backing up = Sichere .SAV mit .BAK-Erweiterung
+overwrite = Sicherung ist bereits vorhanden, möchtest Du sie überschreiben?
+
+[save restore]
+question = Möchtest Du den Spielstand aus der Sicherung wiederherstellen?
+restoring save = Stelle .SAV von .BAK-Erweiterung wieder her
+overwrite = Spielstand ist bereits vorhanden, möchtest Du ihn überschreiben?
+
+[textview]
+confirm = Bestätigen 
+exit = Möchtest Du wirklich beenden?
+error = Fehler beim Öffnen der Datei
+file open error = Diese Textdatei kann nicht geöffnet werden. Du kommst ins OS-Menü zurück.
+screen angle = Bildschirmausrichtung
+normal = Normal
+rotate 90 = 90° gedreht
+rotate 270 = 270° gedreht
+screen mode = Bildschirm-Modus
+dual = Beide Bildschirme
+dual copy = Bildschirm kopieren
+lower = Nur unten
+upper = Nur oben
+add bookmark = Möchtest Du hier wirklich ein neues Lesezeichen einfügen?
+remove bookmark = Möchtest Du dieses Lesezeichen wirklich entfernen?
+goto toppage? = Möchtest Du wirklich zum Seitenanfang springen?
+
+[save slot]
+title = Speicherplatz 
+default = Standard
+text = Welcher Speicherplatz soll verwendet werden
+
+[romnametype]
+Normal = Normal
+HideExtName = Verstecke ROM-Erw.
+BannerTitle = Interner Name
+
+[cheat]
+text = Cheat-Codes
+item0 = Deaktiviert
+Item1 = Aktiviert
+
+[setting window]
+ok = OK
+savetype = Spielstand-Typ
+cancel = Abbr.
+confirm = Speichern der Einstellungen bestätigen
+confirm text = Möchtest Du die aktuellen Einstellungen wirklich speichern?
+shortcut = Shortcut
+delete shortcut = Löschen
+rominfo = Einstellungen
+
+[switches]
+Default = Standard
+Enable = Aktiviert
+Disable = Deaktiviert
+auto menu = Auto-Menü
+
+[rom info]
+title = Eigenschaften
+title_copywnd = Kopieren
+file date = Letzte Änderung: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Dateigröße: %s
+save type = Speicher-Typ: %s
+game code = Spielcode: %s
+save slot = Speicherplatz 
+save slot copy = Von %s nach:
+Slot = Speicherplatz
+cheat menu = Cheat-Menü
+copy menu = Kopieren
+save extension = Spielstand Erw.
+convert text = Spielstände konvertieren
+convert text = Möchtest Du den Spielstand von %s nach %s konvertieren?
+
+[patches]
+title = Standardmäßige Patch-Einstellungen
+download play = DS Download-Spiel
+cheating system = Cheat/Action Replay
+slow motion = Zeitlupe
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Alt. Loader nicht gefunden, ROM direkt starten?
+patching loader = Patche alternativen Loader zur Verwendung mit AKAIO
+IRQ Hook = IRQ Hook
+SWI Hook = SWI Hook
+bypass antipiracy = AntiPiracy-Fix
+
+[advanced setting]
+title = Dateisystem-Einstellungen
+Advanced = Erweitert
+Show Hidden Files = Zeige versteckte Dateien
+Hide Extension Name = Verstecke ROM-Erweiterung
+Scrolling Speed = Scroll-Geschwindigkeit
+CopyCut Saves Too = Kopiere SAV mit ROM
+Delete Saves Too = Lösche SAV mit ROM
+Cheat Scrolling = Cheat Scrolling
+Cheat Scrolling Speed = Cheat Scrolling-Geschwindigkeit
+Homebrew Reset Type = Homebrew Reset-Typ
+
+[cheatupdate]
+DATorXML = Datei
+updateDB = WiFi Update
+cheatDBbutton = Aktualisiere DB
+SaveList = savelist.bin
+startupdatetitle = AKAIO Updater
+get whatsnew = Lade WhatsNew.txt
+startupdatequestion = Möchtest Du den Aktualisierungsvorgang starten?
+WFCConnection = Verbinde via WFC, %c zum Abbrechen
+cantconnect = Verbindung fehlgeschlagen, überprüfe die WFC-Einstellungen
+stopconnectquestion = Möchtest Du den WiFi-Verbindungsversuch abbrechen?
+stopconnecttitle = Verbindungsversuch abbrechen
+getwhatsnew = Lade What's New
+downloadthisfile = Cheat-Datei vom %s herunterladen?
+downloaderror = Fehler beim Herunterladen
+downloadstart = Lade Datei herunter, %c zum Abbrechen
+stopdownloadquestion = Möchtest Du das Herunterladen abbrechen?
+stopdownloadtitle = Herunterladen abbrechen
+downloading = Lade herunter... %.0fKb/%.0fKb, %c zum Abbrechen
+unzipstop = Möchtest Du das Entpacken abbrechen?
+unzipstoptitle = Entpacken angehalten
+unzipping = Entpacke Datei, %c zum Abbrechen
+unziperror = Fehler beim Entpacken der Datei
+success = %s entpackt! Viel Spaß damit!
+error = Fehler beim aktualisieren, möchtest Du es erneut versuchen?
+resumeupdatetitle = Unterbrochenen Download wiederaufnehmen
+resumethisfile = Download von %s bei %.0fKb wiederaufnehmen?
+deletepartial = Möchtest Du die teilweise heruntergeladene Datei löschen?
+previousdates = Vorherige Daten
+previousfiles = Vorherige Dateien
+previous date notice = NUR WiFi- und Loader-Aktualisierungen
+cheats = Cheats
+loader = Loader aktualisieren
+wifi = WiFi-Plugin
+3version = 3 Versionen
+5version = 5 Versionen
+Checking Site = AKAIO-Homepage überprüfen
+whatsnew notice = NUR offizielle Homepage überprüfen
+site = Seite
+site1 = Offizielle Homepage
+site2 = TempDB
+
+[text viewer]
+text = TXT-Betrachter
+item0 = Plugin
+item1 = Intern
+title = Plugin-Einstellungen
+
+[interface settings]
+title = Oberflächen-Einstellungen
+oldschool = Text-Liste
+modern = Dateiname
+internal = Interner Name
+filelist style = Dateilisten-Stil
+Hide File Extensions = Verstecke Dateierweiterung
+Icon Animation = Iconanimation
+
+[exp window]
+title = Slot-2 Cartridge-Einstellungen
+ram = RAM
+sram = SRAM auslesen
+off = Aus
+low = Niedrig
+mid = Mittel
+high = Hoch
+strength = Vibrationsstärke
+NOR Mode = NOR-Modus
+auto = Automatisch
+always = Immer
+notdetected = 3in1/EWin/FlashAdvance nicht gefunden!
+NOR Flash = Ins NOR schreiben
+norquestion = Möchtest Du in NOR schreiben?
+norblank = NOR löschen
+erasenor = Möchtest Du den NOR wirklich löschen?
+
+[gba settings]
+gbabutton = GBA-Einstellungen
+gbasleepdescription = (L+R+Start: Schlaf-Modus/ Select+Start: Aufwachen)
+title = GBA-Einstellungen
+sleephack = GBA Universal Schlaf-Modus
+autosave = Sichere GBA-Spielstand beim Start
+gbaSavePrompt = Frage vor Speichern/Laden
+Load Save = Spielstand laden
+Load File = Möchtest Du %s laden?
+Backup Save = Spielstand sichern
+Backup File = Möchtest Du %s sichern?
+
+[ram allocation]
+title = Fehler
+memory allocation error = Fehler bei der Speicherzuweisung
+
+[LShortcuts]
+CheatOn = Cheats wurden bei diesem Spiel aktiviert.
+CheatOff = Cheats wurden bei diesem Spiel deaktiviert.
+SoftresetOn = Soft-Reset wurde bei diesem Spiel aktiviert.
+SoftresetOff = Soft-Reset wurde bei diesem Spiel deaktiviert.
+
+[end]
