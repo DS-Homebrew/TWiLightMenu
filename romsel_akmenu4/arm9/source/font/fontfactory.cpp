@@ -22,7 +22,8 @@
 #include "font_pcf.h"
 #include "systemfilenames.h"
 #include "language.h"
-
+#include "common/systemdetails.h"
+#include <nds.h>
 
 FontFactory::FontFactory() : _font(NULL)
 {
@@ -36,7 +37,15 @@ FontFactory::~FontFactory()
 
 void FontFactory::makeFont(void)
 {
-    std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
     _font = new FontPcf();
-    _font->Load(filename.c_str());
+    std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
+    if (access(filename.c_str(), F_OK) == 0)
+    {
+        _font->Load(filename.c_str());
+    }
+    else if (sys().useNitroFS())
+    {   
+        // This doesn't work so far, but we'll keep it anyways.
+        _font->Load(SFN_FALLBACK_FONT);
+    }
 }

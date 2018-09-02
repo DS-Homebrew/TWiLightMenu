@@ -71,7 +71,9 @@
 #define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
 
 #define SFN_FONTS_DIRECTORY         SFN_SYSTEM_DIR"fonts/"
-#define SFN_DEFAULT_FONT            "liberation.pcf"
+#define SFN_DEFAULT_FONT            "tahoma.pcf"
+#define SFN_FALLBACK_FONT           "nitro:/fonts/tahoma.pcf"
+
 
 #define SFN_ICONS_DIRECTORY         SFN_SYSTEM_DIR"icons/"
 
