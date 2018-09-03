@@ -175,7 +175,7 @@ private:
 class SettingsPage
 {
 public:
-  SettingsPage() {}
+  SettingsPage(const std::string& title) { _title = title; }
   ~SettingsPage() {}
 
   /*
@@ -216,8 +216,14 @@ public:
   */
   std::vector<Option> &options() { return _options; }
 
+  /**
+   * Gets the title of the settings page.
+   */
+  std::string& title() { return _title; }
+
 private:
   std::vector<Option> _options;
+  std::string _title;
 };
 
 #endif

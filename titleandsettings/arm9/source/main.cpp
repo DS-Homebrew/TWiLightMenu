@@ -41,6 +41,7 @@
 #include "common/nitrofs.h"
 #include "common/dsimenusettings.h"
 #include "settingspage.h"
+#include "settingsgui.h"
 #include "language.h"
 
 #include "soundbank.h"
@@ -730,7 +731,7 @@ int main(int argc, char **argv)
 #pragma endregion
 
 	// consoleDemoInit();
-	SettingsPage page;
+	SettingsPage page("Test title No page");
 
 	page.option("Test Option Bool",
 				"This is an option to \n test variadic options",
@@ -740,6 +741,9 @@ int main(int argc, char **argv)
 				"This is an option to \n test variadic options",
 				Option::Str(&ms().romfolder),
 				{"Hello", "World"}, {"Hello", "World"});
+
+	SettingsGUI gui;
+	gui.addPage(page);
 
 	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
 
@@ -770,17 +774,19 @@ int main(int argc, char **argv)
 				music = true;
 			}
 
-			for (int i = 0; i < page.options().size(); i++)
-			{
-				int selected = page.options()[i].selected();
-				printSmall(false, 12, 30 + i * 14, page.options()[i].displayName().c_str());
-				printSmall(false, 194, 30 + i * 14, page.options()[i].labels()[selected].c_str());
-			}
+			gui.draw();
+
+			// printLarge(false, 6, 1, "Testing..");
+			// for (int i = 0; i < page.options().size(); i++)
+			// {
+			// 	int selected = page.options()[i].selected();
+			// 	printSmall(false, 12, 30 + i * 14, page.options()[i].displayName().c_str());
+			// 	printSmall(false, 194, 30 + i * 14, page.options()[i].labels()[selected].c_str());
+			// }
 		
 			// printSmall(true, 28, 1, username);
 			// 		printSmall(true, 194, 174, vertext);
 
-			// 		printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
@@ -788,7 +794,18 @@ int main(int argc, char **argv)
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
 			} while (!pressed);
-		
+			
+			if (pressed & KEY_RIGHT) {
+				gui.setOptionNext();
+			} 
+			if (pressed & KEY_DOWN) {
+				gui.incrementOption();
+			}
+
+			if (pressed & KEY_UP) {
+				gui.decrementOption();
+			}
+
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;
