@@ -6,9 +6,17 @@
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
 
+/**
+ * \brief Represents a settings option with an associated INI 
+ *        entry that can be displayed to the user.
+ * 
+ */
 class Option
 {
 public:
+  /**
+   * \brief Represents a submenu, or jump to a page.
+   */
   class Sub
   {
   public:
@@ -20,6 +28,12 @@ public:
     int _page;
   };
 
+  /**
+   * \brief Represents a boolean option
+   * 
+   * @param pointer A pointer to the backing boolean that will change
+   *                when the user toggles this value.
+   */
   class Bool
   {
   public:
@@ -32,6 +46,11 @@ public:
     bool *_pointer;
   };
 
+  /**
+   * \brief Represents an integer option
+   *  @param pointer A pointer to the backing integer that will change
+   *                when the user changes this value.
+   */
   class Int
   {
   public:
@@ -44,6 +63,11 @@ public:
     int *_pointer;
   };
 
+  /**
+   * \brief Represents aa string option.
+   *  @param pointer A pointer to the backing string that will change
+   *                when the user changes this value.
+   */
   class Str
   {
   public:
@@ -57,11 +81,33 @@ public:
   };
 
 public:
+  /**
+ * \brief Default constructor for an option
+ *  
+ * \remark This should not be called directly, instead, call
+ *         SettingsPage::option instead, to avoid orphaning
+ *         options.
+ * 
+ * @param displayName     The display name of the option
+ * 
+ * @param longDescription The long description shown on the top screen.
+ *                        Lines should be broken with the \n delimiter.
+ * 
+ * @param action          The action that will happen when the user changes or
+ *                        selects this option. One of Option::{Sub, Int, Bool, Str}.
+ * 
+ * @param labels          The label of the types of values that will be shown to the
+ *                        user. The label corresponds to the value given in the values
+ *                        parameter. Each value must have a corresponding label.
+ * 
+ * @param values          The possible list of possible values this option can take when
+ *                        the user selects the corresponding label.
+ */
   Option(const std::string &displayName,
-                 const std::string &longDescription,
-                 std::variant<Sub, Bool, Int, Str> action,
-                 std::initializer_list<std::string> const &labels,
-                 std::initializer_list<std::variant<bool, int, std::string>> const &values)
+         const std::string &longDescription,
+         std::variant<Sub, Bool, Int, Str> action,
+         std::initializer_list<std::string> const &labels,
+         std::initializer_list<std::variant<bool, int, std::string>> const &values)
       : _action(action)
   {
     _displayName = displayName;
@@ -76,31 +122,44 @@ public:
   std::string &longDescription() { return _longDescription; }
   std::variant<Sub, Bool, Int, Str> &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
-  std::vector<std::variant<bool, int, std::string>>& values() { return _values; }
+  std::vector<std::variant<bool, int, std::string>> &values() { return _values; }
 
-  int selected() {
-    if (auto value = std::get_if<Bool>(&action())) {
-        for (int i = 0; i < _values.size(); i++) {
-          if (auto _value = std::get_if<bool>(&_values[i])) {
-            if (*_value == value->get()) return i;
-          }
+  int selected()
+  {
+    if (auto value = std::get_if<Bool>(&action()))
+    {
+      for (int i = 0; i < _values.size(); i++)
+      {
+        if (auto _value = std::get_if<bool>(&_values[i]))
+        {
+          if (*_value == value->get())
+            return i;
         }
+      }
     }
 
-    if (auto value = std::get_if<Int>(&action())) {
-        for (int i = 0; i < _values.size(); i++) {
-          if (auto _value = std::get_if<int>(&_values[i])) {
-            if (*_value == value->get()) return i;
-          }
+    if (auto value = std::get_if<Int>(&action()))
+    {
+      for (int i = 0; i < _values.size(); i++)
+      {
+        if (auto _value = std::get_if<int>(&_values[i]))
+        {
+          if (*_value == value->get())
+            return i;
         }
+      }
     }
 
-     if (auto value = std::get_if<Str>(&action())) {
-        for (int i = 0; i < _values.size(); i++) {
-          if (auto _value = std::get_if<std::string>(&_values[i])) {
-            if (*_value == value->get()) return i;
-          }
+    if (auto value = std::get_if<Str>(&action()))
+    {
+      for (int i = 0; i < _values.size(); i++)
+      {
+        if (auto _value = std::get_if<std::string>(&_values[i]))
+        {
+          if (*_value == value->get())
+            return i;
         }
+      }
     }
     return -1;
   }
@@ -119,17 +178,42 @@ public:
   SettingsPage() {}
   ~SettingsPage() {}
 
+  /*
+ * \brief Adds an option to this settings page.
+ * 
+ * \remake This should be the preferred way to create an option, and forwards
+ *         the arguments to the Option constructor created directly into a 
+ *         vector. 
+ * 
+ * @param displayName     The display name of the option
+ * 
+ * @param longDescription The long description shown on the top screen.
+ *                        Lines should be broken with the \n delimiter.
+ * 
+ * @param action          The action that will happen when the user changes or
+ *                        selects this option. One of Option::{Sub, Int, Bool, Str}.
+ * 
+ * @param labels          The label of the types of values that will be shown to the
+ *                        user. The label corresponds to the value given in the values
+ *                        parameter. Each value must have a corresponding label.
+ * 
+ * @param values          The possible list of possible values this option can take when
+ *                        the user selects the corresponding label.
+ */
   SettingsPage &option(
-                const std::string &displayName,
-                const std::string &longDescription,
-                std::variant<Option::Sub, Option::Bool, Option::Int, Option::Str> action,
-                std::initializer_list<std::string> const &labels,
-                std::initializer_list<std::variant<bool, int, std::string>> const &values)
+      const std::string &displayName,
+      const std::string &longDescription,
+      std::variant<Option::Sub, Option::Bool, Option::Int, Option::Str> action,
+      std::initializer_list<std::string> const &labels,
+      std::initializer_list<std::variant<bool, int, std::string>> const &values)
   {
     _options.emplace_back(displayName, longDescription, action, labels, values);
     return *this;
   }
 
+  /*
+  * Gets the option this page has.
+  */
   std::vector<Option> &options() { return _options; }
 
 private:
