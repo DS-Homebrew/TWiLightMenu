@@ -28,9 +28,10 @@
 
 using namespace akui;
 
-SettingWnd::SettingWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text) : Form(x, y, w, h, parent, text), _tabSwitcher(0, 0, w, 18, this, "spin"),
-                                                                                                 _buttonOK(0, 0, 46, 18, this, "\x01 OK"), _buttonCancel(0, 0, 48, 18, this, "\x02 Cancel"),
-                                                                                                 _buttonY(0, 0, 76, 18, this, "\x04 Common")
+SettingWnd::SettingWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
+    : Form(x, y, w, h, parent, text), _tabSwitcher(0, 0, w, 18, this, "spin"),
+      _buttonOK(0, 0, 46, 18, this, "\x01 OK"), _buttonCancel(0, 0, 48, 18, this, "\x02 Cancel"),
+      _buttonY(0, 0, 76, 18, this, "\x04 Common")
 {
   _tabSwitcher.loadAppearance("");
   _tabSwitcher.changed.connect(this, &SettingWnd::onItemChanged);

@@ -24,7 +24,7 @@
 #include <fat.h>
 #include <sys/stat.h>
 #include <limits.h>
-
+#include <variant>
 #include <string.h>
 #include <unistd.h>
 #include <maxmod9.h>
@@ -41,7 +41,7 @@
 #include "common/inifile.h"
 #include "common/nitrofs.h"
 #include "common/dsimenusettings.h"
-
+#include "settingspage.h"
 #include "language.h"
 
 #include "soundbank.h"
@@ -65,14 +65,14 @@ std::string dsiWarePrvPath;
 std::string homebrewArg;
 std::string bootstrapfilename;
 
-// static int consoleModel = 0;
-// /*	0 = Nintendo DSi (Retail)
-// 	1 = Nintendo DSi (Dev/Panda)
-// 	2 = Nintendo 3DS
-// 	3 = New Nintendo 3DS	*/
+static int consoleModel = 0;
+/*	0 = Nintendo DSi (Retail)
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
 
-// static bool showlogo = true;
-// static bool gotosettings = false;
+static bool showlogo = true;
+static bool gotosettings = false;
 
 int appName = 0;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
 const char* appNameText = "";
@@ -82,19 +82,19 @@ static int bstrap_loadingScreen = 1;
 
 static int donorSdkVer = 0;
 
-// static bool startButtonLaunch = false;
-// static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-// static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
-// static bool bootstrapFile = false;
-// static bool homebrewBootstrap = false;
+static bool startButtonLaunch = false;
+static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
+static bool bootstrapFile = false;
+static bool homebrewBootstrap = false;
 
-// static bool useGbarunner = false;
-// static bool autorun = false;
-// static int theme = 0;
-// static int subtheme = 0;
-// static bool showDirectories = true;
-// static bool showBoxArt = true;
-// static bool animateDsiIcons = false;
+static bool useGbarunner = false;
+static bool autorun = false;
+static int theme = 0;
+static int subtheme = 0;
+static bool showDirectories = true;
+static bool showBoxArt = true;
+static bool animateDsiIcons = false;
 
 static int bstrap_language = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
@@ -104,7 +104,7 @@ static bool bstrap_debug = false;
 static bool bstrap_logging = false;
 static int bstrap_romreadled = 0;
 static bool bstrap_asyncPrefetch = true;
-//static bool bstrap_lockARM9scfgext = false;
+static bool bstrap_lockARM9scfgext = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
@@ -136,7 +136,7 @@ void LoadSettings(void) {
 	// slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	// bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	// startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
-	// launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+	//  launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	// if (flashcardUsed && launchType == 0) launchType = 1;
 	// dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	// dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
@@ -159,17 +159,17 @@ void LoadSettings(void) {
 	// soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	// bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 
-	if(!flashcardUsed) {
-		// nds-bootstrap
-		CIniFile bootstrapini( bootstrapinipath );
+	// if(!flashcardUsed) {
+	// 	// nds-bootstrap
+	// 	CIniFile bootstrapini( bootstrapinipath );
 
-		bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
-		bstrap_logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", 0);
-		bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 0);
-		donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
-		bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
-		// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
-	}
+	// 	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", 0);
+	// 	bstrap_logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", 0);
+	// 	bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", 0);
+	// 	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
+	// 	bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", 1);
+	// 	// bstrap_lockARM9scfgext = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOCK_ARM9_SCFG_EXT", 0);
+	// }
 }
 
 void SaveSettings(void) {
@@ -223,7 +223,7 @@ static int settingscursor = 0;
 
 touchPosition touch;
 
-//static bool arm7SCFGLocked = false;
+static bool arm7SCFGLocked = false;
 
 using namespace std;
 
@@ -495,9 +495,9 @@ int main(int argc, char **argv) {
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
-	
+	#pragma region init
 	//consoleDemoInit();
-
+	gotosettings =true;
 	bool fatInited = fatInitDefault();
 	
 	/* if (!isDSiMode() && REG_SCFG_EXT == 0x8307F100) {
@@ -582,72 +582,92 @@ int main(int argc, char **argv) {
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 1, 0);
 
-	if (gotosettings) {
-		graphicsInit();
-		fontInit();
-		screenmode = 1;
-		gotosettings = false;
-		SaveSettings();
-		langInit();
-		fadeType = true;
-	} else if (autorun || showlogo) {
-		loadTitleGraphics();
-		fadeType = true;
+	// if (gotosettings) {
+	// 	graphicsInit();
+	// 	fontInit();
+	// 	screenmode = 1;
+	// 	gotosettings = false;
+	// 	SaveSettings();
+	// 	langInit();
+	// 	fadeType = true;
+	// } else if (autorun || showlogo) {
+	// 	loadTitleGraphics();
+	// 	fadeType = true;
 
-		for (int i = 0; i < 60*3; i++) {
-			swiWaitForVBlank();
-		}
+	// 	for (int i = 0; i < 60*3; i++) {
+	// 		swiWaitForVBlank();
+	// 	}
 		
-		scanKeys();
+	// 	scanKeys();
 
-		if (keysHeld() & KEY_START) {
-			fadeType = false;
-			for (int i = 0; i < 30; i++) {
-				swiWaitForVBlank();
-			}
-			graphicsInit();
-			fontInit();
-			screenmode = 1;
-			langInit();
-			fadeType = true;
-		}
-	} else {
-		scanKeys();
+	// 	if (keysHeld() & KEY_START) {
+	// 		fadeType = false;
+	// 		for (int i = 0; i < 30; i++) {
+	// 			swiWaitForVBlank();
+	// 		}
+	// 		graphicsInit();
+	// 		fontInit();
+	// 		screenmode = 1;
+	// 		langInit();
+	// 		fadeType = true;
+	// 	}
+	// } else {
+	// 	scanKeys();
 
-		if (keysHeld() & KEY_START) {
-			graphicsInit();
-			fontInit();
-			fadeType = true;
-			screenmode = 1;
-			langInit();
-			for (int i = 0; i < 60; i++) {
-				swiWaitForVBlank();
-			}
-		}
-	}
+	// 	if (keysHeld() & KEY_START) {
+	// 		graphicsInit();
+	// 		fontInit();
+	// 		fadeType = true;
+	// 		screenmode = 1;
+	// 		langInit();
+	// 		for (int i = 0; i < 60; i++) {
+	// 			swiWaitForVBlank();
+	// 		}
+	// 	}
+	// }
 
 
-	srand(time(NULL));
+	// srand(time(NULL));
 
-	switch (appName) {
-		case 0:
-		default:
-			appNameText = "DSiMenu++";
-			break;
-		case 1:
-			appNameText = "SRLoader";
-			break;
-		case 2:
-			appNameText = "DSisionX";
-			break;
-	}
+	// switch (appName) {
+	// 	case 0:
+	// 	default:
+	// 		appNameText = "DSiMenu++";
+	// 		break;
+	// 	case 1:
+	// 		appNameText = "SRLoader";
+	// 		break;
+	// 	case 2:
+	// 		appNameText = "DSisionX";
+	// 		break;
+	// }
 
-	bool menuprinted = false;
+	// bool menuprinted = false;
 
-	bool hiyaAutobootFound = false;
+	// bool hiyaAutobootFound = false;
 
-	int pressed = 0;
+	 int pressed = 0;
+#pragma endregion
+	
+	consoleDemoInit();
+	SettingsPage page;
 
+	page.option("Test Option Bool",
+		 "This is an option to \n test variadic options",
+		 Option::Bool(&ms().ak_zoomIcons),
+		 {"On", "Off"}, {true, false})
+	
+		.option("Test Option", "This is an option to \n test variadic options", Option::Str(&ms().romfolder),
+	   {"Off", "On"}, {"Hello", "World"});
+
+
+	printf("%s", ms().romfolder.c_str());
+	// std::get<SettingsOption::Bool>(option.action()).set(false);
+	// printf("%i",ms().ak_zoomIcons);
+	// std::get<SettingsOption::Bool>(option.action()).set(true);
+	// printf("%i",ms().ak_zoomIcons);
+
+	stop();
 	while(1) {
 	
 		if (screenmode == 1) {
@@ -657,1020 +677,1022 @@ int main(int argc, char **argv) {
 				music = true;
 			}
 
-			if (subscreenmode == 4) {
-				pressed = 0;
-
-				if (!menuprinted) {
-					// Clear the screen so it doesn't over-print
-					clearText();
-
-					printSmall(true, 28, 1, username);
-					printSmall(true, 194, 174, vertext);
-
-					printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
-
-					int yPos = 32;
-					switch (flashcard) {
-						case 0:
-						default:
-							printSmall(false, 12, 30+(0*14), "DSTT");
-							printSmall(false, 12, 30+(1*14), "R4i Gold");
-							printSmall(false, 12, 30+(2*14), "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
-							printSmall(false, 12, 30+(3*14), "R4 SDHC Dual-Core");
-							printSmall(false, 12, 30+(4*14), "R4 SDHC Upgrade");
-							printSmall(false, 12, 30+(5*14), "SuperCard DSONE");
-							break;
-						case 1:
-							printSmall(false, 12, 30+(0*14), "Original R4");
-							printSmall(false, 12, 30+(1*14), "M3 Simply");
-							break;
-						case 2:
-							printSmall(false, 12, 30+(0*14), "R4iDSN");
-							printSmall(false, 12, 30+(1*14), "R4i Gold RTS");
-							printSmall(false, 12, 30+(2*14), "R4 Ultra");
-							break;
-						case 3:
-							printSmall(false, 12, 30+(0*14), "Acekard 2(i)");
-							printSmall(false, 12, 30+(1*14), "Galaxy Eagle");
-							printSmall(false, 12, 30+(2*14), "M3DS Real");
-							break;
-						case 4:
-							printSmall(false, 12, 30, "Acekard RPG");
-							break;
-						case 5:
-							printSmall(false, 12, 30+(0*14), "Ace 3DS+");
-							printSmall(false, 12, 30+(1*14), "Gateway Blue Card");
-							printSmall(false, 12, 30+(2*14), "R4iTT");
-							break;
-						case 6:
-							printSmall(false, 12, 30, "SuperCard DSTWO");
-							break;
-					}
-
-					printLargeCentered(true, 118, STR_LEFTRIGHT_FLASHCARD.c_str());
-					printLargeCentered(true, 132, STR_AB_SETRETURN.c_str());
-
-					menuprinted = true;
-				}
-
-				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
 				} while (!pressed);
 				
-				if (pressed & KEY_LEFT) {
-					flashcard -= 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
-				if (pressed & KEY_RIGHT) {
-					flashcard += 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+#pragma region settings
+			// if (subscreenmode == 4) {
+			// 	pressed = 0;
 
-				if ((pressed & KEY_A) || (pressed & KEY_B)) {
-					subscreenmode = 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if (!menuprinted) {
+			// 		// Clear the screen so it doesn't over-print
+			// 		clearText();
 
-				if (flashcard > 6) flashcard = 0;
-				else if (flashcard < 0) flashcard = 6;
-			} else if (subscreenmode == 3) {
-				pressed = 0;
+			// 		printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
 
-				if (!menuprinted) {
-					// Clear the screen so it doesn't over-print
-					clearText();
+			// 		printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
 
-					printSmall(true, 28, 1, username);
-					printSmall(true, 194, 174, vertext);
+			// 		int yPos = 32;
+			// 		switch (flashcard) {
+			// 			case 0:
+			// 			default:
+			// 				printSmall(false, 12, 30+(0*14), "DSTT");
+			// 				printSmall(false, 12, 30+(1*14), "R4i Gold");
+			// 				printSmall(false, 12, 30+(2*14), "R4i-SDHC (Non-v1.4.x version) (www.r4i-sdhc.com)");
+			// 				printSmall(false, 12, 30+(3*14), "R4 SDHC Dual-Core");
+			// 				printSmall(false, 12, 30+(4*14), "R4 SDHC Upgrade");
+			// 				printSmall(false, 12, 30+(5*14), "SuperCard DSONE");
+			// 				break;
+			// 			case 1:
+			// 				printSmall(false, 12, 30+(0*14), "Original R4");
+			// 				printSmall(false, 12, 30+(1*14), "M3 Simply");
+			// 				break;
+			// 			case 2:
+			// 				printSmall(false, 12, 30+(0*14), "R4iDSN");
+			// 				printSmall(false, 12, 30+(1*14), "R4i Gold RTS");
+			// 				printSmall(false, 12, 30+(2*14), "R4 Ultra");
+			// 				break;
+			// 			case 3:
+			// 				printSmall(false, 12, 30+(0*14), "Acekard 2(i)");
+			// 				printSmall(false, 12, 30+(1*14), "Galaxy Eagle");
+			// 				printSmall(false, 12, 30+(2*14), "M3DS Real");
+			// 				break;
+			// 			case 4:
+			// 				printSmall(false, 12, 30, "Acekard RPG");
+			// 				break;
+			// 			case 5:
+			// 				printSmall(false, 12, 30+(0*14), "Ace 3DS+");
+			// 				printSmall(false, 12, 30+(1*14), "Gateway Blue Card");
+			// 				printSmall(false, 12, 30+(2*14), "R4iTT");
+			// 				break;
+			// 			case 6:
+			// 				printSmall(false, 12, 30, "SuperCard DSTWO");
+			// 				break;
+			// 		}
 
-					switch (theme) {
-						case 0:
-						default:
-							printLarge(false, 6, 2, STR_SUBTHEMESEL_DSI.c_str());
-							break;
-						case 1:
-							printLarge(false, 6, 2, STR_SUBTHEMESEL_3DS.c_str());
-							break;
-						case 2:
-							printLarge(false, 6, 2, STR_SUBTHEMESEL_R4.c_str());
-							break;
-					}
+			// 		printLargeCentered(true, 118, STR_LEFTRIGHT_FLASHCARD.c_str());
+			// 		printLargeCentered(true, 132, STR_AB_SETRETURN.c_str());
 
-					int yPos = 30;
-					if (theme == 2) yPos = 22;
-					for (int i = 0; i < subtheme; i++) {
-						yPos += 12;
-					}
-					if (subtheme == 12) yPos = 30;
+			// 		menuprinted = true;
+			// 	}
 
-					if (subtheme == 12) printSmall(false, 126, yPos, ">");
-					else printSmall(false, 4, yPos, ">");
 
-					int selyPos = 30;
-					if (theme == 2) selyPos = 22;
+			// 	if (pressed & KEY_LEFT) {
+			// 		flashcard -= 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
+			// 	if (pressed & KEY_RIGHT) {
+			// 		flashcard += 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-					switch (theme) {
-						case 0:
-						default:
-							printSmall(false, 12, selyPos, STR_DSI_DARKMENU.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_NORMALMENU.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_RED.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_BLUE.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_GREEN.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_YELLOW.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_PINK.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_DSI_PURPLE.c_str());
-							break;
-						case 1:
-							break;
-						case 2:
-							printSmall(false, 12, selyPos, STR_R4_THEME01.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME02.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME03.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME04.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME05.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME06.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME07.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME08.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME09.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME10.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME11.c_str());
-							selyPos += 12;
-							printSmall(false, 12, selyPos, STR_R4_THEME12.c_str());
-							selyPos = 30;
-							printSmall(false, 134, selyPos, STR_R4_THEME13.c_str());
-							break;
-					}
+			// 	if ((pressed & KEY_A) || (pressed & KEY_B)) {
+			// 		subscreenmode = 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-					printLargeCentered(true, 128, STR_AB_SETSUBTHEME.c_str());
+			// 	if (flashcard > 6) flashcard = 0;
+			// 	else if (flashcard < 0) flashcard = 6;
+			// } else if (subscreenmode == 3) {
+			// 	pressed = 0;
 
-					menuprinted = true;
-				}
+			// 	if (!menuprinted) {
+			// 		// Clear the screen so it doesn't over-print
+			// 		clearText();
 
-				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					swiWaitForVBlank();
-				} while (!pressed);
+			// 		printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
+
+			// 		switch (theme) {
+			// 			case 0:
+			// 			default:
+			// 				printLarge(false, 6, 2, STR_SUBTHEMESEL_DSI.c_str());
+			// 				break;
+			// 			case 1:
+			// 				printLarge(false, 6, 2, STR_SUBTHEMESEL_3DS.c_str());
+			// 				break;
+			// 			case 2:
+			// 				printLarge(false, 6, 2, STR_SUBTHEMESEL_R4.c_str());
+			// 				break;
+			// 		}
+
+			// 		int yPos = 30;
+			// 		if (theme == 2) yPos = 22;
+			// 		for (int i = 0; i < subtheme; i++) {
+			// 			yPos += 12;
+			// 		}
+			// 		if (subtheme == 12) yPos = 30;
+
+			// 		if (subtheme == 12) printSmall(false, 126, yPos, ">");
+			// 		else printSmall(false, 4, yPos, ">");
+
+			// 		int selyPos = 30;
+			// 		if (theme == 2) selyPos = 22;
+
+			// 		switch (theme) {
+			// 			case 0:
+			// 			default:
+			// 				printSmall(false, 12, selyPos, STR_DSI_DARKMENU.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_NORMALMENU.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_RED.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_BLUE.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_GREEN.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_YELLOW.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_PINK.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_DSI_PURPLE.c_str());
+			// 				break;
+			// 			case 1:
+			// 				break;
+			// 			case 2:
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME01.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME02.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME03.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME04.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME05.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME06.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME07.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME08.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME09.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME10.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME11.c_str());
+			// 				selyPos += 12;
+			// 				printSmall(false, 12, selyPos, STR_R4_THEME12.c_str());
+			// 				selyPos = 30;
+			// 				printSmall(false, 134, selyPos, STR_R4_THEME13.c_str());
+			// 				break;
+			// 		}
+
+			// 		printLargeCentered(true, 128, STR_AB_SETSUBTHEME.c_str());
+
+			// 		menuprinted = true;
+			// 	}
+
+			// 	// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			// 	do {
+			// 		scanKeys();
+			// 		pressed = keysDownRepeat();
+			// 		swiWaitForVBlank();
+			// 	} while (!pressed);
 				
-				if (pressed & KEY_UP) {
-					subtheme -= 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
-				if (pressed & KEY_DOWN) {
-					subtheme += 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if (pressed & KEY_UP) {
+			// 		subtheme -= 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
+			// 	if (pressed & KEY_DOWN) {
+			// 		subtheme += 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_A) || (pressed & KEY_B)) {
-					subscreenmode = 0;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_A) || (pressed & KEY_B)) {
+			// 		subscreenmode = 0;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-				if (theme == 2) {
-					if (subtheme > 12) subtheme = 0;
-					else if (subtheme < 0) subtheme = 12;
-				} else {
-					if (subtheme > 7) subtheme = 0;
-					else if (subtheme < 0) subtheme = 7;
-				}
-			} else if (subscreenmode == 2) {
-				pressed = 0;
+			// 	if (theme == 2) {
+			// 		if (subtheme > 12) subtheme = 0;
+			// 		else if (subtheme < 0) subtheme = 12;
+			// 	} else {
+			// 		if (subtheme > 7) subtheme = 0;
+			// 		else if (subtheme < 0) subtheme = 7;
+			// 	}
+			// } else if (subscreenmode == 2) {
+			// 	pressed = 0;
 
-				if (!menuprinted) {
-					// Clear the screen so it doesn't over-print
-					clearText();
+			// 	if (!menuprinted) {
+			// 		// Clear the screen so it doesn't over-print
+			// 		clearText();
 
-					printSmallCentered(false, 173, appNameText);
+			// 		printSmallCentered(false, 173, appNameText);
 
-					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
-					printSmall(true, 28, 1, username);
-					printSmall(true, 194, 174, vertext);
+			// 		printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+			// 		printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
 
-					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
+			// 		printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
 
-					int yPos = 30;
-					for (int i = 0; i < settingscursor; i++) {
-						yPos += 12;
-					}
+			// 		int yPos = 30;
+			// 		for (int i = 0; i < settingscursor; i++) {
+			// 			yPos += 12;
+			// 		}
 
-					int selyPos = 30;
+			// 		int selyPos = 30;
 
-					printSmall(false, 4, yPos, ">");
+			// 		printSmall(false, 4, yPos, ">");
 
-					printSmall(false, 12, selyPos, STR_DEBUG.c_str());
-					if(bstrap_debug)
-						printSmall(false, 224, selyPos, STR_ON.c_str());
-					else
-						printSmall(false, 224, selyPos, STR_OFF.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_DEBUG.c_str());
+			// 		if(bstrap_debug)
+			// 			printSmall(false, 224, selyPos, STR_ON.c_str());
+			// 		else
+			// 			printSmall(false, 224, selyPos, STR_OFF.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_LOGGING.c_str());
-					if(bstrap_logging)
-						printSmall(false, 224, selyPos, STR_ON.c_str());
-					else
-						printSmall(false, 224, selyPos, STR_OFF.c_str());
-					selyPos += 12;
-
-
-					if (settingscursor == 0) {
-						printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
-					} else if (settingscursor == 1) {
-						printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
-					}
+			// 		printSmall(false, 12, selyPos, STR_LOGGING.c_str());
+			// 		if(bstrap_logging)
+			// 			printSmall(false, 224, selyPos, STR_ON.c_str());
+			// 		else
+			// 			printSmall(false, 224, selyPos, STR_OFF.c_str());
+			// 		selyPos += 12;
 
 
+			// 		if (settingscursor == 0) {
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
+			// 		} else if (settingscursor == 1) {
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
+			// 		}
 
-					menuprinted = true;
-				}
 
-				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					touchRead(&touch);
-					swiWaitForVBlank();
-				} while (!pressed);
+
+			// 		menuprinted = true;
+			// 	}
+
+			// 	// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			// 	do {
+			// 		scanKeys();
+			// 		pressed = keysDownRepeat();
+			// 		touchRead(&touch);
+			// 		swiWaitForVBlank();
+			// 	} while (!pressed);
 				
-				if (pressed & KEY_UP) {
-					settingscursor--;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
-				if (pressed & KEY_DOWN) {
-					settingscursor++;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if (pressed & KEY_UP) {
+			// 		settingscursor--;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
+			// 	if (pressed & KEY_DOWN) {
+			// 		settingscursor++;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 					
-				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
-					switch (settingscursor) {
-						case 0:
-						default:
-							bstrap_debug = !bstrap_debug;
-							break;
-						case 1:
-							bstrap_logging = !bstrap_logging;
-							break;
-					}
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+			// 		switch (settingscursor) {
+			// 			case 0:
+			// 			default:
+			// 				bstrap_debug = !bstrap_debug;
+			// 				break;
+			// 			case 1:
+			// 				bstrap_logging = !bstrap_logging;
+			// 				break;
+			// 		}
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
-					subscreenmode = 1;
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_L) || (pressed & KEY_Y)) {
+			// 		subscreenmode = 1;
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_R) || (pressed & KEY_X)) {
-					subscreenmode = 0;
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_R) || (pressed & KEY_X)) {
+			// 		subscreenmode = 0;
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
-					mmEffectEx(&snd_back);
-					clearText();
-					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
-					SaveSettings();
-					clearText();
-					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-					if (!arm7SCFGLocked) {
-						rebootDSiMenuPP();
-					}
-					loadROMselect();
-					break;
-				}
+			// 	if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
+			// 		mmEffectEx(&snd_back);
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+			// 		SaveSettings();
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+			// 		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+			// 		if (!arm7SCFGLocked) {
+			// 			rebootDSiMenuPP();
+			// 		}
+			// 		loadROMselect();
+			// 		break;
+			// 	}
 
-				if (settingscursor > 1) settingscursor = 0;
-				else if (settingscursor < 0) settingscursor = 1;
-			} else if (subscreenmode == 1) {
-				pressed = 0;
+			// 	if (settingscursor > 1) settingscursor = 0;
+			// 	else if (settingscursor < 0) settingscursor = 1;
+			// } else if (subscreenmode == 1) {
+			// 	pressed = 0;
 
-				if (!menuprinted) {
-					// Clear the screen so it doesn't over-print
-					clearText();
+			// 	if (!menuprinted) {
+			// 		// Clear the screen so it doesn't over-print
+			// 		clearText();
 
-					printSmallCentered(false, 173, appNameText);
+			// 		printSmallCentered(false, 173, appNameText);
 
-					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
-					printSmall(true, 28, 1, username);
-					printSmall(true, 194, 174, vertext);
+			// 		printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+			// 		printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
 
-					printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
+			// 		printLarge(false, 6, 2, STR_GAMESAPPS_SETTINGS.c_str());
 
-					int yPos = 30;
-					for (int i = 0; i < settingscursor; i++) {
-						yPos += 12;
-					}
+			// 		int yPos = 30;
+			// 		for (int i = 0; i < settingscursor; i++) {
+			// 			yPos += 12;
+			// 		}
 
-					int selyPos = 30;
+			// 		int selyPos = 30;
 
-					printSmall(false, 4, yPos, ">");
+			// 		printSmall(false, 4, yPos, ">");
 
-					if(!flashcardUsed) {
-						printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
-						switch(bstrap_language) {
-							case -1:
-							default:
-								printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
-								break;
-							case 0:
-								printSmall(false, 194, selyPos, "Japanese");
-								break;
-							case 1:
-								printSmall(false, 206, selyPos, "English");
-								break;
-							case 2:
-								printSmall(false, 207, selyPos, "French");
-								break;
-							case 3:
-								printSmall(false, 200, selyPos, "German");
-								break;
-							case 4:
-								printSmall(false, 210, selyPos, "Italian");
-								break;
-							case 5:
-								printSmall(false, 203, selyPos, "Spanish");
-								break;
-						}
-						selyPos += 12;
+			// 		if(!flashcardUsed) {
+			// 			printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
+			// 			switch(bstrap_language) {
+			// 				case -1:
+			// 				default:
+			// 					printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
+			// 					break;
+			// 				case 0:
+			// 					printSmall(false, 194, selyPos, "Japanese");
+			// 					break;
+			// 				case 1:
+			// 					printSmall(false, 206, selyPos, "English");
+			// 					break;
+			// 				case 2:
+			// 					printSmall(false, 207, selyPos, "French");
+			// 					break;
+			// 				case 3:
+			// 					printSmall(false, 200, selyPos, "German");
+			// 					break;
+			// 				case 4:
+			// 					printSmall(false, 210, selyPos, "Italian");
+			// 					break;
+			// 				case 5:
+			// 					printSmall(false, 203, selyPos, "Spanish");
+			// 					break;
+			// 			}
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_CPUSPEED.c_str());
-						if(boostCpu)
-							printSmall(false, 158, selyPos, "133mhz (TWL)");
-						else
-							printSmall(false, 170, selyPos, "67mhz (NTR)");
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_CPUSPEED.c_str());
+			// 			if(boostCpu)
+			// 				printSmall(false, 158, selyPos, "133mhz (TWL)");
+			// 			else
+			// 				printSmall(false, 170, selyPos, "67mhz (NTR)");
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_VRAMBOOST.c_str());
-						if(boostVram)
-							printSmall(false, 224, selyPos, STR_ON.c_str());
-						else
-							printSmall(false, 224, selyPos, STR_OFF.c_str());
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_VRAMBOOST.c_str());
+			// 			if(boostVram)
+			// 				printSmall(false, 224, selyPos, STR_ON.c_str());
+			// 			else
+			// 				printSmall(false, 224, selyPos, STR_OFF.c_str());
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_SOUNDFIX.c_str());
-						if(soundFix)
-							printSmall(false, 224, selyPos, STR_ON.c_str());
-						else
-							printSmall(false, 224, selyPos, STR_OFF.c_str());
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_SOUNDFIX.c_str());
+			// 			if(soundFix)
+			// 				printSmall(false, 224, selyPos, STR_ON.c_str());
+			// 			else
+			// 				printSmall(false, 224, selyPos, STR_OFF.c_str());
+			// 			selyPos += 12;
 
-						if (consoleModel < 2) {
-							printSmall(false, 12, selyPos, STR_ROMREADLED.c_str());
-							switch(bstrap_romreadled) {
-								case 0:
-								default:
-									printSmall(false, 216, selyPos, STR_NONE.c_str());
-									break;
-								case 1:
-									printSmall(false, 216, selyPos, "WiFi");
-									break;
-								case 2:
-									printSmall(false, 216, selyPos, STR_POWER.c_str());
-									break;
-								case 3:
-									printSmall(false, 216, selyPos, STR_CAMERA.c_str());
-									break;
-							}
-						}
-						selyPos += 12;
+			// 			if (consoleModel < 2) {
+			// 				printSmall(false, 12, selyPos, STR_ROMREADLED.c_str());
+			// 				switch(bstrap_romreadled) {
+			// 					case 0:
+			// 					default:
+			// 						printSmall(false, 216, selyPos, STR_NONE.c_str());
+			// 						break;
+			// 					case 1:
+			// 						printSmall(false, 216, selyPos, "WiFi");
+			// 						break;
+			// 					case 2:
+			// 						printSmall(false, 216, selyPos, STR_POWER.c_str());
+			// 						break;
+			// 					case 3:
+			// 						printSmall(false, 216, selyPos, STR_CAMERA.c_str());
+			// 						break;
+			// 				}
+			// 			}
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_ASYNCPREFETCH.c_str());
-						if(bstrap_asyncPrefetch)
-							printSmall(false, 224, selyPos, STR_ON.c_str());
-						else
-							printSmall(false, 224, selyPos, STR_OFF.c_str());
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_ASYNCPREFETCH.c_str());
+			// 			if(bstrap_asyncPrefetch)
+			// 				printSmall(false, 224, selyPos, STR_ON.c_str());
+			// 			else
+			// 				printSmall(false, 224, selyPos, STR_OFF.c_str());
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
-						if(soundfreq)
-							printSmall(false, 187, selyPos, "47.61 kHz");
-						else
-							printSmall(false, 186, selyPos, "32.73 kHz");
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
+			// 			if(soundfreq)
+			// 				printSmall(false, 187, selyPos, "47.61 kHz");
+			// 			else
+			// 				printSmall(false, 186, selyPos, "32.73 kHz");
+			// 			selyPos += 12;
 
-						if (!arm7SCFGLocked) {
-							printSmall(false, 12, selyPos, STR_SLOT1LAUNCHMETHOD.c_str());
-							if(slot1LaunchMethod)
-								printSmall(false, 210, selyPos, STR_DIRECT.c_str());
-							else
-								printSmall(false, 202, selyPos, STR_REBOOT.c_str());
-						}
-						selyPos += 12;
+			// 			if (!arm7SCFGLocked) {
+			// 				printSmall(false, 12, selyPos, STR_SLOT1LAUNCHMETHOD.c_str());
+			// 				if(slot1LaunchMethod)
+			// 					printSmall(false, 210, selyPos, STR_DIRECT.c_str());
+			// 				else
+			// 					printSmall(false, 202, selyPos, STR_REBOOT.c_str());
+			// 			}
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_LOADINGSCREEN.c_str());
-						switch(bstrap_loadingScreen) {
-							case 0:
-							default:
-								printSmall(false, 216, selyPos, STR_NONE.c_str());
-								break;
-							case 1:
-								printSmall(false, 200, selyPos, STR_REGULAR.c_str());
-								break;
-							case 2:
-								printSmall(false, 216, selyPos, "Pong");
-								break;
-							case 3:
-								printSmall(false, 172, selyPos, "Tic-Tac-Toe");
-								break;
-						}
-						selyPos += 12;
+			// 			printSmall(false, 12, selyPos, STR_LOADINGSCREEN.c_str());
+			// 			switch(bstrap_loadingScreen) {
+			// 				case 0:
+			// 				default:
+			// 					printSmall(false, 216, selyPos, STR_NONE.c_str());
+			// 					break;
+			// 				case 1:
+			// 					printSmall(false, 200, selyPos, STR_REGULAR.c_str());
+			// 					break;
+			// 				case 2:
+			// 					printSmall(false, 216, selyPos, "Pong");
+			// 					break;
+			// 				case 3:
+			// 					printSmall(false, 172, selyPos, "Tic-Tac-Toe");
+			// 					break;
+			// 			}
+			// 			selyPos += 12;
 
-						printSmall(false, 12, selyPos, STR_BOOTSTRAP.c_str());
-						if(bootstrapFile)
-							printSmall(false, 202, selyPos, STR_NIGHTLY.c_str());
-						else
-							printSmall(false, 200, selyPos, STR_RELEASE.c_str());
-
-
-						if (settingscursor == 0) {
-							printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
-							printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
-							printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
-						} else if (settingscursor == 1) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_CPUSPEED_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_CPUSPEED_2.c_str());
-						} else if (settingscursor == 2) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_VRAMBOOST_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_VRAMBOOST_2.c_str());
-						} else if (settingscursor == 3) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_SOUNDFIX_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_SOUNDFIX_2.c_str());
-						} else if (settingscursor == 4) {
-							// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
-							// printLargeCentered(true, 128, "avoiding conflict with");
-							// printLargeCentered(true, 142, "recent libnds.");
-							printLargeCentered(true, 126, STR_DESCRIPTION_ROMREADLED_1.c_str());
-						} else if (settingscursor == 5) {
-							printLargeCentered(true, 112, STR_DESCRIPTION_ASYNCPREFETCH_1.c_str());
-							printLargeCentered(true, 126, STR_DESCRIPTION_ASYNCPREFETCH_2.c_str());
-							printLargeCentered(true, 140, STR_DESCRIPTION_ASYNCPREFETCH_3.c_str());
-						} else if (settingscursor == 6) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
-						} else if (settingscursor == 7) {
-							printLargeCentered(true, 104, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1.c_str());
-							printLargeCentered(true, 118, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3.c_str());
-							printLargeCentered(true, 146, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4.c_str());
-						} else if (settingscursor == 8) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
-						} else if (settingscursor == 9) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
-						}
-					} else {
-						printSmall(false, 12, selyPos, STR_FLASHCARD_SELECT.c_str());
-						selyPos += 12;
-						if(soundfreqsetting) {
-							printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
-							if(soundfreq)
-								printSmall(false, 184, selyPos, "47.61 kHz");
-							else
-								printSmall(false, 184, selyPos, "32.73 kHz");
-						} else {
-							printSmall(false, 12, selyPos, STR_USEGBARUNNER2.c_str());
-							if(useGbarunner)
-								printSmall(false, 224, selyPos, STR_YES.c_str());
-							else
-								printSmall(false, 224, selyPos, STR_NO.c_str());
-						}
-
-						if (settingscursor == 0) {
-							printLargeCentered(true, 118, STR_DESCRIPTION_FLASHCARD_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_FLASHCARD_2.c_str());
-						} else if (settingscursor == 1) {
-							if(soundfreqsetting) {
-								printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
-								printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
-							} else {
-								printLargeCentered(true, 118, STR_DESCRIPTION_GBARUNNER2_1.c_str());
-								printLargeCentered(true, 132, STR_DESCRIPTION_GBARUNNER2_2.c_str());
-							}
-						}
-					}
+			// 			printSmall(false, 12, selyPos, STR_BOOTSTRAP.c_str());
+			// 			if(bootstrapFile)
+			// 				printSmall(false, 202, selyPos, STR_NIGHTLY.c_str());
+			// 			else
+			// 				printSmall(false, 200, selyPos, STR_RELEASE.c_str());
 
 
+			// 			if (settingscursor == 0) {
+			// 				printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
+			// 				printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
+			// 				printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
+			// 			} else if (settingscursor == 1) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_CPUSPEED_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_CPUSPEED_2.c_str());
+			// 			} else if (settingscursor == 2) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_VRAMBOOST_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_VRAMBOOST_2.c_str());
+			// 			} else if (settingscursor == 3) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_SOUNDFIX_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_SOUNDFIX_2.c_str());
+			// 			} else if (settingscursor == 4) {
+			// 				// printLargeCentered(true, 114, "Locks the ARM9 SCFG_EXT,");
+			// 				// printLargeCentered(true, 128, "avoiding conflict with");
+			// 				// printLargeCentered(true, 142, "recent libnds.");
+			// 				printLargeCentered(true, 126, STR_DESCRIPTION_ROMREADLED_1.c_str());
+			// 			} else if (settingscursor == 5) {
+			// 				printLargeCentered(true, 112, STR_DESCRIPTION_ASYNCPREFETCH_1.c_str());
+			// 				printLargeCentered(true, 126, STR_DESCRIPTION_ASYNCPREFETCH_2.c_str());
+			// 				printLargeCentered(true, 140, STR_DESCRIPTION_ASYNCPREFETCH_3.c_str());
+			// 			} else if (settingscursor == 6) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
+			// 			} else if (settingscursor == 7) {
+			// 				printLargeCentered(true, 104, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1.c_str());
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3.c_str());
+			// 				printLargeCentered(true, 146, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4.c_str());
+			// 			} else if (settingscursor == 8) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_LOADINGSCREEN_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_LOADINGSCREEN_2.c_str());
+			// 			} else if (settingscursor == 9) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_BOOTSTRAP_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_BOOTSTRAP_2.c_str());
+			// 			}
+			// 		} else {
+			// 			printSmall(false, 12, selyPos, STR_FLASHCARD_SELECT.c_str());
+			// 			selyPos += 12;
+			// 			if(soundfreqsetting) {
+			// 				printSmall(false, 12, selyPos, STR_SNDFREQ.c_str());
+			// 				if(soundfreq)
+			// 					printSmall(false, 184, selyPos, "47.61 kHz");
+			// 				else
+			// 					printSmall(false, 184, selyPos, "32.73 kHz");
+			// 			} else {
+			// 				printSmall(false, 12, selyPos, STR_USEGBARUNNER2.c_str());
+			// 				if(useGbarunner)
+			// 					printSmall(false, 224, selyPos, STR_YES.c_str());
+			// 				else
+			// 					printSmall(false, 224, selyPos, STR_NO.c_str());
+			// 			}
 
-					menuprinted = true;
-				}
+			// 			if (settingscursor == 0) {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_FLASHCARD_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_FLASHCARD_2.c_str());
+			// 			} else if (settingscursor == 1) {
+			// 				if(soundfreqsetting) {
+			// 					printLargeCentered(true, 118, STR_DESCRIPTION_SNDFREQ_1.c_str());
+			// 					printLargeCentered(true, 132, STR_DESCRIPTION_SNDFREQ_2.c_str());
+			// 				} else {
+			// 					printLargeCentered(true, 118, STR_DESCRIPTION_GBARUNNER2_1.c_str());
+			// 					printLargeCentered(true, 132, STR_DESCRIPTION_GBARUNNER2_2.c_str());
+			// 				}
+			// 			}
+			// 		}
 
-				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					touchRead(&touch);
-					swiWaitForVBlank();
-				} while (!pressed);
+
+
+			// 		menuprinted = true;
+			// 	}
+
+			// 	// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			// 	do {
+			// 		scanKeys();
+			// 		pressed = keysDownRepeat();
+			// 		touchRead(&touch);
+			// 		swiWaitForVBlank();
+			// 	} while (!pressed);
 				
-				if (pressed & KEY_UP) {
-					settingscursor--;
-					if (consoleModel > 1 && settingscursor == 4) settingscursor--;
-					if (arm7SCFGLocked && settingscursor == 7) settingscursor--;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
-				if (pressed & KEY_DOWN) {
-					settingscursor++;
-					if (consoleModel > 1 && settingscursor == 4) settingscursor++;
-					if (arm7SCFGLocked && settingscursor == 7) settingscursor++;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if (pressed & KEY_UP) {
+			// 		settingscursor--;
+			// 		if (consoleModel > 1 && settingscursor == 4) settingscursor--;
+			// 		if (arm7SCFGLocked && settingscursor == 7) settingscursor--;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
+			// 	if (pressed & KEY_DOWN) {
+			// 		settingscursor++;
+			// 		if (consoleModel > 1 && settingscursor == 4) settingscursor++;
+			// 		if (arm7SCFGLocked && settingscursor == 7) settingscursor++;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 					
-				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
-					if(!flashcardUsed) {
-						switch (settingscursor) {
-							case 0:
-							default:
-								if (pressed & KEY_LEFT) {
-									bstrap_language--;
-									if (bstrap_language < -1) bstrap_language = 5;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_language++;
-									if (bstrap_language > 5) bstrap_language = -1;
-								}
-								break;
-							case 1:
-								boostCpu = !boostCpu;
-								break;
-							case 2:
-								boostVram = !boostVram;
-								break;
-							case 3:
-								soundFix = !soundFix;
-								break;
-							case 4:
-								// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
-								if (pressed & KEY_LEFT) {
-									bstrap_romreadled--;
-									if (bstrap_romreadled < 0) bstrap_romreadled = 2;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_romreadled++;
-									if (bstrap_romreadled > 2) bstrap_romreadled = 0;
-								}
-								break;
-							case 5:
-								bstrap_asyncPrefetch = !bstrap_asyncPrefetch;
-								break;
-							case 6:
-								soundfreq = !soundfreq;
-								soundfreqsettingChanged = !soundfreqsettingChanged;
-								break;
-							case 7:
-								slot1LaunchMethod = !slot1LaunchMethod;
-								break;
-							case 8:
-								if (pressed & KEY_LEFT) {
-									bstrap_loadingScreen--;
-									if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
-								} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-									bstrap_loadingScreen++;
-									if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
-								}
-								break;
-							case 9:
-								bootstrapFile = !bootstrapFile;
-								break;
-						}
-					} else {
-						switch (settingscursor) {
-							case 0:
-							default:
-								subscreenmode = 4;
-								break;
-							case 1:
-								if(soundfreqsetting) {
-									soundfreq = !soundfreq;
-									soundfreqsettingChanged = !soundfreqsettingChanged;
-								} else {
-									useGbarunner = !useGbarunner;
-								}
-								break;
-						}
-					}
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+			// 		if(!flashcardUsed) {
+			// 			switch (settingscursor) {
+			// 				case 0:
+			// 				default:
+			// 					if (pressed & KEY_LEFT) {
+			// 						bstrap_language--;
+			// 						if (bstrap_language < -1) bstrap_language = 5;
+			// 					} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+			// 						bstrap_language++;
+			// 						if (bstrap_language > 5) bstrap_language = -1;
+			// 					}
+			// 					break;
+			// 				case 1:
+			// 					boostCpu = !boostCpu;
+			// 					break;
+			// 				case 2:
+			// 					boostVram = !boostVram;
+			// 					break;
+			// 				case 3:
+			// 					soundFix = !soundFix;
+			// 					break;
+			// 				case 4:
+			// 					// bstrap_lockARM9scfgext = !bstrap_lockARM9scfgext;
+			// 					if (pressed & KEY_LEFT) {
+			// 						bstrap_romreadled--;
+			// 						if (bstrap_romreadled < 0) bstrap_romreadled = 2;
+			// 					} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+			// 						bstrap_romreadled++;
+			// 						if (bstrap_romreadled > 2) bstrap_romreadled = 0;
+			// 					}
+			// 					break;
+			// 				case 5:
+			// 					bstrap_asyncPrefetch = !bstrap_asyncPrefetch;
+			// 					break;
+			// 				case 6:
+			// 					soundfreq = !soundfreq;
+			// 					soundfreqsettingChanged = !soundfreqsettingChanged;
+			// 					break;
+			// 				case 7:
+			// 					slot1LaunchMethod = !slot1LaunchMethod;
+			// 					break;
+			// 				case 8:
+			// 					if (pressed & KEY_LEFT) {
+			// 						bstrap_loadingScreen--;
+			// 						if (bstrap_loadingScreen < 0) bstrap_loadingScreen = 3;
+			// 					} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+			// 						bstrap_loadingScreen++;
+			// 						if (bstrap_loadingScreen > 3) bstrap_loadingScreen = 0;
+			// 					}
+			// 					break;
+			// 				case 9:
+			// 					bootstrapFile = !bootstrapFile;
+			// 					break;
+			// 			}
+			// 		} else {
+			// 			switch (settingscursor) {
+			// 				case 0:
+			// 				default:
+			// 					subscreenmode = 4;
+			// 					break;
+			// 				case 1:
+			// 					if(soundfreqsetting) {
+			// 						soundfreq = !soundfreq;
+			// 						soundfreqsettingChanged = !soundfreqsettingChanged;
+			// 					} else {
+			// 						useGbarunner = !useGbarunner;
+			// 					}
+			// 					break;
+			// 			}
+			// 		}
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
-					subscreenmode = 0;
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_L) || (pressed & KEY_Y)) {
+			// 		subscreenmode = 0;
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_R) || (pressed & KEY_X)) {
-					if (flashcardUsed) {
-						subscreenmode = 0;
-					} else {
-						subscreenmode = 2;
-					}
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 	if ((pressed & KEY_R) || (pressed & KEY_X)) {
+			// 		if (flashcardUsed) {
+			// 			subscreenmode = 0;
+			// 		} else {
+			// 			subscreenmode = 2;
+			// 		}
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
-					mmEffectEx(&snd_back);
-					clearText();
-					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
-					SaveSettings();
-					clearText();
-					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-					if (!arm7SCFGLocked) {
-						rebootDSiMenuPP();
-					}
-					loadROMselect();
-					break;
-				}
+			// 	if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
+			// 		mmEffectEx(&snd_back);
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+			// 		SaveSettings();
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+			// 		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+			// 		if (!arm7SCFGLocked) {
+			// 			rebootDSiMenuPP();
+			// 		}
+			// 		loadROMselect();
+			// 		break;
+			// 	}
 
-				if(!flashcardUsed) {
-					if (settingscursor > 9) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 9;
-				} else {
-					if (settingscursor > 1) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 1;
-				}
-			} else {
-				pressed = 0;
+			// 	if(!flashcardUsed) {
+			// 		if (settingscursor > 9) settingscursor = 0;
+			// 		else if (settingscursor < 0) settingscursor = 9;
+			// 	} else {
+			// 		if (settingscursor > 1) settingscursor = 0;
+			// 		else if (settingscursor < 0) settingscursor = 1;
+			// 	}
+			// } else {
+			// 	pressed = 0;
 
-				if (!flashcardUsed && consoleModel < 2) {
-					if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
-					else hiyaAutobootFound = false;
-				}
+			// 	if (!flashcardUsed && consoleModel < 2) {
+			// 		if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
+			// 		else hiyaAutobootFound = false;
+			// 	}
 
-				if (!menuprinted) {
-					// Clear the screen so it doesn't over-print
-					clearText();
+			// 	if (!menuprinted) {
+			// 		// Clear the screen so it doesn't over-print
+			// 		clearText();
 
-					printSmallCentered(false, 173, appNameText);
+			// 		printSmallCentered(false, 173, appNameText);
 
-					printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
-					printSmall(true, 28, 1, username);
-					printSmall(true, 194, 174, vertext);
+			// 		printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
+			// 		printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
 
-					printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
+			// 		printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
 					
-					int yPos = 30;
-					for (int i = 0; i < settingscursor; i++) {
-						yPos += 12;
-					}
+			// 		int yPos = 30;
+			// 		for (int i = 0; i < settingscursor; i++) {
+			// 			yPos += 12;
+			// 		}
 
-					int selyPos = 30;
+			// 		int selyPos = 30;
 
-					printSmall(false, 4, yPos, ">");
+			// 		printSmall(false, 4, yPos, ">");
 
-					printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
-					switch(guiLanguage) {
-						case -1:
-						default:
-							printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
-							break;
-						case 0:
-							printSmall(false, 194, selyPos, "Japanese");
-							break;
-						case 1:
-							printSmall(false, 206, selyPos, "English");
-							break;
-						case 2:
-							printSmall(false, 207, selyPos, "French");
-							break;
-						case 3:
-							printSmall(false, 200, selyPos, "German");
-							break;
-						case 4:
-							printSmall(false, 210, selyPos, "Italian");
-							break;
-						case 5:
-							printSmall(false, 203, selyPos, "Spanish");
-							break;
-					}
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
+			// 		switch(guiLanguage) {
+			// 			case -1:
+			// 			default:
+			// 				printSmall(false, 203, selyPos, STR_SYSTEM.c_str());
+			// 				break;
+			// 			case 0:
+			// 				printSmall(false, 194, selyPos, "Japanese");
+			// 				break;
+			// 			case 1:
+			// 				printSmall(false, 206, selyPos, "English");
+			// 				break;
+			// 			case 2:
+			// 				printSmall(false, 207, selyPos, "French");
+			// 				break;
+			// 			case 3:
+			// 				printSmall(false, 200, selyPos, "German");
+			// 				break;
+			// 			case 4:
+			// 				printSmall(false, 210, selyPos, "Italian");
+			// 				break;
+			// 			case 5:
+			// 				printSmall(false, 203, selyPos, "Spanish");
+			// 				break;
+			// 		}
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_THEME.c_str());
-					switch (theme) {
-						case 0:
-						default:
-							printSmall(false, 224, selyPos, "DSi");
-							break;
-						case 1:
-							printSmall(false, 224, selyPos, "3DS");
-							break;
-						case 2:
-							printSmall(false, 224, selyPos, "R4");
-							break;
-						case 3:
-							printSmall(false, 200, selyPos, "Acekard");
-							break;
-					}
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_THEME.c_str());
+			// 		switch (theme) {
+			// 			case 0:
+			// 			default:
+			// 				printSmall(false, 224, selyPos, "DSi");
+			// 				break;
+			// 			case 1:
+			// 				printSmall(false, 224, selyPos, "3DS");
+			// 				break;
+			// 			case 2:
+			// 				printSmall(false, 224, selyPos, "R4");
+			// 				break;
+			// 			case 3:
+			// 				printSmall(false, 200, selyPos, "Acekard");
+			// 				break;
+			// 		}
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_LASTPLAYEDROM.c_str());
-					if(autorun)
-						printSmall(false, 224, selyPos, STR_YES.c_str());
-					else
-						printSmall(false, 230, selyPos, STR_NO.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_LASTPLAYEDROM.c_str());
+			// 		if(autorun)
+			// 			printSmall(false, 224, selyPos, STR_YES.c_str());
+			// 		else
+			// 			printSmall(false, 230, selyPos, STR_NO.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_DSIMENUPPLOGO.c_str());
-					if(showlogo)
-						printSmall(false, 216, selyPos, STR_SHOW.c_str());
-					else
-						printSmall(false, 222, selyPos, STR_HIDE.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_DSIMENUPPLOGO.c_str());
+			// 		if(showlogo)
+			// 			printSmall(false, 216, selyPos, STR_SHOW.c_str());
+			// 		else
+			// 			printSmall(false, 222, selyPos, STR_HIDE.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_DIRECTORIES.c_str());
-					if(showDirectories)
-						printSmall(false, 216, selyPos, STR_SHOW.c_str());
-					else
-						printSmall(false, 222, selyPos, STR_HIDE.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_DIRECTORIES.c_str());
+			// 		if(showDirectories)
+			// 			printSmall(false, 216, selyPos, STR_SHOW.c_str());
+			// 		else
+			// 			printSmall(false, 222, selyPos, STR_HIDE.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_BOXART.c_str());
-					if(showBoxArt)
-						printSmall(false, 216, selyPos, STR_SHOW.c_str());
-					else
-						printSmall(false, 222, selyPos, STR_HIDE.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_BOXART.c_str());
+			// 		if(showBoxArt)
+			// 			printSmall(false, 216, selyPos, STR_SHOW.c_str());
+			// 		else
+			// 			printSmall(false, 222, selyPos, STR_HIDE.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_ANIMATEDSIICONS.c_str());
-					if(animateDsiIcons)
-						printSmall(false, 224, selyPos, STR_YES.c_str());
-					else
-						printSmall(false, 230, selyPos, STR_NO.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_ANIMATEDSIICONS.c_str());
+			// 		if(animateDsiIcons)
+			// 			printSmall(false, 224, selyPos, STR_YES.c_str());
+			// 		else
+			// 			printSmall(false, 230, selyPos, STR_NO.c_str());
+			// 		selyPos += 12;
 
-					printSmall(false, 12, selyPos, STR_STARTBUTTONLAUNCH.c_str());
-					if(startButtonLaunch)
-						printSmall(false, 224, selyPos, STR_YES.c_str());
-					else
-						printSmall(false, 230, selyPos, STR_NO.c_str());
-					selyPos += 12;
+			// 		printSmall(false, 12, selyPos, STR_STARTBUTTONLAUNCH.c_str());
+			// 		if(startButtonLaunch)
+			// 			printSmall(false, 224, selyPos, STR_YES.c_str());
+			// 		else
+			// 			printSmall(false, 230, selyPos, STR_NO.c_str());
+			// 		selyPos += 12;
 
-					if (!flashcardUsed && !arm7SCFGLocked) {
-						if (consoleModel < 2) {
-							printSmall(false, 12, selyPos, STR_SYSTEMSETTINGS.c_str());
-							selyPos += 12;
-							if (hiyaAutobootFound) {
-								printSmall(false, 12, selyPos, STR_RESTOREDSIMENU.c_str());
-							} else {
-								printSmall(false, 12, selyPos, STR_REPLACEDSIMENU.c_str());
-							}
-						}
-					}
-
-
-					if (settingscursor == 0) {
-						printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
-						printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
-						printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
-					} else if (settingscursor == 1) {
-						printLargeCentered(true, 118, STR_DESCRIPTION_THEME_1.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_THEME_2.c_str());
-					} else if (settingscursor == 2) {
-						printLargeCentered(true, 104, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
-						printLargeCentered(true, 118, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
-						printLargeCentered(true, 146, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
-					} else if (settingscursor == 3) {
-						printLargeCentered(true, 112, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
-						printLargeCentered(true, 126, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());
-						printLargeCentered(true, 140, STR_DESCRIPTION_DSIMENUPPLOGO_3.c_str());
-					} else if (settingscursor == 4) {
-						printLargeCentered(true, 112, STR_DESCRIPTION_DIRECTORIES_1.c_str());
-						printLargeCentered(true, 126, STR_DESCRIPTION_DIRECTORIES_2.c_str());
-						printLargeCentered(true, 140, STR_DESCRIPTION_DIRECTORIES_3.c_str());
-					} else if (settingscursor == 5) {
-						printLargeCentered(true, 118, STR_DESCRIPTION_BOXART_1.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_BOXART_2.c_str());
-					} else if (settingscursor == 6) {
-						printLargeCentered(true, 112, STR_DESCRIPTION_ANIMATEDSIICONS_1.c_str());
-						printLargeCentered(true, 126, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
-						printLargeCentered(true, 140, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
-					} else if (settingscursor == 7) {
-						printLargeCentered(true, 112, STR_DESCRIPTION_STARTBUTTONLAUNCH_1.c_str());
-						printLargeCentered(true, 126, STR_DESCRIPTION_STARTBUTTONLAUNCH_2.c_str());
-						printLargeCentered(true, 140, STR_DESCRIPTION_STARTBUTTONLAUNCH_3.c_str());
-					} else if (settingscursor == 8) {
-						printLargeCentered(true, 118, STR_DESCRIPTION_SYSTEMSETTINGS_1.c_str());
-						printLargeCentered(true, 132, STR_DESCRIPTION_SYSTEMSETTINGS_2.c_str());
-					} else if (settingscursor == 9) {
-						if (hiyaAutobootFound) {
-							printLargeCentered(true, 126, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
-						} else {
-							printLargeCentered(true, 118, STR_DESCRIPTION_REPLACEDSIMENU_1.c_str());
-							printLargeCentered(true, 132, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
-						}
-					}
+			// 		if (!flashcardUsed && !arm7SCFGLocked) {
+			// 			if (consoleModel < 2) {
+			// 				printSmall(false, 12, selyPos, STR_SYSTEMSETTINGS.c_str());
+			// 				selyPos += 12;
+			// 				if (hiyaAutobootFound) {
+			// 					printSmall(false, 12, selyPos, STR_RESTOREDSIMENU.c_str());
+			// 				} else {
+			// 					printSmall(false, 12, selyPos, STR_REPLACEDSIMENU.c_str());
+			// 				}
+			// 			}
+			// 		}
 
 
-					menuprinted = true;
-				}
+			// 		if (settingscursor == 0) {
+			// 			printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
+			// 			printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
+			// 			printLargeCentered(true, 140, STR_DESCRIPTION_LANGUAGE_3.c_str());
+			// 		} else if (settingscursor == 1) {
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_THEME_1.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_THEME_2.c_str());
+			// 		} else if (settingscursor == 2) {
+			// 			printLargeCentered(true, 104, STR_DESCRIPTION_LASTPLAYEDROM_1.c_str());
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_LASTPLAYEDROM_2.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_LASTPLAYEDROM_3.c_str());
+			// 			printLargeCentered(true, 146, STR_DESCRIPTION_LASTPLAYEDROM_4.c_str());
+			// 		} else if (settingscursor == 3) {
+			// 			printLargeCentered(true, 112, STR_DESCRIPTION_DSIMENUPPLOGO_1.c_str());
+			// 			printLargeCentered(true, 126, STR_DESCRIPTION_DSIMENUPPLOGO_2.c_str());
+			// 			printLargeCentered(true, 140, STR_DESCRIPTION_DSIMENUPPLOGO_3.c_str());
+			// 		} else if (settingscursor == 4) {
+			// 			printLargeCentered(true, 112, STR_DESCRIPTION_DIRECTORIES_1.c_str());
+			// 			printLargeCentered(true, 126, STR_DESCRIPTION_DIRECTORIES_2.c_str());
+			// 			printLargeCentered(true, 140, STR_DESCRIPTION_DIRECTORIES_3.c_str());
+			// 		} else if (settingscursor == 5) {
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_BOXART_1.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_BOXART_2.c_str());
+			// 		} else if (settingscursor == 6) {
+			// 			printLargeCentered(true, 112, STR_DESCRIPTION_ANIMATEDSIICONS_1.c_str());
+			// 			printLargeCentered(true, 126, STR_DESCRIPTION_ANIMATEDSIICONS_2.c_str());
+			// 			printLargeCentered(true, 140, STR_DESCRIPTION_ANIMATEDSIICONS_3.c_str());
+			// 		} else if (settingscursor == 7) {
+			// 			printLargeCentered(true, 112, STR_DESCRIPTION_STARTBUTTONLAUNCH_1.c_str());
+			// 			printLargeCentered(true, 126, STR_DESCRIPTION_STARTBUTTONLAUNCH_2.c_str());
+			// 			printLargeCentered(true, 140, STR_DESCRIPTION_STARTBUTTONLAUNCH_3.c_str());
+			// 		} else if (settingscursor == 8) {
+			// 			printLargeCentered(true, 118, STR_DESCRIPTION_SYSTEMSETTINGS_1.c_str());
+			// 			printLargeCentered(true, 132, STR_DESCRIPTION_SYSTEMSETTINGS_2.c_str());
+			// 		} else if (settingscursor == 9) {
+			// 			if (hiyaAutobootFound) {
+			// 				printLargeCentered(true, 126, STR_DESCRIPTION_RESTOREDSIMENU_1.c_str());
+			// 			} else {
+			// 				printLargeCentered(true, 118, STR_DESCRIPTION_REPLACEDSIMENU_1.c_str());
+			// 				printLargeCentered(true, 132, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
+			// 			}
+			// 		}
 
-				// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					touchRead(&touch);
-					swiWaitForVBlank();
-				} while (!pressed);
 
-				if (pressed & KEY_UP) {
-					settingscursor -= 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
-				if (pressed & KEY_DOWN) {
-					settingscursor += 1;
-					mmEffectEx(&snd_select);
-					menuprinted = false;
-				}
+			// 		menuprinted = true;
+			// 	}
 
-				if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
-					switch (settingscursor) {
-						case 0:
-						default:
-							if (pressed & KEY_LEFT) {
-								guiLanguage--;
-								if (guiLanguage < -1) guiLanguage = 5;
-							} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
-								guiLanguage++;
-								if (guiLanguage > 5) guiLanguage = -1;
-							}
-							break;
-						case 1:
-							if (pressed & KEY_LEFT) {
-								subtheme = 0;
-								theme -= 1;
-								if (theme < 0) theme = 3;
-								mmEffectEx(&snd_select);
-							} else if (pressed & KEY_RIGHT) {
-								subtheme = 0;
-								theme += 1;
-								if (theme > 3) theme = 0;
-								mmEffectEx(&snd_select);
-							} else if (theme == 1 || theme == 3) {
-								mmEffectEx(&snd_wrong);
-							} else {
-								subscreenmode = 3;
-								mmEffectEx(&snd_select);
-							}
-							break;
-						case 2:
-							autorun = !autorun;
-							mmEffectEx(&snd_select);
-							break;
-						case 3:
-							showlogo = !showlogo;
-							mmEffectEx(&snd_select);
-							break;
-						case 4:
-							showDirectories = !showDirectories;
-							mmEffectEx(&snd_select);
-							break;
-						case 5:
-							showBoxArt = !showBoxArt;
-							mmEffectEx(&snd_select);
-							break;
-						case 6:
-							animateDsiIcons = !animateDsiIcons;
-							mmEffectEx(&snd_select);
-							break;
-						case 7:
-							startButtonLaunch = !startButtonLaunch;
-							mmEffectEx(&snd_select);
-							break;
-						case 8:
-							screenmode = 0;
-							mmEffectEx(&snd_launch);
-							clearText();
-							printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
-							SaveSettings();
-							clearText();
-							printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
-							for (int i = 0; i < 60; i++) swiWaitForVBlank();
-							launchSystemSettings();
-							break;
-						case 9:
-							if (pressed & KEY_A) {
-								if (hiyaAutobootFound) {
-									if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
-									} else {
-										hiyaAutobootFound = false;
-									}
-								} else {
-									FILE* ResetData = fopen("sd:/hiya/autoboot.bin","wb");
-									fwrite(autoboot_bin,1,autoboot_bin_len,ResetData);
-									fclose(ResetData);
-									hiyaAutobootFound = true;
+			// 	// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+			// 	do {
+			// 		scanKeys();
+			// 		pressed = keysDownRepeat();
+			// 		touchRead(&touch);
+			// 		swiWaitForVBlank();
+			// 	} while (!pressed);
 
-									CIniFile hiyacfwini( hiyacfwinipath );
-									hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
-									hiyacfwini.SaveIniFile(hiyacfwinipath);
-								}
-							}
-							break;
-					}
-					menuprinted = false;
-				}
+			// 	if (pressed & KEY_UP) {
+			// 		settingscursor -= 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
+			// 	if (pressed & KEY_DOWN) {
+			// 		settingscursor += 1;
+			// 		mmEffectEx(&snd_select);
+			// 		menuprinted = false;
+			// 	}
 
-				if (pressed & KEY_Y && settingscursor == 2) {
-					screenmode = 0;
-					mmEffectEx(&snd_launch);
-					clearText();
-					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
-					SaveSettings();
-					clearText();
-					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-					int err = lastRanROM();
-					iprintf ("Start failed. Error %i\n", err);
-				}
+			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+			// 		switch (settingscursor) {
+			// 			case 0:
+			// 			default:
+			// 				if (pressed & KEY_LEFT) {
+			// 					guiLanguage--;
+			// 					if (guiLanguage < -1) guiLanguage = 5;
+			// 				} else if ((pressed & KEY_RIGHT) || (pressed & KEY_A)) {
+			// 					guiLanguage++;
+			// 					if (guiLanguage > 5) guiLanguage = -1;
+			// 				}
+			// 				break;
+			// 			case 1:
+			// 				if (pressed & KEY_LEFT) {
+			// 					subtheme = 0;
+			// 					theme -= 1;
+			// 					if (theme < 0) theme = 3;
+			// 					mmEffectEx(&snd_select);
+			// 				} else if (pressed & KEY_RIGHT) {
+			// 					subtheme = 0;
+			// 					theme += 1;
+			// 					if (theme > 3) theme = 0;
+			// 					mmEffectEx(&snd_select);
+			// 				} else if (theme == 1 || theme == 3) {
+			// 					mmEffectEx(&snd_wrong);
+			// 				} else {
+			// 					subscreenmode = 3;
+			// 					mmEffectEx(&snd_select);
+			// 				}
+			// 				break;
+			// 			case 2:
+			// 				autorun = !autorun;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 3:
+			// 				showlogo = !showlogo;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 4:
+			// 				showDirectories = !showDirectories;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 5:
+			// 				showBoxArt = !showBoxArt;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 6:
+			// 				animateDsiIcons = !animateDsiIcons;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 7:
+			// 				startButtonLaunch = !startButtonLaunch;
+			// 				mmEffectEx(&snd_select);
+			// 				break;
+			// 			case 8:
+			// 				screenmode = 0;
+			// 				mmEffectEx(&snd_launch);
+			// 				clearText();
+			// 				printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+			// 				SaveSettings();
+			// 				clearText();
+			// 				printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+			// 				for (int i = 0; i < 60; i++) swiWaitForVBlank();
+			// 				launchSystemSettings();
+			// 				break;
+			// 			case 9:
+			// 				if (pressed & KEY_A) {
+			// 					if (hiyaAutobootFound) {
+			// 						if ( remove ("sd:/hiya/autoboot.bin") != 0 ) {
+			// 						} else {
+			// 							hiyaAutobootFound = false;
+			// 						}
+			// 					} else {
+			// 						FILE* ResetData = fopen("sd:/hiya/autoboot.bin","wb");
+			// 						fwrite(autoboot_bin,1,autoboot_bin_len,ResetData);
+			// 						fclose(ResetData);
+			// 						hiyaAutobootFound = true;
 
-				if ((pressed & KEY_L) || (pressed & KEY_Y)) {
-					if (flashcardUsed) {
-						subscreenmode = 1;
-					} else {
-						subscreenmode = 2;
-					}
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 						CIniFile hiyacfwini( hiyacfwinipath );
+			// 						hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
+			// 						hiyacfwini.SaveIniFile(hiyacfwinipath);
+			// 					}
+			// 				}
+			// 				break;
+			// 		}
+			// 		menuprinted = false;
+			// 	}
 
-				if ((pressed & KEY_R) || (pressed & KEY_X)) {
-					subscreenmode = 1;
-					settingscursor = 0;
-					mmEffectEx(&snd_switch);
-					menuprinted = false;
-				}
+			// 	if (pressed & KEY_Y && settingscursor == 2) {
+			// 		screenmode = 0;
+			// 		mmEffectEx(&snd_launch);
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+			// 		SaveSettings();
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+			// 		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+			// 		int err = lastRanROM();
+			// 		iprintf ("Start failed. Error %i\n", err);
+			// 	}
 
-				if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
-					mmEffectEx(&snd_back);
-					clearText();
-					printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
-					SaveSettings();
-					clearText();
-					printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
-					if (!arm7SCFGLocked) {
-						rebootDSiMenuPP();
-					}
-					loadROMselect();
-					break;
-				}
+			// 	if ((pressed & KEY_L) || (pressed & KEY_Y)) {
+			// 		if (flashcardUsed) {
+			// 			subscreenmode = 1;
+			// 		} else {
+			// 			subscreenmode = 2;
+			// 		}
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
 
-				if (!flashcardUsed && consoleModel < 2) {
-					if (settingscursor > 9) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 9;
-				} else {
-					if (settingscursor > 7) settingscursor = 0;
-					else if (settingscursor < 0) settingscursor = 7;
-				}
-			}
+			// 	if ((pressed & KEY_R) || (pressed & KEY_X)) {
+			// 		subscreenmode = 1;
+			// 		settingscursor = 0;
+			// 		mmEffectEx(&snd_switch);
+			// 		menuprinted = false;
+			// 	}
+
+			// 	if ((pressed & KEY_B) || ((pressed & KEY_TOUCH) && touch.py > 170)) {
+			// 		mmEffectEx(&snd_back);
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SAVING_SETTINGS.c_str());
+			// 		SaveSettings();
+			// 		clearText();
+			// 		printSmall(false, 4, 2, STR_SETTINGS_SAVED.c_str());
+			// 		for (int i = 0; i < 60; i++) swiWaitForVBlank();
+			// 		if (!arm7SCFGLocked) {
+			// 			rebootDSiMenuPP();
+			// 		}
+			// 		loadROMselect();
+			// 		break;
+			// 	}
+
+			// 	if (!flashcardUsed && consoleModel < 2) {
+			// 		if (settingscursor > 9) settingscursor = 0;
+			// 		else if (settingscursor < 0) settingscursor = 9;
+			// 	} else {
+			// 		if (settingscursor > 7) settingscursor = 0;
+			// 		else if (settingscursor < 0) settingscursor = 7;
+			// 	}
+			// }
+#pragma endregion
 
 		} else {
 			loadROMselect();
 		}
-
 	}
 
 	return 0;
