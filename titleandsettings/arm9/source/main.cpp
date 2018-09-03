@@ -549,6 +549,11 @@ int lastRanROM()
 	return err;
 }
 
+Option generate_option(Option::Bool& optval)
+{
+	return Option("Sub Option", "Long Description of Sub Option", Option::Bool(&ms().ak_zoomIcons), {"On", "Off"}, {true, false});
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -735,8 +740,9 @@ int main(int argc, char **argv)
 	ms().romfolder = "Hello";
 	page.option("Test Option Bool",
 				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons),
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
 				{"On", "Off"}, {true, false})
+
 		.option("Test Option", 
 				"This is an option to \n test variadic options",
 				Option::Str(&ms().romfolder),
@@ -798,6 +804,7 @@ int main(int argc, char **argv)
 			if (pressed & KEY_RIGHT) {
 				gui.setOptionNext();
 			} 
+			
 			if (pressed & KEY_DOWN) {
 				gui.incrementOption();
 			}
@@ -806,6 +813,15 @@ int main(int argc, char **argv)
 				gui.decrementOption();
 			}
 
+			if (pressed & KEY_A)
+			{
+				gui.enableSub();
+			}
+
+			if (pressed & KEY_B && gui.inSub())
+			{
+				gui.disableSub();
+			}
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;

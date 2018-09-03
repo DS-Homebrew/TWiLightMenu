@@ -9,11 +9,17 @@ class SettingsGUI
 {
   public:
     SettingsGUI()
-        : _selectedPage(0), _selectedOption(0) {}
+        : _selectedPage(0), _selectedOption(0), _inSub(false) {}
     ~SettingsGUI() {}
 
   public:
     void draw();
+
+    void drawSub(Option& subOption);
+
+    void enableSub() { _inSub = true; }
+    void disableSub() { _inSub = false; }
+    bool inSub() { return _inSub; }
 
     SettingsGUI &addPage(SettingsPage &page)
     {
@@ -29,6 +35,7 @@ class SettingsGUI
   private:
     int _selectedPage;
     int _selectedOption;
+    bool _inSub;
     std::vector<SettingsPage> _pages;
 };
 

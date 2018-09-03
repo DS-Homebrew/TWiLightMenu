@@ -3,7 +3,8 @@
 #include <vector>
 #include <algorithm>
 #include <nds.h>
-
+#include <functional>
+#include <memory>
 #pragma once
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
@@ -17,19 +18,19 @@ typedef const char* cstr;
 class Option
 {
 public:
-  /**
-   * \brief Represents a submenu, or jump to a page.
-   */
-  class Sub
-  {
-  public:
-    Sub(int page) { _page = page; }
-    ~Sub() {}
-    int page() { return _page; }
+  // /**
+  //  * \brief Represents a submenu, or jump to a page.
+  //  */
+  // class Sub
+  // {
+  // public:
+  //   Sub(int page) { _page = page; }
+  //   ~Sub() {}
+  //   int page() { return _page; }
 
-  private:
-    int _page;
-  };
+  // private:
+  //   int _page;
+  // };
 
   /**
    * \brief Represents a boolean option
@@ -40,13 +41,20 @@ public:
   class Bool
   {
   public:
-    Bool(bool *pointer) { _pointer = pointer; };
+    Bool(bool *pointer) 
+      : _generator(nullptr) { _pointer = pointer; };
+   
+    Bool(bool *pointer, const std::function<Option(Bool&)>& generator) 
+      : _generator(generator) { _pointer = pointer; _generator = generator; };
+
     ~Bool() {}
     void set(bool value) { (*_pointer) = value; };
     bool get() { return *_pointer; };
-
+    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
   private:
     bool *_pointer;
+    std::function<Option(Bool&)> _generator;
+
   };
 
   /**
@@ -57,13 +65,18 @@ public:
   class Int
   {
   public:
-    Int(int *pointer) { _pointer = pointer; };
+    Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
+    Int(int *pointer, const std::function<Option(Int&)>& generator) 
+      : _generator(generator) { _pointer = pointer; _generator = generator; };
+
     ~Int() {}
     void set(int value) { (*_pointer) = value; };
     int get() { return *_pointer; };
+    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
 
   private:
     int *_pointer;
+    std::function<Option(Int&)> _generator;
   };
 
   /**
@@ -74,14 +87,23 @@ public:
   class Str
   {
   public:
-    Str(std::string *pointer) { _pointer = pointer; };
+    Str(std::string *pointer) 
+      : _generator(nullptr) { _pointer = pointer; };
+
+    Str(std::string *pointer, const std::function<Option(Str&)>& generator) 
+      : _generator(generator) { _pointer = pointer; _generator = generator; };
+      
     ~Str() {}
     void set(std::string value) { (*_pointer) = value; };
     std::string &get() { return *_pointer; };
+    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
 
   private:
     std::string *_pointer;
+    std::function<Option(Str&)> _generator;
   };
+  
+  typedef std::variant<Bool, Int, Str> OptVal;
 
 public:
   /**
@@ -108,7 +130,7 @@ public:
  */
   Option(const std::string &displayName,
          const std::string &longDescription,
-         std::variant<Sub, Bool, Int, Str> action,
+         Option::OptVal action,
          std::initializer_list<std::string> const &labels,
          std::initializer_list<std::variant<bool, int, cstr>> const &values)
       : _action(action)
@@ -123,7 +145,7 @@ public:
 
   std::string &displayName() { return _displayName; }
   std::string &longDescription() { return _longDescription; }
-  std::variant<Sub, Bool, Int, Str> &action() { return _action; }
+  OptVal &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
   std::vector<std::variant<bool, int, cstr>> &values() { return _values; }
 
@@ -170,7 +192,7 @@ public:
 private:
   std::string _displayName;
   std::string _longDescription;
-  std::variant<Sub, Bool, Int, Str> _action;
+  Option::OptVal _action;
   std::vector<std::string> _labels;
   std::vector<std::variant<bool, int, cstr>> _values;
 };
@@ -206,7 +228,7 @@ public:
   SettingsPage &option(
       const std::string &displayName,
       const std::string &longDescription,
-      std::variant<Option::Sub, Option::Bool, Option::Int, Option::Str> action,
+      Option::OptVal action,
       std::initializer_list<std::string> const &labels,
       std::initializer_list<std::variant<bool, int, cstr>> const &values)
   {

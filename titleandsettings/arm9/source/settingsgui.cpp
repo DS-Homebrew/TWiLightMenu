@@ -4,7 +4,19 @@
 #include <variant>
 
 void SettingsGUI::draw()
-{
+{   
+    auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
+    if (inSub()) {
+        if (auto action = std::get_if<Option::Bool>(&selectedOption.action())) {
+            if (action->sub()) 
+            {
+                drawSub(*action->sub());
+                return;
+            }
+        }
+    }
+    clearText();
+    disableSub();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
     for (int i = 0; i < _pages[_selectedPage].options().size(); i++)
     {
@@ -16,6 +28,12 @@ void SettingsGUI::draw()
         printSmall(false, 12, 30 + i * 14, _pages[_selectedPage].options()[i].displayName().c_str());
         printSmall(false, 194, 30 + i * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
+}
+
+void SettingsGUI::drawSub(Option& option)
+{
+    clearText();
+    printLarge(false, 6, 1, option.displayName().c_str());
 }
 
 void SettingsGUI::incrementOption()
