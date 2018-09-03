@@ -45,7 +45,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     ak_theme = "zelda";
     ak_zoomIcons = true;
 
-    launchType = ESNoLaunch;
+    launchType = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
