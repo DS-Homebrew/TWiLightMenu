@@ -50,7 +50,7 @@ void SettingsGUI::setOptionNext()
 
     if (auto action = std::get_if<Option::Str>(&selectedOption.action()))
     {
-        action->set(*std::get_if<const char*>(&nextValue));
+        action->set(*std::get_if<cstr>(&nextValue));
     }
     clearText();
 }

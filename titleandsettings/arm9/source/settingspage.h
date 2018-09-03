@@ -7,6 +7,8 @@
 #pragma once
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
+typedef const char* cstr;
+
 /**
  * \brief Represents a settings option with an associated INI 
  *        entry that can be displayed to the user.
@@ -108,7 +110,7 @@ public:
          const std::string &longDescription,
          std::variant<Sub, Bool, Int, Str> action,
          std::initializer_list<std::string> const &labels,
-         std::initializer_list<std::variant<bool, int, const char*>> const &values)
+         std::initializer_list<std::variant<bool, int, cstr>> const &values)
       : _action(action)
   {
     _displayName = displayName;
@@ -123,7 +125,7 @@ public:
   std::string &longDescription() { return _longDescription; }
   std::variant<Sub, Bool, Int, Str> &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
-  std::vector<std::variant<bool, int, const char*>> &values() { return _values; }
+  std::vector<std::variant<bool, int, cstr>> &values() { return _values; }
 
   int selected()
   {
@@ -156,7 +158,7 @@ public:
        //nocashMessage(value->get().c_str());
       for (int i = 0; i < _values.size(); i++)
       {
-        if (auto _value = std::get_if<const char*>(&_values[i]))
+        if (auto _value = std::get_if<cstr>(&_values[i]))
         {
           if (value->get().compare(*_value) == 0) return i;
         }
@@ -170,7 +172,7 @@ private:
   std::string _longDescription;
   std::variant<Sub, Bool, Int, Str> _action;
   std::vector<std::string> _labels;
-  std::vector<std::variant<bool, int, const char*>> _values;
+  std::vector<std::variant<bool, int, cstr>> _values;
 };
 
 class SettingsPage
@@ -206,7 +208,7 @@ public:
       const std::string &longDescription,
       std::variant<Option::Sub, Option::Bool, Option::Int, Option::Str> action,
       std::initializer_list<std::string> const &labels,
-      std::initializer_list<std::variant<bool, int, const char*>> const &values)
+      std::initializer_list<std::variant<bool, int, cstr>> const &values)
   {
     _options.emplace_back(displayName, longDescription, action, labels, values);
     return *this;
