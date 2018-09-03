@@ -732,7 +732,7 @@ int main(int argc, char **argv)
 
 	// consoleDemoInit();
 	SettingsPage page("Test title No page");
-
+	ms().romfolder = "Hello";
 	page.option("Test Option Bool",
 				"This is an option to \n test variadic options",
 				Option::Bool(&ms().ak_zoomIcons),
@@ -794,7 +794,7 @@ int main(int argc, char **argv)
 				pressed = keysDownRepeat();
 				swiWaitForVBlank();
 			} while (!pressed);
-			
+
 			if (pressed & KEY_RIGHT) {
 				gui.setOptionNext();
 			} 

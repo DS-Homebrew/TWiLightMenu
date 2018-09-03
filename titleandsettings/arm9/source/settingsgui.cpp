@@ -35,6 +35,7 @@ void SettingsGUI::setOptionNext()
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     int currentValueIndex = selectedOption.selected();
     int nextValueIndex = (currentValueIndex + 1) % (selectedOption.values().size());
+    if (currentValueIndex == -1) nextValueIndex = 0;
     auto nextValue = selectedOption.values()[nextValueIndex];
 
     if (auto action = std::get_if<Option::Bool>(&selectedOption.action()))
@@ -49,7 +50,7 @@ void SettingsGUI::setOptionNext()
 
     if (auto action = std::get_if<Option::Str>(&selectedOption.action()))
     {
-        action->set(*std::get_if<std::string>(&nextValue));
+        action->set(*std::get_if<const char*>(&nextValue));
     }
     clearText();
 }
