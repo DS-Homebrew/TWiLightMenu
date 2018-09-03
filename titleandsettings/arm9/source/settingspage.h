@@ -1,7 +1,7 @@
 #include <variant>
 #include <string>
 #include <vector>
-
+#include <algorithm>
 #pragma once
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
@@ -26,7 +26,7 @@ public:
     Bool(bool *pointer) { _pointer = pointer; };
     ~Bool() {}
     void set(bool value) { (*_pointer) = value; };
-    bool get() { *_pointer; };
+    bool get() { return *_pointer; };
 
   private:
     bool *_pointer;
@@ -38,7 +38,7 @@ public:
     Int(int *pointer) { _pointer = pointer; };
     ~Int() {}
     void set(int value) { (*_pointer) = value; };
-    int get() { *_pointer; };
+    int get() { return *_pointer; };
 
   private:
     int *_pointer;
@@ -50,7 +50,7 @@ public:
     Str(std::string *pointer) { _pointer = pointer; };
     ~Str() {}
     void set(std::string value) { (*_pointer) = value; };
-    std::string &get() { *_pointer; };
+    std::string &get() { return *_pointer; };
 
   private:
     std::string *_pointer;
@@ -76,6 +76,34 @@ public:
   std::string &longDescription() { return _longDescription; }
   std::variant<Sub, Bool, Int, Str> &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
+  std::vector<std::variant<bool, int, std::string>>& values() { return _values; }
+
+  int selected() {
+    if (auto value = std::get_if<Bool>(&action())) {
+        for (int i = 0; i < _values.size(); i++) {
+          if (auto _value = std::get_if<bool>(&_values[i])) {
+            if (*_value == value->get()) return i;
+          }
+        }
+    }
+
+    if (auto value = std::get_if<Int>(&action())) {
+        for (int i = 0; i < _values.size(); i++) {
+          if (auto _value = std::get_if<int>(&_values[i])) {
+            if (*_value == value->get()) return i;
+          }
+        }
+    }
+
+     if (auto value = std::get_if<Str>(&action())) {
+        for (int i = 0; i < _values.size(); i++) {
+          if (auto _value = std::get_if<std::string>(&_values[i])) {
+            if (*_value == value->get()) return i;
+          }
+        }
+    }
+    return -1;
+  }
 
 private:
   std::string _displayName;

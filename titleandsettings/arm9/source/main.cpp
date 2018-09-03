@@ -34,7 +34,6 @@
 
 #include "graphics/graphics.h"
 
-
 #include "graphics/fontHandler.h"
 
 #include "common/nds_loader_arm9.h"
@@ -47,17 +46,17 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
-#include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
+#include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
+#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 
 bool renderScreens = false;
-bool fadeType = false;		// false = out, true = in
+bool fadeType = false; // false = out, true = in
 
 bool soundfreqsettingChanged = false;
 
-const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
-const char* hiyacfwinipath = "sd:/hiya/settings.ini";
-const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
+const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char *hiyacfwinipath = "sd:/hiya/settings.ini";
+const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
@@ -74,8 +73,8 @@ static int consoleModel = 0;
 static bool showlogo = true;
 static bool gotosettings = false;
 
-int appName = 0;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
-const char* appNameText = "";
+int appName = 0; // 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
+const char *appNameText = "";
 
 int guiLanguage = -1;
 static int bstrap_loadingScreen = 1;
@@ -83,8 +82,8 @@ static int bstrap_loadingScreen = 1;
 static int donorSdkVer = 0;
 
 static bool startButtonLaunch = false;
-static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-static bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
+static int launchType = 1;			  // 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+static bool slot1LaunchMethod = true; // false == Reboot, true == Direct
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -97,7 +96,7 @@ static bool showBoxArt = true;
 static bool animateDsiIcons = false;
 
 static int bstrap_language = -1;
-static bool boostCpu = false;	// false == NTR, true == TWL
+static bool boostCpu = false; // false == NTR, true == TWL
 static bool boostVram = false;
 static bool soundFix = false;
 static bool bstrap_debug = false;
@@ -106,7 +105,7 @@ static int bstrap_romreadled = 0;
 static bool bstrap_asyncPrefetch = true;
 static bool bstrap_lockARM9scfgext = false;
 
-static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
+static bool soundfreq = false; // false == 32.73 kHz, true == 47.61 kHz
 
 bool flashcardUsed = false;
 
@@ -121,7 +120,8 @@ static int flashcard;
 	6: SuperCard DSTWO
 */
 
-void LoadSettings(void) {
+void LoadSettings(void)
+{
 	// GUI
 	//CIniFile settingsini( settingsinipath );
 
@@ -172,7 +172,8 @@ void LoadSettings(void) {
 	// }
 }
 
-void SaveSettings(void) {
+void SaveSettings(void)
+{
 	ms().saveSettings();
 	// GUI
 	// CIniFile settingsini( settingsinipath );
@@ -203,9 +204,10 @@ void SaveSettings(void) {
 	// settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
 	// settingsini.SaveIniFile(settingsinipath);
 
-	if(!flashcardUsed) {
+	if (!flashcardUsed)
+	{
 		// nds-bootstrap
-		CIniFile bootstrapini( bootstrapinipath );
+		CIniFile bootstrapini(bootstrapinipath);
 
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
@@ -237,72 +239,75 @@ mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
 mm_sound_effect mus_settings;
 
-void InitSound() {
+void InitSound()
+{
 	mmInitDefaultMem((mm_addr)soundbank_bin);
-	
-	mmLoadEffect( SFX_LAUNCH );
-	mmLoadEffect( SFX_SELECT );
-	mmLoadEffect( SFX_STOP );
-	mmLoadEffect( SFX_WRONG );
-	mmLoadEffect( SFX_BACK );
-	mmLoadEffect( SFX_SWITCH );
-	mmLoadEffect( SFX_SETTINGS );
+
+	mmLoadEffect(SFX_LAUNCH);
+	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_STOP);
+	mmLoadEffect(SFX_WRONG);
+	mmLoadEffect(SFX_BACK);
+	mmLoadEffect(SFX_SWITCH);
+	mmLoadEffect(SFX_SETTINGS);
 
 	snd_launch = {
-		{ SFX_LAUNCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_LAUNCH},			 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	snd_select = {
-		{ SFX_SELECT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_SELECT},			 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	snd_stop = {
-		{ SFX_STOP } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_STOP},				 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	snd_wrong = {
-		{ SFX_WRONG } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_WRONG},			 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	snd_back = {
-		{ SFX_BACK } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_BACK},				 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	snd_switch = {
-		{ SFX_SWITCH } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_SWITCH},			 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 	mus_settings = {
-		{ SFX_SETTINGS } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
+		{SFX_SETTINGS},			 // id
+		(int)(1.0f * (1 << 10)), // rate
+		0,						 // handle
+		255,					 // volume
+		128,					 // panning
 	};
 }
 
 //---------------------------------------------------------------------------------
-void stop (void) {
-//---------------------------------------------------------------------------------
-	while (1) {
+void stop(void)
+{
+	//---------------------------------------------------------------------------------
+	while (1)
+	{
 		swiWaitForVBlank();
 	}
 }
@@ -310,41 +315,49 @@ void stop (void) {
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
-void doPause(void) {
-//---------------------------------------------------------------------------------
+void doPause(void)
+{
+	//---------------------------------------------------------------------------------
 	printf("Press start...\n");
 	//printSmall(false, x, y, "Press start...");
-	while(1) {
+	while (1)
+	{
 		scanKeys();
-		if(keysDown() & KEY_START)
+		if (keysDown() & KEY_START)
 			break;
 	}
 	scanKeys();
 }
 
-std::string ReplaceAll(std::string str, const std::string& from, const std::string& to) {
-    size_t start_pos = 0;
-    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-    }
-    return str;
+std::string ReplaceAll(std::string str, const std::string &from, const std::string &to)
+{
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+	{
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+	}
+	return str;
 }
 
-void launchSystemSettings() {
+void launchSystemSettings()
+{
 	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
 	renderScreens = false;
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	char tmdpath[256];
 	u8 titleID[4];
-	for (u8 i = 0x41; i <= 0x5A; i++) {
-		snprintf (tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-		if (!access(tmdpath, F_OK)) {
+	for (u8 i = 0x41; i <= 0x5A; i++)
+	{
+		snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+		if (!access(tmdpath, F_OK))
+		{
 			titleID[0] = i;
 			titleID[1] = 0x42;
 			titleID[2] = 0x4e;
@@ -353,153 +366,201 @@ void launchSystemSettings() {
 		}
 	}
 
-	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-	*(u16*)(0x02000304) = 0x1801;
-	*(u8*)(0x02000308) = titleID[0];
-	*(u8*)(0x02000309) = titleID[1];
-	*(u8*)(0x0200030A) = titleID[2];
-	*(u8*)(0x0200030B) = titleID[3];
-	*(u32*)(0x0200030C) = 0x00030015;
-	*(u8*)(0x02000310) = titleID[0];
-	*(u8*)(0x02000311) = titleID[1];
-	*(u8*)(0x02000312) = titleID[2];
-	*(u8*)(0x02000313) = titleID[3];
-	*(u32*)(0x02000314) = 0x00030015;
-	*(u32*)(0x02000318) = 0x00000017;
-	*(u32*)(0x0200031C) = 0x00000000;
-	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+	*(u16 *)(0x02000304) = 0x1801;
+	*(u8 *)(0x02000308) = titleID[0];
+	*(u8 *)(0x02000309) = titleID[1];
+	*(u8 *)(0x0200030A) = titleID[2];
+	*(u8 *)(0x0200030B) = titleID[3];
+	*(u32 *)(0x0200030C) = 0x00030015;
+	*(u8 *)(0x02000310) = titleID[0];
+	*(u8 *)(0x02000311) = titleID[1];
+	*(u8 *)(0x02000312) = titleID[2];
+	*(u8 *)(0x02000313) = titleID[3];
+	*(u32 *)(0x02000314) = 0x00030015;
+	*(u32 *)(0x02000318) = 0x00000017;
+	*(u32 *)(0x0200031C) = 0x00000000;
+	while (*(u16 *)(0x02000306) == 0x0000)
+	{ // Keep running, so that CRC16 isn't 0
+		*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 	}
 
-	fifoSendValue32(FIFO_USER_08, 1);	// Reboot into System Settings
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
+	for (int i = 0; i < 15; i++)
+		swiWaitForVBlank();
 }
 
-void rebootDSiMenuPP() {
+void rebootDSiMenuPP()
+{
 	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
 	music = false;
-	memcpy((u32*)0x02000300,autoboot_bin,0x020);
-	fifoSendValue32(FIFO_USER_08, 1);	// Reboot DSiMenu++ to avoid potential crashing
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
+	for (int i = 0; i < 15; i++)
+		swiWaitForVBlank();
 }
 
-void loadROMselect() {
+void loadROMselect()
+{
 	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
 	renderScreens = false;
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
-	if (soundfreqsettingChanged) {
-		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-		else fifoSendValue32(FIFO_USER_07, 1);
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	if (soundfreqsettingChanged)
+	{
+		if (soundfreq)
+			fifoSendValue32(FIFO_USER_07, 2);
+		else
+			fifoSendValue32(FIFO_USER_07, 1);
 	}
-	if (theme == 3) {
-		runNdsFile ("/_nds/dsimenuplusplus/akmenu.srldr", 0, NULL, false);
-	} else if (theme == 2) {
-		runNdsFile ("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
-	} else {
-		runNdsFile ("/_nds/dsimenuplusplus/dsimenu.srldr", 0, NULL, false);
+	if (theme == 3)
+	{
+		runNdsFile("/_nds/dsimenuplusplus/akmenu.srldr", 0, NULL, false);
+	}
+	else if (theme == 2)
+	{
+		runNdsFile("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
+	}
+	else
+	{
+		runNdsFile("/_nds/dsimenuplusplus/dsimenu.srldr", 0, NULL, false);
 	}
 }
 
-int lastRanROM() {
+int lastRanROM()
+{
 	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 25; i++) swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
 	renderScreens = false;
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade out
-	if (soundfreqsettingChanged) {
-		if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-		else fifoSendValue32(FIFO_USER_07, 1);
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	if (soundfreqsettingChanged)
+	{
+		if (soundfreq)
+			fifoSendValue32(FIFO_USER_07, 2);
+		else
+			fifoSendValue32(FIFO_USER_07, 1);
 	}
 
-	vector<char*> argarray;
-	if (launchType > 2) {
+	vector<char *> argarray;
+	if (launchType > 2)
+	{
 		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
 	int err = 0;
-	if (launchType == 0) {
-		err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
-	} else if (launchType == 1) {
-		if (!flashcardUsed) {
-			if (homebrewBootstrap) {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-				else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
-			} else {
-				if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-				else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+	if (launchType == 0)
+	{
+		err = runNdsFile("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
+	}
+	else if (launchType == 1)
+	{
+		if (!flashcardUsed)
+		{
+			if (homebrewBootstrap)
+			{
+				if (bootstrapFile)
+					bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
+				else
+					bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
 			}
-			err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
-		} else {
-			switch (flashcard) {
-				case 0:
-				case 1:
-				default:
-					err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
-					break;
-				case 2:
-				case 4:
-				case 5:
-					err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
-					break;
-				case 3:
-					err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
-					break;
-				case 6:
-					err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
-					break;
+			else
+			{
+				if (bootstrapFile)
+					bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
+				else
+					bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 			}
+			err = runNdsFile(bootstrapfilename.c_str(), 0, NULL, true);
 		}
-	} else if (launchType == 2) {
-		if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
-			rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-		if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-			rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-		if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-			rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
-
-		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
-	} else if (launchType == 3) {
-		if(flashcardUsed) {
-			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-			err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
-		} else {
-			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-			err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
-		}
-	} else if (launchType == 4) {
-		if(flashcardUsed) {
-			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-			err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
-		} else {
-			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-			err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+		else
+		{
+			switch (flashcard)
+			{
+			case 0:
+			case 1:
+			default:
+				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true);
+				break;
+			case 2:
+			case 4:
+			case 5:
+				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true);
+				break;
+			case 3:
+				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true);
+				break;
+			case 6:
+				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true);
+				break;
+			}
 		}
 	}
-	
+	else if (launchType == 2)
+	{
+		if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
+			rename(dsiWareSrlPath.c_str(), "sd:/bootthis.dsi"); // Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+		if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+			rename(dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+		if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+			rename(dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+
+		fifoSendValue32(FIFO_USER_08, 1); // Reboot
+	}
+	else if (launchType == 3)
+	{
+		if (flashcardUsed)
+		{
+			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
+			err = runNdsFile("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+		}
+		else
+		{
+			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
+			err = runNdsFile("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+		}
+	}
+	else if (launchType == 4)
+	{
+		if (flashcardUsed)
+		{
+			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
+			err = runNdsFile("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+		}
+		else
+		{
+			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
+			err = runNdsFile("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+		}
+	}
+
 	return err;
 }
 
 //---------------------------------------------------------------------------------
-int main(int argc, char **argv) {
-//---------------------------------------------------------------------------------
+int main(int argc, char **argv)
+{
+	//---------------------------------------------------------------------------------
 
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
-	#pragma region init
+#pragma region init
 	//consoleDemoInit();
-	gotosettings =true;
+	gotosettings = true;
 	bool fatInited = fatInitDefault();
-	
+
 	/* if (!isDSiMode() && REG_SCFG_EXT == 0x8307F100) {
 		// Force-enable DSi mode
 		extern bool __dsimode;
@@ -519,17 +580,19 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 
 	// Read user name
-	char *username = (char*)PersonalData->name;
+	char *username = (char *)PersonalData->name;
 
 	// text
-	for (int i = 0; i < 10; i++) {
-		if (username[i*2] == 0x00)
-			username[i*2/2] = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		if (username[i * 2] == 0x00)
+			username[i * 2 / 2] = 0;
 		else
-			username[i*2/2] = username[i*2];
+			username[i * 2 / 2] = username[i * 2];
 	}
 
-	if (!fatInited) {
+	if (!fatInited)
+	{
 		graphicsInit();
 		fontInit();
 		fadeType = true;
@@ -538,42 +601,49 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
+	if (!access("fat:/", F_OK))
+		flashcardUsed = true;
 
 	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
 
 	bool soundfreqsetting = false;
 
 	std::string filename;
-	
+
 	ms().loadSettings();
 	//LoadSettings();
-	
+
 	swiWaitForVBlank();
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard (in DS mode), then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0)
+		arm7SCFGLocked = true; // If DSiMenu++ is being ran from DSiWarehax or flashcard (in DS mode), then arm7 SCFG is locked.
 
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
+	if (arm7_SNDEXCNT != 0)
+		soundfreqsetting = true;
 	fifoSendValue32(FIFO_USER_07, 0);
 
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
+	if (soundfreq)
+		fifoSendValue32(FIFO_USER_07, 2);
+	else
+		fifoSendValue32(FIFO_USER_07, 1);
 
 	scanKeys();
 
-	if (arm7SCFGLocked && !gotosettings && autorun && !(keysHeld() & KEY_B)) {
+	if (arm7SCFGLocked && !gotosettings && autorun && !(keysHeld() & KEY_B))
+	{
 		lastRanROM();
 	}
-	
-	if (launchType == 2) {
+
+	if (launchType == 2)
+	{
 		if (!access("sd:/bootthis.dsi", F_OK) && access(dsiWareSrlPath.c_str(), F_OK))
-			rename ("sd:/bootthis.dsi", dsiWareSrlPath.c_str());	// Rename "bootthis.dsi" back to original .nds filename
+			rename("sd:/bootthis.dsi", dsiWareSrlPath.c_str()); // Rename "bootthis.dsi" back to original .nds filename
 		if (!access("sd:/bootthis.pub", F_OK) && access(dsiWarePubPath.c_str(), F_OK))
-			rename ("sd:/bootthis.pub", dsiWarePubPath.c_str());
+			rename("sd:/bootthis.pub", dsiWarePubPath.c_str());
 		if (!access("sd:/bootthis.prv", F_OK) && access(dsiWarePrvPath.c_str(), F_OK))
-			rename ("sd:/bootthis.prv", dsiWarePrvPath.c_str());
+			rename("sd:/bootthis.prv", dsiWarePrvPath.c_str());
 	}
 
 	InitSound();
@@ -582,108 +652,143 @@ int main(int argc, char **argv) {
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 1, 0);
 
-	// if (gotosettings) {
-	// 	graphicsInit();
-	// 	fontInit();
-	// 	screenmode = 1;
-	// 	gotosettings = false;
-	// 	SaveSettings();
-	// 	langInit();
-	// 	fadeType = true;
-	// } else if (autorun || showlogo) {
-	// 	loadTitleGraphics();
-	// 	fadeType = true;
+	if (gotosettings)
+	{
+		graphicsInit();
+		fontInit();
+		screenmode = 1;
+		gotosettings = false;
+		SaveSettings();
+		langInit();
+		fadeType = true;
+	}
+	else if (autorun || showlogo)
+	{
+		loadTitleGraphics();
+		fadeType = true;
 
-	// 	for (int i = 0; i < 60*3; i++) {
-	// 		swiWaitForVBlank();
-	// 	}
-		
-	// 	scanKeys();
+		for (int i = 0; i < 60 * 3; i++)
+		{
+			swiWaitForVBlank();
+		}
 
-	// 	if (keysHeld() & KEY_START) {
-	// 		fadeType = false;
-	// 		for (int i = 0; i < 30; i++) {
-	// 			swiWaitForVBlank();
-	// 		}
-	// 		graphicsInit();
-	// 		fontInit();
-	// 		screenmode = 1;
-	// 		langInit();
-	// 		fadeType = true;
-	// 	}
-	// } else {
-	// 	scanKeys();
+		scanKeys();
 
-	// 	if (keysHeld() & KEY_START) {
-	// 		graphicsInit();
-	// 		fontInit();
-	// 		fadeType = true;
-	// 		screenmode = 1;
-	// 		langInit();
-	// 		for (int i = 0; i < 60; i++) {
-	// 			swiWaitForVBlank();
-	// 		}
-	// 	}
-	// }
+		if (keysHeld() & KEY_START)
+		{
+			fadeType = false;
+			for (int i = 0; i < 30; i++)
+			{
+				swiWaitForVBlank();
+			}
+			graphicsInit();
+			fontInit();
+			screenmode = 1;
+			langInit();
+			fadeType = true;
+		}
+	}
+	else
+	{
+		scanKeys();
 
+		if (keysHeld() & KEY_START)
+		{
+			graphicsInit();
+			fontInit();
+			fadeType = true;
+			screenmode = 1;
+			langInit();
+			for (int i = 0; i < 60; i++)
+			{
+				swiWaitForVBlank();
+			}
+		}
+	}
 
-	// srand(time(NULL));
+	srand(time(NULL));
 
-	// switch (appName) {
-	// 	case 0:
-	// 	default:
-	// 		appNameText = "DSiMenu++";
-	// 		break;
-	// 	case 1:
-	// 		appNameText = "SRLoader";
-	// 		break;
-	// 	case 2:
-	// 		appNameText = "DSisionX";
-	// 		break;
-	// }
+	switch (appName)
+	{
+	case 0:
+	default:
+		appNameText = "DSiMenu++";
+		break;
+	case 1:
+		appNameText = "SRLoader";
+		break;
+	case 2:
+		appNameText = "DSisionX";
+		break;
+	}
 
 	// bool menuprinted = false;
 
 	// bool hiyaAutobootFound = false;
 
-	 int pressed = 0;
+	int pressed = 0;
 #pragma endregion
-	
-	consoleDemoInit();
+
+	// consoleDemoInit();
 	SettingsPage page;
 
 	page.option("Test Option Bool",
-		 "This is an option to \n test variadic options",
-		 Option::Bool(&ms().ak_zoomIcons),
-		 {"On", "Off"}, {true, false})
-	
-		.option("Test Option", "This is an option to \n test variadic options", Option::Str(&ms().romfolder),
-	   {"Off", "On"}, {"Hello", "World"});
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons),
+				{"On", "Off"}, {true, false})
+		.option("Test Option", 
+				"This is an option to \n test variadic options",
+				Option::Str(&ms().romfolder),
+				{"Hello", "World"}, {"Hello", "World"});
 
+	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
 
-	printf("%s", ms().romfolder.c_str());
+	// printf("%s", ms().romfolder.c_str());
 	// std::get<SettingsOption::Bool>(option.action()).set(false);
 	// printf("%i",ms().ak_zoomIcons);
-	// std::get<SettingsOption::Bool>(option.action()).set(true);
-	// printf("%i",ms().ak_zoomIcons);
+	//std::get<SettingsOption::Bool>(option.action()).set(true);
+	// printf("%i\n",ms().ak_zoomIcons);
+	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
 
-	stop();
-	while(1) {
-	
-		if (screenmode == 1) {
 
-			if (!music) {
-				mmEffectEx(&mus_settings);	// Play settings music
+	// std::get_if<Option::Bool>(&page.options()[0].action())->set(false);
+	// printf("%i\n",ms().ak_zoomIcons);
+	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
+
+
+
+//	stop();
+	while (1)
+	{
+
+		if (screenmode == 1)
+		{
+
+			if (!music)
+			{
+				mmEffectEx(&mus_settings); // Play settings music
 				music = true;
 			}
 
+			for (int i = 0; i < page.options().size(); i++)
+			{
+				int selected = page.options()[i].selected();
+				printSmall(false, 12, 30 + i * 14, page.options()[i].displayName().c_str());
+				printSmall(false, 194, 30 + i * 14, page.options()[i].labels()[selected].c_str());
+			}
+		
+			// printSmall(true, 28, 1, username);
+			// 		printSmall(true, 194, 174, vertext);
+
+			// 		printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
-				do {
-					scanKeys();
-					pressed = keysDownRepeat();
-					swiWaitForVBlank();
-				} while (!pressed);
-				
+			do
+			{
+				scanKeys();
+				pressed = keysDownRepeat();
+				swiWaitForVBlank();
+			} while (!pressed);
+		
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;
@@ -692,10 +797,7 @@ int main(int argc, char **argv) {
 			// 		// Clear the screen so it doesn't over-print
 			// 		clearText();
 
-			// 		printSmall(true, 28, 1, username);
-			// 		printSmall(true, 194, 174, vertext);
-
-			// 		printLarge(false, 6, 2, STR_FLASHCARD_SELECT.c_str());
+		
 
 			// 		int yPos = 32;
 			// 		switch (flashcard) {
@@ -740,7 +842,6 @@ int main(int argc, char **argv) {
 
 			// 		menuprinted = true;
 			// 	}
-
 
 			// 	if (pressed & KEY_LEFT) {
 			// 		flashcard -= 1;
@@ -858,7 +959,7 @@ int main(int argc, char **argv) {
 			// 		pressed = keysDownRepeat();
 			// 		swiWaitForVBlank();
 			// 	} while (!pressed);
-				
+
 			// 	if (pressed & KEY_UP) {
 			// 		subtheme -= 1;
 			// 		mmEffectEx(&snd_select);
@@ -921,7 +1022,6 @@ int main(int argc, char **argv) {
 			// 			printSmall(false, 224, selyPos, STR_OFF.c_str());
 			// 		selyPos += 12;
 
-
 			// 		if (settingscursor == 0) {
 			// 			printLargeCentered(true, 118, STR_DESCRIPTION_DEBUG_1.c_str());
 			// 			printLargeCentered(true, 132, STR_DESCRIPTION_DEBUG_2.c_str());
@@ -929,8 +1029,6 @@ int main(int argc, char **argv) {
 			// 			printLargeCentered(true, 118, STR_DESCRIPTION_LOGGING_1.c_str());
 			// 			printLargeCentered(true, 132, STR_DESCRIPTION_LOGGING_2.c_str());
 			// 		}
-
-
 
 			// 		menuprinted = true;
 			// 	}
@@ -942,7 +1040,7 @@ int main(int argc, char **argv) {
 			// 		touchRead(&touch);
 			// 		swiWaitForVBlank();
 			// 	} while (!pressed);
-				
+
 			// 	if (pressed & KEY_UP) {
 			// 		settingscursor--;
 			// 		mmEffectEx(&snd_select);
@@ -953,7 +1051,7 @@ int main(int argc, char **argv) {
 			// 		mmEffectEx(&snd_select);
 			// 		menuprinted = false;
 			// 	}
-					
+
 			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 			// 		switch (settingscursor) {
 			// 			case 0:
@@ -1139,7 +1237,6 @@ int main(int argc, char **argv) {
 			// 			else
 			// 				printSmall(false, 200, selyPos, STR_RELEASE.c_str());
 
-
 			// 			if (settingscursor == 0) {
 			// 				printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
 			// 				printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
@@ -1208,8 +1305,6 @@ int main(int argc, char **argv) {
 			// 			}
 			// 		}
 
-
-
 			// 		menuprinted = true;
 			// 	}
 
@@ -1220,7 +1315,7 @@ int main(int argc, char **argv) {
 			// 		touchRead(&touch);
 			// 		swiWaitForVBlank();
 			// 	} while (!pressed);
-				
+
 			// 	if (pressed & KEY_UP) {
 			// 		settingscursor--;
 			// 		if (consoleModel > 1 && settingscursor == 4) settingscursor--;
@@ -1235,7 +1330,7 @@ int main(int argc, char **argv) {
 			// 		mmEffectEx(&snd_select);
 			// 		menuprinted = false;
 			// 	}
-					
+
 			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 			// 		if(!flashcardUsed) {
 			// 			switch (settingscursor) {
@@ -1370,7 +1465,7 @@ int main(int argc, char **argv) {
 			// 		printSmall(true, 194, 174, vertext);
 
 			// 		printLarge(false, 6, 2, STR_GUI_SETTINGS.c_str());
-					
+
 			// 		int yPos = 30;
 			// 		for (int i = 0; i < settingscursor; i++) {
 			// 			yPos += 12;
@@ -1479,7 +1574,6 @@ int main(int argc, char **argv) {
 			// 			}
 			// 		}
 
-
 			// 		if (settingscursor == 0) {
 			// 			printLargeCentered(true, 112, STR_DESCRIPTION_LANGUAGE_1.c_str());
 			// 			printLargeCentered(true, 126, STR_DESCRIPTION_LANGUAGE_2.c_str());
@@ -1522,7 +1616,6 @@ int main(int argc, char **argv) {
 			// 				printLargeCentered(true, 132, STR_DESCRIPTION_REPLACEDSIMENU_2.c_str());
 			// 			}
 			// 		}
-
 
 			// 		menuprinted = true;
 			// 	}
@@ -1689,8 +1782,9 @@ int main(int argc, char **argv) {
 			// 	}
 			// }
 #pragma endregion
-
-		} else {
+		}
+		else
+		{
 			loadROMselect();
 		}
 	}
