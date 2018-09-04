@@ -8,7 +8,7 @@
 #pragma once
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
-typedef const char* cstr;
+typedef const char *cstr;
 
 /**
  * \brief Represents a settings option with an associated INI 
@@ -18,15 +18,14 @@ typedef const char* cstr;
 class Option
 {
 public:
-
   /*
   * Represents an option that may or may not have
   * a sub option. 
   */
   class Sub
   {
-    public:
-      virtual std::unique_ptr<Option> sub() = 0;
+  public:
+    virtual std::unique_ptr<Option> sub() = 0;
   };
 
   /**
@@ -38,22 +37,26 @@ public:
   class Bool : public Sub
   {
   public:
-    typedef Option(*OptionGenerator_Bool)(Bool&);
+    typedef Option (*OptionGenerator_Bool)(Bool &);
 
-    Bool(bool *pointer) 
-      : _generator(nullptr) { _pointer = pointer; };
-   
-    Bool(bool *pointer, const OptionGenerator_Bool generator) 
-      : _generator(generator) { _pointer = pointer; _generator = generator; };
+    Bool(bool *pointer)
+        : _generator(nullptr) { _pointer = pointer; };
+
+    Bool(bool *pointer, const OptionGenerator_Bool generator)
+        : _generator(generator)
+    {
+      _pointer = pointer;
+      _generator = generator;
+    };
 
     ~Bool() {}
     void set(bool value) { (*_pointer) = value; };
     bool get() { return *_pointer; };
     std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
+
   private:
     bool *_pointer;
     OptionGenerator_Bool _generator;
-
   };
 
   /**
@@ -64,10 +67,14 @@ public:
   class Int : public Sub
   {
   public:
-    typedef Option(*OptionGenerator_Int)(Int&);
+    typedef Option (*OptionGenerator_Int)(Int &);
     Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
-    Int(int *pointer, const OptionGenerator_Int generator) 
-      : _generator(generator) { _pointer = pointer; _generator = generator; };
+    Int(int *pointer, const OptionGenerator_Int generator)
+        : _generator(generator)
+    {
+      _pointer = pointer;
+      _generator = generator;
+    };
 
     ~Int() {}
     void set(int value) { (*_pointer) = value; };
@@ -87,13 +94,17 @@ public:
   class Str : public Sub
   {
   public:
-    typedef Option(*OptionGenerator_Str)(Str&);
-    Str(std::string *pointer) 
-      : _generator(nullptr) { _pointer = pointer; };
+    typedef Option (*OptionGenerator_Str)(Str &);
+    Str(std::string *pointer)
+        : _generator(nullptr) { _pointer = pointer; };
 
-    Str(std::string *pointer, const OptionGenerator_Str generator) 
-      : _generator(generator) { _pointer = pointer; _generator = generator; };
-      
+    Str(std::string *pointer, const OptionGenerator_Str generator)
+        : _generator(generator)
+    {
+      _pointer = pointer;
+      _generator = generator;
+    };
+
     ~Str() {}
     void set(std::string value) { (*_pointer) = value; };
     std::string &get() { return *_pointer; };
@@ -103,7 +114,7 @@ public:
     std::string *_pointer;
     OptionGenerator_Str _generator;
   };
-  
+
   typedef std::variant<Bool, Int, Str> OptVal;
 
 public:
@@ -146,18 +157,18 @@ public:
   Option(const std::string &displayName,
          const std::string &longDescription,
          Option::Str stringAction,
-         std::vector<cstr> const &values
-         )
+         std::vector<cstr> const &values)
       : _action(stringAction)
   {
     _displayName = displayName;
     _longDescription = longDescription;
     _action = stringAction;
-    
-    for (cstr str : values) {
+
+    for (cstr str : values)
+    {
       _labels.emplace_back(str);
       _values.emplace_back(str);
-    }    
+    }
   }
 
   ~Option() {}
@@ -171,10 +182,20 @@ public:
   /**
    * Gets this option's action as an abstract Sub.
    */
-  Option::Sub &action_sub() {
-    if (auto action = std::get_if<Bool>(&_action)) { return *action; }
-    if (auto action = std::get_if<Int>(&_action)) { return *action; }
-    if (auto action = std::get_if<Str>(&_action)) { return *action; }
+  Option::Sub &action_sub()
+  {
+    if (auto action = std::get_if<Bool>(&_action))
+    {
+      return *action;
+    }
+    if (auto action = std::get_if<Int>(&_action))
+    {
+      return *action;
+    }
+    if (auto action = std::get_if<Str>(&_action))
+    {
+      return *action;
+    }
   }
 
   int selected()
@@ -205,12 +226,13 @@ public:
 
     if (auto value = std::get_if<Str>(&action()))
     {
-       //nocashMessage(value->get().c_str());
+      //nocashMessage(value->get().c_str());
       for (int i = 0; i < _values.size(); i++)
       {
         if (auto _value = std::get_if<cstr>(&_values[i]))
         {
-          if (value->get().compare(*_value) == 0) return i;
+          if (value->get().compare(*_value) == 0)
+            return i;
         }
       }
     }
@@ -228,7 +250,7 @@ private:
 class SettingsPage
 {
 public:
-  SettingsPage(const std::string& title) { _title = title; }
+  SettingsPage(const std::string &title) { _title = title; }
   ~SettingsPage() {}
 
   /*
@@ -264,6 +286,16 @@ public:
     return *this;
   }
 
+  SettingsPage &option(
+      const std::string &displayName,
+      const std::string &longDescription,
+      Option::Str stringAction,
+      std::vector<cstr> const &values)
+  {
+    _options.emplace_back(displayName, longDescription, stringAction, values);
+    return *this;
+  }
+
   /*
   * Gets the option this page has.
   */
@@ -272,7 +304,7 @@ public:
   /**
    * Gets the title of the settings page.
    */
-  std::string& title() { return _title; }
+  std::string &title() { return _title; }
 
 private:
   std::vector<Option> _options;
