@@ -549,7 +549,7 @@ int lastRanROM()
 	return err;
 }
 
-Option generate_option(Option::Bool& optval)
+Option generate_option(Option::Bool &optval)
 {
 	return Option("Sub Option", "Long Description of Sub Option", Option::Bool(&ms().ak_zoomIcons), {"On", "Off"}, {true, false});
 }
@@ -738,12 +738,59 @@ int main(int argc, char **argv)
 	// consoleDemoInit();
 	SettingsPage page("Test title No page");
 	ms().romfolder = "Hello";
-	page.option("Test Option Bool",
+	page.option(" 1 Test Option Bool",
 				"This is an option to \n test variadic options",
 				Option::Bool(&ms().ak_zoomIcons, generate_option),
 				{"On", "Off"}, {true, false})
-
-		.option("Test Option", 
+		.option("Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("2 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("3 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("4 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("5 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("6 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("7 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("8 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("9 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("10 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("11 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("12 Test Option Bool",
+				"This is an option to \n test variadic options",
+				Option::Bool(&ms().ak_zoomIcons, generate_option),
+				{"On", "Off"}, {true, false})
+		.option("13 Test Option",
 				"This is an option to \n test variadic options",
 				Option::Str(&ms().romfolder),
 				{"Hello", "World"}, {"Hello", "World"});
@@ -760,14 +807,11 @@ int main(int argc, char **argv)
 	// printf("%i\n",ms().ak_zoomIcons);
 	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
 
-
 	// std::get_if<Option::Bool>(&page.options()[0].action())->set(false);
 	// printf("%i\n",ms().ak_zoomIcons);
 	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
 
-
-
-//	stop();
+	//	stop();
 	while (1)
 	{
 
@@ -789,7 +833,7 @@ int main(int argc, char **argv)
 			// 	printSmall(false, 12, 30 + i * 14, page.options()[i].displayName().c_str());
 			// 	printSmall(false, 194, 30 + i * 14, page.options()[i].labels()[selected].c_str());
 			// }
-		
+
 			// printSmall(true, 28, 1, username);
 			// 		printSmall(true, 194, 174, vertext);
 
@@ -801,19 +845,23 @@ int main(int argc, char **argv)
 				swiWaitForVBlank();
 			} while (!pressed);
 
-			if (pressed & KEY_RIGHT) {
+			if (pressed & KEY_RIGHT)
+			{
 				gui.setOptionNext();
-			} 
+			}
 
-			if (pressed & KEY_LEFT) {
+			if (pressed & KEY_LEFT)
+			{
 				gui.setOptionPrev();
-			} 
+			}
 
-			if (pressed & KEY_DOWN) {
+			if (pressed & KEY_DOWN)
+			{
 				gui.incrementOption();
 			}
 
-			if (pressed & KEY_UP) {
+			if (pressed & KEY_UP)
+			{
 				gui.decrementOption();
 			}
 
@@ -827,7 +875,6 @@ int main(int argc, char **argv)
 				gui.exitSub();
 			}
 
-
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;
@@ -835,8 +882,6 @@ int main(int argc, char **argv)
 			// 	if (!menuprinted) {
 			// 		// Clear the screen so it doesn't over-print
 			// 		clearText();
-
-		
 
 			// 		int yPos = 32;
 			// 		switch (flashcard) {

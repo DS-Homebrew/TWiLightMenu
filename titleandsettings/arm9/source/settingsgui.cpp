@@ -2,7 +2,9 @@
 
 #include "graphics/fontHandler.h"
 #include <variant>
+#include <algorithm>
 
+#define MAX_ELEMENTS 9
 void SettingsGUI::draw()
 {
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
@@ -19,7 +21,7 @@ void SettingsGUI::draw()
     clearText();
     exitSub();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
-    for (int i = 0; i < _pages[_selectedPage].options().size(); i++)
+    for (int i = 0; i < std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS); i++)
     {
         int selected = _pages[_selectedPage].options()[i].selected();
 
@@ -81,7 +83,8 @@ void SettingsGUI::rotateOption(int rotateAmount)
     if (!inSub())
     {
         // If we're not in the sub option menu, change the option.
-        _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
+        if ((_selectedOption + rotateAmount) < 0) _selectedOption = _pages[_selectedPage].options().size() - abs(rotateAmount);
+        else  _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
     }
     else
     {

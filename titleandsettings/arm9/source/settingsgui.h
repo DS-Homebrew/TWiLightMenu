@@ -42,6 +42,7 @@ class SettingsGUI
     int _selectedOption;
     int _selectedSub;
     bool _inSub;
+    
     std::vector<SettingsPage> _pages;
 };
 
