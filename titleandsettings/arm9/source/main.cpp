@@ -554,6 +554,11 @@ Option generate_option(Option::Bool &optval)
 	return Option("Sub Option", "Long Description of Sub Option", Option::Bool(&ms().ak_zoomIcons), {"On", "Off"}, {true, false});
 }
 
+// Option generate_str_option(Option::Str &optVal)
+// {
+// 	//return Option("Sub Option for Strings", "Long Description of Sub Option", Option::)
+// }
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -742,7 +747,7 @@ int main(int argc, char **argv)
 				"This is an option to \n test variadic options",
 				Option::Bool(&ms().ak_zoomIcons, generate_option),
 				{"On", "Off"}, {true, false})
-		
+
 		.option("13 Test Option",
 				"This is an option to \n test variadic options",
 				Option::Str(&ms().romfolder),
@@ -750,7 +755,7 @@ int main(int argc, char **argv)
 
 	SettingsGUI gui;
 	gui.addPage(page)
-	.setPage(0);
+		.setPage(0);
 
 	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
 

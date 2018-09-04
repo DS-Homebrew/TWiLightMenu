@@ -142,6 +142,24 @@ public:
     _labels = std::vector(std::move(labels));
     _values = std::vector(std::move(values));
   }
+
+  Option(const std::string &displayName,
+         const std::string &longDescription,
+         Option::Str stringAction,
+         std::vector<cstr> const &values
+         )
+      : _action(stringAction)
+  {
+    _displayName = displayName;
+    _longDescription = longDescription;
+    _action = stringAction;
+    
+    for (cstr str : values) {
+      _labels.emplace_back(str);
+      _values.emplace_back(str);
+    }    
+  }
+
   ~Option() {}
 
   std::string &displayName() { return _displayName; }
