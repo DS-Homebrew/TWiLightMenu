@@ -1,6 +1,7 @@
 #include "unlaunchboot.h"
 #include "tool/stringtool.h"
 #include <nds.h>
+#include "dsimenusettings.h"
 
 UnlaunchBoot::UnlaunchBoot(const std::string &fileName, u32 pubSavSize, u32 prvSavSize)
 {
@@ -46,6 +47,11 @@ bool UnlaunchBoot::doRenames(const std::string &fileExt)
 {
     std::string pubPath = replaceAll(_fileName, fileExt, ".pub");
     std::string prvPath = replaceAll(_fileName, fileExt, ".prv");
+    
+    ms().dsiWareSrlPath = _fileName;
+    ms().dsiWarePrvPath = prvPath;
+    ms().dsiWarePubPath = pubPath;
+    ms().saveSettings();
 
     if (access(BOOTTHIS_SRL, F_OK) == 0)
         return false;
@@ -82,6 +88,7 @@ bool UnlaunchBoot::prepare()
     if (_pubSavCreatedHandler)
         _pubSavCreatedHandler();
 
+    
     return UnlaunchBoot::doRenames(extension);
 }
 
