@@ -9,41 +9,58 @@
 
 class SettingsGUI
 {
-  public:
-    SettingsGUI()
-        : _selectedPage(0), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0), 
+public:
+  SettingsGUI()
+      : _selectedPage(-1), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
         _bottomCursor(0) {}
-    ~SettingsGUI() {}
+  ~SettingsGUI() {}
 
-  public:
-    void draw();
+public:
+  void draw();
 
-    void drawSub(Option& subOption);
+  void drawSub(Option &subOption);
 
-    void enterSub() { _inSub = true; }
-    
-    void exitSub() { _inSub = false; _selectedSub = 0; }
-    bool inSub() { return _inSub; }
+  void enterSub() { _inSub = true; }
 
-    SettingsGUI &addPage(SettingsPage &page);
+  void exitSub()
+  {
+    _inSub = false;
+    _selectedSub = 0;
+  }
+  bool inSub() { return _inSub; }
 
-    void incrementOption() { rotateOption(1); }
-    void decrementOption() { rotateOption(-1); }
-    
-    void setOptionNext() { rotateOptionValue(1); }
-    void setOptionPrev() { rotateOptionValue(-1); }
+  void incrementOption() { rotateOption(1); }
+  void decrementOption() { rotateOption(-1); }
 
-  private:
-    void rotateOption(int rotateAmount);
-    void rotateOptionValue(int rotateAmount);
-    
-    int _selectedPage;
-    int _selectedOption;
-    int _selectedSub;
-    bool _inSub;
-    int _topCursor;
-    int _bottomCursor;
-    std::vector<SettingsPage> _pages;
+  void setOptionNext() { rotateOptionValue(1); }
+  void setOptionPrev() { rotateOptionValue(-1); }
+
+public:
+  SettingsGUI &addPage(SettingsPage &page)
+  {
+     _pages.emplace_back(std::move(page));
+    return *this;
+  }
+  
+  SettingsGUI &setPage(int pageIndex)
+  {
+    _selectedPage = pageIndex;
+    _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
+    _topCursor = 0;
+    return *this;
+  }
+
+private:
+  void rotateOption(int rotateAmount);
+  void rotateOptionValue(int rotateAmount);
+
+  int _selectedPage;
+  int _selectedOption;
+  int _selectedSub;
+  bool _inSub;
+  int _topCursor;
+  int _bottomCursor;
+  std::vector<SettingsPage> _pages;
 };
 
 #endif

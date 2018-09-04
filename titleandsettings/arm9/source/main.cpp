@@ -749,7 +749,8 @@ int main(int argc, char **argv)
 				{"Hello", "World"}, {"Hello", "World"});
 
 	SettingsGUI gui;
-	gui.addPage(page);
+	gui.addPage(page)
+	.setPage(0);
 
 	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
 

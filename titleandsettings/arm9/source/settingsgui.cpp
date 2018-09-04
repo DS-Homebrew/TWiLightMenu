@@ -4,16 +4,10 @@
 #include <variant>
 #include <algorithm>
 
-SettingsGUI &SettingsGUI::addPage(SettingsPage &page)
-{
-    _pages.emplace_back(std::move(page));
-    // todo: page switching.
-    _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
-    return *this;
-}
-
 void SettingsGUI::draw()
 {
+    if (_selectedPage < 0 || _pages.size() < 1 ||_selectedPage >= _pages.size()) return;
+
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     if (inSub())
     {
