@@ -14,10 +14,11 @@
 
 void SettingsGUI::processInputs(int pressed)
 {
-    if (pressed & KEY_B && inSub())
+    if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
         mmEffectEx(&snd().snd_select);
         exitSub();
+        return;
     }
     else if (pressed & KEY_B && !inSub())
     {
@@ -48,15 +49,30 @@ void SettingsGUI::processInputs(int pressed)
         decrementOption();
     }
 
-    if (pressed & KEY_A)
+    if (pressed & KEY_X || pressed & KEY_R)
+    {
+        mmEffectEx(&snd().snd_switch);
+        rotatePage(1);
+    }
+
+    if (pressed & KEY_Y || pressed & KEY_L)
+    {
+        mmEffectEx(&snd().snd_switch);
+        rotatePage(-1);
+    }
+
+    if (pressed & KEY_A && !inSub())
     {
         auto opt = _pages[_selectedPage].options()[_selectedOption];
         if (opt.action_sub().has_sub())
         {
-            if (opt.action_sub().sub()) {
+            if (opt.action_sub().sub())
+            {
                 mmEffectEx(&snd().snd_select);
                 enterSub();
-            } else {
+            }
+            else
+            {
                 mmEffectEx(&snd().snd_wrong);
             }
         }
@@ -147,12 +163,19 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
-
     for (int i = 0; i < _topText.size(); i++)
     {
         printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
     }
-    //
+}
+
+void SettingsGUI::rotatePage(int rotateAmount)
+{
+    int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
+    _selectedPage = pageIndex;
+    _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
+    _topCursor = 0;
+    rotateOption(0);
 }
 
 void SettingsGUI::rotateOptionValue(int rotateAmount)

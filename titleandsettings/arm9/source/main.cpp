@@ -556,16 +556,11 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	switch (optVal.get())
 	{
 	case 0:
-		// Reset Theme
-		if (ms().theme != 0)
-			ms().subtheme = 0;
 		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME,
 					  Option::Int(&ms().subtheme),
 					  {STR_DSI_DARKMENU, STR_DSI_NORMALMENU, STR_DSI_RED, STR_DSI_BLUE, STR_DSI_GREEN, STR_DSI_YELLOW, STR_DSI_PINK, STR_DSI_PURPLE},
 					  {0, 1, 2, 3, 4, 5, 6, 7});
 	case 2:
-		if (ms().theme != 2)
-			ms().subtheme = 0;
 		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME,
 					  Option::Int(&ms().subtheme),
 					  {
@@ -804,22 +799,12 @@ int main(int argc, char **argv)
 
 		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
 
+	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	SettingsGUI gui;
 	gui.addPage(guiPage)
-		.setPage(0);
-
-	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
-
-	// printf("%s", ms().romfolder.c_str());
-	// std::get<SettingsOption::Bool>(option.action()).set(false);
-	// printf("%i",ms().ak_zoomIcons);
-	//std::get<SettingsOption::Bool>(option.action()).set(true);
-	// printf("%i\n",ms().ak_zoomIcons);
-	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
-
-	// std::get_if<Option::Bool>(&page.options()[0].action())->set(false);
-	// printf("%i\n",ms().ak_zoomIcons);
-	// printf(":%i\n",	std::get_if<Option::Bool>(&page.options()[0].action())->get());
+		.addPage(gamesPage)
+	// Prep and show the firs page.
+		.show();
 
 	//	stop();
 	while (1)
