@@ -12,20 +12,43 @@ class SettingsGUI
 public:
   SettingsGUI()
       : _selectedPage(-1), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
-        _bottomCursor(0), _subOption(nullptr) {}
+        _bottomCursor(0), _subOption(nullptr), _subBottomCursor(0), _subTopCursor(0) {}
   ~SettingsGUI() {}
 
 public:
   void draw();
 
-  void drawSub(Option &subOption);
+  void drawSub();
 
-  void enterSub() { _inSub = true; }
+  void enterSub()
+  {
+    if (_inSub) return;
+    auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
+    auto &action = selectedOption.action_sub();
+    if (action.sub())
+    {
+      _inSub = true;
+      
+      // Since the value of Option::sub will be dropped
+      // upon exit of this function, we make a copy of it
+      // as a unique_ptr, to ensure that when we replace it,
+      // it drops the old value as well.
+      _subOption = std::make_unique<Option>(*action.sub());
+
+      _subTopCursor = 0;
+      _subBottomCursor = std::min<int>(_subOption->values().size(), MAX_ELEMENTS);
+      return;
+    }
+    _inSub = false;
+  }
 
   void exitSub()
   {
     _inSub = false;
     _selectedSub = 0;
+    _subOption = nullptr;
+    _subTopCursor = 0;
+    _subBottomCursor = 0;
   }
   bool inSub() { return _inSub; }
 
@@ -38,7 +61,7 @@ public:
 public:
   SettingsGUI &addPage(SettingsPage &page)
   {
-     _pages.emplace_back(std::move(page));
+    _pages.emplace_back(std::move(page));
     return *this;
   }
 
@@ -56,10 +79,17 @@ private:
 
   int _selectedPage;
   int _selectedOption;
-  int _selectedSub;
-  bool _inSub;
+
+  // Cursors are used to keep track of scroll positions.
   int _topCursor;
   int _bottomCursor;
+
+  int _selectedSub;
+  bool _inSub;
+
+  int _subTopCursor;
+  int _subBottomCursor;  
+
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
 };

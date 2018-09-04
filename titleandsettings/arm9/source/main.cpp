@@ -551,14 +551,14 @@ int lastRanROM()
 
 Option generate_option(Option::Bool &optval)
 {
-	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().theme), {"On", "Off", "Maybe"}, {0, 1, 2});
+	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().launchType), {"On", "Off", "Maybe"}, {0, 1, 2});
 }
 
 Option generate_str_option(Option::Str &optVal)
 {
 	return Option("Sub Option for slightly longer..",
 				  "Long Description of Sub Option",
-				  Option::Int(&ms().r4_theme),
+				  Option::Int(&ms().theme),
 				  {
 					  "Theme 1",
 					  "Theme 2",

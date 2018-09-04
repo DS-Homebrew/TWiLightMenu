@@ -7,24 +7,15 @@
 void SettingsGUI::draw()
 {
     if (_selectedPage < 0 || _pages.size() < 1 ||_selectedPage >= _pages.size()) return;
-
-    auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     if (inSub())
     {
-        auto &action = selectedOption.action_sub();
-        if (action.sub())
-        {
-            drawSub(*action.sub());
-            return;
-        }
+        drawSub();
+        return;
     }
 
     clearText();
     exitSub();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
-
-    // _topCursor = std::max<int>(0, _selectedOption - MAX_ELEMENTS);
-    // _bottomCursor = std::max<int>(MAX_ELEMENTS, _selectedOption);
 
     for (int i = _topCursor; i < _bottomCursor; i++)
     {
@@ -39,27 +30,16 @@ void SettingsGUI::draw()
     printSmallCentered(false, 173, "DSiMenu++");
 }
 
-void SettingsGUI::drawSub(Option &option)
+void SettingsGUI::drawSub()
 {
     clearText();
-    int selected = option.selected();
+     int selected = _subOption->selected();
 
-    // option may be destroyed upon exit of this function, so
-    // we need to copy the option here.
-
-    // The use of smart pointers ensures that the old value is dropped
-    // once we're finished with it.
-
-    // There is an optimization to be done here to check if
-    // the copy is really necessary, but doing the copy here
-    // is fast enough for now.
-    _subOption = std::make_unique<Option>(option);
-
-    for (int i = 0; i < _subOption->values().size(); i++)
+    for (int i = _subTopCursor; i < _subBottomCursor; i++)
     {
         if (i == selected)
-            printSmall(false, 4, 29 + i * 14, ">");
-        printSmall(false, 12, 30 + i * 14, _subOption->labels()[i].c_str());
+            printSmall(false, 4, 29 + (i - _subTopCursor)  * 14, ">");
+        printSmall(false, 12, 30 + (i - _subTopCursor)  * 14, _subOption->labels()[i].c_str());
     }
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, "DSiMenu++");
@@ -128,6 +108,27 @@ void SettingsGUI::rotateOption(int rotateAmount)
         {
             auto sub = *action.sub();
             int currentValueIndex = sub.selected();
+
+            // Update cursors.
+            if ((currentValueIndex + rotateAmount) < 0 || ((currentValueIndex + rotateAmount) >= sub.values().size()))
+            {
+                // Prevent overflows...
+                return;
+            }
+
+            if (currentValueIndex + rotateAmount >= _subBottomCursor)
+            {
+                _subTopCursor++;
+                _subBottomCursor++;
+            }
+
+            if (currentValueIndex + rotateAmount < _subTopCursor)
+            {
+                _subTopCursor--;
+                _subBottomCursor--;
+            }
+
+
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
             if (currentValueIndex == -1)
                 nextValueIndex = 0;
