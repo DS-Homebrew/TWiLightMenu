@@ -821,35 +821,7 @@ int main(int argc, char **argv)
 				swiWaitForVBlank();
 			} while (!pressed);
 
-			if (pressed & KEY_RIGHT)
-			{
-				gui.setOptionNext();
-			}
-
-			if (pressed & KEY_LEFT)
-			{
-				gui.setOptionPrev();
-			}
-
-			if (pressed & KEY_DOWN)
-			{
-				gui.incrementOption();
-			}
-
-			if (pressed & KEY_UP)
-			{
-				gui.decrementOption();
-			}
-
-			if (pressed & KEY_A)
-			{
-				gui.enterSub();
-			}
-
-			if (pressed & KEY_B && gui.inSub())
-			{
-				gui.exitSub();
-			}
+			gui.processInputs(pressed);
 
 #pragma region settings
 			// if (subscreenmode == 4) {

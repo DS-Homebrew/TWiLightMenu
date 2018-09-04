@@ -16,6 +16,10 @@ public:
   ~SettingsGUI() {}
 
 public:
+  void processInputs(int inputs);
+  void draw();
+
+private:
   void setTopText(const std::string &text)
   {
     std::string _topTextStr(text);
@@ -29,7 +33,6 @@ public:
     _topText.push_back(_topTextStr);
   }
 
-  void draw();
 
   void drawSub();
 

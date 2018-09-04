@@ -9,6 +9,39 @@
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
+void SettingsGUI::processInputs(int pressed)
+{
+    if (pressed & KEY_RIGHT)
+    {
+        setOptionNext();
+    }
+
+    if (pressed & KEY_LEFT)
+    {
+        setOptionPrev();
+    }
+
+    if (pressed & KEY_DOWN)
+    {
+        incrementOption();
+    }
+
+    if (pressed & KEY_UP)
+    {
+        decrementOption();
+    }
+
+    if (pressed & KEY_A)
+    {
+        enterSub();
+    }
+
+    if (pressed & KEY_B && inSub())
+    {
+        exitSub();
+    }
+}
+
 void SettingsGUI::draw()
 {
     if (_selectedPage < 0 || _pages.size() < 1 || _selectedPage >= _pages.size())
@@ -77,12 +110,12 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
-    
-    for (int i = 0; i < _topText.size(); i++) 
+
+    for (int i = 0; i < _topText.size(); i++)
     {
         printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
     }
-    // 
+    //
 }
 
 void SettingsGUI::rotateOptionValue(int rotateAmount)
