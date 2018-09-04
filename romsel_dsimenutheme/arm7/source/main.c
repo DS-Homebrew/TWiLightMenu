@@ -32,6 +32,17 @@
 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
+static int soundVolume = 127;
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 3;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -42,6 +53,12 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	if(fifoCheckValue32(FIFO_USER_01)) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 	if(fifoCheckValue32(FIFO_USER_02)) {
 		ReturntoDSiMenu();
 	}

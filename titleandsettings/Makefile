@@ -25,8 +25,8 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 TARGET		:=	titleandsettings
 BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
+SOURCES		:=	source source/graphics source/tool source/common
+INCLUDES	:=	include source
 DATA		:=	data  
 NITRODATA	:=	nitrofiles
 GRAPHICS	:=  gfx
@@ -43,7 +43,7 @@ CFLAGS	:=	-g -Wall -O2 \
 		$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++11
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++1z
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=ds_arm9.specs -g -Wl,--gc-sections $(ARCH) -Wl,-Map,$(notdir $*.map)

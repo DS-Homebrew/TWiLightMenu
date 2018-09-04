@@ -32,13 +32,17 @@ THE SOFTWARE.
 
 
 
-#ifndef _STRINGTOOL_H_
-#define _STRINGTOOL_H_
+#ifndef _MEMTOOL_H_
+#define _MEMTOOL_H_
 
-#include <string>
+inline void fillMemory( void * addr, u32 count, u32 value )
+{
+    swiFastCopy( (void*)(&value), addr, (count>>2) | COPY_MODE_WORD | COPY_MODE_FILL);
+}
 
-std::string formatString( const char* fmt, ... );
+inline void zeroMemory( void * addr, u32 count )
+{
+    fillMemory( addr, count, 0 );
+}
 
-
-
-#endif//_STRINGTOOL_H_
+#endif//_MEMTOOL_H_

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "inifile.h"
+#include "common/inifile.h"
 
 extern int appName;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
 

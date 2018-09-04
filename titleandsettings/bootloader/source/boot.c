@@ -72,6 +72,7 @@ extern unsigned long argStart;
 extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
+extern unsigned long clearMasterBright;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
@@ -251,6 +252,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 
 		if (REG_SCFG_EXT != 0) {
 			*(u8*)(TWL_HEAD+0x1BF) = 0x00;		// Tell homebrew to use NTR touch
+		} else {
+			*(u8*)(TWL_HEAD+0x1BF) = 0x01;		// TWL touch, if in DSiWarehax
 		}
 
 		u32 ARM9i_SRC = *(u32*)(TWL_HEAD+0x1C0);
@@ -338,6 +341,15 @@ int main (void) {
 	(*(vu32*)0x02FFFE24) = (u32)TEMP_MEM;	// Make ARM9 jump to the function
 	// Wait until the ARM9 has completed its task
 	while ((*(vu32*)0x02FFFE24) == (u32)TEMP_MEM);
+
+	if (clearMasterBright) {
+		// ARM9 clears master brightness
+		// copy ARM9 function to RAM, and make the ARM9 jump to it
+		copyLoop((void*)TEMP_MEM, (void*)clearMasterBright_ARM9, clearMasterBright_ARM9_size);
+		(*(vu32*)0x02FFFE24) = (u32)TEMP_MEM;	// Make ARM9 jump to the function
+		// Wait until the ARM9 has completed its task
+		while ((*(vu32*)0x02FFFE24) == (u32)TEMP_MEM);
+	}
 
 	// ARM9 sets up mpu
 	// copy ARM9 function to RAM, and make the ARM9 jump to it

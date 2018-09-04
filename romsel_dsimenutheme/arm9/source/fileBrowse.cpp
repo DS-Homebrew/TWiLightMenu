@@ -791,11 +791,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						fadeSpeed = false;	// Slow fade speed
 					}
 					fadeType = false;	// Fade to white
+					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
 					music = false;
 					mmEffectCancelAll();
+					fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
 					clearText(true);
 					if (startMenu_cursorPosition == 1) launchType = 0;
@@ -906,11 +908,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 					}
 					fadeType = false;	// Fade to white
+					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
 					music = false;
 					mmEffectCancelAll();
+					fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
 					clearText(true);
 
