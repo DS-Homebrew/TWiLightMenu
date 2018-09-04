@@ -53,7 +53,7 @@ private:
       // upon exit of this function, we make a copy of it
       // as a unique_ptr, to ensure that when we replace it,
       // it drops the old value as well.
-      _subOption = std::make_unique<Option>(*action.sub());
+      _subOption = std::move(action.sub());
 
       setTopText(_subOption->longDescription());
 
