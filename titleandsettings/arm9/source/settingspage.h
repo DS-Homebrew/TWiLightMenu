@@ -27,6 +27,7 @@ public:
   {
   public:
     virtual std::unique_ptr<Option> sub() = 0;
+    virtual bool has_sub() = 0;
   };
 
   /**
@@ -62,6 +63,7 @@ public:
         return nullptr;
       return std::make_unique<Option>(*option);
     }
+    bool has_sub() { return _generator != nullptr; }
 
   private:
     bool *_pointer;
@@ -98,6 +100,7 @@ public:
         return nullptr;
       return std::make_unique<Option>(*option);
     }
+    bool has_sub() { return _generator != nullptr; }
 
   private:
     int *_pointer;
@@ -136,6 +139,7 @@ public:
         return nullptr;
       return std::make_unique<Option>(*option);
     }
+    bool has_sub() { return _generator != nullptr; }
 
   private:
     std::string *_pointer;

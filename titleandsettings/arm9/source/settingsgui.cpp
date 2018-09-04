@@ -50,8 +50,20 @@ void SettingsGUI::processInputs(int pressed)
 
     if (pressed & KEY_A)
     {
-        mmEffectEx(&snd().snd_select);
-        enterSub();
+        auto opt = _pages[_selectedPage].options()[_selectedOption];
+        if (opt.action_sub().has_sub())
+        {
+            if (opt.action_sub().sub()) {
+                mmEffectEx(&snd().snd_select);
+                enterSub();
+            } else {
+                mmEffectEx(&snd().snd_wrong);
+            }
+        }
+        else
+        {
+            setOptionNext();
+        }
     }
 }
 
