@@ -496,18 +496,6 @@ int main(int argc, char **argv) {
 
 	bool fatInited = fatInitDefault();
 
-	/* if (!isDSiMode() && REG_SCFG_EXT == 0x8307F100) {
-		// Force-enable DSi mode
-		extern bool __dsimode;
-		__dsimode = true;
-	}
-
-	fifoWaitValue32(FIFO_USER_06);
-	
-	iprintf("ARM7 SCFG_ROM: %x\n", fifoGetValue32(FIFO_USER_01));
-	
-	doPause(); */
-
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
