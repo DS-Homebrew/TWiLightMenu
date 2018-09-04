@@ -143,8 +143,8 @@ public:
   Option(const std::string &displayName,
          const std::string &longDescription,
          Option::OptVal action,
-         std::initializer_list<std::string> const &labels,
-         std::initializer_list<std::variant<bool, int, cstr>> const &values)
+         std::initializer_list<std::string> const labels,
+         std::initializer_list<std::variant<bool, int, cstr>> const values)
       : _action(action)
   {
     _displayName = displayName;
@@ -279,8 +279,8 @@ public:
       const std::string &displayName,
       const std::string &longDescription,
       Option::OptVal action,
-      std::initializer_list<std::string> const &labels,
-      std::initializer_list<std::variant<bool, int, cstr>> const &values)
+      std::initializer_list<std::string> const labels,
+      std::initializer_list<std::variant<bool, int, cstr>> const values)
   {
     _options.emplace_back(displayName, longDescription, action, labels, values);
     return *this;

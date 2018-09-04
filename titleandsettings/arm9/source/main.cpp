@@ -551,13 +551,30 @@ int lastRanROM()
 
 Option generate_option(Option::Bool &optval)
 {
-	return Option("Sub Option", "Long Description of Sub Option", Option::Bool(&ms().ak_zoomIcons), {"On", "Off"}, {true, false});
+	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().theme), {"On", "Off", "Maybe"}, {0, 1, 2});
 }
 
-// Option generate_str_option(Option::Str &optVal)
-// {
-// 	//return Option("Sub Option for Strings", "Long Description of Sub Option", Option::)
-// }
+Option generate_str_option(Option::Str &optVal)
+{
+	return Option("Sub Option for Strings",
+				  "Long Description of Sub Option",
+				  Option::Str(&ms().r4_theme),
+				  {
+					  "Theme 1",
+					  "Theme 2",
+					//   "Theme 3",
+					//   "Theme 4",
+					//   "Theme 5",
+					//   "Theme 6",
+					//   "Theme 7",
+					//   "Theme 8",
+					//   "Theme 9",
+					//   "Theme 10",
+					//   "Theme 11",
+					//   "Theme 12",
+				  },
+				  {"Theme 1", "Theme 2" /*, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11*/});
+}
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
@@ -750,7 +767,7 @@ int main(int argc, char **argv)
 
 		.option("13 Test Option",
 				"This is an option to \n test variadic options",
-				Option::Str(&ms().romfolder),
+				Option::Str(&ms().romfolder, generate_str_option),
 				{"Hello", "World"}, {"Hello", "World"});
 
 	SettingsGUI gui;
