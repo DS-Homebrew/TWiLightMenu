@@ -1,15 +1,29 @@
 #include "settingsgui.h"
 
 #include "graphics/fontHandler.h"
+#include "common/dsimenusettings.h"
 #include <variant>
 #include <algorithm>
 
 void SettingsGUI::draw()
 {
-    if (_selectedPage < 0 || _pages.size() < 1 ||_selectedPage >= _pages.size()) return;
+    if (_selectedPage < 0 || _pages.size() < 1 || _selectedPage >= _pages.size())
+        return;
     if (inSub())
     {
         drawSub();
+        return;
+    }
+
+    if (_isExited)
+    {
+        clearText();
+        printSmall(false, 4, 2, "Saving settings...");
+        return;
+    }
+    else if (_isSaved)
+    {
+        printSmall(false, 4, 2, "Settings saved.");
         return;
     }
 
@@ -33,13 +47,13 @@ void SettingsGUI::draw()
 void SettingsGUI::drawSub()
 {
     clearText();
-     int selected = _subOption->selected();
+    int selected = _subOption->selected();
 
     for (int i = _subTopCursor; i < _subBottomCursor; i++)
     {
         if (i == selected)
-            printSmall(false, 4, 29 + (i - _subTopCursor)  * 14, ">");
-        printSmall(false, 12, 30 + (i - _subTopCursor)  * 14, _subOption->labels()[i].c_str());
+            printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+        printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
     }
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, "DSiMenu++");
@@ -128,12 +142,10 @@ void SettingsGUI::rotateOption(int rotateAmount)
                 _subBottomCursor--;
             }
 
-
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
             if (currentValueIndex == -1)
                 nextValueIndex = 0;
             auto nextValue = sub.values()[nextValueIndex];
-
 
             if (auto subaction = std::get_if<Option::Bool>(&sub.action()))
             {
@@ -154,4 +166,13 @@ void SettingsGUI::rotateOption(int rotateAmount)
     }
 
     clearText();
+}
+
+void SettingsGUI::saveAndExit()
+{
+    _isExited = true;
+    ms().saveSettings();
+    for (int i = 0; i < 60; i++)
+        swiWaitForVBlank();
+    _isSaved = true;
 }
