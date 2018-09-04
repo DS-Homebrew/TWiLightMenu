@@ -761,12 +761,12 @@ int main(int argc, char **argv)
 	SettingsPage page("Test title No page");
 	ms().romfolder = "Hello";
 	page.option(" 1 Test Option Bool",
-				"This is an option to \n test variadic options",
+				"This is an option to\ntest variadic options",
 				Option::Bool(&ms().ak_zoomIcons, generate_option),
 				{"On", "Off"}, {true, false})
 
 		.option("13 Test Option",
-				"This is an option to \n test variadic options",
+				"This is an option to\ntest variadic\noptions",
 				Option::Str(&ms().romfolder, generate_str_option),
 				{"Hello", "World"}, {"Hello", "World"});
 

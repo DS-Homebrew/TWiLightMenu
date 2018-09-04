@@ -11,7 +11,8 @@
 
 void SettingsGUI::draw()
 {
-    if (_selectedPage < 0 || _pages.size() < 1 ||_selectedPage >= _pages.size()) return;
+    if (_selectedPage < 0 || _pages.size() < 1 || _selectedPage >= _pages.size())
+        return;
     if (inSub())
     {
         drawSub();
@@ -20,13 +21,15 @@ void SettingsGUI::draw()
 
     clearText();
     exitSub();
+    drawTopText();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
     for (int i = _topCursor; i < _bottomCursor; i++)
     {
         int selected = _pages[_selectedPage].options()[i].selected();
 
-        if (i == _selectedOption) {
+        if (i == _selectedOption)
+        {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
         }
 
@@ -36,39 +39,50 @@ void SettingsGUI::draw()
 
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
-    int scrollSections =  CURSOR_HEIGHT / (_pages[_selectedPage].options().size() - 1);
+    int scrollSections = CURSOR_HEIGHT / (_pages[_selectedPage].options().size() - 1);
     // Print a nice thick scroller.
     printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
     printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
-    
+
     printSmallCentered(false, 173, "DSiMenu++");
 }
 
 void SettingsGUI::drawSub()
 {
     clearText();
+    drawTopText();
     int selected = _subOption->selected();
 
     for (int i = _subTopCursor; i < _subBottomCursor; i++)
     {
-        if (i == selected) {
-            printSmall(false, 4, 29 + (i - _subTopCursor)  * 14, ">");
+        if (i == selected)
+        {
+
+            printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
         }
 
-        printSmall(false, 12, 30 + (i - _subTopCursor)  * 14, _subOption->labels()[i].c_str());
+        printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
     }
-
 
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
-    int scrollSections =  CURSOR_HEIGHT / (_subOption->values().size() - 1);
+    int scrollSections = CURSOR_HEIGHT / (_subOption->values().size() - 1);
     // Print a nice thick scroller.
     printSmall(false, 252, (scrollSections * (selected)) + CURSOR_MIN, "|");
     printSmall(false, 254, (scrollSections * (selected)) + CURSOR_MIN, "|");
 
-
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, "DSiMenu++");
+}
+
+void SettingsGUI::drawTopText()
+{
+    
+    for (int i = 0; i < _topText.size(); i++) 
+    {
+        printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
+    }
+    // 
 }
 
 void SettingsGUI::rotateOptionValue(int rotateAmount)
@@ -96,6 +110,7 @@ void SettingsGUI::rotateOptionValue(int rotateAmount)
 
     if (auto action = std::get_if<Option::Str>(&selectedOption.action()))
     {
+        nocashMessage(*std::get_if<cstr>(&nextValue));
         action->set(*std::get_if<cstr>(&nextValue));
     }
     clearText();
@@ -123,6 +138,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
             _bottomCursor--;
         }
 
+        setTopText(_pages[_selectedPage].options()[_selectedOption].longDescription());
         _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
     }
     else
@@ -154,12 +170,10 @@ void SettingsGUI::rotateOption(int rotateAmount)
                 _subBottomCursor--;
             }
 
-
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
             if (currentValueIndex == -1)
                 nextValueIndex = 0;
             auto nextValue = sub.values()[nextValueIndex];
-
 
             if (auto subaction = std::get_if<Option::Bool>(&sub.action()))
             {
