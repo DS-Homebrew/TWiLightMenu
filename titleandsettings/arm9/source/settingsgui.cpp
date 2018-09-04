@@ -14,6 +14,16 @@
 
 void SettingsGUI::processInputs(int pressed)
 {
+    if (pressed & KEY_B && inSub())
+    {
+        mmEffectEx(&snd().snd_select);
+        exitSub();
+    }
+    else if (pressed & KEY_B && !inSub())
+    {
+        saveAndExit();
+    }
+
     if (pressed & KEY_RIGHT)
     {
         mmEffectEx(&snd().snd_select);
@@ -43,12 +53,6 @@ void SettingsGUI::processInputs(int pressed)
         mmEffectEx(&snd().snd_select);
         enterSub();
     }
-
-    if (pressed & KEY_B && inSub())
-    {
-        mmEffectEx(&snd().snd_select);
-        exitSub();
-    }
 }
 
 void SettingsGUI::draw()
@@ -61,20 +65,20 @@ void SettingsGUI::draw()
         return;
     }
 
-    if (_isExited)
+    if (_isSaved)
+    {
+        clearText();
+        printSmall(false, 4, 2, "Settings saved.");
+        return;
+    }
+    else if (_isExited)
     {
         clearText();
         printSmall(false, 4, 2, "Saving settings...");
         return;
     }
-    else if (_isSaved)
-    {
-        printSmall(false, 4, 2, "Settings saved.");
-        return;
-    }
 
     clearText();
-    exitSub();
     drawTopText();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
@@ -253,8 +257,18 @@ void SettingsGUI::rotateOption(int rotateAmount)
 void SettingsGUI::saveAndExit()
 {
     _isExited = true;
-    ms().saveSettings();
-    for (int i = 0; i < 60; i++)
+    mmEffectEx(&snd().snd_back);
+    // Draw in between here.
+    draw();
+
+    for (int i = 0; i < 30; i++)
         swiWaitForVBlank();
+    ms().saveSettings();
     _isSaved = true;
+
+    for (int i = 0; i < 30; i++)
+        swiWaitForVBlank();
+    snd().stopBgMusic();
+    if (_exitCallback)
+        _exitCallback();
 }

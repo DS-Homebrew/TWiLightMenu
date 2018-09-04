@@ -104,6 +104,7 @@ class SoundEffect
         mmEffectCancelAll();
         music = false;
     }
+    
     mm_sound_effect snd_launch;
     mm_sound_effect snd_select;
     mm_sound_effect snd_stop;

@@ -12,7 +12,8 @@ class SettingsGUI
 public:
   SettingsGUI()
       : _selectedPage(-1), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
-        _bottomCursor(0), _subOption(nullptr), _subBottomCursor(0), _subTopCursor(0), _isExited(false), _isSaved(false) {}
+        _bottomCursor(0), _subOption(nullptr), _subBottomCursor(0), _subTopCursor(0), _isExited(false), _isSaved(false),
+        _exitCallback(nullptr) {}
   ~SettingsGUI() {}
 
 public:
@@ -112,6 +113,10 @@ public:
     return *this;
   }
 
+  SettingsGUI &onExit(std::function<void(void)>& callback)  
+  {
+    _exitCallback = callback;
+  }
 private:
   void rotateOption(int rotateAmount);
   void rotateOptionValue(int rotateAmount);
@@ -134,6 +139,8 @@ private:
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
   std::vector<std::string> _topText;
+
+  std::function<void(void)> _exitCallback;
 };
 
 #endif
