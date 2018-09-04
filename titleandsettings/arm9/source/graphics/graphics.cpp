@@ -34,10 +34,11 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
+#include "soundeffect.h"
+
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-extern bool music;
 static int musicTime = 0;
 
 extern const char* settingsinipath;
@@ -64,8 +65,6 @@ void vramcpy_ui (void* dest, const void* src, int size)
 		size-=2;
 	}
 }
-
-extern mm_sound_effect mus_settings;
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -156,13 +155,7 @@ void vBlankHandler()
 		SetBrightness(1, screenBrightness);
 	}
 
-	if (music) {
-		musicTime++;
-		if (musicTime == 60*25) {	// Length of music file in seconds (60*ss)
-			mmEffectEx(&mus_settings);
-			musicTime = 0;
-		}
-	}
+	snd().tickBgMusic();
 
 	if (renderScreens) {
 		startRendering(renderingTop);

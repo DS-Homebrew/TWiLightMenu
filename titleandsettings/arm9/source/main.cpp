@@ -44,8 +44,7 @@
 #include "settingsgui.h"
 #include "language.h"
 
-#include "soundbank.h"
-#include "soundbank_bin.h"
+#include "soundeffect.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
@@ -232,76 +231,76 @@ using namespace std;
 
 bool music = false;
 
-mm_sound_effect snd_launch;
-mm_sound_effect snd_select;
-mm_sound_effect snd_stop;
-mm_sound_effect snd_wrong;
-mm_sound_effect snd_back;
-mm_sound_effect snd_switch;
-mm_sound_effect mus_settings;
+// mm_sound_effect snd_launch;
+// mm_sound_effect snd_select;
+// mm_sound_effect snd_stop;
+// mm_sound_effect snd_wrong;
+// mm_sound_effect snd_back;
+// mm_sound_effect snd_switch;
+// mm_sound_effect mus_settings;
 
-void InitSound()
-{
-	mmInitDefaultMem((mm_addr)soundbank_bin);
+// void InitSound()
+// {
+// 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
-	mmLoadEffect(SFX_LAUNCH);
-	mmLoadEffect(SFX_SELECT);
-	mmLoadEffect(SFX_STOP);
-	mmLoadEffect(SFX_WRONG);
-	mmLoadEffect(SFX_BACK);
-	mmLoadEffect(SFX_SWITCH);
-	mmLoadEffect(SFX_SETTINGS);
+// 	mmLoadEffect(SFX_LAUNCH);
+// 	mmLoadEffect(SFX_SELECT);
+// 	mmLoadEffect(SFX_STOP);
+// 	mmLoadEffect(SFX_WRONG);
+// 	mmLoadEffect(SFX_BACK);
+// 	mmLoadEffect(SFX_SWITCH);
+// 	mmLoadEffect(SFX_SETTINGS);
 
-	snd_launch = {
-		{SFX_LAUNCH},			 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	snd_select = {
-		{SFX_SELECT},			 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	snd_stop = {
-		{SFX_STOP},				 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	snd_wrong = {
-		{SFX_WRONG},			 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	snd_back = {
-		{SFX_BACK},				 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	snd_switch = {
-		{SFX_SWITCH},			 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-	mus_settings = {
-		{SFX_SETTINGS},			 // id
-		(int)(1.0f * (1 << 10)), // rate
-		0,						 // handle
-		255,					 // volume
-		128,					 // panning
-	};
-}
+// 	snd_launch = {
+// 		{SFX_LAUNCH},			 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	snd_select = {
+// 		{SFX_SELECT},			 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	snd_stop = {
+// 		{SFX_STOP},				 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	snd_wrong = {
+// 		{SFX_WRONG},			 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	snd_back = {
+// 		{SFX_BACK},				 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	snd_switch = {
+// 		{SFX_SWITCH},			 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// 	mus_settings = {
+// 		{SFX_SETTINGS},			 // id
+// 		(int)(1.0f * (1 << 10)), // rate
+// 		0,						 // handle
+// 		255,					 // volume
+// 		128,					 // panning
+// 	};
+// }
 
 //---------------------------------------------------------------------------------
 void stop(void)
@@ -348,8 +347,9 @@ void launchSystemSettings()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	renderScreens = false;
-	music = false;
-	mmEffectCancelAll();
+	snd().stopBgMusic();
+	// music = false;
+	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	char tmdpath[256];
@@ -411,8 +411,9 @@ void loadROMselect()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	renderScreens = false;
-	music = false;
-	mmEffectCancelAll();
+	snd().stopBgMusic();
+	// music = false;
+	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	if (soundfreqsettingChanged)
 	{
@@ -442,8 +443,9 @@ int lastRanROM()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	renderScreens = false;
-	music = false;
-	mmEffectCancelAll();
+	snd().stopBgMusic();
+	// music = false;
+	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	if (soundfreqsettingChanged)
 	{
@@ -599,7 +601,7 @@ int main(int argc, char **argv)
 	
 	iprintf("ARM7 SCFG_ROM: %x\n", fifoGetValue32(FIFO_USER_01));
 	
-	doPause(); */
+	doPausnd(); */
 
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
@@ -674,7 +676,8 @@ int main(int argc, char **argv)
 			rename("sd:/bootthis.prv", dsiWarePrvPath.c_str());
 	}
 
-	InitSound();
+//	InitSound();
+	snd().init();
 
 	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
@@ -794,11 +797,7 @@ int main(int argc, char **argv)
 		if (screenmode == 1)
 		{
 
-			if (!music)
-			{
-				mmEffectEx(&mus_settings); // Play settings music
-				music = true;
-			}
+			snd().playBgMusic();
 
 			gui.draw();
 

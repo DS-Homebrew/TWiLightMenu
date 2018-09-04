@@ -4,6 +4,8 @@
 #include <variant>
 #include <algorithm>
 #include <nds.h>
+#include <maxmod9.h>
+#include "soundeffect.h"
 
 #define CURSOR_MIN 30
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
@@ -13,31 +15,37 @@ void SettingsGUI::processInputs(int pressed)
 {
     if (pressed & KEY_RIGHT)
     {
+        mmEffectEx(&snd().snd_select);
         setOptionNext();
     }
 
     if (pressed & KEY_LEFT)
     {
+        mmEffectEx(&snd().snd_select);
         setOptionPrev();
     }
 
     if (pressed & KEY_DOWN)
     {
+        mmEffectEx(&snd().snd_select);
         incrementOption();
     }
 
     if (pressed & KEY_UP)
     {
+        mmEffectEx(&snd().snd_select);
         decrementOption();
     }
 
     if (pressed & KEY_A)
     {
+        mmEffectEx(&snd().snd_select);
         enterSub();
     }
 
     if (pressed & KEY_B && inSub())
     {
+        mmEffectEx(&snd().snd_select);
         exitSub();
     }
 }
