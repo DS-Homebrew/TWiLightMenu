@@ -111,31 +111,43 @@ void SettingsGUI::rotateOption(int rotateAmount)
     else
     {
         // Change the sub option instead.
+        nocashMessage("Entered rotate");
         auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
         auto &action = selectedOption.action_sub();
+        nocashMessage("Managed to get pointer to action sub.");
         if (action.sub())
         {
             auto sub = *action.sub();
+            nocashMessage("Managed to deference to action sub.");
+
             int currentValueIndex = sub.selected();
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
             if (currentValueIndex == -1)
                 nextValueIndex = 0;
-            auto nextValue = selectedOption.values()[nextValueIndex];
+            auto nextValue = sub.values()[nextValueIndex];
+
+            nocashMessage("Managed find next value.");
 
             if (auto subaction = std::get_if<Option::Bool>(&sub.action()))
             {
+                nocashMessage("Found Bool Sub.");
                 subaction->set(*std::get_if<bool>(&nextValue));
             }
 
             if (auto subaction = std::get_if<Option::Str>(&sub.action()))
             {
+                nocashMessage("Found Str Sub.");
                 subaction->set(*std::get_if<cstr>(&nextValue));
             }
 
             if (auto subaction = std::get_if<Option::Int>(&sub.action()))
             {
-                subaction->set(*std::get_if<int>(&nextValue));
+                nocashMessage("Found Int Sub.");
+                int value = *std::get_if<int>(&nextValue);
+                nocashMessage("Dereferenced next value.");
+                subaction->set(value);
             }
+            nocashMessage("Managed exit rotation.");
         }
     }
 

@@ -37,8 +37,8 @@ public:
   class Bool : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Bool)(Bool &);
-
+    //typedef Option (*OptionGenerator_Bool)(Bool &);
+    typedef std::function<Option(Bool&)> OptionGenerator_Bool;
     Bool(bool *pointer)
         : _generator(nullptr) { _pointer = pointer; };
 
@@ -67,7 +67,8 @@ public:
   class Int : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Int)(Int &);
+    //typedef Option (*OptionGenerator_Int)(Int &);
+    typedef std::function<Option(Int&)> OptionGenerator_Int;
     Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
     Int(int *pointer, const OptionGenerator_Int generator)
         : _generator(generator)
@@ -94,7 +95,8 @@ public:
   class Str : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Str)(Str &);
+   // typedef Option (*OptionGenerator_Str)(Str &);
+    typedef std::function<Option(Str&)> OptionGenerator_Str;
     Str(std::string *pointer)
         : _generator(nullptr) { _pointer = pointer; };
 
