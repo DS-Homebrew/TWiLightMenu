@@ -28,19 +28,6 @@ public:
     public:
       virtual std::unique_ptr<Option> sub() = 0;
   };
-  // /**
-  //  * \brief Represents a submenu, or jump to a page.
-  //  */
-  // class Sub
-  // {
-  // public:
-  //   Sub(int page) { _page = page; }
-  //   ~Sub() {}
-  //   int page() { return _page; }
-
-  // private:
-  //   int _page;
-  // };
 
   /**
    * \brief Represents a boolean option
@@ -51,10 +38,12 @@ public:
   class Bool : public Sub
   {
   public:
+    typedef Option(*OptionGenerator_Bool)(Bool&);
+
     Bool(bool *pointer) 
       : _generator(nullptr) { _pointer = pointer; };
    
-    Bool(bool *pointer, const std::function<Option(Bool&)>& generator) 
+    Bool(bool *pointer, const OptionGenerator_Bool generator) 
       : _generator(generator) { _pointer = pointer; _generator = generator; };
 
     ~Bool() {}
@@ -63,7 +52,7 @@ public:
     std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
   private:
     bool *_pointer;
-    std::function<Option(Bool&)> _generator;
+    OptionGenerator_Bool _generator;
 
   };
 
@@ -75,8 +64,9 @@ public:
   class Int : public Sub
   {
   public:
+    typedef Option(*OptionGenerator_Int)(Int&);
     Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
-    Int(int *pointer, const std::function<Option(Int&)>& generator) 
+    Int(int *pointer, const OptionGenerator_Int generator) 
       : _generator(generator) { _pointer = pointer; _generator = generator; };
 
     ~Int() {}
@@ -86,7 +76,7 @@ public:
 
   private:
     int *_pointer;
-    std::function<Option(Int&)> _generator;
+    OptionGenerator_Int _generator;
   };
 
   /**
@@ -97,10 +87,11 @@ public:
   class Str : public Sub
   {
   public:
+    typedef Option(*OptionGenerator_Str)(Str&);
     Str(std::string *pointer) 
       : _generator(nullptr) { _pointer = pointer; };
 
-    Str(std::string *pointer, const std::function<Option(Str&)>& generator) 
+    Str(std::string *pointer, const OptionGenerator_Str generator) 
       : _generator(generator) { _pointer = pointer; _generator = generator; };
       
     ~Str() {}
@@ -110,7 +101,7 @@ public:
 
   private:
     std::string *_pointer;
-    std::function<Option(Str&)> _generator;
+    OptionGenerator_Str _generator;
   };
   
   typedef std::variant<Bool, Int, Str> OptVal;
