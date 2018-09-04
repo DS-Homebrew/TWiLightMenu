@@ -42,15 +42,26 @@ void SettingsGUI::draw()
 void SettingsGUI::drawSub(Option &option)
 {
     clearText();
-    printLarge(false, 6, 1, option.displayName().c_str());
     int selected = option.selected();
 
-    for (int i = 0; i < option.values().size(); i++)
+    // option may be destroyed upon exit of this function, so
+    // we need to copy the option here.
+
+    // The use of smart pointers ensures that the old value is dropped
+    // once we're finished with it.
+
+    // There is an optimization to be done here to check if
+    // the copy is really necessary, but doing the copy here
+    // is fast enough for now.
+    _subOption = std::make_unique<Option>(option);
+
+    for (int i = 0; i < _subOption->values().size(); i++)
     {
         if (i == selected)
             printSmall(false, 4, 29 + i * 14, ">");
-        printSmall(false, 12, 30 + i * 14, option.labels()[i].c_str());
+        printSmall(false, 12, 30 + i * 14, _subOption->labels()[i].c_str());
     }
+    printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, "DSiMenu++");
 }
 
@@ -111,43 +122,33 @@ void SettingsGUI::rotateOption(int rotateAmount)
     else
     {
         // Change the sub option instead.
-        nocashMessage("Entered rotate");
         auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
         auto &action = selectedOption.action_sub();
-        nocashMessage("Managed to get pointer to action sub.");
         if (action.sub())
         {
             auto sub = *action.sub();
-            nocashMessage("Managed to deference to action sub.");
-
             int currentValueIndex = sub.selected();
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
             if (currentValueIndex == -1)
                 nextValueIndex = 0;
             auto nextValue = sub.values()[nextValueIndex];
 
-            nocashMessage("Managed find next value.");
 
             if (auto subaction = std::get_if<Option::Bool>(&sub.action()))
             {
-                nocashMessage("Found Bool Sub.");
                 subaction->set(*std::get_if<bool>(&nextValue));
             }
 
             if (auto subaction = std::get_if<Option::Str>(&sub.action()))
             {
-                nocashMessage("Found Str Sub.");
                 subaction->set(*std::get_if<cstr>(&nextValue));
             }
 
             if (auto subaction = std::get_if<Option::Int>(&sub.action()))
             {
-                nocashMessage("Found Int Sub.");
                 int value = *std::get_if<int>(&nextValue);
-                nocashMessage("Dereferenced next value.");
                 subaction->set(value);
             }
-            nocashMessage("Managed exit rotation.");
         }
     }
 

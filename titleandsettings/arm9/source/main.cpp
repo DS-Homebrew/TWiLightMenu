@@ -556,24 +556,24 @@ Option generate_option(Option::Bool &optval)
 
 Option generate_str_option(Option::Str &optVal)
 {
-	return Option("Sub Option for Strings",
+	return Option("Sub Option for slightly longer..",
 				  "Long Description of Sub Option",
-				  Option::Str(&ms().r4_theme),
+				  Option::Int(&ms().r4_theme),
 				  {
 					  "Theme 1",
 					  "Theme 2",
-					//   "Theme 3",
-					//   "Theme 4",
-					//   "Theme 5",
-					//   "Theme 6",
-					//   "Theme 7",
-					//   "Theme 8",
-					//   "Theme 9",
-					//   "Theme 10",
-					//   "Theme 11",
-					//   "Theme 12",
+					  "Theme 3",
+					  "Theme 4",
+					  "Theme 5",
+					  "Theme 6",
+					  "Theme 7",
+					  "Theme 8",
+					  "Theme 9",
+					  "Theme 10",
+					  "Theme 11",
+					  "Theme 12",
 				  },
-				  {"Theme 1", "Theme 2" /*, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11*/});
+				  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
 }
 
 //---------------------------------------------------------------------------------

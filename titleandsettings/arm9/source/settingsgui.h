@@ -12,7 +12,7 @@ class SettingsGUI
 public:
   SettingsGUI()
       : _selectedPage(-1), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
-        _bottomCursor(0) {}
+        _bottomCursor(0), _subOption(nullptr) {}
   ~SettingsGUI() {}
 
 public:
@@ -41,7 +41,7 @@ public:
      _pages.emplace_back(std::move(page));
     return *this;
   }
-  
+
   SettingsGUI &setPage(int pageIndex)
   {
     _selectedPage = pageIndex;
@@ -60,6 +60,7 @@ private:
   bool _inSub;
   int _topCursor;
   int _bottomCursor;
+  std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
 };
 

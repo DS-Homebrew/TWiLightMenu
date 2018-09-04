@@ -115,6 +115,7 @@ public:
   private:
     std::string *_pointer;
     OptionGenerator_Str _generator;
+    
   };
 
   typedef std::variant<Bool, Int, Str> OptVal;
