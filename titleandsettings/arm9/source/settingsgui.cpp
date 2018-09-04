@@ -4,7 +4,14 @@
 #include <variant>
 #include <algorithm>
 
-#define MAX_ELEMENTS 9
+SettingsGUI &SettingsGUI::addPage(SettingsPage &page)
+{
+    _pages.emplace_back(std::move(page));
+    // todo: page switching.
+    _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
+    return *this;
+}
+
 void SettingsGUI::draw()
 {
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
@@ -21,15 +28,19 @@ void SettingsGUI::draw()
     clearText();
     exitSub();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
-    for (int i = 0; i < std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS); i++)
+
+    // _topCursor = std::max<int>(0, _selectedOption - MAX_ELEMENTS);
+    // _bottomCursor = std::max<int>(MAX_ELEMENTS, _selectedOption);
+
+    for (int i = _topCursor; i < _bottomCursor; i++)
     {
         int selected = _pages[_selectedPage].options()[i].selected();
 
         if (i == _selectedOption)
-            printSmall(false, 4, 29 + i * 14, ">");
+            printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
 
-        printSmall(false, 12, 30 + i * 14, _pages[_selectedPage].options()[i].displayName().c_str());
-        printSmall(false, 194, 30 + i * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
+        printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
+        printSmall(false, 194, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
     printSmallCentered(false, 173, "DSiMenu++");
 }
@@ -46,12 +57,14 @@ void SettingsGUI::drawSub(Option &option)
             printSmall(false, 4, 29 + i * 14, ">");
         printSmall(false, 12, 30 + i * 14, option.labels()[i].c_str());
     }
+    printSmallCentered(false, 173, "DSiMenu++");
 }
 
 void SettingsGUI::rotateOptionValue(int rotateAmount)
 {
     // Only the main menu pages have left-right option values. Sub menus only control one Option.
-    if (inSub()) return;
+    if (inSub())
+        return;
 
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     int currentValueIndex = selectedOption.selected();
@@ -77,14 +90,29 @@ void SettingsGUI::rotateOptionValue(int rotateAmount)
     clearText();
 }
 
-
 void SettingsGUI::rotateOption(int rotateAmount)
 {
     if (!inSub())
     {
         // If we're not in the sub option menu, change the option.
-        if ((_selectedOption + rotateAmount) < 0) _selectedOption = _pages[_selectedPage].options().size() - abs(rotateAmount);
-        else  _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
+        if ((_selectedOption + rotateAmount) < 0 || ((_selectedOption + rotateAmount) >= _pages[_selectedPage].options().size()))
+        {
+            return;
+        }
+
+        if (_selectedOption + rotateAmount >= _bottomCursor)
+        {
+            _topCursor++;
+            _bottomCursor++;
+        }
+
+        if (_selectedOption + rotateAmount < _topCursor)
+        {
+            _topCursor--;
+            _bottomCursor--;
+        }
+
+        _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
     }
     else
     {

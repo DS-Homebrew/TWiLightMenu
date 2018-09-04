@@ -742,54 +742,7 @@ int main(int argc, char **argv)
 				"This is an option to \n test variadic options",
 				Option::Bool(&ms().ak_zoomIcons, generate_option),
 				{"On", "Off"}, {true, false})
-		.option("Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("2 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("3 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("4 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("5 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("6 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("7 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("8 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("9 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("10 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("11 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
-		.option("12 Test Option Bool",
-				"This is an option to \n test variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
+		
 		.option("13 Test Option",
 				"This is an option to \n test variadic options",
 				Option::Str(&ms().romfolder),
