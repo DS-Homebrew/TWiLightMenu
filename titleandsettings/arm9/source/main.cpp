@@ -804,7 +804,11 @@ int main(int argc, char **argv)
 			if (pressed & KEY_RIGHT) {
 				gui.setOptionNext();
 			} 
-			
+
+			if (pressed & KEY_LEFT) {
+				gui.setOptionPrev();
+			} 
+
 			if (pressed & KEY_DOWN) {
 				gui.incrementOption();
 			}
@@ -815,13 +819,15 @@ int main(int argc, char **argv)
 
 			if (pressed & KEY_A)
 			{
-				gui.enableSub();
+				gui.enterSub();
 			}
 
 			if (pressed & KEY_B && gui.inSub())
 			{
-				gui.disableSub();
+				gui.exitSub();
 			}
+
+
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;

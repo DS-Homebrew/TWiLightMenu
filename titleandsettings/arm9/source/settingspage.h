@@ -18,6 +18,16 @@ typedef const char* cstr;
 class Option
 {
 public:
+
+  /*
+  * Represents an option that may or may not have
+  * a sub option. 
+  */
+  class Sub
+  {
+    public:
+      virtual std::unique_ptr<Option> sub() = 0;
+  };
   // /**
   //  * \brief Represents a submenu, or jump to a page.
   //  */
@@ -38,7 +48,7 @@ public:
    * @param pointer A pointer to the backing boolean that will change
    *                when the user toggles this value.
    */
-  class Bool
+  class Bool : public Sub
   {
   public:
     Bool(bool *pointer) 
@@ -62,7 +72,7 @@ public:
    *  @param pointer A pointer to the backing integer that will change
    *                when the user changes this value.
    */
-  class Int
+  class Int : public Sub
   {
   public:
     Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
@@ -84,7 +94,7 @@ public:
    *  @param pointer A pointer to the backing string that will change
    *                when the user changes this value.
    */
-  class Str
+  class Str : public Sub
   {
   public:
     Str(std::string *pointer) 
@@ -148,6 +158,15 @@ public:
   OptVal &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
   std::vector<std::variant<bool, int, cstr>> &values() { return _values; }
+
+  /**
+   * Gets this option's action as an abstract Sub.
+   */
+  Option::Sub &action_sub() {
+    if (auto action = std::get_if<Bool>(&_action)) { return *action; }
+    if (auto action = std::get_if<Int>(&_action)) { return *action; }
+    if (auto action = std::get_if<Str>(&_action)) { return *action; }
+  }
 
   int selected()
   {
