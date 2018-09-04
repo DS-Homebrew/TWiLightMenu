@@ -108,7 +108,7 @@ class DSiMenuPlusPlusSettings
     void loadSettings();
     void saveSettings();
 
-    TLanguage guiLanguage();
+    TLanguage getGuiLanguage();
   public:
     std::string romfolder;
     int pagenum;
@@ -116,7 +116,7 @@ class DSiMenuPlusPlusSettings
     int startMenu_cursorPosition;
     int consoleModel;
 
-    int _guiLanguage;
+    int guiLanguage;
     bool useGbarunner;
     int theme;
     int subtheme;
@@ -135,7 +135,7 @@ class DSiMenuPlusPlusSettings
     bool boostVram;
     bool soundFix;
     bool bstrap_asyncPrefetch;
-
+    bool autorun;
     bool show12hrClock;
 
     int ak_viewMode;

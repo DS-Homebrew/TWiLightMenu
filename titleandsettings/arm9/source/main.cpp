@@ -551,31 +551,44 @@ int lastRanROM()
 	return err;
 }
 
-Option generate_option(Option::Bool &optval)
+std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
-	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().launchType), {"On", "Off", "Maybe"}, {0, 1, 2});
-}
-
-Option generate_str_option(Option::Str &optVal)
-{
-	return Option("Sub Option for slightly longer..",
-				  "Long Description of Sub Option",
-				  Option::Int(&ms().theme),
-				  {
-					  "Theme 1",
-					  "Theme 2",
-					  "Theme 3",
-					  "Theme 4",
-					  "Theme 5",
-					  "Theme 6",
-					  "Theme 7",
-					  "Theme 8",
-					  "Theme 9",
-					  "Theme 10",
-					  "Theme 11",
-					  "Theme 12",
-				  },
-				  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11});
+	switch (optVal.get())
+	{
+	case 0:
+		// Reset Theme
+		if (ms().theme != 0)
+			ms().subtheme = 0;
+		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME,
+					  Option::Int(&ms().subtheme),
+					  {STR_DSI_DARKMENU, STR_DSI_NORMALMENU, STR_DSI_RED, STR_DSI_BLUE, STR_DSI_GREEN, STR_DSI_YELLOW, STR_DSI_PINK, STR_DSI_PURPLE},
+					  {0, 1, 2, 3, 4, 5, 6, 7});
+	case 2:
+		if (ms().theme != 2)
+			ms().subtheme = 0;
+		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME,
+					  Option::Int(&ms().subtheme),
+					  {
+						  STR_R4_THEME01,
+						  STR_R4_THEME02,
+						  STR_R4_THEME03,
+						  STR_R4_THEME04,
+						  STR_R4_THEME05,
+						  STR_R4_THEME06,
+						  STR_R4_THEME07,
+						  STR_R4_THEME08,
+						  STR_R4_THEME09,
+						  STR_R4_THEME10,
+						  STR_R4_THEME11,
+						  STR_R4_THEME12,
+						  STR_R4_THEME13,
+					  },
+					  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+	case 1:
+	default:
+		return nullopt;
+	}
+	//	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().launchType), {"On", "Off", "Maybe"}, {0, 1, 2});
 }
 
 //---------------------------------------------------------------------------------
@@ -676,7 +689,7 @@ int main(int argc, char **argv)
 			rename("sd:/bootthis.prv", dsiWarePrvPath.c_str());
 	}
 
-//	InitSound();
+	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
 	char vertext[12];
@@ -761,20 +774,54 @@ int main(int argc, char **argv)
 #pragma endregion
 
 	// consoleDemoInit();
-	SettingsPage page("Test title No page");
-	ms().romfolder = "Hello";
-	page.option(" 1 Test Option Bool",
-				"This is an option to\ntest variadic options",
-				Option::Bool(&ms().ak_zoomIcons, generate_option),
-				{"On", "Off"}, {true, false})
+	SettingsPage guiPage(STR_GUI_SETTINGS);
 
-		.option("13 Test Option",
-				"This is an option to\ntest variadic\noptions",
-				Option::Str(&ms().romfolder, generate_str_option),
-				{"Hello", "World"}, {"Hello", "World"});
+	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
+	guiPage
+		// Language
+		.option(STR_LANGUAGE,
+				STR_DESCRIPTION_LANGUAGE_1,
+				Option::Int(&ms().guiLanguage),
+				{STR_SYSTEM,
+				 "Japanese",
+				 "English",
+				 "French",
+				 "German",
+				 "Italian",
+				 "Spanish"},
+				{TLanguage::ELangDefault,
+				 TLanguage::ELangJapanese,
+				 TLanguage::ELangEnglish,
+				 TLanguage::ELangFrench,
+				 TLanguage::ELangGerman,
+				 TLanguage::ELangItalian,
+				 TLanguage::ELangSpanish})
+
+		// Theme
+		.option(STR_THEME,
+				STR_DESCRIPTION_THEME_1,
+				Option::Int(&ms().theme, opt_subtheme_select),
+				{"DSi", "3DS", "R4", "Acekard"},
+				{0, 1, 2, 3})
+
+		.option(STR_LASTPLAYEDROM,
+				STR_DESCRIPTION_LASTPLAYEDROM_1,
+				Option::Bool(&ms().autorun),
+				{STR_YES, STR_NO}, {true, false})
+
+		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1,
+				Option::Bool(&ms().showlogo),
+				{STR_SHOW, STR_HIDE}, {true, false})
+
+		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1,
+				Option::Bool(&ms().showDirectories),
+				{STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
+		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
 
 	SettingsGUI gui;
-	gui.addPage(page)
+	gui.addPage(guiPage)
 		.setPage(0);
 
 	//std::get_if<Option::Bool>(&page.options()[0].action())->set(true);
@@ -822,7 +869,6 @@ int main(int argc, char **argv)
 
 			gui.processInputs(pressed);
 
-			
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;

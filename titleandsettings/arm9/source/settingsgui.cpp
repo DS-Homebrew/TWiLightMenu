@@ -196,8 +196,8 @@ void SettingsGUI::rotateOption(int rotateAmount)
             _bottomCursor--;
         }
 
-        setTopText(_pages[_selectedPage].options()[_selectedOption].longDescription());
         _selectedOption = (_selectedOption + rotateAmount) % (_pages[_selectedPage].options().size());
+        setTopText(_pages[_selectedPage].options()[_selectedOption].longDescription());
     }
     else
     {

@@ -5,6 +5,7 @@
 #include <nds.h>
 #include <functional>
 #include <memory>
+#include <optional>
 #pragma once
 #ifndef __DSIMENUPP_SETTINGS_PAGE_H_
 #define __DSIMENUPP_SETTINGS_PAGE_H_
@@ -37,7 +38,7 @@ public:
   class Bool : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Bool)(Bool &);
+    typedef std::optional<Option> (*OptionGenerator_Bool)(Bool &);
     //typedef std::function<Option(Bool&)> OptionGenerator_Bool;
     Bool(bool *pointer)
         : _generator(nullptr) { _pointer = pointer; };
@@ -52,7 +53,15 @@ public:
     ~Bool() {}
     void set(bool value) { (*_pointer) = value; };
     bool get() { return *_pointer; };
-    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
+    std::unique_ptr<Option> sub()
+    {
+      if (!_generator)
+        return nullptr;
+      auto option = _generator(*this);
+      if (!option.has_value())
+        return nullptr;
+      return std::make_unique<Option>(*option);
+    }
 
   private:
     bool *_pointer;
@@ -67,7 +76,7 @@ public:
   class Int : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Int)(Int &);
+    typedef std::optional<Option> (*OptionGenerator_Int)(Int &);
     //typedef std::function<Option(Int&)> OptionGenerator_Int;
     Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
     Int(int *pointer, const OptionGenerator_Int generator)
@@ -80,7 +89,15 @@ public:
     ~Int() {}
     void set(int value) { (*_pointer) = value; };
     int get() { return *_pointer; };
-    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
+    std::unique_ptr<Option> sub()
+    {
+      if (!_generator)
+        return nullptr;
+      auto option = _generator(*this);
+      if (!option.has_value())
+        return nullptr;
+      return std::make_unique<Option>(*option);
+    }
 
   private:
     int *_pointer;
@@ -95,7 +112,7 @@ public:
   class Str : public Sub
   {
   public:
-    typedef Option (*OptionGenerator_Str)(Str &);
+    typedef std::optional<Option> (*OptionGenerator_Str)(Str &);
     //typedef std::function<Option(Str&)> OptionGenerator_Str;
     Str(std::string *pointer)
         : _generator(nullptr) { _pointer = pointer; };
@@ -110,12 +127,19 @@ public:
     ~Str() {}
     void set(std::string value) { (*_pointer) = value; };
     std::string &get() { return *_pointer; };
-    std::unique_ptr<Option> sub() { return _generator ? std::make_unique<Option>(_generator(*this)) : nullptr; }
+    std::unique_ptr<Option> sub()
+    {
+      if (!_generator)
+        return nullptr;
+      auto option = _generator(*this);
+      if (!option.has_value())
+        return nullptr;
+      return std::make_unique<Option>(*option);
+    }
 
   private:
     std::string *_pointer;
     OptionGenerator_Str _generator;
-    
   };
 
   typedef std::variant<Bool, Int, Str> OptVal;
