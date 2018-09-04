@@ -35,8 +35,23 @@ public:
       // it drops the old value as well.
       _subOption = std::make_unique<Option>(*action.sub());
 
+      int selectedIndex = _subOption->selected();
+      int valueCount = _subOption->values().size();
+
+      // Establish a base for the cursors.
+      _subBottomCursor = std::min<int>(valueCount, MAX_ELEMENTS);
       _subTopCursor = 0;
-      _subBottomCursor = std::min<int>(_subOption->values().size(), MAX_ELEMENTS);
+
+      // Shift cursors by the difference between the selected value
+      // such that the selected value, if above MAX_ELEMENTS, is at the bottom.
+
+      // Cursors are at most the size of the options vector.
+      if (selectedIndex >= MAX_ELEMENTS) 
+      {
+        _subTopCursor = (selectedIndex - MAX_ELEMENTS) + 1;
+        _subBottomCursor = selectedIndex + 1;
+      }
+
       return;
     }
     _inSub = false;

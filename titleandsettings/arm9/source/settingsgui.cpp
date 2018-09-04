@@ -3,6 +3,11 @@
 #include "graphics/fontHandler.h"
 #include <variant>
 #include <algorithm>
+#include <nds.h>
+
+#define CURSOR_MIN 30
+#define CURSOR_MAX (SCREEN_HEIGHT - 40)
+#define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
 void SettingsGUI::draw()
 {
@@ -21,26 +26,47 @@ void SettingsGUI::draw()
     {
         int selected = _pages[_selectedPage].options()[i].selected();
 
-        if (i == _selectedOption)
+        if (i == _selectedOption) {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+        }
 
         printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
         printSmall(false, 194, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
+
+    // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
+    // Integer division is good enough for this case.
+    int scrollSections =  CURSOR_HEIGHT / (_pages[_selectedPage].options().size() - 1);
+    // Print a nice thick scroller.
+    printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
+    printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
+    
     printSmallCentered(false, 173, "DSiMenu++");
 }
 
 void SettingsGUI::drawSub()
 {
     clearText();
-     int selected = _subOption->selected();
+    int selected = _subOption->selected();
 
     for (int i = _subTopCursor; i < _subBottomCursor; i++)
     {
-        if (i == selected)
+        if (i == selected) {
             printSmall(false, 4, 29 + (i - _subTopCursor)  * 14, ">");
+        }
+
         printSmall(false, 12, 30 + (i - _subTopCursor)  * 14, _subOption->labels()[i].c_str());
     }
+
+
+    // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
+    // Integer division is good enough for this case.
+    int scrollSections =  CURSOR_HEIGHT / (_subOption->values().size() - 1);
+    // Print a nice thick scroller.
+    printSmall(false, 252, (scrollSections * (selected)) + CURSOR_MIN, "|");
+    printSmall(false, 254, (scrollSections * (selected)) + CURSOR_MIN, "|");
+
+
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, "DSiMenu++");
 }
