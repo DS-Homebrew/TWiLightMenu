@@ -804,20 +804,16 @@ int main(int argc, char **argv)
 				{"DSi", "3DS", "R4", "Acekard"},
 				{0, 1, 2, 3})
 
-		.option(STR_LASTPLAYEDROM,
-				STR_DESCRIPTION_LASTPLAYEDROM_1,
-				Option::Bool(&ms().autorun),
-				{STR_YES, STR_NO}, {true, false})
+		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
 
-		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1,
-				Option::Bool(&ms().showlogo),
-				{STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
 
-		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1,
-				Option::Bool(&ms().showDirectories),
-				{STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1,	Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
+
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
+
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
+
 		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
 
 	SettingsGUI gui;
