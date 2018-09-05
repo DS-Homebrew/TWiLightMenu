@@ -495,9 +495,9 @@ int main(int argc, char **argv)
 
 	sys().initFilesystem("/_nds/dsimenuplusplus/main.srldr");
 	ms();
-	consoleDemoInit();
-	printf("%i", sys().flashcardUsed());
-	stop();
+	// consoleDemoInit();
+	// printf("%i", sys().flashcardUsed());
+	// stop();
 	defaultExceptionHandler();
 
 	// Read user name
