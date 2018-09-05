@@ -38,6 +38,7 @@
 
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
+#include "common/my_system.h"
 #include "common/nitrofs.h"
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
@@ -58,7 +59,7 @@ bool fadeType = false; // false = out, true = in
 bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
 
-const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char *settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -141,7 +142,7 @@ void LoadSettings(void)
 	// bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	// startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", 0);
 	//  launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
-	// if (flashcardUsed && launchType == 0) launchType = 1;
+	// if (!isDSiMode_partial() && launchType == 0) launchType = 1;
 	// dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	// dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
 	// dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
@@ -163,7 +164,7 @@ void LoadSettings(void)
 	// soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	// bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
 
-	// if(!flashcardUsed) {
+	// if(isDSiMode_partial()) {
 	// 	// nds-bootstrap
 	// 	CIniFile bootstrapini( bootstrapinipath );
 
@@ -208,7 +209,7 @@ void SaveSettings(void)
 	// settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
 	// settingsini.SaveIniFile(settingsinipath);
 
-	if (!flashcardUsed)
+	if (isDSiMode_partial())
 	{
 		// nds-bootstrap
 		CIniFile bootstrapini(bootstrapinipath);
@@ -436,7 +437,7 @@ int lastRanROM()
 	}
 	else if (launchType == 1)
 	{
-		if (!flashcardUsed)
+		if (isDSiMode_partial())
 		{
 			if (homebrewBootstrap)
 			{
@@ -645,8 +646,13 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	if (!access("fat:/", F_OK))
+	if (access("fat:/", F_OK) == 0) {
 		flashcardUsed = true;
+	}
+	
+	if (access(settingsinipath, F_OK) != 0) {
+		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
 	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
 
@@ -1228,7 +1234,7 @@ int main(int argc, char **argv)
 
 			// 		printSmall(false, 4, yPos, ">");
 
-			// 		if(!flashcardUsed) {
+			// 		if(isDSiMode_partial()) {
 			// 			printSmall(false, 12, selyPos, STR_LANGUAGE.c_str());
 			// 			switch(bstrap_language) {
 			// 				case -1:
@@ -1439,7 +1445,7 @@ int main(int argc, char **argv)
 			// 	}
 
 			// 	if ((pressed & KEY_A) || (pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
-			// 		if(!flashcardUsed) {
+			// 		if(isDSiMode_partial()) {
 			// 			switch (settingscursor) {
 			// 				case 0:
 			// 				default:
@@ -1521,10 +1527,10 @@ int main(int argc, char **argv)
 			// 	}
 
 			// 	if ((pressed & KEY_R) || (pressed & KEY_X)) {
-			// 		if (flashcardUsed) {
-			// 			subscreenmode = 0;
-			// 		} else {
+			// 		if (isDSiMode_partial()) {
 			// 			subscreenmode = 2;
+			// 		} else {
+			// 			subscreenmode = 0;
 			// 		}
 			// 		settingscursor = 0;
 			// 		mmEffectEx(&snd_switch);
@@ -1546,7 +1552,7 @@ int main(int argc, char **argv)
 			// 		break;
 			// 	}
 
-			// 	if(!flashcardUsed) {
+			// 	if(isDSiMode_partial()) {
 			// 		if (settingscursor > 9) settingscursor = 0;
 			// 		else if (settingscursor < 0) settingscursor = 9;
 			// 	} else {
@@ -1555,6 +1561,11 @@ int main(int argc, char **argv)
 			// 	}
 			// } else {
 			// 	pressed = 0;
+
+			// 	if (isDSiMode_partial() && consoleModel < 2) {
+			// 		if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
+			// 		else hiyaAutobootFound = false;
+			// 	}
 
 			// 	if (!menuprinted) {
 			// 		// Clear the screen so it doesn't over-print
@@ -1664,7 +1675,7 @@ int main(int argc, char **argv)
 			// 			printSmall(false, 230, selyPos, STR_NO.c_str());
 			// 		selyPos += 12;
 
-			// 		if (!flashcardUsed && !arm7SCFGLocked) {
+			// 		if (isDSiMode_partial() && !arm7SCFGLocked) {
 			// 			if (consoleModel < 2) {
 			// 				printSmall(false, 12, selyPos, STR_SYSTEMSETTINGS.c_str());
 			// 				selyPos += 12;
@@ -1843,10 +1854,10 @@ int main(int argc, char **argv)
 			// 	}
 
 			// 	if ((pressed & KEY_L) || (pressed & KEY_Y)) {
-			// 		if (flashcardUsed) {
-			// 			subscreenmode = 1;
-			// 		} else {
+			// 		if (isDSiMode_partial()) {
 			// 			subscreenmode = 2;
+			// 		} else {
+			// 			subscreenmode = 1;
 			// 		}
 			// 		settingscursor = 0;
 			// 		mmEffectEx(&snd_switch);
@@ -1875,7 +1886,7 @@ int main(int argc, char **argv)
 			// 		break;
 			// 	}
 
-			// 	if (!flashcardUsed && consoleModel < 2) {
+			// 	if (isDSiMode_partial() && consoleModel < 2) {
 			// 		if (settingscursor > 9) settingscursor = 0;
 			// 		else if (settingscursor < 0) settingscursor = 9;
 			// 	} else {
