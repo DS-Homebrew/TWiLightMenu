@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -72,9 +73,9 @@ int main(int argc, char **argv) {
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
 	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
-	if (!fatInitDefault()) {
+	if (!fatMountSimple("fat", dldiGetInternal())) {
 		consoleDemoInit();
-		printf ("fatInitDefault failed!");
+		printf ("DLDI init failed!");
 		stop();
 	}
 
