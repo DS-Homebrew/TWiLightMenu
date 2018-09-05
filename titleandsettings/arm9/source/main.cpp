@@ -594,6 +594,14 @@ void opt_reset_subtheme(int prev, int next)
 	}
 }
 
+void opt_sound_freq_changed(bool prev, bool next)
+{
+	if (prev != next && !soundfreqsettingChanged)
+	{
+		soundfreqsettingChanged = true;
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -743,22 +751,6 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	switch (appName)
-	{
-	case 0:
-	default:
-		appNameText = "DSiMenu++";
-		break;
-	case 1:
-		appNameText = "SRLoader";
-		break;
-	case 2:
-		appNameText = "DSisionX";
-		break;
-	}
-
-	// bool menuprinted = false;
-
 	// bool hiyaAutobootFound = false;
 
 	int pressed = 0;
@@ -826,9 +818,23 @@ int main(int argc, char **argv)
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish});
-
-	SettingsGUI gui;
+				 TLanguage::ELangSpanish})
+		.option(STR_CPUSPEED,
+				STR_DESCRIPTION_CPUSPEED_1,
+				Option::Bool(&ms().boostCpu),
+				{"67 MHz (NTR)", "133 MHz (TWL)"},
+				{true, false})
+		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
+		//.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::b)
+		.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq, opt_sound_freq_changed), {"32.73 kHz", "47.61 kHz"}, {true, false})
+		.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {"Direct", "Reboot"},
+			 {true, false})
+		//.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1, )
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool(&ms().bootstrapFile), {"Release", "Nightly"},
+				{true, false});
+			SettingsGUI gui;
 	gui.addPage(guiPage)
 		.addPage(gamesPage)
 		// Prep and show the firs page.
@@ -841,7 +847,8 @@ int main(int argc, char **argv)
 		if (screenmode == 1)
 		{
 
-			if (!gui.isExited()) {
+			if (!gui.isExited())
+			{
 				snd().playBgMusic();
 			}
 
