@@ -29,6 +29,9 @@
 		* Today i have added full "." and ".." support.
 		  dirnext() will return . and .. first, and all relevent operations will 
 		  support . and .. in pathnames. 
+    
+    2019-09-05 v0.9 - modernize devoptab (by RonnChyran)
+        * Updated for libsysbase change in devkitARM r46 and above.
 */
 
 #ifndef NITROFS_H
@@ -49,10 +52,10 @@ extern "C"
     int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *st);
     int nitroFSDirClose(struct _reent *r, DIR_ITER *dirState);
     int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags, int mode);
-    int nitroFSClose(struct _reent *r, int fd);
-    int nitroFSRead(struct _reent *r, int fd, char *ptr, int len);
-    int nitroFSSeek(struct _reent *r, int fd, int pos, int dir);
-    int nitroFSFstat(struct _reent *r, int fd, struct stat *st);
+    int nitroFSClose(struct _reent *r, void *fd);
+    ssize_t nitroFSRead(struct _reent *r, void *fd, char *ptr, size_t len);
+    off_t nitroFSSeek(struct _reent *r, void *fd, off_t pos, int dir);
+    int nitroFSFstat(struct _reent *r, void *fd, struct stat *st);
     int nitroFSstat(struct _reent *r, const char *file, struct stat *st);
     int nitroFSChdir(struct _reent *r, const char *name);
 #define LOADERSTR "PASS" //look for this
@@ -86,15 +89,15 @@ extern "C"
 
     struct nitroFSStruct
     {
-        unsigned int pos;   //where in the file am i?
-        unsigned int start; //where in the rom this file starts
-        unsigned int end;   //where in the rom this file ends
+        off_t pos;   //where in the file am i?
+        off_t start; //where in the rom this file starts
+        off_t end;   //where in the rom this file ends
     };
 
     struct nitroDIRStruct
     {
-        unsigned int pos;     //where in the file am i?
-        unsigned int namepos; //ptr to next name to lookup in list
+        off_t pos;     //where in the file am i?
+        off_t namepos; //ptr to next name to lookup in list
         struct ROM_FAT romfat;
         u16 entry_id;   //which entry this is (for files only) incremented with each new file in dir?
         u16 dir_id;     //which directory entry this is.. used ofc for dirs only

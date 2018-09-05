@@ -44,6 +44,9 @@
                   in NDS mode causing nitroFSInit() to think it was a valid GBA cart header and attempt to 
            	  read from GBA SLOT instead of SLOT 1. Fixed this by making it check that filename is not NULL
  		  and then to try FAT/SLOT1 first. The NULL option allows forcing nitroFS to use gba.
+    
+    2019-09-05 v0.9 - modernize devoptab (by RonnChyran)
+        * Updated for libsysbase change in devkitARM r46 and above. 
 
 */
 
@@ -65,17 +68,17 @@ u32 fatOffset;   //offset to start of file alloc table
 bool hasLoader;  //single global nds filehandle (is null if not in dldi/fat mode)
 u16 chdirpathid; //default dir path id...
 FILE *ndsFile;
-unsigned int ndsFileLastpos; //Used to determine need to fseek or not
+off_t ndsFileLastpos; //Used to determine need to fseek or not
 
 devoptab_t nitroFSdevoptab = {
     "nitro",                       //	const char *name;
     sizeof(struct nitroFSStruct),  //	int	structSize;
     &nitroFSOpen,                  //	int (*open_r)(struct _reent *r, void *fileStruct, const char *path,int flags,int mode);
-    &nitroFSClose,                 //	int (*close_r)(struct _reent *r,int fd);
-    NULL,                          //	int (*write_r)(struct _reent *r,int fd,const char *ptr,int len);
-    &nitroFSRead,                  //	int (*read_r)(struct _reent *r,int fd,char *ptr,int len);
-    &nitroFSSeek,                  //	int (*seek_r)(struct _reent *r,int fd,int pos,int dir);
-    &nitroFSFstat,                 //	int (*fstat_r)(struct _reent *r,int fd,struct stat *st);
+    &nitroFSClose,                 //	int (*close_r)(struct _reent *r,void* fd);
+    NULL,                          //	int (*write_r)(struct _reent *r,void* fd,const char *ptr,int len);
+    &nitroFSRead,                  //	int (*read_r)(struct _reent *r,void* fd,char *ptr,int len);
+    &nitroFSSeek,                  //	int (*seek_r)(struct _reent *r,void* fd,int pos,int dir);
+    &nitroFSFstat,                 //	int (*fstat_r)(struct _reent *r,void* fd,struct stat *st);
     &nitroFSstat,                  //	int (*stat_r)(struct _reent *r,const char *file,struct stat *st);
     NULL,                          //	int (*link_r)(struct _reent *r,const char *existing, const char  *newLink);
     NULL,                          //	int (*unlink_r)(struct _reent *r,const char *name);
@@ -97,7 +100,7 @@ devoptab_t nitroFSdevoptab = {
 //how to read the proper way can replace these 4 functions and everything should work normally :)
 
 //reads from rom image either gba rom or dldi
-inline int nitroSubRead(unsigned int *npos, void *ptr, int len)
+inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len)
 {
     if (ndsFile != NULL)
     { //read from ndsfile
@@ -116,7 +119,7 @@ inline int nitroSubRead(unsigned int *npos, void *ptr, int len)
 }
 
 //seek around
-inline void nitroSubSeek(unsigned int *npos, int pos, int dir)
+inline void nitroSubSeek(off_t *npos, int pos, int dir)
 {
     if ((dir == SEEK_SET) || (dir == SEEK_END)) //otherwise just set the pos :)
         *npos = pos;
@@ -128,7 +131,7 @@ inline void nitroSubSeek(unsigned int *npos, int pos, int dir)
 int __itcm
 nitroFSInit(const char *ndsfile)
 {
-    unsigned int pos = 0;
+    off_t pos = 0;
     char romstr[0x10];
     chdirpathid = NITROROOT;
     ndsFileLastpos = 0;
@@ -260,7 +263,7 @@ int nitroDirReset(struct _reent *r, DIR_ITER *dirState)
 {
     struct nitroDIRStruct *dirStruct = (struct nitroDIRStruct *)dirState->dirStruct; //this makes it lots easier!
     struct ROM_FNTDir dirsubtable;
-    unsigned int *pos = &dirStruct->pos;
+    off_t *pos = &dirStruct->pos;
     nitroSubSeek(pos, fntOffset + ((dirStruct->cur_dir_id & NITRODIRMASK) * sizeof(struct ROM_FNTDir)), SEEK_SET);
     nitroSubRead(pos, &dirsubtable, sizeof(dirsubtable));
     dirStruct->namepos = dirsubtable.entry_start;    //set namepos to first entry in this dir's table
@@ -274,7 +277,7 @@ int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct 
 {
     unsigned char next;
     struct nitroDIRStruct *dirStruct = (struct nitroDIRStruct *)dirState->dirStruct; //this makes it lots easier!
-    unsigned int *pos = &dirStruct->pos;
+    off_t *pos = &dirStruct->pos;
     if (dirStruct->spc <= 1)
     {
         if (st)
@@ -391,15 +394,15 @@ int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags,
     return (-1); //teh fail
 }
 
-int nitroFSClose(struct _reent *r, int fd)
+int nitroFSClose(struct _reent *r, void* fd)
 {
     return (0);
 }
 
-int nitroFSRead(struct _reent *r, int fd, char *ptr, int len)
+ssize_t nitroFSRead(struct _reent *r, void* fd, char *ptr, size_t len)
 {
     struct nitroFSStruct *fatStruct = (struct nitroFSStruct *)fd;
-    unsigned int *npos = &fatStruct->pos;
+    off_t *npos = &fatStruct->pos;
     if (*npos + len > fatStruct->end)
         len = fatStruct->end - *npos; //dont let us read past the end plz!
     if (*npos > fatStruct->end)
@@ -407,11 +410,11 @@ int nitroFSRead(struct _reent *r, int fd, char *ptr, int len)
     return (nitroSubRead(npos, ptr, len));
 }
 
-int nitroFSSeek(struct _reent *r, int fd, int pos, int dir)
+off_t nitroFSSeek(struct _reent *r, void* fd, off_t pos, int dir)
 {
     //need check for eof here...
     struct nitroFSStruct *fatStruct = (struct nitroFSStruct *)fd;
-    unsigned int *npos = &fatStruct->pos;
+    off_t *npos = &fatStruct->pos;
     if (dir == SEEK_SET)
         pos += fatStruct->start; //add start from .nds file offset
     else if (dir == SEEK_END)
@@ -422,7 +425,7 @@ int nitroFSSeek(struct _reent *r, int fd, int pos, int dir)
     return (*npos - fatStruct->start);
 }
 
-int nitroFSFstat(struct _reent *r, int fd, struct stat *st)
+int nitroFSFstat(struct _reent *r, void* fd, struct stat *st)
 {
     struct nitroFSStruct *fatStruct = (struct nitroFSStruct *)fd;
     st->st_size = fatStruct->end - fatStruct->start;
