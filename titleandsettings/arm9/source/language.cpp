@@ -228,13 +228,13 @@ void langInit(void)
 	switch (appName) {
 		case 0:
 		default:
-			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "DSiMenu++");
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "DSiMenu++ logo on startup");
 			break;
 		case 1:
-			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "SRLoader");
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "SRLoader on startup");
 			break;
 		case 2:
-			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "DSisionX");
+			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "DSisionX on startup");
 			break;
 	}
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");

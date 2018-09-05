@@ -588,9 +588,11 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void opt_reset_subtheme(int prev, int next)
 {
-	
+	if (prev != next)
+	{
+		ms().subtheme = 0;
+	}
 }
-
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
@@ -789,7 +791,7 @@ int main(int argc, char **argv)
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
-				Option::Int(&ms().theme, opt_subtheme_select),
+				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
 				{"DSi", "3DS", "R4", "Acekard"},
 				{0, 1, 2, 3})
 
@@ -797,7 +799,7 @@ int main(int argc, char **argv)
 
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
 
-		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1,	Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 
@@ -809,7 +811,7 @@ int main(int argc, char **argv)
 	SettingsGUI gui;
 	gui.addPage(guiPage)
 		.addPage(gamesPage)
-	// Prep and show the firs page.
+		// Prep and show the firs page.
 		.show();
 
 	//	stop();

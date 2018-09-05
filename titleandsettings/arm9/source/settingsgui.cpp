@@ -175,6 +175,8 @@ void SettingsGUI::rotatePage(int rotateAmount)
     _selectedPage = pageIndex;
     _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
     _topCursor = 0;
+    _topText.clear();
+    _selectedOption = 0;
     rotateOption(0);
 }
 
