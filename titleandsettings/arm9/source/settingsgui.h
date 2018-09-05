@@ -59,7 +59,7 @@ private:
     std::string _topTextStr(text);
     std::size_t pos;
     _topText.clear();
-    while ((pos = _topTextStr.find('\n')) != std::string::npos)
+    while ((pos = _topTextStr.find('|')) != std::string::npos)
     {
       _topText.push_back(_topTextStr.substr(0, pos));
       _topTextStr = _topTextStr.substr(pos + 1);

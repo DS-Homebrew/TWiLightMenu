@@ -248,20 +248,20 @@ void langInit(void)
 	switch (ms().appName) {
 		case 0:
 		default:
-			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in DSiMenu++\nPress A for sub-themes.");
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in DSiMenu++|Press A for sub-themes.");
 			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
 			break;
 		case 1:
-			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader\nPress A for sub-themes.");
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader|Press A for sub-themes.");
 			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
 			break;
 		case 2:
-			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSisionX\nPress A for sub-themes.");
+			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSisionX|Press A for sub-themes.");
 			STR_DESCRIPTION_THEME_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_2", "");
 			break;
 	}
 
-	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on\nstartup to skip to the \nROM select menu.\nPress Y to start last played ROM.");
+	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on|startup to skip to the |ROM select menu.|Press Y to start last played ROM.");
 	STR_DESCRIPTION_LASTPLAYEDROM_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_2", "");
 	STR_DESCRIPTION_LASTPLAYEDROM_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_3", "");
 	STR_DESCRIPTION_LASTPLAYEDROM_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_4", "");
@@ -269,44 +269,44 @@ void langInit(void)
 	switch (ms().appName) {
 		case 0:
 		default:
-			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The DSiMenu++ logo will be\nshown when you start\nDSiMenu++");
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The DSiMenu++ logo will be|shown when you start|DSiMenu++");
 			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_2", "");
 			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_3", "");
 			break;
 		case 1:
-			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The SRLoader logo will be\nshown when you start\nSRLoader");
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The SRLoader logo will be|shown when you start|SRLoader");
 			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_2", "");
 			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_3", "");
 			break;
 		case 2:
-			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The DSisionX logo will be\nshown when you start\nDSisionX");
+			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The DSisionX logo will be|shown when you start|DSisionX");
 			STR_DESCRIPTION_DSIMENUPPLOGO_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_2", "");
 			STR_DESCRIPTION_DSIMENUPPLOGO_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_3", "");
 			break;
 	}
 
-	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most\nof your games are, it is safe to\nhide directories/folders.");
+	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most|of your games are, it is safe to|hide directories/folders.");
 	STR_DESCRIPTION_DIRECTORIES_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_2", "");
 	STR_DESCRIPTION_DIRECTORIES_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_3", "");
 
-	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen\nof the DSi/3DS theme.");
+	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen|of the DSi/3DS theme.");
 	STR_DESCRIPTION_BOXART_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_2", "");
 
-	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in\nthe DSi/3DS menus. Turning this off\nwill fix some icons appearing white.");
+	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in|the DSi/3DS menus. Turning this off|will fix some icons appearing white.");
 	STR_DESCRIPTION_ANIMATEDSIICONS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_2", "");
 	STR_DESCRIPTION_ANIMATEDSIICONS_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_3", "");
 
-	STR_DESCRIPTION_STARTBUTTONLAUNCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_1", "START button will be used to launch\na game instead of A, where A\nwill bring up per-game settings.");
+	STR_DESCRIPTION_STARTBUTTONLAUNCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_1", "START button will be used to launch|a game instead of A, where A|will bring up per-game settings.");
 	STR_DESCRIPTION_STARTBUTTONLAUNCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_2", "");
 	STR_DESCRIPTION_STARTBUTTONLAUNCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_STARTBUTTONLAUNCH_3", "");
 
-	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings\nrelated to the DSi system.");
+	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings|related to the DSi system.");
 	STR_DESCRIPTION_SYSTEMSETTINGS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_2", "");
 
 	switch (ms().appName) {
 		case 0:
 		default:
-			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start DSiMenu++ on boot, instead\nof the regular DSi Menu.");
+			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start DSiMenu++ on boot, instead|of the regular DSi Menu.");
 			STR_DESCRIPTION_REPLACEDSIMENU_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_2", "");
 			break;
 		case 1:
@@ -350,44 +350,44 @@ void langInit(void)
 	STR_RELEASE = languageini.GetString("LANGUAGE", "RELEASE", "Release");
 	STR_NIGHTLY = languageini.GetString("LANGUAGE", "NIGHTLY", "Nightly");
 
-	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections\nof your console language\nby setting this option.");
+	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections|of your console language|by setting this option.");
 	STR_DESCRIPTION_LANGUAGE_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_2", "");
 	STR_DESCRIPTION_LANGUAGE_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_3", "");
 
-	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags\nin some games.");
+	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags|in some games.");
 	STR_DESCRIPTION_CPUSPEED_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_2", "");
 
-	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes\nand expands the bus to 32 bit.");
+	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes|and expands the bus to 32 bit.");
 	STR_DESCRIPTION_VRAMBOOST_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_2", "");
 
-	STR_DESCRIPTION_SOUNDFIX_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_1", "Fixes most sound crackles\ndoubles, and split-second pauses.");
+	STR_DESCRIPTION_SOUNDFIX_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_1", "Fixes most sound crackles|doubles, and split-second pauses.");
 	STR_DESCRIPTION_SOUNDFIX_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_2", "");
 
-	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before\nlaunched game.");
+	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before|launched game.");
 	STR_DESCRIPTION_DEBUG_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_2", "");
 
-	STR_DESCRIPTION_LOGGING_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching\nto sd:/NDSBTSRP.LOG");
+	STR_DESCRIPTION_LOGGING_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching|to sd:/NDSBTSRP.LOG");
 	STR_DESCRIPTION_LOGGING_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_2", "");
 
 	STR_DESCRIPTION_ROMREADLED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator.");
 
-	STR_DESCRIPTION_ASYNCPREFETCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_1", "Can make streamed video/music\nplayback smoother.\nMay break certain games.");
+	STR_DESCRIPTION_ASYNCPREFETCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_1", "Can make streamed video/music|playback smoother.|May break certain games.");
 	STR_DESCRIPTION_ASYNCPREFETCH_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_2", "");
 	STR_DESCRIPTION_ASYNCPREFETCH_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_3", "");
 
-	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz: Original quality\n47.61kHz: High quality");
+	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz: Original quality|47.61kHz: High quality");
 	STR_DESCRIPTION_SNDFREQ_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_2", "");
 
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1", 
-		"Change this if some Slot-1 cards are not booting. Please note the\nreboot method will not use your\nset language or CPU speed.");
+		"Change this if some Slot-1 cards are not booting. Please note the|reboot method will not use your|set language or CPU speed.");
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_2", "");
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_3", "");
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_4", "");
 
-	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM\nis started in nds-bootstrap");
+	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM|is started in nds-bootstrap");
 	STR_DESCRIPTION_LOADINGSCREEN_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_2", "");
 
-	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly\nbootstrap");
+	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly|bootstrap");
 	STR_DESCRIPTION_BOOTSTRAP_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_2", "");
 
 	STR_DESCRIPTION_FLASHCARD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", "");
@@ -432,13 +432,13 @@ void langInit(void)
 	switch (ms().appName) {
 		case 0:
 		default:
-			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_DSIMENUPP", "Launch Nintendo DSi Menu\nor DSiMenu++ on boot.");
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_DSIMENUPP", "Launch Nintendo DSi Menu|or DSiMenu++ on boot.");
 			break;
 		case 1:
-			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_SRLOADER", "Launch Nintendo DSi Menu\nor SRLoader on boot.");
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_SRLOADER", "Launch Nintendo DSi Menu|or SRLoader on boot.");
 			break;
 		case 2:
-			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_DSISIONX", "Launch Nintendo DSi Menu\nor DSisionX on boot.");
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_DSISIONX", "Launch Nintendo DSi Menu|or DSisionX on boot.");
 			break;
 	}
 
