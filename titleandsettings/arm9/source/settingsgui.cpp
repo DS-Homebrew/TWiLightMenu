@@ -165,12 +165,6 @@ void SettingsGUI::drawSub()
         printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
     }
 
-    // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
-    // Integer division is good enough for this case.
-   // int scrollSections = CURSOR_HEIGHT / (_subOption->values().size() - 1);
-    // Print a nice thick scroller.
-   
-
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, ms().getAppName());
 }
