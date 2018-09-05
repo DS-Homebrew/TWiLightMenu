@@ -58,6 +58,16 @@ bool fadeType = false; // false = out, true = in
 
 bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
+static int flashcard;
+/* Flashcard value
+	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+	1: R4DS (Original Non-SDHC version)/ M3 Simply
+	2: R4iDSN/R4i Gold RTS/R4 Ultra
+	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+	4: Acekard RPG
+	5: Ace 3DS+/Gateway Blue Card/R4iTT
+	6: SuperCard DSTWO
+*/
 
 const char *settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
@@ -114,16 +124,6 @@ static bool soundfreq = false; // false == 32.73 kHz, true == 47.61 kHz
 
 bool flashcardUsed = false;
 
-static int flashcard;
-/* Flashcard value
-	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
 
 void LoadSettings(void)
 {
@@ -457,7 +457,7 @@ int lastRanROM()
 		}
 		else
 		{
-			switch (flashcard)
+			switch (ms().flashcard)
 			{
 			case 0:
 			case 1:
@@ -605,6 +605,79 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 		hiyacfwini.SaveIniFile(hiyacfwinipath);
 	}
 }
+
+inline bool between_incl(int x, int a, int b)
+{
+	return (a <= x && x >= b);
+}
+
+void opt_flashcard_map(int prev, int next)
+{
+	if (between_incl(next, 0, 5)) ms().flashcard = 0;
+	if (between_incl(next, 6, 7)) ms().flashcard = 1;
+	if (between_incl(next, 8, 10)) ms().flashcard = 2;
+	if (between_incl(next, 11, 13)) ms().flashcard = 3;
+	if (next == 14) ms().flashcard = 4;
+	if (between_incl(next, 15, 17)) ms().flashcard = 5;
+	if (next == 16) ms().flashcard = 6;
+}
+
+std::optional<Option> opt_flashcard_select()
+{
+	// Since the SettingsGUI can't support the multi page flashcard select as in
+	// old titleandsettings, we can use the API to hack around the issue using a 
+	// changed handler and a global variable.
+	/* Flashcard value
+		0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+		1: R4DS (Original Non-SDHC version)/ M3 Simply
+		2: R4iDSN/R4i Gold RTS/R4 Ultra
+		3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+		4: Acekard RPG
+		5: Ace 3DS+/Gateway Blue Card/R4iTT
+		6: SuperCard DSTWO
+	*/
+
+	// Notice that the changed handler is opt_flashcard_map, which will actually
+	// change the settings for us from this mapping.
+	return Option(STR_FLASHCARD_SELECT, STR_AB_SETRETURN, Option::Int(&flashcard, opt_flashcard_map),
+		{
+			// 0 - 5 => category 0.
+
+			"DSTT",
+			"R4i Gold",
+			"R4i-SDHC (Non v.1.4.x) (r4i-sdhc.com)",
+			"R4 SDHC Dual-Core",
+			"R4 SDHC Upgrade",
+			"SuperCard DSONE",
+			
+			// 6-7 => category 1
+			"Original R4",
+			"M3 Simply",
+
+			// 8-10 => category 2
+			"R4iDSN",
+			"R4i Gold RTS",
+			"R4 Ultra",
+
+			// 11-13 => category 3
+			"Acekard 2(i)",
+			"Galaxy Eagle",
+			"M3DS Real",
+
+			// 14 => category 4
+			"Acekard RPG",
+			
+			// 15-17 => category 5
+			"Ace 3DS+",
+			"Gateway Blue Card",
+			"R4iTT",
+
+			// 18 => category 6
+			"SuperCard DSTWO"
+		},
+		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18}
+	);
+}
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -646,12 +719,14 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	if (access("fat:/", F_OK) == 0) {
+	if (access("fat:/", F_OK) == 0)
+	{
 		flashcardUsed = true;
 	}
-	
-	if (access(settingsinipath, F_OK) != 0) {
-		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+
+	if (access(settingsinipath, F_OK) != 0)
+	{
+		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini"; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
@@ -699,9 +774,7 @@ int main(int argc, char **argv)
 	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
-	char vertext[12];
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", 6, 1, 0);
 
 	if (gotosettings)
 	{
@@ -806,64 +879,92 @@ int main(int argc, char **argv)
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false})
-		// Actions do not have to bound to an object.
-		// todo: only show these options for DSi consoles.
-		.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {ms().getAppName(), "System Menu"}, {true, false})
-		.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
+		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
+	
+	
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
+	if (sys().flashcardUsed())
+	{
+		gamesPage.option(STR_FLASHCARD_SELECT, STR_DESCRIPTION_FLASHCARD_1, Option::Nul(opt_flashcard_select), {}, {});
+	}
+	if (isDSiMode_partial())
+	{
+		gamesPage
+			.option(STR_LANGUAGE,
+					STR_DESCRIPTION_LANGUAGE_1,
+					Option::Int(&ms().bstrap_language),
+					{STR_SYSTEM,
+					 "Japanese",
+					 "English",
+					 "French",
+					 "German",
+					 "Italian",
+					 "Spanish"},
+					{TLanguage::ELangDefault,
+					 TLanguage::ELangJapanese,
+					 TLanguage::ELangEnglish,
+					 TLanguage::ELangFrench,
+					 TLanguage::ELangGerman,
+					 TLanguage::ELangItalian,
+					 TLanguage::ELangSpanish})
 
-	gamesPage
-		.option(STR_LANGUAGE,
-				STR_DESCRIPTION_LANGUAGE_1,
-				Option::Int(&ms().bstrap_language),
-				{STR_SYSTEM,
-				 "Japanese",
-				 "English",
-				 "French",
-				 "German",
-				 "Italian",
-				 "Spanish"},
-				{TLanguage::ELangDefault,
-				 TLanguage::ELangJapanese,
-				 TLanguage::ELangEnglish,
-				 TLanguage::ELangFrench,
-				 TLanguage::ELangGerman,
-				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish})
-		.option(STR_CPUSPEED,
-				STR_DESCRIPTION_CPUSPEED_1,
-				Option::Bool(&ms().boostCpu),
-				{"67 MHz (NTR)", "133 MHz (TWL)"},
-				{true, false})
-		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
-				{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-		.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq, opt_sound_freq_changed), {"32.73 kHz", "47.61 kHz"}, {true, false})
-		.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
-				{true, false})
+			.option(STR_CPUSPEED,
+					STR_DESCRIPTION_CPUSPEED_1,
+					Option::Bool(&ms().boostCpu),
+					{"67 MHz (NTR)", "133 MHz (TWL)"},
+					{true, false})
+			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
 
-		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
-				Option::Int(&bs().bstrap_loadingScreen),
-				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe"},
-				{TLoadingScreen::ELoadingNone,
-				 TLoadingScreen::ELoadingRegular,
-				 TLoadingScreen::ELoadingPong,
-				 TLoadingScreen::ELoadingTicTacToe})
+			.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
+					{true, false});
+	}
 
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
-				Option::Bool(&ms().bootstrapFile),
-				{STR_RELEASE, STR_NIGHTLY},
-				{true, false})
+	gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq, opt_sound_freq_changed), {"32.73 kHz", "47.61 kHz"}, {true, false});
 
-		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Int(&bs().bstrap_loadingScreen), {STR_ON, STR_OFF}, {true, false});
+	
+	if (isDSiMode_partial())
+	{
+		if (consoleModel < 2)
+		{
+			gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
+		}
 
+		gamesPage
+			.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
+					Option::Int(&bs().bstrap_loadingScreen),
+					{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe"},
+					{TLoadingScreen::ELoadingNone,
+					 TLoadingScreen::ELoadingRegular,
+					 TLoadingScreen::ELoadingPong,
+					 TLoadingScreen::ELoadingTicTacToe})
+
+			.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
+					Option::Bool(&ms().bootstrapFile),
+					{STR_RELEASE, STR_NIGHTLY},
+					{true, false})
+
+			.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
+
+		if (consoleModel < 2)
+		{
+			// Actions do not have to bound to an object.
+			// See for exam here we have bound an option to 
+			// hiyaAutobootFound.
+
+			// We are also using the changed callback to write
+			// or delete the hiya autoboot file.
+			guiPage
+				.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {ms().getAppName(), "System Menu"}, {true, false})
+				.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
+		}
+	}
 	gui()
 		.addPage(guiPage)
 		.addPage(gamesPage)

@@ -15,7 +15,11 @@ public:
   SettingsGUI()
       : _selectedPage(0), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
         _bottomCursor(0), _subOption(nullptr), _subBottomCursor(0), _subTopCursor(0), _isExited(false), _isSaved(false),
-        _exitCallback(nullptr) {}
+        _exitCallback(nullptr)
+  {
+
+    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 1, 0);
+  }
   ~SettingsGUI() {}
 
 public:
@@ -44,8 +48,8 @@ public:
    * using onExit.
    */
   void saveAndExit();
-private:
 
+private:
   /**
    * Sets the text at the top screen to
    * be printed next call of draw.
@@ -62,7 +66,6 @@ private:
     }
     _topText.push_back(_topTextStr);
   }
-
 
   void drawSub();
 
@@ -144,9 +147,7 @@ private:
    */
   void setOptionPrev() { rotateOptionValue(-1); }
 
-
 public:
-
   /**
    * Adds a settings page to the GUI.
    */
@@ -171,13 +172,13 @@ public:
    * 
    * Do reboots, and any necessary cleanup here.
    */
-  SettingsGUI &onExit(std::function<void(void)> callback)  
+  SettingsGUI &onExit(std::function<void(void)> callback)
   {
     _exitCallback = callback;
     return *this;
   }
-private:
 
+private:
   /*
   * Sets the currently selected option to the next nth option.
   * Generally should be used with -1, or 1, or 0 to
@@ -215,14 +216,15 @@ private:
 
   bool _isExited;
   bool _isSaved;
-  
+
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
   std::vector<std::string> _topText;
 
   std::function<void(void)> _exitCallback;
+  
+  char vertext[13];
 };
-
 
 typedef singleton<SettingsGUI> settingsGui_s;
 inline SettingsGUI &gui() { return settingsGui_s::instance(); }

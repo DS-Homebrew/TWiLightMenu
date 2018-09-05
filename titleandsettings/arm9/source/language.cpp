@@ -397,9 +397,9 @@ void langInit(void)
 	STR_DESCRIPTION_GBARUNNER2_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_2", "");
 
 	// Flashcard settings
-	STR_FLASHCARD_SELECT = languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "");
+	STR_FLASHCARD_SELECT = languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "Select Flashcard");
 	STR_LEFTRIGHT_FLASHCARD = languageini.GetString("LANGUAGE", "LEFTRIGHT_FLASHCARD", "");
-	STR_AB_SETRETURN = languageini.GetString("LANGUAGE", "AB_SETRETURN", "");
+	STR_AB_SETRETURN = languageini.GetString("LANGUAGE", "AB_SETRETURN", "A/B: Set and Return");
 
 	// Sub-theme select
 	STR_SUBTHEMESEL_DSI = languageini.GetString("LANGUAGE", "SUBTHEMESEL_DSI", "Sub-theme select: DSi Menu");

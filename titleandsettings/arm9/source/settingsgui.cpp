@@ -15,6 +15,7 @@
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
+
 void SettingsGUI::processInputs(int pressed)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
@@ -112,6 +113,7 @@ void SettingsGUI::draw()
     clearText();
     printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
     drawTopText();
+    
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
     for (int i = _topCursor; i < _bottomCursor; i++)
@@ -169,6 +171,7 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
+    printSmall(true, 194, 174, vertext);
     for (int i = 0; i < _topText.size(); i++)
     {
         printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
