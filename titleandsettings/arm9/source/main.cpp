@@ -1000,11 +1000,13 @@ int main(int argc, char **argv)
 			{
 				scanKeys();
 				pressed = keysDownRepeat();
+				touchRead(&touch);
 				swiWaitForVBlank();
 			} while (!pressed);
 
-			gui().processInputs(pressed);
+			gui().processInputs(pressed, touch);
 
+		
 #pragma region settings
 			// if (subscreenmode == 4) {
 			// 	pressed = 0;

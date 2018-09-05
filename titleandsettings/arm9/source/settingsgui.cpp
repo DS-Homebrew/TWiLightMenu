@@ -16,7 +16,7 @@
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
 
-void SettingsGUI::processInputs(int pressed)
+void SettingsGUI::processInputs(int pressed, touchPosition& touch)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
@@ -24,7 +24,7 @@ void SettingsGUI::processInputs(int pressed)
         exitSub();
         return;
     }
-    else if (pressed & KEY_B && !inSub())
+    else if (pressed & KEY_B && !inSub() || (pressed & KEY_TOUCH && touch.py >= 170) && !inSub())
     {
         saveAndExit();
     }

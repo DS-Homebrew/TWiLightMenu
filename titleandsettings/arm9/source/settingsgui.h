@@ -26,7 +26,7 @@ public:
   /**
    * Processes inputs and modifies the state of the GUI
    */
-  void processInputs(int inputs);
+  void processInputs(int inputs, touchPosition& touch);
 
   /**
    * Refreshes the text content of the GUI and re-draws
