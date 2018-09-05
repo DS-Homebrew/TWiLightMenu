@@ -7,7 +7,7 @@
 #include <nds.h>
 #include <maxmod9.h>
 #include "soundeffect.h"
-
+#include "language.h"
 #define CURSOR_MIN 30
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
@@ -49,13 +49,13 @@ void SettingsGUI::processInputs(int pressed)
         decrementOption();
     }
 
-    if (pressed & KEY_X || pressed & KEY_R)
+    if ((pressed & KEY_X || pressed & KEY_R) && !inSub())
     {
         mmEffectEx(&snd().snd_switch);
         rotatePage(1);
     }
 
-    if (pressed & KEY_Y || pressed & KEY_L)
+    if ((pressed & KEY_Y || pressed & KEY_L) && !inSub())
     {
         mmEffectEx(&snd().snd_switch);
         rotatePage(-1);
@@ -107,6 +107,7 @@ void SettingsGUI::draw()
     }
 
     clearText();
+    printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
     drawTopText();
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
@@ -123,14 +124,16 @@ void SettingsGUI::draw()
         printSmall(false, 194, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
 
+    nocashMessage("Printed all options.");
+
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
-    int scrollSections = CURSOR_HEIGHT / (_pages[_selectedPage].options().size() - 1);
+    int scrollSections = CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1;
     // Print a nice thick scroller.
     printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
     printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
 
-    printSmallCentered(false, 173, "DSiMenu++");
+    printSmallCentered(false, 173, ms().getAppName());
 }
 
 void SettingsGUI::drawSub()
@@ -173,7 +176,9 @@ void SettingsGUI::rotatePage(int rotateAmount)
 {
     int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
     _selectedPage = pageIndex;
+    nocashMessage("Successfully got page index.");
     _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
+    nocashMessage("Successfully got bottom cursor.");
     _topCursor = 0;
     _topText.clear();
     _selectedOption = 0;

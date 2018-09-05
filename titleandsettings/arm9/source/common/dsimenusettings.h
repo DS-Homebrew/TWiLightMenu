@@ -73,7 +73,7 @@ class DSiMenuPlusPlusSettings
         EReleaseBootstrap = false,
         ENightlyBootstrap = true
     };
-    
+
     enum TLaunchType
     {
         ENoLaunch = 0,
@@ -83,12 +83,12 @@ class DSiMenuPlusPlusSettings
         EGameYobLaunch = 4
     };
 
-/*	0 = Nintendo DSi (Retail)
+    /*	0 = Nintendo DSi (Retail)
 	1 = Nintendo DSi (Dev/Panda)
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
     enum TConsoleModel
-    {  
+    {
         EDSiRetail = 0,
         EDSiDebug = 1,
         E3DSOriginal = 2,
@@ -100,6 +100,15 @@ class DSiMenuPlusPlusSettings
         EFreq32KHz = 0,
         EFreq47KHz = 1
     };
+
+    enum TAppName
+    {
+        ENameDSiMenuPP = 0,
+        ENameSRLoader = 1,
+        ENameDSisionX = 2
+
+    };
+
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();
@@ -109,13 +118,14 @@ class DSiMenuPlusPlusSettings
     void saveSettings();
 
     TLanguage getGuiLanguage();
+    const char* getAppName();
   public:
     std::string romfolder;
     int pagenum;
     int cursorPosition;
     int startMenu_cursorPosition;
     int consoleModel;
-
+    int appName;
     int guiLanguage;
     bool useGbarunner;
     int theme;

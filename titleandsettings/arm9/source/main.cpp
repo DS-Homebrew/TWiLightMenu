@@ -808,6 +808,26 @@ int main(int argc, char **argv)
 		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+
+	gamesPage
+		.option(STR_LANGUAGE,
+				STR_DESCRIPTION_LANGUAGE_1,
+				Option::Int(&ms().bstrap_language),
+				{STR_SYSTEM,
+				 "Japanese",
+				 "English",
+				 "French",
+				 "German",
+				 "Italian",
+				 "Spanish"},
+				{TLanguage::ELangDefault,
+				 TLanguage::ELangJapanese,
+				 TLanguage::ELangEnglish,
+				 TLanguage::ELangFrench,
+				 TLanguage::ELangGerman,
+				 TLanguage::ELangItalian,
+				 TLanguage::ELangSpanish});
+
 	SettingsGUI gui;
 	gui.addPage(guiPage)
 		.addPage(gamesPage)
