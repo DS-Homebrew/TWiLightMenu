@@ -18,6 +18,7 @@ SystemDetails::SystemDetails()
         dbg_printf("Is DSi\n");
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
+    fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
 }
 
 void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)

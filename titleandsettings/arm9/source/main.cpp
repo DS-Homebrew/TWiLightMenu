@@ -534,15 +534,10 @@ int main(int argc, char **argv)
 
 	swiWaitForVBlank();
 
-	fifoWaitValue32(FIFO_USER_06);
-	fifoGetValue32(FIFO_USER_03);
-
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0)
-		soundfreqsetting = true;
+	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+	// if (arm7_SNDEXCNT != 0) stop();
 
 	fifoSendValue32(FIFO_USER_07, 0);
-
 	if (ms().soundfreq)
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
@@ -686,10 +681,8 @@ int main(int argc, char **argv)
 	
 	if (sys().flashcardUsed())
 	{
-		
 		gamesPage.option(STR_FLASHCARD_SELECT, STR_DESCRIPTION_FLASHCARD_1, Option::Nul(opt_flashcard_select), {}, {});
 	}
-
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
@@ -729,10 +722,11 @@ int main(int argc, char **argv)
 					{true, false});
 	}
 
-	if (soundfreqsetting)
+	if (!sys().isRegularDS())
 	{
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"32.73 kHz", "47.61 kHz"}, {true, false});
 	}
+
 	if (isDSiMode_partial())
 	{
 		if (ms().consoleModel < 2)

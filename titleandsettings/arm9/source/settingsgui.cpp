@@ -118,7 +118,6 @@ void SettingsGUI::draw()
     for (int i = _topCursor; i < _bottomCursor; i++)
     {
         int selected = _pages[_selectedPage].options()[i].selected();
-
         if (i == _selectedOption)
         {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
@@ -130,6 +129,8 @@ void SettingsGUI::draw()
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
 
         printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
+
+        if (selected < 0) break;
         printSmall(false, SCREEN_WIDTH - 12 - labelWidth, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
 
@@ -153,7 +154,6 @@ void SettingsGUI::drawSub()
     {
         if (i == selected)
         {
-
             printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
 
             // print scroller on the other side
