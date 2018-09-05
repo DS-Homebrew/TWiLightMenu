@@ -644,6 +644,7 @@ int main(int argc, char **argv)
 	SettingsPage guiPage(STR_GUI_SETTINGS);
 
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
+	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
 		// Language
 		.option(STR_LANGUAGE,
@@ -676,7 +677,11 @@ int main(int argc, char **argv)
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
+		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false})
+		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock),{STR_YES, STR_NO},{true, false})
+		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
+			 {TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
+		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons, {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
@@ -770,7 +775,6 @@ int main(int argc, char **argv)
 	//	stop();
 	while (1)
 	{
-
 		if (screenmode == 1)
 		{
 			if (!gui().isExited())

@@ -137,6 +137,16 @@ extern std::string STR_R4_THEME13;
 extern std::string STR_DEFAULT_LAUNCHER;
 extern std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1;
 
+extern std::string STR_12_HOUR_CLOCK;
+extern std::string STR_DESCRIPTION_12_HOUR_CLOCK;
+
+extern std::string STR_AK_ZOOMING_ICON;
+extern std::string STR_DESCRIPTION_AK_ZOOMING_ICON;
+
+extern std::string STR_AK_SCROLLSPEED;
+extern std::string STR_DESCRIPTION_AK_SCROLLSPEED;
+
+
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.
