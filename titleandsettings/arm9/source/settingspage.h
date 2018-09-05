@@ -15,13 +15,46 @@ typedef const char *cstr;
  * \brief Represents a settings option with an associated INI 
  *        entry that can be displayed to the user.
  * 
+ * Options can have one of Boolean, Integer, or String Actions 
+ * that "act", or modify directly the value at a given pointer 
+ * with a corresponding. 
+ * 
+ * While it is possible to, and indeed Action does do direct ma-
+ * nipulation of pointers, Option comes with it a way to define
+ * a restricted set of values that an Action is intended to take.
+ * 
+ * In combination, Option encapsulates the possible values and
+ * an accessor to the current value of a settings option.
+ * 
+ * Actions may also have sub-options and event handlers called 
+ * when its value is changed through the Action interface. 
+ * 
+ * Through the Sub virtual class, Actions may be given a pointer
+ * to a function of type OptionGenerator_{T}, which may produce
+ * another Option that will be displayed with the SettingsGUI is
+ * in 'sub mode' (see SettingsGUI::inSub). The OptionGenerator_{T}
+ * is called with the Action that it was associated with it, and
+ * can use the Action to determine if a sub option is to be displayed.
+ * 
+ * In addition, event handlers of type OptionChangedHandler_{T} may
+ * be used to cause side effects when the value of the underlying
+ * Action has changed. OptionChangedHandler_{T} are only called with
+ * the new value whenever Action::set has been called.
+ * 
+ * Note that changed handlers are only called when the value was
+ * changed using the Action::set interface, and not if the under-
+ * lying value was changed outside of Action::set. This is useful
+ * if a settings option is to be changed, without having to raise
+ * any changed handlers.
+ * 
  */
 class Option
 {
 public:
   /*
-  * Represents an option that may or may not have
-  * a sub option. 
+  * Represents an action that may or may not have
+  * a sub option. All actions derive from this for
+  * polymorphism purposes (see Option::action_sub) 
   */
   class Sub
   {
@@ -40,19 +73,42 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Bool)(Bool &);
+    typedef void (*OptionChangedHandler_Bool)(bool);
+
     //typedef std::function<Option(Bool&)> OptionGenerator_Bool;
     Bool(bool *pointer)
-        : _generator(nullptr) { _pointer = pointer; };
+        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
 
     Bool(bool *pointer, const OptionGenerator_Bool generator)
-        : _generator(generator)
+        : _generator(generator), _changed(nullptr)
     {
       _pointer = pointer;
       _generator = generator;
     };
 
+    Bool(bool *pointer, const OptionGenerator_Bool generator, const OptionChangedHandler_Bool changed)
+        : _generator(generator), _changed(changed)
+    {
+      _pointer = pointer;
+      _generator = generator;
+      _changed = changed;
+    };
+
+     Bool(bool *pointer, const OptionChangedHandler_Bool changed)
+        : _generator(nullptr), _changed(changed)
+    {
+      _pointer = pointer;
+      _changed = changed;
+    };
+
     ~Bool() {}
-    void set(bool value) { (*_pointer) = value; };
+    void set(bool value)
+    {
+      (*_pointer) = value;
+      if (_changed)
+        _changed(value);
+    };
+
     bool get() { return *_pointer; };
     std::unique_ptr<Option> sub()
     {
@@ -68,6 +124,7 @@ public:
   private:
     bool *_pointer;
     OptionGenerator_Bool _generator;
+    OptionChangedHandler_Bool _changed;
   };
 
   /**
@@ -79,8 +136,10 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Int)(Int &);
+    typedef void (*OptionChangedHandler_Int)(int);
+
     //typedef std::function<Option(Int&)> OptionGenerator_Int;
-    Int(int *pointer) : _generator(nullptr) { _pointer = pointer; };
+    Int(int *pointer) : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
     Int(int *pointer, const OptionGenerator_Int generator)
         : _generator(generator)
     {
@@ -88,8 +147,28 @@ public:
       _generator = generator;
     };
 
+    Int(int *pointer, const OptionGenerator_Int generator, const OptionChangedHandler_Int changed)
+        : _generator(generator), _changed(changed)
+    {
+      _pointer = pointer;
+      _generator = generator;
+      _changed = changed;
+    };
+
+    Int(int *pointer,  const OptionChangedHandler_Int changed)
+        : _generator(nullptr), _changed(changed)
+    {
+      _pointer = pointer;
+      _changed = changed;
+    };
+
     ~Int() {}
-    void set(int value) { (*_pointer) = value; };
+    void set(int value)
+    {
+      (*_pointer) = value;
+      if (_changed)
+        _changed(value);
+    };
     int get() { return *_pointer; };
     std::unique_ptr<Option> sub()
     {
@@ -105,6 +184,7 @@ public:
   private:
     int *_pointer;
     OptionGenerator_Int _generator;
+    OptionChangedHandler_Int _changed;
   };
 
   /**
@@ -116,19 +196,42 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Str)(Str &);
+    typedef void (*OptionChangedHandler_Str)(std::string &);
+
     //typedef std::function<Option(Str&)> OptionGenerator_Str;
     Str(std::string *pointer)
-        : _generator(nullptr) { _pointer = pointer; };
+        : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
 
     Str(std::string *pointer, const OptionGenerator_Str generator)
-        : _generator(generator)
+        : _generator(generator), _changed(nullptr)
     {
       _pointer = pointer;
       _generator = generator;
     };
 
+    Str(std::string *pointer, const OptionGenerator_Str generator, const OptionChangedHandler_Str changed)
+        : _generator(generator), _changed(changed)
+    {
+      _pointer = pointer;
+      _generator = generator;
+      _changed = changed;
+    };
+
+    Str(std::string *pointer, const OptionChangedHandler_Str changed)
+        : _generator(nullptr), _changed(changed)
+    {
+      _pointer = pointer;
+      _changed = changed;
+    };
+
+
     ~Str() {}
-    void set(std::string value) { (*_pointer) = value; };
+    void set(std::string value)
+    {
+      (*_pointer) = value;
+      if (_changed)
+        _changed(value);
+    };
     std::string &get() { return *_pointer; };
     std::unique_ptr<Option> sub()
     {
@@ -144,9 +247,20 @@ public:
   private:
     std::string *_pointer;
     OptionGenerator_Str _generator;
+    OptionChangedHandler_Str _changed;
   };
 
-  typedef std::variant<Bool, Int, Str> OptVal;
+  /**
+   * Algebraic type definition for Action.
+   * 
+   * Action is one of Bool, Int, or Str. Note
+   * that all of Bool, Int, Str inherit from
+   * Sub, and thus have an is-a relationship with
+   * Option::Sub, but Option::Action is not, and 
+   * can not be Option::Sub without matching
+   * the variant type.
+   */
+  typedef std::variant<Bool, Int, Str> Action;
 
 public:
   /**
@@ -173,7 +287,7 @@ public:
  */
   Option(const std::string &displayName,
          const std::string &longDescription,
-         Option::OptVal action,
+         Option::Action action,
          std::initializer_list<std::string> const labels,
          std::initializer_list<std::variant<bool, int, cstr>> const values)
       : _action(action)
@@ -206,7 +320,7 @@ public:
 
   std::string &displayName() { return _displayName; }
   std::string &longDescription() { return _longDescription; }
-  OptVal &action() { return _action; }
+  Action &action() { return _action; }
   std::vector<std::string> &labels() { return _labels; }
   std::vector<std::variant<bool, int, cstr>> &values() { return _values; }
 
@@ -273,7 +387,7 @@ public:
 private:
   std::string _displayName;
   std::string _longDescription;
-  Option::OptVal _action;
+  Option::Action _action;
   std::vector<std::string> _labels;
   std::vector<std::variant<bool, int, cstr>> _values;
 };
@@ -309,7 +423,7 @@ public:
   SettingsPage &option(
       const std::string &displayName,
       const std::string &longDescription,
-      Option::OptVal action,
+      Option::Action action,
       std::initializer_list<std::string> const labels,
       std::initializer_list<std::variant<bool, int, cstr>> const values)
   {
