@@ -17,10 +17,29 @@ public:
   ~SettingsGUI() {}
 
 public:
+  /**
+   * Processes inputs and modifies the state of the GUI
+   */
   void processInputs(int inputs);
+
+  /**
+   * Refreshes the text content of the GUI and re-draws
+   * the scene.
+   */
   void draw();
 
+  /**
+   * If we have exited settings and are waiting to
+   * reboot into DSiMenu++
+   */
+  bool isExited() { return _isExited; }
+
 private:
+
+  /**
+   * Sets the text at the top screen to
+   * be printed next call of draw.
+   */
   void setTopText(const std::string &text)
   {
     std::string _topTextStr(text);
@@ -39,6 +58,10 @@ private:
 
   void drawTopText();
 
+  /**
+   * Enters the sub option mode, and will draw a sub option next call of draw if one
+   * exists.
+   */
   void enterSub()
   {
     if (_inSub)
@@ -50,9 +73,8 @@ private:
       _inSub = true;
 
       // Since the value of Option::sub will be dropped
-      // upon exit of this function, we make a copy of it
-      // as a unique_ptr, to ensure that when we replace it,
-      // it drops the old value as well.
+      // upon exit of this function, we move it into scope
+      // to prevent it from being dropped after exit.
       _subOption = std::move(action.sub());
 
       setTopText(_subOption->longDescription());
@@ -79,6 +101,9 @@ private:
     _inSub = false;
   }
 
+  /**
+   * Exits the sub option mode and returns to the previous page.
+   */
   void exitSub()
   {
     _inSub = false;
@@ -89,33 +114,86 @@ private:
     rotateOption(0);
   }
   bool inSub() { return _inSub; }
-
+  /**
+   * Scrolls down the option list by one.
+   */
   void incrementOption() { rotateOption(1); }
+
+  /**
+   * Scroll up the option list by one.
+   */
   void decrementOption() { rotateOption(-1); }
 
+  /**
+   * Moves the value of currently selected option right.
+   */
   void setOptionNext() { rotateOptionValue(1); }
+
+  /**
+   * Moves the value of the currently selected option left.
+   */
   void setOptionPrev() { rotateOptionValue(-1); }
 
+  /**
+   * Saves settings and prepares to exit the GUI.
+   * This function writes settings to file and
+   * freezes the GUI, but does not actually
+   * reboot. To reboot, set the exit callback
+   * using onExit.
+   */
   void saveAndExit();
 public:
+
+  /**
+   * Adds a settings page to the GUI.
+   */
   SettingsGUI &addPage(SettingsPage &page)
   {
     _pages.emplace_back(std::move(page));
     return *this;
   }
 
+  /**
+   * After adding all the pages, set the initial cursors,
+   * and other requirements to show page 0.
+   */
   void show()
   {
     rotatePage(0);
   }
 
+  /**
+   * Sets the callback to be called when the 
+   * settings GUI exits.
+   * 
+   * Do reboots, and any necessary cleanup here.
+   */
   SettingsGUI &onExit(std::function<void(void)>& callback)  
   {
     _exitCallback = callback;
   }
 private:
+
+  /*
+  * Sets the currently selected option to the next nth option.
+  * Generally should be used with -1, or 1, or 0 to
+  * refresh the current state, usually after a page switch.
+  */
   void rotateOption(int rotateAmount);
+
+  /*
+  * Sets the value of the currently selected option 
+  * to the next nth value.
+  * Generally should be used with -1, or 1, or 0 to
+  * refresh the current state, usually after a page switch.
+  */
   void rotateOptionValue(int rotateAmount);
+
+  /*
+  * Sets the current page to the next nth option.
+  * Generally should be used with -1, or 1, or 0 to
+  * refresh the current state, usually once on boot.
+  */
   void rotatePage(int rotateAmount);
 
   int _selectedPage;
@@ -133,6 +211,7 @@ private:
 
   bool _isExited;
   bool _isSaved;
+  
   std::unique_ptr<Option> _subOption;
   std::vector<SettingsPage> _pages;
   std::vector<std::string> _topText;

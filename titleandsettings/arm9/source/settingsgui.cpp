@@ -124,8 +124,6 @@ void SettingsGUI::draw()
         printSmall(false, 194, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
 
-    nocashMessage("Printed all options.");
-
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
     int scrollSections = CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1;

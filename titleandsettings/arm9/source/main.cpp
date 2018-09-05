@@ -841,7 +841,9 @@ int main(int argc, char **argv)
 		if (screenmode == 1)
 		{
 
-			snd().playBgMusic();
+			if (!gui.isExited()) {
+				snd().playBgMusic();
+			}
 
 			gui.draw();
 
