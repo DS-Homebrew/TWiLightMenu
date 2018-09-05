@@ -593,7 +593,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	ms().gotosettings = true;
+	// ms().gotosettings = true;
 	if (ms().gotosettings)
 	{
 		graphicsInit();

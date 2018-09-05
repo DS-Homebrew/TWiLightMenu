@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __PER_GAME_SETTINGS_H__
 #define __PER_GAME_SETTINGS_H__
-
+#include <string>
 class PerGameSettings
 {
   public:

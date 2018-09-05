@@ -67,7 +67,7 @@ public:
 };
 
 typedef singleton<LanguageFile, DSiMenuPlusPlusSettings::TLanguage> languageFile_s;
-inline LanguageFile &lang() { return languageFile_s::instance(ms().guiLanguage()); }
+inline LanguageFile &lang() { return languageFile_s::instance(ms().getGuiLanguage()); }
 #define LANG(i, t) lang().GetString(i, t, t)
 
 bool stringComp(const std::string &item1, const std::string &item2);

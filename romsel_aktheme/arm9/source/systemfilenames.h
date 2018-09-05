@@ -29,7 +29,7 @@
 
 
 #define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
-#define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"themes/zelda"
+#define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"themes/"
 #define SFN_UI_DIRECTORY           sfn().uiDirectory() + 
 
 #define SFN_UI_CURRENT_DIRECTORY    SFN_UI_DIRECTORY"/"

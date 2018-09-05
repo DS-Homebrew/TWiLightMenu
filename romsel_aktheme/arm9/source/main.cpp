@@ -114,6 +114,7 @@ int main(int argc, char **argv)
 	
 	
 	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
+	ms().loadSettings();
 
 	// init basic system
 	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
@@ -125,7 +126,6 @@ int main(int argc, char **argv)
 	gdi().init();
 	// init graphics
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
-	ms().loadSettings();
 	windowManager();
 
 

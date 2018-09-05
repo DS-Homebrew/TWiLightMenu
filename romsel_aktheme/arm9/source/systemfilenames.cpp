@@ -2,22 +2,28 @@
 #include "common/systemdetails.h"
 #include <nds.h>
 #include "tool/dbgtool.h"
+#include "tool/stringtool.h"
+#include "common/dsimenusettings.h"
 
 SystemFilenames::SystemFilenames()
 {
+    std::string systemDirectory = formatString(SFN_SYSTEM_UI_DIRECTORY "%s", ms().ak_theme.c_str());
     if (!sys().useNitroFS())
     {
-        _uiDirectory = SFN_SYSTEM_UI_DIRECTORY;
+        // nocashMessage("NNONITROFS");
+        // nocashMessage(systemDirectory.c_str());
+        _uiDirectory = systemDirectory;
     }
     else
     {
-        if (access(SFN_SYSTEM_UI_DIRECTORY "/uisettings.ini", F_OK) == 0)
+        if (access((systemDirectory + "/uisettings.ini").c_str(), F_OK) == 0)
         {
-            _uiDirectory = SFN_SYSTEM_UI_DIRECTORY;
+            // nocashMessage("NITROFSOK");
+            // nocashMessage(systemDirectory.c_str());
+            _uiDirectory = systemDirectory;
         }
         else
         {  
-            dbg_printf("FALLBACK REQUIRED\n");
             cwl();
             _uiDirectory = SFN_FALLBACK_UI_DIRECTORY;
         }

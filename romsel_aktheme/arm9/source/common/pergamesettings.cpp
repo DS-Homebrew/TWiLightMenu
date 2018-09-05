@@ -1,6 +1,7 @@
 #include "pergamesettings.h"
 #include "common/inifile.h"
 #include "tool/stringtool.h"
+#include "tool/dbgtool.h"
 #include "bootstrappaths.h"
 #include <string.h>
 #include <cstdio>
