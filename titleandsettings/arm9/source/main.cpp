@@ -55,7 +55,7 @@
 
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/dsimenuplusplus/akmenu/themes/"
 
-std::vector<cstr> akThemeList;
+std::vector<std::string> akThemeList;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -317,14 +317,18 @@ void loadAkThemeList()
 {
 	DIR *dir;
 	struct dirent *ent;
+	std::string themeDir;
 	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
 	{
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
 		{
 			// Reallocation here, but prevents our vector from being filled with
-			// 
-			akThemeList.emplace_back(std::string(ent->d_name).c_str());
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			akThemeList.emplace_back(themeDir);
 		}
 		closedir(dir);
 	}
@@ -589,7 +593,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	//ms().gotosettings = true;
+	ms().gotosettings = true;
 	if (ms().gotosettings)
 	{
 		graphicsInit();

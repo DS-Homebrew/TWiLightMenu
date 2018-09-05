@@ -358,17 +358,17 @@ public:
   Option(const std::string &displayName,
          const std::string &longDescription,
          Option::Str stringAction,
-         std::vector<cstr> const &values)
+         std::vector<std::string> const &values)
       : _action(stringAction)
   {
     _displayName = displayName;
     _longDescription = longDescription;
     _action = stringAction;
 
-    for (cstr str : values)
+    for (auto& str : values)
     {
       _labels.emplace_back(str);
-      _values.emplace_back(str);
+      _values.emplace_back(str.c_str());
     }
   }
 
@@ -495,7 +495,7 @@ public:
       const std::string &displayName,
       const std::string &longDescription,
       Option::Str stringAction,
-      std::vector<cstr> const &values)
+      std::vector<std::string> const &values)
   {
     _options.emplace_back(displayName, longDescription, stringAction, values);
     return *this;
