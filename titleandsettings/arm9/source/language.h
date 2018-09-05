@@ -111,6 +111,8 @@ extern std::string STR_AB_SETRETURN;
 extern std::string STR_SUBTHEMESEL_DSI;
 
 extern std::string STR_SUBTHEMESEL_R4;
+extern std::string STR_SUBTHEMESEL_AK;
+
 extern std::string STR_AB_SETSUBTHEME;
 extern std::string STR_DSI_DARKMENU;
 extern std::string STR_DSI_NORMALMENU;

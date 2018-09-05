@@ -117,6 +117,8 @@ std::string STR_AB_SETRETURN = "STR_AB_SETRETURN";
 std::string STR_SUBTHEMESEL_DSI = "STR_SUBTHEMESEL_DSI";
 
 std::string STR_SUBTHEMESEL_R4 = "STR_SUBTHEMESEL_R4";
+std::string STR_SUBTHEMESEL_AK = "STR_SUBTHEMESEL_AK";
+
 std::string STR_AB_SETSUBTHEME = "STR_AB_SETSUBTHEME";
 std::string STR_DSI_DARKMENU = "STR_DSI_DARKMENU";
 std::string STR_DSI_NORMALMENU = "STR_DSI_NORMALMENU";
@@ -357,6 +359,8 @@ void langInit(void)
 	STR_SUBTHEMESEL_DSI = languageini.GetString("LANGUAGE", "SUBTHEMESEL_DSI", "Sub-theme select: DSi Menu");
 
 	STR_SUBTHEMESEL_R4 = languageini.GetString("LANGUAGE", "SUBTHEMESEL_R4", "Sub-theme select: R4");
+	STR_SUBTHEMESEL_AK = languageini.GetString("LANGUAGE", "SUBTHEMESEL_AK", "Sub-theme select: Acekard Menu");
+
 	STR_AB_SETSUBTHEME = languageini.GetString("LANGUAGE", "AB_SETSUBTHEME", "A/B: Set sub-theme");
 	STR_DSI_DARKMENU = languageini.GetString("LANGUAGE", "DSI_DARKMENU", "SD/Black");
 	STR_DSI_NORMALMENU = languageini.GetString("LANGUAGE", "DSI_NORMALMENU", "Normal/White");

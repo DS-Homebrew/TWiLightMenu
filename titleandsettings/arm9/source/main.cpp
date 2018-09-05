@@ -20,7 +20,7 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
-#include <stdio.h>
+#include <cstdio>
 #include <fat.h>
 #include <sys/stat.h>
 #include <limits.h>
@@ -53,7 +53,9 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
-#define AK_SYSTEM_UI_DIRECTORY     "/_nds/dsimenuplusplus/akmenu/themes/"
+#define AK_SYSTEM_UI_DIRECTORY "/_nds/dsimenuplusplus/akmenu/themes/"
+
+std::vector<cstr> akThemeList;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -77,7 +79,6 @@ const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string homebrewArg;
 std::string bootstrapfilename;
-
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -312,6 +313,28 @@ int lastRanROM()
 	return err;
 }
 
+void loadAkThemeList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+			// 
+			akThemeList.emplace_back(std::string(ent->d_name).c_str());
+		}
+		closedir(dir);
+	}
+	// for (auto &p : std::filesystem::directory_iterator(path))
+	// {
+	// 	if (p.is_directory())
+	// 		akThemeList.emplace_back(p);
+	// }
+}
+
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
 	switch (optVal.get())
@@ -340,6 +363,8 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 						  STR_R4_THEME13,
 					  },
 					  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+	case 3:
+		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
 	default:
 		return nullopt;
@@ -526,11 +551,10 @@ int main(int argc, char **argv)
 		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini"; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
-	bool soundfreqsetting = false;
-
 	std::string filename;
 
 	ms().loadSettings();
+	loadAkThemeList();
 
 	swiWaitForVBlank();
 
@@ -630,7 +654,6 @@ int main(int argc, char **argv)
 			hiyaAutobootFound = false;
 	}
 
-
 	int pressed = 0;
 #pragma endregion
 
@@ -672,21 +695,24 @@ int main(int argc, char **argv)
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false})
-		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock),{STR_YES, STR_NO},{true, false})
+		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
-			 {TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
+				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
-	
+
 	if (sys().flashcardUsed())
 	{
 		gamesPage.option(STR_FLASHCARD_SELECT, STR_DESCRIPTION_FLASHCARD_1, Option::Nul(opt_flashcard_select), {}, {});
+
+		if (sys().isRegularDS()) {
+			gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
+		}
 	}
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
-	
 
 	if (isDSiMode_partial())
 	{

@@ -192,6 +192,7 @@ void SettingsGUI::rotateOptionValue(int rotateAmount)
     // Only the main menu pages have left-right option values. Sub menus only control one Option.
     if (inSub())
         return;
+    if (_pages[_selectedPage].options().size() == 0) return;
 
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     int currentValueIndex = selectedOption.selected();
@@ -249,6 +250,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
     }
     else
     {
+        if (_pages[_selectedPage].options().size() == 0) return;
         // Change the sub option instead.
         auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
         auto &action = selectedOption.action_sub();
