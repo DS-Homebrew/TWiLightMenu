@@ -123,6 +123,9 @@ void SettingsGUI::draw()
         if (i == _selectedOption)
         {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
+                // print scroller on the other side
+            printSmall(false, 252,  (i - _subTopCursor), "|");
+            printSmall(false, 254,  (i - _subTopCursor), "|");
         }
 
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
@@ -133,10 +136,10 @@ void SettingsGUI::draw()
 
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
-    int scrollSections = CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1;
-    // Print a nice thick scroller.
-    printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
-    printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
+    // int scrollSections = CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1;
+    // // Print a nice thick scroller.
+    // printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
+    // printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
 
     printSmallCentered(false, 173, ms().getAppName());
 }
@@ -153,6 +156,10 @@ void SettingsGUI::drawSub()
         {
 
             printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
+           
+            // print scroller on the other side
+            printSmall(false, 252,  (i - _subTopCursor), "|");
+            printSmall(false, 254,  (i - _subTopCursor), "|");
         }
 
         printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
@@ -160,10 +167,9 @@ void SettingsGUI::drawSub()
 
     // Divide CURSOR_HEIGHT into _subOption->values().size() pieces and get the ith piece.
     // Integer division is good enough for this case.
-    int scrollSections = CURSOR_HEIGHT / (_subOption->values().size() - 1);
+   // int scrollSections = CURSOR_HEIGHT / (_subOption->values().size() - 1);
     // Print a nice thick scroller.
-    printSmall(false, 252, (scrollSections * (selected)) + CURSOR_MIN, "|");
-    printSmall(false, 254, (scrollSections * (selected)) + CURSOR_MIN, "|");
+   
 
     printLarge(false, 6, 1, _subOption->displayName().c_str());
     printSmallCentered(false, 173, ms().getAppName());
