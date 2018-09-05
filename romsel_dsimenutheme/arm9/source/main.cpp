@@ -65,7 +65,7 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
@@ -676,6 +676,8 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+	
+	bool fatInited = fatInitDefault();
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -696,7 +698,7 @@ int main(int argc, char **argv) {
 	
 	LoadColor();
 
-	if (!fatInitDefault()) {
+	if (!fatInited) {
 		graphicsInit();
 		fontInit();
 		whiteScreen = false;
@@ -742,7 +744,13 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
+	if (access("fat:/", F_OK) == 0) {
+		flashcardUsed = true;
+	}
+	
+	if (access(settingsinipath, F_OK) != 0) {
+		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
 	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
 	
