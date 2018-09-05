@@ -18,7 +18,7 @@ class SystemDetails
     bool flashcardUsed()
     {
         if (_flashcardUsed)
-            return !_flashcardUsed;
+            return _flashcardUsed;
         if (!access("fat:/", F_OK))
         {
             _flashcardUsed = true;

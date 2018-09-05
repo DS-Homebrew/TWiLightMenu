@@ -10,13 +10,12 @@
 #include "language.h"
 #include "bootstrapsettings.h"
 
-// Screen offsets for scrollbar 
+// Screen offsets for scrollbar
 #define CURSOR_MIN 30
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
-
-void SettingsGUI::processInputs(int pressed, touchPosition& touch)
+void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
@@ -113,7 +112,7 @@ void SettingsGUI::draw()
     clearText();
     printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
     drawTopText();
-    
+
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
 
     for (int i = _topCursor; i < _bottomCursor; i++)
@@ -123,9 +122,9 @@ void SettingsGUI::draw()
         if (i == _selectedOption)
         {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
-                // print scroller on the other side
-            printSmall(false, 252,  (i - _topCursor) * 14, "|");
-            printSmall(false, 254,  (i - _topCursor) * 14, "|");
+            // print scroller on the other side
+            printSmall(false, 252, 30 + (i - _topCursor) * 14, "|");
+            printSmall(false, 254, 30 + (i - _topCursor) * 14, "|");
         }
 
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
@@ -156,10 +155,10 @@ void SettingsGUI::drawSub()
         {
 
             printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
-           
+
             // print scroller on the other side
-            printSmall(false, 252,  (i - _subTopCursor) * 14, "|");
-            printSmall(false, 254,  (i - _subTopCursor) * 14, "|");
+            printSmall(false, 252, 30 + (i - _subTopCursor) * 14, "|");
+            printSmall(false, 254, 30 + (i - _subTopCursor) * 14, "|");
         }
 
         printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
@@ -298,7 +297,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
                 int value = *std::get_if<int>(&nextValue);
                 subaction->set(value);
             }
-             if (auto subaction = std::get_if<Option::Nul>(&sub.action()))
+            if (auto subaction = std::get_if<Option::Nul>(&sub.action()))
             {
                 subaction->set();
             }
@@ -324,9 +323,10 @@ void SettingsGUI::saveAndExit()
     for (int i = 0; i < 30; i++)
         swiWaitForVBlank();
     snd().stopBgMusic();
-    
-    if (_exitCallback != nullptr) {
-        
+
+    if (_exitCallback != nullptr)
+    {
+
         _exitCallback();
     }
 }

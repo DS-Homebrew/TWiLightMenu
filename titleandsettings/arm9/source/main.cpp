@@ -82,8 +82,6 @@ std::string bootstrapfilename;
 int screenmode = 0;
 int subscreenmode = 0;
 
-static int settingscursor = 0;
-
 touchPosition touch;
 
 using namespace std;
@@ -494,6 +492,7 @@ int main(int argc, char **argv)
 	*fake_heap_end = 0;
 
 	sys().initFilesystem("/_nds/dsimenuplusplus/main.srldr");
+	sys().flashcardUsed();
 	ms();
 	// consoleDemoInit();
 	// printf("%i", sys().flashcardUsed());
@@ -571,7 +570,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	//ms().gotosettings = true;
+	ms().gotosettings = true;
 	if (ms().gotosettings)
 	{
 		graphicsInit();
@@ -636,6 +635,7 @@ int main(int argc, char **argv)
 			hiyaAutobootFound = false;
 	}
 
+
 	int pressed = 0;
 #pragma endregion
 
@@ -683,12 +683,18 @@ int main(int argc, char **argv)
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
-	using TROMReadLED = BootstrapSettings::TROMReadLED;
-	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
+	
 	if (sys().flashcardUsed())
 	{
+		
 		gamesPage.option(STR_FLASHCARD_SELECT, STR_DESCRIPTION_FLASHCARD_1, Option::Nul(opt_flashcard_select), {}, {});
 	}
+
+
+	using TROMReadLED = BootstrapSettings::TROMReadLED;
+	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
+	
+
 	if (isDSiMode_partial())
 	{
 		gamesPage
