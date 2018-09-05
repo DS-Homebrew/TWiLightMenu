@@ -258,7 +258,7 @@ bool MainList::enterDir(const std::string &dirName)
                     extName = "";
 
                 dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
-                bool showThis = (st.st_mode & S_IFDIR) ? (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..")) : extnameFilter(extNames, extName);
+                bool showThis = (st.st_mode & S_IFDIR) ? (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..")  && strcmp(lfn.c_str(), "_nds")) : extnameFilter(extNames, extName);
                 showThis = showThis && (_showAllFiles || !(attr & ATTRIB_HID));
 
                 if (showThis)
