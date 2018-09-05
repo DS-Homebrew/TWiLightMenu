@@ -54,6 +54,7 @@ ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     _selectionBarColor2 = BIT(15) | uiSettings().listViewBarColor2; //RGB15(0,0,31);
     _selectionBarOpacity = 100;
     _engine = GE_MAIN;
+    _scrollSpeed = scrollSpeed;
     _touchMovedAfterTouchDown = false;
 }
 
