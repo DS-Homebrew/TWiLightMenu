@@ -30,7 +30,7 @@
 		  dirnext() will return . and .. first, and all relevent operations will 
 		  support . and .. in pathnames. 
     
-    2019-09-05 v0.9 - modernize devoptab (by RonnChyran)
+    2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
         * Updated for libsysbase change in devkitARM r46 and above.
 */
 
