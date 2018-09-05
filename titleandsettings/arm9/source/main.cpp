@@ -76,11 +76,6 @@ const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 std::string homebrewArg;
 std::string bootstrapfilename;
 
-static int consoleModel = 0;
-/*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -730,7 +725,7 @@ int main(int argc, char **argv)
 	}
 	if (isDSiMode_partial())
 	{
-		if (consoleModel < 2)
+		if (ms().consoleModel < 2)
 		{
 			gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
@@ -753,7 +748,7 @@ int main(int argc, char **argv)
 			.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
 			.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
 
-		if (consoleModel < 2)
+		if (ms().consoleModel < 2)
 		{
 			// Actions do not have to bound to an object.
 			// See for exam here we have bound an option to
