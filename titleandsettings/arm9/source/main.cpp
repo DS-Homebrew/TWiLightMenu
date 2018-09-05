@@ -54,7 +54,7 @@ bool fadeType = false; // false = out, true = in
 
 bool soundfreqsettingChanged = false;
 
-const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char *settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -635,8 +635,13 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	if (!access("fat:/", F_OK))
+	if (access("fat:/", F_OK) == 0) {
 		flashcardUsed = true;
+	}
+	
+	if (access(settingsinipath, F_OK) != 0) {
+		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
 	nitroFSInit("/_nds/dsimenuplusplus/main.srldr");
 
