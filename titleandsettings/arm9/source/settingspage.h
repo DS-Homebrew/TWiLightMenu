@@ -39,7 +39,7 @@ typedef const char *cstr;
  * In addition, event handlers of type OptionChangedHandler_{T} may
  * be used to cause side effects when the value of the underlying
  * Action has changed. OptionChangedHandler_{T} are only called with
- * the new value whenever Action::set has been called.
+ * the new and previous value whenever Action::set has been called.
  * 
  * Note that changed handlers are only called when the value was
  * changed using the Action::set interface, and not if the under-
@@ -73,7 +73,7 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Bool)(Bool &);
-    typedef void (*OptionChangedHandler_Bool)(bool);
+    typedef void (*OptionChangedHandler_Bool)(bool, bool);
 
     //typedef std::function<Option(Bool&)> OptionGenerator_Bool;
     Bool(bool *pointer)
@@ -94,7 +94,7 @@ public:
       _changed = changed;
     };
 
-     Bool(bool *pointer, const OptionChangedHandler_Bool changed)
+    Bool(bool *pointer, const OptionChangedHandler_Bool changed)
         : _generator(nullptr), _changed(changed)
     {
       _pointer = pointer;
@@ -104,9 +104,9 @@ public:
     ~Bool() {}
     void set(bool value)
     {
-      (*_pointer) = value;
       if (_changed)
-        _changed(value);
+        _changed(bool(*_pointer), value);
+      (*_pointer) = value;
     };
 
     bool get() { return *_pointer; };
@@ -136,7 +136,7 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Int)(Int &);
-    typedef void (*OptionChangedHandler_Int)(int);
+    typedef void (*OptionChangedHandler_Int)(int, int);
 
     //typedef std::function<Option(Int&)> OptionGenerator_Int;
     Int(int *pointer) : _generator(nullptr), _changed(nullptr) { _pointer = pointer; };
@@ -155,7 +155,7 @@ public:
       _changed = changed;
     };
 
-    Int(int *pointer,  const OptionChangedHandler_Int changed)
+    Int(int *pointer, const OptionChangedHandler_Int changed)
         : _generator(nullptr), _changed(changed)
     {
       _pointer = pointer;
@@ -165,9 +165,9 @@ public:
     ~Int() {}
     void set(int value)
     {
-      (*_pointer) = value;
       if (_changed)
-        _changed(value);
+        _changed(int(*_pointer), value);
+      (*_pointer) = value;
     };
     int get() { return *_pointer; };
     std::unique_ptr<Option> sub()
@@ -196,7 +196,7 @@ public:
   {
   public:
     typedef std::optional<Option> (*OptionGenerator_Str)(Str &);
-    typedef void (*OptionChangedHandler_Str)(std::string &);
+    typedef void (*OptionChangedHandler_Str)(std::string, std::string);
 
     //typedef std::function<Option(Str&)> OptionGenerator_Str;
     Str(std::string *pointer)
@@ -224,14 +224,14 @@ public:
       _changed = changed;
     };
 
-
     ~Str() {}
     void set(std::string value)
     {
-      (*_pointer) = value;
       if (_changed)
-        _changed(value);
+        _changed(std::string(*_pointer), value);
+      (*_pointer) = value;
     };
+    
     std::string &get() { return *_pointer; };
     std::unique_ptr<Option> sub()
     {

@@ -586,6 +586,12 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	//	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().launchType), {"On", "Off", "Maybe"}, {0, 1, 2});
 }
 
+void opt_reset_subtheme(int prev, int next)
+{
+	
+}
+
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
