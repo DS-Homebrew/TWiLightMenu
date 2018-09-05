@@ -120,7 +120,6 @@ void SettingsGUI::draw()
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
         }
 
-        int displayNameWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].displayName().c_str());
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
 
         printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
