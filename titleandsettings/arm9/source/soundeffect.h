@@ -101,7 +101,10 @@ class SoundEffect
 
     void stopBgMusic()
     {
-        mmEffectCancelAll();
+        if (music) {
+            mmEffectCancelAll();
+
+        }
         music = false;
     }
     
