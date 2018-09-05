@@ -385,6 +385,24 @@ void langInit(void)
 	STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "Blue moon");
 
 	STR_DEFAULT_LAUNCHER = languageini.GetString("LANGUAGE", "DEFAULT_LAUNCHER", "Default launcher");
+
+    STR_12_HOUR_CLOCK =  languageini.GetString("LANGUAGE", "12_HOUR_CLOCK", "Use a 12 hour clock");
+    STR_DESCRIPTION_12_HOUR_CLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of|a 24 hour clock in|the Acekard theme.");
+
+    STR_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "AK_ZOOMING_ICON", "Zooming icons");
+    STR_DESCRIPTION_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for|the selected icon|in the Acekard theme.");
+
+    STR_AK_SCROLLSPEED = languageini.GetString("LANGUAGE", "AK_SCROLLSPEED", "Scroll speed");
+    STR_DESCRIPTION_AK_SCROLLSPEED =  languageini.GetString("LANGUAGE", "DESCRIPTION_AK_SCROLLSPEED", "Sets the scroll speed|in the Acekard theme.");
+
+	// The localestrign is here but the setting isn't displayed
+	// we can just keep the default viewmode
+	// which is icons with rom internal names.
+	// akmenu should save the view mode anyways when its changed with SELECT.
+	
+    STR_AK_VIEWMODE = languageini.GetString("LANGUAGE", "AK_VIEWMODE", "Default viewmode");
+    STR_DESCRIPTION_AK_VIEWMODE = languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode|in the Acekard theme.");
+
 	switch (ms().appName)
 	{
 	case 0:

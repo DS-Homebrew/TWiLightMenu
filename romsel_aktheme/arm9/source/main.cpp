@@ -111,8 +111,6 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-	
-	
 	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
 	ms().loadSettings();
 

@@ -401,7 +401,6 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             }
             else
             {
-
                 _mainList->setViewMode((MainList::VIEW_MODE)((_mainList->getViewMode() + 1) % 3));
                 ms().ak_viewMode = _mainList->getViewMode();
                 ms().saveSettings();
