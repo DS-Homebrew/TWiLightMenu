@@ -12,9 +12,10 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     cursorPosition = 0;
     startMenu_cursorPosition = 0;
     consoleModel = 0;
+    appName = ENameDSiMenuPP;
 
     gotosettings = false;
-    _guiLanguage = ELangDefault;
+    guiLanguage = ELangDefault;
     useGbarunner = false;
     theme = 0;
     subtheme = 0;
@@ -50,6 +51,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     r4_theme = "unused";
     soundfreq = EFreq32KHz;
     showlogo = true;
+    autorun = false;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -63,12 +65,14 @@ void DSiMenuPlusPlusSettings::loadSettings()
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
+    appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
     // Customizable UI settings.
-    _guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", _guiLanguage);
+    guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-    if (!sys().isRegularDS())
+    if (!sys().isRegularDS()) {
         useGbarunner = true;
+    }
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
@@ -106,6 +110,9 @@ void DSiMenuPlusPlusSettings::loadSettings()
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+
+    autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
+
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()
@@ -118,9 +125,9 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
-
+    settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
     // Customizable UI settings.
-    settingsini.SetInt("SRLOADER", "LANGUAGE", _guiLanguage);
+    settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 
     settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
@@ -156,15 +163,30 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+    settingsini.SetInt("SRLOADER", "APP_NAME", appName);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
-DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::guiLanguage()
+DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
 {
-    if (_guiLanguage == ELangDefault)
+    if (guiLanguage == ELangDefault)
     {
         return (TLanguage)PersonalData->language;
     }
-    return (TLanguage)_guiLanguage;
+    return (TLanguage)guiLanguage;
+}
+
+const char* DSiMenuPlusPlusSettings::getAppName()
+{
+    switch(appName)
+    {
+        case ENameDSiMenuPP:
+        default:
+            return "DSiMenu++";
+        case ENameSRLoader:
+            return "SRLoader";
+        case ENameDSisionX:
+            return "DSisiionX";
+    }
 }
