@@ -56,7 +56,7 @@
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
-bool soundfreqsettingChanged = false;
+//bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
 static int flashcard;
 /* Flashcard value
@@ -168,13 +168,19 @@ void loadROMselect()
 	// music = false;
 	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-	if (soundfreqsettingChanged)
-	{
-		if (ms().soundfreq)
+	
+	fifoSendValue32(FIFO_USER_07, 0);
+	if (ms().soundfreq)
 			fifoSendValue32(FIFO_USER_07, 2);
 		else
 			fifoSendValue32(FIFO_USER_07, 1);
-	}
+	// if (soundfreqsettingChanged)
+	// {
+	// 	if (ms().soundfreq)
+	// 		fifoSendValue32(FIFO_USER_07, 2);
+	// 	else
+	// 		fifoSendValue32(FIFO_USER_07, 1);
+	// }
 	if (ms().theme == 3)
 	{
 		runNdsFile("/_nds/dsimenuplusplus/akmenu.srldr", 0, NULL, false);
@@ -201,13 +207,19 @@ int lastRanROM()
 	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	
-	if (soundfreqsettingChanged)
-	{
-		if (ms().soundfreq)
+	fifoSendValue32(FIFO_USER_07, 0);
+	if (ms().soundfreq)
 			fifoSendValue32(FIFO_USER_07, 2);
 		else
 			fifoSendValue32(FIFO_USER_07, 1);
-	}
+
+	// if (soundfreqsettingChanged)
+	// {
+	// 	if (ms().soundfreq)
+	// 		fifoSendValue32(FIFO_USER_07, 2);
+	// 	else
+	// 		fifoSendValue32(FIFO_USER_07, 1);
+	// }
 
 	vector<char *> argarray;
 	if (ms().launchType > 2)
@@ -355,13 +367,13 @@ void opt_reset_subtheme(int prev, int next)
 	}
 }
 
-void opt_sound_freq_changed(bool prev, bool next)
-{
-	if (prev != next && !soundfreqsettingChanged)
-	{
-		soundfreqsettingChanged = true;
-	}
-}
+// void opt_sound_freq_changed(bool prev, bool next)
+// {
+// 	if (prev != next && !soundfreqsettingChanged)
+// 	{
+// 		soundfreqsettingChanged = true;
+// 	}
+// }
 
 void opt_reboot_system_menu()
 {
@@ -709,7 +721,7 @@ int main(int argc, char **argv)
 	}
 
 	if(soundfreqsetting) {
-		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq, opt_sound_freq_changed), {"32.73 kHz", "47.61 kHz"}, {true, false});
+		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"32.73 kHz", "47.61 kHz"}, {true, false});
 	}
 	if (isDSiMode_partial())
 	{
