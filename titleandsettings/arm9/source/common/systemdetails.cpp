@@ -1,7 +1,4 @@
 #include "systemdetails.h"
-#include <nds.h>
-#include <stdio.h>
-#include "tool/dbgtool.h"
 SystemDetails::SystemDetails()
 {
 
@@ -17,15 +14,7 @@ SystemDetails::SystemDetails()
     u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
     if (arm7_SNDEXCNT != 0)
     {
-        dbg_printf("Is DSi\n");
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
-    }
-    fifoSendValue32(FIFO_USER_07, 0);
-
-    if (!access("fat:/", F_OK))
-    {
-        _flashcardUsed = true;
-        dbg_printf("flahcart used..\n");
     }
 }
 

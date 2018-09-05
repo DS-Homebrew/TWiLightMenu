@@ -53,6 +53,8 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
+#define AK_SYSTEM_UI_DIRECTORY     "/_nds/dsimenuplusplus/akmenu/themes/"
+
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
@@ -493,7 +495,9 @@ int main(int argc, char **argv)
 
 	sys().initFilesystem("/_nds/dsimenuplusplus/main.srldr");
 	ms();
-
+	consoleDemoInit();
+	printf("%i", sys().flashcardUsed());
+	stop();
 	defaultExceptionHandler();
 
 	// Read user name
@@ -676,7 +680,7 @@ int main(int argc, char **argv)
 		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock),{STR_YES, STR_NO},{true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 			 {TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
-		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons, {STR_ON, STR_OFF}, {true, false});
+		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
