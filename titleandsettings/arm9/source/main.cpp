@@ -40,19 +40,23 @@
 #include "common/inifile.h"
 #include "common/nitrofs.h"
 #include "common/dsimenusettings.h"
+#include "common/cardlaunch.h"
 #include "settingspage.h"
 #include "settingsgui.h"
 #include "language.h"
+#include "bootstrapsettings.h"
 
 #include "soundeffect.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
+#include "common/systemdetails.h"
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
 bool soundfreqsettingChanged = false;
+bool hiyaAutobootFound = false;
 
 const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
@@ -347,46 +351,9 @@ void launchSystemSettings()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	renderScreens = false;
-	snd().stopBgMusic();
-	// music = false;
-	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	dsiLaunchSystemSettings();
 
-	char tmdpath[256];
-	u8 titleID[4];
-	for (u8 i = 0x41; i <= 0x5A; i++)
-	{
-		snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-		if (!access(tmdpath, F_OK))
-		{
-			titleID[0] = i;
-			titleID[1] = 0x42;
-			titleID[2] = 0x4e;
-			titleID[3] = 0x48;
-			break;
-		}
-	}
-
-	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
-	*(u16 *)(0x02000304) = 0x1801;
-	*(u8 *)(0x02000308) = titleID[0];
-	*(u8 *)(0x02000309) = titleID[1];
-	*(u8 *)(0x0200030A) = titleID[2];
-	*(u8 *)(0x0200030B) = titleID[3];
-	*(u32 *)(0x0200030C) = 0x00030015;
-	*(u8 *)(0x02000310) = titleID[0];
-	*(u8 *)(0x02000311) = titleID[1];
-	*(u8 *)(0x02000312) = titleID[2];
-	*(u8 *)(0x02000313) = titleID[3];
-	*(u32 *)(0x02000314) = 0x00030015;
-	*(u32 *)(0x02000318) = 0x00000017;
-	*(u32 *)(0x0200031C) = 0x00000000;
-	while (*(u16 *)(0x02000306) == 0x0000)
-	{ // Keep running, so that CRC16 isn't 0
-		*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
-	}
-
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
 }
@@ -586,6 +553,14 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	//	return Option("Sub Option", "Long Description of Sub Option", Option::Int(&ms().launchType), {"On", "Off", "Maybe"}, {0, 1, 2});
 }
 
+void defaultExitHandler()
+{
+	if (!sys().arm7SCFGLocked())
+	{
+		rebootDSiMenuPP();
+	}
+	loadROMselect();
+}
 void opt_reset_subtheme(int prev, int next)
 {
 	if (prev != next)
@@ -602,6 +577,33 @@ void opt_sound_freq_changed(bool prev, bool next)
 	}
 }
 
+void opt_reboot_system_menu()
+{
+	gui().onExit(launchSystemSettings).saveAndExit();
+}
+
+void opt_hiya_autoboot_toggle(bool prev, bool next)
+{
+	if (!next)
+	{
+		if (remove("sd:/hiya/autoboot.bin") != 0)
+		{
+		}
+		else
+		{
+			hiyaAutobootFound = false;
+		}
+	}
+	else
+	{
+		FILE *ResetData = fopen("sd:/hiya/autoboot.bin", "wb");
+		fwrite(autoboot_bin, 1, autoboot_bin_len, ResetData);
+		fclose(ResetData);
+		CIniFile hiyacfwini(hiyacfwinipath);
+		hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
+		hiyacfwini.SaveIniFile(hiyacfwinipath);
+	}
+}
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -751,7 +753,13 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	// bool hiyaAutobootFound = false;
+	if (!flashcardUsed && consoleModel < 2)
+	{
+		if (!access("sd:/hiya/autoboot.bin", F_OK))
+			hiyaAutobootFound = true;
+		else
+			hiyaAutobootFound = false;
+	}
 
 	int pressed = 0;
 #pragma endregion
@@ -788,18 +796,19 @@ int main(int argc, char **argv)
 				{0, 1, 2, 3})
 
 		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
-
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
-
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
-
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
-
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-
-		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false});
+		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false})
+		// Actions do not have to bound to an object.
+		// todo: only show these options for DSi consoles.
+		.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {ms().getAppName(), "System Menu"}, {true, false})
+		.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
+	using TROMReadLED = BootstrapSettings::TROMReadLED;
+	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
 
 	gamesPage
 		.option(STR_LANGUAGE,
@@ -826,33 +835,47 @@ int main(int argc, char **argv)
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
-		//.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::b)
+		.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+				{TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
 		.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq, opt_sound_freq_changed), {"32.73 kHz", "47.61 kHz"}, {true, false})
-		.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {"Direct", "Reboot"},
-			 {true, false})
-		//.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1, )
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool(&ms().bootstrapFile), {"Release", "Nightly"},
-				{true, false});
-			SettingsGUI gui;
-	gui.addPage(guiPage)
-		.addPage(gamesPage)
-		// Prep and show the firs page.
-		.show();
+		.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
+				{true, false})
 
+		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
+				Option::Int(&bs().bstrap_loadingScreen),
+				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe"},
+				{TLoadingScreen::ELoadingNone,
+				 TLoadingScreen::ELoadingRegular,
+				 TLoadingScreen::ELoadingPong,
+				 TLoadingScreen::ELoadingTicTacToe})
+
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
+				Option::Bool(&ms().bootstrapFile),
+				{STR_RELEASE, STR_NIGHTLY},
+				{true, false})
+
+		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Int(&bs().bstrap_loadingScreen), {STR_ON, STR_OFF}, {true, false});
+
+	gui()
+		.addPage(guiPage)
+		.addPage(gamesPage)
+		.onExit(defaultExitHandler)
+		// Prep and show the first page.
+		.show();
 	//	stop();
 	while (1)
 	{
-
 		if (screenmode == 1)
 		{
 
-			if (!gui.isExited())
+			if (!gui().isExited())
 			{
 				snd().playBgMusic();
 			}
 
-			gui.draw();
+			gui().draw();
 
 			// printLarge(false, 6, 1, "Testing..");
 			// for (int i = 0; i < page.options().size(); i++)
@@ -873,7 +896,7 @@ int main(int argc, char **argv)
 				swiWaitForVBlank();
 			} while (!pressed);
 
-			gui.processInputs(pressed);
+			gui().processInputs(pressed);
 
 #pragma region settings
 			// if (subscreenmode == 4) {
@@ -1532,11 +1555,6 @@ int main(int argc, char **argv)
 			// 	}
 			// } else {
 			// 	pressed = 0;
-
-			// 	if (!flashcardUsed && consoleModel < 2) {
-			// 		if (!access("sd:/hiya/autoboot.bin", F_OK)) hiyaAutobootFound = true;
-			// 		else hiyaAutobootFound = false;
-			// 	}
 
 			// 	if (!menuprinted) {
 			// 		// Clear the screen so it doesn't over-print

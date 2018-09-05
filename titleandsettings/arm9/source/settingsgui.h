@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "settingspage.h"
 #include "graphics/fontHandler.h"
+#include "common/singleton.h"
+
 #define MAX_ELEMENTS 9
 
 class SettingsGUI
@@ -34,6 +36,14 @@ public:
    */
   bool isExited() { return _isExited; }
 
+  /**
+   * Saves settings and prepares to exit the GUI.
+   * This function writes settings to file and
+   * freezes the GUI, but does not actually
+   * reboot. To reboot, set the exit callback
+   * using onExit.
+   */
+  void saveAndExit();
 private:
 
   /**
@@ -134,14 +144,7 @@ private:
    */
   void setOptionPrev() { rotateOptionValue(-1); }
 
-  /**
-   * Saves settings and prepares to exit the GUI.
-   * This function writes settings to file and
-   * freezes the GUI, but does not actually
-   * reboot. To reboot, set the exit callback
-   * using onExit.
-   */
-  void saveAndExit();
+
 public:
 
   /**
@@ -168,9 +171,10 @@ public:
    * 
    * Do reboots, and any necessary cleanup here.
    */
-  SettingsGUI &onExit(std::function<void(void)>& callback)  
+  SettingsGUI &onExit(std::function<void(void)> callback)  
   {
     _exitCallback = callback;
+    return *this;
   }
 private:
 
@@ -218,5 +222,9 @@ private:
 
   std::function<void(void)> _exitCallback;
 };
+
+
+typedef singleton<SettingsGUI> settingsGui_s;
+inline SettingsGUI &gui() { return settingsGui_s::instance(); }
 
 #endif

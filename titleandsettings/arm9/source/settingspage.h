@@ -15,9 +15,9 @@ typedef const char *cstr;
  * \brief Represents a settings option with an associated INI 
  *        entry that can be displayed to the user.
  * 
- * Options can have one of Boolean, Integer, or String Actions 
- * that "act", or modify directly the value at a given pointer 
- * with a corresponding. 
+ * Options can have one of Nothing, Boolean, Integer, or String 
+ * Actions that "act", or modify directly the value at a given 
+ * pointer.
  * 
  * While it is possible to, and indeed Action does do direct ma-
  * nipulation of pointers, Option comes with it a way to define
@@ -61,6 +61,62 @@ public:
   public:
     virtual std::unique_ptr<Option> sub() = 0;
     virtual bool has_sub() = 0;
+  };
+
+  /* \brief Represents an action with no valid selections.
+   * Although the Nul action can not modify data, it is
+   * still a first-class Action, with changed handlers and
+   * option generators that can be used as usual.
+   */
+  class Nul : public Sub
+  {
+  public:
+    typedef std::optional<Option> (*OptionGenerator_Nul)(void);
+    typedef void (*OptionChangedHandler_Nul)(void);
+
+    Nul()
+        : _generator(nullptr), _changed(nullptr){};
+
+    Nul(const OptionGenerator_Nul generator, const OptionChangedHandler_Nul changed)
+        : _generator(generator), _changed(changed)
+    {
+      _generator = generator;
+      _changed = changed;
+    };
+
+    Nul(const OptionGenerator_Nul generator)
+        : _generator(generator), _changed(nullptr)
+    {
+      _generator = generator;
+    };
+
+    Nul(const OptionChangedHandler_Nul changed)
+        : _generator(nullptr), _changed(changed)
+    {
+      _changed = changed;
+    };
+
+    ~Nul() {}
+
+    std::unique_ptr<Option> sub()
+    {
+      if (!_generator)
+        return nullptr;
+      auto option = _generator();
+      if (!option.has_value())
+        return nullptr;
+      return std::make_unique<Option>(*option);
+    }
+    bool has_sub() { return _generator != nullptr; }
+    void set()
+    {
+      if (_changed)
+        _changed();
+    };
+
+  private:
+    OptionGenerator_Nul _generator;
+    OptionChangedHandler_Nul _changed;
   };
 
   /**
@@ -231,7 +287,7 @@ public:
         _changed(std::string(*_pointer), value);
       (*_pointer) = value;
     };
-    
+
     std::string &get() { return *_pointer; };
     std::unique_ptr<Option> sub()
     {
@@ -260,7 +316,7 @@ public:
    * can not be Option::Sub without matching
    * the variant type.
    */
-  typedef std::variant<Bool, Int, Str> Action;
+  typedef std::variant<Bool, Int, Str, Nul> Action;
 
 public:
   /**
@@ -338,6 +394,10 @@ public:
       return *action;
     }
     if (auto action = std::get_if<Str>(&_action))
+    {
+      return *action;
+    }
+    if (auto action = std::get_if<Nul>(&_action))
     {
       return *action;
     }

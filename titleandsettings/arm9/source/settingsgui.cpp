@@ -8,6 +8,9 @@
 #include <maxmod9.h>
 #include "soundeffect.h"
 #include "language.h"
+#include "bootstrapsettings.h"
+
+// Screen offsets for scrollbar 
 #define CURSOR_MIN 30
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
@@ -161,7 +164,7 @@ void SettingsGUI::drawSub()
     printSmall(false, 254, (scrollSections * (selected)) + CURSOR_MIN, "|");
 
     printLarge(false, 6, 1, _subOption->displayName().c_str());
-    printSmallCentered(false, 173, "DSiMenu++");
+    printSmallCentered(false, 173, ms().getAppName());
 }
 
 void SettingsGUI::drawTopText()
@@ -176,9 +179,7 @@ void SettingsGUI::rotatePage(int rotateAmount)
 {
     int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
     _selectedPage = pageIndex;
-    nocashMessage("Successfully got page index.");
     _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
-    nocashMessage("Successfully got bottom cursor.");
     _topCursor = 0;
     _topText.clear();
     _selectedOption = 0;
@@ -210,8 +211,12 @@ void SettingsGUI::rotateOptionValue(int rotateAmount)
 
     if (auto action = std::get_if<Option::Str>(&selectedOption.action()))
     {
-        nocashMessage(*std::get_if<cstr>(&nextValue));
         action->set(*std::get_if<cstr>(&nextValue));
+    }
+
+    if (auto action = std::get_if<Option::Nul>(&selectedOption.action()))
+    {
+        action->set();
     }
     clearText();
 }
@@ -290,6 +295,10 @@ void SettingsGUI::rotateOption(int rotateAmount)
                 int value = *std::get_if<int>(&nextValue);
                 subaction->set(value);
             }
+             if (auto subaction = std::get_if<Option::Nul>(&sub.action()))
+            {
+                subaction->set();
+            }
         }
     }
 
@@ -306,11 +315,15 @@ void SettingsGUI::saveAndExit()
     for (int i = 0; i < 30; i++)
         swiWaitForVBlank();
     ms().saveSettings();
+    bs().saveSettings();
     _isSaved = true;
-
+    draw();
     for (int i = 0; i < 30; i++)
         swiWaitForVBlank();
     snd().stopBgMusic();
-    if (_exitCallback)
+    
+    if (_exitCallback != nullptr) {
+        
         _exitCallback();
+    }
 }

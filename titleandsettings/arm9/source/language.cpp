@@ -6,8 +6,8 @@
 #include <unistd.h>
 
 #include "common/inifile.h"
+#include "common/dsimenusettings.h"
 
-extern int appName;	// 0 = DSiMenu++, 1 = SRLoader, 2 = DSisionX
 
 // Strings
 std::string STR_SAVING_SETTINGS = "STR_SAVING_SETTINGS";
@@ -173,10 +173,13 @@ std::string STR_R4_THEME11 = "STR_R4_THEME11";
 std::string STR_R4_THEME12 = "STR_R4_THEME12";
 std::string STR_R4_THEME13 = "STR_R4_THEME13";
 
+std::string STR_DEFAULT_LAUNCHER = "STR_DEFAULT_LAUNCHER";
+std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = "STR_DESCRIPTION_DEFAULT_LAUNCHER_1";
+
+
 
 const char* languageIniPath;
 
-extern int guiLanguage;
 int setLanguage = 0;
 
 /**
@@ -185,13 +188,7 @@ int setLanguage = 0;
  */
 void langInit(void)
 {
-	if (guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = guiLanguage;
-	}
-
-	switch (setLanguage) {
+	switch (ms().getGuiLanguage()) {
 		case 0:
 		default:
 			languageIniPath = "nitro:/languages/japanese.ini";
@@ -225,7 +222,7 @@ void langInit(void)
 	// GUI settings
 	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "Theme");
 	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup.");
-	switch (appName) {
+	switch (ms().appName) {
 		case 0:
 		default:
 			STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "DSiMenu++ logo on startup");
@@ -248,7 +245,7 @@ void langInit(void)
 	STR_SHOW = languageini.GetString("LANGUAGE", "SHOW", "Show");
 	STR_HIDE = languageini.GetString("LANGUAGE", "HIDE", "Hide");
 
-	switch (appName) {
+	switch (ms().appName) {
 		case 0:
 		default:
 			STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in DSiMenu++\nPress A for sub-themes.");
@@ -269,7 +266,7 @@ void langInit(void)
 	STR_DESCRIPTION_LASTPLAYEDROM_3 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_3", "");
 	STR_DESCRIPTION_LASTPLAYEDROM_4 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_4", "");
 
-	switch (appName) {
+	switch (ms().appName) {
 		case 0:
 		default:
 			STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The DSiMenu++ logo will be\nshown when you start\nDSiMenu++");
@@ -306,7 +303,7 @@ void langInit(void)
 	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings\nrelated to the DSi system.");
 	STR_DESCRIPTION_SYSTEMSETTINGS_2 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_2", "");
 
-	switch (appName) {
+	switch (ms().appName) {
 		case 0:
 		default:
 			STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start DSiMenu++ on boot, instead\nof the regular DSi Menu.");
@@ -430,4 +427,19 @@ void langInit(void)
 	STR_R4_THEME11 = languageini.GetString("LANGUAGE", "R4_THEME11", "Christmas tree");
 	STR_R4_THEME12 = languageini.GetString("LANGUAGE", "R4_THEME12", "Drawn symbol");
 	STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "Blue moon");
+
+	STR_DEFAULT_LAUNCHER = languageini.GetString("LANGUAGE", "DEFAULT_LAUNCHER", "Default launcher");
+	switch (ms().appName) {
+		case 0:
+		default:
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_DSIMENUPP", "Launch Nintendo DSi Menu\nor DSiMenu++ on boot.");
+			break;
+		case 1:
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_SRLOADER", "Launch Nintendo DSi Menu\nor SRLoader on boot.");
+			break;
+		case 2:
+			STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_DSISIONX", "Launch Nintendo DSi Menu\nor DSisionX on boot.");
+			break;
+	}
+
 }

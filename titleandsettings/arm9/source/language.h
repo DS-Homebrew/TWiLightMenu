@@ -166,6 +166,9 @@ extern std::string STR_R4_THEME11;
 extern std::string STR_R4_THEME12;
 extern std::string STR_R4_THEME13;
 
+extern std::string STR_DEFAULT_LAUNCHER;
+extern std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1;
+
 
 /**
  * Initialize translations.

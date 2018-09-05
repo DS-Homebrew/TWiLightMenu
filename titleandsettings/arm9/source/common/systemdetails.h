@@ -17,6 +17,7 @@ class SystemDetails
         bool fatInitOk() { return _fatInitOk; }
         bool useNitroFS() { return _nitroFsInitOk; }
         void initFilesystem(const char *nitrofsPath, const char *runningPath = NULL);
+      
     private:
         bool _arm7SCFGLocked;
         bool _flashcardUsed;
