@@ -168,12 +168,12 @@ void loadROMselect()
 	// music = false;
 	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-	
+
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
-			fifoSendValue32(FIFO_USER_07, 2);
-		else
-			fifoSendValue32(FIFO_USER_07, 1);
+		fifoSendValue32(FIFO_USER_07, 2);
+	else
+		fifoSendValue32(FIFO_USER_07, 1);
 	// if (soundfreqsettingChanged)
 	// {
 	// 	if (ms().soundfreq)
@@ -206,12 +206,12 @@ int lastRanROM()
 	// music = false;
 	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-	
+
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
-			fifoSendValue32(FIFO_USER_07, 2);
-		else
-			fifoSendValue32(FIFO_USER_07, 1);
+		fifoSendValue32(FIFO_USER_07, 2);
+	else
+		fifoSendValue32(FIFO_USER_07, 1);
 
 	// if (soundfreqsettingChanged)
 	// {
@@ -498,7 +498,6 @@ int main(int argc, char **argv)
 
 	sys().initFilesystem("/_nds/dsimenuplusplus/main.srldr");
 	ms();
-	
 
 	defaultExceptionHandler();
 
@@ -572,7 +571,7 @@ int main(int argc, char **argv)
 	snd().init();
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-	
+
 	//ms().gotosettings = true;
 	if (ms().gotosettings)
 	{
@@ -720,7 +719,8 @@ int main(int argc, char **argv)
 					{true, false});
 	}
 
-	if(soundfreqsetting) {
+	if (soundfreqsetting)
+	{
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"32.73 kHz", "47.61 kHz"}, {true, false});
 	}
 	if (isDSiMode_partial())
