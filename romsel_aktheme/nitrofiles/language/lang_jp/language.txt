@@ -1,5 +1,5 @@
 ﻿[font]
-main = wenquanyi_9pt.pcf
+main = tahoma.pcf
 language = 3
 
 [start menu]
