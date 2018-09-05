@@ -129,8 +129,7 @@ void SettingsGUI::draw()
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
 
         printSmall(false, 12, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].displayName().c_str());
-
-        if (selected < 0) break;
+        if (selected < 0 ) continue;
         printSmall(false, SCREEN_WIDTH - 12 - labelWidth, 30 + (i - _topCursor) * 14, _pages[_selectedPage].options()[i].labels()[selected].c_str());
     }
 
