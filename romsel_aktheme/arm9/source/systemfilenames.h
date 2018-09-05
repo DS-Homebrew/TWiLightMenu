@@ -58,10 +58,10 @@
 #define SFN_GBAFRAME                SFN_UI_DIRECTORY"/gbaframe.bmp"
 #define SFN_UI_ICONS_DIRECTORY      SFN_UI_DIRECTORY"/icons/"
 
-#define SFN_LANGUAGE_DIRECTORY      SFN_SYSTEM_DIR"language/"
+#define SFN_LANGUAGE_DIRECTORY      "nitro:/language/"
 #define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
 
-#define SFN_FONTS_DIRECTORY         SFN_SYSTEM_DIR"fonts/"
+#define SFN_FONTS_DIRECTORY         "nitro:/fonts/"
 #define SFN_DEFAULT_FONT            "tahoma.pcf"
 #define SFN_FALLBACK_FONT           "nitro:/fonts/tahoma.pcf"
 
