@@ -51,7 +51,7 @@ extern int startMenu_cursorPosition;
 extern int theme;
 extern bool useGbarunner;
 
-extern bool flashcardUsed;
+extern bool flashcardFound(void);
 extern bool animateDsiIcons;
 
 extern bool showbubble;
@@ -737,7 +737,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 		if (startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
 		} else if (startMenu_cursorPosition == 1) {
-			if (!flashcardUsed) {
+			if (!flashcardFound()) {
 				writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
 			} else {
 				if (useGbarunner) {

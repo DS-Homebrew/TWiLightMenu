@@ -76,7 +76,7 @@ extern int cursorPosition;
 extern int pagenum;
 extern int file_count;
 
-extern bool flashcardUsed;
+extern bool flashcardFound(void);
 
 std::string pergamefilepath;
 
@@ -98,7 +98,7 @@ char gameTIDText[16];
 void loadPerGameSettings (std::string filename) {
 	pergamefilepath = "sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini";
 	CIniFile pergameini( pergamefilepath );
-	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", flashcardUsed);	// Homebrew only
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", flashcardFound());	// Homebrew only
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
@@ -125,7 +125,7 @@ void perGameSettings (std::string filename) {
 	int pressed = 0;
 
 	clearText();
-	if (!flashcardUsed) perGameSettingsButtons = true;
+	if (isDSiMode_partial()) perGameSettingsButtons = true;
 	showdialogbox = true;
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
@@ -338,5 +338,5 @@ void perGameSettings (std::string filename) {
 	clearText();
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
-	if (!flashcardUsed) perGameSettingsButtons = false;
+	if (isDSiMode_partial()) perGameSettingsButtons = false;
 }
