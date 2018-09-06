@@ -48,7 +48,7 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
@@ -61,7 +61,7 @@ void stop(void)
 	//---------------------------------------------------------------------------------
 	while (1)
 	{
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 }
 
@@ -78,7 +78,7 @@ void doPause()
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	scanKeys();
 }
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 		timer().updateFps();
 		INPUT &inputs = updateInput();
 		processInput(inputs);
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 		windowManager().update();
 		gdi().present(GE_MAIN);
 	}

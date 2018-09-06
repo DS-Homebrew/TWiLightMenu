@@ -698,7 +698,7 @@ void Gdi::present(GRAPHICS_ENGINE engine)
 //special version for window switching
 void Gdi::present(void)
 {
-    swiIntrWait(0, 1);
+    swiWaitForVBlank();
     dmaCopyWordsGdi(3, _bufferMain2, _bufferMain1, 256 * 192 * 2);
     dmaCopyWordsGdi(3, _bufferMain2 + (256 * 192), _bufferMain1 + (1 << 16), 256 * 192 * 2);
     fillMemory((void *)_bufferMain2, 256 * 192 * 4, 0);

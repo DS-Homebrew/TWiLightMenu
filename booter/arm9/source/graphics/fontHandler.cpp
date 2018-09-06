@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 
-#include <gl2d.h>
+#include "gl2d.h"
 #include <list>
 #include <stdio.h>
 #include <nds/interrupts.h>
@@ -181,5 +181,5 @@ TextEntry *getPreviousTextEntry(bool top)
 void waitForPanesToClear()
 {
 	while (panes.size() > 0)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 }

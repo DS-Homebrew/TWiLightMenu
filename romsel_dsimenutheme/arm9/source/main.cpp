@@ -567,7 +567,7 @@ void SetMPUSettings(const char* filename) {
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 }
 
@@ -582,7 +582,7 @@ void doPause() {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	scanKeys();
 }
@@ -663,7 +663,7 @@ void dsCardLaunch() {
 	}
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 //---------------------------------------------------------------------------------
@@ -683,7 +683,7 @@ int main(int argc, char **argv) {
 	// iprintf("Hello World");
 	
 	// while(1) {
-	// 	swiIntrWait(0, 1);
+	// 	swiWaitForVBlank();
 	// }
 	// return 0;
 
@@ -711,12 +711,12 @@ int main(int argc, char **argv) {
 		fontInit();
 		whiteScreen = false;
 		fadeType = true;
-		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
 		if (!dropDown && theme == 0) {
 			dropDown = true;
-			for (int i = 0; i < 72; i++) swiIntrWait(0, 1);
+			for (int i = 0; i < 72; i++) swiWaitForVBlank();
 		} else {
-			for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 		showbubble = true;
 		printLargeCentered(false, 32, "fatInitDefault failed!");
@@ -730,7 +730,7 @@ int main(int argc, char **argv) {
 			{
 				scanKeys();
 				pressed = keysDownRepeat();
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 			}
 			while (!pressed);
 
@@ -876,7 +876,7 @@ int main(int argc, char **argv) {
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
@@ -949,7 +949,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					clearText();
 				}
 
@@ -971,7 +971,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 					clearText();
 				}
 
@@ -997,14 +997,14 @@ int main(int argc, char **argv) {
 				// Wait for X button hold
 				while (1)
 				{
-					swiIntrWait(0, 1);
+					swiWaitForVBlank();
 					scanKeys();
 					if (keysHeld() & KEY_X) break;
 				}
 
 				clearText();
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			// Launch .nds directly or via nds-bootstrap
@@ -1343,7 +1343,7 @@ int main(int argc, char **argv) {
 			}
 
 			// while (1) {
-			// 	swiIntrWait(0, 1);
+			// 	swiWaitForVBlank();
 			// 	scanKeys();
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }

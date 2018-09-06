@@ -179,5 +179,5 @@ TextEntry *getPreviousTextEntry(bool top)
 void waitForPanesToClear()
 {
 	while (panes.size() > 0)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 }

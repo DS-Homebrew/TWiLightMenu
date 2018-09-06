@@ -316,13 +316,13 @@ void SettingsGUI::saveAndExit()
     draw();
 
     for (int i = 0; i < 30; i++)
-        swiIntrWait(0, 1);
+        swiWaitForVBlank();
     ms().saveSettings();
     bs().saveSettings();
     _isSaved = true;
     draw();
     for (int i = 0; i < 30; i++)
-        swiIntrWait(0, 1);
+        swiWaitForVBlank();
     snd().stopBgMusic();
 
     if (_exitCallback != nullptr)

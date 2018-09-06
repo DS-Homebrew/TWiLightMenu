@@ -122,8 +122,8 @@ void vramcpy_ui (void* dest, const void* src, int size)
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
-	swiIntrWait(0, 1);
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
 }
 
 // Ported from PAlib (obsolete)
@@ -159,7 +159,7 @@ void initSubSprites(void)
 			++id;
 		}
 
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
 
 	oamUpdate(&oamSub);
 }

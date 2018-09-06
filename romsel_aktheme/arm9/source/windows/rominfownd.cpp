@@ -107,7 +107,7 @@ void RomInfoWnd::draw()
 
     Form::draw();
     // Powersaving loop
-    swiIntrWait(0, 1);
+    swiWaitForVBlank();
 }
 
 bool RomInfoWnd::process(const akui::Message &msg)

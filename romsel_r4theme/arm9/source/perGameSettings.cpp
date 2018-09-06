@@ -271,7 +271,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		} while (!pressed);
 
 		if (isHomebrew == 1) {

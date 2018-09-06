@@ -113,7 +113,7 @@ void SettingWnd::draw(void)
 {
   _renderDesc.draw(windowRectangle(), _engine);
   Form::draw();
-  swiIntrWait(0, 1);
+  swiWaitForVBlank();
 }
 
 bool SettingWnd::process(const akui::Message &msg)

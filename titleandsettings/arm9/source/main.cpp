@@ -93,7 +93,7 @@ void stop(void)
 	//---------------------------------------------------------------------------------
 	while (1)
 	{
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 }
 
@@ -130,14 +130,14 @@ void launchSystemSettings()
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	renderScreens = false;
 	snd().stopBgMusic();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	dsiLaunchSystemSettings();
 
 	for (int i = 0; i < 15; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 }
 
 void rebootDSiMenuPP()
@@ -145,12 +145,12 @@ void rebootDSiMenuPP()
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	snd().stopBgMusic();
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
 	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
 	for (int i = 0; i < 15; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 }
 
 void loadROMselect()
@@ -158,7 +158,7 @@ void loadROMselect()
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
@@ -196,7 +196,7 @@ int lastRanROM()
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
@@ -560,7 +560,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	loadAkThemeList();
 
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
 
 	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	// if (arm7_SNDEXCNT != 0) stop();
@@ -611,7 +611,7 @@ int main(int argc, char **argv)
 
 		for (int i = 0; i < 60 * 3; i++)
 		{
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		}
 
 		scanKeys();
@@ -621,7 +621,7 @@ int main(int argc, char **argv)
 			fadeType = false;
 			for (int i = 0; i < 30; i++)
 			{
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 			}
 			graphicsInit();
 			fontInit();
@@ -643,7 +643,7 @@ int main(int argc, char **argv)
 			langInit();
 			for (int i = 0; i < 60; i++)
 			{
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 			}
 		}
 	}
@@ -817,7 +817,7 @@ int main(int argc, char **argv)
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 			} while (!pressed);
 
 			gui().processInputs(pressed, touch);

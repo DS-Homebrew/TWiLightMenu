@@ -293,7 +293,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		} while (!pressed);
 
 		if (pressed & KEY_UP) {
@@ -352,12 +352,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printLargeCentered(false, 84, "Error!");
 				printSmallCentered(false, 104, "This game cannot be launched.");
 				printSmallCentered(false, 118, "A: OK");
-				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pressed = 0;
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
-					swiIntrWait(0, 1);
+					swiWaitForVBlank();
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
 			} else {
@@ -365,7 +365,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {
-					swiIntrWait(0, 1);
+					swiWaitForVBlank();
 				}
 				cursorPosition = fileOffset;
 				pagenum = 0;
@@ -437,13 +437,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				printSmallCentered(false, 104, "Delete this game?");
 			}
-			for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
+			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 			printSmallCentered(false, 118, "A: Yes  B: No");
 			while (1) {
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
-					swiIntrWait(0, 1);
+					swiWaitForVBlank();
 				} while (!pressed);
 				
 				if (pressed & KEY_A) {

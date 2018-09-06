@@ -100,7 +100,7 @@ void initSubSprites(void)
 			++id;
 		}
 
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
 
 	oamUpdate(&oamSub);
 }

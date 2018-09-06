@@ -27,7 +27,7 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <gl2d.h>
+#include "gl2d.h"
 
 #include "graphics/graphics.h"
 
@@ -43,7 +43,7 @@ using namespace std;
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 }
 
