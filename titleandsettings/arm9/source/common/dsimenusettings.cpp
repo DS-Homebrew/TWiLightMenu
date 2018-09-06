@@ -187,6 +187,6 @@ const char* DSiMenuPlusPlusSettings::getAppName()
         case ENameSRLoader:
             return "SRLoader";
         case ENameDSisionX:
-            return "DSisiionX";
+            return "DSisionX";
     }
 }
