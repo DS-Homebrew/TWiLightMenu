@@ -558,6 +558,7 @@ int main(int argc, char **argv)
 	std::string filename;
 
 	ms().loadSettings();
+	bs().loadSettings();
 	loadAkThemeList();
 
 	swiWaitForVBlank();
