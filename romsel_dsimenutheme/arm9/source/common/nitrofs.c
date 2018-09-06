@@ -52,7 +52,7 @@
 
 #include <string.h>
 #include <errno.h>
-#include "nds.h"
+#include <nds.h>
 #include "nitrofs.h"
 
 //This seems to be a typo! memory.h has REG_EXEMEMCNT
