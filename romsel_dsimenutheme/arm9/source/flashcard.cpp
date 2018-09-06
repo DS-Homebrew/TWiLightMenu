@@ -12,6 +12,8 @@ bool flashcardFound(void) {
 }
 
 void flashcardInit(void) {
-	io_dldi_data = dldiLoadFromFile("sd:/_nds/test.dldi");
-	fatMountSimple("fat", &io_dldi_data->ioInterface);
+	if (!flashcardFound()) {
+		io_dldi_data = dldiLoadFromFile("sd:/_nds/test.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	}
 }
