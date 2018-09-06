@@ -74,8 +74,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
         useGbarunner = true;
     }
 
-	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
-    showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", 1);
+	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
+    showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
@@ -129,6 +129,9 @@ void DSiMenuPlusPlusSettings::saveSettings()
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+
+	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
+    settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
     settingsini.SetInt("SRLOADER", "THEME", theme);
