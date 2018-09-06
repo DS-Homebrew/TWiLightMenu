@@ -150,14 +150,6 @@ bool boostVram = false;
 bool soundFix = false;
 bool bstrap_asyncPrefetch = true;
 
-bool flashcardFound(void) {
-	if (access("fat:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
