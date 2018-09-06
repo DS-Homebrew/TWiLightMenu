@@ -417,9 +417,9 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 72; i++) swiWaitForVBlank();
+		for (int i = 0; i < 72; i++) swiIntrWait(0, 1);
 	} else {
-		for (int i = 0; i < 25; i++) swiWaitForVBlank();
+		for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 	}
 }
 
@@ -429,9 +429,9 @@ void displayNowLoading(void) {
 	fadeType = true;	// Fade in from white
 	printLargeCentered(false, 88, "Now Loading...");
 	nowLoadingDisplaying = true;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 	reloadFontPalettes();
-	for (int i = 0; i < 20; i++) swiWaitForVBlank();
+	for (int i = 0; i < 20; i++) swiIntrWait(0, 1);
 	showProgressIcon = true;
 	controlTopBright = false;
 }
@@ -574,13 +574,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (nowLoadingDisplaying) {
 			showProgressIcon = false;
 			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+			for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 			nowLoadingDisplaying = false;
 			clearText(false);
 		}
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
-		for (int i = 0; i < 5; i++) swiWaitForVBlank();
+		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
 		reloadIconPalettes();
 		reloadFontPalettes();
 		waitForFadeOut();
@@ -669,7 +669,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
-				swiWaitForVBlank();
+				swiIntrWait(0, 1);
 			}
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -793,7 +793,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					fadeType = false;	// Fade to white
 					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					}
 					music = false;
 					mmEffectCancelAll();
@@ -844,7 +844,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// Enter selected directory
 					mmEffectEx(&snd_select);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					pagenum = 0;
 					cursorPosition = 0;
 					titleboxXpos = 0;
@@ -871,7 +871,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_wrong);
 					clearText();
 					showdialogbox = true;
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 					printSmallCentered(false, 112, "This game cannot be launched");
 					if (flashcardUsed) {
@@ -884,11 +884,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					} while (!(pressed & KEY_A));
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < 15; i++) swiWaitForVBlank();
+					for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 				}
 				else
 				{
@@ -904,13 +904,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 						fadeSpeed = false;	// Slow fade speed
 						for (int i = 0; i < 5; i++) {
-							swiWaitForVBlank();
+							swiIntrWait(0, 1);
 						}
 					}
 					fadeType = false;	// Fade to white
 					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					}
 					music = false;
 					mmEffectCancelAll();
@@ -930,7 +930,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum != 0) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					pagenum -= 1;
 					cursorPosition = 0;
 					titleboxXpos = 0;
@@ -956,7 +956,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum*40) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					pagenum += 1;
 					cursorPosition = 0;
 					titleboxXpos = 0;
@@ -984,7 +984,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				mmEffectEx(&snd_switch);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				dsiWareList = !dsiWareList;
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
@@ -1001,7 +1001,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (startMenu) {
 					mmEffectEx(&snd_back);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiWaitForVBlank();
+					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 					startMenu = false;
 					if (settingsChanged) {
 						SaveSettings();
@@ -1016,13 +1016,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					whiteScreen = false;
 					fadeType = true;	// Fade in from white
-					for (int i = 0; i < 5; i++) swiWaitForVBlank();
+					for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
 					waitForFadeOut();
 				} else if (showDirectories) {
 					// Go up a directory
 					mmEffectEx(&snd_select);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiWaitForVBlank();
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					pagenum = 0;
 					cursorPosition = 0;
 					titleboxXpos = 0;
@@ -1050,7 +1050,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				clearText();
 				showdialogbox = true;
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition+1)+pagenum*40, file_count);
 				titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str());
@@ -1061,19 +1061,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} else {
 					printSmallCentered(false, 128, "delete this game?");
 				}
-				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+				for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
 				printSmall(false, 160, 166, "A: Yes");
 				printSmall(false, 208, 166, "B: No");
 				while (1) {
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					} while (!pressed);
 					
 					if (pressed & KEY_A) {
 						fadeType = false;	// Fade to white
-						for (int i = 0; i < 30; i++) swiWaitForVBlank();
+						for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 						whiteScreen = true;
 						remove(dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str()); // Remove game/folder
 						if (showBoxArt) clearBoxArt();	// Clear box art
@@ -1095,13 +1095,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				clearText();
 				showdialogbox = false;
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
 			if ((pressed & KEY_X) && startMenu && !flashcardUsed) {
 				mmEffectEx(&snd_back);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 				music = false;
 				mmEffectCancelAll();
 				if (settingsChanged) {
@@ -1125,7 +1125,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				mmEffectEx(&snd_switch);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				if (showBoxArt && !startMenu) clearBoxArt();	// Clear box art
 				startMenu = !startMenu;
 				if (settingsChanged) {
@@ -1142,7 +1142,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				whiteScreen = false;
 				fadeType = true;	// Fade in from white
-				for (int i = 0; i < 5; i++) swiWaitForVBlank();
+				for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
 				waitForFadeOut();
 			}
 
