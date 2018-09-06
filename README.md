@@ -3,7 +3,7 @@ DSiMenu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-b
 
 # Building
 
-Building this app by yourself requires devkitPRO with at least devkitARM r49. Make sure that grit and mmutil are installed.
+Building this app by yourself requires devkitPRO with devkitARM. Make sure that grit and mmutil are installed.
 
 # Building with Docker
 

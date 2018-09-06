@@ -1,4 +1,4 @@
-FROM devkitpro/devkitarm:latest
+FROM devkitpro/devkitarm:20180613
 # ADD libnds.tar /devkitpro
 RUN \
   apt-get update && \
