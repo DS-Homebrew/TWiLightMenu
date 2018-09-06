@@ -776,7 +776,7 @@ int main(int argc, char **argv)
 
 			.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
 					Option::Bool(&ms().bootstrapFile),
-					{STR_RELEASE, STR_NIGHTLY},
+					{STR_NIGHTLY, STR_RELEASE},
 					{true, false})
 
 			.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
