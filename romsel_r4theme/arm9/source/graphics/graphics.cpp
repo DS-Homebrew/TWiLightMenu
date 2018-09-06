@@ -20,7 +20,7 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 
@@ -122,8 +122,8 @@ void vramcpy_ui (void* dest, const void* src, int size)
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
-	swiWaitForVBlank();
-	swiWaitForVBlank();
+	swiIntrWait(0, 1);
+	swiIntrWait(0, 1);
 }
 
 // Ported from PAlib (obsolete)
@@ -159,7 +159,7 @@ void initSubSprites(void)
 			++id;
 		}
 
-	swiWaitForVBlank();
+	swiIntrWait(0, 1);
 
 	oamUpdate(&oamSub);
 }

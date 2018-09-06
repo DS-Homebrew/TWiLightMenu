@@ -81,7 +81,7 @@ void initSubSprites(void)
 			++id;
 		}
 
-	swiWaitForVBlank();
+	swiIntrWait(0, 1);
 
 	oamUpdate(&oamSub);
 }

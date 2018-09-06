@@ -25,8 +25,8 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_r4theme
 BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
+SOURCES		:=	source source/common source/graphics
+INCLUDES	:=	include source
 DATA		:=	data  
 NITRODATA	:=	nitrofiles
 GRAPHICS	:=  gfx

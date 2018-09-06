@@ -61,7 +61,7 @@ void stop(void)
 	//---------------------------------------------------------------------------------
 	while (1)
 	{
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 }
 
@@ -78,7 +78,7 @@ void doPause()
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 	scanKeys();
 }
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 		timer().updateFps();
 		INPUT &inputs = updateInput();
 		processInput(inputs);
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 		windowManager().update();
 		gdi().present(GE_MAIN);
 	}

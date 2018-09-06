@@ -125,7 +125,7 @@ int main() {
 			exitflag = true;
 		}
 		// fifocheck();
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	return 0;
 }

@@ -31,7 +31,7 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 #include "date.h"
 
@@ -271,7 +271,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiWaitForVBlank();
+			swiIntrWait(0, 1);
 		} while (!pressed);
 
 		if (isHomebrew == 1) {

@@ -90,7 +90,7 @@ using namespace std;
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 }
 
@@ -180,7 +180,7 @@ int lastRanROM() {
 				printf("Save file created!\n");
 				
 				for (int i = 0; i < 30; i++) {
-					swiWaitForVBlank();
+					swiIntrWait(0, 1);
 				}
 
 			}
@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
 
 	LoadSettings();
 	
-	swiWaitForVBlank();
+	swiIntrWait(0, 1);
 
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being ran from DSiWarehax or flashcard, then arm7 SCFG is locked.

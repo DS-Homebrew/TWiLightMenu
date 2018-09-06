@@ -43,7 +43,7 @@ using namespace std;
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 }
 

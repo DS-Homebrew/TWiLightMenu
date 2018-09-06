@@ -29,13 +29,13 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 #include "date.h"
 
 #include "graphics/graphics.h"
 
-#include "nitrofs.h"
+#include "common/nitrofs.h"
 #include "ndsheaderbanner.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -561,7 +561,7 @@ void SetMPUSettings(const char* filename) {
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 }
 
@@ -576,7 +576,7 @@ void doPause() {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 	scanKeys();
 }
@@ -657,7 +657,7 @@ void dsCardLaunch() {
 	}
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 }
 
 //---------------------------------------------------------------------------------
@@ -689,7 +689,7 @@ int main(int argc, char **argv) {
 		whiteScreen = false;
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 		stop();
 	}
 
@@ -770,7 +770,7 @@ int main(int argc, char **argv) {
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);
-				swiWaitForVBlank();
+				swiIntrWait(0, 1);
 			} while (!pressed);
 			
 			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
@@ -817,7 +817,7 @@ int main(int argc, char **argv) {
 						if (!flashcardUsed) {
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
+								swiIntrWait(0, 1);
 							}
 
 							launchType = 0;
@@ -834,7 +834,7 @@ int main(int argc, char **argv) {
 						// Switch to GBA mode
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
+							swiIntrWait(0, 1);
 						}
 
 						useBootstrap = true;
@@ -863,7 +863,7 @@ int main(int argc, char **argv) {
 
 			if ((pressed & KEY_B) && !flashcardUsed) {
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 				*(u16*)(0x02000304) = 0x1801;
 				*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
@@ -874,7 +874,7 @@ int main(int argc, char **argv) {
 				// Launch settings
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {
-					swiWaitForVBlank();
+					swiIntrWait(0, 1);
 				}
 
 				gotosettings = true;
@@ -946,7 +946,7 @@ int main(int argc, char **argv) {
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
 			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
@@ -1021,7 +1021,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, savecreated);
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
 				}
 
 				if (access(dsiWarePrvPath.c_str(), F_OK) && NDSHeader.prvSavSize > 0) {
@@ -1044,7 +1044,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, savecreated);
-					for (int i = 0; i < 60; i++) swiWaitForVBlank();
+					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
 				}
 
 				if (access("sd:/bootthis.dsi", F_OK)) {
@@ -1073,13 +1073,13 @@ int main(int argc, char **argv) {
 				// Wait for X button hold
 				while (1)
 				{
-					swiWaitForVBlank();
+					swiIntrWait(0, 1);
 					scanKeys();
 					if (keysHeld() & KEY_X) break;
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
 			// Launch .nds directly or via nds-bootstrap
@@ -1422,7 +1422,7 @@ int main(int argc, char **argv) {
 			}
 
 			// while (1) {
-			// 	swiWaitForVBlank();
+			// 	swiIntrWait(0, 1);
 			// 	scanKeys();
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }

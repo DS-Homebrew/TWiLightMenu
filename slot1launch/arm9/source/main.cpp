@@ -77,7 +77,7 @@ int main() {
 			// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
 			// setCpuClock(false);
 			REG_SCFG_CLK = 0x80;
-			swiWaitForVBlank();
+			swiIntrWait(0, 1);
 		}
 
 		if(settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0) == 1) {
@@ -107,13 +107,13 @@ int main() {
 	fifoWaitValue32(FIFO_USER_03);
 
 	// Wait for card to stablize before continuing
-	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) {  swiIntrWait(0, 1); }
 
 	sysSetCardOwner (BUS_OWNER_ARM9);
 
 	getHeader (ndsHeader);
 
-	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) { swiIntrWait(0, 1); }
 	
 	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
 
