@@ -503,7 +503,7 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
 
     if (err)
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "ROM Start Error"), errorString, MB_OK);
         progressWnd().hide();
     }
@@ -549,7 +549,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     int err = config.launch();
     if (err)
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
         progressWnd().hide();
     }
@@ -560,7 +560,7 @@ void MainWnd::bootFlashcard(const std::string &fullPath)
     int err = loadGameOnFlashcard(fullPath.c_str());
     if (err)
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "Flashcard Error"), errorString, MB_OK);
     }
 }
@@ -574,7 +574,7 @@ void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
     int err = config.launch(argv.size(), argv.data());
     if (err)
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "Launch Error"), errorString, MB_OK);
         progressWnd().hide();
     }
@@ -716,7 +716,7 @@ void MainWnd::showSettings(void)
 
     if (int err = settingsLoader.launch())
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
     }
 }
@@ -733,7 +733,7 @@ void MainWnd::bootSlot1(void)
     LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
     if (int err = slot1Loader.launch())
     {
-       std::string errorString = formatString(LANG("game launch", "error"), err);
+       std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
     }
 }
@@ -755,7 +755,7 @@ void MainWnd::bootGbaRunner(void)
     BootstrapConfig gbaRunner(GBARUNNER_BOOTSTRAP, "", 0);
     if (int err = gbaRunner.launch())
     {
-        std::string errorString = formatString(LANG("game launch", "error"), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
     }
 }
