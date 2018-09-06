@@ -1,0 +1,5 @@
+# AKMenu Fonts
+
+There are prebuild PCF versions of these fonts in the `fonts` folder.
+
+To build these fonts from scratch, run `make` on a POSIX system with `bdftopcf`.

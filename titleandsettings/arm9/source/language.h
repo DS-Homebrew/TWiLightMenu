@@ -26,37 +26,22 @@ extern std::string STR_SHOW;
 extern std::string STR_HIDE;
 
 extern std::string STR_DESCRIPTION_THEME_1;
-extern std::string STR_DESCRIPTION_THEME_2;
 
 extern std::string STR_DESCRIPTION_LASTPLAYEDROM_1;
-extern std::string STR_DESCRIPTION_LASTPLAYEDROM_2;
-extern std::string STR_DESCRIPTION_LASTPLAYEDROM_3;
-extern std::string STR_DESCRIPTION_LASTPLAYEDROM_4;
 
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
-extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_2;
-extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_3;
 
 extern std::string STR_DESCRIPTION_DIRECTORIES_1;
-extern std::string STR_DESCRIPTION_DIRECTORIES_2;
-extern std::string STR_DESCRIPTION_DIRECTORIES_3;
 
 extern std::string STR_DESCRIPTION_BOXART_1;
-extern std::string STR_DESCRIPTION_BOXART_2;
 
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_1;
-extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_2;
-extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_3;
 
 extern std::string STR_DESCRIPTION_STARTBUTTONLAUNCH_1;
-extern std::string STR_DESCRIPTION_STARTBUTTONLAUNCH_2;
-extern std::string STR_DESCRIPTION_STARTBUTTONLAUNCH_3;
 
 extern std::string STR_DESCRIPTION_SYSTEMSETTINGS_1;
-extern std::string STR_DESCRIPTION_SYSTEMSETTINGS_2;
 
 extern std::string STR_DESCRIPTION_REPLACEDSIMENU_1;
-extern std::string STR_DESCRIPTION_REPLACEDSIMENU_2;
 
 extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 
@@ -90,49 +75,32 @@ extern std::string STR_RELEASE;
 extern std::string STR_NIGHTLY;
 
 extern std::string STR_DESCRIPTION_LANGUAGE_1;
-extern std::string STR_DESCRIPTION_LANGUAGE_2;
-extern std::string STR_DESCRIPTION_LANGUAGE_3;
 
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
-extern std::string STR_DESCRIPTION_CPUSPEED_2;
 
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
-extern std::string STR_DESCRIPTION_VRAMBOOST_2;
 
 extern std::string STR_DESCRIPTION_SOUNDFIX_1;
-extern std::string STR_DESCRIPTION_SOUNDFIX_2;
 
 extern std::string STR_DESCRIPTION_DEBUG_1;
-extern std::string STR_DESCRIPTION_DEBUG_2;
 
 extern std::string STR_DESCRIPTION_LOGGING_1;
-extern std::string STR_DESCRIPTION_LOGGING_2;
 
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
 
 extern std::string STR_DESCRIPTION_ASYNCPREFETCH_1;
-extern std::string STR_DESCRIPTION_ASYNCPREFETCH_2;
-extern std::string STR_DESCRIPTION_ASYNCPREFETCH_3;
 
 extern std::string STR_DESCRIPTION_SNDFREQ_1;
-extern std::string STR_DESCRIPTION_SNDFREQ_2;
 
 extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1;
-extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_2;
-extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_3;
-extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_4;
 
 extern std::string STR_DESCRIPTION_LOADINGSCREEN_1;
-extern std::string STR_DESCRIPTION_LOADINGSCREEN_2;
 
 extern std::string STR_DESCRIPTION_BOOTSTRAP_1;
-extern std::string STR_DESCRIPTION_BOOTSTRAP_2;
 
 extern std::string STR_DESCRIPTION_FLASHCARD_1;
-extern std::string STR_DESCRIPTION_FLASHCARD_2;
 
 extern std::string STR_DESCRIPTION_GBARUNNER2_1;
-extern std::string STR_DESCRIPTION_GBARUNNER2_2;
 
 // Flashcard settings
 extern std::string STR_FLASHCARD_SELECT;
@@ -141,8 +109,10 @@ extern std::string STR_AB_SETRETURN;
 
 // Sub-theme select
 extern std::string STR_SUBTHEMESEL_DSI;
-extern std::string STR_SUBTHEMESEL_3DS;
+
 extern std::string STR_SUBTHEMESEL_R4;
+extern std::string STR_SUBTHEMESEL_AK;
+
 extern std::string STR_AB_SETSUBTHEME;
 extern std::string STR_DSI_DARKMENU;
 extern std::string STR_DSI_NORMALMENU;
@@ -165,6 +135,18 @@ extern std::string STR_R4_THEME10;
 extern std::string STR_R4_THEME11;
 extern std::string STR_R4_THEME12;
 extern std::string STR_R4_THEME13;
+
+extern std::string STR_DEFAULT_LAUNCHER;
+extern std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1;
+
+extern std::string STR_12_HOUR_CLOCK;
+extern std::string STR_DESCRIPTION_12_HOUR_CLOCK;
+
+extern std::string STR_AK_ZOOMING_ICON;
+extern std::string STR_DESCRIPTION_AK_ZOOMING_ICON;
+
+extern std::string STR_AK_SCROLLSPEED;
+extern std::string STR_DESCRIPTION_AK_SCROLLSPEED;
 
 
 /**

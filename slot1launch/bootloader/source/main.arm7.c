@@ -53,6 +53,7 @@
 
 
 extern u32 language;
+extern u32 sdAccess;
 extern u32 twlMode;
 extern u32 twlClock;
 extern u32 runCardEngine;
@@ -306,6 +307,10 @@ void arm7_main (void) {
 		} else {
 			REG_SCFG_CLK = 0x0180;
 		}
+	}
+	
+	if (!sdAccess) {
+		REG_SCFG_EXT = 0x93FBFB06;
 	}
 	
 	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs

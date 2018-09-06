@@ -65,7 +65,7 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
@@ -81,16 +81,16 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
-/**
- * Remove trailing slashes from a pathname, if present.
- * @param path Pathname to modify.
- */
-static void RemoveTrailingSlashes(std::string& path)
-{
-	while (!path.empty() && path[path.size()-1] == '/') {
-		path.resize(path.size()-1);
-	}
-}
+// /**
+//  * Remove trailing slashes from a pathname, if present.
+//  * @param path Pathname to modify.
+//  */
+// static void RemoveTrailingSlashes(std::string& path)
+// {
+// 	while (!path.empty() && path[path.size()-1] == '/') {
+// 		path.resize(path.size()-1);
+// 	}
+// }
 
 /**
  * Remove trailing spaces from a cheat code line, if present.
@@ -167,7 +167,6 @@ void LoadSettings(void) {
 
 	// UI settings.
 	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "");
-	RemoveTrailingSlashes(romfolder);
 	pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
 	cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
@@ -671,11 +670,22 @@ void dsCardLaunch() {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
-	// overwrite reboot stub identifier
+	//overwrite reboot stub identifier
+	
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+	
+	bool fatInited = fatInitDefault();
+
+	// consoleDemoInit();
+	// iprintf("Hello World");
+	
+	// while(1) {
+	// 	swiWaitForVBlank();
+	// }
+	// return 0;
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -696,7 +706,7 @@ int main(int argc, char **argv) {
 	
 	LoadColor();
 
-	if (!fatInitDefault()) {
+	if (!fatInited) {
 		graphicsInit();
 		fontInit();
 		whiteScreen = false;
@@ -742,7 +752,13 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (!access("fat:/", F_OK)) flashcardUsed = true;
+	if (access("fat:/", F_OK) == 0) {
+		flashcardUsed = true;
+	}
+	
+	if (access(settingsinipath, F_OK) != 0) {
+		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
 	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
 	

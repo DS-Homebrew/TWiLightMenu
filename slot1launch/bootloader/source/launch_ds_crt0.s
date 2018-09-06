@@ -2,6 +2,7 @@
 	.section ".init"
 	.global _start
 	.global language
+	.global sdAccess
 	.global twlMode
 	.global twlClock
 	.global runCardEngine
@@ -14,6 +15,8 @@ _start:
 	b	startUp
 
 language:
+	.word	0x00000000
+sdAccess:
 	.word	0x00000000
 twlMode:
 	.word	0x00000000

@@ -251,6 +251,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 
 		if (REG_SCFG_EXT != 0) {
 			*(u8*)(TWL_HEAD+0x1BF) = 0x00;		// Tell homebrew to use NTR touch
+		} else {
+			*(u8*)(TWL_HEAD+0x1BF) = 0x01;		// TWL touch, if in DSiWarehax
 		}
 
 		u32 ARM9i_SRC = *(u32*)(TWL_HEAD+0x1C0);

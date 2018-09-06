@@ -1,0 +1,491 @@
+﻿[font]
+main = tahoma.pcf
+language = 7
+
+[start menu]
+Start = MENÚ
+Copy = Copiar
+Cut = Cortar
+Paste = Pegar
+Delete = Borrar
+Save Type = Tipo de SAV
+Patches = Cfg. Parches
+Setting = Cfg. Sistema
+Info = Información
+Help = Ayuda
+More = Más ->
+3in1 = 3en1
+Cheats = Trucos
+Back = <- Atrás
+
+[message box]
+yes = Sí
+no = No
+ok = OK
+cancel = Cancelar
+
+[cheats]
+title = Trucos: SELECT = Guardar
+error_title = Error: 
+error_text = No hay archivo de trucos.
+selectrom = Por favor, seleccione un archivo .NDS
+noxml = Archivo de trucos XML no encontrado.
+ccexists = CC ya existe, ¿Crear uno nuevo?
+nonefound = No se encontraron trucos en la DB.
+xmlselect = Archivo de trucos:
+confirm = Confirmar
+confirm_rebuild = ¿Rehacer archivo .CC?
+invalid cheatdb = Archivo de trucos no válido.
+Rebuild = Rehacer
+Sel. DB = Sel. DB
+Cancel = Cancelar
+
+[progress window]
+processing save = Procesando, ¡¡NO Apague!!
+processing copy = Copiando, ¡¡NO Apague, %c=Cancelar!!
+first use sd = Comprobando MicroSD por primera vez...
+gba load = Cargando juego de GBA...
+gba save load = Cargando partida de GBA...
+gba save store = Procesando partida de GBA... ¡¡NO Apague!!
+erase nor = Limpiando Flash NOR... ¡¡NO Apague!!
+rebuilding cheat data = Rehaciendo el archivo de trucos.
+
+[copy file error]
+title = Error copiando archivo o carpeta
+text = El archivo o carpeta no existe.
+
+[copy file exists]
+title = Confirmación de Reemplazo de Fichero
+text = Ya existe un fichero con ese nombre, ¿Sobreescribir?
+
+[copy dest is directory]
+title = Error copiando archivo o carpeta
+text = Ya existe un directorio con el mismo nombre, no se puede copiar el archivo.
+
+[move dest is directory]
+title = Error moviendo fichero o carpeta
+text = Ya existe un fichero con el mismo nombre, imposible mover el archivo aquí.
+
+[no copy dir]
+title = Error al copiar/cortar carpeta
+text = ¡¡Copia/Corte de carpeta NO es posible por el momento!!
+
+[stop copying file]
+title = Confirmar cancelación de copia de archivo
+text = ¿Quieres cancelar el proceso de copiado?
+
+[confirm delete file]
+title = Confirmar borrado de archivo/carpeta
+text = El archivo no podrá recuperse tras borrar, ¿continuar borrado "%s"?
+text2 = ¿Cancelar? Recuerde, el archivo no se podrá recuperar.
+
+[do not delete directory]
+title = Error al borrar la carpeta
+text = La carpeta no está vacía, debe borrar su contenido antes.
+
+[unknown save type]
+title = Tipo de SAV desconocido
+text = Tipo de SAV desconocido, pulse "A" para elegir manualmente un nuevo tipo.
+
+[no savelist]
+title = Error al cargar el listado de SAV
+text = Imposible cargar lista, no se encontró "savelist.bin"
+
+[restore save fail]
+title = Fallo de restauración del SAV
+text = Fallo al restaurar los datos, ¿continuar igualmente?
+
+[backup save fail]
+title = Fallo de copia del SAV
+text = Fallo al guardar datos, no hay suficiente memoria libre en el disco.
+
+[language changed]
+title = Confirmar el cambio de idioma
+text = Se ha cambiado el idioma, ¿desea reiniciar para aplicar los cambios? Pulse "No" para reiniciar después.
+
+[ui style changed]
+title = Confirmar Cambio de Tema de la Interfaz
+text = Estilo del interfaz cambiado, ¿desea reiniciar para aplicar los cambios? Pulsar "No" para reiniciar después.
+
+[save type]
+title = Especificar tipo de SAV
+text = Tipo de SAV
+Unknown = Desconocido/Auto
+No Save = No hay SAV
+4K = 4K
+64K = 64K
+512K = 64K/512K
+2M = 2M
+4M = 2M/4M
+
+[scrolling]
+Fast = Rápido
+Medium = Medio
+Slow = Lento
+
+[system setting]
+title = Configuración del Sistema
+
+[disk info]
+total = Capacidad: %s
+used = Espacio usado: %s
+free = Espacio libre: %s
+
+[no free space]
+title = Error de Espacio Insuficiente
+text = No hay suficiente espacio en el disco, imposible copiar el archivo.
+
+
+[sd speed]
+text = Establecer Velocidad de la MicroSD
+item0 = Extrema
+item1 = Rápida
+item2 = Media
+item3 = Lenta
+
+[unsupported sd]
+title = Tarjeta MicroSD no soportada
+text = Ésta tarjeta MicroSD (Modelo:%s) no es compatible para ejecutar aplicaciones de NDS, copie los ficheros de la tarjeta MicroSD a la memoria interna y pruebe de nuevo.
+
+[sd card error]
+title = Error de acceso a la MicroSD
+text = Imposible acceder a la MicroSD, puede que la MicroSD no esté formateada o no esté bien insertada.
+
+[no sd for save]
+title = No hay MicroSD para guardar datos
+text = Imposible acceder a la MicroSD, los datos de la aplicación en curso serán guardados en el fichero: "%s".
+
+[no gba card]
+title = Error, no hay tarjeta de GBA
+text = No hay dispositivo en el SLOT-2.
+
+[filelist type]
+text = Listado de Archivos
+item0 = NDS
+item1 = NDS/SAV
+item2 = NDS/SAV/BAK
+item3 = Todos
+
+[rom trim]
+text = Reducir ROM al Copiar
+item0 = No
+item1 = Sí
+
+[cheat]
+text = Usar Trucos
+item0 = No
+Item1 = Sí
+
+[autorun]
+text = Autoejecutar al inicio
+item0 = No
+item1 = Sí
+
+[language]
+text = Idioma de la Interfaz
+item0 = Inglés
+item1 = Chino Simp.
+item2 = Chino Trad.
+item3 = Japonés
+item4 = Francés
+item5 = Italiano
+item6 = Alemán
+item7 = Español
+item8 = Neerlandés
+
+[brightness]
+text = Brillo
+
+[ui style]
+text = Tema de la Interfaz
+
+[help window]
+title = Ayuda
+item0 = %c  Arriba/Abajo/PgArriba/PgAbajo
+item1 = %c  Sí/Start/OK
+item2 = %c  No/Atrás/Cancelar
+item3 = %c  Ver información/Selección tipo de SAV
+item4 = %c  Selección de memoria: MicroSD/Flash
+item5 = %c  Volver a la carpeta anterior
+item6 = %c  Ajustar brillo: 1/2/3/4
+item7 = %s  Menú inicial
+item8 = %s  Estilo de menú: Gráfico/Numérico
+versions = HW: %02x NDD: %02x
+
+[abort save]
+title = Cancelación del proceso de guardado
+text = ¿Está seguro de que quiere cancelar el proceso de guardado?
+
+[gba warn]
+title = Cuidado con el tamaño de las ROMs de GBA
+text = ¡Las ROMs de GBA de tamaño superior a 32Mb no son soportadas!
+
+[shortcut overwrite]
+title = ¿Sobreescribir acceso directo?
+text = ¿Desea sobreescribir el acceso directo del menú de inicio?
+
+[shortcut delete]
+title = Borrar acceso directo
+text = ¿Esta seguro que desea borrar el acceso directo?
+
+[slot2]
+gbamode = Iniciar modo GBA
+passme = Iniciar modo NDSe (PassMe)
+backupsramq = Guardar SRAM Bank1 (FAS1)
+
+[fas1]
+question = Pregunta
+title = Conf. FAS1
+useFAS1 = Usar Características FlashAdvance
+listgba = Listado de ficheros GBA/BIN
+verifyFAS1 = Verificar bloques escritos
+item0 = No
+item1 = Sí
+StartMenuDescription = FAS1
+prompt = Escribiendo ROM
+flashquestion = ¿Flashear ROM a la FlashAdvance de la Tarjeta? (%.2fMB / about %.1f min.)
+writeprompt = ¿Escribir Sav en el Slot 1?
+backupsramq = Backup del FlashAdvance del Cartucho Slot-1
+backupsram = Guardando Slot 1 [%iKB] (%c para Cancelar)
+saveerror = No es un archivo SAV de 64KB, ¿Continuar?
+unsupported = FAS1: Cartucho NO Soportado
+writingpercent = Escribiendo %iKB de %iKB, (%c para Cancelar)
+savebytes = Escribiendo %i bytes (%c para Cancelar)
+
+[save backup]
+question = ¿Guardar copia de seguridad?
+backing up = Guardando .SAV a extensión .BAK
+overwrite = Ya existe copia de seguridad, ¿Sobreescribir?
+
+[save restore]
+question = ¿Restaurar copia de seguridad?
+restoring save = Restaurando .SAV de la extensión .BAK
+overwrite = Ya existe un sav, ¿Sobreescribir?
+
+[textview]
+confirm = Confirmar
+exit = ¿Realmente quiere salir?
+error = Error Abriendo Archivo
+file open error = Imposible abrir el archivo de texto. Retornando al Menú de Sistema.
+screen angle = Ángulo de Pantalla
+normal = Normal
+rotate 90 = Rotar 90º
+rotate 270 = Rotar 270º
+screen mode = Modo de Pantalla
+dual = Doble Pantalla
+dual copy = Clon Pantalla
+lower = Solo Inferior
+upper = Solo Superior
+add bookmark = ¿Deseas añadir un nuevo marcapágina en esta posición?
+remove bookmark = ¿Desea eliminar este marcapágina?
+goto toppage? = ¿Quiere volver a la página de inicio?
+
+[save slot]
+title = Elija el lugar de guardado
+default = Inicial
+text = Seleccione el SAV
+
+[romnametype]
+Normal = Normal
+HideExtName = Esconder Ext. ROM
+BannerTitle = Nombre Interno
+
+[cheat]
+text = Uso de trucos
+item0 = No
+Item1 = Sí
+
+[setting window]
+ok = OK
+savetype = Tipo de SAV
+cancel = Cancelar
+confirm = Confirmar
+confirm text = ¿Guardar configuración actual?
+shortcut = Enlazar
+delete shortcut = Borrar
+rominfo = Info. ROM
+setting = Cfg.
+[switches]
+Default = Inicial
+Enable = Activado
+Disable = Desactivado
+auto menu = Auto Menú
+
+[rom info]
+title = Propiedades
+title_copywnd = Copiar SAV Slot
+file date = Último cambio: %d/%d/%d %02d:%02d:%02d(GMT)
+file size = Tamaño del archivo: %s
+save type = Tipo de SAV: %s
+game code = ID del Juego: %s
+save slot = Seleccionar Slot de SAV
+save slot copy = Desde %s a:
+Slot = Slot
+cheat menu = Menú de Trucos
+copy menu = Copiar Slot
+save extension = Extensión del SAV
+convert text = Convertir SAV
+convert text = ¿Convertir SAV de %s a %s ?
+
+[patches]
+title = Configuración de parches
+download play = Parchear descargaDS
+cheating system = Trucos/Action replay
+slow motion = Ralentización jugando
+reset in game = Soft-Reset
+3in1 = 3in1
+ak2 loader = AK2 Loader
+altloadernotfound = Loader alt. no encontrado, ¿Iniciar ROM directamente?
+patching loader = Parcheando otro loader para usar con AKAIO.
+IRQ Hook = Reset IRQ
+SWI Hook = Reset SWI
+bypass antipiracy = parchear AntiPiratería
+
+[advanced setting]
+title = Configuración Avanzada
+Advanced = Avanzada
+Show Hidden Files = Mostrar archivos ocultos
+Hide Extension Name = Ocultar Ext. ROM (.nds)
+Scrolling Speed = Velocidad de Scroll
+CopyCut Saves Too = Copiar/Cortar SAV con la ROM
+Delete Saves Too = Borrar SAV con la ROM
+Cheat Scrolling = Scroll en Trucos
+Cheat Scrolling Speed = V. de scroll en trucos
+Homebrew Reset Type = Tipo de reset en homebrews
+
+[cheatupdate]
+DATorXML = Archivo a Descargar
+updateDB = Actualización Wifi
+cheatDBbutton = Trucos
+SaveList = savelist.bin
+startupdatetitle = Actualizador de AKAIO
+get whatsnew = ¿Qué hay de nuevo?
+startupdatequestion = ¿Deseas iniciar el proceso de actualización?
+WFCConnection = Conectado mediante WFC, %c para cancelar
+cantconnect = Imposible conectar, revisa las opciones WFC.
+stopconnectquestion = ¿Quieres detener la conexión?
+stopconnecttitle = Detener conexión
+getwhatsnew = Obteniendo ¿Qué hay de Nuevo?...
+downloadthisfile = ¿Descargar archivo de trucos creado en %s?
+downloaderror = Error descargando archivo.
+downloadstart = Descargando archivo, %c para Cancelar.
+stopdownloadquestion = ¿Cancelar la descarga?
+stopdownloadtitle = Cancelar descarga
+downloading = Descargando %.0fKb/%.0fKb, %c para cancelar.
+unzipstop = ¿Quieres cancelar la descompresión?
+unzipstoptitle = Descompresión cancelada.
+unzipping = Descomprimiendo archivo, %c para cancelar.
+unziperror = Error extrayendo archivo
+success = Disfruta del último %s
+error = Error actualizando. ¿Intentar de nuevo?
+resumeupdatetitle = Resumir Descarga Interrumpida
+resumethisfile = ¿Resumir descarga en %s a %.0fKb?
+deletepartial = ¿Borrar el archivo parcialmente descargado?
+previousdates = Subidas anteriores
+previousfiles = Archivos anteriores
+previous date notice = SOLO actualizaciones del loader y plugin WI-FI 
+cheats = Trucos
+loader = Loader 
+wifi = Plugin WI-FI
+Show on Load = Elegir al cargar
+3version = 3 versiones
+5version = 5 versiones
+Checking Site = Revisando el sitio AKAIO
+whatsnew notice = SOLO el sitio oficial
+site = ¿DB de trucos?
+site1 = Sitio oficial
+site2 = AKAIO (yusuo)
+
+[text viewer]
+text = Visor TXT
+item0 = PlugIn
+item1 = Interno
+title = Cfg. de PlugIn
+
+[interface settings]
+oldschool = Sólo Texto
+modern = Nombre del archivo
+internal = Nombre interno
+filelist style = Estilo lista de archivos
+Hide File Extensions = Ocultar Extensiones
+Icon Animation = Animación en íconos
+
+[exp window]
+title = Configuración de Slot 2
+ram = RAM
+sram = Cop. SRAM
+off = Desactivado
+low = Bajo
+mid = Medio
+high = Alto
+strength = Nivel de Vibración
+NOR Mode = Modo NOR
+auto = Auto
+always = Siempre
+notdetected = ¡3in1/EWin/FlashAdvance no encontrado!
+NOR Flash = Flashear a NOR
+norquestion = ¿Flashear a NOR?
+norblank = NOR vacía
+erasenor = ¿Quiere vaciar el NOR?
+
+[gba settings]
+gbabutton = Configurar GBA
+gbasleepdescription = (L+R+Start: dormir / Select+Start: despertar)
+title = Configuración de GBA
+sleephack = Modo GBA Sleep
+autosave = Guardar SAV de GBA al inicio
+gbaSavePrompt = Preguntar Guardar/Cargar
+Load Save = Cargar SAV
+Load File = ¿Cargar %s?
+Backup Save = Backup SAV
+Backup File = ¿Backup %s?
+
+[ram allocation]
+title = Error
+memory allocation error = Error en la distribución de la memoria.
+
+[LShortcuts]
+CheatOn = Trucos activados para este juego.
+CheatOff = Trucos desactivados para este juego.
+SoftresetOn = Soft-Reset activado para este juego.
+SoftresetOff = Soft-Reset desactivado para este juego.
+
+[clone card error]
+title = Clon
+text = Usted puede poseer una Acekard no original. Por favor contacte a su proveedor.
+
+[game settings]
+Default = Default
+System = System
+Japanese = Japanese
+English = English
+French = French
+German = German
+Italian = Italian
+Spanish = Español
+Language = Language
+CPU Frequency = CPU Frequency
+Off = Off
+On = On
+Sound Fix = Sound Fix
+Async Prefetch = Async Prefetch
+Use Bootstrap = Use Bootstrap
+Direct Boot = Direct Boot
+Per Game Settings = Per Game Settings
+
+[game launch]
+ROM Start Error = ROM Start Error
+error = Error %i
+Please wait = Please wait...
+NDS Bootstrap Error = NDS Bootstrap Error
+Flashcard Error = Flashcard Error
+Launch Error = Launch Error
+
+Preparing Unlaunch Boot = Preparing Unlaunch Boot...
+Unlaunch Error = Unlaunch Error
+unlaunch boot = Boot DSiWare with Unlaunch
+
+bootthis exists = "bootthis" file(s) already exist on the SD root. Please back them up before launching DSiWare.
+unlaunch instructions = Please press and hold the X button. Hold it on the black screen for 2 seconds.
+
+[end]

@@ -30,14 +30,23 @@
 #include <nds.h>
 #include <maxmod7.h>
 
-unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
+//unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
 unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
-int sndValue = 0;
+static int soundVolume = 127;
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 5;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -54,6 +63,12 @@ void VblankHandler(void) {
 	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
 		*(u16*)(0x4004700) = 0x800F;
 	}
+	if(fifoCheckValue32(FIFO_USER_01)) {
+		soundFadeOut();
+	} else {
+		soundVolume = 127;
+	}
+	REG_MASTER_VOLUME = soundVolume;
 	if(fifoCheckValue32(FIFO_USER_08)) {
 		ReturntoDSiMenu();
 	}
@@ -110,7 +125,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
+	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
 	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);

@@ -25,9 +25,10 @@
 #define LCDC_BANK_C (u16*)0x06840000
 
 #define LANGUAGE_OFFSET 4
-#define TWLMODE_OFFSET 8
-#define TWLCLOCK_OFFSET 12
-#define RUNCARDENGINE_OFFSET 16
+#define SDACCESS_OFFSET 8
+#define TWLMODE_OFFSET 12
+#define TWLCLOCK_OFFSET 16
+#define RUNCARDENGINE_OFFSET 20
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -69,6 +70,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 
 	// Set the parameters for the loader
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
+	writeAddr ((data_t*) LCDC_BANK_C, SDACCESS_OFFSET, EnableSD);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLCLOCK_OFFSET, TWLCLK);
 	writeAddr ((data_t*) LCDC_BANK_C, RUNCARDENGINE_OFFSET, runCardEngine);
@@ -81,7 +83,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
 	
-	if (TWLMODE || EnableSD) {
+	if (TWLMODE) {
 		if (TWLVRAM) {
 			REG_SCFG_EXT=0x83002000;
 		} else {

@@ -287,11 +287,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	// INIT_DISC = initDisc;
 	writeAddr ((data_t*) LCDC_BANK_C, INIT_DISC_OFFSET, initDisc);
 
-	if (REG_SCFG_EXT != 0) {
-		writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, true);
-	} else {
-		writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, false);
-	}
+	// writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	if(argv[0][0]=='s' && argv[0][1]=='d') {
 		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);

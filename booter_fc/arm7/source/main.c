@@ -61,7 +61,7 @@ int main() {
 	powerOn(POWER_SOUND);
 
 	// Go back into DSi mode, if possible
-	REG_SCFG_ROM = 0x101;
+	// REG_SCFG_ROM = 0x101;				// Doesn't work :(
 	REG_SCFG_EXT = 0x93FFFB06;
 
 	readUserSettings();
@@ -73,14 +73,10 @@ int main() {
 	
 	fifoInit();
 	
-	SetYtrigger(80);
-	
-	installSystemFIFO();
-
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
 	
