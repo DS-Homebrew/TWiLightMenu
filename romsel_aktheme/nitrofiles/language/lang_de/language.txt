@@ -302,6 +302,7 @@ confirm text = Möchtest Du die aktuellen Einstellungen wirklich speichern?
 shortcut = Shortcut
 delete shortcut = Löschen
 rominfo = Einstellungen
+setting = Einstellungen
 
 [switches]
 Default = Standard

@@ -302,7 +302,8 @@ confirm = Confirm Options Save
 confirm text = Are you sure you want to save current settings?
 shortcut = Shortcut
 delete shortcut = Delete
-rominfo = Rom Settings
+rominfo = ROM Info
+setting = Settings
 
 [switches]
 Default = Default

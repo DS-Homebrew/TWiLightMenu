@@ -304,6 +304,7 @@ confirm text = 현재 설정을 저장하시겠습니까?
 shortcut = 바로가기
 delete shortcut = 삭제
 rominfo = Rom 설정
+setting = Settings
 
 [switches]
 Default = 기본

@@ -302,6 +302,7 @@ confirm text = Salvare queste Impostazioni?
 shortcut = Scorciatoia
 delete shortcut = Elimina
 rominfo = Info Rom
+setting = Conf.
 
 [switches]
 Default = Default

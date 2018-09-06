@@ -114,6 +114,7 @@ shortcut = 捷徑
 delete shortcut = 刪除
 rominfo = Rom設定
 rominfo text =ROM詳細設定
+setting = 設定
 
 [save type]
 title = 設定

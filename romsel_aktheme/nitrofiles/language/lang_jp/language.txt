@@ -349,6 +349,7 @@ shortcut = ショートカット
 delete shortcut = 削除
 rominfo = ロム詳細
 rominfo text = ロム詳細
+setting = ゲーム設定
 
 [switches]
 Default = デフォルト

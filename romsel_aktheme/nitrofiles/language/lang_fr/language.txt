@@ -358,6 +358,7 @@ confirm text = Sauvegarder la configuration ?
 shortcut = Raccourci
 delete shortcut = Supprimer
 rominfo = Infos ROM
+setting = Conf.
 
 [switches]
 Default = Default

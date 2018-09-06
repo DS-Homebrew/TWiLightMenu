@@ -332,6 +332,7 @@ confirm text = 您确定要保存当前设置吗？
 shortcut = 快捷方式
 delete shortcut = 删除
 rominfo = Rom设置
+setting = 设置
 
 [switches]
 Default = 默认

@@ -56,7 +56,7 @@ RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
 
     _buttonOK.setRelativePosition(Point(nextButtonX, buttonY));
     _buttonGameSettings.setStyle(Button::press);
-    _buttonGameSettings.setText("\x04 " + LANG("setting window", "Settings"));
+    _buttonGameSettings.setText("\x04 " + LANG("setting window", "setting"));
     _buttonGameSettings.setTextColor(uis().buttonTextColor);
     _buttonGameSettings.loadAppearance(SFN_BUTTON3);
     _buttonGameSettings.clicked.connect(this, &RomInfoWnd::pressGameSettings);
