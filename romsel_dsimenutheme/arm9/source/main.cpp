@@ -29,13 +29,13 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 #include "date.h"
 
 #include "graphics/graphics.h"
 
-#include "nitrofs.h"
+#include "common/nitrofs.h"
 #include "ndsheaderbanner.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"

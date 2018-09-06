@@ -6,7 +6,6 @@
 #include <unistd.h>
 
 #include "inifile.h"
-//#include "nitrofs.h"
 
 const char* languageIniPath;
 

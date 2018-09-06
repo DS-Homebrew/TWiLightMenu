@@ -1,5 +1,5 @@
-FROM quarktheawesome/devkitpro-arm-ppc:r47_r29
-ADD libnds.tar /devkitpro
+FROM devkitpro/devkitarm:latest
+# ADD libnds.tar /devkitpro
 RUN \
   apt-get update && \
   apt-get install -y python && \
