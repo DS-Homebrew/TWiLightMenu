@@ -3,12 +3,11 @@ DSiMenu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-b
 
 # Building
 
-Building this app by yourself require DEVKITARM with DEVKITPRO. You will also need [Easy GL2D](https://www.odrive.com/s/eb3e676a-be1b-4a18-bc7d-67f25c80eb42-5917ab0b). Merge the contents `LibGL2D_DS.zip:/distributable/libnds/* (lib and include)` at `devkitPro/libnds/`. Also, download [this](https://www.odrive.com/s/895059a5-673c-4b3c-b3dd-8dbf0cbd8c6f-5af9d7f4) file, and place it at `devkitPro/libnds/lib`, overwriting the existing one.
-Make sure that grit and mmutil are installed.
+Building this app by yourself requires devkitPRO with devkitARM. Make sure that grit and mmutil are installed.
 
 # Building with Docker
 
-DSiMenu++ comes included with a Docker image for easy building without having to manually set up the required version of devkitARM and Easy GL2D. 
+DSiMenu++ comes included with a Docker image for easy building without having to manually set up the required version of devkitARM.
 
 ## Building with Docker for Windows users.
 

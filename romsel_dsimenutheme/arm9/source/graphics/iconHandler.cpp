@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 // Graphic files
 #include "icon_unk.h"
