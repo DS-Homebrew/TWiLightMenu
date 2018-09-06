@@ -150,7 +150,13 @@ bool boostVram = false;
 bool soundFix = false;
 bool bstrap_asyncPrefetch = true;
 
-bool flashcardUsed = false;
+bool flashcardFound(void) {
+	if (access("fat:/", F_OK) == 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 int flashcard;
 /* Flashcard value
@@ -756,10 +762,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (access("fat:/", F_OK) == 0) {
-		flashcardUsed = true;
-	}
-	
 	if (access(settingsinipath, F_OK) != 0) {
 		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
@@ -1306,7 +1308,7 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(gbROMpath);
 				int err = 0;
-				if(flashcardUsed) {
+				if(flashcardFound()) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
 					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 				} else {
@@ -1327,7 +1329,7 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(nesROMpath);
 				int err = 0;
-				if(flashcardUsed) {
+				if(flashcardFound()) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
 					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 				} else {

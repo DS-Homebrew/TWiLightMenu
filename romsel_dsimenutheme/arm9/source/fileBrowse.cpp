@@ -123,7 +123,7 @@ extern bool showRshoulder;
 
 extern bool showProgressIcon;
 
-extern bool flashcardUsed;
+extern bool flashcardFound(void);
 
 char boxArtPath[40][256];
 
@@ -605,7 +605,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->delay = TextEntry::ACTIVE;
 
 			if (startMenu) {
-				if (startMenu_cursorPosition < (3-flashcardUsed)) {
+				if (startMenu_cursorPosition < (3-flashcardFound())) {
 					showbubble = true;
 					showSTARTborder = true;
 					titleUpdate(false, "startMenu", startMenu_cursorPosition);
@@ -640,7 +640,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (!stopSoundPlayed) {
 				if ((theme == 0 && !startMenu && cursorPosition+pagenum*40 <= ((int) dirContents[scrn].size() - 1))
-				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardUsed))) {
+				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardFound()))) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;

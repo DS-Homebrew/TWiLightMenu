@@ -166,7 +166,7 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
-extern bool flashcardUsed;
+extern bool flashcardFound(void);
 
 extern int theme;
 extern int subtheme;
@@ -823,14 +823,14 @@ void vBlankHandler()
 					if (i == 0 &&  (!applaunchprep || startMenu_cursorPosition != i)) {
 						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (i == 1 && (!applaunchprep || startMenu_cursorPosition != i)) {
-						if (!flashcardUsed) {
+						if (!flashcardFound()) {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
-					} else if (i == 2 && !flashcardUsed && (!applaunchprep || startMenu_cursorPosition != i)) {
+					} else if (i == 2 && !flashcardFound() && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &boxfullImage[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
@@ -887,7 +887,7 @@ void vBlankHandler()
 					if (startMenu_cursorPosition == 0) {
 						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
 					} else if (startMenu_cursorPosition == 1) {
-						if (!flashcardUsed) {
+						if (!flashcardFound()) {
 							glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[0 & 63]);
 						} else {
 							glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
