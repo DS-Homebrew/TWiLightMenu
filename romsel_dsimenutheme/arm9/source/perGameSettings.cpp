@@ -47,6 +47,7 @@
 #include "nds_loader_arm9.h"
 
 #include "inifile.h"
+#include "my_system.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -205,7 +206,7 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 208, 96, "No");
 			}
 			printSmall(false, 200, 166, "B: Back");
-		} else if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] == 2 || flashcardUsed) {
+		} else if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] == 2 || !isDSiMode_partial()) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition >= 0 && perGameSettings_cursorPosition < 4) {
@@ -284,7 +285,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-		} else if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] == 2 || flashcardUsed) {
+		} else if (isDSiWare[cursorPosition] || isHomebrew[cursorPosition] == 2 || !isDSiMode_partial()) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

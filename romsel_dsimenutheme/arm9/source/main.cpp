@@ -36,6 +36,7 @@
 #include "graphics/graphics.h"
 
 #include "nitrofs.h"
+#include "flashcard.h"
 #include "ndsheaderbanner.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"
@@ -45,6 +46,7 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
+#include "my_system.h"
 
 #include "language.h"
 
@@ -686,6 +688,8 @@ int main(int argc, char **argv) {
 	// 	swiWaitForVBlank();
 	// }
 	// return 0;
+	
+	flashcardInit();
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -905,7 +909,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (!flashcardUsed && isDSiWare[cursorPosition]) {
+			if (isDSiMode_partial() && isDSiWare[cursorPosition]) {
 				const char *typeToReplace = ".nds";
 				if (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0) {
 					typeToReplace = ".dsi";
@@ -1032,12 +1036,12 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBootstrap) {
-					if(!flashcardUsed) {
+					if(isDSiMode_partial()) {
 						char game_TID[5];
                         char  gameid[4]; // for nitrohax cheat parsing
                         u32 ndsHeader[0x80];
                         uint32_t headerCRC;
-						
+
 						FILE *f_nds_file = fopen(argarray[0], "rb");
 
 						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
