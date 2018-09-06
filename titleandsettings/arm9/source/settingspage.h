@@ -59,7 +59,17 @@ public:
   class Sub
   {
   public:
+
+    /**
+     * Gets a unique_ptr to an Option instance that is
+     * the sub option to be displayed. The unique_ptr
+     * may be nullptr if has_sub is false.
+     */
     virtual std::unique_ptr<Option> sub() = 0;
+
+    /**
+     * Whether or not this option has a sub option.
+     */
     virtual bool has_sub() = 0;
   };
 
