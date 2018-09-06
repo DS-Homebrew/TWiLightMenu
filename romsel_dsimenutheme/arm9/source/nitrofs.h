@@ -29,6 +29,9 @@
 		* Today i have added full "." and ".." support.
 		  dirnext() will return . and .. first, and all relevent operations will 
 		  support . and .. in pathnames. 
+    
+    2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
+        * Updated for libsysbase change in devkitARM r46 and above.
 */
 
 #ifndef NITROFS_H
@@ -39,64 +42,69 @@
 #include <stdio.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-int nitroFSInit(const char *ndsfile);
-DIR_ITER* nitroFSDirOpen(struct _reent *r, DIR_ITER *dirState, const char *path);
-int nitroDirReset(struct _reent *r, DIR_ITER *dirState);
-int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *st);
-int nitroFSDirClose(struct _reent *r, DIR_ITER *dirState);
-int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path,int flags,int mode);
-int nitroFSClose(struct _reent *r,int fd);
-int nitroFSRead(struct _reent *r,int fd,char *ptr,int len);
-int nitroFSSeek(struct _reent *r,int fd,int pos,int dir);
-int nitroFSFstat(struct _reent *r,int fd,struct stat *st);
-int nitroFSstat(struct _reent *r,const char *file,struct stat *st);
-int nitroFSChdir(struct _reent *r,const char *name);
-#define LOADERSTR	"PASS"	//look for this
+    int nitroFSInit(const char *ndsfile);
+    DIR_ITER *nitroFSDirOpen(struct _reent *r, DIR_ITER *dirState, const char *path);
+    int nitroDirReset(struct _reent *r, DIR_ITER *dirState);
+    int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *st);
+    int nitroFSDirClose(struct _reent *r, DIR_ITER *dirState);
+    int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags, int mode);
+    int nitroFSClose(struct _reent *r, void *fd);
+    ssize_t nitroFSRead(struct _reent *r, void *fd, char *ptr, size_t len);
+    off_t nitroFSSeek(struct _reent *r, void *fd, off_t pos, int dir);
+    int nitroFSFstat(struct _reent *r, void *fd, struct stat *st);
+    int nitroFSstat(struct _reent *r, const char *file, struct stat *st);
+    int nitroFSChdir(struct _reent *r, const char *name);
+#define LOADERSTR "PASS" //look for this
 #define LOADERSTROFFSET 0xac
-#define LOADEROFFSET 	0x0200
-#define FNTOFFSET 	0x40
-#define FATOFFSET 	0x48
+#define LOADEROFFSET 0x0200
+#define FNTOFFSET 0x40
+#define FATOFFSET 0x48
 
-#define NITRONAMELENMAX 0x80	//max file name is 127 +1 for zero byte :D
-#define NITROMAXPATHLEN	0x100	//256 bytes enuff?
+#define NITRONAMELENMAX 0x80  //max file name is 127 +1 for zero byte :D
+#define NITROMAXPATHLEN 0x100 //256 bytes enuff?
 
-#define NITROROOT 	0xf000	//root entry_file_id
-#define NITRODIRMASK	0x0fff	//remove leading 0xf
+#define NITROROOT 0xf000    //root entry_file_id
+#define NITRODIRMASK 0x0fff //remove leading 0xf
 
-#define NITROISDIR 0x80	//mask to indicate this name entry is a dir, other 7 bits = name length
+#define NITROISDIR 0x80 //mask to indicate this name entry is a dir, other 7 bits = name length
 
-//Directory filename subtable entry structure
-struct ROM_FNTDir {
-	u32 	entry_start;
-	u16	entry_file_id;
-	u16	parent_id;
-};
+    //Directory filename subtable entry structure
+    struct ROM_FNTDir
+    {
+        u32 entry_start;
+        u16 entry_file_id;
+        u16 parent_id;
+    };
 
-//Yo, dis table is fat (describes the structures
-struct ROM_FAT {
-	u32	top;	//start of file in rom image
-	u32	bottom;	//end of file in rom image
-};
+    //Yo, dis table is fat (describes the structures
+    struct ROM_FAT
+    {
+        u32 top;    //start of file in rom image
+        u32 bottom; //end of file in rom image
+    };
 
-struct nitroFSStruct {
-	unsigned int	pos;	//where in the file am i?
-	unsigned int 	start;	//where in the rom this file starts
-	unsigned int 	end;	//where in the rom this file ends
-};
+    struct nitroFSStruct
+    {
+        off_t pos;   //where in the file am i?
+        off_t start; //where in the rom this file starts
+        off_t end;   //where in the rom this file ends
+    };
 
-struct nitroDIRStruct {
-	unsigned int	pos;	//where in the file am i?
-	unsigned int 	namepos;	//ptr to next name to lookup in list
-	struct ROM_FAT  romfat;
-	u16		entry_id;	//which entry this is (for files only) incremented with each new file in dir?
-	u16		dir_id;		//which directory entry this is.. used ofc for dirs only
-	u16		cur_dir_id;	//which directory entry we are using
-	u16		parent_id;	//who is the parent of the current directory (this can be used to easily ../ )
-	u8		spc;		//system path count.. used by dirnext, when 0=./ 1=../ >=2 actual dirs
-};
+    struct nitroDIRStruct
+    {
+        off_t pos;     //where in the file am i?
+        off_t namepos; //ptr to next name to lookup in list
+        struct ROM_FAT romfat;
+        u16 entry_id;   //which entry this is (for files only) incremented with each new file in dir?
+        u16 dir_id;     //which directory entry this is.. used ofc for dirs only
+        u16 cur_dir_id; //which directory entry we are using
+        u16 parent_id;  //who is the parent of the current directory (this can be used to easily ../ )
+        u8 spc;         //system path count.. used by dirnext, when 0=./ 1=../ >=2 actual dirs
+    };
 
 #ifdef __cplusplus
 }
