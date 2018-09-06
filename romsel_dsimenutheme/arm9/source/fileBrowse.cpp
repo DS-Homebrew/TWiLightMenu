@@ -50,6 +50,7 @@
 #include "nds_loader_arm9.h"
 
 #include "inifile.h"
+#include "my_system.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -809,7 +810,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false);
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
-						if (!flashcardUsed) {
+						if (isDSiMode_partial()) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
@@ -865,7 +866,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 					return "null";
 				}
-				else if ((isDSiWare[cursorPosition] && flashcardUsed)
+				else if ((isDSiWare[cursorPosition] && !isDSiMode_partial())
 						|| (isDSiWare[cursorPosition] && consoleModel > 1))
 				{
 					mmEffectEx(&snd_wrong);
@@ -874,10 +875,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					titleUpdate(dirContents[scrn].at(cursorPosition+pagenum*40).isDirectory, dirContents[scrn].at(cursorPosition+pagenum*40).name.c_str(), cursorPosition);
 					printSmallCentered(false, 112, "This game cannot be launched");
-					if (flashcardUsed) {
-						printSmallCentered(false, 128, "in DS mode.");
-					} else {
+					if (isDSiMode_partial()) {
 						printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
+					} else {
+						printSmallCentered(false, 128, "in DS mode.");
 					}
 					printSmall(false, 208, 166, "A: OK");
 					pressed = 0;
@@ -980,7 +981,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			/*if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
-			&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && !flashcardUsed && consoleModel < 2)
+			&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && isDSiMode_partial() && consoleModel < 2)
 			{
 				mmEffectEx(&snd_switch);
 				fadeType = false;	// Fade to white
@@ -1098,7 +1099,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
-			if ((pressed & KEY_X) && startMenu && !flashcardUsed) {
+			if ((pressed & KEY_X) && startMenu && isDSiMode_partial()) {
 				mmEffectEx(&snd_back);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
