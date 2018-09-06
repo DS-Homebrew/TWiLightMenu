@@ -31,7 +31,7 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 
 #include "date.h"
 
@@ -188,7 +188,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 
 	while (1) {
 		clearText();
@@ -269,7 +269,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiWaitForVBlank();
+			swiIntrWait(0, 1);
 		} while (!pressed);
 
 		if (isHomebrew[cursorPosition] == 1) {
@@ -337,6 +337,6 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 	if (isDSiMode_partial()) perGameSettingsButtons = false;
 }

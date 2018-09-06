@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#include <gl2d.h>
+#include "common/gl2d.h"
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
@@ -909,7 +909,7 @@ void titleUpdate(bool isDir, const char* name)
 				p[i / 2] = 0;
 				bannerlines++;
 			} else if (p[i] == 0xE9) {
-				p[i / 2] = 0x65;	// Replace bugged "é" with regular "e"
+				p[i / 2] = 0x65;	// Replace bugged "ï¿½" with regular "e"
 			} else {
 				p[i / 2] = p[i];
 			}
