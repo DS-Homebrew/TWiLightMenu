@@ -12,7 +12,7 @@ bool flashcardFound(void) {
 }
 
 void flashcardInit(void) {
-	if (!flashcardFound()) {
+	if (!flashcardFound() && REG_SCFG_MC != 0x11) {
 		io_dldi_data = dldiLoadFromFile("sd:/_nds/test.dldi");
 		fatMountSimple("fat", &io_dldi_data->ioInterface);
 	}
