@@ -9,7 +9,7 @@ Paste = Paste
 Delete = Delete
 Save Type = Save Type
 Patches = Patches
-Setting = System Options
+Setting = Settings Menu
 Info = Properties
 Help = Help
 More = More ->
@@ -485,4 +485,38 @@ SoftresetOff = Soft-Reset has been disabled for this game.
 [clone card error]
 title = Clone
 text = It may not be a genuine Acekard.\n Please contact your vender or\n      access our website:\n\n      www.acekard.com\n
+
+[game settings]
+Default = Default
+System = System
+Japanese = Japanese
+English = English
+French = French
+German = German
+Italian = Italian
+Spanish = Spanish
+Language = Language
+CPU Frequency = CPU Frequency
+Off = Off
+On = On
+Sound Fix = Sound Fix
+Async Prefetch = Async Prefetch
+Use Bootstrap = Use Bootstrap
+Direct Boot = Direct Boot
+Per Game Settings = Per Game Settings
+
+[game launch]
+ROM Start Error = ROM Start Error
+error = Error %i
+Please wait = Please wait...
+NDS Bootstrap Error = NDS Bootstrap Error
+Flashcard Error = Flashcard Error
+Launch Error = Launch Error
+
+Preparing Unlaunch Boot = Preparing Unlaunch Boot...
+Unlaunch Error = Unlaunch Error
+unlaunch boot = Boot DSiWare with Unlaunch
+
+bootthis exists = "bootthis" file(s) already exist on the SD root. Please back them up before launching DSiWare.
+unlaunch instructions = Please press and hold the X button. Hold it on the black screen for 2 seconds.
 [end]

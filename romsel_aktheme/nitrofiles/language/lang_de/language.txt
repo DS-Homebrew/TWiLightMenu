@@ -448,4 +448,37 @@ CheatOff = Cheats wurden bei diesem Spiel deaktiviert.
 SoftresetOn = Soft-Reset wurde bei diesem Spiel aktiviert.
 SoftresetOff = Soft-Reset wurde bei diesem Spiel deaktiviert.
 
+[game settings]
+Default = Default
+System = System
+Japanese = Japanese
+English = English
+French = French
+German = Deutsch
+Italian = Italian
+Spanish = Spanish
+Language = Language
+CPU Frequency = CPU Frequency
+Off = Off
+On = On
+Sound Fix = Sound Fix
+Async Prefetch = Async Prefetch
+Use Bootstrap = Use Bootstrap
+Direct Boot = Direct Boot
+Per Game Settings = Per Game Settings
+
+[game launch]
+ROM Start Error = ROM Start Error
+error = Error %i
+Please wait = Please wait...
+NDS Bootstrap Error = NDS Bootstrap Error
+Flashcard Error = Flashcard Error
+Launch Error = Launch Error
+
+Preparing Unlaunch Boot = Preparing Unlaunch Boot...
+Unlaunch Error = Unlaunch Error
+unlaunch boot = Boot DSiWare with Unlaunch
+
+bootthis exists = "bootthis" file(s) already exist on the SD root. Please back them up before launching DSiWare.
+unlaunch instructions = Please press and hold the X button. Hold it on the black screen for 2 seconds.
 [end]

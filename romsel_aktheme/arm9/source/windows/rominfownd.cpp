@@ -173,7 +173,7 @@ void RomInfoWnd::pressGameSettings(void)
     if (_romInfo.isDSiWare())
         return;
 
-    SettingWnd settingWnd(0, 0, 252, 188, this, "Per Game Settings");
+    SettingWnd settingWnd(0, 0, 252, 188, this, LANG("game settings", "Per Game Settings");
 
     PerGameSettings settingsIni(_filenameText);
     std::vector<std::string> _values;
@@ -271,7 +271,7 @@ static std::string getFriendlyFileSizeString(u64 size)
     if (size < 1024)
     {
         fileSize = formatString("%d", size);
-        sizeUnit = " Byte";
+        sizeUnit = " B";
     }
     else
     {

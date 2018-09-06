@@ -401,4 +401,37 @@ item1 = Internal
 title = エラー
 memory allocation error = メモリ割り当てエラー
 
+[game settings]
+Default = Default
+System = System
+Japanese = Japanese
+English = 日本語
+French = French
+German = German
+Italian = Italian
+Spanish = Spanish
+Language = Language
+CPU Frequency = CPU 周波数
+Off = 使用
+On = 不使用
+Sound Fix = サウンドFIX
+Async Prefetch = アシンクロナスプリフェッチ
+Use Bootstrap =　Bootstrapでブート
+Direct Boot = 直接ROMをブートします
+Per Game Settings = ゲーム設定
+
+[game launch]
+ROM Start Error = このROMは起動ことができませんでした。
+error = エラー %i
+Please wait = 少々お待ちください。
+NDS Bootstrap Error = Bootstrapエラー
+Flashcard Error = フラッシュカードエラー
+Launch Error = 起動エラー
+
+Preparing Unlaunch Boot = DSiWare起動の準備中です.
+Unlaunch Error = Unlaunchエラー
+unlaunch boot = DSiWare起動の説明
+
+bootthis exists = "bootthis"と言ったファイルはまだSDカードのルートフォルダーに存在しています。続ける前にファイルをバックアップしてください。
+unlaunch instructions = Xボタンを押し続き、それから消した画面に二秒押してください。
 [end]
