@@ -187,7 +187,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 
 	while (1) {
 		clearText();
@@ -336,6 +336,6 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 	if (!flashcardUsed) perGameSettingsButtons = false;
 }

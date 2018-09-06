@@ -113,7 +113,7 @@ int main() {
 
 	getHeader (ndsHeader);
 
-	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 	
 	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
 

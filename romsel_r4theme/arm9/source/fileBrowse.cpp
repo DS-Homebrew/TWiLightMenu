@@ -352,7 +352,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printLargeCentered(false, 84, "Error!");
 				printSmallCentered(false, 104, "This game cannot be launched.");
 				printSmallCentered(false, 118, "A: OK");
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
+				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				pressed = 0;
 				do {
 					scanKeys();
@@ -437,7 +437,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				printSmallCentered(false, 104, "Delete this game?");
 			}
-			for (int i = 0; i < 90; i++) swiWaitForVBlank();
+			for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
 			printSmallCentered(false, 118, "A: Yes  B: No");
 			while (1) {
 				do {
