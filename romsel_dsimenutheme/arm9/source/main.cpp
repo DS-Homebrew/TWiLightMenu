@@ -567,7 +567,7 @@ void SetMPUSettings(const char* filename) {
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 }
 
@@ -582,7 +582,7 @@ void doPause() {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 	scanKeys();
 }
@@ -683,7 +683,7 @@ int main(int argc, char **argv) {
 	// iprintf("Hello World");
 	
 	// while(1) {
-	// 	swiWaitForVBlank();
+	// 	swiIntrWait(0, 1);
 	// }
 	// return 0;
 
@@ -730,7 +730,7 @@ int main(int argc, char **argv) {
 			{
 				scanKeys();
 				pressed = keysDownRepeat();
-				swiWaitForVBlank();
+				swiIntrWait(0, 1);
 			}
 			while (!pressed);
 
@@ -997,7 +997,7 @@ int main(int argc, char **argv) {
 				// Wait for X button hold
 				while (1)
 				{
-					swiWaitForVBlank();
+					swiIntrWait(0, 1);
 					scanKeys();
 					if (keysHeld() & KEY_X) break;
 				}
@@ -1343,7 +1343,7 @@ int main(int argc, char **argv) {
 			}
 
 			// while (1) {
-			// 	swiWaitForVBlank();
+			// 	swiIntrWait(0, 1);
 			// 	scanKeys();
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }

@@ -48,7 +48,6 @@
 
 #include <string.h>
 #include <unistd.h>
-#include "common/gl2d.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)

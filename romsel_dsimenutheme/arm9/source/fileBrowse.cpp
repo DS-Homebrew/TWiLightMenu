@@ -669,7 +669,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
-				swiWaitForVBlank();
+				swiIntrWait(0, 1);
 			}
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -793,7 +793,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					fadeType = false;	// Fade to white
 					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					}
 					music = false;
 					mmEffectCancelAll();
@@ -884,7 +884,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					} while (!(pressed & KEY_A));
 					clearText();
 					showdialogbox = false;
@@ -904,13 +904,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 						fadeSpeed = false;	// Slow fade speed
 						for (int i = 0; i < 5; i++) {
-							swiWaitForVBlank();
+							swiIntrWait(0, 1);
 						}
 					}
 					fadeType = false;	// Fade to white
 					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					}
 					music = false;
 					mmEffectCancelAll();
@@ -1068,7 +1068,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiWaitForVBlank();
+						swiIntrWait(0, 1);
 					} while (!pressed);
 					
 					if (pressed & KEY_A) {
