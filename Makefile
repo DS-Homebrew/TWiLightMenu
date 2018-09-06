@@ -6,9 +6,9 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc rungame slot1launch romsel_dsimenutheme romsel_r4theme titleandsettings
+.PHONY: all package booter booter_fc rungame slot1launch romsel_dsimenutheme romsel_r4theme romsel_aktheme titleandsettings
 
-all:	booter booter_fc rungame slot1launch romsel_dsimenutheme romsel_r4theme titleandsettings
+all:	booter booter_fc rungame slot1launch romsel_dsimenutheme romsel_r4theme romsel_aktheme titleandsettings
 
 package: all
 	@mkdir -p "$(PACKAGE)"
@@ -26,6 +26,7 @@ package: all
 	@cp "titleandsettings/titleandsettings.nds" "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
 	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
 	@cp "romsel_r4theme/romsel_r4theme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
+	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/akmenu.srldr"
 
 booter:
 	@$(MAKE) -C booter
@@ -45,6 +46,9 @@ romsel_dsimenutheme:
 romsel_r4theme:
 	@$(MAKE) -C romsel_r4theme
 
+romsel_aktheme:
+	@$(MAKE) -C romsel_aktheme
+
 titleandsettings:
 	@$(MAKE) -C titleandsettings
 
@@ -57,6 +61,7 @@ clean:
 	@$(MAKE) -C titleandsettings clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
+	@$(MAKE) -C romsel_aktheme clean
 
 	@echo clean package files
 	@rm -rf "$(PACKAGE)/BOOT.NDS"
@@ -67,3 +72,4 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/akmenu.srldr"
