@@ -156,7 +156,15 @@ bool MainList::enterDir(const std::string &dirName)
         if (!sys().flashcardUsed())
         {
             // TODO: Show "SD Card" if consoleModel is < 3, else show "microSD Card"
-            addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+
+            if (ms().showDirectories)
+            {
+                addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
+            }
+            else
+            {
+                addDirEntry(0, LANG("mainlist", "SD Card"), "", ms().romfolder, "usd", microsd_banner_bin);
+            }
         }
         else
         {
@@ -258,8 +266,7 @@ bool MainList::enterDir(const std::string &dirName)
                     extName = "";
 
                 dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
-                bool showThis = (st.st_mode & S_IFDIR) ? 
-                    (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..")  && strcmp(lfn.c_str(), "_nds") && ms().showDirectories) : extnameFilter(extNames, extName);
+                bool showThis = (st.st_mode & S_IFDIR) ? (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..") && strcmp(lfn.c_str(), "_nds") && ms().showDirectories) : extnameFilter(extNames, extName);
                 showThis = showThis && (_showAllFiles || !(attr & ATTRIB_HID));
 
                 if (showThis)
@@ -372,10 +379,17 @@ void MainList::backParentDir()
         return;
 
     dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
-    if ("" == _currentDir || SD_ROOT == _currentDir)
+    if ("" == _currentDir || SD_ROOT == _currentDir || !ms().showDirectories)
     {
         dbg_printf("Entering HOME\n");
         enterDir(SPATH_ROOT);
+        return;
+    }
+
+    if (!ms().showDirectories)
+    {
+        // Allow going back into the root, but don't allow going
+        // back in other directories.
         return;
     }
 
