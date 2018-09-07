@@ -486,28 +486,40 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					isDirectory[i] = false;
 					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str();
 					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
 					{
 						getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
 						bnrRomType[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
 					{
 						bnrRomType[i] = 1;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
-					} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
+					{
 						bnrRomType[i] = 2;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-							|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
 					{
 						bnrRomType[i] = 3;
 						bnrWirelessIcon[i] = 0;

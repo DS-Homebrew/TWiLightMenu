@@ -844,8 +844,9 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 
 			// Launch DSiWare via launcharg
-			if ( strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0) {
-
+			if ((strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 10, ".LAUNCHARG") == 0))
+			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -892,8 +893,9 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
-			if ( strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0) {
-
+			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 5, ".ARGV") == 0))
+			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -1022,8 +1024,11 @@ int main(int argc, char **argv) {
 
 			// Launch .nds directly or via nds-bootstrap
 			if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)) {
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".DSI") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
+			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
 				if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
 					useBootstrap = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
@@ -1305,9 +1310,13 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if ( strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0 ||
-						strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0 ||
-						strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0 ) {
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GB") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SGB") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GBC") == 0))
+			{
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
 				homebrewArg = gbROMpath;
@@ -1327,8 +1336,11 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ( 		strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0 ||
-						strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0 ) {
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".FDS") == 0))
+			{
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
 				homebrewArg = nesROMpath;
