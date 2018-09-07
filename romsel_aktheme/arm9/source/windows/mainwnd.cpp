@@ -166,7 +166,10 @@ void MainWnd::init()
     _folderText->setRelativePosition(Point(x, y));
     _folderText->setTextColor(ini.GetInt("folder text", "color", 0));
     addChildWindow(_folderText);
-
+    
+    if (!ms().showDirectories) {
+        _folderText->hide();
+    }
     // init startmenu
     _startMenu = new StartMenu(160, 40, 61, 108, this, "start menu");
     //_startMenu->setRelativePosition( Point(160, 40) );

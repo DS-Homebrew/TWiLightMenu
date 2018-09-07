@@ -11,7 +11,10 @@
 class SoundEffect
 {
   public:
-    SoundEffect(): music(false) {}
+    SoundEffect(): music(false) {
+        music = false;
+        counter = 0;
+    }
     ~SoundEffect() {}
 
     void init()
@@ -81,8 +84,8 @@ class SoundEffect
     {
         if (!music)
         {
-            mmEffectEx(&mus_settings); // Play settings music
             music = true;
+            mmEffectEx(&mus_settings); // Play settings music
         }
     }
 
