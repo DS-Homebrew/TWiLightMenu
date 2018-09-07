@@ -184,8 +184,10 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
   // We need to delete the texture since the resource held by the unique pointer will be
   // immediately dropped when we assign it to the pointer.
 
-  if (*textureId)
+  if (*textureId != 0) {
+    nocashMessage("Existing texture found!?");
     glDeleteTextures(1, textureId);
+  }
 
   unique_ptr<glImage[]> texturePtr = std::make_unique<glImage[]>(arraySize);
 
@@ -209,24 +211,25 @@ void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
   loadDialogboxImage(dialogboxPal, dialogboxBitmap);
-
-  // todo: don't load on 3DS
-  loadBipsImage(bipsPal, bipsBitmap);
-  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
-  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
-  loadStartImage(start_textPal, start_textBitmap);
-  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 
 void ThemeTextures::loadDSiDarkTheme()
 {
-  loadCommonTextures();
 
   loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
-  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
   loadSettingsImage(icon_settingsPal, icon_settingsBitmap);
   loadBraceImage(bracePal, braceBitmap);
   loadBoxfullImage(boxPal, boxBitmap);
   loadFolderImage(folderPal, folderBitmap);
+
+  loadCommonTextures();
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+
+
 }

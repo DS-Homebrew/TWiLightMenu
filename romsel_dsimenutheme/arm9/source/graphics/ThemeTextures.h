@@ -11,11 +11,28 @@ class ThemeTextures
 {
 
 public:
-  ThemeTextures() {}
+  ThemeTextures()
+  {
+    bubbleTexID = 0;
+    bipsTexID = 0;
+    scrollwindowTexID = 0;
+    buttonarrowTexID = 0;
+    launchdotTexID = 0;
+    startTexID = 0;
+    startbrdTexID = 0;
+    settingsTexID = 0;
+    braceTexID = 0;
+    boxfullTexID = 0;
+    boxemptyTexID = 0;
+    folderTexID = 0;
+
+    progressTexID = 0;
+    dialogboxTexID = 0;
+    wirelessiconTexID = 0;
+  }
   ~ThemeTextures() {}
 
 public:
-
   void loadDSiDarkTheme();
 
 private:
