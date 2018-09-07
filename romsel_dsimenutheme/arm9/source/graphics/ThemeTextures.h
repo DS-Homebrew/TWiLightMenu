@@ -1,0 +1,117 @@
+#pragma once
+#ifndef __DSIMENUPP_THEME_TEXTURES__
+#define __DSIMENUPP_THEME_TEXTURES__
+#include "common/gl2d.h"
+#include "common/singleton.h"
+#include <memory>
+
+using std::unique_ptr;
+
+class ThemeTextures
+{
+
+public:
+  ThemeTextures() {}
+  ~ThemeTextures() {}
+
+public:
+
+  void loadDSiDarkTheme();
+
+private:
+  void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);
+  void loadProgressImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadBipsImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadScrollwindowImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadButtonarrowImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadLaunchdotImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadStartImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadStartbrdImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize, int palLength,
+                         int sprH, int texH);
+  void loadBraceImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadSettingsImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadBoxfullImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadBoxemptyImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadFolderImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
+
+private:
+  unique_ptr<glImage[]> loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
+                                    unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int texH);
+  void loadCommonTextures();
+
+public:
+  const glImage *bubbleImage() { return _bubbleImage.get(); }
+  const glImage *progressImage() { return _progressImage.get(); }
+  const glImage *dialogboxImage() { return _dialogboxImage.get(); }
+  const glImage *bipsImage() { return _bipsImage.get(); }
+  const glImage *scrollwindowImage() { return _scrollwindowImage.get(); }
+  const glImage *buttonarrowImage() { return _buttonarrowImage.get(); }
+  const glImage *launchdotImage() { return _launchdotImage.get(); }
+  const glImage *startImage() { return _startImage.get(); }
+  const glImage *startbrdImage() { return _startbrdImage.get(); }
+  const glImage *braceImage() { return _braceImage.get(); }
+  const glImage *settingsImage() { return _settingsImage.get(); }
+  const glImage *boxfullImage() { return _boxfullImage.get(); }
+  const glImage *boxemptyImage() { return _boxemptyImage.get(); }
+  const glImage *folderImage() { return _folderImage.get(); }
+  const glImage *wirelessIcons() { return _wirelessIcons.get(); }
+
+private:
+  unique_ptr<glImage[]> _progressImage;
+  unique_ptr<glImage[]> _dialogboxImage;
+  unique_ptr<glImage[]> _bipsImage;
+  unique_ptr<glImage[]> _scrollwindowImage;
+  unique_ptr<glImage[]> _buttonarrowImage;
+  unique_ptr<glImage[]> _launchdotImage;
+  unique_ptr<glImage[]> _startImage;
+  unique_ptr<glImage[]> _startbrdImage;
+  unique_ptr<glImage[]> _braceImage;
+  unique_ptr<glImage[]> _settingsImage;
+  unique_ptr<glImage[]> _boxfullImage;
+  unique_ptr<glImage[]> _boxemptyImage;
+  unique_ptr<glImage[]> _folderImage;
+  unique_ptr<glImage[]> _wirelessIcons;
+  unique_ptr<glImage[]> _bubbleImage;
+
+  int bubbleTexID;
+  int bipsTexID;
+  int scrollwindowTexID;
+  int buttonarrowTexID;
+  int launchdotTexID;
+  int startTexID;
+  int startbrdTexID;
+  int settingsTexID;
+  int braceTexID;
+  int boxfullTexID;
+  int boxemptyTexID;
+  int folderTexID;
+
+  int progressTexID;
+  int dialogboxTexID;
+  int wirelessiconTexID;
+
+  // unique_ptr<glImage[1]> bubbleImage[1];
+  // glImage progressImage[(16 / 16) * (128 / 16)];
+  // glImage dialogboxImage[(256 / 16) * (256 / 16)];
+  // glImage bipsImage[(8 / 8) * (32 / 8)];
+  // glImage scrollwindowImage[(32 / 16) * (32 / 16)];
+  // glImage buttonarrowImage[(32 / 32) * (64 / 32)];
+  // glImage launchdotImage[(16 / 16) * (96 / 16)];
+  // glImage startImage[(64 / 16) * (128 / 16)];
+  // glImage startbrdImage[(32 / 32) * (256 / 80)];
+
+  // glImage _3dsstartbrdImage[(32 / 32) * (192 / 64)];
+  // glImage braceImage[(16 / 16) * (128 / 16)];
+  // glImage settingsImage[(64 / 16) * (128 / 64)];
+  // glImage boxfullImage[(64 / 16) * (128 / 64)];
+  // glImage boxemptyImage[(64 / 16) * (64 / 16)];
+  // glImage folderImage[(64 / 16) * (64 / 16)];
+  // glImage wirelessIcons[(32 / 32) * (64 / 32)];
+};
+
+typedef singleton<ThemeTextures> themeTextures_s;
+inline ThemeTextures &tex() { return themeTextures_s::instance(); }
+
+#endif

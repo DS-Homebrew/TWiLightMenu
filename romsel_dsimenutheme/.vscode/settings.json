@@ -36,6 +36,9 @@
         "streambuf": "cpp",
         "string_view": "cpp",
         "system_error": "cpp",
-        "type_traits": "cpp"
-    }
+        "type_traits": "cpp",
+        "memory": "cpp",
+        "numeric": "cpp"
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }
