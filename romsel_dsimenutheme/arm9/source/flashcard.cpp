@@ -61,6 +61,7 @@ void flashcardInit(void) {
 
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
 		/* consoleDemoInit();
+		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
 		SetBrightness(0, 0);
@@ -70,7 +71,9 @@ void flashcardInit(void) {
 			swiWaitForVBlank();
 		} */
 
-		if (!memcmp(gamename, "TOP TF/SD DS", 12)) {
+		if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
+		} else if (!memcmp(gamename, "TOP TF/SD DS", 12)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 		} else if (!memcmp(gamename, "R4DSULTRA", 9)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
