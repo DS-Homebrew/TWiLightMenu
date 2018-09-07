@@ -360,9 +360,13 @@ void getGameInfo(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -399,9 +403,13 @@ void getGameInfo(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -576,9 +584,13 @@ void iconUpdate(bool isDir, const char* name, int num)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -611,9 +623,13 @@ void iconUpdate(bool isDir, const char* name, int num)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -762,10 +778,15 @@ void titleUpdate(bool isDir, const char* name, int num)
 		}
 	}
 	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".GB") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".SGB") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".GBC") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".nes") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".fds") == 0  )
+				strcasecmp (name + strlen(name) - 4, ".NES") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".fds") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".FDS") == 0  )
 	{
 		writeBannerText(0, name, "", "");
 	}
