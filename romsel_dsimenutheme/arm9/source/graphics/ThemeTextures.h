@@ -34,6 +34,15 @@ public:
 
 public:
   void loadDSiDarkTheme();
+  void loadDSiWhiteTheme();
+  void loadDSiRedTheme();
+  void loadDSiBlueTheme();
+  void loadDSiGreenTheme();
+  void loadDSiYellowTheme();
+  void loadDSiPinkTheme();
+  void loadDSiPurpleTheme();
+
+  void load3DSTheme();
 
 private:
   void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);

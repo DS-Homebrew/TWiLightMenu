@@ -211,6 +211,7 @@ void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
   loadDialogboxImage(dialogboxPal, dialogboxBitmap);
+  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 
 void ThemeTextures::loadDSiDarkTheme()
@@ -230,6 +231,173 @@ void ThemeTextures::loadDSiDarkTheme()
 
   loadCommonTextures();
   loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+}
+
+void ThemeTextures::load3DSTheme()
+{
+
+  loadBubbleImage(_3ds_bubblePal, _3ds_bubbleBitmap, 7, 7, 8);
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+ 
+  loadBoxfullImage(_3ds_box_fullPal, _3ds_box_fullBitmap);
+  loadBoxemptyImage(_3ds_box_emptyPal, _3ds_box_emptyBitmap);
+  loadFolderImage(_3ds_folderPal, _3ds_folderBitmap);
+ 
+
+  loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  
+  //loadBipsImage(bipsPal, bipsBitmap);
+  //loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  //loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
 
 
+
+void ThemeTextures::loadDSiWhiteTheme()
+{
+
+  loadBubbleImage(org_bubblePal, org_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(org_scroll_windowPal, org_scroll_windowBitmap);
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadBraceImage(org_bracePal, org_braceBitmap);
+  loadBoxfullImage(org_boxPal, org_boxBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+
+void ThemeTextures::loadDSiRedTheme()
+{
+
+  loadBubbleImage(red_bubblePal, red_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(red_scroll_windowPal, red_scroll_windowBitmap);
+  loadBraceImage(red_bracePal, red_braceBitmap);
+  loadBoxfullImage(red_boxPal, red_boxBitmap);
+
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+void ThemeTextures::loadDSiBlueTheme()
+{
+
+  loadBubbleImage(blue_bubblePal, blue_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(blue_scroll_windowPal, blue_scroll_windowBitmap);
+  loadBraceImage(blue_bracePal, blue_braceBitmap);
+  loadBoxfullImage(blue_boxPal, blue_boxBitmap);
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+void ThemeTextures::loadDSiGreenTheme()
+{
+  loadBubbleImage(green_bubblePal, green_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(green_scroll_windowPal, green_scroll_windowBitmap);
+  loadBraceImage(green_bracePal, green_braceBitmap);
+  loadBoxfullImage(green_boxPal, green_boxBitmap);
+
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+
+void ThemeTextures::loadDSiYellowTheme()
+{
+  loadBubbleImage(yellow_bubblePal, yellow_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(yellow_scroll_windowPal, yellow_scroll_windowBitmap);
+  loadBraceImage(yellow_bracePal, yellow_braceBitmap);
+  loadBoxfullImage(yellow_boxPal, yellow_boxBitmap);
+
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+
+void ThemeTextures::loadDSiPurpleTheme()
+{
+  loadBubbleImage(purple_bubblePal, purple_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(purple_scroll_windowPal, purple_scroll_windowBitmap);
+  loadBraceImage(purple_bracePal, purple_braceBitmap);
+  loadBoxfullImage(purple_boxPal, purple_boxBitmap);
+
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
+}
+
+
+void ThemeTextures::loadDSiPinkTheme()
+{
+  loadBubbleImage(pink_bubblePal, pink_bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(pink_scroll_windowPal, pink_scroll_windowBitmap);
+  loadBraceImage(pink_bracePal, pink_braceBitmap);
+  loadBoxfullImage(pink_boxPal, pink_boxBitmap);
+
+
+  loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+  loadFolderImage(org_folderPal, org_folderBitmap);
+
+  loadStartImage(start_textPal, start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadButtonarrowImage(button_arrowPal, button_arrowBitmap);
+  loadStartbrdImage(start_borderPal, start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  
+  loadLaunchdotImage(button_arrowPal, launch_dotBitmap);
+
+  loadCommonTextures();
 }
