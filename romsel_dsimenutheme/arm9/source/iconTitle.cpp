@@ -29,6 +29,7 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
+#include "flashcard.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
 
@@ -51,7 +52,6 @@ extern int startMenu_cursorPosition;
 extern int theme;
 extern bool useGbarunner;
 
-extern bool flashcardFound(void);
 extern bool animateDsiIcons;
 
 extern bool showbubble;
