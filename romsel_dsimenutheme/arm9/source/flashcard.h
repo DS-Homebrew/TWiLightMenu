@@ -2,6 +2,7 @@
 #define DSIMENUPP_FLASHCARD_H
 
 extern bool secondaryDevice;
+extern int flashcard;
 //bool sdFound(void);
 bool flashcardFound(void);
 bool bothSDandFlashcard(void);
