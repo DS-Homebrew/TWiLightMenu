@@ -215,30 +215,30 @@ int bottomBg;
 
 int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 
-int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
-int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
+// int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
+// int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
 
-//glImage subBgImage[(256 / 16) * (256 / 16)];
-//glImage mainBgImage[(256 / 16) * (256 / 16)];
-//glImage shoulderImage[(128 / 16) * (64 / 32)];
-//glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
+// //glImage subBgImage[(256 / 16) * (256 / 16)];
+// //glImage mainBgImage[(256 / 16) * (256 / 16)];
+// //glImage shoulderImage[(128 / 16) * (64 / 32)];
+// //glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
 
-glImage bubbleImage[1];
-glImage progressImage[(16 / 16) * (128 / 16)];
-glImage dialogboxImage[(256 / 16) * (256 / 16)];
-glImage bipsImage[(8 / 8) * (32 / 8)];
-glImage scrollwindowImage[(32 / 16) * (32 / 16)];
-glImage buttonarrowImage[(32 / 32) * (64 / 32)];
-glImage launchdotImage[(16 / 16) * (96 / 16)];
-glImage startImage[(64 / 16) * (128 / 16)];
-glImage startbrdImage[(32 / 32) * (256 / 80)];
-glImage _3dsstartbrdImage[(32 / 32) * (192 / 64)];
-glImage braceImage[(16 / 16) * (128 / 16)];
-glImage settingsImage[(64 / 16) * (128 / 64)];
-glImage boxfullImage[(64 / 16) * (128 / 64)];
-glImage boxemptyImage[(64 / 16) * (64 / 16)];
-glImage folderImage[(64 / 16) * (64 / 16)];
-glImage wirelessIcons[(32 / 32) * (64 / 32)];
+// glImage tex().bubbleImage()[1];
+// glImage tex().progressImage()[(16 / 16) * (128 / 16)];
+// glImage tex().dialogboxImage()[(256 / 16) * (256 / 16)];
+// glImage tex().bipsImage()[(8 / 8) * (32 / 8)];
+// glImage tex().scrollwindowImage()[(32 / 16) * (32 / 16)];
+// glImage tex().buttonarrowImage()[(32 / 32) * (64 / 32)];
+// glImage tex().launchdotImage()[(16 / 16) * (96 / 16)];
+// glImage tex().startImage()[(64 / 16) * (128 / 16)];
+// glImage tex().startbrdImage()[(32 / 32) * (256 / 80)];
+// glImage tex().startbrdImage()[(32 / 32) * (192 / 64)];
+// glImage tex().braceImage()[(16 / 16) * (128 / 16)];
+// glImage tex().settingsImage()[(64 / 16) * (128 / 64)];
+// glImage boxfullImage[(64 / 16) * (128 / 64)];
+// glImage boxemptyImage[(64 / 16) * (64 / 16)];
+// glImage tex().folderImage()[(64 / 16) * (64 / 16)];
+// glImage tex().wirelessIcons()[(32 / 32) * (64 / 32)];
 
 
 int vblankRefreshCounter = 0;
@@ -529,7 +529,7 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 // 	}
 // }
 
-void drawBubble(glImage *images)
+void drawBubble(const glImage *images)
 {
 	glSprite(bubbleXpos, bubbleYpos, GL_FLIP_NONE, &images[0]);
 }
@@ -541,7 +541,7 @@ void drawDbox()
 		for (int x = 0; x < 256 / 16; x++)
 		{
 			int i = y * 16 + x;
-			glSprite(x * 16, dbox_Ypos+y * 16, GL_FLIP_NONE, &dialogboxImage[i & 255]);
+			glSprite(x * 16, dbox_Ypos+y * 16, GL_FLIP_NONE, &tex().dialogboxImage()[i & 255]);
 		}
 	}
 }
@@ -787,30 +787,30 @@ void vBlankHandler()
 				glColor(RGB15(31, 31, 31));
 				int bipXpos = 27;
 				if(startMenu) {
-					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, scrollwindowImage);
+					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, tex().scrollwindowImage());
 					for(int i = 0; i < 40; i++) {
-						if (i == 0) glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[2 & 31]);
-						else if (i == 1) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
-						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+						if (i == 0) glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[2 & 31]);
+						else if (i == 1) glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
+						else glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
 						bipXpos += 5;
 					}
-					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, &buttonarrowImage[1]);
+					glSprite(16+startMenu_titlewindowXpos, 171, GL_FLIP_NONE, &tex().buttonarrowImage()[1]);
 				} else {
-					glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, scrollwindowImage);
+					glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
 					for(int i = 0; i < 40; i++) {
-						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, bipsImage);
-						else glSprite(bipXpos, 178, GL_FLIP_NONE, &bipsImage[1 & 31]);
+						if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
+						else glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
 						bipXpos += 5;
 					}
-					glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, &buttonarrowImage[1]);
+					glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, &tex().buttonarrowImage()[1]);
 				}
-				glSprite(0, 171, GL_FLIP_NONE, &buttonarrowImage[0]);
-				glSprite(224, 171, GL_FLIP_H, &buttonarrowImage[0]);
+				glSprite(0, 171, GL_FLIP_NONE, &tex().buttonarrowImage()[0]);
+				glSprite(224, 171, GL_FLIP_H, &tex().buttonarrowImage()[0]);
 				glColor(RGB15(31, 31, 31));
 				if (startMenu) {
-					glSprite(72-startMenu_titleboxXpos, 81, GL_FLIP_NONE, braceImage);
+					glSprite(72-startMenu_titleboxXpos, 81, GL_FLIP_NONE, tex().braceImage());
 				} else {
-					glSprite(72-titleboxXpos[secondaryDevice], 81, GL_FLIP_NONE, braceImage);
+					glSprite(72-titleboxXpos[secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 				}
 			}
 			int spawnedboxXpos = 96;
@@ -823,22 +823,22 @@ void vBlankHandler()
 						movecloseXpos = 0;
 					}
 					if (i == 0 &&  (!applaunchprep || startMenu_cursorPosition != i)) {
-						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[1 & 63]);
+						glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[1 & 63]);
 					} else if (i == 1 && (!applaunchprep || startMenu_cursorPosition != i)) {
 						if (!flashcardFound()) {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &settingsImage[0 & 63]);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[0 & 63]);
 						} else {
-							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+							if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 							else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
 							drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						}
 					} else if (i == 2 && !flashcardFound() && (!applaunchprep || startMenu_cursorPosition != i)) {
-						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, boxfullImage);
+						if (theme == 1) glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 						else glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
 						drawIconGBA(iconXpos-startMenu_titleboxXpos+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 					} else if (!applaunchprep || startMenu_cursorPosition != i){
 						if (theme == 1) {
-							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, boxemptyImage);
+							glSprite(spawnedboxXpos-startMenu_titleboxXpos, titleboxYpos, GL_FLIP_NONE, tex().boxemptyImage());
 						} else {
 							glSprite(spawnedboxXpos-startMenu_titleboxXpos+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
 						}
@@ -846,7 +846,7 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 81, GL_FLIP_H, braceImage);
+				if (theme == 0) glSprite(spawnedboxXpos+10-startMenu_titleboxXpos, 81, GL_FLIP_H, tex().braceImage());
 			} else {
 				for(int i = 0; i < 40; i++) {
 					if (theme == 0) {
@@ -856,11 +856,11 @@ void vBlankHandler()
 					}
 					if (i < spawnedtitleboxes) {
 						if (isDirectory[i]) {
-							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos, GL_FLIP_NONE, folderImage);
-							else glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, folderImage);
+							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos, GL_FLIP_NONE, tex().folderImage());
+							else glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
 						} else if (!applaunchprep || cursorPosition[secondaryDevice] != i){ // Only draw the icon if we're not launching the selcted app
 							if (theme == 1) {
-								glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, boxfullImage);
+								glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 							} else { 
 								glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
 							}
@@ -873,7 +873,7 @@ void vBlankHandler()
 					} else {
 						// Empty box
 						if (theme == 1) {
-							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, boxemptyImage);
+							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().boxemptyImage());
 						} else {
 							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
 						}
@@ -881,29 +881,29 @@ void vBlankHandler()
 					spawnedboxXpos += 64;
 					iconXpos += 64;
 				}
-				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, braceImage);
+				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
 			if (applaunchprep && theme==0) {
 				
 				if(startMenu) {
 					if (startMenu_cursorPosition == 0) {
-						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[1 & 63]);
+						glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1 & 63]);
 					} else if (startMenu_cursorPosition == 1) {
 						if (!flashcardFound()) {
-							glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &settingsImage[0 & 63]);
+							glSprite(96, 83-titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[0 & 63]);
 						} else {
-							glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+							glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 							drawIconGBA(112, 96-titleboxYmovepos);
 						}
 					} else if (startMenu_cursorPosition == 2) {
-						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 						drawIconGBA(112, 96-titleboxYmovepos);
 					}
 				} else {
 					if (isDirectory[cursorPosition[secondaryDevice]]) {
-						glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, folderImage);
+						glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
 					} else {
-						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, boxfullImage);
+						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
 						if (bnrRomType[cursorPosition[secondaryDevice]] == 3) drawIconNES(112, 96-titleboxYmovepos);
 						else if (bnrRomType[cursorPosition[secondaryDevice]] == 2) drawIconGBC(112, 96-titleboxYmovepos);
 						else if (bnrRomType[cursorPosition[secondaryDevice]] == 1) drawIconGB(112, 96-titleboxYmovepos);
@@ -912,7 +912,7 @@ void vBlankHandler()
 				}
 				// Draw dots after selecting a game/app
 				for (int i = 0; i < 11; i++) {
-					glSprite(76+launchDotX[i], 69+launchDotY[i], GL_FLIP_NONE, &launchdotImage[(launchDotFrame[i]) & 15]);
+					glSprite(76+launchDotX[i], 69+launchDotY[i], GL_FLIP_NONE, &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
 					if (launchDotX[i] == 0) launchDotXMove[i] = true;
 					if (launchDotX[i] == 88) launchDotXMove[i] = false;
 					if (launchDotY[i] == 0) launchDotYMove[i] = true;
@@ -932,11 +932,11 @@ void vBlankHandler()
 			}
 			if (showSTARTborder) {
 				if (theme == 1) {
-					glSprite(96, 92, GL_FLIP_NONE, &_3dsstartbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
-					glSprite(96+32, 92, GL_FLIP_H, &_3dsstartbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+					glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
-						if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
+						if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 					}
 				} else if (!isScrolling) {
 					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
@@ -944,19 +944,19 @@ void vBlankHandler()
 						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
 					}
-					glSprite(96, 81, GL_FLIP_NONE, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-					glSprite(96+32, 81, GL_FLIP_H, &startbrdImage[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96, 81, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96+32, 81, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
 					if (!startMenu) {
-						if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
+						if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 					}
 				}
 			}
 
 			// Refresh the background layer.
 			bottomBgLoad(showbubble);
-			if (showbubble) drawBubble(bubbleImage);
-			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &startImage[setLanguage]);
+			if (showbubble) drawBubble(tex().bubbleImage());
+			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -970,7 +970,7 @@ void vBlankHandler()
 			}*/
 			if (whiteScreen) {
 				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &progressImage[progressAnimNum]);
+				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 			}
 			
 			if (vblankRefreshCounter >= REFRESH_EVERY_VBLANKS) {
@@ -1586,7 +1586,7 @@ void graphicsInit()
 	bottomBgLoad(false, true);
 	swiIntrWait(0, 1);
 	tex().loadDSiDarkTheme();
-	// progressTexID = glLoadTileSet(progressImage, // pointer to glImage array
+	// progressTexID = glLoadTileSet(tex().progressImage(), // pointer to glImage array
 	// 						16, // sprite width
 	// 						16, // sprite height
 	// 						16, // bitmap width
@@ -1600,7 +1600,7 @@ void graphicsInit()
 	// 						(u8*) progressBitmap // image data generated by GRIT
 	// 						);
 
-	// dialogboxTexID = glLoadTileSet(dialogboxImage, // pointer to glImage array
+	// dialogboxTexID = glLoadTileSet(tex().dialogboxImage(), // pointer to glImage array
 	// 						16, // sprite width
 	// 						16, // sprite height
 	// 						256, // bitmap width
@@ -1618,7 +1618,7 @@ void graphicsInit()
 	// 	titleboxYpos = 96;
 	// 	bubbleYpos += 18;
 	// 	bubbleXpos += 3;
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							7, // sprite width
 	// 							7, // sprite height
 	// 							8, // bitmap width
@@ -1633,7 +1633,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 7) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1648,7 +1648,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 6) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1663,7 +1663,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 5) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1678,7 +1678,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 4) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1693,7 +1693,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 3) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1708,7 +1708,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 2) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1723,7 +1723,7 @@ void graphicsInit()
 	// 							);
 	// } else if (subtheme == 1) {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1738,7 +1738,7 @@ void graphicsInit()
 	// 							);
 	// } else {
 
-	// 	bubbleTexID = glLoadTileSet(bubbleImage, // pointer to glImage array
+	// 	bubbleTexID = glLoadTileSet(tex().bubbleImage(), // pointer to glImage array
 	// 							11, // sprite width
 	// 							8, // sprite height
 	// 							16, // bitmap width
@@ -1753,7 +1753,7 @@ void graphicsInit()
 	// 							);
 	// }
 
-	// bipsTexID = glLoadTileSet(bipsImage, // pointer to glImage array
+	// bipsTexID = glLoadTileSet(tex().bipsImage(), // pointer to glImage array
 	// 						8, // sprite width
 	// 						8, // sprite height
 	// 						8, // bitmap width
@@ -1768,7 +1768,7 @@ void graphicsInit()
 	// 						);
 
 	// if (subtheme == 7) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1782,7 +1782,7 @@ void graphicsInit()
 	// 							(u8*) purple_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 6) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1796,7 +1796,7 @@ void graphicsInit()
 	// 							(u8*) pink_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 5) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1810,7 +1810,7 @@ void graphicsInit()
 	// 							(u8*) yellow_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 4) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1824,7 +1824,7 @@ void graphicsInit()
 	// 							(u8*) green_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 3) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1838,7 +1838,7 @@ void graphicsInit()
 	// 							(u8*) blue_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 2) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1852,7 +1852,7 @@ void graphicsInit()
 	// 							(u8*) red_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 1) {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1866,7 +1866,7 @@ void graphicsInit()
 	// 							(u8*) org_scroll_windowBitmap // image data generated by GRIT
 	// 							);
 	// } else {
-	// 	scrollwindowTexID = glLoadTileSet(scrollwindowImage, // pointer to glImage array
+	// 	scrollwindowTexID = glLoadTileSet(tex().scrollwindowImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							32, // sprite height
 	// 							32, // bitmap width
@@ -1881,7 +1881,7 @@ void graphicsInit()
 	// 							);
 	// }
 
-	// buttonarrowTexID = glLoadTileSet(buttonarrowImage, // pointer to glImage array
+	// buttonarrowTexID = glLoadTileSet(tex().buttonarrowImage(), // pointer to glImage array
 	// 						32, // sprite width
 	// 						32, // sprite height
 	// 						32, // bitmap width
@@ -1895,7 +1895,7 @@ void graphicsInit()
 	// 						(u8*) button_arrowBitmap // image data generated by GRIT
 	// 						);
 
-	// launchdotTexID = glLoadTileSet(launchdotImage, // pointer to glImage array
+	// launchdotTexID = glLoadTileSet(tex().launchdotImage(), // pointer to glImage array
 	// 						16, // sprite width
 	// 						16, // sprite height
 	// 						16, // bitmap width
@@ -1909,7 +1909,7 @@ void graphicsInit()
 	// 						(u8*) launch_dotBitmap // image data generated by GRIT
 	// 						);
 
-	// startTexID = glLoadTileSet(startImage, // pointer to glImage array
+	// startTexID = glLoadTileSet(tex().startImage(), // pointer to glImage array
 	// 						64, // sprite width
 	// 						16, // sprite height
 	// 						64, // bitmap width
@@ -1924,7 +1924,7 @@ void graphicsInit()
 	// 						);
 
 	// if (theme == 1) {
-	// 	startbrdTexID = glLoadTileSet(_3dsstartbrdImage, // pointer to glImage array
+	// 	startbrdTexID = glLoadTileSet(tex().startbrdImage(), // pointer to glImage array
 	// 							32, // sprite width
 	// 							64, // sprite height
 	// 							32, // bitmap width
@@ -1954,7 +1954,7 @@ void graphicsInit()
 	// }
 
 	// if (theme == 1) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -1996,7 +1996,7 @@ void graphicsInit()
 	// 							(u8*) _3ds_box_emptyBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2010,7 +2010,7 @@ void graphicsInit()
 	// 							(u8*) _3ds_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 7) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2024,7 +2024,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2052,7 +2052,7 @@ void graphicsInit()
 	// 							(u8*) purple_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2066,7 +2066,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 6) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2080,7 +2080,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2108,7 +2108,7 @@ void graphicsInit()
 	// 							(u8*) pink_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2122,7 +2122,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 5) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2136,7 +2136,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2164,7 +2164,7 @@ void graphicsInit()
 	// 							(u8*) yellow_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2178,7 +2178,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 4) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2192,7 +2192,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2220,7 +2220,7 @@ void graphicsInit()
 	// 							(u8*) green_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2234,7 +2234,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 3) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2248,7 +2248,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2276,7 +2276,7 @@ void graphicsInit()
 	// 							(u8*) blue_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2290,7 +2290,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 2) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2304,7 +2304,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2332,7 +2332,7 @@ void graphicsInit()
 	// 							(u8*) red_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2346,7 +2346,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else if (subtheme == 1) {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2360,7 +2360,7 @@ void graphicsInit()
 	// 							(u8*) org_icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2388,7 +2388,7 @@ void graphicsInit()
 	// 							(u8*) org_boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2402,7 +2402,7 @@ void graphicsInit()
 	// 							(u8*) org_folderBitmap // image data generated by GRIT
 	// 							);
 	// } else {
-	// 	settingsTexID = glLoadTileSet(settingsImage, // pointer to glImage array
+	// 	settingsTexID = glLoadTileSet(tex().settingsImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
@@ -2416,7 +2416,7 @@ void graphicsInit()
 	// 							(u8*) icon_settingsBitmap // image data generated by GRIT
 	// 							);
 
-	// 	braceTexID = glLoadTileSet(braceImage, // pointer to glImage array
+	// 	braceTexID = glLoadTileSet(tex().braceImage(), // pointer to glImage array
 	// 							16, // sprite width
 	// 							128, // sprite height
 	// 							16, // bitmap width
@@ -2444,7 +2444,7 @@ void graphicsInit()
 	// 							(u8*) boxBitmap // image data generated by GRIT
 	// 							);
 
-	// 	folderTexID = glLoadTileSet(folderImage, // pointer to glImage array
+	// 	folderTexID = glLoadTileSet(tex().folderImage(), // pointer to glImage array
 	// 							64, // sprite width
 	// 							64, // sprite height
 	// 							64, // bitmap width
