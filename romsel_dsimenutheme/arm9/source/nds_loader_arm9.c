@@ -380,7 +380,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 
 	bool havedsiSD = false;
 
-	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
+	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
