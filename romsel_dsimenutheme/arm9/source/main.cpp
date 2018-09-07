@@ -150,11 +150,6 @@ bool boostVram = false;
 bool soundFix = false;
 bool bstrap_asyncPrefetch = true;
 
-int getConsoleModel(void) {
-	CIniFile settingsini( settingsinipath );
-	return settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-}
-
 void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
