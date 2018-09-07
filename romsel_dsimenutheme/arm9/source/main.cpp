@@ -702,6 +702,8 @@ int main(int argc, char **argv) {
 	// }
 	// return 0;
 	
+	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
+
 	flashcardInit();
 
 	// TODO: turn this into swiCopy
@@ -772,8 +774,6 @@ int main(int argc, char **argv) {
 	if (access(settingsinipath, F_OK) != 0) {
 		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
-
-	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
 	
 	langInit();
 

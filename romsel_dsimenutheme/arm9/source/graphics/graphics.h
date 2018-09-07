@@ -20,6 +20,7 @@
 #pragma once
 #define REFRESH_EVERY_VBLANKS 60
 
+void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void clearBmpScreen();
 void loadBoxArt(const char* filename);
