@@ -32,6 +32,7 @@
 #include "common/gl2d.h"
 
 #include "date.h"
+#include "fileCopy.h"
 
 #include "graphics/graphics.h"
 
@@ -134,6 +135,7 @@ bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
 bool useGbarunner = false;
+int appName = 0;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition[2] = {0};
@@ -163,6 +165,7 @@ void LoadSettings(void) {
 	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+    appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
 	// Customizable UI settings.
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -809,6 +812,8 @@ int main(int argc, char **argv) {
 		music = true;
 	}
 
+	//fcopy("sd:/test.txt", "fat:/delivery from SD.txt");
+
 	while(1) {
 
 		snprintf (path, sizeof(path), "%s", romfolder[secondaryDevice].c_str());
@@ -999,6 +1004,17 @@ int main(int argc, char **argv) {
 				printLarge(false, 4, 4, "Please press and hold the X button.");
 				printLarge(false, 4, 20, "Hold it on the black screen for");
 				printLarge(false, 4, 36, "2 seconds.");
+				if (secondaryDevice) {
+					printLarge(false, 4, 64, "After saving, please re-start");
+					if (appName == 0) {
+						printLarge(false, 4, 80, "DSiMenu++ to transfer your");
+					} else if (appName == 1) {
+						printLarge(false, 4, 80, "SRLoader to transfer your");
+					} else if (appName == 2) {
+						printLarge(false, 4, 80, "DSisionX to transfer your");
+					}
+					printLarge(false, 4, 96, "save data back.");
+				}
 
 				// Wait for X button hold
 				while (1)
