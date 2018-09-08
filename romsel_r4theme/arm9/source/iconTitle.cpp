@@ -46,9 +46,6 @@
 #include "icon_gb.h"
 #include "icon_nes.h"
 
-extern bool startMenu;
-extern int startMenu_cursorPosition;
-
 extern int theme;
 extern bool useGbarunner;
 extern bool animateDsiIcons;
@@ -436,9 +433,13 @@ void getGameInfo(bool isDir, const char* name)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -471,9 +472,13 @@ void getGameInfo(bool isDir, const char* name)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -601,9 +606,13 @@ void iconUpdate(bool isDir, const char* name)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -636,9 +645,13 @@ void iconUpdate(bool isDir, const char* name)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
 		FILE *fp;
@@ -720,19 +733,6 @@ void titleUpdate(bool isDir, const char* name)
 {
 	clearText(false);
 	
-	if (startMenu) {
-		if (startMenu_cursorPosition == 0) {
-			writeBannerText(0, "Settings", "", "");
-		} else if (startMenu_cursorPosition == 1) {
-			if (useGbarunner) {
-				writeBannerText(0, "Start GBARunner2", "", "");
-			} else {
-				writeBannerText(0, "Start GBA Mode", "", "");
-			}
-		}
-		return;
-	}
-
 	if (isDir)
 	{
 		// text
@@ -743,10 +743,15 @@ void titleUpdate(bool isDir, const char* name)
 		}
 	}
 	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".GB") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".SGB") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".GBC") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".nes") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".fds") == 0  )
+				strcasecmp (name + strlen(name) - 4, ".NES") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".fds") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".FDS") == 0  )
 	{
 		writeBannerText(0, name, "", "");
 	}
@@ -795,9 +800,13 @@ void titleUpdate(bool isDir, const char* name)
 			strtok(p, "\n\r\t ");
 
 			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
 			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0))
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
+			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
 			{
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -830,9 +839,13 @@ void titleUpdate(bool isDir, const char* name)
 		free(line);
 	}
 	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0))
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
+			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
 		FILE *fp;

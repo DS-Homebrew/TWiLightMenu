@@ -36,6 +36,7 @@
 #include "date.h"
 
 #include "ndsheaderbanner.h"
+#include "flashcard.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -69,7 +70,7 @@ extern bool isRegularDS;
 
 extern bool showdialogbox;
 
-extern std::string romfolder;
+extern std::string romfolder[2];
 
 extern std::string arm7DonorPath;
 bool donorFound = true;
@@ -88,11 +89,9 @@ extern int theme;
 
 extern bool showDirectories;
 extern int spawnedtitleboxes;
-extern int cursorPosition;
+extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
-extern int pagenum;
-
-extern bool flashcardUsed;
+extern int pagenum[2];
 
 bool settingsChanged = false;
 
@@ -232,9 +231,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 
-	fileOffset = cursorPosition;
-	if (pagenum > 0) {
-		fileOffset += pagenum*40;
+	fileOffset = cursorPosition[secondaryDevice];
+	if (pagenum[secondaryDevice] > 0) {
+		fileOffset += pagenum[secondaryDevice]*40;
 	}
 
 	while (true)
@@ -256,28 +255,40 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
 			{
 				bnrRomType = 1;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc") {
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
+			{
 				bnrRomType = 2;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-					|| std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
 			{
 				bnrRomType = 3;
 				bnrWirelessIcon = 0;
@@ -340,13 +351,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				// Enter selected directory
 				chdir (entry->name.c_str());
 				char buf[256];
-				romfolder = getcwd(buf, 256);
-				cursorPosition = 0;
-				pagenum = 0;
+				romfolder[secondaryDevice] = getcwd(buf, 256);
+				cursorPosition[secondaryDevice] = 0;
+				pagenum[secondaryDevice] = 0;
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
-			} else if ((isDSiWare && flashcardUsed)
+			} else if ((isDSiWare && !isDSiMode())
 					|| (isDSiWare && consoleModel > 1)) {
 				showdialogbox = true;
 				printLargeCentered(false, 84, "Error!");
@@ -367,12 +378,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 25; i++) {
 					swiWaitForVBlank();
 				}
-				cursorPosition = fileOffset;
-				pagenum = 0;
+				cursorPosition[secondaryDevice] = fileOffset;
+				pagenum[secondaryDevice] = 0;
 				for (int i = 0; i < 100; i++) {
-					if (cursorPosition > 39) {
-						cursorPosition -= 40;
-						pagenum++;
+					if (cursorPosition[secondaryDevice] > 39) {
+						cursorPosition[secondaryDevice] -= 40;
+						pagenum[secondaryDevice]++;
 					} else {
 						break;
 					}
@@ -383,45 +394,32 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		/*if ((pressed & KEY_R) && !flashcardUsed && consoleModel < 2)
+		if ((pressed & KEY_R) && bothSDandFlashcard())
 		{
 			consoleClear();
 			printf("Please wait...\n");
-			if (dsiWareList) {
-				dsiWare_cursorPosition = fileOffset;
-				dsiWarePageNum = 0;
-				for (int i = 0; i < 100; i++) {
-					if (dsiWare_cursorPosition > 39) {
-						dsiWare_cursorPosition -= 40;
-						dsiWarePageNum++;
-					} else {
-						break;
-					}
-				}
-			} else {
-				cursorPosition = fileOffset;
-				pagenum = 0;
-				for (int i = 0; i < 100; i++) {
-					if (cursorPosition > 39) {
-						cursorPosition -= 40;
-						pagenum++;
-					} else {
-						break;
-					}
+			cursorPosition[secondaryDevice] = fileOffset;
+			pagenum[secondaryDevice] = 0;
+			for (int i = 0; i < 100; i++) {
+				if (cursorPosition[secondaryDevice] > 39) {
+					cursorPosition[secondaryDevice] -= 40;
+					pagenum[secondaryDevice]++;
+				} else {
+					break;
 				}
 			}
-			dsiWareList = !dsiWareList;
+			secondaryDevice = !secondaryDevice;
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
-		}*/
+		}
 
 		if ((pressed & KEY_B) && showDirectories) {
 			// Go up a directory
 			chdir ("..");
 			char buf[256];
-			romfolder = getcwd(buf, 256);
-			cursorPosition = 0;
+			romfolder[secondaryDevice] = getcwd(buf, 256);
+			cursorPosition[secondaryDevice] = 0;
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
@@ -453,12 +451,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printf("Please wait...\n");
 					remove(dirContents.at(fileOffset).name.c_str()); // Remove game/folder
 					if (settingsChanged) {
-						cursorPosition = fileOffset;
-						pagenum = 0;
+						cursorPosition[secondaryDevice] = fileOffset;
+						pagenum[secondaryDevice] = 0;
 						for (int i = 0; i < 100; i++) {
-							if (cursorPosition > 39) {
-								cursorPosition -= 40;
-								pagenum++;
+							if (cursorPosition[secondaryDevice] > 39) {
+								cursorPosition[secondaryDevice] -= 40;
+								pagenum[secondaryDevice]++;
 							} else {
 								break;
 							}
@@ -487,12 +485,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (pressedForStartMenu)
 		{
 			if (settingsChanged) {
-				cursorPosition = fileOffset;
-				pagenum = 0;
+				cursorPosition[secondaryDevice] = fileOffset;
+				pagenum[secondaryDevice] = 0;
 				for (int i = 0; i < 100; i++) {
-					if (cursorPosition > 39) {
-						cursorPosition -= 40;
-						pagenum++;
+					if (cursorPosition[secondaryDevice] > 39) {
+						cursorPosition[secondaryDevice] -= 40;
+						pagenum[secondaryDevice]++;
 					} else {
 						break;
 					}
@@ -515,7 +513,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		if (pressedForPerGameSettings && (isDirectory == false) && (bnrRomType == 0))
 		{
-			cursorPosition = fileOffset;
+			cursorPosition[secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
 		}
 
