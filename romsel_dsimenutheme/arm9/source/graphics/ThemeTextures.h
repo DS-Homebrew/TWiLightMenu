@@ -67,6 +67,14 @@ private:
   void setStringPaths(const std::string theme);
 
 private:
+
+  /**
+   * Allocates space for and loads a glTexture into memory, returning a 
+   * unique_ptr to the glImage array, and sets textureId to the ID of the
+   * loaded texture.
+   * 
+   * arraySize is the size of the glImage array.
+   */
   unique_ptr<glImage[]> loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
                                     unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int texH);
   void loadCommonTextures();

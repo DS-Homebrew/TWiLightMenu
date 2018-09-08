@@ -197,8 +197,10 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
     glDeleteTextures(1, textureId);
   }
 
+  // Do a heap allocation of arraySize glImage
   unique_ptr<glImage[]> texturePtr = std::make_unique<glImage[]>(arraySize);
 
+  // Load the texture here.
   *textureId = glLoadTileSet(texturePtr.get(),                           // pointer to glImage array
                              sprW,                                       // sprite width
                              sprH,                                       // sprite height
