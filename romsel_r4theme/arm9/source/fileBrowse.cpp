@@ -300,6 +300,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		if (bnrRomType==0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
+		if (!isRegularDS) {
+			printSmall(false, 8, 168, "Location:");
+			if (secondaryDevice) {
+				printSmall(false, 8, 176, "Slot-1 microSD Card");
+			} else if (consoleModel < 3) {
+				printSmall(false, 8, 176, "SD Card");
+			} else {
+				printSmall(false, 8, 176, "microSD Card");
+			}
+		}
+
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
 			scanKeys();
