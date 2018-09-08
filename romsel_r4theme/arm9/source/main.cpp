@@ -943,7 +943,7 @@ int main(int argc, char **argv) {
 			clearText();
 
 			// Delete previously used DSiWare of flashcard from SD
-			if (!gotosettings && previousUsedDevice && bothSDandFlashcard()) {
+			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/bootthis.dsi", F_OK) == 0) {
 					remove("sd:/bootthis.dsi");
 				}
