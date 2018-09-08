@@ -1,7 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 
-u32 copyBuf[2];
+u32 copyBuf[0x8000];
 
 int fcopy(const char *sourcePath, const char *destinationPath)
 {
@@ -29,10 +29,19 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 	int numr;
 	while (1)
 	{
+		/* scanKeys();
+		if (keysHeld() & KEY_A) {
+			// Cancel copying
+			fclose(sourceFile);
+			fclose(destinationFile);
+			return -1;
+			break;
+		} */
+
 		// Copy file to destination path
-		numr = fread(copyBuf, 2, 1, sourceFile);
+		numr = fread(copyBuf, 2, 0x8000, sourceFile);
 		fwrite(copyBuf, 2, numr, destinationFile);
-		offset += 1;
+		offset += 0x8000;
 
 		if (offset > fsize) {
 			fclose(sourceFile);
