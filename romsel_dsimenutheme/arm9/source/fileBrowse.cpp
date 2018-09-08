@@ -50,7 +50,6 @@
 #include "nds_loader_arm9.h"
 
 #include "inifile.h"
-#include "my_system.h"
 #include "flashcard.h"
 
 #include "soundbank.h"
@@ -830,7 +829,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false);
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
-						if (isDSiMode_partial()) {
+						if (isDSiMode()) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
@@ -886,8 +885,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 					return "null";
 				}
-				else if ((isDSiWare[cursorPosition[secondaryDevice]] && !isDSiMode_partial())
-						|| (isDSiWare[cursorPosition[secondaryDevice]] && consoleModel > 1))
+				else if ((isDSiWare[cursorPosition[secondaryDevice]] && !isDSiMode())
+						|| (isDSiWare[cursorPosition[secondaryDevice]] && !sdFound() && consoleModel > 1))
 				{
 					mmEffectEx(&snd_wrong);
 					clearText();
@@ -895,8 +894,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 					printSmallCentered(false, 112, "This game cannot be launched");
-					if (isDSiMode_partial()) {
-						printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
+					if (isDSiMode()) {
+						if (sdFound()) {
+							printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
+						} else {
+							printSmallCentered(false, 128, "without an SD card.");
+						}
 					} else {
 						printSmallCentered(false, 128, "in DS mode.");
 					}
@@ -1122,7 +1125,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
-			if ((pressed & KEY_X) && startMenu && isDSiMode_partial()) {
+			if ((pressed & KEY_X) && startMenu && isDSiMode()) {
 				mmEffectEx(&snd_back);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);

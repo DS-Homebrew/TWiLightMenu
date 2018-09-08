@@ -22,13 +22,13 @@ int flashcard;
 	6: SuperCard DSTWO
 */
 
-/*bool sdFound(void) {
+bool sdFound(void) {
 	if (access("sd:/", F_OK) == 0) {
 		return true;
 	} else {
 		return false;
 	}
-}*/
+}
 
 bool flashcardFound(void) {
 	if (access("fat:/", F_OK) == 0) {

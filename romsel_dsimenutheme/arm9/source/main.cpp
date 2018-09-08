@@ -47,7 +47,6 @@
 #include "graphics/fontHandler.h"
 
 #include "inifile.h"
-#include "my_system.h"
 
 #include "language.h"
 
@@ -959,7 +958,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiMode_partial() && isDSiWare[cursorPosition[secondaryDevice]]) {
+			if (isDSiMode() && isDSiWare[cursorPosition[secondaryDevice]]) {
 				const char *typeToReplace = ".nds";
 				if (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0) {
 					typeToReplace = ".dsi";
