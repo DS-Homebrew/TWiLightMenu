@@ -6,6 +6,7 @@
 extern bool perGameSettingsButtons;
 
 extern bool perGameSettings_directBoot;	// Homebrew only
+extern bool perGameSettings_dsiMode;
 extern int perGameSettings_language;
 extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;

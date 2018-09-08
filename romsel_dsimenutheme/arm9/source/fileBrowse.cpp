@@ -827,14 +827,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (startMenu_cursorPosition == 0) {
 						// Launch settings
-						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false);
+						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false);
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
 						if (isDSiMode_partial()) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
+								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
@@ -853,8 +853,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						int err = 0;
-						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true);
-						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true);
+						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false);
+						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false);
 						iprintf ("Start failed. Error %i\n", err);
 					}
 				}

@@ -613,7 +613,7 @@ void loadGameOnFlashcard (const char* filename) {
 			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true);
+			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true);
 			break;
 		}
 
@@ -624,7 +624,7 @@ void loadGameOnFlashcard (const char* filename) {
 			path = ReplaceAll(filename, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true);
+			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true);
 			break;
 		}
 
@@ -634,7 +634,7 @@ void loadGameOnFlashcard (const char* filename) {
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 			ClearBrightness();
-			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true);
+			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true);
 			break;
 		}
 
@@ -643,7 +643,7 @@ void loadGameOnFlashcard (const char* filename) {
 			path = ReplaceAll(filename, "fat:/", dstwofat);
 			fcrompathini.SetString("Dir Info", "fullName", path);
 			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true);
+			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true);
 			break;
 		}
 	}
@@ -979,19 +979,21 @@ int main(int argc, char **argv) {
 					clearText();
 				}
 
-				if (access("sd:/bootthis.dsi", F_OK)) {
-					rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-				} else {
-					ClearBrightness();
-					printLarge(false, 4, 4, "\"bootthis\" file(s) already exist");
-					printLarge(false, 4, 20, "on the SD root. Please back them up");
-					printLarge(false, 4, 36, "before launching DSiWare.");
-					stop();
+				if (!secondaryDevice) {
+					if (access("sd:/bootthis.dsi", F_OK)) {
+						rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+					} else {
+						ClearBrightness();
+						printLarge(false, 4, 4, "\"bootthis\" file(s) already exist");
+						printLarge(false, 4, 20, "on the SD root. Please back them up");
+						printLarge(false, 4, 36, "before launching DSiWare.");
+						stop();
+					}
+					if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+						rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+					if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+						rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
 				}
-				if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-					rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-				if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-					rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
 
 				ClearBrightness();
 				printLarge(false, 4, 4, "Please press and hold the X button.");
@@ -1018,6 +1020,7 @@ int main(int argc, char **argv) {
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".DSI") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
+				bool dsModeSwitch = false;
 				if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
 					useBootstrap = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
@@ -1027,6 +1030,11 @@ int main(int argc, char **argv) {
 						useBootstrap = false;	// Bypass nds-bootstrap
 					} else {
 						useBootstrap = true;
+					}
+					if (isDSiMode() && perGameSettings_dsiMode) {
+						dsModeSwitch = false;
+					} else {
+						dsModeSwitch = true;
 					}
 					homebrewBootstrap = true;
 				} else {
@@ -1276,7 +1284,7 @@ int main(int argc, char **argv) {
 						}
 						launchType = 1;
 						SaveSettings();
-						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
+						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true, false);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -1292,7 +1300,7 @@ int main(int argc, char **argv) {
 					launchType = 1;
 					SaveSettings();
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					ClearBrightness();
@@ -1315,10 +1323,10 @@ int main(int argc, char **argv) {
 				int err = 0;
 				if(secondaryDevice) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to GameYob as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1339,10 +1347,10 @@ int main(int argc, char **argv) {
 				int err = 0;
 				if(secondaryDevice) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to nesDS as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

@@ -29,9 +29,9 @@ extern "C" {
 
 #define LOAD_DEFAULT_NDS 0
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright);
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch);
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright);
+int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch);
 
 bool installBootStub(bool havedsiSD);
 

@@ -47,6 +47,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/sdmmc.h>
+#include <nds/arm7/i2c.h>
 #include "fat.h"
 #include "dldi_patcher.h"
 #include "card.h"
@@ -73,6 +74,7 @@ extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
+extern unsigned long dsMode;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
@@ -245,7 +247,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 	ndsHeader[0x024>>2] = 0;
 	dmaCopyWords(3, (void*)ndsHeader, (void*)NDS_HEAD, 0x170);
 
-	if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
+	if (!dsMode && dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
 	{
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
@@ -369,6 +371,12 @@ int main (void) {
 	// Load the NDS file
 	loadBinary_ARM7(fileCluster);
 
+	if (dsMode && REG_SCFG_EXT != 0) {
+		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
+		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
+		REG_SCFG_ROM = 0x703;	// NTR BIOS
+	}
+
 #ifndef NO_DLDI
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
@@ -377,7 +385,7 @@ int main (void) {
 #endif
 
 #ifndef NO_SDMMC
-	if (dsiSD && dsiMode) {
+	if (dsiSD && !dsMode && dsiMode) {
 		sdmmc_controller_init(true);
 	}
 #endif

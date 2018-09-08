@@ -70,6 +70,7 @@ dsiMode:
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
 #define CLEAR_MASTER_BRIGHT_OFFSET 36
+#define DSMODE_SWITCH_OFFSET 40
 
 
 typedef signed int addr_t;
@@ -267,7 +268,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch)
 {
 	char* argStart;
 	u16* argData;
@@ -295,6 +296,9 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	writeAddr ((data_t*) LCDC_BANK_C, CLEAR_MASTER_BRIGHT_OFFSET, clearMasterBright);
+	if (isDSiMode()) {
+		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
+	}
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -356,7 +360,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -384,7 +388,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright, dsModeSwitch);
 }
 
 /*
