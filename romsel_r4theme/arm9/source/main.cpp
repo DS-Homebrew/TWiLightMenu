@@ -757,12 +757,12 @@ int main(int argc, char **argv) {
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
 	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
 	{
+		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
 		printSmallCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 96, "Do not turn off the power.");
 		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
-		controlTopBright = false;
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/bootthis.pub", dsiWarePubPath.c_str());
 		}
@@ -773,6 +773,7 @@ int main(int argc, char **argv) {
 		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 		clearText(false);
 		whiteScreen = false;
+		controlTopBright = true;
 	}
 
 	while(1) {
@@ -856,7 +857,6 @@ int main(int argc, char **argv) {
 						break;
 					case 1:
 						if (!flashcardFound()) {
-							controlTopBright = true;
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
@@ -874,7 +874,6 @@ int main(int argc, char **argv) {
 						break;
 					case 2:
 						// Switch to GBA mode
-						controlTopBright = true;
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
@@ -926,8 +925,6 @@ int main(int argc, char **argv) {
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
-			controlTopBright = true;
-
 			snprintf (path, sizeof(path), "%s", romfolder[secondaryDevice].c_str());
 			// Set directory
 			chdir (path);
@@ -942,6 +939,7 @@ int main(int argc, char **argv) {
 		if (applaunch) {
 			// Clear screen with white
 			whiteScreen = true;
+			controlTopBright = false;
 			clearText();
 
 			// Delete previously used DSiWare of flashcard from SD
