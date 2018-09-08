@@ -55,6 +55,7 @@ static int consoleModel = 0;
 
 static int donorSdkVer = 0;
 
+static bool previousUsedDevice = false;	// true == secondary
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
@@ -67,6 +68,7 @@ void LoadSettings(void) {
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
@@ -189,7 +191,7 @@ int lastRanROM() {
 			else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
-	} else if (launchType == 2) {
+	} else if (launchType == 2 && !previousUsedDevice) {
 		if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
 			rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
 		if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
