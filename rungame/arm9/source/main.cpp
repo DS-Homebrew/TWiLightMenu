@@ -191,14 +191,15 @@ int lastRanROM() {
 			else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
-	} else if (launchType == 2 && !previousUsedDevice) {
-		if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
-			rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-		if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-			rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-		if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-			rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
-
+	} else if (launchType == 2) {
+		if (!previousUsedDevice) {
+			if (!access(dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
+				rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+			if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+				rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+			if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+				rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+		}
 		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 	} else if (launchType == 3) {
 		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
