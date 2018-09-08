@@ -67,6 +67,7 @@ bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
+bool perGameSettings_dsiMode = false;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
@@ -98,6 +99,7 @@ void loadPerGameSettings (std::string filename) {
 	pergamefilepath = (secondaryDevice ? ("fat:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini") : ("sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini"));
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
+	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", false);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
@@ -110,6 +112,7 @@ void savePerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
+		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 	} else {
 		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
@@ -197,12 +200,20 @@ void perGameSettings (std::string filename) {
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 166, fileCounter);
 		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {		// Per-game settings for homebrew (no DSi-Extended header)
-			printSmall(false, 16, 96, ">");
+			printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
 			printSmall(false, 24, 96, "Direct boot:");
 			if (perGameSettings_directBoot) {
 				printSmall(false, 208, 96, "Yes");
 			} else {
 				printSmall(false, 208, 96, "No");
+			}
+			if(isDSiMode()) {
+				printSmall(false, 24, 112, "Run in:");
+				if (perGameSettings_dsiMode) {
+					printSmall(false, 184, 112, "DSi mode");
+				} else {
+					printSmall(false, 184, 112, "DS mode");
+				}
 			}
 			printSmall(false, 200, 166, "B: Back");
 		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || !isDSiMode_partial()) {
@@ -273,8 +284,30 @@ void perGameSettings (std::string filename) {
 
 		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
 			if (pressed & KEY_A) {
-				perGameSettings_directBoot = !perGameSettings_directBoot;
-				perGameSettingsChanged = !perGameSettingsChanged;
+				switch (perGameSettings_cursorPosition) {
+					case 0:
+					default:
+						perGameSettings_directBoot = !perGameSettings_directBoot;
+						break;
+					case 1:
+						perGameSettings_dsiMode = !perGameSettings_dsiMode;
+						break;
+				}
+				if(isDSiMode()) {
+					perGameSettingsChanged = true;
+				} else {
+					perGameSettingsChanged = !perGameSettingsChanged;
+				}
+			}
+			if(isDSiMode()) {
+				if (pressed & KEY_UP) {
+					perGameSettings_cursorPosition--;
+					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 1;
+				}
+				if (pressed & KEY_DOWN) {
+					perGameSettings_cursorPosition++;
+					if (perGameSettings_cursorPosition > 1) perGameSettings_cursorPosition = 0;
+				}
 			}
 
 			if (pressed & KEY_B) {

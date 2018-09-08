@@ -27,5 +27,5 @@ void gbaSwitch(void) {
 		}
 	//}
 	// Switch to GBA mode
-	runNdsFile ("/_nds/dsimenuplusplus/gbaswitch.srldr", 0, NULL, false);	
+	runNdsFile ("/_nds/dsimenuplusplus/gbaswitch.srldr", 0, NULL, false, true);	
 }

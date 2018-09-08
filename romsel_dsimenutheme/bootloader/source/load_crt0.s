@@ -31,6 +31,7 @@
 	.global dsiSD
 	.global dsiMode
 	.global clearMasterBright
+	.global dsMode
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -57,6 +58,8 @@ dsiSD:
 dsiMode:
 	.word	0
 clearMasterBright:
+	.word	0
+dsMode:
 	.word	0
 
 startUp:
