@@ -940,7 +940,7 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				if (access(dsiWarePubPath.c_str(), F_OK) && NDSHeader.pubSavSize > 0) {
+				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
 					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
@@ -962,7 +962,7 @@ int main(int argc, char **argv) {
 					clearText();
 				}
 
-				if (access(dsiWarePrvPath.c_str(), F_OK) && NDSHeader.prvSavSize > 0) {
+				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
 					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
 					const char* savecreated = "Private save file created!";
@@ -984,7 +984,23 @@ int main(int argc, char **argv) {
 					clearText();
 				}
 
-				if (!secondaryDevice) {
+				if (secondaryDevice) {
+					extern bool showProgressIcon;
+
+					ClearBrightness();
+					printLargeCentered(false, 88, "Now copying data...");
+					printSmallCentered(false, 104, "Do not turn off the power.");
+					showProgressIcon = true;
+					fcopy(dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");
+					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
+						fcopy(dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+					}
+					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+						fcopy(dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+					}
+					showProgressIcon = false;
+					clearText();
+				} else {
 					if (access("sd:/bootthis.dsi", F_OK)) {
 						rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
 					} else {

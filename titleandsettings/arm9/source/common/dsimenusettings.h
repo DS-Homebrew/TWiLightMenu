@@ -134,6 +134,7 @@ class DSiMenuPlusPlusSettings
     bool showBoxArt;
     bool animateDsiIcons;
     bool gotosettings;
+    bool secondaryDevice;
 
     int flashcard;
     bool slot1LaunchMethod;
