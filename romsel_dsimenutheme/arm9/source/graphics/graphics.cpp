@@ -24,34 +24,7 @@
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 
-// Graphic files
-#include "bottom.h"
-#include "bottom_bubble.h"
-
-#include "org_bottom.h"
-#include "org_bottom_bubble.h"
-
-#include "red_bottom.h"
-#include "red_bottom_bubble.h"
-
-#include "blue_bottom.h"
-#include "blue_bottom_bubble.h"
-
-#include "green_bottom.h"
-#include "green_bottom_bubble.h"
-
-#include "yellow_bottom.h"
-#include "yellow_bottom_bubble.h"
-
-#include "pink_bottom.h"
-#include "pink_bottom_bubble.h"
-
-#include "purple_bottom.h"
-#include "purple_bottom_bubble.h"
-
-#include "_3ds_bottom.h"
-#include "_3ds_bottom_bubble.h"
-
+// This is use for the top font.
 #include "../include/startborderpal.h"
 
 #include "graphics/ThemeTextures.h"
