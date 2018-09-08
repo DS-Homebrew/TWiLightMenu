@@ -274,12 +274,14 @@ int lastRanROM()
 	}
 	else if (ms().launchType == 2)
 	{
-		if (!access(ms().dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
-			rename(ms().dsiWareSrlPath.c_str(), "sd:/bootthis.dsi"); // Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-		if (!access(ms().dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-			rename(ms().dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-		if (!access(ms().dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-			rename(ms().dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+		if (!ms().secondaryDevice) {
+			if (!access(ms().dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
+				rename(ms().dsiWareSrlPath.c_str(), "sd:/bootthis.dsi"); // Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
+			if (!access(ms().dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
+				rename(ms().dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+			if (!access(ms().dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
+				rename(ms().dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+		}
 
 		fifoSendValue32(FIFO_USER_08, 1); // Reboot
 	}
@@ -579,7 +581,7 @@ int main(int argc, char **argv)
 		lastRanROM();
 	}
 
-	if (ms().launchType == 2)
+	if (ms().launchType == 2 && !ms().secondaryDevice)
 	{
 		if (!access("sd:/bootthis.dsi", F_OK) && access(ms().dsiWareSrlPath.c_str(), F_OK))
 			rename("sd:/bootthis.dsi", ms().dsiWareSrlPath.c_str()); // Rename "bootthis.dsi" back to original .nds filename
