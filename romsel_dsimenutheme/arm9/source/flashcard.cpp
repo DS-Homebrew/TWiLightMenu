@@ -100,7 +100,7 @@ void flashcardInit(void) {
 			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "R4DS", 4)) {
+		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
 			flashcard = 1;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
