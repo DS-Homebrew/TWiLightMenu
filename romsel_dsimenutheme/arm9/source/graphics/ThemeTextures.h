@@ -4,6 +4,7 @@
 #include "common/gl2d.h"
 #include "common/singleton.h"
 #include <memory>
+#include <string>
 
 using std::unique_ptr;
 
@@ -63,6 +64,8 @@ private:
   void loadFolderImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
 
+  void setStringPaths(const std::string theme);
+
 private:
   unique_ptr<glImage[]> loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
                                     unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int texH);
@@ -87,6 +90,12 @@ public:
 
   void drawBubbleBg(int bgId);
   void drawBg(int bgId);
+
+  std::string shoulderLPath;
+  std::string shoulderLGreyPath;
+  std::string shoulderRPath;
+  std::string shoulderRGreyPath;
+  std::string topBgPath;
 
 private:
   unique_ptr<glImage[]> _progressImage;
