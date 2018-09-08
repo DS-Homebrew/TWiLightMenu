@@ -434,83 +434,11 @@ void initSubSprites(void)
 
 void bottomBgLoad(bool drawBubble, bool init = false) {
 	if (init || (!drawBubble && bottomBgState == 2)) {
-		if (theme == 1) {
-			dmaCopy(_3ds_bottomTiles, bgGetGfxPtr(bottomBg), _3ds_bottomTilesLen);
-			dmaCopy(_3ds_bottomPal, BG_PALETTE, _3ds_bottomPalLen);
-			dmaCopy(_3ds_bottomMap, bgGetMapPtr(bottomBg), _3ds_bottomMapLen);
-		} else if (subtheme == 7) {
-			dmaCopy(purple_bottomTiles, bgGetGfxPtr(bottomBg), purple_bottomTilesLen);
-			dmaCopy(purple_bottomPal, BG_PALETTE, purple_bottomPalLen);
-			dmaCopy(purple_bottomMap, bgGetMapPtr(bottomBg), purple_bottomMapLen);
-		} else if (subtheme == 6) {
-			dmaCopy(pink_bottomTiles, bgGetGfxPtr(bottomBg), pink_bottomTilesLen);
-			dmaCopy(pink_bottomPal, BG_PALETTE, pink_bottomPalLen);
-			dmaCopy(pink_bottomMap, bgGetMapPtr(bottomBg), pink_bottomMapLen);
-		} else if (subtheme == 5) {
-			dmaCopy(yellow_bottomTiles, bgGetGfxPtr(bottomBg), yellow_bottomTilesLen);
-			dmaCopy(yellow_bottomPal, BG_PALETTE, yellow_bottomPalLen);
-			dmaCopy(yellow_bottomMap, bgGetMapPtr(bottomBg), yellow_bottomMapLen);
-		} else if (subtheme == 4) {
-			dmaCopy(green_bottomTiles, bgGetGfxPtr(bottomBg), green_bottomTilesLen);
-			dmaCopy(green_bottomPal, BG_PALETTE, green_bottomPalLen);
-			dmaCopy(green_bottomMap, bgGetMapPtr(bottomBg), green_bottomMapLen);
-		} else if (subtheme == 3) {
-			dmaCopy(blue_bottomTiles, bgGetGfxPtr(bottomBg), blue_bottomTilesLen);
-			dmaCopy(blue_bottomPal, BG_PALETTE, blue_bottomPalLen);
-			dmaCopy(blue_bottomMap, bgGetMapPtr(bottomBg), blue_bottomMapLen);
-		} else if (subtheme == 2) {
-			dmaCopy(red_bottomTiles, bgGetGfxPtr(bottomBg), red_bottomTilesLen);
-			dmaCopy(red_bottomPal, BG_PALETTE, red_bottomPalLen);
-			dmaCopy(red_bottomMap, bgGetMapPtr(bottomBg), red_bottomMapLen);
-		} else if (subtheme == 1) {
-			dmaCopy(org_bottomTiles, bgGetGfxPtr(bottomBg), org_bottomTilesLen);
-			dmaCopy(org_bottomPal, BG_PALETTE, org_bottomPalLen);
-			dmaCopy(org_bottomMap, bgGetMapPtr(bottomBg), org_bottomMapLen);
-		} else {
-			dmaCopy(bottomTiles, bgGetGfxPtr(bottomBg), bottomTilesLen);
-			dmaCopy(bottomPal, BG_PALETTE, bottomPalLen);
-			dmaCopy(bottomMap, bgGetMapPtr(bottomBg), bottomMapLen);
-		}
+		tex().drawBg(bottomBg);
 		// Set that we've not drawn the bubble.
 		bottomBgState = 1;
 	} else if (drawBubble && bottomBgState == 1){
-		if (theme == 1) {
-			dmaCopy(_3ds_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), _3ds_bottom_bubbleTilesLen);
-			dmaCopy(_3ds_bottom_bubblePal, BG_PALETTE, _3ds_bottom_bubblePalLen);
-			dmaCopy(_3ds_bottom_bubbleMap, bgGetMapPtr(bottomBg), _3ds_bottom_bubbleMapLen);
-		} else if (subtheme == 7) {
-			dmaCopy(purple_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), purple_bottom_bubbleTilesLen);
-			dmaCopy(purple_bottom_bubblePal, BG_PALETTE, purple_bottom_bubblePalLen);
-			dmaCopy(purple_bottom_bubbleMap, bgGetMapPtr(bottomBg), purple_bottom_bubbleMapLen);
-		} else if (subtheme == 6) {
-			dmaCopy(pink_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), pink_bottom_bubbleTilesLen);
-			dmaCopy(pink_bottom_bubblePal, BG_PALETTE, pink_bottom_bubblePalLen);
-			dmaCopy(pink_bottom_bubbleMap, bgGetMapPtr(bottomBg), pink_bottom_bubbleMapLen);
-		} else if (subtheme == 5) {
-			dmaCopy(yellow_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), yellow_bottom_bubbleTilesLen);
-			dmaCopy(yellow_bottom_bubblePal, BG_PALETTE, yellow_bottom_bubblePalLen);
-			dmaCopy(yellow_bottom_bubbleMap, bgGetMapPtr(bottomBg), yellow_bottom_bubbleMapLen);
-		} else if (subtheme == 4) {
-			dmaCopy(green_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), green_bottom_bubbleTilesLen);
-			dmaCopy(green_bottom_bubblePal, BG_PALETTE, green_bottom_bubblePalLen);
-			dmaCopy(green_bottom_bubbleMap, bgGetMapPtr(bottomBg), green_bottom_bubbleMapLen);
-		} else if (subtheme == 3) {
-			dmaCopy(blue_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), blue_bottom_bubbleTilesLen);
-			dmaCopy(blue_bottom_bubblePal, BG_PALETTE, blue_bottom_bubblePalLen);
-			dmaCopy(blue_bottom_bubbleMap, bgGetMapPtr(bottomBg), blue_bottom_bubbleMapLen);
-		} else if (subtheme == 2) {
-			dmaCopy(red_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), red_bottom_bubbleTilesLen);
-			dmaCopy(red_bottom_bubblePal, BG_PALETTE, red_bottom_bubblePalLen);
-			dmaCopy(red_bottom_bubbleMap, bgGetMapPtr(bottomBg), red_bottom_bubbleMapLen);
-		} else if (subtheme == 1) {
-			dmaCopy(org_bottom_bubbleTiles, bgGetGfxPtr(bottomBg), org_bottom_bubbleTilesLen);
-			dmaCopy(org_bottom_bubblePal, BG_PALETTE, org_bottom_bubblePalLen);
-			dmaCopy(org_bottom_bubbleMap, bgGetMapPtr(bottomBg), org_bottom_bubbleMapLen);
-		} else {
-			dmaCopy(bottom_bubbleTiles, bgGetGfxPtr(bottomBg), bottom_bubbleTilesLen);
-			dmaCopy(bottom_bubblePal, BG_PALETTE, bottom_bubblePalLen);
-			dmaCopy(bottom_bubbleMap, bgGetMapPtr(bottomBg), bottom_bubbleMapLen);
-		}
+		tex().drawBubbleBg(bottomBg);
 		// Set that we've drawn the bubble.
 		bottomBgState = 2;
 	}
@@ -548,8 +476,7 @@ void drawDbox()
 
 
 void reloadDboxPalette() {
-	// glBindTexture(0, dialogboxTexID);
-	// glColorSubTableEXT(0, 0, 4, 0, 0, (u16*) dialogboxPal);
+	tex().reloadPalDialogBox();
 }
 
 void vBlankHandler()
@@ -1583,15 +1510,14 @@ void graphicsInit()
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 	
-	bottomBgLoad(false, true);
 	swiIntrWait(0, 1);
-	tex().loadDSiDarkTheme();
 
 	if (theme == 1) {
 		tex().load3DSTheme();
 		titleboxYpos = 96;
 		bubbleYpos += 18;
 		bubbleXpos += 3;
+		bottomBgLoad(false, true);
 	} else {
 		switch(subtheme) {
 			default:
@@ -1620,8 +1546,9 @@ void graphicsInit()
 				tex().loadDSiPurpleTheme();
 				break;
 		}
+		bottomBgLoad(false, true);
 	}
-	
+
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	//consoleDemoInit();

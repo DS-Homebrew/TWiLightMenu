@@ -41,8 +41,9 @@ public:
   void loadDSiYellowTheme();
   void loadDSiPinkTheme();
   void loadDSiPurpleTheme();
-
   void load3DSTheme();
+
+  void reloadPalDialogBox();
 
 private:
   void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);
@@ -84,6 +85,9 @@ public:
   const glImage *folderImage() { return _folderImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
+  void drawBubbleBg(int bgId);
+  void drawBg(int bgId);
+
 private:
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
@@ -100,6 +104,25 @@ private:
   unique_ptr<glImage[]> _folderImage;
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
+
+private:
+  const unsigned int *_bottomTiles;
+  u32 _bottomTilesLen;
+
+  const unsigned short *_bottomPalette;
+  u32 _bottomPaletteLen;
+
+  const unsigned short *_bottomMap;
+  u32 _bottomMapLen;
+
+  const unsigned int *_bottom_bubbleTiles;
+  u32 _bottom_bubbleTilesLen;
+
+  const unsigned short *_bottom_bubblePalette;
+  u32 _bottom_bubblePaletteLen;
+
+  const unsigned short *_bottom_bubbleMap;
+  u32 _bottom_bubbleMapLen;
 
   int bubbleTexID;
   int bipsTexID;
