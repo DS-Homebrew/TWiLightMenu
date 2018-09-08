@@ -32,6 +32,7 @@
 #include "common/gl2d.h"
 
 #include "date.h"
+#include "fileCopy.h"
 
 #include "graphics/graphics.h"
 
@@ -130,6 +131,7 @@ bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
 bool useGbarunner = false;
+int appName = 0;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition[2] = {0};
@@ -158,6 +160,7 @@ void LoadSettings(void) {
 	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
 	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+    appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
 	// Customizable UI settings.
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -1011,7 +1014,7 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				if (access(dsiWarePubPath.c_str(), F_OK) && NDSHeader.pubSavSize > 0) {
+				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
 					whiteScreen = true;
 					clearText();
 					ClearBrightness();
@@ -1034,7 +1037,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
 				}
 
-				if (access(dsiWarePrvPath.c_str(), F_OK) && NDSHeader.prvSavSize > 0) {
+				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
 					whiteScreen = true;
 					clearText();
 					ClearBrightness();
@@ -1057,7 +1060,20 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
 				}
 
-				if (!secondaryDevice) {
+				if (secondaryDevice) {
+					whiteScreen = true;
+					clearText();
+					ClearBrightness();
+					printSmallCentered(false, 88, "Now copying data...");
+					printSmallCentered(false, 96, "Do not turn off the power.");
+					fcopy(dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");
+					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
+						fcopy(dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+					}
+					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+						fcopy(dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+					}
+				} else {
 					if (access("sd:/bootthis.dsi", F_OK)) {
 						rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
 					} else {
@@ -1081,6 +1097,17 @@ int main(int argc, char **argv) {
 				printSmall(false, 2, 80, "Please press and hold the");
 				printSmall(false, 2, 88, "X button. Hold it on the");
 				printSmall(false, 2, 96, "black screen for 2 seconds.");
+				if (secondaryDevice) {
+					printSmall(false, 2, 112, "After saving, please re-start");
+					if (appName == 0) {
+						printSmall(false, 2, 120, "DSiMenu++ to transfer your");
+					} else if (appName == 1) {
+						printSmall(false, 2, 120, "SRLoader to transfer your");
+					} else if (appName == 2) {
+						printSmall(false, 2, 120, "DSisionX to transfer your");
+					}
+					printSmall(false, 2, 128, "save data back.");
+				}
 
 				// Wait for X button hold
 				while (1)
