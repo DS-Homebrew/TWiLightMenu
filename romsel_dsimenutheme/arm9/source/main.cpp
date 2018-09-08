@@ -178,11 +178,11 @@ void LoadSettings(void) {
 	if (bothSDandFlashcard()) {
 		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	} else if (flashcardFound()) {
+		flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 		secondaryDevice = true;
 	} else {
 		secondaryDevice = false;
 	}
-	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);

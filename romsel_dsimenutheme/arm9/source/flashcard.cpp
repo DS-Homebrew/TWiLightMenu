@@ -88,15 +88,19 @@ void flashcardInit(void) {
 
 		// Read a DLDI driver specific to the cart
 		if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
+			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "TOP TF/SD DS", 12)) {
+			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "R4DSULTRA", 9)) {
+			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gameid, "R4DS", 4)) {
+			flashcard = 1;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		}

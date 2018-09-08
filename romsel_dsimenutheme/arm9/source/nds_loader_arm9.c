@@ -345,6 +345,10 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	irqDisable(IRQ_ALL);
+	
+	if (isDSiMode() && dsModeSwitch) {
+		REG_SCFG_EXT = 0x03000000;		// 4MB memory mode, and lock SCFG
+	}
 
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;	

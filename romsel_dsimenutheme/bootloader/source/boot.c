@@ -374,7 +374,8 @@ int main (void) {
 	if (dsMode && REG_SCFG_EXT != 0) {
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
-		REG_SCFG_ROM = 0x703;	// NTR BIOS
+		REG_SCFG_ROM = 0x703;								// NTR BIOS
+		REG_SCFG_EXT = 0x13FBFB06;							// Disable SD access, and lock SCFG
 	}
 
 #ifndef NO_DLDI
