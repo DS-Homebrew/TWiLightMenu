@@ -25,7 +25,7 @@ VERSION	:=	$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_PATCH)
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_dsimenutheme
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics 
+SOURCES		:=	source source/common source/graphics
 INCLUDES	:=	include source
 DATA		:=	data  
 NITRODATA	:=	nitrofiles
