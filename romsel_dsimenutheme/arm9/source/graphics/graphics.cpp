@@ -215,32 +215,6 @@ int bottomBg;
 
 int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 
-// int subBgTexID, mainBgTexID, shoulderTexID, ndsimenutextTexID, bubbleTexID, progressTexID, dialogboxTexID, wirelessiconTexID;
-// int bipsTexID, scrollwindowTexID, buttonarrowTexID, launchdotTexID, startTexID, startbrdTexID, settingsTexID, braceTexID, boxfullTexID, boxemptyTexID, folderTexID;
-
-// //glImage subBgImage[(256 / 16) * (256 / 16)];
-// //glImage mainBgImage[(256 / 16) * (256 / 16)];
-// //glImage shoulderImage[(128 / 16) * (64 / 32)];
-// //glImage ndsimenutextImage[(256 / 16) * (32 / 16)];
-
-// glImage tex().bubbleImage()[1];
-// glImage tex().progressImage()[(16 / 16) * (128 / 16)];
-// glImage tex().dialogboxImage()[(256 / 16) * (256 / 16)];
-// glImage tex().bipsImage()[(8 / 8) * (32 / 8)];
-// glImage tex().scrollwindowImage()[(32 / 16) * (32 / 16)];
-// glImage tex().buttonarrowImage()[(32 / 32) * (64 / 32)];
-// glImage tex().launchdotImage()[(16 / 16) * (96 / 16)];
-// glImage tex().startImage()[(64 / 16) * (128 / 16)];
-// glImage tex().startbrdImage()[(32 / 32) * (256 / 80)];
-// glImage tex().startbrdImage()[(32 / 32) * (192 / 64)];
-// glImage tex().braceImage()[(16 / 16) * (128 / 16)];
-// glImage tex().settingsImage()[(64 / 16) * (128 / 64)];
-// glImage boxfullImage[(64 / 16) * (128 / 64)];
-// glImage boxemptyImage[(64 / 16) * (64 / 16)];
-// glImage tex().folderImage()[(64 / 16) * (64 / 16)];
-// glImage tex().wirelessIcons()[(32 / 32) * (64 / 32)];
-
-
 int vblankRefreshCounter = 0;
 
 int bubbleYpos = 80;
@@ -1111,54 +1085,11 @@ void loadShoulders() {
 	FILE* file;
 
 	// Draw L shoulder
-	if (subtheme == 7) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/purple_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/purple_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 6) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/pink_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/pink_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 5) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/yellow_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/yellow_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 4) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/green_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/green_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 3) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/blue_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/blue_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 2) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/red_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/red_Lshoulder_greyed.bmp", "rb");
-		}
-	} else if (theme == 1 || subtheme == 1) {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/Lshoulder_greyed.bmp", "rb");
-		}
+	if (showLshoulder)
+	{ 
+		file = fopen(tex().shoulderLPath.c_str(), "rb");
 	} else {
-		if (showLshoulder) {
-			file = fopen("nitro:/graphics/dark_Lshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/dark_Lshoulder_greyed.bmp", "rb");
-		}
+		file = fopen(tex().shoulderLGreyPath.c_str(), "rb");
 	}
 
 	if (file) {
@@ -1182,56 +1113,14 @@ void loadShoulders() {
 	fclose(file);
 
 	// Draw R shoulder
-	if (subtheme == 7) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/purple_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/purple_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 6) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/pink_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/pink_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 5) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/yellow_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/yellow_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 4) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/green_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/green_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 3) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/blue_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/blue_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (subtheme == 2) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/red_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/red_Rshoulder_greyed.bmp", "rb");
-		}
-	} else if (theme == 1 || subtheme == 1) {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/Rshoulder_greyed.bmp", "rb");
-		}
-	} else {
-		if (showRshoulder) {
-			file = fopen("nitro:/graphics/dark_Rshoulder.bmp", "rb");
-		} else {
-			file = fopen("nitro:/graphics/dark_Rshoulder_greyed.bmp", "rb");
-		}
-	}
 
+	if (showRshoulder)
+	{ 
+		file = fopen(tex().shoulderRPath.c_str(), "rb");
+	} else {
+		file = fopen(tex().shoulderRGreyPath.c_str(), "rb");
+	}
+	
 	if (file) {
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
@@ -1301,25 +1190,7 @@ inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
 }
 
 void topBgLoad() {
-	if (theme == 1) {
-		loadBMP("nitro:/graphics/3ds_top.bmp");
-	} else if (subtheme == 7) {
-		loadBMP("nitro:/graphics/purple_top.bmp");
-	} else if (subtheme == 6) {
-		loadBMP("nitro:/graphics/pink_top.bmp");
-	} else if (subtheme == 5) {
-		loadBMP("nitro:/graphics/yellow_top.bmp");
-	} else if (subtheme == 4) {
-		loadBMP("nitro:/graphics/green_top.bmp");
-	} else if (subtheme == 3) {
-		loadBMP("nitro:/graphics/blue_top.bmp");
-	} else if (subtheme == 2) {
-		loadBMP("nitro:/graphics/red_top.bmp");
-	} else if (subtheme == 1) {
-		loadBMP("nitro:/graphics/org_top.bmp");
-	} else {
-		loadBMP("nitro:/graphics/top.bmp");
-	}
+	loadBMP(tex().topBgPath.c_str());
 
 	// Load username
 	char fontPath[64];
@@ -1505,7 +1376,6 @@ void graphicsInit()
 	REG_BG3PD_SUB = 1<<8;
 
 	if (theme < 1) loadPhoto();
-	topBgLoad();
 
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
@@ -1517,6 +1387,7 @@ void graphicsInit()
 		titleboxYpos = 96;
 		bubbleYpos += 18;
 		bubbleXpos += 3;
+		topBgLoad();
 		bottomBgLoad(false, true);
 	} else {
 		switch(subtheme) {
@@ -1546,6 +1417,7 @@ void graphicsInit()
 				tex().loadDSiPurpleTheme();
 				break;
 		}
+		topBgLoad();
 		bottomBgLoad(false, true);
 	}
 
