@@ -274,7 +274,7 @@ int lastRanROM()
 	}
 	else if (ms().launchType == 2)
 	{
-		if (!ms().secondaryDevice) {
+		if (!ms().previousUsedDevice) {
 			if (!access(ms().dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
 				rename(ms().dsiWareSrlPath.c_str(), "sd:/bootthis.dsi"); // Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
 			if (!access(ms().dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
@@ -581,7 +581,7 @@ int main(int argc, char **argv)
 		lastRanROM();
 	}
 
-	if (ms().launchType == 2 && !ms().secondaryDevice)
+	if (ms().launchType == 2 && !ms().previousUsedDevice)
 	{
 		if (!access("sd:/bootthis.dsi", F_OK) && access(ms().dsiWareSrlPath.c_str(), F_OK))
 			rename("sd:/bootthis.dsi", ms().dsiWareSrlPath.c_str()); // Rename "bootthis.dsi" back to original .nds filename

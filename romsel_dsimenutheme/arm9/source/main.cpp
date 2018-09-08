@@ -67,6 +67,7 @@ bool controlTopBright = true;
 bool controlBottomBright = true;
 
 extern void ClearBrightness();
+extern bool showProgressIcon;
 
 const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -178,6 +179,7 @@ void LoadSettings(void) {
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 
+	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	if (bothSDandFlashcard()) {
 		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	} else if (flashcardFound()) {
@@ -197,6 +199,11 @@ void LoadSettings(void) {
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
+
+    dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+    dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+    dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
 }
 
 void SaveSettings(void) {
@@ -217,6 +224,7 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}
 	if (!gotosettings) {
+		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
@@ -814,6 +822,29 @@ int main(int argc, char **argv) {
 
 	//fcopy("sd:/test.txt", "fat:/delivery from SD.txt");
 
+	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
+	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
+	{
+		fadeType = true;	// Fade in from white
+		printLargeCentered(false, 88, "Now copying data...");
+		printSmallCentered(false, 104, "Do not turn off the power.");
+		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		reloadFontPalettes();
+		for (int i = 0; i < 20; i++) swiIntrWait(0, 1);
+		showProgressIcon = true;
+		controlTopBright = false;
+		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/bootthis.pub", dsiWarePubPath.c_str());
+		}
+		if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/bootthis.prv", dsiWarePrvPath.c_str());
+		}
+		showProgressIcon = false;
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		clearText(false);
+	}
+
 	while(1) {
 
 		snprintf (path, sizeof(path), "%s", romfolder[secondaryDevice].c_str());
@@ -831,6 +862,19 @@ int main(int argc, char **argv) {
 			whiteScreen = true;
 			clearText();
 			clearBmpScreen();
+
+			// Delete previously used DSiWare of flashcard from SD
+			if (!gotosettings && previousUsedDevice && bothSDandFlashcard()) {
+				if (access("sd:/bootthis.dsi", F_OK) == 0) {
+					remove("sd:/bootthis.dsi");
+				}
+				if (access("sd:/bootthis.pub", F_OK) == 0) {
+					remove("sd:/bootthis.pub");
+				}
+				if (access("sd:/bootthis.prv", F_OK) == 0) {
+					remove("sd:/bootthis.prv");
+				}
+			}
 
 			// Construct a command line
 			getcwd (filePath, PATH_MAX);
@@ -862,6 +906,7 @@ int main(int argc, char **argv) {
 				filename = argarray.at(0);
 
 				launchType = 0;	// No launch type for launcharg
+				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -931,6 +976,7 @@ int main(int argc, char **argv) {
 				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				launchType = 2;
+				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -985,8 +1031,6 @@ int main(int argc, char **argv) {
 				}
 
 				if (secondaryDevice) {
-					extern bool showProgressIcon;
-
 					ClearBrightness();
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
@@ -1315,6 +1359,7 @@ int main(int argc, char **argv) {
 							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 						}
 						launchType = 1;
+						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true, false);
 						char text[32];
@@ -1325,11 +1370,13 @@ int main(int argc, char **argv) {
 						stop();
 					} else {
 						launchType = 1;
+						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						loadGameOnFlashcard(argarray[0]);
 					}
 				} else {
 					launchType = 1;
+					previousUsedDevice = secondaryDevice;
 					SaveSettings();
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch);
@@ -1350,6 +1397,7 @@ int main(int argc, char **argv) {
 				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
 				homebrewArg = gbROMpath;
 				launchType = 4;
+				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				argarray.push_back(gbROMpath);
 				int err = 0;
@@ -1374,6 +1422,7 @@ int main(int argc, char **argv) {
 				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
 				homebrewArg = nesROMpath;
 				launchType = 3;
+				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				argarray.push_back(nesROMpath);
 				int err = 0;

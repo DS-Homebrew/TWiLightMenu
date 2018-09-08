@@ -23,6 +23,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showDirectories = true;
     showBoxArt = true;
     animateDsiIcons = true;
+    previousUsedDevice = false;
     secondaryDevice = false;
 
     flashcard = EDSTTClone;
@@ -79,6 +80,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
+	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
     secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
