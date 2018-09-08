@@ -8,6 +8,7 @@
 
 sNDSHeader nds;
 
+bool previousUsedDevice = false;	// true == secondary
 bool secondaryDevice = false;
 
 int flashcard;

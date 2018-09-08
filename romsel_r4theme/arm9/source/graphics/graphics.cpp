@@ -78,6 +78,8 @@
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool controlTopBright;
+extern bool controlBottomBright;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -203,8 +205,8 @@ void vBlankHandler()
 				fadeDelay = 0;
 			}
 		}
-		SetBrightness(0, screenBrightness);
-		SetBrightness(1, screenBrightness);
+		if (controlBottomBright) SetBrightness(0, screenBrightness);
+		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		/*if (renderingTop)
 		{
