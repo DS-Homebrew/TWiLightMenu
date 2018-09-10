@@ -216,7 +216,7 @@ bool MainList::enterDir(const std::string &dirName)
         return false;
     }
 	
-	ms().secondaryDevice = (S1SD_ROOT == dirName);
+	ms().secondaryDevice = ((dirName == S1SD_ROOT) || (dirName == ms().romfolder[1]));
 
     removeAllRows();
     _romInfoList.clear();
