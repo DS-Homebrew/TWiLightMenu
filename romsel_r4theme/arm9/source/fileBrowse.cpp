@@ -99,8 +99,6 @@ extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
-extern void loadGameOnFlashcard(const char* filename);
-
 struct DirEntry {
 	string name;
 	bool isDirectory;

@@ -610,7 +610,22 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-void loadGameOnFlashcard (const char* filename) {
+void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
+	bool runNds_boostCpu = false;
+	bool runNds_boostVram = false;
+	if (usePerGameSettings) {
+		loadPerGameSettings(filename);
+		if (perGameSettings_boostCpu == -1) {
+			runNds_boostCpu = boostCpu;
+		} else {
+			runNds_boostCpu = perGameSettings_boostCpu;
+		}
+		if (perGameSettings_boostVram == -1) {
+			runNds_boostVram = boostVram;
+		} else {
+			runNds_boostVram = perGameSettings_boostVram;
+		}
+	}
 	std::string path;
 	int err = 0;
 	switch (flashcard) {
@@ -623,7 +638,7 @@ void loadGameOnFlashcard (const char* filename) {
 			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
 			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true);
+			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
 
@@ -634,7 +649,7 @@ void loadGameOnFlashcard (const char* filename) {
 			path = ReplaceAll(filename, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true);
+			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
 
@@ -644,7 +659,7 @@ void loadGameOnFlashcard (const char* filename) {
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 			ClearBrightness();
-			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true);
+			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
 
@@ -653,7 +668,7 @@ void loadGameOnFlashcard (const char* filename) {
 			path = ReplaceAll(filename, "fat:/", dstwofat);
 			fcrompathini.SetString("Dir Info", "fullName", path);
 			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true);
+			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
 	}
@@ -1358,7 +1373,7 @@ int main(int argc, char **argv) {
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
-						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true, false);
+						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true, false, true, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -1369,14 +1384,29 @@ int main(int argc, char **argv) {
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
-						loadGameOnFlashcard(argarray[0]);
+						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					launchType = 1;
 					previousUsedDevice = secondaryDevice;
 					SaveSettings();
+					bool runNds_boostCpu = false;
+					bool runNds_boostVram = false;
+					if (isDSiMode()) {
+						loadPerGameSettings(filename);
+						if (perGameSettings_boostCpu == -1) {
+							runNds_boostCpu = boostCpu;
+						} else {
+							runNds_boostCpu = perGameSettings_boostCpu;
+						}
+						if (perGameSettings_boostVram == -1) {
+							runNds_boostVram = boostVram;
+						} else {
+							runNds_boostVram = perGameSettings_boostVram;
+						}
+					}
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					ClearBrightness();
@@ -1400,10 +1430,10 @@ int main(int argc, char **argv) {
 				int err = 0;
 				if(secondaryDevice) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to GameYob as argument
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1425,10 +1455,10 @@ int main(int argc, char **argv) {
 				int err = 0;
 				if(secondaryDevice) {
 					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				} else {
 					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false);	// Pass ROM to nesDS as argument
+					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

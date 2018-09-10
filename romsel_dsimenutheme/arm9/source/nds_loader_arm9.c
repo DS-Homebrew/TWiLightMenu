@@ -268,7 +268,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -347,7 +347,10 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	irqDisable(IRQ_ALL);
 	
 	if (isDSiMode() && dsModeSwitch) {
-		REG_SCFG_EXT = 0x03000000;		// 4MB memory mode, and lock SCFG
+		if (!boostCpu) {
+			REG_SCFG_CLK = 0x80;
+		}
+		REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
 	}
 
 	// Give the VRAM to the ARM7
@@ -364,7 +367,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -392,7 +395,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright, dsModeSwitch);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*

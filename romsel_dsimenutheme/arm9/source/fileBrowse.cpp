@@ -137,7 +137,7 @@ extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
-extern void loadGameOnFlashcard(const char* filename);
+extern void loadGameOnFlashcard(const char* filename, bool usePerGameSettings);
 extern void dsCardLaunch();
 
 mm_sound_effect snd_launch;
@@ -826,21 +826,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (startMenu_cursorPosition == 0) {
 						// Launch settings
-						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false);
+						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false, true, true);
 						iprintf ("Start failed. Error %i\n", err);
 					} else if (startMenu_cursorPosition == 1) {
 						if (isDSiMode()) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false);
+								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
 							// Switch to GBA mode
 							useBootstrap = true;
 							if (useGbarunner) {
-								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds");
+								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", false);
 							} else {
 								gbaSwitch();
 							}
@@ -852,8 +852,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						int err = 0;
-						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false);
-						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false);
+						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false, true, true);
+						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
 						iprintf ("Start failed. Error %i\n", err);
 					}
 				}
