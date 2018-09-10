@@ -73,7 +73,7 @@ static int flashcard;
 	6: SuperCard DSTWO
 */
 
-const char *settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
+const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -550,11 +550,6 @@ int main(int argc, char **argv)
 		printSmall(true, 28, 1, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
-	}
-
-	if (access(settingsinipath, F_OK) != 0 && access("fat:/", F_OK) == 0)
-	{
-		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini"; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	std::string filename;
