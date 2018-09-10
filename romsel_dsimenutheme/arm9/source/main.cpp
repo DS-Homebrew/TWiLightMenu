@@ -610,10 +610,10 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
+void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
-	if (usePerGameSettings) {
+	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
 		if (perGameSettings_boostCpu == -1) {
 			runNds_boostCpu = boostCpu;
@@ -633,7 +633,7 @@ void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
 		case 1:
 		default: {
 			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-			path = ReplaceAll(filename, "fat:/", slashchar);
+			path = ReplaceAll(ndsPath, "fat:/", slashchar);
 			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
 			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
@@ -646,7 +646,7 @@ void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
 		case 4:
 		case 5: {
 			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-			path = ReplaceAll(filename, "fat:/", woodfat);
+			path = ReplaceAll(ndsPath, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
@@ -655,7 +655,7 @@ void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
 
 		case 3: {
 			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-			path = ReplaceAll(filename, "fat:/", woodfat);
+			path = ReplaceAll(ndsPath, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 			ClearBrightness();
@@ -665,7 +665,7 @@ void loadGameOnFlashcard (const char* filename, bool usePerGameSettings) {
 
 		case 6: {
 			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-			path = ReplaceAll(filename, "fat:/", dstwofat);
+			path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 			fcrompathini.SetString("Dir Info", "fullName", path);
 			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
@@ -1384,7 +1384,7 @@ int main(int argc, char **argv) {
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
-						loadGameOnFlashcard(argarray[0], true);
+						loadGameOnFlashcard(argarray[0], filename, true);
 					}
 				} else {
 					launchType = 1;

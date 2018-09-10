@@ -137,7 +137,7 @@ extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
-extern void loadGameOnFlashcard(const char* filename, bool usePerGameSettings);
+extern void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings);
 extern void dsCardLaunch();
 
 mm_sound_effect snd_launch;
@@ -840,7 +840,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							// Switch to GBA mode
 							useBootstrap = true;
 							if (useGbarunner) {
-								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", false);
+								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
 							} else {
 								gbaSwitch();
 							}
