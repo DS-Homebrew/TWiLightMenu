@@ -410,8 +410,8 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						break;
 					case 2:
-						perGameSettings_asyncPrefetch++;
-						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
+						perGameSettings_boostVram++;
+						if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						break;
 					case 3:
 						perGameSettings_soundFix++;
