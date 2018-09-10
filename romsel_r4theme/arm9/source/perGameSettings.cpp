@@ -230,19 +230,24 @@ void perGameSettings (std::string filename) {
 				}
 				printSmall(false, 32, 128, "ARM9 CPU Speed:");
 				printSmall(false, 32, 136, "VRAM boost:");
-				if (perGameSettings_boostCpu == -1) {
-					printSmall(false, 180, 128, "Default");
-				} else if (perGameSettings_boostCpu == 1) {
+				if (perGameSettings_dsiMode) {
 					printSmall(false, 153, 128, "133mhz (TWL)");
-				} else {
-					printSmall(false, 156, 128, "67mhz (NTR)");
-				}
-				if (perGameSettings_boostVram == -1) {
-					printSmall(false, 180, 136, "Default");
-				} else if (perGameSettings_boostVram == 1) {
 					printSmall(false, 180, 136, "On");
 				} else {
-					printSmall(false, 180, 136, "Off");
+					if (perGameSettings_boostCpu == -1) {
+						printSmall(false, 180, 128, "Default");
+					} else if (perGameSettings_boostCpu == 1) {
+						printSmall(false, 153, 128, "133mhz (TWL)");
+					} else {
+						printSmall(false, 156, 128, "67mhz (NTR)");
+					}
+					if (perGameSettings_boostVram == -1) {
+						printSmall(false, 180, 136, "Default");
+					} else if (perGameSettings_boostVram == 1) {
+						printSmall(false, 180, 136, "On");
+					} else {
+						printSmall(false, 180, 136, "Off");
+					}
 				}
 				printSmallCentered(false, 150, "B: Back");
 			} else {
@@ -335,12 +340,16 @@ void perGameSettings (std::string filename) {
 						perGameSettings_dsiMode = !perGameSettings_dsiMode;
 						break;
 					case 2:
-						perGameSettings_boostCpu++;
-						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						if (!perGameSettings_dsiMode) {
+							perGameSettings_boostCpu++;
+							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						}
 						break;
 					case 3:
-						perGameSettings_boostVram++;
-						if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
+						if (!perGameSettings_dsiMode) {
+							perGameSettings_boostVram++;
+							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
+						}
 						break;
 				}
 				if(isDSiMode()) {
