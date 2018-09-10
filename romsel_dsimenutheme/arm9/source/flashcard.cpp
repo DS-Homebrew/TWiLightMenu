@@ -74,7 +74,7 @@ void flashcardInit(void) {
 		char gameid[5];
 
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
-		/* consoleDemoInit();
+		/*consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -83,7 +83,7 @@ void flashcardInit(void) {
 
 		for (int i = 0; i < 60*2; i++) {
 			swiWaitForVBlank();
-		} */
+		}*/
 
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 

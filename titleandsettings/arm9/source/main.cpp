@@ -552,7 +552,7 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	if (access(settingsinipath, F_OK) != 0)
+	if (access(settingsinipath, F_OK) != 0 && access("fat:/", F_OK) == 0)
 	{
 		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini"; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
@@ -595,6 +595,11 @@ int main(int argc, char **argv)
 	snd().init();
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
+
+	if (access(settingsinipath, F_OK) != 0) {
+		// Create "settings.ini"
+		ms().saveSettings();
+	}
 
 	// ms().gotosettings = true;
 	if (ms().gotosettings)

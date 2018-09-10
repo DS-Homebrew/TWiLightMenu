@@ -22,13 +22,13 @@ int flashcard;
 	6: SuperCard DSTWO
 */
 
-/*bool sdFound(void) {
+bool sdFound(void) {
 	if (access("sd:/", F_OK) == 0) {
 		return true;
 	} else {
 		return false;
 	}
-}*/
+}
 
 bool flashcardFound(void) {
 	if (access("fat:/", F_OK) == 0) {
@@ -74,7 +74,7 @@ void flashcardInit(void) {
 		char gameid[5];
 
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
-		/* consoleDemoInit();
+		/*consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -83,7 +83,7 @@ void flashcardInit(void) {
 
 		for (int i = 0; i < 60*2; i++) {
 			swiWaitForVBlank();
-		} */
+		}*/
 
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
@@ -96,11 +96,11 @@ void flashcardInit(void) {
 			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "R4DSULTRA", 9)) {
+		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
 			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "R4DS", 4)) {
+		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
 			flashcard = 1;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);

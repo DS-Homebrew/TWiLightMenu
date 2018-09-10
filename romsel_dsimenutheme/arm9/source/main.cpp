@@ -770,7 +770,7 @@ int main(int argc, char **argv) {
 
 	flashcardInit();
 
-	if (access(settingsinipath, F_OK) != 0) {
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 	
