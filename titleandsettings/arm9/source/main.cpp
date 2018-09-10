@@ -38,7 +38,6 @@
 
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
-#include "common/my_system.h"
 #include "common/nitrofs.h"
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
@@ -231,7 +230,7 @@ int lastRanROM()
 	}
 	else if (ms().launchType == 1)
 	{
-		if (isDSiMode_partial())
+		if (isDSiMode())
 		{
 			if (ms().homebrewBootstrap)
 			{
@@ -721,7 +720,7 @@ int main(int argc, char **argv)
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
 
-	if (isDSiMode_partial())
+	if (isDSiMode())
 	{
 		gamesPage
 			.option(STR_LANGUAGE,
@@ -760,7 +759,7 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
-	if (isDSiMode_partial())
+	if (isDSiMode())
 	{
 		if (ms().consoleModel < 2)
 		{

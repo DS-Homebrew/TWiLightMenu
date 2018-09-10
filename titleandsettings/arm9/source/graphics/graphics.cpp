@@ -24,7 +24,6 @@
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/inifile.h"
-#include "common/my_system.h"
 #include "common/dsimenusettings.h"
 #include "title_sub.h"
 #include "top_bg.h"
@@ -150,7 +149,7 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	SetBrightness(0, screenBrightness);
-	if (!isDSiMode_partial()) {
+	if (!isDSiMode()) {
 		if (screenmode == 1) SetBrightness(1, screenBrightness);
 	} else {
 		SetBrightness(1, screenBrightness);
@@ -359,7 +358,7 @@ void loadTitleGraphics() {
 
 	// Display DSiMenu++ logo
 	LoadBMP();
-	if (isDSiMode_partial()) {		// Show nds-bootstrap logo, if in full or partial DSi mode
+	if (isDSiMode()) {		// Show nds-bootstrap logo, if in full or partial DSi mode
 		swiDecompressLZSSVram ((void*)title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
 	}

@@ -18,7 +18,7 @@ public:
         _exitCallback(nullptr)
   {
 
-    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 1, 0);
+    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 1, 1);
   }
   ~SettingsGUI() {}
 
