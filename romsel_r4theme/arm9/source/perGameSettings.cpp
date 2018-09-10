@@ -73,7 +73,7 @@ int perGameSettings_boostVram = -1;
 int perGameSettings_soundFix = -1;
 int perGameSettings_asyncPrefetch = -1;
 
-std::string pergamefilepath;
+char pergamefilepath[256];
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
@@ -91,7 +91,7 @@ char fileCounter[8];
 char gameTIDText[16];
 
 void loadPerGameSettings (std::string filename) {
-	pergamefilepath = (secondaryDevice ? ("fat:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini") : ("sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini"));
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", false);
@@ -103,7 +103,7 @@ void loadPerGameSettings (std::string filename) {
 }
 
 void savePerGameSettings (std::string filename) {
-	pergamefilepath = (secondaryDevice ? ("fat:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini") : ("sd:/_nds/dsimenuplusplus/gamesettings/"+filename+".ini"));
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
