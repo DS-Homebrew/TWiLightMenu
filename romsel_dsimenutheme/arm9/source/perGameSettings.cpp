@@ -119,13 +119,19 @@ void savePerGameSettings (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
-		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
+		if (isDSiMode()) {
+			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
+			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
+			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+		}
 	} else {
-		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
-		pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
-		pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
+		if (!secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
+			pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
+		}
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
