@@ -1106,9 +1106,7 @@ int main(int argc, char **argv) {
 					} else {
 						useBootstrap = true;
 					}
-					if (isDSiMode() && perGameSettings_dsiMode) {
-						dsModeSwitch = false;
-					} else {
+					if (isDSiMode() && !perGameSettings_dsiMode) {
 						dsModeSwitch = true;
 					}
 					homebrewBootstrap = true;
