@@ -16,5 +16,5 @@ void gbaSwitch(void)
 		loadGbaBorder("nitro:/gbaborder/nologo.bmp");
 	}*/
     // Switch to GBA mode
-    runNdsFile("/_nds/dsimenuplusplus/gbaswitch.srldr", 0, NULL, false);
+    runNdsFile("/_nds/dsimenuplusplus/gbaswitch.srldr", 0, NULL, false, true, false, false);
 }

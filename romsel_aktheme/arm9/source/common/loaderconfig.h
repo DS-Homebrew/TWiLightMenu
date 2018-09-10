@@ -19,7 +19,7 @@ class LoaderConfig
         LoaderConfig& option(const std::string& section, const std::string& item, const std::string& value);
         LoaderConfig& option(const std::string& section, const std::string& item, int value);
         
-        int launch(int argc = 0, const char** argv = NULL, bool clearBrightness = true);
+        int launch(int argc = 0, const char** argv = NULL, bool clearBrightness = true, bool dsModeSwitch = false, bool boostCpu = true, bool boostVram = true);
 
     private:
         const std::string _loaderPath;

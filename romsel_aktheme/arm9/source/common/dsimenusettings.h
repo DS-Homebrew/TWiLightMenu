@@ -120,7 +120,7 @@ class DSiMenuPlusPlusSettings
     TLanguage getGuiLanguage();
     const char* getAppName();
   public:
-    std::string romfolder;
+    std::string romfolder[2];
     int pagenum;
     int cursorPosition;
     int startMenu_cursorPosition;
@@ -134,6 +134,8 @@ class DSiMenuPlusPlusSettings
     bool showBoxArt;
     bool animateDsiIcons;
     bool gotosettings;
+    bool previousUsedDevice;
+    bool secondaryDevice;
 
     int flashcard;
     bool slot1LaunchMethod;

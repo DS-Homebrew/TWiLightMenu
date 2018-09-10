@@ -1,9 +1,9 @@
 #include "systemdetails.h"
+#include "flashcard.h"
 #include "tool/dbgtool.h"
 SystemDetails::SystemDetails()
 {
 
-    _flashcardUsed = false;
     _arm7SCFGLocked = false;
     _isRegularDS = true;
     _nitroFsInitOk = false;
@@ -34,4 +34,6 @@ void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningP
     {
         _nitroFsInitOk = nitroFSInit(runningPath) == 1;
     }
+
+	flashcardInit();
 }

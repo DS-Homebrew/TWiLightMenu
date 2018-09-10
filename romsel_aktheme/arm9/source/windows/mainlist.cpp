@@ -27,6 +27,7 @@
 #include "windows/startmenu.h"
 #include "systemfilenames.h"
 #include "common/systemdetails.h"
+#include "common/flashcard.h"
 #include "common/dsimenusettings.h"
 #include "ui/windowmanager.h"
 #include "tool/timetool.h"
@@ -145,49 +146,46 @@ void MainList::addDirEntry(int pos, const std::string row1, const std::string ro
     _romInfoList.push_back(rominfo);
 }
 
+static int listNum = 0;
+
 bool MainList::enterDir(const std::string &dirName)
 {
     dbg_printf("Enter Dir: %s\n", dirName.c_str());
     if (SPATH_ROOT == dirName) // select RPG or SD card
     {
+		listNum = 0;
         removeAllRows();
         _romInfoList.clear();
 
-        if (!sys().flashcardUsed())
+        if (sdFound())
         {
-            // TODO: Show "SD Card" if consoleModel is < 3, else show "microSD Card"
-
-            if (ms().showDirectories)
-            {
-                addDirEntry(0, LANG("mainlist", "SD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-            }
-            else
-            {
-                addDirEntry(0, LANG("mainlist", "SD Card"), "", ms().romfolder, "usd", microsd_banner_bin);
-            }
+			addDirEntry(listNum, LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+			listNum++;
         }
-        else
+        if (flashcardFound())
         {
-            if (sys().isRegularDS())
-            {
-                addDirEntry(0, LANG("mainlist", "microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-            }
-            else
-            {
-                addDirEntry(0, LANG("mainlist", "SLOT-1 microSD Card"), "", SD_ROOT, "usd", microsd_banner_bin);
-            }
+            addDirEntry(listNum, LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
+			listNum++;
         }
-        addDirEntry(1, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
-        if (!sys().flashcardUsed())
+        addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
+		listNum++;
+        if (isDSiMode())
         {
-            addDirEntry(2, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
-            addDirEntry(3, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
-            addDirEntry(4, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+			if (!flashcardFound()) {
+				addDirEntry(listNum, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+				listNum++;
+			}
+            addDirEntry(listNum, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
+			listNum++;
+            addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+			//listNum++;
             //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
+			//listNum++;
         }
         else
         {
-            addDirEntry(2, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+            addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+			//listNum++;
         }
         _currentDir = SPATH_ROOT;
         directoryChanged();
@@ -208,7 +206,7 @@ bool MainList::enterDir(const std::string &dirName)
 
     if (dir == NULL)
     {
-        if (SD_ROOT == dirName)
+        if (SD_ROOT == dirName || S1SD_ROOT == dirName)
         {
             std::string title = LANG("sd card error", "title");
             std::string sdError = LANG("sd card error", "text");
@@ -217,6 +215,8 @@ bool MainList::enterDir(const std::string &dirName)
         dbg_printf("Unable to open directory<%s>.\n", dirName.c_str());
         return false;
     }
+	
+	ms().secondaryDevice = (S1SD_ROOT == dirName);
 
     removeAllRows();
     _romInfoList.clear();
@@ -379,7 +379,7 @@ void MainList::backParentDir()
         return;
 
     dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
-    if ("" == _currentDir || SD_ROOT == _currentDir || !ms().showDirectories)
+    if ("" == _currentDir || SD_ROOT == _currentDir  || S1SD_ROOT == _currentDir || !ms().showDirectories)
     {
         dbg_printf("Entering HOME\n");
         enterDir(SPATH_ROOT);

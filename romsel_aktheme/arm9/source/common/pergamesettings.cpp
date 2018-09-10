@@ -1,4 +1,5 @@
 #include "pergamesettings.h"
+#include "dsimenusettings.h"
 #include "common/inifile.h"
 #include "tool/stringtool.h"
 #include "tool/dbgtool.h"
@@ -9,13 +10,14 @@
 
 PerGameSettings::PerGameSettings(const std::string &romFileName)
 {
-    _iniPath = formatString(PERGAMESETTINGS_PATH, romFileName.c_str());
+    _iniPath = formatString(PERGAMESETTINGS_PATH, (ms().secondaryDevice ? "fat:" : "sd:"), romFileName.c_str());
     language = ELangDefault;
     boostCpu = EDefault;
     boostVram = EDefault;
     soundFix = EDefault;
     asyncPrefetch = EDefault;
-    directBoot = EDefault;
+    directBoot = EFalse;
+    dsiMode = EFalse;
     loadSettings();
 }
 
@@ -23,7 +25,8 @@ void PerGameSettings::loadSettings()
 {
     CIniFile pergameini(_iniPath);
     dbg_printf("CINI LOAD %s", _iniPath.c_str());
-    directBoot = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
+    directBoot = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", ms().secondaryDevice);	// Homebrew only
+    dsiMode = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 	language = (TLanguage)pergameini.GetInt("GAMESETTINGS", "LANGUAGE", language);
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
@@ -35,10 +38,12 @@ void PerGameSettings::saveSettings()
 {
     CIniFile pergameini(_iniPath);
     pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
-    pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
+    if (isDSiMode() && !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
     pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
     pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
-    pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", soundFix);
-    pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", asyncPrefetch);
+	if (isDSiMode() && !ms().secondaryDevice) {
+		pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", soundFix);
+		pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", asyncPrefetch);
+	}
     pergameini.SaveIniFile(_iniPath);
 }

@@ -35,6 +35,7 @@ class PerGameSettings
 
   public:
     TDefaultBool directBoot;
+    TDefaultBool dsiMode;
     TLanguage language;
     TDefaultBool boostCpu;
     TDefaultBool boostVram;

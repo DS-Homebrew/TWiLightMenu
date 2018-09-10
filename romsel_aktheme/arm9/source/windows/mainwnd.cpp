@@ -599,7 +599,7 @@ void MainWnd::launchSelected()
         return;
     }
 
-    ms().romfolder = _mainList->getCurrentDir();
+    ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
     ms().saveSettings();
 
     DSRomInfo rominfo;
@@ -616,7 +616,7 @@ void MainWnd::launchSelected()
     }
 
     // Todo: Don't boot on 3DS.
-    if (rominfo.isDSiWare() && !sys().flashcardUsed())
+    if (rominfo.isDSiWare() && isDSiMode())
     {
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
@@ -656,7 +656,7 @@ void MainWnd::launchSelected()
             return;
         }
 
-        else if (sys().flashcardUsed())
+        else if (ms().secondaryDevice)
         {
             dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
             bootFlashcard(fullPath);
@@ -679,7 +679,7 @@ void MainWnd::launchSelected()
     {
         ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
         ms().saveSettings();
-        if (sys().flashcardUsed())
+        if (ms().secondaryDevice)
         {
             bootFile(NESDS_FC, fullPath);
         }
@@ -694,7 +694,7 @@ void MainWnd::launchSelected()
     {
         ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
         ms().saveSettings();
-        if (sys().flashcardUsed())
+        if (ms().secondaryDevice)
         {
             bootFile(GAMEYOB_FC, fullPath);
         }
@@ -743,13 +743,13 @@ void MainWnd::bootSlot1(void)
 
 void MainWnd::bootGbaRunner(void)
 {
-    if (sys().flashcardUsed() && ms().useGbarunner)
+    if (!isDSiMode() && ms().useGbarunner)
     {
         bootFlashcard(GBARUNNER_FC);
         return;
     }
 
-    if (sys().flashcardUsed() && !ms().useGbarunner)
+    if (!isDSiMode() && !ms().useGbarunner)
     {
         gbaSwitch();
         return;

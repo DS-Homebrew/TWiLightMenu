@@ -28,12 +28,12 @@ LoaderConfig& LoaderConfig::option(const std::string& section, const std::string
     return *this;
 }
 
-int LoaderConfig::launch(int argc, const char** argv, bool clearBrightness) 
+int LoaderConfig::launch(int argc, const char** argv, bool clearBrightness, bool dsModeSwitch, bool boostCpu, bool boostVram) 
 {
     CIniFile file(_configPath);
     for (auto& [section, item, value] : _iniOptions) {
         file.SetString(section, item, value);
     }
     file.SaveIniFile(_configPath);
-    return runNdsFile(_loaderPath.c_str(), argc, argv, clearBrightness);
+    return runNdsFile(_loaderPath.c_str(), argc, argv, clearBrightness, dsModeSwitch, boostCpu, boostVram);
 }

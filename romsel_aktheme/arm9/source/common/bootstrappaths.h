@@ -14,7 +14,7 @@
 #define DSIMENUPP_INI "/_nds/dsimenuplusplus/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/dsimenuplusplus/main.srldr"
 
-#define PERGAMESETTINGS_PATH "/_nds/dsimenuplusplus/gamesettings/%s.ini"
+#define PERGAMESETTINGS_PATH "%s/_nds/dsimenuplusplus/gamesettings/%s.ini"
 
 #define SLOT1_SRL "/_nds/dsimenuplusplus/slot1launch.srldr"
 

@@ -70,6 +70,7 @@ dsiMode:
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
 #define CLEAR_MASTER_BRIGHT_OFFSET 36
+#define DSMODE_SWITCH_OFFSET 40
 
 
 typedef signed int addr_t;
@@ -267,7 +268,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -295,6 +296,9 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	writeAddr ((data_t*) LCDC_BANK_C, CLEAR_MASTER_BRIGHT_OFFSET, clearMasterBright);
+	if (isDSiMode()) {
+		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
+	}
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -341,6 +345,13 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	irqDisable(IRQ_ALL);
+	
+	if (isDSiMode() && dsModeSwitch) {
+		if (!boostCpu) {
+			REG_SCFG_CLK = 0x80;
+		}
+		REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+	}
 
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;	
@@ -356,7 +367,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -380,11 +391,11 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 
 	bool havedsiSD = false;
 
-	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
+	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*
@@ -437,3 +448,4 @@ bool installBootStub(bool havedsiSD) {
 #endif
 
 }
+

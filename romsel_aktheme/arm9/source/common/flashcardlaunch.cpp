@@ -20,7 +20,7 @@ int loadGameOnFlashcard(const char *filename)
         config.option("YSMENU", "AUTO_BOOT", launchPath)
             .option("YSMENU", "DEFAULT_DMA", "true")
             .option("YSMENU", "DEFAULT_RESET", "false");
-        return config.launch();
+        return config.launch(0, NULL, true, true, false, false);
     }
     case DSiMenuPlusPlusSettings::ER4iGoldClone:
     case DSiMenuPlusPlusSettings::EAcekardRPG:
@@ -29,21 +29,21 @@ int loadGameOnFlashcard(const char *filename)
         LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
         launchPath = replaceAll(filename, FC_PREFIX_FAT, FC_PREFIX_FAT0);
         config.option("Save Info", "lastLoaded", launchPath);
-        return config.launch();
+        return config.launch(0, NULL, true, true, false, false);
     }
     case DSiMenuPlusPlusSettings::EAcekard2i:
     {
         LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
         launchPath = replaceAll(filename, FC_PREFIX_FAT, FC_PREFIX_FAT0);
         config.option("Save Info", "lastLoaded", launchPath);
-        return config.launch();
+        return config.launch(0, NULL, true, true, false, false);
     }
     case DSiMenuPlusPlusSettings::ESupercardDSTWO:
     {
         LoaderConfig config("fat:/_dstwo/autoboot.nds", "fat:/_dstwo/autoboot.ini");
         launchPath = replaceAll(filename, FC_PREFIX_FAT, FC_PREFIX_FAT1);
         config.option("Dir Info", "fullName", launchPath);
-        return config.launch();
+        return config.launch(0, NULL, true, true, false, false);
     }
     }
     return 100;

@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 	gdi().present(GE_SUB);
 
 	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
-	wnd->_mainList->enterDir(ms().romfolder);
+	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
 
 	irq().vblankStart();
 

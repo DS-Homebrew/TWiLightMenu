@@ -30,7 +30,8 @@
 #include "windows/zoomingicon.h"
 #include "windows/dsiiconsequence.h"
 
-#define SD_ROOT "/"
+#define SD_ROOT "sd:/"
+#define S1SD_ROOT "fat:/"
 // Note that ^*:: is an impossible file name on 
 // FAT32. This makes it safe for special paths.
 #define SPATH_ROOT "^*::~"
