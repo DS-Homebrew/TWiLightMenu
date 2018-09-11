@@ -28,11 +28,14 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include <string.h>
 #include <maxmod7.h>
 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
 static int soundVolume = 127;
+
+//static bool gotCartHeader = false;
 
 //---------------------------------------------------------------------------------
 void soundFadeOut() {
@@ -49,6 +52,12 @@ void ReturntoDSiMenu() {
 	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
 }
+
+//---------------------------------------------------------------------------------
+//void UpdateCardInfo(void) {
+//---------------------------------------------------------------------------------
+	//cardReadHeader((u8*)0x02000000);
+//}
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
@@ -125,7 +134,12 @@ int main() {
 			exitflag = true;
 		}
 		// fifocheck();
-		swiIntrWait(0, 1);
+		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
+			UpdateCardInfo();
+			fifoSendValue32(FIFO_USER_04, 0);
+			gotCartHeader = true;
+		}*/
+		swiWaitForVBlank();
 	}
 	return 0;
 }

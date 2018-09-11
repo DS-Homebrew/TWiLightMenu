@@ -60,7 +60,7 @@ void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 void flashcardInit(void) {
-	if (!flashcardFound() && REG_SCFG_MC != 0x11) {
+	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
 		// Reset Slot-1 to allow reading title name and ID
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -73,22 +73,31 @@ void flashcardInit(void) {
 		char gamename[13];
 		char gameid[5];
 
+		/*fifoSendValue32(FIFO_USER_04, 1);
+		for (int i = 0; i < 10; i++) {
+			swiWaitForVBlank();
+		}
+		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
-		/*consoleDemoInit();
+
+		/*SetBrightness(0, 0);
+		SetBrightness(1, 0);
+		consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
-		SetBrightness(0, 0);
-		SetBrightness(1, 0);
-
-		for (int i = 0; i < 60*2; i++) {
+		for (int i = 0; i < 60*5; i++) {
 			swiWaitForVBlank();
 		}*/
 
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
 		// Read a DLDI driver specific to the cart
-		if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
+		/*if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
+			flashcard = 0;
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
+			fatMountSimple("fat", &io_dldi_data->ioInterface);
+		} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
 			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
@@ -96,14 +105,14 @@ void flashcardInit(void) {
 			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
+		} else if (!memcmp(gamename, "QMATETRIAL", 9) || */ if (!memcmp(gamename, "R4DSULTRA", 9)) {
 			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
+		} /* else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
 			flashcard = 1;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		}
+		} */
 	}
 }
