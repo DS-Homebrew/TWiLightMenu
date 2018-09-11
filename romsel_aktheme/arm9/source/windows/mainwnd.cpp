@@ -607,7 +607,7 @@ void MainWnd::launchSelected()
         return;
 
     // Launch DSiWare
-    if (rominfo.isDSiWare() && rominfo.isArgv())
+    if (rominfo.isDSiWare() && rominfo.isArgv() && ms().consoleModel < 2)
     {
         ms().launchType = DSiMenuPlusPlusSettings::ENoLaunch;
         ms().saveSettings();
@@ -615,8 +615,7 @@ void MainWnd::launchSelected()
         return;
     }
 
-    // Todo: Don't boot on 3DS.
-    if (rominfo.isDSiWare() && isDSiMode())
+    if (rominfo.isDSiWare() && isDSiMode() && ms().consoleModel < 2)
     {
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
