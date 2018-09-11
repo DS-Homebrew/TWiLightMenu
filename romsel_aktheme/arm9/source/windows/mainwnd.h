@@ -98,7 +98,7 @@ class MainWnd : public akui::Form
 
     void bootBootstrap(PerGameSettings &gameConfig, DSRomInfo& rominfo);
 
-    void bootFlashcard(const std::string& filename);
+    void bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings);
 
     void bootFile(const std::string &loader, const std::string &fullPath);
 
