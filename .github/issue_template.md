@@ -4,24 +4,17 @@
 ###### Also check the Wiki (https://github.com/Robz8/DSiMenuPlusPlus/wiki) before making an issue.
 ###### Keep in mind that DSiMenu++ is only a frontend for nds-bootstrap on SD card. DO NOT OPEN AN ISSUE INVOLVING GAMES or APPS! Instead, open an issue here (https://github.com/ahezard/nds-bootstrap/issues)
 ###### Issues that don't attach any log file or any reproducible method will be closed.
-###### Issues without replies in 15 days will be closed too.
-###### If you want to create a request, please, delete all text after this message.
+###### If you want to create a request, please delete all text after this message.
 ###### Issues about asking for support for piracy will be closed.
 -->
 ### Your console
 
 Tell us which console do you have:
 
-- [ ]  DS Phat
-- [ ]  DS Lite
-- [ ]  DSi
-- [ ]  DSi XL
-- [ ]  Old 3DS
-- [ ]  Old 3DS XL
-- [ ]  Old 2DS
-- [ ]  New 3DS
-- [ ]  New 3DS XL
-- [ ]  New 2DS XL
+- [ ]  DS Phat/Lite
+- [ ]  DSi (XL)
+- [ ]  Old 3DS/2DS (XL)
+- [ ]  New 3DS/2DS (XL)
 
 ### CFW and configuration
 
@@ -40,31 +33,21 @@ DSi:
 - [ ]  Other CFW [specify]
 - [ ]  Older CFW
 
-
-### 3DS console version (ignore, if you're using DS/DSi)
-
-Tell us which version do you have:
-
-- [ ]  >= 11.4
-- [ ]  < 11.4
-
 ### DSiMenu++ Launcher version (ignore, if you're using DS/DSi)
 
 This launches DSiMenu++ on 3DS/2DS.
 
 Tell us which versions you are using:
 
-- [ ]  Latest release _[please specify version]_
-- [ ]  I've compiled myself _[insert here commit hash]_
-- [ ]  Old release _[please specify version]_
+- [ ]  Release _[please specify version]_
+- [ ]  Nightly _[insert here commit hash]_
 
 ### DSiMenu++ version
 
 Tell us which versions you are using:
 
-- [ ]  Latest release _[please specify version]_
-- [ ]  I've compiled myself _[insert here commit hash]_
-- [ ]  Old release _[please specify version]_
+- [ ]  Release _[please specify version]_
+- [ ]  Nightly _[insert here commit hash]_
 
 ### Expected behaviour
 
