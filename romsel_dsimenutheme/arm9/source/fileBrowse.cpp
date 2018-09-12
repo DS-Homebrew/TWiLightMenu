@@ -886,7 +886,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					return "null";
 				}
 				else if ((isDSiWare[cursorPosition[secondaryDevice]] && !isDSiMode())
-						|| (isDSiWare[cursorPosition[secondaryDevice]] && !sdFound() && consoleModel > 1))
+						|| (isDSiWare[cursorPosition[secondaryDevice]] && !sdFound())
+						|| (isDSiWare[cursorPosition[secondaryDevice]] && consoleModel > 1))
 				{
 					mmEffectEx(&snd_wrong);
 					clearText();

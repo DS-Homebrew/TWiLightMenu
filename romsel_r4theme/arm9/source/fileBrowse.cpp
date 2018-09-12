@@ -366,8 +366,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				SaveSettings();
 				settingsChanged = false;
 				return "null";
-			} else if ((isDSiWare && !isDSiMode())
-					|| (isDSiWare && consoleModel > 1)) {
+			}
+			else if ((isDSiWare && !isDSiMode())
+					|| (isDSiWare && !sdFound())
+					|| (isDSiWare && consoleModel > 1))
+			{
 				showdialogbox = true;
 				printLargeCentered(false, 84, "Error!");
 				printSmallCentered(false, 104, "This game cannot be launched.");
