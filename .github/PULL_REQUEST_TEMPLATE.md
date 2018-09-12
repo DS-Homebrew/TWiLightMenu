@@ -1,11 +1,7 @@
 <!--- ##### REMEMBER TO ALWAYS TEST YOUR PR! -->
-#### What's new?
+#### What's changed?
 
-_Tell us what's new._
-
-#### What is fixed?
-
-_Tell us what's fixed._
+_Tell us what you've changed._
 
 #### Where have you tested it?
 
