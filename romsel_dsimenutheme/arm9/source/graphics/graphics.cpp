@@ -736,20 +736,20 @@ void vBlankHandler()
 				// Draw dots after selecting a game/app
 				for (int i = 0; i < 11; i++) {
 					glSprite(76+launchDotX[i], 69+launchDotY[i], GL_FLIP_NONE, &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
-					if (launchDotX[i] == 0) launchDotXMove[i] = true;
-					if (launchDotX[i] == 88) launchDotXMove[i] = false;
-					if (launchDotY[i] == 0) launchDotYMove[i] = true;
-					if (launchDotY[i] == 88) launchDotYMove[i] = false;
-					if (launchDotXMove[i] == false) {
-						launchDotX[i]--;
-					} else if (launchDotXMove[i] == true) {
-						launchDotX[i]++;
-					}
-					if (launchDotYMove[i] == false) {
-						launchDotY[i]--;
-					} else if (launchDotYMove[i] == true) {
-						launchDotY[i]++;
-					}
+				//	if (launchDotX[i] == 0) launchDotXMove[i] = true;
+				//	if (launchDotX[i] == 88) launchDotXMove[i] = false;
+				//	if (launchDotY[i] == 0) launchDotYMove[i] = true;
+				//	if (launchDotY[i] == 88) launchDotYMove[i] = false;
+				//	if (launchDotXMove[i] == false) {
+				//		launchDotX[i]--;
+				//	} else if (launchDotXMove[i] == true) {
+				//		launchDotX[i]++;
+				//	}
+				//	if (launchDotYMove[i] == false) {
+				//		launchDotY[i]--;
+				//	} else if (launchDotYMove[i] == true) {
+				//		launchDotY[i]++;
+				//	}
 				}
 				titleboxYmovepos += 5;
 			}
@@ -1235,8 +1235,8 @@ void graphicsInit()
 	launchDotY[7] = 75;
 	launchDotXMove[8] = true;
 	launchDotYMove[8] = false;
-	launchDotX[8] = 76;
-	launchDotY[8] = 90;
+	launchDotX[8] = 79;
+	launchDotY[8] = 60;
 	launchDotXMove[9] = false;
 	launchDotYMove[9] = false;
 	launchDotX[9] = 84;
