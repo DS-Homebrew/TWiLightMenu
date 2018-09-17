@@ -107,7 +107,7 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		// fifocheck();
+		resyncClock();
 		swiWaitForVBlank();
 	}
 	return 0;
