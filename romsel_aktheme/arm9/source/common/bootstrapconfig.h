@@ -28,7 +28,7 @@ class BootstrapConfig
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
 
-        BootstrapConfig& asyncPrefetch(bool asyncPrefetch);
+        BootstrapConfig& dsiMode(bool dsiMode);
         BootstrapConfig& vramBoost(bool vramBoost);
         BootstrapConfig& cpuBoost(bool cpuBoost);
 
@@ -63,7 +63,7 @@ class BootstrapConfig
         int _mpuRegion;
         bool _isHomebrew;
         int _saveSize;
-        bool _asyncPrefetch;
+        bool _dsiMode;
         bool _vramBoost;
         bool _cpuBoost;
         int _language;

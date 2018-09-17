@@ -741,17 +741,20 @@ int main(int argc, char **argv)
 					 TLanguage::ELangItalian,
 					 TLanguage::ELangSpanish})
 
+			.option(STR_RUNIN, STR_DESCRIPTION_RUNIN_1, Option::Bool(&ms().bstrap_dsiMode), {"DSi mode", "DS mode"}, {true, false})
+
 			.option(STR_CPUSPEED,
 					STR_DESCRIPTION_CPUSPEED_1,
 					Option::Bool(&ms().boostCpu),
 					{"67 MHz (NTR)", "133 MHz (TWL)"},
 					{true, false})
 			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
-			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false});
 
-			.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
-			.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
+		if (!sys().arm7SCFGLocked()) {
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
 					{true, false});
+		}
 	}
 
 	if (!sys().isRegularDS())

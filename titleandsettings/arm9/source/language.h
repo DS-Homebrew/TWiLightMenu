@@ -53,7 +53,7 @@ extern std::string STR_SOUNDFIX;
 extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
-extern std::string STR_ASYNCPREFETCH;
+extern std::string STR_RUNIN;
 extern std::string STR_SNDFREQ;
 extern std::string STR_SLOT1LAUNCHMETHOD;
 extern std::string STR_LOADINGSCREEN;
@@ -76,6 +76,8 @@ extern std::string STR_NIGHTLY;
 
 extern std::string STR_DESCRIPTION_LANGUAGE_1;
 
+extern std::string STR_DESCRIPTION_RUNIN_1;
+
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
 
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
@@ -87,8 +89,6 @@ extern std::string STR_DESCRIPTION_DEBUG_1;
 extern std::string STR_DESCRIPTION_LOGGING_1;
 
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
-
-extern std::string STR_DESCRIPTION_ASYNCPREFETCH_1;
 
 extern std::string STR_DESCRIPTION_SNDFREQ_1;
 

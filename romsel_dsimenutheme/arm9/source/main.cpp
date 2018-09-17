@@ -150,7 +150,7 @@ int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 bool soundFix = false;
-bool bstrap_asyncPrefetch = true;
+bool bstrap_dsiMode = false;
 
 void LoadSettings(void) {
 	// GUI
@@ -197,7 +197,7 @@ void LoadSettings(void) {
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
-	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
+	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
@@ -1249,6 +1249,11 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
 						}
+						if (perGameSettings_dsiMode == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+						}
 						if (perGameSettings_boostCpu == -1) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 						} else {
@@ -1263,11 +1268,6 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", perGameSettings_soundFix);
-						}
-						if (perGameSettings_asyncPrefetch == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
 						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);

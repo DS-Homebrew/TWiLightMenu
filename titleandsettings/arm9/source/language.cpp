@@ -59,7 +59,7 @@ std::string STR_SOUNDFIX = "STR_SOUNDFIX";
 std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
-std::string STR_ASYNCPREFETCH = "STR_ASYNCPREFETCH";
+std::string STR_RUNIN = "STR_RUNIN";
 std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
 std::string STR_LOADINGSCREEN = "STR_LOADINGSCREEN";
@@ -82,6 +82,8 @@ std::string STR_NIGHTLY = "STR_NIGHTLY";
 
 std::string STR_DESCRIPTION_LANGUAGE_1 = "STR_DESCRIPTION_LANGUAGE_1";
 
+std::string STR_DESCRIPTION_RUNIN_1 = "STR_DESCRIPTION_RUNIN_1";
+
 std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
 
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
@@ -93,8 +95,6 @@ std::string STR_DESCRIPTION_DEBUG_1 = "STR_DESCRIPTION_DEBUG_1";
 std::string STR_DESCRIPTION_LOGGING_1 = "STR_DESCRIPTION_LOGGING_1";
 
 std::string STR_DESCRIPTION_ROMREADLED_1 = "STR_DESCRIPTION_ROMREADLED_1";
-
-std::string STR_DESCRIPTION_ASYNCPREFETCH_1 = "STR_DESCRIPTION_ASYNCPREFETCH_1";
 
 std::string STR_DESCRIPTION_SNDFREQ_1 = "STR_DESCRIPTION_SNDFREQ_1";
 
@@ -300,7 +300,7 @@ void langInit(void)
 	STR_DEBUG = languageini.GetString("LANGUAGE", "DEBUG", "Debug");
 	STR_LOGGING = languageini.GetString("LANGUAGE", "LOGGING", "Logging");
 	STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED");
-	STR_ASYNCPREFETCH = languageini.GetString("LANGUAGE", "ASYNCPREFETCH", "Async Prefetch");
+	STR_RUNIN = languageini.GetString("LANGUAGE", "RUNIN", "Run in");
 	STR_SNDFREQ = languageini.GetString("LANGUAGE", "SNDFREQ", "Sound/Mic frequency");
 	STR_SLOT1LAUNCHMETHOD = languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method");
 	STR_LOADINGSCREEN = languageini.GetString("LANGUAGE", "LOADINGSCREEN", "Loading screen");
@@ -323,6 +323,8 @@ void langInit(void)
 
 	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections|of your console language|by setting this option.");
 
+	STR_DESCRIPTION_RUNIN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_RUNIN_1", "Run in either DS or DSi mode.");
+
 	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags|in some games.");
 
 	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes|and expands the bus to 32 bit.");
@@ -334,8 +336,6 @@ void langInit(void)
 	STR_DESCRIPTION_LOGGING_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching|to sd:/NDSBTSRP.LOG");
 
 	STR_DESCRIPTION_ROMREADLED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator.");
-
-	STR_DESCRIPTION_ASYNCPREFETCH_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ASYNCPREFETCH_1", "Can make streamed video/music|playback smoother.|May break certain games.");
 
 	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz: Original quality|47.61kHz: High quality");
 

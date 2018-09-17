@@ -519,7 +519,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
-    config.asyncPrefetch(gameConfig.asyncPrefetch == PerGameSettings::EDefault ? ms().bstrap_asyncPrefetch : (bool)gameConfig.asyncPrefetch)
+    config.dsiMode(gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (bool)gameConfig.dsiMode)
         .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
         .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
         .soundFix(gameConfig.soundFix == PerGameSettings::EDefault ? ms().soundFix : (bool)gameConfig.soundFix)
