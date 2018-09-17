@@ -71,8 +71,6 @@ void flashcardInit(void) {
 			swiWaitForVBlank();
 		}*/
 
-		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
-
 		// Read a DLDI driver specific to the cart
 		/*if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
 			ms().flashcard = DSiMenuPlusPlusSettings::EDSTTClone;
@@ -87,6 +85,7 @@ void flashcardInit(void) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "QMATETRIAL", 9) ||*/ if(!memcmp(gamename, "R4DSULTRA", 9)) {
+			sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 			ms().flashcard = DSiMenuPlusPlusSettings::ER4iGoldClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
