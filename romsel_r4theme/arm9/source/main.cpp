@@ -798,32 +798,32 @@ int main(int argc, char **argv) {
 			topLogoLoad();
 			fadeType = true;	// Fade in from white
 
-			clearText();
-			switch (startMenu_cursorPosition) {
-				case 0:
-				default:
-					printLargeCentered(false, 182, "Games");
-					break;
-				case 1:
-					if (flashcardFound()) {
-						printLargeCentered(false, 182, "Not used");
-					} else {
-						printLargeCentered(false, 182, "Launch Slot-1 card");
-					}
-					break;
-				case 2:
-					if (useGbarunner) {
-						printLargeCentered(false, 182, "Start GBARunner2");
-					} else {
-						printLargeCentered(false, 182, "Start GBA Mode");
-					}
-					break;
-			}
-
 			int pressed = 0;
 
-			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do {
+				clearText();
+				switch (startMenu_cursorPosition) {
+					case 0:
+					default:
+						printLargeCentered(false, 182, "Game");
+						break;
+					case 1:
+						if (flashcardFound()) {
+							printLargeCentered(false, 182, "Not used");
+						} else {
+							printLargeCentered(false, 182, "Launch Slot-1 card");
+						}
+						break;
+					case 2:
+						if (useGbarunner) {
+							printLargeCentered(false, 182, "Start GBARunner2");
+						} else {
+							printLargeCentered(false, 182, "Start GBA Mode");
+						}
+						break;
+				}
+				printLarge(false, 208, 182, RetTime().c_str());
+
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);

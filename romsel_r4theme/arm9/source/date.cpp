@@ -64,19 +64,8 @@ string RetTime()
 	time(&Raw);
 	const struct tm *Time = localtime(&Raw);
 
-	// Blink the ':' approximately once per second.
-	static int chartimer = 0;
-	chartimer++;
-	if (chartimer >= 60*2) {
-		chartimer = 0;
-	}
-
 	char Tmp[24];
-	if (chartimer >= 60) {
-		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
-	} else {
-		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
-	}
+	strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
 
 	return string(Tmp);
 }
