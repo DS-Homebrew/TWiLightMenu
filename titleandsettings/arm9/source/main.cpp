@@ -570,7 +570,7 @@ int main(int argc, char **argv)
 
 	scanKeys();
 
-	if (sys().arm7SCFGLocked() && !ms().gotosettings && ms().autorun && !(keysHeld() & KEY_B))
+	if (!ms().gotosettings && ms().autorun && !(keysHeld() & KEY_B))
 	{
 		lastRanROM();
 	}
