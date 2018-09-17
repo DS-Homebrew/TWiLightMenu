@@ -169,6 +169,10 @@ void SettingsGUI::drawSub()
 
 void SettingsGUI::drawTopText()
 {
+	if (isDSiMode()) {
+		printSmall(true, 4, 0, "nds-bootstrap Ver:");
+		printSmall(true, 114, 0, bsVerText[ms().bootstrapFile]);
+	}
     printSmall(true, 194, 174, vertext);
     for (int i = 0; i < _topText.size(); i++)
     {
