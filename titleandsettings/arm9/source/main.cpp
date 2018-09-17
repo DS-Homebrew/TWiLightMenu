@@ -746,7 +746,7 @@ int main(int argc, char **argv)
 			.option(STR_CPUSPEED,
 					STR_DESCRIPTION_CPUSPEED_1,
 					Option::Bool(&ms().boostCpu),
-					{"67 MHz (NTR)", "133 MHz (TWL)"},
+					{"133 MHz (TWL)", "67 MHz (NTR)"},
 					{true, false})
 			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
 			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false});
