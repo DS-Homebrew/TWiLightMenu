@@ -111,6 +111,8 @@ glImage blueMoonSubBgImage[(256 / 16) * (256 / 16)];
 glImage iconboxImage[(64 / 16) * (64 / 16)];
 glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
+int bottomBg;
+
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
 	u16* destination = (u16*)dest;
@@ -166,17 +168,89 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-void drawBG(glImage *images)
-{
-	for (int y = 0; y < 256 / 16; y++)
-	{
-		for (int x = 0; x < 256 / 16; x++)
-		{
-			int i = y * 16 + x;
-			glSprite(x * 16, y * 16, GL_FLIP_NONE, &images[i & 255]);
-		}
+void bottomBgLoad(void) {
+	switch (subtheme) {
+		case 0:
+		default:
+			dmaCopy(theme01_iconsTiles, bgGetGfxPtr(bottomBg), theme01_iconsTilesLen);
+			dmaCopy(theme01_iconsPal, BG_PALETTE, theme01_iconsPalLen);
+			dmaCopy(theme01_iconsMap, bgGetMapPtr(bottomBg), theme01_iconsMapLen);
+			break;
+		case 1:
+			dmaCopy(theme02_iconsTiles, bgGetGfxPtr(bottomBg), theme02_iconsTilesLen);
+			dmaCopy(theme02_iconsPal, BG_PALETTE, theme02_iconsPalLen);
+			dmaCopy(theme02_iconsMap, bgGetMapPtr(bottomBg), theme02_iconsMapLen);
+			break;
+		case 2:
+			dmaCopy(theme03_iconsTiles, bgGetGfxPtr(bottomBg), theme03_iconsTilesLen);
+			dmaCopy(theme03_iconsPal, BG_PALETTE, theme03_iconsPalLen);
+			dmaCopy(theme03_iconsMap, bgGetMapPtr(bottomBg), theme03_iconsMapLen);
+			break;
+		case 3:
+			dmaCopy(theme04_iconsTiles, bgGetGfxPtr(bottomBg), theme04_iconsTilesLen);
+			dmaCopy(theme04_iconsPal, BG_PALETTE, theme04_iconsPalLen);
+			dmaCopy(theme04_iconsMap, bgGetMapPtr(bottomBg), theme04_iconsMapLen);
+			break;
+		case 4:
+			dmaCopy(theme05_iconsTiles, bgGetGfxPtr(bottomBg), theme05_iconsTilesLen);
+			dmaCopy(theme05_iconsPal, BG_PALETTE, theme05_iconsPalLen);
+			dmaCopy(theme05_iconsMap, bgGetMapPtr(bottomBg), theme05_iconsMapLen);
+			break;
+		case 5:
+			dmaCopy(theme06_iconsTiles, bgGetGfxPtr(bottomBg), theme06_iconsTilesLen);
+			dmaCopy(theme06_iconsPal, BG_PALETTE, theme06_iconsPalLen);
+			dmaCopy(theme06_iconsMap, bgGetMapPtr(bottomBg), theme06_iconsMapLen);
+			break;
+		case 6:
+			dmaCopy(theme07_iconsTiles, bgGetGfxPtr(bottomBg), theme07_iconsTilesLen);
+			dmaCopy(theme07_iconsPal, BG_PALETTE, theme07_iconsPalLen);
+			dmaCopy(theme07_iconsMap, bgGetMapPtr(bottomBg), theme07_iconsMapLen);
+			break;
+		case 7:
+			dmaCopy(theme08_iconsTiles, bgGetGfxPtr(bottomBg), theme08_iconsTilesLen);
+			dmaCopy(theme08_iconsPal, BG_PALETTE, theme08_iconsPalLen);
+			dmaCopy(theme08_iconsMap, bgGetMapPtr(bottomBg), theme08_iconsMapLen);
+			break;
+		case 8:
+			dmaCopy(theme09_iconsTiles, bgGetGfxPtr(bottomBg), theme09_iconsTilesLen);
+			dmaCopy(theme09_iconsPal, BG_PALETTE, theme09_iconsPalLen);
+			dmaCopy(theme09_iconsMap, bgGetMapPtr(bottomBg), theme09_iconsMapLen);
+			break;
+		case 9:
+			dmaCopy(theme10_iconsTiles, bgGetGfxPtr(bottomBg), theme10_iconsTilesLen);
+			dmaCopy(theme10_iconsPal, BG_PALETTE, theme10_iconsPalLen);
+			dmaCopy(theme10_iconsMap, bgGetMapPtr(bottomBg), theme10_iconsMapLen);
+			break;
+		case 10:
+			dmaCopy(theme11_iconsTiles, bgGetGfxPtr(bottomBg), theme11_iconsTilesLen);
+			dmaCopy(theme11_iconsPal, BG_PALETTE, theme11_iconsPalLen);
+			dmaCopy(theme11_iconsMap, bgGetMapPtr(bottomBg), theme11_iconsMapLen);
+			break;
+		case 11:
+			dmaCopy(theme12_iconsTiles, bgGetGfxPtr(bottomBg), theme12_iconsTilesLen);
+			dmaCopy(theme12_iconsPal, BG_PALETTE, theme12_iconsPalLen);
+			dmaCopy(theme12_iconsMap, bgGetMapPtr(bottomBg), theme12_iconsMapLen);
+			break;
+		case 12:
+			dmaCopy(bluemoon_iconsTiles, bgGetGfxPtr(bottomBg), bluemoon_iconsTilesLen);
+			dmaCopy(bluemoon_iconsPal, BG_PALETTE, bluemoon_iconsPalLen);
+			dmaCopy(bluemoon_iconsMap, bgGetMapPtr(bottomBg), bluemoon_iconsMapLen);
+			break;
 	}
 }
+
+// No longer used.
+// void drawBG(glImage *images)
+// {
+// 	for (int y = 0; y < 256 / 16; y++)
+// 	{
+// 		for (int x = 0; x < 256 / 16; x++)
+// 		{
+// 			int i = y * 16 + x;
+// 			glSprite(x * 16, y * 16, GL_FLIP_NONE, &images[i & 255]);
+// 		}
+// 	}
+// }
 
 void vBlankHandler()
 {
@@ -227,7 +301,6 @@ void vBlankHandler()
 		{*/
 
 		if (startMenu) {
-			drawBG(subBgImage);
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8));
 		} else {
 			switch (subtheme) {
@@ -269,7 +342,7 @@ void vBlankHandler()
 					glBoxFilled(0, 0, 256, 192, 0x0098);	// R: 192, G: 32, B: 0
 					break;
 				case 12:
-					drawBG(blueMoonSubBgImage);
+					//drawBG(blueMoonSubBgImage);
 					break;
 			}
 
@@ -425,12 +498,15 @@ void graphicsInit()
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D);
+	videoSetMode(MODE_5_3D | DISPLAY_BG2_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
 
 
 	// Initialize gl2d
 	glScreen2D();
+	// Make gl2d render on transparent stage.
+	glClearColor(31,31,31,0);
+	glDisable(GL_CLEAR_BMP);
 
 	// Clear the GL texture state
 	glResetTextures();
@@ -440,12 +516,6 @@ void graphicsInit()
 	// sprites
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
-
-	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-
-	vramSetBankE(VRAM_E_MAIN_BG);
-	lcdMainOnBottom();
-
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	//REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
 	REG_BG0CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
@@ -456,217 +526,37 @@ void graphicsInit()
 
 	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
 
-	switch (subtheme) {
-		case 0:
-		default:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme01_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme01_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 1:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme02_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme02_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 2:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme03_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme03_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 3:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme04_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme04_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 4:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme05_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme05_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 5:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme06_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme06_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 6:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme07_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme07_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 7:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme08_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme08_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 8:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme09_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme09_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 9:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme10_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme10_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 10:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme11_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme11_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 11:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) theme12_iconsPal, // Load our 16 color tiles palette
-									(u8*) theme12_iconsBitmap // image data generated by GRIT
-									);
-			break;
-		case 12:
-			subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) bluemoon_iconsPal, // Load our 16 color tiles palette
-									(u8*) bluemoon_iconsBitmap // image data generated by GRIT
-									);
-			blueMoonSubBgTexID = glLoadTileSet(blueMoonSubBgImage, // pointer to glImage array
-									16, // sprite width
-									16, // sprite height
-									256, // bitmap width
-									256, // bitmap height
-									GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-									TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-									GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-									256, // Length of the palette to use (256 colors)
-									(u16*) bluemoon_bckgrd2Pal, // Load our 16 color tiles palette
-									(u8*) bluemoon_bckgrd2Bitmap // image data generated by GRIT
-									);
-			break;
-	}
+	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+	lcdMainOnBottom();
+
+	// Initialize the bottom background
+	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+	
+	swiIntrWait(0, 1);
+	
+	bottomBgLoad();
+
+	/*if (subtheme == 12) {
+		blueMoonSubBgTexID = glLoadTileSet(blueMoonSubBgImage, // pointer to glImage array
+								16, // sprite width
+								16, // sprite height
+								256, // bitmap width
+								256, // bitmap height
+								GL_RGB256, // texture type for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
+								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
+								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
+								256, // Length of the palette to use (256 colors)
+								(u16*) bluemoon_bckgrd2Pal, // Load our 16 color tiles palette
+								(u8*) bluemoon_bckgrd2Bitmap // image data generated by GRIT
+								);
+	}*/
 
 	iconboxTexID = glLoadTileSet(iconboxImage, // pointer to glImage array
 							40, // sprite width

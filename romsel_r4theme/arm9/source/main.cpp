@@ -822,7 +822,8 @@ int main(int argc, char **argv) {
 						}
 						break;
 				}
-				printLarge(false, 208, 182, RetTime().c_str());
+				//printLarge(false, 2, 182, DrawDate());
+				printLarge(false, 212, 182, RetTime().c_str());
 
 				scanKeys();
 				pressed = keysDownRepeat();

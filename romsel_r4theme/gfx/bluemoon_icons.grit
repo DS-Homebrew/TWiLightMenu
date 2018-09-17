@@ -2,10 +2,16 @@
 -W3
 
 #bitmap mode
--gb
+#-gb
 
 # Set the bit depth to 8 (256 colors)
 -gB8
+
+# tiled mode
+-gt
+
+#Include map
+-m
 
 #The Transperant colour of 0xFF00FF
 #-gT FF00FF

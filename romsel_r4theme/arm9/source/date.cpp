@@ -54,8 +54,6 @@ size_t GetDate(DateFormat format, char *buf, size_t size)
 
 /**
  * Get the current time formatted for the top bar.
- * This includes the blinking ':'.
- * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
 string RetTime()
@@ -72,7 +70,6 @@ string RetTime()
 
 /**
  * Draw the date using the specified format.
- * @param screen Top or Bottom screen.
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param size Text size.
