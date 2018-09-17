@@ -796,6 +796,7 @@ int main(int argc, char **argv) {
 		if (startMenu) {
 			whiteScreen = false;
 			topLogoLoad();
+			bottomBgLoad(true);
 			fadeType = true;	// Fade in from white
 
 			int pressed = 0;
@@ -870,6 +871,7 @@ int main(int argc, char **argv) {
 						clearText();
 						startMenu = false;
 						topBgLoad();
+						bottomBgLoad(false);
 						break;
 					case 1:
 						if (!flashcardFound()) {

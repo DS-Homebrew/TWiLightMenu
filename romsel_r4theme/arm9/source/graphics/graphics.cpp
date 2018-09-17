@@ -168,74 +168,80 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-void bottomBgLoad(void) {
-	switch (subtheme) {
-		case 0:
-		default:
-			dmaCopy(theme01_iconsTiles, bgGetGfxPtr(bottomBg), theme01_iconsTilesLen);
-			dmaCopy(theme01_iconsPal, BG_PALETTE, theme01_iconsPalLen);
-			dmaCopy(theme01_iconsMap, bgGetMapPtr(bottomBg), theme01_iconsMapLen);
-			break;
-		case 1:
-			dmaCopy(theme02_iconsTiles, bgGetGfxPtr(bottomBg), theme02_iconsTilesLen);
-			dmaCopy(theme02_iconsPal, BG_PALETTE, theme02_iconsPalLen);
-			dmaCopy(theme02_iconsMap, bgGetMapPtr(bottomBg), theme02_iconsMapLen);
-			break;
-		case 2:
-			dmaCopy(theme03_iconsTiles, bgGetGfxPtr(bottomBg), theme03_iconsTilesLen);
-			dmaCopy(theme03_iconsPal, BG_PALETTE, theme03_iconsPalLen);
-			dmaCopy(theme03_iconsMap, bgGetMapPtr(bottomBg), theme03_iconsMapLen);
-			break;
-		case 3:
-			dmaCopy(theme04_iconsTiles, bgGetGfxPtr(bottomBg), theme04_iconsTilesLen);
-			dmaCopy(theme04_iconsPal, BG_PALETTE, theme04_iconsPalLen);
-			dmaCopy(theme04_iconsMap, bgGetMapPtr(bottomBg), theme04_iconsMapLen);
-			break;
-		case 4:
-			dmaCopy(theme05_iconsTiles, bgGetGfxPtr(bottomBg), theme05_iconsTilesLen);
-			dmaCopy(theme05_iconsPal, BG_PALETTE, theme05_iconsPalLen);
-			dmaCopy(theme05_iconsMap, bgGetMapPtr(bottomBg), theme05_iconsMapLen);
-			break;
-		case 5:
-			dmaCopy(theme06_iconsTiles, bgGetGfxPtr(bottomBg), theme06_iconsTilesLen);
-			dmaCopy(theme06_iconsPal, BG_PALETTE, theme06_iconsPalLen);
-			dmaCopy(theme06_iconsMap, bgGetMapPtr(bottomBg), theme06_iconsMapLen);
-			break;
-		case 6:
-			dmaCopy(theme07_iconsTiles, bgGetGfxPtr(bottomBg), theme07_iconsTilesLen);
-			dmaCopy(theme07_iconsPal, BG_PALETTE, theme07_iconsPalLen);
-			dmaCopy(theme07_iconsMap, bgGetMapPtr(bottomBg), theme07_iconsMapLen);
-			break;
-		case 7:
-			dmaCopy(theme08_iconsTiles, bgGetGfxPtr(bottomBg), theme08_iconsTilesLen);
-			dmaCopy(theme08_iconsPal, BG_PALETTE, theme08_iconsPalLen);
-			dmaCopy(theme08_iconsMap, bgGetMapPtr(bottomBg), theme08_iconsMapLen);
-			break;
-		case 8:
-			dmaCopy(theme09_iconsTiles, bgGetGfxPtr(bottomBg), theme09_iconsTilesLen);
-			dmaCopy(theme09_iconsPal, BG_PALETTE, theme09_iconsPalLen);
-			dmaCopy(theme09_iconsMap, bgGetMapPtr(bottomBg), theme09_iconsMapLen);
-			break;
-		case 9:
-			dmaCopy(theme10_iconsTiles, bgGetGfxPtr(bottomBg), theme10_iconsTilesLen);
-			dmaCopy(theme10_iconsPal, BG_PALETTE, theme10_iconsPalLen);
-			dmaCopy(theme10_iconsMap, bgGetMapPtr(bottomBg), theme10_iconsMapLen);
-			break;
-		case 10:
-			dmaCopy(theme11_iconsTiles, bgGetGfxPtr(bottomBg), theme11_iconsTilesLen);
-			dmaCopy(theme11_iconsPal, BG_PALETTE, theme11_iconsPalLen);
-			dmaCopy(theme11_iconsMap, bgGetMapPtr(bottomBg), theme11_iconsMapLen);
-			break;
-		case 11:
-			dmaCopy(theme12_iconsTiles, bgGetGfxPtr(bottomBg), theme12_iconsTilesLen);
-			dmaCopy(theme12_iconsPal, BG_PALETTE, theme12_iconsPalLen);
-			dmaCopy(theme12_iconsMap, bgGetMapPtr(bottomBg), theme12_iconsMapLen);
-			break;
-		case 12:
-			dmaCopy(bluemoon_iconsTiles, bgGetGfxPtr(bottomBg), bluemoon_iconsTilesLen);
-			dmaCopy(bluemoon_iconsPal, BG_PALETTE, bluemoon_iconsPalLen);
-			dmaCopy(bluemoon_iconsMap, bgGetMapPtr(bottomBg), bluemoon_iconsMapLen);
-			break;
+void bottomBgLoad(bool startMenu) {
+	if (startMenu) {
+		switch (subtheme) {
+			case 0:
+			default:
+				dmaCopy(theme01_iconsTiles, bgGetGfxPtr(bottomBg), theme01_iconsTilesLen);
+				dmaCopy(theme01_iconsPal, BG_PALETTE, theme01_iconsPalLen);
+				dmaCopy(theme01_iconsMap, bgGetMapPtr(bottomBg), theme01_iconsMapLen);
+				break;
+			case 1:
+				dmaCopy(theme02_iconsTiles, bgGetGfxPtr(bottomBg), theme02_iconsTilesLen);
+				dmaCopy(theme02_iconsPal, BG_PALETTE, theme02_iconsPalLen);
+				dmaCopy(theme02_iconsMap, bgGetMapPtr(bottomBg), theme02_iconsMapLen);
+				break;
+			case 2:
+				dmaCopy(theme03_iconsTiles, bgGetGfxPtr(bottomBg), theme03_iconsTilesLen);
+				dmaCopy(theme03_iconsPal, BG_PALETTE, theme03_iconsPalLen);
+				dmaCopy(theme03_iconsMap, bgGetMapPtr(bottomBg), theme03_iconsMapLen);
+				break;
+			case 3:
+				dmaCopy(theme04_iconsTiles, bgGetGfxPtr(bottomBg), theme04_iconsTilesLen);
+				dmaCopy(theme04_iconsPal, BG_PALETTE, theme04_iconsPalLen);
+				dmaCopy(theme04_iconsMap, bgGetMapPtr(bottomBg), theme04_iconsMapLen);
+				break;
+			case 4:
+				dmaCopy(theme05_iconsTiles, bgGetGfxPtr(bottomBg), theme05_iconsTilesLen);
+				dmaCopy(theme05_iconsPal, BG_PALETTE, theme05_iconsPalLen);
+				dmaCopy(theme05_iconsMap, bgGetMapPtr(bottomBg), theme05_iconsMapLen);
+				break;
+			case 5:
+				dmaCopy(theme06_iconsTiles, bgGetGfxPtr(bottomBg), theme06_iconsTilesLen);
+				dmaCopy(theme06_iconsPal, BG_PALETTE, theme06_iconsPalLen);
+				dmaCopy(theme06_iconsMap, bgGetMapPtr(bottomBg), theme06_iconsMapLen);
+				break;
+			case 6:
+				dmaCopy(theme07_iconsTiles, bgGetGfxPtr(bottomBg), theme07_iconsTilesLen);
+				dmaCopy(theme07_iconsPal, BG_PALETTE, theme07_iconsPalLen);
+				dmaCopy(theme07_iconsMap, bgGetMapPtr(bottomBg), theme07_iconsMapLen);
+				break;
+			case 7:
+				dmaCopy(theme08_iconsTiles, bgGetGfxPtr(bottomBg), theme08_iconsTilesLen);
+				dmaCopy(theme08_iconsPal, BG_PALETTE, theme08_iconsPalLen);
+				dmaCopy(theme08_iconsMap, bgGetMapPtr(bottomBg), theme08_iconsMapLen);
+				break;
+			case 8:
+				dmaCopy(theme09_iconsTiles, bgGetGfxPtr(bottomBg), theme09_iconsTilesLen);
+				dmaCopy(theme09_iconsPal, BG_PALETTE, theme09_iconsPalLen);
+				dmaCopy(theme09_iconsMap, bgGetMapPtr(bottomBg), theme09_iconsMapLen);
+				break;
+			case 9:
+				dmaCopy(theme10_iconsTiles, bgGetGfxPtr(bottomBg), theme10_iconsTilesLen);
+				dmaCopy(theme10_iconsPal, BG_PALETTE, theme10_iconsPalLen);
+				dmaCopy(theme10_iconsMap, bgGetMapPtr(bottomBg), theme10_iconsMapLen);
+				break;
+			case 10:
+				dmaCopy(theme11_iconsTiles, bgGetGfxPtr(bottomBg), theme11_iconsTilesLen);
+				dmaCopy(theme11_iconsPal, BG_PALETTE, theme11_iconsPalLen);
+				dmaCopy(theme11_iconsMap, bgGetMapPtr(bottomBg), theme11_iconsMapLen);
+				break;
+			case 11:
+				dmaCopy(theme12_iconsTiles, bgGetGfxPtr(bottomBg), theme12_iconsTilesLen);
+				dmaCopy(theme12_iconsPal, BG_PALETTE, theme12_iconsPalLen);
+				dmaCopy(theme12_iconsMap, bgGetMapPtr(bottomBg), theme12_iconsMapLen);
+				break;
+			case 12:
+				dmaCopy(bluemoon_iconsTiles, bgGetGfxPtr(bottomBg), bluemoon_iconsTilesLen);
+				dmaCopy(bluemoon_iconsPal, BG_PALETTE, bluemoon_iconsPalLen);
+				dmaCopy(bluemoon_iconsMap, bgGetMapPtr(bottomBg), bluemoon_iconsMapLen);
+				break;
+		}
+	} else if (subtheme == 12) {
+		dmaCopy(bluemoon_bckgrd2Tiles, bgGetGfxPtr(bottomBg), bluemoon_bckgrd2TilesLen);
+		dmaCopy(bluemoon_bckgrd2Pal, BG_PALETTE, bluemoon_bckgrd2PalLen);
+		dmaCopy(bluemoon_bckgrd2Map, bgGetMapPtr(bottomBg), bluemoon_bckgrd2MapLen);
 	}
 }
 
@@ -539,8 +545,6 @@ void graphicsInit()
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 	
 	swiIntrWait(0, 1);
-	
-	bottomBgLoad();
 
 	/*if (subtheme == 12) {
 		blueMoonSubBgTexID = glLoadTileSet(blueMoonSubBgImage, // pointer to glImage array

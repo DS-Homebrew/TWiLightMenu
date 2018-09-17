@@ -20,6 +20,7 @@
 #pragma once
 
 void initSubSprites(void);
+void bottomBgLoad(bool startMenu);
 void graphicsInit();
 void topLogoLoad();
 void topBgLoad();
