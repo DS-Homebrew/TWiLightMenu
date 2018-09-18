@@ -228,7 +228,7 @@ void perGameSettings (std::string filename) {
 				}
 				printSmall(false, 32, 128, "ARM9 CPU Speed:");
 				printSmall(false, 32, 136, "VRAM boost:");
-				if (perGameSettings_dsiMode) {
+				if (perGameSettings_dsiMode == 1) {
 					printSmall(false, 153, 128, "133mhz (TWL)");
 					printSmall(false, 180, 136, "On");
 				} else {
@@ -292,9 +292,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 180, 112, "Spanish");
 				}
 			}
-			printSmall(false, 32, 128, "ARM9 CPU Speed:");
-			printSmall(false, 32, 136, "VRAM boost:");
-			if (perGameSettings_dsiMode) {
+			if (perGameSettings_dsiMode == 1) {
 				printSmall(false, 153, 128, "133mhz (TWL)");
 				printSmall(false, 180, 136, "On");
 			} else {

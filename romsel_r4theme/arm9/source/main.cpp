@@ -874,7 +874,7 @@ int main(int argc, char **argv) {
 						bottomBgLoad(false);
 						break;
 					case 1:
-						if (!flashcardFound()) {
+						if (!flashcardFound() && REG_SCFG_MC != 0x11) {
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
