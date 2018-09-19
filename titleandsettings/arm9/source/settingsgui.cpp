@@ -15,6 +15,9 @@
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
+extern bool renderScreens;
+extern bool fadeType; // false = out, true = in
+
 void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
@@ -96,7 +99,7 @@ void SettingsGUI::draw()
         return;
     }
 
-    if (_isSaved)
+    /*if (_isSaved)
     {
         clearText();
         printSmall(false, 4, 2, "Settings saved.");
@@ -107,7 +110,7 @@ void SettingsGUI::draw()
         clearText();
         printSmall(false, 4, 2, "Saving settings...");
         return;
-    }
+    }*/
 
     clearText();
     printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
@@ -319,8 +322,10 @@ void SettingsGUI::saveAndExit()
     // Draw in between here.
     draw();
 
+	fadeType = false;
     for (int i = 0; i < 30; i++)
         swiWaitForVBlank();
+	renderScreens = false;
     ms().saveSettings();
     bs().saveSettings();
     _isSaved = true;

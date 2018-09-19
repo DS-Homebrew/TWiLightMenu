@@ -126,11 +126,9 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 
 void launchSystemSettings()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	dsiLaunchSystemSettings();
@@ -141,7 +139,6 @@ void launchSystemSettings()
 
 void rebootDSiMenuPP()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
@@ -158,7 +155,6 @@ void loadROMselect()
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
 	// mmEffectCancelAll();
@@ -192,11 +188,9 @@ void loadROMselect()
 
 int lastRanROM()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
 	// mmEffectCancelAll();
@@ -378,10 +372,10 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-	if (!sys().arm7SCFGLocked())
+	/*if (!sys().arm7SCFGLocked())
 	{
 		rebootDSiMenuPP();
-	}
+	}*/
 	loadROMselect();
 }
 void opt_reset_subtheme(int prev, int next)
