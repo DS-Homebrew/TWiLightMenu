@@ -25,7 +25,7 @@
 #include "common/singleton.h"
 
 
-#define SFN_SYSTEM_DIR              "/_nds/dsimenuplusplus/akmenu/"
+#define SFN_SYSTEM_DIR              "/_nds/TWiLightMenu/akmenu/"
 
 
 #define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"

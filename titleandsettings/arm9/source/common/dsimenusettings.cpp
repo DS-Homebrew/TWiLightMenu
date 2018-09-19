@@ -193,7 +193,7 @@ const char* DSiMenuPlusPlusSettings::getAppName()
     {
         case ENameDSiMenuPP:
         default:
-            return "DSiMenu++";
+            return "TWiLight Menu++";
         case ENameSRLoader:
             return "SRLoader";
         case ENameDSisionX:

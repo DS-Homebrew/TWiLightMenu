@@ -21,12 +21,12 @@ package: all
 	@mkdir -p "$(PACKAGE)/CFW - SDNAND root/title/00030015/534c524e/content"
 	@cp "rungame/rungame.nds" "$(PACKAGE)/CFW - SDNAND root/title/00030015/534c524e/content/00000000.app"
 
-	@mkdir -p "$(PACKAGE)/_nds/dsimenuplusplus"
-	@cp "slot1launch/slot1launch.nds" "$(PACKAGE)/_nds/dsimenuplusplus/slot1launch.srldr"
-	@cp "titleandsettings/titleandsettings.nds" "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
-	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
-	@cp "romsel_r4theme/romsel_r4theme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
-	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/dsimenuplusplus/akmenu.srldr"
+	@mkdir -p "$(PACKAGE)/_nds/TWiLightMenu"
+	@cp "slot1launch/slot1launch.nds" "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
+	@cp "titleandsettings/titleandsettings.nds" "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
+	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
+	@cp "romsel_r4theme/romsel_r4theme.nds" "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
+	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 
 booter:
 	@$(MAKE) -C booter
@@ -68,8 +68,8 @@ clean:
 	@rm -rf "$(PACKAGE)/BOOT_FC.NDS"
 	@rm -rf "$(PACKAGE)/CFW - SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/CFW - SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/slot1launch.srldr"
-	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/main.srldr"
-	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/dsimenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/r4menu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/dsimenuplusplus/akmenu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"

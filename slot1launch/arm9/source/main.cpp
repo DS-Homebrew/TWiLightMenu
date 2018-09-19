@@ -37,7 +37,7 @@
 // #define REG_SCFG_MC		(*(vu32*)0x4004010)
 
 
-const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 
 bool consoleOn = false;
 

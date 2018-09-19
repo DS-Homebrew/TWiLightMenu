@@ -95,7 +95,7 @@ char fileCounter[8];
 char gameTIDText[16];
 
 void loadPerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
@@ -107,7 +107,7 @@ void loadPerGameSettings (std::string filename) {
 }
 
 void savePerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);

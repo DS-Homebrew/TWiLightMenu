@@ -68,7 +68,7 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
@@ -724,12 +724,12 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
+	nitroFSInit("/_nds/TWiLightMenu/r4menu.srldr");
 
 	flashcardInit();
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	langInit();
@@ -885,7 +885,7 @@ int main(int argc, char **argv) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false, true, true);
+								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						}
@@ -939,7 +939,7 @@ int main(int argc, char **argv) {
 
 				gotosettings = true;
 				SaveSettings();
-				int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false, true, true);
+				int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false, false, true, true);
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
@@ -1518,11 +1518,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile ("/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1544,11 +1544,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "/_nds/TWiLightMenu/emulators/nesds.nds";
+					err = runNdsFile ("/_nds/TWiLightMenu/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

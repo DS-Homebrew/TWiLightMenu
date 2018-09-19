@@ -207,7 +207,7 @@ void langInit(void)
 	{
 	case 0:
 	default:
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "DSiMenu++ logo on startup");
+		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ logo on startup");
 		break;
 	case 1:
 		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "SRLoader on startup");
@@ -231,15 +231,15 @@ void langInit(void)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in DSiMenu++|Press A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight|Menu++. Press Left/Right|to select, A for sub-themes.");
 
 		break;
 	case 1:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader|Press A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader|Press Left/Right|to select, A for sub-themes.");
 
 		break;
 	case 2:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSisionX|Press A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSisionX|Press Left/Right|to select, A for sub-themes.");
 
 		break;
 	}
@@ -250,15 +250,15 @@ void langInit(void)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The DSiMenu++ logo will be|shown when you start|DSiMenu++");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be|shown when you start|TWiLight Menu++.");
 
 		break;
 	case 1:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The SRLoader logo will be|shown when you start|SRLoader");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The logo will be|shown when you start|SRLoader.");
 
 		break;
 	case 2:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The DSisionX logo will be|shown when you start|DSisionX");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be|shown when you start|DSisionX.");
 
 		break;
 	}
@@ -277,7 +277,7 @@ void langInit(void)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start DSiMenu++ on boot, instead|of the regular DSi Menu.");
+		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start TWiLight Menu++ on boot,|instead of the DSi Menu.");
 
 		break;
 	case 1:
@@ -407,7 +407,7 @@ void langInit(void)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu|or DSiMenu++ on boot.");
+		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu|or TWiLight Menu++ on boot.");
 		break;
 	case 1:
 		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_SRLOADER", "Launch Nintendo DSi Menu|or SRLoader on boot.");

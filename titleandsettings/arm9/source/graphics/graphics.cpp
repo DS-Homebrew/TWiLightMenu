@@ -26,6 +26,7 @@
 #include "common/inifile.h"
 #include "common/dsimenusettings.h"
 #include "title_sub.h"
+#include "inv_title_sub.h"
 #include "top_bg.h"
 #include "srloader_top_bg.h"
 #include "dsisionx_top_bg.h"
@@ -38,10 +39,6 @@
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
-
-static int musicTime = 0;
-
-extern const char* settingsinipath;
 
 //extern int appName;
 
@@ -185,7 +182,7 @@ void LoadBMP(void) {
 	switch (ms().appName) {
 		case 0:
 		default:
-			file = fopen("nitro:/graphics/DSiMenuPP.bmp", "rb");
+			file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
 			break;
 		case 1:
 			file = fopen("nitro:/graphics/SRLoader.bmp", "rb");
@@ -356,10 +353,15 @@ void loadTitleGraphics() {
 		ms().saveSettings();
 	}
 
-	// Display DSiMenu++ logo
+	// Display TWiLightMenu++ logo
 	LoadBMP();
-	if (isDSiMode()) {		// Show nds-bootstrap logo, if in full or partial DSi mode
-		swiDecompressLZSSVram ((void*)title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
-		vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
+	if (isDSiMode()) {		// Show nds-bootstrap logo, if in DSi mode
+		if (ms().appName == 0) {
+			swiDecompressLZSSVram ((void*)inv_title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], inv_title_subPal, inv_title_subPalLen);
+		} else {
+			swiDecompressLZSSVram ((void*)title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
+		}
 	}
 }

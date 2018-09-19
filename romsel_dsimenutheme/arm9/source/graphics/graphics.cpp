@@ -902,8 +902,8 @@ void loadBoxArt(const char* filename) {
 }
 
 void loadPhoto() {
-	FILE* file = fopen("fat:/_nds/dsimenuplusplus/photo.bmp", "rb");
-	if (!file) file = fopen("sd:/_nds/dsimenuplusplus/photo.bmp", "rb");
+	FILE* file = fopen("fat:/_nds/TWiLightMenu/photo.bmp", "rb");
+	if (!file) file = fopen("sd:/_nds/TWiLightMenu/photo.bmp", "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
@@ -927,8 +927,8 @@ void loadPhoto() {
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	FILE* file = fopen("fat:/_nds/dsimenuplusplus/photo.bmp", "rb");
-	if (!file) file = fopen("sd:/_nds/dsimenuplusplus/photo.bmp", "rb");
+	FILE* file = fopen("fat:/_nds/TWiLightMenu/photo.bmp", "rb");
+	if (!file) file = fopen("sd:/_nds/TWiLightMenu/photo.bmp", "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {

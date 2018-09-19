@@ -18,16 +18,16 @@ public:
         _exitCallback(nullptr)
   {
 
-    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 2, 1);
+    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 3, 0);
 	if (isDSiMode()) {
 		// Read nds-bootstrap version
 		FILE* bsVerFile;
 		for (int i = 0; i < 2; i++) {
 			snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "No version available    ");
 			if (i == 1) {
-				bsVerFile = fopen("sd:/_nds/dsimenuplusplus/nightly-bootstrap.ver", "rb");
+				bsVerFile = fopen("sd:/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
 			} else {
-				bsVerFile = fopen("sd:/_nds/dsimenuplusplus/release-bootstrap.ver", "rb");
+				bsVerFile = fopen("sd:/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
 			}
 			if (bsVerFile) {
 				snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "                        ");

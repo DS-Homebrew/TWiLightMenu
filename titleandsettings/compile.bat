@@ -1,3 +1,3 @@
 make
-copy "titleandsettings.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
+copy "titleandsettings.nds" "../7zfile/_nds/TWiLightMenu/main.srldr"
 pause

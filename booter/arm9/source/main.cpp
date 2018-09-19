@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL);
+	int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL);
 
 	if(!graphicsInited) {
 		graphicsInit();
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 
 	clearText();
 	if (err == 1) {
-		printSmall(false, 4, 4, "sd:/_nds/dsimenuplusplus/");
+		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
 		printSmall(false, 4, 12, "main.srldr not found.");
 	} else {
 		char errorText[16];

@@ -70,8 +70,8 @@ int main(int argc, char **argv) {
 	//defaultExceptionHandler();
 	
 	// Go back into DSi mode, if possible
-	REG_SCFG_CLK = 0x85;					// TWL clock speed
-	REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
+	//REG_SCFG_CLK = 0x85;					// TWL clock speed
+	//REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
 
 	if (!fatMountSimple("fat", dldiGetInternal())) {
 		consoleDemoInit();
@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	int err = runNdsFile ("fat:/_nds/dsimenuplusplus/main.srldr", 0, NULL);
+	int err = runNdsFile ("fat:/_nds/TWiLightMenu/main.srldr", 0, NULL);
 	consoleDemoInit();
 	iprintf ("Start failed. Error %i\n", err);
 	stop();
