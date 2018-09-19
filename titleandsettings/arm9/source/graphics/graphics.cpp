@@ -188,7 +188,7 @@ void LoadBMP(void) {
 			file = fopen("nitro:/graphics/SRLoader.bmp", "rb");
 			break;
 		case 2:
-			file = fopen("nitro:/graphics/DSisionX.bmp", "rb");
+			file = fopen("nitro:/graphics/DSiMenuPP.bmp", "rb");
 			break;
 	}
 
