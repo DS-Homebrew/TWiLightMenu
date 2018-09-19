@@ -4,12 +4,12 @@ if (!$?) {
     Write-Output "Install Docker at https://www.docker.com/";
 }
 
-#check for dsimenuplusplus image
-docker image inspect dsimenuplusplus >$null 2>&1 
+#check for TWiLightMenu image
+docker image inspect TWiLightMenu >$null 2>&1 
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t dsimenuplusplus --label dsimenuplusplus ./docker
+    docker build -t TWiLightMenu --label TWiLightMenu ./docker
 }
 
-docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
+docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args

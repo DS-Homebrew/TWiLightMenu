@@ -146,7 +146,7 @@ class DSiMenuPlusPlusSettings
     bool boostCpu;
     bool boostVram;
     bool soundFix;
-    bool bstrap_asyncPrefetch;
+    bool bstrap_dsiMode;
     bool autorun;
     bool show12hrClock;
 

@@ -11,7 +11,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_mpuRegion = 0;
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
-	_asyncPrefetch = true;
+	_dsiMode = false;
 	_vramBoost = false;
 	_language = -1;
 	_softReset = false;
@@ -231,9 +231,9 @@ BootstrapConfig &BootstrapConfig::saveSize(int saveSize)
 	return *this;
 }
 
-BootstrapConfig &BootstrapConfig::asyncPrefetch(bool asyncPrefetch)
+BootstrapConfig &BootstrapConfig::dsiMode(bool dsiMode)
 {
-	_asyncPrefetch = asyncPrefetch;
+	_dsiMode = dsiMode;
 	return *this;
 }
 
@@ -339,7 +339,7 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "BOOST_CPU", _cpuBoost)
 		.option("NDS-BOOTSTRAP", "BOOST_VRAM", _vramBoost)
 		.option("NDS-BOOTSTRAP", "SOUND_FIX", _soundFix)
-		.option("NDS-BOOTSTRAP", "ASYNC_PREFETCH", _asyncPrefetch)
+		.option("NDS-BOOTSTRAP", "DSI_MODE", _dsiMode)
 		.option("NDS-BOOTSTRAP", "DONOR_SDK_VER", _donorSdk)
 		.option("NDS-BOOTSTRAP", "GAME_SOFT_RESET", _softReset)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_REGION", _mpuRegion)

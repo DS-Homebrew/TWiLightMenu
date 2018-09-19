@@ -66,7 +66,7 @@ bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
-bool perGameSettings_dsiMode = false;
+int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
@@ -91,10 +91,10 @@ char fileCounter[8];
 char gameTIDText[16];
 
 void loadPerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
-	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", false);
+	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
@@ -103,7 +103,7 @@ void loadPerGameSettings (std::string filename) {
 }
 
 void savePerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/dsimenuplusplus/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
@@ -112,14 +112,12 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-	} else {
+	} else if (isDSiMode()) {
 		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
-		if (!secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
-			pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
-		}
+		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -167,7 +165,7 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 		if (secondaryDevice) {
-			perGameSettings_cursorPosition = 1;
+			perGameSettings_cursorPosition = 2;
 		}
 	}
 
@@ -201,7 +199,7 @@ void perGameSettings (std::string filename) {
 		dialogboxHeight = 0;
 	} else {
 		if (secondaryDevice) {
-			dialogboxHeight = 3;
+			dialogboxHeight = 4;
 		} else {
 			dialogboxHeight = 5;
 		}
@@ -230,7 +228,7 @@ void perGameSettings (std::string filename) {
 				}
 				printSmall(false, 32, 128, "ARM9 CPU Speed:");
 				printSmall(false, 32, 136, "VRAM boost:");
-				if (perGameSettings_dsiMode) {
+				if (perGameSettings_dsiMode == 1) {
 					printSmall(false, 153, 128, "133mhz (TWL)");
 					printSmall(false, 180, 136, "On");
 				} else {
@@ -265,12 +263,17 @@ void perGameSettings (std::string filename) {
 			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
 			if (!secondaryDevice) {
 				printSmall(false, 32, 112, "Language:");
+				printSmall(false, 32, 120, "Run in:");
+				if (perGameSettings_dsiMode) {
+					printSmall(false, 184, 120, "DSi mode");
+				} else {
+					printSmall(false, 184, 120, "DS mode");
+				}
 			}
-			printSmall(false, 32, 120, "ARM9 CPU Speed:");
-			printSmall(false, 32, 128, "VRAM boost:");
+			printSmall(false, 32, 128, "ARM9 CPU Speed:");
+			printSmall(false, 32, 136, "VRAM boost:");
 			if (!secondaryDevice) {
-				printSmall(false, 32, 136, "Sound fix:");
-				printSmall(false, 32, 144, "Async prefetch:");
+				printSmall(false, 32, 144, "Sound fix:");
 				if (perGameSettings_language == -2) {
 					printSmall(false, 180, 112, "Default");
 				} else if (perGameSettings_language == -1) {
@@ -289,38 +292,36 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 180, 112, "Spanish");
 				}
 			}
-			if (perGameSettings_boostCpu == -1) {
-				printSmall(false, 180, 120, "Default");
-			} else if (perGameSettings_boostCpu == 1) {
-				printSmall(false, 153, 120, "133mhz (TWL)");
+			if (perGameSettings_dsiMode == 1) {
+				printSmall(false, 153, 128, "133mhz (TWL)");
+				printSmall(false, 180, 136, "On");
 			} else {
-				printSmall(false, 156, 120, "67mhz (NTR)");
-			}
-			if (perGameSettings_boostVram == -1) {
-				printSmall(false, 180, 128, "Default");
-			} else if (perGameSettings_boostVram == 1) {
-				printSmall(false, 180, 128, "On");
-			} else {
-				printSmall(false, 180, 128, "Off");
-			}
-			if (!secondaryDevice) {
-				if (perGameSettings_soundFix == -1) {
+				if (perGameSettings_boostCpu == -1) {
+					printSmall(false, 180, 128, "Default");
+				} else if (perGameSettings_boostCpu == 1) {
+					printSmall(false, 153, 128, "133mhz (TWL)");
+				} else {
+					printSmall(false, 156, 128, "67mhz (NTR)");
+				}
+				if (perGameSettings_boostVram == -1) {
 					printSmall(false, 180, 136, "Default");
-				} else if (perGameSettings_soundFix == 1) {
+				} else if (perGameSettings_boostVram == 1) {
 					printSmall(false, 180, 136, "On");
 				} else {
 					printSmall(false, 180, 136, "Off");
 				}
-				if (perGameSettings_asyncPrefetch == -1) {
+			}
+			if (!secondaryDevice) {
+				if (perGameSettings_soundFix == -1) {
 					printSmall(false, 180, 144, "Default");
-				} else if (perGameSettings_asyncPrefetch == 1) {
+				} else if (perGameSettings_soundFix == 1) {
 					printSmall(false, 180, 144, "On");
 				} else {
 					printSmall(false, 180, 144, "Off");
 				}
 				printSmallCentered(false, 158, "B: Back");
 			} else {
-				printSmallCentered(false, 142, "B: Back");
+				printSmallCentered(false, 150, "B: Back");
 			}
 		}
 		do {
@@ -384,7 +385,7 @@ void perGameSettings (std::string filename) {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
 				if (secondaryDevice) {
-					if (perGameSettings_cursorPosition < 1) perGameSettings_cursorPosition = 2;
+					if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
 				} else {
 					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 				}
@@ -392,7 +393,7 @@ void perGameSettings (std::string filename) {
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
 				if (secondaryDevice) {
-					if (perGameSettings_cursorPosition > 2) perGameSettings_cursorPosition = 1;
+					if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
 				} else {
 					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 				}
@@ -406,20 +407,24 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_language > 5) perGameSettings_language = -2;
 						break;
 					case 1:
-						perGameSettings_boostCpu++;
-						if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						perGameSettings_dsiMode++;
+						if (perGameSettings_dsiMode > 1) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
-						perGameSettings_boostVram++;
-						if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
+						if (!perGameSettings_dsiMode) {
+							perGameSettings_boostCpu++;
+							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
+						}
 						break;
 					case 3:
-						perGameSettings_soundFix++;
-						if (perGameSettings_soundFix > 1) perGameSettings_soundFix = -1;
+						if (!perGameSettings_dsiMode) {
+							perGameSettings_boostVram++;
+							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
+						}
 						break;
 					case 4:
-						perGameSettings_asyncPrefetch++;
-						if (perGameSettings_asyncPrefetch > 1) perGameSettings_asyncPrefetch = -1;
+						perGameSettings_soundFix++;
+						if (perGameSettings_soundFix > 1) perGameSettings_soundFix = -1;
 						break;
 				}
 				perGameSettingsChanged = true;

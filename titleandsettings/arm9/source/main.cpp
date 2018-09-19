@@ -39,6 +39,7 @@
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
 #include "common/nitrofs.h"
+#include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
 #include "settingspage.h"
@@ -52,7 +53,7 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
-#define AK_SYSTEM_UI_DIRECTORY "/_nds/dsimenuplusplus/akmenu/themes/"
+#define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 
 std::vector<std::string> akThemeList;
 
@@ -72,7 +73,6 @@ static int flashcard;
 	6: SuperCard DSTWO
 */
 
-const char *settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -126,11 +126,9 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 
 void launchSystemSettings()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 	dsiLaunchSystemSettings();
@@ -141,7 +139,6 @@ void launchSystemSettings()
 
 void rebootDSiMenuPP()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
@@ -158,7 +155,6 @@ void loadROMselect()
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
 	// mmEffectCancelAll();
@@ -178,25 +174,23 @@ void loadROMselect()
 	// }
 	if (ms().theme == 3)
 	{
-		runNdsFile("/_nds/dsimenuplusplus/akmenu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
 	}
 	else if (ms().theme == 2)
 	{
-		runNdsFile("/_nds/dsimenuplusplus/r4menu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
 	}
 	else
 	{
-		runNdsFile("/_nds/dsimenuplusplus/dsimenu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
 	}
 }
 
 int lastRanROM()
 {
-	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	renderScreens = false;
 	snd().stopBgMusic();
 	// music = false;
 	// mmEffectCancelAll();
@@ -226,7 +220,7 @@ int lastRanROM()
 	int err = 0;
 	if (ms().launchType == 0)
 	{
-		err = runNdsFile("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true);
+		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true);
 	}
 	else if (ms().launchType == 1)
 	{
@@ -288,26 +282,26 @@ int lastRanROM()
 	{
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-			err = runNdsFile("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+			argarray.at(0) = "/_nds/TWiLightMenu/emulators/nesds.nds";
+			err = runNdsFile("/_nds/TWiLightMenu/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
 		}
 		else
 		{
-			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-			err = runNdsFile("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+			argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+			err = runNdsFile("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
 		}
 	}
 	else if (ms().launchType == 4)
 	{
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-			err = runNdsFile("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+			argarray.at(0) = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+			err = runNdsFile("/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
 		}
 		else
 		{
-			argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-			err = runNdsFile("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+			argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+			err = runNdsFile("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
 		}
 	}
 
@@ -378,10 +372,10 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-	if (!sys().arm7SCFGLocked())
+	/*if (!sys().arm7SCFGLocked())
 	{
 		rebootDSiMenuPP();
-	}
+	}*/
 	loadROMselect();
 }
 void opt_reset_subtheme(int prev, int next)
@@ -521,7 +515,7 @@ int main(int argc, char **argv)
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	sys().initFilesystem("/_nds/dsimenuplusplus/main.srldr");
+	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
 	sys().flashcardUsed();
 	ms();
 	// consoleDemoInit();
@@ -570,7 +564,7 @@ int main(int argc, char **argv)
 
 	scanKeys();
 
-	if (sys().arm7SCFGLocked() && !ms().gotosettings && ms().autorun && !(keysHeld() & KEY_B))
+	if (!ms().gotosettings && ms().autorun && !(keysHeld() & KEY_B))
 	{
 		lastRanROM();
 	}
@@ -590,7 +584,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	if (access(settingsinipath, F_OK) != 0) {
+	if (access(DSIMENUPP_INI, F_OK) != 0) {
 		// Create "settings.ini"
 		ms().saveSettings();
 	}
@@ -741,17 +735,20 @@ int main(int argc, char **argv)
 					 TLanguage::ELangItalian,
 					 TLanguage::ELangSpanish})
 
+			.option(STR_RUNIN, STR_DESCRIPTION_RUNIN_1, Option::Bool(&ms().bstrap_dsiMode), {"DSi mode", "DS mode"}, {true, false})
+
 			.option(STR_CPUSPEED,
 					STR_DESCRIPTION_CPUSPEED_1,
 					Option::Bool(&ms().boostCpu),
-					{"67 MHz (NTR)", "133 MHz (TWL)"},
+					{"133 MHz (TWL)", "67 MHz (NTR)"},
 					{true, false})
 			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
-			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_SOUNDFIX, STR_DESCRIPTION_SOUNDFIX_1, Option::Bool(&ms().soundFix), {STR_ON, STR_OFF}, {true, false});
 
-			.option(STR_ASYNCPREFETCH, STR_DESCRIPTION_ASYNCPREFETCH_1, Option::Bool(&ms().bstrap_asyncPrefetch), {STR_ON, STR_OFF}, {true, false})
-			.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
+		if (!sys().arm7SCFGLocked()) {
+			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
 					{true, false});
+		}
 	}
 
 	if (!sys().isRegularDS())

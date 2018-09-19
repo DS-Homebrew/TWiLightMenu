@@ -32,7 +32,7 @@
 
 #include "inifile.h"
 
-const char* settingsinipath = "/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
@@ -118,7 +118,7 @@ int lastRanROM() {
 	}
 
 	if (launchType == 0) {
-		return runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, false);
+		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, false);
 	} else if (launchType == 1) {
 		if (homebrewBootstrap) {
 			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
@@ -202,11 +202,11 @@ int lastRanROM() {
 		}
 		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 	} else if (launchType == 3) {
-		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+		argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+		return runNdsFile ("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 	} else if (launchType == 4) {
-		argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-		return runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+		argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+		return runNdsFile ("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 	}
 }
 

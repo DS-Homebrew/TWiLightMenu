@@ -754,7 +754,11 @@ void titleUpdate(bool isDir, const char* name, int num)
 			writeBannerText(0, "Settings", "", "");
 		} else if (startMenu_cursorPosition == 1) {
 			if (!flashcardFound()) {
-				writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
+				if (REG_SCFG_MC == 0x11) {
+					writeBannerText(1, "There is nothing inserted in", "the Game Card slot.", "");
+				} else {
+					writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
+				}
 			} else {
 				if (useGbarunner) {
 					writeBannerText(0, "Start GBARunner2", "", "");

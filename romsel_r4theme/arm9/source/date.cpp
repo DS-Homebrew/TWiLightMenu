@@ -54,8 +54,6 @@ size_t GetDate(DateFormat format, char *buf, size_t size)
 
 /**
  * Get the current time formatted for the top bar.
- * This includes the blinking ':'.
- * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
 string RetTime()
@@ -64,26 +62,14 @@ string RetTime()
 	time(&Raw);
 	const struct tm *Time = localtime(&Raw);
 
-	// Blink the ':' approximately once per second.
-	static int chartimer = 0;
-	chartimer++;
-	if (chartimer >= 60*2) {
-		chartimer = 0;
-	}
-
 	char Tmp[24];
-	if (chartimer >= 60) {
-		strftime(Tmp, sizeof(Tmp), "%k %M", Time);
-	} else {
-		strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
-	}
+	strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
 
 	return string(Tmp);
 }
 
 /**
  * Draw the date using the specified format.
- * @param screen Top or Bottom screen.
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param size Text size.

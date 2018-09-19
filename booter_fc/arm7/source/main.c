@@ -62,7 +62,7 @@ int main() {
 
 	// Go back into DSi mode, if possible
 	// REG_SCFG_ROM = 0x101;				// Doesn't work :(
-	REG_SCFG_EXT = 0x93FFFB06;
+	//REG_SCFG_EXT = 0x93FFFB06;
 
 	readUserSettings();
 	ledBlink(0);

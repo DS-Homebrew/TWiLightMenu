@@ -15,9 +15,8 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
     boostCpu = EDefault;
     boostVram = EDefault;
     soundFix = EDefault;
-    asyncPrefetch = EDefault;
+    dsiMode = EDefault;
     directBoot = EFalse;
-    dsiMode = EFalse;
     loadSettings();
 }
 
@@ -31,19 +30,20 @@ void PerGameSettings::loadSettings()
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
 	soundFix = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "SOUND_FIX", soundFix);
-	asyncPrefetch = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "ASYNC_PREFETCH", asyncPrefetch);
 }
 
 void PerGameSettings::saveSettings()
 {
     CIniFile pergameini(_iniPath);
     pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
-    if (isDSiMode() && !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
-    pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
-    pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
-	if (isDSiMode() && !ms().secondaryDevice) {
-		pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", soundFix);
-		pergameini.SetInt("GAMESETTINGS", "ASYNC_PREFETCH", asyncPrefetch);
+    if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
+	if (isDSiMode()) {
+		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
+		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
+		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
+		if (!ms().secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", soundFix);
+		}
 	}
     pergameini.SaveIniFile(_iniPath);
 }

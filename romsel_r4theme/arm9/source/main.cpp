@@ -68,7 +68,7 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "sd:/_nds/dsimenuplusplus/settings.ini";
+const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string dsiWareSrlPath;
@@ -147,7 +147,7 @@ int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 bool soundFix = false;
-bool bstrap_asyncPrefetch = true;
+bool bstrap_dsiMode = false;
 
 void LoadSettings(void) {
 	// GUI
@@ -193,7 +193,7 @@ void LoadSettings(void) {
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
-	bstrap_asyncPrefetch = settingsini.GetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", 1);
+	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
@@ -724,12 +724,12 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	nitroFSInit("/_nds/dsimenuplusplus/dsimenu.srldr");
+	nitroFSInit("/_nds/TWiLightMenu/r4menu.srldr");
 
 	flashcardInit();
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath = "fat:/_nds/dsimenuplusplus/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	langInit();
@@ -796,34 +796,36 @@ int main(int argc, char **argv) {
 		if (startMenu) {
 			whiteScreen = false;
 			topLogoLoad();
+			bottomBgLoad(true);
 			fadeType = true;	// Fade in from white
-
-			clearText();
-			switch (startMenu_cursorPosition) {
-				case 0:
-				default:
-					printLargeCentered(false, 182, "Games");
-					break;
-				case 1:
-					if (flashcardFound()) {
-						printLargeCentered(false, 182, "Not used");
-					} else {
-						printLargeCentered(false, 182, "Launch Slot-1 card");
-					}
-					break;
-				case 2:
-					if (useGbarunner) {
-						printLargeCentered(false, 182, "Start GBARunner2");
-					} else {
-						printLargeCentered(false, 182, "Start GBA Mode");
-					}
-					break;
-			}
 
 			int pressed = 0;
 
-			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do {
+				clearText();
+				switch (startMenu_cursorPosition) {
+					case 0:
+					default:
+						printLargeCentered(false, 182, "Game");
+						break;
+					case 1:
+						if (flashcardFound()) {
+							printLargeCentered(false, 182, "Not used");
+						} else {
+							printLargeCentered(false, 182, "Launch Slot-1 card");
+						}
+						break;
+					case 2:
+						if (useGbarunner) {
+							printLargeCentered(false, 182, "Start GBARunner2");
+						} else {
+							printLargeCentered(false, 182, "Start GBA Mode");
+						}
+						break;
+				}
+				//printLarge(false, 2, 182, DrawDate());
+				printLarge(false, 212, 182, RetTime().c_str());
+
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);
@@ -869,9 +871,10 @@ int main(int argc, char **argv) {
 						clearText();
 						startMenu = false;
 						topBgLoad();
+						bottomBgLoad(false);
 						break;
 					case 1:
-						if (!flashcardFound()) {
+						if (!flashcardFound() && REG_SCFG_MC != 0x11) {
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
@@ -882,7 +885,7 @@ int main(int argc, char **argv) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false, true, true);
+								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						}
@@ -936,7 +939,7 @@ int main(int argc, char **argv) {
 
 				gotosettings = true;
 				SaveSettings();
-				int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false, true, true);
+				int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false, false, true, true);
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
@@ -1334,6 +1337,11 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
 						}
+						if (perGameSettings_dsiMode == -1) {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+						} else {
+							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+						}
 						if (perGameSettings_boostCpu == -1) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 						} else {
@@ -1348,11 +1356,6 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FIX", perGameSettings_soundFix);
-						}
-						if (perGameSettings_asyncPrefetch == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "ASYNC_PREFETCH", perGameSettings_asyncPrefetch);
 						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
@@ -1515,11 +1518,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile ("/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1541,11 +1544,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/dsimenuplusplus/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/dsimenuplusplus/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "/_nds/TWiLightMenu/emulators/nesds.nds";
+					err = runNdsFile ("/_nds/TWiLightMenu/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/dsimenuplusplus/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/dsimenuplusplus/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

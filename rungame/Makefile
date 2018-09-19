@@ -131,8 +131,8 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030015 -g SLRN -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-b icon.bmp "DSiMenu++;Last-ran ROM;Robz8"
 	python2 patch_ndsheader_dsiware.py $(TARGET).nds
+			-g SLRN 01 "TWLMENUPP-LR" -b icon.bmp "TWiLight Menu++;Last-ran ROM;Robz8"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf

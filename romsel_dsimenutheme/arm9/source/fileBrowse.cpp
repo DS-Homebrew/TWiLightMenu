@@ -463,6 +463,89 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 }
 
+void startMenuLaunch(int pressedToLaunch) {
+	if ((startMenu_cursorPosition == 0)
+	|| (startMenu_cursorPosition == 1)
+	|| (startMenu_cursorPosition == 2))
+	{
+		if (!flashcardFound() && startMenu_cursorPosition == 1 && REG_SCFG_MC == 0x11) {
+			mmEffectEx(&snd_wrong);
+		} else {
+			mmEffectEx(&snd_launch);
+			controlTopBright = true;
+			applaunch = true;
+			applaunchprep = true;
+			if (startMenu_cursorPosition == 0) gotosettings = true;
+			useBootstrap = false;
+
+			if (theme == 0) {
+				showbubble = false;
+				showSTARTborder = false;
+				clearText(false);	// Clear title
+
+				fadeSpeed = false;	// Slow fade speed
+			}
+			fadeType = false;	// Fade to white
+			fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+			for (int i = 0; i < 60; i++) {
+				swiIntrWait(0, 1);
+			}
+			music = false;
+			mmEffectCancelAll();
+			fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+			clearText(true);
+			if (flashcardFound()) {
+				if (startMenu_cursorPosition == 1) {
+					launchType = 0;
+					homebrewBootstrap = true;
+				}
+			} else {
+				if (startMenu_cursorPosition == 1 || startMenu_cursorPosition == 2) {
+					launchType = 0;
+				}
+				if (startMenu_cursorPosition == 2) {
+					homebrewBootstrap = true;
+				}
+			}
+			SaveSettings();
+
+			if (startMenu_cursorPosition == 0) {
+				// Launch settings
+				int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false, false, true, true);
+				iprintf ("Start failed. Error %i\n", err);
+			} else if (startMenu_cursorPosition == 1) {
+				if (isDSiMode()) {
+					if (!slot1LaunchMethod || arm7SCFGLocked) {
+						dsCardLaunch();
+					} else {
+						int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+						iprintf ("Start failed. Error %i\n", err);
+					}
+				} else {
+					// Switch to GBA mode
+					useBootstrap = true;
+					if (useGbarunner) {
+						loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+					} else {
+						gbaSwitch();
+					}
+				}
+			} else if (startMenu_cursorPosition == 2) {
+				// Switch to GBA mode
+				useBootstrap = true;
+				CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+				bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+				int err = 0;
+				if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false, true, true);
+				else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+				iprintf ("Start failed. Error %i\n", err);
+			}
+		}
+	}
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	displayNowLoading();
@@ -528,7 +611,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (showBoxArt) {
 						// Store box art path
-						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/dsimenuplusplus/boxart/%s.bmp", dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
+						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/TWiLightMenu/boxart/%s.bmp", dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
 						if (!access(boxArtPath[i], F_OK)) {
 						} else if (bnrRomType[i] == 0) {
 							if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
@@ -563,7 +646,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							game_TID[4] = 0;
 							fclose(f_nds_file);
 
-							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/dsimenuplusplus/boxart/%s.bmp", game_TID);
+							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/TWiLightMenu/boxart/%s.bmp", game_TID);
 						}
 					}
 				}
@@ -627,6 +710,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (startMenu_cursorPosition < (3-flashcardFound())) {
 					showbubble = true;
 					showSTARTborder = true;
+					if (!flashcardFound() && startMenu_cursorPosition == 1 && REG_SCFG_MC == 0x11) {
+						showSTARTborder = false;
+					}
 					titleUpdate(false, "startMenu", startMenu_cursorPosition);
 				} else {
 					showbubble = false;
@@ -681,6 +767,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = true;
 			}
 
+			u8 current_SCFG_MC = REG_SCFG_MC;
+
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
@@ -690,6 +778,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
 				swiIntrWait(0, 1);
+				if (REG_SCFG_MC != current_SCFG_MC) {
+					break;
+				}
 			}
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -788,75 +879,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			// Startup...
-			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
-			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder))											// START button/text (3DS theme)
+			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
 			{
-				if ((startMenu_cursorPosition == 0 && startMenu)
-				|| (startMenu_cursorPosition == 1 && startMenu)
-				|| (startMenu_cursorPosition == 2 && startMenu))
+				if (startMenu)
 				{
-					mmEffectEx(&snd_launch);
-					controlTopBright = true;
-					applaunch = true;
-					applaunchprep = true;
-					if (startMenu_cursorPosition == 0) gotosettings = true;
-					useBootstrap = false;
-
-					if (theme == 0) {
-						showbubble = false;
-						showSTARTborder = false;
-						clearText(false);	// Clear title
-
-						fadeSpeed = false;	// Slow fade speed
-					}
-					fadeType = false;	// Fade to white
-					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-					for (int i = 0; i < 60; i++) {
-						swiIntrWait(0, 1);
-					}
-					music = false;
-					mmEffectCancelAll();
-					fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
-
-					clearText(true);
-					if (startMenu_cursorPosition == 1) launchType = 0;
-					if (startMenu_cursorPosition == 2) homebrewBootstrap = true;
-					SaveSettings();
-
-					if (startMenu_cursorPosition == 0) {
-						// Launch settings
-						int err = runNdsFile ("/_nds/dsimenuplusplus/main.srldr", 0, NULL, false, false, true, true);
-						iprintf ("Start failed. Error %i\n", err);
-					} else if (startMenu_cursorPosition == 1) {
-						if (isDSiMode()) {
-							if (!slot1LaunchMethod || arm7SCFGLocked) {
-								dsCardLaunch();
-							} else {
-								int err = runNdsFile ("/_nds/dsimenuplusplus/slot1launch.srldr", 0, NULL, true, false, true, true);
-								iprintf ("Start failed. Error %i\n", err);
-							}
-						} else {
-							// Switch to GBA mode
-							useBootstrap = true;
-							if (useGbarunner) {
-								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
-							} else {
-								gbaSwitch();
-							}
-						}
-					} else if (startMenu_cursorPosition == 2) {
-						// Switch to GBA mode
-						useBootstrap = true;
-						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						int err = 0;
-						if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false, true, true);
-						else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
-						iprintf ("Start failed. Error %i\n", err);
-					}
+					startMenuLaunch(pressedToLaunch);
 				}
+				else if (showSTARTborder)
+				{
 
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
@@ -945,6 +977,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					// Return the chosen file
 					return entry->name;
+				}
+				
 				}
 			}
 

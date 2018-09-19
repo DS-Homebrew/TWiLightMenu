@@ -192,21 +192,30 @@ void RomInfoWnd::pressGameSettings(void)
 
 			settingWnd.addSettingItem(LANG("game settings", "Language"), _values, settingsIni.language + 2); // Default is -2
 			_values.clear();
+
+			_values.push_back(LANG("game settings", "Default")); // -1 => 0
+			_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
+			_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
+
+			settingWnd.addSettingItem(LANG("game settings", "Run in"), _values, settingsIni.dsiMode + 1);
+			_values.clear();
 		}
 
-		_values.push_back(LANG("game settings", "Default")); // -1 => 0
-		_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
-		_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
+		if (isDSiMode()) {
+			_values.push_back(LANG("game settings", "Default")); // -1 => 0
+			_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
+			_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
 
-        settingWnd.addSettingItem(LANG("game settings", "CPU Frequency"), _values, settingsIni.boostCpu + 1);
-        _values.clear();
+			settingWnd.addSettingItem(LANG("game settings", "CPU Frequency"), _values, settingsIni.boostCpu + 1);
+			_values.clear();
 
-        _values.push_back(LANG("game settings", "Default")); // -1 => 0
-        _values.push_back(LANG("game settings", "Off")); // 0 => 1
-        _values.push_back(LANG("game settings", "On")); // 1 => 2
+			_values.push_back(LANG("game settings", "Default")); // -1 => 0
+			_values.push_back(LANG("game settings", "Off")); // 0 => 1
+			_values.push_back(LANG("game settings", "On")); // 1 => 2
 
-        settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
-        _values.clear();
+			settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
+			_values.clear();
+		}
 
 		if (!ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
@@ -214,13 +223,6 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.push_back(LANG("game settings", "On")); // 1 => 2
 
 			settingWnd.addSettingItem(LANG("game settings", "Sound Fix"), _values, settingsIni.soundFix + 1);
-			_values.clear();
-
-			_values.push_back(LANG("game settings", "Default")); // -1 => 0
-			_values.push_back(LANG("game settings", "Off")); // 0 => 1
-			_values.push_back(LANG("game settings", "On")); // 1 => 2
-
-			settingWnd.addSettingItem(LANG("game settings", "Async Prefetch"), _values, settingsIni.asyncPrefetch + 1);
 			_values.clear();
 		}
     }
@@ -266,18 +268,37 @@ void RomInfoWnd::pressGameSettings(void)
     if (ret == ID_OK)
     {
         dbg_printf("FN: %s\n", _filenameText.c_str());
+		int selection = 0;
         if (!_romInfo.isHomebrew())
         {
-            settingsIni.language = (PerGameSettings::TLanguage)(settingWnd.getItemSelection(0, 0) - 2);
-            settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 1) - 1);
-            settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 2) - 1);
-            settingsIni.soundFix = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 3) - 1);
-            settingsIni.asyncPrefetch = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 4) - 1);
+			if (!ms().secondaryDevice) {
+				settingsIni.language = (PerGameSettings::TLanguage)(settingWnd.getItemSelection(0, selection) - 2);
+				selection++;
+				settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+			}
+			if (isDSiMode()) {
+				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
+			if (!ms().secondaryDevice) {
+				selection++;
+				settingsIni.soundFix = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
         }
         else
         {
-            settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, 0) - 1);
-        }
+            settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			if (isDSiMode()) {
+				selection++;
+				settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
+       }
         settingsIni.saveSettings();
     }
     _settingWnd = NULL;

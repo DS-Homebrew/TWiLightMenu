@@ -40,7 +40,6 @@ class PerGameSettings
     TDefaultBool boostCpu;
     TDefaultBool boostVram;
     TDefaultBool soundFix;
-    TDefaultBool asyncPrefetch;
 
   private:
     std::string _iniPath;
