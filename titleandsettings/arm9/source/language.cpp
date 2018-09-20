@@ -213,7 +213,7 @@ void langInit(void)
 		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "SRLoader on startup");
 		break;
 	case 2:
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "DSisionX on startup");
+		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "DSiMenu++ on startup");
 		break;
 	}
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");
@@ -239,7 +239,7 @@ void langInit(void)
 
 		break;
 	case 2:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSisionX|Press Left/Right|to select, A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSiMenu++|Press Left/Right|to select, A for sub-themes.");
 
 		break;
 	}
@@ -258,7 +258,7 @@ void langInit(void)
 
 		break;
 	case 2:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be|shown when you start|DSisionX.");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be|shown when you start|DSiMenu++.");
 
 		break;
 	}
@@ -413,7 +413,7 @@ void langInit(void)
 		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_SRLOADER", "Launch Nintendo DSi Menu|or SRLoader on boot.");
 		break;
 	case 2:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSISIONX", "Launch Nintendo DSi Menu|or DSisionX on boot.");
+		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSISIONX", "Launch Nintendo DSi Menu|or DSiMenu++ on boot.");
 		break;
 	}
 }

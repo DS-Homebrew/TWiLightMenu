@@ -103,9 +103,9 @@ class DSiMenuPlusPlusSettings
 
     enum TAppName
     {
-        ENameDSiMenuPP = 0,
+        ENameTWiLightMenu = 0,
         ENameSRLoader = 1,
-        ENameDSisionX = 2
+        ENameDSiMenuPP = 2
 
     };
 
