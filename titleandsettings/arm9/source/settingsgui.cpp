@@ -146,6 +146,39 @@ void SettingsGUI::draw()
     printSmallCentered(false, 173, ms().getAppName());
 }
 
+void SettingsGUI::setTopText(const std::string &text)
+{
+	std::string _topTextStr(text);
+	_topText.clear();
+	std::vector<std::string> words;
+	std::string temp;
+	for(auto c : _topTextStr)
+	{
+		if(c == ' ')
+		{
+			words.push_back(temp);
+			temp.clear();
+		}
+		else
+			temp += c;
+	}
+	if(temp.size())
+		words.push_back(temp);
+	temp.clear();
+	for(auto word : words)
+	{
+		int width = calcLargeFontWidth((temp + word).c_str());
+		if(width > 256) {
+			_topText.push_back(temp);
+			temp = word;
+		}
+		else
+		{
+			temp += word;
+		}
+	}
+}
+
 void SettingsGUI::drawSub()
 {
     clearText();
