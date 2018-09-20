@@ -411,13 +411,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode > 1) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
-						if (!perGameSettings_dsiMode) {
+						if (perGameSettings_dsiMode < 1) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 3:
-						if (!perGameSettings_dsiMode) {
+						if (perGameSettings_dsiMode < 1) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
