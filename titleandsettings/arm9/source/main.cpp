@@ -589,6 +589,11 @@ int main(int argc, char **argv)
 		ms().saveSettings();
 	}
 
+	if (access(BOOTSTRAP_INI, F_OK) != 0) {
+		// Create "nds-bootstrap.ini"
+		bs().saveSettings();
+	}
+
 	// ms().gotosettings = true;
 	if (ms().gotosettings)
 	{
