@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-	sys().initFilesystem("/_nds/dsimenuplusplus/akmenu.srldr");
+	sys().initFilesystem("/_nds/TWiLightMenu/akmenu.srldr");
 	ms().loadSettings();
 
 	// init basic system
