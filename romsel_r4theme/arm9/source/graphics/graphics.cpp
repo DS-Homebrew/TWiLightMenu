@@ -27,46 +27,29 @@
 // Graphic files
 #include "theme01_bckgrd1.h"
 #include "theme01_logo.h"
-#include "theme01_icons.h"
 #include "theme02_bckgrd1.h"
 #include "theme02_logo.h"
-#include "theme02_icons.h"
 #include "theme03_bckgrd1.h"
 #include "theme03_logo.h"
-#include "theme03_icons.h"
 #include "theme04_bckgrd1.h"
 #include "theme04_logo.h"
-#include "theme04_icons.h"
 #include "theme05_bckgrd1.h"
 #include "theme05_logo.h"
-#include "theme05_icons.h"
 #include "theme06_bckgrd1.h"
 #include "theme06_logo.h"
-#include "theme06_icons.h"
 #include "theme07_bckgrd1.h"
 #include "theme07_logo.h"
-#include "theme07_icons.h"
 #include "theme08_bckgrd1.h"
 #include "theme08_logo.h"
-#include "theme08_icons.h"
 #include "theme09_bckgrd1.h"
 #include "theme09_logo.h"
-#include "theme09_icons.h"
 #include "theme10_bckgrd1.h"
 #include "theme10_logo.h"
-#include "theme10_icons.h"
 #include "theme11_bckgrd1.h"
 #include "theme11_logo.h"
-#include "theme11_icons.h"
 #include "theme12_bckgrd1.h"
 #include "theme12_logo.h"
-#include "theme12_icons.h"
 #include "bluemoon_bckgrd1.h"
-#include "bluemoon_bckgrd2.h"
-#include "bluemoon_icons.h"
-#include "icon1.h"
-#include "icon2.h"
-#include "icon3.h"
 #include "iconbox.h"
 #include "wirelessicons.h"
 
@@ -173,7 +156,48 @@ void initSubSprites(void)
 }
 
 void bottomBgLoad(bool startMenu) {
+	//char pathTop[256];
+	char pathBottom[256];
 	if (startMenu) {
+		//snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme%i/logo.bmp", subtheme+1);
+		snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme%i/icons.bmp", subtheme+1);
+	} else {
+		//snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme%i/bckgrd_1.bmp", subtheme+1);
+		snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme%i/bckgrd_2.bmp", subtheme+1);
+	}
+
+	//FILE* fileTop = fopen(pathTop, "rb");
+	FILE* fileBottom = fopen(pathBottom, "rb");
+
+	//if (fileTop && fileBottom) {
+	if (fileBottom) {
+		// Start loading
+		u8 pixelStart[2];
+		/*fseek(fileTop, 0xe, SEEK_SET);
+		pixelStart[0] = (u8)fgetc(fileTop) + 0xe;
+		fseek(fileTop, pixelStart[0], SEEK_SET);*/
+		fseek(fileBottom, 0xe, SEEK_SET);
+		pixelStart[1] = (u8)fgetc(fileBottom) + 0xe;
+		fseek(fileBottom, pixelStart[1], SEEK_SET);
+		for (int y=191; y>=0; y--) {
+			u16 buffer[2][256];
+			//fread(buffer[0], 2, 0x100, fileTop);
+			fread(buffer[1], 2, 0x100, fileBottom);
+			//u16* srcTop = buffer[0];
+			u16* srcBottom = buffer[1];
+			for (int i=0; i<256; i++) {
+				//u16 valTop = *(srcTop++);
+				u16 valBottom = *(srcBottom++);
+				BG_GFX[y*256+i] = ((valBottom>>10)&0x1f) | ((valBottom)&(0x1f<<5)) | (valBottom&0x1f)<<10 | BIT(15);
+				//BG_GFX_SUB[y*256+i] = ((valTop>>10)&0x1f) | ((valTop)&(0x1f<<5)) | (valTop&0x1f)<<10 | BIT(15);
+			}
+		}
+	}
+
+	//fclose(fileTop);
+	fclose(fileBottom);
+
+	/*if (startMenu) {
 		switch (subtheme) {
 			case 0:
 			default:
@@ -246,7 +270,7 @@ void bottomBgLoad(bool startMenu) {
 		dmaCopy(bluemoon_bckgrd2Tiles, bgGetGfxPtr(bottomBg), bluemoon_bckgrd2TilesLen);
 		dmaCopy(bluemoon_bckgrd2Pal, BG_PALETTE, bluemoon_bckgrd2PalLen);
 		dmaCopy(bluemoon_bckgrd2Map, bgGetMapPtr(bottomBg), bluemoon_bckgrd2MapLen);
-	}
+	}*/
 }
 
 // No longer used.
@@ -311,14 +335,14 @@ void vBlankHandler()
 		{*/
 
 		if (startMenu) {
-			if (subtheme >= 0 && subtheme < 12) {
+			/*if (subtheme >= 0 && subtheme < 12) {
 				glSprite(10, 62, GL_FLIP_NONE, icon1Image);
 				glSprite(92, 62, GL_FLIP_NONE, icon2Image);
 				glSprite(174, 62, GL_FLIP_NONE, icon3Image);
-			}
+			}*/
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, RGB15(colorRvalue/8, colorGvalue/8, colorBvalue/8));
 		} else {
-			switch (subtheme) {
+			/*switch (subtheme) {
 				case 0:
 				default:
 					glBoxFilled(0, 0, 256, 192, 0x6318);	// R: 192, G: 192, B: 192
@@ -358,7 +382,7 @@ void vBlankHandler()
 					break;
 				case 12:
 					break;
-			}
+			}*/
 
 			glBoxFilled(31, 23, 217, 64, RGB15(0, 0, 0));
 			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
@@ -512,8 +536,8 @@ void graphicsInit()
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D | DISPLAY_BG2_ACTIVE);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
+	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
 
 
 	// Initialize gl2d
@@ -531,7 +555,6 @@ void graphicsInit()
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	//REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
 	REG_BG0CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
 	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
@@ -548,13 +571,29 @@ void graphicsInit()
 	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
 	lcdMainOnBottom();
+	
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1<<8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1<<8;
+
+	/*REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X_SUB = 0;
+	REG_BG3Y_SUB = 0;
+	REG_BG3PA_SUB = 1<<8;
+	REG_BG3PB_SUB = 0;
+	REG_BG3PC_SUB = 0;
+	REG_BG3PD_SUB = 1<<8;*/
 
 	// Initialize the bottom background
-	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
-	
+	//bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+
 	swiIntrWait(0, 1);
 
-	if (subtheme >= 0 && subtheme < 12) {
+	/*if (subtheme >= 0 && subtheme < 12) {
 		icon1TexID = glLoadTileSet(icon1Image, // pointer to glImage array
 								73, // sprite width
 								72, // sprite height
@@ -594,7 +633,7 @@ void graphicsInit()
 								(u16*) icon3Pal, // Load our 16 color tiles palette
 								(u8*) icon3Bitmap // image data generated by GRIT
 								);
-	}
+	}*/
 
 	iconboxTexID = glLoadTileSet(iconboxImage, // pointer to glImage array
 							40, // sprite width

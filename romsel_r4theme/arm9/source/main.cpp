@@ -791,12 +791,17 @@ int main(int argc, char **argv) {
 		controlTopBright = true;
 	}
 
+	bool menuGraphicsLoaded = false;
+
 	while(1) {
 
 		if (startMenu) {
 			whiteScreen = false;
-			topLogoLoad();
-			bottomBgLoad(true);
+			if (!menuGraphicsLoaded) {
+				topLogoLoad();
+				bottomBgLoad(true);
+				menuGraphicsLoaded = true;
+			}
 			fadeType = true;	// Fade in from white
 
 			int pressed = 0;
@@ -872,6 +877,7 @@ int main(int argc, char **argv) {
 						startMenu = false;
 						topBgLoad();
 						bottomBgLoad(false);
+						menuGraphicsLoaded = false;
 						break;
 					case 1:
 						if (!flashcardFound() && REG_SCFG_MC != 0x11) {
