@@ -141,6 +141,7 @@ std::string STR_R4_THEME10 = "STR_R4_THEME10";
 std::string STR_R4_THEME11 = "STR_R4_THEME11";
 std::string STR_R4_THEME12 = "STR_R4_THEME12";
 std::string STR_R4_THEME13 = "STR_R4_THEME13";
+std::string STR_R4_THEME14 = "STR_R4_THEME14";
 
 std::string STR_DEFAULT_LAUNCHER = "STR_DEFAULT_LAUNCHER";
 std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = "STR_DESCRIPTION_DEFAULT_LAUNCHER_1";
@@ -383,6 +384,7 @@ void langInit(void)
 	STR_R4_THEME11 = languageini.GetString("LANGUAGE", "R4_THEME11", "Christmas tree");
 	STR_R4_THEME12 = languageini.GetString("LANGUAGE", "R4_THEME12", "Drawn symbol");
 	STR_R4_THEME13 = languageini.GetString("LANGUAGE", "R4_THEME13", "Blue moon");
+	STR_R4_THEME14 = languageini.GetString("LANGUAGE", "R4_THEME14", "Mac-like");
 
 	STR_DEFAULT_LAUNCHER = languageini.GetString("LANGUAGE", "DEFAULT_LAUNCHER", "Default launcher");
 

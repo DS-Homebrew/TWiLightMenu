@@ -50,6 +50,7 @@
 #include "theme12_bckgrd1.h"
 #include "theme12_logo.h"
 #include "bluemoon_bckgrd1.h"
+#include "maclike_bckgrd1.h"
 #include "iconbox.h"
 #include "wirelessicons.h"
 
@@ -467,6 +468,10 @@ void topLogoLoad() {
 			swiDecompressLZSSVram ((void*)bluemoon_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
 			vramcpy_ui (&BG_PALETTE_SUB[0], bluemoon_bckgrd1Pal, bluemoon_bckgrd1PalLen);
 			break;
+		case 13:
+			swiDecompressLZSSVram ((void*)maclike_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], maclike_bckgrd1Pal, maclike_bckgrd1PalLen);
+			break;
 	}
 }
 
@@ -524,6 +529,10 @@ void topBgLoad() {
 		case 12:
 			swiDecompressLZSSVram ((void*)bluemoon_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
 			vramcpy_ui (&BG_PALETTE_SUB[0], bluemoon_bckgrd1Pal, bluemoon_bckgrd1PalLen);
+			break;
+		case 13:
+			swiDecompressLZSSVram ((void*)maclike_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+			vramcpy_ui (&BG_PALETTE_SUB[0], maclike_bckgrd1Pal, maclike_bckgrd1PalLen);
 			break;
 	}
 }

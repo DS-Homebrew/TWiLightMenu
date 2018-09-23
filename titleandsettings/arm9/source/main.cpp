@@ -360,8 +360,9 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 						  STR_R4_THEME11,
 						  STR_R4_THEME12,
 						  STR_R4_THEME13,
+						  STR_R4_THEME14,
 					  },
-					  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12});
+					  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13});
 	case 3:
 		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:

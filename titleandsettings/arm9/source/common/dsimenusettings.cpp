@@ -12,7 +12,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     cursorPosition = 0;
     startMenu_cursorPosition = 0;
     consoleModel = 0;
-    appName = ENameDSiMenuPP;
+    appName = ENameTWiLightMenu;
 
     gotosettings = false;
     guiLanguage = ELangDefault;
