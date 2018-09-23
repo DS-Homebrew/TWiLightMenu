@@ -167,14 +167,14 @@ void SettingsGUI::setTopText(const std::string &text)
 	temp.clear();
 	for(auto word : words)
 	{
-		int width = calcLargeFontWidth((temp + word).c_str());
+		int width = calcLargeFontWidth((temp + " " + word).c_str());
 		if(width > 256) {
 			_topText.push_back(temp);
 			temp = word;
 		}
 		else
 		{
-			temp += word;
+			temp += " " + word;
 		}
 	}
 }
