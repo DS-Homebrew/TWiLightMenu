@@ -177,6 +177,8 @@ void SettingsGUI::setTopText(const std::string &text)
 			temp += " " + word;
 		}
 	}
+	if(temp.size())
+	   _topText.push_back(temp);
 }
 
 void SettingsGUI::drawSub()
