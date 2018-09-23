@@ -58,6 +58,12 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     autorun = false;
 }
 
+bool DSiMenuPlusPlusSettings::is3dsCartInserted()
+{
+    CIniFile settingsini(DSIMENUPP_INI);
+	return settingsini.GetInt("SRLOADER", "3DS_CART_INSERTED", false);
+}
+
 void DSiMenuPlusPlusSettings::loadSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);

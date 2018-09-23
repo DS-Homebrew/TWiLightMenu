@@ -6,7 +6,7 @@
 
 #include "dsimenusettings.h"
 
-sNDSHeader nds;
+static sNDSHeader nds;
 
 bool sdFound(void) {
 	if (access("sd:/", F_OK) == 0) {
@@ -46,7 +46,7 @@ void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 void flashcardInit(void) {
-	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
+	if (!flashcardFound() && isDSiMode() && !ms().is3dsCartInserted() && REG_SCFG_MC != 0x11) {
 		// Reset Slot-1 to allow reading title name and ID
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -64,12 +64,11 @@ void flashcardInit(void) {
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
-		SetBrightness(0, 0);
-		SetBrightness(1, 0);
-
 		for (int i = 0; i < 60*5; i++) {
 			swiWaitForVBlank();
 		}*/
+
+		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
 		// Read a DLDI driver specific to the cart
 		/*if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
@@ -85,7 +84,6 @@ void flashcardInit(void) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "QMATETRIAL", 9) ||*/ if(!memcmp(gamename, "R4DSULTRA", 9)) {
-			sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 			ms().flashcard = DSiMenuPlusPlusSettings::ER4iGoldClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);

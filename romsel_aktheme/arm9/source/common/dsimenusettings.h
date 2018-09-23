@@ -114,6 +114,7 @@ class DSiMenuPlusPlusSettings
     ~DSiMenuPlusPlusSettings();
 
   public:
+    bool is3dsCartInserted();
     void loadSettings();
     void saveSettings();
 
