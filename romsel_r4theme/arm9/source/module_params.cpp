@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "module_params.h"
 
+u32 offsetOfModuleParams;
 u32 buf[2];
 char moduleParamsBuf[sizeof(module_params_t)];
 
@@ -9,44 +10,51 @@ static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
 
 u32 findModuleParamsOffset(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
 {
-	fseek(ndsFile, ndsHeader->arm9romOffset, SEEK_SET);
-
-	// Offset of the module params in bytes
-	int offset = 0;
-	bool found = false;
-	while (fread(buf, sizeof(u32), 2, ndsFile) == 2)
-	{
-		// The first word of the signature is on an even offset (relative to arm9romOffset)
-		if (buf[0] == moduleParamsSignature[0] && buf[1] == moduleParamsSignature[1])
-		{
-			found = true;
-			break;
+	for (int i = 0; i < 2; i++) {
+		if (i == 1) {
+			// Run fallback method
+			fseek(ndsFile, (ndsHeader->arm9romOffset), SEEK_SET);
+			offsetOfModuleParams = ndsHeader->arm9romOffset;
+		} else {
+			// Get module params offset from before Auto Load List
+			fseek(ndsFile, (ndsHeader->arm9romOffset + ndsHeader->unknownRAM1 - 0x02000000 - 4), SEEK_SET);
+			fread(buf, sizeof(u32), 2, ndsFile);
+			offsetOfModuleParams = buf[0]-0x02000000+ndsHeader->arm9romOffset;
+			fseek(ndsFile, offsetOfModuleParams, SEEK_SET);
 		}
-		// The first word of the signature is on an odd offset (relative to arm9romOffset)
-		else if (buf[1] == moduleParamsSignature[0])
+
+		// Offset of the module params
+		u32 offset = 0;
+		while (fread(buf, sizeof(u32), 2, ndsFile) == 2)
 		{
-			// Read the next byte and check if the next byte is the paramSignature.
-			if (fread(buf, sizeof(u32), 1, ndsFile) == 1 && buf[0] == moduleParamsSignature[1])
+			// The first word of the signature is on an even offset (relative to arm9romOffset)
+			if (buf[0] == moduleParamsSignature[0] && buf[1] == moduleParamsSignature[1])
 			{
-				// The offset of moduleParamsSignature is at offset + 1.
-				offset += sizeof(u32);
-				found = true;
+				return offsetOfModuleParams + offset - 0x1C;
+				break;
+			}
+			// The first word of the signature is on an odd offset (relative to arm9romOffset)
+			else if (buf[1] == moduleParamsSignature[0])
+			{
+				// Read the next byte and check if the next byte is the paramSignature.
+				if (fread(buf, sizeof(u32), 1, ndsFile) == 1 && buf[0] == moduleParamsSignature[1])
+				{
+					// The offset of moduleParamsSignature is at offset + 1.
+					offset += sizeof(u32);
+					return offsetOfModuleParams + offset - 0x1C;
+					break;
+				}
+			}
+			offset += sizeof(u32) * 2;
+
+			// Stop searching, if signature isn't found
+			if (offset > (i ? ndsHeader->arm9binarySize : 0x80)) {
 				break;
 			}
 		}
-		offset += sizeof(u32) * 2;
-
-		// Stop searching, if past the arm9 binary
-		if (offset > ndsHeader->arm9binarySize) {
-			break;
-		}
 	}
-
-	if (!found)
-		return NULL;
-
-
-	return ndsHeader->arm9romOffset + offset - 0x1C;
+	
+	return (u32)NULL;
 }
 
 module_params_t *getModuleParams(const sNDSHeaderExt *ndsHeader, FILE *ndsFile)
