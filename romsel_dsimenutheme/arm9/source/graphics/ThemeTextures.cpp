@@ -80,6 +80,7 @@
 #include "folder.h"
 #include "org_folder.h"
 #include "_3ds_folder.h"
+#include "_3ds_cornerbutton.h"
 #include "wirelessicons.h"
 
 #include "stringtool.h"
@@ -153,6 +154,11 @@ void ThemeTextures::loadBoxemptyImage(const unsigned short *palette, const unsig
 void ThemeTextures::loadFolderImage(const unsigned short *palette, const unsigned int *bitmap)
 {
   _folderImage = std::move(loadTexture(&folderTexID, palette, bitmap, (64 / 16) * (64 / 16), 16, 64, 64, 64, 64));
+}
+
+void ThemeTextures::loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap)
+{
+  _cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, palette, bitmap, (64 / 16) * (64 / 32), 16, 64, 32, 64, 64));
 }
 
 void ThemeTextures::loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap)
@@ -279,6 +285,8 @@ void ThemeTextures::load3DSTheme()
   loadBoxfullImage(_3ds_box_fullPal, _3ds_box_fullBitmap);
   loadBoxemptyImage(_3ds_box_emptyPal, _3ds_box_emptyBitmap);
   loadFolderImage(_3ds_folderPal, _3ds_folderBitmap);
+
+  loadCornerButtonImage(_3ds_cornerbuttonPal, _3ds_cornerbuttonBitmap);
 
   loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
 

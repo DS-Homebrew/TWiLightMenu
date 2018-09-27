@@ -706,6 +706,10 @@ void vBlankHandler()
 				}
 				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
+			if (theme==1) {
+				glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
+				glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+			}
 			if (applaunchprep && theme==0) {
 				
 				if(startMenu) {

@@ -546,6 +546,49 @@ void startMenuLaunch(int pressedToLaunch) {
 	}
 }
 
+void launchSettings(void) {
+	mmEffectEx(&snd_launch);
+	controlTopBright = true;
+	gotosettings = true;
+
+	fadeType = false;	// Fade to white
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 60; i++) {
+		swiIntrWait(0, 1);
+	}
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+	SaveSettings();
+	// Launch settings
+	int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false, false, true, true);
+	iprintf ("Start failed. Error %i\n", err);
+}
+
+void exitToSystemMenu(void) {
+	mmEffectEx(&snd_launch);
+	controlTopBright = true;
+
+	fadeType = false;	// Fade to white
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 60; i++) {
+		swiIntrWait(0, 1);
+	}
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+	if (settingsChanged) {
+		SaveSettings();
+		settingsChanged = false;
+	}
+	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
+	fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+}
+
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	displayNowLoading();
@@ -980,6 +1023,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				
 				}
+			}
+
+			// Launch settings by touching corner button
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright) {
+				launchSettings();
+			}
+
+			// Exit to system menu by touching corner button
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !titleboxXmoveleft && !titleboxXmoveright) {
+				exitToSystemMenu();
 			}
 
 			// page switch
