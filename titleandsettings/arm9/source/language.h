@@ -11,6 +11,7 @@ extern std::string STR_GUI_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
 
 // GUI settings
+extern std::string STR_S1SDACCESS;
 extern std::string STR_THEME;
 extern std::string STR_LASTPLAYEDROM;
 extern std::string STR_DSIMENUPPLOGO;
@@ -24,6 +25,8 @@ extern std::string STR_RESTOREDSIMENU;
 
 extern std::string STR_SHOW;
 extern std::string STR_HIDE;
+
+extern std::string STR_DESCRIPTION_S1SDACCESS_1;
 
 extern std::string STR_DESCRIPTION_THEME_1;
 

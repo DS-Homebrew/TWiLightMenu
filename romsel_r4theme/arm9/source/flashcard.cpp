@@ -5,8 +5,11 @@
 #include <stdio.h>
 
 #include "graphics/graphics.h"
+#include "inifile.h"
 
 sNDSHeader nds;
+
+extern const char* settingsinipath;
 
 bool previousUsedDevice = false;	// true == secondary
 bool secondaryDevice = false;
@@ -61,6 +64,12 @@ void ShowGameInfo(const char gameid[], const char gamename[]) {
 
 void flashcardInit(void) {
 	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
+		CIniFile settingsini( settingsinipath );
+
+		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
+			return;
+		}
+
 		// Reset Slot-1 to allow reading title name and ID
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -93,7 +102,7 @@ void flashcardInit(void) {
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
 		// Read a DLDI driver specific to the cart
-		/*if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
+		if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
 			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
@@ -105,14 +114,14 @@ void flashcardInit(void) {
 			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "QMATETRIAL", 9) || */ if (!memcmp(gamename, "R4DSULTRA", 9)) {
+		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
 			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} /* else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
+		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
 			flashcard = 1;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} */
+		}
 	}
 }

@@ -17,6 +17,7 @@ std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // GUI settings
+std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_THEME = "STR_THEME";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
@@ -30,6 +31,8 @@ std::string STR_RESTOREDSIMENU = "STR_RESTOREDSIMENU";
 
 std::string STR_SHOW = "STR_SHOW";
 std::string STR_HIDE = "STR_HIDE";
+
+std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
 
 std::string STR_DESCRIPTION_THEME_1 = "STR_DESCRIPTION_THEME_1";
 
@@ -202,6 +205,7 @@ void langInit(void)
 	STR_GAMESAPPS_SETTINGS = languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings");
 
 	// GUI settings
+	STR_S1SDACCESS = languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access");
 	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "Theme");
 	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup.");
 	switch (ms().appName)
@@ -227,6 +231,8 @@ void langInit(void)
 
 	STR_SHOW = languageini.GetString("LANGUAGE", "SHOW", "Show");
 	STR_HIDE = languageini.GetString("LANGUAGE", "HIDE", "Hide");
+
+	STR_DESCRIPTION_S1SDACCESS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used|as a secondary device. Turn this|off, if IR functionality doesn't|work, or if the app crashes.");
 
 	switch (ms().appName)
 	{

@@ -585,6 +585,11 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
+	bool sdAccessible = false;
+	if (access("sd:/", F_OK) == 0) {
+		sdAccessible = true;
+	}
+
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
 		// Create "settings.ini"
 		ms().saveSettings();
@@ -654,7 +659,7 @@ int main(int argc, char **argv)
 
 	if (!sys().flashcardUsed() && ms().consoleModel < 2)
 	{
-		if (!access("sd:/hiya/autoboot.bin", F_OK))
+		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
 			hiyaAutobootFound = true;
 		else
 			hiyaAutobootFound = false;
@@ -686,8 +691,17 @@ int main(int argc, char **argv)
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish})
+				 TLanguage::ELangSpanish});
 
+	if (isDSiMode() && sdAccessible) {
+		guiPage.option(STR_S1SDACCESS,
+				STR_DESCRIPTION_S1SDACCESS_1,
+				Option::Bool(&ms().secondaryAccess),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
+	guiPage
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,

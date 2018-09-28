@@ -5,6 +5,8 @@
 #include <stdio.h>
 
 #include "dsimenusettings.h"
+#include "bootstrappaths.h"
+#include "inifile.h"
 
 static sNDSHeader nds;
 
@@ -46,7 +48,13 @@ void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 void flashcardInit(void) {
-	if (!flashcardFound() && isDSiMode() && !ms().is3dsCartInserted() && REG_SCFG_MC != 0x11) {
+	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
+		CIniFile settingsini(DSIMENUPP_INI);
+
+		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
+			return;
+		}
+
 		// Reset Slot-1 to allow reading title name and ID
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -71,11 +79,11 @@ void flashcardInit(void) {
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
 		// Read a DLDI driver specific to the cart
-		/*if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
+		if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
 			ms().flashcard = DSiMenuPlusPlusSettings::EDSTTClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
+		} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
 			ms().flashcard = DSiMenuPlusPlusSettings::EDSTTClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
@@ -83,14 +91,14 @@ void flashcardInit(void) {
 			ms().flashcard = DSiMenuPlusPlusSettings::EDSTTClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "QMATETRIAL", 9) ||*/ if(!memcmp(gamename, "R4DSULTRA", 9)) {
+		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
 			ms().flashcard = DSiMenuPlusPlusSettings::ER4iGoldClone;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} /*else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
+		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
 			ms().flashcard = DSiMenuPlusPlusSettings::ER4Original;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		}*/
+		}
 	}
 }
