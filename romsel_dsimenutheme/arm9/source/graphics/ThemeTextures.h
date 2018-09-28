@@ -63,7 +63,8 @@ private:
   void loadBoxfullImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadBoxemptyImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadFolderImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize,
+											int sprW, int sprH, int texW, int texH);
   void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
 
   void setStringPaths(const std::string theme);

@@ -74,16 +74,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text1);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, text1);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, text2);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text2);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmallCentered(false, BOX_PY, text1);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -738,15 +738,15 @@ void titleUpdate(bool isDir, const char* name, int num)
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
 	} else if (theme == 1) {
-		BOX_PY = 37;
-		BOX_PY_spacing1 = 17;
-		BOX_PY_spacing2 = 7;
-		BOX_PY_spacing3 = 26;
+		BOX_PY = 39;
+		BOX_PY_spacing1 = 16;
+		BOX_PY_spacing2 = 8;
+		BOX_PY_spacing3 = 25;
 	} else {
-		BOX_PY = 11;
-		BOX_PY_spacing1 = 19;
-		BOX_PY_spacing2 = 9;
-		BOX_PY_spacing3 = 28;
+		BOX_PY = 31;
+		BOX_PY_spacing1 = 16;
+		BOX_PY_spacing2 = 8;
+		BOX_PY_spacing3 = 25;
 	}
 	
 	if (startMenu) {
@@ -836,8 +836,8 @@ void titleUpdate(bool isDir, const char* name, int num)
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
 		} else {
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, name);
+			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}
