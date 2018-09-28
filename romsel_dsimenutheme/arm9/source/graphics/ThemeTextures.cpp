@@ -2,8 +2,11 @@
 #include <nds.h>
 
 // Graphic files
-#include "bottom.h"
-#include "bottom_bubble.h"
+//#include "bottom.h"
+//#include "bottom_bubble.h"
+
+#include "dark_bottom.h"
+#include "dark_bottom_bubble.h"
 
 //#include "org_bottom.h"
 //#include "org_bottom_bubble.h"
@@ -327,21 +330,21 @@ void ThemeTextures::loadDSiDarkTheme()
 
   loadCommonTextures();
 
-  _bottomTiles = bottomTiles;
-  _bottomPalette = bottomPal;
-  _bottomMap = bottomMap;
+  _bottomTiles = dark_bottomTiles;
+  _bottomPalette = dark_bottomPal;
+  _bottomMap = dark_bottomMap;
 
-  _bottom_bubbleMap = bottom_bubbleMap;
-  _bottom_bubblePalette = bottom_bubblePal;
-  _bottom_bubbleTiles = bottom_bubbleTiles;
+  _bottom_bubbleMap = dark_bottom_bubbleMap;
+  _bottom_bubblePalette = dark_bottom_bubblePal;
+  _bottom_bubbleTiles = dark_bottom_bubbleTiles;
 
-  _bottomTilesLen = bottomTilesLen;
-  _bottomPaletteLen = bottomPalLen;
-  _bottomMapLen = bottomMapLen;
+  _bottomTilesLen = dark_bottomTilesLen;
+  _bottomPaletteLen = dark_bottomPalLen;
+  _bottomMapLen = dark_bottomMapLen;
 
-  _bottom_bubbleMapLen = bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = bottom_bubbleTilesLen;
+  _bottom_bubbleMapLen = dark_bottom_bubbleMapLen;
+  _bottom_bubblePaletteLen = dark_bottom_bubblePalLen;
+  _bottom_bubbleTilesLen = dark_bottom_bubbleTilesLen;
 }
 
 void ThemeTextures::loadDSiWhiteTheme()
