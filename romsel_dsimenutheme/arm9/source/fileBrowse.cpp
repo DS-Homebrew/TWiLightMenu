@@ -907,10 +907,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			// Startup...
-			if (((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_START) && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
+			if (((pressed & KEY_A) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
