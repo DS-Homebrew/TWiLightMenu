@@ -174,7 +174,7 @@ void ThemeTextures::loadCornerButtonImage(const unsigned short *palette, const u
 
 void ThemeTextures::loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap)
 {
-  _smallCartImage = std::move(loadTexture(&smallCartTexID, palette, bitmap, (32 / 16) * (32 / 32), 16, 32, 32, 32, 96));
+  _smallCartImage = std::move(loadTexture(&smallCartTexID, palette, bitmap, (32 / 16) * (128 / 32), 16, 32, 32, 32, 128));
 }
 
 void ThemeTextures::loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap)
