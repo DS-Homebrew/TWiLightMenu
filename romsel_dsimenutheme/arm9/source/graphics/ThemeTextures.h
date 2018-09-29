@@ -27,6 +27,7 @@ public:
     boxemptyTexID = 0;
     folderTexID = 0;
     cornerButtonTexID = 0;
+    smallCartTexID = 0;
 
     progressTexID = 0;
     dialogboxTexID = 0;
@@ -65,6 +66,7 @@ private:
   void loadFolderImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize,
 											int sprW, int sprH, int texW, int texH);
+  void loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
 
   void setStringPaths(const std::string theme);
@@ -98,6 +100,7 @@ public:
   const glImage *boxemptyImage() { return _boxemptyImage.get(); }
   const glImage *folderImage() { return _folderImage.get(); }
   const glImage *cornerButtonImage() { return _cornerButtonImage.get(); }
+  const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
   void drawBubbleBg(int bgId);
@@ -124,6 +127,7 @@ private:
   unique_ptr<glImage[]> _boxemptyImage;
   unique_ptr<glImage[]> _folderImage;
   unique_ptr<glImage[]> _cornerButtonImage;
+  unique_ptr<glImage[]> _smallCartImage;
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
 
@@ -159,6 +163,7 @@ private:
   int boxemptyTexID;
   int folderTexID;
   int cornerButtonTexID;
+  int smallCartTexID;
 
   int progressTexID;
   int dialogboxTexID;

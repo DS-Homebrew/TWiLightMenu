@@ -463,89 +463,6 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 }
 
-void startMenuLaunch(int pressedToLaunch) {
-	if ((startMenu_cursorPosition == 0)
-	|| (startMenu_cursorPosition == 1)
-	|| (startMenu_cursorPosition == 2))
-	{
-		if (!flashcardFound() && startMenu_cursorPosition == 1 && REG_SCFG_MC == 0x11) {
-			mmEffectEx(&snd_wrong);
-		} else {
-			mmEffectEx(&snd_launch);
-			controlTopBright = true;
-			applaunch = true;
-			applaunchprep = true;
-			if (startMenu_cursorPosition == 0) gotosettings = true;
-			useBootstrap = false;
-
-			if (theme == 0) {
-				showbubble = false;
-				showSTARTborder = false;
-				clearText(false);	// Clear title
-
-				fadeSpeed = false;	// Slow fade speed
-			}
-			fadeType = false;	// Fade to white
-			fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-			for (int i = 0; i < 60; i++) {
-				swiIntrWait(0, 1);
-			}
-			music = false;
-			mmEffectCancelAll();
-			fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
-
-			clearText(true);
-			if (flashcardFound()) {
-				if (startMenu_cursorPosition == 1) {
-					launchType = 0;
-					homebrewBootstrap = true;
-				}
-			} else {
-				if (startMenu_cursorPosition == 1 || startMenu_cursorPosition == 2) {
-					launchType = 0;
-				}
-				if (startMenu_cursorPosition == 2) {
-					homebrewBootstrap = true;
-				}
-			}
-			SaveSettings();
-
-			if (startMenu_cursorPosition == 0) {
-				// Launch settings
-				int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false, false, true, true);
-				iprintf ("Start failed. Error %i\n", err);
-			} else if (startMenu_cursorPosition == 1) {
-				if (isDSiMode()) {
-					if (!slot1LaunchMethod || arm7SCFGLocked) {
-						dsCardLaunch();
-					} else {
-						int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
-						iprintf ("Start failed. Error %i\n", err);
-					}
-				} else {
-					// Switch to GBA mode
-					useBootstrap = true;
-					if (useGbarunner) {
-						loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
-					} else {
-						gbaSwitch();
-					}
-				}
-			} else if (startMenu_cursorPosition == 2) {
-				// Switch to GBA mode
-				useBootstrap = true;
-				CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-				bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-				int err = 0;
-				if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false, true, true);
-				else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
-				iprintf ("Start failed. Error %i\n", err);
-			}
-		}
-	}
-}
-
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
@@ -587,6 +504,81 @@ void exitToSystemMenu(void) {
 	*(u16*)(0x02000304) = 0x1801;
 	*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 	fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
+}
+
+void switchDevice(void) {
+	if (bothSDandFlashcard())
+	{
+		mmEffectEx(&snd_switch);
+		fadeType = false;	// Fade to white
+		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		secondaryDevice = !secondaryDevice;
+		if (showBoxArt) clearBoxArt();	// Clear box art
+		whiteScreen = true;
+		boxArtLoaded = false;
+		redoDropDown = true;
+		shouldersRendered = false;
+		showbubble = false;
+		showSTARTborder = false;
+		stopSoundPlayed = false;
+		clearText();
+		SaveSettings();
+		settingsChanged = false;
+	} else {
+		mmEffectEx(&snd_launch);
+		controlTopBright = true;
+		gotosettings = true;
+
+		fadeType = false;	// Fade to white
+		fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+		for (int i = 0; i < 60; i++) {
+			swiIntrWait(0, 1);
+		}
+		music = false;
+		mmEffectCancelAll();
+		fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+		SaveSettings();
+		if (!slot1LaunchMethod || arm7SCFGLocked) {
+			dsCardLaunch();
+		} else {
+			int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+			iprintf ("Start failed. Error %i\n", err);
+		}
+	}
+}
+
+void launchGba(void) {
+	mmEffectEx(&snd_launch);
+	controlTopBright = true;
+	useBootstrap = true;
+
+	fadeType = false;	// Fade to white
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 60; i++) {
+		swiIntrWait(0, 1);
+	}
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+	SaveSettings();
+	// Switch to GBA mode
+	if (useGbarunner) {
+		if (secondaryDevice) {
+			loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+		} else {
+			CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+			int err = 0;
+			if (bootstrapFile) err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-nightly.nds", 0, NULL, true, false, true, true);
+			else err = runNdsFile ("sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+			iprintf ("Start failed. Error %i\n", err);
+		}
+	} else {
+		gbaSwitch();
+	}
 }
 
 string browseForFile(const vector<string> extensionList, const char* username)
@@ -914,25 +906,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			int pressedToLaunch = 0;
-			if (startButtonLaunch) {
-				pressedToLaunch = (pressed & KEY_START);
-			} else {
-				pressedToLaunch = (pressed & KEY_A);
-			}
-
 			// Startup...
-			if ((pressedToLaunch && !titleboxXmoveleft && !titleboxXmoveright)
+			if (((pressed & KEY_A) && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
 			{
-				if (startMenu)
-				{
-					startMenuLaunch(pressedToLaunch);
-				}
-				else if (showSTARTborder)
-				{
-
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
 				{
@@ -1021,18 +1000,36 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// Return the chosen file
 					return entry->name;
 				}
-				
-				}
 			}
 
 			// Launch settings by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright) {
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
+			{
 				launchSettings();
 			}
 
 			// Exit to system menu by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !titleboxXmoveleft && !titleboxXmoveright) {
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && isDSiMode() && !titleboxXmoveleft && !titleboxXmoveright)
+			{
 				exitToSystemMenu();
+			}
+
+			// Switch devices or launch Slot-1 by touching button
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 100 && touch.px < 124
+			&& isDSiMode() && sdFound() && !titleboxXmoveleft && !titleboxXmoveright)
+			{
+				if (secondaryDevice || REG_SCFG_MC != 0x11) {
+					switchDevice();
+					return "null";
+				} else {
+					mmEffectEx(&snd_wrong);
+				}
+			}
+
+			// Launch GBA by touching button
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= (sdFound() ? 132 : 116) && touch.px < (sdFound() ? 156 : 140) && !titleboxXmoveleft && !titleboxXmoveright)
+			{
+				launchGba();
 			}
 
 			// page switch
@@ -1091,15 +1088,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			if (((pressed & KEY_UP) || (pressed & KEY_DOWN))
-			&& !startMenu && !titleboxXmoveleft && !titleboxXmoveright && bothSDandFlashcard())
-			{
-				mmEffectEx(&snd_switch);
+			if ((pressed & KEY_B) && showDirectories) {
+				// Go up a directory
+				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
-				secondaryDevice = !secondaryDevice;
-				if (showBoxArt) clearBoxArt();	// Clear box art
+				pagenum[secondaryDevice] = 0;
+				cursorPosition[secondaryDevice] = 0;
+				titleboxXpos[secondaryDevice] = 0;
+				titlewindowXpos[secondaryDevice] = 0;
 				whiteScreen = true;
+				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				redoDropDown = true;
 				shouldersRendered = false;
@@ -1107,57 +1106,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showSTARTborder = false;
 				stopSoundPlayed = false;
 				clearText();
+				chdir("..");
+				char buf[256];
+				romfolder[secondaryDevice] = getcwd(buf, 256);
 				SaveSettings();
 				settingsChanged = false;
-				return "null";		
-			}
-
-			if ((pressed & KEY_B)) {
-				if (startMenu) {
-					mmEffectEx(&snd_back);
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
-					startMenu = false;
-					if (settingsChanged) {
-						SaveSettings();
-						settingsChanged = false;
-					}
-					whiteScreen = true;
-					redoDropDown = true;
-					shouldersRendered = false;
-					showbubble = false;
-					showSTARTborder = false;
-					stopSoundPlayed = false;
-					clearText();
-					whiteScreen = false;
-					fadeType = true;	// Fade in from white
-					for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
-					waitForFadeOut();
-				} else if (showDirectories) {
-					// Go up a directory
-					mmEffectEx(&snd_select);
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
-					pagenum[secondaryDevice] = 0;
-					cursorPosition[secondaryDevice] = 0;
-					titleboxXpos[secondaryDevice] = 0;
-					titlewindowXpos[secondaryDevice] = 0;
-					whiteScreen = true;
-					if (showBoxArt) clearBoxArt();	// Clear box art
-					boxArtLoaded = false;
-					redoDropDown = true;
-					shouldersRendered = false;
-					showbubble = false;
-					showSTARTborder = false;
-					stopSoundPlayed = false;
-					clearText();
-					chdir("..");
-					char buf[256];
-					romfolder[secondaryDevice] = getcwd(buf, 256);
-					SaveSettings();
-					settingsChanged = false;
-					return "null";
-				}
+				return "null";
 			}
 
 			if ((pressed & KEY_X) && !startMenu && showSTARTborder
@@ -1213,62 +1167,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
-			if ((pressed & KEY_X) && startMenu && isDSiMode()) {
-				mmEffectEx(&snd_back);
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
-				music = false;
-				mmEffectCancelAll();
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-				*(u16*)(0x02000304) = 0x1801;
-				*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
-				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
-			}
-
-			int pressedForStartMenu = 0;
-			if (startButtonLaunch) {
-				pressedForStartMenu = (pressed & KEY_SELECT);
-			} else {
-				pressedForStartMenu = (pressed & KEY_START);
-			}
-
-			if (pressedForStartMenu)
-			{
-				mmEffectEx(&snd_switch);
-				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
-				if (showBoxArt && !startMenu) clearBoxArt();	// Clear box art
-				startMenu = !startMenu;
-				if (settingsChanged) {
-					SaveSettings();
-					settingsChanged = false;
-				}
-				whiteScreen = true;
-				boxArtLoaded = false;
-				redoDropDown = true;
-				shouldersRendered = false;
-				showbubble = false;
-				showSTARTborder = false;
-				stopSoundPlayed = false;
-				clearText();
-				whiteScreen = false;
-				fadeType = true;	// Fade in from white
-				for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
-				waitForFadeOut();
-			}
-
-			int pressedForPerGameSettings = 0;
-			if (startButtonLaunch) {
-				pressedForPerGameSettings = (pressed & KEY_A);
-			} else {
-				pressedForPerGameSettings = (pressed & KEY_SELECT);
-			}
-
-			if (pressedForPerGameSettings && !startMenu
+			if ((pressed & KEY_Y) && !startMenu
 			&& (isDirectory[cursorPosition[secondaryDevice]] == false) && (bnrRomType[cursorPosition[secondaryDevice]] == 0)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
 			{

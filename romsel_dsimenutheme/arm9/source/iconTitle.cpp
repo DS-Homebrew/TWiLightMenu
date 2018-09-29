@@ -171,7 +171,11 @@ void drawIcon(int Xpos, int Ypos, int num)
 
 void drawIconGBA(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(GBA_ICON));
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]);
+}
+void drawSmallIconGBA(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[1 & 31]);
 }
 void drawIconGB(int Xpos, int Ypos)
 {

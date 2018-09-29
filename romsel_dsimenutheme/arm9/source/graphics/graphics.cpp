@@ -91,6 +91,8 @@ extern int spawnedtitleboxes;
 
 extern bool startMenu;
 
+extern bool useGbarunner;
+
 extern int theme;
 extern int subtheme;
 extern int cursorPosition[2];
@@ -706,13 +708,29 @@ void vBlankHandler()
 				}
 				if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
+			// Top icons
+			if (isDSiMode() && sdFound()) {
+				if (secondaryDevice) {
+					glSprite(116-16, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]);
+				} else {
+					glSprite(116-16, 1, GL_FLIP_NONE, &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+				}
+				drawSmallIconGBA(116+16, 1);
+			} else {
+				if (useGbarunner) {
+					drawSmallIconGBA(116, 1);
+				} else {
+					glSprite(116, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]);
+				}
+			}
 			if (theme==1) {
 				glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-				glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+				if (isDSiMode()) glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 			} else {
 				glSprite(1, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-				glSprite(256-25, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+				if (isDSiMode()) glSprite(256-25, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 			}
+
 			if (applaunchprep && theme==0) {
 				
 				if(startMenu) {

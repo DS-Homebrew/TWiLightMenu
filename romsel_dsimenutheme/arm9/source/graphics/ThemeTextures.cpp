@@ -89,6 +89,7 @@
 #include "org_folder.h"
 #include "_3ds_folder.h"
 #include "cornerbutton.h"
+#include "small_cart.h"
 #include "_3ds_cornerbutton.h"
 #include "wirelessicons.h"
 
@@ -169,6 +170,11 @@ void ThemeTextures::loadCornerButtonImage(const unsigned short *palette, const u
 											int sprW, int sprH, int texW, int texH)
 {
   _cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, palette, bitmap, arraysize, 16, sprW, sprH, texW, texH));
+}
+
+void ThemeTextures::loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap)
+{
+  _smallCartImage = std::move(loadTexture(&smallCartTexID, palette, bitmap, (32 / 16) * (32 / 32), 16, 32, 32, 32, 96));
 }
 
 void ThemeTextures::loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap)
@@ -256,6 +262,7 @@ void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
   loadDialogboxImage(dialogboxPal, dialogboxBitmap);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 

@@ -288,7 +288,7 @@ void iconManagerInit()
 
     if (useGbarunner)
     {
-        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 32, true);
+        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 64, true);
     }
     else
     {
