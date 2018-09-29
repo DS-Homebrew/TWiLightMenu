@@ -24,7 +24,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), and MHGen theme for Acekard theme.
 - Joom: Original TWLoader logo.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
-- RonnChyran: Port of akMenu/Wood UI to TWLMenu++ as a theme.
+- chyyran: Port of akMenu/Wood UI to TWLMenu++ as a theme.
 - Robz8: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
 - shutterbug2000: For the muted sound/touchscreen fix for nds-bootstrap.
 - spinal_cord: DSi4DS and DSision2 graphics.
