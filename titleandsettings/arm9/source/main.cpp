@@ -714,7 +714,6 @@ int main(int argc, char **argv)
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_STARTBUTTONLAUNCH, STR_DESCRIPTION_STARTBUTTONLAUNCH_1, Option::Bool(&ms().startButtonLaunch), {STR_YES, STR_NO}, {true, false})
 		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
