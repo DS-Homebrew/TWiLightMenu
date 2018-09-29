@@ -9,6 +9,7 @@
 #include "icon_unk.h"
 #include "icon_gbamode.h"
 #include "icon_gba.h"
+#include "_3ds_icon_gba.h"
 #include "icon_gb.h"
 #include "icon_nes.h"
 
@@ -27,6 +28,8 @@ glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
 
 extern bool useGbarunner;
+
+extern int theme;
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -288,7 +291,14 @@ void iconManagerInit()
 
     if (useGbarunner)
     {
-        glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 64, true);
+		if (theme == 1)
+		{
+			glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)_3ds_icon_gbaBitmap, 64, true);
+		}
+		else
+		{
+			glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 64, true);
+		}
     }
     else
     {

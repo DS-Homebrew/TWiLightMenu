@@ -90,6 +90,7 @@
 #include "_3ds_folder.h"
 #include "cornerbutton.h"
 #include "small_cart.h"
+#include "_3ds_small_cart.h"
 #include "_3ds_cornerbutton.h"
 #include "wirelessicons.h"
 
@@ -262,7 +263,6 @@ void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
   loadDialogboxImage(dialogboxPal, dialogboxBitmap);
-  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 
@@ -304,6 +304,7 @@ void ThemeTextures::load3DSTheme()
   loadFolderImage(_3ds_folderPal, _3ds_folderBitmap);
 
   loadCornerButtonImage(_3ds_cornerbuttonPal, _3ds_cornerbuttonBitmap, (64 / 16) * (64 / 32), 64, 32, 64, 64);
+  loadSmallCartImage(_3ds_small_cartPal, _3ds_small_cartBitmap);
 
   loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
 
@@ -333,6 +334,7 @@ void ThemeTextures::loadDSiDarkTheme()
   loadBraceImage(bracePal, braceBitmap);
   loadBoxfullImage(boxPal, boxBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(folderPal, folderBitmap);
 
   loadCommonTextures();
@@ -381,6 +383,7 @@ void ThemeTextures::loadDSiWhiteTheme()
   loadBraceImage(org_bracePal, org_braceBitmap);
   loadBoxfullImage(org_boxPal, org_boxBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -420,6 +423,7 @@ void ThemeTextures::loadDSiRedTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -459,6 +463,7 @@ void ThemeTextures::loadDSiBlueTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -498,6 +503,7 @@ void ThemeTextures::loadDSiGreenTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -538,6 +544,7 @@ void ThemeTextures::loadDSiYellowTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -577,6 +584,7 @@ void ThemeTextures::loadDSiPurpleTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
@@ -615,6 +623,7 @@ void ThemeTextures::loadDSiPinkTheme()
 
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(org_folderPal, org_folderBitmap);
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
