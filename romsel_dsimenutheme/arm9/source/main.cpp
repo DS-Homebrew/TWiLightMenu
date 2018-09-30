@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <maxmod9.h>
 
 #include <stdio.h>
@@ -628,7 +629,23 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	}
 	std::string path;
 	int err = 0;
-	switch (flashcard) {
+	if ((memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0))
+	{
+		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+		err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+	else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
+	{
+		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
+		fcrompathini.SetString("Dir Info", "fullName", path);
+		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+	/*switch (flashcard) {
 		case 0:
 		case 1:
 		default: {
@@ -658,7 +675,6 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 			path = ReplaceAll(ndsPath, "fat:/", woodfat);
 			fcrompathini.SetString("Save Info", "lastLoaded", path);
 			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-			ClearBrightness();
 			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
@@ -671,10 +687,14 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 			break;
 		}
-	}
+	}*/
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
-	printLarge(false, 4, 36, text);
+	ClearBrightness();
+	printLarge(false, 4, 4, text);
+	if (err == 0) {
+		printLarge(false, 4, 20, "Flashcard may be unsupported.");
+	}
 	stop();
 }
 

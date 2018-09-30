@@ -1,4 +1,6 @@
 
+#include <nds/arm9/dldi.h>
+
 #include "flashcardlaunch.h"
 #include "pergamesettings.h"
 
@@ -25,7 +27,21 @@ int loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGa
 		}
 	}*/
     std::string launchPath;
-    switch (ms().flashcard)
+	if ((memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0))
+	{
+        LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
+        launchPath = replaceAll(ndsPath, FC_PREFIX_FAT, FC_PREFIX_FAT0);
+        config.option("Save Info", "lastLoaded", launchPath);
+        return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+	else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
+	{
+        LoaderConfig config("fat:/_dstwo/autoboot.nds", "fat:/_dstwo/autoboot.ini");
+        launchPath = replaceAll(ndsPath, FC_PREFIX_FAT, FC_PREFIX_FAT1);
+        config.option("Dir Info", "fullName", launchPath);
+        return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+    /*switch (ms().flashcard)
     {
     case DSiMenuPlusPlusSettings::EDSTTClone:
     case DSiMenuPlusPlusSettings::ER4Original:
@@ -61,6 +77,6 @@ int loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGa
         config.option("Dir Info", "fullName", launchPath);
         return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
     }
-    }
+    }*/
     return 100;
 }

@@ -428,77 +428,6 @@ inline bool between_incl(int x, int a, int b)
 	return (a <= x && x >= b);
 }
 
-void opt_flashcard_map(int prev, int next)
-{
-	if (between_incl(next, 0, 5))
-		ms().flashcard = 0;
-	if (between_incl(next, 6, 7))
-		ms().flashcard = 1;
-	if (between_incl(next, 8, 10))
-		ms().flashcard = 2;
-	if (between_incl(next, 11, 13))
-		ms().flashcard = 3;
-	if (next == 14)
-		ms().flashcard = 4;
-	if (between_incl(next, 15, 17))
-		ms().flashcard = 5;
-	if (next == 16)
-		ms().flashcard = 6;
-}
-
-std::optional<Option> opt_flashcard_select()
-{
-	// Since the SettingsGUI can't support the multi page flashcard select as in
-	// old titleandsettings, we can use the API to hack around the issue using a
-	// changed handler and a global variable.
-	/* Flashcard value
-		0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-		1: R4DS (Original Non-SDHC version)/ M3 Simply
-		2: R4iDSN/R4i Gold RTS/R4 Ultra
-		3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-		4: Acekard RPG
-		5: Ace 3DS+/Gateway Blue Card/R4iTT
-		6: SuperCard DSTWO
-	*/
-
-	// Notice that the changed handler is opt_flashcard_map, which will actually
-	// change the settings for us from this mapping.
-	return Option(STR_FLASHCARD_SELECT, STR_AB_SETRETURN, Option::Int(&flashcard, opt_flashcard_map),
-				  {// 0 - 5 => category 0.
-
-				   "DSTT",
-				   "R4i Gold",
-				   "R4i-SDHC (Non v.1.4.x) (r4i-sdhc.com)",
-				   "R4 SDHC Dual-Core",
-				   "R4 SDHC Upgrade",
-				   "SuperCard DSONE",
-
-				   // 6-7 => category 1
-				   "Original R4",
-				   "M3 Simply",
-
-				   // 8-10 => category 2
-				   "R4iDSN",
-				   "R4i Gold RTS",
-				   "R4 Ultra",
-
-				   // 11-13 => category 3
-				   "Acekard 2(i)",
-				   "Galaxy Eagle",
-				   "M3DS Real",
-
-				   // 14 => category 4
-				   "Acekard RPG",
-
-				   // 15-17 => category 5
-				   "Ace 3DS+",
-				   "Gateway Blue Card",
-				   "R4iTT",
-
-				   // 18 => category 6
-				   "SuperCard DSTWO"},
-				  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18});
-}
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -721,13 +650,9 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (sys().flashcardUsed())
+	if (sys().flashcardUsed() && sys().isRegularDS())
 	{
-		gamesPage.option(STR_FLASHCARD_SELECT, STR_DESCRIPTION_FLASHCARD_1, Option::Nul(opt_flashcard_select), {}, {});
-
-		if (sys().isRegularDS()) {
-			gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
-		}
+		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
