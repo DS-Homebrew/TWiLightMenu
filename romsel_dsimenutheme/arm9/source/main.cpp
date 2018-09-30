@@ -1081,11 +1081,11 @@ int main(int argc, char **argv) {
 				if (secondaryDevice) {
 					printLarge(false, 4, 64, "After saving, please re-start");
 					if (appName == 0) {
-						printLarge(false, 4, 80, "DSiMenu++ to transfer your");
+						printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
 					} else if (appName == 1) {
 						printLarge(false, 4, 80, "SRLoader to transfer your");
 					} else if (appName == 2) {
-						printLarge(false, 4, 80, "DSisionX to transfer your");
+						printLarge(false, 4, 80, "DSiMenu++ to transfer your");
 					}
 					printLarge(false, 4, 96, "save data back.");
 				}
