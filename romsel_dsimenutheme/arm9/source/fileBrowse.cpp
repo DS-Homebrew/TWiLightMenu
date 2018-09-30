@@ -452,9 +452,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 	// If we were scrolling before, but now let go of all keys, stop scrolling.
 	 if (isHeld && !isPressed 
 	 	&&(
-			startMenu ? 
-			(startMenu_cursorPosition != 0 && startMenu_cursorPosition != 39) 
-			: (cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
+			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
 		)){
 		isScrolling = true;
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
@@ -741,41 +739,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->finalY = 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW);
 			// cursor->delay = TextEntry::ACTIVE;
 
-			if (startMenu) {
-				if (startMenu_cursorPosition < (3-flashcardFound())) {
-					showbubble = true;
-					showSTARTborder = true;
-					if (!flashcardFound() && startMenu_cursorPosition == 1 && REG_SCFG_MC == 0x11) {
-						showSTARTborder = false;
-					}
-					titleUpdate(false, "startMenu", startMenu_cursorPosition);
-				} else {
-					showbubble = false;
-					showSTARTborder = false;
-					clearText(false);	// Clear title
+			if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
+				if (!boxArtLoaded && showBoxArt) {
+					clearBoxArt();	// Clear box art
+					boxArtLoaded = true;
 				}
+				showbubble = false;
+				showSTARTborder = (theme == 1 ? true : false);
+				clearText(false);	// Clear title
 			} else {
-				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
-					if (!boxArtLoaded && showBoxArt) {
-						clearBoxArt();	// Clear box art
-						boxArtLoaded = true;
+				if (!boxArtLoaded && showBoxArt) {
+					if (isDirectory[cursorPosition[secondaryDevice]]) {
+						clearBoxArt();	// Clear box art, if it's a directory
+					} else {
+						loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
 					}
-					showbubble = false;
-					showSTARTborder = false;
-					clearText(false);	// Clear title
-				} else {
-					if (!boxArtLoaded && showBoxArt) {
-						if (isDirectory[cursorPosition[secondaryDevice]]) {
-							clearBoxArt();	// Clear box art, if it's a directory
-						} else {
-							loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
-						}
-						boxArtLoaded = true;
-					}
-					showbubble = true;
-					showSTARTborder = true;
-					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					boxArtLoaded = true;
 				}
+				showbubble = true;
+				showSTARTborder = true;
+				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 			}
 
 			if (!stopSoundPlayed) {
@@ -823,32 +806,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
-				if (startMenu) {
-					startMenu_cursorPosition -= 1;
-					if (startMenu_cursorPosition >= 0) {
-						titleboxXmoveleft = true;
-						waitForNeedToPlayStopSound = 1;
-						mmEffectEx(&snd_select);
-						settingsChanged = true;
-					} else {
-						mmEffectEx(&snd_wrong);
-					}
+				cursorPosition[secondaryDevice] -= 1;
+				if (cursorPosition[secondaryDevice] >= 0) {
+					titleboxXmoveleft = true;
+					waitForNeedToPlayStopSound = 1;
+					mmEffectEx(&snd_select);
+					boxArtLoaded = false;
+					settingsChanged = true;
 				} else {
-					cursorPosition[secondaryDevice] -= 1;
-					if (cursorPosition[secondaryDevice] >= 0) {
-						titleboxXmoveleft = true;
-						waitForNeedToPlayStopSound = 1;
-						mmEffectEx(&snd_select);
-						boxArtLoaded = false;
-						settingsChanged = true;
-					} else {
-						mmEffectEx(&snd_wrong);
-					}
-					if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-						if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
-							defer(reloadFontTextures);
-						}
+					mmEffectEx(&snd_wrong);
+				}
+				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+						defer(reloadFontTextures);
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -856,61 +827,38 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
-				if (startMenu) {
-					startMenu_cursorPosition += 1;
-					if (startMenu_cursorPosition <= 39) {
-						titleboxXmoveright = true;
-						waitForNeedToPlayStopSound = 1;
-						mmEffectEx(&snd_select);
-						settingsChanged = true;
-					} else {
-						mmEffectEx(&snd_wrong);
-					}
+				cursorPosition[secondaryDevice] += 1;
+				if (cursorPosition[secondaryDevice] <= 39) {
+					titleboxXmoveright = true;
+					waitForNeedToPlayStopSound = 1;
+					mmEffectEx(&snd_select);
+					boxArtLoaded = false;
+					settingsChanged = true;
 				} else {
-					cursorPosition[secondaryDevice] += 1;
-					if (cursorPosition[secondaryDevice] <= 39) {
-						titleboxXmoveright = true;
-						waitForNeedToPlayStopSound = 1;
-						mmEffectEx(&snd_select);
-						boxArtLoaded = false;
-						settingsChanged = true;
-					} else {
-						mmEffectEx(&snd_wrong);
-					}
-					if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
-						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
-							defer(reloadFontTextures);
-						}
+					mmEffectEx(&snd_wrong);
+				}
+				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
+					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+						defer(reloadFontTextures);
 					}
 				}
 			}
 
-			if (startMenu) {
-				if (startMenu_cursorPosition < 0)
-				{
-					startMenu_cursorPosition = 0;
-				}
-				else if (startMenu_cursorPosition > 39)
-				{
-					startMenu_cursorPosition = 39;
-				}
-			} else {
-				if (cursorPosition[secondaryDevice] < 0)
-				{
-					cursorPosition[secondaryDevice] = 0;
-				}
-				else if (cursorPosition[secondaryDevice] > 39)
-				{
-					cursorPosition[secondaryDevice] = 39;
-				}
+			if (cursorPosition[secondaryDevice] < 0)
+			{
+				cursorPosition[secondaryDevice] = 0;
+			}
+			else if (cursorPosition[secondaryDevice] > 39)
+			{
+				cursorPosition[secondaryDevice] = 39;
 			}
 
 			// Startup...
-			if (((pressed & KEY_A) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_START) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
+			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
@@ -1114,7 +1062,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && showSTARTborder
+			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder
 			&& strcmp(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "..") != 0)
 			{
 				clearText();
@@ -1169,7 +1117,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if ((pressed & KEY_Y) && !startMenu
 			&& (isDirectory[cursorPosition[secondaryDevice]] == false) && (bnrRomType[cursorPosition[secondaryDevice]] == 0)
-			&& !titleboxXmoveleft && !titleboxXmoveright && showSTARTborder)
+			&& !titleboxXmoveleft && !titleboxXmoveright && showbubble && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
 			}
