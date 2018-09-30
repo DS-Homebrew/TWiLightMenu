@@ -102,25 +102,26 @@ void flashcardInit(void) {
 		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
 
 		// Read a DLDI driver specific to the cart
-		if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
-			flashcard = 0;
+		if (!memcmp(gameid, "ASMA", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
+			fatMountSimple("fat", &io_dldi_data->ioInterface);
+		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
+			fatMountSimple("fat", &io_dldi_data->ioInterface);
+		} else if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
-			flashcard = 0;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "TOP TF/SD DS", 12)) {
-			flashcard = 0;
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
-			flashcard = 2;
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "ASMA", 4) || !memcmp(gameid, "R4DS", 4)) {
-			flashcard = 1;
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
+		} else if (!memcmp(gameid, "YCEP", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
+			fatMountSimple("fat", &io_dldi_data->ioInterface);
+		} else if (!memcmp(gameid, "ALXX", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		}
 	}
