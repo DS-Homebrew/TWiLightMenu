@@ -149,22 +149,14 @@ void SettingsGUI::draw()
 void SettingsGUI::setTopText(const std::string &text)
 {
 	std::string _topTextStr(text);
-	_topText.clear();
 	std::vector<std::string> words;
-	std::string temp;
-	for(auto c : _topTextStr)
-	{
-		if(c == ' ')
-		{
-			words.push_back(temp);
-			temp.clear();
-		}
-		else
-			temp += c;
+	std::size_t pos;
+	while((pos = _topTextStr.find(' ')) != std::string::npos) {
+		words.push_back(_topTextStr.substr(0, pos));
+		_topTextStr = _topTextStr.substr(pos + 1);
 	}
-	if(temp.size())
-		words.push_back(temp);
-	temp.clear();
+	std::string temp;
+	_topText.clear();
 	for(auto word : words)
 	{
 		int width = calcLargeFontWidth((temp + " " + word).c_str());
