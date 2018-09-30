@@ -23,7 +23,7 @@ int _gbcTexID;
 int _nesTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
-glImage _gbaIcon[1];
+glImage _gbaIcon[(32 / 32) * (64 / 32)];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
 
