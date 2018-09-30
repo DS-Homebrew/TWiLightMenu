@@ -89,22 +89,17 @@ int titleboxYmovepos = 0;
 
 extern int spawnedtitleboxes;
 
-extern bool startMenu;
-
 extern bool useGbarunner;
 
 extern int theme;
 extern int subtheme;
 extern int cursorPosition[2];
-extern int startMenu_cursorPosition;
 extern int pagenum[2];
 //int titleboxXmovespeed[8] = {8};
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 int titleboxXpos[2] = {0};
-int startMenu_titleboxXpos;
 int titleboxYpos = 93;	// 85, when dropped down
 int titlewindowXpos[2] = {0};
-int startMenu_titlewindowXpos;
 
 bool showLshoulder = false;
 bool showRshoulder = false;
@@ -239,70 +234,6 @@ void moveIconClose(int num) {
 		else movecloseXpos = 0;
 	}
 }
-
-/*void startMenu_moveIconClose(int num) {
-	if (titleboxXmoveleft) {
-		movecloseXpos = 0;
-		if(movetimer == 1) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 1;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 2) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 1;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 3) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 4) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 5) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -4;
-		} else if(movetimer == 6) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 4;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -5;
-		} else if(movetimer == 7) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 5;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -6;
-		} else if(movetimer == 8) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 6;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -7;
-		}
-	}
-	if (titleboxXmoveright) {
-		movecloseXpos = 0;
-		if(movetimer == 1) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -1;
-		} else if(movetimer == 2) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 2;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -1;
-		} else if(movetimer == 3) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 4) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 3;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -2;
-		} else if(movetimer == 5) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 4;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -3;
-		} else if(movetimer == 6) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 5;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -4;
-		} else if(movetimer == 7) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 6;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -5;
-		} else if(movetimer == 8) {
-			if (startMenu_cursorPosition-2 == num) movecloseXpos = 7;
-			else if (startMenu_cursorPosition+2 == num) movecloseXpos = -6;
-		}
-	}
-	if(!titleboxXmoveleft || !titleboxXmoveright) {
-		if (startMenu_cursorPosition-2 == num) movecloseXpos = 6;
-		else if (startMenu_cursorPosition+2 == num) movecloseXpos = -6;
-		else movecloseXpos = 0;
-	}
-}*/
 
 //-------------------------------------------------------
 // set up a 2D layer construced of bitmap sprites
@@ -624,7 +555,9 @@ void vBlankHandler()
 				spawnedboxXpos += 64;
 				iconXpos += 64;
 			}
-			if (theme == 0) glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 89, GL_FLIP_H, tex().braceImage());
+			if (theme == 0) {
+				glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 89, GL_FLIP_H, tex().braceImage());
+			}
 			// Top icons
 			if (isDSiMode() && sdFound()) {
 				if (secondaryDevice) {
@@ -1059,7 +992,7 @@ void topBgLoad() {
 				fread(buffer, 2, 0x200, file);
 				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
 
-				for (int i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
+				for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					u16 bg = BG_GFX_SUB[(y+1)*256+(i+x)]; //grab the background pixel
 					// Apply palette here.
@@ -1174,9 +1107,7 @@ void graphicsInit()
 	titlewindowXpos[0] = cursorPosition[0]*5;
 	titleboxXpos[1] = cursorPosition[1]*64;
 	titlewindowXpos[1] = cursorPosition[1]*5;
-	startMenu_titleboxXpos = startMenu_cursorPosition*64;
-	startMenu_titlewindowXpos = startMenu_cursorPosition*5;
-	
+
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
