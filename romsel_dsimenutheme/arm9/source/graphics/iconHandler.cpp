@@ -293,7 +293,7 @@ void iconManagerInit()
     {
 		if (theme == 1)
 		{
-			glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)_3ds_icon_gbaBitmap, 64, true);
+			glLoadIcon(GBA_ICON, (u16 *)_3ds_icon_gbaPal, (u8 *)_3ds_icon_gbaBitmap, 64, true);
 		}
 		else
 		{
