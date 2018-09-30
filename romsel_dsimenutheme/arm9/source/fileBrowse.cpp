@@ -525,7 +525,6 @@ void switchDevice(void) {
 	} else {
 		mmEffectEx(&snd_launch);
 		controlTopBright = true;
-		gotosettings = true;
 
 		fadeType = false;	// Fade to white
 		fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
@@ -536,6 +535,7 @@ void switchDevice(void) {
 		mmEffectCancelAll();
 		fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
+		launchType = 0;
 		SaveSettings();
 		if (!slot1LaunchMethod || arm7SCFGLocked) {
 			dsCardLaunch();
