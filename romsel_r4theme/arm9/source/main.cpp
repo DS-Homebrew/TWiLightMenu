@@ -623,7 +623,15 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	}
 	std::string path;
 	int err = 0;
-	if ((memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0))
+	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	{
+		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+		err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+	else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
 	{
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);

@@ -27,7 +27,14 @@ int loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGa
 		}
 	}*/
     std::string launchPath;
-	if ((memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0))
+	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
+	{
+        LoaderConfig config("fat:/Wfwd.dat", "fat:/_wfwd/lastsave.ini");
+        launchPath = replaceAll(ndsPath, FC_PREFIX_FAT, FC_PREFIX_FAT0);
+        config.option("Save Info", "lastLoaded", launchPath);
+        return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	}
+	else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
 	{
         LoaderConfig config("fat:/Afwd.dat", "fat:/_afwd/lastsave.ini");
         launchPath = replaceAll(ndsPath, FC_PREFIX_FAT, FC_PREFIX_FAT0);
