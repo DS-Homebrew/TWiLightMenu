@@ -103,7 +103,7 @@ void flashcardInit(void) {
 
 		// Read a DLDI driver specific to the cart
 		if (!memcmp(gameid, "ASMA", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tfv2.dldi");
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
