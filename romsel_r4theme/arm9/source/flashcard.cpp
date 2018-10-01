@@ -117,7 +117,7 @@ void flashcardInit(void) {
 		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "YCEP", 4)) {
+		} else if (!memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gameid, "ALXX", 4)) {
