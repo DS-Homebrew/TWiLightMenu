@@ -186,7 +186,7 @@ void loadROMselect()
 	}
 }
 
-int lastRanROM()
+int lastRunROM()
 {
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
@@ -496,7 +496,7 @@ int main(int argc, char **argv)
 
 	if (!ms().gotosettings && ms().autorun && !(keysHeld() & KEY_B))
 	{
-		lastRanROM();
+		lastRunROM();
 	}
 
 	if (ms().launchType == 2 && !ms().previousUsedDevice)
