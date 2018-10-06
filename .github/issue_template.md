@@ -22,9 +22,9 @@ Tell us which CFW do you have:
 
 DSi:
 
-- [ ]  HiyaCFW
-- [ ]  Not using CFW / Unlaunch only
-- [ ]  Not using CFW / DSiWarehax
+- [ ]  (No CFW) DSiWarehax (such as Flipnote Lenny, Sudokuhax, etc.)
+- [ ]  (No CFW) Unlaunch only _[please specify version]_
+- [ ]  Unlaunch+HiyaCFW _[please specify versions of both]_
 
 3DS/2DS:
 
