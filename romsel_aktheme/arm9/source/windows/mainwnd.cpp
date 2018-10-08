@@ -615,7 +615,7 @@ void MainWnd::launchSelected()
         return;
     }
 
-    if (rominfo.isDSiWare() && isDSiMode() && ms().consoleModel < 2)
+    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel < 2)
     {
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
@@ -649,7 +649,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
         // Direct Boot for homebrew.
-        if (gameConfig.directBoot && rominfo.isHomebrew())
+        if (rominfo.isDSiWare() || gameConfig.directBoot && rominfo.isHomebrew())
         {
             bootArgv(rominfo);
             return;
