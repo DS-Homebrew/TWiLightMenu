@@ -7,7 +7,7 @@
 #include "graphics/graphics.h"
 #include "inifile.h"
 
-sNDSHeader nds;
+static sNDSHeader nds;
 
 extern const char* settingsinipath;
 
@@ -49,7 +49,7 @@ bool bothSDandFlashcard(void) {
 	}
 }
 
-bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
+TWL_CODE bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
 	cardReadHeader((uint8*)nds);
 	memcpy(gameid, nds->gameCode, 4);
 	gameid[4] = 0x00;
@@ -58,12 +58,12 @@ bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
 	return true;
 }
 
-void ShowGameInfo(const char gameid[], const char gamename[]) {
+TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 	iprintf("Game id: %s\nName:    %s", gameid, gamename);
 }
 
-void flashcardInit(void) {
-	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
+TWL_CODE void twl_flashcardInit(void) {
+	if (REG_SCFG_MC != 0x11) {
 		CIniFile settingsini( settingsinipath );
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
@@ -117,12 +117,18 @@ void flashcardInit(void) {
 		} else if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4)) {
+		} else if (!memcmp(gameid, "ACEK", 4) || !memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gameid, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		}
+	}
+}
+
+void flashcardInit(void) {
+	if (isDSiMode() && !flashcardFound()) {
+		twl_flashcardInit();
 	}
 }
