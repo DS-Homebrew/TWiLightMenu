@@ -62,7 +62,7 @@ static bool homebrewBootstrap = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
-void LoadSettings(void) {
+TWL_CODE void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
@@ -83,8 +83,6 @@ void LoadSettings(void) {
 	ndsPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
 	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 }
-
-static bool arm7SCFGLocked = false;
 
 using namespace std;
 
@@ -107,7 +105,11 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-int lastRunROM() {
+TWL_CODE int lastRunROM() {
+	LoadSettings();
+	
+	swiWaitForVBlank();
+
 	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
 	else fifoSendValue32(FIFO_USER_07, 1);
 
@@ -226,17 +228,8 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	bool soundfreqsetting = false;
-
-	LoadSettings();
-	
-	swiWaitForVBlank();
-
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
-
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) soundfreqsetting = true;
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	int err = lastRunROM();
