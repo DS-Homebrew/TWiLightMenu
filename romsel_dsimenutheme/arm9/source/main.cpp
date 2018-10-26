@@ -135,6 +135,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
+bool gbaBiosFound[2] = {false};
 bool useGbarunner = false;
 int appName = 0;
 int theme = 0;
@@ -829,6 +830,13 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	
+	if (access("sd:/bios.bin", F_OK) == 0) {
+		gbaBiosFound[0] = true;
+	}
+	if (access("fat:/bios.bin", F_OK) == 0) {
+		gbaBiosFound[1] = true;
+	}
 
 	graphicsInit();
 	fontInit();

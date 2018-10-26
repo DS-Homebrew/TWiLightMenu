@@ -73,6 +73,7 @@ extern int launchType;
 extern bool slot1LaunchMethod;
 extern bool bootstrapFile;
 extern bool homebrewBootstrap;
+extern bool gbaBiosFound[2];
 extern bool useGbarunner;
 extern bool arm7SCFGLocked;
 extern int consoleModel;
@@ -91,6 +92,7 @@ extern bool applaunchprep;
 extern touchPosition touch;
 
 extern bool showdialogbox;
+extern bool dbox_showIcon;
 
 extern std::string romfolder[2];
 
@@ -547,6 +549,30 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
+	if (!gbaBiosFound[secondaryDevice] && useGbarunner) {
+		mmEffectEx(&snd_wrong);
+		clearText();
+		dbox_showIcon = false;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		printLarge(false, 16, 12, "Error code: BINF");
+		printSmallCentered(false, 64, "The GBA BIOS is required");
+		printSmallCentered(false, 78, "to run GBA games.");
+		printSmallCentered(false, 112, "Place the BIOS on the root");
+		printSmallCentered(false, 126, "as \"bios.bin\".");
+		printSmall(false, 208, 166, "A: OK");
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			swiIntrWait(0, 1);
+		} while (!(pressed & KEY_A));
+		clearText();
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		return;
+	}
+
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
 	useBootstrap = true;

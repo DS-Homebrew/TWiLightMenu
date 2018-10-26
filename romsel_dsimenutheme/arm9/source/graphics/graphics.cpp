@@ -127,6 +127,7 @@ int launchDotCurrentChangingFrame = 0;
 bool launchDotDoFrameChange = false;
 
 bool showdialogbox = false;
+bool dbox_showIcon = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 
@@ -638,7 +639,9 @@ void vBlankHandler()
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
-				if (!isDirectory[cursorPosition[secondaryDevice]]) drawIcon(24, dbox_Ypos+20, cursorPosition[secondaryDevice]);
+				if (dbox_showIcon && !isDirectory[cursorPosition[secondaryDevice]]) {
+					drawIcon(24, dbox_Ypos+20, cursorPosition[secondaryDevice]);
+				}
 			}
 			// Show button_arrowPals (debug feature)
 			/*for (int i = 0; i < 16; i++) {
