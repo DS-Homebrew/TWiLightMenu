@@ -1400,11 +1400,9 @@ int main(int argc, char **argv) {
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (homebrewBootstrap) {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						} else {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 						}
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
