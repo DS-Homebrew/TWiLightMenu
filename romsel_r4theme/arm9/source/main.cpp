@@ -693,9 +693,9 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
-	printLarge(false, 4, 4, text);
+	printSmall(false, 4, 80, text);
 	if (err == 0) {
-		printLarge(false, 4, 20, "Flashcard may be unsupported.");
+		printSmall(false, 4, 88, "Flashcard may be unsupported.");
 	}
 	stop();
 }
@@ -1500,7 +1500,10 @@ int main(int argc, char **argv) {
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
 						ClearBrightness();
-						printSmall(false, 4, 36, text);
+						printSmall(false, 4, 80, text);
+						if (err == 1) {
+							printSmall(false, 4, 88, "nds-bootstrap not found.");
+						}
 						stop();
 					} else {
 						launchType = 1;

@@ -1412,7 +1412,10 @@ int main(int argc, char **argv) {
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
 						ClearBrightness();
-						printLarge(false, 4, 36, text);
+						printLarge(false, 4, 4, text);
+						if (err == 1) {
+							printLarge(false, 4, 20, "nds-bootstrap not found.");
+						}
 						stop();
 					} else {
 						launchType = 1;
