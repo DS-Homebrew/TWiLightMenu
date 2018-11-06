@@ -130,7 +130,7 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
   # simple nds srl without dsi extended header
-	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "DSiMenu++;Robz8"
+	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "DSiMenu++;RocketRobz"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
