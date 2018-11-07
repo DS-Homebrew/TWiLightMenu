@@ -1062,6 +1062,8 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
+				fadeSpeed = true;	// Fast fading
+
 				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
