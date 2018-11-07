@@ -4,8 +4,8 @@
 #include "dsimenusettings.h"
 #include "filecopy.h"
 
-static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-//static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
 UnlaunchBoot::UnlaunchBoot(const std::string &fileName, u32 pubSavSize, u32 prvSavSize)
 {
