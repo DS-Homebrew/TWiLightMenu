@@ -39,6 +39,8 @@
 #include "windows/mainwnd.h"
 #include "common/systemdetails.h"
 #include "common/dsimenusettings.h"
+#include "common/flashcard.h"
+#include "common/filecopy.h"
 
 // -- AK End ------------
 
@@ -195,6 +197,17 @@ int main(int argc, char **argv)
 
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
+
+	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 && access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
+	|| (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 && access(ms().dsiWarePrvPath.c_str(), F_OK) == 0))
+	{
+		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());
+		}
+		if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
+		}
+	}
 
 	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
 	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);

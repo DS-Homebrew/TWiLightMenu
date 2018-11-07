@@ -36,6 +36,7 @@
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
 #include "common/dsargv.h"
+#include "common/flashcard.h"
 #include "common/flashcardlaunch.h"
 #include "common/gbaswitch.h"
 #include "common/unlaunchboot.h"
@@ -599,6 +600,18 @@ void MainWnd::launchSelected()
         return;
     }
 
+	if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()) {
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
+		}
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+		}
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+		}
+	}
+
     ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
     ms().saveSettings();
 
@@ -647,7 +660,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
         // Direct Boot for homebrew.
-        if (rominfo.isDSiWare() || gameConfig.directBoot && rominfo.isHomebrew())
+        if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
         {
             bootArgv(rominfo);
             return;
