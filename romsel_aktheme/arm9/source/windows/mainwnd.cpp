@@ -621,16 +621,26 @@ void MainWnd::launchSelected()
         return;
 
     // Launch DSiWare
-    if (rominfo.isDSiWare() && rominfo.isArgv() && ms().consoleModel < 2)
+    if (rominfo.isDSiWare() && rominfo.isArgv())
     {
+		if (ms().consoleModel > 1) {
+			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
+			return;
+		}
+
         ms().launchType = DSiMenuPlusPlusSettings::ENoLaunch;
         ms().saveSettings();
         dsiLaunch(rominfo.saveInfo().dsiTid);
         return;
     }
 
-    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel < 2)
+    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode())
     {
+		if (ms().consoleModel > 1) {
+			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
+			return;
+		}
+
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
 
