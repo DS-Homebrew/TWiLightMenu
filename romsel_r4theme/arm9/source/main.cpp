@@ -703,23 +703,6 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	stop();
 }
 
-void dsCardLaunch() {
-	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-	*(u16*)(0x02000304) = 0x1801;
-	*(u32*)(0x02000308) = 0x43415254;	// "CART"
-	*(u32*)(0x0200030C) = 0x00000000;
-	*(u32*)(0x02000310) = 0x43415254;	// "CART"
-	*(u32*)(0x02000314) = 0x00000000;
-	*(u32*)(0x02000318) = 0x00000013;
-	*(u32*)(0x0200031C) = 0x00000000;
-	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-	}
-
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
-}
-
 void unlaunchSetHiyaBoot(void) {
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -737,6 +720,25 @@ void unlaunchSetHiyaBoot(void) {
 	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
+}
+
+void dsCardLaunch() {
+	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+	*(u16*)(0x02000304) = 0x1801;
+	*(u32*)(0x02000308) = 0x43415254;	// "CART"
+	*(u32*)(0x0200030C) = 0x00000000;
+	*(u32*)(0x02000310) = 0x43415254;	// "CART"
+	*(u32*)(0x02000314) = 0x00000000;
+	*(u32*)(0x02000318) = 0x00000013;
+	*(u32*)(0x0200031C) = 0x00000000;
+	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
+	}
+	
+	unlaunchSetHiyaBoot();
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 }
 
 //---------------------------------------------------------------------------------
@@ -1204,16 +1206,18 @@ int main(int argc, char **argv) {
 					}
 
 					clearText();
-					printSmall(false, 2, 112, "After saving, please re-start");
-					if (appName == 0) {
-						printSmall(false, 2, 120, "TWiLight Menu++ to transfer your");
-					} else if (appName == 1) {
-						printSmall(false, 2, 120, "SRLoader to transfer your");
-					} else if (appName == 2) {
-						printSmall(false, 2, 120, "DSiMenu++ to transfer your");
+					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+						printSmall(false, 2, 112, "After saving, please re-start");
+						if (appName == 0) {
+							printSmall(false, 2, 120, "TWiLight Menu++ to transfer your");
+						} else if (appName == 1) {
+							printSmall(false, 2, 120, "SRLoader to transfer your");
+						} else if (appName == 2) {
+							printSmall(false, 2, 120, "DSiMenu++ to transfer your");
+						}
+						printSmall(false, 2, 128, "save data back.");
+						for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
 					}
-					printSmall(false, 2, 128, "save data back.");
-					for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
 				}
 
 				char unlaunchDevicePath[256];
