@@ -957,7 +957,9 @@ int main(int argc, char **argv) {
 						homebrewBootstrap = true;
 						SaveSettings();
 						if (useGbarunner) {
-							if (secondaryDevice) {
+							if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+								// Nothing
+							} else if (secondaryDevice) {
 								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
 							} else {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
