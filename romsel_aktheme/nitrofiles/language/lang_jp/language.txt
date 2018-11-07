@@ -426,6 +426,7 @@ ROM Start Error = このROMは起動ことができませんでした。
 error = エラー %i
 Please wait = 少々お待ちください。
 NDS Bootstrap Error = Bootstrapエラー
+GBARunner2 Error = GBARunner2エラー
 Flashcard Error = フラッシュカードエラー
 Launch Error = 起動エラー
 
@@ -433,6 +434,5 @@ Preparing Unlaunch Boot = DSiWare起動の準備中です.
 Unlaunch Error = Unlaunchエラー
 unlaunch boot = DSiWare起動の説明
 
-bootthis exists = "bootthis"と言ったファイルはまだSDカードのルートフォルダーに存在しています。続ける前にファイルをバックアップしてください。
-unlaunch instructions = Xボタンを押し続き、それから消した画面に二秒押してください。
+unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
 [end]

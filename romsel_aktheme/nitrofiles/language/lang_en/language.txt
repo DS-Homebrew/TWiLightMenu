@@ -511,6 +511,7 @@ ROM Start Error = ROM Start Error
 error = Error %i
 Please wait = Please wait...
 NDS Bootstrap Error = NDS Bootstrap Error
+GBARunner2 Error = GBARunner2 Error
 Flashcard Error = Flashcard Error
 Launch Error = Launch Error
 
@@ -518,6 +519,5 @@ Preparing Unlaunch Boot = Preparing Unlaunch Boot...
 Unlaunch Error = Unlaunch Error
 unlaunch boot = Boot DSiWare with Unlaunch
 
-bootthis exists = "bootthis" file(s) already exist on the SD root. Please back them up before launching DSiWare.
-unlaunch instructions = Please press and hold the X button. Hold it on the black screen for 2 seconds.
+unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
 [end]

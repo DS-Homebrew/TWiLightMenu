@@ -630,16 +630,14 @@ void MainWnd::launchSelected()
         progressWnd().update();
         progressWnd().show();
 
-        if (!unlaunch.prepare())
+        if (unlaunch.prepare())
         {
-            messageBox(this, LANG("game launch", "Unlaunch Error"), LANG("game launch", "bootthis exists"), MB_OK);
-            progressWnd().hide();
-            return;
+			progressWnd().hide();
+            messageBox(this, LANG("game launch", "unlaunch boot"), LANG("unlaunch boot", "unlaunch instructions"), MB_OK);
         }
         ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
         ms().saveSettings();
         progressWnd().hide();
-        messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_HOLD_X);
         unlaunch.launch();
     }
 
@@ -742,6 +740,11 @@ void MainWnd::bootSlot1(void)
 
 void MainWnd::bootGbaRunner(void)
 {
+	if (ms().useGbarunner && access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+        messageBox(this, LANG("game launch", "GBARunner2 Error"), "BINF: bios.bin not found", MB_OK);
+		return;
+	}
+
     if (!isDSiMode() && ms().useGbarunner)
     {
         bootFlashcard(GBARUNNER_FC, "", false);
