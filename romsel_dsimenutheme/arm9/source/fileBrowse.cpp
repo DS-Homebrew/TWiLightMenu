@@ -141,6 +141,7 @@ extern std::string ReplaceAll(std::string str, const std::string& from, const st
 
 extern void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings);
 extern void dsCardLaunch();
+extern void unlaunchSetHiyaBoot();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -503,6 +504,7 @@ void exitToSystemMenu(void) {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
 	*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
+	unlaunchSetHiyaBoot();
 	fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 }
 
