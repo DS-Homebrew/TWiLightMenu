@@ -1211,6 +1211,7 @@ int main(int argc, char **argv) {
 						printSmall(false, 2, 120, "DSiMenu++ to transfer your");
 					}
 					printSmall(false, 2, 128, "save data back.");
+					for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
 				}
 
 				char unlaunchDevicePath[256];
