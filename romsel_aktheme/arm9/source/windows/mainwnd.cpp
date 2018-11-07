@@ -647,7 +647,7 @@ void MainWnd::launchSelected()
         if (unlaunch.prepare())
         {
 			progressWnd().hide();
-            messageBox(this, LANG("game launch", "unlaunch boot"), LANG("unlaunch boot", "unlaunch instructions"), MB_OK);
+            messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
         }
         ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
         ms().saveSettings();
