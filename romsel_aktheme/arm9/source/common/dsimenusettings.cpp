@@ -171,6 +171,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
     settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
+	settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
     settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
