@@ -79,8 +79,8 @@ const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 std::string homebrewArg;
 std::string bootstrapfilename;
 
-static const char *unlaunchAutoLoadID = "AutoLoadInfo";
-//static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -284,13 +284,14 @@ int lastRunROM()
 		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 		*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+		*(u32*)(0x02000810) = 0;			// Unlaunch Flags
 		*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
 		*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 		*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 		int i2 = 0;
-		for (int i = 0; i < sizeof(unlaunchDevicePath); i++) {
+		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 			i2 += 2;
 		}
