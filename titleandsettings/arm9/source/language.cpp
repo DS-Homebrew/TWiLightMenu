@@ -227,7 +227,7 @@ void langInit(void)
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");
 	STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers");
 	STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons");
-	STR_SYSREGION = languageini.GetString("LANGUAGE", "LAUNCHERAPP", "SysNAND Region");
+	STR_SYSREGION = languageini.GetString("LANGUAGE", "SYSREGION", "SysNAND Region");
 	STR_LAUNCHERAPP = languageini.GetString("LANGUAGE", "LAUNCHERAPP", "SysNAND Launcher");
 	STR_SYSTEMSETTINGS = languageini.GetString("LANGUAGE", "SYSTEMSETTINGS", "System Settings");
 	STR_REPLACEDSIMENU = languageini.GetString("LANGUAGE", "REPLACEDSIMENU", "Replace DSi Menu");
