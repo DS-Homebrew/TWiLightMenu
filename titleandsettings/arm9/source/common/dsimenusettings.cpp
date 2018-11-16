@@ -29,7 +29,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     flashcard = EDSTTClone;
 
-    slot1LaunchMethod = EReboot;
+    slot1LaunchMethod = EDirect;
 
     bootstrapFile = EReleaseBootstrap;
 
