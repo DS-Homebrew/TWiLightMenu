@@ -635,7 +635,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangItalian,
 				 TLanguage::ELangSpanish});
 
-	if (isDSiMode() && sdAccessible) {
+	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
 		guiPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,
 				Option::Bool(&ms().secondaryAccess),

@@ -10,6 +10,7 @@
 static sNDSHeader nds;
 
 extern const char* settingsinipath;
+extern bool arm7SCFGLocked;
 
 bool previousUsedDevice = false;	// true == secondary
 bool secondaryDevice = false;
@@ -63,7 +64,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 TWL_CODE void twl_flashcardInit(void) {
-	if (REG_SCFG_MC != 0x11) {
+	if (REG_SCFG_MC != 0x11 && !arm7SCFGLocked) {
 		CIniFile settingsini( settingsinipath );
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
