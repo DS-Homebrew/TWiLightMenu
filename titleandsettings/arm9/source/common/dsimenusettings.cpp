@@ -23,6 +23,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showDirectories = true;
     showBoxArt = true;
     animateDsiIcons = true;
+    sysRegion = -1;
     launcherApp = -1;
     secondaryAccess = false;
     previousUsedDevice = false;
@@ -88,7 +89,10 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-    launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	if (consoleModel < 2) {
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
+		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	}
 
     flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
@@ -145,7 +149,10 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-    settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	if (consoleModel < 2) {
+		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
+		settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	}
 
     settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 

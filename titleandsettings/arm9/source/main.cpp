@@ -662,7 +662,13 @@ int main(int argc, char **argv)
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
-		guiPage.option(STR_LAUNCHERAPP,
+		guiPage
+			.option(STR_SYSREGION,
+				STR_DESCRIPTION_SYSREGION_1,
+				Option::Int(&ms().sysRegion),
+				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
+				{-1, 0, 1, 2, 3, 4, 5})
+			.option(STR_LAUNCHERAPP,
 				STR_DESCRIPTION_LAUNCHERAPP_1,
 				Option::Int(&ms().launcherApp),
 				{STR_NONE,

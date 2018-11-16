@@ -150,6 +150,7 @@ bool showDirectories = true;
 bool showBoxArt = true;
 bool animateDsiIcons = false;
 int launcherApp = -1;
+int sysRegion = -1;
 
 int guiLanguage = -1;
 int bstrap_language = -1;
@@ -185,6 +186,7 @@ void LoadSettings(void) {
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 	}
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);

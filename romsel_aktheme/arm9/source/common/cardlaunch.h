@@ -54,8 +54,45 @@ void dsiSysMenuLaunch()
 		*(u32 *)(0x02000310) = 0x4D454E55;	// "MENU"
 		unlaunchSetHiyaBoot();
 	} else {
+		u8 setRegion;
+		if (ms().sysRegion == -1) {
+			// Determine SysNAND region by searching region of System Settings on SDNAND
+			char tmdpath[256];
+			for (u8 i = 0x41; i <= 0x5A; i++)
+			{
+				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+				if (access(tmdpath, F_OK) == 0)
+				{
+					setRegion = i;
+					break;
+				}
+			}
+		} else {
+			switch(ms().sysRegion) {
+				case 0:
+				default:
+					setRegion = 0x4A;	// JAP
+					break;
+				case 1:
+					setRegion = 0x45;	// USA
+					break;
+				case 2:
+					setRegion = 0x50;	// EUR
+					break;
+				case 3:
+					setRegion = 0x55;	// AUS
+					break;
+				case 4:
+					setRegion = 0x43;	// CHN
+					break;
+				case 5:
+					setRegion = 0x4B;	// KOR
+					break;
+			}
+		}
+
 		char unlaunchDevicePath[256];
-		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E4145/content/0000000%i.app", ms().launcherApp);
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 
 		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
