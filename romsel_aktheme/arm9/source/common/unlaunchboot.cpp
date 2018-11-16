@@ -17,22 +17,24 @@ UnlaunchBoot::UnlaunchBoot(const std::string &fileName, u32 pubSavSize, u32 prvS
 void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::string &savExt, u32 saveSize)
 {
     std::string saveName = replaceAll(_fileName, fileExt, savExt);
-    if (access(saveName.c_str(), F_OK) == 0 && saveSize <= 0)
+    if (access(saveName.c_str(), F_OK) == 0)
         return;
 
-    static const int BUFFER_SIZE = 0x1000;
-    char buffer[BUFFER_SIZE];
-    memset(buffer, 0, sizeof(buffer));
+	if (saveSize > 0) {
+		static const int BUFFER_SIZE = 0x1000;
+		char buffer[BUFFER_SIZE];
+		memset(buffer, 0, sizeof(buffer));
 
-    FILE *pFile = fopen(saveName.c_str(), "wb");
-    if (pFile)
-    {
-        for (int i = saveSize; i > 0; i -= BUFFER_SIZE)
-        {
-            fwrite(buffer, 1, sizeof(buffer), pFile);
-        }
-        fclose(pFile);
-    }
+		FILE *pFile = fopen(saveName.c_str(), "wb");
+		if (pFile)
+		{
+			for (int i = saveSize; i > 0; i -= BUFFER_SIZE)
+			{
+				fwrite(buffer, 1, sizeof(buffer), pFile);
+			}
+			fclose(pFile);
+		}
+	}
 }
 
 UnlaunchBoot &UnlaunchBoot::onPrvSavCreated(std::function<void(void)> handler)
