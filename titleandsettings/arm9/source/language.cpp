@@ -24,6 +24,7 @@ std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
 std::string STR_BOXART = "STR_BOXART";
 std::string STR_ANIMATEDSIICONS = "STR_ANIMATEDSIICONS";
+std::string STR_LAUNCHERAPP = "STR_LAUNCHERAPP";
 std::string STR_SYSTEMSETTINGS = "STR_SYSTEMSETTINGS";
 std::string STR_REPLACEDSIMENU = "STR_REPLACEDSIMENU";
 std::string STR_RESTOREDSIMENU = "STR_RESTOREDSIMENU";
@@ -44,6 +45,8 @@ std::string STR_DESCRIPTION_DIRECTORIES_1 = "STR_DESCRIPTION_DIRECTORIES_1";
 std::string STR_DESCRIPTION_BOXART_1 = "STR_DESCRIPTION_BOXART_1";
 
 std::string STR_DESCRIPTION_ANIMATEDSIICONS_1 = "STR_DESCRIPTION_ANIMATEDSIICONS_1";
+
+std::string STR_DESCRIPTION_LAUNCHERAPP_1 = "STR_DESCRIPTION_LAUNCHERAPP_1";
 
 std::string STR_DESCRIPTION_SYSTEMSETTINGS_1 = "STR_DESCRIPTION_SYSTEMSETTINGS_1";
 
@@ -221,6 +224,7 @@ void langInit(void)
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");
 	STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers");
 	STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons");
+	STR_LAUNCHERAPP = languageini.GetString("LANGUAGE", "LAUNCHERAPP", "SysNAND Launcher");
 	STR_SYSTEMSETTINGS = languageini.GetString("LANGUAGE", "SYSTEMSETTINGS", "System Settings");
 	STR_REPLACEDSIMENU = languageini.GetString("LANGUAGE", "REPLACEDSIMENU", "Replace DSi Menu");
 	STR_RESTOREDSIMENU = languageini.GetString("LANGUAGE", "RESTOREDSIMENU", "Restore DSi Menu");
@@ -270,7 +274,9 @@ void langInit(void)
 
 	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen|of the DSi/3DS theme.");
 
-	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in|the DSi/3DS menus. Turning this off|will fix some icons appearing white.");
+	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in|the DSi/3DS menus.");
+
+	STR_DESCRIPTION_LAUNCHERAPP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LAUNCHERAPP_1", "To get the .app name,|press POWER, hold A,|then highlight LAUNCHER.");
 
 	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings|related to the DSi system.");
 

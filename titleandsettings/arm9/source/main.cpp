@@ -661,6 +661,23 @@ int main(int argc, char **argv)
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
+	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+		guiPage.option(STR_LAUNCHERAPP,
+				STR_DESCRIPTION_LAUNCHERAPP_1,
+				Option::Int(&ms().launcherApp),
+				{STR_NONE,
+				"00000000.app",
+				"00000001.app",
+				"00000002.app",
+				"00000003.app",
+				"00000004.app",
+				"00000005.app",
+				"00000006.app",
+				"00000007.app",
+				"00000008.app"},
+				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
+	}
+
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
 	if (sys().flashcardUsed() && sys().isRegularDS())

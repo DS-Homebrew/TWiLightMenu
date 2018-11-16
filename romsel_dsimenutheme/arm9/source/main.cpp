@@ -77,7 +77,7 @@ std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 std::string homebrewArg;
 
-static const char *unlaunchAutoLoadID = "AutoLoadInfo";
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
 bool arm7SCFGLocked = false;
@@ -149,6 +149,7 @@ int pagenum[2] = {0};
 bool showDirectories = true;
 bool showBoxArt = true;
 bool animateDsiIcons = false;
+int launcherApp = -1;
 
 int guiLanguage = -1;
 int bstrap_language = -1;
@@ -182,6 +183,9 @@ void LoadSettings(void) {
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
+	if (consoleModel < 2) {
+		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	}
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	if (bothSDandFlashcard()) {
@@ -1176,7 +1180,7 @@ int main(int argc, char **argv) {
 				*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 				memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 				int i2 = 0;
-				for (int i = 0; i < sizeof(unlaunchDevicePath); i++) {
+				for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 					*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 					i2 += 2;
 				}
