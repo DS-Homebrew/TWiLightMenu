@@ -62,7 +62,7 @@ bool fadeType = false; // false = out, true = in
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
-static int flashcard;
+//static int flashcard;
 /* Flashcard value
 	0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
 	1: R4DS (Original Non-SDHC version)/ M3 Simply
@@ -78,6 +78,9 @@ const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string homebrewArg;
 std::string bootstrapfilename;
+
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -267,13 +270,33 @@ int lastRunROM()
 	}
 	else if (ms().launchType == 2)
 	{
-		if (!ms().previousUsedDevice) {
-			if (!access(ms().dsiWareSrlPath.c_str(), F_OK) && access("sd:/bootthis.dsi", F_OK))
-				rename(ms().dsiWareSrlPath.c_str(), "sd:/bootthis.dsi"); // Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-			if (!access(ms().dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-				rename(ms().dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-			if (!access(ms().dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-				rename(ms().dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+		char unlaunchDevicePath[256];
+		if (ms().previousUsedDevice) {
+			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
+		} else {
+			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", ms().dsiWareSrlPath.c_str());
+			unlaunchDevicePath[0] = 's';
+			unlaunchDevicePath[1] = 'd';
+			unlaunchDevicePath[2] = 'm';
+			unlaunchDevicePath[3] = 'c';
+		}
+
+		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+		*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+		*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+		*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+		*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+		*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+		int i2 = 0;
+		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+			i2 += 2;
+		}
+		while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+			*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 		}
 
 		fifoSendValue32(FIFO_USER_08, 1); // Reboot
@@ -499,16 +522,6 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
-	if (ms().launchType == 2 && !ms().previousUsedDevice)
-	{
-		if (!access("sd:/bootthis.dsi", F_OK) && access(ms().dsiWareSrlPath.c_str(), F_OK))
-			rename("sd:/bootthis.dsi", ms().dsiWareSrlPath.c_str()); // Rename "bootthis.dsi" back to original .nds filename
-		if (!access("sd:/bootthis.pub", F_OK) && access(ms().dsiWarePubPath.c_str(), F_OK))
-			rename("sd:/bootthis.pub", ms().dsiWarePubPath.c_str());
-		if (!access("sd:/bootthis.prv", F_OK) && access(ms().dsiWarePrvPath.c_str(), F_OK))
-			rename("sd:/bootthis.prv", ms().dsiWarePrvPath.c_str());
-	}
-
 	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
@@ -622,7 +635,7 @@ int main(int argc, char **argv)
 				 TLanguage::ELangItalian,
 				 TLanguage::ELangSpanish});
 
-	if (isDSiMode() && sdAccessible) {
+	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
 		guiPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,
 				Option::Bool(&ms().secondaryAccess),
@@ -647,6 +660,29 @@ int main(int argc, char **argv)
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+
+	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+		guiPage
+			.option(STR_SYSREGION,
+				STR_DESCRIPTION_SYSREGION_1,
+				Option::Int(&ms().sysRegion),
+				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
+				{-1, 0, 1, 2, 3, 4, 5})
+			.option(STR_LAUNCHERAPP,
+				STR_DESCRIPTION_LAUNCHERAPP_1,
+				Option::Int(&ms().launcherApp),
+				{STR_NONE,
+				"00000000.app",
+				"00000001.app",
+				"00000002.app",
+				"00000003.app",
+				"00000004.app",
+				"00000005.app",
+				"00000006.app",
+				"00000007.app",
+				"00000008.app"},
+				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
+	}
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 

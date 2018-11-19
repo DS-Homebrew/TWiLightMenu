@@ -133,6 +133,8 @@ class DSiMenuPlusPlusSettings
     bool showDirectories;
     bool showBoxArt;
     bool animateDsiIcons;
+    int sysRegion;
+    int launcherApp;
     bool gotosettings;
     bool previousUsedDevice;
     bool secondaryDevice;

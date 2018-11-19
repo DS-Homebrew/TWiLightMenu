@@ -77,6 +77,9 @@ std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 std::string homebrewArg;
 
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
+static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -135,6 +138,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
+bool gbaBiosFound[2] = {false};
 bool useGbarunner = false;
 int appName = 0;
 int theme = 0;
@@ -145,6 +149,8 @@ int pagenum[2] = {0};
 bool showDirectories = true;
 bool showBoxArt = true;
 bool animateDsiIcons = false;
+int launcherApp = -1;
+int sysRegion = -1;
 
 int guiLanguage = -1;
 int bstrap_language = -1;
@@ -178,6 +184,10 @@ void LoadSettings(void) {
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
+	if (consoleModel < 2) {
+		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
+	}
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	if (bothSDandFlashcard()) {
@@ -706,6 +716,25 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	stop();
 }
 
+void unlaunchSetHiyaBoot(void) {
+	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	int i2 = 0;
+	for (int i = 0; i < 14; i++) {
+		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+		i2 += 2;
+	}
+	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+}
+
 void dsCardLaunch() {
 	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 	*(u16*)(0x02000304) = 0x1801;
@@ -718,6 +747,8 @@ void dsCardLaunch() {
 	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
 	}
+
+	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
@@ -829,6 +860,13 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	
+	if (access("sd:/bios.bin", F_OK) == 0) {
+		gbaBiosFound[0] = true;
+	}
+	if (access("fat:/bios.bin", F_OK) == 0) {
+		gbaBiosFound[1] = true;
+	}
 
 	graphicsInit();
 	fontInit();
@@ -876,10 +914,10 @@ int main(int argc, char **argv) {
 		showProgressIcon = true;
 		controlTopBright = false;
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
-			fcopy("sd:/bootthis.pub", dsiWarePubPath.c_str());
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", dsiWarePubPath.c_str());
 		}
 		if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
-			fcopy("sd:/bootthis.prv", dsiWarePrvPath.c_str());
+			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", dsiWarePrvPath.c_str());
 		}
 		showProgressIcon = false;
 		fadeType = false;	// Fade to white
@@ -907,14 +945,14 @@ int main(int argc, char **argv) {
 
 			// Delete previously used DSiWare of flashcard from SD
 			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
-				if (access("sd:/bootthis.dsi", F_OK) == 0) {
-					remove("sd:/bootthis.dsi");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				}
-				if (access("sd:/bootthis.pub", F_OK) == 0) {
-					remove("sd:/bootthis.pub");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 				}
-				if (access("sd:/bootthis.prv", F_OK) == 0) {
-					remove("sd:/bootthis.prv");
+				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
+					remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 				}
 			}
 
@@ -969,6 +1007,8 @@ int main(int argc, char **argv) {
 				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
 					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
 				}
+
+				unlaunchSetHiyaBoot();
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
@@ -1028,11 +1068,17 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
+				fadeSpeed = true;	// Fast fading
+
 				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
-					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
+					clearText();
 					printLarge(false, 4, 4, savecreate);
+					if (!fadeType) {
+						fadeType = true;	// Fade in from white
+						for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
+					}
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1047,14 +1093,17 @@ int main(int argc, char **argv) {
 					}
 					printLarge(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
-					clearText();
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
-					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
 					const char* savecreated = "Private save file created!";
+					clearText();
 					printLarge(false, 4, 4, savecreate);
+					if (!fadeType) {
+						fadeType = true;	// Fade in from white
+						for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
+					}
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1069,65 +1118,79 @@ int main(int argc, char **argv) {
 					}
 					printLarge(false, 4, 20, savecreated);
 					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
-					clearText();
+				}
+
+				if (fadeType) {
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 				}
 
 				if (secondaryDevice) {
-					ClearBrightness();
+					clearText();
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
+					fadeType = true;	// Fade in from white
+					for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
 					showProgressIcon = true;
-					fcopy(dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");
+					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
-						fcopy(dsiWarePubPath.c_str(), "sd:/bootthis.pub");
+						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 					}
 					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
-						fcopy(dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
+						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					showProgressIcon = false;
-					clearText();
-				} else {
-					if (access("sd:/bootthis.dsi", F_OK)) {
-						rename (dsiWareSrlPath.c_str(), "sd:/bootthis.dsi");	// Rename .nds file to "bootthis.dsi" for Unlaunch to boot it
-					} else {
-						ClearBrightness();
-						printLarge(false, 4, 4, "\"bootthis\" file(s) already exist");
-						printLarge(false, 4, 20, "on the SD root. Please back them up");
-						printLarge(false, 4, 36, "before launching DSiWare.");
-						stop();
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+
+					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+						clearText();
+						printLarge(false, 4, 64, "After saving, please re-start");
+						if (appName == 0) {
+							printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
+						} else if (appName == 1) {
+							printLarge(false, 4, 80, "SRLoader to transfer your");
+						} else if (appName == 2) {
+							printLarge(false, 4, 80, "DSiMenu++ to transfer your");
+						}
+						printLarge(false, 4, 96, "save data back.");
+						fadeType = true;	// Fade in from white
+						for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
 					}
-					if (!access(dsiWarePubPath.c_str(), F_OK) && access("sd:/bootthis.pub", F_OK))
-						rename (dsiWarePubPath.c_str(), "sd:/bootthis.pub");
-					if (!access(dsiWarePrvPath.c_str(), F_OK) && access("sd:/bootthis.prv", F_OK))
-						rename (dsiWarePrvPath.c_str(), "sd:/bootthis.prv");
 				}
 
-				ClearBrightness();
-				printLarge(false, 4, 4, "Please press and hold the X button.");
-				printLarge(false, 4, 20, "Hold it on the black screen for");
-				printLarge(false, 4, 36, "2 seconds.");
+				char unlaunchDevicePath[256];
 				if (secondaryDevice) {
-					printLarge(false, 4, 64, "After saving, please re-start");
-					if (appName == 0) {
-						printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
-					} else if (appName == 1) {
-						printLarge(false, 4, 80, "SRLoader to transfer your");
-					} else if (appName == 2) {
-						printLarge(false, 4, 80, "DSiMenu++ to transfer your");
-					}
-					printLarge(false, 4, 96, "save data back.");
+					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
+				} else {
+					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", dsiWareSrlPath.c_str());
+					unlaunchDevicePath[0] = 's';
+					unlaunchDevicePath[1] = 'd';
+					unlaunchDevicePath[2] = 'm';
+					unlaunchDevicePath[3] = 'c';
 				}
 
-				// Wait for X button hold
-				while (1)
-				{
-					swiIntrWait(0, 1);
-					scanKeys();
-					if (keysHeld() & KEY_X) break;
+				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+				*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+				*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+				*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+				*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+				*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+				*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+				*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+				memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+				int i2 = 0;
+				for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+					*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+					i2 += 2;
+				}
+				while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+					*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 				}
 
-				clearText();
-				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
@@ -1392,11 +1455,9 @@ int main(int argc, char **argv) {
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (homebrewBootstrap) {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						} else {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 						}
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
@@ -1406,7 +1467,10 @@ int main(int argc, char **argv) {
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
 						ClearBrightness();
-						printLarge(false, 4, 36, text);
+						printLarge(false, 4, 4, text);
+						if (err == 1) {
+							printLarge(false, 4, 20, "nds-bootstrap not found.");
+						}
 						stop();
 					} else {
 						launchType = 1;

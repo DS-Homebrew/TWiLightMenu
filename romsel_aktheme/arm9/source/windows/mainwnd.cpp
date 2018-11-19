@@ -36,6 +36,7 @@
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
 #include "common/dsargv.h"
+#include "common/flashcard.h"
 #include "common/flashcardlaunch.h"
 #include "common/gbaswitch.h"
 #include "common/unlaunchboot.h"
@@ -599,7 +600,20 @@ void MainWnd::launchSelected()
         return;
     }
 
+	if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()) {
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
+		}
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.pub", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+		}
+		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.prv", F_OK) == 0) {
+			remove("sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+		}
+	}
+
     ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
+	ms().previousUsedDevice = ms().secondaryDevice;
     ms().saveSettings();
 
     DSRomInfo rominfo;
@@ -607,16 +621,26 @@ void MainWnd::launchSelected()
         return;
 
     // Launch DSiWare
-    if (rominfo.isDSiWare() && rominfo.isArgv() && ms().consoleModel < 2)
+    if (rominfo.isDSiWare() && rominfo.isArgv())
     {
+		if (ms().consoleModel > 1) {
+			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
+			return;
+		}
+
         ms().launchType = DSiMenuPlusPlusSettings::ENoLaunch;
         ms().saveSettings();
         dsiLaunch(rominfo.saveInfo().dsiTid);
         return;
     }
 
-    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel < 2)
+    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode())
     {
+		if (ms().consoleModel > 1) {
+			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
+			return;
+		}
+
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
 
@@ -630,16 +654,14 @@ void MainWnd::launchSelected()
         progressWnd().update();
         progressWnd().show();
 
-        if (!unlaunch.prepare())
+        if (unlaunch.prepare())
         {
-            messageBox(this, LANG("game launch", "Unlaunch Error"), LANG("game launch", "bootthis exists"), MB_OK);
-            progressWnd().hide();
-            return;
+			progressWnd().hide();
+            messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
         }
         ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
         ms().saveSettings();
         progressWnd().hide();
-        messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_HOLD_X);
         unlaunch.launch();
     }
 
@@ -649,7 +671,7 @@ void MainWnd::launchSelected()
         ms().saveSettings();
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
         // Direct Boot for homebrew.
-        if (rominfo.isDSiWare() || gameConfig.directBoot && rominfo.isHomebrew())
+        if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
         {
             bootArgv(rominfo);
             return;
@@ -742,6 +764,11 @@ void MainWnd::bootSlot1(void)
 
 void MainWnd::bootGbaRunner(void)
 {
+	if (ms().useGbarunner && access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+        messageBox(this, LANG("game launch", "GBARunner2 Error"), "BINF: bios.bin not found", MB_OK);
+		return;
+	}
+
     if (!isDSiMode() && ms().useGbarunner)
     {
         bootFlashcard(GBARUNNER_FC, "", false);

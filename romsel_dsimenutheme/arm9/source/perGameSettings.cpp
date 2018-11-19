@@ -60,8 +60,8 @@
 const char* SDKnumbertext;
 
 extern bool showdialogbox;
+extern bool dbox_showIcon;
 
-bool perGameSettingsButtons = false;
 bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
@@ -130,7 +130,7 @@ void perGameSettings (std::string filename) {
 	int pressed = 0;
 
 	clearText();
-	if (isDSiMode()) perGameSettingsButtons = true;
+	dbox_showIcon = true;
 	showdialogbox = true;
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
@@ -434,5 +434,5 @@ void perGameSettings (std::string filename) {
 	clearText();
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
-	if (isDSiMode()) perGameSettingsButtons = false;
+	dbox_showIcon = false;
 }

@@ -73,10 +73,15 @@ extern int launchType;
 extern bool slot1LaunchMethod;
 extern bool bootstrapFile;
 extern bool homebrewBootstrap;
+extern bool gbaBiosFound[2];
 extern bool useGbarunner;
 extern bool arm7SCFGLocked;
 extern int consoleModel;
 extern bool isRegularDS;
+extern int launcherApp;
+extern int sysRegion;
+
+extern const char *unlaunchAutoLoadID;
 
 extern bool dropDown;
 extern bool redoDropDown;
@@ -91,6 +96,7 @@ extern bool applaunchprep;
 extern touchPosition touch;
 
 extern bool showdialogbox;
+extern bool dbox_showIcon;
 
 extern std::string romfolder[2];
 
@@ -139,6 +145,7 @@ extern std::string ReplaceAll(std::string str, const std::string& from, const st
 
 extern void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings);
 extern void dsCardLaunch();
+extern void unlaunchSetHiyaBoot();
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -498,9 +505,69 @@ void exitToSystemMenu(void) {
 		SaveSettings();
 		settingsChanged = false;
 	}
-	*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-	*(u16*)(0x02000304) = 0x1801;
-	*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
+	if (launcherApp == -1) {
+		*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
+		*(u16*)(0x02000304) = 0x1801;
+		*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
+		unlaunchSetHiyaBoot();
+	} else {
+		u8 setRegion;
+		if (sysRegion == -1) {
+			// Determine SysNAND region by searching region of System Settings on SDNAND
+			char tmdpath[256];
+			for (u8 i = 0x41; i <= 0x5A; i++)
+			{
+				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+				if (access(tmdpath, F_OK) == 0)
+				{
+					setRegion = i;
+					break;
+				}
+			}
+		} else {
+			switch(sysRegion) {
+				case 0:
+				default:
+					setRegion = 0x4A;	// JAP
+					break;
+				case 1:
+					setRegion = 0x45;	// USA
+					break;
+				case 2:
+					setRegion = 0x50;	// EUR
+					break;
+				case 3:
+					setRegion = 0x55;	// AUS
+					break;
+				case 4:
+					setRegion = 0x43;	// CHN
+					break;
+				case 5:
+					setRegion = 0x4B;	// KOR
+					break;
+			}
+		}
+
+		char unlaunchDevicePath[256];
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
+
+		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+		*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+		*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+		*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+		*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+		int i2 = 0;
+		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+			i2 += 2;
+		}
+		while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+			*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+		}
+	}
 	fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 }
 
@@ -547,6 +614,30 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
+	if (!gbaBiosFound[secondaryDevice] && useGbarunner) {
+		mmEffectEx(&snd_wrong);
+		clearText();
+		dbox_showIcon = false;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		printLarge(false, 16, 12, "Error code: BINF");
+		printSmallCentered(false, 64, "The GBA BIOS is required");
+		printSmallCentered(false, 78, "to run GBA games.");
+		printSmallCentered(false, 112, "Place the BIOS on the root");
+		printSmallCentered(false, 126, "as \"bios.bin\".");
+		printSmall(false, 208, 166, "A: OK");
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDownRepeat();
+			swiIntrWait(0, 1);
+		} while (!(pressed & KEY_A));
+		clearText();
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		return;
+	}
+
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
 	useBootstrap = true;

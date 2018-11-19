@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "dsimenusettings.h"
+#include "systemdetails.h"
 #include "bootstrappaths.h"
 #include "inifile.h"
 
@@ -48,7 +49,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 TWL_CODE void twl_flashcardInit(void) {
-	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11) {
+	if (!flashcardFound() && isDSiMode() && REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
 		CIniFile settingsini(DSIMENUPP_INI);
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {

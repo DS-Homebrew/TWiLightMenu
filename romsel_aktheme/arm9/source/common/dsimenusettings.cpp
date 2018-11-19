@@ -25,6 +25,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showDirectories = true;
     showBoxArt = true;
     animateDsiIcons = true;
+    launcherApp = -1;
     previousUsedDevice = false;
     secondaryDevice = false;
 
@@ -97,6 +98,10 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+	if (consoleModel < 2) {
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
+		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+	}
 
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
@@ -171,6 +176,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
     settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
+	settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
     settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
