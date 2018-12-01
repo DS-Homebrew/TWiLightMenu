@@ -1005,6 +1005,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				{
 					mmEffectEx(&snd_wrong);
 					clearText();
+					dbox_showIcon = true;
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
@@ -1028,6 +1029,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					showdialogbox = false;
 					for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+					dbox_showIcon = false;
 				}
 				else
 				{
@@ -1175,9 +1177,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder
-			&& strcmp(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "..") != 0)
+			&& strcmp(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "..") != 0
+			&& !isDirectory[cursorPosition[secondaryDevice]])
 			{
 				clearText();
+				dbox_showIcon = true;
 				showdialogbox = true;
 				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
@@ -1185,11 +1189,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
-				if (isDirectory[cursorPosition[secondaryDevice]]) {
-					printSmallCentered(false, 128, "delete this folder?");
-				} else {
+				//if (isDirectory[cursorPosition[secondaryDevice]]) {
+				//	printSmallCentered(false, 128, "delete this folder?");
+				//} else {
 					printSmallCentered(false, 128, "delete this game?");
-				}
+				//}
 				for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
 				printSmall(false, 160, 166, "A: Yes");
 				printSmall(false, 208, 166, "B: No");
@@ -1225,6 +1229,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				showdialogbox = false;
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				dbox_showIcon = false;
 			}
 
 			if ((pressed & KEY_Y) && !startMenu
