@@ -1033,6 +1033,102 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				else
 				{
+					bool hasAP = false;
+					if (!secondaryDevice
+					&& bnrRomType[cursorPosition[secondaryDevice]] == 0 && !isDSiWare[cursorPosition[secondaryDevice]]
+					&& isHomebrew[cursorPosition[secondaryDevice]] == 0)
+					{
+						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "rb");
+
+						char game_TID[5];
+						char game_TID_full[5];
+						char game_TID_letter1[5];
+						grabTID(f_nds_file, game_TID);
+						grabTID(f_nds_file, game_TID_full);
+						grabTID(f_nds_file, game_TID_letter1);
+						game_TID_full[4] = 0;
+						game_TID[4] = 0;
+						game_TID[3] = 0;
+						game_TID_letter1[4] = 0;
+						game_TID_letter1[3] = 0;
+						game_TID_letter1[2] = 0;
+						game_TID_letter1[1] = 0;
+						fclose(f_nds_file);
+
+						// Check for ROMs that have AP measures.
+						if ((strcmp(game_TID_letter1, "B") == 0)
+						|| (strcmp(game_TID_letter1, "T") == 0)
+						|| (strcmp(game_TID_letter1, "V") == 0)) {
+							hasAP = true;
+						} else if (strcmp(game_TID_full, "AZLJ") != 0 && strcmp(game_TID_full, "YEEJ") != 0) {
+								// ^ Girls Mode (JAP version of Style Savvy) and Inazuma Eleven (J) do not have AP measures
+
+						static const char ap_list[][4] = {
+							"ABT",	// Bust-A-Move DS
+							"YHG",	// Houkago Shounen
+							"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
+							"AS7",	// Summon Night: Twin Age
+							"YFQ",	// Nanashi no Geemu
+							"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
+							"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
+							"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
+							"CCU",	// Tomodachi Life
+							"CLJ",	// Mario & Luigi: Bowser's Inside Story
+							"YKG",	// Kindgom Hearts: 358/2 Days
+							"COL",	// Mario & Sonic at the Olympic Winter Games
+							"C24",	// Phantasy Star 0
+							"AZL",	// Style Savvy
+							"CS3",	// Sonic and Sega All Stars Racing
+							"IPK",	// Pokemon HeartGold Version
+							"IPG",	// Pokemon SoulSilver Version
+							"YBU",	// Blue Dragon: Awakened Shadow
+							"YBN",	// 100 Classic Books
+							"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
+							"C3J",	// Professor Layton and the Unwound Future
+							"IRA",	// Pokemon Black Version
+							"IRB",	// Pokemon White Version
+							"CJR",	// Dragon Quest Monsters: Joker 2
+							"YEE",	// Inazuma Eleven
+							"UZP",	// Learn with Pokemon: Typing Adventure
+							"IRE",	// Pokemon Black Version 2
+							"IRD",	// Pokemon White Version 2
+						};
+
+						// TODO: If the list gets large enough, switch to bsearch().
+						for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
+							if (!memcmp(game_TID, ap_list[i], 3)) {
+								// Found a match.
+								hasAP = true;
+								break;
+							}
+						}
+
+						}
+					}
+					if (hasAP) {
+					clearText();
+					dbox_showIcon = true;
+					showdialogbox = true;
+					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					printSmallCentered(false, 64, "This game may not work correctly,");
+					printSmallCentered(false, 78, "if it's not AP-patched.");
+					printSmallCentered(false, 112, "If the game freezes, does not");
+					printSmallCentered(false, 126, "start, or doesn't seem normal,");
+					printSmallCentered(false, 140, "it needs to be AP-patched.");
+					printSmall(false, 208, 166, "A: OK");
+					pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						swiIntrWait(0, 1);
+					} while (!(pressed & KEY_A));
+					clearText();
+					showdialogbox = false;
+					for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+					dbox_showIcon = false;
+					}
+
 					mmEffectEx(&snd_launch);
 					controlTopBright = true;
 					applaunch = true;
