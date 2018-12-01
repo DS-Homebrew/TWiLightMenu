@@ -140,8 +140,13 @@ void perGameSettings (std::string filename) {
 
 	std::string filenameForInfo = filename;
 	if((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
-	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg"))
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV")
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg")
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "LAUNCHARG"))
 	{
+		bool isLauncharg = ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg")
+						|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "LAUNCHARG"));
+
 		std::vector<char*> argarray;
 
 		FILE *argfile = fopen(filenameForInfo.c_str(),"rb");
@@ -163,6 +168,28 @@ void perGameSettings (std::string filename) {
 		}
 		fclose(argfile);
 		filenameForInfo = argarray.at(0);
+
+		if (isLauncharg) {
+			char appPath[256];
+			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
+			{
+				if (appVer > 0xF) {
+					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", filenameForInfo.c_str(), appVer);
+				} else {
+					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", filenameForInfo.c_str(), appVer);
+				}
+				/*printSmall(false, 16, 64, appPath);
+				printSmall(false, -128, 80, appPath);
+				while (1) {
+					swiWaitForVBlank();
+				}*/
+				if (access(appPath, F_OK) == 0)
+				{
+					break;
+				}
+			}
+			filenameForInfo = appPath;
+		}
 	}
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");

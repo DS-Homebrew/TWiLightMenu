@@ -738,8 +738,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/TWiLightMenu/boxart/%s.bmp", dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
 						if (!access(boxArtPath[i], F_OK)) {
 						} else if (bnrRomType[i] == 0) {
+							bool isLauncharg = ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
+											|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"));
+
 							if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg"))
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
 							{
 								vector<char*> argarray;
 
@@ -764,6 +769,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								std_romsel_filename = argarray.at(0);
 							}
 							// Get game's TID
+							if (isLauncharg) {
+								char appPath[256];
+								for (u8 appVer = 0; appVer <= 0xFF; appVer++)
+								{
+									if (appVer > 0xF) {
+										snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", std_romsel_filename.c_str(), appVer);
+									} else {
+										snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", std_romsel_filename.c_str(), appVer);
+									}
+									if (access(appPath, F_OK) == 0)
+									{
+										break;
+									}
+								}
+								std_romsel_filename = appPath;
+							}
 							FILE *f_nds_file = fopen(std_romsel_filename.c_str(), "rb");
 							char game_TID[5];
 							grabTID(f_nds_file, game_TID);

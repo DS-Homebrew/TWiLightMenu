@@ -989,9 +989,23 @@ int main(int argc, char **argv) {
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
+				char appPath[256];
+				for (u8 appVer = 0; appVer <= 0xFF; appVer++)
+				{
+					if (appVer > 0xF) {
+						snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", filename.c_str(), appVer);
+					} else {
+						snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", filename.c_str(), appVer);
+					}
+					if (access(appPath, F_OK) == 0)
+					{
+						break;
+					}
+				}
+
 				sNDSHeaderExt NDSHeader;
 
-				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+				FILE *f_nds_file = fopen(appPath, "rb");
 
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
