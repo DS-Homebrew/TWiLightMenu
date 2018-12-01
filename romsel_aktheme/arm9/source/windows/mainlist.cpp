@@ -318,7 +318,8 @@ bool MainList::enterDir(const std::string &dirName)
                 {
                     rominfo.MayBeGbaRom(filename);
                 }
-                else if (".launcharg" == extName || ".argv" == extName)
+                //else if (".launcharg" == extName || ".argv" == extName)
+                else if (".argv" == extName)
                 {
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);

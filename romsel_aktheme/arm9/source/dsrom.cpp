@@ -85,8 +85,10 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
 
-        if (header.unitCode == 0x03 && (header.arm7binarySize > 0x20000 || _isArgv == ETrue))
-        {
+        if ((header.unitCode == 0x03 && (header.arm7binarySize > 0x20000 || _isArgv == ETrue))
+        || (header.unitCode == 0x03 && header.gameCode[0] == 0x48)
+		|| (header.unitCode == 0x03 && header.arm7binarySize == 0x151BC))
+		{
             dbg_printf("DSIWAREFOUND Is DSiWare!\n");
             _isDSiWare = ETrue;
 
