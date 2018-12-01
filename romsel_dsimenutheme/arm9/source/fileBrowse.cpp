@@ -1125,7 +1125,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} while (!(pressed & KEY_A));
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 20; i++) swiIntrWait(0, 1);
 					dbox_showIcon = false;
 					}
 
