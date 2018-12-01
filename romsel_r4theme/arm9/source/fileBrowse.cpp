@@ -438,15 +438,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		}
 
 		if ((pressed & KEY_X)
-		&& strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0)
+		&& strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0 && !isDirectory)
 		{
 			showdialogbox = true;
 			printLargeCentered(false, 84, "Warning!");
-			if (isDirectory) {
-				printSmallCentered(false, 104, "Delete this folder?");
-			} else {
+			//if (isDirectory) {
+			//	printSmallCentered(false, 104, "Delete this folder?");
+			//} else {
 				printSmallCentered(false, 104, "Delete this game?");
-			}
+			//}
 			for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
 			printSmallCentered(false, 118, "A: Yes  B: No");
 			while (1) {

@@ -131,8 +131,11 @@ void perGameSettings (std::string filename) {
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
+	bool isLauncharg = ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg")
+					|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "LAUNCHARG"));
 	if((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
-	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg"))
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV")
+	|| isLauncharg)
 	{
 		std::vector<char*> argarray;
 
@@ -155,6 +158,28 @@ void perGameSettings (std::string filename) {
 		}
 		fclose(argfile);
 		filenameForInfo = argarray.at(0);
+
+		if (isLauncharg) {
+			char appPath[256];
+			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
+			{
+				if (appVer > 0xF) {
+					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", filenameForInfo.c_str(), appVer);
+				} else {
+					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", filenameForInfo.c_str(), appVer);
+				}
+				/*printSmall(false, 16, 64, appPath);
+				printSmall(false, -128, 80, appPath);
+				while (1) {
+					swiWaitForVBlank();
+				}*/
+				if (access(appPath, F_OK) == 0)
+				{
+					break;
+				}
+			}
+			filenameForInfo = appPath;
+		}
 	}
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
@@ -195,7 +220,7 @@ void perGameSettings (std::string filename) {
 		} else {
 			dialogboxHeight = 1;
 		}
-	} else if (isDSiWare || isHomebrew == 2 || !isDSiMode()) {
+	} else if (isLauncharg || isDSiWare || isHomebrew == 2 || !isDSiMode()) {
 		dialogboxHeight = 0;
 	} else {
 		if (secondaryDevice) {
@@ -251,7 +276,7 @@ void perGameSettings (std::string filename) {
 			} else {
 				printSmallCentered(false, 126, "B: Back");
 			}
-		} else if (isDSiWare || isHomebrew == 2 || !isDSiMode()) {
+		} else if (isLauncharg || isDSiWare || isHomebrew == 2 || !isDSiMode()) {
 			printLargeCentered(false, 84, "Info");
 			if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
@@ -377,7 +402,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-		} else if (isDSiWare || isHomebrew == 2 || !isDSiMode()) {
+		} else if (isLauncharg || isDSiWare || isHomebrew == 2 || !isDSiMode()) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
