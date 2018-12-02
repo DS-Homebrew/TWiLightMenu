@@ -25,7 +25,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - Joom: Original TWLoader logo.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
 - chyyran: Port of akMenu/Wood UI to TWLMenu++ as a theme.
-- Robz8: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
+- RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
 - shutterbug2000: For the muted sound/touchscreen fix for nds-bootstrap.
 - spinal_cord: DSi4DS and DSision2 graphics.
 - devkitPro: Some code used in nds-hb-menu.
