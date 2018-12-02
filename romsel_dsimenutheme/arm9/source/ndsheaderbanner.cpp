@@ -46,6 +46,71 @@ u32 getSDKVersion(FILE *ndsFile)
 	return getModuleParams(&NDSHeader, ndsFile)->sdk_version;
 }
 
+/**
+ * Check if NDS game has AP.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @return true on success; false if no AP.
+ */
+bool checkRomAP(FILE *ndsFile)
+{
+	char game_TID[5];
+	grabTID(ndsFile, game_TID);
+	game_TID[4] = 0;
+
+	// Check for ROMs that have AP measures.
+	if ((strncmp(game_TID, "B", 1) == 0)
+	|| (strncmp(game_TID, "T", 1) == 0)
+	|| (strncmp(game_TID, "V", 1) == 0)) {
+		return true;
+	} else if (strcmp(game_TID, "AZLJ") != 0 && strcmp(game_TID, "YEEJ") != 0) {
+			// ^ Girls Mode (JAP version of Style Savvy) and Inazuma Eleven (J) do not have AP measures
+
+		static const char ap_list[][4] = {
+			"ABT",	// Bust-A-Move DS
+			"YHG",	// Houkago Shounen
+			"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
+			"AS7",	// Summon Night: Twin Age
+			"YFQ",	// Nanashi no Geemu
+			"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
+			"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
+			"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
+			"CCU",	// Tomodachi Life
+			"CLJ",	// Mario & Luigi: Bowser's Inside Story
+			"YKG",	// Kindgom Hearts: 358/2 Days
+			"COL",	// Mario & Sonic at the Olympic Winter Games
+			"C24",	// Phantasy Star 0
+			"AZL",	// Style Savvy
+			"CS3",	// Sonic and Sega All Stars Racing
+			"IPK",	// Pokemon HeartGold Version
+			"IPG",	// Pokemon SoulSilver Version
+			"YBU",	// Blue Dragon: Awakened Shadow
+			"YBN",	// 100 Classic Books
+			"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
+			"C3J",	// Professor Layton and the Unwound Future
+			"IRA",	// Pokemon Black Version
+			"IRB",	// Pokemon White Version
+			"CJR",	// Dragon Quest Monsters: Joker 2
+			"YEE",	// Inazuma Eleven
+			"UZP",	// Learn with Pokemon: Typing Adventure
+			"IRE",	// Pokemon Black Version 2
+			"IRD",	// Pokemon White Version 2
+		};
+
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
+			if (memcmp(game_TID, ap_list[i], 3) == 0) {
+				// Found a match.
+				return true;
+				break;
+			}
+		}
+
+	}
+	
+	return false;
+}
+
 // bnriconframeseq[]
 static u16 bnriconframeseq[40][64] = {0x0000};
 
