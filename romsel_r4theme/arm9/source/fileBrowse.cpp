@@ -412,7 +412,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				showdialogbox = false;
 				dialogboxHeight = 0;
-				iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+				titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 				if (!isRegularDS) {
 					printSmall(false, 8, 168, "Location:");
 					if (secondaryDevice) {
