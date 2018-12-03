@@ -409,8 +409,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_A));
+				clearText();
 				showdialogbox = false;
 				dialogboxHeight = 0;
+				iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+				if (!isRegularDS) {
+					printSmall(false, 8, 168, "Location:");
+					if (secondaryDevice) {
+						printSmall(false, 8, 176, "Slot-1 microSD Card");
+					} else if (consoleModel < 3) {
+						printSmall(false, 8, 176, "SD Card");
+					} else {
+						printSmall(false, 8, 176, "microSD Card");
+					}
+				}
 				}
 
 				applaunch = true;
