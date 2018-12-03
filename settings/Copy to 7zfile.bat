@@ -1,0 +1,2 @@
+@echo off
+copy "settings.nds" "../7zfile/_nds/TWiLightMenu/settings.srldr"
