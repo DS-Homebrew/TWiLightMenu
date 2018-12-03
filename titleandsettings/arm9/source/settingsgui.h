@@ -71,7 +71,7 @@ private:
    * Sets the text at the top screen to
    * be printed next call of draw.
    */
-  void setTopText(const std::string &text);  
+  void setTopText(const std::string &text);
 
   void drawSub();
 

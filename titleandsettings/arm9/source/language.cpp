@@ -236,61 +236,61 @@ void langInit(void)
 	STR_SHOW = languageini.GetString("LANGUAGE", "SHOW", "Show");
 	STR_HIDE = languageini.GetString("LANGUAGE", "HIDE", "Hide");
 
-	STR_DESCRIPTION_S1SDACCESS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used|as a secondary device. Turn this|off, if IR functionality doesn't|work, or if the app crashes.");
+	STR_DESCRIPTION_S1SDACCESS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes.");
 
 	switch (ms().appName)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight|Menu++. Press Left/Right|to select, A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes.");
 
 		break;
 	case 1:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader|Press Left/Right|to select, A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader Press Left/Right to select, A for sub-themes.");
 
 		break;
 	case 2:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSiMenu++|Press Left/Right|to select, A for sub-themes.");
+		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSiMenu++ Press Left/Right to select, A for sub-themes.");
 
 		break;
 	}
 
-	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on|startup to skip to the |ROM select menu.|Press Y to start last played ROM.");
+	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the  ROM select menu. Press Y to start last played ROM.");
 
 	switch (ms().appName)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be|shown when you start|TWiLight Menu++.");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++.");
 
 		break;
 	case 1:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The logo will be|shown when you start|SRLoader.");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The logo will be shown when you start SRLoader.");
 
 		break;
 	case 2:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be|shown when you start|DSiMenu++.");
+		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be shown when you start DSiMenu++.");
 
 		break;
 	}
 
-	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most|of your games are, it is safe to|hide directories/folders.");
+	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders.");
 
-	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen|of the DSi/3DS theme.");
+	STR_DESCRIPTION_BOXART_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen of the DSi/3DS theme.");
 
-	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in|the DSi/3DS menus.");
+	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in the DSi/3DS menus.");
 
-	STR_DESCRIPTION_SYSREGION_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSREGION_1", "The region of SysNAND.|\"Auto\" option will only work|if SDNAND is set up.");
+	STR_DESCRIPTION_SYSREGION_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSREGION_1", "The region of SysNAND. \"Auto\" option will only work if SDNAND is set up.");
 
-	STR_DESCRIPTION_LAUNCHERAPP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LAUNCHERAPP_1", "To get the .app name,|press POWER, hold A,|then highlight LAUNCHER.");
+	STR_DESCRIPTION_LAUNCHERAPP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LAUNCHERAPP_1", "To get the .app name, press POWER, hold A, then highlight LAUNCHER.");
 
-	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings|related to the DSi system.");
+	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings related to the DSi system.");
 
 	switch (ms().appName)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start TWiLight Menu++ on boot,|instead of the DSi Menu.");
+		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start TWiLight Menu++ on boot, instead of the DSi Menu.");
 
 		break;
 	case 1:
@@ -334,30 +334,30 @@ void langInit(void)
 	STR_RELEASE = languageini.GetString("LANGUAGE", "RELEASE", "Release");
 	STR_NIGHTLY = languageini.GetString("LANGUAGE", "NIGHTLY", "Nightly");
 
-	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections|of your console language|by setting this option.");
+	STR_DESCRIPTION_LANGUAGE_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections of your console language by setting this option.");
 
 	STR_DESCRIPTION_RUNIN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_RUNIN_1", "Run in either DS or DSi mode.");
 
-	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags|in some games.");
+	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags in some games.");
 
-	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes|and expands the bus to 32 bit.");
+	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit.");
 
-	STR_DESCRIPTION_SOUNDFIX_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_1", "Fixes most sound crackles|doubles, and split-second pauses.");
+	STR_DESCRIPTION_SOUNDFIX_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_1", "Fixes most sound crackles doubles, and split-second pauses.");
 
-	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before|launched game.");
+	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before launched game.");
 
-	STR_DESCRIPTION_LOGGING_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching|to sd:/NDSBTSRP.LOG");
+	STR_DESCRIPTION_LOGGING_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching to sd:/NDSBTSRP.LOG");
 
 	STR_DESCRIPTION_ROMREADLED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator.");
 
-	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz: Original quality|47.61kHz: High quality");
+	STR_DESCRIPTION_SNDFREQ_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz is original quality, 47.61kHz is high quality.");
 
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1",
-																"Change this if some Slot-1 cards are not booting. Please note the|reboot method will not use your|set language or CPU speed.");
+																"Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed.");
 
-	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM|is started in nds-bootstrap");
+	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM is started in nds-bootstrap");
 
-	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly|bootstrap");
+	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly bootstrap");
 
 	STR_DESCRIPTION_FLASHCARD_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", "");
 
@@ -401,13 +401,13 @@ void langInit(void)
 	STR_DEFAULT_LAUNCHER = languageini.GetString("LANGUAGE", "DEFAULT_LAUNCHER", "Default launcher");
 
     STR_12_HOUR_CLOCK =  languageini.GetString("LANGUAGE", "12_HOUR_CLOCK", "Use a 12 hour clock");
-    STR_DESCRIPTION_12_HOUR_CLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of|a 24 hour clock in|the Acekard theme.");
+    STR_DESCRIPTION_12_HOUR_CLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme.");
 
     STR_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "AK_ZOOMING_ICON", "Zooming icons");
-    STR_DESCRIPTION_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for|the selected icon|in the Acekard theme.");
+    STR_DESCRIPTION_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for the selected icon in the Acekard theme.");
 
     STR_AK_SCROLLSPEED = languageini.GetString("LANGUAGE", "AK_SCROLLSPEED", "Scroll speed");
-    STR_DESCRIPTION_AK_SCROLLSPEED =  languageini.GetString("LANGUAGE", "DESCRIPTION_AK_SCROLLSPEED", "Sets the scroll speed|in the Acekard theme.");
+    STR_DESCRIPTION_AK_SCROLLSPEED =  languageini.GetString("LANGUAGE", "DESCRIPTION_AK_SCROLLSPEED", "Sets the scroll speed in the Acekard theme.");
 
 	// The localestrign is here but the setting isn't displayed
 	// we can just keep the default viewmode
@@ -415,19 +415,19 @@ void langInit(void)
 	// akmenu should save the view mode anyways when its changed with SELECT.
 	
     STR_AK_VIEWMODE = languageini.GetString("LANGUAGE", "AK_VIEWMODE", "Default viewmode");
-    STR_DESCRIPTION_AK_VIEWMODE = languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode|in the Acekard theme.");
+    STR_DESCRIPTION_AK_VIEWMODE = languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode in the Acekard theme.");
 
 	switch (ms().appName)
 	{
 	case 0:
 	default:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu|or TWiLight Menu++ on boot.");
+		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu or TWiLight Menu++ on boot.");
 		break;
 	case 1:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_SRLOADER", "Launch Nintendo DSi Menu|or SRLoader on boot.");
+		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_SRLOADER", "Launch Nintendo DSi Menu or SRLoader on boot.");
 		break;
 	case 2:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSISIONX", "Launch Nintendo DSi Menu|or DSiMenu++ on boot.");
+		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSISIONX", "Launch Nintendo DSi Menu or DSiMenu++ on boot.");
 		break;
 	}
 }
