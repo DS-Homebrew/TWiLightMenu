@@ -245,6 +245,14 @@ int grabTID(FILE* ndsFile, char *buf);
  */
 u32 getSDKVersion(FILE* ndsFile);
 
+/**
+ * Check if NDS game has AP.
+ * @param ndsFile NDS file.
+ * @param filename NDS ROM filename.
+ * @return true on success; false if no AP.
+ */
+bool checkRomAP(FILE *ndsFile);
+
 // bnriconframenum[]
 extern int bnriconPalLine;
 extern int bnriconframenumY;

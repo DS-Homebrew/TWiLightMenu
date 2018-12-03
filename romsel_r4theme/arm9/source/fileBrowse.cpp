@@ -69,6 +69,7 @@ extern int consoleModel;
 extern bool isRegularDS;
 
 extern bool showdialogbox;
+extern int dialogboxHeight;
 
 extern std::string romfolder[2];
 
@@ -384,6 +385,34 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
 			} else {
+				bool hasAP = false;
+				if (!secondaryDevice && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
+				{
+					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+					hasAP = checkRomAP(f_nds_file);
+					fclose(f_nds_file);
+				}
+				if (hasAP) {
+				dialogboxHeight = 5;
+				showdialogbox = true;
+				printLargeCentered(false, 84, "Warning");
+				printSmallCentered(false, 104, "This game may not work right,");
+				printSmallCentered(false, 112, "if it's not AP-patched.");
+				printSmallCentered(false, 128, "If the game freezes, does not");
+				printSmallCentered(false, 136, "start, or doesn't seem normal,");
+				printSmallCentered(false, 144, "it needs to be AP-patched.");
+				printSmallCentered(false, 158, "A: OK");
+				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+				pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_A));
+				showdialogbox = false;
+				dialogboxHeight = 0;
+				}
+
 				applaunch = true;
 
 				fadeType = false;	// Fade to white
