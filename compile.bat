@@ -16,9 +16,13 @@ cd "slot1launch"
 make
 copy "slot1launch.nds" "../7zfile/_nds/dsimenuplusplus/slot1launch.srldr"
 cd ..
-cd "titleandsettings"
+cd "title"
 make
-copy "titleandsettings.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
+copy "title.nds" "../7zfile/_nds/dsimenuplusplus/main.srldr"
+cd ..
+cd "settings"
+make
+copy "settings.nds" "../7zfile/_nds/dsimenuplusplus/settings.srldr"
 cd ..
 cd "romsel_dsimenutheme"
 make

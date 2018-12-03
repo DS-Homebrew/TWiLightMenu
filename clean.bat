@@ -11,7 +11,10 @@ cd ..
 cd "slot1launch"
 make clean
 cd ..
-cd "titleandsettings"
+cd "title"
+make clean
+cd ..
+cd "settings"
 make clean
 cd ..
 cd "romsel_dsimenutheme"
