@@ -155,6 +155,8 @@ void SettingsGUI::setTopText(const std::string &text)
 		words.push_back(_topTextStr.substr(0, pos));
 		_topTextStr = _topTextStr.substr(pos + 1);
 	}
+	if(_topTextStr.size())
+		words.push_back(_topTextStr);
 	std::string temp;
 	_topText.clear();
 	for(auto word : words)
