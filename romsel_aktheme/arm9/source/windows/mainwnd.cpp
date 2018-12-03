@@ -792,9 +792,8 @@ void MainWnd::onKeyBPressed()
 
 void MainWnd::showSettings(void)
 {
-    dbg_printf("Launch titleandsettings...");
+    dbg_printf("Launch settings...");
     LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);
-    settingsLoader.option("SRLOADER", "GOTOSETTINGS", true);
 
     if (int err = settingsLoader.launch())
     {

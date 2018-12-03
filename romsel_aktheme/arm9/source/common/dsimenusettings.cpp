@@ -83,7 +83,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
-    gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	if (bothSDandFlashcard()) {
 		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
@@ -148,7 +147,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 
-    settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	if (bothSDandFlashcard()) {
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}
@@ -176,13 +174,15 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
     settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-    settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
-    settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
-    settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
-    settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
-    settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+	if (!gotosettings) {
+		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
+		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+	}
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
     settingsini.SetInt("SRLOADER", "APP_NAME", appName);

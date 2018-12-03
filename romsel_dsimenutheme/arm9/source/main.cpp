@@ -178,7 +178,6 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;
-	gotosettings = settingsini.GetInt("SRLOADER", "GOTOSETTINGS", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
@@ -229,7 +228,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
-	settingsini.SetInt("SRLOADER", "GOTOSETTINGS", gotosettings);
 	if (bothSDandFlashcard()) {
 		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	}

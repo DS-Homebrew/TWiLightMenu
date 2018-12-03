@@ -12,7 +12,7 @@
 #define BOOTSTRAP_INI "sd:/_nds/nds-bootstrap.ini"
 
 #define DSIMENUPP_INI "/_nds/TWiLightMenu/settings.ini"
-#define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/main.srldr"
+#define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/settings.srldr"
 
 #define PERGAMESETTINGS_PATH "%s/_nds/TWiLightMenu/gamesettings/%s.ini"
 
