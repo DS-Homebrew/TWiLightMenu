@@ -356,8 +356,12 @@ int main(int argc, char **argv)
 	runGraphicIrq();
 
 	swiWaitForVBlank();
+	
+	bool dsiSplashEnabled = false;
+	CIniFile hiyacfwini(hiyacfwinipath);
+	dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
 
-	if (ms().consoleModel < 2 && !sys().arm7SCFGLocked()) {
+	if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked()) {
 		BootSplashInit();
 	}
 
