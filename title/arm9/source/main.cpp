@@ -404,7 +404,7 @@ int main(int argc, char **argv)
 
 	scanKeys();
 
-	if (keysHeld() & KEY_START)
+	if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT))
 	{
 		screenmode = 1;
 	}
