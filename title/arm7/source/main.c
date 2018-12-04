@@ -45,6 +45,10 @@ void VblankHandler(void) {
 	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
 		*(u16*)(0x4004700) = 0x800F;
 	}
+	if(fifoGetValue32(FIFO_USER_01) == 10) {
+		i2cWriteRegister(0x4A, 0x71, 0x01);
+		fifoSendValue32(FIFO_USER_01, 0);
+	}
 }
 
 //---------------------------------------------------------------------------------
@@ -99,6 +103,7 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
+	fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
 	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);
