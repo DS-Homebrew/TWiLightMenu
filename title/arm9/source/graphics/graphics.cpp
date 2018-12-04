@@ -31,8 +31,6 @@
 #include "graphics.h"
 #include "fontHandler.h"
 
-#include "soundeffect.h"
-
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
@@ -40,7 +38,6 @@
 
 extern int screenmode;
 
-extern bool renderScreens;
 extern bool fadeType;
 int screenBrightness = 31;
 
@@ -57,6 +54,11 @@ void vramcpy_ui (void* dest, const void* src, int size)
 		*destination++ = *source++;
 		size-=2;
 	}
+}
+
+void clearBrightness(void) {
+	fadeType = true;
+	screenBrightness = 0;
 }
 
 // Ported from PAlib (obsolete)
@@ -118,7 +120,7 @@ void LoadBMP(void) {
 	fclose(file);
 }
 
-void loadTitleGraphics() {
+void runGraphicIrq(void) {
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
@@ -126,7 +128,9 @@ void loadTitleGraphics() {
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+}
 
+void loadTitleGraphics() {
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 	vramSetBankD(VRAM_D_MAIN_BG_0x06040000);

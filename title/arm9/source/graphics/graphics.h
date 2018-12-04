@@ -19,8 +19,9 @@
 ------------------------------------------------------------------*/
 #pragma once
 
-void initSubSprites(void);
-void graphicsInit();
+void vramcpy_ui (void* dest, const void* src, int size);
+void clearBrightness(void);
+void runGraphicIrq(void);
 void loadTitleGraphics();
 void startRendering(bool top);
 bool isRenderingTop();

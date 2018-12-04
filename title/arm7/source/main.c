@@ -37,41 +37,9 @@ unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
-static int soundVolume = 127;
-
-//---------------------------------------------------------------------------------
-void soundFadeOut() {
-//---------------------------------------------------------------------------------
-	soundVolume -= 5;
-	if (soundVolume < 0) {
-		soundVolume = 0;
-	}
-}
-
-//---------------------------------------------------------------------------------
-void ReturntoDSiMenu() {
-//---------------------------------------------------------------------------------
-	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
-	i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
-}
-
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_07) == 2) {
-		*(u16*)(0x4004700) = 0xC00F;
-	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
-		*(u16*)(0x4004700) = 0x800F;
-	}
-	if(fifoCheckValue32(FIFO_USER_01)) {
-		soundFadeOut();
-	} else {
-		soundVolume = 127;
-	}
-	REG_MASTER_VOLUME = soundVolume;
-	if(fifoCheckValue32(FIFO_USER_08)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------

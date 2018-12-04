@@ -43,8 +43,7 @@
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
 #include "bootstrapsettings.h"
-
-#include "soundeffect.h"
+#include "bootsplash.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
@@ -354,16 +353,13 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+	runGraphicIrq();
+
 	swiWaitForVBlank();
 
-	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	// if (arm7_SNDEXCNT != 0) stop();
-
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
+	if (ms().consoleModel < 2) {
+		BootSplashInit();
+	}
 
 	scanKeys();
 
@@ -372,8 +368,6 @@ int main(int argc, char **argv)
 		lastRunROM();
 	}
 
-	//	InitSound();
-	snd().init();
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
