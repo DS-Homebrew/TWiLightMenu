@@ -357,7 +357,7 @@ int main(int argc, char **argv)
 
 	swiWaitForVBlank();
 
-	if (ms().consoleModel < 2) {
+	if (ms().consoleModel < 2 && !sys().arm7SCFGLocked()) {
 		BootSplashInit();
 	}
 
