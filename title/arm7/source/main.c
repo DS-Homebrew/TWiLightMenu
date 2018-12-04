@@ -103,7 +103,9 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
-	fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
+	if (isDSiMode()) {
+		fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
+	}
 	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);

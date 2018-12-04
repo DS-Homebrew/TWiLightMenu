@@ -356,14 +356,23 @@ int main(int argc, char **argv)
 	runGraphicIrq();
 
 	swiWaitForVBlank();
-	
-	bool dsiSplashEnabled = false;
-	CIniFile hiyacfwini(hiyacfwinipath);
-	dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
 
-	if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
-		BootSplashInit();
-		fifoSendValue32(FIFO_USER_01, 10);
+	if (isDSiMode()) {
+		bool sdAccessible = false;
+		if (access("sd:/", F_OK) == 0) {
+			sdAccessible = true;
+		}
+
+		bool dsiSplashEnabled = false;
+		if (sdAccessible) {
+			CIniFile hiyacfwini(hiyacfwinipath);
+			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
+		}
+
+		if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
+			BootSplashInit();
+			fifoSendValue32(FIFO_USER_01, 10);
+		}
 	}
 
 	scanKeys();
@@ -375,11 +384,6 @@ int main(int argc, char **argv)
 
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-
-	bool sdAccessible = false;
-	if (access("sd:/", F_OK) == 0) {
-		sdAccessible = true;
-	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
 		// Create "settings.ini"
