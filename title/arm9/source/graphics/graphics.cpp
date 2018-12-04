@@ -25,8 +25,8 @@
 #include "FontGraphic.h"
 #include "common/inifile.h"
 #include "common/dsimenusettings.h"
-#include "title_sub.h"
-#include "inv_title_sub.h"
+#include "logo_rocketrobz.h"
+#include "logo_rocketrobzbootstrap.h"
 #include "font6x8.h"
 #include "graphics.h"
 #include "fontHandler.h"
@@ -83,9 +83,7 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	SetBrightness(0, screenBrightness);
-	if (isDSiMode()) {
-		SetBrightness(1, screenBrightness);
-	}
+	SetBrightness(1, screenBrightness);
 }
 
 void LoadBMP(void) {
@@ -172,12 +170,10 @@ void loadTitleGraphics() {
 	// Display TWiLightMenu++ logo
 	LoadBMP();
 	if (isDSiMode()) {		// Show nds-bootstrap logo, if in DSi mode
-		if (ms().appName == 0) {
-			swiDecompressLZSSVram ((void*)inv_title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], inv_title_subPal, inv_title_subPalLen);
-		} else {
-			swiDecompressLZSSVram ((void*)title_subTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], title_subPal, title_subPalLen);
-		}
+		swiDecompressLZSSVram ((void*)logo_rocketrobzbootstrapTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], logo_rocketrobzbootstrapPal, logo_rocketrobzbootstrapPalLen);
+	} else {
+		swiDecompressLZSSVram ((void*)logo_rocketrobzTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+		vramcpy_ui (&BG_PALETTE_SUB[0], logo_rocketrobzPal, logo_rocketrobzPalLen);
 	}
 }
