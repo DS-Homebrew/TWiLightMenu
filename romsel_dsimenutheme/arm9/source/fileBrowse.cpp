@@ -770,13 +770,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							}
 							// Get game's TID
 							if (isLauncharg) {
+								extern void RemoveTrailingSlashes(std::string& path);
+								RemoveTrailingSlashes(std_romsel_filename);
+
 								char appPath[256];
 								for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 								{
 									if (appVer > 0xF) {
-										snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", std_romsel_filename.c_str(), appVer);
+										snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", std_romsel_filename.c_str(), appVer);
 									} else {
-										snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", std_romsel_filename.c_str(), appVer);
+										snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", std_romsel_filename.c_str(), appVer);
 									}
 									if (access(appPath, F_OK) == 0)
 									{

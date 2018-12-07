@@ -88,27 +88,27 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
-// /**
-//  * Remove trailing slashes from a pathname, if present.
-//  * @param path Pathname to modify.
-//  */
-// static void RemoveTrailingSlashes(std::string& path)
-// {
-// 	while (!path.empty() && path[path.size()-1] == '/') {
-// 		path.resize(path.size()-1);
-// 	}
-// }
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+void RemoveTrailingSlashes(std::string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
 
 /**
  * Remove trailing spaces from a cheat code line, if present.
  * @param path Code line to modify.
  */
-static void RemoveTrailingSpaces(std::string& code)
+/*static void RemoveTrailingSpaces(std::string& code)
 {
 	while (!code.empty() && code[code.size()-1] == ' ') {
 		code.resize(code.size()-1);
 	}
-}
+}*/
 
 bool music = false;
 extern mm_sound_effect mus_startup;
@@ -982,6 +982,7 @@ int main(int argc, char **argv) {
 				}
 				fclose(argfile);
 				filename = argarray.at(0);
+				RemoveTrailingSlashes(filename);
 
 				launchType = 0;	// No launch type for launcharg
 				previousUsedDevice = secondaryDevice;
@@ -991,9 +992,9 @@ int main(int argc, char **argv) {
 				for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 				{
 					if (appVer > 0xF) {
-						snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", filename.c_str(), appVer);
+						snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filename.c_str(), appVer);
 					} else {
-						snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", filename.c_str(), appVer);
+						snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filename.c_str(), appVer);
 					}
 					if (access(appPath, F_OK) == 0)
 					{

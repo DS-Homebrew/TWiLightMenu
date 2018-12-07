@@ -429,14 +429,16 @@ void getGameInfo(bool isDir, const char* name)
 		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
 		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
 		{
+			p[27] = '\0';		// Remove trailing slash
+
 			// Search for .app
 			char appPath[256];
 			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 			{
 				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
 				} else {
-					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
 				}
 				if (access(appPath, F_OK) == 0)
 				{
@@ -629,14 +631,16 @@ void iconUpdate(bool isDir, const char* name)
 		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
 		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
 		{
+			p[27] = '\0';		// Remove trailing slash
+
 			// Search for .app
 			char appPath[256];
 			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 			{
 				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
 				} else {
-					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
 				}
 				if (access(appPath, F_OK) == 0)
 				{
@@ -848,14 +852,16 @@ void titleUpdate(bool isDir, const char* name)
 		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
 		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
 		{
+			p[27] = '\0';		// Remove trailing slash
+
 			// Search for .app
 			char appPath[256];
 			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 			{
 				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
 				} else {
-					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", p, appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
 				}
 				if (access(appPath, F_OK) == 0)
 				{

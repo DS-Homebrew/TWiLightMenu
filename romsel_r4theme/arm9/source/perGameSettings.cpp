@@ -160,13 +160,16 @@ void perGameSettings (std::string filename) {
 		filenameForInfo = argarray.at(0);
 
 		if (isLauncharg) {
+			extern void RemoveTrailingSlashes(std::string& path);
+			RemoveTrailingSlashes(filenameForInfo);
+
 			char appPath[256];
 			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 			{
 				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%scontent/000000%x.app", filenameForInfo.c_str(), appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filenameForInfo.c_str(), appVer);
 				} else {
-					snprintf(appPath, sizeof(appPath), "%scontent/0000000%x.app", filenameForInfo.c_str(), appVer);
+					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filenameForInfo.c_str(), appVer);
 				}
 				/*printSmall(false, 16, 64, appPath);
 				printSmall(false, -128, 80, appPath);
