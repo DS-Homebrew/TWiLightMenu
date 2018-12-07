@@ -1059,13 +1059,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 140, "it needs to be AP-patched.");
 					printSmallCentered(false, 166, "B: Back, A: OK");
 					pressed = 0;
-					do {
+					while (1) {
 						scanKeys();
 						pressed = keysDownRepeat();
 						swiIntrWait(0, 1);
-					} while (!(pressed & KEY_A) || !(pressed & KEY_B));
-					if (pressed & KEY_B) {
-						proceedToLaunch = false;
+						if (pressed & KEY_A) {
+							pressed = 0;
+							break;
+						}
+						if (pressed & KEY_B) {
+							proceedToLaunch = false;
+							pressed = 0;
+							break;
+						}
 					}
 					clearText();
 					showdialogbox = false;
