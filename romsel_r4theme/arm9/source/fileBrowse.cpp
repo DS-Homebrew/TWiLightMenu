@@ -386,6 +386,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				showdialogbox = false;
 			} else {
 				bool hasAP = false;
+				bool proceedToLaunch = true;
 				if (!secondaryDevice && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
@@ -401,30 +402,36 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmallCentered(false, 128, "If the game freezes, does not");
 				printSmallCentered(false, 136, "start, or doesn't seem normal,");
 				printSmallCentered(false, 144, "it needs to be AP-patched.");
-				printSmallCentered(false, 158, "A: OK");
+				printSmallCentered(false, 158, "B: Back, A: OK");
 				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				pressed = 0;
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
-				} while (!(pressed & KEY_A));
+				} while (!(pressed & KEY_A) || !(pressed & KEY_B));
+				if (pressed & KEY_B) {
+					proceedToLaunch = false;
+				}
 				clearText();
 				showdialogbox = false;
 				dialogboxHeight = 0;
-				titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-				if (!isRegularDS) {
-					printSmall(false, 8, 168, "Location:");
-					if (secondaryDevice) {
-						printSmall(false, 8, 176, "Slot-1 microSD Card");
-					} else if (consoleModel < 3) {
-						printSmall(false, 8, 176, "SD Card");
-					} else {
-						printSmall(false, 8, 176, "microSD Card");
+				if (proceedToLaunch) {
+					titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+					if (!isRegularDS) {
+						printSmall(false, 8, 168, "Location:");
+						if (secondaryDevice) {
+							printSmall(false, 8, 176, "Slot-1 microSD Card");
+						} else if (consoleModel < 3) {
+							printSmall(false, 8, 176, "SD Card");
+						} else {
+							printSmall(false, 8, 176, "microSD Card");
+						}
 					}
 				}
 				}
 
+				if (proceedToLaunch) {
 				applaunch = true;
 
 				fadeType = false;	// Fade to white
@@ -444,6 +451,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				// Return the chosen file
 				return entry->name;
+				}
 			}
 		}
 

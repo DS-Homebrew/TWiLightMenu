@@ -1037,6 +1037,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				else
 				{
 					bool hasAP = false;
+					bool proceedToLaunch = true;
 					if (!secondaryDevice
 					&& bnrRomType[cursorPosition[secondaryDevice]] == 0 && !isDSiWare[cursorPosition[secondaryDevice]]
 					&& isHomebrew[cursorPosition[secondaryDevice]] == 0)
@@ -1056,19 +1057,23 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 112, "If the game freezes, does not");
 					printSmallCentered(false, 126, "start, or doesn't seem normal,");
 					printSmallCentered(false, 140, "it needs to be AP-patched.");
-					printSmall(false, 208, 166, "A: OK");
+					printSmallCentered(false, 166, "B: Back, A: OK");
 					pressed = 0;
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
 						swiIntrWait(0, 1);
-					} while (!(pressed & KEY_A));
+					} while (!(pressed & KEY_A) || !(pressed & KEY_B));
+					if (pressed & KEY_B) {
+						proceedToLaunch = false;
+					}
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < 20; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) swiIntrWait(0, 1);
 					dbox_showIcon = false;
 					}
 
+					if (proceedToLaunch) {
 					mmEffectEx(&snd_launch);
 					controlTopBright = true;
 					applaunch = true;
@@ -1097,6 +1102,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					// Return the chosen file
 					return entry->name;
+					}
 				}
 			}
 
