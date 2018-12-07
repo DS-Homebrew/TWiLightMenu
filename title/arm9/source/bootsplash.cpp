@@ -102,12 +102,12 @@ void BootSplashDSi(void) {
 	swiDecompressLZSSVram ((void*)DSi04Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
 	vramcpy_ui (&BG_PALETTE[0], DSi04Pal, DSi04PalLen);
 
-	BootJingleDSi();
-
 	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
 
 	swiDecompressLZSSVram ((void*)DSi05Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
 	vramcpy_ui (&BG_PALETTE[0], DSi05Pal, DSi05PalLen);
+
+	BootJingleDSi();
 
 	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
 	
