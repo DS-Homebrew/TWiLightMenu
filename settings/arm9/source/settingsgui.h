@@ -18,7 +18,7 @@ public:
         _exitCallback(nullptr)
   {
 
-    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 6, 1);
+    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 6, 2);
 	if (isDSiMode()) {
 		// Read nds-bootstrap version
 		FILE* bsVerFile;
