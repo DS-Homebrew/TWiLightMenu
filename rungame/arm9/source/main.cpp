@@ -109,11 +109,6 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 
 TWL_CODE int lastRunROM() {
 	LoadSettings();
-	
-	swiWaitForVBlank();
-
-	if(soundfreq) fifoSendValue32(FIFO_USER_07, 2);
-	else fifoSendValue32(FIFO_USER_07, 1);
 
 	vector<char*> argarray;
 	if (launchType > 2) {
@@ -125,8 +120,7 @@ TWL_CODE int lastRunROM() {
 		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, false);
 	} else if (launchType == 1) {
 		if (homebrewBootstrap) {
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-			else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
+			bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 		} else {
 			char game_TID[5];
 
@@ -191,8 +185,7 @@ TWL_CODE int lastRunROM() {
 
 			}
 
-			if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-			else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+			bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else if (launchType == 2) {
@@ -252,8 +245,6 @@ int main(int argc, char **argv) {
 	}
 
 	fifoWaitValue32(FIFO_USER_06);
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	fifoSendValue32(FIFO_USER_07, 0);
 
 	int err = lastRunROM();
 	consoleDemoInit();

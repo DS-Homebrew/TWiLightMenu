@@ -48,11 +48,6 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_07) == 2) {
-		*(u16*)(0x4004700) = 0xC00F;
-	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
-		*(u16*)(0x4004700) = 0x800F;
-	}
 	if(fifoCheckValue32(FIFO_USER_08)) {
 		ReturntoDSiMenu();
 	}
@@ -77,13 +72,6 @@ int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
 	
-	// clear sound registers
-	dmaFillWords(0, (void*)0x04000400, 0x100);
-
-	REG_SOUNDCNT |= SOUND_ENABLE;
-	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );
-	powerOn(POWER_SOUND);
-
 	readUserSettings();
 	ledBlink(0);
 
@@ -104,12 +92,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
-	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_04, *CPUID2);
-	fifoSendValue32(FIFO_USER_05, *CPUID);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
