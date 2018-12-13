@@ -295,38 +295,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 	dirContents.clear();
 
-#ifdef EMULATE_FILES
-
-	string vowels = "aeiou";
-	string consonants = "bcdfghjklmnpqrstvwxyz";
-
-	DirEntry first;
-	first.name = "AAA First";
-	first.visibleName = "[AAA First]";
-	first.isDirectory = true;
-	dirContents.push_back(first);
-
-	for (int i = 0; i < rand() % 10 + 5; ++i)
-	{
-		ostringstream fileName;
-		DirEntry dirEntry;
-		for (int j = 0; j < rand() % 15 + 4; ++j)
-			fileName << (j % 2 == 0 ? consonants[rand() % consonants.size()]
-				: vowels[rand() % vowels.size()]);
-		dirEntry.name = fileName.str();
-		if ((dirEntry.isDirectory = rand() % 2))
-			dirEntry.visibleName = "[" + dirEntry.name + "]";
-		else
-			dirEntry.visibleName = dirEntry.name;
-		dirContents.push_back(dirEntry);
-	}
-	DirEntry last;
-	last.name = "ZZZ Last";
-	last.visibleName = last.name;
-	last.isDirectory = false;
-	dirContents.push_back(last);
-
-#else
 	file_count = 0;
 	
 	struct stat st;
@@ -372,8 +340,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 		closedir(pdir);
 	}
-
-#endif
 
 	sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 }
@@ -801,6 +767,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				spawnedtitleboxes++;
 			}
 		}
+		if (nowLoadingDisplaying) {
+			showProgressIcon = false;
+			fadeType = false;	// Fade to white
+		}
 		// Load correct icons depending on cursor position
 		if (cursorPosition[secondaryDevice] <= 1) {
 			for(int i = 0; i < 5; i++) {
@@ -822,18 +792,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if (nowLoadingDisplaying) {
-			showProgressIcon = false;
-			fadeType = false;	// Fade to white
-			for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
-			nowLoadingDisplaying = false;
-			clearText(false);
-		}
+		while (!screenFadedOut());
+		nowLoadingDisplaying = false;
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
 		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
 		reloadIconPalettes();
 		reloadFontPalettes();
+		clearText(false);
 		waitForFadeOut();
 
 		/* clearText(false);
