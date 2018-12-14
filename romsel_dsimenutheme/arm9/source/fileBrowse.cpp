@@ -410,9 +410,8 @@ void displayNowLoading(void) {
 		}
 	}
 	nowLoadingDisplaying = true;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	reloadFontPalettes();
-	for (int i = 0; i < 20; i++) swiWaitForVBlank();
+	while (!screenFadedIn());
 	showProgressIcon = true;
 	controlTopBright = false;
 }
