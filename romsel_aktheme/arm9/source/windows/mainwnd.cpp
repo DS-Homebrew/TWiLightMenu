@@ -545,7 +545,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	bool hasAP = false;
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)		// Girls Mode (JAP version of Style Savvy)
-	|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J) do not have AP measures
+	|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J)
 	|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)		// Sonic Classic Collection
 	|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
 	{
