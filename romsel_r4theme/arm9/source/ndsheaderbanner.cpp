@@ -58,14 +58,21 @@ bool checkRomAP(FILE *ndsFile)
 	grabTID(ndsFile, game_TID);
 	game_TID[4] = 0;
 
+	// Check for SDK4-5 ROMs that don't have AP measures.
+	if ((strcmp(game_TID, "AZLJ") == 0)		// Girls Mode (JAP version of Style Savvy)
+	|| (strcmp(game_TID, "YEEJ") == 0)			// Inazuma Eleven (J) do not have AP measures
+	|| (strncmp(game_TID, "VSO", 3) == 0)		// Sonic Classic Collection
+	|| (strncmp(game_TID, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
+	{
+		return false;
+	}
+	else
 	// Check for ROMs that have AP measures.
 	if ((strncmp(game_TID, "B", 1) == 0)
 	|| (strncmp(game_TID, "T", 1) == 0)
 	|| (strncmp(game_TID, "V", 1) == 0)) {
 		return true;
-	} else if (strcmp(game_TID, "AZLJ") != 0 && strcmp(game_TID, "YEEJ") != 0) {
-			// ^ Girls Mode (JAP version of Style Savvy) and Inazuma Eleven (J) do not have AP measures
-
+	} else {
 		static const char ap_list[][4] = {
 			"ABT",	// Bust-A-Move DS
 			"YHG",	// Houkago Shounen

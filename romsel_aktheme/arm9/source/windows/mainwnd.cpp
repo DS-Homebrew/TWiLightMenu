@@ -543,14 +543,21 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     }
 
 	bool hasAP = false;
+	// Check for SDK4-5 ROMs that don't have AP measures.
+	if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)		// Girls Mode (JAP version of Style Savvy)
+	|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J) do not have AP measures
+	|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)		// Sonic Classic Collection
+	|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
+	{
+		hasAP = false;
+	}
+	else
 	// Check for ROMs that have AP measures.
 	if ((memcmp(rominfo.saveInfo().gameCode, "B", 1) == 0)
 	|| (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
 	|| (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
 		hasAP = true;
-	} else if (memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) != 0 && memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) != 0) {
-			// ^ Girls Mode (JAP version of Style Savvy) and Inazuma Eleven (J) do not have AP measures
-
+	} else {
 		static const char ap_list[][4] = {
 			"ABT",	// Bust-A-Move DS
 			"YHG",	// Houkago Shounen
