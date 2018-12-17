@@ -1,4 +1,4 @@
-# ![TWiLightMenu++](https://github.com/Iam2smart/TWiLightMenu/blob/master/Untitled.png)
+# ![TWiLightMenu++](https://github.com/Iam2smart/TWiLightMenu/blob/master/logo.png)
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, and flashcards.
 
 # Building
