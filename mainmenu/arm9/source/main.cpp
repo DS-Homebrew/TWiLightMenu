@@ -140,6 +140,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
+bool gbaBiosFound = false;
 bool useGbarunner = false;
 int appName = 0;
 int theme = 0;
@@ -826,6 +827,16 @@ void dsCardLaunch() {
 	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 }
 
+void printGbaBannerText() {
+	if (useGbarunner && !gbaBiosFound) {
+		printSmall(false, 104, iconYpos[3]+15, "BINF: bios.bin");
+		printSmall(false, 116, iconYpos[3]+23, "not found");
+	} else {
+		printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
+							useGbarunner ? gbarunnerText : gbamodeText);
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -882,8 +893,6 @@ int main(int argc, char **argv) {
 
 	LoadSettings();
 	
-	bool gbaBiosFound = false;
-
 	if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound = true;
 	}
@@ -959,13 +968,7 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmall(false, 180, 4, RetTime().c_str());
-				if (useGbarunner && !gbaBiosFound) {
-					printSmall(false, 104, iconYpos[3]+15, "BINF: bios.bin");
-					printSmall(false, 116, iconYpos[3]+23, "not found");
-				} else {
-					printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
-										useGbarunner ? gbarunnerText : gbamodeText);
-				}
+				printGbaBannerText();
 
 				scanKeys();
 				pressed = keysDownRepeat();
@@ -1020,8 +1023,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
-													useGbarunner ? gbarunnerText : gbamodeText);
+								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 							loadROMselect();
@@ -1031,8 +1033,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
-													useGbarunner ? gbarunnerText : gbamodeText);
+								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 							applaunch = true;
@@ -1042,8 +1043,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
-													useGbarunner ? gbarunnerText : gbamodeText);
+								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 
@@ -1065,8 +1065,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								clearText();
 								iconYpos[3] -= 6;
-								printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
-													useGbarunner ? gbarunnerText : gbamodeText);
+								printGbaBannerText();
 								swiWaitForVBlank();
 							}
 						}
