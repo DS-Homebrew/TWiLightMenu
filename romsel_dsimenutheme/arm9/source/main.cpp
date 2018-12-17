@@ -1472,6 +1472,7 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 						}
+						homebrewArg = argarray[0];
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
