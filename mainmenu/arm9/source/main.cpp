@@ -75,6 +75,7 @@ extern void ClearBrightness();
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string romPath;
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
@@ -210,6 +211,7 @@ void LoadSettings(void) {
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", homebrewArg);
 }
 
 void SaveSettings(void) {
@@ -936,6 +938,10 @@ int main(int argc, char **argv) {
 
 	topBgLoad();
 	bottomBgLoad();
+	
+	if (access(romPath.c_str(), F_OK) == 0) {
+		iconUpdate (false, romPath.c_str());
+	}
 
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white

@@ -185,10 +185,10 @@ void vBlankHandler()
 
 		if (startMenu) {
 			glSprite(33, iconYpos[0], GL_FLIP_NONE, iconboxImage);
-			if (bnrRomType == 3) drawIconNES(40, 31);
-			else if (bnrRomType == 2) drawIconGBC(40, 31);
-			else if (bnrRomType == 1) drawIconGB(40, 31);
-			else drawIcon(40, 31);
+			if (bnrRomType == 3) drawIconNES(40, iconYpos[0]+6);
+			else if (bnrRomType == 2) drawIconGBC(40, iconYpos[0]+6);
+			else if (bnrRomType == 1) drawIconGB(40, iconYpos[0]+6);
+			else drawIcon(40, iconYpos[0]+6);
 			if (bnrWirelessIcon > 0) glSprite(207, 55, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if(bnriconisDSi==true) {

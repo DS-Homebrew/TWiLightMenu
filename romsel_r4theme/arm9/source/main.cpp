@@ -72,6 +72,7 @@ extern void ClearBrightness();
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
+std::string romPath;
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
@@ -227,6 +228,7 @@ void SaveSettings(void) {
 	}
 	if (!gotosettings) {
 		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
@@ -1599,7 +1601,7 @@ int main(int argc, char **argv) {
 							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
 							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
 						}
-						homebrewArg = argarray[0];
+						romPath = argarray[0];
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
