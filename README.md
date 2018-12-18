@@ -28,4 +28,4 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
 - shutterbug2000: For the muted sound/touchscreen fix for nds-bootstrap.
 - spinal_cord: DSi4DS and DSision2 graphics.
-- devkitPro: Some code used in nds-hb-menu.
+- devkitPro, WinterMute: Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
