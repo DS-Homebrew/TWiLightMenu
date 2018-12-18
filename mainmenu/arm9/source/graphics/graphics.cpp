@@ -189,7 +189,7 @@ void vBlankHandler()
 			else if (bnrRomType == 2) drawIconGBC(40, iconYpos[0]+6);
 			else if (bnrRomType == 1) drawIconGB(40, iconYpos[0]+6);
 			else drawIcon(40, iconYpos[0]+6);
-			if (bnrWirelessIcon > 0) glSprite(207, iconYpos[0]+26, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+			if (bnrWirelessIcon > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if(bnriconisDSi==true) {
 				playBannerSequence();

@@ -68,6 +68,8 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
+extern std::string romPath;
+
 extern bool startButtonLaunch;
 extern int launchType;
 extern bool slot1LaunchMethod;
@@ -567,6 +569,7 @@ void switchDevice(void) {
 		mmEffectCancelAll();
 		fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
+		romPath = "";
 		launchType = 0;
 		SaveSettings();
 		if (!slot1LaunchMethod || arm7SCFGLocked) {

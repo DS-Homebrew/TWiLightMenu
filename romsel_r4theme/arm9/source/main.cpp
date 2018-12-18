@@ -204,7 +204,8 @@ void LoadSettings(void) {
 	soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
-    dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
@@ -943,6 +944,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 
+							romPath = "";
 							launchType = 0;
 							SaveSettings();
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
@@ -1107,6 +1109,8 @@ int main(int argc, char **argv) {
 			if ((strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 10, ".LAUNCHARG") == 0))
 			{
+				romPath = filePath+filename;
+
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
@@ -1171,6 +1175,7 @@ int main(int argc, char **argv) {
 				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 			}
 
+			bool isArgv = false;
 			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 5, ".ARGV") == 0))
 			{
@@ -1193,6 +1198,7 @@ int main(int argc, char **argv) {
 				}
 				fclose(argfile);
 				filename = argarray.at(0);
+				isArgv = true;
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
 			}
@@ -1214,6 +1220,9 @@ int main(int argc, char **argv) {
 				dsiWareSrlPath = argarray[0];
 				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
+				if (!isArgv) {
+					romPath = argarray[0];
+				}
 				launchType = 2;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
@@ -1595,13 +1604,13 @@ int main(int argc, char **argv) {
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 						if (homebrewBootstrap) {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						} else {
-							if (bootstrapFile) bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-							else bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 						}
-						romPath = argarray[0];
+						if (!isArgv) {
+							romPath = argarray[0];
+						}
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
@@ -1616,12 +1625,16 @@ int main(int argc, char **argv) {
 						}
 						stop();
 					} else {
+						romPath = argarray[0];
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						loadGameOnFlashcard(argarray[0], filename, true);
 					}
 				} else {
+					if (!isArgv) {
+						romPath = argarray[0];
+					}
 					launchType = 1;
 					previousUsedDevice = secondaryDevice;
 					SaveSettings();
@@ -1658,6 +1671,7 @@ int main(int argc, char **argv) {
 			{
 				char gbROMpath[256];
 				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
+				romPath = gbROMpath;
 				homebrewArg = gbROMpath;
 				launchType = 4;
 				previousUsedDevice = secondaryDevice;
@@ -1684,6 +1698,7 @@ int main(int argc, char **argv) {
 			{
 				char nesROMpath[256];
 				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
+				romPath = nesROMpath;
 				homebrewArg = nesROMpath;
 				launchType = 3;
 				previousUsedDevice = secondaryDevice;

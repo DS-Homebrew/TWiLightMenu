@@ -134,7 +134,7 @@ bool startMenu = false;
 bool gotosettings = false;
 
 bool startButtonLaunch = false;
-int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
@@ -923,6 +923,8 @@ int main(int argc, char **argv) {
 	topBgLoad();
 	bottomBgLoad();
 	
+	bool isLauncharg = false;
+
 	if (access(romPath.c_str(), F_OK) == 0) {
 		romfolder = romPath;
 		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
@@ -950,6 +952,8 @@ int main(int argc, char **argv) {
 		|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
 		|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"))
 		{
+			isLauncharg = ((filename.substr(filename.find_last_of(".") + 1) == "launcharg")
+						|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"));
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
@@ -986,9 +990,6 @@ int main(int argc, char **argv) {
 			char boxArtPath[256];
 			snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/TWiLightMenu/boxart/%s.bmp", filename.c_str());
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
-				bool isLauncharg = ((filename.substr(filename.find_last_of(".") + 1) == "launcharg")
-								|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"));
-
 				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
@@ -1018,16 +1019,15 @@ int main(int argc, char **argv) {
 				}
 				// Get game's TID
 				if (isLauncharg) {
-					extern void RemoveTrailingSlashes(std::string& path);
 					RemoveTrailingSlashes(temp_filename);
 
 					char appPath[256];
 					for (u8 appVer = 0; appVer <= 0xFF; appVer++)
 					{
 						if (appVer > 0xF) {
-							snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filename.c_str(), appVer);
+							snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", temp_filename.c_str(), appVer);
 						} else {
-							snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filename.c_str(), appVer);
+							snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", temp_filename.c_str(), appVer);
 						}
 						if (access(appPath, F_OK) == 0)
 						{
@@ -1123,7 +1123,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 							loadROMselect();
-						} else if (launchType > 0) {
+						} else if (launchType > 0 || isLauncharg) {
 							mmEffectEx(&snd_launch);
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 60; i++) {
@@ -1133,7 +1133,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 							applaunch = true;
-						} else if (launchType == 0 && !flashcardFound() && REG_SCFG_MC != 0x11) {
+						} else if (launchType == 0 && !isLauncharg && !flashcardFound() && REG_SCFG_MC != 0x11) {
 							mmEffectEx(&snd_launch);
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 60; i++) {
@@ -1310,8 +1310,7 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 
 			// Launch DSiWare via launcharg
-			if ((strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 10, ".LAUNCHARG") == 0))
+			if (isLauncharg)
 			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
