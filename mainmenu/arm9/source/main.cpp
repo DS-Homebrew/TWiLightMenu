@@ -1097,7 +1097,9 @@ int main(int argc, char **argv) {
 				} else if (touch.px >= 33 && touch.px <= 221 && touch.py >= 121 && touch.py <= 165) {
 					startMenu_cursorPosition = 3;
 					menuButtonPressed = true;
-				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185) {
+				} else if (touch.px >= 10 && touch.px <= 20 && touch.py >= 175 && touch.py <= 185
+							&& isDSiMode() && consoleModel < 2)
+				{
 					startMenu_cursorPosition = 4;
 					menuButtonPressed = true;
 				} else if (touch.px >= 117 && touch.px <= 137 && touch.py >= 170 && touch.py <= 190) {
