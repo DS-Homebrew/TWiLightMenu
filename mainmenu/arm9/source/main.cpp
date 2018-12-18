@@ -609,6 +609,7 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+mm_sound_effect snd_backlight;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -619,6 +620,7 @@ void InitSound() {
 	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
+	mmLoadEffect( SFX_BACKLIGHT );
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -657,6 +659,13 @@ void InitSound() {
 	};
 	snd_switch = {
 		{ SFX_SWITCH } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	snd_backlight = {
+		{ SFX_BACKLIGHT } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
@@ -1187,6 +1196,7 @@ int main(int argc, char **argv) {
 						// Adjust backlight level
 						if (isDSiMode() && consoleModel < 2) {
 							fifoSendValue32(FIFO_USER_04, 1);
+							mmEffectEx(&snd_backlight);
 						}
 						break;
 					case 5:
