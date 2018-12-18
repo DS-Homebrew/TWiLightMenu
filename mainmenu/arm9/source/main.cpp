@@ -1183,6 +1183,12 @@ int main(int argc, char **argv) {
 							gbaSwitch();
 						}
 						break;
+					case 4:
+						// Adjust backlight level
+						if (isDSiMode() && consoleModel < 2) {
+							fifoSendValue32(FIFO_USER_04, 1);
+						}
+						break;
 					case 5:
 						// Launch settings
 						fadeType = false;	// Fade to white

@@ -61,9 +61,7 @@ extern bool startMenu;
 extern bool useGbarunner;
 extern int theme;
 extern int subtheme;
-extern int cursorPosition;
-extern int dsiWare_cursorPosition;
-extern int startMenu_cursorPosition;
+extern int consoleModel;
 
 //bool moveIconUp[7] = {false};
 int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
@@ -198,7 +196,9 @@ void vBlankHandler()
 			}
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, iconboxImage);
 			glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
-			glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
+			if (isDSiMode() && consoleModel < 2) {
+				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
+			}
 			glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, &cornerIcons[3]);
 		}

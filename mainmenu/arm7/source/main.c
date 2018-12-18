@@ -32,6 +32,8 @@
 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
+static u8 backlightLevel = 0;
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -40,10 +42,24 @@ void ReturntoDSiMenu() {
 }
 
 //---------------------------------------------------------------------------------
+void changeBacklightLevel() {
+//---------------------------------------------------------------------------------
+	backlightLevel++;
+	if (backlightLevel > 0x04) {
+		backlightLevel = 0;
+	}
+	i2cWriteRegister(0x4A, 0x41, backlightLevel);
+}
+
+//---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 	if(fifoCheckValue32(FIFO_USER_02)) {
 		ReturntoDSiMenu();
+	}
+	if(fifoGetValue32(FIFO_USER_04) == 1) {
+		changeBacklightLevel();
+		fifoSendValue32(FIFO_USER_04, 0);
 	}
 }
 
@@ -101,6 +117,10 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
+
+	if (isDSiMode()) {
+		backlightLevel = i2cReadRegister(0x4A, 0x41);
+	}
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
