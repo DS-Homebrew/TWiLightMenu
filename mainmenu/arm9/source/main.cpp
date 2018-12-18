@@ -42,7 +42,6 @@
 #include "ndsheaderbanner.h"
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
-#include "fileBrowse.h"
 #include "perGameSettings.h"
 
 #include "iconTitle.h"
@@ -116,7 +115,7 @@ void RemoveTrailingSlashes(std::string& path)
 	}
 }*/
 
-std::string romfolder[2];
+std::string romfolder;
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string slashchar = "/";
@@ -149,6 +148,7 @@ int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
 bool showDirectories = true;
+bool showBoxArt = true;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -165,13 +165,6 @@ void LoadSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
-	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", "sd:/");
-	romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", "fat:/");
-	pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
-	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", 0);
-	cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
-	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
-	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
     appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
@@ -182,6 +175,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
@@ -212,20 +206,12 @@ void LoadSettings(void) {
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
-	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", homebrewArg);
+	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
 }
 
 void SaveSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
-
-	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
-	settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
-	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
-	settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
-	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
-	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
-	//settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	if (bothSDandFlashcard()) {
@@ -906,17 +892,6 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(25,5);
 
-	vector<string> extensionList;
-	extensionList.push_back(".nds");
-	extensionList.push_back(".dsi");
-	extensionList.push_back(".ids");
-	if (consoleModel < 2) extensionList.push_back(".launcharg");
-	extensionList.push_back(".argv");
-	extensionList.push_back(".gb");
-	extensionList.push_back(".sgb");
-	extensionList.push_back(".gbc");
-	extensionList.push_back(".nes");
-	extensionList.push_back(".fds");
 	srand(time(NULL));
 	
 	bool menuButtonPressed = false;
@@ -949,7 +924,128 @@ int main(int argc, char **argv) {
 	bottomBgLoad();
 	
 	if (access(romPath.c_str(), F_OK) == 0) {
-		iconUpdate (false, romPath.c_str());
+		romfolder = romPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		chdir(romfolder.c_str());
+
+		filename = romPath;
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx)
+		{
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		if((filename.substr(filename.find_last_of(".") + 1) == "nds")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "NDS")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "dsi")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "DSI")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "ids")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "IDS")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "app")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "APP")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "argv")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
+		|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"))
+		{
+			getGameInfo(false, filename.c_str());
+			iconUpdate (false, filename.c_str());
+			bnrRomType = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "gb")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "GB")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "sgb")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "SGB"))
+		{
+			bnrRomType = 1;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "gbc")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "GBC"))
+		{
+			bnrRomType = 2;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "nes")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "NES")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "fds")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "FDS"))
+		{
+			bnrRomType = 3;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		}
+
+		if (showBoxArt) {
+			// Store box art path
+			std::string temp_filename = filename;
+			char boxArtPath[256];
+			snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/TWiLightMenu/boxart/%s.bmp", filename.c_str());
+			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
+				bool isLauncharg = ((filename.substr(filename.find_last_of(".") + 1) == "launcharg")
+								|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"));
+
+				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"))
+				{
+					vector<char*> argarray;
+
+					FILE *argfile = fopen(filename.c_str(),"rb");
+						char str[PATH_MAX], *pstr;
+					const char seps[]= "\n\r\t ";
+
+					while( fgets(str, PATH_MAX, argfile) ) {
+						// Find comment and end string there
+						if( (pstr = strchr(str, '#')) )
+							*pstr= '\0';
+
+						// Tokenize arguments
+						pstr= strtok(str, seps);
+
+						while( pstr != NULL ) {
+							argarray.push_back(strdup(pstr));
+							pstr= strtok(NULL, seps);
+						}
+					}
+					fclose(argfile);
+					temp_filename = argarray.at(0);
+				}
+				// Get game's TID
+				if (isLauncharg) {
+					extern void RemoveTrailingSlashes(std::string& path);
+					RemoveTrailingSlashes(temp_filename);
+
+					char appPath[256];
+					for (u8 appVer = 0; appVer <= 0xFF; appVer++)
+					{
+						if (appVer > 0xF) {
+							snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filename.c_str(), appVer);
+						} else {
+							snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filename.c_str(), appVer);
+						}
+						if (access(appPath, F_OK) == 0)
+						{
+							break;
+						}
+					}
+					temp_filename = appPath;
+				}
+				FILE *f_nds_file = fopen(temp_filename.c_str(), "rb");
+				char game_TID[5];
+				grabTID(f_nds_file, game_TID);
+				game_TID[4] = 0;
+				fclose(f_nds_file);
+
+				snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/TWiLightMenu/boxart/%s.bmp", game_TID);
+			}
+			loadBoxArt(boxArtPath);	// Load box art
+		}
 	}
 
 	whiteScreen = false;
@@ -1766,7 +1862,7 @@ int main(int argc, char **argv) {
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GBC") == 0))
 			{
 				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
+				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				homebrewArg = gbROMpath;
 				launchType = 4;
 				previousUsedDevice = secondaryDevice;
@@ -1792,7 +1888,7 @@ int main(int argc, char **argv) {
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".FDS") == 0))
 			{
 				char nesROMpath[256];
-				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder[secondaryDevice].c_str(), filename.c_str());
+				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
 				homebrewArg = nesROMpath;
 				launchType = 3;
 				previousUsedDevice = secondaryDevice;

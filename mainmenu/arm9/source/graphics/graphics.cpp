@@ -189,7 +189,7 @@ void vBlankHandler()
 			else if (bnrRomType == 2) drawIconGBC(40, iconYpos[0]+6);
 			else if (bnrRomType == 1) drawIconGB(40, iconYpos[0]+6);
 			else drawIcon(40, iconYpos[0]+6);
-			if (bnrWirelessIcon > 0) glSprite(207, 55, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
+			if (bnrWirelessIcon > 0) glSprite(207, iconYpos[0]+26, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if(bnriconisDSi==true) {
 				playBannerSequence();
@@ -213,8 +213,31 @@ void vBlankHandler()
 	GFX_FLUSH = 0;
 }
 
+void loadBoxArt(const char* filename) {
+	FILE* file = fopen(filename, "rb");
+	if (!file) file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		for (int y=114; y>=0; y--) {
+			u16 buffer[128];
+			fread(buffer, 2, 0x80, file);
+			u16* src = buffer;
+			for (int i=0; i<128; i++) {
+				u16 val = *(src++);
+				BG_GFX_SUB[(y+40)*256+(i+64)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+		}
+	}
+
+	fclose(file);
+}
+
 void topBgLoad(void) {
-	FILE* file = fopen("nitro:/topbg.bmp", "rb");
+	FILE* file = fopen("nitro:/graphics/topbg.bmp", "rb");
 
 	if (file) {
 		// Start loading

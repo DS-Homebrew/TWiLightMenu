@@ -25,6 +25,7 @@ extern int iconYpos[7];
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void bottomBgLoad(void);
+void loadBoxArt(const char* filename);
 void graphicsInit();
 void topBgLoad(void);
 void startRendering(bool top);
