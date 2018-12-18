@@ -934,7 +934,7 @@ int main(int argc, char **argv) {
 	
 	bool isLauncharg = false;
 
-	if (access(romPath.c_str(), F_OK) == 0) {
+	if (romPath != "" && access(romPath.c_str(), F_OK) == 0) {
 		romfolder = romPath;
 		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 			romfolder.resize(romfolder.size()-1);
