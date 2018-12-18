@@ -1203,6 +1203,7 @@ int main(int argc, char **argv) {
 					fadeType = false;	// Fade to white
 					mmEffectEx(&snd_launch);
 					for (int i = 0; i < 60; i++) {
+						iconYpos[6] -= 6;
 						swiWaitForVBlank();
 					}
 					loadROMselect();
