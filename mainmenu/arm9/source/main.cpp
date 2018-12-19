@@ -1073,6 +1073,7 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmall(false, 180, 4, RetTime().c_str());
+				titleUpdate(false, filename.c_str());
 				printGbaBannerText();
 
 				scanKeys();
@@ -1130,6 +1131,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								titleUpdate(false, filename.c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1140,6 +1142,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								titleUpdate(false, filename.c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1150,6 +1153,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								titleUpdate(false, filename.c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
