@@ -28,6 +28,7 @@ void bottomBgLoad(void);
 void loadBoxArt(const char* filename);
 void graphicsInit();
 void topBgLoad(void);
+void topBarLoad(void);
 void startRendering(bool top);
 bool isRenderingTop();
 

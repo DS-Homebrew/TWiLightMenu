@@ -1068,6 +1068,8 @@ int main(int argc, char **argv) {
 	startMenu = true;	// Show bottom screen graphics
 	fadeSpeed = false;
 
+	topBarLoad();
+
 	while(1) {
 
 		if (startMenu) {
