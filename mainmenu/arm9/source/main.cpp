@@ -860,8 +860,9 @@ void dsCardLaunch() {
 
 void printGbaBannerText() {
 	if (useGbarunner && !gbaBiosFound) {
-		printSmall(false, 108, iconYpos[3]+8, "BINF: bios.bin");
-		printSmall(false, 120, iconYpos[3]+20, "not found");
+		printSmall(false, 96, iconYpos[3]+2, "BINF: bios.bin not");
+		printSmall(false, 84, iconYpos[3]+14, "found. Add GBA BIOS");
+		printSmall(false, 80, iconYpos[3]+26, "to enable GBARunner2.");
 	} else {
 		printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+14,
 							useGbarunner ? gbarunnerText : gbamodeText);
