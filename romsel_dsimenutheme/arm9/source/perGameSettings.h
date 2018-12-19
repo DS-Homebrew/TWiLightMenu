@@ -17,6 +17,8 @@ extern char fileCounter[8];
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);
+bool checkIfShowAPMsg (std::string filename);
+void dontShowAPMsgAgain (std::string filename);
 void perGameSettings(std::string filename);
 
 

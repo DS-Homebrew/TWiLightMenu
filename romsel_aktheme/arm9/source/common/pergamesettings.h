@@ -32,6 +32,8 @@ class PerGameSettings
 
     void loadSettings();
     void saveSettings();
+	bool checkIfShowAPMsg();
+	void dontShowAPMsgAgain();
 
   public:
     TDefaultBool directBoot;

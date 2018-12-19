@@ -109,13 +109,12 @@ MessageBox::MessageBox(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     _buttonNO->clicked.connect(this, &MessageBox::onCANCEL);
     addChildWindow(_buttonNO);
 
-    _buttonHOLD_X = new Button(0, 0, 46, 18, this, "\x01 OK");
-    _buttonHOLD_X->setText("\x03 " + LANG("message box", "Hold X"));
+    _buttonHOLD_X = new Button(0, 0, 46, 18, this, "\x03 Don't show");
+    _buttonHOLD_X->setText("\x03 " + LANG("message box", "Don't show"));
     _buttonHOLD_X->setStyle(Button::press);
     _buttonHOLD_X->hide();
     _buttonHOLD_X->loadAppearance(SFN_BUTTON4);
-    _buttonHOLD_X->setStyle(Button::toggle);
-    //_buttonHOLD_X->clicked.connect(this, &MessageBox::onHOLDX);
+    _buttonHOLD_X->clicked.connect(this, &MessageBox::onHOLDX);
     addChildWindow(_buttonHOLD_X);
 
     s16 nextButtonX = size().x;
@@ -236,6 +235,16 @@ bool MessageBox::processKeyMessage(const KeyMessage &msg)
     {
         switch (msg.keyCode())
         {
+        case KeyMessage::UI_KEY_A:
+            onOK();
+            ret = true;
+            return true;
+            break;
+        case KeyMessage::UI_KEY_B:
+            onCANCEL();
+            ret = true;
+            return true;
+            break;
         case KeyMessage::UI_KEY_X:
             onHOLDX();
             ret = true;

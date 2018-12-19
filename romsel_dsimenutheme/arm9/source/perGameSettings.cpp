@@ -126,6 +126,22 @@ void savePerGameSettings (std::string filename) {
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
+bool checkIfShowAPMsg (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
+		return true;	// Show AP message
+	}
+	return false;	// Don't show AP message
+}
+
+void dontShowAPMsgAgain (std::string filename) {
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
+	pergameini.SaveIniFile( pergamefilepath );
+}
+
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 

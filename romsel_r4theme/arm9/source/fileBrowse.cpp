@@ -387,7 +387,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				bool hasAP = false;
 				bool proceedToLaunch = true;
-				if (!secondaryDevice && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
+				if (!secondaryDevice && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
+				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					hasAP = checkRomAP(f_nds_file);
@@ -402,7 +403,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmallCentered(false, 128, "If the game freezes, does not");
 				printSmallCentered(false, 136, "start, or doesn't seem normal,");
 				printSmallCentered(false, 144, "it needs to be AP-patched.");
-				printSmallCentered(false, 158, "B: Back, A: OK");
+				printSmallCentered(false, 158, "B/A: OK, X: Don't show again");
 				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 				pressed = 0;
 				while (1) {
@@ -415,6 +416,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					if (pressed & KEY_B) {
 						proceedToLaunch = false;
+						pressed = 0;
+						break;
+					}
+					if (pressed & KEY_X) {
+						dontShowAPMsgAgain(dirContents.at(fileOffset).name);
 						pressed = 0;
 						break;
 					}

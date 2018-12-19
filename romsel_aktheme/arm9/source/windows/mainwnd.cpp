@@ -33,6 +33,7 @@
 #include "ui/progresswnd.h"
 #include "common/bootstrapconfig.h"
 #include "common/loaderconfig.h"
+#include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "common/systemdetails.h"
 #include "common/dsargv.h"
@@ -543,85 +544,114 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     }
 
 	bool hasAP = false;
-	// Check for SDK4-5 ROMs that don't have AP measures.
-	if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)		// Girls Mode (JAP version of Style Savvy)
-	|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J)
-	|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)		// Sonic Classic Collection
-	|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
-	{
-		hasAP = false;
-	}
-	else
-	// Check for ROMs that have AP measures.
-	if ((memcmp(rominfo.saveInfo().gameCode, "B", 1) == 0)
-	|| (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
-	|| (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
-		hasAP = true;
-	} else {
-		static const char ap_list[][4] = {
-			"ABT",	// Bust-A-Move DS
-			"YHG",	// Houkago Shounen
-			"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
-			"AS7",	// Summon Night: Twin Age
-			"YFQ",	// Nanashi no Geemu
-			"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
-			"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
-			"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
-			"CCU",	// Tomodachi Life
-			"CLJ",	// Mario & Luigi: Bowser's Inside Story
-			"YKG",	// Kindgom Hearts: 358/2 Days
-			"COL",	// Mario & Sonic at the Olympic Winter Games
-			"C24",	// Phantasy Star 0
-			"AZL",	// Style Savvy
-			"CS3",	// Sonic and Sega All Stars Racing
-			"IPK",	// Pokemon HeartGold Version
-			"IPG",	// Pokemon SoulSilver Version
-			"YBU",	// Blue Dragon: Awakened Shadow
-			"YBN",	// 100 Classic Books
-			"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
-			"C3J",	// Professor Layton and the Unwound Future
-			"IRA",	// Pokemon Black Version
-			"IRB",	// Pokemon White Version
-			"CJR",	// Dragon Quest Monsters: Joker 2
-			"YEE",	// Inazuma Eleven
-			"UZP",	// Learn with Pokemon: Typing Adventure
-			"IRE",	// Pokemon Black Version 2
-			"IRD",	// Pokemon White Version 2
-		};
+    PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
+	if (settingsIni.checkIfShowAPMsg()) {
+		// Check for SDK4-5 ROMs that don't have AP measures.
+		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)		// Girls Mode (JAP version of Style Savvy)
+		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J)
+		|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)		// Sonic Classic Collection
+		|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
+		{
+			hasAP = false;
+		}
+		else
+		// Check for ROMs that have AP measures.
+		if ((memcmp(rominfo.saveInfo().gameCode, "B", 1) == 0)
+		|| (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
+		|| (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
+			hasAP = true;
+		} else {
+			static const char ap_list[][4] = {
+				"ABT",	// Bust-A-Move DS
+				"YHG",	// Houkago Shounen
+				"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
+				"AS7",	// Summon Night: Twin Age
+				"YFQ",	// Nanashi no Geemu
+				"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
+				"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
+				"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
+				"CCU",	// Tomodachi Life
+				"CLJ",	// Mario & Luigi: Bowser's Inside Story
+				"YKG",	// Kindgom Hearts: 358/2 Days
+				"COL",	// Mario & Sonic at the Olympic Winter Games
+				"C24",	// Phantasy Star 0
+				"AZL",	// Style Savvy
+				"CS3",	// Sonic and Sega All Stars Racing
+				"IPK",	// Pokemon HeartGold Version
+				"IPG",	// Pokemon SoulSilver Version
+				"YBU",	// Blue Dragon: Awakened Shadow
+				"YBN",	// 100 Classic Books
+				"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
+				"C3J",	// Professor Layton and the Unwound Future
+				"IRA",	// Pokemon Black Version
+				"IRB",	// Pokemon White Version
+				"CJR",	// Dragon Quest Monsters: Joker 2
+				"YEE",	// Inazuma Eleven
+				"UZP",	// Learn with Pokemon: Typing Adventure
+				"IRE",	// Pokemon Black Version 2
+				"IRD",	// Pokemon White Version 2
+			};
 
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
-			if (memcmp(rominfo.saveInfo().gameCode, ap_list[i], 3) == 0) {
-				// Found a match.
-				hasAP = true;
-				break;
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
+				if (memcmp(rominfo.saveInfo().gameCode, ap_list[i], 3) == 0) {
+					// Found a match.
+					hasAP = true;
+					break;
+				}
 			}
+
 		}
 
+		if (hasAP)
+		{
+			messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
+										"If the game freezes, does not start, or doesn't seem normal, "
+										"it needs to be AP-patched.", MB_OK | MB_HOLD_X | MB_CANCEL);
+		}
+
+		scanKeys();
+		int pressed = keysHeld();
+
+		if (pressed & KEY_X)
+		{
+			settingsIni.dontShowAPMsgAgain();
+		}
+		if (!hasAP || pressed & KEY_A || pressed & KEY_X)
+		{
+			// Event handlers for progress window.
+			config.onSaveCreated(bootstrapSaveHandler)
+				.onConfigSaved(bootstrapLaunchHandler);
+
+			progressWnd().setTipText(LANG("game launch", "Please wait"));
+			progressWnd().update();
+			progressWnd().show();
+
+			int err = config.launch();
+			if (err)
+			{
+				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+				progressWnd().hide();
+			}
+		}
+	} else {
+		// Event handlers for progress window.
+		config.onSaveCreated(bootstrapSaveHandler)
+			.onConfigSaved(bootstrapLaunchHandler);
+
+		progressWnd().setTipText(LANG("game launch", "Please wait"));
+		progressWnd().update();
+		progressWnd().show();
+
+		int err = config.launch();
+		if (err)
+		{
+			std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+			progressWnd().hide();
+		}
 	}
-
-	if (hasAP)
-	{
-		messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
-									"If the game freezes, does not start, or doesn't seem normal, "
-									"it needs to be AP-patched.", MB_OK);
-	}
-
-    // Event handlers for progress window.
-    config.onSaveCreated(bootstrapSaveHandler)
-        .onConfigSaved(bootstrapLaunchHandler);
-
-    progressWnd().setTipText(LANG("game launch", "Please wait"));
-    progressWnd().update();
-    progressWnd().show();
-
-    int err = config.launch();
-    if (err)
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-        progressWnd().hide();
-    }
 }
 
 void MainWnd::bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings)

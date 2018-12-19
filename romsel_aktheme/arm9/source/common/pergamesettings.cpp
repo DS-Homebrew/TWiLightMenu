@@ -47,3 +47,17 @@ void PerGameSettings::saveSettings()
 	}
     pergameini.SaveIniFile(_iniPath);
 }
+
+bool PerGameSettings::checkIfShowAPMsg() {
+    CIniFile pergameini(_iniPath);
+	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
+		return true;	// Show AP message
+	}
+	return false;	// Don't show AP message
+}
+
+void PerGameSettings::dontShowAPMsgAgain() {
+    CIniFile pergameini(_iniPath);
+	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
+	pergameini.SaveIniFile(_iniPath);
+}

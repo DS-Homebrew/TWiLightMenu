@@ -1008,7 +1008,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					bool proceedToLaunch = true;
 					if (!secondaryDevice
 					&& bnrRomType[cursorPosition[secondaryDevice]] == 0 && !isDSiWare[cursorPosition[secondaryDevice]]
-					&& isHomebrew[cursorPosition[secondaryDevice]] == 0)
+					&& isHomebrew[cursorPosition[secondaryDevice]] == 0 && checkIfShowAPMsg(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name))
 					{
 						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
@@ -1025,7 +1025,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 112, "If the game freezes, does not");
 					printSmallCentered(false, 126, "start, or doesn't seem normal,");
 					printSmallCentered(false, 140, "it needs to be AP-patched.");
-					printSmallCentered(false, 166, "B: Back, A: OK");
+					printSmallCentered(false, 166, "B/A: OK, X: Don't show again");
 					pressed = 0;
 					while (1) {
 						scanKeys();
@@ -1037,6 +1037,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						if (pressed & KEY_B) {
 							proceedToLaunch = false;
+							pressed = 0;
+							break;
+						}
+						if (pressed & KEY_X) {
+							dontShowAPMsgAgain(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
 							pressed = 0;
 							break;
 						}
