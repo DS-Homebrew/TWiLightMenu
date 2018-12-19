@@ -83,6 +83,9 @@ std::string homebrewArg;
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
+static char pictochatPath[256];
+static char dlplayPath[256];
+
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
 /*	0 = Nintendo DSi (Retail)
@@ -140,6 +143,8 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 
+bool pictochatFound = false;
+bool dlplayFound = false;
 bool gbaBiosFound = false;
 bool useGbarunner = false;
 int appName = 0;
@@ -785,6 +790,36 @@ void loadROMselect()
 	}
 }
 
+void unalunchRomBoot(const char* rom) {
+	char unlaunchDevicePath[256];
+	snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", rom);
+	unlaunchDevicePath[0] = 's';
+	unlaunchDevicePath[1] = 'd';
+	unlaunchDevicePath[2] = 'm';
+	unlaunchDevicePath[3] = 'c';
+
+	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	int i2 = 0;
+	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+		i2 += 2;
+	}
+	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+}
+
 void unlaunchSetHiyaBoot(void) {
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -891,6 +926,32 @@ int main(int argc, char **argv) {
 	
 	if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound = true;
+	}
+
+	if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+		pictochatFound = true;
+		dlplayFound = true;
+	} else if (access("sd:/hiya.dsi", F_OK) == 0) {
+		//snprintf(pictochatPath, sizeof(pictochatPath), "sd:/_nds/pictochat.nds");
+		//if (access(pictochatPath, F_OK) == 0) {
+		//	pictochatFound = true;
+		//}
+		//if (!pictochatFound) {
+			snprintf(pictochatPath, sizeof(pictochatPath), "sd:/title/00030005/484e4541/content/00000000.app");
+			if (access(pictochatPath, F_OK) == 0) {
+				pictochatFound = true;
+			}
+		//}
+		//snprintf(dlplayPath, sizeof(dlplayPath), "sd:/_nds/dlplay.nds");
+		//if (access(dlplayPath, F_OK) == 0) {
+		//	dlplayFound = true;
+		//}
+		//if (!dlplayFound) {
+			snprintf(dlplayPath, sizeof(dlplayPath), "sd:/title/00030005/484e4441/content/00000001.app");
+			if (access(dlplayPath, F_OK) == 0) {
+				dlplayFound = true;
+			}
+		//}
 	}
 
 	graphicsInit();
@@ -1066,10 +1127,9 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < 30; i++) {
 		swiWaitForVBlank();
 	}
+	topBarLoad();
 	startMenu = true;	// Show bottom screen graphics
 	fadeSpeed = false;
-
-	topBarLoad();
 
 	while(1) {
 
@@ -1216,6 +1276,94 @@ int main(int argc, char **argv) {
 								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
+						}
+						break;
+					case 1:
+						if (pictochatFound) {
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							for (int i = 0; i < 60; i++) {
+								clearText();
+								iconYpos[1] -= 6;
+								printGbaBannerText();
+								swiWaitForVBlank();
+							}
+
+							// Clear screen with white
+							whiteScreen = true;
+							controlTopBright = false;
+							clearText();
+
+							//if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+								*(u16 *)(0x02000304) = 0x1801;
+								*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
+								*(u32 *)(0x0200030C) = 0x00030005;
+								*(u32 *)(0x02000310) = 0x484E4541;	// "HNEA"
+								*(u32 *)(0x02000314) = 0x00030005;
+								*(u32 *)(0x02000318) = 0x00000017;
+								*(u32 *)(0x0200031C) = 0x00000000;
+								while (*(u16 *)(0x02000306) == 0x0000)
+								{ // Keep running, so that CRC16 isn't 0
+									*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+								}
+
+								if (consoleModel < 2) {
+									unlaunchSetHiyaBoot();
+								}
+
+								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+								for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+							//} else {
+							//	unalunchRomBoot(pictochatPath);
+							//}
+						} else {
+							mmEffectEx(&snd_wrong);
+						}
+						break;
+					case 2:
+						if (dlplayFound) {
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							for (int i = 0; i < 60; i++) {
+								clearText();
+								iconYpos[2] -= 6;
+								printGbaBannerText();
+								swiWaitForVBlank();
+							}
+
+							// Clear screen with white
+							whiteScreen = true;
+							controlTopBright = false;
+							clearText();
+
+							//if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+								*(u16 *)(0x02000304) = 0x1801;
+								*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
+								*(u32 *)(0x0200030C) = 0x00030005;
+								*(u32 *)(0x02000310) = 0x484E4441;	// "HNDA"
+								*(u32 *)(0x02000314) = 0x00030005;
+								*(u32 *)(0x02000318) = 0x00000017;
+								*(u32 *)(0x0200031C) = 0x00000000;
+								while (*(u16 *)(0x02000306) == 0x0000)
+								{ // Keep running, so that CRC16 isn't 0
+									*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+								}
+
+								if (consoleModel < 2) {
+									unlaunchSetHiyaBoot();
+								}
+
+								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+								for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+							//} else {
+							//	unalunchRomBoot(dlplayPath);
+							//}
+						} else {
+							mmEffectEx(&snd_wrong);
 						}
 						break;
 					case 3:

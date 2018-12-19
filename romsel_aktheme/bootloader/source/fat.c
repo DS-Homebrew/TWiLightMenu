@@ -140,9 +140,9 @@ typedef struct
 	u8	ext[3];
 	u8	attrib;
 	u8	reserved;
-	u8	Time_ms;
-	u16	Time;
-	u16	Date;
+	u8	cTime_ms;
+	u16	cTime;
+	u16	cDate;
 	u16	aDate;
 	u16	startClusterHigh;
 	u16	mTime;
