@@ -1286,6 +1286,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								clearText();
 								iconYpos[1] -= 6;
+								printSmall(false, 180, 2, RetTime().c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
