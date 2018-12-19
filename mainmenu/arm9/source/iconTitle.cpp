@@ -35,10 +35,10 @@
 #define ICON_POS_Y	96
 
 #define BOX_PX				80
-#define BOX_PY				10
-#define BOX_PY_spacing1		8
-#define BOX_PY_spacing2		4
-#define BOX_PY_spacing3		12
+#define BOX_PY				2
+#define BOX_PY_spacing1		12
+#define BOX_PY_spacing2		6
+#define BOX_PY_spacing3		18
 
 // Graphic files
 #include "icon_unk.h"

@@ -824,10 +824,10 @@ void dsCardLaunch() {
 
 void printGbaBannerText() {
 	if (useGbarunner && !gbaBiosFound) {
-		printSmall(false, 104, iconYpos[3]+15, "BINF: bios.bin");
-		printSmall(false, 116, iconYpos[3]+23, "not found");
+		printSmall(false, 108, iconYpos[3]+8, "BINF: bios.bin");
+		printSmall(false, 120, iconYpos[3]+20, "not found");
 	} else {
-		printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+19,
+		printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+14,
 							useGbarunner ? gbarunnerText : gbamodeText);
 	}
 }
@@ -1077,7 +1077,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 180, 4, RetTime().c_str());
+				printSmall(false, 180, 2, RetTime().c_str());
 				if (romFound) {
 					titleUpdate(false, filename.c_str());
 				}
@@ -1113,7 +1113,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (pressed & KEY_LEFT) {
-				if (startMenu_cursorPosition == 2 || startMenu_cursorPosition == 5 && isDSiMode() && consoleModel < 2
+				if (startMenu_cursorPosition == 2 || (startMenu_cursorPosition == 5 && isDSiMode() && consoleModel < 2)
 				|| startMenu_cursorPosition == 6) {
 					startMenu_cursorPosition--;
 					mmEffectEx(&snd_select);

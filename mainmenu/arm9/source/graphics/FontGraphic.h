@@ -17,13 +17,16 @@ class FontGraphic
 {
 private:
 	glImage *fontSprite;
+	const unsigned short int *mapping;
+	unsigned int imageCount;
 	char buffer[256];
 	char buffer2[256];
-	
+	unsigned int getSpriteIndex(const u16 letter);
+
 public:
 
 	FontGraphic() { };
-	int load(glImage *_font_sprite,
+	int load(int textureID, glImage *_font_sprite,
 			const unsigned int numframes,
 			const unsigned int *texcoords,
 			GL_TEXTURE_TYPE_ENUM type,
@@ -32,7 +35,8 @@ public:
 			int param,
 			int pallette_width,
 			const u16 *palette,
-			const uint8 *texture
+			const uint8 *texture,
+			const unsigned short int *_mapping
 			);
 	void print(int x, int y, const char *text);
 	int calcWidth(const char *text);

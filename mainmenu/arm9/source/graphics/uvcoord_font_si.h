@@ -22,42 +22,43 @@
 #define FONT_SI__H
 
 
-#define FONT_SI_BITMAP_WIDTH   64
-#define FONT_SI_BITMAP_HEIGHT  128
-#define FONT_SI_NUM_IMAGES   128
+#define FONT_SI_BITMAP_WIDTH   512
+#define FONT_SI_BITMAP_HEIGHT  32
+#define FONT_SI_NUM_IMAGES   32
 
-#define S_TEXT_SYS 8
+#define S_TEXT_SYS 10
 
 //	Format:
 //	U,V,Width,Height
 
 extern const unsigned int font_si_texcoords[] = {
-	0, 0, 6, S_TEXT_SYS, // Space
-	8, 0, 3, S_TEXT_SYS, // !
-	16, 0, 5, S_TEXT_SYS, // "
-	24, 0, 7, S_TEXT_SYS, // #
-	32, 0, 8, S_TEXT_SYS, // $
-	40, 0, 8, S_TEXT_SYS, // %
-	48, 0, 8, S_TEXT_SYS, // &
-	56, 0, 3, S_TEXT_SYS, // '
-	0, 8, 5, S_TEXT_SYS, // (
-	8, 8, 5, S_TEXT_SYS, // )
-	16, 8, 6, S_TEXT_SYS, // *
-	24, 8, 8, S_TEXT_SYS, // +
-	32, 8, 4, S_TEXT_SYS, // ,
-	40, 8, 6, S_TEXT_SYS, // -
-	48, 8, 4, S_TEXT_SYS, // .
-	56, 8, 6, S_TEXT_SYS, // /
-	0, 16, 7, S_TEXT_SYS, // 0
-	8, 16, 5, S_TEXT_SYS, // 1
-	16, 16, 7, S_TEXT_SYS, // 2
-	24, 16, 7, S_TEXT_SYS, // 3
-	32, 16, 8, S_TEXT_SYS, // 4
-	40, 16, 8, S_TEXT_SYS, // 5
-	48, 16, 8, S_TEXT_SYS, // 6
-	56, 16, 8, S_TEXT_SYS, // 7
-	0, 24, 8, S_TEXT_SYS, // 8
-	8, 24, 8, S_TEXT_SYS, // 9
+	0, 0, 3, S_TEXT_SYS, // Space
+	4, 0, 3, S_TEXT_SYS, // !
+	6, 0, 4, S_TEXT_SYS, // "
+	10, 0, 9, S_TEXT_SYS, // #
+	18, 0, 6, S_TEXT_SYS, // $
+	24, 0, 8, S_TEXT_SYS, // %
+	32, 0, 7, S_TEXT_SYS, // &
+	39, 0, 3, S_TEXT_SYS, // '
+	42, 0, 4, S_TEXT_SYS, // (
+	46, 0, 4, S_TEXT_SYS, // )
+	50, 0, 9, S_TEXT_SYS, // *
+	59, 0, 6, S_TEXT_SYS, // +
+	65, 0, 4, S_TEXT_SYS, // ,
+	69, 0, 6, S_TEXT_SYS, // -
+	75, 0, 4, S_TEXT_SYS, // .
+	79, 0, 6, S_TEXT_SYS, // /
+	85, 0, 6, S_TEXT_SYS, // 0
+	91, 0, 4, S_TEXT_SYS, // 1
+	95, 0, 6, S_TEXT_SYS, // 2
+	101, 0, 6, S_TEXT_SYS, // 3
+	107, 0, 7, S_TEXT_SYS, // 4
+	// Unchanged from this point
+	40, 0, 8, S_TEXT_SYS, // 5
+	48, 0, 8, S_TEXT_SYS, // 6
+	56, 0, 8, S_TEXT_SYS, // 7
+	0, 0, 8, S_TEXT_SYS, // 8
+	8, 0, 8, S_TEXT_SYS, // 9
 	16, 24, 4, S_TEXT_SYS, // :
 	24, 24, 4, S_TEXT_SYS, // ;
 	32, 24, 6, S_TEXT_SYS, // <
