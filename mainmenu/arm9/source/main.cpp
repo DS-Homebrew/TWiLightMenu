@@ -130,6 +130,7 @@ int mpuregion = 0;
 int mpusize = 0;
 
 bool applaunch = false;
+bool showCursor = true;
 bool startMenu = false;
 bool gotosettings = false;
 
@@ -1168,8 +1169,9 @@ int main(int argc, char **argv) {
 						break;
 					case 0:
 						if (launchType == -1) {
-							mmEffectEx(&snd_launch);
+							showCursor = false;
 							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
@@ -1181,8 +1183,9 @@ int main(int argc, char **argv) {
 							}
 							loadROMselect();
 						} else if (launchType > 0 || isLauncharg) {
-							mmEffectEx(&snd_launch);
+							showCursor = false;
 							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
@@ -1194,8 +1197,9 @@ int main(int argc, char **argv) {
 							}
 							applaunch = true;
 						} else if (launchType == 0 && !isLauncharg && !flashcardFound() && REG_SCFG_MC != 0x11) {
-							mmEffectEx(&snd_launch);
+							showCursor = false;
 							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
@@ -1219,8 +1223,9 @@ int main(int argc, char **argv) {
 						if ((useGbarunner && gbaBiosFound)
 						|| (!useGbarunner))
 						{
-							mmEffectEx(&snd_launch);
+							showCursor = false;
 							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
 								clearText();
 								iconYpos[3] -= 6;
@@ -1255,6 +1260,7 @@ int main(int argc, char **argv) {
 						break;
 					case 5:
 						// Launch settings
+						showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
 						for (int i = 0; i < 60; i++) {
@@ -1270,6 +1276,7 @@ int main(int argc, char **argv) {
 				}
 				if (startMenu_cursorPosition == 6) {
 					// Proceed to ROM select menu
+					showCursor = false;
 					fadeType = false;	// Fade to white
 					mmEffectEx(&snd_launch);
 					for (int i = 0; i < 60; i++) {

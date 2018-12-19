@@ -59,6 +59,7 @@ int screenBrightness = 31;
 
 extern int spawnedtitleboxes;
 
+extern bool showCursor;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
 
@@ -209,7 +210,7 @@ void vBlankHandler()
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, &cornerIcons[3]);
 
 			// Draw cursor
-			if (screenBrightness == 0) {
+			if (showCursor) {
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
