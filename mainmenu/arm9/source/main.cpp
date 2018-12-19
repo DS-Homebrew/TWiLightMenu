@@ -933,8 +933,11 @@ int main(int argc, char **argv) {
 	bottomBgLoad();
 	
 	bool isLauncharg = false;
+	bool romFound = false;
 
 	if (romPath != "" && access(romPath.c_str(), F_OK) == 0) {
+		romFound = true;
+
 		romfolder = romPath;
 		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 			romfolder.resize(romfolder.size()-1);
@@ -1073,7 +1076,9 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmall(false, 180, 4, RetTime().c_str());
-				titleUpdate(false, filename.c_str());
+				if (romFound) {
+					titleUpdate(false, filename.c_str());
+				}
 				printGbaBannerText();
 
 				scanKeys();
@@ -1081,9 +1086,44 @@ int main(int argc, char **argv) {
 				touchRead(&touch);
 				swiWaitForVBlank();
 			} while (!pressed);
-			
-			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
-			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
+
+			if (pressed & KEY_UP) {
+				if (startMenu_cursorPosition == 2 || startMenu_cursorPosition == 3 || startMenu_cursorPosition == 5) {
+					startMenu_cursorPosition -= 2;
+					mmEffectEx(&snd_select);
+				} else if (startMenu_cursorPosition == 6) {
+					startMenu_cursorPosition -= 3;
+					mmEffectEx(&snd_select);
+				} else {
+					startMenu_cursorPosition--;
+					mmEffectEx(&snd_select);
+				}
+			}
+
+			if (pressed & KEY_DOWN) {
+				if (startMenu_cursorPosition == 1 || startMenu_cursorPosition == 3) {
+					startMenu_cursorPosition += 2;
+					mmEffectEx(&snd_select);
+				} else if (startMenu_cursorPosition >= 0 && startMenu_cursorPosition <= 3) {
+					startMenu_cursorPosition++;
+					mmEffectEx(&snd_select);
+				}
+			}
+
+			if (pressed & KEY_LEFT) {
+				if (startMenu_cursorPosition == 2 || startMenu_cursorPosition == 5 && isDSiMode() && consoleModel < 2
+				|| startMenu_cursorPosition == 6) {
+					startMenu_cursorPosition--;
+					mmEffectEx(&snd_select);
+				}
+			}
+
+			if (pressed & KEY_RIGHT) {
+				if (startMenu_cursorPosition == 1 || startMenu_cursorPosition == 4 || startMenu_cursorPosition == 5) {
+					startMenu_cursorPosition++;
+					mmEffectEx(&snd_select);
+				}
+			}
 
 			if (pressed & KEY_TOUCH) {
 				if (touch.px >= 33 && touch.px <= 221 && touch.py >= 25 && touch.py <= 69) {
@@ -1131,7 +1171,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								titleUpdate(false, filename.c_str());
+								if (romFound) {
+									titleUpdate(false, filename.c_str());
+								}
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1142,7 +1184,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								titleUpdate(false, filename.c_str());
+								if (romFound) {
+									titleUpdate(false, filename.c_str());
+								}
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1153,7 +1197,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								titleUpdate(false, filename.c_str());
+								if (romFound) {
+									titleUpdate(false, filename.c_str());
+								}
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
