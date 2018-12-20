@@ -872,7 +872,7 @@ void printGbaBannerText() {
 		printSmall(false, 84, iconYpos[3]+14, "found. Add GBA BIOS");
 		printSmall(false, 80, iconYpos[3]+26, "to enable GBARunner2.");
 	} else {
-		printSmall(false, useGbarunner ? 88 : 96, iconYpos[3]+14,
+		printSmall(false, useGbarunner ? 94 : 96, iconYpos[3]+14,
 							useGbarunner ? gbarunnerText : gbamodeText);
 	}
 }
