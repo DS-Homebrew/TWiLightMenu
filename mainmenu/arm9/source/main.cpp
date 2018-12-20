@@ -139,6 +139,7 @@ bool gotosettings = false;
 
 bool startButtonLaunch = false;
 int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+bool isLauncharg = false;
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
@@ -856,6 +857,15 @@ void dsCardLaunch() {
 	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 }
 
+void printNdsCartBannerText() {
+	if (REG_SCFG_MC == 0x11) {
+		printSmall(false, 80, iconYpos[0]+8, "There is no Game Card");
+		printSmall(false, 124, iconYpos[0]+20, "inserted.");
+	} else {
+		printSmall(false, 100, iconYpos[0]+14, "Start Game Card");
+	}
+}
+
 void printGbaBannerText() {
 	if (useGbarunner && !gbaBiosFound) {
 		printSmall(false, 96, iconYpos[3]+2, "BINF: bios.bin not");
@@ -993,10 +1003,9 @@ int main(int argc, char **argv) {
 	topBgLoad();
 	bottomBgLoad();
 	
-	bool isLauncharg = false;
 	bool romFound = false;
 
-	if (romPath != "" && access(romPath.c_str(), F_OK) == 0) {
+	if (launchType > 0 && romPath != "" && access(romPath.c_str(), F_OK) == 0) {
 		romFound = true;
 
 		romfolder = romPath;
@@ -1138,9 +1147,11 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmall(false, 180, 2, RetTime().c_str());
-				if (romFound) {
+				if (isDSiMode() && launchType == 0 && !isLauncharg && !flashcardFound()) {
+					printNdsCartBannerText();
+				} else if (romFound) {
 					titleUpdate(false, filename.c_str());
-				}
+				} 
 				printGbaBannerText();
 
 				scanKeys();
@@ -1254,7 +1265,11 @@ int main(int argc, char **argv) {
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
-							applaunch = true;
+							if (romFound) {
+								applaunch = true;
+							} else {
+								loadROMselect();
+							}
 						} else if (launchType == 0 && !isLauncharg && !flashcardFound() && REG_SCFG_MC != 0x11) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
@@ -1262,9 +1277,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								if (romFound) {
-									titleUpdate(false, filename.c_str());
-								}
+								printNdsCartBannerText();
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1275,6 +1288,8 @@ int main(int argc, char **argv) {
 								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
+						} else {
+							mmEffectEx(&snd_wrong);
 						}
 						break;
 					case 1:
