@@ -82,7 +82,6 @@ std::string bootstrapfilename;
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
-int screenmode = 0;
 int subscreenmode = 0;
 
 touchPosition touch;
@@ -425,7 +424,8 @@ void defaultExitHandler()
 	{
 		rebootDSiMenuPP();
 	}*/
-	loadROMselect();
+	loadMainMenu();
+	//loadROMselect();
 }
 void opt_reset_subtheme(int prev, int next)
 {
@@ -562,7 +562,6 @@ int main(int argc, char **argv)
 
 	graphicsInit();
 	fontInit();
-	screenmode = 1;
 	langInit();
 	fadeType = true;
 
@@ -751,29 +750,21 @@ int main(int argc, char **argv)
 	//	stop();
 	while (1)
 	{
-		if (screenmode == 1)
+		if (!gui().isExited())
 		{
-			if (!gui().isExited())
-			{
-				snd().playBgMusic();
-			}
-
-			gui().draw();
-			do
-			{
-				scanKeys();
-				pressed = keysDownRepeat();
-				touchRead(&touch);
-				swiWaitForVBlank();
-			} while (!pressed);
-
-			gui().processInputs(pressed, touch);
+			snd().playBgMusic();
 		}
-		else
+
+		gui().draw();
+		do
 		{
-			loadMainMenu();
-			//loadROMselect();
-		}
+			scanKeys();
+			pressed = keysDownRepeat();
+			touchRead(&touch);
+			swiWaitForVBlank();
+		} while (!pressed);
+
+		gui().processInputs(pressed, touch);
 	}
 
 	return 0;
