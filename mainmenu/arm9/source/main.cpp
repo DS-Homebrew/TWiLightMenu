@@ -984,8 +984,8 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
-		printSmallCentered(false, 88, "Now copying data...");
-		printSmallCentered(false, 96, "Do not turn off the power.");
+		printSmallCentered(false, 86, "Now copying data...");
+		printSmallCentered(false, 98, "Do not turn off the power.");
 		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", dsiWarePubPath.c_str());
@@ -1721,8 +1721,8 @@ int main(int argc, char **argv) {
 					whiteScreen = true;
 					clearText();
 					ClearBrightness();
-					printSmallCentered(false, 88, "Now copying data...");
-					printSmallCentered(false, 96, "Do not turn off the power.");
+					printSmallCentered(false, 86, "Now copying data...");
+					printSmallCentered(false, 98, "Do not turn off the power.");
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -1733,15 +1733,15 @@ int main(int argc, char **argv) {
 
 					clearText();
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
-						printSmall(false, 2, 112, "After saving, please re-start");
+						printSmall(false, 2, 8, "After saving, please re-start");
 						if (appName == 0) {
-							printSmall(false, 2, 120, "TWiLight Menu++ to transfer your");
+							printSmall(false, 2, 20, "TWiLight Menu++ to transfer your");
 						} else if (appName == 1) {
-							printSmall(false, 2, 120, "SRLoader to transfer your");
+							printSmall(false, 2, 20, "SRLoader to transfer your");
 						} else if (appName == 2) {
-							printSmall(false, 2, 120, "DSiMenu++ to transfer your");
+							printSmall(false, 2, 20, "DSiMenu++ to transfer your");
 						}
-						printSmall(false, 2, 128, "save data back.");
+						printSmall(false, 2, 32, "save data back.");
 						for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
 					}
 				}
