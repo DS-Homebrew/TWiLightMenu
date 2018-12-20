@@ -346,14 +346,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			showDirectoryContents (dirContents, screenOffset);
 		}
 
-		int pressedToLaunch = 0;
-		if (startButtonLaunch) {
-			pressedToLaunch = (pressed & KEY_START);
-		} else {
-			pressedToLaunch = (pressed & KEY_A);
-		}
-
-		if (pressedToLaunch) {
+		if (pressed & KEY_A) {
 			DirEntry* entry = &dirContents.at(fileOffset);
 			if (entry->isDirectory) {
 				iprintf("Entering directory\n");
