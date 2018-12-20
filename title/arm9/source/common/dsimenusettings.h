@@ -76,7 +76,8 @@ class DSiMenuPlusPlusSettings
 
     enum TLaunchType
     {
-        ENoLaunch = 0,
+        ENoLaunch = -1,
+        ESlot1 = 0,
         ESDFlashcardLaunch = 1,
         EDSiWareLaunch = 2,
         ENESDSLaunch = 3,
@@ -146,7 +147,6 @@ class DSiMenuPlusPlusSettings
     int bstrap_language;
     bool boostCpu;
     bool boostVram;
-    bool soundFix;
     bool bstrap_dsiMode;
     bool autorun;
     bool show12hrClock;
