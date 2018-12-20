@@ -216,15 +216,6 @@ void RomInfoWnd::pressGameSettings(void)
 			settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
 			_values.clear();
 		}
-
-		if (!ms().secondaryDevice) {
-			_values.push_back(LANG("game settings", "Default")); // -1 => 0
-			_values.push_back(LANG("game settings", "Off")); // 0 => 1
-			_values.push_back(LANG("game settings", "On")); // 1 => 2
-
-			settingWnd.addSettingItem(LANG("game settings", "Sound Fix"), _values, settingsIni.soundFix + 1);
-			_values.clear();
-		}
     }
     else
     {
@@ -281,10 +272,6 @@ void RomInfoWnd::pressGameSettings(void)
 				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 				selection++;
 				settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-			}
-			if (!ms().secondaryDevice) {
-				selection++;
-				settingsIni.soundFix = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
         }
         else

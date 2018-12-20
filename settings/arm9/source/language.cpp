@@ -309,7 +309,6 @@ void langInit(void)
 	STR_LANGUAGE = languageini.GetString("LANGUAGE", "LANGUAGE", "Language");
 	STR_CPUSPEED = languageini.GetString("LANGUAGE", "CPUSPEED", "ARM9 CPU Speed");
 	STR_VRAMBOOST = languageini.GetString("LANGUAGE", "VRAMBOOST", "VRAM boost");
-	STR_SOUNDFIX = languageini.GetString("LANGUAGE", "SOUNDFIX", "Sound fix");
 	STR_DEBUG = languageini.GetString("LANGUAGE", "DEBUG", "Debug");
 	STR_LOGGING = languageini.GetString("LANGUAGE", "LOGGING", "Logging");
 	STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED");

@@ -70,8 +70,6 @@ int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
-int perGameSettings_soundFix = -1;
-int perGameSettings_asyncPrefetch = -1;
 
 char pergamefilepath[256];
 
@@ -98,8 +96,6 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
-	perGameSettings_soundFix = pergameini.GetInt("GAMESETTINGS", "SOUND_FIX", -1);
-	perGameSettings_asyncPrefetch = pergameini.GetInt("GAMESETTINGS", "ASYNC_PREFETCH", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -117,7 +113,6 @@ void savePerGameSettings (std::string filename) {
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SOUND_FIX", perGameSettings_soundFix);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -242,11 +237,7 @@ void perGameSettings (std::string filename) {
 	} else if (isLauncharg || isDSiWare || isHomebrew == 2 || !isDSiMode()) {
 		dialogboxHeight = 0;
 	} else {
-		if (secondaryDevice) {
-			dialogboxHeight = 4;
-		} else {
-			dialogboxHeight = 5;
-		}
+		dialogboxHeight = 4;
 	}
 	showdialogbox = true;
 
@@ -355,18 +346,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 180, 136, "Off");
 				}
 			}
-			if (!secondaryDevice) {
-				if (perGameSettings_soundFix == -1) {
-					printSmall(false, 180, 144, "Default");
-				} else if (perGameSettings_soundFix == 1) {
-					printSmall(false, 180, 144, "On");
-				} else {
-					printSmall(false, 180, 144, "Off");
-				}
-				printSmallCentered(false, 158, "B: Back");
-			} else {
-				printSmallCentered(false, 150, "B: Back");
-			}
+			printSmallCentered(false, 150, "B: Back");
 		}
 		do {
 			scanKeys();
@@ -428,19 +408,11 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (secondaryDevice) {
-					if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
-				} else {
-					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
-				}
+				if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (secondaryDevice) {
-					if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
-				} else {
-					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
-				}
+				if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
 			}
 
 			if (pressed & KEY_A) {
@@ -465,10 +437,6 @@ void perGameSettings (std::string filename) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
-						break;
-					case 4:
-						perGameSettings_soundFix++;
-						if (perGameSettings_soundFix > 1) perGameSettings_soundFix = -1;
 						break;
 				}
 				perGameSettingsChanged = true;

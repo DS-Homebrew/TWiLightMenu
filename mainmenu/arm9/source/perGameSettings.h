@@ -10,12 +10,9 @@ extern int perGameSettings_dsiMode;
 extern int perGameSettings_language;
 extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;
-extern int perGameSettings_soundFix;
-extern int perGameSettings_asyncPrefetch;
 
 void loadPerGameSettings(std::string filename);
 void savePerGameSettings(std::string filename);
-void perGameSettings(std::string filename);
 
 
 

@@ -41,7 +41,6 @@ class PerGameSettings
     TLanguage language;
     TDefaultBool boostCpu;
     TDefaultBool boostVram;
-    TDefaultBool soundFix;
 
   private:
     std::string _iniPath;

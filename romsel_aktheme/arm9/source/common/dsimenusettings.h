@@ -147,7 +147,6 @@ class DSiMenuPlusPlusSettings
     int bstrap_language;
     bool boostCpu;
     bool boostVram;
-    bool soundFix;
     bool bstrap_dsiMode;
     bool autorun;
     bool show12hrClock;

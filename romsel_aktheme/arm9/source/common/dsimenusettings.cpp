@@ -40,7 +40,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     bstrap_language = ELangDefault;
     boostCpu = false;
     boostVram = false;
-    soundFix = false;
     bstrap_dsiMode = false;
 
     show12hrClock = true;
@@ -110,7 +109,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
     bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
     boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    soundFix = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
@@ -166,7 +164,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     /*settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-    settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FIX", soundFix);
     settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);*/
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
