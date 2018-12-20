@@ -404,11 +404,11 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
+				if (perGameSettings_cursorPosition < 0+(secondaryDevice*2)) perGameSettings_cursorPosition = 3;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
+				if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 0+(secondaryDevice*2);
 			}
 
 			if (pressed & KEY_A) {

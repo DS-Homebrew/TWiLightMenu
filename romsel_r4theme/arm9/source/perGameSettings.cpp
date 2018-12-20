@@ -299,16 +299,17 @@ void perGameSettings (std::string filename) {
 			if (!secondaryDevice) {
 				printSmall(false, 32, 112, "Language:");
 				printSmall(false, 32, 120, "Run in:");
-				if (perGameSettings_dsiMode) {
-					printSmall(false, 184, 120, "DSi mode");
+				if (perGameSettings_dsiMode == -1) {
+					printSmall(false, 180, 120, "Default");
+				} else if (perGameSettings_dsiMode == 1) {
+					printSmall(false, 180, 120, "DSi mode");
 				} else {
-					printSmall(false, 184, 120, "DS mode");
+					printSmall(false, 180, 120, "DS mode");
 				}
 			}
 			printSmall(false, 32, 128, "ARM9 CPU Speed:");
 			printSmall(false, 32, 136, "VRAM boost:");
 			if (!secondaryDevice) {
-				printSmall(false, 32, 144, "Sound fix:");
 				if (perGameSettings_language == -2) {
 					printSmall(false, 180, 112, "Default");
 				} else if (perGameSettings_language == -1) {
@@ -408,11 +409,11 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (pressed & KEY_UP) {
 				perGameSettings_cursorPosition--;
-				if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
+				if (perGameSettings_cursorPosition < 0+(secondaryDevice*2)) perGameSettings_cursorPosition = 3;
 			}
 			if (pressed & KEY_DOWN) {
 				perGameSettings_cursorPosition++;
-				if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
+				if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 0+(secondaryDevice*2);
 			}
 
 			if (pressed & KEY_A) {

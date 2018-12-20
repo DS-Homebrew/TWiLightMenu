@@ -70,7 +70,6 @@ extern bool controlBottomBright;
 
 extern std::string romPath;
 
-extern bool startButtonLaunch;
 extern int launchType;
 extern bool slot1LaunchMethod;
 extern bool bootstrapFile;
