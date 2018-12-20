@@ -161,6 +161,7 @@ class DSiMenuPlusPlusSettings
     std::string dsiWarePrvPath;
 
     int launchType;
+    std::string romPath;
     std::string homebrewArg;
     bool homebrewBootstrap;
     bool soundfreq;

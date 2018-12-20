@@ -120,6 +120,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
     homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
@@ -177,6 +178,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}

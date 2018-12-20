@@ -708,6 +708,7 @@ void MainWnd::launchSelected()
 
     ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
 	ms().previousUsedDevice = ms().secondaryDevice;
+    ms().romPath = fullPath;
     ms().saveSettings();
 
     DSRomInfo rominfo;
