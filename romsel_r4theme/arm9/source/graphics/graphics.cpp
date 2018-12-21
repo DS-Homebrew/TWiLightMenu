@@ -600,7 +600,7 @@ void graphicsInit()
 	// Initialize the bottom background
 	//bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
 
 	/*if (subtheme >= 0 && subtheme < 12) {
 		icon1TexID = glLoadTileSet(icon1Image, // pointer to glImage array

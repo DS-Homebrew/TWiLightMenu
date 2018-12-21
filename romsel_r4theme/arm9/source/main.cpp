@@ -739,7 +739,7 @@ void dsCardLaunch() {
 	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 //---------------------------------------------------------------------------------
@@ -773,7 +773,7 @@ int main(int argc, char **argv) {
 		whiteScreen = false;
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		stop();
 	}
 
@@ -830,7 +830,7 @@ int main(int argc, char **argv) {
 		fadeType = true;	// Fade in from white
 		printSmallCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 96, "Do not turn off the power.");
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", dsiWarePubPath.c_str());
 		}
@@ -838,7 +838,7 @@ int main(int argc, char **argv) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", dsiWarePrvPath.c_str());
 		}
 		fadeType = false;	// Fade to white
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		clearText(false);
 		whiteScreen = false;
 		controlTopBright = true;
@@ -985,7 +985,7 @@ int main(int argc, char **argv) {
 
 			if ((pressed & KEY_B) && isDSiMode()) {
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				if (launcherApp == -1) {
 					*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 					*(u16*)(0x02000304) = 0x1801;
@@ -1167,7 +1167,7 @@ int main(int argc, char **argv) {
 				unlaunchSetHiyaBoot();
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			bool isArgv = false;
@@ -1249,7 +1249,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
@@ -1272,7 +1272,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if (secondaryDevice) {
@@ -1300,7 +1300,7 @@ int main(int argc, char **argv) {
 							printSmall(false, 2, 120, "DSiMenu++ to transfer your");
 						}
 						printSmall(false, 2, 128, "save data back.");
-						for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
+						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 					}
 				}
 
@@ -1334,7 +1334,7 @@ int main(int argc, char **argv) {
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			// Launch .nds directly or via nds-bootstrap

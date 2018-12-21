@@ -403,7 +403,7 @@ void graphicsInit()
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
 
 	cursorTexID = glLoadTileSet(cursorImage, // pointer to glImage array
 							32, // sprite width
