@@ -937,7 +937,7 @@ int main(int argc, char **argv) {
 		gbaBiosFound = true;
 	}
 
-	if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+	if ((isDSiMode() && arm7SCFGLocked && consoleModel < 2) || (isDSiMode() && consoleModel >= 2)) {
 		pictochatFound = true;
 		dlplayFound = true;
 	} else if (access("sd:/hiya.dsi", F_OK) == 0) {
