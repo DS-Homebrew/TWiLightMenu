@@ -16,6 +16,7 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
     boostVram = EDefault;
     dsiMode = EDefault;
     directBoot = EFalse;
+    bootstrapFile = EDefault;
     loadSettings();
 }
 
@@ -28,6 +29,7 @@ void PerGameSettings::loadSettings()
 	language = (TLanguage)pergameini.GetInt("GAMESETTINGS", "LANGUAGE", language);
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
+    bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 }
 
 void PerGameSettings::saveSettings()
@@ -39,6 +41,7 @@ void PerGameSettings::saveSettings()
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
+        pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 	}
     pergameini.SaveIniFile(_iniPath);
 }

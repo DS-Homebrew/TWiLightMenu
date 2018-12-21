@@ -199,6 +199,13 @@ void RomInfoWnd::pressGameSettings(void)
 
 			settingWnd.addSettingItem(LANG("game settings", "Run in"), _values, settingsIni.dsiMode + 1);
 			_values.clear();
+
+            _values.push_back(LANG("game settings", "Default")); // -1 => 0
+            _values.push_back(LANG("game settings", "Release")); // 0 => 1
+            _values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
+
+            settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
+            _values.clear();
 		}
 
 		if (isDSiMode()) {
@@ -267,6 +274,8 @@ void RomInfoWnd::pressGameSettings(void)
 				selection++;
 				settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 				selection++;
+                settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+                selection++;
 			}
 			if (isDSiMode()) {
 				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);

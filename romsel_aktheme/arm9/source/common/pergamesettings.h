@@ -41,6 +41,7 @@ class PerGameSettings
     TLanguage language;
     TDefaultBool boostCpu;
     TDefaultBool boostVram;
+    TDefaultBool bootstrapFile;
 
   private:
     std::string _iniPath;
