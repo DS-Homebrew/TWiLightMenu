@@ -242,6 +242,8 @@ void langInit(void)
 
 	STR_DESCRIPTION_S1SDACCESS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes.");
 
+	STR_DESCRIPTION_MAINMENU = languageini.GetString("LANGUAGE", "DESCRIPTION_MAINMENU", "The menu that is shown before the ROM select menu. Has the look of the original DS UI.");
+
 	switch (ms().appName)
 	{
 	case 0:
