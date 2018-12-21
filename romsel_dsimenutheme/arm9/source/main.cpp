@@ -668,7 +668,9 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 	
-	// consoleDemoInit();
+	//SetBrightness(0, 0);
+	//SetBrightness(1, 0);
+	//consoleDemoInit();
 
 	bool fatInited = fatInitDefault();
 	// if (fatInited) {
@@ -698,13 +700,17 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 	
-	// printf("Username read!");
-	
 	//snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
-	
+	//printf("Username read!");
+
 	if (!fatInited) {
 		graphicsInit();
 		fontInit();
+		InitSound();
+		if (!music) {
+			mmEffectEx(&mus_menu);
+			music = true;
+		}
 		whiteScreen = false;
 		fadeType = true;
 		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
@@ -749,7 +755,7 @@ int main(int argc, char **argv) {
 	}
 
 	nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
-	// printf("nitroFS inited!");
+	//printf("nitroFS inited!");
 
 	flashcardInit();
 
@@ -758,7 +764,7 @@ int main(int argc, char **argv) {
 	}
 	
 	langInit();
-	// printf("lang inited!");
+	//printf("lang inited!");
 
 	std::string filename;
 	std::string bootstrapfilename;
@@ -770,7 +776,7 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
-	// printf("settings loaded!");
+	//printf("settings loaded!");
 	
 	if (access("sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[0] = true;
@@ -779,7 +785,7 @@ int main(int argc, char **argv) {
 		gbaBiosFound[1] = true;
 	}
 
-	// printf("initing graphics...");
+	//printf("initing graphics...");
 	graphicsInit();
 	fontInit();
 	iconManagerInit();

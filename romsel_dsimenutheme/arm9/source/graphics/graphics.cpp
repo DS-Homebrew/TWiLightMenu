@@ -156,8 +156,8 @@ extern mm_sound_effect mus_menu;
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
-	swiIntrWait(0, 1);
-	swiIntrWait(0, 1);
+	swiWaitForVBlank();
+	swiWaitForVBlank();
 }
 
 bool screenFadedIn(void) {
@@ -1165,8 +1165,8 @@ void graphicsInit()
 
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
-	
-	swiIntrWait(0, 1);
+
+	swiWaitForVBlank();
 
 	if (theme == 1) {
 		tex().load3DSTheme();
