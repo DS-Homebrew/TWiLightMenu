@@ -243,99 +243,6 @@ void SaveSettings(void) {
 	settingsini.SaveIniFile(settingsinipath);
 }
 
-int colorRvalue;
-int colorGvalue;
-int colorBvalue;
-
-/**
- * Load the console's color.
- */
-void LoadColor(void) {
-	switch (PersonalData->theme) {
-		case 0:
-		default:
-			colorRvalue = 99;
-			colorGvalue = 127;
-			colorBvalue = 127;
-			break;
-		case 1:
-			colorRvalue = 139;
-			colorGvalue = 99;
-			colorBvalue = 0;
-			break;
-		case 2:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 0;
-			break;
-		case 3:
-			colorRvalue = 255;
-			colorGvalue = 127;
-			colorBvalue = 127;
-			break;
-		case 4:
-			colorRvalue = 223;
-			colorGvalue = 63;
-			colorBvalue = 0;
-			break;
-		case 5:
-			colorRvalue = 215;
-			colorGvalue = 215;
-			colorBvalue = 0;
-			break;
-		case 6:
-			colorRvalue = 215;
-			colorGvalue = 255;
-			colorBvalue = 0;
-			break;
-		case 7:
-			colorRvalue = 0;
-			colorGvalue = 255;
-			colorBvalue = 0;
-			break;
-		case 8:
-			colorRvalue = 63;
-			colorGvalue = 255;
-			colorBvalue = 63;
-			break;
-		case 9:
-			colorRvalue = 31;
-			colorGvalue = 231;
-			colorBvalue = 31;
-			break;
-		case 10:
-			colorRvalue = 0;
-			colorGvalue = 63;
-			colorBvalue = 255;
-			break;
-		case 11:
-			colorRvalue = 63;
-			colorGvalue = 63;
-			colorBvalue = 255;
-			break;
-		case 12:
-			colorRvalue = 0;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 13:
-			colorRvalue = 127;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 14:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 15:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 127;
-			break;
-	}
-}
-
 bool useBootstrap = false;
 
 using namespace std;
@@ -761,7 +668,12 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 	
+	// consoleDemoInit();
+
 	bool fatInited = fatInitDefault();
+	// if (fatInited) {
+	// 	printf("fat inited!");
+	// }
 
 	// consoleDemoInit();
 	// iprintf("Hello World");
@@ -786,10 +698,10 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 	
+	// printf("Username read!");
+	
 	//snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
 	
-	LoadColor();
-
 	if (!fatInited) {
 		graphicsInit();
 		fontInit();
@@ -837,6 +749,7 @@ int main(int argc, char **argv) {
 	}
 
 	nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
+	// printf("nitroFS inited!");
 
 	flashcardInit();
 
@@ -845,6 +758,7 @@ int main(int argc, char **argv) {
 	}
 	
 	langInit();
+	// printf("lang inited!");
 
 	std::string filename;
 	std::string bootstrapfilename;
@@ -856,6 +770,7 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
+	// printf("settings loaded!");
 	
 	if (access("sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[0] = true;
@@ -864,6 +779,7 @@ int main(int argc, char **argv) {
 		gbaBiosFound[1] = true;
 	}
 
+	// printf("initing graphics...");
 	graphicsInit();
 	fontInit();
 	iconManagerInit();
