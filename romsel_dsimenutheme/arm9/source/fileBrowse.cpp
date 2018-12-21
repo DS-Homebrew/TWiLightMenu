@@ -389,9 +389,9 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 72; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 72; i++) swiWaitForVBlank();
 	} else {
-		for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	}
 }
 
@@ -442,7 +442,7 @@ void launchSettings(void) {
 	fadeType = false;	// Fade to white
 	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 	for (int i = 0; i < 60; i++) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
@@ -461,7 +461,7 @@ void exitToSystemMenu(void) {
 	fadeType = false;	// Fade to white
 	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 	for (int i = 0; i < 60; i++) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
@@ -542,7 +542,7 @@ void switchDevice(void) {
 	{
 		mmEffectEx(&snd_switch);
 		fadeType = false;	// Fade to white
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		secondaryDevice = !secondaryDevice;
 		if (showBoxArt) clearBoxArt();	// Clear box art
 		whiteScreen = true;
@@ -562,7 +562,7 @@ void switchDevice(void) {
 		fadeType = false;	// Fade to white
 		fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 		for (int i = 0; i < 60; i++) {
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		}
 		music = false;
 		mmEffectCancelAll();
@@ -586,7 +586,7 @@ void launchGba(void) {
 		clearText();
 		dbox_showIcon = false;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		printLarge(false, 16, 12, "Error code: BINF");
 		printSmallCentered(false, 64, "The GBA BIOS is required");
 		printSmallCentered(false, 78, "to run GBA games.");
@@ -597,11 +597,11 @@ void launchGba(void) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
 		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 		return;
 	}
 
@@ -612,7 +612,7 @@ void launchGba(void) {
 	fadeType = false;	// Fade to white
 	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 	for (int i = 0; i < 60; i++) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
@@ -797,7 +797,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
 		fadeType = true;	// Fade in from white
-		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
 		reloadIconPalettes();
 		reloadFontPalettes();
 		clearText(false);
@@ -877,7 +877,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}
@@ -948,7 +948,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// Enter selected directory
 					mmEffectEx(&snd_select);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					pagenum[secondaryDevice] = 0;
 					cursorPosition[secondaryDevice] = 0;
 					titleboxXpos[secondaryDevice] = 0;
@@ -977,7 +977,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					dbox_showIcon = true;
 					showdialogbox = true;
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 					printSmallCentered(false, 112, "This game cannot be launched");
 					if (isDSiMode()) {
@@ -994,11 +994,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiIntrWait(0, 1);
+						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 15; i++) swiWaitForVBlank();
 					dbox_showIcon = false;
 				}
 				else
@@ -1017,7 +1017,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					dbox_showIcon = true;
 					showdialogbox = true;
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 					printSmallCentered(false, 64, "This game may not work correctly,");
 					printSmallCentered(false, 78, "if it's not AP-patched.");
@@ -1029,7 +1029,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					while (1) {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiIntrWait(0, 1);
+						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;
 							break;
@@ -1047,7 +1047,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) swiIntrWait(0, 1);
+					for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) swiWaitForVBlank();
 					dbox_showIcon = false;
 					}
 
@@ -1064,13 +1064,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 						fadeSpeed = false;	// Slow fade speed
 						for (int i = 0; i < 5; i++) {
-							swiIntrWait(0, 1);
+							swiWaitForVBlank();
 						}
 					}
 					fadeType = false;	// Fade to white
 					fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
 					for (int i = 0; i < 60; i++) {
-						swiIntrWait(0, 1);
+						swiWaitForVBlank();
 					}
 					music = false;
 					mmEffectCancelAll();
@@ -1121,7 +1121,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum[secondaryDevice] != 0) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					pagenum[secondaryDevice] -= 1;
 					cursorPosition[secondaryDevice] = 0;
 					titleboxXpos[secondaryDevice] = 0;
@@ -1147,7 +1147,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum[secondaryDevice]*40) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					pagenum[secondaryDevice] += 1;
 					cursorPosition[secondaryDevice] = 0;
 					titleboxXpos[secondaryDevice] = 0;
@@ -1174,7 +1174,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				// Go up a directory
 				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
-				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pagenum[secondaryDevice] = 0;
 				cursorPosition[secondaryDevice] = 0;
 				titleboxXpos[secondaryDevice] = 0;
@@ -1203,7 +1203,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				dbox_showIcon = true;
 				showdialogbox = true;
-				for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
 				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
@@ -1214,19 +1214,19 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				//} else {
 					printSmallCentered(false, 128, "delete this game?");
 				//}
-				for (int i = 0; i < 90; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 90; i++) swiWaitForVBlank();
 				printSmall(false, 160, 166, "A: Yes");
 				printSmall(false, 208, 166, "B: No");
 				while (1) {
 					do {
 						scanKeys();
 						pressed = keysDownRepeat();
-						swiIntrWait(0, 1);
+						swiWaitForVBlank();
 					} while (!pressed);
 					
 					if (pressed & KEY_A) {
 						fadeType = false;	// Fade to white
-						for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
 						remove(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()); // Remove game/folder
 						if (showBoxArt) clearBoxArt();	// Clear box art
@@ -1248,7 +1248,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				clearText();
 				showdialogbox = false;
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 				dbox_showIcon = false;
 			}
 

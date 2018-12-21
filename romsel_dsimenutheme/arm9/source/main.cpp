@@ -495,7 +495,7 @@ void SetMPUSettings(const char* filename) {
 void stop (void) {
 //---------------------------------------------------------------------------------
 	while (1) {
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 }
 
@@ -510,7 +510,7 @@ void doPause() {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	scanKeys();
 }
@@ -654,7 +654,7 @@ void dsCardLaunch() {
 	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 //---------------------------------------------------------------------------------
@@ -681,7 +681,7 @@ int main(int argc, char **argv) {
 	// iprintf("Hello World");
 	
 	// while(1) {
-	// 	swiIntrWait(0, 1);
+	// 	swiWaitForVBlank();
 	// }
 	// return 0;
 
@@ -713,12 +713,12 @@ int main(int argc, char **argv) {
 		}
 		whiteScreen = false;
 		fadeType = true;
-		for (int i = 0; i < 5; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 5; i++) swiWaitForVBlank();
 		if (!dropDown && theme == 0) {
 			dropDown = true;
-			for (int i = 0; i < 72; i++) swiIntrWait(0, 1);
+			for (int i = 0; i < 72; i++) swiWaitForVBlank();
 		} else {
-			for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 		showbubble = true;
 		printLargeCentered(false, 32, "fatInitDefault failed!");
@@ -732,7 +732,7 @@ int main(int argc, char **argv) {
 			{
 				scanKeys();
 				pressed = keysDownRepeat();
-				swiIntrWait(0, 1);
+				swiWaitForVBlank();
 			}
 			while (!pressed);
 
@@ -826,9 +826,9 @@ int main(int argc, char **argv) {
 		fadeType = true;	// Fade in from white
 		printLargeCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 104, "Do not turn off the power.");
-		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 		reloadFontPalettes();
-		for (int i = 0; i < 20; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 20; i++) swiWaitForVBlank();
 		showProgressIcon = true;
 		controlTopBright = false;
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
@@ -839,7 +839,7 @@ int main(int argc, char **argv) {
 		}
 		showProgressIcon = false;
 		fadeType = false;	// Fade to white
-		for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		clearText(false);
 	}
 
@@ -946,7 +946,7 @@ int main(int argc, char **argv) {
 				unlaunchSetHiyaBoot();
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			bool isArgv = false;
@@ -1019,7 +1019,7 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, savecreate);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
-						for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
+						for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					}
 
 					static const int BUFFER_SIZE = 4096;
@@ -1034,7 +1034,7 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
@@ -1044,7 +1044,7 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, savecreate);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
-						for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
+						for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					}
 
 					static const int BUFFER_SIZE = 4096;
@@ -1059,12 +1059,12 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if (fadeType) {
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 
 				if (secondaryDevice) {
@@ -1072,7 +1072,7 @@ int main(int argc, char **argv) {
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
 					fadeType = true;	// Fade in from white
-					for (int i = 0; i < 35; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					showProgressIcon = true;
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
@@ -1083,7 +1083,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
 						clearText();
@@ -1097,9 +1097,9 @@ int main(int argc, char **argv) {
 						}
 						printLarge(false, 4, 96, "save data back.");
 						fadeType = true;	// Fade in from white
-						for (int i = 0; i < 60*3; i++) swiIntrWait(0, 1);		// Wait 3 seconds
+						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 						fadeType = false;	// Fade to white
-						for (int i = 0; i < 25; i++) swiIntrWait(0, 1);
+						for (int i = 0; i < 25; i++) swiWaitForVBlank();
 					}
 				}
 
@@ -1133,7 +1133,7 @@ int main(int argc, char **argv) {
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
-				for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			}
 
 			// Launch .nds directly or via nds-bootstrap
@@ -1511,7 +1511,7 @@ int main(int argc, char **argv) {
 			}
 
 			// while (1) {
-			// 	swiIntrWait(0, 1);
+			// 	swiWaitForVBlank();
 			// 	scanKeys();
 			// 	if (!(keysHeld() & KEY_A)) break;
 			// }

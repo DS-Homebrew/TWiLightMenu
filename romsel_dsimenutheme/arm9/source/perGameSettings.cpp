@@ -237,7 +237,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) swiIntrWait(0, 1);
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
 
 	while (1) {
 		clearText();
@@ -346,7 +346,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
-			swiIntrWait(0, 1);
+			swiWaitForVBlank();
 		} while (!pressed);
 
 		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
@@ -449,6 +449,6 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	dbox_showIcon = false;
 }
