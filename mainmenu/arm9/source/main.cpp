@@ -146,6 +146,8 @@ bool homebrewBootstrap = false;
 
 bool pictochatFound = false;
 bool dlplayFound = false;
+bool pictochatReboot = false;
+bool dlplayReboot = false;
 bool gbaBiosFound = false;
 bool useGbarunner = false;
 int appName = 0;
@@ -937,30 +939,34 @@ int main(int argc, char **argv) {
 		gbaBiosFound = true;
 	}
 
-	if ((isDSiMode() && arm7SCFGLocked && consoleModel < 2) || (isDSiMode() && consoleModel >= 2)) {
-		pictochatFound = true;
+	if (isDSiMode() && arm7SCFGLocked) {
+		if (consoleModel < 2) {
+			pictochatFound = true;
+			pictochatReboot = true;
+		}
 		dlplayFound = true;
-	} else if (access("sd:/hiya.dsi", F_OK) == 0) {
-		//snprintf(pictochatPath, sizeof(pictochatPath), "sd:/_nds/pictochat.nds");
-		//if (access(pictochatPath, F_OK) == 0) {
-		//	pictochatFound = true;
-		//}
-		//if (!pictochatFound) {
-			snprintf(pictochatPath, sizeof(pictochatPath), "sd:/title/00030005/484e4541/content/00000000.app");
+		dlplayReboot = true;
+	} else {
+		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+		if (access(pictochatPath, F_OK) == 0) {
+			pictochatFound = true;
+		}
+		if (!pictochatFound) {
+			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e4541/content/00000000.app");
 			if (access(pictochatPath, F_OK) == 0) {
 				pictochatFound = true;
 			}
-		//}
-		//snprintf(dlplayPath, sizeof(dlplayPath), "sd:/_nds/dlplay.nds");
-		//if (access(dlplayPath, F_OK) == 0) {
-		//	dlplayFound = true;
-		//}
-		//if (!dlplayFound) {
-			snprintf(dlplayPath, sizeof(dlplayPath), "sd:/title/00030005/484e4441/content/00000001.app");
+		}
+		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+		if (access(dlplayPath, F_OK) == 0) {
+			dlplayFound = true;
+		}
+		if (!dlplayFound) {
+			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
 			if (access(dlplayPath, F_OK) == 0) {
 				dlplayFound = true;
 			}
-		//}
+		}
 	}
 
 	graphicsInit();
@@ -1310,7 +1316,7 @@ int main(int argc, char **argv) {
 							controlTopBright = false;
 							clearText();
 
-							//if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+							if (pictochatReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
 								*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
@@ -1330,9 +1336,10 @@ int main(int argc, char **argv) {
 
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
-							//} else {
-							//	unalunchRomBoot(pictochatPath);
-							//}
+							} else {
+								int err = runNdsFile (pictochatPath, 0, NULL, true, true, false, false);
+								iprintf ("Start failed. Error %i\n", err);
+							}
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1354,7 +1361,7 @@ int main(int argc, char **argv) {
 							controlTopBright = false;
 							clearText();
 
-							//if ((arm7SCFGLocked && consoleModel < 2) || consoleModel >= 2) {
+							if (dlplayReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
 								*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
@@ -1374,9 +1381,10 @@ int main(int argc, char **argv) {
 
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
-							//} else {
-							//	unalunchRomBoot(dlplayPath);
-							//}
+							} else {
+								int err = runNdsFile (dlplayPath, 0, NULL, true, true, false, false);
+								iprintf ("Start failed. Error %i\n", err);
+							}
 						} else {
 							mmEffectEx(&snd_wrong);
 						}

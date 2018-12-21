@@ -222,6 +222,8 @@ void resetMemory_ARM7 (void)
 }
 
 
+u32 ROM_TID;
+
 void loadBinary_ARM7 (u32 fileCluster)
 {
 	u32 ndsHeader[0x170>>2];
@@ -236,6 +238,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 	u32 ARM7_SRC = ndsHeader[0x030>>2];
 	char* ARM7_DST = (char*)ndsHeader[0x038>>2];
 	u32 ARM7_LEN = ndsHeader[0x03C>>2];
+
+	ROM_TID = ndsHeader[0x00C>>2];
 
 	// Load binaries into memory
 	fileRead(ARM9_DST, fileCluster, ARM9_SRC, ARM9_LEN);
@@ -370,6 +374,11 @@ int main (void) {
 
 	// Load the NDS file
 	loadBinary_ARM7(fileCluster);
+
+	// Fix for Pictochat and DLP
+	if (ROM_TID == 0x41444E48 || ROM_TID == 0x41454E48) {
+		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
+	}
 
 	if (dsMode) {
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
