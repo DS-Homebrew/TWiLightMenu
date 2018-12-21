@@ -967,6 +967,10 @@ int main(int argc, char **argv) {
 				dlplayFound = true;
 			}
 		}
+		if (!dlplayFound && consoleModel >= 2) {
+			dlplayFound = true;
+			dlplayReboot = true;
+		}
 	}
 
 	graphicsInit();
