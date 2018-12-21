@@ -129,6 +129,7 @@ class DSiMenuPlusPlusSettings
     int appName;
     int guiLanguage;
     bool useGbarunner;
+    bool showMainMenu;
     int theme;
     int subtheme;
     bool showDirectories;

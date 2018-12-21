@@ -424,8 +424,14 @@ void defaultExitHandler()
 	{
 		rebootDSiMenuPP();
 	}*/
-	loadMainMenu();
-	//loadROMselect();
+	if (ms().showMainMenu)
+	{
+		loadMainMenu();
+	}
+	else
+	{
+		loadROMselect();
+	}
 }
 void opt_reset_subtheme(int prev, int next)
 {
@@ -612,6 +618,8 @@ int main(int argc, char **argv)
 	}
 
 	guiPage
+		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
+
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,

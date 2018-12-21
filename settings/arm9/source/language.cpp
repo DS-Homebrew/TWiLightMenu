@@ -18,6 +18,7 @@ std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // GUI settings
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
+std::string STR_MAINMENU = "STR_MAINMENU";
 std::string STR_THEME = "STR_THEME";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
@@ -34,6 +35,8 @@ std::string STR_SHOW = "STR_SHOW";
 std::string STR_HIDE = "STR_HIDE";
 
 std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
+
+std::string STR_DESCRIPTION_MAINMENU = "STR_DESCRIPTION_MAINMENU";
 
 std::string STR_DESCRIPTION_THEME_1 = "STR_DESCRIPTION_THEME_1";
 
@@ -209,6 +212,7 @@ void langInit(void)
 
 	// GUI settings
 	STR_S1SDACCESS = languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access");
+	STR_MAINMENU = languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu");
 	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "Theme");
 	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup.");
 	switch (ms().appName)

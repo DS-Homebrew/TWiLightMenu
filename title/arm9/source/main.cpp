@@ -454,8 +454,14 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			loadMainMenu();
-			//loadROMselect();
+			if (ms().showMainMenu)
+			{
+				loadMainMenu();
+			}
+			else
+			{
+				loadROMselect();
+			}
 		}
 	}
 
