@@ -70,6 +70,7 @@ int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
+int perGameSettings_bootstrapFile = -1;
 
 char pergamefilepath[256];
 
@@ -96,6 +97,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
+    perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -113,6 +115,7 @@ void savePerGameSettings (std::string filename) {
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
+		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }

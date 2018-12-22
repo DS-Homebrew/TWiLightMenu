@@ -1593,10 +1593,18 @@ int main(int argc, char **argv) {
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
 						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						if (homebrewBootstrap) {
-							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						if (perGameSettings_bootstrapFile == -1) {
+							if (homebrewBootstrap) {
+								bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+							} else {
+								bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+							}
 						} else {
-							bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+							if (homebrewBootstrap) {
+								bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+							} else {
+								bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+							}
 						}
 						if (!isArgv) {
 							romPath = argarray[0];
