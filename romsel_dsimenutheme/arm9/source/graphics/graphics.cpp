@@ -137,6 +137,8 @@ int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 
 int vblankRefreshCounter = 0;
 
+static u16 boxArtBuffer[128*115];
+
 int bubbleYpos = 88;
 int bubbleXpos = 122;
 
@@ -753,14 +755,18 @@ void loadBoxArt(const char* filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		for (int y=114; y>=0; y--) {
-			u16 buffer[128];
-			fread(buffer, 2, 0x80, file);
-			u16* src = buffer;
-			for (int i=0; i<128; i++) {
-				u16 val = *(src++);
-				BG_GFX_SUB[(y+40)*256+(i+64)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+		fread(boxArtBuffer, 2, 0x7800, file);
+		u16* src = boxArtBuffer;
+		int x = 64;
+		int y = 40+114;
+		for (int i=0; i<128*115; i++) {
+			if (x >= 192) {
+				x = 64;
+				y--;
 			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
 		}
 	}
 
