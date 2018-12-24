@@ -19,14 +19,14 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 
 # Credits
 
-- ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap)
+- ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
 - Apache Thunder: Providing the Miku theme (not made by him) for Acekard theme.
 - Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), and MHGen theme for Acekard theme.
 - Joom: Original TWLoader logo.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
 - chyyran: Port of akMenu/Wood UI to TWLMenu++ as a theme.
 - RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
-- shutterbug2000: For the muted sound/touchscreen fix for nds-bootstrap.
+- shutterbug2000: NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
 - spinal_cord: DSi4DS and DSision2 graphics.
 - profi200: Improved SD code from fastboot3DS.
 - devkitPro, WinterMute: Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
