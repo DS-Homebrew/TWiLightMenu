@@ -3,7 +3,7 @@ TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for
 
 # Building
 
-Building this app by yourself requires devkitPRO with devkitARM. Make sure that grit and mmutil are installed.
+Building this app by yourself requires devkitPRO with devkitARM and [RocketRobz libnds fork](https://github.com/RocketRobz/libnds). Make sure that grit and mmutil are installed.
 
 # Building with Docker
 
