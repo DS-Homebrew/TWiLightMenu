@@ -101,6 +101,8 @@ glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
 int bottomBg;
 
+static u16 bmpImageBuffer[256*192];
+
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
 	u16* destination = (u16*)dest;
@@ -173,25 +175,21 @@ void bottomBgLoad(bool startMenu) {
 	//if (fileTop && fileBottom) {
 	if (fileBottom) {
 		// Start loading
-		u8 pixelStart[2];
-		/*fseek(fileTop, 0xe, SEEK_SET);
-		pixelStart[0] = (u8)fgetc(fileTop) + 0xe;
-		fseek(fileTop, pixelStart[0], SEEK_SET);*/
 		fseek(fileBottom, 0xe, SEEK_SET);
-		pixelStart[1] = (u8)fgetc(fileBottom) + 0xe;
-		fseek(fileBottom, pixelStart[1], SEEK_SET);
-		for (int y=191; y>=0; y--) {
-			u16 buffer[2][256];
-			//fread(buffer[0], 2, 0x100, fileTop);
-			fread(buffer[1], 2, 0x100, fileBottom);
-			//u16* srcTop = buffer[0];
-			u16* srcBottom = buffer[1];
-			for (int i=0; i<256; i++) {
-				//u16 valTop = *(srcTop++);
-				u16 valBottom = *(srcBottom++);
-				BG_GFX[y*256+i] = ((valBottom>>10)&0x1f) | ((valBottom)&(0x1f<<5)) | (valBottom&0x1f)<<10 | BIT(15);
-				//BG_GFX_SUB[y*256+i] = ((valTop>>10)&0x1f) | ((valTop)&(0x1f<<5)) | (valTop&0x1f)<<10 | BIT(15);
+		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
+		fseek(fileBottom, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x1A000, fileBottom);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
 			}
+			u16 val = *(src++);
+			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
 		}
 	}
 

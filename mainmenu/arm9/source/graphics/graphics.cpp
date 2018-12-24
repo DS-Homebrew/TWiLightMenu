@@ -94,7 +94,7 @@ glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
 int bottomBg;
 
-static u16 boxArtBuffer[128*115];
+static u16 bmpImageBuffer[256*192];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -299,8 +299,8 @@ void loadBoxArt(const char* filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(boxArtBuffer, 2, 0x7800, file);
-		u16* src = boxArtBuffer;
+		fread(bmpImageBuffer, 2, 0x7800, file);
+		u16* src = bmpImageBuffer;
 		int x = 64;
 		int y = 40+114;
 		for (int i=0; i<128*115; i++) {
@@ -325,14 +325,18 @@ void topBgLoad(void) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		for (int y=191; y>=0; y--) {
-			u16 buffer[256];
-			fread(buffer, 2, 0x100, file);
-			u16* src = buffer;
-			for (int i=0; i<256; i++) {
-				u16 val = *(src++);
-				BG_GFX_SUB[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+		fread(bmpImageBuffer, 2, 0x1A000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
 			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
 		}
 	}
 
