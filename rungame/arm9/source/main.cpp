@@ -32,6 +32,8 @@
 
 #include "inifile.h"
 
+#include "perGameSettings.h"
+
 const char* settingsinipath = "/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -41,6 +43,7 @@ std::string dsiWarePrvPath;
 std::string homebrewArg;
 std::string bootstrapfilename;
 std::string ndsPath;
+std::string filename;
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
 
@@ -55,14 +58,17 @@ static int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 
-static int donorSdkVer = 0;
-
 static bool previousUsedDevice = false;	// true == secondary
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
+
+static int bstrap_language = -1;
+static bool boostCpu = false;	// false == NTR, true == TWL
+static bool boostVram = false;
+static bool bstrap_dsiMode = false;
 
 TWL_CODE void LoadSettings(void) {
 	// GUI
@@ -72,10 +78,17 @@ TWL_CODE void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
+
+	// Default nds-bootstrap settings
+	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
+	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
 	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
@@ -83,7 +96,6 @@ TWL_CODE void LoadSettings(void) {
 	CIniFile bootstrapini( bootstrapinipath );
 
 	ndsPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
-	donorSdkVer = bootstrapini.GetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", 0);
 }
 
 using namespace std;
@@ -119,8 +131,20 @@ TWL_CODE int lastRunROM() {
 	if (launchType == 0) {
 		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, false);
 	} else if (launchType == 1) {
+		filename = ndsPath;
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx)
+		{
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		loadPerGameSettings(filename);
 		if (homebrewBootstrap) {
-			bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+			if (perGameSettings_bootstrapFile == -1) {
+				bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+			} else {
+				bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+			}
 		} else {
 			char game_TID[5];
 
@@ -135,7 +159,7 @@ TWL_CODE int lastRunROM() {
 
 			std::string savename = ReplaceAll(ndsPath, ".nds", ".sav");
 
-			if (access(savename.c_str(), F_OK) && strcmp(game_TID, "###") != 0) {
+			if ((access(savename.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {
 				consoleDemoInit();
 				printf("Creating save file...\n");
 
@@ -185,7 +209,33 @@ TWL_CODE int lastRunROM() {
 
 			}
 
-			bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+			CIniFile bootstrapini( bootstrapinipath );
+			if (perGameSettings_language == -2) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
+			}
+			if (perGameSettings_dsiMode == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+			}
+			if (perGameSettings_boostCpu == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+			}
+			if (perGameSettings_boostVram == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+			}
+			bootstrapini.SaveIniFile( bootstrapinipath );
+			if (perGameSettings_bootstrapFile == -1) {
+				bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+			} else {
+				bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+			}
 		}
 		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
 	} else if (launchType == 2) {
