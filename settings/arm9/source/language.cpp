@@ -261,7 +261,7 @@ void langInit(void)
 		break;
 	}
 
-	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the  ROM select menu. Press Y to start last played ROM.");
+	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the ROM select menu.");
 
 	switch (ms().appName)
 	{
