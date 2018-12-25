@@ -1820,6 +1820,28 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 				if(useBackend) {
 					if(useBootstrap || isDSiMode()) {
+						if (secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
+							// Create temporary file for nds-bootstrap
+							clearText();
+							ClearBrightness();
+							printSmall(false, 4, 4, "Creating \"BTSTRP.TMP\"...");
+
+							static const int BUFFER_SIZE = 4096;
+							char buffer[BUFFER_SIZE];
+							memset(buffer, 0, sizeof(buffer));
+
+							u32 fileSize = 0x40000;	// 256KB
+							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
+							if (pFile) {
+								for (u32 i = fileSize; i > 0; i -= BUFFER_SIZE) {
+									fwrite(buffer, 1, sizeof(buffer), pFile);
+								}
+								fclose(pFile);
+							}
+							printSmall(false, 4, 18, "Done!");
+							for (int i = 0; i < 30; i++) swiWaitForVBlank();
+						}
+
 						char game_TID[5];
                         char  gameid[4]; // for nitrohax cheat parsing
                         u32 ndsHeader[0x80];
@@ -1917,6 +1939,7 @@ int main(int argc, char **argv) {
 								fclose(pFile);
 							}
 							printSmall(false, 2, 88, savecreated);
+							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						}
 
 						SetDonorSDK(argarray[0]);
