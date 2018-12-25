@@ -1353,7 +1353,7 @@ int main(int argc, char **argv) {
 					homebrewBootstrap = true;
 				} else if (isHomebrew == 1) {
 					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot) {
+					if (perGameSettings_directBoot || useBootstrap) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
 						useBackend = true;
