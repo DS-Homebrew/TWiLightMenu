@@ -718,7 +718,7 @@ void MainWnd::launchSelected()
     // Launch DSiWare
     if (rominfo.isDSiWare() && rominfo.isArgv())
     {
-		if (ms().consoleModel > 1) {
+		if (ms().consoleModel >= 2) {
 			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
 			return;
 		}
@@ -731,7 +731,7 @@ void MainWnd::launchSelected()
 
     if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode())
     {
-		if (ms().consoleModel > 1) {
+		if (ms().consoleModel >= 2) {
 			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
 			return;
 		}
@@ -772,15 +772,15 @@ void MainWnd::launchSelected()
             return;
         }
 
-        else if (ms().secondaryDevice)
+        else if (ms().useBootstrap || isDSiMode())
         {
-            dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
-            bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
+            bootBootstrap(gameConfig, rominfo);
             return;
         }
         else
         {
-            bootBootstrap(gameConfig, rominfo);
+            dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
+            bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
             return;
         }
     }

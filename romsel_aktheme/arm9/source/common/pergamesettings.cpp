@@ -36,13 +36,13 @@ void PerGameSettings::saveSettings()
 {
     CIniFile pergameini(_iniPath);
     pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
-    if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
+    pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
 	if (isDSiMode()) {
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
-        pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 	}
+    pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
     pergameini.SaveIniFile(_iniPath);
 }
 

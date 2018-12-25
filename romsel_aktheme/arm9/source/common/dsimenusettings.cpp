@@ -33,9 +33,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     slot1LaunchMethod = EReboot;
 
+    useBootstrap = true;
     bootstrapFile = EReleaseBootstrap;
-
-    startButtonLaunch = false;
 
     bstrap_language = ELangDefault;
     boostCpu = false;
@@ -103,7 +102,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
-    startButtonLaunch = settingsini.GetInt("SRLOADER", "START_BUTTON_LAUNCH", startButtonLaunch);
+    if (!isDSiMode()) useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
     bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
@@ -159,7 +158,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
-    settingsini.SetInt("SRLOADER", "START_BUTTON_LAUNCH", startButtonLaunch);
+    if (!isDSiMode()) settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
     /*settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);

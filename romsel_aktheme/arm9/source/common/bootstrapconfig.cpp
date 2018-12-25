@@ -1,4 +1,5 @@
 #include "bootstrapconfig.h"
+#include "dsimenusettings.h"
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
 #include <stdio.h>
@@ -321,17 +322,29 @@ int BootstrapConfig::launch()
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
 
 	std::string bootstrapPath;
-	if (_useNightlyBootstrap && _isHomebrew)
-		bootstrapPath = BOOTSTRAP_NIGHTLY_HB;
-	if (_useNightlyBootstrap && !_isHomebrew)
-		bootstrapPath = BOOTSTRAP_NIGHTLY;
+	if (ms().secondaryDevice) {
+		if (_useNightlyBootstrap && _isHomebrew)
+			bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
+		if (_useNightlyBootstrap && !_isHomebrew)
+			bootstrapPath = BOOTSTRAP_NIGHTLY_FC;
 
-	if (!_useNightlyBootstrap && _isHomebrew)
-		bootstrapPath = BOOTSTRAP_RELEASE_HB;
-	if (!_useNightlyBootstrap && !_isHomebrew)
-		bootstrapPath = BOOTSTRAP_RELEASE;
+		if (!_useNightlyBootstrap && _isHomebrew)
+			bootstrapPath = BOOTSTRAP_RELEASE_HB_FC;
+		if (!_useNightlyBootstrap && !_isHomebrew)
+			bootstrapPath = BOOTSTRAP_RELEASE_FC;
+	} else {
+		if (_useNightlyBootstrap && _isHomebrew)
+			bootstrapPath = BOOTSTRAP_NIGHTLY_HB;
+		if (_useNightlyBootstrap && !_isHomebrew)
+			bootstrapPath = BOOTSTRAP_NIGHTLY;
 
-	LoaderConfig loader(bootstrapPath, BOOTSTRAP_INI);
+		if (!_useNightlyBootstrap && _isHomebrew)
+			bootstrapPath = BOOTSTRAP_RELEASE_HB;
+		if (!_useNightlyBootstrap && !_isHomebrew)
+			bootstrapPath = BOOTSTRAP_RELEASE;
+	}
+
+	LoaderConfig loader(bootstrapPath, (ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI));
 
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fileName)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savename)

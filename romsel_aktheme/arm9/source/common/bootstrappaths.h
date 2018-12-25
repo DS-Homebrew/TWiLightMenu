@@ -5,11 +5,16 @@
 
 #define BOOTSTRAP_NIGHTLY_HB "sd:/_nds/nds-bootstrap-hb-nightly.nds"
 #define BOOTSTRAP_NIGHTLY "sd:/_nds/nds-bootstrap-nightly.nds"
+#define BOOTSTRAP_NIGHTLY_HB_FC "fat:/_nds/nds-bootstrap-hb-nightly.nds"
+#define BOOTSTRAP_NIGHTLY_FC "fat:/_nds/nds-bootstrap-nightly.nds"
 
 #define BOOTSTRAP_RELEASE_HB "sd:/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE "sd:/_nds/nds-bootstrap-release.nds"
+#define BOOTSTRAP_RELEASE_HB_FC "fat:/_nds/nds-bootstrap-hb-release.nds"
+#define BOOTSTRAP_RELEASE_FC "fat:/_nds/nds-bootstrap-release.nds"
 
 #define BOOTSTRAP_INI "sd:/_nds/nds-bootstrap.ini"
+#define BOOTSTRAP_INI_FC "fat:/_nds/nds-bootstrap.ini"
 
 #define DSIMENUPP_INI "/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/settings.srldr"

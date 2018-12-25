@@ -180,7 +180,7 @@ void RomInfoWnd::pressGameSettings(void)
 
     if (!_romInfo.isHomebrew())
     {
-		if (!ms().secondaryDevice) {
+		if (ms().useBootstrap) {
 			_values.push_back(LANG("game settings", "Default")); // -2 => 0
 			_values.push_back(LANG("game settings", "System")); // -1 => 1
 			_values.push_back(LANG("game settings", "Japanese"));
@@ -193,34 +193,34 @@ void RomInfoWnd::pressGameSettings(void)
 			settingWnd.addSettingItem(LANG("game settings", "Language"), _values, settingsIni.language + 2); // Default is -2
 			_values.clear();
 
+			if (isDSiMode()) {
+				_values.push_back(LANG("game settings", "Default")); // -1 => 0
+				_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
+				_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
+
+				settingWnd.addSettingItem(LANG("game settings", "Run in"), _values, settingsIni.dsiMode + 1);
+				_values.clear();
+
+				_values.push_back(LANG("game settings", "Default")); // -1 => 0
+				_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
+				_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
+
+				settingWnd.addSettingItem(LANG("game settings", "CPU Frequency"), _values, settingsIni.boostCpu + 1);
+				_values.clear();
+
+				_values.push_back(LANG("game settings", "Default")); // -1 => 0
+				_values.push_back(LANG("game settings", "Off")); // 0 => 1
+				_values.push_back(LANG("game settings", "On")); // 1 => 2
+
+				settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
+				_values.clear();
+			}
+
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
-			_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
-			_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
+			_values.push_back(LANG("game settings", "Release")); // 0 => 1
+			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
 
-			settingWnd.addSettingItem(LANG("game settings", "Run in"), _values, settingsIni.dsiMode + 1);
-			_values.clear();
-
-            _values.push_back(LANG("game settings", "Default")); // -1 => 0
-            _values.push_back(LANG("game settings", "Release")); // 0 => 1
-            _values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
-
-            settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
-            _values.clear();
-		}
-
-		if (isDSiMode()) {
-			_values.push_back(LANG("game settings", "Default")); // -1 => 0
-			_values.push_back(LANG("game settings", "67MHz (NTR)")); // 0 => 1
-			_values.push_back(LANG("game settings", "133MHz (TWL)")); // 1 => 2
-
-			settingWnd.addSettingItem(LANG("game settings", "CPU Frequency"), _values, settingsIni.boostCpu + 1);
-			_values.clear();
-
-			_values.push_back(LANG("game settings", "Default")); // -1 => 0
-			_values.push_back(LANG("game settings", "Off")); // 0 => 1
-			_values.push_back(LANG("game settings", "On")); // 1 => 2
-
-			settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
+			settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
 			_values.clear();
 		}
     }
@@ -228,7 +228,7 @@ void RomInfoWnd::pressGameSettings(void)
     {
 
         _values.push_back(LANG("game settings", "Default"));
-        _values.push_back(LANG("game settings", "Use Bootstrap"));
+        _values.push_back(LANG("game settings", "No Direct Boot"));
         _values.push_back(LANG("game settings", "Direct Boot"));
 
         settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
@@ -255,6 +255,15 @@ void RomInfoWnd::pressGameSettings(void)
 
 			settingWnd.addSettingItem(LANG("game settings", "Boost VRAM"), _values, settingsIni.boostVram + 1);
 			_values.clear();
+
+			if (!ms().secondaryDevice) {
+				_values.push_back(LANG("game settings", "Default")); // -1 => 0
+				_values.push_back(LANG("game settings", "Release")); // 0 => 1
+				_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
+
+				settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
+				_values.clear();
+			}
 		}
 
     }
