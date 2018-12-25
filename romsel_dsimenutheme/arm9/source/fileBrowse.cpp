@@ -72,6 +72,7 @@ extern std::string romPath;
 
 extern int launchType;
 extern bool slot1LaunchMethod;
+extern bool useBootstrap;
 extern bool bootstrapFile;
 extern bool homebrewBootstrap;
 extern bool gbaBiosFound[2];
@@ -1003,7 +1004,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				{
 					bool hasAP = false;
 					bool proceedToLaunch = true;
-					if (!secondaryDevice
+					if (useBootstrap
 					&& bnrRomType[cursorPosition[secondaryDevice]] == 0 && !isDSiWare[cursorPosition[secondaryDevice]]
 					&& isHomebrew[cursorPosition[secondaryDevice]] == 0 && checkIfShowAPMsg(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name))
 					{

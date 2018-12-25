@@ -62,6 +62,7 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool useBootstrap;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
@@ -377,7 +378,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				bool hasAP = false;
 				bool proceedToLaunch = true;
-				if (!secondaryDevice && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
+				if (useBootstrap && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
 				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
