@@ -67,7 +67,6 @@ bool hiyaAutobootFound = false;
 */
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
-const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string homebrewArg;
 std::string bootstrapfilename;
@@ -226,9 +225,9 @@ int lastRunROM()
 	}
 	else if (ms().launchType == 1)
 	{
-		if (isDSiMode())
+		if (ms().useBootstrap || isDSiMode())
 		{
-			CIniFile bootstrapini( bootstrapinipath );
+			CIniFile bootstrapini( BOOTSTRAP_INI );
 			std::string filename = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
 
 			const size_t last_slash_idx = filename.find_last_of("/");
@@ -241,17 +240,17 @@ int lastRunROM()
 			if (ms().homebrewBootstrap)
 			{
 				if (perGameSettings_bootstrapFile == -1) {
-					bootstrapfilename = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					bootstrapfilename = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 				} else {
-					bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					bootstrapfilename = (perGameSettings_bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 				}
 			}
 			else
 			{
 				if (perGameSettings_bootstrapFile == -1) {
-					bootstrapfilename = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+					bootstrapfilename = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY : BOOTSTRAP_RELEASE);
 				} else {
-					bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+					bootstrapfilename = (perGameSettings_bootstrapFile ? BOOTSTRAP_NIGHTLY : BOOTSTRAP_RELEASE);
 				}
 			}
 			err = runNdsFile(bootstrapfilename.c_str(), 0, NULL, true);

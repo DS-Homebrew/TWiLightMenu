@@ -58,7 +58,7 @@ extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 extern std::string STR_LANGUAGE;
 extern std::string STR_CPUSPEED;
 extern std::string STR_VRAMBOOST;
-extern std::string STR_SOUNDFIX;
+extern std::string STR_USEBOOTSTRAP;
 extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
@@ -91,7 +91,7 @@ extern std::string STR_DESCRIPTION_CPUSPEED_1;
 
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
 
-extern std::string STR_DESCRIPTION_SOUNDFIX_1;
+extern std::string STR_DESCRIPTION_USEBOOTSTRAP;
 
 extern std::string STR_DESCRIPTION_DEBUG_1;
 

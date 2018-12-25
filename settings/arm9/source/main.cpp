@@ -74,7 +74,6 @@ bool hiyaAutobootFound = false;
 */
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
-const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string homebrewArg;
 std::string bootstrapfilename;
@@ -520,7 +519,7 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (sys().flashcardUsed() && sys().isRegularDS())
+	if (!isDSiMode() && sys().isRegularDS())
 	{
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
@@ -528,40 +527,41 @@ int main(int argc, char **argv)
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
 
-	if (isDSiMode())
-	{
-		gamesPage
-			.option(STR_LANGUAGE,
-					STR_DESCRIPTION_LANGUAGE_1,
-					Option::Int(&ms().bstrap_language),
-					{STR_SYSTEM,
-					 "Japanese",
-					 "English",
-					 "French",
-					 "German",
-					 "Italian",
-					 "Spanish"},
-					{TLanguage::ELangDefault,
-					 TLanguage::ELangJapanese,
-					 TLanguage::ELangEnglish,
-					 TLanguage::ELangFrench,
-					 TLanguage::ELangGerman,
-					 TLanguage::ELangItalian,
-					 TLanguage::ELangSpanish})
+	gamesPage
+		.option(STR_LANGUAGE,
+				STR_DESCRIPTION_LANGUAGE_1,
+				Option::Int(&ms().bstrap_language),
+				{STR_SYSTEM,
+				 "Japanese",
+				 "English",
+				 "French",
+				 "German",
+				 "Italian",
+				 "Spanish"},
+				{TLanguage::ELangDefault,
+				 TLanguage::ELangJapanese,
+				 TLanguage::ELangEnglish,
+				 TLanguage::ELangFrench,
+				 TLanguage::ELangGerman,
+				 TLanguage::ELangItalian,
+				 TLanguage::ELangSpanish});
 
-			.option(STR_RUNIN, STR_DESCRIPTION_RUNIN_1, Option::Bool(&ms().bstrap_dsiMode), {"DSi mode", "DS mode"}, {true, false})
+	if (isDSiMode()) {
+		gamesPage.option(STR_RUNIN, STR_DESCRIPTION_RUNIN_1, Option::Bool(&ms().bstrap_dsiMode), {"DSi mode", "DS mode"}, {true, false})
 
-			.option(STR_CPUSPEED,
-					STR_DESCRIPTION_CPUSPEED_1,
-					Option::Bool(&ms().boostCpu),
-					{"133 MHz (TWL)", "67 MHz (NTR)"},
-					{true, false})
-			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_CPUSPEED,
+				STR_DESCRIPTION_CPUSPEED_1,
+				Option::Bool(&ms().boostCpu),
+				{"133 MHz (TWL)", "67 MHz (NTR)"},
+				{true, false})
+		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
+	} else {
+		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+	}
 
-		if (!sys().arm7SCFGLocked()) {
-			gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
-					{true, false});
-		}
+	if (isDSiMode() && !sys().arm7SCFGLocked()) {
+		gamesPage.option(STR_SLOT1LAUNCHMETHOD, STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1, Option::Bool(&ms().slot1LaunchMethod), {STR_DIRECT, STR_REBOOT},
+				{true, false});
 	}
 
 	if (!sys().isRegularDS())
@@ -569,43 +569,40 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
-	if (isDSiMode())
+	if (isDSiMode() && ms().consoleModel < 2)
 	{
-		if (ms().consoleModel < 2)
-		{
-			gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
-							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
-		}
+		gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+						 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
+	}
 
-		gamesPage
-			.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
-					Option::Int(&bs().bstrap_loadingScreen),
-					{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe"},
-					{TLoadingScreen::ELoadingNone,
-					 TLoadingScreen::ELoadingRegular,
-					 TLoadingScreen::ELoadingPong,
-					 TLoadingScreen::ELoadingTicTacToe})
+	gamesPage
+		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
+				Option::Int(&bs().bstrap_loadingScreen),
+				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe"},
+				{TLoadingScreen::ELoadingNone,
+				 TLoadingScreen::ELoadingRegular,
+				 TLoadingScreen::ELoadingPong,
+				 TLoadingScreen::ELoadingTicTacToe})
 
-			.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
-					Option::Bool(&ms().bootstrapFile),
-					{STR_NIGHTLY, STR_RELEASE},
-					{true, false})
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
+				Option::Bool(&ms().bootstrapFile),
+				{STR_NIGHTLY, STR_RELEASE},
+				{true, false})
 
-			.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
-			.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
 
-		if (ms().consoleModel < 2)
-		{
-			// Actions do not have to bound to an object.
-			// See for exam here we have bound an option to
-			// hiyaAutobootFound.
+	if (isDSiMode() && ms().consoleModel < 2)
+	{
+		// Actions do not have to bound to an object.
+		// See for exam here we have bound an option to
+		// hiyaAutobootFound.
 
-			// We are also using the changed callback to write
-			// or delete the hiya autoboot file.
-			guiPage
-				.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {ms().getAppName(), "System Menu"}, {true, false})
-				.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
-		}
+		// We are also using the changed callback to write
+		// or delete the hiya autoboot file.
+		guiPage
+			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {ms().getAppName(), "System Menu"}, {true, false})
+			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	gui()
 		.addPage(guiPage)

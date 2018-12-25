@@ -3,13 +3,13 @@
 #define __BOOTSTRAP_PATHS__
 
 
-#define BOOTSTRAP_NIGHTLY_HB "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-#define BOOTSTRAP_NIGHTLY "sd:/_nds/nds-bootstrap-nightly.nds"
+#define BOOTSTRAP_NIGHTLY_HB "/_nds/nds-bootstrap-hb-nightly.nds"
+#define BOOTSTRAP_NIGHTLY "/_nds/nds-bootstrap-nightly.nds"
 
-#define BOOTSTRAP_RELEASE_HB "sd:/_nds/nds-bootstrap-hb-release.nds"
-#define BOOTSTRAP_RELEASE "sd:/_nds/nds-bootstrap-release.nds"
+#define BOOTSTRAP_RELEASE_HB "/_nds/nds-bootstrap-hb-release.nds"
+#define BOOTSTRAP_RELEASE "/_nds/nds-bootstrap-release.nds"
 
-#define BOOTSTRAP_INI "sd:/_nds/nds-bootstrap.ini"
+#define BOOTSTRAP_INI "/_nds/nds-bootstrap.ini"
 
 #define DSIMENUPP_INI "/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/main.srldr"

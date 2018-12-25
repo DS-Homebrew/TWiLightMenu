@@ -143,6 +143,7 @@ class DSiMenuPlusPlusSettings
 
     int flashcard;
     bool slot1LaunchMethod;
+    bool useBootstrap;
     bool bootstrapFile;
 
     int bstrap_language;

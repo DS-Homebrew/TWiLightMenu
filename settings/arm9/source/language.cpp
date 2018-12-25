@@ -64,7 +64,7 @@ std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1
 std::string STR_LANGUAGE = "STR_LANGUAGE";
 std::string STR_CPUSPEED = "STR_CPUSPEED";
 std::string STR_VRAMBOOST = "STR_VRAMBOOST";
-std::string STR_SOUNDFIX = "STR_SOUNDFIX";
+std::string STR_USEBOOTSTRAP = "STR_BOOTSTRAP";
 std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
@@ -97,7 +97,7 @@ std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
 
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
 
-std::string STR_DESCRIPTION_SOUNDFIX_1 = "STR_DESCRIPTION_SOUNDFIX_1";
+std::string STR_DESCRIPTION_USEBOOTSTRAP = "STR_DESCRIPTION_USEBOOTSTRAP";
 
 std::string STR_DESCRIPTION_DEBUG_1 = "STR_DESCRIPTION_DEBUG_1";
 
@@ -315,6 +315,7 @@ void langInit(void)
 	STR_LANGUAGE = languageini.GetString("LANGUAGE", "LANGUAGE", "Language");
 	STR_CPUSPEED = languageini.GetString("LANGUAGE", "CPUSPEED", "ARM9 CPU Speed");
 	STR_VRAMBOOST = languageini.GetString("LANGUAGE", "VRAMBOOST", "VRAM boost");
+	STR_USEBOOTSTRAP = languageini.GetString("LANGUAGE", "USEBOOTSTRAP", "Use nds-bootstrap");
 	STR_DEBUG = languageini.GetString("LANGUAGE", "DEBUG", "Debug");
 	STR_LOGGING = languageini.GetString("LANGUAGE", "LOGGING", "Logging");
 	STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED");
@@ -347,7 +348,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit.");
 
-	STR_DESCRIPTION_SOUNDFIX_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SOUNDFIX_1", "Fixes most sound crackles doubles, and split-second pauses.");
+	STR_DESCRIPTION_USEBOOTSTRAP = languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOOTSTRAP", "nds-bootstrap is used instead of the flashcard kernel or firmware.");
 
 	STR_DESCRIPTION_DEBUG_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before launched game.");
 
