@@ -41,6 +41,7 @@
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
+#include "common/perGameSettings.h"
 #include "common/cardlaunch.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
@@ -48,10 +49,6 @@
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
-
-#define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
-
-std::vector<std::string> akThemeList;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -231,19 +228,31 @@ int lastRunROM()
 	{
 		if (isDSiMode())
 		{
+			CIniFile bootstrapini( bootstrapinipath );
+			std::string filename = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
+
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx)
+			{
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			loadPerGameSettings(filename);
 			if (ms().homebrewBootstrap)
 			{
-				if (ms().bootstrapFile)
-					bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-nightly.nds";
-				else
-					bootstrapfilename = "sd:/_nds/nds-bootstrap-hb-release.nds";
+				if (perGameSettings_bootstrapFile == -1) {
+					bootstrapfilename = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				} else {
+					bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				}
 			}
 			else
 			{
-				if (ms().bootstrapFile)
-					bootstrapfilename = "sd:/_nds/nds-bootstrap-nightly.nds";
-				else
-					bootstrapfilename = "sd:/_nds/nds-bootstrap-release.nds";
+				if (perGameSettings_bootstrapFile == -1) {
+					bootstrapfilename = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				} else {
+					bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				}
 			}
 			err = runNdsFile(bootstrapfilename.c_str(), 0, NULL, true);
 		}
