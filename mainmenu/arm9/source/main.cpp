@@ -71,8 +71,8 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
-const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
+const char* settingsinipath = "/_nds/TWiLightMenu/settings.ini";
+const char* bootstrapinipath = "/_nds/nds-bootstrap.ini";
 
 std::string romPath;
 std::string dsiWareSrlPath;
@@ -331,7 +331,7 @@ void LoadColor(void) {
 	}
 }
 
-bool useBootstrap = false;
+bool useBackend = false;
 
 using namespace std;
 
@@ -917,10 +917,6 @@ int main(int argc, char **argv) {
 	nitroFSInit("/_nds/TWiLightMenu/mainmenu.srldr");
 
 	flashcardInit();
-
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-	}
 
 	langInit();
 
@@ -1800,21 +1796,21 @@ int main(int argc, char **argv) {
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
 				bool dsModeSwitch = false;
 				if (isHomebrew == 2) {
-					useBootstrap = false;	// Bypass nds-bootstrap
+					useBackend = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
 				} else if (isHomebrew == 1) {
 					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot) {
-						useBootstrap = false;	// Bypass nds-bootstrap
+					if (perGameSettings_directBoot || (useBootstrap && secondaryDevice)) {
+						useBackend = false;	// Bypass nds-bootstrap
 					} else {
-						useBootstrap = true;
+						useBackend = true;
 					}
 					if (isDSiMode() && !perGameSettings_dsiMode) {
 						dsModeSwitch = true;
 					}
 					homebrewBootstrap = true;
 				} else {
-					useBootstrap = true;
+					useBackend = true;
 					homebrewBootstrap = false;
 				}
 
@@ -1822,8 +1818,8 @@ int main(int argc, char **argv) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if(useBootstrap) {
-					if(!secondaryDevice) {
+				if(useBackend) {
+					if(useBootstrap || isDSiMode()) {
 						char game_TID[5];
                         char  gameid[4]; // for nitrohax cheat parsing
                         u32 ndsHeader[0x80];
@@ -1929,7 +1925,8 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savepath = savename;
-						CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+						bootstrapinipath = (secondaryDevice ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini");
+						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						loadPerGameSettings(filename);
@@ -1938,27 +1935,29 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
 						}
-						if (perGameSettings_dsiMode == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-						}
-						if (perGameSettings_boostCpu == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-						}
-						if (perGameSettings_boostVram == -1) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+						if (isDSiMode()) {
+							if (perGameSettings_dsiMode == -1) {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+							} else {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+							}
+							if (perGameSettings_boostCpu == -1) {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+							} else {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+							}
+							if (perGameSettings_boostVram == -1) {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+							} else {
+								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+							}
 						}
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						// Read cheats
-						std::string cheatpath = "sd:/_nds/cheats.xml";
+						std::string cheatpath = "/_nds/cheats.xml";
                         int c;
 	                    FILE* cheatFile;
                         bool doFilter=true;
@@ -2046,18 +2045,34 @@ int main(int argc, char **argv) {
                         }
                         if (cheatsFound) bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", cheatData);
                         else bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
-						bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-						if (perGameSettings_bootstrapFile == -1) {
-							if (homebrewBootstrap) {
-								bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						bootstrapini.SaveIniFile( bootstrapinipath );
+						if (secondaryDevice) {
+							if (perGameSettings_bootstrapFile == -1) {
+								if (homebrewBootstrap) {
+									bootstrapfilename = (bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+								} else {
+									bootstrapfilename = (bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+								}
 							} else {
-								bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+								if (homebrewBootstrap) {
+									bootstrapfilename = (perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+								} else {
+									bootstrapfilename = (perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+								}
 							}
 						} else {
-							if (homebrewBootstrap) {
-								bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+							if (perGameSettings_bootstrapFile == -1) {
+								if (homebrewBootstrap) {
+									bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+								} else {
+									bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+								}
 							} else {
-								bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+								if (homebrewBootstrap) {
+									bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+								} else {
+									bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+								}
 							}
 						}
 						launchType = 1;
