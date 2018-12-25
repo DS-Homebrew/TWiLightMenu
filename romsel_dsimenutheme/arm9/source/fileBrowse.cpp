@@ -105,7 +105,6 @@ extern bool applaunch;
 
 extern bool gotosettings;
 
-extern bool useBootstrap;
 extern int vblankRefreshCounter;
 using namespace std;
 
@@ -607,7 +606,6 @@ void launchGba(void) {
 
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
-	useBootstrap = true;
 
 	fadeType = false;	// Fade to white
 	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound

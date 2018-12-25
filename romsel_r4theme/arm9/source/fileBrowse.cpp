@@ -79,8 +79,6 @@ extern bool applaunch;
 
 extern bool gotosettings;
 
-extern bool useBootstrap;
-
 using namespace std;
 
 extern bool startMenu;
