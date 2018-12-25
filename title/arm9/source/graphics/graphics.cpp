@@ -169,7 +169,7 @@ void loadTitleGraphics() {
 
 	// Display TWiLightMenu++ logo
 	LoadBMP();
-	if (isDSiMode()) {		// Show nds-bootstrap logo, if in DSi mode
+	if (ms().useBootstrap || isDSiMode()) {		// Show nds-bootstrap logo, if nds-bootstrap is set to be used
 		swiDecompressLZSSVram ((void*)logo_rocketrobzbootstrapTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], logo_rocketrobzbootstrapPal, logo_rocketrobzbootstrapPalLen);
 	} else {
