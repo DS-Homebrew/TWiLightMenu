@@ -48,6 +48,7 @@ class BootstrapConfig
     private:
 
         void createSaveFileIfNotExists();
+        void createTmpFileIfNotExists();
 
         const std::string _fileName;
         const std::string _gametid;

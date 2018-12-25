@@ -312,8 +312,31 @@ void BootstrapConfig::createSaveFileIfNotExists()
 	}
 }
 
+void BootstrapConfig::createTmpFileIfNotExists()
+{
+	if (access("fat:/BTSTRP.TMP", F_OK) == 0)
+		return;
+
+	static const int BUFFER_SIZE = 0x1000;
+	char buffer[BUFFER_SIZE];
+	memset(buffer, 0, sizeof(buffer));
+
+	FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
+	if (pFile)
+	{
+		for (u32 i = 0x40000; i > 0; i -= BUFFER_SIZE)
+		{
+			fwrite(buffer, 1, sizeof(buffer), pFile);
+		}
+		fclose(pFile);
+	}
+}
+
 int BootstrapConfig::launch()
 {
+	if (ms().secondaryDevice) 
+		createTmpFileIfNotExists();
+
 	createSaveFileIfNotExists();
 
 	if (_saveCreatedHandler)
