@@ -14,7 +14,7 @@ BootstrapSettings::BootstrapSettings()
 
 void BootstrapSettings::loadSettings()
 {
-    CIniFile bootstrapini((access("sd:/", F_OK) == 0) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+    CIniFile bootstrapini(BOOTSTRAP_INI);
 
     // UI settings.
    	bstrap_debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
@@ -26,12 +26,12 @@ void BootstrapSettings::loadSettings()
 
 void BootstrapSettings::saveSettings()
 {
-     CIniFile bootstrapini((access("sd:/", F_OK) == 0) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+    CIniFile bootstrapini(BOOTSTRAP_INI);
 
     // UI settings.
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
 	if (isDSiMode()) bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
-    bootstrapini.SaveIniFile((access("sd:/", F_OK) == 0) ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC);
+    bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }
