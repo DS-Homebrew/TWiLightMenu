@@ -830,6 +830,9 @@ void MainWnd::onKeyBPressed()
 void MainWnd::showSettings(void)
 {
     dbg_printf("Launch settings...");
+	if (sdFound()) {
+		chdir("sd:/");
+	}
     LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);
 
     if (int err = settingsLoader.launch())
@@ -848,6 +851,9 @@ void MainWnd::bootSlot1(void)
         return;
     }
 
+	if (sdFound()) {
+		chdir("sd:/");
+	}
     LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
     if (int err = slot1Loader.launch())
     {
