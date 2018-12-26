@@ -450,7 +450,7 @@ void launchSettings(void) {
 
 	SaveSettings();
 	// Launch settings
-	int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
+	int err = runNdsFile (sdFound() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
 	iprintf ("Start failed. Error %i\n", err);
 }
 
@@ -574,7 +574,7 @@ void switchDevice(void) {
 		if (!slot1LaunchMethod || arm7SCFGLocked) {
 			dsCardLaunch();
 		} else {
-			int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+			int err = runNdsFile ("sd:/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 			iprintf ("Start failed. Error %i\n", err);
 		}
 	}
@@ -701,7 +701,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (showBoxArt) {
 						// Store box art path
-						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/TWiLightMenu/boxart/%s.bmp", dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
+						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
 						if (!access(boxArtPath[i], F_OK)) {
 						} else if (bnrRomType[i] == 0) {
 							bool isLauncharg = ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
@@ -760,7 +760,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							game_TID[4] = 0;
 							fclose(f_nds_file);
 
-							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), "/_nds/TWiLightMenu/boxart/%s.bmp", game_TID);
+							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), game_TID);
 						}
 					}
 				}

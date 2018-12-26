@@ -779,15 +779,15 @@ void loadROMselect()
 {
 	if (theme == 3)
 	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile(sdFound() ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
 	}
 	else if (theme == 2)
 	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile(sdFound() ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
 	}
 	else
 	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile(sdFound() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
 	}
 }
 
@@ -914,7 +914,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	nitroFSInit("/_nds/TWiLightMenu/mainmenu.srldr");
+	nitroFSInit(sdFound() ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr");
 
 	flashcardInit();
 
@@ -947,22 +947,22 @@ int main(int argc, char **argv) {
 		dlplayFound = true;
 		dlplayReboot = true;
 	} else {
-		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+		snprintf(pictochatPath, sizeof(pictochatPath), "%s/_nds/pictochat.nds", (sdFound() ? "sd:" : "fat:"));
 		if (access(pictochatPath, F_OK) == 0) {
 			pictochatFound = true;
 		}
 		if (!pictochatFound) {
-			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e4541/content/00000000.app");
+			snprintf(pictochatPath, sizeof(pictochatPath), "%s/title/00030005/484e4541/content/00000000.app", (sdFound() ? "sd:" : "fat:"));
 			if (access(pictochatPath, F_OK) == 0) {
 				pictochatFound = true;
 			}
 		}
-		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+		snprintf(dlplayPath, sizeof(dlplayPath), "%s/_nds/dlplay.nds", (sdFound() ? "sd:" : "fat:"));
 		if (access(dlplayPath, F_OK) == 0) {
 			dlplayFound = true;
 		}
 		if (!dlplayFound) {
-			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
+			snprintf(dlplayPath, sizeof(dlplayPath), "%s/title/00030005/484e4441/content/00000001.app", (sdFound() ? "sd:" : "fat:"));
 			if (access(dlplayPath, F_OK) == 0) {
 				dlplayFound = true;
 			}
@@ -1080,7 +1080,7 @@ int main(int argc, char **argv) {
 			// Store box art path
 			std::string temp_filename = filename;
 			char boxArtPath[256];
-			snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/TWiLightMenu/boxart/%s.bmp", filename.c_str());
+			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), filename.c_str());
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
 				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
@@ -1134,7 +1134,7 @@ int main(int argc, char **argv) {
 				game_TID[4] = 0;
 				fclose(f_nds_file);
 
-				snprintf (boxArtPath, sizeof(boxArtPath), "/_nds/TWiLightMenu/boxart/%s.bmp", game_TID);
+				snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), game_TID);
 			}
 			loadBoxArt(boxArtPath);	// Load box art
 		}
@@ -1295,7 +1295,7 @@ int main(int argc, char **argv) {
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
 							} else {
-								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+								int err = runNdsFile ("sd:/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
@@ -1445,7 +1445,7 @@ int main(int argc, char **argv) {
 
 						gotosettings = true;
 						//SaveSettings();
-						int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
+						int err = runNdsFile (sdFound() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
 						iprintf ("Start failed. Error %i\n", err);
 						break;
 				}

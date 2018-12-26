@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	// stop();
 
 	defaultExceptionHandler();
-	sys().initFilesystem("/_nds/TWiLightMenu/akmenu.srldr");
+	sys().initFilesystem();
 	ms().loadSettings();
 
 	// init basic system

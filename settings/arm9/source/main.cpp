@@ -171,7 +171,7 @@ void loadMainMenu()
 	// 		fifoSendValue32(FIFO_USER_07, 1);
 	// }
 
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
+	runNdsFile((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/mainmenu.srldr" : "fat:/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
 	stop();
 }
 
@@ -200,15 +200,15 @@ void loadROMselect()
 	// }
 	if (ms().theme == 3)
 	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
+		runNdsFile((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
 	}
 	else if (ms().theme == 2)
 	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
+		runNdsFile((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/r4menu.srldr" : "fat:/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
 	}
 	else
 	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
+		runNdsFile((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
 	}
 }
 
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	sys().initFilesystem("/_nds/TWiLightMenu/settings.srldr");
+	sys().initFilesystem();
 	sys().flashcardUsed();
 	ms();
 	// consoleDemoInit();
@@ -411,16 +411,6 @@ int main(int argc, char **argv)
 	bool sdAccessible = false;
 	if (access("sd:/", F_OK) == 0) {
 		sdAccessible = true;
-	}
-
-	if (access(DSIMENUPP_INI, F_OK) != 0) {
-		// Create "settings.ini"
-		ms().saveSettings();
-	}
-
-	if (access(BOOTSTRAP_INI, F_OK) != 0) {
-		// Create "nds-bootstrap.ini"
-		bs().saveSettings();
 	}
 
 	graphicsInit();

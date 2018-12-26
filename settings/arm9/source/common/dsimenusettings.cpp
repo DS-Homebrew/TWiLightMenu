@@ -5,6 +5,8 @@
 #include "common/inifile.h"
 #include <string.h>
 
+static const char* settingsinipath = DSIMENUPP_INI;
+
 DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 {
     romfolder = "";
@@ -59,7 +61,11 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
+
+	if (access(settingsinipath, F_OK) != 0 && access("fat:/", F_OK) == 0) {
+		settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
     // UI settings.
     romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
@@ -126,7 +132,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 void DSiMenuPlusPlusSettings::saveSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
 

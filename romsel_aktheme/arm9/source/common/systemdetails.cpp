@@ -21,13 +21,13 @@ SystemDetails::SystemDetails()
     fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
 }
 
-void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
+void SystemDetails::initFilesystem(const char *runningPath)
 {
     if (_fatInitOk)
         return;
 
     _fatInitOk = fatInitDefault();
-    int ntr = nitroFSInit(nitrofsPath);
+    int ntr = nitroFSInit((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr");
     _nitroFsInitOk = (ntr == 1);
 
     if (!_nitroFsInitOk && runningPath != NULL)
