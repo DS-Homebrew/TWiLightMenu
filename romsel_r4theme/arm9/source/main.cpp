@@ -69,8 +69,8 @@ bool controlBottomBright = true;
 
 extern void ClearBrightness();
 
-const char* settingsinipath = "/_nds/TWiLightMenu/settings.ini";
-const char* bootstrapinipath = "/_nds/nds-bootstrap.ini";
+const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
+const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
 std::string romPath;
 std::string dsiWareSrlPath;
@@ -783,6 +783,10 @@ int main(int argc, char **argv) {
 	nitroFSInit("/_nds/TWiLightMenu/r4menu.srldr");
 
 	flashcardInit();
+
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+	}
 
 	langInit();
 
