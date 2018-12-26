@@ -27,7 +27,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
         return;
 
     _fatInitOk = fatInitDefault();
-    int ntr = nitroFSInit((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/akmenu.srldr" : "fat:/_nds/TWiLightMenu/akmenu.srldr");
+    int ntr = nitroFSInit("/_nds/TWiLightMenu/akmenu.srldr");
     _nitroFsInitOk = (ntr == 1);
 
     if (!_nitroFsInitOk && runningPath != NULL)

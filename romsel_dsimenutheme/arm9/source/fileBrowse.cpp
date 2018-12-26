@@ -450,7 +450,10 @@ void launchSettings(void) {
 
 	SaveSettings();
 	// Launch settings
-	int err = runNdsFile (sdFound() ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+	int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
 	iprintf ("Start failed. Error %i\n", err);
 }
 
@@ -574,7 +577,10 @@ void switchDevice(void) {
 		if (!slot1LaunchMethod || arm7SCFGLocked) {
 			dsCardLaunch();
 		} else {
-			int err = runNdsFile ("sd:/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+			if (sdFound()) {
+				chdir("sd:/");
+			}
+			int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
 			iprintf ("Start failed. Error %i\n", err);
 		}
 	}

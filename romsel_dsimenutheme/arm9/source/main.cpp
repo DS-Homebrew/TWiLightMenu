@@ -757,7 +757,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	nitroFSInit(sdFound() ? "sd:/_nds/TWiLightMenu/dsimenu.srldr" : "fat:/_nds/TWiLightMenu/dsimenu.srldr");
+	nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
 	//printf("nitroFS inited!");
 
 	flashcardInit();

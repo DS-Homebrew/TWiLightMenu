@@ -29,7 +29,7 @@ void SystemDetails::initFilesystem(const char *runningPath)
         return;
 
     _fatInitOk = fatInitDefault();
-    int ntr = nitroFSInit((access("sd:/", F_OK) == 0) ? "sd:/_nds/TWiLightMenu/settings.srldr" : "fat:/_nds/TWiLightMenu/settings.srldr");
+    int ntr = nitroFSInit("/_nds/TWiLightMenu/settings.srldr");
     _nitroFsInitOk = (ntr == 1);
 
     if (!_nitroFsInitOk && runningPath != NULL)
