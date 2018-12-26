@@ -19,22 +19,20 @@ public:
   {
 
     snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 6, 8, 1);
-	if (isDSiMode()) {
-		// Read nds-bootstrap version
-		FILE* bsVerFile;
-		for (int i = 0; i < 2; i++) {
-			snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "No version available    ");
-			if (i == 1) {
-				bsVerFile = fopen("sd:/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
-			} else {
-				bsVerFile = fopen("sd:/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
-			}
-			if (bsVerFile) {
-				snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "                        ");
-				fread(bsVerText[i], 1, 19, bsVerFile);
-			}
-			fclose(bsVerFile);
+	// Read nds-bootstrap version
+	FILE* bsVerFile;
+	for (int i = 0; i < 2; i++) {
+		snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "No version available    ");
+		if (i == 1) {
+			bsVerFile = fopen("/_nds/TWiLightMenu/nightly-bootstrap.ver", "rb");
+		} else {
+			bsVerFile = fopen("/_nds/TWiLightMenu/release-bootstrap.ver", "rb");
 		}
+		if (bsVerFile) {
+			snprintf(bsVerText[i], sizeof(bsVerText[i]), "%s", "                        ");
+			fread(bsVerText[i], 1, 19, bsVerFile);
+		}
+		fclose(bsVerFile);
 	}
   }
   ~SettingsGUI() {}
