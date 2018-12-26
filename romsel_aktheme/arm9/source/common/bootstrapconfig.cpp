@@ -1,5 +1,7 @@
 #include "bootstrapconfig.h"
 #include "dsimenusettings.h"
+#include "filecopy.h"
+#include "flashcard.h"
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
 #include <stdio.h>
@@ -343,6 +345,10 @@ int BootstrapConfig::launch()
 		_saveCreatedHandler();
 
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
+
+	if (sdFound() && ms().secondaryDevice) {
+		fcopy(BOOTSTRAP_INI, BOOTSTRAP_INI_FC);		// Sync nds-bootstrap SD settings to flashcard
+	}
 
 	std::string bootstrapPath;
 	if (ms().secondaryDevice) {

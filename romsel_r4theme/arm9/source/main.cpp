@@ -1507,6 +1507,9 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savepath = savename;
+						if (sdFound() && secondaryDevice) {
+							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
+						}
 						bootstrapinipath = (secondaryDevice ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
