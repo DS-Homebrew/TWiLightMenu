@@ -24,6 +24,12 @@ void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::
 		static const int BUFFER_SIZE = 0x1000;
 		char buffer[BUFFER_SIZE];
 		memset(buffer, 0, sizeof(buffer));
+		bool bufferCleared = false;
+		char savHdrPath[64];
+		snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", saveSize);
+		FILE *hdrFile = fopen(savHdrPath, "rb");
+		if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+		fclose(hdrFile);
 
 		FILE *pFile = fopen(saveName.c_str(), "wb");
 		if (pFile)
@@ -31,6 +37,11 @@ void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::
 			for (int i = saveSize; i > 0; i -= BUFFER_SIZE)
 			{
 				fwrite(buffer, 1, sizeof(buffer), pFile);
+				if (!bufferCleared)
+				{
+					memset(buffer, 0, sizeof(buffer));
+					bufferCleared = true;
+				}
 			}
 			fclose(pFile);
 		}

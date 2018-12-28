@@ -1692,22 +1692,36 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
+				whiteScreen = true;
+
 				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
-					whiteScreen = true;
-					clearText();
-					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
 					const char* savecreated = "Public save file created!";
+					clearText();
 					printSmall(false, 2, 80, savecreate);
+					if (!fadeType) {
+						fadeType = true;	// Fade in from white
+						for (int i = 0; i < 35; i++) swiWaitForVBlank();
+					}
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.pubSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePubPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
@@ -1716,21 +1730,33 @@ int main(int argc, char **argv) {
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
-					whiteScreen = true;
-					clearText();
-					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
 					const char* savecreated = "Private save file created!";
+					clearText();
 					printSmall(false, 2, 80, savecreate);
+					if (!fadeType) {
+						fadeType = true;	// Fade in from white
+						for (int i = 0; i < 35; i++) swiWaitForVBlank();
+					}
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.prvSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePrvPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
@@ -1738,12 +1764,17 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
+				if (fadeType) {
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				}
+
 				if (secondaryDevice) {
-					whiteScreen = true;
 					clearText();
-					ClearBrightness();
 					printSmallCentered(false, 86, "Now copying data...");
 					printSmallCentered(false, 98, "Do not turn off the power.");
+					fadeType = true;	// Fade in from white
+					for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -1751,9 +1782,11 @@ int main(int argc, char **argv) {
 					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
 						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 
-					clearText();
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+						clearText();
 						printSmall(false, 2, 8, "After saving, please re-start");
 						if (appName == 0) {
 							printSmall(false, 2, 20, "TWiLight Menu++ to transfer your");
@@ -1763,7 +1796,10 @@ int main(int argc, char **argv) {
 							printSmall(false, 2, 20, "DSiMenu++ to transfer your");
 						}
 						printSmall(false, 2, 32, "save data back.");
+						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 25; i++) swiWaitForVBlank();
 					}
 				}
 

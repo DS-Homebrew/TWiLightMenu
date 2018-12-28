@@ -1238,8 +1238,9 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
+				whiteScreen = true;
+
 				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
-					whiteScreen = true;
 					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
@@ -1249,11 +1250,21 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.pubSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePubPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
@@ -1262,7 +1273,6 @@ int main(int argc, char **argv) {
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
-					whiteScreen = true;
 					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
@@ -1272,11 +1282,21 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.prvSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePrvPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
@@ -1285,7 +1305,6 @@ int main(int argc, char **argv) {
 				}
 
 				if (secondaryDevice) {
-					whiteScreen = true;
 					clearText();
 					ClearBrightness();
 					printSmallCentered(false, 88, "Now copying data...");

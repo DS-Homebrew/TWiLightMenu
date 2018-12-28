@@ -1028,11 +1028,21 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.pubSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePubPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
@@ -1053,11 +1063,21 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
+					bool bufferCleared = false;
+					char savHdrPath[64];
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.prvSavSize);
+					FILE *hdrFile = fopen(savHdrPath, "rb");
+					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
+					fclose(hdrFile);
 
 					FILE *pFile = fopen(dsiWarePrvPath.c_str(), "wb");
 					if (pFile) {
 						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (!bufferCleared) {
+								memset(buffer, 0, sizeof(buffer));
+								bufferCleared = true;
+							}
 						}
 						fclose(pFile);
 					}
