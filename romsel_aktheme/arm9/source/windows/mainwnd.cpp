@@ -818,7 +818,6 @@ void MainWnd::launchSelected()
         {
             bootFile(GAMEYOB_SD, fullPath);
         }
-        // gb
     }
 }
 
@@ -869,9 +868,16 @@ void MainWnd::bootGbaRunner(void)
 		return;
 	}
 
-    if (!isDSiMode() && ms().useGbarunner)
+    if (ms().secondaryDevice && ms().useGbarunner)
     {
-        bootFlashcard(GBARUNNER_FC, "", false);
+		if (ms().useBootstrap)
+		{
+            bootFile(GBARUNNER_FC, "");
+		}
+		else
+		{
+			bootFlashcard(GBARUNNER_FC, "", false);
+		}
         return;
     }
 

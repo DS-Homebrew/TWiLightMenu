@@ -1420,7 +1420,12 @@ int main(int argc, char **argv) {
 
 						if (useGbarunner && gbaBiosFound) {
 							if (secondaryDevice) {
-								loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+								if (useBootstrap) {
+									int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+									iprintf ("Start failed. Error %i\n", err);
+								} else {
+									loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+								}
 							} else {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
