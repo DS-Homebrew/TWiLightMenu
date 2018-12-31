@@ -286,9 +286,9 @@ void langInit(void)
 
 	STR_DESCRIPTION_ANIMATEDSIICONS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in the DSi/3DS menus.");
 
-	STR_DESCRIPTION_SYSREGION_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSREGION_1", "The region of SysNAND. \"Auto\" option will only work if SDNAND is set up.");
+	STR_DESCRIPTION_SYSREGION_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSREGION", "The region of SysNAND. \"Auto\" option will only work if SDNAND is set up.");
 
-	STR_DESCRIPTION_LAUNCHERAPP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LAUNCHERAPP_1", "To get the .app name, press POWER, hold A, then highlight LAUNCHER.");
+	STR_DESCRIPTION_LAUNCHERAPP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LAUNCHERAPP", "To get the .app name, press POWER, hold A, then highlight LAUNCHER.");
 
 	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings related to the DSi system.");
 
