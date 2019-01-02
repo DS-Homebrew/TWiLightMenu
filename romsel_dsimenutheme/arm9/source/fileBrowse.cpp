@@ -235,7 +235,6 @@ extern bool usernameRenderedDone;
 struct DirEntry
 {
 	string name;
-	string visibleName;
 	bool isDirectory;
 };
 
@@ -319,11 +318,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
-
-			if (dirEntry.isDirectory)
-				dirEntry.visibleName = "[" + dirEntry.name + "]";
-			else
-				dirEntry.visibleName = dirEntry.name;
 
 			if (showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
