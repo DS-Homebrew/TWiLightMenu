@@ -320,7 +320,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
 			if (showDirectories) {
-				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					dirContents.push_back(dirEntry);
 					file_count++;
 				}
@@ -474,7 +474,7 @@ void exitToSystemMenu(void) {
 		*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 		unlaunchSetHiyaBoot();
 	} else {
-		u8 setRegion;
+		u8 setRegion = 0;
 		if (sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];

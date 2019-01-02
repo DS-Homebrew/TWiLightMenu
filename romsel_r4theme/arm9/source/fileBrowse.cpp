@@ -151,7 +151,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
 			if (showDirectories) {
-				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					dirContents.push_back (dirEntry);
 				}
 			} else {
