@@ -60,6 +60,17 @@ static int consoleModel = 0;
 
 static std::string romfolder;
 
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+void RemoveTrailingSlashes(std::string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
+
 static bool previousUsedDevice = false;	// true == secondary
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool bootstrapFile = false;
@@ -161,7 +172,9 @@ TWL_CODE int lastRunROM() {
 			fclose(f_nds_file);
 
 			std::string savename = ReplaceAll(filename, ".nds", ".sav");
-			std::string savepath = romfolder+"saves/"+savename;
+			std::string romFolderNoSlash = romfolder;
+			RemoveTrailingSlashes(romFolderNoSlash);
+			std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 			if ((access(savepath.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {
 				consoleDemoInit();
