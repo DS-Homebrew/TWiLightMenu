@@ -62,6 +62,13 @@ class DSiMenuPlusPlusSettings
         ELangKorean = 7
     };
 
+    enum TRunIn
+    {
+        EDSMode = 0,
+        EDSiMode = 1,
+        EDSiModeForced = 2
+    };
+
     enum TSlot1LaunchMethod
     {
         EReboot = false,
@@ -147,7 +154,7 @@ class DSiMenuPlusPlusSettings
     int bstrap_language;
     bool boostCpu;
     bool boostVram;
-    bool bstrap_dsiMode;
+    int bstrap_dsiMode;
     bool autorun;
     bool show12hrClock;
 

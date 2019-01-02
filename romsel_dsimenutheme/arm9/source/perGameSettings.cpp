@@ -263,6 +263,8 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 24, 112, "Run in:");
 					if (perGameSettings_boostVram == -1) {
 						printSmall(false, 188, 112, "Default");
+					} else if (perGameSettings_dsiMode == 2) {
+						printSmall(false, 128, 112, "DSi mode (Forced)");
 					} else if (perGameSettings_dsiMode == 1) {
 						printSmall(false, 184, 112, "DSi mode");
 					} else {
@@ -270,7 +272,7 @@ void perGameSettings (std::string filename) {
 					}
 					printSmall(false, 24, 128, "ARM9 CPU Speed:");
 					printSmall(false, 24, 144, "VRAM boost:");
-					if (perGameSettings_dsiMode == 1) {
+					if (perGameSettings_dsiMode > 0) {
 						printSmall(false, 146, 128, "133mhz (TWL)");
 						printSmall(false, 188, 144, "On");
 					} else {
@@ -329,6 +331,8 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 24, 112, "Run in:");
 					if (perGameSettings_dsiMode == -1) {
 						printSmall(false, 188, 112, "Default");
+					} else if (perGameSettings_dsiMode == 2) {
+						printSmall(false, 128, 112, "DSi mode (Forced)");
 					} else if (perGameSettings_dsiMode == 1) {
 						printSmall(false, 184, 112, "DSi mode");
 					} else {
@@ -336,7 +340,7 @@ void perGameSettings (std::string filename) {
 					}
 					printSmall(false, 24, 128, "ARM9 CPU Speed:");
 					printSmall(false, 24, 144, "VRAM boost:");
-					if (perGameSettings_dsiMode == 1) {
+					if (perGameSettings_dsiMode > 0) {
 						printSmall(false, 146, 128, "133mhz (TWL)");
 						printSmall(false, 188, 144, "On");
 					} else {
@@ -395,7 +399,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 1:
 						perGameSettings_dsiMode++;
-						if (perGameSettings_dsiMode > 1) perGameSettings_dsiMode = -1;
+						if (perGameSettings_dsiMode > 2) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
 						if (!perGameSettings_dsiMode) {
@@ -453,7 +457,7 @@ void perGameSettings (std::string filename) {
 						break;
 					case 1:
 						perGameSettings_dsiMode++;
-						if (perGameSettings_dsiMode > 1) perGameSettings_dsiMode = -1;
+						if (perGameSettings_dsiMode > 2) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
 						if (perGameSettings_dsiMode < 1) {

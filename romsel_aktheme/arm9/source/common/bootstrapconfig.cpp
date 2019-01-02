@@ -14,7 +14,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_mpuRegion = 0;
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
-	_dsiMode = false;
+	_dsiMode = 0;
 	_vramBoost = false;
 	_language = -1;
 	_softReset = false;
@@ -234,7 +234,7 @@ BootstrapConfig &BootstrapConfig::saveSize(int saveSize)
 	return *this;
 }
 
-BootstrapConfig &BootstrapConfig::dsiMode(bool dsiMode)
+BootstrapConfig &BootstrapConfig::dsiMode(int dsiMode)
 {
 	_dsiMode = dsiMode;
 	return *this;

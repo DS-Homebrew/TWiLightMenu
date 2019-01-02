@@ -41,7 +41,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     bstrap_language = ELangDefault;
     boostCpu = false;
     boostVram = false;
-    bstrap_dsiMode = false;
+    bstrap_dsiMode = EDSMode;
 
     show12hrClock = true;
 

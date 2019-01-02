@@ -197,6 +197,7 @@ void RomInfoWnd::pressGameSettings(void)
 				_values.push_back(LANG("game settings", "Default")); // -1 => 0
 				_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
 				_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
+				_values.push_back(LANG("game settings", "DSi mode (Forced)")); // 2 => 3
 
 				settingWnd.addSettingItem(LANG("game settings", "Run in"), _values, settingsIni.dsiMode + 1);
 				_values.clear();

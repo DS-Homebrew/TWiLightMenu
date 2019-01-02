@@ -514,6 +514,7 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
+	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
 
@@ -537,7 +538,11 @@ int main(int argc, char **argv)
 				 TLanguage::ELangSpanish});
 
 	if (isDSiMode()) {
-		gamesPage.option(STR_RUNIN, STR_DESCRIPTION_RUNIN_1, Option::Bool(&ms().bstrap_dsiMode), {"DSi mode", "DS mode"}, {true, false})
+		gamesPage.option(STR_RUNIN,
+						STR_DESCRIPTION_RUNIN_1,
+						Option::Int(&ms().bstrap_dsiMode),
+						{"DS mode", "DSi mode", "DSi mode (Forced)"},
+						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced})
 
 		.option(STR_CPUSPEED,
 				STR_DESCRIPTION_CPUSPEED_1,

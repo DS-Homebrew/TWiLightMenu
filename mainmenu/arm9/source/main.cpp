@@ -166,7 +166,7 @@ int guiLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
-bool bstrap_dsiMode = false;
+int bstrap_dsiMode = 0;
 
 void LoadSettings(void) {
 	// GUI

@@ -28,7 +28,7 @@ class BootstrapConfig
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
 
-        BootstrapConfig& dsiMode(bool dsiMode);
+        BootstrapConfig& dsiMode(int dsiMode);
         BootstrapConfig& vramBoost(bool vramBoost);
         BootstrapConfig& cpuBoost(bool cpuBoost);
 
@@ -65,7 +65,7 @@ class BootstrapConfig
         int _mpuRegion;
         bool _isHomebrew;
         int _saveSize;
-        bool _dsiMode;
+        int _dsiMode;
         bool _vramBoost;
         bool _cpuBoost;
         int _language;
