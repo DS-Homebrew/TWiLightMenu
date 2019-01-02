@@ -1,3 +1,4 @@
+#include "systemdetails.h"
 #include "bootstrapconfig.h"
 #include "dsimenusettings.h"
 #include "filecopy.h"
@@ -12,6 +13,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_donorSdk = 0;
 	_mpuSize = 0;
 	_mpuRegion = 0;
+	_forceSleepPatch = (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()) ? true : false;
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
 	_dsiMode = 0;
@@ -387,7 +389,8 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "DONOR_SDK_VER", _donorSdk)
 		.option("NDS-BOOTSTRAP", "GAME_SOFT_RESET", _softReset)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_REGION", _mpuRegion)
-		.option("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", _mpuSize);
+		.option("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", _mpuSize)
+		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch);
 
 	if (_configSavedHandler)
 		_configSavedHandler();

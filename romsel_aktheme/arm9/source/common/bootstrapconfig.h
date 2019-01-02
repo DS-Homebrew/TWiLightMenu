@@ -25,6 +25,7 @@ class BootstrapConfig
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
+        BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
 
@@ -63,6 +64,7 @@ class BootstrapConfig
         int _donorSdk;
         int _mpuSize;
         int _mpuRegion;
+        int _forceSleepPatch;
         bool _isHomebrew;
         int _saveSize;
         int _dsiMode;

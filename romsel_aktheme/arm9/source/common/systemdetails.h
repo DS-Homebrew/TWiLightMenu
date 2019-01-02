@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "nitrofs.h"
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 
 class SystemDetails
 {
