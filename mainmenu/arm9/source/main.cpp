@@ -1947,7 +1947,9 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", ".sav");
-						std::string savepath = romfolder+"saves/"+savename;
+						std::string romFolderNoSlash = romfolder;
+						RemoveTrailingSlashes(romFolderNoSlash);
+						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 						if (access(savepath.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();

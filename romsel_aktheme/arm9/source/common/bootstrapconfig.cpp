@@ -298,7 +298,11 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 void BootstrapConfig::createSaveFileIfNotExists()
 {
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
-	std::string savepath = ms().romfolder[ms().secondaryDevice]+"saves/"+savename;
+	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
+		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
+	}
+	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 	if (access(savepath.c_str(), F_OK) == 0)
 		return;
 
@@ -348,7 +352,11 @@ int BootstrapConfig::launch()
 		_saveCreatedHandler();
 
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
-	std::string savepath = ms().romfolder[ms().secondaryDevice]+"saves/"+savename;
+	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
+		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
+	}
+	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 	if (sdFound() && ms().secondaryDevice) {
 		fcopy(BOOTSTRAP_INI, BOOTSTRAP_INI_FC);		// Sync nds-bootstrap SD settings to flashcard
