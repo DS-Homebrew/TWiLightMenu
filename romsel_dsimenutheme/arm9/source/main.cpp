@@ -1263,9 +1263,11 @@ int main(int argc, char **argv) {
                          
 						fclose(f_nds_file);
 
-						std::string savename = ReplaceAll(argarray[0], ".nds", ".sav");
+						std::string path = argarray[0];
+						std::string savename = ReplaceAll(filename, ".nds", ".sav");
+						std::string savepath = romfolder[secondaryDevice]+"saves/"+savename;
 
-						if (access(savename.c_str(), F_OK) && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
+						if (access(savepath.c_str(), F_OK) && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
 							ClearBrightness();
 							const char* savecreate = "Creating save file...";
 							const char* savecreated = "Save file created!";
@@ -1302,7 +1304,7 @@ int main(int argc, char **argv) {
 								savesize = 1048576*32;
 							}
 
-							FILE *pFile = fopen(savename.c_str(), "wb");
+							FILE *pFile = fopen(savepath.c_str(), "wb");
 							if (pFile) {
 								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 									fwrite(buffer, 1, sizeof(buffer), pFile);
@@ -1317,8 +1319,6 @@ int main(int argc, char **argv) {
 						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
 
-						std::string path = argarray[0];
-						std::string savepath = savename;
 						if (sdFound() && secondaryDevice) {
 							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
 						}

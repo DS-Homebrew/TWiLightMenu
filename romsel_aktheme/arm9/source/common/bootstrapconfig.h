@@ -14,7 +14,7 @@
 class BootstrapConfig
 {
     public:
-        BootstrapConfig(const std::string& fileName, const std::string& gametid, u32 sdkVersion);
+        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion);
 
         ~BootstrapConfig();
         
@@ -51,6 +51,7 @@ class BootstrapConfig
         void createTmpFileIfNotExists();
 
         const std::string _fileName;
+        const std::string _fullPath;
         const std::string _gametid;
         const u32 _sdkVersion;
 

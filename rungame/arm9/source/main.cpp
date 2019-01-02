@@ -58,6 +58,8 @@ static int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 
+static std::string romfolder;
+
 static bool previousUsedDevice = false;	// true == secondary
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
 static bool bootstrapFile = false;
@@ -74,6 +76,7 @@ TWL_CODE void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
+	romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", "sd:/");
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
@@ -157,9 +160,10 @@ TWL_CODE int lastRunROM() {
 
 			fclose(f_nds_file);
 
-			std::string savename = ReplaceAll(ndsPath, ".nds", ".sav");
+			std::string savename = ReplaceAll(filename, ".nds", ".sav");
+			std::string savepath = romfolder+"saves/"+savename;
 
-			if ((access(savename.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {
+			if ((access(savepath.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {
 				consoleDemoInit();
 				printf("Creating save file...\n");
 
@@ -194,7 +198,7 @@ TWL_CODE int lastRunROM() {
 					savesize = 1048576*32;
 				}
 
-				FILE *pFile = fopen(savename.c_str(), "wb");
+				FILE *pFile = fopen(savepath.c_str(), "wb");
 				if (pFile) {
 					for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
 						fwrite(buffer, 1, sizeof(buffer), pFile);
@@ -241,9 +245,9 @@ TWL_CODE int lastRunROM() {
 	} else if (launchType == 2) {
 		char unlaunchDevicePath[256];
 		if (previousUsedDevice) {
-			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
+			snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
 		} else {
-			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", dsiWareSrlPath.c_str());
+			snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "__%s", dsiWareSrlPath.c_str());
 			unlaunchDevicePath[0] = 's';
 			unlaunchDevicePath[1] = 'd';
 			unlaunchDevicePath[2] = 'm';
@@ -259,7 +263,7 @@ TWL_CODE int lastRunROM() {
 		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 		int i2 = 0;
-		for (int i = 0; i < sizeof(unlaunchDevicePath); i++) {
+		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 			i2 += 2;
 		}

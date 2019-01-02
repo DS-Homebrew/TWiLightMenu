@@ -517,9 +517,10 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 {
     dbg_printf("%s", _mainList->getSelectedShowName().c_str());
+    std::string fileName = _mainList->getSelectedShowName();
     std::string fullPath = _mainList->getSelectedFullPath();
 
-    BootstrapConfig config(fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
+    BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
     config.dsiMode(gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (bool)gameConfig.dsiMode)
         .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
@@ -887,7 +888,7 @@ void MainWnd::bootGbaRunner(void)
         return;
     }
 
-    BootstrapConfig gbaRunner(GBARUNNER_BOOTSTRAP, "", 0);
+    BootstrapConfig gbaRunner("GBARunner2.nds", GBARUNNER_BOOTSTRAP, "", 0);
     if (int err = gbaRunner.launch())
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);

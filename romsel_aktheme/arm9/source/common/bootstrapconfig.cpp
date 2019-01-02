@@ -6,8 +6,8 @@
 #include "tool/stringtool.h"
 #include <stdio.h>
 
-BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &gametid, u32 sdkVersion)
-	: _fileName(fileName), _gametid(gametid), _sdkVersion(sdkVersion)
+BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion)
+	: _fileName(fileName), _fullPath(fullPath), _gametid(gametid), _sdkVersion(sdkVersion)
 {
 	_donorSdk = 0;
 	_mpuSize = 0;
@@ -296,14 +296,15 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 void BootstrapConfig::createSaveFileIfNotExists()
 {
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
-	if (access(savename.c_str(), F_OK) == 0)
+	std::string savepath = ms().romfolder[ms().secondaryDevice]+"saves/"+savename;
+	if (access(savepath.c_str(), F_OK) == 0)
 		return;
 
 	static const int BUFFER_SIZE = 0x1000;
 	char buffer[BUFFER_SIZE];
 	memset(buffer, 0, sizeof(buffer));
 
-	FILE *pFile = fopen(savename.c_str(), "wb");
+	FILE *pFile = fopen(savepath.c_str(), "wb");
 	if (pFile)
 	{
 		for (int i = _saveSize; i > 0; i -= BUFFER_SIZE)
@@ -345,6 +346,7 @@ int BootstrapConfig::launch()
 		_saveCreatedHandler();
 
 	std::string savename = replaceAll(_fileName, ".nds", ".sav");
+	std::string savepath = ms().romfolder[ms().secondaryDevice]+"saves/"+savename;
 
 	if (sdFound() && ms().secondaryDevice) {
 		fcopy(BOOTSTRAP_INI, BOOTSTRAP_INI_FC);		// Sync nds-bootstrap SD settings to flashcard
@@ -375,8 +377,8 @@ int BootstrapConfig::launch()
 
 	LoaderConfig loader(bootstrapPath, (ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI));
 
-	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fileName)
-		.option("NDS-BOOTSTRAP", "SAV_PATH", savename)
+	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
+		.option("NDS-BOOTSTRAP", "SAV_PATH", savepath)
 		.option("NDS-BOOTSTRAP", "LANGUAGE", _language)
 		.option("NDS-BOOTSTRAP", "BOOST_CPU", _cpuBoost)
 		.option("NDS-BOOTSTRAP", "BOOST_VRAM", _vramBoost)
