@@ -87,7 +87,7 @@ int main() {
 			EnableSD = true;
 		}
 		
-		TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_TWLMODE",0);
+		TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
 
 		if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 			fifoSendValue32(FIFO_USER_02, 1);

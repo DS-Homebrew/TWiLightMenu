@@ -150,6 +150,7 @@ class DSiMenuPlusPlusSettings
     bool boostCpu;
     bool boostVram;
     bool bstrap_dsiMode;
+    bool slot1SCFGUnlock;
     bool autorun;
     bool show12hrClock;
 

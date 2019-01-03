@@ -69,6 +69,7 @@ std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
 std::string STR_RUNIN = "STR_RUNIN";
+std::string STR_SLOT1SCFGUNLOCK = "STR_SLOT1SCFGUNLOCK";
 std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
 std::string STR_LOADINGSCREEN = "STR_LOADINGSCREEN";
@@ -96,6 +97,8 @@ std::string STR_DESCRIPTION_RUNIN_1 = "STR_DESCRIPTION_RUNIN_1";
 std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
 
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
+
+std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK = "STR_DESCRIPTION_SLOT1SCFGUNLOCK";
 
 std::string STR_DESCRIPTION_USEBOOTSTRAP = "STR_DESCRIPTION_USEBOOTSTRAP";
 
@@ -320,6 +323,7 @@ void langInit(void)
 	STR_LOGGING = languageini.GetString("LANGUAGE", "LOGGING", "Logging");
 	STR_ROMREADLED = languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED");
 	STR_RUNIN = languageini.GetString("LANGUAGE", "RUNIN", "Run in");
+	STR_SLOT1SCFGUNLOCK = languageini.GetString("LANGUAGE", "SLOT1SCFGUNLOCK", "SCFG access in Slot-1");
 	STR_SNDFREQ = languageini.GetString("LANGUAGE", "SNDFREQ", "Sound/Mic frequency");
 	STR_SLOT1LAUNCHMETHOD = languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method");
 	STR_LOADINGSCREEN = languageini.GetString("LANGUAGE", "LOADINGSCREEN", "Loading screen");
@@ -347,6 +351,8 @@ void langInit(void)
 	STR_DESCRIPTION_CPUSPEED_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags in some games.");
 
 	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit.");
+
+	STR_DESCRIPTION_SLOT1SCFGUNLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode in flashcard homebrew.");
 
 	STR_DESCRIPTION_USEBOOTSTRAP = languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOOTSTRAP", "nds-bootstrap is used instead of the flashcard kernel or firmware.");
 

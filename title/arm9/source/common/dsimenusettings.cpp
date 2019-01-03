@@ -40,6 +40,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = false;
+    slot1SCFGUnlock = false;
 
     show12hrClock = true;
 
@@ -105,6 +106,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+    slot1SCFGUnlock = settingsini.GetInt("NDS-BOOTSTRAP", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -165,6 +167,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+    settingsini.SetInt("NDS-BOOTSTRAP", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
