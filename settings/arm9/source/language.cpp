@@ -352,7 +352,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_VRAMBOOST_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit.");
 
-	STR_DESCRIPTION_SLOT1SCFGUNLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode in flashcard homebrew.");
+	STR_DESCRIPTION_SLOT1SCFGUNLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode and/or clock speed in flashcard homebrew.");
 
 	STR_DESCRIPTION_USEBOOTSTRAP = languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOOTSTRAP", "nds-bootstrap is used instead of the flashcard kernel or firmware.");
 
