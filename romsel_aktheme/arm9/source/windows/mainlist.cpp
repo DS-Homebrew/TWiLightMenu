@@ -467,36 +467,39 @@ void MainList::draw()
 
 void MainList::drawIcons()
 {
-    if (VM_LIST != _viewMode)
+    size_t total = _visibleRowCount;
+    if (total > _rows.size() - _firstVisibleRowId)
+        total = _rows.size() - _firstVisibleRowId;
+
+    for (size_t i = 0; i < total; ++i)
     {
-        size_t total = _visibleRowCount;
-        if (total > _rows.size() - _firstVisibleRowId)
-            total = _rows.size() - _firstVisibleRowId;
-
-        for (size_t i = 0; i < total; ++i)
+        if (_firstVisibleRowId + i == _selectedRowId)
         {
-            if (_firstVisibleRowId + i == _selectedRowId)
+            if (_activeIcon.visible())
             {
-                if (_activeIcon.visible())
-                {
-                    continue;
-                }
+                continue;
             }
-            s32 itemX = _position.x + 1;
-            s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
-            {
-                int seqIdx = seq().allocate_sequence(
-                    _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
-                    _romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
+        }
+        s32 itemX = _position.x + 1;
+        s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
+        if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
+        {
+            int seqIdx = seq().allocate_sequence(
+                _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
+                _romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
 
-                int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
-                int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
-                bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
-                bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
+            int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+            int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+            bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
+            bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
+            if (VM_LIST != _viewMode)
+            {
                 _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, flipH, flipV, _engine);
             }
-            else
+        }
+        else
+        {
+            if (VM_LIST != _viewMode)
             {
                 _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
             }
