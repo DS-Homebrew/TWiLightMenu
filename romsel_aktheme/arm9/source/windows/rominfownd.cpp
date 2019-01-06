@@ -297,6 +297,7 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
+            selection++;
             settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
         }
         else
@@ -312,6 +313,8 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
+            selection++;
+            settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 		}
         settingsIni.saveSettings();
     }
