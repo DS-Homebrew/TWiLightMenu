@@ -124,7 +124,7 @@ void ThemeTextures::loadScrollwindowImage(const unsigned short *palette, const u
 
 void ThemeTextures::loadButtonarrowImage(const unsigned short *palette, const unsigned int *bitmap)
 {
-  _buttonarrowImage = std::move(loadTexture(&buttonarrowTexID, palette, bitmap, (32 / 32) * (64 / 32), 16, 32, 32, 32, 64));
+  _buttonarrowImage = std::move(loadTexture(&buttonarrowTexID, palette, bitmap, (32 / 32) * (128 / 32), 16, 32, 32, 32, 128));
 }
 
 void ThemeTextures::loadLaunchdotImage(const unsigned short *palette, const unsigned int *bitmap)

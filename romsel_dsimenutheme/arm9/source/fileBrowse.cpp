@@ -89,6 +89,7 @@ extern bool dropDown;
 extern bool redoDropDown;
 extern bool showbubble;
 extern bool showSTARTborder;
+extern bool buttonArrowTouched[2];
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -881,6 +882,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
+				if (!isScrolling) {
+					buttonArrowTouched[0] = false;
+					buttonArrowTouched[1] = false;
+				}
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -894,6 +899,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				cursorPosition[secondaryDevice] -= 1;
 				if (cursorPosition[secondaryDevice] >= 0) {
+					if (pressed & KEY_TOUCH) buttonArrowTouched[0] = true;
 					titleboxXmoveleft = true;
 					waitForNeedToPlayStopSound = 1;
 					mmEffectEx(&snd_select);
@@ -915,6 +921,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				cursorPosition[secondaryDevice] += 1;
 				if (cursorPosition[secondaryDevice] <= 39) {
+					if (pressed & KEY_TOUCH) buttonArrowTouched[1] = true;
 					titleboxXmoveright = true;
 					waitForNeedToPlayStopSound = 1;
 					mmEffectEx(&snd_select);
