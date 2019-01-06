@@ -171,9 +171,12 @@ TWL_CODE int lastRunROM() {
 
 			fclose(f_nds_file);
 
+			chdir(romfolder.c_str());
+
 			std::string savename = ReplaceAll(filename, ".nds", ".sav");
 			std::string romFolderNoSlash = romfolder;
 			RemoveTrailingSlashes(romFolderNoSlash);
+			mkdir ("saves", 0777);
 			std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 			if ((access(savepath.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {

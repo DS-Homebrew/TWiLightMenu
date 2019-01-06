@@ -356,6 +356,7 @@ int BootstrapConfig::launch()
 	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
 		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
 	}
+	mkdir ("saves", 0777);
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 	if (sdFound() && ms().secondaryDevice) {

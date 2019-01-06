@@ -1267,6 +1267,7 @@ int main(int argc, char **argv) {
 						std::string savename = ReplaceAll(filename, ".nds", ".sav");
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
+						mkdir ("saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
 						if (access(savepath.c_str(), F_OK) && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
