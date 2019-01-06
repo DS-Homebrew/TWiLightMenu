@@ -268,7 +268,7 @@ void perGameSettings (std::string filename) {
 				}
 				if(isDSiMode()) {
 					printSmall(false, 24, 112, "Run in:");
-					if (perGameSettings_boostVram == -1) {
+					if (perGameSettings_dsiMode == -1) {
 						printSmall(false, 188, 112, "Default");
 					} else if (perGameSettings_dsiMode == 2) {
 						printSmall(false, 128, 112, "DSi mode (Forced)");
@@ -428,13 +428,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_dsiMode > 2) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
-						if (!perGameSettings_dsiMode) {
+						if (perGameSettings_dsiMode < 1) {
 							perGameSettings_boostCpu++;
 							if (perGameSettings_boostCpu > 1) perGameSettings_boostCpu = -1;
 						}
 						break;
 					case 3:
-						if (!perGameSettings_dsiMode) {
+						if (perGameSettings_dsiMode < 1) {
 							perGameSettings_boostVram++;
 							if (perGameSettings_boostVram > 1) perGameSettings_boostVram = -1;
 						}
