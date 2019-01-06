@@ -542,15 +542,19 @@ int main(int argc, char **argv)
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
 						{"DS mode", "DSi mode", "DSi mode (Forced)"},
-						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced})
+						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
+	}
 
-		.option(STR_CPUSPEED,
+	if (REG_SCFG_EXT != 0) {
+		gamesPage.option(STR_CPUSPEED,
 				STR_DESCRIPTION_CPUSPEED_1,
 				Option::Bool(&ms().boostCpu),
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
-		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
+		if (sdAccessible) {
+			gamesPage.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
+		}
 	} else {
 		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}

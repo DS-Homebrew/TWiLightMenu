@@ -346,7 +346,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	irqDisable(IRQ_ALL);
 	
-	if (isDSiMode() && dsModeSwitch) {
+	if (REG_SCFG_EXT != 0 && dsModeSwitch) {
 		if (!boostCpu) {
 			REG_SCFG_CLK = 0x80;
 		}
