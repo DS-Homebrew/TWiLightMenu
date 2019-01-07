@@ -133,7 +133,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
 	python2 patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds
 			-b icon.bmp "TWiLight Menu++;RocketRobz" \
-			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030015 
+			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
