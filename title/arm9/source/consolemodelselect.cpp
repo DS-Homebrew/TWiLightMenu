@@ -41,7 +41,7 @@ void LoadConsoleBMP(int consoleModel) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -94,15 +94,15 @@ void consoleModelSelect(void) {
 			ms().consoleModel--;
 			if (ms().consoleModel < 0) {
 				ms().consoleModel = 3;
-				LoadConsoleBMP(ms().consoleModel);
 			}
+			LoadConsoleBMP(ms().consoleModel);
 		}
 		if (pressed & KEY_RIGHT) {
 			ms().consoleModel++;
-			if (ms().consoleModel < 0) {
-				ms().consoleModel = 3;
-				LoadConsoleBMP(ms().consoleModel);
+			if (ms().consoleModel > 3) {
+				ms().consoleModel = 0;
 			}
+			LoadConsoleBMP(ms().consoleModel);
 		}
 
 		if (pressed & KEY_A) {
