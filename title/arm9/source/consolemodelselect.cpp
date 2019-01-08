@@ -129,7 +129,7 @@ bool consoleModel_isSure(void) {
 	}
 }
 
-void consoleModelSelect(bool isDevConsole) {
+void consoleModelSelect(void) {
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 	vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
@@ -149,8 +149,8 @@ void consoleModelSelect(bool isDevConsole) {
 		bgMapSub[i] = (u16)i;
 	}
 
-	if (ms().consoleModel < isDevConsole || ms().consoleModel > 3) {
-		ms().consoleModel = isDevConsole;
+	if (ms().consoleModel < 1 || ms().consoleModel > 3) {
+		ms().consoleModel = 1;
 	}
 
 	LoadConsoleBMP(ms().consoleModel);
@@ -175,7 +175,7 @@ void consoleModelSelect(bool isDevConsole) {
 
 		if (pressed & KEY_LEFT) {
 			ms().consoleModel--;
-			if (ms().consoleModel < isDevConsole) {
+			if (ms().consoleModel < 1) {
 				ms().consoleModel = 3;
 			}
 			LoadConsoleBMP(ms().consoleModel);
@@ -183,7 +183,7 @@ void consoleModelSelect(bool isDevConsole) {
 		if (pressed & KEY_RIGHT) {
 			ms().consoleModel++;
 			if (ms().consoleModel > 3) {
-				ms().consoleModel = isDevConsole;
+				ms().consoleModel = 1;
 			}
 			LoadConsoleBMP(ms().consoleModel);
 		}

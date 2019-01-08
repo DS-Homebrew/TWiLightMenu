@@ -1,7 +1,7 @@
 #ifndef CONSOLEMODELSELECT_H
 #define CONSOLEMODELSELECT_H
 
-void consoleModelSelect(bool isDevConsole);
+void consoleModelSelect(void);
 
 #endif // CONSOLEMODELSELECT_H
 
