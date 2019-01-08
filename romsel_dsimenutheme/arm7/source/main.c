@@ -142,13 +142,10 @@ int main() {
 		}*/
 		resyncClock();
 		if (isDSiMode()) {
-			if (fifoGetValue32(FIFO_USER_05) == 1) {
-				fifoSendValue32(FIFO_USER_05, 0);
-			}
 			timeTilVolumeLevelRefresh++;
 			if (timeTilVolumeLevelRefresh == 8) {
-				fifoSendValue32(FIFO_USER_04, i2cReadRegister(0x4A, 0x40));
-				fifoSendValue32(FIFO_USER_05, 1);
+				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				*(u32*)(0x027FF004) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
 				timeTilVolumeLevelRefresh = 0;
 			}
 		}

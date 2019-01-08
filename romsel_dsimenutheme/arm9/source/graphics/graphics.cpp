@@ -778,10 +778,10 @@ void loadBoxArt(const char* filename) {
 static int loadedVolumeImage = -1;
 
 void loadVolumeImage(void) {
-	if (!isDSiMode() || !fifoGetValue32(FIFO_USER_05))
+	if (!isDSiMode())
 		return;
 
-	u8 volumeLevel = fifoGetValue32(FIFO_USER_04);
+	u8 volumeLevel = *(u8*)(0x027FF000);
 	const char *volumeImagePath;
 
 	if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
@@ -800,10 +800,12 @@ void loadVolumeImage(void) {
 		if (loadedVolumeImage == 1) return;
 		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/volume1.bmp";
 		loadedVolumeImage = 1;
-	} else {
+	} else if (volumeLevel == 0x00) {
 		if (loadedVolumeImage == 0) return;
 		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/volume0.bmp";
 		loadedVolumeImage = 0;
+	} else {
+		return;
 	}
 
 	FILE* file = fopen(volumeImagePath, "rb");
@@ -835,7 +837,8 @@ void loadVolumeImage(void) {
 
 static int loadedBatteryImage = -1;
 
-void loadBatteryImage(u32 batteryLevel) {
+void loadBatteryImage(void) {
+	u32 batteryLevel = *(u32*)(0x027FF004);
 	const char *batteryImagePath;
 
 	if (batteryLevel & 1<<7) {
@@ -859,9 +862,7 @@ void loadBatteryImage(u32 batteryLevel) {
 		batteryImagePath = "nitro:/graphics/battery1.bmp";
 		loadedBatteryImage = 0;
 	} else {
-		if (loadedBatteryImage == 7) return;
-		batteryImagePath = "nitro:/graphics/batterycharge.bmp";
-		loadedBatteryImage = 7;
+		return;
 	}
 
 	FILE* file = fopen(batteryImagePath, "rb");
@@ -1345,7 +1346,7 @@ void graphicsInit()
 		bottomBgLoad(false, true);
 	}
 
-	loadBatteryImage(getBatteryLevel());
+	loadBatteryImage();
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

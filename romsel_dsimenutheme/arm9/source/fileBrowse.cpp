@@ -599,7 +599,7 @@ void launchGba(void) {
 			scanKeys();
 			pressed = keysDown();
 			loadVolumeImage();
-			loadBatteryImage(getBatteryLevel());
+			loadBatteryImage();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
@@ -889,7 +889,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					buttonArrowTouched[1] = false;
 				}
 				loadVolumeImage();
-				loadBatteryImage(getBatteryLevel());
+				loadBatteryImage();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1010,7 +1010,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						scanKeys();
 						pressed = keysDown();
 						loadVolumeImage();
-						loadBatteryImage(getBatteryLevel());
+						loadBatteryImage();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1047,7 +1047,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						scanKeys();
 						pressed = keysDown();
 						loadVolumeImage();
-						loadBatteryImage(getBatteryLevel());
+						loadBatteryImage();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;

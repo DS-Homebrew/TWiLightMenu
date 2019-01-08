@@ -27,7 +27,7 @@ void initSubSprites(void);
 void clearBmpScreen();
 void loadBoxArt(const char* filename);
 void loadVolumeImage(void);
-void loadBatteryImage(u32 batteryLevel);
+void loadBatteryImage(void);
 void clearBoxArt();
 void loadShoulders();
 void graphicsInit();
