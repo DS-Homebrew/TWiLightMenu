@@ -23,7 +23,6 @@
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
-#include "common/inifile.h"
 #include "common/dsimenusettings.h"
 #include "logo_rocketrobz.h"
 #include "logo_rocketrobzbootstrap.h"
@@ -41,10 +40,7 @@ extern int screenmode;
 extern bool fadeType;
 int screenBrightness = 31;
 
-bool renderingTop = true;
-int mainBgTexID, subBgTexID;
-glImage topBgImage[(256 / 16) * (256 / 16)];
-glImage subBgImage[(256 / 16) * (256 / 16)];
+u16 bmpImageBuffer[256*192];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -87,31 +83,25 @@ void vBlankHandler()
 }
 
 void LoadBMP(void) {
-	FILE* file;
-	switch (ms().appName) {
-		case 0:
-		default:
-			file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
-			break;
-		case 1:
-			file = fopen("nitro:/graphics/SRLoader.bmp", "rb");
-			break;
-		case 2:
-			file = fopen("nitro:/graphics/DSiMenuPP.bmp", "rb");
-			break;
-	}
+	FILE* file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
 
-	// Start loading
-	fseek(file, 0xe, SEEK_SET);
-	u8 pixelStart = (u8)fgetc(file) + 0xe;
-	fseek(file, pixelStart, SEEK_SET);
-	for (int y=191; y>=0; y--) {
-		u16 buffer[256];
-		fread(buffer, 2, 0x100, file);
-		u16* src = buffer;
-		for (int i=0; i<256; i++) {
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x1A000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
 			u16 val = *(src++);
-			BG_GFX[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
 		}
 	}
 
@@ -146,25 +136,6 @@ void loadTitleGraphics() {
 	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
 		bgMapSub[i] = (u16)i;
-	}
-
-	bool appNameChanged = false;
-
-	scanKeys();
-
-	if (keysHeld() & KEY_UP) {
-		ms().appName = 0;
-		appNameChanged = true;
-	} else if (keysHeld() & KEY_DOWN) {
-		ms().appName = 1;
-		appNameChanged = true;
-	} else if (keysHeld() & KEY_LEFT) {
-		ms().appName = 2;
-		appNameChanged = true;
-	}
-	
-	if (appNameChanged) {
-		ms().saveSettings();
 	}
 
 	// Display TWiLightMenu++ logo

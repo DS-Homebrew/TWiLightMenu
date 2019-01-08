@@ -45,6 +45,7 @@
 #include "common/cardlaunch.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
+#include "consolemodelselect.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
@@ -408,6 +409,22 @@ int main(int argc, char **argv)
 			fifoSendValue32(FIFO_USER_01, 10);
 		}
 	}
+	
+	if (access(DSIMENUPP_INI, F_OK) != 0) {
+		// Create "settings.ini"
+		ms().saveSettings();
+	}
+
+	if (access(BOOTSTRAP_INI, F_OK) != 0) {
+		// Create "nds-bootstrap.ini"
+		bs().saveSettings();
+	}
+
+	if (REG_SCFG_EXT != 0) {
+		if (ms().consoleModel < 0 || ms().consoleModel > 3) {
+			consoleModelSelect();
+		}
+	}
 
 	scanKeys();
 
@@ -418,16 +435,6 @@ int main(int argc, char **argv)
 
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-
-	if (access(DSIMENUPP_INI, F_OK) != 0) {
-		// Create "settings.ini"
-		ms().saveSettings();
-	}
-
-	if (access(BOOTSTRAP_INI, F_OK) != 0) {
-		// Create "nds-bootstrap.ini"
-		bs().saveSettings();
-	}
 
 	if (ms().autorun || ms().showlogo)
 	{

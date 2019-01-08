@@ -22,7 +22,7 @@ BUILD		:=	build
 SOURCES		:=	source source/graphics source/tool source/common
 INCLUDES	:=	include source
 DATA		:=	../data  
-GRAPHICS	:=  ../gfx
+GRAPHICS	:=  ../gfx ../gfx/dsisplash
 MUSIC       :=  ../music
 
 #---------------------------------------------------------------------------------

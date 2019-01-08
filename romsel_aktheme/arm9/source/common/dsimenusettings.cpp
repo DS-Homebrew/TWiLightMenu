@@ -145,7 +145,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
     settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
-    settingsini.SetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
