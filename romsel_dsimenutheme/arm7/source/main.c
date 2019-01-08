@@ -127,18 +127,31 @@ int main() {
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
+	
+	int timeTilVolumeLevelRefresh = 0;
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		// fifocheck();
 		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
 			UpdateCardInfo();
 			fifoSendValue32(FIFO_USER_04, 0);
 			gotCartHeader = true;
 		}*/
+		resyncClock();
+		if (isDSiMode()) {
+			if (fifoGetValue32(FIFO_USER_05) == 1) {
+				fifoSendValue32(FIFO_USER_05, 0);
+			}
+			timeTilVolumeLevelRefresh++;
+			if (timeTilVolumeLevelRefresh == 8) {
+				fifoSendValue32(FIFO_USER_04, i2cReadRegister(0x4A, 0x40));
+				fifoSendValue32(FIFO_USER_05, 1);
+				timeTilVolumeLevelRefresh = 0;
+			}
+		}
 		swiWaitForVBlank();
 	}
 	return 0;

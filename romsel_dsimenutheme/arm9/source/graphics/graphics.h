@@ -26,6 +26,7 @@ void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void clearBmpScreen();
 void loadBoxArt(const char* filename);
+void loadVolumeImage(void);
 void loadBatteryImage(u32 batteryLevel);
 void clearBoxArt();
 void loadShoulders();

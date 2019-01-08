@@ -775,6 +775,64 @@ void loadBoxArt(const char* filename) {
 	fclose(file);
 }
 
+static int loadedVolumeImage = -1;
+
+void loadVolumeImage(void) {
+	if (!isDSiMode() || !fifoGetValue32(FIFO_USER_05))
+		return;
+
+	u8 volumeLevel = fifoGetValue32(FIFO_USER_04);
+	const char *volumeImagePath;
+
+	if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
+		if (loadedVolumeImage == 4) return;
+		volumeImagePath = "nitro:/graphics/volume4.bmp";
+		loadedVolumeImage = 4;
+	} else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
+		if (loadedVolumeImage == 3) return;
+		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/volume3.bmp";
+		loadedVolumeImage = 3;
+	} else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
+		if (loadedVolumeImage == 2) return;
+		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/volume2.bmp";
+		loadedVolumeImage = 2;
+	} else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
+		if (loadedVolumeImage == 1) return;
+		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/volume1.bmp";
+		loadedVolumeImage = 1;
+	} else {
+		if (loadedVolumeImage == 0) return;
+		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/volume0.bmp";
+		loadedVolumeImage = 0;
+	}
+
+	FILE* file = fopen(volumeImagePath, "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x200, file);
+		u16* src = bmpImageBuffer;
+		int x = 4;
+		int y = 5+11;
+		for (int i=0; i<18*12; i++) {
+			if (x >= 4+18) {
+				x = 4;
+				y--;
+			}
+			u16 val = *(src++);
+			if (val != 0x7C1F) {	// Do not render magneta pixel
+				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+			x++;
+		}
+	}
+
+	fclose(file);
+}
+
 static int loadedBatteryImage = -1;
 
 void loadBatteryImage(u32 batteryLevel) {
@@ -816,7 +874,7 @@ void loadBatteryImage(u32 batteryLevel) {
 		fread(bmpImageBuffer, 2, 0x200, file);
 		u16* src = bmpImageBuffer;
 		int x = 235;
-		int y = 4+10;
+		int y = 5+10;
 		for (int i=0; i<18*11; i++) {
 			if (x >= 235+18) {
 				x = 235;
@@ -1063,7 +1121,7 @@ void topBgLoad() {
 	// Load username
 	char fontPath[64];
 	FILE* file;
-	int x = 24; 
+	int x = (isDSiMode() ? 28 : 4); 
 
 	for (int c = 0; c < 10; c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
@@ -1085,7 +1143,7 @@ void topBgLoad() {
 
 				for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
-					u16 bg = BG_GFX_SUB[(y+1)*256+(i+x)]; //grab the background pixel
+					u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
 					// Apply palette here.
 					
 					// Magic numbers were found by dumping val to stdout
@@ -1108,7 +1166,7 @@ void topBgLoad() {
 							break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+1)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 					}
 				}
 			}

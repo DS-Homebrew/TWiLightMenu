@@ -389,6 +389,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
+			loadVolumeImage();
 			loadBatteryImage(getBatteryLevel());
 			swiWaitForVBlank();
 		} while (!pressed);
