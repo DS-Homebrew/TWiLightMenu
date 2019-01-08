@@ -402,7 +402,7 @@ int main(int argc, char **argv)
 			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
 		}
 
-		if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
+		if (dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
 			BootSplashInit();
 			fifoSendValue32(FIFO_USER_01, 10);
 		}
@@ -413,8 +413,9 @@ int main(int argc, char **argv)
 		|| bs().consoleModel < 0 || bs().consoleModel > 3)
 		{
 			*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
-			if (!isDSiMode() || *(vu32*)(0x0DFFFE0C) == 0x53524C41) {
-				consoleModelSelect();
+			bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
+			if (!isDSiMode() || isDevConsole) {
+				consoleModelSelect(isDevConsole);
 			} else {
 				ms().consoleModel = 0;
 				bs().consoleModel = 0;
