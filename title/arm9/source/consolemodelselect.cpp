@@ -2,6 +2,7 @@
 
 #include "graphics/bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
+#include "bootstrapsettings.h"
 #include "consoleseltext_dsi.h"
 #include "consoleseltext_devdsi.h"
 #include "consoleseltext_o3ds.h"
@@ -108,7 +109,9 @@ bool consoleModel_isSure(void) {
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
+			bs().consoleModel = ms().consoleModel;
 			ms().saveSettings();
+			bs().saveSettings();
 			return true;
 		}
 		if (isSure_pressed & KEY_B) {
@@ -146,8 +149,8 @@ void consoleModelSelect(void) {
 		bgMapSub[i] = (u16)i;
 	}
 
-	if (ms().consoleModel < 0 || ms().consoleModel > 3) {
-		ms().consoleModel = 0;
+	if (ms().consoleModel < 1 || ms().consoleModel > 3) {
+		ms().consoleModel = 1;
 	}
 
 	LoadConsoleBMP(ms().consoleModel);
@@ -172,7 +175,7 @@ void consoleModelSelect(void) {
 
 		if (pressed & KEY_LEFT) {
 			ms().consoleModel--;
-			if (ms().consoleModel < 0) {
+			if (ms().consoleModel < 1) {
 				ms().consoleModel = 3;
 			}
 			LoadConsoleBMP(ms().consoleModel);
@@ -180,7 +183,7 @@ void consoleModelSelect(void) {
 		if (pressed & KEY_RIGHT) {
 			ms().consoleModel++;
 			if (ms().consoleModel > 3) {
-				ms().consoleModel = 0;
+				ms().consoleModel = 1;
 			}
 			LoadConsoleBMP(ms().consoleModel);
 		}

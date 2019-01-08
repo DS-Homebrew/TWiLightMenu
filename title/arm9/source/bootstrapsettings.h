@@ -43,6 +43,7 @@ class BootstrapSettings
 	bool bstrap_logging;
 	int bstrap_romreadled;
 	int bstrap_loadingScreen;
+	int consoleModel;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

@@ -407,7 +407,23 @@ int main(int argc, char **argv)
 			fifoSendValue32(FIFO_USER_01, 10);
 		}
 	}
-	
+
+	if (REG_SCFG_EXT != 0) {
+		if (ms().consoleModel < 0 || ms().consoleModel > 3
+		|| bs().consoleModel < 0 || bs().consoleModel > 3)
+		{
+			*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
+			if (!isDSiMode() || *(vu32*)(0x0DFFFE0C) == 0x53524C41) {
+				consoleModelSelect();
+			} else {
+				ms().consoleModel = 0;
+				bs().consoleModel = 0;
+				ms().saveSettings();
+				bs().saveSettings();
+			}
+		}
+	}
+
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
 		// Create "settings.ini"
 		ms().saveSettings();
@@ -416,12 +432,6 @@ int main(int argc, char **argv)
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
-	}
-
-	if (REG_SCFG_EXT != 0) {
-		if (ms().consoleModel < 0 || ms().consoleModel > 3) {
-			consoleModelSelect();
-		}
 	}
 
 	scanKeys();

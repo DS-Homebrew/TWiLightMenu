@@ -10,6 +10,7 @@ BootstrapSettings::BootstrapSettings()
 	bstrap_logging = false;
 	bstrap_romreadled = BootstrapSettings::ELEDNone;
 	bstrap_loadingScreen = BootstrapSettings::ELoadingRegular;
+	consoleModel = -1;
 }
 
 void BootstrapSettings::loadSettings()
@@ -21,7 +22,7 @@ void BootstrapSettings::loadSettings()
 	bstrap_logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
 	if (isDSiMode()) bstrap_romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 	bstrap_loadingScreen = bootstrapini.GetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
-
+	consoleModel = bootstrapini.GetInt( "NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
 }
 
 void BootstrapSettings::saveSettings()
@@ -33,5 +34,6 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
 	if (isDSiMode()) bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
     bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }
