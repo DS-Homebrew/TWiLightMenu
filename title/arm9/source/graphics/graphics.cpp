@@ -20,24 +20,17 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include "common/gl2d.h"
 #include "bios_decompress_callback.h"
-#include "FontGraphic.h"
 #include "common/dsimenusettings.h"
 #include "logo_rocketrobz.h"
 #include "logo_rocketrobzbootstrap.h"
-#include "font6x8.h"
 #include "graphics.h"
-#include "fontHandler.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-//extern int appName;
-
-extern int screenmode;
-
 extern bool fadeType;
+bool controlTopBright = true;
 int screenBrightness = 31;
 
 u16 bmpImageBuffer[256*192];
@@ -78,7 +71,7 @@ void vBlankHandler()
 		screenBrightness++;
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
-	SetBrightness(0, screenBrightness);
+	if (controlTopBright) SetBrightness(0, screenBrightness);
 	SetBrightness(1, screenBrightness);
 }
 

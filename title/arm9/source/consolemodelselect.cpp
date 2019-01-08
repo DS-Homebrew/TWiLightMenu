@@ -1,12 +1,19 @@
 #include <nds.h>
 
-#include "graphics/graphics.h"
+#include "graphics/bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
+#include "consoleseltext_dsi.h"
+#include "consoleseltext_devdsi.h"
+#include "consoleseltext_o3ds.h"
+#include "consoleseltext_n3ds.h"
+#include "consoleseltext_areyousure.h"
+#include "graphics/graphics.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool fadeType;
+extern bool controlTopBright;
 
 void LoadConsoleBMP(int consoleModel) {
 	FILE* file;
@@ -47,6 +54,76 @@ void LoadConsoleBMP(int consoleModel) {
 	}
 
 	fclose(file);
+	
+	switch (consoleModel) {
+		case 0:
+		default:
+			swiDecompressLZSSVram ((void*)consoleseltext_dsiTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			dmaCopy(consoleseltext_dsiPal, BG_PALETTE_SUB, consoleseltext_dsiPalLen);
+			break;
+		case 1:
+			swiDecompressLZSSVram ((void*)consoleseltext_devdsiTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			dmaCopy(consoleseltext_devdsiPal, BG_PALETTE_SUB, consoleseltext_devdsiPalLen);
+			break;
+		case 2:
+			swiDecompressLZSSVram ((void*)consoleseltext_o3dsTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			dmaCopy(consoleseltext_o3dsPal, BG_PALETTE_SUB, consoleseltext_o3dsPalLen);
+			break;
+		case 3:
+			swiDecompressLZSSVram ((void*)consoleseltext_n3dsTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+			dmaCopy(consoleseltext_n3dsPal, BG_PALETTE_SUB, consoleseltext_n3dsPalLen);
+			break;
+	}
+}
+
+bool consoleModel_isSure(void) {
+	int isSure_pressed = 0;
+
+	controlTopBright = false;
+	fadeType = false;
+	for (int i = 0; i < 90; i++) {
+		swiWaitForVBlank();
+	}
+
+	swiDecompressLZSSVram ((void*)consoleseltext_areyousureTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
+	dmaCopy(consoleseltext_areyousurePal, BG_PALETTE_SUB, consoleseltext_areyousurePalLen);
+
+	fadeType = true;
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
+	while (1) {
+		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
+		do
+		{
+			scanKeys();
+			isSure_pressed = keysDown();
+			swiWaitForVBlank();
+		}
+		while (!isSure_pressed);
+
+		if (isSure_pressed & KEY_A) {
+			controlTopBright = true;
+			fadeType = false;
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
+			}
+			ms().saveSettings();
+			return true;
+		}
+		if (isSure_pressed & KEY_B) {
+			fadeType = false;
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
+			}
+			LoadConsoleBMP(ms().consoleModel);
+			fadeType = true;
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
+			}
+			return false;
+		}
+	}
 }
 
 void consoleModelSelect(void) {
@@ -76,16 +153,19 @@ void consoleModelSelect(void) {
 	LoadConsoleBMP(ms().consoleModel);
 
 	int pressed = 0;
-	touchPosition touch;
+	//touchPosition touch;
 
 	fadeType = true;
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
 	while (1) {
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do
 		{
 			scanKeys();
 			pressed = keysDown();
-			touchRead(&touch);
+			//touchRead(&touch);
 			swiWaitForVBlank();
 		}
 		while (!pressed);
@@ -106,12 +186,9 @@ void consoleModelSelect(void) {
 		}
 
 		if (pressed & KEY_A) {
-			fadeType = false;
-			for (int i = 0; i < 25; i++) {
-				swiWaitForVBlank();
+			if (consoleModel_isSure()) {
+				break;
 			}
-			ms().saveSettings();
-			break;
 		}
 	}
 }

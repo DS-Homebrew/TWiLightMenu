@@ -34,8 +34,6 @@
 
 #include "graphics/graphics.h"
 
-#include "graphics/fontHandler.h"
-
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
 #include "common/nitrofs.h"
