@@ -775,6 +775,64 @@ void loadBoxArt(const char* filename) {
 	fclose(file);
 }
 
+static int loadedBatteryImage = -1;
+
+void loadBatteryImage(u32 batteryLevel) {
+	const char *batteryImagePath;
+
+	if (batteryLevel & 1<<7) {
+		if (loadedBatteryImage == 7) return;
+		batteryImagePath = "nitro:/graphics/batterycharge.bmp";
+		loadedBatteryImage = 7;
+	} else if (batteryLevel & 1<<3) {
+		if (loadedBatteryImage == 3) return;
+		batteryImagePath = "nitro:/graphics/battery4.bmp";
+		loadedBatteryImage = 3;
+	} else if (batteryLevel & 1<<2) {
+		if (loadedBatteryImage == 2) return;
+		batteryImagePath = "nitro:/graphics/battery3.bmp";
+		loadedBatteryImage = 2;
+	} else if (batteryLevel & 1<<1) {
+		if (loadedBatteryImage == 1) return;
+		batteryImagePath = "nitro:/graphics/battery2.bmp";
+		loadedBatteryImage = 1;
+	} else if (batteryLevel & 1<<0) {
+		if (loadedBatteryImage == 0) return;
+		batteryImagePath = "nitro:/graphics/battery1.bmp";
+		loadedBatteryImage = 0;
+	} else {
+		if (loadedBatteryImage == 7) return;
+		batteryImagePath = "nitro:/graphics/batterycharge.bmp";
+		loadedBatteryImage = 7;
+	}
+
+	FILE* file = fopen(batteryImagePath, "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x200, file);
+		u16* src = bmpImageBuffer;
+		int x = 235;
+		int y = 4+10;
+		for (int i=0; i<18*11; i++) {
+			if (x >= 235+18) {
+				x = 235;
+				y--;
+			}
+			u16 val = *(src++);
+			if (val != 0x7C1F) {	// Do not render magneta pixel
+				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+			x++;
+		}
+	}
+
+	fclose(file);
+}
+
 void loadPhoto() {
 	FILE* file = fopen("fat:/_nds/TWiLightMenu/photo.bmp", "rb");
 	if (!file) file = fopen("sd:/_nds/TWiLightMenu/photo.bmp", "rb");
@@ -1228,6 +1286,8 @@ void graphicsInit()
 		topBgLoad();
 		bottomBgLoad(false, true);
 	}
+
+	loadBatteryImage(getBatteryLevel());
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
