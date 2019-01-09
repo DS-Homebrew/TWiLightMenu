@@ -788,15 +788,15 @@ void loadVolumeImage(void) {
 		if (loadedVolumeImage == 4) return;
 		volumeImagePath = "nitro:/graphics/volume4.bmp";
 		loadedVolumeImage = 4;
-	} else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
+	} else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
 		if (loadedVolumeImage == 3) return;
 		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/volume3.bmp";
 		loadedVolumeImage = 3;
-	} else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
+	} else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
 		if (loadedVolumeImage == 2) return;
 		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/volume2.bmp";
 		loadedVolumeImage = 2;
-	} else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
+	} else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
 		if (loadedVolumeImage == 1) return;
 		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/volume1.bmp";
 		loadedVolumeImage = 1;
