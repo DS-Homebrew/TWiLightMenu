@@ -35,6 +35,8 @@
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
+#include "windows/batteryicon.h"
+#include "windows/volumeicon.h"
 #include "ui/progresswnd.h"
 #include "windows/mainwnd.h"
 #include "common/systemdetails.h"
@@ -173,6 +175,10 @@ int main(int argc, char **argv)
 
 	// diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
 	// diskIcon().show();
+
+	batteryIcon().draw();
+
+	volumeIcon().draw();
 
 	timer().updateFps();
 

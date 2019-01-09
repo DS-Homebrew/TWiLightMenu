@@ -58,6 +58,17 @@
 #define SFN_GBAFRAME                SFN_UI_DIRECTORY"/gbaframe.bmp"
 #define SFN_UI_ICONS_DIRECTORY      SFN_UI_DIRECTORY"/icons/"
 
+#define SFN_BATTERY1                SFN_UI_DIRECTORY"/icons/battery1.bmp"
+#define SFN_BATTERY2                SFN_UI_DIRECTORY"/icons/battery2.bmp"
+#define SFN_BATTERY3                SFN_UI_DIRECTORY"/icons/battery3.bmp"
+#define SFN_BATTERY4                SFN_UI_DIRECTORY"/icons/battery4.bmp"
+#define SFN_BATTERY_CHARGE          SFN_UI_DIRECTORY"/icons/batterycharge.bmp"
+#define SFN_VOLUME0                 SFN_UI_DIRECTORY"/icons/volume0.bmp"
+#define SFN_VOLUME1                 SFN_UI_DIRECTORY"/icons/volume1.bmp"
+#define SFN_VOLUME2                 SFN_UI_DIRECTORY"/icons/volume2.bmp"
+#define SFN_VOLUME3                 SFN_UI_DIRECTORY"/icons/volume3.bmp"
+#define SFN_VOLUME4                 SFN_UI_DIRECTORY"/icons/volume4.bmp"
+
 #define SFN_LANGUAGE_DIRECTORY      "nitro:/language/"
 #define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
 
