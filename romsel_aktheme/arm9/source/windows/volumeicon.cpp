@@ -32,35 +32,38 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     _size = Size(0, 0);
     _position = Point(0, 0);
     _engine = GE_MAIN;
-    _icon.init(2);
+    _icon.init(1);
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
-    _icon.setBufferOffset(48);
-    // if(ini.GetInt("volume icon", "show"))
-    // {
+    _icon.setBufferOffset(16);
+    CIniFile ini(SFN_UI_SETTINGS);
+    if(ini.GetInt("volume icon", "show", false))
+    {
         _icon.show();
-    // }
+    }
 
     fillMemory(_icon.buffer(), 32 * 32 * 2, 0x00000000);
 }
 
 void VolumeIcon::draw()
 {
-    // if (!isDSiMode() || !fifoGetValue32(FIFO_USER_05))
-    //         return;
-
-    u8 volumeLevel = fifoGetValue32(FIFO_USER_04);
-    // const char *volumeImagePath;
-
-    if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-         volumeIcon().loadAppearance(SFN_VOLUME4);
-     } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
-         volumeIcon().loadAppearance(SFN_VOLUME3);
-     } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
-         volumeIcon().loadAppearance(SFN_VOLUME2);
-     } else if (volumeLevel > 0x01 && volumeLevel < 0x08) {
-         volumeIcon().loadAppearance(SFN_VOLUME1);
-     }
+    CIniFile ini(SFN_UI_SETTINGS);
+    if(ini.GetInt("volume icon", "show", false))
+    {
+        u8 volumeLevel = *(u8*)(0x027FF000);
+        
+        if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
+            loadAppearance(SFN_VOLUME4);
+        } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
+            loadAppearance(SFN_VOLUME3);
+        } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
+            loadAppearance(SFN_VOLUME2);
+        } else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
+            loadAppearance(SFN_VOLUME1);
+        } else {
+            loadAppearance(SFN_VOLUME0);
+        }
+    }
 }
 
 Window &VolumeIcon::loadAppearance(const std::string &aFileName)

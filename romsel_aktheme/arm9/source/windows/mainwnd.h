@@ -110,15 +110,12 @@ class MainWnd : public akui::Form
 
     akui::Button *_folderUpButton;
 
-    akui::Button *_volumeIcon;
-
     akui::Button *_batteryIcon;
 
     akui::StaticText *_folderText;
 
     bool _processL;
-
-    u8 volume = fifoGetValue32(FIFO_USER_04);
+    
 };
 
 #endif //_MAINWND_H_

@@ -64,7 +64,7 @@ using namespace akui;
 
 MainWnd::MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
     : Form(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
-      _brightnessButton(NULL), _folderUpButton(NULL), _batteryIcon(NULL), _volumeIcon(NULL), _folderText(NULL), _processL(false)
+      _brightnessButton(NULL), _folderUpButton(NULL), _batteryIcon(NULL), _folderText(NULL), _processL(false)
 {
 }
 
@@ -73,7 +73,6 @@ MainWnd::~MainWnd()
     delete _folderText;
     delete _folderUpButton;
     delete _brightnessButton;
-    delete _volumeIcon;
     delete _batteryIcon;
     delete _startButton;
     delete _startMenu;
@@ -87,7 +86,6 @@ void MainWnd::init()
     int y = 0;
     int w = 0;
     int h = 0;
-    bool showVol = 0;
     bool showBatt = 0;
     COLOR color = 0;
     std::string file("");
@@ -153,31 +151,6 @@ void MainWnd::init()
     // _brightnessButton->pressed.connect(this, &MainWnd::brightnessButtonClicked);
     // addChildWindow(_brightnessButton);
 
-    x = ini.GetInt("volume icon", "x", 238);
-    y = ini.GetInt("volume icon", "y", 172);
-    showVol = ini.GetInt("volume icon", "show", 0);
-
-    if(showVol)
-    {
-        u8 volumeLevel = fifoGetValue32(FIFO_USER_04);
-        _volumeIcon = new Button(x, y, w, h, this, "");
-        _volumeIcon->setRelativePosition(Point(x,y));
-
-        if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-            _volumeIcon->loadAppearance(SFN_VOLUME4);
-        } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
-            _volumeIcon->loadAppearance(SFN_VOLUME3);
-        } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
-            _volumeIcon->loadAppearance(SFN_VOLUME2);
-        } else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
-            _volumeIcon->loadAppearance(SFN_VOLUME1);
-        } else {
-            _volumeIcon->loadAppearance(SFN_VOLUME0);
-        }
-
-        addChildWindow(_volumeIcon);
-    }
-
     x = ini.GetInt("battery icon", "x", 238);
     y = ini.GetInt("battery icon", "y", 172);
     showBatt = ini.GetInt("battery icon", "show", 0);
@@ -187,7 +160,7 @@ void MainWnd::init()
         _batteryIcon = new Button(x, y, w, h, this, "");
         _batteryIcon->setRelativePosition(Point(x,y));
 
-        u32 batteryLevel = getBatteryLevel();
+        u32 batteryLevel = *(u32*)(0x027FF004);
 
         if (batteryLevel & 1<<7) {
             _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
@@ -391,17 +364,6 @@ bool MainWnd::process(const Message &msg)
 
 bool MainWnd::processKeyMessage(const KeyMessage &msg)
 {
-    u8 volumeLevel = fifoGetValue32(FIFO_USER_04);
-
-    if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-        _volumeIcon->loadAppearance(SFN_VOLUME4);
-    } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
-        _volumeIcon->loadAppearance(SFN_VOLUME3);
-    } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
-        _volumeIcon->loadAppearance(SFN_VOLUME2);
-    } else if (volumeLevel > 0x01 && volumeLevel < 0x08) {
-        _volumeIcon->loadAppearance(SFN_VOLUME1);
-    }
     bool ret = false, isL = msg.shift() & KeyMessage::UI_SHIFT_L;
     if (msg.id() == Message::keyDown)
     {
