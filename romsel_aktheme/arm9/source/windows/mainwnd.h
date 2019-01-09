@@ -110,9 +110,12 @@ class MainWnd : public akui::Form
 
     akui::Button *_folderUpButton;
 
+    akui::Button *_batteryIcon;
+
     akui::StaticText *_folderText;
 
     bool _processL;
+    
 };
 
 #endif //_MAINWND_H_

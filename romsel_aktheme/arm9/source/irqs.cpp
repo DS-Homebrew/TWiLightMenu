@@ -27,6 +27,7 @@
 #include "windows/diskicon.h"
 #include "windows/calendarwnd.h"
 #include "windows/calendar.h"
+#include "windows/calendar_2.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
 #include "ui/animation.h"
@@ -86,6 +87,7 @@ void IRQ::vBlank()
         bigClock().blinkColon();
         calendarWnd().draw();
         calendar().draw();
+        calendar_2().draw();
         bigClock().draw();
         userWindow().draw();
 #if 0

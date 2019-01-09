@@ -102,12 +102,25 @@ int main() {
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 
+	int timeTilVolumeLevelRefresh = 0;
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
 		resyncClock();
+			if (isDSiMode()) {
+				if (fifoGetValue32(FIFO_USER_05) == 1) {
+					fifoSendValue32(FIFO_USER_05, 0);
+				}
+				timeTilVolumeLevelRefresh++;
+				if (timeTilVolumeLevelRefresh == 8) {
+					*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+					*(u32*)(0x027FF004) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+					timeTilVolumeLevelRefresh = 0;
+				}
+			}
 		swiWaitForVBlank();
 	}
 	return 0;
