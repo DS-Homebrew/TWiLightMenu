@@ -46,6 +46,7 @@ class VolumeIcon : public akui::Window
     float _lightTime;
 
     Sprite _icon;
+
 };
 
 typedef singleton<VolumeIcon> volumeIcon_s;

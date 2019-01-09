@@ -32,6 +32,7 @@
 #include "userinput.h"
 #include "language.h"
 #include "windows/calendar.h"
+#include "windows/calendar_2.h"
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
@@ -176,9 +177,9 @@ int main(int argc, char **argv)
 	// diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
 	// diskIcon().show();
 
-	batteryIcon().draw();
+	// batteryIcon().draw();
 
-	volumeIcon().draw();
+	// volumeIcon().draw();
 
 	timer().updateFps();
 
@@ -192,6 +193,8 @@ int main(int argc, char **argv)
 	calendarWnd().draw();
 	calendar().init();
 	calendar().draw();
+	calendar_2().init();
+	calendar_2().draw();
 	bigClock().init();
 	bigClock().draw();
 
@@ -220,6 +223,8 @@ int main(int argc, char **argv)
 
 	irq().vblankStart();
 
+	int waitForVolDraw = 0;
+
 	while (1)
 	{
 		timer().updateFps();
@@ -227,7 +232,7 @@ int main(int argc, char **argv)
 		processInput(inputs);
 		swiWaitForVBlank();
 		windowManager().update();
-		gdi().present(GE_MAIN);
+		gdi().present(GE_MAIN);		
 	}
 	return 0;
 }

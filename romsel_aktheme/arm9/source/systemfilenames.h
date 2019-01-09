@@ -69,6 +69,11 @@
 #define SFN_VOLUME3                 SFN_UI_DIRECTORY"/icons/volume3.bmp"
 #define SFN_VOLUME4                 SFN_UI_DIRECTORY"/icons/volume4.bmp"
 
+#define SFN_CLOCK_NUMBERS_2         SFN_UI_DIRECTORY"/calendar/clock_numbers_2.bmp"
+#define SFN_CLOCK_COLON_2           SFN_UI_DIRECTORY"/calendar/clock_colon_2.bmp"
+#define SFN_DAY_NUMBERS_2           SFN_UI_DIRECTORY"/calendar/day_numbers_2.bmp"
+#define SFN_YEAR_NUMBERS_2          SFN_UI_DIRECTORY"/calendar/year_numbers_2.bmp"
+
 #define SFN_LANGUAGE_DIRECTORY      "nitro:/language/"
 #define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
 

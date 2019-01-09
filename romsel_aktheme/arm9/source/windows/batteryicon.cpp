@@ -32,7 +32,7 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
     _size = Size(0, 0);
     _position = Point(0, 0);
     _engine = GE_MAIN;
-    _icon.init(1);
+    _icon.init(2);
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
     _icon.setBufferOffset(32);
