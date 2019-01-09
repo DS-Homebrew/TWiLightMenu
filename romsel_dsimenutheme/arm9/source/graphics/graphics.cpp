@@ -1346,6 +1346,7 @@ void graphicsInit()
 		bottomBgLoad(false, true);
 	}
 
+	loadVolumeImage();
 	loadBatteryImage();
 
 	irqSet(IRQ_VBLANK, vBlankHandler);

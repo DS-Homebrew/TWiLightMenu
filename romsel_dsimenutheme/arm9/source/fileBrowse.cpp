@@ -332,6 +332,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 				}
 			}
 
+			loadVolumeImage();
+			loadBatteryImage();
 		}
 
 		closedir(pdir);
@@ -384,7 +386,11 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 72; i++) swiWaitForVBlank();
+		for (int i = 0; i < 72; i++) {
+			loadVolumeImage();
+			loadBatteryImage();
+			swiWaitForVBlank();
+		}
 	} else {
 		for (int i = 0; i < 25; i++) swiWaitForVBlank();
 	}
@@ -773,6 +779,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 				spawnedtitleboxes++;
+
+				loadVolumeImage();
+				loadBatteryImage();
 			}
 		}
 		if (nowLoadingDisplaying) {
