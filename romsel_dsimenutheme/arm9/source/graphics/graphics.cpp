@@ -784,28 +784,58 @@ void loadVolumeImage(void) {
 	u8 volumeLevel = *(u8*)(0x027FF000);
 	const char *volumeImagePath;
 
-	if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-		if (loadedVolumeImage == 4) return;
-		volumeImagePath = "nitro:/graphics/volume4.bmp";
-		loadedVolumeImage = 4;
-	} else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
-		if (loadedVolumeImage == 3) return;
-		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/volume3.bmp";
-		loadedVolumeImage = 3;
-	} else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
-		if (loadedVolumeImage == 2) return;
-		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/volume2.bmp";
-		loadedVolumeImage = 2;
-	} else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
-		if (loadedVolumeImage == 1) return;
-		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/volume1.bmp";
-		loadedVolumeImage = 1;
-	} else if (volumeLevel == 0x00) {
-		if (loadedVolumeImage == 0) return;
-		volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/volume0.bmp";
-		loadedVolumeImage = 0;
-	} else {
-		return;
+	switch (subtheme) {
+		case 0:
+			if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
+				if (loadedVolumeImage == 4) return;
+				volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume4.bmp" : "nitro:/graphics/dark_volume4.bmp";
+				loadedVolumeImage = 4;
+			} else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
+				if (loadedVolumeImage == 3) return;
+				volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/dark_volume3.bmp";
+				loadedVolumeImage = 3;
+			} else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
+				if (loadedVolumeImage == 2) return;
+				volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/dark_volume2.bmp";
+				loadedVolumeImage = 2;
+			} else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
+				if (loadedVolumeImage == 1) return;
+				volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/dark_volume1.bmp";
+				loadedVolumeImage = 1;
+			} else if (volumeLevel == 0x00) {
+				if (loadedVolumeImage == 0) return;
+				volumeImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/dark_volume0.bmp";
+				loadedVolumeImage = 0;
+			} else {
+				return;
+			}
+			break;
+		case 1:
+		default:
+			if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
+				if (loadedVolumeImage == 4) return;
+				volumeImagePath = "nitro:/graphics/volume4.bmp";
+				loadedVolumeImage = 4;
+			} else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
+				if (loadedVolumeImage == 3) return;
+				volumeImagePath = "nitro:/graphics/volume3.bmp";
+				loadedVolumeImage = 3;
+			} else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
+				if (loadedVolumeImage == 2) return;
+				volumeImagePath = "nitro:/graphics/volume2.bmp";
+				loadedVolumeImage = 2;
+			} else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
+				if (loadedVolumeImage == 1) return;
+				volumeImagePath = "nitro:/graphics/volume1.bmp";
+				loadedVolumeImage = 1;
+			} else if (volumeLevel == 0x00) {
+				if (loadedVolumeImage == 0) return;
+				volumeImagePath = "nitro:/graphics/volume0.bmp";
+				loadedVolumeImage = 0;
+			} else {
+				return;
+			}
+			break;
 	}
 
 	FILE* file = fopen(volumeImagePath, "rb");
@@ -841,28 +871,58 @@ void loadBatteryImage(void) {
 	u32 batteryLevel = *(u32*)(0x027FF004);
 	const char *batteryImagePath;
 
-	if (batteryLevel & 1<<7) {
-		if (loadedBatteryImage == 7) return;
-		batteryImagePath = "nitro:/graphics/batterycharge.bmp";
-		loadedBatteryImage = 7;
-	} else if (batteryLevel & 1<<3) {
-		if (loadedBatteryImage == 3) return;
-		batteryImagePath = "nitro:/graphics/battery4.bmp";
-		loadedBatteryImage = 3;
-	} else if (batteryLevel & 1<<2) {
-		if (loadedBatteryImage == 2) return;
-		batteryImagePath = "nitro:/graphics/battery3.bmp";
-		loadedBatteryImage = 2;
-	} else if (batteryLevel & 1<<1) {
-		if (loadedBatteryImage == 1) return;
-		batteryImagePath = "nitro:/graphics/battery2.bmp";
-		loadedBatteryImage = 1;
-	} else if (batteryLevel & 1<<0) {
-		if (loadedBatteryImage == 0) return;
-		batteryImagePath = "nitro:/graphics/battery1.bmp";
-		loadedBatteryImage = 0;
-	} else {
-		return;
+	switch (subtheme) {
+		case 0:
+			if (batteryLevel & 1<<7) {
+				if (loadedBatteryImage == 7) return;
+				batteryImagePath = (theme == 1) ? "nitro:/graphics/batterycharge.bmp" : "nitro:/graphics/dark_batterycharge.bmp";
+				loadedBatteryImage = 7;
+			} else if (batteryLevel & 1<<3) {
+				if (loadedBatteryImage == 3) return;
+				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery4.bmp" : "nitro:/graphics/dark_battery4.bmp";
+				loadedBatteryImage = 3;
+			} else if (batteryLevel & 1<<2) {
+				if (loadedBatteryImage == 2) return;
+				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery3.bmp" : "nitro:/graphics/dark_battery3.bmp";
+				loadedBatteryImage = 2;
+			} else if (batteryLevel & 1<<1) {
+				if (loadedBatteryImage == 1) return;
+				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery2.bmp" : "nitro:/graphics/dark_battery2.bmp";
+				loadedBatteryImage = 1;
+			} else if (batteryLevel & 1<<0) {
+				if (loadedBatteryImage == 0) return;
+				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery1.bmp" : "nitro:/graphics/dark_battery1.bmp";
+				loadedBatteryImage = 0;
+			} else {
+				return;
+			}
+			break;
+		case 1:
+		default:
+			if (batteryLevel & 1<<7) {
+				if (loadedBatteryImage == 7) return;
+				batteryImagePath = "nitro:/graphics/batterycharge.bmp";
+				loadedBatteryImage = 7;
+			} else if (batteryLevel & 1<<3) {
+				if (loadedBatteryImage == 3) return;
+				batteryImagePath = "nitro:/graphics/battery4.bmp";
+				loadedBatteryImage = 3;
+			} else if (batteryLevel & 1<<2) {
+				if (loadedBatteryImage == 2) return;
+				batteryImagePath = "nitro:/graphics/battery3.bmp";
+				loadedBatteryImage = 2;
+			} else if (batteryLevel & 1<<1) {
+				if (loadedBatteryImage == 1) return;
+				batteryImagePath = "nitro:/graphics/battery2.bmp";
+				loadedBatteryImage = 1;
+			} else if (batteryLevel & 1<<0) {
+				if (loadedBatteryImage == 0) return;
+				batteryImagePath = "nitro:/graphics/battery1.bmp";
+				loadedBatteryImage = 0;
+			} else {
+				return;
+			}
+			break;
 	}
 
 	FILE* file = fopen(batteryImagePath, "rb");
