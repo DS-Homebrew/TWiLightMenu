@@ -66,6 +66,6 @@
         "codecvt": "cpp",
         "ratio": "cpp"
     },
-    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
     "C_Cpp.errorSquiggles": "Disabled"
 }
