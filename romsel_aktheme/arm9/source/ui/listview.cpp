@@ -53,6 +53,7 @@ ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     _selectionBarColor1 = BIT(15) | uiSettings().listViewBarColor1; //RGB15(0,0,31);
     _selectionBarColor2 = BIT(15) | uiSettings().listViewBarColor2; //RGB15(0,0,31);
     _selectionBarOpacity = 100;
+    _showSelectionBarBg = false;
     _engine = GE_MAIN;
     _scrollSpeed = scrollSpeed;
     _touchMovedAfterTouchDown = false;
@@ -153,9 +154,12 @@ void ListView::drawSelectionBar()
             gdi().fillRectBlend(_selectionBarColor2, _selectionBarColor1, x, y + i, w, 1, _engine, _selectionBarOpacity);
     }
 
-    // BMP15 _barPic = createBMP15FromFile(SFN_CARD_ICON_BLUE);
+    if(_showSelectionBarBg)
+    {
+        BMP15 _barPic = createBMP15FromFile(SFN_LIST_BAR_BG);
 
-    // gdi().maskBlt(_barPic.buffer(), x, y, _barPic.width(), _barPic.height(), GE_MAIN);
+        gdi().maskBlt(_barPic.buffer(), x, y, _barPic.width(), _barPic.height(), GE_MAIN);
+    }
 }
 
 void ListView::drawText()
