@@ -223,8 +223,6 @@ int main(int argc, char **argv)
 
 	irq().vblankStart();
 
-	static u32 vBlankCounter = 0;
-
 	while (1)
 	{
 		timer().updateFps();
@@ -233,13 +231,6 @@ int main(int argc, char **argv)
 		swiWaitForVBlank();
 		windowManager().update();
 		gdi().present(GE_MAIN);
-		if(vBlankCounter>0) {
-			// batteryIcon().drawBottom();
-    	// volumeIcon().drawBottom();
-			vBlankCounter = 0;
-		} else {
-			vBlankCounter++;
-		}
 	}
 	return 0;
 }

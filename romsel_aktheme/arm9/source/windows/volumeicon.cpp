@@ -32,7 +32,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     CIniFile ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
-    if(ini.GetInt("volume icon", "topScreen", true)) {
+    if(ini.GetInt("volume icon", "screen", true)) {
         _engine = GE_SUB;
     } else {
         _engine = GE_MAIN;
@@ -70,22 +70,6 @@ void VolumeIcon::draw()
     }
 }
 
-void VolumeIcon::drawTop()
-{
-    CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("volume icon", "topScreen", true)) {
-        draw();
-    }
-}
-
-void VolumeIcon::drawBottom()
-{
-    CIniFile ini(SFN_UI_SETTINGS);
-    if(!ini.GetInt("volume icon", "topScreen", true)) {
-        draw();
-    }
-}
-
 Window &VolumeIcon::loadAppearance(const std::string &aFileName)
 {
 
@@ -97,7 +81,18 @@ Window &VolumeIcon::loadAppearance(const std::string &aFileName)
 
     BMP15 icon = createBMP15FromFile(aFileName);
 
+    if(ini.GetInt("volume icon", "screen", true)) {
     gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
+    } else {
+        u32 pitch = icon.pitch() >> 1;
+	    for (u8 i = 0; i < icon.height(); ++i)
+	    {
+	        for (u8 j = 0; j < icon.width(); ++j)
+	        {
+	            ((u16 *)_icon.buffer())[i * 32 + j] = ((u16 *)icon.buffer())[i * pitch + j];
+	        }
+	    }
+    }
 
     dbg_printf("cVolumeIcon::loadAppearance ok %d\n", icon.valid());
     return *this;

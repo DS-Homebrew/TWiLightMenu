@@ -92,8 +92,8 @@ void IRQ::vBlank()
         calendar_2().draw();
         bigClock().draw();
         userWindow().draw();
-        batteryIcon().drawTop();
-        volumeIcon().drawTop();
+        batteryIcon().draw();
+        volumeIcon().draw();
 #if 0
         char fpsText[16];
         sprintf( fpsText, "fps %.2f\n", timer().getFps() );

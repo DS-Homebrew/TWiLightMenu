@@ -39,10 +39,6 @@ class BatteryIcon : public akui::Window
   public:
     void draw();
 
-    void drawTop();
-
-    void drawBottom();
-
     akui::Window &loadAppearance(const std::string &aFileName);
 
 

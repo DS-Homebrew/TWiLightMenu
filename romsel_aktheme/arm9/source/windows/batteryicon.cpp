@@ -32,7 +32,7 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
     CIniFile ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
-    if(ini.GetInt("battery icon", "topScreen", true)) {
+    if(ini.GetInt("battery icon", "screen", true)) {
         _engine = GE_SUB;
     } else {
         _engine = GE_MAIN;
@@ -53,34 +53,21 @@ void BatteryIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
     if(ini.GetInt("battery icon", "show", false)) {
-        if(waitForBattery>10) {
-            u32 batteryLevel = *(u32*)(0x027FF004);
+        u32 batteryLevel = *(u32*)(0x027FF004);
 
-            if (batteryLevel & 1<<7) {
-                loadAppearance(SFN_BATTERY_CHARGE);
-            } else if (batteryLevel & 1<<3) {
-                loadAppearance(SFN_BATTERY4);
-            } else if (batteryLevel & 1<<2) {
-                loadAppearance(SFN_BATTERY3);
-            } else if (batteryLevel & 1<<1) {
-                loadAppearance(SFN_BATTERY2);
-            } else if (batteryLevel & 1<<0) {
-                loadAppearance(SFN_BATTERY1);
-            } else {
-                loadAppearance(SFN_BATTERY_CHARGE);
-            }
-            waitForBattery = 0;
+        if (batteryLevel & 1<<7) {
+            loadAppearance(SFN_BATTERY_CHARGE);
+        } else if (batteryLevel & 1<<3) {
+            loadAppearance(SFN_BATTERY4);
+        } else if (batteryLevel & 1<<2) {
+            loadAppearance(SFN_BATTERY3);
+        } else if (batteryLevel & 1<<1) {
+            loadAppearance(SFN_BATTERY2);
+        } else if (batteryLevel & 1<<0) {
+            loadAppearance(SFN_BATTERY1);
         } else {
-            waitForBattery++;
+            loadAppearance(SFN_BATTERY_CHARGE);
         }
-    }
-}
-
-void BatteryIcon::drawTop()
-{
-    CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("battery icon", "topScreen", true)) {
-        draw();
     }
 }
 
@@ -95,7 +82,9 @@ Window &BatteryIcon::loadAppearance(const std::string &aFileName)
 
     BMP15 icon = createBMP15FromFile(aFileName);
 
-    gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
+    if(ini.GetInt("battery icon", "screen", true)) {
+        gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
+    }
 
     dbg_printf("cBatteryIcon::loadAppearance ok %d\n", icon.valid());
     return *this;

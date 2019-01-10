@@ -108,6 +108,8 @@ class MainWnd : public akui::Form
 
     akui::Button *_brightnessButton;
 
+    akui::Button *_batteryIcon;
+
     akui::Button *_folderUpButton;
 
     akui::StaticText *_folderText;
