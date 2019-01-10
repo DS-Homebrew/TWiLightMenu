@@ -1,5 +1,5 @@
 /*
-    volumeicon.cpp
+    batteryicon.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,7 +18,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "volumeicon.h"
+#include "batteryicon.h"
 #include "drawing/bmp15.h"
 #include "common/inifile.h"
 #include "systemfilenames.h"
@@ -27,12 +27,12 @@
 
 using namespace akui;
 
-VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
+BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
 {
     CIniFile ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
-    if(ini.GetInt("volume icon", "topScreen", true)) {
+    if(ini.GetInt("battery icon", "topScreen", true)) {
         _engine = GE_SUB;
     } else {
         _engine = GE_MAIN;
@@ -41,7 +41,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
     _icon.setBufferOffset(16);
-    if(ini.GetInt("volume icon", "show", false))
+    if(ini.GetInt("battery icon", "show", false))
     {
         _icon.show();
     }
@@ -49,56 +49,54 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     fillMemory(_icon.buffer(), 32 * 32 * 2, 0x00000000);
 }
 
-void VolumeIcon::draw()
+void BatteryIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("volume icon", "show", false))
-    {
-        u8 volumeLevel = *(u8*)(0x027FF000);
-        
-        if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-            loadAppearance(SFN_VOLUME4);
-        } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
-            loadAppearance(SFN_VOLUME3);
-        } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
-            loadAppearance(SFN_VOLUME2);
-        } else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
-            loadAppearance(SFN_VOLUME1);
+    if(ini.GetInt("battery icon", "show", false)) {
+        if(waitForBattery>10) {
+            u32 batteryLevel = *(u32*)(0x027FF004);
+
+            if (batteryLevel & 1<<7) {
+                loadAppearance(SFN_BATTERY_CHARGE);
+            } else if (batteryLevel & 1<<3) {
+                loadAppearance(SFN_BATTERY4);
+            } else if (batteryLevel & 1<<2) {
+                loadAppearance(SFN_BATTERY3);
+            } else if (batteryLevel & 1<<1) {
+                loadAppearance(SFN_BATTERY2);
+            } else if (batteryLevel & 1<<0) {
+                loadAppearance(SFN_BATTERY1);
+            } else {
+                loadAppearance(SFN_BATTERY_CHARGE);
+            }
+            waitForBattery = 0;
         } else {
-            loadAppearance(SFN_VOLUME0);
+            waitForBattery++;
         }
     }
 }
 
-void VolumeIcon::drawTop()
+void BatteryIcon::drawTop()
 {
     CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("volume icon", "topScreen", true)) {
+    if(ini.GetInt("battery icon", "topScreen", true)) {
         draw();
     }
 }
 
-void VolumeIcon::drawBottom()
-{
-    CIniFile ini(SFN_UI_SETTINGS);
-    if(!ini.GetInt("volume icon", "topScreen", true)) {
-        draw();
-    }
-}
-
-Window &VolumeIcon::loadAppearance(const std::string &aFileName)
+Window &BatteryIcon::loadAppearance(const std::string &aFileName)
 {
 
     CIniFile ini(SFN_UI_SETTINGS);
 
-    u16 x = ini.GetInt("volume icon", "x", 238);
-    u16 y = ini.GetInt("volume icon", "y", 172);
+    u16 x = ini.GetInt("battery icon", "x", 238);
+    u16 y = ini.GetInt("battery icon", "y", 172);
     _icon.setPosition(x, y);
 
     BMP15 icon = createBMP15FromFile(aFileName);
 
     gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
 
-    dbg_printf("cVolumeIcon::loadAppearance ok %d\n", icon.valid());
+    dbg_printf("cBatteryIcon::loadAppearance ok %d\n", icon.valid());
     return *this;
 }

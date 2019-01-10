@@ -36,6 +36,7 @@
 #include "windows/calendarwnd.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
+#include "windows/batteryicon.h"
 #include "windows/volumeicon.h"
 #include "ui/progresswnd.h"
 #include "windows/mainwnd.h"
@@ -176,6 +177,8 @@ int main(int argc, char **argv)
 	// diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
 	// diskIcon().show();
 
+	batteryIcon().draw();
+
 	volumeIcon().draw();
 
 	timer().updateFps();
@@ -220,7 +223,7 @@ int main(int argc, char **argv)
 
 	irq().vblankStart();
 
-	int waitForVolDraw = 0;
+	static u32 vBlankCounter = 0;
 
 	while (1)
 	{
@@ -230,11 +233,12 @@ int main(int argc, char **argv)
 		swiWaitForVBlank();
 		windowManager().update();
 		gdi().present(GE_MAIN);
-		if (waitForVolDraw == 8) {
-			volumeIcon().draw();
-			waitForVolDraw = 0;
+		if(vBlankCounter>0) {
+			// batteryIcon().drawBottom();
+    	// volumeIcon().drawBottom();
+			vBlankCounter = 0;
 		} else {
-			waitForVolDraw++;
+			vBlankCounter++;
 		}
 	}
 	return 0;

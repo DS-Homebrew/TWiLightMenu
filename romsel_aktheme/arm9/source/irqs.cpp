@@ -30,6 +30,8 @@
 #include "windows/calendar_2.h"
 #include "windows/bigclock.h"
 #include "windows/userwnd.h"
+#include "windows/batteryicon.h"
+#include "windows/volumeicon.h"
 #include "ui/animation.h"
 
 // #include "time/timer.h"
@@ -90,6 +92,8 @@ void IRQ::vBlank()
         calendar_2().draw();
         bigClock().draw();
         userWindow().draw();
+        batteryIcon().drawTop();
+        volumeIcon().drawTop();
 #if 0
         char fpsText[16];
         sprintf( fpsText, "fps %.2f\n", timer().getFps() );

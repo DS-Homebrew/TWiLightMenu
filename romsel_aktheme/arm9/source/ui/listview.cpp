@@ -152,6 +152,10 @@ void ListView::drawSelectionBar()
         else
             gdi().fillRectBlend(_selectionBarColor2, _selectionBarColor1, x, y + i, w, 1, _engine, _selectionBarOpacity);
     }
+
+    // BMP15 _barPic = createBMP15FromFile(SFN_CARD_ICON_BLUE);
+
+    // gdi().maskBlt(_barPic.buffer(), x, y, _barPic.width(), _barPic.height(), GE_MAIN);
 }
 
 void ListView::drawText()
