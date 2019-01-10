@@ -1,5 +1,5 @@
 /*
-    volumeicon.h
+    smallclock.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,42 +18,47 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _VOLUMEICON_H_
-#define _VOLUMEICON_H_
+#ifndef _SMALLCLOCK_H_
+#define _SMALLCLOCK_H_
 
-#include <nds.h>
 #include "ui/window.h"
-#include "drawing/sprite.h"
+#include "drawing/bmp15.h"
+#include "time/datetime.h"
 #include "common/singleton.h"
 
-class VolumeIcon : public akui::Window
+//class ClockNumber : public
+class SmallClock : public akui::Window
 {
+  public:
+    SmallClock();
+
+    ~SmallClock() {}
 
   public:
-    VolumeIcon();
+    void init();
 
-    ~VolumeIcon() {}
-
-  public:
     void draw();
 
-    void drawTop();
-
-    void drawBottom();
+    void blinkColon();
 
     akui::Window &loadAppearance(const std::string &aFileName);
 
-
   protected:
-    bool _draw;
+    void drawNumber(u8 id, u8 number);
 
-    float _lightTime;
+    void drawColon();
 
-    Sprite _icon;
+    BMP15 _numbers;
+    BMP15 _colon;
 
+    bool _show;
+    bool _colonShow;
+    bool _ampmShow;
+    akui::Point _ampmPosition;
+    COLOR _ampmColor;
 };
 
-typedef singleton<VolumeIcon> volumeIcon_s;
-inline VolumeIcon &volumeIcon() { return volumeIcon_s::instance(); }
+typedef singleton<SmallClock> smallClock_s;
+inline SmallClock &smallClock() { return smallClock_s::instance(); }
 
-#endif //_VOLUMEICON_H_
+#endif //_SMALLCLOCK_H_

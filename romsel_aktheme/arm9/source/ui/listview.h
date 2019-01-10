@@ -170,6 +170,7 @@ class ListView : public Window
     u16 _selectionBarColor1;
     u16 _selectionBarColor2;
     u16 _selectionBarOpacity;
+    bool _showSelectionBarBg;
 
     u32 _selectedRowId;
     u32 _firstVisibleRowId;

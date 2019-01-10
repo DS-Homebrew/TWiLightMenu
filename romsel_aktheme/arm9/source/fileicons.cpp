@@ -19,6 +19,7 @@
 #include "fileicons.h"
 #include "systemfilenames.h"
 #include "ui/binaryfind.h"
+#include "windows/batteryicon.h"
 #include "icons.h"
 #include <sys/dirent.h>
 #include <sys/iosupport.h>

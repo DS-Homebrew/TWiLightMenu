@@ -1,5 +1,5 @@
 /*
-    volumeicon.h
+    batteryicon.h
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -18,28 +18,26 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _VOLUMEICON_H_
-#define _VOLUMEICON_H_
+#ifndef _BATTERYICON_H_
+#define _BATTERYICON_H_
 
 #include <nds.h>
 #include "ui/window.h"
 #include "drawing/sprite.h"
 #include "common/singleton.h"
 
-class VolumeIcon : public akui::Window
+class BatteryIcon : public akui::Window
 {
 
   public:
-    VolumeIcon();
+    BatteryIcon();
 
-    ~VolumeIcon() {}
+    ~BatteryIcon() {}
+
+    u32 waitForBattery = 11;
 
   public:
     void draw();
-
-    void drawTop();
-
-    void drawBottom();
 
     akui::Window &loadAppearance(const std::string &aFileName);
 
@@ -53,7 +51,7 @@ class VolumeIcon : public akui::Window
 
 };
 
-typedef singleton<VolumeIcon> volumeIcon_s;
-inline VolumeIcon &volumeIcon() { return volumeIcon_s::instance(); }
+typedef singleton<BatteryIcon> batteryIcon_s;
+inline BatteryIcon &batteryIcon() { return batteryIcon_s::instance(); }
 
-#endif //_VOLUMEICON_H_
+#endif // _BATTERYICON_H_

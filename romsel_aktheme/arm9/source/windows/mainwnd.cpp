@@ -141,43 +141,47 @@ void MainWnd::init()
     addChildWindow(_startButton);
 
     // // init brightness button
-    // x = ini.GetInt("brightness btn", "x", 240);
-    // y = ini.GetInt("brightness btn", "y", 1);
-    // w = ini.GetInt("brightness btn", "w", 16);
-    // h = ini.GetInt("brightness btn", "h", 16);
-    // _brightnessButton = new Button(x, y, w, h, this, "");
-    // _brightnessButton->setRelativePosition(Point(x, y));
-    // _brightnessButton->loadAppearance(SFN_BRIGHTNESS_BUTTON);
-    // _brightnessButton->pressed.connect(this, &MainWnd::brightnessButtonClicked);
-    // addChildWindow(_brightnessButton);
+	    // x = ini.GetInt("brightness btn", "x", 240);
+	    // y = ini.GetInt("brightness btn", "y", 1);
+	    // w = ini.GetInt("brightness btn", "w", 16);
+	    // h = ini.GetInt("brightness btn", "h", 16);
+	    // _brightnessButton = new Button(x, y, w, h, this, "");
+	    // _brightnessButton->setRelativePosition(Point(x, y));
+	    // _brightnessButton->loadAppearance(SFN_BRIGHTNESS_BUTTON);
+	    // _brightnessButton->pressed.connect(this, &MainWnd::brightnessButtonClicked);
+	    // addChildWindow(_brightnessButton);
+	
+	    x = ini.GetInt("battery icon", "x", 238);
+	    y = ini.GetInt("battery icon", "y", 172);
+	    showBatt = ini.GetInt("battery icon", "show", 0);
 
-    x = ini.GetInt("battery icon", "x", 238);
-    y = ini.GetInt("battery icon", "y", 172);
-    showBatt = ini.GetInt("battery icon", "show", 0);
-
-    if(showBatt)
-    {
-        _batteryIcon = new Button(x, y, w, h, this, "");
-        _batteryIcon->setRelativePosition(Point(x,y));
-
-        u32 batteryLevel = *(u32*)(0x027FF004);
-
-        if (batteryLevel & 1<<7) {
-            _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-        } else if (batteryLevel & 1<<3) {
-            _batteryIcon->loadAppearance(SFN_BATTERY4);
-        } else if (batteryLevel & 1<<2) {
-            _batteryIcon->loadAppearance(SFN_BATTERY3);
-        } else if (batteryLevel & 1<<1) {
-            _batteryIcon->loadAppearance(SFN_BATTERY2);
-        } else if (batteryLevel & 1<<0) {
-            _batteryIcon->loadAppearance(SFN_BATTERY1);
-        } else {
-            _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-        }
-
-        addChildWindow(_batteryIcon);
-    }
+	
+	    if(showBatt)
+	    {
+            if(!ini.GetInt("battery icon", "screen", true))
+            {
+                _batteryIcon = new Button(x, y, w, h, this, "");
+                _batteryIcon->setRelativePosition(Point(x,y));
+        
+                u32 batteryLevel = *(u32*)(0x027FF004);
+        
+                if (batteryLevel & 1<<7) {
+                    _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+                } else if (batteryLevel & 1<<3) {
+                    _batteryIcon->loadAppearance(SFN_BATTERY4);
+                } else if (batteryLevel & 1<<2) {
+                    _batteryIcon->loadAppearance(SFN_BATTERY3);
+                } else if (batteryLevel & 1<<1) {
+                    _batteryIcon->loadAppearance(SFN_BATTERY2);
+                } else if (batteryLevel & 1<<0) {
+                    _batteryIcon->loadAppearance(SFN_BATTERY1);
+                } else {
+                    _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+                }
+        
+                addChildWindow(_batteryIcon);
+            }
+	    }
 
     x = ini.GetInt("folderup btn", "x", 0);
     y = ini.GetInt("folderup btn", "y", 2);

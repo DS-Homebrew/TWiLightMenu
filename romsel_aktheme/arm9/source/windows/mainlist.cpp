@@ -76,6 +76,7 @@ int MainList::init()
     _selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
     _selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0));
     _selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
+    _showSelectionBarBg = ini.GetInt("main list", "showSelectionBarBg", false);
 
     insertColumn(ICON_COLUMN, "icon", 0);
     insertColumn(SHOWNAME_COLUMN, "showName", 0);
