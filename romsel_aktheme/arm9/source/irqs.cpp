@@ -29,6 +29,7 @@
 #include "windows/calendar.h"
 #include "windows/calendar_2.h"
 #include "windows/bigclock.h"
+#include "windows/smallclock.h"
 #include "windows/userwnd.h"
 #include "windows/batteryicon.h"
 #include "windows/volumeicon.h"
@@ -87,10 +88,12 @@ void IRQ::vBlank()
     {
         vBlankCounter = 0;
         bigClock().blinkColon();
+        smallClock().blinkColon();
         calendarWnd().draw();
         calendar().draw();
         calendar_2().draw();
         bigClock().draw();
+        smallClock().draw();
         userWindow().draw();
         batteryIcon().draw();
         volumeIcon().draw();
