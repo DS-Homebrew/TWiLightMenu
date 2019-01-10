@@ -67,9 +67,9 @@ void SmallClock::drawNumber(u8 id, u8 number)
         return;
 
     u8 x = _position.x + id * (_numbers.width());
-    if (id > 2)
+    if (id > 4)
     { // minute number
-        x -= 8;
+        x -= 6;
     }
     if (_numbers.valid())
     {
