@@ -67,9 +67,9 @@ void SmallClock::drawNumber(u8 id, u8 number)
         return;
 
     u8 x = _position.x + id * (_numbers.width());
-    if (id > 4)
+    if (id > 2)
     { // minute number
-        x -= 6;
+        x -= 2;
     }
     if (_numbers.valid())
     {
@@ -86,7 +86,7 @@ void SmallClock::drawColon()
     if (_colon.valid())
     {
         gdi().maskBlt(_colon.buffer(),
-                      x, _position.y, _colon.width(), _colon.height(), selectedEngine());
+                      x-1, _position.y, _colon.width(), _colon.height(), selectedEngine());
     }
 }
 
