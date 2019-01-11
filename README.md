@@ -21,7 +21,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 
 - ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
 - Apache Thunder: Providing the Miku theme (not made by him) for Acekard theme.
-- Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), and MHGen theme for Acekard theme.
+- Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), MHGen, and DS Menu themes for Acekard theme.
 - Epicpkmn11: Adding new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.
 - Joom: Original TWLoader logo.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
