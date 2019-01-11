@@ -52,6 +52,8 @@ extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
 
+extern bool isRegularDS;
+
 extern bool music;
 static int musicTime = 0;
 static bool waitBeforeMusicPlay = true;
@@ -910,6 +912,8 @@ static const char *battery4ImagePath;
 static const char *battery3ImagePath;
 static const char *battery2ImagePath;
 static const char *battery1ImagePath;
+static const char *batteryFullImagePath;
+static const char *batteryLowImagePath;
 
 void setBatteryImagePaths(void) {
 	switch (subtheme) {
@@ -919,6 +923,12 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = (theme == 1) ? "nitro:/graphics/battery3.bmp" : "nitro:/graphics/dark_battery3.bmp";
 			battery2ImagePath = (theme == 1) ? "nitro:/graphics/battery2.bmp" : "nitro:/graphics/dark_battery2.bmp";
 			battery1ImagePath = (theme == 1) ? "nitro:/graphics/battery1.bmp" : "nitro:/graphics/dark_battery1.bmp";
+			if (isRegularDS) {
+				batteryFullImagePath = (theme == 1) ? "nitro:/graphics/batteryfullDS.bmp" : "nitro:/graphics/dark_batteryfullDS.bmp";
+			} else {
+				batteryFullImagePath = (theme == 1) ? "nitro:/graphics/batteryfull.bmp" : "nitro:/graphics/dark_batteryfull.bmp";
+			}
+			batteryLowImagePath = (theme == 1) ? "nitro:/graphics/batterylow.bmp" : "nitro:/graphics/dark_batterylow.bmp";
 			break;
 		case 1:
 		default:
@@ -927,6 +937,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/batteryfullDS.bmp" : "nitro:/graphics/batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/batterylow.bmp";
 			break;
 		case 2:
 			batteryChargeImagePath = "nitro:/graphics/red_batterycharge.bmp";
@@ -934,6 +946,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/red_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/red_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/red_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/red_batteryfullDS.bmp" : "nitro:/graphics/red_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/red_batterylow.bmp";
 			break;
 		case 3:
 			batteryChargeImagePath = "nitro:/graphics/blue_batterycharge.bmp";
@@ -941,6 +955,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/blue_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/blue_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/blue_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/blue_batteryfullDS.bmp" : "nitro:/graphics/blue_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/blue_batterylow.bmp";
 			break;
 		case 4:
 			batteryChargeImagePath = "nitro:/graphics/green_batterycharge.bmp";
@@ -948,6 +964,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/green_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/green_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/green_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/green_batteryfullDS.bmp" : "nitro:/graphics/green_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/green_batterylow.bmp";
 			break;
 		case 5:
 			batteryChargeImagePath = "nitro:/graphics/yellow_batterycharge.bmp";
@@ -955,6 +973,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/yellow_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/yellow_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/yellow_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/yellow_batteryfullDS.bmp" : "nitro:/graphics/yellow_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/yellow_batterylow.bmp";
 			break;
 		case 6:
 			batteryChargeImagePath = "nitro:/graphics/pink_batterycharge.bmp";
@@ -962,6 +982,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/pink_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/pink_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/pink_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/pink_batteryfullDS.bmp" : "nitro:/graphics/pink_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/pink_batterylow.bmp";
 			break;
 		case 7:
 			batteryChargeImagePath = "nitro:/graphics/purple_batterycharge.bmp";
@@ -969,6 +991,8 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/purple_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/purple_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/purple_battery1.bmp";
+			batteryFullImagePath = isRegularDS ? "nitro:/graphics/purple_batteryfullDS.bmp" : "nitro:/graphics/purple_batteryfull.bmp";
+			batteryLowImagePath = "nitro:/graphics/purple_batterylow.bmp";
 			break;
 	}
 }
@@ -1004,12 +1028,12 @@ void loadBatteryImage(void) {
 	} else {
 		if (batteryLevel & BIT(0)) {
 			if (loadedBatteryImage == 1) return;
-			batteryImagePath = battery1ImagePath;
+			batteryImagePath = batteryLowImagePath;
 			loadedBatteryImage = 1;
 		} else {
-			if (loadedBatteryImage == 4) return;
-			batteryImagePath = battery4ImagePath;
-			loadedBatteryImage = 4;
+			if (loadedBatteryImage == 0) return;
+			batteryImagePath = batteryFullImagePath;
+			loadedBatteryImage = 0;
 		}
 	}
 
