@@ -786,11 +786,11 @@ static const char *volume0ImagePath;
 void setVolumeImagePaths(void) {
 	switch (subtheme) {
 		case 0:	
-			volume4ImagePath = (theme == 1) ? "nitro:/graphics/volume4.bmp" : "nitro:/graphics/dark_volume4.bmp";
-			volume3ImagePath = (theme == 1) ? "nitro:/graphics/volume3.bmp" : "nitro:/graphics/dark_volume3.bmp";
-			volume2ImagePath = (theme == 1) ? "nitro:/graphics/volume2.bmp" : "nitro:/graphics/dark_volume2.bmp";
-			volume1ImagePath = (theme == 1) ? "nitro:/graphics/volume1.bmp" : "nitro:/graphics/dark_volume1.bmp";
-			volume0ImagePath = (theme == 1) ? "nitro:/graphics/volume0.bmp" : "nitro:/graphics/dark_volume0.bmp";
+			volume4ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume4.bmp" : "nitro:/graphics/dark_volume4.bmp";
+			volume3ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/dark_volume3.bmp";
+			volume2ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/dark_volume2.bmp";
+			volume1ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/dark_volume1.bmp";
+			volume0ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/dark_volume0.bmp";
 			break;
 		case 1:
 		default:
