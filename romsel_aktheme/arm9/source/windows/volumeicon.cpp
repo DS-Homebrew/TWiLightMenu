@@ -58,11 +58,11 @@ void VolumeIcon::draw()
         
         if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
             loadAppearance(SFN_VOLUME4);
-        } else if (volumeLevel >= 0x14 && volumeLevel < 0x1C) {
+        } else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
             loadAppearance(SFN_VOLUME3);
-        } else if (volumeLevel >= 0x08 && volumeLevel < 0x14) {
+        } else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
             loadAppearance(SFN_VOLUME2);
-        } else if (volumeLevel > 0x00 && volumeLevel < 0x08) {
+        } else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
             loadAppearance(SFN_VOLUME1);
         } else {
             loadAppearance(SFN_VOLUME0);
