@@ -590,10 +590,10 @@ void vBlankHandler()
 			}
 			if (theme==1) {
 				glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-				if (isDSiMode()) glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+				if (!isRegularDS) glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 			} else {
 				glSprite(1, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-				if (isDSiMode()) glSprite(256-25, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+				if (!isRegularDS) glSprite(256-25, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 			}
 
 			if (applaunchprep && theme==0) {

@@ -475,7 +475,7 @@ void exitToSystemMenu(void) {
 		SaveSettings();
 		settingsChanged = false;
 	}
-	if (launcherApp == -1) {
+	if (!isDSiMode() || launcherApp == -1) {
 		*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 		*(u16*)(0x02000304) = 0x1801;
 		*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
@@ -1117,7 +1117,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			// Exit to system menu by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && isDSiMode() && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				exitToSystemMenu();
 			}

@@ -170,24 +170,18 @@ bool MainList::enterDir(const std::string &dirName)
         }
         addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
 		listNum++;
-        if (isDSiMode())
+        if (!sys().isRegularDS())
         {
-			if (!flashcardFound()) {
+			if (!flashcardFound() && sdFound()) {
 				addDirEntry(listNum, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
 				listNum++;
 			}
             addDirEntry(listNum, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
 			listNum++;
-            addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-			//listNum++;
             //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
-			//listNum++;
         }
-        else
-        {
-            addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-			//listNum++;
-        }
+        addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+		//listNum++;
         _currentDir = SPATH_ROOT;
         directoryChanged();
         return true;
