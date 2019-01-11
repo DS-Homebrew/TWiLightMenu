@@ -868,28 +868,28 @@ void loadVolumeImage(void) {
 static int loadedBatteryImage = -1;
 
 void loadBatteryImage(void) {
-	u32 batteryLevel = *(u32*)(0x027FF004);
+	u8 batteryLevel = *(u8*)(0x027FF001);
 	const char *batteryImagePath;
 
 	switch (subtheme) {
 		case 0:
-			if (batteryLevel & 1<<7) {
+			if (batteryLevel & BIT(7)) {
 				if (loadedBatteryImage == 7) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/batterycharge.bmp" : "nitro:/graphics/dark_batterycharge.bmp";
 				loadedBatteryImage = 7;
-			} else if (batteryLevel & 1<<4) {
+			} else if (batteryLevel & BIT(3)) {
 				if (loadedBatteryImage == 3) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery4.bmp" : "nitro:/graphics/dark_battery4.bmp";
 				loadedBatteryImage = 3;
-			} else if (batteryLevel & 1<<3) {
+			} else if (batteryLevel & BIT(2)) {
 				if (loadedBatteryImage == 2) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery3.bmp" : "nitro:/graphics/dark_battery3.bmp";
 				loadedBatteryImage = 2;
-			} else if (batteryLevel & 1<<2) {
+			} else if (batteryLevel & BIT(1)) {
 				if (loadedBatteryImage == 1) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery2.bmp" : "nitro:/graphics/dark_battery2.bmp";
 				loadedBatteryImage = 1;
-			} else if (batteryLevel & 1<<1) {
+			} else if (batteryLevel & BIT(0)) {
 				if (loadedBatteryImage == 0) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery1.bmp" : "nitro:/graphics/dark_battery1.bmp";
 				loadedBatteryImage = 0;
@@ -899,23 +899,23 @@ void loadBatteryImage(void) {
 			break;
 		case 1:
 		default:
-			if (batteryLevel & 1<<7) {
+			if (batteryLevel & BIT(7)) {
 				if (loadedBatteryImage == 7) return;
 				batteryImagePath = "nitro:/graphics/batterycharge.bmp";
 				loadedBatteryImage = 7;
-			} else if (batteryLevel & 1<<4) {
+			} else if (batteryLevel & BIT(3)) {
 				if (loadedBatteryImage == 3) return;
 				batteryImagePath = "nitro:/graphics/battery4.bmp";
 				loadedBatteryImage = 3;
-			} else if (batteryLevel & 1<<3) {
+			} else if (batteryLevel & BIT(2)) {
 				if (loadedBatteryImage == 2) return;
 				batteryImagePath = "nitro:/graphics/battery3.bmp";
 				loadedBatteryImage = 2;
-			} else if (batteryLevel & 1<<2) {
+			} else if (batteryLevel & BIT(1)) {
 				if (loadedBatteryImage == 1) return;
 				batteryImagePath = "nitro:/graphics/battery2.bmp";
 				loadedBatteryImage = 1;
-			} else if (batteryLevel & 1<<1) {
+			} else if (batteryLevel & BIT(0)) {
 				if (loadedBatteryImage == 0) return;
 				batteryImagePath = "nitro:/graphics/battery1.bmp";
 				loadedBatteryImage = 0;

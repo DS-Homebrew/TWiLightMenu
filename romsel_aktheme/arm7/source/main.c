@@ -110,17 +110,14 @@ int main() {
 			exitflag = true;
 		}
 		resyncClock();
-			if (isDSiMode()) {
-				if (fifoGetValue32(FIFO_USER_05) == 1) {
-					fifoSendValue32(FIFO_USER_05, 0);
-				}
-				timeTilVolumeLevelRefresh++;
-				if (timeTilVolumeLevelRefresh == 8) {
-					*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
-					*(u32*)(0x027FF004) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
-					timeTilVolumeLevelRefresh = 0;
-				}
+		if (isDSiMode()) {
+			timeTilVolumeLevelRefresh++;
+			if (timeTilVolumeLevelRefresh == 8) {
+				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				*(u8*)(0x027FF001) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+				timeTilVolumeLevelRefresh = 0;
 			}
+		}
 		swiWaitForVBlank();
 	}
 	return 0;

@@ -145,7 +145,7 @@ int main() {
 			timeTilVolumeLevelRefresh++;
 			if (timeTilVolumeLevelRefresh == 8) {
 				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
-				*(u32*)(0x027FF004) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+				*(u8*)(0x027FF001) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
 				timeTilVolumeLevelRefresh = 0;
 			}
 		}

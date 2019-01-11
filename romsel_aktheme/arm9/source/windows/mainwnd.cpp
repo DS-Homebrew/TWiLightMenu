@@ -162,18 +162,18 @@ void MainWnd::init()
             {
                 _batteryIcon = new Button(x, y, w, h, this, "");
                 _batteryIcon->setRelativePosition(Point(x,y));
-        
-                u32 batteryLevel = *(u32*)(0x027FF004);
-        
-                if (batteryLevel & 1<<7) {
+
+                u8 batteryLevel = *(u8*)(0x027FF001);
+
+                if (batteryLevel & BIT(7)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-                } else if (batteryLevel & 1<<3) {
+                } else if (batteryLevel & BIT(3)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY4);
-                } else if (batteryLevel & 1<<2) {
+                } else if (batteryLevel & BIT(2)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY3);
-                } else if (batteryLevel & 1<<1) {
+                } else if (batteryLevel & BIT(1)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY2);
-                } else if (batteryLevel & 1<<0) {
+                } else if (batteryLevel & BIT(0)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY1);
                 } else {
                     _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
