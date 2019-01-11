@@ -1864,6 +1864,7 @@ int main(int argc, char **argv) {
 					}
 					homebrewBootstrap = true;
 				} else {
+					loadPerGameSettings(filename);
 					useBackend = true;
 					homebrewBootstrap = false;
 				}
@@ -2012,7 +2013,6 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						loadPerGameSettings(filename);
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 						} else {
