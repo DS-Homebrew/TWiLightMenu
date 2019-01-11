@@ -800,6 +800,20 @@ void setVolumeImagePaths(void) {
 			volume1ImagePath = "nitro:/graphics/volume1.bmp";
 			volume0ImagePath = "nitro:/graphics/volume0.bmp";
 			break;
+		case 2:
+			volume4ImagePath = "nitro:/graphics/red_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/red_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/red_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/red_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/red_volume0.bmp";
+			break;
+		case 3:
+			volume4ImagePath = "nitro:/graphics/blue_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/blue_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/blue_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/blue_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/blue_volume0.bmp";
+			break;
 	}
 }
 
