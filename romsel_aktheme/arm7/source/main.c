@@ -110,6 +110,7 @@ int main() {
 			exitflag = true;
 		}
 		resyncClock();
+		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if (isDSiMode()) {
 				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
