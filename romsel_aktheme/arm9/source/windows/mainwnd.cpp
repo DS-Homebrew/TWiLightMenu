@@ -565,6 +565,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
     config.dsiMode(gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
+		.saveNo((int)gameConfig.saveNo)
         .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
         .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
         .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);

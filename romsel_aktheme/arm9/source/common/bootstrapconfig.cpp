@@ -7,6 +7,8 @@
 #include "tool/stringtool.h"
 #include <stdio.h>
 
+extern std::string getSavExtension(int number);
+
 BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion)
 	: _fileName(fileName), _fullPath(fullPath), _gametid(gametid), _sdkVersion(sdkVersion)
 {
@@ -19,6 +21,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_dsiMode = 0;
 	_vramBoost = false;
 	_language = -1;
+	_saveNo = 0;
 	_softReset = false;
 	_soundFix = false;
 	_cpuBoost = false;
@@ -258,6 +261,11 @@ BootstrapConfig &BootstrapConfig::language(int language)
 	_language = language;
 	return *this;
 }
+BootstrapConfig &BootstrapConfig::saveNo(int saveNo)
+{
+	_saveNo = saveNo;
+	return *this;
+}
 BootstrapConfig &BootstrapConfig::softReset(bool softReset)
 {
 	_softReset = softReset;
@@ -297,7 +305,7 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 
 void BootstrapConfig::createSaveFileIfNotExists()
 {
-	std::string savename = replaceAll(_fileName, ".nds", ".sav");
+	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
 		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
@@ -351,7 +359,7 @@ int BootstrapConfig::launch()
 	if (_saveCreatedHandler)
 		_saveCreatedHandler();
 
-	std::string savename = replaceAll(_fileName, ".nds", ".sav");
+	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
 		romFolderNoSlash.resize(romFolderNoSlash.size()-1);

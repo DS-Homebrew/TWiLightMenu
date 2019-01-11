@@ -67,9 +67,11 @@ extern bool dbox_showIcon;
 bool perGameSettingsChanged = false;
 
 int perGameSettings_cursorPosition = 0;
+bool perGameSettings_cursorSide = false;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
+int perGameSettings_saveNo = 0;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_bootstrapFile = -1;
@@ -101,6 +103,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
+	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
@@ -119,15 +122,16 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 	} else {
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
+		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -235,6 +239,8 @@ void perGameSettings (std::string filename) {
 	
 	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTIDDisplay);
 
+	char saveNoDisplay[16];
+
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
 	} else if((SDKVersion > 0x2000000) && (SDKVersion < 0x3000000)) {
@@ -317,26 +323,32 @@ void perGameSettings (std::string filename) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
-				printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+				if (perGameSettings_cursorSide) {
+					printSmall(false, 154, 96, ">");
+				} else {
+					printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+				}
 				if (useBootstrap) {
 					printSmall(false, 24, 96, "Language:");
 					if (perGameSettings_language == -2) {
-						printSmall(false, 188, 96, "Default");
+						printSmall(false, 88, 96, "Default");
 					} else if (perGameSettings_language == -1) {
-						printSmall(false, 188, 96, "System");
+						printSmall(false, 88, 96, "System");
 					} else if (perGameSettings_language == 0) {
-						printSmall(false, 188, 96, "Japanese");
+						printSmall(false, 88, 96, "Japanese");
 					} else if (perGameSettings_language == 1) {
-						printSmall(false, 188, 96, "English");
+						printSmall(false, 88, 96, "English");
 					} else if (perGameSettings_language == 2) {
-						printSmall(false, 188, 96, "French");
+						printSmall(false, 88, 96, "French");
 					} else if (perGameSettings_language == 3) {
-						printSmall(false, 188, 96, "German");
+						printSmall(false, 88, 96, "German");
 					} else if (perGameSettings_language == 4) {
-						printSmall(false, 188, 96, "Italian");
+						printSmall(false, 88, 96, "Italian");
 					} else if (perGameSettings_language == 5) {
-						printSmall(false, 188, 96, "Spanish");
+						printSmall(false, 88, 96, "Spanish");
 					}
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "Save no: %i", perGameSettings_saveNo);
+					printSmall(false, 162, 96, saveNoDisplay);
 				}
 				if (isDSiMode()) {
 					printSmall(false, 24, 112, "Run in:");
@@ -463,16 +475,27 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (useBootstrap) {
 				if (pressed & KEY_UP) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = false;
+					}
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT == 0 && perGameSettings_cursorPosition == 3) perGameSettings_cursorPosition = 0;
 				}
 				if (pressed & KEY_DOWN) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = false;
+					}
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 2;
 					if (!isDSiMode() && REG_SCFG_EXT == 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 4;
+				}
+				if ((pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = !perGameSettings_cursorSide;
+					}
 				}
 			} else {
 				if (pressed & KEY_UP) {
@@ -489,8 +512,13 @@ void perGameSettings (std::string filename) {
 				switch (perGameSettings_cursorPosition) {
 					case 0:
 					default:
-						perGameSettings_language++;
-						if (perGameSettings_language > 5) perGameSettings_language = -2;
+						if (perGameSettings_cursorSide) {
+							perGameSettings_saveNo++;
+							if (perGameSettings_saveNo > 9) perGameSettings_saveNo = 0;
+						} else {
+							perGameSettings_language++;
+							if (perGameSettings_language > 5) perGameSettings_language = -2;
+						}
 						break;
 					case 1:
 						perGameSettings_dsiMode++;
@@ -529,4 +557,40 @@ void perGameSettings (std::string filename) {
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	dbox_showIcon = false;
+}
+
+std::string getSavExtension(void) {
+	switch (perGameSettings_saveNo) {
+		case 0:
+		default:
+			return ".sav";
+			break;
+		case 1:
+			return ".sav1";
+			break;
+		case 2:
+			return ".sav2";
+			break;
+		case 3:
+			return ".sav3";
+			break;
+		case 4:
+			return ".sav4";
+			break;
+		case 5:
+			return ".sav5";
+			break;
+		case 6:
+			return ".sav6";
+			break;
+		case 7:
+			return ".sav7";
+			break;
+		case 8:
+			return ".sav8";
+			break;
+		case 9:
+			return ".sav9";
+			break;
+	}
 }

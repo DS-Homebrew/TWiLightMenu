@@ -40,6 +40,7 @@ int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
+int perGameSettings_saveNo = 0;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_bootstrapFile = -1;
@@ -52,7 +53,44 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
+	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
+}
+
+std::string getSavExtension(void) {
+	switch (perGameSettings_saveNo) {
+		case 0:
+		default:
+			return ".sav";
+			break;
+		case 1:
+			return ".sav1";
+			break;
+		case 2:
+			return ".sav2";
+			break;
+		case 3:
+			return ".sav3";
+			break;
+		case 4:
+			return ".sav4";
+			break;
+		case 5:
+			return ".sav5";
+			break;
+		case 6:
+			return ".sav6";
+			break;
+		case 7:
+			return ".sav7";
+			break;
+		case 8:
+			return ".sav8";
+			break;
+		case 9:
+			return ".sav9";
+			break;
+	}
 }

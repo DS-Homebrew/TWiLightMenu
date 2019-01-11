@@ -1265,7 +1265,7 @@ int main(int argc, char **argv) {
 						fclose(f_nds_file);
 
 						std::string path = argarray[0];
-						std::string savename = ReplaceAll(filename, ".nds", ".sav");
+						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir ("saves", 0777);
