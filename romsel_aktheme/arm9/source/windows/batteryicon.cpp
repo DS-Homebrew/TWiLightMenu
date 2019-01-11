@@ -53,17 +53,17 @@ void BatteryIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
     if(ini.GetInt("battery icon", "show", false)) {
-        u32 batteryLevel = *(u32*)(0x027FF004);
+        u8 batteryLevel = *(u8*)(0x027FF001);
 
-        if (batteryLevel & 1<<7) {
+        if (batteryLevel & BIT(7)) {
             loadAppearance(SFN_BATTERY_CHARGE);
-        } else if (batteryLevel & 1<<3) {
+        } else if (batteryLevel & BIT(3)) {
             loadAppearance(SFN_BATTERY4);
-        } else if (batteryLevel & 1<<2) {
+        } else if (batteryLevel & BIT(2)) {
             loadAppearance(SFN_BATTERY3);
-        } else if (batteryLevel & 1<<1) {
+        } else if (batteryLevel & BIT(1)) {
             loadAppearance(SFN_BATTERY2);
-        } else if (batteryLevel & 1<<0) {
+        } else if (batteryLevel & BIT(0)) {
             loadAppearance(SFN_BATTERY1);
         } else {
             loadAppearance(SFN_BATTERY_CHARGE);
