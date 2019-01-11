@@ -109,14 +109,6 @@ class DSiMenuPlusPlusSettings
         EFreq47KHz = 1
     };
 
-    enum TAppName
-    {
-        ENameTWiLightMenu = 0,
-        ENameSRLoader = 1,
-        ENameDSiMenuPP = 2
-
-    };
-
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();
@@ -133,7 +125,6 @@ class DSiMenuPlusPlusSettings
     int cursorPosition;
     int startMenu_cursorPosition;
     int consoleModel;
-    int appName;
     int guiLanguage;
     bool useGbarunner;
     bool showMainMenu;

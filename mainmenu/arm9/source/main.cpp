@@ -150,7 +150,6 @@ bool pictochatReboot = false;
 bool dlplayReboot = false;
 bool gbaBiosFound = false;
 bool useGbarunner = false;
-int appName = 0;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition[2] = {0};
@@ -174,7 +173,6 @@ void LoadSettings(void) {
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-    appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
 	// Customizable UI settings.
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -1793,13 +1791,7 @@ int main(int argc, char **argv) {
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
 						clearText();
 						printSmall(false, 2, 8, "After saving, please re-start");
-						if (appName == 0) {
-							printSmall(false, 2, 20, "TWiLight Menu++ to transfer your");
-						} else if (appName == 1) {
-							printSmall(false, 2, 20, "SRLoader to transfer your");
-						} else if (appName == 2) {
-							printSmall(false, 2, 20, "DSiMenu++ to transfer your");
-						}
+						printSmall(false, 2, 20, "TWiLight Menu++ to transfer your");
 						printSmall(false, 2, 32, "save data back.");
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds

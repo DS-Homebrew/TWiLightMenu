@@ -141,7 +141,6 @@ bool homebrewBootstrap = false;
 
 bool gbaBiosFound[2] = {false};
 bool useGbarunner = false;
-int appName = 0;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition[2] = {0};
@@ -172,7 +171,6 @@ void LoadSettings(void) {
 	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
 	startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-    appName = settingsini.GetInt("SRLOADER", "APP_NAME", appName);
 
 	// Customizable UI settings.
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -1112,13 +1110,7 @@ int main(int argc, char **argv) {
 					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
 						clearText();
 						printLarge(false, 4, 64, "After saving, please re-start");
-						if (appName == 0) {
-							printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
-						} else if (appName == 1) {
-							printLarge(false, 4, 80, "SRLoader to transfer your");
-						} else if (appName == 2) {
-							printLarge(false, 4, 80, "DSiMenu++ to transfer your");
-						}
+						printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
 						printLarge(false, 4, 96, "save data back.");
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds

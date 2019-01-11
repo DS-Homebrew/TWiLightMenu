@@ -143,7 +143,7 @@ void SettingsGUI::draw()
     // printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
     // printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
 
-    printSmallCentered(false, 173, ms().getAppName());
+    printSmallCentered(false, 173, "TWiLight Menu++");
 }
 
 void SettingsGUI::setTopText(const std::string &text)
@@ -196,7 +196,7 @@ void SettingsGUI::drawSub()
     }
 
     printLarge(false, 6, 1, _subOption->displayName().c_str());
-    printSmallCentered(false, 173, ms().getAppName());
+    printSmallCentered(false, 173, "TWiLight Menu++");
 }
 
 void SettingsGUI::drawTopText()

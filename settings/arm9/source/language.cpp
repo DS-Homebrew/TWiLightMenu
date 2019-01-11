@@ -218,19 +218,7 @@ void langInit(void)
 	STR_MAINMENU = languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu");
 	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "Theme");
 	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup.");
-	switch (ms().appName)
-	{
-	case 0:
-	default:
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ logo on startup");
-		break;
-	case 1:
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "SRLOADERLOGO", "SRLoader on startup");
-		break;
-	case 2:
-		STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSISIONXLOGO", "DSiMenu++ on startup");
-		break;
-	}
+	STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ logo on startup");
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");
 	STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers");
 	STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons");
@@ -247,41 +235,11 @@ void langInit(void)
 
 	STR_DESCRIPTION_MAINMENU = languageini.GetString("LANGUAGE", "DESCRIPTION_MAINMENU", "The menu that is shown before the ROM select menu. Has the look of the original DS UI.");
 
-	switch (ms().appName)
-	{
-	case 0:
-	default:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes.");
-
-		break;
-	case 1:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_SRLOADER", "The theme to use in SRLoader Press Left/Right to select, A for sub-themes.");
-
-		break;
-	case 2:
-		STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1_DSISIONX", "The theme to use in DSiMenu++ Press Left/Right to select, A for sub-themes.");
-
-		break;
-	}
+	STR_DESCRIPTION_THEME_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes.");
 
 	STR_DESCRIPTION_LASTPLAYEDROM_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the ROM select menu.");
 
-	switch (ms().appName)
-	{
-	case 0:
-	default:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++.");
-
-		break;
-	case 1:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SRLOADERLOGO_1", "The logo will be shown when you start SRLoader.");
-
-		break;
-	case 2:
-		STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSISIONXLOGO_1", "The logo will be shown when you start DSiMenu++.");
-
-		break;
-	}
+	STR_DESCRIPTION_DSIMENUPPLOGO_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++.");
 
 	STR_DESCRIPTION_DIRECTORIES_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders.");
 
@@ -295,22 +253,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_SYSTEMSETTINGS_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_SYSTEMSETTINGS_1", "Press A to change settings related to the DSi system.");
 
-	switch (ms().appName)
-	{
-	case 0:
-	default:
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start TWiLight Menu++ on boot, instead of the DSi Menu.");
-
-		break;
-	case 1:
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_SRLOADER", "");
-
-		break;
-	case 2:
-		STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1_DSISIONX", "");
-
-		break;
-	}
+	STR_DESCRIPTION_REPLACEDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_REPLACEDSIMENU_1", "Start TWiLight Menu++ on boot, instead of the DSi Menu.");
 
 	STR_DESCRIPTION_RESTOREDSIMENU_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "Show DSi Menu on boot again.");
 
@@ -429,17 +372,5 @@ void langInit(void)
     STR_AK_VIEWMODE = languageini.GetString("LANGUAGE", "AK_VIEWMODE", "Default viewmode");
     STR_DESCRIPTION_AK_VIEWMODE = languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode in the Acekard theme.");
 
-	switch (ms().appName)
-	{
-	case 0:
-	default:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu or TWiLight Menu++ on boot.");
-		break;
-	case 1:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_SRLOADER", "Launch Nintendo DSi Menu or SRLoader on boot.");
-		break;
-	case 2:
-		STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSISIONX", "Launch Nintendo DSi Menu or DSiMenu++ on boot.");
-		break;
-	}
+	STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu or TWiLight Menu++ on boot.");
 }
