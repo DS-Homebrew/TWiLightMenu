@@ -877,19 +877,19 @@ void loadBatteryImage(void) {
 				if (loadedBatteryImage == 7) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/batterycharge.bmp" : "nitro:/graphics/dark_batterycharge.bmp";
 				loadedBatteryImage = 7;
-			} else if (batteryLevel & BIT(3)) {
+			} else if (batteryLevel == 0xF) {
 				if (loadedBatteryImage == 3) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery4.bmp" : "nitro:/graphics/dark_battery4.bmp";
 				loadedBatteryImage = 3;
-			} else if (batteryLevel & BIT(2)) {
+			} else if (batteryLevel == 0xB) {
 				if (loadedBatteryImage == 2) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery3.bmp" : "nitro:/graphics/dark_battery3.bmp";
 				loadedBatteryImage = 2;
-			} else if (batteryLevel & BIT(1)) {
+			} else if (batteryLevel == 0x7) {
 				if (loadedBatteryImage == 1) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery2.bmp" : "nitro:/graphics/dark_battery2.bmp";
 				loadedBatteryImage = 1;
-			} else if (batteryLevel & BIT(0)) {
+			} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
 				if (loadedBatteryImage == 0) return;
 				batteryImagePath = (theme == 1) ? "nitro:/graphics/battery1.bmp" : "nitro:/graphics/dark_battery1.bmp";
 				loadedBatteryImage = 0;
@@ -903,19 +903,19 @@ void loadBatteryImage(void) {
 				if (loadedBatteryImage == 7) return;
 				batteryImagePath = "nitro:/graphics/batterycharge.bmp";
 				loadedBatteryImage = 7;
-			} else if (batteryLevel & BIT(3)) {
+			} else if (batteryLevel == 0xF) {
 				if (loadedBatteryImage == 3) return;
 				batteryImagePath = "nitro:/graphics/battery4.bmp";
 				loadedBatteryImage = 3;
-			} else if (batteryLevel & BIT(2)) {
+			} else if (batteryLevel == 0xB) {
 				if (loadedBatteryImage == 2) return;
 				batteryImagePath = "nitro:/graphics/battery3.bmp";
 				loadedBatteryImage = 2;
-			} else if (batteryLevel & BIT(1)) {
+			} else if (batteryLevel == 0x7) {
 				if (loadedBatteryImage == 1) return;
 				batteryImagePath = "nitro:/graphics/battery2.bmp";
 				loadedBatteryImage = 1;
-			} else if (batteryLevel & BIT(0)) {
+			} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
 				if (loadedBatteryImage == 0) return;
 				batteryImagePath = "nitro:/graphics/battery1.bmp";
 				loadedBatteryImage = 0;

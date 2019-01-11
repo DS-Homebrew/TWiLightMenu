@@ -167,13 +167,13 @@ void MainWnd::init()
 
                 if (batteryLevel & BIT(7)) {
                     _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-                } else if (batteryLevel & BIT(3)) {
+				} else if (batteryLevel == 0xF) {
                     _batteryIcon->loadAppearance(SFN_BATTERY4);
-                } else if (batteryLevel & BIT(2)) {
+				} else if (batteryLevel == 0xB) {
                     _batteryIcon->loadAppearance(SFN_BATTERY3);
-                } else if (batteryLevel & BIT(1)) {
+				} else if (batteryLevel == 0x7) {
                     _batteryIcon->loadAppearance(SFN_BATTERY2);
-                } else if (batteryLevel & BIT(0)) {
+				} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
                     _batteryIcon->loadAppearance(SFN_BATTERY1);
                 } else {
                     _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);

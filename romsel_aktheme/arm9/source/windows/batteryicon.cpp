@@ -57,13 +57,13 @@ void BatteryIcon::draw()
 
         if (batteryLevel & BIT(7)) {
             loadAppearance(SFN_BATTERY_CHARGE);
-        } else if (batteryLevel & BIT(3)) {
+		} else if (batteryLevel == 0xF) {
             loadAppearance(SFN_BATTERY4);
-        } else if (batteryLevel & BIT(2)) {
+		} else if (batteryLevel == 0xB) {
             loadAppearance(SFN_BATTERY3);
-        } else if (batteryLevel & BIT(1)) {
+		} else if (batteryLevel == 0x7) {
             loadAppearance(SFN_BATTERY2);
-        } else if (batteryLevel & BIT(0)) {
+		} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
             loadAppearance(SFN_BATTERY1);
         } else {
             loadAppearance(SFN_BATTERY_CHARGE);
