@@ -977,28 +977,40 @@ void loadBatteryImage(void) {
 	u8 batteryLevel = *(u8*)(0x027FF001);
 	const char *batteryImagePath;
 
-	if (batteryLevel & BIT(7)) {
-		if (loadedBatteryImage == 7) return;
-		batteryImagePath = batteryChargeImagePath;
-		loadedBatteryImage = 7;
-	} else if (batteryLevel == 0xF) {
-		if (loadedBatteryImage == 4) return;
-		batteryImagePath = battery4ImagePath;
-		loadedBatteryImage = 4;
-	} else if (batteryLevel == 0xB) {
-		if (loadedBatteryImage == 3) return;
-		batteryImagePath = battery3ImagePath;
-		loadedBatteryImage = 3;
-	} else if (batteryLevel == 0x7) {
-		if (loadedBatteryImage == 2) return;
-		batteryImagePath = battery2ImagePath;
-		loadedBatteryImage = 2;
-	} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
-		if (loadedBatteryImage == 1) return;
-		batteryImagePath = battery1ImagePath;
-		loadedBatteryImage = 1;
+	if (isDSiMode()) {
+		if (batteryLevel & BIT(7)) {
+			if (loadedBatteryImage == 7) return;
+			batteryImagePath = batteryChargeImagePath;
+			loadedBatteryImage = 7;
+		} else if (batteryLevel == 0xF) {
+			if (loadedBatteryImage == 4) return;
+			batteryImagePath = battery4ImagePath;
+			loadedBatteryImage = 4;
+		} else if (batteryLevel == 0xB) {
+			if (loadedBatteryImage == 3) return;
+			batteryImagePath = battery3ImagePath;
+			loadedBatteryImage = 3;
+		} else if (batteryLevel == 0x7) {
+			if (loadedBatteryImage == 2) return;
+			batteryImagePath = battery2ImagePath;
+			loadedBatteryImage = 2;
+		} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
+			if (loadedBatteryImage == 1) return;
+			batteryImagePath = battery1ImagePath;
+			loadedBatteryImage = 1;
+		} else {
+			return;
+		}
 	} else {
-		return;
+		if (batteryLevel & BIT(0)) {
+			if (loadedBatteryImage == 1) return;
+			batteryImagePath = battery1ImagePath;
+			loadedBatteryImage = 1;
+		} else {
+			if (loadedBatteryImage == 4) return;
+			batteryImagePath = battery4ImagePath;
+			loadedBatteryImage = 4;
+		}
 	}
 
 	FILE* file = fopen(batteryImagePath, "rb");

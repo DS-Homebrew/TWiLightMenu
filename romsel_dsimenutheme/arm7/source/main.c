@@ -141,13 +141,13 @@ int main() {
 			gotCartHeader = true;
 		}*/
 		resyncClock();
-		if (isDSiMode()) {
-			timeTilVolumeLevelRefresh++;
-			if (timeTilVolumeLevelRefresh == 8) {
+		timeTilVolumeLevelRefresh++;
+		if (timeTilVolumeLevelRefresh == 8) {
+			if (isDSiMode()) {
 				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
-				*(u8*)(0x027FF001) = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
-				timeTilVolumeLevelRefresh = 0;
 			}
+			*(u8*)(0x027FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
+			timeTilVolumeLevelRefresh = 0;
 		}
 		swiWaitForVBlank();
 	}

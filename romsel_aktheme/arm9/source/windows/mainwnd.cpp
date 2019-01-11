@@ -165,19 +165,27 @@ void MainWnd::init()
 
                 u8 batteryLevel = *(u8*)(0x027FF001);
 
-                if (batteryLevel & BIT(7)) {
-                    _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-				} else if (batteryLevel == 0xF) {
-                    _batteryIcon->loadAppearance(SFN_BATTERY4);
-				} else if (batteryLevel == 0xB) {
-                    _batteryIcon->loadAppearance(SFN_BATTERY3);
-				} else if (batteryLevel == 0x7) {
-                    _batteryIcon->loadAppearance(SFN_BATTERY2);
-				} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
-                    _batteryIcon->loadAppearance(SFN_BATTERY1);
-                } else {
-                    _batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-                }
+				if (isDSiMode()) {
+					if (batteryLevel & BIT(7)) {
+						_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+					} else if (batteryLevel == 0xF) {
+						_batteryIcon->loadAppearance(SFN_BATTERY4);
+					} else if (batteryLevel == 0xB) {
+						_batteryIcon->loadAppearance(SFN_BATTERY3);
+					} else if (batteryLevel == 0x7) {
+						_batteryIcon->loadAppearance(SFN_BATTERY2);
+					} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
+						_batteryIcon->loadAppearance(SFN_BATTERY1);
+					} else {
+						_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+					}
+				} else {
+					if (batteryLevel & BIT(0)) {
+						_batteryIcon->loadAppearance(SFN_BATTERY1);
+					} else {
+						_batteryIcon->loadAppearance(SFN_BATTERY4);
+					}
+				}
         
                 addChildWindow(_batteryIcon);
             }
