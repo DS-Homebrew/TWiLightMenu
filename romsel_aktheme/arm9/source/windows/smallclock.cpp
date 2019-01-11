@@ -55,8 +55,8 @@ Window &SmallClock::loadAppearance(const std::string &aFileName)
     _ampmShow = ini.GetInt("am pm", "show", _ampmShow);
     _ampmColor = ini.GetInt("am pm", "color", _ampmColor);
 
-    _numbers = createBMP15FromFile(SFN_CLOCK_NUMBERS);
-    _colon = createBMP15FromFile(SFN_CLOCK_COLON);
+    _numbers = createBMP15FromFile(SFN_CLOCK_NUMBERS_2);
+    _colon = createBMP15FromFile(SFN_CLOCK_COLON_2);
 
     return *this;
 }
