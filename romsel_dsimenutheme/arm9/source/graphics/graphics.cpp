@@ -814,6 +814,34 @@ void setVolumeImagePaths(void) {
 			volume1ImagePath = "nitro:/graphics/blue_volume1.bmp";
 			volume0ImagePath = "nitro:/graphics/blue_volume0.bmp";
 			break;
+		case 4:
+			volume4ImagePath = "nitro:/graphics/green_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/green_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/green_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/green_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/green_volume0.bmp";
+			break;
+		case 5:
+			volume4ImagePath = "nitro:/graphics/yellow_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/yellow_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/yellow_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/yellow_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/yellow_volume0.bmp";
+			break;
+		case 6:
+			volume4ImagePath = "nitro:/graphics/pink_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/pink_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/pink_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/pink_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/pink_volume0.bmp";
+			break;
+		case 7:
+			volume4ImagePath = "nitro:/graphics/purple_volume4.bmp";
+			volume3ImagePath = "nitro:/graphics/purple_volume3.bmp";
+			volume2ImagePath = "nitro:/graphics/purple_volume2.bmp";
+			volume1ImagePath = "nitro:/graphics/purple_volume1.bmp";
+			volume0ImagePath = "nitro:/graphics/purple_volume0.bmp";
+			break;
 	}
 }
 
@@ -913,6 +941,34 @@ void setBatteryImagePaths(void) {
 			battery3ImagePath = "nitro:/graphics/blue_battery3.bmp";
 			battery2ImagePath = "nitro:/graphics/blue_battery2.bmp";
 			battery1ImagePath = "nitro:/graphics/blue_battery1.bmp";
+			break;
+		case 4:
+			batteryChargeImagePath = "nitro:/graphics/green_batterycharge.bmp";
+			battery4ImagePath = "nitro:/graphics/green_battery4.bmp";
+			battery3ImagePath = "nitro:/graphics/green_battery3.bmp";
+			battery2ImagePath = "nitro:/graphics/green_battery2.bmp";
+			battery1ImagePath = "nitro:/graphics/green_battery1.bmp";
+			break;
+		case 5:
+			batteryChargeImagePath = "nitro:/graphics/yellow_batterycharge.bmp";
+			battery4ImagePath = "nitro:/graphics/yellow_battery4.bmp";
+			battery3ImagePath = "nitro:/graphics/yellow_battery3.bmp";
+			battery2ImagePath = "nitro:/graphics/yellow_battery2.bmp";
+			battery1ImagePath = "nitro:/graphics/yellow_battery1.bmp";
+			break;
+		case 6:
+			batteryChargeImagePath = "nitro:/graphics/pink_batterycharge.bmp";
+			battery4ImagePath = "nitro:/graphics/pink_battery4.bmp";
+			battery3ImagePath = "nitro:/graphics/pink_battery3.bmp";
+			battery2ImagePath = "nitro:/graphics/pink_battery2.bmp";
+			battery1ImagePath = "nitro:/graphics/pink_battery1.bmp";
+			break;
+		case 7:
+			batteryChargeImagePath = "nitro:/graphics/purple_batterycharge.bmp";
+			battery4ImagePath = "nitro:/graphics/purple_battery4.bmp";
+			battery3ImagePath = "nitro:/graphics/purple_battery3.bmp";
+			battery2ImagePath = "nitro:/graphics/purple_battery2.bmp";
+			battery1ImagePath = "nitro:/graphics/purple_battery1.bmp";
 			break;
 	}
 }
