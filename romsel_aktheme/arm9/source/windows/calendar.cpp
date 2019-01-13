@@ -52,6 +52,9 @@ Window &Calendar::loadAppearance(const std::string &aFileName)
     // load year number
     _yearNumbers = createBMP15FromFile(SFN_YEAR_NUMBERS);
 
+    // load weekday text
+    _weekdayText = createBMP15FromFile(SFN_WEEKDAY_TEXT);
+
     CIniFile ini(aFileName);
     _dayPosition.x = ini.GetInt("calendar day", "x", 134);
     _dayPosition.y = ini.GetInt("calendar day", "y", 34);
@@ -71,6 +74,10 @@ Window &Calendar::loadAppearance(const std::string &aFileName)
     _yearPosition.x = ini.GetInt("calendar year", "x", 52);
     _yearPosition.y = ini.GetInt("calendar year", "y", 28);
     _showYear = ini.GetInt("calendar year", "show", _showYear);
+
+    _weekdayPosition.x = ini.GetInt("calendar weekday", "x", 52);
+    _weekdayPosition.y = ini.GetInt("calendar weekday", "y", 28);
+    _showWeekday = ini.GetInt("calendar weekday", "show", _showWeekday);
 
     return *this;
 }
@@ -104,6 +111,20 @@ void Calendar::drawDayNumber(u8 day)
         gdi().maskBlt(_dayNumbers.buffer() + firstNumber * pitch * h / 2, x, y, w, h, selectedEngine());
         gdi().maskBlt(_dayNumbers.buffer() + secondNumber * pitch * h / 2, x + w, y, w, h, selectedEngine());
     }
+}
+
+void Calendar::drawWeekday(const akui::Point &position, u32 value)
+{
+    if (!_weekdayText.valid())
+        return;
+
+    u8 w = _weekdayText.width();
+    u8 h = _weekdayText.height() / 7;
+    u8 pitch = _weekdayText.pitch() >> 1;
+    u8 x = position.x;
+    u8 y = position.y;
+
+    gdi().maskBlt(_weekdayText.buffer() + value * pitch * h / 2, x, y, w, h, selectedEngine());
 }
 
 u8 Calendar::weekDayOfFirstDay()
@@ -161,5 +182,9 @@ void Calendar::draw()
     if (_showYear)
     {
         drawText(_yearPosition, datetime().year(), 1000);
+    }
+    if (_showWeekday)
+    {
+        drawWeekday(_weekdayPosition, datetime().weekday());
     }
 }

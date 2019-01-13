@@ -52,6 +52,7 @@
 #define SFN_CLOCK_COLON             SFN_UI_DIRECTORY"/calendar/clock_colon.bmp"
 #define SFN_DAY_NUMBERS             SFN_UI_DIRECTORY"/calendar/day_numbers.bmp"
 #define SFN_YEAR_NUMBERS            SFN_UI_DIRECTORY"/calendar/year_numbers.bmp"
+#define SFN_WEEKDAY_TEXT            SFN_UI_DIRECTORY"/calendar/weekday_text.bmp"
 #define SFN_CARD_ICON_BLUE          SFN_UI_DIRECTORY"/card_icon_blue.bmp"
 #define SFN_PROGRESS_WND_BG         SFN_UI_DIRECTORY"/progress_wnd.bmp"
 #define SFN_PROGRESS_BAR_BG         SFN_UI_DIRECTORY"/progress_bar.bmp"
@@ -73,6 +74,7 @@
 #define SFN_CLOCK_COLON_2           SFN_UI_DIRECTORY"/calendar/clock_colon_2.bmp"
 #define SFN_DAY_NUMBERS_2           SFN_UI_DIRECTORY"/calendar/day_numbers_2.bmp"
 #define SFN_YEAR_NUMBERS_2          SFN_UI_DIRECTORY"/calendar/year_numbers_2.bmp"
+#define SFN_WEEKDAY_TEXT_2          SFN_UI_DIRECTORY"/calendar/weekday_text_2.bmp"
 
 #define SFN_LIST_BAR_BG             SFN_UI_DIRECTORY"/selection_bar_bg.bmp"
 

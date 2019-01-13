@@ -51,20 +51,24 @@ protected:
     void drawDayNumber( u8 day );
     void drawText( const akui::Point& position, u32 value, u32 factor );
     void drawNumber( const akui::Point& position, u32 index, u32 value );
+    void drawWeekday( const akui::Point& position, u32 value );
 
     akui::Point _dayPosition;
     akui::Size _daySize;
     akui::Point _dayxPosition;
     akui::Point _monthPosition;
     akui::Point _yearPosition;
+    akui::Point _weekdayPosition;
     COLOR _dayHighlightColor;
     BMP15 _dayNumbers;       // index 10 means colon
     BMP15 _yearNumbers;
+    BMP15 _weekdayText;
 
     bool _showYear_2;
     bool _showMonth_2;
     bool _showDayX_2;
     bool _showDay_2;
+    bool _showWeekday_2;
 
     bool _colonShow_2;
 };
