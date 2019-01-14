@@ -25,7 +25,8 @@ ok = OK
 cancel = Abbr.
 
 [cheats]
-title = Cheats: SELECT = Auswahl speichern
+button = Cheats
+title = Cheats-Menü
 error_title = Fehler
 error_text = Cheat-Datei wurde nicht gefunden.
 selectrom = Bitte wähle eine .NDS-Datei aus

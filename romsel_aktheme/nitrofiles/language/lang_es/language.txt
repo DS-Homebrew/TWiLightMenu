@@ -25,7 +25,8 @@ ok = OK
 cancel = Cancelar
 
 [cheats]
-title = Trucos: SELECT = Guardar
+button = Trucos
+title = Menú de Trucos
 error_title = Error: 
 error_text = No hay archivo de trucos.
 selectrom = Por favor, seleccione un archivo .NDS

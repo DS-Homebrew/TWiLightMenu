@@ -24,7 +24,8 @@ ok = OK
 cancel = Cancel
 
 [cheats]
-title = Cheats: SELECT = Save Selection
+button = Cheats
+title = Cheats Menu
 error_title = Error
 error_text = Cheat file was not found.
 selectrom = Please select a .NDS file

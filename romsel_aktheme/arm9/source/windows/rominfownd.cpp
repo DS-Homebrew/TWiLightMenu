@@ -38,7 +38,7 @@ RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     : Form(x, y, w, h, parent, text),
       _buttonOK(0, 0, 46, 18, this, "\x01 OK"),
       _buttonGameSettings(0, 0, 76, 18, this, "\x04 Save Type"),
-      _buttonCheats(0,0,46,18,this,"\x03 Cheats"),
+      _buttonCheats(0, 0, 46, 18, this, "\x03 Cheats"),
       _settingWnd(NULL)
 //   _saves(NULL)
 {
@@ -70,7 +70,7 @@ RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
     _buttonGameSettings.setRelativePosition(Point(nextButtonXone, buttonY));
 
     _buttonCheats.setStyle( Button::press );
-    _buttonCheats.setText( "\x03 " + LANG( "cheats", "title" ) );
+    _buttonCheats.setText( "\x03 " + LANG( "cheats", "button" ) );
     _buttonCheats.setTextColor( uis().buttonTextColor );
     _buttonCheats.loadAppearance( SFN_BUTTON3 );
     _buttonCheats.clicked.connect( this, &RomInfoWnd::pressCheats );
@@ -156,17 +156,17 @@ bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
             pressGameSettings();
             ret = true;
             break;
-        // case KeyMessage::UI_KEY_X:
-        //     // if (_buttonCheats.isVisible())
-        //     // {
-        //     //     pressCheats();
-        //     // }
-        //     // else if (_buttonFlash.isVisible())
-        //     // {
-        //     //     pressFlash();
-        //     // }
-        //     ret = true;
-        //     break;
+        case KeyMessage::UI_KEY_X:
+            if (_buttonCheats.isVisible())
+            {
+                pressCheats();
+            }
+            // else if (_buttonFlash.isVisible())
+            // {
+            //     pressFlash();
+            // }
+            ret = true;
+            break;
         // case KeyMessage::UI_KEY_L:
         //     pressCopy();
         //     ret = true;
@@ -364,8 +364,7 @@ void RomInfoWnd::showCheats(const std::string& aFileName)
   u32 w=256;
   u32 h=179;
 
-  // CheatWnd cheatWnd((256-w)/2,(192-h)/2,w,h,NULL,LANG("cheats","title"));
-  CheatWnd cheatWnd((256-w)/2,(192-h)/2,w,h,NULL,aFileName);
+  CheatWnd cheatWnd((256-w)/2,(192-h)/2,w,h,NULL,LANG("cheats","title"));
   if(cheatWnd.parse(aFileName)) cheatWnd.doModal();
 }
 

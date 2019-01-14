@@ -25,7 +25,8 @@ ok = 決定
 cancel = 取消し
 
 [cheats]
-title =  チートメニュー
+button = チート
+title = チートメニュー
 error_title = エラー
 error_text = チートコードが登録されていません
 selectrom = NDSファイルを選択してください
