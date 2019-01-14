@@ -646,9 +646,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		}
 
+        int optionPicked;
+
 		if (hasAP)
 		{
-			messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
+			optionPicked = messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
 										"If the game freezes, does not start, or doesn't seem normal, "
 										"it needs to be AP-patched.", MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
@@ -656,11 +658,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		scanKeys();
 		int pressed = keysHeld();
 
-		if (pressed & KEY_X)
+		if (pressed & KEY_X || optionPicked == ID_HOLD_X)
 		{
 			settingsIni.dontShowAPMsgAgain();
 		}
-		if (!hasAP || pressed & KEY_A || pressed & KEY_X)
+		if (!hasAP || pressed & KEY_A || pressed & KEY_X || optionPicked == ID_HOLD_X || optionPicked == ID_OK)
 		{
 			// Event handlers for progress window.
 			config.onSaveCreated(bootstrapSaveHandler)
