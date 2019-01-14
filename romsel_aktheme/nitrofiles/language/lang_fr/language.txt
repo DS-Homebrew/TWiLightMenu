@@ -28,22 +28,17 @@ ok = OK
 cancel = Annuler
 
 [cheats]
-
-title = Codes triches
+button = Triches
+title = Menu codes triche
 error_title = Erreur
-
 error_text = Fichier codes triche non trouvé 
 selectrom = Sélectionnez un .NDS SVP.
-
-
-
 noxml = Fichier codes Triches XML n'a pas été trouvé 
 ccexists = .CC existe deja, Crée un nouveau ?
 nonefound = Pas de codes triches trouvé dans le fichier XML
 xmlselect = Select. fichier codes triche:
 confirm = Confirmer
 confirm_rebuild = Sauvegarder dans le fichier .CC?
-
 invalid cheatdb = Fichier code triche invalide
 Rebuild = Sauver
 Sel. DB = Choix

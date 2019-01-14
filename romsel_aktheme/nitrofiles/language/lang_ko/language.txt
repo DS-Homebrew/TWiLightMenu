@@ -24,7 +24,8 @@ ok = 확인
 cancel = 취소
 
 [cheats]
-title = 치트를 선택하신 후 SELECT를 누르세요.
+button = 치트를
+title = 치트를 메뉴
 error_title = 오류
 error_text = 치트파일이 없습니다.
 selectrom = NDS 파일을 선택해 주십시오.

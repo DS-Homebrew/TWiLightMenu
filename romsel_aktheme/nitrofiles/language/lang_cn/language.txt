@@ -25,6 +25,7 @@ ok = 确定
 cancel = 取消
 
 [cheats]
+button = 金手指
 title = 金手指
 error_title = 错误
 error_text = 没有找到金手指文件。
