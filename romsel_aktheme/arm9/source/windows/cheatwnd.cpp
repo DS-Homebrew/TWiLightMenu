@@ -514,9 +514,9 @@ std::string CheatWnd::getCheats()
   {
     if(_data[i]._flags&cParsedItem::ESelected)
     {
-      cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size()-1);
+      cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size());
     }
   }
-  std::replace( cheats.begin(), cheats.end(), '\n', ' '); // replace all '\n' to ' '
+  std::replace( cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
 }
