@@ -4,7 +4,10 @@
 #include "filecopy.h"
 #include "flashcard.h"
 #include "loaderconfig.h"
+#include "systemfilenames.h"
 #include "tool/stringtool.h"
+#include "windows/cheatwnd.h"
+#include "windows/mainlist.h"
 #include <stdio.h>
 
 extern std::string getSavExtension(int number);
@@ -349,8 +352,30 @@ void BootstrapConfig::createTmpFileIfNotExists()
 	}
 }
 
+void BootstrapConfig::loadCheats()
+{
+	u32 gameCode,crc32;
+	
+	if(CheatWnd::romData(_fullPath,gameCode,crc32))
+      {
+				long cheatOffset; size_t cheatSize;
+        FILE* dat=fopen(SFN_CHEATS,"rb");
+        if(dat)
+        {
+          if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
+          {
+						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
+						chtwnd.parse(_fullPath);
+						_cheatData = chtwnd.getCheats();
+          }
+          fclose(dat);
+        }
+      }
+}
+
 int BootstrapConfig::launch()
 {
+	loadCheats();
 	if (ms().secondaryDevice) 
 		createTmpFileIfNotExists();
 
@@ -407,7 +432,8 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "GAME_SOFT_RESET", _softReset)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_REGION", _mpuRegion)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", _mpuSize)
-		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch);
+		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch)
+		.option("NDS-BOOTSTRAP", "CHEAT_DATA", _cheatData);
 
 	if (_configSavedHandler)
 		_configSavedHandler();

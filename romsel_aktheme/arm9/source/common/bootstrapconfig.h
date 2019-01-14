@@ -45,12 +45,14 @@ class BootstrapConfig
 
         int launch();
 
+        std::string _cheatData;
 
 
     private:
 
         void createSaveFileIfNotExists();
         void createTmpFileIfNotExists();
+        void loadCheats();
 
         const std::string _fileName;
         const std::string _fullPath;

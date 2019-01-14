@@ -51,8 +51,9 @@ class RomInfoWnd : public akui::Form
 
     const DSRomInfo &getRomInfo();
 
-   // static void showPerGameSettings(const std::string &aFileName);
-    // static void showCheats(const std::string &aFileName);
+    // static void showPerGameSettings(const std::string &aFileName);
+    
+    static void showCheats(const std::string &aFileName);
 
   protected:
     void setDiskInfo(void);
@@ -63,7 +64,7 @@ class RomInfoWnd : public akui::Form
 
     // void pressCopy(void);
 
-    // void pressCheats(void);
+    void pressCheats(void);
 
     // void pressCopySlot(void);
 
@@ -83,7 +84,7 @@ class RomInfoWnd : public akui::Form
 
     // akui::Button _buttonCopy;
 
-    // akui::Button _buttonCheats;
+    akui::Button _buttonCheats;
 
     akui::FormDesc _renderDesc;
 
