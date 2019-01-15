@@ -28,16 +28,24 @@ using namespace akui;
 
 void StartMenu::init()
 {
-    // addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
-    // addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
-    //addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
-    //addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
-    //addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
+    CIniFile ini(SFN_UI_SETTINGS);
+    if(ini.GetInt("start menu", "showFileOperations", true))
+    {
+        addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
+        addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
+        addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
+        addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
+        //addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
 
-
-    addItem(START_MENU_ITEM_SETTING, LANG("start menu", "Setting"));
-    addItem(START_MENU_ITEM_INFO, LANG("start menu", "Info"));
-    // addItem(START_MENU_ITEM_TOOLS, LANG("start menu", "Tools"));
+        addItem(START_MENU_ITEM_SETTING, LANG("start menu", "Setting"));
+        addItem(START_MENU_ITEM_INFO, LANG("start menu", "Info"));
+        // addItem(START_MENU_ITEM_TOOLS, LANG("start menu", "Tools"));
+    }
+    else
+    {
+        addItem(START_MENU_ITEM_SETTING, LANG("start menu", "Setting"));
+        addItem(START_MENU_ITEM_INFO, LANG("start menu", "Info"));
+    }
     loadAppearance(SFN_UI_SETTINGS);
     dbg_printf("startmenu ok\n");
 }

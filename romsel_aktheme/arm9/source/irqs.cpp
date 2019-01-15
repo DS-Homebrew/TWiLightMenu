@@ -36,7 +36,7 @@
 #include "ui/animation.h"
 
 // #include "time/timer.h"
-// #include "files.h"
+#include "common/files.h"
 // #include "userwnd.h"
 
 bool IRQ::_vblankStarted(false);
@@ -44,7 +44,7 @@ bool IRQ::_vblankStarted(false);
 void IRQ::init()
 {
     irqSet(IRQ_VBLANK, vBlank);
-  //  irqSet(IRQ_CARD_LINE, cardMC);
+    // irqSet(IRQ_CARD_LINE, cardMC);
 }
 
 // void IRQ::cardMC()
@@ -69,22 +69,22 @@ void IRQ::vBlank()
     if (!_vblankStarted)
         return;
 
-    // // get inputs when file copying because the main route
-    // // can't do any thing at that time
-    // if( true == copyingFile) {
-    //     if( false == stopCopying ) {
-    //         INPUT & input = updateInput();
-    //         if( (input.keysDown & KEY_B) ) {
-    //             stopCopying = true;
-    //         }
-    //     }
-    // }
+    // get inputs when file copying because the main route
+    // can't do any thing at that time
+    if( true == copyingFile) {
+        if( false == stopCopying ) {
+            INPUT & input = updateInput();
+            if( (input.keysDown & KEY_B) ) {
+                stopCopying = true;
+            }
+        }
+    }
 
     timer().updateTimer();
 
     static u32 vBlankCounter = 0;
 
-    if (vBlankCounter++ > 30)
+    if (vBlankCounter++ > 60)
     {
         vBlankCounter = 0;
         bigClock().blinkColon();
@@ -95,8 +95,10 @@ void IRQ::vBlank()
         bigClock().draw();
         smallClock().draw();
         userWindow().draw();
-        batteryIcon().draw();
-        volumeIcon().draw();
+        if(!copyingFile) {
+            batteryIcon().draw();
+            volumeIcon().draw();
+        }
 #if 0
         char fpsText[16];
         sprintf( fpsText, "fps %.2f\n", timer().getFps() );

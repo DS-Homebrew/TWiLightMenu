@@ -41,7 +41,7 @@
 #include "common/flashcardlaunch.h"
 #include "common/gbaswitch.h"
 #include "common/unlaunchboot.h"
-//#include "files.h"
+#include "common/files.h"
 
 #include "common/inifile.h"
 #include "language.h"
@@ -254,73 +254,74 @@ void MainWnd::listSelChange(u32 i)
 
 void MainWnd::startMenuItemClicked(s16 i)
 {
+    CIniFile ini(SFN_UI_SETTINGS);
+    if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
+    
     dbg_printf("start menu item %d\n", i);
     //messageBox( this, "Power Off", "Are you sure you want to turn off ds?", MB_YES | MB_NO );
 
-#pragma region copypaste
     // ------------------- Copy and Paste ---
-    // if (START_MENU_ITEM_COPY == i)
-    // {
-    //     if ("" == _mainList->getSelectedFullPath())
-    //         return;
-    //     struct stat st;
-    //     stat(_mainList->getSelectedFullPath().c_str(), &st);
-    //     if (st.st_mode & S_IFDIR)
-    //     {
-    //         messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-    //         return;
-    //     }
-    //     setSrcFile(_mainList->getSelectedFullPath(), SFM_COPY);
-    // }
+    if (START_MENU_ITEM_COPY == i)
+    {
+        if ("" == _mainList->getSelectedFullPath())
+            return;
+        struct stat st;
+        stat(_mainList->getSelectedFullPath().c_str(), &st);
+        if (st.st_mode & S_IFDIR)
+        {
+            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
+            return;
+        }
+        setSrcFile(_mainList->getSelectedFullPath(), SFM_COPY);
+    }
 
-    // else if (START_MENU_ITEM_CUT == i)
-    // {
-    //     if ("" == _mainList->getSelectedFullPath())
-    //         return;
-    //     struct stat st;
-    //     stat(_mainList->getSelectedFullPath().c_str(), &st);
-    //     if (st.st_mode & S_IFDIR)
-    //     {
-    //         messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-    //         return;
-    //     }
-    //     setSrcFile(_mainList->getSelectedFullPath(), SFM_CUT);
-    // }
+    else if (START_MENU_ITEM_CUT == i)
+    {
+        if ("" == _mainList->getSelectedFullPath())
+            return;
+        struct stat st;
+        stat(_mainList->getSelectedFullPath().c_str(), &st);
+        if (st.st_mode & S_IFDIR)
+        {
+            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
+            return;
+        }
+        setSrcFile(_mainList->getSelectedFullPath(), SFM_CUT);
+    }
 
-    // else if (START_MENU_ITEM_PASTE == i)
-    // {
-    //     bool ret = false;
-    //     if (_mainList->IsFavorites())
-    //     {
-    //         ret = Favorites::AddToFavorites(getSrcFile());
-    //     }
-    //     else
-    //     {
-    //         ret = copyOrMoveFile(_mainList->getCurrentDir());
-    //     }
-    //     if (ret) // refresh current directory
-    //         _mainList->enterDir(_mainList->getCurrentDir());
-    // }
+    else if (START_MENU_ITEM_PASTE == i)
+    {
+        bool ret = false;
+        // if (_mainList->IsFavorites())
+        // {
+        //     ret = Favorites::AddToFavorites(getSrcFile());
+        // }
+        // else
+        // {
+            ret = copyOrMoveFile(_mainList->getCurrentDir());
+        // }
+        if (ret) // refresh current directory
+            _mainList->enterDir(_mainList->getCurrentDir());
+    }
 
-    // else if (START_MENU_ITEM_DELETE == i)
-    // {
-    //     std::string fullPath = _mainList->getSelectedFullPath();
-    //     if ("" != fullPath)
-    //     {
-    //         bool ret = false;
-    //         if (_mainList->IsFavorites())
-    //         {
-    //             ret = Favorites::RemoveFromFavorites(fullPath);
-    //         }
-    //         else
-    //         {
-    //             ret = deleteFile(fullPath);
-    //         }
-    //         if (ret)
-    //             _mainList->enterDir(_mainList->getCurrentDir());
-    //     }
-    // }
-#pragma endregion
+    else if (START_MENU_ITEM_DELETE == i)
+    {
+        std::string fullPath = _mainList->getSelectedFullPath();
+        if ("" != fullPath)
+        {
+            bool ret = false;
+            // if (_mainList->IsFavorites())
+            // {
+                // ret = Favorites::RemoveFromFavorites(fullPath);
+            // }
+            // else
+            // {
+                ret = deleteFile(fullPath);
+            // }
+            if (ret)
+                _mainList->enterDir(_mainList->getCurrentDir());
+        }
+    }
 
     if (START_MENU_ITEM_SETTING == i)
     {
@@ -646,9 +647,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		}
 
+        int optionPicked;
+
 		if (hasAP)
 		{
-			messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
+			optionPicked = messageBox(this, "Warning", "This game may not work correctly, if it's not AP-patched. "
 										"If the game freezes, does not start, or doesn't seem normal, "
 										"it needs to be AP-patched.", MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
@@ -656,11 +659,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		scanKeys();
 		int pressed = keysHeld();
 
-		if (pressed & KEY_X)
+		if (pressed & KEY_X || optionPicked == ID_HOLD_X)
 		{
 			settingsIni.dontShowAPMsgAgain();
 		}
-		if (!hasAP || pressed & KEY_A || pressed & KEY_X)
+		if (!hasAP || pressed & KEY_A || pressed & KEY_X || optionPicked == ID_HOLD_X || optionPicked == ID_OK)
 		{
 			// Event handlers for progress window.
 			config.onSaveCreated(bootstrapSaveHandler)

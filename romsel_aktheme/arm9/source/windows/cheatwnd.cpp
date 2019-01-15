@@ -100,8 +100,15 @@ _List(0,0,w-8,h-44,this,"cheat tree", ms().ak_scrollSpeed)
 
   _List.setRelativePosition(Point(4, 20));
 
-  //CIniFile ini(SFN_UI_SETTINGS);
-  //_List.setColors(ini.GetInt("main list","textColor",RGB15(7,7,7)),ini.GetInt("main list","textColorHilight",RGB15(31,0,31)),ini.GetInt("main list","selectionBarColor1",RGB15(16,20,24)),ini.GetInt("main list","selectionBarColor2",RGB15(20,25,0)));
+  CIniFile ini(SFN_UI_SETTINGS);
+  if(ini.GetInt("cheat menu","textColor",-1)!=-1)
+  {
+    _List.setColors(ini.GetInt("cheat menu","textColor",RGB15(7,7,7)),ini.GetInt("cheat menu","textColorHilight",RGB15(31,0,31)),ini.GetInt("cheat menu","selectionBarColor1",RGB15(16,20,24)),ini.GetInt("cheat menu","selectionBarColor2",RGB15(20,25,0)));
+  }
+  else
+  {
+    _List.setColors(ini.GetInt("main list","textColor",RGB15(7,7,7)),ini.GetInt("main list","textColorHilight",RGB15(31,0,31)),ini.GetInt("main list","selectionBarColor1",RGB15(16,20,24)),ini.GetInt("main list","selectionBarColor2",RGB15(20,25,0)));
+  }
 
   _List.insertColumn(0,"icon",EIconWidth);
   _List.insertColumn(1,"showName",_List.size().x+2-EIconWidth);
