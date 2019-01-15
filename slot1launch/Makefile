@@ -37,8 +37,7 @@ dist:	all
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-	python2 patch_ndsheader_dsiware.py $(CURDIR)/$(TARGET).nds --accessControl 0x00000038
-			-b $(CURDIR)/icon.bmp "TWiLight Menu++;Slot-1 Launcher;Apache Thunder, RocketRobz" \
+			-b $(CURDIR)/icon.bmp "TWiLight Menu++;Slot-1 Launcher;Apache Thunder & RocketRobz" \
 			-g TWL1 01 "TWLMENUPP-S1" -z 80040000 -u 00030004
 
 $(TARGET).arm7	: arm7/$(TARGET).elf
