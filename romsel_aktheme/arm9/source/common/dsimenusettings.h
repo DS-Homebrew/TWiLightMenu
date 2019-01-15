@@ -115,6 +115,7 @@ class DSiMenuPlusPlusSettings
   public:
     void loadSettings();
     void saveSettings();
+    static u32 CopyBufferSize(void);
 
     TLanguage getGuiLanguage();
     const char* getAppName();

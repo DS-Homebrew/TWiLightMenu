@@ -190,6 +190,13 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
+u32 DSiMenuPlusPlusSettings::CopyBufferSize(void)
+{
+//   if(font().FontRAM()<300*1024) return 1024*1024;
+//   return 512*1024;
+return 0x8000;
+}
+
 DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)

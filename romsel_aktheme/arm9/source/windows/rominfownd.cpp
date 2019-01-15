@@ -472,6 +472,13 @@ void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
     {
         _buttonGameSettings.show();
     }
+
+    _buttonCheats.hide();
+
+    if (!_romInfo.isDSiWare() && _romInfo.isDSRom())
+    {
+        _buttonCheats.show();
+    }
 }
 
 const DSRomInfo &RomInfoWnd::getRomInfo()
