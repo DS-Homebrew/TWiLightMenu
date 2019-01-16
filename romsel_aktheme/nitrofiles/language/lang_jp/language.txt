@@ -428,6 +428,10 @@ error = エラー %i
 Please wait = 少々お待ちください。
 NDS Bootstrap Error = Bootstrapエラー
 GBARunner2 Error = GBARunner2エラー
+SNES Error = スーパーファミコンRAMディスクエラー
+SNES Error Message = 「sd:/_nds/TWiLightMenu/emulators/」のスーパーファミコンRAMディスクが見つかりませんでした。
+SegaMD Error = メガドライブRAMディスクエラー
+SegaMD Error Message = 「sd:/_nds/TWiLightMenu/emulators/」のメガドライブRAMディスクが見つかりませんでした。
 Flashcard Error = フラッシュカードエラー
 Launch Error = 起動エラー
 

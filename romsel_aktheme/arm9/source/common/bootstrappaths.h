@@ -13,6 +13,9 @@
 #define BOOTSTRAP_RELEASE_HB_FC "fat:/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE_FC "fat:/_nds/nds-bootstrap-release.nds"
 
+#define BOOTSTRAP_NIGHTLY_GBAR "sd:/_nds/nds-bootstrap-gbar2-nightly.nds"
+#define BOOTSTRAP_RELEASE_GBAR "sd:/_nds/nds-bootstrap-gbar2-release.nds"
+
 #define BOOTSTRAP_INI "sd:/_nds/nds-bootstrap.ini"
 #define BOOTSTRAP_INI_FC "fat:/_nds/nds-bootstrap.ini"
 
@@ -26,6 +29,14 @@
 
 #define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
+
+#define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
+#define SNES_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SNES.img"
+#define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
+
+#define JENESISDS_ROM "sd:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
+#define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
+#define JENESISDS_FC "fat:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
 
 #define GAMEYOB_SD "sd:/_nds/TWiLightMenu/emulators/gameyob.nds"
 #define GAMEYOB_FC "/_nds/TWiLightMenu/emulators/gameyob.nds"
