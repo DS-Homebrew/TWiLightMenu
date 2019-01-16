@@ -1124,13 +1124,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound()) {
-				for (int i = 0; i < 3; i++) {
-					topIconXpos -= 12;
+				for (int i = 0; i < 2; i++) {
+					topIconXpos -= 14;
 				}
 			} else {
-				for (int i = 0; i < 2; i++) {
-					topIconXpos -= 12;
-				}
+				//for (int i = 0; i < 1; i++) {
+					topIconXpos -= 14;
+				//}
 			}
 
 			if (isDSiMode() && sdFound()) {
@@ -1147,7 +1147,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				else
 				{
-					topIconXpos += 32;
+					topIconXpos += 28;
 				}
 			}
 
@@ -1158,7 +1158,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			else
 			{
-				topIconXpos += 32;
+				topIconXpos += 28;
 			}
 
 			// page switch

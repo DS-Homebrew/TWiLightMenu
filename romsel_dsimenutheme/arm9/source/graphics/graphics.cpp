@@ -576,28 +576,28 @@ void vBlankHandler()
 			// Top icons
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound()) {
-				for (int i = 0; i < 3; i++) {
-					topIconXpos -= 12;
+				for (int i = 0; i < 2; i++) {
+					topIconXpos -= 14;
 				}
 				if (secondaryDevice) {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]);	// SD card
 				} else {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]);	// Slot-1 card
 				}
-				topIconXpos += 32;
+				topIconXpos += 28;
 				drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
-				topIconXpos += 32;
+				topIconXpos += 28;
 				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]);	// Sega Mega Drive
 			} else {
-				for (int i = 0; i < 2; i++) {
-					topIconXpos -= 12;
-				}
+				//for (int i = 0; i < 1; i++) {
+					topIconXpos -= 14;
+				//}
 				if (useGbarunner) {
 					drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
 				} else {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]);	// GBA Mode
 				}
-				topIconXpos += 32;
+				topIconXpos += 28;
 				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]);	// Sega Mega Drive
 			}
 			if (theme==1) {
