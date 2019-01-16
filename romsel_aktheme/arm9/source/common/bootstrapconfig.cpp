@@ -28,6 +28,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_softReset = false;
 	_soundFix = false;
 	_cpuBoost = false;
+	_useGbarBootstrap = false;
 
 	this
 		->saveSize()
@@ -304,6 +305,12 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 	return *this;
 }
 
+BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
+{
+	_useGbarBootstrap = gbarBootstrap;
+	return *this;
+}
+
 
 
 void BootstrapConfig::createSaveFileIfNotExists()
@@ -397,7 +404,13 @@ int BootstrapConfig::launch()
 	}
 
 	std::string bootstrapPath;
-	if (ms().secondaryDevice) {
+
+	if(_useGbarBootstrap) {
+		if (_useNightlyBootstrap)
+			bootstrapPath = BOOTSTRAP_NIGHTLY_GBAR;
+		if (!_useNightlyBootstrap)
+			bootstrapPath = BOOTSTRAP_RELEASE_GBAR;
+	} else if (ms().secondaryDevice) {	
 		if (_useNightlyBootstrap && _isHomebrew)
 			bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
 		if (_useNightlyBootstrap && !_isHomebrew)

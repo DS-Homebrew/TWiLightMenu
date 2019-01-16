@@ -513,6 +513,10 @@ error = Error %i
 Please wait = Please wait...
 NDS Bootstrap Error = NDS Bootstrap Error
 GBARunner2 Error = GBARunner2 Error
+SNES Error = SNES RAM Disk Error
+SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SegaMD Error = SEGA MD RAM Disk Error
+SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
 Flashcard Error = Flashcard Error
 Launch Error = Launch Error
 

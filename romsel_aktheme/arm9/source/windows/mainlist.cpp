@@ -46,6 +46,8 @@
 #include "nesrom_banner_bin.h"
 #include "gbcrom_banner_bin.h"
 #include "gbrom_banner_bin.h"
+#include "snesrom_banner_bin.h"
+#include "smdrom_banner_bin.h"
 #include "ui/progresswnd.h"
 #include "language.h"
 #include "unicode.h"
@@ -169,6 +171,10 @@ bool MainList::enterDir(const std::string &dirName)
 			listNum++;
         }
         addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
+		listNum++;
+        addDirEntry(listNum, "SNES", "", SPATH_SNES, "snes", snesrom_banner_bin);
+		listNum++;
+        addDirEntry(listNum, "Sega Mega Drive (Genesis)", "", SPATH_SEGAMD, "segamd", smdrom_banner_bin);
 		listNum++;
         if (!sys().isRegularDS())
         {

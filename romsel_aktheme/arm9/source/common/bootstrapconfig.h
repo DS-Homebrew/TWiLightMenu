@@ -38,6 +38,7 @@ class BootstrapConfig
         BootstrapConfig& softReset(bool softReset);
         BootstrapConfig& soundFix(bool soundFix);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
+        BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);
@@ -64,6 +65,7 @@ class BootstrapConfig
         std::function<void(void)>  _cheatsAppliedHandler;
 
         bool _useNightlyBootstrap;
+        bool _useGbarBootstrap;
         int _donorSdk;
         int _mpuSize;
         int _mpuRegion;

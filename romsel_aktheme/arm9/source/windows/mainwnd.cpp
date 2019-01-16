@@ -935,7 +935,76 @@ void MainWnd::bootGbaRunner(void)
     }
 
     BootstrapConfig gbaRunner("GBARunner2.nds", GBARUNNER_BOOTSTRAP, "", 0);
+    gbaRunner.gbarBootstrap(true);
     if (int err = gbaRunner.launch())
+    {
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+    }
+}
+
+void MainWnd::bootSNES(void)
+{
+	if (!ms().secondaryDevice && access(SNEMULDS_ROM, F_OK) != 0) {
+        messageBox(this, LANG("game launch", "SNES Error"), LANG("game launch", "SNES Error message"), MB_OK);
+		return;
+	}
+
+    if (ms().secondaryDevice)
+    {
+		if (ms().useBootstrap)
+		{
+            bootFile(SNEMULDS_FC, "");
+		}
+		else
+		{
+			bootFlashcard(SNEMULDS_FC, "", false);
+		}
+        return;
+    }
+
+    BootstrapConfig snes("SNEmulDS.nds", SNEMULDS_ROM, "", 0);
+
+	CIniFile ini(BOOTSTRAP_INI);
+	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SNES_RAMDISK);
+	ini.SaveIniFile(BOOTSTRAP_INI);
+    snes.nightlyBootstrap(ms().bootstrapFile);
+
+    if (int err = snes.launch())
+    {
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+    }
+}
+
+void MainWnd::bootSegaMD()
+{
+	if (!ms().secondaryDevice && access(JENESISDS_ROM, F_OK) != 0) {
+        messageBox(this, LANG("game launch", "SegaMD Error"), LANG("game launch", "SegaMD Error Message"), MB_OK);
+		return;
+	}
+
+    if (ms().secondaryDevice)
+    {
+		if (ms().useBootstrap)
+		{
+            bootFile(JENESISDS_FC, "");
+		}
+		else
+		{
+			bootFlashcard(JENESISDS_FC, "", false);
+		}
+        return;
+    }
+
+    BootstrapConfig segamd("JEnesisDS.nds", JENESISDS_ROM, "", 0);
+
+	CIniFile ini(BOOTSTRAP_INI);
+	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGAMD_RAMDISK);
+	ini.SaveIniFile(BOOTSTRAP_INI);
+    segamd.nightlyBootstrap(ms().bootstrapFile);
+
+    if (int err = segamd.launch())
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
@@ -1001,6 +1070,16 @@ void MainWnd::onFolderChanged()
         if (dirShowName == SPATH_GBARUNNER)
         {
             bootGbaRunner();
+        }
+
+        if (dirShowName == SPATH_SNES)
+        {
+            bootSNES();
+        }
+
+        if (dirShowName == SPATH_SEGAMD)
+        {
+            bootSegaMD();
         }
 
         if (dirShowName == SPATH_SYSMENU)
