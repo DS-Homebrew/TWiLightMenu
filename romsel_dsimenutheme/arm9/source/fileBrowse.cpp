@@ -1122,22 +1122,43 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				exitToSystemMenu();
 			}
 
-			// Switch devices or launch Slot-1 by touching button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 100 && touch.px < 124
-			&& isDSiMode() && sdFound() && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				if (secondaryDevice || REG_SCFG_MC != 0x11) {
-					switchDevice();
-					return "null";
-				} else {
-					mmEffectEx(&snd_wrong);
+			int topIconXpos = 116;
+			if (isDSiMode() && sdFound()) {
+				for (int i = 0; i < 3; i++) {
+					topIconXpos -= 12;
+				}
+			} else {
+				for (int i = 0; i < 2; i++) {
+					topIconXpos -= 12;
+				}
+			}
+
+			if (isDSiMode() && sdFound()) {
+				// Switch devices or launch Slot-1 by touching button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24
+				&& !titleboxXmoveleft && !titleboxXmoveright)
+				{
+					if (secondaryDevice || REG_SCFG_MC != 0x11) {
+						switchDevice();
+						return "null";
+					} else {
+						mmEffectEx(&snd_wrong);
+					}
+				}
+				else
+				{
+					topIconXpos += 32;
 				}
 			}
 
 			// Launch GBA by touching button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= (sdFound() ? 132 : 116) && touch.px < (sdFound() ? 156 : 140) && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchGba();
+			}
+			else
+			{
+				topIconXpos += 32;
 			}
 
 			// page switch
