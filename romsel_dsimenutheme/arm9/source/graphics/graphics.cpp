@@ -576,7 +576,7 @@ void vBlankHandler()
 			// Top icons
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound()) {
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 3; i++) {
 					topIconXpos -= 14;
 				}
 				if (secondaryDevice) {
@@ -588,10 +588,12 @@ void vBlankHandler()
 				drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
 				topIconXpos += 28;
 				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]);	// Sega Mega Drive
+				topIconXpos += 28;
+				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[5]);	// Super Nintendo
 			} else {
-				//for (int i = 0; i < 1; i++) {
+				for (int i = 0; i < 2; i++) {
 					topIconXpos -= 14;
-				//}
+				}
 				if (useGbarunner) {
 					drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
 				} else {
@@ -599,6 +601,8 @@ void vBlankHandler()
 				}
 				topIconXpos += 28;
 				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]);	// Sega Mega Drive
+				topIconXpos += 28;
+				glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[5]);	// Super Nintendo
 			}
 			if (theme==1) {
 				glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
