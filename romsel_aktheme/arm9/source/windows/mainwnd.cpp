@@ -967,7 +967,7 @@ void MainWnd::bootSNES(void)
 
 	CIniFile ini(BOOTSTRAP_INI);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SNES_RAMDISK);
-	ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+	ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	ini.SaveIniFile(BOOTSTRAP_INI);
     snes.nightlyBootstrap(ms().bootstrapFile);
 

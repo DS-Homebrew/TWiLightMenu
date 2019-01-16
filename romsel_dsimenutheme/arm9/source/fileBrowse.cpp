@@ -759,7 +759,7 @@ void launchSNES(void) {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
 		iprintf ("Start failed. Error %i\n", err);
