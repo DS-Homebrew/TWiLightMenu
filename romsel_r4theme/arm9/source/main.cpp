@@ -873,7 +873,7 @@ int main(int argc, char **argv) {
 							printLargeCentered(false, 182, "Start jEnesisDS");
 						} else {
 							if (useGbarunner) {
-								printLargeCentered(false, 182, "Start GBARunner2 (hypervisor)");
+								printLargeCentered(false, 182, "Start GBARunner2");
 							} else {
 								printLargeCentered(false, 182, "Start GBA Mode");
 							}
@@ -892,7 +892,7 @@ int main(int argc, char **argv) {
 			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
 			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
 
-			if (startMenu_cursorPosition == 1) {
+			if (startMenu_cursorPosition == 2) {
 				if (pressed & KEY_UP) highlightedEmulator--;
 				if (pressed & KEY_DOWN) highlightedEmulator++;
 			}
@@ -983,6 +983,7 @@ int main(int argc, char **argv) {
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
@@ -999,6 +1000,7 @@ int main(int argc, char **argv) {
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SegaMD.img");
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
