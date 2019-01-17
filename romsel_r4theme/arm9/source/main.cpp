@@ -833,6 +833,8 @@ int main(int argc, char **argv) {
 		whiteScreen = false;
 		controlTopBright = true;
 	}
+	
+	int highlightedEmulator = 0;
 
 	bool menuGraphicsLoaded = false;
 
@@ -864,10 +866,17 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						if (useGbarunner) {
-							printLargeCentered(false, 182, "Start GBARunner2");
+						printLargeCentered(false, 166, "Up/Down: Select emulator");
+						if (highlightedEmulator == 2) {
+							printLargeCentered(false, 182, "Start SNEmulDS");
+						} else if (highlightedEmulator == 1) {
+							printLargeCentered(false, 182, "Start jEnesisDS");
 						} else {
-							printLargeCentered(false, 182, "Start GBA Mode");
+							if (useGbarunner) {
+								printLargeCentered(false, 182, "Start GBARunner2 (hypervisor)");
+							} else {
+								printLargeCentered(false, 182, "Start GBA Mode");
+							}
 						}
 						break;
 				}
@@ -879,9 +888,14 @@ int main(int argc, char **argv) {
 				touchRead(&touch);
 				swiWaitForVBlank();
 			} while (!pressed);
-			
+
 			if (pressed & KEY_LEFT) startMenu_cursorPosition--;
 			if (pressed & KEY_RIGHT) startMenu_cursorPosition++;
+
+			if (startMenu_cursorPosition == 1) {
+				if (pressed & KEY_UP) highlightedEmulator--;
+				if (pressed & KEY_DOWN) highlightedEmulator++;
+			}
 
 			if ((pressed & KEY_TOUCH) && touch.py >= 62 && touch.py <= 133) {
 				if (touch.px >= 10 && touch.px <= 82) {
@@ -911,6 +925,9 @@ int main(int argc, char **argv) {
 
 			if (startMenu_cursorPosition < 0) startMenu_cursorPosition = 0;
 			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
+
+			if (highlightedEmulator < 0) highlightedEmulator = 0;
+			if (highlightedEmulator > 2) highlightedEmulator = 2;
 
 			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
@@ -953,25 +970,59 @@ int main(int argc, char **argv) {
 						useBackend = true;
 						homebrewBootstrap = true;
 						SaveSettings();
-						if (useGbarunner) {
-							if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
-								// Nothing
-							} else if (secondaryDevice) {
+						if (highlightedEmulator == 2) {
+							if (secondaryDevice) {
 								if (useBootstrap) {
-									int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+									int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
 									iprintf ("Start failed. Error %i\n", err);
 								} else {
-									loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+									loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
 								}
-							} else {
+							} else if (access("sd:/_nds/TWiLightMenu/emulators/SNES.img", F_OK) == 0) {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+								iprintf ("Start failed. Error %i\n", err);
+							}
+						} else if (highlightedEmulator == 1) {
+							if (secondaryDevice) {
+								if (useBootstrap) {
+									int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", 0, NULL, true, true, true, false);
+									iprintf ("Start failed. Error %i\n", err);
+								} else {
+									loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", "jEnesisDS.nds", false);
+								}
+							} else if (access("sd:/_nds/TWiLightMenu/emulators/SegaMD.img", F_OK) == 0) {
+								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SegaMD.img");
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else {
-							gbaSwitch();
+							if (useGbarunner) {
+								if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+									// Nothing
+								} else if (secondaryDevice) {
+									if (useBootstrap) {
+										int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+										iprintf ("Start failed. Error %i\n", err);
+									} else {
+										loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+									}
+								} else {
+									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+									int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
+									iprintf ("Start failed. Error %i\n", err);
+								}
+							} else {
+								gbaSwitch();
+							}
 						}
 						break;
 				}
@@ -1048,7 +1099,7 @@ int main(int argc, char **argv) {
 				fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			}
 
-			if (pressed & KEY_START) {
+			if ((pressed & KEY_START) || (pressed & KEY_SELECT)) {
 				// Launch settings
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 25; i++) {

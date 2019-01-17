@@ -750,7 +750,7 @@ void launchSNES(void) {
 	// Start SNEmulDS
 	if (secondaryDevice) {
 		if (useBootstrap) {
-			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, true, false);
+			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
 			iprintf ("Start failed. Error %i\n", err);
 		} else {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
