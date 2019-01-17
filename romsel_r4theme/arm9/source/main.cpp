@@ -1565,26 +1565,24 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
 
-                        CheatCodelist* codelist = new CheatCodelist();
-
-                        u32 gameCode,crc32;
-                        
-                        if(codelist->romData(path,gameCode,crc32))
-                        {
+						CheatCodelist codelist;
+						u32 gameCode,crc32;
+						
+						if(codelist.romData(path,gameCode,crc32))
+						{
                             long cheatOffset; size_t cheatSize;
                             FILE* dat=fopen("sd:/_nds/usrcheat.dat","rb");
                             if(dat)
                             {
-                            if(codelist->searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
+                            if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
                             {
-                                // CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,path);
-                                codelist->parse(path);
-                                bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist->getCheats());
-                                bootstrapini.SaveIniFile( bootstrapinipath );
+                                codelist.parse(path);
+                                bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
+                                bootstrapini.SaveIniFile(bootstrapinipath);
                             }
                             fclose(dat);
                             }
-                        }
+						}
                                 
 						if (secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
