@@ -102,17 +102,6 @@ void RemoveTrailingSlashes(std::string& path)
 	}
 }
 
-/**
- * Remove trailing spaces from a cheat code line, if present.
- * @param path Code line to modify.
- */
-/*static void RemoveTrailingSpaces(std::string& code)
-{
-	while (!code.empty() && code[code.size()-1] == ' ') {
-		code.resize(code.size()-1);
-	}
-}*/
-
 std::string romfolder[2];
 
 // These are used by flashcard functions and must retain their trailing slash.
@@ -1417,7 +1406,7 @@ int main(int argc, char **argv) {
 						}
 
 						char game_TID[5];
-                        char  gameid[4]; // for nitrohax cheat parsing
+                        char  gameid[4];
                         u32 ndsHeader[0x80];
                         uint32_t headerCRC;
 						
