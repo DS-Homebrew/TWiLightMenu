@@ -102,17 +102,6 @@ void RemoveTrailingSlashes(std::string& path)
 	}
 }
 
-/**
- * Remove trailing spaces from a cheat code line, if present.
- * @param path Code line to modify.
- */
-/*static void RemoveTrailingSpaces(std::string& code)
-{
-	while (!code.empty() && code[code.size()-1] == ' ') {
-		code.resize(code.size()-1);
-	}
-}*/
-
 std::string romfolder[2];
 
 // These are used by flashcard functions and must retain their trailing slash.
@@ -1417,7 +1406,7 @@ int main(int argc, char **argv) {
 						}
 
 						char game_TID[5];
-                        char  gameid[4]; // for nitrohax cheat parsing
+                        char  gameid[4];
                         u32 ndsHeader[0x80];
                         uint32_t headerCRC;
 						
@@ -1532,7 +1521,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+                        bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 						} else {
@@ -1564,8 +1553,26 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
-                        bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
-						bootstrapini.SaveIniFile( bootstrapinipath );
+
+						CheatCodelist codelist;
+						u32 gameCode,crc32;
+						
+						if(codelist.romData(path,gameCode,crc32))
+						{
+                            long cheatOffset; size_t cheatSize;
+                            FILE* dat=fopen("sd:/_nds/TWiLightMenu/cheats/usrcheat.dat","rb");
+                            if(dat)
+                            {
+                            if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
+                            {
+                                codelist.parse(path);
+                                bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
+                                bootstrapini.SaveIniFile(bootstrapinipath);
+                            }
+                            fclose(dat);
+                            }
+						}
+                                
 						if (secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (homebrewBootstrap) {
@@ -1595,6 +1602,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
+
 						if (!isArgv) {
 							romPath = argarray[0];
 						}
