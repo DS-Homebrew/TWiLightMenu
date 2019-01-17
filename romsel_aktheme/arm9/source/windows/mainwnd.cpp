@@ -998,7 +998,7 @@ void MainWnd::bootSegaMD()
         return;
     }
 
-    BootstrapConfig segamd("JEnesisDS.nds", JENESISDS_ROM, "", 0);
+    BootstrapConfig segamd("jEnesisDS.nds", JENESISDS_ROM, "", 0);
 
 	CIniFile ini(BOOTSTRAP_INI);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGAMD_RAMDISK);
