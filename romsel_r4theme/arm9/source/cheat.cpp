@@ -50,7 +50,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen("sd:/_nds/usrcheat.dat","rb");
+    FILE* dat=fopen("sd:/_nds/TWiLightMenu/cheats/usrcheat.dat","rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
