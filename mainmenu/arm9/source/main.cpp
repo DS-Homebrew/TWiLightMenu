@@ -2051,7 +2051,6 @@ int main(int argc, char **argv) {
                             {
                                 codelist.parse(path);
                                 bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
-                                bootstrapini.SaveIniFile(bootstrapinipath);
                             }
                             fclose(dat);
                             }
