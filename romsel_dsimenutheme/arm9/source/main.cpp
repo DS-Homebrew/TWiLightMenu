@@ -1358,7 +1358,9 @@ int main(int argc, char **argv) {
 
                         CheatCodelist codelist;
 						u32 gameCode,crc32;
-						
+
+						if (isHomebrew[cursorPosition[secondaryDevice]] == 0)
+						{
 						if(codelist.romData(path,gameCode,crc32))
 						{
                             long cheatOffset; size_t cheatSize;
@@ -1372,6 +1374,7 @@ int main(int argc, char **argv) {
                             }
                             fclose(dat);
                             }
+						}
 						}
 
 						bootstrapini.SaveIniFile( bootstrapinipath );
