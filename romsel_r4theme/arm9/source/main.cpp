@@ -1459,9 +1459,6 @@ int main(int argc, char **argv) {
 						}
 
 						char game_TID[5];
-                        char  gameid[4];
-                        u32 ndsHeader[0x80];
-                        uint32_t headerCRC;
 						
 						FILE *f_nds_file = fopen(argarray[0], "rb");
 
@@ -1469,50 +1466,16 @@ int main(int argc, char **argv) {
 						fread(game_TID, 1, 4, f_nds_file);
 						game_TID[4] = 0;
 						game_TID[3] = 0;
-                        
-                        fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-                        int sizeread = fread(gameid, 1, 4, f_nds_file);
-                        
-                        #ifdef DEBUG
-                        char * sizereads;
-                        sprintf (sizereads, "%08X", sizeread);
-                        nocashMessage("gameid readed");
-                        nocashMessage(sizereads);
-                        #endif
-                        
-                        #ifdef DEBUG
-                        char* gameIdS;
-                        sprintf (gameIdS, "%c%c%c%c", gameid[0], gameid[1], gameid[2], gameid[3]);
-                        nocashMessage("gameId");
-                        nocashMessage(gameIdS);
-                        #endif
-                        
-                        fseek(f_nds_file, 0, SEEK_SET);
-                        sizeread = fread(ndsHeader, 1, 0x80*4, f_nds_file);
-                        
-                        #ifdef DEBUG
-                        sprintf (sizereads, "%08X", sizeread);                        
-                        nocashMessage("ndsHeader readed");
-                        nocashMessage(sizereads);
-                        #endif
-                        
-                        headerCRC = crc32((const char*)ndsHeader, sizeof(ndsHeader));
-
-                        #ifdef DEBUG    
-                        char * headerCrcS;
-                        sprintf (headerCrcS, "%08X", headerCRC);                  
-                        nocashMessage("headerCRC computed");
-                        nocashMessage(headerCrcS);
-                        #endif
-                         
 						fclose(f_nds_file);
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
+						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir ("saves", 0777);
+						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
+						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
 						if (access(savepath.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();
@@ -1574,7 +1537,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-                        bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "");
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 						} else {

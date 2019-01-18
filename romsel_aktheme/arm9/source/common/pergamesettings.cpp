@@ -13,6 +13,7 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
     _iniPath = formatString(PERGAMESETTINGS_PATH, (ms().secondaryDevice ? "fat:" : "sd:"), romFileName.c_str());
     language = ELangDefault;
 	saveNo = 0;
+	ramDiskNo = -1;
     boostCpu = EDefault;
     boostVram = EDefault;
     dsiMode = EDefault;
@@ -29,6 +30,7 @@ void PerGameSettings::loadSettings()
     dsiMode = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 	language = (TLanguage)pergameini.GetInt("GAMESETTINGS", "LANGUAGE", language);
 	saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
+	ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
     bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
@@ -95,6 +97,42 @@ std::string getSavExtension(int number) {
 			break;
 		case 9:
 			return ".sav9";
+			break;
+	}
+}
+
+std::string getImgExtension(int number) {
+	switch (number) {
+		case 0:
+		default:
+			return ".img";
+			break;
+		case 1:
+			return ".img1";
+			break;
+		case 2:
+			return ".img2";
+			break;
+		case 3:
+			return ".img3";
+			break;
+		case 4:
+			return ".img4";
+			break;
+		case 5:
+			return ".img5";
+			break;
+		case 6:
+			return ".img6";
+			break;
+		case 7:
+			return ".img7";
+			break;
+		case 8:
+			return ".img8";
+			break;
+		case 9:
+			return ".img9";
 			break;
 	}
 }

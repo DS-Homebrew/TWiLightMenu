@@ -35,6 +35,7 @@ class BootstrapConfig
 
         BootstrapConfig& language(int language);
         BootstrapConfig& saveNo(int saveNo);
+        BootstrapConfig& ramDiskNo(int ramDiskNo);
         BootstrapConfig& softReset(bool softReset);
         BootstrapConfig& soundFix(bool soundFix);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
@@ -77,6 +78,7 @@ class BootstrapConfig
         bool _cpuBoost;
         int _language;
         int _saveNo;
+        int _ramDiskNo;
         bool _softReset;
         bool _soundFix;
 };

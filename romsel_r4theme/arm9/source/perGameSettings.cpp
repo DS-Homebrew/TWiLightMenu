@@ -72,6 +72,7 @@ bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
 int perGameSettings_saveNo = 0;
+int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_bootstrapFile = -1;
@@ -100,6 +101,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
+	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
@@ -113,6 +115,7 @@ void savePerGameSettings (std::string filename) {
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
+		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
@@ -154,6 +157,7 @@ void perGameSettings (std::string filename) {
 	clearText();
 	
 	perGameSettings_cursorPosition = 0;
+	perGameSettings_cursorSide = false;
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
@@ -261,12 +265,23 @@ void perGameSettings (std::string filename) {
 		if (isHomebrew == 1) {
 			printLargeCentered(false, 84, "Game settings");
 			printSmall(false, 172, 104, gameTIDText);
-			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
-			printSmall(false, 32, 112, "Direct boot:");
-			if (perGameSettings_directBoot) {
-				printSmall(false, 208, 112, "Yes");
+			if (perGameSettings_cursorSide) {
+				printSmall(false, 156, 112, ">");
 			} else {
-				printSmall(false, 208, 112, "No");
+				printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
+			}
+			if (perGameSettings_directBoot) {
+				printSmall(false, 32, 112, "Direct boot: Yes");
+			} else {
+				printSmall(false, 32, 112, "Direct boot: No");
+			}
+			if (!secondaryDevice) {
+				if (perGameSettings_ramDiskNo == -1) {
+					printSmall(false, 162, 112, "RAM disk: No");
+				} else {
+					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "RAM disk: %i", perGameSettings_ramDiskNo);
+					printSmall(false, 164, 112, saveNoDisplay);
+				}
 			}
 			if(isDSiMode()) {
 				printSmall(false, 32, 120, "Run in:");
@@ -408,16 +423,28 @@ void perGameSettings (std::string filename) {
 		if (isHomebrew == 1) {
 			if (useBootstrap) {
 				if (pressed & KEY_UP) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = false;
+					}
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT == 0 && perGameSettings_cursorPosition == 3) perGameSettings_cursorPosition = 0;
 				}
 				if (pressed & KEY_DOWN) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = false;
+					}
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 2;
 					if (!isDSiMode() && REG_SCFG_EXT == 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 4;
+				}
+				if ((!secondaryDevice && (pressed & KEY_LEFT))
+				|| (!secondaryDevice && (pressed & KEY_RIGHT))) {
+					if (perGameSettings_cursorPosition == 0) {
+						perGameSettings_cursorSide = !perGameSettings_cursorSide;
+					}
 				}
 			} else {
 				if (pressed & KEY_UP) {
@@ -434,7 +461,12 @@ void perGameSettings (std::string filename) {
 				switch (perGameSettings_cursorPosition) {
 					case 0:
 					default:
-						perGameSettings_directBoot = !perGameSettings_directBoot;
+						if (perGameSettings_cursorSide) {
+							perGameSettings_ramDiskNo++;
+							if (perGameSettings_ramDiskNo > 9) perGameSettings_ramDiskNo = -1;
+						} else {
+							perGameSettings_directBoot = !perGameSettings_directBoot;
+						}
 						break;
 					case 1:
 						perGameSettings_dsiMode++;
@@ -589,6 +621,42 @@ std::string getSavExtension(void) {
 			break;
 		case 9:
 			return ".sav9";
+			break;
+	}
+}
+
+std::string getImgExtension(void) {
+	switch (perGameSettings_ramDiskNo) {
+		case 0:
+		default:
+			return ".img";
+			break;
+		case 1:
+			return ".img1";
+			break;
+		case 2:
+			return ".img2";
+			break;
+		case 3:
+			return ".img3";
+			break;
+		case 4:
+			return ".img4";
+			break;
+		case 5:
+			return ".img5";
+			break;
+		case 6:
+			return ".img6";
+			break;
+		case 7:
+			return ".img7";
+			break;
+		case 8:
+			return ".img8";
+			break;
+		case 9:
+			return ".img9";
 			break;
 	}
 }

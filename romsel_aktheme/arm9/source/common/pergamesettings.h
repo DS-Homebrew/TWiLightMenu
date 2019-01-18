@@ -35,12 +35,14 @@ class PerGameSettings
 	bool checkIfShowAPMsg();
 	void dontShowAPMsgAgain();
 	std::string getSavExtension(int number);
+	std::string getImgExtension(int number);
 
   public:
     TDefaultBool directBoot;
     TDefaultBool dsiMode;
     TLanguage language;
 	int saveNo;
+	int ramDiskNo;
     TDefaultBool boostCpu;
     TDefaultBool boostVram;
     TDefaultBool bootstrapFile;

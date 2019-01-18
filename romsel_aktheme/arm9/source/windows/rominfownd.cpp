@@ -267,6 +267,23 @@ void RomInfoWnd::pressGameSettings(void)
         settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
         _values.clear();
 
+		if (!ms().secondaryDevice && ms().useBootstrap) {
+			_values.push_back("None");
+			_values.push_back("0");
+			_values.push_back("1");
+			_values.push_back("2");
+			_values.push_back("3");
+			_values.push_back("4");
+			_values.push_back("5");
+			_values.push_back("6");
+			_values.push_back("7");
+			_values.push_back("8");
+			_values.push_back("9");
+
+			settingWnd.addSettingItem(LANG("game settings", "RAM disk"), _values, settingsIni.ramDiskNo + 1);
+			_values.clear();
+		}
+
 		if (isDSiMode()) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
