@@ -475,11 +475,11 @@ void getGameInfo(bool isDir, const char* name, int num)
 		|| (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48)
 		|| (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize == 0x151BC)) {
 			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
-		} else if ((ndsHeader.unitCode >= 0x02
-		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
-		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
+		} else if (ndsHeader.unitCode >= 0x02
+		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000) {
 			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
-		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)
+		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
 			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
 		}
 
