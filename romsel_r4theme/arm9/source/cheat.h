@@ -25,6 +25,10 @@ public:
 
 	bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
 
+  void selectCheats(std::string filename);
+
+  void onGenerate(void);
+
 	private:
     struct sDatIndex
     {
