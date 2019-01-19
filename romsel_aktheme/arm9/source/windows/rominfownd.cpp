@@ -350,6 +350,10 @@ void RomInfoWnd::pressGameSettings(void)
         else
         {
             settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			if (!ms().secondaryDevice && ms().useBootstrap) {
+                selection++;
+                settingsIni.ramDiskNo = (int)(settingWnd.getItemSelection(0, selection) - 1);
+			}
             if (isDSiMode()) {
                 selection++;
                 settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
