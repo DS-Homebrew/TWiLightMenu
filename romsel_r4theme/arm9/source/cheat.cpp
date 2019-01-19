@@ -23,6 +23,15 @@
 #include "tool/stringtool.h"
 #include <algorithm>
 
+#include "ndsheaderbanner.h"
+#include "iconTitle.h"
+#include "graphics/fontHandler.h"
+
+extern bool showdialogbox;
+extern int dialogboxHeight;
+
+int cheatWnd_cursorPosition = 0;
+
 CheatCodelist::~CheatCodelist(void) {}
 
 inline u32 gamecode(const char *aGameCode)
@@ -215,4 +224,242 @@ std::string CheatCodelist::getCheats()
   }
 	std::replace( cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
+}
+
+void CheatCodelist::selectCheats(std::string filename)
+{
+	int pressed = 0;
+
+	clearText();
+
+  dialogboxHeight = 6;
+	showdialogbox = true;
+
+  titleUpdate(isDirectory, filename.c_str());
+  printLargeCentered(false, 84, "Cheats");
+  printSmallCentered(false, 100, "Loading...");
+	
+	cheatWnd_cursorPosition = 0;
+	parse(filename);
+
+  int textX;
+
+  while (1) {
+ 		clearText();
+    titleUpdate(isDirectory, filename.c_str());
+    printLargeCentered(false, 84, "Cheats");
+
+    // If no cheats are found
+    if(_data.size() == 0) {
+      printSmallCentered(false, 100, "No cheats found");
+      printSmallCentered(false, 167, "B: Back");
+
+      while(1) {
+        scanKeys();
+        pressed = keysDownRepeat();
+        swiWaitForVBlank();
+        if(pressed & KEY_B) {
+          break;
+        }
+      }
+      break;
+    }
+
+    // Print bottom text
+    if(_data[cheatWnd_cursorPosition]._comment != "") {
+      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+        printSmallCentered(false, 167, "Y: Info X: Save B: Cancel");
+      } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+        printSmallCentered(false, 167, "A: Deslct Y: Info X: Save B: Cancl");
+      } else {
+        printSmallCentered(false, 167, "A: Slct Y: Info X: Save B: Cancl");
+      }
+    } else {
+      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+        printSmallCentered(false, 167, "X: Save B: Cancel");
+      } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+        printSmallCentered(false, 167, "A: Deselect X: Save B: Cancel");
+      } else {
+        printSmallCentered(false, 167, "A: Select X: Save B: Cancel");
+      }
+    }
+
+    // Print cheat list
+    for(int i=0;i<dialogboxHeight+2;i++) {
+      if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+        printSmall(false, 22, 100+(i*8), "v");
+        printSmall(false, 30, 100+(i*8), _data[i+cheatWnd_cursorPosition]._title.c_str());
+      } else {
+        if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::EInFolder) {
+          textX = 34;
+        } else {
+          textX = 30;
+        }
+        if(i+cheatWnd_cursorPosition<(int)_data.size()) {
+          if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+            printf ("\x1B[42m");
+            printSmall(false, textX-14, 99+(i*8), "x");
+          }
+          if(i==0) {
+            printSmall(false, textX-7, 100, "=");
+          } else {
+            printSmall(false, textX-6, 100+(i*8), "-");
+          }
+          printSmall(false, textX, 100+(i*8), _data[i+cheatWnd_cursorPosition]._title.c_str());
+        }
+      }
+    }
+
+    scanKeys();
+    pressed = keysDownRepeat();
+    swiWaitForVBlank();
+    if(pressed & KEY_UP) {
+      if(cheatWnd_cursorPosition>0) {
+        cheatWnd_cursorPosition--;
+      }
+    }
+    if(pressed & KEY_DOWN) {
+      if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
+        cheatWnd_cursorPosition++;
+      }
+    }
+    if(pressed & KEY_LEFT) {
+      if(cheatWnd_cursorPosition>0) {
+        cheatWnd_cursorPosition--;
+      }
+      while(1) {
+        if(!(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder)) {
+          if(cheatWnd_cursorPosition>0) {
+            cheatWnd_cursorPosition--;
+          } else {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    if(pressed & KEY_RIGHT) {
+      if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
+        cheatWnd_cursorPosition++;
+      }
+      while(1) {
+        if(!(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder)) {
+          if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
+            cheatWnd_cursorPosition++;
+          } else {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+    }
+    if(pressed & KEY_A) {
+      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+        if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EOpen) {
+          _data[cheatWnd_cursorPosition]._flags&=~cParsedItem::EOpen;
+        } else {
+          _data[cheatWnd_cursorPosition]._flags^=cParsedItem::EOpen;
+        }
+      } else {
+        if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+          _data[cheatWnd_cursorPosition]._flags&=~cParsedItem::ESelected;
+        } else {
+          _data[cheatWnd_cursorPosition]._flags^=cParsedItem::ESelected;
+        }
+      }
+    }
+    if(pressed & KEY_B) {
+      break;
+    }
+    if(pressed & KEY_X) {
+      onGenerate();
+      break;
+    }
+    if(pressed & KEY_Y) {
+      if(_data[cheatWnd_cursorPosition]._comment != "") {
+        while(1) {
+          clearText();
+          printLargeCentered(false, 84, "Cheats");
+
+          std::vector<std::string> _topText;
+          std::string _topTextStr(_data[cheatWnd_cursorPosition]._comment);
+          std::vector<std::string> words;
+          std::size_t pos;
+
+          // Process comment to stay within the box
+          while((pos = _topTextStr.find(' ')) != std::string::npos) {
+            words.push_back(_topTextStr.substr(0, pos));
+            _topTextStr = _topTextStr.substr(pos + 1);
+          }
+          if(_topTextStr.size())
+            words.push_back(_topTextStr);
+          std::string temp;
+          _topText.clear();
+          for(auto word : words)
+          {
+            int width = calcLargeFontWidth((temp + " " + word).c_str());
+            if(width > 220) {
+              _topText.push_back(temp);
+              temp = word;
+            }
+            else
+            {
+              temp += " " + word;
+            }
+          }
+          if(temp.size())
+            _topText.push_back(temp);
+          
+          // Print comment
+          for (int i = 0; i < (int)_topText.size(); i++)
+          {
+            printSmallCentered(false, 100 + (i*8), _topText[i].c_str());
+          }
+
+          // Print 'Back' text
+          printSmallCentered(false, 167, "B: Back");
+          scanKeys();
+          pressed = keysDownRepeat();
+          swiWaitForVBlank();
+          if(pressed & KEY_B) {
+            break;
+          }
+        }
+      }
+    }
+  }
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
+static void updateDB(u8 value,u32 offset,FILE* db)
+{
+  u8 oldvalue;
+  if(!db) return;
+  if(!offset) return;
+  if(fseek(db,offset,SEEK_SET)) return;
+  if(fread(&oldvalue,sizeof(oldvalue),1,db)!=1) return;
+  if(oldvalue!=value)
+  {
+    if(fseek(db,offset,SEEK_SET)) return;
+    fwrite(&value,sizeof(value),1,db);
+  }
+}
+
+void CheatCodelist::onGenerate(void)
+{
+  FILE* db=fopen("sd:/_nds/TWiLightMenu/cheats/usrcheat.dat","r+b");
+  if(db)
+  {
+    std::vector<cParsedItem>::iterator itr=_data.begin();
+    while(itr!=_data.end())
+    {
+      updateDB(((*itr)._flags&cParsedItem::ESelected)?1:0,(*itr)._offset,db);
+      ++itr;
+    }
+    fclose(db);
+  }
 }
