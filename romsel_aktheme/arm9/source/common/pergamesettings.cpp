@@ -42,6 +42,7 @@ void PerGameSettings::saveSettings()
     pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
     pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
 	pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", saveNo);
+	if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", ramDiskNo);
 	if (isDSiMode()) {
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
