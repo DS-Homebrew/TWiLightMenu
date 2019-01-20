@@ -42,6 +42,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
+#include "cheat.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -411,7 +412,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 96, "Release");
 				}
 			}
-			printSmall(false, 200, 166, "B: Back");
+			printSmall(false, 135, 166, "X: Cheats B: Back");
 		}
 		do {
 			scanKeys();
@@ -582,6 +583,10 @@ void perGameSettings (std::string filename) {
 					perGameSettingsChanged = false;
 				}
 				break;
+			}
+			if ((pressed & KEY_X)) {
+				CheatCodelist codelist;
+				codelist.selectCheats(filename);
 			}
 		}
 	}
