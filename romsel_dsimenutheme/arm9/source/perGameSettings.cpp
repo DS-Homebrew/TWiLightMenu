@@ -584,8 +584,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X))
-			{
+			if ((pressed & KEY_X)) {
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
 			}

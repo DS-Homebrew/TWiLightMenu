@@ -44,7 +44,6 @@
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
 #include "perGameSettings.h"
-#include "cheat.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -477,12 +476,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			SaveSettings();
 			settingsChanged = false;
 			return "null";		
-		}
-
-		if ((pressed & KEY_L))
-		{
-			CheatCodelist codelist;
-			codelist.selectCheats(dirContents.at(fileOffset).name);
 		}
 
 		if ((pressed & KEY_B) && showDirectories) {

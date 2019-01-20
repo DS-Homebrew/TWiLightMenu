@@ -27,8 +27,8 @@
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 
-extern bool showdialogbox;
 extern int dialogboxHeight;
+extern bool useBootstrap;
 
 int cheatWnd_cursorPosition = 0;
 
@@ -233,7 +233,6 @@ void CheatCodelist::selectCheats(std::string filename)
 	clearText();
 
   dialogboxHeight = 6;
-	showdialogbox = true;
 
   titleUpdate(isDirectory, filename.c_str());
   printLargeCentered(false, 84, "Cheats");
@@ -373,52 +372,57 @@ void CheatCodelist::selectCheats(std::string filename)
       break;
     }
     if(pressed & KEY_X) {
+      clearText();
+      titleUpdate(isDirectory, filename.c_str());
+      printLargeCentered(false, 84, "Cheats");
+      printSmallCentered(false, 100, "Saving...");
       onGenerate();
       break;
     }
     if(pressed & KEY_Y) {
       if(_data[cheatWnd_cursorPosition]._comment != "") {
-        while(1) {
-          clearText();
-          printLargeCentered(false, 84, "Cheats");
+        clearText();
+        titleUpdate(isDirectory, filename.c_str());
+        printLargeCentered(false, 84, "Cheats");
 
-          std::vector<std::string> _topText;
-          std::string _topTextStr(_data[cheatWnd_cursorPosition]._comment);
-          std::vector<std::string> words;
-          std::size_t pos;
+        std::vector<std::string> _topText;
+        std::string _topTextStr(_data[cheatWnd_cursorPosition]._comment);
+        std::vector<std::string> words;
+        std::size_t pos;
 
-          // Process comment to stay within the box
-          while((pos = _topTextStr.find(' ')) != std::string::npos) {
-            words.push_back(_topTextStr.substr(0, pos));
-            _topTextStr = _topTextStr.substr(pos + 1);
-          }
-          if(_topTextStr.size())
-            words.push_back(_topTextStr);
-          std::string temp;
-          _topText.clear();
-          for(auto word : words)
-          {
-            int width = calcLargeFontWidth((temp + " " + word).c_str());
-            if(width > 220) {
-              _topText.push_back(temp);
-              temp = word;
-            }
-            else
-            {
-              temp += " " + word;
-            }
-          }
-          if(temp.size())
+        // Process comment to stay within the box
+        while((pos = _topTextStr.find(' ')) != std::string::npos) {
+          words.push_back(_topTextStr.substr(0, pos));
+          _topTextStr = _topTextStr.substr(pos + 1);
+        }
+        if(_topTextStr.size())
+          words.push_back(_topTextStr);
+        std::string temp;
+        _topText.clear();
+        for(auto word : words)
+        {
+          int width = calcLargeFontWidth((temp + " " + word).c_str());
+          if(width > 220) {
             _topText.push_back(temp);
-          
-          // Print comment
-          for (int i = 0; i < (int)_topText.size(); i++)
-          {
-            printSmallCentered(false, 100 + (i*8), _topText[i].c_str());
+            temp = word;
           }
+          else
+          {
+            temp += " " + word;
+          }
+        }
+        if(temp.size())
+          _topText.push_back(temp);
+        
+        // Print comment
+        for (int i = 0; i < (int)_topText.size(); i++)
+        {
+          printSmallCentered(false, 100 + (i*8), _topText[i].c_str());
+        }
 
-          // Print 'Back' text
-          printSmallCentered(false, 167, "B: Back");
+        // Print 'Back' text
+        printSmallCentered(false, 167, "B: Back");
+        while(1) {
           scanKeys();
           pressed = keysDownRepeat();
           swiWaitForVBlank();
@@ -430,8 +434,7 @@ void CheatCodelist::selectCheats(std::string filename)
     }
   }
 	clearText();
-	showdialogbox = false;
-	dialogboxHeight = 0;
+	dialogboxHeight = 4+useBootstrap;
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
