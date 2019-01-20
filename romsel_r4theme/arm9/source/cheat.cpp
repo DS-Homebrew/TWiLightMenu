@@ -297,7 +297,6 @@ void CheatCodelist::selectCheats(std::string filename)
         }
         if(i+cheatWnd_cursorPosition<(int)_data.size()) {
           if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-            printf ("\x1B[42m");
             printSmall(false, textX-14, 99+(i*8), "x");
           }
           if(i==0) {
