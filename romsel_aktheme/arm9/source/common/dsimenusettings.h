@@ -150,6 +150,8 @@ class DSiMenuPlusPlusSettings
     bool autorun;
     bool show12hrClock;
 
+    bool snesEmulator;
+
     int ak_viewMode;
     int ak_scrollSpeed;
     bool ak_zoomIcons;

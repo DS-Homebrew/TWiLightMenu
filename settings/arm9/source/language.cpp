@@ -214,6 +214,7 @@ void langInit(void)
 	STR_SETTINGS_SAVED = languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "Settings saved.");
 
 	STR_LR_SWITCH = languageini.GetString("LANGUAGE", "LR_SWITCH", "L/R/Y/X Switch Pages");
+	STR_MAIN_SETTINGS = languageini.GetString("LANGUAGE", "MAIN_SETTINGS", "Main Settings");
 	STR_GUI_SETTINGS = languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings");
 	STR_GAMESAPPS_SETTINGS = languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings");
 
@@ -361,6 +362,9 @@ void langInit(void)
 
     STR_12_HOUR_CLOCK =  languageini.GetString("LANGUAGE", "12_HOUR_CLOCK", "Use a 12 hour clock");
     STR_DESCRIPTION_12_HOUR_CLOCK = languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme.");
+
+		STR_SNES_EMULATOR =  languageini.GetString("LANGUAGE", "SNES_EMULATOR", "Choose a SNES emulator");
+    STR_DESCRIPTION_SNES_EMULATOR = languageini.GetString("LANGUAGE", "DESCRIPTION_SNES_EMULATOR", "Use whether you would rather use SNEmulDS or lolSNES.");
 
     STR_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "AK_ZOOMING_ICON", "Zooming icons");
     STR_DESCRIPTION_AK_ZOOMING_ICON = languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for the selected icon in the Acekard theme.");

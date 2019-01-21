@@ -42,6 +42,7 @@
 #include "common/gbaswitch.h"
 #include "common/unlaunchboot.h"
 #include "common/files.h"
+#include "common/nds_loader_arm9.h"
 
 #include "common/inifile.h"
 #include "language.h"
@@ -946,7 +947,14 @@ void MainWnd::bootGbaRunner(void)
 
 void MainWnd::bootSNES(void)
 {
-	if (!ms().secondaryDevice && access(SNEMULDS_ROM, F_OK) != 0) {
+    char* snesEmulatorRom;
+    if(ms().snesEmulator) {
+        snesEmulatorRom = SNEMULDS_ROM;
+    } else {
+        snesEmulatorRom = LOLSNES_ROM;
+    }
+
+	if (!ms().secondaryDevice && access(snesEmulatorRom, F_OK) != 0) {
         messageBox(this, LANG("game launch", "SNES Error"), LANG("game launch", "SNES Error message"), MB_OK);
 		return;
 	}
@@ -964,15 +972,17 @@ void MainWnd::bootSNES(void)
         return;
     }
 
-    BootstrapConfig snes("SNEmulDS.nds", SNEMULDS_ROM, "", 0);
-
 	CIniFile ini(BOOTSTRAP_INI);
+    ini.SetString("NDS-BOOTSTRAP", "NDS_PATH", snesEmulatorRom);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SNES_RAMDISK);
-	ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+    if(ms().snesEmulator) {
+        ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+    } else {
+        ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+    }
 	ini.SaveIniFile(BOOTSTRAP_INI);
-    snes.nightlyBootstrap(ms().bootstrapFile);
 
-    if (int err = snes.launch())
+    if (int err = runNdsFile (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);

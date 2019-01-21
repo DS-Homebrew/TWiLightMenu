@@ -44,6 +44,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     show12hrClock = true;
 
+    snesEmulator = true;
+
     ak_viewMode = EViewInternal;
     ak_scrollSpeed = EScrollFast;
     ak_theme = "zelda";
@@ -129,6 +131,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
+    snesEmulator =  settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 
 }
@@ -186,6 +190,8 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	}
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+
+    settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
