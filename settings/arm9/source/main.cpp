@@ -431,12 +431,11 @@ int main(int argc, char **argv)
 	int pressed = 0;
 #pragma endregion
 
-	// consoleDemoInit();
-	SettingsPage guiPage(STR_GUI_SETTINGS);
+SettingsPage mainPage(STR_MAIN_SETTINGS);
 
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
-	guiPage
+	mainPage
 		// Language
 		.option(STR_LANGUAGE,
 				STR_DESCRIPTION_LANGUAGE_1,
@@ -457,13 +456,24 @@ int main(int argc, char **argv)
 				 TLanguage::ELangSpanish});
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
-		guiPage.option(STR_S1SDACCESS,
+		mainPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,
 				Option::Bool(&ms().secondaryAccess),
 				{STR_ON, STR_OFF},
 				{true, false});
 	}
 
+	mainPage
+		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
+		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
+		.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false});
+
+	// consoleDemoInit();
+	SettingsPage guiPage(STR_GUI_SETTINGS);
+
+	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
+	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
 		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
 
@@ -474,12 +484,9 @@ int main(int argc, char **argv)
 				{"DSi", "3DS", "R4", "Acekard"},
 				{0, 1, 2, 3})
 
-		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
@@ -605,6 +612,7 @@ int main(int argc, char **argv)
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	gui()
+		.addPage(mainPage)
 		.addPage(guiPage)
 		.addPage(gamesPage)
 		.onExit(defaultExitHandler)

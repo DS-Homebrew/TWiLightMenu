@@ -7,6 +7,7 @@ extern std::string STR_SAVING_SETTINGS;
 extern std::string STR_SETTINGS_SAVED;
 
 extern std::string STR_LR_SWITCH;
+extern std::string STR_MAIN_SETTINGS;
 extern std::string STR_GUI_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
 
@@ -154,6 +155,9 @@ extern std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1;
 
 extern std::string STR_12_HOUR_CLOCK;
 extern std::string STR_DESCRIPTION_12_HOUR_CLOCK;
+
+extern std::string STR_SNES_EMULATOR;
+extern std::string STR_DESCRIPTION_SNES_EMULATOR;
 
 extern std::string STR_AK_ZOOMING_ICON;
 extern std::string STR_DESCRIPTION_AK_ZOOMING_ICON;

@@ -212,7 +212,10 @@ void SettingsGUI::drawTopText()
 
 void SettingsGUI::rotatePage(int rotateAmount)
 {
-    int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
+    // int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
+    int pageIndex = (_selectedPage + rotateAmount);
+    if(pageIndex<0) pageIndex = _pages.size()-1;
+    else if(pageIndex>_pages.size()-1) pageIndex = 0;
     _selectedPage = pageIndex;
     _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
     _topCursor = 0;
