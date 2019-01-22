@@ -1189,38 +1189,60 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
-				cursorPosition[secondaryDevice] = floor((touch.px-30)/4.925);
-				titlewindowXpos[secondaryDevice] = touch.px-30;
-				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
+				touchPosition startTouch = touch;
+				while(1) {
+					// pressed = keysDown();
+					// held = keysDownRepeat();
+					scanKeys();
+					touchRead(&touch);
 
-				// Load icons
-				if (cursorPosition[secondaryDevice] <= 1) {
-					for(int i = 0; i < 5; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-						}
+					if (!(keysHeld() & KEY_TOUCH)) break;
+
+					cursorPosition[secondaryDevice] = floor((touch.px-30)/4.925);
+					if(cursorPosition[secondaryDevice] > 39) {
+						cursorPosition[secondaryDevice] = 39;
+						titlewindowXpos[secondaryDevice] = 192.075;
+						titleboxXpos[secondaryDevice] = 2496;
+					} else if(cursorPosition[secondaryDevice] < 0) {
+						cursorPosition[secondaryDevice] = 0;
+						titlewindowXpos[secondaryDevice] = 0;
+						titleboxXpos[secondaryDevice] = 0;
+					} else {
+						titlewindowXpos[secondaryDevice] = touch.px-30;
+						titleboxXpos[secondaryDevice] = (touch.px-30)/4.925 * 64;
 					}
-				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-					for(int i = 0; i < 6; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+					
+
+					// Load icons
+					if (cursorPosition[secondaryDevice] <= 1) {
+						for(int i = 0; i < 5; i++) {
+							swiWaitForVBlank();
+							if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+							}
 						}
-					}
-				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
-					for(int i = 0; i < 5; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+					} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+						for(int i = 0; i < 6; i++) {
+							swiWaitForVBlank();
+							if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+							}
+						}
+					} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+						for(int i = 0; i < 5; i++) {
+							swiWaitForVBlank();
+							if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+							}
 						}
 					}
 				}
-
+				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
 				waitForNeedToPlayStopSound = 1;
 				mmEffectEx(&snd_select);
 				boxArtLoaded = false;
 				settingsChanged = true;
+				touch = startTouch;
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
