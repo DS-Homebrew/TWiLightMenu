@@ -131,17 +131,18 @@ void rebootDSiMenuPP()
 
 void loadMainMenu()
 {
+	fifoSendValue32(FIFO_USER_07, 0);
+	if (ms().soundfreq)
+		fifoSendValue32(FIFO_USER_07, 2);
+	else
+		fifoSendValue32(FIFO_USER_07, 1);
+
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
 	// if (soundfreqsettingChanged)
 	// {
 	// 	if (ms().soundfreq)
@@ -156,17 +157,18 @@ void loadMainMenu()
 
 void loadROMselect()
 {
+	fifoSendValue32(FIFO_USER_07, 0);
+	if (ms().soundfreq)
+		fifoSendValue32(FIFO_USER_07, 2);
+	else
+		fifoSendValue32(FIFO_USER_07, 1);
+
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
 	// if (soundfreqsettingChanged)
 	// {
 	// 	if (ms().soundfreq)
@@ -191,16 +193,16 @@ void loadROMselect()
 
 int lastRunROM()
 {
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
+
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 25; i++)
+		swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	// if (soundfreqsettingChanged)
 	// {
