@@ -432,7 +432,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 		)){
 		isScrolling = true;
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
-		isScrolling = false; 
+		isScrolling = false;
 	} 
 
 }
@@ -1190,6 +1190,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
 				touchPosition startTouch = touch;
+				showSTARTborder = false;
 				while(1) {
 					// pressed = keysDown();
 					// held = keysDownRepeat();
@@ -1236,6 +1237,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							}
 						}
 					}
+					clearText();
+					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1)) {
+						showbubble = true;
+						titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					} else {
+						showbubble = false;
+					}
 				}
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
 				waitForNeedToPlayStopSound = 1;
@@ -1243,6 +1251,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
+				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
+					showSTARTborder = true;
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
