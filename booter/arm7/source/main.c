@@ -64,7 +64,7 @@ int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
 
-	*(u16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+	//*(u16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
@@ -89,7 +89,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
 	
