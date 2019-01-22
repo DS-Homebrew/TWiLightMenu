@@ -648,7 +648,90 @@ void launchGba(void) {
 	}
 }
 
+void launchSega8bit(void) {
+	if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) != 0) {
+		mmEffectEx(&snd_wrong);
+		clearText();
+		dbox_showIcon = false;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		printLarge(false, 16, 12, ".img file not found");
+		printSmallCentered(false, 64, "\"Sega8bit.img\" is required");
+		printSmallCentered(false, 78, "to run 8-bit Sega games.");
+		printSmallCentered(false, 112, "Place it in \"sd:/_nds/");
+		printSmallCentered(false, 126, "TWiLightMenu/emulators\".");
+		printSmall(false, 208, 166, "A: OK");
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDown();
+			loadVolumeImage();
+			loadBatteryImage();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_A));
+		clearText();
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		return;
+	}
+
+	mmEffectEx(&snd_launch);
+	controlTopBright = true;
+
+	fadeType = false;	// Fade to white
+	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
+	for (int i = 0; i < 60; i++) {
+		swiWaitForVBlank();
+	}
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
+
+	SaveSettings();
+	// Start S8DS
+	if (secondaryDevice || arm7SCFGLocked) {
+		if (useBootstrap) {
+			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, ((!secondaryDevice && arm7SCFGLocked) ? false : true), true, false);
+			iprintf ("Start failed. Error %i\n", err);
+		} else {
+			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
+		}
+	} else {
+		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+		iprintf ("Start failed. Error %i\n", err);
+	}
+}
+
 void launchSegaMD(void) {
+	if (!secondaryDevice && arm7SCFGLocked) {
+		mmEffectEx(&snd_wrong);
+		clearText();
+		dbox_showIcon = false;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		printLarge(false, 16, 12, "Error");
+		printSmallCentered(false, 112, "This emulator cannot be ran");
+		printSmallCentered(false, 128, "with DSiWareHax.");
+		printSmall(false, 208, 166, "A: OK");
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDown();
+			loadVolumeImage();
+			loadBatteryImage();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_A));
+		clearText();
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		return;
+	}
+
 	if (!secondaryDevice && access("sd:/_nds/TWiLightMenu/emulators/SegaMD.img", F_OK) != 0) {
 		mmEffectEx(&snd_wrong);
 		clearText();
@@ -708,6 +791,30 @@ void launchSegaMD(void) {
 }
 
 void launchSNES(void) {
+	if (!secondaryDevice && arm7SCFGLocked) {
+		mmEffectEx(&snd_wrong);
+		clearText();
+		dbox_showIcon = false;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		printLarge(false, 16, 12, "Error");
+		printSmallCentered(false, 112, "This emulator cannot be ran");
+		printSmallCentered(false, 128, "with DSiWareHax.");
+		printSmall(false, 208, 166, "A: OK");
+		int pressed = 0;
+		do {
+			scanKeys();
+			pressed = keysDown();
+			loadVolumeImage();
+			loadBatteryImage();
+			swiWaitForVBlank();
+		} while (!(pressed & KEY_A));
+		clearText();
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		return;
+	}
+
 	if (!secondaryDevice && access("sd:/_nds/TWiLightMenu/emulators/SNES.img", F_OK) != 0) {
 		mmEffectEx(&snd_wrong);
 		clearText();
@@ -1242,11 +1349,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound()) {
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 4; i++) {
 					topIconXpos -= 14;
 				}
 			} else {
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < 3; i++) {
 					topIconXpos -= 14;
 				}
 			}
@@ -1273,6 +1380,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchGba();
+			}
+			else
+			{
+				topIconXpos += 28;
+			}
+
+			// Launch 8-bit Sega emulator
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
+			{
+				launchSega8bit();
 			}
 			else
 			{
