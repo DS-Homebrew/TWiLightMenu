@@ -431,12 +431,11 @@ int main(int argc, char **argv)
 	int pressed = 0;
 #pragma endregion
 
-	// consoleDemoInit();
-	SettingsPage guiPage(STR_GUI_SETTINGS);
+SettingsPage mainPage(STR_MAIN_SETTINGS);
 
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
-	guiPage
+	mainPage
 		// Language
 		.option(STR_LANGUAGE,
 				STR_DESCRIPTION_LANGUAGE_1,
@@ -457,35 +456,19 @@ int main(int argc, char **argv)
 				 TLanguage::ELangSpanish});
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
-		guiPage.option(STR_S1SDACCESS,
+		mainPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,
 				Option::Bool(&ms().secondaryAccess),
 				{STR_ON, STR_OFF},
 				{true, false});
 	}
 
-	guiPage
-		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
-
-		// Theme
-		.option(STR_THEME,
-				STR_DESCRIPTION_THEME_1,
-				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard"},
-				{0, 1, 2, 3})
-
+	mainPage
 		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
-		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
-		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
-		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
-				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
-		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false});
 
 	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
-		guiPage
+		mainPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
 				Option::Int(&ms().sysRegion),
@@ -507,6 +490,30 @@ int main(int argc, char **argv)
 				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
 	}
 
+	// consoleDemoInit();
+	SettingsPage guiPage(STR_GUI_SETTINGS);
+
+	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
+	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
+	guiPage
+		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
+
+		// Theme
+		.option(STR_THEME,
+				STR_DESCRIPTION_THEME_1,
+				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
+				{"DSi", "3DS", "R4", "Acekard"},
+				{0, 1, 2, 3})
+
+		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
+		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
+		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
+				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
+		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
 	if (!isDSiMode() && sys().isRegularDS())
@@ -517,25 +524,6 @@ int main(int argc, char **argv)
 	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
-
-	gamesPage
-		.option(STR_LANGUAGE,
-				STR_DESCRIPTION_LANGUAGE_1,
-				Option::Int(&ms().bstrap_language),
-				{STR_SYSTEM,
-				 "Japanese",
-				 "English",
-				 "French",
-				 "German",
-				 "Italian",
-				 "Spanish"},
-				{TLanguage::ELangDefault,
-				 TLanguage::ELangJapanese,
-				 TLanguage::ELangEnglish,
-				 TLanguage::ELangFrench,
-				 TLanguage::ELangGerman,
-				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish});
 
 	if (isDSiMode()) {
 		gamesPage.option(STR_RUNIN,
@@ -600,11 +588,12 @@ int main(int argc, char **argv)
 
 		// We are also using the changed callback to write
 		// or delete the hiya autoboot file.
-		guiPage
+		mainPage
 			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", "System Menu"}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	gui()
+		.addPage(mainPage)
 		.addPage(guiPage)
 		.addPage(gamesPage)
 		.onExit(defaultExitHandler)

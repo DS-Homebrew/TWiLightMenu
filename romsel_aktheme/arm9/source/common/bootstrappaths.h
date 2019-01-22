@@ -31,8 +31,10 @@
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
 
 #define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
-#define SNES_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SNES.img"
 #define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
+#define LOLSNES_ROM "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds"
+#define LOLSNES_FC "fat:/_nds/TWiLightMenu/emulators/lolSNES.nds"
+#define SNES_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SNES.img"
 
 #define JENESISDS_ROM "sd:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
 #define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
