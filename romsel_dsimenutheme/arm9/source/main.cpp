@@ -138,6 +138,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool snesEmulator = true;
 
 bool gbaBiosFound[2] = {false};
 bool useGbarunner = false;
@@ -199,6 +200,7 @@ void LoadSettings(void) {
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	if (!isDSiMode()) useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);

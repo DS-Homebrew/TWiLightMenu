@@ -860,18 +860,18 @@ void launchSNES(void) {
 	if (secondaryDevice) {
 		if (useBootstrap) {
 			if(snesEmulator) {
-				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
-				iprintf ("Start failed. Error %i\n", err);
-			} else {
-				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
-				iprintf ("Start failed. Error %i\n", err);
-			}
+					int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
+					iprintf ("Start failed. Error %i\n", err);
+				} else {
+					int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
+					iprintf ("Start failed. Error %i\n", err);
+				}
 		} else {
 			if(snesEmulator) {
-				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
-			} else {
-				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
-			}
+					loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+				} else {
+					loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
+				}
 		}
 	} else {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );

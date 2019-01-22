@@ -125,6 +125,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool snesEmulator = true;
 
 bool useGbarunner = false;
 int theme = 0;
@@ -182,6 +183,7 @@ void LoadSettings(void) {
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	if (!isDSiMode()) useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -868,7 +870,11 @@ int main(int argc, char **argv) {
 					case 2:
 						printLargeCentered(false, 166, "Up/Down: Select emulator");
 						if (highlightedEmulator == 2) {
-							printLargeCentered(false, 182, "Start SNEmulDS");
+							if(snesEmulator) {
+								printLargeCentered(false, 182, "Start SNEmulDS");
+							} else {
+								printLargeCentered(false, 182, "Start lolSNES");
+							}
 						} else if (highlightedEmulator == 1) {
 							printLargeCentered(false, 182, "Start jEnesisDS");
 						} else {
@@ -973,14 +979,27 @@ int main(int argc, char **argv) {
 						if (highlightedEmulator == 2) {
 							if (secondaryDevice) {
 								if (useBootstrap) {
-									int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
-									iprintf ("Start failed. Error %i\n", err);
+									if(snesEmulator) {
+										int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
+										iprintf ("Start failed. Error %i\n", err);
+									} else {
+										int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
+										iprintf ("Start failed. Error %i\n", err);
+									}
 								} else {
-									loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+									if(snesEmulator) {
+										loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+									} else {
+										loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
+									}
 								}
 							} else if (access("sd:/_nds/TWiLightMenu/emulators/SNES.img", F_OK) == 0) {
 								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+								if(snesEmulator) {
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+								} else {
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
+								}
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
