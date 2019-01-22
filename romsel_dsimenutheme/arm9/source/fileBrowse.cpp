@@ -1348,19 +1348,28 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			int topIconXpos = 116;
+			int savedTopIconXpos[5] = {0};
 			if (isDSiMode() && sdFound()) {
 				for (int i = 0; i < 4; i++) {
 					topIconXpos -= 14;
+				}
+				for (int i = 0; i < 5; i++) {
+					savedTopIconXpos[i] = topIconXpos;
+					topIconXpos += 28;
 				}
 			} else {
 				for (int i = 0; i < 3; i++) {
 					topIconXpos -= 14;
 				}
+				for (int i = 1; i < 5; i++) {
+					savedTopIconXpos[i] = topIconXpos;
+					topIconXpos += 28;
+				}
 			}
 
 			if (isDSiMode() && sdFound()) {
 				// Switch devices or launch Slot-1 by touching button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
 				&& !titleboxXmoveleft && !titleboxXmoveright)
 				{
 					if (secondaryDevice || REG_SCFG_MC != 0x11) {
@@ -1370,50 +1379,30 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						mmEffectEx(&snd_wrong);
 					}
 				}
-				else
-				{
-					topIconXpos += 28;
-				}
 			}
 
 			// Launch GBA by touching button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchGba();
 			}
-			else
-			{
-				topIconXpos += 28;
-			}
 
 			// Launch 8-bit Sega emulator
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] && touch.px < savedTopIconXpos[2]+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchSega8bit();
 			}
-			else
-			{
-				topIconXpos += 28;
-			}
 
 			// Launch Sega MD/Gen
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[3] && touch.px < savedTopIconXpos[3]+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchSegaMD();
 			}
-			else
-			{
-				topIconXpos += 28;
-			}
 
 			// Launch SNES
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= topIconXpos && touch.px < topIconXpos+24 && !titleboxXmoveleft && !titleboxXmoveright)
+			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[4] && touch.px < savedTopIconXpos[4]+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchSNES();
-			}
-			else
-			{
-				topIconXpos += 28;
 			}
 
 			// page switch
