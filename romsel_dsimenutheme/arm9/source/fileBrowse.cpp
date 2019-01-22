@@ -1249,6 +1249,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				scrollWindowTouched = false;
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
+				titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 5;
 				waitForNeedToPlayStopSound = 1;
 				mmEffectEx(&snd_select);
 				boxArtLoaded = false;
