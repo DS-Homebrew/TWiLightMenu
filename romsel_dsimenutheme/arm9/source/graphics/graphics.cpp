@@ -79,6 +79,7 @@ extern bool needToPlayStopSound;
 extern int waitForNeedToPlayStopSound;
 
 extern bool buttonArrowTouched[2];
+extern bool scrollWindowTouched;
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -529,7 +530,7 @@ void vBlankHandler()
 					else glSprite(bipXpos, 179, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
 					bipXpos += 5;
 				}
-				glSprite(16+titlewindowXpos[secondaryDevice], 173, GL_FLIP_NONE, &tex().buttonarrowImage()[2]);
+				glSprite(16+titlewindowXpos[secondaryDevice], 173, GL_FLIP_NONE, &tex().buttonarrowImage()[2+scrollWindowTouched]);
 				glSprite(0, 173, GL_FLIP_NONE, &tex().buttonarrowImage()[0+buttonArrowTouched[0]]);
 				glSprite(224, 173, GL_FLIP_H, &tex().buttonarrowImage()[0+buttonArrowTouched[1]]);
 				glColor(RGB15(31, 31, 31));

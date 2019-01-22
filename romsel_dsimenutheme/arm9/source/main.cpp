@@ -255,6 +255,7 @@ bool redoDropDown = false;
 bool showbubble = false;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
+bool scrollWindowTouched = false;
 
 bool titleboxXmoveleft = false;
 bool titleboxXmoveright = false;

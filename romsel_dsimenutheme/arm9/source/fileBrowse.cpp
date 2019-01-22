@@ -92,6 +92,7 @@ extern bool redoDropDown;
 extern bool showbubble;
 extern bool showSTARTborder;
 extern bool buttonArrowTouched[2];
+extern bool scrollWindowTouched;
 
 extern bool titleboxXmoveleft;
 extern bool titleboxXmoveright;
@@ -1191,6 +1192,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				touchPosition startTouch = touch;
 				showSTARTborder = false;
+				scrollWindowTouched = true;
 				while(1) {
 					// pressed = keysDown();
 					// held = keysDownRepeat();
@@ -1245,6 +1247,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						showbubble = false;
 					}
 				}
+				scrollWindowTouched = false;
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
 				waitForNeedToPlayStopSound = 1;
 				mmEffectEx(&snd_select);
