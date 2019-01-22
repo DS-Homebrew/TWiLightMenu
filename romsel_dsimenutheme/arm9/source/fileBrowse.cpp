@@ -28,6 +28,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <dirent.h>
+#include <math.h>
 
 #include <nds.h>
 #include <maxmod9.h>
@@ -82,6 +83,7 @@ extern int consoleModel;
 extern bool isRegularDS;
 extern int launcherApp;
 extern int sysRegion;
+extern bool snesEmulator;
 
 extern const char *unlaunchAutoLoadID;
 
@@ -854,17 +856,30 @@ void launchSNES(void) {
 	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
 	SaveSettings();
-	// Start SNEmulDS
+	// Start SNEmulDS / lolSNES
 	if (secondaryDevice) {
 		if (useBootstrap) {
-			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
-			iprintf ("Start failed. Error %i\n", err);
+			if(snesEmulator) {
+				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
+				iprintf ("Start failed. Error %i\n", err);
+			} else {
+				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
+				iprintf ("Start failed. Error %i\n", err);
+			}
 		} else {
-			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+			if(snesEmulator) {
+				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+			} else {
+				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
+			}
 		}
 	} else {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+		if(snesEmulator) {
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+		} else {
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
+		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
@@ -1172,6 +1187,40 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						defer(reloadFontTextures);
 					}
 				}
+			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
+			{
+				cursorPosition[secondaryDevice] = floor((touch.px-30)/4.925);
+				titlewindowXpos[secondaryDevice] = touch.px-30;
+				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
+
+				// Load icons
+				if (cursorPosition[secondaryDevice] <= 1) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+					for(int i = 0; i < 6; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+						}
+					}
+				}
+
+				waitForNeedToPlayStopSound = 1;
+				mmEffectEx(&snd_select);
+				boxArtLoaded = false;
+				settingsChanged = true;
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
