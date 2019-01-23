@@ -37,12 +37,13 @@
 #define SNES_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SNES.img"
 
 #define JENESISDS_ROM "sd:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
-#define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
 #define JENESISDS_FC "fat:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
+#define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
 
+#define S8DS07_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds"
 #define S8DS_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"
-#define SEGA8BIT_RAMDISK "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img"
 #define S8DS_FC "fat:/_nds/TWiLightMenu/emulators/S8DS.nds"
+#define SEGA8BIT_RAMDISK "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img"
 
 #define GAMEYOB_SD "sd:/_nds/TWiLightMenu/emulators/gameyob.nds"
 #define GAMEYOB_FC "/_nds/TWiLightMenu/emulators/gameyob.nds"

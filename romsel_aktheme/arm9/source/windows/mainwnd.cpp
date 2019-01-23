@@ -991,7 +991,7 @@ void MainWnd::bootSNES(void)
 
 void MainWnd::bootSega8bit()
 {
-	if (!ms().secondaryDevice && access(S8DS_ROM, F_OK) != 0) {
+	if (!ms().secondaryDevice && access(S8DS07_ROM, F_OK) != 0) {
         messageBox(this, LANG("game launch", "Sega8bit Error"), LANG("game launch", "Sega8bit Error Message"), MB_OK);
 		return;
 	}
@@ -1009,7 +1009,7 @@ void MainWnd::bootSega8bit()
         return;
     }
 
-    BootstrapConfig sega8bit("S8DS.nds", S8DS_ROM, "", 0);
+    BootstrapConfig sega8bit("S8DS.nds", S8DS07_ROM, "", 0);
 
 	CIniFile ini(BOOTSTRAP_INI);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGA8BIT_RAMDISK);

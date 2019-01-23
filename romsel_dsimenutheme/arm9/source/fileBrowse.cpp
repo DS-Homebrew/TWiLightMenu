@@ -701,7 +701,7 @@ void launchSega8bit(void) {
 		}
 	} else {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
