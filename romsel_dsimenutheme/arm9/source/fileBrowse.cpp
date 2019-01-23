@@ -1469,6 +1469,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 5;;
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice]*64;
+				boxArtLoaded = false;
+				settingsChanged = true;
 				touch = startTouch;
 				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
 					showSTARTborder = (theme == 1 ? true : false);
