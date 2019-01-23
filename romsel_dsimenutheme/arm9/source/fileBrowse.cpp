@@ -652,30 +652,45 @@ void launchGba(void) {
 }
 
 void launchSega8bit(void) {
-	if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) != 0) {
-		mmEffectEx(&snd_wrong);
+	bool useRAMDisk = false;
+	dbox_showIcon = false;
+
+	if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
+		bool canceled = false;
+
 		clearText();
-		dbox_showIcon = false;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, ".img file not found");
-		printSmallCentered(false, 64, "\"Sega8bit.img\" is required");
-		printSmallCentered(false, 78, "to run 8-bit Sega games.");
-		printSmallCentered(false, 112, "Place it in \"sd:/_nds/");
-		printSmallCentered(false, 126, "TWiLightMenu/emulators\".");
-		printSmall(false, 208, 166, "A: OK");
+		printLarge(false, 16, 12, "RAM disk .img found");
+		printSmallCentered(false, 80, "Do you want to use a");
+		printSmallCentered(false, 94, "RAM disk?");
+		printSmallCentered(false, 166, "X: Cancel  B: No  A: Yes");
 		int pressed = 0;
-		do {
+		while (1) {
 			scanKeys();
 			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
 			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
+
+			if (pressed & KEY_X) {
+				canceled = true;
+				break;
+			}
+			if (pressed & KEY_A) {
+				useRAMDisk = true;
+				break;
+			}
+			if (pressed & KEY_B) {
+				break;
+			}
+		}
 		clearText();
 		showdialogbox = false;
 		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		return;
+		if (canceled) {
+			return;
+		}
 	}
 
 	mmEffectEx(&snd_launch);
@@ -692,9 +707,9 @@ void launchSega8bit(void) {
 
 	SaveSettings();
 	// Start S8DS
-	if (secondaryDevice || arm7SCFGLocked) {
+	if (!useRAMDisk) {
 		if (useBootstrap) {
-			int err = runNdsFile ("/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, ((!secondaryDevice && arm7SCFGLocked) ? false : true), true, false);
+			int err = runNdsFile ((!secondaryDevice && !arm7SCFGLocked) ? "/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, false, true, false);
 			iprintf ("Start failed. Error %i\n", err);
 		} else {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
