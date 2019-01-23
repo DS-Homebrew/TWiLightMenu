@@ -861,18 +861,18 @@ void launchSNES(void) {
 	if (secondaryDevice) {
 		if (useBootstrap) {
 			if(snesEmulator) {
-					int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
-					iprintf ("Start failed. Error %i\n", err);
-				} else {
-					int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
-					iprintf ("Start failed. Error %i\n", err);
-				}
+				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
+				iprintf ("Start failed. Error %i\n", err);
+			} else {
+				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
+				iprintf ("Start failed. Error %i\n", err);
+			}
 		} else {
 			if(snesEmulator) {
-					loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
-				} else {
-					loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
-				}
+				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
+			} else {
+				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
+			}
 		}
 	} else {
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
@@ -1057,6 +1057,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		reloadFontPalettes();
 		clearText(false);
 		waitForFadeOut();
+		bool gameTapped = false;
 
 		/* clearText(false);
 		updatePath();
@@ -1146,7 +1147,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px < 96 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				cursorPosition[secondaryDevice] -= 1;
@@ -1168,7 +1168,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
 					|| ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
-					|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 160 && !titleboxXmoveleft && !titleboxXmoveright)		// Title box
 					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				cursorPosition[secondaryDevice] += 1;
@@ -1188,20 +1187,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						defer(reloadFontTextures);
 					}
 				}
+			// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
 				touchPosition startTouch = touch;
+				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
 				scrollWindowTouched = true;
 				while(1) {
-					// pressed = keysDown();
-					// held = keysDownRepeat();
 					scanKeys();
 					touchRead(&touch);
 
 					if (!(keysHeld() & KEY_TOUCH)) break;
 
-					cursorPosition[secondaryDevice] = floor((touch.px-30)/4.925);
+					cursorPosition[secondaryDevice] = round((touch.px-30)/4.925);
 					if(cursorPosition[secondaryDevice] > 39) {
 						cursorPosition[secondaryDevice] = 39;
 						titlewindowXpos[secondaryDevice] = 192.075;
@@ -1217,28 +1216,41 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					
 
 					// Load icons
-					if (cursorPosition[secondaryDevice] <= 1) {
+					if (prevPos == cursorPosition[secondaryDevice]+1) {
+						if(cursorPosition[secondaryDevice] > 2) {
+							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+							}
+						}
+					} else if (prevPos == cursorPosition[secondaryDevice]-1) {
+						if(cursorPosition[secondaryDevice] < 37) {
+							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+							}
+						}
+					} else if (cursorPosition[secondaryDevice] <= 1) {
 						for(int i = 0; i < 5; i++) {
-							swiWaitForVBlank();
+							if(i%2)	swiWaitForVBlank();
 							if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
 								iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
 							}
 						}
 					} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 						for(int i = 0; i < 6; i++) {
-							swiWaitForVBlank();
+							if(i%2)	swiWaitForVBlank();
 							if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
 							}
 						}
 					} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
 						for(int i = 0; i < 5; i++) {
-							swiWaitForVBlank();
+							if(i%2)	swiWaitForVBlank();
 							if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
 								iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
 							}
 						}
 					}
+
 					clearText();
 					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1)) {
 						showbubble = true;
@@ -1246,6 +1258,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else {
 						showbubble = false;
 					}
+					prevPos = cursorPosition[secondaryDevice];
 				}
 				scrollWindowTouched = false;
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
@@ -1257,22 +1270,204 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touch = startTouch;
 				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
 					showSTARTborder = true;
+
+				// Draw icons 1 per vblank to prevent corruption
+				if (cursorPosition[secondaryDevice] <= 1) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+					for(int i = 0; i < 6; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+						}
+					}
+				}
+
+			// Dragging icons
+			} else if (((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft && !titleboxXmoveright)) {
+				touchPosition startTouch = touch;
+				touchPosition prevTouch1 = touch;
+				touchPosition prevTouch2 = touch;
+				int prevPos = cursorPosition[secondaryDevice];
+				showSTARTborder = false;
+
+				if(touch.px > 96 && touch.px < 160 && touch.py < 144 && touch.py > 88) {
+					while(1) {
+						scanKeys();
+						touchRead(&touch);
+						if(!(keysHeld() & KEY_TOUCH)) {
+							gameTapped = true;
+							break;
+						}
+						else if(touch.px < startTouch.px-10 || touch.px > startTouch.px+10)
+							break;
+					}
+				}
+
+				while(1) {
+					if(gameTapped)
+						break;
+					scanKeys();
+					touchRead(&touch);
+
+					if (!(keysHeld() & KEY_TOUCH)) {
+						bool tapped = false;
+						int dX = (-(prevTouch1.px-prevTouch2.px));
+						int decAmount = abs(dX);
+						if(dX>0) {
+							while(decAmount>.25 && titleboxXpos[secondaryDevice] < 2496) {
+								scanKeys();
+								if(keysHeld() & KEY_TOUCH) {
+									tapped = true;
+									break;
+								}
+
+								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
+
+								for(int i=0;i<2;i++) {
+									swiWaitForVBlank();
+									titleboxXpos[secondaryDevice] += decAmount/2;
+								}
+								decAmount = decAmount/1.25;
+
+								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+
+								if(cursorPosition[secondaryDevice] < 37) {
+									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+									}
+								}
+							}
+						} else if (dX<0) {
+							while(decAmount>.25 && titleboxXpos[secondaryDevice]>0) {
+								scanKeys();
+								if(keysHeld() & KEY_TOUCH) {
+									tapped = true;
+									break;
+								}
+
+								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
+
+								for(int i=0;i<2;i++) {
+									swiWaitForVBlank();
+									titleboxXpos[secondaryDevice] -= decAmount/2;
+								}
+								decAmount = decAmount/1.25;
+
+								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+
+								if(cursorPosition[secondaryDevice] > 2) {
+									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+									}
+								}
+							}
+						}
+						if(tapped) continue;
+
+						if (cursorPosition[secondaryDevice] < 0)
+							cursorPosition[secondaryDevice] = 0;
+						else if (cursorPosition[secondaryDevice] > 39)
+							cursorPosition[secondaryDevice] = 39;
+
+						// Load icons
+						if (cursorPosition[secondaryDevice] <= 1) {
+							for(int i = 0; i < 5; i++) {
+								swiWaitForVBlank();
+								if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+								}
+							}
+						} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+							for(int i = 0; i < 6; i++) {
+								swiWaitForVBlank();
+								if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+								}
+							}
+						} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+							for(int i = 0; i < 5; i++) {
+								swiWaitForVBlank();
+								if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+								}
+							}
+						}
+						break;
+					}
+
+					titleboxXpos[secondaryDevice] += (-(touch.px-prevTouch1.px));
+					cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+					if(titleboxXpos[secondaryDevice] > 2496) {
+						cursorPosition[secondaryDevice] = 39;
+						titleboxXpos[secondaryDevice] = 2496;
+						titlewindowXpos[secondaryDevice] = 192.075;
+					} else if(titleboxXpos[secondaryDevice] < 0) {
+						cursorPosition[secondaryDevice] = 0;
+						titleboxXpos[secondaryDevice] = 0;
+						titlewindowXpos[secondaryDevice] = 0;
+					} else {
+						titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
+					}
+
+					// Load icons
+					if (prevPos == cursorPosition[secondaryDevice]+1) {
+						if(cursorPosition[secondaryDevice] > 2) {
+							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+							}
+						}
+					} else if (prevPos == cursorPosition[secondaryDevice]-1) {
+						if(cursorPosition[secondaryDevice] < 37) {
+							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+							}
+						}
+					}
+
+					if(prevPos != cursorPosition[secondaryDevice]) {
+						clearText();
+						if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1)) {
+							showbubble = true;
+							titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+						} else {
+							showbubble = false;
+						}
+					}
+					prevTouch2 = prevTouch1;
+					prevTouch1 = touch;
+					prevPos = cursorPosition[secondaryDevice];
+					swiWaitForVBlank();
+					swiWaitForVBlank();
+				}
+				titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 5;;
+				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice]*64;
+				touch = startTouch;
+				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
+					showSTARTborder = (theme == 1 ? true : false);
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
-			{
 				cursorPosition[secondaryDevice] = 0;
-			}
 			else if (cursorPosition[secondaryDevice] > 39)
-			{
 				cursorPosition[secondaryDevice] = 39;
-			}
 
 			// Startup...
 			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && touch.px > 96 && touch.px < 160 && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 170 && theme == 1 && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))											// START button/text (3DS theme)
+			|| gameTapped)
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
@@ -1371,6 +1566,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							break;
 						}
 						if (pressed & KEY_B) {
+							gameTapped = false;
 							proceedToLaunch = false;
 							pressed = 0;
 							break;
