@@ -46,6 +46,7 @@
 #include "nesrom_banner_bin.h"
 #include "gbcrom_banner_bin.h"
 #include "gbrom_banner_bin.h"
+#include "s8ds_banner_bin.h"
 #include "snemulds_banner_bin.h"
 #include "lolsnes_banner_bin.h"
 #include "smdrom_banner_bin.h"
@@ -173,14 +174,11 @@ bool MainList::enterDir(const std::string &dirName)
         }
         addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
 		listNum++;
-        if(ms().snesEmulator) {
-            addDirEntry(listNum, "SNES", "", SPATH_SNES, "snes", snemulds_banner_bin);
-		    listNum++;
-        } else {
-            addDirEntry(listNum, "SNES", "", SPATH_SNES, "snes", lolsnes_banner_bin);
-		    listNum++;
-        }
+        addDirEntry(listNum, "Sega 8-bit (MS, GG, etc.)", "", SPATH_SEGA8BIT, "sega8bit", s8ds_banner_bin);
+		listNum++;
         addDirEntry(listNum, "Sega Mega Drive (Genesis)", "", SPATH_SEGAMD, "segamd", smdrom_banner_bin);
+		listNum++;
+        addDirEntry(listNum, "SNES", "", SPATH_SNES, "snes", ms().snesEmulator ? snemulds_banner_bin : lolsnes_banner_bin);
 		listNum++;
         if (!sys().isRegularDS())
         {

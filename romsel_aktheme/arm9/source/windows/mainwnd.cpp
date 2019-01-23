@@ -989,6 +989,41 @@ void MainWnd::bootSNES(void)
     }
 }
 
+void MainWnd::bootSega8bit()
+{
+	if (!ms().secondaryDevice && access(S8DS_ROM, F_OK) != 0) {
+        messageBox(this, LANG("game launch", "Sega8bit Error"), LANG("game launch", "Sega8bit Error Message"), MB_OK);
+		return;
+	}
+
+    if (ms().secondaryDevice || sys().arm7SCFGLocked())
+    {
+		if (ms().useBootstrap)
+		{
+            bootFile(!ms().secondaryDevice && sys().arm7SCFGLocked() ? S8DS_ROM : S8DS_FC, "");
+		}
+		else
+		{
+			bootFlashcard(S8DS_FC, "", false);
+		}
+        return;
+    }
+
+    BootstrapConfig sega8bit("S8DS.nds", S8DS_ROM, "", 0);
+
+	CIniFile ini(BOOTSTRAP_INI);
+	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGA8BIT_RAMDISK);
+	ini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+	ini.SaveIniFile(BOOTSTRAP_INI);
+    sega8bit.nightlyBootstrap(ms().bootstrapFile);
+
+    if (int err = sega8bit.launch())
+    {
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+    }
+}
+
 void MainWnd::bootSegaMD()
 {
 	if (!ms().secondaryDevice && access(JENESISDS_ROM, F_OK) != 0) {
@@ -1085,14 +1120,19 @@ void MainWnd::onFolderChanged()
             bootGbaRunner();
         }
 
-        if (dirShowName == SPATH_SNES)
+        if (dirShowName == SPATH_SEGA8BIT)
         {
-            bootSNES();
+            bootSega8bit();
         }
 
         if (dirShowName == SPATH_SEGAMD)
         {
             bootSegaMD();
+        }
+
+        if (dirShowName == SPATH_SNES)
+        {
+            bootSNES();
         }
 
         if (dirShowName == SPATH_SYSMENU)

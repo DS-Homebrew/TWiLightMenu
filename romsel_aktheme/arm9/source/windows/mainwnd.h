@@ -86,9 +86,11 @@ class MainWnd : public akui::Form
 
     void bootGbaRunner(void);
 
-    void bootSNES(void);
+    void bootSega8bit(void);
 
     void bootSegaMD(void);
+
+    void bootSNES(void);
 
     void onFolderChanged();
 
