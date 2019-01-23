@@ -935,7 +935,7 @@ int main(int argc, char **argv) {
 			if (startMenu_cursorPosition > 2) startMenu_cursorPosition = 2;
 
 			if (highlightedEmulator < 0) highlightedEmulator = 0;
-			if (highlightedEmulator > 2) highlightedEmulator = 2;
+			if (highlightedEmulator > 3) highlightedEmulator = 3;
 
 			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
