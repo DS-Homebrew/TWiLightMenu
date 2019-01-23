@@ -694,7 +694,7 @@ void launchSega8bit(void) {
 	// Start S8DS
 	if (secondaryDevice || arm7SCFGLocked) {
 		if (useBootstrap) {
-			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, ((!secondaryDevice && arm7SCFGLocked) ? false : true), true, false);
+			int err = runNdsFile ("/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, ((!secondaryDevice && arm7SCFGLocked) ? false : true), true, false);
 			iprintf ("Start failed. Error %i\n", err);
 		} else {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
