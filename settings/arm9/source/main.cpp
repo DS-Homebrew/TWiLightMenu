@@ -571,7 +571,7 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 				 TLoadingScreen::ELoadingRegular,
 				 TLoadingScreen::ELoadingPong,
 				 TLoadingScreen::ELoadingTicTacToe,
-				 TLoadingScreen::ELoadingSimpleLight
+				 TLoadingScreen::ELoadingSimpleLight,
 				 TLoadingScreen::ELoadingSimpleDark})
 
 		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
