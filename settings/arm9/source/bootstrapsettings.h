@@ -27,7 +27,9 @@ class BootstrapSettings
         ELoadingNone = 0,
         ELoadingRegular = 1,
         ELoadingPong = 2,
-        ELoadingTicTacToe = 3
+        ELoadingTicTacToe = 3,
+	ELoadingSimpleLight = 4,
+	ELoadingSimpleDark = 5
     };
 
   public:
