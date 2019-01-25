@@ -859,9 +859,11 @@ int main(int argc, char **argv) {
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
+						printLargeCentered(false, 166, "SELECT: Settings menu");
 						printLargeCentered(false, 182, "Game");
 						break;
 					case 1:
+						printLargeCentered(false, 166, "SELECT: Settings menu");
 						if (flashcardFound()) {
 							printLargeCentered(false, 182, "Not used");
 						} else {
