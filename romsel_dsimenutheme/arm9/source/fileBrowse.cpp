@@ -1216,23 +1216,40 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						defer(reloadFontTextures);
 					}
 				}
-			} else if ((pressed & KEY_UP)/* && !titleboxXmoveleft && !titleboxXmoveright*/)
+			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
 			{
+				showSTARTborder = false;
+				showbubble = false;
+				applaunchprep = true;
+				clearText();
 				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
 				int posFrom = cursorPosition[secondaryDevice];
 				int posTo = posFrom;
+				for(int i=0;i<10;i++) {
+					swiWaitForVBlank();
+				}
 
 				while(1){
+					// if(titleboxXmoveleft || titleboxXmoveright)	continue;
 					scanKeys();
 					pressed = keysDown();
 					
-					if(pressed & KEY_LEFT)
+					if(pressed & KEY_LEFT) {
 						posTo--;
-					else if(pressed & KEY_RIGHT)
+						titleboxXmoveleft = true;
+					}
+					else if(pressed & KEY_RIGHT) {
 						posTo++;
-					else if(pressed & KEY_DOWN)
+						titleboxXmoveright = true;
+					}
+					else if(pressed & KEY_DOWN) {
+						for(int i=0;i<10;i++) {
+							// titleboxYpos -= 5;
+							swiWaitForVBlank();
+						}
 						break;
+					}
 				}
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 
