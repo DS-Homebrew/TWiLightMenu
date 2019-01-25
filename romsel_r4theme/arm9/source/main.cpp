@@ -90,6 +90,7 @@ int consoleModel = 0;
 bool isRegularDS = true;
 
 extern bool showdialogbox;
+extern int dialogboxHeight;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -969,16 +970,13 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						// Switch to GBA mode
-						fadeType = false;	// Fade to white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
-						}
-
-						useBackend = true;
-						homebrewBootstrap = true;
-						SaveSettings();
 						if (highlightedEmulator == 3) {
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							useBackend = true;
+							SaveSettings();
 							if (secondaryDevice) {
 								if (useBootstrap) {
 									if(snesEmulator) {
@@ -1009,6 +1007,12 @@ int main(int argc, char **argv) {
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else if (highlightedEmulator == 2) {
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							useBackend = true;
+							SaveSettings();
 							if (secondaryDevice) {
 								if (useBootstrap) {
 									int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", 0, NULL, true, true, true, false);
@@ -1026,23 +1030,74 @@ int main(int argc, char **argv) {
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else if (highlightedEmulator == 1) {
-							if (secondaryDevice || arm7SCFGLocked) {
-								if (useBootstrap) {
-									int err = runNdsFile ("/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, ((!secondaryDevice && arm7SCFGLocked) ? false : true), true, false);
-									iprintf ("Start failed. Error %i\n", err);
-								} else {
-									loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
+							bool useRAMDisk = false;
+							bool canceled = false;
+
+							if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
+								clearText();
+								dialogboxHeight = 1;
+								showdialogbox = true;
+								printLargeCentered(false, 84, "RAM disk .img found");
+								printSmallCentered(false, 104, "Do you want to use a");
+								printSmallCentered(false, 112, "RAM disk?");
+								printSmallCentered(false, 126, "X: Cancel  B: No  A: Yes");
+								for (int i = 0; i < 30; i++) swiWaitForVBlank();
+								pressed = 0;
+								while (1) {
+									scanKeys();
+									pressed = keysDown();
+									swiWaitForVBlank();
+
+									if (pressed & KEY_X) {
+										canceled = true;
+										break;
+									}
+									if (pressed & KEY_A) {
+										useRAMDisk = true;
+										break;
+									}
+									if (pressed & KEY_B) {
+										break;
+									}
 								}
-							} else if (access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
-								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-								int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
-								iprintf ("Start failed. Error %i\n", err);
+								showdialogbox = false;
+								dialogboxHeight = 0;
+							}
+
+							if (!canceled) {
+								clearText();
+								fadeType = false;	// Fade to white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
+								useBackend = true;
+								SaveSettings();
+								if (!useRAMDisk) {
+									if (useBootstrap) {
+										int err = runNdsFile ((!secondaryDevice && !arm7SCFGLocked) ? "/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, false, true, false);
+										iprintf ("Start failed. Error %i\n", err);
+									} else {
+										loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
+									}
+								} else if (access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
+									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+									int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+									iprintf ("Start failed. Error %i\n", err);
+								}
 							}
 						} else {
+							// Switch to GBA mode
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							useBackend = true;
+							homebrewBootstrap = true;
+							SaveSettings();
 							if (useGbarunner) {
 								if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
 									// Nothing
