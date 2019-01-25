@@ -340,7 +340,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
-		CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/dsimenu/gameorder.ini");
+		CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 		vector<std::string> gameOrder;
 		char str[2];
 
@@ -350,7 +350,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		}
 
 		for(int i=0;i<(int)gameOrder.size();i++) {
-			for(int j=0;j<=dirContents.size();j++)
+			for(int j=0;j<=(int)dirContents.size();j++)
 				if(gameOrder[i] == dirContents[j].name) {
 					std::rotate(dirContents.begin()+j,dirContents.begin()+j+1,dirContents.begin()+i+1);
 			}
@@ -1216,6 +1216,61 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						defer(reloadFontTextures);
 					}
 				}
+			} else if ((pressed & KEY_UP)/* && !titleboxXmoveleft && !titleboxXmoveright*/)
+			{
+				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
+				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
+				int posFrom = cursorPosition[secondaryDevice];
+				int posTo = posFrom;
+
+				while(1){
+					scanKeys();
+					pressed = keysDown();
+					
+					if(pressed & KEY_LEFT)
+						posTo--;
+					else if(pressed & KEY_RIGHT)
+						posTo++;
+					else if(pressed & KEY_DOWN)
+						break;
+				}
+				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
+
+				char str[2];
+				sprintf(str, "%d", posTo);
+				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
+				sprintf(str, "%d", posFrom);
+				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
+				gameOrderIni.SaveIniFile("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
+				
+				getDirectoryContents(dirContents[scrn], extensionList);
+
+				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+
+				// Draw icons 1 per vblank to prevent corruption
+				if (cursorPosition[secondaryDevice] <= 1) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+					for(int i = 0; i < 6; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+						}
+					}
+				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+					for(int i = 0; i < 5; i++) {
+						swiWaitForVBlank();
+						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+						}
+					}
+				}
+
 			// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
