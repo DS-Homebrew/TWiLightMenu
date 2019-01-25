@@ -260,9 +260,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;

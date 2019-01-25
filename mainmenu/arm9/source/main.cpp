@@ -138,7 +138,6 @@ bool startMenu = false;
 bool gotosettings = false;
 
 int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-bool isLauncharg = false;
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
@@ -1041,12 +1040,8 @@ int main(int argc, char **argv) {
 		|| (filename.substr(filename.find_last_of(".") + 1) == "app")
 		|| (filename.substr(filename.find_last_of(".") + 1) == "APP")
 		|| (filename.substr(filename.find_last_of(".") + 1) == "argv")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"))
+		|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV"))
 		{
-			isLauncharg = ((filename.substr(filename.find_last_of(".") + 1) == "launcharg")
-						|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"));
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
@@ -1084,9 +1079,7 @@ int main(int argc, char **argv) {
 			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), filename.c_str());
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
 				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "launcharg")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "LAUNCHARG"))
+				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV"))
 				{
 					vector<char*> argarray;
 
@@ -1111,24 +1104,6 @@ int main(int argc, char **argv) {
 					temp_filename = argarray.at(0);
 				}
 				// Get game's TID
-				if (isLauncharg) {
-					RemoveTrailingSlashes(temp_filename);
-
-					char appPath[256];
-					for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-					{
-						if (appVer > 0xF) {
-							snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", temp_filename.c_str(), appVer);
-						} else {
-							snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", temp_filename.c_str(), appVer);
-						}
-						if (access(appPath, F_OK) == 0)
-						{
-							break;
-						}
-					}
-					temp_filename = appPath;
-				}
 				FILE *f_nds_file = fopen(temp_filename.c_str(), "rb");
 				char game_TID[5];
 				grabTID(f_nds_file, game_TID);
@@ -1158,7 +1133,7 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmall(false, 180, 2, RetTime().c_str());
-				if (isDSiMode() && launchType == 0 && !isLauncharg && !flashcardFound()) {
+				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
 					printNdsCartBannerText();
 				} else if (romFound) {
 					titleUpdate(false, filename.c_str());
@@ -1263,7 +1238,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 							loadROMselect();
-						} else if (launchType > 0 || isLauncharg) {
+						} else if (launchType > 0) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
@@ -1281,7 +1256,7 @@ int main(int argc, char **argv) {
 							} else {
 								loadROMselect();
 							}
-						} else if (launchType == 0 && !isLauncharg && !flashcardFound() && REG_SCFG_MC != 0x11) {
+						} else if (launchType == 0 && !flashcardFound() && REG_SCFG_MC != 0x11) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
@@ -1573,73 +1548,6 @@ int main(int argc, char **argv) {
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
-
-			// Launch DSiWare via launcharg
-			if (isLauncharg)
-			{
-				FILE *argfile = fopen(filename.c_str(),"rb");
-					char str[PATH_MAX], *pstr;
-				const char seps[]= "\n\r\t ";
-
-				while( fgets(str, PATH_MAX, argfile) ) {
-					// Find comment and end string there
-					if( (pstr = strchr(str, '#')) )
-						*pstr= '\0';
-
-					// Tokenize arguments
-					pstr= strtok(str, seps);
-
-					while( pstr != NULL ) {
-						argarray.push_back(strdup(pstr));
-						pstr= strtok(NULL, seps);
-					}
-				}
-				fclose(argfile);
-				filename = argarray.at(0);
-				RemoveTrailingSlashes(filename);
-
-				launchType = 0;	// No launch type for launcharg
-				previousUsedDevice = secondaryDevice;
-				SaveSettings();
-
-				char appPath[256];
-				for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-				{
-					if (appVer > 0xF) {
-						snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filename.c_str(), appVer);
-					} else {
-						snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filename.c_str(), appVer);
-					}
-					if (access(appPath, F_OK) == 0)
-					{
-						break;
-					}
-				}
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(appPath, "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
-
-				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-				*(u16*)(0x02000304) = 0x1801;
-				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
-				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
-				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000318) = 0x00000017;
-				*(u32*)(0x0200031C) = 0x00000000;
-				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-				}
-
-				unlaunchSetHiyaBoot();
-
-				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
-			}
 
 			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 5, ".ARGV") == 0))

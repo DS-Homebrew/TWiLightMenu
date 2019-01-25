@@ -245,7 +245,6 @@ bool MainList::enterDir(const std::string &dirName)
     extNames.push_back(".nes");
 
     extNames.push_back(".argv");
-    extNames.push_back(".launcharg");
 
     if (_showAllFiles)
         extNames.clear();

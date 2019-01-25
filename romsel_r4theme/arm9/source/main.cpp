@@ -802,7 +802,6 @@ int main(int argc, char **argv) {
 	extensionList.push_back(".nds");
 	extensionList.push_back(".dsi");
 	extensionList.push_back(".ids");
-	if (consoleModel < 2) extensionList.push_back(".launcharg");
 	extensionList.push_back(".argv");
 	extensionList.push_back(".gb");
 	extensionList.push_back(".sgb");
@@ -1246,76 +1245,6 @@ int main(int argc, char **argv) {
 			getcwd (filePath, PATH_MAX);
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
-
-			// Launch DSiWare via launcharg
-			if ((strcasecmp (filename.c_str() + filename.size() - 10, ".launcharg") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 10, ".LAUNCHARG") == 0))
-			{
-				romPath = filePath+filename;
-
-				FILE *argfile = fopen(filename.c_str(),"rb");
-					char str[PATH_MAX], *pstr;
-				const char seps[]= "\n\r\t ";
-
-				while( fgets(str, PATH_MAX, argfile) ) {
-					// Find comment and end string there
-					if( (pstr = strchr(str, '#')) )
-						*pstr= '\0';
-
-					// Tokenize arguments
-					pstr= strtok(str, seps);
-
-					while( pstr != NULL ) {
-						argarray.push_back(strdup(pstr));
-						pstr= strtok(NULL, seps);
-					}
-				}
-				fclose(argfile);
-				filename = argarray.at(0);
-				RemoveTrailingSlashes(filename);
-
-				launchType = 0;	// No launch type for launcharg
-				previousUsedDevice = secondaryDevice;
-				SaveSettings();
-
-				char appPath[256];
-				for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-				{
-					if (appVer > 0xF) {
-						snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filename.c_str(), appVer);
-					} else {
-						snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filename.c_str(), appVer);
-					}
-					if (access(appPath, F_OK) == 0)
-					{
-						break;
-					}
-				}
-
-				sNDSHeaderExt NDSHeader;
-
-				FILE *f_nds_file = fopen(appPath, "rb");
-
-				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
-				fclose(f_nds_file);
-
-				*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
-				*(u16*)(0x02000304) = 0x1801;
-				*(u32*)(0x02000308) = NDSHeader.dsi_tid;
-				*(u32*)(0x0200030C) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000310) = NDSHeader.dsi_tid;
-				*(u32*)(0x02000314) = NDSHeader.dsi_tid2;
-				*(u32*)(0x02000318) = 0x00000017;
-				*(u32*)(0x0200031C) = 0x00000000;
-				while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
-					*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
-				}
-
-				unlaunchSetHiyaBoot();
-
-				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
-			}
 
 			bool isArgv = false;
 			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)

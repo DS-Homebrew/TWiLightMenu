@@ -389,9 +389,7 @@ void getGameInfo(bool isDir, const char* name)
 		clearBannerSequence();
 	}
 	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
 	{
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
@@ -425,31 +423,6 @@ void getGameInfo(bool isDir, const char* name)
 
 		// done with the file at this point
 		fclose(fp);
-
-		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
-		{
-			p[27] = '\0';		// Remove trailing slash
-
-			// Search for .app
-			char appPath[256];
-			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-			{
-				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
-				} else {
-					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
-				}
-				if (access(appPath, F_OK) == 0)
-				{
-					p = appPath;
-					break;
-				}
-				if (appVer == 0xFF) {
-					p = NULL;
-				}
-			}
-		}
 
 		if (p && *p)
 		{
@@ -591,9 +564,7 @@ void iconUpdate(bool isDir, const char* name)
 		clearIcon();
 	}
 	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
@@ -627,31 +598,6 @@ void iconUpdate(bool isDir, const char* name)
 
 		// done with the file at this point
 		fclose(fp);
-
-		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
-		{
-			p[27] = '\0';		// Remove trailing slash
-
-			// Search for .app
-			char appPath[256];
-			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-			{
-				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
-				} else {
-					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
-				}
-				if (access(appPath, F_OK) == 0)
-				{
-					p = appPath;
-					break;
-				}
-				if (appVer == 0xFF) {
-					p = NULL;
-				}
-			}
-		}
 
 		if (p && *p)
 		{
@@ -812,9 +758,7 @@ void titleUpdate(bool isDir, const char* name)
 		writeBannerText(0, name, "", "");
 	}
 	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
+		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
 	{
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
@@ -848,31 +792,6 @@ void titleUpdate(bool isDir, const char* name)
 
 		// done with the file at this point
 		fclose(fp);
-
-		if ((strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".launcharg") == 0)
-		|| (strlen(name) >= 10 && strcasecmp(name + strlen(name) - 10, ".LAUNCHARG") == 0))
-		{
-			p[27] = '\0';		// Remove trailing slash
-
-			// Search for .app
-			char appPath[256];
-			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-			{
-				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", p, appVer);
-				} else {
-					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", p, appVer);
-				}
-				if (access(appPath, F_OK) == 0)
-				{
-					p = appPath;
-					break;
-				}
-				if (appVer == 0xFF) {
-					p = NULL;
-				}
-			}
-		}
 
 		if (p && *p)
 		{

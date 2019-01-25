@@ -66,7 +66,6 @@ extern bool startMenu;
 extern int startMenu_cursorPosition;
 
 extern int launchType;			// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
-extern bool isLauncharg;
 extern bool pictochatFound;
 extern bool dlplayFound;
 extern bool gbaBiosFound;
@@ -201,7 +200,7 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (startMenu) {
-			if (isDSiMode() && launchType == 0 && !isLauncharg) {
+			if (isDSiMode() && launchType == 0) {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 			} else {
