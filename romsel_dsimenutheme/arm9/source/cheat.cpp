@@ -57,7 +57,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen("sd:/_nds/TWiLightMenu/cheats/usrcheat.dat","rb");
+    FILE* dat=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
@@ -447,7 +447,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-  FILE* db=fopen("sd:/_nds/TWiLightMenu/cheats/usrcheat.dat","r+b");
+  FILE* db=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","r+b");
   if(db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
