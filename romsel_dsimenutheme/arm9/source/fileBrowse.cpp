@@ -340,19 +340,19 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
-		CIniFile gameOrderIni("./_gameorder.ini");
+		CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/dsimenu/gameorder.ini");
 		vector<std::string> gameOrder;
 		char str[2];
 
 		for(int i=0;i<40;i++) {
 			sprintf(str, "%d", i);
-			gameOrder.push_back(gameOrderIni.GetString("GAME ORDER", str, ""));
+			gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, ""));
 		}
 
 		for(int i=0;i<(int)gameOrder.size();i++) {
 			for(int j=0;j<=dirContents.size();j++)
 				if(gameOrder[i] == dirContents[j].name) {
-					std::rotate(dirContents.begin()+j,dirContents.begin()+j+1,dirContents.begin()+i);
+					std::rotate(dirContents.begin()+j,dirContents.begin()+j+1,dirContents.begin()+i+1);
 			}
 		}
 		closedir(pdir);
