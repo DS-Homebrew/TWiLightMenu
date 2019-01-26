@@ -445,7 +445,9 @@ void getGameInfo(bool isDir, const char* name, int num)
 		}
 
 		if ((ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000)
-		|| (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48)
+		|| (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48
+		&& ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0
+		&& ndsHeader.makercode[0] != 0x30 && ndsHeader.makercode[1] != 0x30)
 		|| (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize == 0x151BC)) {
 			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
 		} else if (ndsHeader.unitCode >= 0x02
