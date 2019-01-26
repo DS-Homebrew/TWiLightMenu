@@ -859,6 +859,11 @@ void dsCardLaunch() {
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
+void printLastPlayedText() {
+	printSmall(false, 80, iconYpos[0]+8, "Last-played game");
+	printSmall(false, 124, iconYpos[0]+20, "will appear here.");
+}
+
 void printNdsCartBannerText() {
 	if (REG_SCFG_MC == 0x11) {
 		printSmall(false, 80, iconYpos[0]+8, "There is no Game Card");
@@ -1137,7 +1142,9 @@ int main(int argc, char **argv) {
 					printNdsCartBannerText();
 				} else if (romFound) {
 					titleUpdate(false, filename.c_str());
-				} 
+				} else {
+					printLastPlayedText();
+				}
 				printGbaBannerText();
 
 				scanKeys();
@@ -1233,6 +1240,8 @@ int main(int argc, char **argv) {
 								clearText();
 								if (romFound) {
 									titleUpdate(false, filename.c_str());
+								} else {
+									printLastPlayedText();
 								}
 								printGbaBannerText();
 								swiWaitForVBlank();
@@ -1247,6 +1256,8 @@ int main(int argc, char **argv) {
 								clearText();
 								if (romFound) {
 									titleUpdate(false, filename.c_str());
+								} else {
+									printLastPlayedText();
 								}
 								printGbaBannerText();
 								swiWaitForVBlank();
