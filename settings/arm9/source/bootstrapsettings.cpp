@@ -10,6 +10,8 @@ BootstrapSettings::BootstrapSettings()
 	bstrap_logging = false;
 	bstrap_romreadled = BootstrapSettings::ELEDNone;
 	bstrap_loadingScreen = BootstrapSettings::ELoadingRegular;
+	bstrap_loadingScreenTheme = false;
+	bstrap_loadingScreenLocation = false;
 }
 
 void BootstrapSettings::loadSettings()
