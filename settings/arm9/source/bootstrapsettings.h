@@ -28,8 +28,7 @@ class BootstrapSettings
         ELoadingRegular = 1,
         ELoadingPong = 2,
         ELoadingTicTacToe = 3,
-	ELoadingSimpleLight = 4,
-	ELoadingSimpleDark = 5
+		ELoadingSimple = 4
     };
 
   public:
@@ -45,6 +44,8 @@ class BootstrapSettings
 	bool bstrap_logging;
 	int bstrap_romreadled;
 	int bstrap_loadingScreen;
+	bool bstrap_loadingScreenTheme;
+	bool bstrap_loadingScreenLocation;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

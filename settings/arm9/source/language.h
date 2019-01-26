@@ -68,6 +68,8 @@ extern std::string STR_SLOT1SCFGUNLOCK;
 extern std::string STR_SNDFREQ;
 extern std::string STR_SLOT1LAUNCHMETHOD;
 extern std::string STR_LOADINGSCREEN;
+extern std::string STR_LOADINGSCREENTHEME;
+extern std::string STR_LOADINGSCREENLOCATION;
 extern std::string STR_BOOTSTRAP;
 extern std::string STR_USEGBARUNNER2;
 
@@ -82,6 +84,10 @@ extern std::string STR_CAMERA;
 extern std::string STR_REBOOT;
 extern std::string STR_DIRECT;
 extern std::string STR_REGULAR;
+extern std::string STR_DARK;
+extern std::string STR_LIGHT;
+extern std::string STR_BOTTOM;
+extern std::string STR_TOP;
 extern std::string STR_RELEASE;
 extern std::string STR_NIGHTLY;
 
@@ -108,6 +114,10 @@ extern std::string STR_DESCRIPTION_SNDFREQ_1;
 extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1;
 
 extern std::string STR_DESCRIPTION_LOADINGSCREEN_1;
+
+extern std::string STR_DESCRIPTION_LOADINGSCREENTHEME;
+
+extern std::string STR_DESCRIPTION_LOADINGSCREENLOCATION;
 
 extern std::string STR_DESCRIPTION_BOOTSTRAP_1;
 

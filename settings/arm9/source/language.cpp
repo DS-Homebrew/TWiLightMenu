@@ -74,6 +74,8 @@ std::string STR_SLOT1SCFGUNLOCK = "STR_SLOT1SCFGUNLOCK";
 std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
 std::string STR_LOADINGSCREEN = "STR_LOADINGSCREEN";
+std::string STR_LOADINGSCREENTHEME = "STR_LOADINGSCREENTHEME";
+std::string STR_LOADINGSCREENLOCATION = "STR_LOADINGSCREENLOCATION";
 std::string STR_BOOTSTRAP = "STR_BOOTSTRAP";
 std::string STR_USEGBARUNNER2 = "STR_USEGBARUNNER2";
 
@@ -88,6 +90,10 @@ std::string STR_CAMERA = "STR_CAMERA";
 std::string STR_REBOOT = "STR_REBOOT";
 std::string STR_DIRECT = "STR_DIRECT";
 std::string STR_REGULAR = "STR_REGULAR";
+std::string STR_DARK = "STR_DARK";
+std::string STR_LIGHT = "STR_LIGHT";
+std::string STR_BOTTOM = "STR_BOTTOM";
+std::string STR_TOP = "STR_TOP";
 std::string STR_RELEASE = "STR_RELEASE";
 std::string STR_NIGHTLY = "STR_NIGHTLY";
 
@@ -114,6 +120,10 @@ std::string STR_DESCRIPTION_SNDFREQ_1 = "STR_DESCRIPTION_SNDFREQ_1";
 std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = "STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1";
 
 std::string STR_DESCRIPTION_LOADINGSCREEN_1 = "STR_DESCRIPTION_LOADINGSCREEN_1";
+
+std::string STR_DESCRIPTION_LOADINGSCREENTHEME = "STR_DESCRIPTION_LOADINGSCREENTHEME";
+
+std::string STR_DESCRIPTION_LOADINGSCREENLOCATION = "STR_DESCRIPTION_LOADINGSCREENLOCATION";
 
 std::string STR_DESCRIPTION_BOOTSTRAP_1 = "STR_DESCRIPTION_BOOTSTRAP_1";
 
@@ -275,6 +285,8 @@ void langInit(void)
 	STR_SNDFREQ = languageini.GetString("LANGUAGE", "SNDFREQ", "Sound/Mic frequency");
 	STR_SLOT1LAUNCHMETHOD = languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method");
 	STR_LOADINGSCREEN = languageini.GetString("LANGUAGE", "LOADINGSCREEN", "Loading screen");
+	STR_LOADINGSCREENTHEME = languageini.GetString("LANGUAGE", "LOADINGSCREENTHEME", "Loading screen theme");
+	STR_LOADINGSCREENLOCATION = languageini.GetString("LANGUAGE", "LOADINGSCREENLOCATION", "Loading screen location");
 	STR_BOOTSTRAP = languageini.GetString("LANGUAGE", "BOOTSTRAP", "Bootstrap");
 	STR_USEGBARUNNER2 = languageini.GetString("LANGUAGE", "USEGBARUNNER2", "Use GBARunner2");
 
@@ -289,6 +301,10 @@ void langInit(void)
 	STR_REBOOT = languageini.GetString("LANGUAGE", "REBOOT", "Reboot");
 	STR_DIRECT = languageini.GetString("LANGUAGE", "DIRECT", "Direct");
 	STR_REGULAR = languageini.GetString("LANGUAGE", "REGULAR", "Regular");
+	STR_DARK = languageini.GetString("LANGUAGE", "DARK", "Dark");
+	STR_LIGHT = languageini.GetString("LANGUAGE", "LIGHT", "Light");
+	STR_BOTTOM = languageini.GetString("LANGUAGE", "BOTTOM", "Bottom");
+	STR_TOP = languageini.GetString("LANGUAGE", "TOP", "Top");
 	STR_RELEASE = languageini.GetString("LANGUAGE", "RELEASE", "Release");
 	STR_NIGHTLY = languageini.GetString("LANGUAGE", "NIGHTLY", "Nightly");
 
@@ -316,6 +332,10 @@ void langInit(void)
 																"Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed.");
 
 	STR_DESCRIPTION_LOADINGSCREEN_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM is started in nds-bootstrap");
+
+	STR_DESCRIPTION_LOADINGSCREENTHEME = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREENTHEME", "Choose the loading screen to be light or dark.");
+
+	STR_DESCRIPTION_LOADINGSCREENLOCATION = languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREENLOCATION", "Show the loading screen on either the top or botton screen.");
 
 	STR_DESCRIPTION_BOOTSTRAP_1 = languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly bootstrap");
 
