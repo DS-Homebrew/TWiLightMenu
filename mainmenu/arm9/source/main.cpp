@@ -860,8 +860,8 @@ void dsCardLaunch() {
 }
 
 void printLastPlayedText() {
-	printSmall(false, 80, iconYpos[0]+8, "Last-played game");
-	printSmall(false, 124, iconYpos[0]+20, "will appear here.");
+	printSmall(false, 96, iconYpos[0]+8, "Last-played game");
+	printSmall(false, 104, iconYpos[0]+20, "will appear here.");
 }
 
 void printNdsCartBannerText() {
