@@ -19,7 +19,7 @@ bool checkIfShowAPMsg (std::string filename);
 void dontShowAPMsgAgain (std::string filename);
 void perGameSettings(std::string filename);
 std::string getSavExtension(void);
-std::string getImgExtension(void);
+std::string getImgExtension(int number);
 
 
 

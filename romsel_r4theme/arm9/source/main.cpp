@@ -1031,20 +1031,28 @@ int main(int argc, char **argv) {
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						} else if (highlightedEmulator == 1) {
+							bool textPrinted = false;
 							bool useRAMDisk = false;
 							bool canceled = false;
+							int ramDiskNo = 0;
+							char ramDiskText[16];
 
 							if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
-								clearText();
-								dialogboxHeight = 1;
+								dialogboxHeight = 3;
 								showdialogbox = true;
-								printLargeCentered(false, 84, "RAM disk .img found");
-								printSmallCentered(false, 104, "Do you want to use a");
-								printSmallCentered(false, 112, "RAM disk?");
-								printSmallCentered(false, 126, "X: Cancel  B: No  A: Yes");
-								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 								pressed = 0;
 								while (1) {
+									if (!textPrinted) {
+										clearText();
+										printLargeCentered(false, 84, "RAM disk .img found");
+										printSmallCentered(false, 104, "Do you want to use a");
+										printSmallCentered(false, 112, "RAM disk?");
+										snprintf(ramDiskText, sizeof(ramDiskText), "RAM disk: <%i>", ramDiskNo);
+										printSmallCentered(false, 128, ramDiskText);
+										printSmallCentered(false, 142, "X: Cancel  B: No  A: Yes");
+										textPrinted = true;
+									}
+
 									scanKeys();
 									pressed = keysDown();
 									swiWaitForVBlank();
@@ -1059,6 +1067,21 @@ int main(int argc, char **argv) {
 									}
 									if (pressed & KEY_B) {
 										break;
+									}
+									if (pressed & KEY_LEFT) {
+										ramDiskNo--;
+										textPrinted = false;
+									}
+									if (pressed & KEY_RIGHT) {
+										ramDiskNo++;
+										textPrinted = false;
+									}
+
+									if (ramDiskNo < 0) {
+										ramDiskNo = 9;
+									}
+									if (ramDiskNo > 9) {
+										ramDiskNo = 0;
 									}
 								}
 								showdialogbox = false;
@@ -1080,10 +1103,11 @@ int main(int argc, char **argv) {
 									} else {
 										loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
 									}
-								} else if (access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
+								} else {
+									std::string ramdiskname = "sd:/_nds/TWiLightMenu/emulators/Sega8bit"+getImgExtension(ramDiskNo);
 									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
-									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ramdiskname);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 									int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
@@ -1511,7 +1535,7 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
-						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());
+						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);

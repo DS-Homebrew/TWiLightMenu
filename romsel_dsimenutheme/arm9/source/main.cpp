@@ -1152,7 +1152,7 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
-						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());
+						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir ((isHomebrew[cursorPosition[secondaryDevice]] == 1) ? "ramdisks" : "saves", 0777);

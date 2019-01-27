@@ -632,8 +632,8 @@ std::string getSavExtension(void) {
 	}
 }
 
-std::string getImgExtension(void) {
-	switch (perGameSettings_ramDiskNo) {
+std::string getImgExtension(int number) {
+	switch (number) {
 		case 0:
 		default:
 			return ".img";

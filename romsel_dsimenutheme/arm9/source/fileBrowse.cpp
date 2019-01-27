@@ -652,8 +652,11 @@ void launchGba(void) {
 }
 
 void launchSega8bit(void) {
+	bool textPrinted = false;
 	bool useRAMDisk = false;
 	dbox_showIcon = false;
+	int ramDiskNo = 0;
+	char ramDiskText[16];
 
 	if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
 		bool canceled = false;
@@ -661,12 +664,18 @@ void launchSega8bit(void) {
 		clearText();
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, "RAM disk .img found");
-		printSmallCentered(false, 80, "Do you want to use a");
-		printSmallCentered(false, 94, "RAM disk?");
-		printSmallCentered(false, 166, "X: Cancel  B: No  A: Yes");
 		int pressed = 0;
 		while (1) {
+			if (!textPrinted) {
+				clearText();
+				printLarge(false, 16, 12, "RAM disk .img found");
+				printSmallCentered(false, 80, "Do you want to use a");
+				printSmallCentered(false, 94, "RAM disk?");
+				snprintf(ramDiskText, sizeof(ramDiskText), "RAM disk: <%i>", ramDiskNo);
+				printSmallCentered(false, 112, ramDiskText);
+				printSmallCentered(false, 166, "X: Cancel  B: No  A: Yes");
+				textPrinted = true;
+			}
 			scanKeys();
 			pressed = keysDown();
 			loadVolumeImage();
@@ -683,6 +692,21 @@ void launchSega8bit(void) {
 			}
 			if (pressed & KEY_B) {
 				break;
+			}
+			if (pressed & KEY_LEFT) {
+				ramDiskNo--;
+				textPrinted = false;
+			}
+			if (pressed & KEY_RIGHT) {
+				ramDiskNo++;
+				textPrinted = false;
+			}
+
+			if (ramDiskNo < 0) {
+				ramDiskNo = 9;
+			}
+			if (ramDiskNo > 9) {
+				ramDiskNo = 0;
 			}
 		}
 		clearText();
@@ -715,9 +739,10 @@ void launchSega8bit(void) {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
 		}
 	} else {
+		std::string ramdiskname = "sd:/_nds/TWiLightMenu/emulators/Sega8bit"+getImgExtension(ramDiskNo);
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
-		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ramdiskname);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
