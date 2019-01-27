@@ -858,40 +858,40 @@ int main(int argc, char **argv) {
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
-						printLargeCentered(false, 166, "SELECT: Settings menu");
-						printLargeCentered(false, 182, "Game");
+						printLargeCentered(false, 182, "SELECT: Settings menu");
+						printLargeCentered(false, 166, "Game");
 						break;
 					case 1:
-						printLargeCentered(false, 166, "SELECT: Settings menu");
+						printLargeCentered(false, 182, "SELECT: Settings menu");
 						if (flashcardFound()) {
-							printLargeCentered(false, 182, "Not used");
+							printLargeCentered(false, 166, "Not used");
 						} else {
-							printLargeCentered(false, 182, "Launch Slot-1 card");
+							printLargeCentered(false, 166, "Launch Slot-1 card");
 						}
 						break;
 					case 2:
-						printLargeCentered(false, 166, "Up/Down: Select emulator");
+						printLargeCentered(false, 182, "Up/Down: Select emulator");
 						if (highlightedEmulator == 3) {
 							if(snesEmulator) {
-								printLargeCentered(false, 182, "Start SNEmulDS");
+								printLargeCentered(false, 166, "Start SNEmulDS");
 							} else {
-								printLargeCentered(false, 182, "Start lolSNES");
+								printLargeCentered(false, 166, "Start lolSNES");
 							}
 						} else if (highlightedEmulator == 2) {
-							printLargeCentered(false, 182, "Start jEnesisDS");
+							printLargeCentered(false, 166, "Start jEnesisDS");
 						} else if (highlightedEmulator == 1) {
-							printLargeCentered(false, 182, "Start S8DS");
+							printLargeCentered(false, 166, "Start S8DS");
 						} else {
 							if (useGbarunner) {
-								printLargeCentered(false, 182, "Start GBARunner2");
+								printLargeCentered(false, 166, "Start GBARunner2");
 							} else {
-								printLargeCentered(false, 182, "Start GBA Mode");
+								printLargeCentered(false, 166, "Start GBA Mode");
 							}
 						}
 						break;
 				}
 				//printLarge(false, 2, 182, DrawDate());
-				printLarge(false, 212, 182, RetTime().c_str());
+				printLarge(false, 212, 166, RetTime().c_str());
 
 				scanKeys();
 				pressed = keysDownRepeat();
@@ -1091,33 +1091,50 @@ int main(int argc, char **argv) {
 								}
 							}
 						} else {
-							// Switch to GBA mode
-							fadeType = false;	// Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
-							}
-							useBackend = true;
-							homebrewBootstrap = true;
-							SaveSettings();
-							if (useGbarunner) {
-								if (access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
-									// Nothing
-								} else if (secondaryDevice) {
-									if (useBootstrap) {
-										int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
-										iprintf ("Start failed. Error %i\n", err);
+							if (useGbarunner && access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+								clearText();
+								dialogboxHeight = 1;
+								showdialogbox = true;
+								printLargeCentered(false, 84, "Error code: BINF");
+								printSmallCentered(false, 104, "The GBA BIOS is required");
+								printSmallCentered(false, 112, "to run GBA games.");
+								printSmallCentered(false, 126, "A: OK");
+								for (int i = 0; i < 30; i++) swiWaitForVBlank();
+								pressed = 0;
+								do {
+									scanKeys();
+									pressed = keysDown();
+									swiWaitForVBlank();
+								} while (!(pressed & KEY_A));
+								showdialogbox = false;
+								dialogboxHeight = 0;
+							} else {
+								// Switch to GBA mode
+								fadeType = false;	// Fade to white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
+								useBackend = true;
+								homebrewBootstrap = true;
+								SaveSettings();
+								if (useGbarunner) {
+									if (secondaryDevice) {
+										if (useBootstrap) {
+											int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+											iprintf ("Start failed. Error %i\n", err);
+										} else {
+											loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+										}
 									} else {
-										loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+										CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+										bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+										bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+										int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
+										iprintf ("Start failed. Error %i\n", err);
 									}
 								} else {
-									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
-									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-									int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
-									iprintf ("Start failed. Error %i\n", err);
+									gbaSwitch();
 								}
-							} else {
-								gbaSwitch();
 							}
 						}
 						break;
