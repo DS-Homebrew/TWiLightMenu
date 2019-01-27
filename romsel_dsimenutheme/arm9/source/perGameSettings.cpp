@@ -170,11 +170,8 @@ void perGameSettings (std::string filename) {
 	loadPerGameSettings(filename);
 
 	std::string filenameForInfo = filename;
-	bool isLauncharg = ((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "launcharg")
-					|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "LAUNCHARG"));
 	if((filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "argv")
-	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV")
-	|| isLauncharg)
+	|| (filenameForInfo.substr(filenameForInfo.find_last_of(".") + 1) == "ARGV"))
 	{
 
 		std::vector<char*> argarray;
@@ -198,31 +195,6 @@ void perGameSettings (std::string filename) {
 		}
 		fclose(argfile);
 		filenameForInfo = argarray.at(0);
-
-		if (isLauncharg) {
-			extern void RemoveTrailingSlashes(std::string& path);
-			RemoveTrailingSlashes(filenameForInfo);
-
-			char appPath[256];
-			for (u8 appVer = 0; appVer <= 0xFF; appVer++)
-			{
-				if (appVer > 0xF) {
-					snprintf(appPath, sizeof(appPath), "%s/content/000000%x.app", filenameForInfo.c_str(), appVer);
-				} else {
-					snprintf(appPath, sizeof(appPath), "%s/content/0000000%x.app", filenameForInfo.c_str(), appVer);
-				}
-				/*printSmall(false, 16, 64, appPath);
-				printSmall(false, -128, 80, appPath);
-				while (1) {
-					swiWaitForVBlank();
-				}*/
-				if (access(appPath, F_OK) == 0)
-				{
-					break;
-				}
-			}
-			filenameForInfo = appPath;
-		}
 	}
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
@@ -335,7 +307,7 @@ void perGameSettings (std::string filename) {
 				}
 			}
 			printSmall(false, 200, 166, "B: Back");
-		} else if (isLauncharg || isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
 			printSmall(false, 208, 166, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
@@ -501,7 +473,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-		} else if (isLauncharg || isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
