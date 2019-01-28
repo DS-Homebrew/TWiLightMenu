@@ -54,8 +54,10 @@
 #include "common/systemdetails.h"
 
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
+#define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
 std::vector<std::string> akThemeList;
+std::vector<std::string> r4ThemeList;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -238,6 +240,32 @@ void loadAkThemeList()
 	// }
 }
 
+void loadR4ThemeList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			r4ThemeList.emplace_back(themeDir);
+		}
+		closedir(dir);
+	}
+	// for (auto &p : std::filesystem::directory_iterator(path))
+	// {
+	// 	if (p.is_directory())
+	// 		r4ThemeList.emplace_back(p);
+	// }
+}
+
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 {
 	switch (optVal.get())
@@ -248,25 +276,7 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 					  {STR_DSI_DARKMENU, STR_DSI_NORMALMENU, STR_DSI_RED, STR_DSI_BLUE, STR_DSI_GREEN, STR_DSI_YELLOW, STR_DSI_PINK, STR_DSI_PURPLE},
 					  {0, 1, 2, 3, 4, 5, 6, 7});
 	case 2:
-		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME,
-					  Option::Int(&ms().subtheme),
-					  {
-						  STR_R4_THEME01,
-						  STR_R4_THEME02,
-						  STR_R4_THEME03,
-						  STR_R4_THEME04,
-						  STR_R4_THEME05,
-						  STR_R4_THEME06,
-						  STR_R4_THEME07,
-						  STR_R4_THEME08,
-						  STR_R4_THEME09,
-						  STR_R4_THEME10,
-						  STR_R4_THEME11,
-						  STR_R4_THEME12,
-						  STR_R4_THEME13,
-						  STR_R4_THEME14,
-					  },
-					  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13});
+		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETRETURN, Option::Str(&ms().r4_theme), r4ThemeList);
 	case 3:
 		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
@@ -391,6 +401,7 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 	loadAkThemeList();
+	loadR4ThemeList();
 
 	swiWaitForVBlank();
 
@@ -573,12 +584,12 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 				 TLoadingScreen::ELoadingTicTacToe,
 				 TLoadingScreen::ELoadingSimple})
 
-		.option(STR_LOADINGSCREENTHEME, STR_DESCRIPTION_LOADINGSCREENTHEME,
+			.option(STR_LOADINGSCREENTHEME, STR_DESCRIPTION_LOADINGSCREENTHEME,
 				Option::Bool(&bs().bstrap_loadingScreenTheme),
 				{STR_DARK, STR_LIGHT},
 				{true, false})
 
-		.option(STR_LOADINGSCREENLOCATION, STR_DESCRIPTION_LOADINGSCREENLOCATION,
+			.option(STR_LOADINGSCREENLOCATION, STR_DESCRIPTION_LOADINGSCREENLOCATION,
 				Option::Bool(&bs().bstrap_loadingScreenLocation),
 				{STR_BOTTOM, STR_TOP},
 				{true, false})

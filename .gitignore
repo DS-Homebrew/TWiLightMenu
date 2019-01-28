@@ -7,6 +7,7 @@
 *.elf
 *.arm7
 *.arm9
+*.DS_Store
 
 # Build Directory
 build/
