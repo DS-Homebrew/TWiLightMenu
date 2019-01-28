@@ -1273,7 +1273,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 
 					clearText();
-					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1)) {
+					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 						showbubble = true;
 						titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 					} else {
@@ -1289,7 +1289,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
+				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = true;
 
 				// Draw icons 1 per vblank to prevent corruption
@@ -1469,7 +1469,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if(prevPos != cursorPosition[secondaryDevice]) {
 						clearText();
-						if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1)) {
+						if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 							showbubble = true;
 							titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 						} else {
@@ -1487,7 +1487,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size() - 1))
+				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = (theme == 1 ? true : false);
 			}
 
