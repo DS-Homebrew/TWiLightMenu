@@ -995,6 +995,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
+					{
+						bnrRomType[i] = 3;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
 					}
 
 					if (showBoxArt) {

@@ -142,6 +142,7 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool snesEmulator = true;
 
 bool pictochatFound = false;
 bool dlplayFound = false;
@@ -199,6 +200,7 @@ void LoadSettings(void) {
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	if (!isDSiMode()) useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
+	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -1076,6 +1078,15 @@ int main(int argc, char **argv) {
 			isHomebrew = 0;
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gen")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GEN"))
+		{
+			bnrRomType = 3;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "smc")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "SMC")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "sfc")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "SFC"))
 		{
 			bnrRomType = 3;
 			bnrWirelessIcon = 0;
@@ -2098,6 +2109,40 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", genROMpath);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+				}
+				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				ClearBrightness();
+				printLarge(false, 4, 4, text);
+				stop();
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".smc") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMC") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sfc") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SFC") == 0))
+			{
+				std::string romfolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romfolderNoSlash);
+				char snesROMpath[256];
+				snprintf (snesROMpath, sizeof(snesROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
+				homebrewBootstrap = true;
+				romPath = snesROMpath;
+				launchType = 1;
+				previousUsedDevice = secondaryDevice;
+				SaveSettings();
+				if (secondaryDevice) {
+					argarray.at(0) = (char*)(snesEmulator ? "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds" : "fat:/_nds/TWiLightMenu/emulators/lolSNES.nds");
+				} else {
+					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					if(snesEmulator) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+					} else {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
+					}
+					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", snesROMpath);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
