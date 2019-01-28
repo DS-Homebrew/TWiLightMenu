@@ -845,7 +845,7 @@ int main(int argc, char **argv) {
 		if (startMenu) {
 			whiteScreen = false;
 			if (!menuGraphicsLoaded) {
-				topLogoLoad();
+				topBgLoad(true);
 				bottomBgLoad(true);
 				menuGraphicsLoaded = true;
 			}
@@ -945,7 +945,7 @@ int main(int argc, char **argv) {
 					default:
 						clearText();
 						startMenu = false;
-						topBgLoad();
+						topBgLoad(false);
 						bottomBgLoad(false);
 						menuGraphicsLoaded = false;
 						break;

@@ -20,37 +20,14 @@
 
 #include <nds.h>
 #include <maxmod9.h>
+#include <fstream>
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
+#include "inifile.h"
+#include "flashcard.h"
 
 // Graphic files
-#include "theme01_bckgrd1.h"
-#include "theme01_logo.h"
-#include "theme02_bckgrd1.h"
-#include "theme02_logo.h"
-#include "theme03_bckgrd1.h"
-#include "theme03_logo.h"
-#include "theme04_bckgrd1.h"
-#include "theme04_logo.h"
-#include "theme05_bckgrd1.h"
-#include "theme05_logo.h"
-#include "theme06_bckgrd1.h"
-#include "theme06_logo.h"
-#include "theme07_bckgrd1.h"
-#include "theme07_logo.h"
-#include "theme08_bckgrd1.h"
-#include "theme08_logo.h"
-#include "theme09_bckgrd1.h"
-#include "theme09_logo.h"
-#include "theme10_bckgrd1.h"
-#include "theme10_logo.h"
-#include "theme11_bckgrd1.h"
-#include "theme11_logo.h"
-#include "theme12_bckgrd1.h"
-#include "theme12_logo.h"
-#include "bluemoon_bckgrd1.h"
-#include "maclike_bckgrd1.h"
 #include "iconbox.h"
 #include "wirelessicons.h"
 
@@ -159,20 +136,34 @@ void initSubSprites(void)
 }
 
 void bottomBgLoad(bool startMenu) {
-	//char pathTop[256];
-	char pathBottom[256];
-	if (startMenu) {
-		//snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme%i/logo.bmp", subtheme+1);
-		snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme%i/icons.bmp", subtheme+1);
-	} else {
-		//snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme%i/bckgrd_1.bmp", subtheme+1);
-		snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme%i/bckgrd_2.bmp", subtheme+1);
+	const char* settingsinipath	= "sd:/_nds/TWiLightMenu/settings.ini";
+	std::string r4_theme = "sd:/";
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
+		r4_theme = "fat:/";
 	}
 
-	//FILE* fileTop = fopen(pathTop, "rb");
+	CIniFile settingsini( settingsinipath );
+	r4_theme += "_nds/TWiLightMenu/r4menu/themes/";
+	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
+
+	char pathBottom[256];
+	if (startMenu) {
+		std::ifstream file((r4_theme+"icons.bmp").c_str());
+		if(file)
+			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str(), subtheme+1);
+		else
+			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp", subtheme+1);
+	} else {
+		std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+		if(file)
+			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str(), subtheme+1);
+		else
+			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp", subtheme+1);
+	}
+
 	FILE* fileBottom = fopen(pathBottom, "rb");
 
-	//if (fileTop && fileBottom) {
 	if (fileBottom) {
 		// Start loading
 		fseek(fileBottom, 0xe, SEEK_SET);
@@ -193,7 +184,6 @@ void bottomBgLoad(bool startMenu) {
 		}
 	}
 
-	//fclose(fileTop);
 	fclose(fileBottom);
 
 	/*if (startMenu) {
@@ -411,132 +401,58 @@ void vBlankHandler()
 	GFX_FLUSH = 0;
 }
 
-void topLogoLoad() {
-	switch (subtheme) {
-		case 0:
-		default:
-			swiDecompressLZSSVram ((void*)theme01_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme01_logoPal, theme01_logoPalLen);
-			break;
-		case 1:
-			swiDecompressLZSSVram ((void*)theme02_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme02_logoPal, theme02_logoPalLen);
-			break;
-		case 2:
-			swiDecompressLZSSVram ((void*)theme03_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme03_logoPal, theme03_logoPalLen);
-			break;
-		case 3:
-			swiDecompressLZSSVram ((void*)theme04_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme04_logoPal, theme04_logoPalLen);
-			break;
-		case 4:
-			swiDecompressLZSSVram ((void*)theme05_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme05_logoPal, theme05_logoPalLen);
-			break;
-		case 5:
-			swiDecompressLZSSVram ((void*)theme06_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme06_logoPal, theme06_logoPalLen);
-			break;
-		case 6:
-			swiDecompressLZSSVram ((void*)theme07_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme07_logoPal, theme07_logoPalLen);
-			break;
-		case 7:
-			swiDecompressLZSSVram ((void*)theme08_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme08_logoPal, theme08_logoPalLen);
-			break;
-		case 8:
-			swiDecompressLZSSVram ((void*)theme09_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme09_logoPal, theme09_logoPalLen);
-			break;
-		case 9:
-			swiDecompressLZSSVram ((void*)theme10_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme10_logoPal, theme10_logoPalLen);
-			break;
-		case 10:
-			swiDecompressLZSSVram ((void*)theme11_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme11_logoPal, theme11_logoPalLen);
-			break;
-		case 11:
-			swiDecompressLZSSVram ((void*)theme12_logoTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme12_logoPal, theme12_logoPalLen);
-			break;
-		case 12:
-			swiDecompressLZSSVram ((void*)bluemoon_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], bluemoon_bckgrd1Pal, bluemoon_bckgrd1PalLen);
-			break;
-		case 13:
-			swiDecompressLZSSVram ((void*)maclike_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], maclike_bckgrd1Pal, maclike_bckgrd1PalLen);
-			break;
+void topBgLoad(bool startMenu) {
+	const char* settingsinipath	= "sd:/_nds/TWiLightMenu/settings.ini";
+	std::string r4_theme = "sd:/";
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
+		r4_theme = "fat:/";
 	}
-}
 
-void topBgLoad() {
-	switch (subtheme) {
-		case 0:
-		default:
-			swiDecompressLZSSVram ((void*)theme01_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme01_bckgrd1Pal, theme01_bckgrd1PalLen);
-			break;
-		case 1:
-			swiDecompressLZSSVram ((void*)theme02_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme02_bckgrd1Pal, theme02_bckgrd1PalLen);
-			break;
-		case 2:
-			swiDecompressLZSSVram ((void*)theme03_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme03_bckgrd1Pal, theme03_bckgrd1PalLen);
-			break;
-		case 3:
-			swiDecompressLZSSVram ((void*)theme04_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme04_bckgrd1Pal, theme04_bckgrd1PalLen);
-			break;
-		case 4:
-			swiDecompressLZSSVram ((void*)theme05_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme05_bckgrd1Pal, theme05_bckgrd1PalLen);
-			break;
-		case 5:
-			swiDecompressLZSSVram ((void*)theme06_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme06_bckgrd1Pal, theme06_bckgrd1PalLen);
-			break;
-		case 6:
-			swiDecompressLZSSVram ((void*)theme07_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme07_bckgrd1Pal, theme07_bckgrd1PalLen);
-			break;
-		case 7:
-			swiDecompressLZSSVram ((void*)theme08_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme08_bckgrd1Pal, theme08_bckgrd1PalLen);
-			break;
-		case 8:
-			swiDecompressLZSSVram ((void*)theme09_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme09_bckgrd1Pal, theme09_bckgrd1PalLen);
-			break;
-		case 9:
-			swiDecompressLZSSVram ((void*)theme10_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme10_bckgrd1Pal, theme10_bckgrd1PalLen);
-			break;
-		case 10:
-			swiDecompressLZSSVram ((void*)theme11_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme11_bckgrd1Pal, theme11_bckgrd1PalLen);
-			break;
-		case 11:
-			swiDecompressLZSSVram ((void*)theme12_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], theme12_bckgrd1Pal, theme12_bckgrd1PalLen);
-			break;
-		case 12:
-			swiDecompressLZSSVram ((void*)bluemoon_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], bluemoon_bckgrd1Pal, bluemoon_bckgrd1PalLen);
-			break;
-		case 13:
-			swiDecompressLZSSVram ((void*)maclike_bckgrd1Tiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
-			vramcpy_ui (&BG_PALETTE_SUB[0], maclike_bckgrd1Pal, maclike_bckgrd1PalLen);
-			break;
+	CIniFile settingsini( settingsinipath );
+	r4_theme += "_nds/TWiLightMenu/r4menu/themes/";
+	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
+
+	char pathTop[256];
+	if (startMenu) {
+		std::ifstream file((r4_theme+"icons.bmp").c_str());
+		if(file)
+			snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str(), subtheme+1);
+		else
+			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp", subtheme+1);
+	} else {
+		std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+		if(file)
+			snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str(), subtheme+1);
+		else
+			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp", subtheme+1);
+	}
+
+	FILE* fileTop = fopen(pathTop, "rb");
+
+	if (fileTop) {
+		// Start loading
+		fseek(fileTop, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
+		fseek(fileTop, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x1A000, fileTop);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191+32;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 0+256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
+		}
 	}
 }
 
 void graphicsInit()
-{
+{	
 	*(u16*)(0x0400006C) |= BIT(14);
 	*(u16*)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
@@ -544,8 +460,7 @@ void graphicsInit()
 
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
-	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG2_ACTIVE);
-
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
 	glScreen2D();
@@ -562,14 +477,16 @@ void graphicsInit()
 	vramSetBankA(VRAM_A_TEXTURE);
 	vramSetBankB(VRAM_B_TEXTURE);
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
-	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
+	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
+	REG_BG1CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
+	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
 		bgMapSub[i] = (u16)i;
 	}
-
-	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-
+	bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
+	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
+		bgMapSub[i] = (u16)i;
+	}
 	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
@@ -579,6 +496,8 @@ void graphicsInit()
 
 	lcdMainOnBottom();
 	
+	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 0, 15, false, true);
+	
 	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X = 0;
 	REG_BG3Y = 0;
@@ -587,16 +506,16 @@ void graphicsInit()
 	REG_BG3PC = 0;
 	REG_BG3PD = 1<<8;
 
-	/*REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3CNT_SUB = BG_MAP_BASE(1) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
 	REG_BG3PA_SUB = 1<<8;
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = 1<<8;*/
+	REG_BG3PD_SUB = 1<<8;
 
 	// Initialize the bottom background
-	//bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
 	swiWaitForVBlank();
 
