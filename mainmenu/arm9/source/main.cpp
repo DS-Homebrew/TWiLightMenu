@@ -1074,6 +1074,13 @@ int main(int argc, char **argv) {
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "gen")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "GEN"))
+		{
+			bnrRomType = 3;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
 		}
 
 		if (showBoxArt) {
@@ -2070,6 +2077,34 @@ int main(int argc, char **argv) {
 				clearText();
 				ClearBrightness();
 				printSmall(false, 4, 4, text);
+				stop();
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".gen") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GEN") == 0))
+			{
+				std::string romfolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romfolderNoSlash);
+				char genROMpath[256];
+				snprintf (genROMpath, sizeof(genROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
+				homebrewBootstrap = true;
+				romPath = genROMpath;
+				launchType = 1;
+				previousUsedDevice = secondaryDevice;
+				SaveSettings();
+				if (secondaryDevice) {
+					argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+				} else {
+					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", genROMpath);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+				}
+				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				ClearBrightness();
+				printLarge(false, 4, 4, text);
 				stop();
 			}
 
