@@ -930,7 +930,6 @@ int main(int argc, char **argv) {
 	langInit();
 
 	std::string filename;
-	std::string bootstrapfilename;
 
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
@@ -1631,7 +1630,7 @@ int main(int argc, char **argv) {
 					memset(buffer, 0, sizeof(buffer));
 					bool bufferCleared = false;
 					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.pubSavSize);
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.pubSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
 					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
 					fclose(hdrFile);
@@ -1666,7 +1665,7 @@ int main(int argc, char **argv) {
 					memset(buffer, 0, sizeof(buffer));
 					bool bufferCleared = false;
 					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", NDSHeader.prvSavSize);
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.prvSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
 					if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
 					fclose(hdrFile);
@@ -1942,39 +1941,39 @@ int main(int argc, char **argv) {
 						}
                         
 						bootstrapini.SaveIniFile( bootstrapinipath );
+						launchType = 1;
+						previousUsedDevice = secondaryDevice;
+						SaveSettings();
 						if (secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (homebrewBootstrap) {
-									bootstrapfilename = (bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+									argarray.at(0) = (char*)(bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
 								} else {
-									bootstrapfilename = (bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+									argarray.at(0) = (char*)(bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
 								}
 							} else {
 								if (homebrewBootstrap) {
-									bootstrapfilename = (perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
 								} else {
-									bootstrapfilename = (perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
 								}
 							}
 						} else {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (homebrewBootstrap) {
-									bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+									argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 								} else {
-									bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+									argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 								}
 							} else {
 								if (homebrewBootstrap) {
-									bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 								} else {
-									bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 								}
 							}
 						}
-						launchType = 1;
-						previousUsedDevice = secondaryDevice;
-						SaveSettings();
-						int err = runNdsFile (bootstrapfilename.c_str(), 0, NULL, true, false, true, true);
+						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -2034,11 +2033,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(gbROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile ("/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -2060,11 +2059,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(nesROMpath);
 				int err = 0;
 				if(secondaryDevice) {
-					argarray.at(0) = "/_nds/TWiLightMenu/emulators/nesds.nds";
-					err = runNdsFile ("/_nds/TWiLightMenu/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				} else {
-					argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-					err = runNdsFile ("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
 				}
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

@@ -936,7 +936,7 @@ void MainWnd::bootGbaRunner(void)
         return;
     }
 
-    BootstrapConfig gbaRunner("GBARunner2.nds", GBARUNNER_BOOTSTRAP, "", 0);
+    BootstrapConfig gbaRunner("GBARunner2.nds", GBARUNNER_BOOTSTRAP, "####", 0);
     gbaRunner.gbarBootstrap(true);
     if (int err = gbaRunner.launch())
     {
@@ -1009,7 +1009,7 @@ void MainWnd::bootSega8bit()
         return;
     }
 
-    BootstrapConfig sega8bit("S8DS.nds", S8DS07_ROM, "", 0);
+    BootstrapConfig sega8bit("S8DS.nds", S8DS07_ROM, "####", 0);
 
 	CIniFile ini(BOOTSTRAP_INI);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGA8BIT_RAMDISK);
@@ -1044,7 +1044,7 @@ void MainWnd::bootSegaMD()
         return;
     }
 
-    BootstrapConfig segamd("jEnesisDS.nds", JENESISDS_ROM, "", 0);
+    BootstrapConfig segamd("jEnesisDS.nds", JENESISDS_ROM, "####", 0);
 
 	CIniFile ini(BOOTSTRAP_INI);
 	ini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", SEGAMD_RAMDISK);

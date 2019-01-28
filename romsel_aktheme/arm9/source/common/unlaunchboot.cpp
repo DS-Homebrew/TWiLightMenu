@@ -26,7 +26,7 @@ void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::
 		memset(buffer, 0, sizeof(buffer));
 		bool bufferCleared = false;
 		char savHdrPath[64];
-		snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", saveSize);
+		snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)saveSize);
 		FILE *hdrFile = fopen(savHdrPath, "rb");
 		if (hdrFile) fread(buffer, 1, 0x200, hdrFile);
 		fclose(hdrFile);

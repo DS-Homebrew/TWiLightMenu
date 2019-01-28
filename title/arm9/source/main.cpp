@@ -68,7 +68,6 @@ bool hiyaAutobootFound = false;
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 
 std::string homebrewArg;
-std::string bootstrapfilename;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
@@ -237,24 +236,39 @@ int lastRunROM()
 				filename.erase(0, last_slash_idx + 1);
 			}
 
+			argarray.push_back(strdup(filename.c_str()));
+
 			loadPerGameSettings(filename);
-			if (ms().homebrewBootstrap)
-			{
+			if (access("fat:/", F_OK) == 0) {
 				if (perGameSettings_bootstrapFile == -1) {
-					bootstrapfilename = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+					if (ms().homebrewBootstrap) {
+						argarray.at(0) = (char*)(ms().bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+					} else {
+						argarray.at(0) = (char*)(ms().bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+					}
 				} else {
-					bootstrapfilename = (perGameSettings_bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+					if (ms().homebrewBootstrap) {
+						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
+					} else {
+						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+					}
+				}
+			} else {
+				if (perGameSettings_bootstrapFile == -1) {
+					if (ms().homebrewBootstrap) {
+						argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					} else {
+						argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+					}
+				} else {
+					if (ms().homebrewBootstrap) {
+						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					} else {
+						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+					}
 				}
 			}
-			else
-			{
-				if (perGameSettings_bootstrapFile == -1) {
-					bootstrapfilename = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY : BOOTSTRAP_RELEASE);
-				} else {
-					bootstrapfilename = (perGameSettings_bootstrapFile ? BOOTSTRAP_NIGHTLY : BOOTSTRAP_RELEASE);
-				}
-			}
-			err = runNdsFile(bootstrapfilename.c_str(), 0, NULL, true);
+			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true);
 		}
 		else
 		{
@@ -316,27 +330,25 @@ int lastRunROM()
 	{
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = "/_nds/TWiLightMenu/emulators/nesds.nds";
-			err = runNdsFile("/_nds/TWiLightMenu/emulators/nesds.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
 		}
 		else
 		{
-			argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-			err = runNdsFile("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
 	}
 	else if (ms().launchType == 4)
 	{
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = "/_nds/TWiLightMenu/emulators/gameyob.nds";
-			err = runNdsFile("/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
 		else
 		{
-			argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-			err = runNdsFile("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
 	}
 
 	return err;

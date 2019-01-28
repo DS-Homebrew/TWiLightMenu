@@ -441,6 +441,10 @@ int BootstrapConfig::launch()
 			bootstrapPath = BOOTSTRAP_RELEASE;
 	}
 
+	std::vector<char*> argarray;
+	argarray.push_back(strdup(bootstrapPath.c_str()));
+	argarray.at(0) = (char*)bootstrapPath.c_str();
+
 	LoaderConfig loader(bootstrapPath, (ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI));
 
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
@@ -460,5 +464,5 @@ int BootstrapConfig::launch()
 
 	if (_configSavedHandler)
 		_configSavedHandler();
-	return loader.launch();
+	return loader.launch(argarray.size(), (const char **)&argarray[0]);
 }

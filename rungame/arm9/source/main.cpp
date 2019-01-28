@@ -41,7 +41,6 @@ std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 std::string homebrewArg;
-std::string bootstrapfilename;
 std::string ndsPath;
 std::string filename;
 
@@ -152,12 +151,14 @@ TWL_CODE int lastRunROM() {
 			filename.erase(0, last_slash_idx + 1);
 		}
 
+		argarray.push_back(strdup(filename.c_str()));
+
 		loadPerGameSettings(filename);
 		if (homebrewBootstrap) {
 			if (perGameSettings_bootstrapFile == -1) {
-				bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 			} else {
-				bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 			}
 		} else {
 			char game_TID[5];
@@ -252,12 +253,12 @@ TWL_CODE int lastRunROM() {
 			}
 			bootstrapini.SaveIniFile( bootstrapinipath );
 			if (perGameSettings_bootstrapFile == -1) {
-				bootstrapfilename = (bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 			} else {
-				bootstrapfilename = (perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 			}
 		}
-		return runNdsFile (bootstrapfilename.c_str(), 0, NULL, true);
+		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);
 	} else if (launchType == 2) {
 		char unlaunchDevicePath[256];
 		if (previousUsedDevice) {
@@ -290,11 +291,11 @@ TWL_CODE int lastRunROM() {
 		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
 	} else if (launchType == 3) {
-		argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-		return runNdsFile ("sd:/_nds/TWiLightMenu/emulators/nestwl.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
+		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to nesDS as argument
 	} else if (launchType == 4) {
-		argarray.at(0) = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-		return runNdsFile ("sd:/_nds/TWiLightMenu/emulators/gameyob.nds", argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
+		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 	}
 }
 
