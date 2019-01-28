@@ -701,7 +701,7 @@ void launchSega8bit(void) {
 				ramDiskNo++;
 				textPrinted = false;
 			}
-
+			
 			if (ramDiskNo < 0) {
 				ramDiskNo = 9;
 			}
@@ -713,7 +713,7 @@ void launchSega8bit(void) {
 		showdialogbox = false;
 		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 		if (canceled) {
-			return;
+		return;
 		}
 	}
 
@@ -1341,7 +1341,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						int dX = (-(prevTouch1.px-prevTouch2.px));
 						int decAmount = abs(dX);
 						if(dX>0) {
-							while(decAmount>.25 && titleboxXpos[secondaryDevice] < 2496) {
+							while(decAmount>.25) {
+								if(theme && titleboxXpos[secondaryDevice] > 2496)
+									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
 									tapped = true;
@@ -1349,10 +1351,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								}
 
 								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
+								if(titlewindowXpos[secondaryDevice] > 192.075)	titlewindowXpos[secondaryDevice] = 192.075;
 
 								for(int i=0;i<2;i++) {
 									swiWaitForVBlank();
-									titleboxXpos[secondaryDevice] += decAmount/2;
+									if(titleboxXpos[secondaryDevice] < 2496)	titleboxXpos[secondaryDevice] += decAmount/2;
+									else	titleboxXpos[secondaryDevice] += decAmount/4;
 								}
 								decAmount = decAmount/1.25;
 
@@ -1365,7 +1369,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								}
 							}
 						} else if (dX<0) {
-							while(decAmount>.25 && titleboxXpos[secondaryDevice]>0) {
+							while(decAmount>.25) {
+								if(theme && titleboxXpos[secondaryDevice]<0)
+									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
 									tapped = true;
@@ -1373,10 +1379,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								}
 
 								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
+								if(titlewindowXpos[secondaryDevice] < 0)	titlewindowXpos[secondaryDevice] = 0;
 
 								for(int i=0;i<2;i++) {
 									swiWaitForVBlank();
-									titleboxXpos[secondaryDevice] -= decAmount/2;
+									if(titleboxXpos[secondaryDevice]>0)	titleboxXpos[secondaryDevice] -= decAmount/2;
+									else	titleboxXpos[secondaryDevice] -= decAmount/4;	
 								}
 								decAmount = decAmount/1.25;
 
@@ -1424,16 +1432,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					titleboxXpos[secondaryDevice] += (-(touch.px-prevTouch1.px));
 					cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+					titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;
 					if(titleboxXpos[secondaryDevice] > 2496) {
+						if(theme)
+							titleboxXpos[secondaryDevice] = 2496;
 						cursorPosition[secondaryDevice] = 39;
-						titleboxXpos[secondaryDevice] = 2496;
 						titlewindowXpos[secondaryDevice] = 192.075;
 					} else if(titleboxXpos[secondaryDevice] < 0) {
+						if(theme)
+							titleboxXpos[secondaryDevice] = 0;
 						cursorPosition[secondaryDevice] = 0;
-						titleboxXpos[secondaryDevice] = 0;
 						titlewindowXpos[secondaryDevice] = 0;
-					} else {
-						titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
 					}
 
 					// Load icons
