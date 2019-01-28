@@ -151,15 +151,15 @@ void bottomBgLoad(bool startMenu) {
 	if (startMenu) {
 		std::ifstream file((r4_theme+"icons.bmp").c_str());
 		if(file)
-			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str(), subtheme+1);
+			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str());
 		else
-			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp", subtheme+1);
+			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp");
 	} else {
 		std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
 		if(file)
-			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str(), subtheme+1);
+			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str());
 		else
-			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp", subtheme+1);
+			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp");
 	}
 
 	FILE* fileBottom = fopen(pathBottom, "rb");
@@ -417,15 +417,15 @@ void topBgLoad(bool startMenu) {
 	if (startMenu) {
 		std::ifstream file((r4_theme+"logo.bmp").c_str());
 		if(file)
-			snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str(), subtheme+1);
+			snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str());
 		else
-			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp", subtheme+1);
+			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp");
 	} else {
 		std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
 		if(file)
-			snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str(), subtheme+1);
+			snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str());
 		else
-			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp", subtheme+1);
+			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp");
 	}
 
 	FILE* fileTop = fopen(pathTop, "rb");
