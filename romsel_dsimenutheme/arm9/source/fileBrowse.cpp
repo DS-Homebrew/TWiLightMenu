@@ -128,7 +128,8 @@ extern int startMenu_cursorPosition;
 extern int pagenum[2];
 extern int titleboxXpos[2];
 extern int titlewindowXpos[2];
-extern int titleboxYposMovingApp;
+int movingApp = 0;
+int movingAppYpos = 105;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -1227,35 +1228,38 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
-				int posFrom = cursorPosition[secondaryDevice];
+				movingApp = (pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice]);
 				// int posTo = posFrom;
 				for(int i=0;i<10;i++) {
-					titleboxYposMovingApp -= 5;
+					movingAppYpos -= 5;
 					swiWaitForVBlank();
 				}
 
 				while(1){
-				// 	glSprite(96, 20-titleboxYmovepos2, GL_FLIP_NONE, tex().boxfullImage());
-				// drawIcon(112, 20-titleboxYmovepos2, cursorPosition[secondaryDevice]);
-					// if(titleboxXmoveleft || titleboxXmoveright)	continue;
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
 					swiWaitForVBlank();
 					
-					if(pressed & KEY_LEFT) {
-						// posTo--;
+					if(pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright
+					|| held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
+					{
 						titleboxXmoveleft = true;
 						cursorPosition[secondaryDevice]--;
+						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count)
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 					}
-					else if(pressed & KEY_RIGHT) {
-						// posTo++;
+					else if(pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright
+					|| held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
+					{
 						titleboxXmoveright = true;
 						cursorPosition[secondaryDevice]++;
+						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count)
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 					}
 					else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
-							titleboxYposMovingApp += 5;
+							movingAppYpos += 5;
 							swiWaitForVBlank();
 						}
 						break;
@@ -1266,7 +1270,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				char str[2];
 				sprintf(str, "%d", cursorPosition[secondaryDevice]);
 				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
-				sprintf(str, "%d", posFrom);
+				sprintf(str, "%d", movingApp);
 				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
 				gameOrderIni.SaveIniFile("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 				
@@ -1282,6 +1286,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				settingsChanged = true;
 				boxArtLoaded = false;
+				movingApp = 0;
 
 				// Draw icons
 				if (cursorPosition[secondaryDevice] <= 1) {

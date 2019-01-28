@@ -77,6 +77,8 @@ extern bool showSTARTborder;
 extern bool isScrolling;
 extern bool needToPlayStopSound;
 extern int waitForNeedToPlayStopSound;
+extern int movingApp;
+extern int movingAppYpos;
 
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
@@ -91,7 +93,6 @@ int screenBrightness = 31;
 int movetimer = 0;
 
 int titleboxYmovepos = 0;
-int titleboxYposMovingApp = 0;
 
 extern int spawnedtitleboxes;
 
@@ -539,6 +540,11 @@ void vBlankHandler()
 			}
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
+
+			if(movingApp != 0) {
+				drawIcon(iconXpos, movingAppYpos, movingApp);
+			}
+
 			for(int i = 0; i < 40; i++) {
 				if (theme == 0) {
 					moveIconClose(i);
@@ -555,13 +561,12 @@ void vBlankHandler()
 						} else { 
 							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
 						}
-						int titleboxYposMovingAppCopy = titleboxYposMovingApp;
-						if(cursorPosition[secondaryDevice] != i)	titleboxYposMovingAppCopy = 0;;
-						if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-						else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-						else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-						
-						else drawIcon(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposMovingAppCopy+titleboxYposDropDown[i % 5], i);
+						if(i!=movingApp) {
+							if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else drawIcon(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
+						}
 					}
 				} else {
 					// Empty box
