@@ -20,8 +20,6 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-void loadGBCIcon();
-void loadNESIcon();
 void getGameInfo(bool isDir, const char* name, int num);
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, const char* name, int num);
@@ -31,4 +29,6 @@ void drawSmallIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);
 void drawIconGBC(int Xpos, int Ypos);
 void drawIconNES(int Xpos, int Ypos);
+void drawIconMD(int Xpos, int Ypos);
+void drawIconSNES(int Xpos, int Ypos);
 void execDeferredIconUpdates();

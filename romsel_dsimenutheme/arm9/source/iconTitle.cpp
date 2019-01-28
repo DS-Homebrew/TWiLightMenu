@@ -189,6 +189,14 @@ void drawIconNES(int Xpos, int Ypos)
 {
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NES_ICON));
 }
+void drawIconMD(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(MD_ICON));
+}
+void drawIconSNES(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SNES_ICON));
+}
 
 void loadFixedBanner(void) {
 	/* Banner fixes start here */

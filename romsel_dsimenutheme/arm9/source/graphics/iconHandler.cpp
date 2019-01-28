@@ -12,6 +12,8 @@
 #include "_3ds_icon_gba.h"
 #include "icon_gb.h"
 #include "icon_nes.h"
+#include "icon_md.h"
+#include "icon_snes.h"
 
 bool initialized;
 
@@ -21,11 +23,15 @@ u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
 int _gbaTexID;
 int _gbcTexID;
 int _nesTexID;
+int _mdTexID;
+int _snesTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
+glImage _mdIcon[1];
+glImage _snesIcon[1];
 
 extern bool useGbarunner;
 
@@ -47,6 +53,10 @@ const glImage *getIcon(int num)
         return _gbcIcon;
     if (num == NES_ICON)
         return _nesIcon;
+    if (num == MD_ICON)
+        return _mdIcon;
+    if (num == SNES_ICON)
+        return _snesIcon;
     if (BAD_ICON_IDX(num) || !initialized)
         return NULL;
     return _ndsIcon[num];
@@ -92,6 +102,14 @@ void glLoadTileSetIntoSlot(
     case NES_ICON:
         textureID = _nesTexID;
         sprite = _nesIcon;
+        break;
+    case MD_ICON:
+        textureID = _mdTexID;
+        sprite = _mdIcon;
+        break;
+    case SNES_ICON:
+        textureID = _snesTexID;
+        sprite = _snesIcon;
         break;
     default:
         if (BAD_ICON_IDX(num))
@@ -206,6 +224,14 @@ void glReloadIconPalette(int num)
         textureID = _nesTexID;
         cachedPalette = (u16 *)icon_nesPal;
         break;
+    case MD_ICON:
+        textureID = _mdTexID;
+        cachedPalette = (u16 *)icon_mdPal;
+        break;
+    case SNES_ICON:
+        textureID = _snesTexID;
+        cachedPalette = (u16 *)icon_snesPal;
+        break;
     default:
         if (BAD_ICON_IDX(num))
             return;
@@ -228,6 +254,8 @@ void reloadIconPalettes()
     glReloadIconPalette(GBA_ICON);
     glReloadIconPalette(GBC_ICON);
     glReloadIconPalette(NES_ICON);
+    glReloadIconPalette(MD_ICON);
+    glReloadIconPalette(SNES_ICON);
 
     for (int i = 0; i < NDS_ICON_BANK_COUNT; i++)
     {
@@ -276,6 +304,8 @@ void iconManagerInit()
     glGenTextures(1, &_gbaTexID);
     glGenTextures(1, &_gbcTexID);
     glGenTextures(1, &_nesTexID);
+    glGenTextures(1, &_mdTexID);
+    glGenTextures(1, &_snesTexID);
 
     // Initialize empty data for the 6 textures.
     for (int i = 0; i < 6; i++)
@@ -288,6 +318,10 @@ void iconManagerInit()
     glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64, true);
 
     glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32, true);
+
+    glLoadIcon(MD_ICON, (u16 *)icon_mdPal, (u8 *)icon_mdBitmap, 32, true);
+
+    glLoadIcon(SNES_ICON, (u16 *)icon_snesPal, (u8 *)icon_snesBitmap, 32, true);
 
     if (useGbarunner)
     {

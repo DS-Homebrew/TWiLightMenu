@@ -1079,7 +1079,7 @@ int main(int argc, char **argv) {
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gen")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GEN"))
 		{
-			bnrRomType = 3;
+			bnrRomType = 4;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -1088,7 +1088,7 @@ int main(int argc, char **argv) {
 				|| (filename.substr(filename.find_last_of(".") + 1) == "sfc")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "SFC"))
 		{
-			bnrRomType = 3;
+			bnrRomType = 5;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
