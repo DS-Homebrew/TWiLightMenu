@@ -91,6 +91,7 @@ int screenBrightness = 31;
 int movetimer = 0;
 
 int titleboxYmovepos = 0;
+int titleboxYposMovingApp = 0;
 
 extern int spawnedtitleboxes;
 
@@ -554,11 +555,13 @@ void vBlankHandler()
 						} else { 
 							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
 						}
+						int titleboxYposMovingAppCopy = titleboxYposMovingApp;
+						if(cursorPosition[secondaryDevice] != i)	titleboxYposMovingAppCopy = 0;;
 						if (bnrRomType[i] == 3) drawIconNES(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						else if (bnrRomType[i] == 2) drawIconGBC(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						else if (bnrRomType[i] == 1) drawIconGB(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 						
-						else drawIcon(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
+						else drawIcon(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposMovingAppCopy+titleboxYposDropDown[i % 5], i);
 					}
 				} else {
 					// Empty box

@@ -46,6 +46,7 @@
 #include "graphics/graphics.h"
 #include "SwitchState.h"
 #include "perGameSettings.h"
+#include "graphics/ThemeTextures.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -127,6 +128,7 @@ extern int startMenu_cursorPosition;
 extern int pagenum[2];
 extern int titleboxXpos[2];
 extern int titlewindowXpos[2];
+extern int titleboxYposMovingApp;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -1216,36 +1218,44 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						defer(reloadFontTextures);
 					}
 				}
+			// Move apps
 			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				showSTARTborder = false;
 				showbubble = false;
-				applaunchprep = true;
+				// applaunchprep = true;
 				clearText();
 				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
 				int posFrom = cursorPosition[secondaryDevice];
-				int posTo = posFrom;
+				// int posTo = posFrom;
 				for(int i=0;i<10;i++) {
+					titleboxYposMovingApp -= 5;
 					swiWaitForVBlank();
 				}
 
 				while(1){
+				// 	glSprite(96, 20-titleboxYmovepos2, GL_FLIP_NONE, tex().boxfullImage());
+				// drawIcon(112, 20-titleboxYmovepos2, cursorPosition[secondaryDevice]);
 					// if(titleboxXmoveleft || titleboxXmoveright)	continue;
 					scanKeys();
 					pressed = keysDown();
+					held = keysDownRepeat();
+					swiWaitForVBlank();
 					
 					if(pressed & KEY_LEFT) {
-						posTo--;
+						// posTo--;
 						titleboxXmoveleft = true;
+						cursorPosition[secondaryDevice]--;
 					}
 					else if(pressed & KEY_RIGHT) {
-						posTo++;
+						// posTo++;
 						titleboxXmoveright = true;
+						cursorPosition[secondaryDevice]++;
 					}
 					else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
-							// titleboxYpos -= 5;
+							titleboxYposMovingApp += 5;
 							swiWaitForVBlank();
 						}
 						break;
@@ -1254,17 +1264,26 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 
 				char str[2];
-				sprintf(str, "%d", posTo);
+				sprintf(str, "%d", cursorPosition[secondaryDevice]);
 				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
 				sprintf(str, "%d", posFrom);
 				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
 				gameOrderIni.SaveIniFile("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 				
 				getDirectoryContents(dirContents[scrn], extensionList);
+				for(int i = 0; i < 40; i++) {
+					if (i+pagenum[secondaryDevice]*40 < file_count) {
+						getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+					}
+				}
+				// browseForFile(extensionList, username);
 
 				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 
-				// Draw icons 1 per vblank to prevent corruption
+				settingsChanged = true;
+				boxArtLoaded = false;
+
+				// Draw icons
 				if (cursorPosition[secondaryDevice] <= 1) {
 					for(int i = 0; i < 5; i++) {
 						swiWaitForVBlank();
@@ -1287,7 +1306,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 					}
 				}
-
 			// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
