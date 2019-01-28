@@ -415,13 +415,13 @@ void topBgLoad(bool startMenu) {
 
 	char pathTop[256];
 	if (startMenu) {
-		std::ifstream file((r4_theme+"icons.bmp").c_str());
+		std::ifstream file((r4_theme+"logo.bmp").c_str());
 		if(file)
 			snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str(), subtheme+1);
 		else
 			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp", subtheme+1);
 	} else {
-		std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+		std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
 		if(file)
 			snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str(), subtheme+1);
 		else
