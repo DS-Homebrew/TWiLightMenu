@@ -28,7 +28,8 @@ class BootstrapSettings
         ELoadingRegular = 1,
         ELoadingPong = 2,
         ELoadingTicTacToe = 3,
-		ELoadingSimple = 4
+	ELoadingSimple = 4,
+	ELoadingR4Like = 5
     };
 
   public:

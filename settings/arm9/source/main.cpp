@@ -577,12 +577,13 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 	gamesPage
 		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
 				Option::Int(&bs().bstrap_loadingScreen),
-				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple"},
+				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "R4-Like"},
 				{TLoadingScreen::ELoadingNone,
 				 TLoadingScreen::ELoadingRegular,
 				 TLoadingScreen::ELoadingPong,
 				 TLoadingScreen::ELoadingTicTacToe,
-				 TLoadingScreen::ELoadingSimple})
+				 TLoadingScreen::ELoadingSimple,
+				 TLoadingScreen::ELoadingR4Like})
 
 			.option(STR_LOADINGSCREENTHEME, STR_DESCRIPTION_LOADINGSCREENTHEME,
 				Option::Bool(&bs().bstrap_loadingScreenTheme),
