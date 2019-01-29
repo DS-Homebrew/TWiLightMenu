@@ -24,6 +24,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - Coto: nesDS
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
 - archeid (Loopy): [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS)
+- StarvingArtist (deviantArt): Some game console icons used.
 - Apache Thunder: Providing the Miku theme (not made by him) for Acekard theme, nesDS TWL Edition, and the DSi splash from NTR Launcher.
 - Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), MHGen and DS Menu themes for Acekard theme.
 - Epicpkmn11: Adding new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.

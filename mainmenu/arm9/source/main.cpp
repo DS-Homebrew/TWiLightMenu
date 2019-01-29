@@ -1086,14 +1086,14 @@ int main(int argc, char **argv) {
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gg")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GG"))
 		{
-			bnrRomType = 4;
+			bnrRomType = 5;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gen")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GEN"))
 		{
-			bnrRomType = 4;
+			bnrRomType = 6;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -1102,7 +1102,7 @@ int main(int argc, char **argv) {
 				|| (filename.substr(filename.find_last_of(".") + 1) == "sfc")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "SFC"))
 		{
-			bnrRomType = 5;
+			bnrRomType = 7;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;

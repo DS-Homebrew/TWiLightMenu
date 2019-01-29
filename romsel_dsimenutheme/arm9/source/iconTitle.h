@@ -29,6 +29,8 @@ void drawSmallIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);
 void drawIconGBC(int Xpos, int Ypos);
 void drawIconNES(int Xpos, int Ypos);
+void drawIconSMS(int Xpos, int Ypos);
+void drawIconGG(int Xpos, int Ypos);
 void drawIconMD(int Xpos, int Ypos);
 void drawIconSNES(int Xpos, int Ypos);
 void execDeferredIconUpdates();

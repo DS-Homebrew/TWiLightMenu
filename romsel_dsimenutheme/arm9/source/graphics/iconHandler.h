@@ -5,8 +5,12 @@
 #define GBA_ICON 0xBA
 #define GBC_ICON 0xBC
 #define NES_ICON 0xE5
+#define SMS_ICON 0xE6
+#define GG_ICON 0xE7
 #define MD_ICON 0xDD
 #define SNES_ICON 0xE2
+#define MSX_ICON 0xEE
+#define COL_ICON 0xC0
 #define NDS_ICON_BANK_COUNT 6
 #define TWL_ICON_FRAMES 8
 #define TWL_TEX_HEIGHT 256

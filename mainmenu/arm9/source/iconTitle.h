@@ -21,11 +21,7 @@
 ------------------------------------------------------------------*/
 #pragma once
 void iconTitleInit();
-void loadGBAIcon();
-void loadGBCIcon();
-void loadNESIcon();
-void loadMDIcon();
-void loadSNESIcon();
+void loadConsoleIcons();
 void getGameInfo(bool isDir, const char* name);
 void iconUpdate(bool isDir, const char* name);
 void titleUpdate(bool isDir, const char* name);
@@ -34,5 +30,7 @@ void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);
 void drawIconGBC(int Xpos, int Ypos);
 void drawIconNES(int Xpos, int Ypos);
+void drawIconSMS(int Xpos, int Ypos);
+void drawIconGG(int Xpos, int Ypos);
 void drawIconMD(int Xpos, int Ypos);
 void drawIconSNES(int Xpos, int Ypos);

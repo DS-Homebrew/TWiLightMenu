@@ -12,6 +12,8 @@
 #include "_3ds_icon_gba.h"
 #include "icon_gb.h"
 #include "icon_nes.h"
+#include "icon_sms.h"
+#include "icon_gg.h"
 #include "icon_md.h"
 #include "icon_snes.h"
 
@@ -23,15 +25,23 @@ u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
 int _gbaTexID;
 int _gbcTexID;
 int _nesTexID;
+int _smsTexID;
+int _ggTexID;
 int _mdTexID;
 int _snesTexID;
+int _msxTexID;
+int _colTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
 glImage _gbcIcon[(32 / 32) * (64 / 32)];
 glImage _nesIcon[1];
+glImage _smsIcon[1];
+glImage _ggIcon[1];
 glImage _mdIcon[1];
 glImage _snesIcon[1];
+//glImage _msxIcon[1];
+//glImage _colIcon[1];
 
 extern bool useGbarunner;
 
@@ -53,10 +63,18 @@ const glImage *getIcon(int num)
         return _gbcIcon;
     if (num == NES_ICON)
         return _nesIcon;
+    if (num == SMS_ICON)
+        return _smsIcon;
+    if (num == GG_ICON)
+        return _ggIcon;
     if (num == MD_ICON)
         return _mdIcon;
     if (num == SNES_ICON)
         return _snesIcon;
+    /*if (num == MSX_ICON)
+        return _msxIcon;
+    if (num == COL_ICON)
+        return _colIcon;*/
     if (BAD_ICON_IDX(num) || !initialized)
         return NULL;
     return _ndsIcon[num];
@@ -102,6 +120,14 @@ void glLoadTileSetIntoSlot(
     case NES_ICON:
         textureID = _nesTexID;
         sprite = _nesIcon;
+        break;
+    case SMS_ICON:
+        textureID = _smsTexID;
+        sprite = _smsIcon;
+        break;
+    case GG_ICON:
+        textureID = _ggTexID;
+        sprite = _ggIcon;
         break;
     case MD_ICON:
         textureID = _mdTexID;
@@ -224,6 +250,14 @@ void glReloadIconPalette(int num)
         textureID = _nesTexID;
         cachedPalette = (u16 *)icon_nesPal;
         break;
+    case SMS_ICON:
+        textureID = _smsTexID;
+        cachedPalette = (u16 *)icon_smsPal;
+        break;
+    case GG_ICON:
+        textureID = _ggTexID;
+        cachedPalette = (u16 *)icon_ggPal;
+        break;
     case MD_ICON:
         textureID = _mdTexID;
         cachedPalette = (u16 *)icon_mdPal;
@@ -254,6 +288,8 @@ void reloadIconPalettes()
     glReloadIconPalette(GBA_ICON);
     glReloadIconPalette(GBC_ICON);
     glReloadIconPalette(NES_ICON);
+    glReloadIconPalette(SMS_ICON);
+    glReloadIconPalette(GG_ICON);
     glReloadIconPalette(MD_ICON);
     glReloadIconPalette(SNES_ICON);
 
@@ -300,10 +336,12 @@ void iconManagerInit()
     // Allocate texture memory for 6 textures.
     glGenTextures(6, _iconTexID);
 
-    // Allocate texture memory for GBA/GBC/NES icons.
+    // Allocate texture memory for GBA/GBC/NES/SMS/GG/MD/SNES icons.
     glGenTextures(1, &_gbaTexID);
     glGenTextures(1, &_gbcTexID);
     glGenTextures(1, &_nesTexID);
+    glGenTextures(1, &_smsTexID);
+    glGenTextures(1, &_ggTexID);
     glGenTextures(1, &_mdTexID);
     glGenTextures(1, &_snesTexID);
 
@@ -318,6 +356,10 @@ void iconManagerInit()
     glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64, true);
 
     glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32, true);
+
+    glLoadIcon(SMS_ICON, (u16 *)icon_smsPal, (u8 *)icon_smsBitmap, 32, true);
+
+    glLoadIcon(GG_ICON, (u16 *)icon_ggPal, (u8 *)icon_ggBitmap, 32, true);
 
     glLoadIcon(MD_ICON, (u16 *)icon_mdPal, (u8 *)icon_mdBitmap, 32, true);
 

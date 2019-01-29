@@ -1010,14 +1010,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
 							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
 					{
-						bnrRomType[i] = 4;
+						bnrRomType[i] = 5;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
 					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
 							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
 					{
-						bnrRomType[i] = 4;
+						bnrRomType[i] = 6;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
@@ -1026,7 +1026,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
 							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
 					{
-						bnrRomType[i] = 5;
+						bnrRomType[i] = 7;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;
