@@ -404,7 +404,7 @@ int BootstrapConfig::launch()
 	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
 		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
 	}
-	mkdir ((_isHomebrew && !ms().secondaryDevice) ? "ramdisks" : "saves", 0777);
+	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 	std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
