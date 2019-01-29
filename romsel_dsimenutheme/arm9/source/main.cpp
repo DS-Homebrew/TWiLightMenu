@@ -1454,15 +1454,11 @@ int main(int argc, char **argv) {
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				if (secondaryDevice) {
-					argarray.at(0) = (char*)(snesEmulator ? "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds" : "fat:/_nds/TWiLightMenu/emulators/lolSNES.nds");
+					argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 				} else {
 					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-					if(snesEmulator) {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-					} else {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
-					}
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", snesROMpath);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );

@@ -915,6 +915,9 @@ void launchSNES(void) {
 			}
 		}
 	} else {
+		vector<char*> argarray;
+		argarray.push_back(strdup(snesEmulator ? "SNEmulDS.nds" : "lolSNES.nds"));
+
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		if(snesEmulator) {
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
@@ -924,7 +927,8 @@ void launchSNES(void) {
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 		iprintf ("Start failed. Error %i\n", err);
 	}
 }
