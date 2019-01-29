@@ -1249,8 +1249,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if(cursorPosition[secondaryDevice] > 0) {
 							titleboxXmoveleft = true;
 						cursorPosition[secondaryDevice]--;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
+							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+							swiWaitForVBlank();
+							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), movingApp);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1263,6 +1265,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						cursorPosition[secondaryDevice]++;
 						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+							swiWaitForVBlank();
+							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), movingApp);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1278,10 +1282,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 
 				char str[2];
-				sprintf(str, "%d", cursorPosition[secondaryDevice]);
-				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
 				sprintf(str, "%d", movingApp);
 				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
+				sprintf(str, "%d", cursorPosition[secondaryDevice]);
+				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
 				gameOrderIni.SaveIniFile("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 				
 				getDirectoryContents(dirContents[scrn], extensionList);
