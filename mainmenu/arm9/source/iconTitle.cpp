@@ -848,12 +848,16 @@ void titleUpdate(bool isDir, const char* name)
 				strcasecmp (name + strlen(name) - 4, ".NES") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".fds") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".FDS") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".sms") == 0 ||
+				strcasecmp (name + strlen(name) - 4, ".SMS") == 0 ||
+				strcasecmp (name + strlen(name) - 3, ".gg") == 0 ||
+				strcasecmp (name + strlen(name) - 3, ".GG") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".gen") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".GEN") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".smc") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".SMC") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sfc") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".SFC") == 0  )
+				strcasecmp (name + strlen(name) - 4, ".SFC") == 0 )
 	{
 		writeBannerText(0, name, "", "");
 	}

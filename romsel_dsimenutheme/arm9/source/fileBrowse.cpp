@@ -739,13 +739,17 @@ void launchSega8bit(void) {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
 		}
 	} else {
+		vector<char*> argarray;
+		argarray.push_back(strdup("S8DS.nds"));
+
 		std::string ramdiskname = "sd:/_nds/TWiLightMenu/emulators/Sega8bit"+getImgExtension(ramDiskNo);
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ramdiskname);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 		iprintf ("Start failed. Error %i\n", err);
 	}
 }
@@ -823,12 +827,16 @@ void launchSegaMD(void) {
 			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", "jEnesisDS.nds", false);
 		}
 	} else {
+		vector<char*> argarray;
+		argarray.push_back(strdup("jEnesisDS.nds"));
+
 		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SegaMD.img");
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds", 0, NULL, true, false, true, true);
+		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 		iprintf ("Start failed. Error %i\n", err);
 	}
 }
@@ -925,7 +933,7 @@ void launchSNES(void) {
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
 		}
 		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", snesEmulator ? 0 : 1);
 		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
@@ -989,6 +997,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
 					{
 						bnrRomType[i] = 3;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
+					{
+						bnrRomType[i] = 4;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
+					{
+						bnrRomType[i] = 4;
 						bnrWirelessIcon[i] = 0;
 						isDSiWare[i] = false;
 						isHomebrew[i] = 0;

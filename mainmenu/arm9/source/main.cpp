@@ -137,7 +137,7 @@ bool showCursor = true;
 bool startMenu = false;
 bool gotosettings = false;
 
-int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
@@ -1073,6 +1073,20 @@ int main(int argc, char **argv) {
 				|| (filename.substr(filename.find_last_of(".") + 1) == "FDS"))
 		{
 			bnrRomType = 3;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "sms")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "SMS"))
+		{
+			bnrRomType = 4;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "gg")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "GG"))
+		{
+			bnrRomType = 4;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -2042,8 +2056,10 @@ int main(int argc, char **argv) {
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0)
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GBC") == 0))
 			{
+				std::string romfolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romfolderNoSlash);
 				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
+				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				homebrewArg = gbROMpath;
 				launchType = 4;
 				previousUsedDevice = secondaryDevice;
@@ -2068,8 +2084,10 @@ int main(int argc, char **argv) {
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0)
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".FDS") == 0))
 			{
+				std::string romfolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romfolderNoSlash);
 				char nesROMpath[256];
-				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolder.c_str(), filename.c_str());
+				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				homebrewArg = nesROMpath;
 				launchType = 3;
 				previousUsedDevice = secondaryDevice;
@@ -2088,6 +2106,35 @@ int main(int argc, char **argv) {
 				clearText();
 				ClearBrightness();
 				printSmall(false, 4, 4, text);
+				stop();
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".sms") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMS") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".gg") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".GG") == 0))
+			{
+				std::string romfolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romfolderNoSlash);
+				char smsROMpath[256];
+				snprintf (smsROMpath, sizeof(smsROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
+				romPath = smsROMpath;
+				homebrewArg = smsROMpath;
+				launchType = 5;
+				previousUsedDevice = secondaryDevice;
+				SaveSettings();
+				argarray.push_back(smsROMpath);
+				int err = 0;
+				if(secondaryDevice) {
+					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/S8DS.nds";
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+				} else {
+					argarray.at(0) = (char*)(!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+				}
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				clearText();
+				ClearBrightness();
+				printLarge(false, 4, 4, text);
 				stop();
 			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".gen") == 0)
 					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GEN") == 0))
@@ -2114,6 +2161,7 @@ int main(int argc, char **argv) {
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
@@ -2144,6 +2192,7 @@ int main(int argc, char **argv) {
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
+				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
