@@ -449,6 +449,7 @@ int BootstrapConfig::launch()
 
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savepath)
+		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 		.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "")
 		.option("NDS-BOOTSTRAP", "LANGUAGE", _language)
 		.option("NDS-BOOTSTRAP", "BOOST_CPU", _cpuBoost)

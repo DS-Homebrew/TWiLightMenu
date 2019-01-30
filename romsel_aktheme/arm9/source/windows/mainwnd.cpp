@@ -883,6 +883,62 @@ void MainWnd::launchSelected()
             bootFile(!sys().arm7SCFGLocked() ? S8DS_NOTOUCH_ROM : S8DS_ROM, fullPath);
         }
     }
+	
+    // GEN Launch
+    if (extension == ".gen")
+	{
+		if (ms().secondaryDevice)
+        {
+            bootFile(JENESISDS_FC, fullPath);
+		}
+		else
+		{
+			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+
+			std::vector<char*> argarray;
+			argarray.push_back(strdup(bootstrapPath.c_str()));
+			argarray.at(0) = (char*)bootstrapPath.c_str();
+
+			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
+			gen.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
+				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
+				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
+				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0]))
+			{
+				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+			}
+		}
+	}
+
+    // SNES Launch
+    if (extension == ".smc" || extension == ".sfc")
+	{
+		if (ms().secondaryDevice)
+        {
+            bootFile(SNEMULDS_FC, fullPath);
+		}
+		else
+		{
+			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+
+			std::vector<char*> argarray;
+			argarray.push_back(strdup(bootstrapPath.c_str()));
+			argarray.at(0) = (char*)bootstrapPath.c_str();
+
+			LoaderConfig snes(bootstrapPath, BOOTSTRAP_INI);
+			snes.option("NDS-BOOTSTRAP", "NDS_PATH", SNEMULDS_ROM)
+				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC")
+				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
+				.option("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0]))
+			{
+				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+			}
+		}
+	}
 }
 
 void MainWnd::onKeyBPressed()
@@ -920,7 +976,7 @@ void MainWnd::bootSlot1(void)
     LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
     if (int err = slot1Loader.launch())
     {
-       std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
     }
 }
@@ -951,9 +1007,16 @@ void MainWnd::bootGbaRunner(void)
         return;
     }
 
-    BootstrapConfig gbaRunner("GBARunner2.nds", GBARUNNER_BOOTSTRAP, "####", 0);
-    gbaRunner.gbarBootstrap(true);
-    if (int err = gbaRunner.launch())
+	std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_GBAR : BOOTSTRAP_RELEASE_GBAR);
+
+	std::vector<char*> argarray;
+	argarray.push_back(strdup(bootstrapPath.c_str()));
+	argarray.at(0) = (char*)bootstrapPath.c_str();
+
+    LoaderConfig gbaRunner(bootstrapPath, ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI);
+	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", GBARUNNER_BOOTSTRAP)
+		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+    if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
