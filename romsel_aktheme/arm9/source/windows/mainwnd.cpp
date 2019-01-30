@@ -874,6 +874,8 @@ void MainWnd::launchSelected()
     {
         ms().launchType = DSiMenuPlusPlusSettings::ES8DSLaunch;
         ms().saveSettings();
+		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
         if (ms().secondaryDevice)
         {
             bootFile(S8DS_FC, fullPath);
@@ -889,8 +891,6 @@ void MainWnd::launchSelected()
 	{
         ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
-		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
-		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 		if (ms().secondaryDevice)
         {
             bootFile(JENESISDS_FC, fullPath);
