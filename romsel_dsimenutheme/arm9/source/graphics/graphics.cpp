@@ -572,7 +572,7 @@ void vBlankHandler()
 							if (bnrRomType[i] == 3) drawIconNES(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 2) drawIconGBC(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 1) drawIconGB(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[i % 5]);
-							else drawIcon(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[i % 5], i);
+							else drawIcon(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[i % 5], -1);
 						} else {
 							if(movingApp!=-1) {
 								int j = i;

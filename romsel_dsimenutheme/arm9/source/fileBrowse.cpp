@@ -1232,6 +1232,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
 				movingApp = (pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice]);
+				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
 					movingAppYpos += 7;
 					swiWaitForVBlank();
@@ -1252,7 +1253,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 							swiWaitForVBlank();
-							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), movingApp);
+							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1266,7 +1267,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 							swiWaitForVBlank();
-							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), movingApp);
+							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}

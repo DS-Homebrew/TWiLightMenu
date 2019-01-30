@@ -56,6 +56,8 @@ extern bool animateDsiIcons;
 
 extern bool showbubble;
 
+extern int movingApp;
+
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
@@ -152,7 +154,10 @@ static void clearIcon(int num)
 void drawIcon(int Xpos, int Ypos, int num)
 {
 	int num2 = num;
-	if(num >= 36) {
+	if(num == -1) {
+		num2 = 6;
+		num = movingApp;
+	} else if(num >= 36) {
 		num2 -= 36;
 	} else if(num2 >= 30) {
 		num2 -= 30;
@@ -553,7 +558,9 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 void iconUpdate(bool isDir, const char* name, int num)
 {
-	if(num >= 36) {
+	if(num == -1) {
+		num = 6;
+	} else if(num >= 36) {
 		num -= 36;
 	} else if(num >= 30) {
 		num -= 30;
