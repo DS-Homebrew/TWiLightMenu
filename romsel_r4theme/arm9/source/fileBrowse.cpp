@@ -50,6 +50,8 @@
 
 #include "inifile.h"
 
+#include "fileCopy.h"
+
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
@@ -213,6 +215,25 @@ void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 			iprintf (" %s", entryName);
 		}
 	}
+}
+
+void mdRomTooBig(void) {
+	dialogboxHeight = 3;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Error!");
+	printSmallCentered(false, 104, "This Mega Drive or Genesis");
+	printSmallCentered(false, 112, "ROM cannot be launched,");
+	printSmallCentered(false, 120, "due to the size of it");
+	printSmallCentered(false, 128, "being above 3MB.");
+	printSmallCentered(false, 142, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDownRepeat();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	dialogboxHeight = 0;
 }
 
 string browseForFile(const vector<string> extensionList, const char* username)
@@ -395,7 +416,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printLargeCentered(false, 84, "Error!");
 				printSmallCentered(false, 104, "This game cannot be launched.");
 				printSmallCentered(false, 118, "A: OK");
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pressed = 0;
 				do {
 					scanKeys();
@@ -413,6 +433,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					hasAP = checkRomAP(f_nds_file);
 					fclose(f_nds_file);
 				}
+				else if (bnrRomType == 6)
+				{
+					if (getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
+						proceedToLaunch = false;
+						mdRomTooBig();
+					}
+				}
 				if (hasAP) {
 				dialogboxHeight = 5;
 				showdialogbox = true;
@@ -423,7 +450,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmallCentered(false, 136, "start, or doesn't seem normal,");
 				printSmallCentered(false, 144, "it needs to be AP-patched.");
 				printSmallCentered(false, 158, "B/A: OK, X: Don't show again");
-				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				pressed = 0;
 				while (1) {
 					scanKeys();

@@ -53,6 +53,8 @@
 #include "inifile.h"
 #include "flashcard.h"
 
+#include "fileCopy.h"
+
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
@@ -649,6 +651,30 @@ void launchGba(void) {
 	} else {
 		gbaSwitch();
 	}
+}
+
+void mdRomTooBig(void) {
+	mmEffectEx(&snd_wrong);
+	clearText();
+	dbox_showIcon = false;
+	showdialogbox = true;
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	printSmallCentered(false, 64, "This Mega Drive or Genesis");
+	printSmallCentered(false, 78, "ROM cannot be launched,");
+	printSmallCentered(false, 92, "due to the size of it");
+	printSmallCentered(false, 106, "being above 3MB.");
+	printSmall(false, 208, 166, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		loadVolumeImage();
+		loadBatteryImage();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	showdialogbox = false;
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 string browseForFile(const vector<string> extensionList, const char* username)
@@ -1318,6 +1344,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
+					}
+					else if (bnrRomType[cursorPosition[secondaryDevice]] == 6)
+					{
+						if (getFileSize(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()) > 0x300000) {
+							proceedToLaunch = false;
+							mdRomTooBig();
+						}
 					}
 					if (hasAP) {
 					clearText();
