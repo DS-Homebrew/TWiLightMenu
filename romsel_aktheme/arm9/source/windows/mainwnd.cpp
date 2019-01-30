@@ -887,6 +887,8 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
 		if (ms().secondaryDevice)
         {
             bootFile(JENESISDS_FC, fullPath);
@@ -915,6 +917,8 @@ void MainWnd::launchSelected()
     // SNES Launch
     if (extension == ".smc" || extension == ".sfc")
 	{
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
 		if (ms().secondaryDevice)
         {
             bootFile(SNEMULDS_FC, fullPath);
