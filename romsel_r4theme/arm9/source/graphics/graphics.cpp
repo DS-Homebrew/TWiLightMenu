@@ -136,16 +136,7 @@ void initSubSprites(void)
 }
 
 void bottomBgLoad(bool startMenu) {
-	const char* settingsinipath	= "sd:/_nds/TWiLightMenu/settings.ini";
-	std::string r4_theme = "sd:/";
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
-		r4_theme = "fat:/";
-	}
-
-	CIniFile settingsini( settingsinipath );
-	r4_theme += "_nds/TWiLightMenu/r4menu/themes/";
-	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
+	extern std::string r4_theme;
 
 	char pathBottom[256];
 	if (startMenu) {
@@ -407,16 +398,7 @@ void vBlankHandler()
 }
 
 void topBgLoad(bool startMenu) {
-	const char* settingsinipath	= "sd:/_nds/TWiLightMenu/settings.ini";
-	std::string r4_theme = "sd:/";
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
-		r4_theme = "fat:/";
-	}
-
-	CIniFile settingsini( settingsinipath );
-	r4_theme += "_nds/TWiLightMenu/r4menu/themes/";
-	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
+	extern std::string r4_theme;
 
 	char pathTop[256];
 	if (startMenu) {

@@ -577,7 +577,7 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 	gamesPage
 		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
 				Option::Int(&bs().bstrap_loadingScreen),
-				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "R4i-SDHC"},
+				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "From TWLMenu++ theme"},
 				{TLoadingScreen::ELoadingNone,
 				 TLoadingScreen::ELoadingRegular,
 				 TLoadingScreen::ELoadingPong,

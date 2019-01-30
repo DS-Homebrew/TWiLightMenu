@@ -110,6 +110,8 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
+std::string r4_theme;
+
 int donorSdkVer = 0;
 
 bool gameSoftReset = false;
@@ -170,6 +172,14 @@ void LoadSettings(void) {
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
+
+	r4_theme = "sd:/";
+	if (strcmp(settingsinipath, "fat:/_nds/TWiLightMenu/settings.ini") == 0) {		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+		r4_theme = "fat:/";
+	}
+
+	r4_theme += "_nds/TWiLightMenu/r4menu/themes/";
+	r4_theme += settingsini.GetString("SRLOADER", "R4_THEME", "") + "/";
 
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	if (bothSDandFlashcard()) {
@@ -1437,6 +1447,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "");
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
@@ -1469,6 +1480,7 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
+						bootstrapini.SetString( "NDS-BOOTSTRAP", "LOADING_SCREEN_IMAGE", r4_theme+"loading.bmp");
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
