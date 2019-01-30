@@ -1640,6 +1640,8 @@ int main(int argc, char **argv) {
 					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".gg") == 0)
 					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".GG") == 0))
 			{
+				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char smsROMpath[256];

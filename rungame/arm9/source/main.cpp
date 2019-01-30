@@ -297,6 +297,8 @@ TWL_CODE int lastRunROM() {
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true);	// Pass ROM to GameYob as argument
 	} else if (launchType == 5) {
+		mkdir("sd:/data", 0777);
+		mkdir("sd:/data/s8ds", 0777);
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds";
 		return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to S8DS as argument
 	}
