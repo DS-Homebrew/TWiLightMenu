@@ -347,15 +347,20 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 		vector<std::string> gameOrder;
 		char str[2];
 
-		for(int i=0;i<40;i++) {
+		for(int i=0;i<(int)dirContents.size();i++) {
 			sprintf(str, "%d", i);
-			gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, ""));
+			gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 		}
 
 		for(int i=0;i<(int)gameOrder.size();i++) {
-			for(int j=0;j<=(int)dirContents.size();j++)
+			for(int j=0;j<=(int)dirContents.size();j++) {
 				if(gameOrder[i] == dirContents[j].name) {
-					std::rotate(dirContents.begin()+j,dirContents.begin()+j+1,dirContents.begin()+i+1);
+					vector<DirEntry> dirContentsCopy;
+					dirContentsCopy.push_back(dirContents[j]);
+					dirContents.erase(dirContents.begin()+j);
+					dirContents.insert(dirContents.begin()+i, dirContentsCopy[0]);
+					break;
+				}
 			}
 		}
 		closedir(pdir);
@@ -1242,7 +1247,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
-					swiWaitForVBlank();
+					swiWaitForVBlank(); 
 					
 					if(pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright
 					|| held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1252,8 +1257,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						cursorPosition[secondaryDevice]--;
 						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
-							swiWaitForVBlank();
-							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1266,8 +1269,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						cursorPosition[secondaryDevice]++;
 						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
-							swiWaitForVBlank();
-							iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1281,53 +1282,77 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
-
+				vector<std::string> gameOrder;
 				char str[2];
-				sprintf(str, "%d", movingApp);
-				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
-				sprintf(str, "%d", cursorPosition[secondaryDevice]);
-				gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameBeingMoved);
+
+				for(int i=0;i<dirContents[scrn].size();i++) {
+					sprintf(str, "%d", i);
+					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+					if(gameOrder[i] == "NULL")
+						gameOrder[i] = dirContents[scrn][i].name;
+				}
+
+				for(int i=gameOrder.size();true;i++) {
+					sprintf(str, "%d", i);
+					if(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
+					} else {
+						break;
+					}
+				}
+
+				for(int i=0;i<gameOrder.size();i++) {
+					bool stillExists = false;
+					for(int j=0;j<dirContents[scrn].size();j++) {
+						if(gameOrder[i] == dirContents[scrn][j].name) {
+							stillExists = true;
+							break;
+						}
+					}
+					if(!stillExists)
+						gameOrder.erase(gameOrder.begin()+i);
+				}
+
+				gameOrder.erase(gameOrder.begin()+movingApp);
+				gameOrder.insert(gameOrder.begin()+cursorPosition[secondaryDevice], gameBeingMoved);
+
+				for(int i=0;i<gameOrder.size();i++) {
+					char str[2];
+					sprintf(str, "%d", i);
+					gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
+				}
 				gameOrderIni.SaveIniFile("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 				
 				getDirectoryContents(dirContents[scrn], extensionList);
-				// for(int i = 0; i < 40; i++) {
-				// 	if (i+pagenum[secondaryDevice]*40 < file_count) {
-				// 		getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-				// 	}
-				// }
 				getFileInfo(scrn, dirContents);
 
 				movingApp = -1;
-				// for(int i=0;i<40;i++)
-				// 	titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
-
 				settingsChanged = true;
 				boxArtLoaded = false;
-				// titleboxXpos[secondaryDevice] += 32;
 
-				// Draw icons
-				if (cursorPosition[secondaryDevice] <= 1) {
-					for(int i = 0; i < 5; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-						}
-					}
-				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-					for(int i = 0; i < 6; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
-						}
-					}
-				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
-					for(int i = 0; i < 5; i++) {
-						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
-						}
-					}
-				}
+				// Redraw icons
+				// if (cursorPosition[secondaryDevice] <= 1) {
+				// 	for(int i = 0; i < 5; i++) {
+				// 		swiWaitForVBlank();
+				// 		if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+				// 			iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+				// 		}
+				// 	}
+				// } else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+				// 	for(int i = 0; i < 6; i++) {
+				// 		swiWaitForVBlank();
+				// 		if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+				// 			iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+				// 		}
+				// 	}
+				// } else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+				// 	for(int i = 0; i < 5; i++) {
+				// 		swiWaitForVBlank();
+				// 		if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+				// 			iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+				// 		}
+				// 	}
+				// }
 			// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
