@@ -174,12 +174,6 @@ bool MainList::enterDir(const std::string &dirName)
         }
         addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
 		listNum++;
-        addDirEntry(listNum, "Sega 8-bit (MS, GG, etc.)", "", SPATH_SEGA8BIT, "sega8bit", s8ds_banner_bin);
-		listNum++;
-        addDirEntry(listNum, "Sega Mega Drive (Genesis)", "", SPATH_SEGAMD, "segamd", smdrom_banner_bin);
-		listNum++;
-        addDirEntry(listNum, "SNES", "", SPATH_SNES, "snes", ms().snesEmulator ? snemulds_banner_bin : lolsnes_banner_bin);
-		listNum++;
         if (!sys().isRegularDS())
         {
 			if (!flashcardFound() && sdFound()) {
@@ -243,6 +237,11 @@ bool MainList::enterDir(const std::string &dirName)
     extNames.push_back(".gb");
     extNames.push_back(".gbc");
     extNames.push_back(".nes");
+    extNames.push_back(".sms");
+    extNames.push_back(".gg");
+    extNames.push_back(".gen");
+    extNames.push_back(".smc");
+    extNames.push_back(".sfc");
 
     extNames.push_back(".argv");
 

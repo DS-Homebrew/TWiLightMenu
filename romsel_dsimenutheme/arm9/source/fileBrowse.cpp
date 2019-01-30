@@ -651,296 +651,6 @@ void launchGba(void) {
 	}
 }
 
-void launchSega8bit(void) {
-	bool textPrinted = false;
-	bool useRAMDisk = false;
-	dbox_showIcon = false;
-	int ramDiskNo = 0;
-	char ramDiskText[16];
-
-	if (!secondaryDevice && !arm7SCFGLocked && access("sd:/_nds/TWiLightMenu/emulators/Sega8bit.img", F_OK) == 0) {
-		bool canceled = false;
-
-		clearText();
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		int pressed = 0;
-		while (1) {
-			if (!textPrinted) {
-				clearText();
-				printLarge(false, 16, 12, "RAM disk .img found");
-				printSmallCentered(false, 80, "Do you want to use a");
-				printSmallCentered(false, 94, "RAM disk?");
-				snprintf(ramDiskText, sizeof(ramDiskText), "RAM disk: <%i>", ramDiskNo);
-				printSmallCentered(false, 112, ramDiskText);
-				printSmallCentered(false, 166, "X: Cancel  B: No  A: Yes");
-				textPrinted = true;
-			}
-			scanKeys();
-			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			swiWaitForVBlank();
-
-			if (pressed & KEY_X) {
-				canceled = true;
-				break;
-			}
-			if (pressed & KEY_A) {
-				useRAMDisk = true;
-				break;
-			}
-			if (pressed & KEY_B) {
-				break;
-			}
-			if (pressed & KEY_LEFT) {
-				ramDiskNo--;
-				textPrinted = false;
-			}
-			if (pressed & KEY_RIGHT) {
-				ramDiskNo++;
-				textPrinted = false;
-			}
-			
-			if (ramDiskNo < 0) {
-				ramDiskNo = 9;
-			}
-			if (ramDiskNo > 9) {
-				ramDiskNo = 0;
-			}
-		}
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		if (canceled) {
-		return;
-		}
-	}
-
-	mmEffectEx(&snd_launch);
-	controlTopBright = true;
-
-	fadeType = false;	// Fade to white
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 60; i++) {
-		swiWaitForVBlank();
-	}
-	music = false;
-	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
-
-	SaveSettings();
-	// Start S8DS
-	if (!useRAMDisk) {
-		if (useBootstrap) {
-			int err = runNdsFile ((!secondaryDevice && !arm7SCFGLocked) ? "/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "/_nds/TWiLightMenu/emulators/S8DS.nds", 0, NULL, true, false, true, false);
-			iprintf ("Start failed. Error %i\n", err);
-		} else {
-			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/S8DS.nds", "S8DS.nds", false);
-		}
-	} else {
-		vector<char*> argarray;
-		argarray.push_back(strdup("S8DS.nds"));
-
-		std::string ramdiskname = "sd:/_nds/TWiLightMenu/emulators/Sega8bit"+getImgExtension(ramDiskNo);
-		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
-		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ramdiskname);
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
-		iprintf ("Start failed. Error %i\n", err);
-	}
-}
-
-void launchSegaMD(void) {
-	if (!secondaryDevice && arm7SCFGLocked) {
-		mmEffectEx(&snd_wrong);
-		clearText();
-		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, "Error");
-		printSmallCentered(false, 112, "This emulator cannot be ran");
-		printSmallCentered(false, 128, "with DSiWareHax.");
-		printSmall(false, 208, 166, "A: OK");
-		int pressed = 0;
-		do {
-			scanKeys();
-			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		return;
-	}
-
-	if (!secondaryDevice && access("sd:/_nds/TWiLightMenu/emulators/SegaMD.img", F_OK) != 0) {
-		mmEffectEx(&snd_wrong);
-		clearText();
-		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, ".img file not found");
-		printSmallCentered(false, 64, "\"SegaMD.img\" is required");
-		printSmallCentered(false, 78, "to run Sega MD/Genesis games.");
-		printSmallCentered(false, 112, "Place it in \"sd:/_nds/");
-		printSmallCentered(false, 126, "TWiLightMenu/emulators\".");
-		printSmall(false, 208, 166, "A: OK");
-		int pressed = 0;
-		do {
-			scanKeys();
-			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		return;
-	}
-
-	mmEffectEx(&snd_launch);
-	controlTopBright = true;
-
-	fadeType = false;	// Fade to white
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 60; i++) {
-		swiWaitForVBlank();
-	}
-	music = false;
-	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
-
-	SaveSettings();
-	// Start jEnesisDS
-	if (secondaryDevice) {
-		if (useBootstrap) {
-			int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", 0, NULL, true, true, true, false);
-			iprintf ("Start failed. Error %i\n", err);
-		} else {
-			loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds", "jEnesisDS.nds", false);
-		}
-	} else {
-		vector<char*> argarray;
-		argarray.push_back(strdup("jEnesisDS.nds"));
-
-		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SegaMD.img");
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
-		iprintf ("Start failed. Error %i\n", err);
-	}
-}
-
-void launchSNES(void) {
-	if (!secondaryDevice && arm7SCFGLocked) {
-		mmEffectEx(&snd_wrong);
-		clearText();
-		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, "Error");
-		printSmallCentered(false, 112, "This emulator cannot be ran");
-		printSmallCentered(false, 128, "with DSiWareHax.");
-		printSmall(false, 208, 166, "A: OK");
-		int pressed = 0;
-		do {
-			scanKeys();
-			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		return;
-	}
-
-	if (!secondaryDevice && access("sd:/_nds/TWiLightMenu/emulators/SNES.img", F_OK) != 0) {
-		mmEffectEx(&snd_wrong);
-		clearText();
-		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		printLarge(false, 16, 12, ".img file not found");
-		printSmallCentered(false, 64, "\"SNES.img\" is required");
-		printSmallCentered(false, 78, "to run Super Nintendo games.");
-		printSmallCentered(false, 112, "Place it in \"sd:/_nds/");
-		printSmallCentered(false, 126, "TWiLightMenu/emulators\".");
-		printSmall(false, 208, 166, "A: OK");
-		int pressed = 0;
-		do {
-			scanKeys();
-			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			swiWaitForVBlank();
-		} while (!(pressed & KEY_A));
-		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		return;
-	}
-
-	mmEffectEx(&snd_launch);
-	controlTopBright = true;
-
-	fadeType = false;	// Fade to white
-	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
-	for (int i = 0; i < 60; i++) {
-		swiWaitForVBlank();
-	}
-	music = false;
-	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
-
-	SaveSettings();
-	// Start SNEmulDS / lolSNES
-	if (secondaryDevice) {
-		if (useBootstrap) {
-			if(snesEmulator) {
-				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", 0, NULL, true, true, false, false);
-				iprintf ("Start failed. Error %i\n", err);
-			} else {
-				int err = runNdsFile ("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", 0, NULL, true, true, false, false);
-				iprintf ("Start failed. Error %i\n", err);
-			}
-		} else {
-			if(snesEmulator) {
-				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds", "SNEmulDS.nds", false);
-			} else {
-				loadGameOnFlashcard("fat:/_nds/TWiLightMenu/emulators/lolSNES.nds", "lolSNES.nds", false);
-			}
-		}
-	} else {
-		vector<char*> argarray;
-		argarray.push_back(strdup(snesEmulator ? "SNEmulDS.nds" : "lolSNES.nds"));
-
-		CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-		if(snesEmulator) {
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-		} else {
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds");
-		}
-		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "sd:/_nds/TWiLightMenu/emulators/SNES.img");
-		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", snesEmulator ? 0 : 1);
-		bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-		argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-		int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
-		iprintf ("Start failed. Error %i\n", err);
-	}
-}
-
 string browseForFile(const vector<string> extensionList, const char* username)
 {
 	displayNowLoading();
@@ -1696,20 +1406,20 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			int topIconXpos = 116;
-			int savedTopIconXpos[5] = {0};
+			int savedTopIconXpos[2] = {0};
 			if (isDSiMode() && sdFound()) {
-				for (int i = 0; i < 4; i++) {
+				//for (int i = 0; i < 4; i++) {
 					topIconXpos -= 14;
-				}
-				for (int i = 0; i < 5; i++) {
+				//}
+				for (int i = 0; i < 2; i++) {
 					savedTopIconXpos[i] = topIconXpos;
 					topIconXpos += 28;
 				}
 			} else {
-				for (int i = 0; i < 3; i++) {
+				//for (int i = 0; i < 3; i++) {
 					topIconXpos -= 14;
-				}
-				for (int i = 1; i < 5; i++) {
+				//}
+				for (int i = 1; i < 2; i++) {
 					savedTopIconXpos[i] = topIconXpos;
 					topIconXpos += 28;
 				}
@@ -1733,24 +1443,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
 			{
 				launchGba();
-			}
-
-			// Launch 8-bit Sega emulator
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] && touch.px < savedTopIconXpos[2]+24 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchSega8bit();
-			}
-
-			// Launch Sega MD/Gen
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[3] && touch.px < savedTopIconXpos[3]+24 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchSegaMD();
-			}
-
-			// Launch SNES
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[4] && touch.px < savedTopIconXpos[4]+24 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchSNES();
 			}
 
 			// page switch
