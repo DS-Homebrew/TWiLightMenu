@@ -350,6 +350,18 @@ int lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
 	}
+	else if (ms().launchType == 5)
+	{
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/S8DS.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)(!sys().arm7SCFGLocked() ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to S8DS as argument
+	}
 
 	return err;
 }
