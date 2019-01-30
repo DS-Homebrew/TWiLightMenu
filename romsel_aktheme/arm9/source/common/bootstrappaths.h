@@ -40,7 +40,7 @@
 #define JENESISDS_FC "fat:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
 #define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
 
-#define S8DS07_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds"
+#define S8DS_NOTOUCH_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds"
 #define S8DS_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"
 #define S8DS_FC "fat:/_nds/TWiLightMenu/emulators/S8DS.nds"
 #define SEGA8BIT_RAMDISK "sd:/_nds/TWiLightMenu/emulators/Sega8bit.img"

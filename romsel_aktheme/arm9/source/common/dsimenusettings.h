@@ -87,7 +87,8 @@ class DSiMenuPlusPlusSettings
         ESDFlashcardLaunch = 1,
         EDSiWareLaunch = 2,
         ENESDSLaunch = 3,
-        EGameYobLaunch = 4
+        EGameYobLaunch = 4,
+        ES8DSLaunch = 5
     };
 
     /*	0 = Nintendo DSi (Retail)

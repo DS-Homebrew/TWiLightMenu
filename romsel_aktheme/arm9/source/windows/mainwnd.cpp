@@ -868,6 +868,21 @@ void MainWnd::launchSelected()
             bootFile(GAMEYOB_SD, fullPath);
         }
     }
+
+    // SMS/GG Launch
+    if (extension == ".sms" || extension == ".gg")
+    {
+        ms().launchType = DSiMenuPlusPlusSettings::ES8DSLaunch;
+        ms().saveSettings();
+        if (ms().secondaryDevice)
+        {
+            bootFile(S8DS_FC, fullPath);
+        }
+        else
+        {
+            bootFile(!sys().arm7SCFGLocked() ? S8DS_NOTOUCH_ROM : S8DS_ROM, fullPath);
+        }
+    }
 }
 
 void MainWnd::onKeyBPressed()

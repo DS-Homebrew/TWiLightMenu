@@ -340,6 +340,18 @@ bool MainList::enterDir(const std::string &dirName)
                 {
                     rominfo.setBanner("nes", nesrom_banner_bin);
                 }
+                else if (".sms" == extName || ".gg" == extName)
+                {
+                    rominfo.setBanner("sms", s8ds_banner_bin);
+                }
+                else if (".gen" == extName)
+                {
+                    rominfo.setBanner("sms", smdrom_banner_bin);
+                }
+                else if (".smc" == extName || ".sfc" == extName)
+                {
+                    rominfo.setBanner("sms", snemulds_banner_bin);
+                }
                 else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
                 {
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
