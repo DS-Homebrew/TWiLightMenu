@@ -41,6 +41,7 @@
 
 // Graphic files
 #include "icon_unk.h"
+#include "icon_folder.h"
 #include "icon_gbamode.h"
 #include "icon_gba.h"
 #include "icon_gb.h"
@@ -55,6 +56,7 @@ extern bool useGbarunner;
 extern bool animateDsiIcons;
 
 static int iconTexID[8];
+static int folderTexID;
 static int gbaTexID;
 static int gbTexID;
 static int nesTexID;
@@ -64,6 +66,8 @@ static int mdTexID;
 static int snesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
+
+static glImage folderIcon[1];
 
 static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
 
@@ -181,9 +185,27 @@ void loadUnkIcon()
 
 void loadConsoleIcons()
 {
+	// Folder
+	glDeleteTextures(1, &folderTexID);
+	
+	folderTexID =
+	glLoadTileSet(folderIcon, // pointer to glImage array
+				32, // sprite width
+				32, // sprite height
+				32, // bitmap image width
+				32, // bitmap image height
+				GL_RGB16, // texture type for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+				TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
+				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+				16, // Length of the palette to use (16 colors)
+				(u16*) icon_folderPal, // Image palette
+				(u8*) icon_folderBitmap // Raw image data
+				);
+
+	// GBA
 	glDeleteTextures(1, &gbaTexID);
 	
-	// GBA
 	if (useGbarunner) {
 		gbaTexID =
 		glLoadTileSet(gbaIcon, // pointer to glImage array
@@ -335,6 +357,10 @@ void drawIcon(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconPalLine][bnriconframenumY & 31]);
 }
 
+void drawIconFolder(int Xpos, int Ypos)
+{
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, folderIcon);
+}
 void drawIconGBA(int Xpos, int Ypos)
 {
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaIcon);

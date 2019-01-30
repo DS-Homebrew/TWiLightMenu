@@ -376,7 +376,8 @@ void vBlankHandler()
 			glBoxFilled(31, 23, 217, 64, RGB15(0, 0, 0));
 			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(32, 24, GL_FLIP_NONE, iconboxImage);
-			if (bnrRomType == 7) drawIconSMS(36, 28);
+			if (isDirectory) drawIconFolder(36, 28);
+			else if (bnrRomType == 7) drawIconSMS(36, 28);
 			else if (bnrRomType == 6) drawIconMD(36, 28);
 			else if (bnrRomType == 5) drawIconGG(36, 28);
 			else if (bnrRomType == 4) drawIconSMS(36, 28);

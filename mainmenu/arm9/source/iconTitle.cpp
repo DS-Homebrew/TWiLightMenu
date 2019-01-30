@@ -188,9 +188,9 @@ void loadUnkIcon()
 
 void loadConsoleIcons()
 {
+	// GBA
 	glDeleteTextures(1, &gbaTexID);
 	
-	// GBA
 	if (useGbarunner) {
 		gbaTexID =
 		glLoadTileSet(gbaIcon, // pointer to glImage array

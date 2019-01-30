@@ -26,6 +26,7 @@ void getGameInfo(bool isDir, const char* name);
 void iconUpdate(bool isDir, const char* name);
 void titleUpdate(bool isDir, const char* name);
 void drawIcon(int Xpos, int Ypos);
+void drawIconFolder(int Xpos, int Ypos);
 void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);
 void drawIconGBC(int Xpos, int Ypos);
