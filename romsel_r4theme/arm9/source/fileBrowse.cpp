@@ -289,6 +289,36 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
+			{
+				bnrRomType = 4;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
+			{
+				bnrRomType = 5;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
+			{
+				bnrRomType = 6;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
+			{
+				bnrRomType = 7;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
 			}
 		}
 
