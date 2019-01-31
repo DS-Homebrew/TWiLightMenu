@@ -1253,9 +1253,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					|| held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
 					{
 						if(cursorPosition[secondaryDevice] > 0) {
+							mmEffectEx(&snd_select);
 							titleboxXmoveleft = true;
-						cursorPosition[secondaryDevice]--;
-						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
+							cursorPosition[secondaryDevice]--;
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
 							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 						} else {
 							mmEffectEx(&snd_wrong);
@@ -1265,6 +1266,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					|| held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
 					{
 						if(cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40)<dirContents[scrn].size()-1 && cursorPosition[secondaryDevice] < 39) {
+							mmEffectEx(&snd_select);
 							titleboxXmoveright = true;
 							cursorPosition[secondaryDevice]++;
 							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
