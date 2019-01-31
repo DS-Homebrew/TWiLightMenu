@@ -1069,13 +1069,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum[secondaryDevice] != 0) {
 							mmEffectEx(&snd_switch);
 							fadeType = false;	// Fade to white
-							for (int i = 0; i < 10; i++) swiWaitForVBlank();
+							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							pagenum[secondaryDevice] -= 1;
 							cursorPosition[secondaryDevice] = 0;
 							titleboxXpos[secondaryDevice] = 0;
 							titlewindowXpos[secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
+							displayNowLoading();
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents);
 
@@ -1102,8 +1103,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 									}
 								}
 							}
-							fadeType = true;
+							while (!screenFadedOut());
+							nowLoadingDisplaying = false;
 							whiteScreen = false;
+							fadeType = true;	// Fade in from white
+							clearText();
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1111,7 +1115,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum[secondaryDevice]*40) {
 							mmEffectEx(&snd_switch);
 							fadeType = false;	// Fade to white
-							for (int i = 0; i < 10; i++) swiWaitForVBlank();
+							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							pagenum[secondaryDevice] += 1;
 							cursorPosition[secondaryDevice] = 0;
 							titleboxXpos[secondaryDevice] = 0;
@@ -1144,8 +1148,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 									}
 								}
 							}
-							fadeType = true;
+							while (!screenFadedOut());
+							nowLoadingDisplaying = false;
 							whiteScreen = false;
+							fadeType = true;	// Fade in from white
+							clearText();
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
