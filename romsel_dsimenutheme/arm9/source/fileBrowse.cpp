@@ -701,87 +701,113 @@ void mdRomTooBig(void) {
 
 void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[]) {
 	spawnedtitleboxes = 0;
-	for(int i = 0; i < 40; i++) {
-		if (i+pagenum[secondaryDevice]*40 < file_count) {
-			if (dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory) {
-				isDirectory[i] = true;
-				bnrWirelessIcon[i] = 0;
-			} else {
-				isDirectory[i] = false;
-				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str();
-				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
-				{
-					getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-					bnrRomType[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
-				{
-					bnrRomType[i] = 1;
+		for(int i = 0; i < 40; i++) {
+			if (i+pagenum[secondaryDevice]*40 < file_count) {
+				if (dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory) {
+					isDirectory[i] = true;
 					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
-				{
-					bnrRomType[i] = 2;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
-				{
-					bnrRomType[i] = 3;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				}
+				} else {
+					isDirectory[i] = false;
+					std::string std_romsel_filename = dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str();
+					if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+					{
+						getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+						bnrRomType[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
+					{
+						bnrRomType[i] = 1;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
+					{
+						bnrRomType[i] = 2;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
+					{
+						bnrRomType[i] = 3;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
+					{
+						bnrRomType[i] = 4;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
+					{
+						bnrRomType[i] = 5;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
+					{
+						bnrRomType[i] = 6;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
+					{
+						bnrRomType[i] = 7;
+						bnrWirelessIcon[i] = 0;
+						isDSiWare[i] = false;
+						isHomebrew[i] = 0;
+					}
 
-				if (showBoxArt) {
-					// Store box art path
-					snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
-					if (!access(boxArtPath[i], F_OK)) {
-					} else if (bnrRomType[i] == 0) {
-						bool isLauncharg = ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
-										|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"));
+					if (showBoxArt) {
+						// Store box art path
+						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
+						if (!access(boxArtPath[i], F_OK)) {
+						} else if (bnrRomType[i] == 0) {
+							if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
+							|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+							{
+								vector<char*> argarray;
 
-						if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "launcharg")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "LAUNCHARG"))
-						{
-							vector<char*> argarray;
+								FILE *argfile = fopen(std_romsel_filename.c_str(),"rb");
+									char str[PATH_MAX], *pstr;
+								const char seps[]= "\n\r\t ";
 
-							FILE *argfile = fopen(std_romsel_filename.c_str(),"rb");
-								char str[PATH_MAX], *pstr;
-							const char seps[]= "\n\r\t ";
+								while( fgets(str, PATH_MAX, argfile) ) {
+									// Find comment and end string there
+									if( (pstr = strchr(str, '#')) )
+										*pstr= '\0';
 
-							while( fgets(str, PATH_MAX, argfile) ) {
-								// Find comment and end string there
-								if( (pstr = strchr(str, '#')) )
-									*pstr= '\0';
+									// Tokenize arguments
+									pstr= strtok(str, seps);
 
-								// Tokenize arguments
-								pstr= strtok(str, seps);
-
-								while( pstr != NULL ) {
-									argarray.push_back(strdup(pstr));
-									pstr= strtok(NULL, seps);
+									while( pstr != NULL ) {
+										argarray.push_back(strdup(pstr));
+										pstr= strtok(NULL, seps);
+									}
 								}
+								fclose(argfile);
+								std_romsel_filename = argarray.at(0);
 							}
 							// Get game's TID
 							FILE *f_nds_file = fopen(std_romsel_filename.c_str(), "rb");
@@ -792,46 +818,38 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[]) {
 
 							snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), game_TID);
 						}
-						FILE *f_nds_file = fopen(std_romsel_filename.c_str(), "rb");
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						fclose(f_nds_file);
-
-						snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), game_TID);
 					}
 				}
-			}
-			spawnedtitleboxes++;
+				spawnedtitleboxes++;
 
-			loadVolumeImage();
-			loadBatteryImage();
-		}
-	}
-	if (nowLoadingDisplaying) {
-		showProgressIcon = false;
-		fadeType = false;	// Fade to white
-	}
-	// Load correct icons depending on cursor position
-	if (cursorPosition[secondaryDevice] <= 1) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-				iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+				loadVolumeImage();
+				loadBatteryImage();
 			}
 		}
-	} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-		for(int i = 0; i < 6; i++) {
-			if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+		if (nowLoadingDisplaying) {
+			showProgressIcon = false;
+			fadeType = false;	// Fade to white
+		}
+		// Load correct icons depending on cursor position
+		if (cursorPosition[secondaryDevice] <= 1) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+					iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+				}
+			}
+		} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+			for(int i = 0; i < 6; i++) {
+				if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+				}
+			}
+		} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+			for(int i = 0; i < 5; i++) {
+				if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+					iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+				}
 			}
 		}
-	} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
-		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-				iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
-			}
-		}
-	}
 }
 
 string browseForFile(const vector<string> extensionList, const char* username)
