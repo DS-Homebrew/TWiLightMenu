@@ -334,7 +334,7 @@ void iconManagerInit()
     blackPalette = new u16[16 * 8]();
 
     // Allocate texture memory for 6 textures.
-    glGenTextures(6, _iconTexID);
+    glGenTextures(NDS_ICON_BANK_COUNT, _iconTexID);
 
     // Allocate texture memory for GBA/GBC/NES/SMS/GG/MD/SNES icons.
     glGenTextures(1, &_gbaTexID);
@@ -346,7 +346,7 @@ void iconManagerInit()
     glGenTextures(1, &_snesTexID);
 
     // Initialize empty data for the 6 textures.
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < NDS_ICON_BANK_COUNT; i++)
     {
         // Todo: Check if this is too much VRAM for NDS icons.
         glLoadIcon(i, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap, TWL_TEX_HEIGHT, true);

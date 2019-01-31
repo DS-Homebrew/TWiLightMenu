@@ -7,7 +7,7 @@ extern std::string STR_SAVING_SETTINGS;
 extern std::string STR_SETTINGS_SAVED;
 
 extern std::string STR_LR_SWITCH;
-extern std::string STR_MAIN_SETTINGS;
+extern std::string STR_MISC_SETTINGS;
 extern std::string STR_GUI_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
 

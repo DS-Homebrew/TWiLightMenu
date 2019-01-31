@@ -13,7 +13,7 @@ std::string STR_SAVING_SETTINGS = "STR_SAVING_SETTINGS";
 std::string STR_SETTINGS_SAVED = "STR_SETTINGS_SAVED";
 
 std::string STR_LR_SWITCH = "STR_LR_SWITCH";
-std::string STR_MAIN_SETTINGS = "STR_MAIN_SETTINGS";
+std::string STR_MISC_SETTINGS = "STR_MISC_SETTINGS";
 std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
@@ -224,7 +224,7 @@ void langInit(void)
 	STR_SETTINGS_SAVED = languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "Settings saved.");
 
 	STR_LR_SWITCH = languageini.GetString("LANGUAGE", "LR_SWITCH", "L/R/Y/X Switch Pages");
-	STR_MAIN_SETTINGS = languageini.GetString("LANGUAGE", "MAIN_SETTINGS", "Main Settings");
+	STR_MISC_SETTINGS = languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. Settings");
 	STR_GUI_SETTINGS = languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings");
 	STR_GAMESAPPS_SETTINGS = languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings");
 
@@ -233,7 +233,7 @@ void langInit(void)
 	STR_MAINMENU = languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu");
 	STR_THEME = languageini.GetString("LANGUAGE", "THEME", "Theme");
 	STR_LASTPLAYEDROM = languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup.");
-	STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ logo on startup");
+	STR_DSIMENUPPLOGO = languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen");
 	STR_DIRECTORIES = languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders");
 	STR_BOXART = languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers");
 	STR_ANIMATEDSIICONS = languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons");
