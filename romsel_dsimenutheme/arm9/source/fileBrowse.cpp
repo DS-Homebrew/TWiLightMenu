@@ -345,7 +345,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 		CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 		vector<std::string> gameOrder;
-		char str[2];
+		char str[9];
 
 		for(int i=0;i<(int)dirContents.size();i++) {
 			sprintf(str, "%d", i);
@@ -1249,8 +1249,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					held = keysDownRepeat();
 					swiWaitForVBlank(); 
 					
-					if(pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright
-					|| held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
+					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
+					|| (held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright))
 					{
 						if(cursorPosition[secondaryDevice] > 0) {
 							mmEffectEx(&snd_select);
@@ -1262,10 +1262,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_wrong);
 						}
 					}
-					else if(pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright
-					|| held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
+					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
+					|| (held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright))
 					{
-						if(cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40)<dirContents[scrn].size()-1 && cursorPosition[secondaryDevice] < 39) {
+						if(cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40)<(int)dirContents[scrn].size()-1 && cursorPosition[secondaryDevice] < 39) {
 							mmEffectEx(&snd_select);
 							titleboxXmoveright = true;
 							cursorPosition[secondaryDevice]++;
@@ -1368,9 +1368,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
 				vector<std::string> gameOrder;
-				char str[2];
+				char str[11];
 
-				for(int i=0;i<dirContents[scrn].size();i++) {
+				for(int i=0;i<(int)dirContents[scrn].size();i++) {
 					sprintf(str, "%d", i);
 					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 					if(gameOrder[i] == "NULL")
@@ -1386,9 +1386,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 
-				for(int i=0;i<gameOrder.size();i++) {
+				for(int i=0;i<(int)gameOrder.size();i++) {
 					bool stillExists = false;
-					for(int j=0;j<dirContents[scrn].size();j++) {
+					for(int j=0;j<(int)dirContents[scrn].size();j++) {
 						if(gameOrder[i] == dirContents[scrn][j].name) {
 							stillExists = true;
 							break;
@@ -1401,8 +1401,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				gameOrder.erase(gameOrder.begin()+movingApp);
 				gameOrder.insert(gameOrder.begin()+cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40), gameBeingMoved);
 
-				for(int i=0;i<gameOrder.size();i++) {
-					char str[2];
+				for(int i=0;i<(int)gameOrder.size();i++) {
+					char str[9];
 					sprintf(str, "%d", i);
 					gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 				}
