@@ -133,6 +133,8 @@ extern int titlewindowXpos[2];
 int movingApp = -1;
 int movingAppYpos = 0;
 bool movingAppIsDir = false;
+extern bool showMovingArrow;
+extern double movingArrowYpos;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -1022,6 +1024,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					movingAppYpos += 7;
 					swiWaitForVBlank();
 				}
+				showMovingArrow = true;
 
 				while(1){
 					scanKeys();
@@ -1056,6 +1059,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
+							showMovingArrow = false;
+							movingArrowYpos = 70;
 							movingAppYpos -= 7;
 							swiWaitForVBlank();
 						}

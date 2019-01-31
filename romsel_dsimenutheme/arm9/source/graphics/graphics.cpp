@@ -80,6 +80,9 @@ extern int waitForNeedToPlayStopSound;
 extern int movingApp;
 extern int movingAppYpos;
 extern bool movingAppIsDir;
+double movingArrowYpos = 70;
+bool movingArrowYdirection = true;
+bool showMovingArrow = false;
 
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
@@ -560,6 +563,18 @@ void vBlankHandler()
 					else if (bnrRomType[movingApp] == 2) drawIconGBC(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 1) drawIconGB(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else drawIcon(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5], -1);
+				}
+				if(!theme && showMovingArrow) {
+					if(movingArrowYdirection) {
+						movingArrowYpos += 0.33;
+						if(movingArrowYpos>75)
+							movingArrowYdirection = false;
+					} else {
+						movingArrowYpos -= 0.33;
+						if(movingArrowYpos<70)
+							movingArrowYdirection = true;
+					}
+					glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());	
 				}
 			}
 
