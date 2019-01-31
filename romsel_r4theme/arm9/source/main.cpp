@@ -1480,7 +1480,7 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
-						bootstrapini.SetString( "NDS-BOOTSTRAP", "LOADING_SCREEN_IMAGE", r4_theme+"loading.bmp");
+						bootstrapini.SetString( "NDS-BOOTSTRAP", "LOADING_SCREEN_FOLDER", r4_theme+"loading/");
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
