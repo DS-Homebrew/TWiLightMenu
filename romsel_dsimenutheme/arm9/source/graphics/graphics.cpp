@@ -20,6 +20,8 @@
 
 #include <nds.h>
 #include <maxmod9.h>
+#include <dirent.h>
+#include <ctime>
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
@@ -104,6 +106,7 @@ extern bool useGbarunner;
 
 extern int theme;
 extern int subtheme;
+std::vector<std::string> photoList;
 extern int cursorPosition[2];
 extern int pagenum[2];
 //int titleboxXmovespeed[8] = {8};
@@ -1154,9 +1157,40 @@ void loadBatteryImage(void) {
 	fclose(file);
 }
 
+void loadPhotoList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string photoDir;
+	bool dirOpen = false;
+	std::string dirPath;
+	if ((dir = opendir("sd:/_nds/TWiLightMenu/dsimenu/photos/")) != NULL) {
+		dirOpen = true;
+		dirPath = "sd:/_nds/TWiLightMenu/dsimenu/photos/";
+	} else if ((dir = opendir("fat:/_nds/TWiLightMenu/dsimenu/photos/")) != NULL) {
+		dirOpen = true;
+		dirPath = "fat:/_nds/TWiLightMenu/dsimenu/photos/";
+	}
+
+	if(dirOpen) {
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			photoDir = ent->d_name;
+			if (photoDir == ".." || photoDir == "..." || photoDir == "." || photoDir.substr(0,2) == "._" || photoDir.substr(photoDir.find_last_of(".") + 1) != "bmp") continue;
+
+			photoList.emplace_back(dirPath+photoDir);
+		}
+		closedir(dir);
+	}
+}
+
 void loadPhoto() {
-	FILE* file = fopen("fat:/_nds/TWiLightMenu/photo.bmp", "rb");
-	if (!file) file = fopen("sd:/_nds/TWiLightMenu/photo.bmp", "rb");
+	loadPhotoList();
+	srand(time(NULL));
+	FILE* file = fopen(photoList[rand()/((RAND_MAX+1u)/photoList.size())].c_str(), "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
@@ -1184,8 +1218,9 @@ void loadPhoto() {
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	FILE* file = fopen("fat:/_nds/TWiLightMenu/photo.bmp", "rb");
-	if (!file) file = fopen("sd:/_nds/TWiLightMenu/photo.bmp", "rb");
+	loadPhotoList();
+	srand(time(NULL));
+	FILE* file = fopen(photoList[rand()/((RAND_MAX+1u)/photoList.size())].c_str(), "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
