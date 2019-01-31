@@ -1122,6 +1122,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							titlewindowXpos[secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
+							displayNowLoading();
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents);
 
