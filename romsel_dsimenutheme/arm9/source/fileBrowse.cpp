@@ -1264,21 +1264,104 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					else if(pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright
 					|| held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
 					{
-						if(cursorPosition[secondaryDevice]<dirContents[scrn].size()-1) {
+						if(cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40)<dirContents[scrn].size()-1 && cursorPosition[secondaryDevice] < 39) {
 							titleboxXmoveright = true;
-						cursorPosition[secondaryDevice]++;
-						if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+							cursorPosition[secondaryDevice]++;
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
-					}
-					else if(pressed & KEY_DOWN) {
+					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
 							movingAppYpos -= 7;
 							swiWaitForVBlank();
 						}
 						break;
+					} else if(pressed & KEY_L) {
+						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum[secondaryDevice] != 0) {
+							mmEffectEx(&snd_switch);
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 10; i++) swiWaitForVBlank();
+							pagenum[secondaryDevice] -= 1;
+							cursorPosition[secondaryDevice] = 0;
+							titleboxXpos[secondaryDevice] = 0;
+							titlewindowXpos[secondaryDevice] = 0;
+							whiteScreen = true;
+							shouldersRendered = false;
+							getDirectoryContents(dirContents[scrn], extensionList);
+							getFileInfo(scrn, dirContents);
+
+							// Draw icons 1 per vblank to prevent corruption
+							if (cursorPosition[secondaryDevice] <= 1) {
+								for(int i = 0; i < 5; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+									}
+								}
+							} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+								for(int i = 0; i < 6; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+									}
+								}
+							} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+								for(int i = 0; i < 5; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+									}
+								}
+							}
+							fadeType = true;
+							whiteScreen = false;
+						} else {
+							mmEffectEx(&snd_wrong);
+						}
+					} else if(pressed & KEY_R) {
+						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum[secondaryDevice]*40) {
+							mmEffectEx(&snd_switch);
+							fadeType = false;	// Fade to white
+							for (int i = 0; i < 10; i++) swiWaitForVBlank();
+							pagenum[secondaryDevice] += 1;
+							cursorPosition[secondaryDevice] = 0;
+							titleboxXpos[secondaryDevice] = 0;
+							titlewindowXpos[secondaryDevice] = 0;
+							whiteScreen = true;
+							shouldersRendered = false;
+							getDirectoryContents(dirContents[scrn], extensionList);
+							getFileInfo(scrn, dirContents);
+
+							// Draw icons 1 per vblank to prevent corruption
+							if (cursorPosition[secondaryDevice] <= 1) {
+								for(int i = 0; i < 5; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+									}
+								}
+							} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+								for(int i = 0; i < 6; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+									}
+								}
+							} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+								for(int i = 0; i < 5; i++) {
+									swiWaitForVBlank();
+									if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+									}
+								}
+							}
+							fadeType = true;
+							whiteScreen = false;
+						} else {
+							mmEffectEx(&snd_wrong);
+						}
 					}
 				}
 				CIniFile gameOrderIni("sd:/_nds/TWiLightMenu/extras/gameorder.ini");
@@ -1314,7 +1397,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 
 				gameOrder.erase(gameOrder.begin()+movingApp);
-				gameOrder.insert(gameOrder.begin()+cursorPosition[secondaryDevice], gameBeingMoved);
+				gameOrder.insert(gameOrder.begin()+cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40), gameBeingMoved);
 
 				for(int i=0;i<gameOrder.size();i++) {
 					char str[2];
