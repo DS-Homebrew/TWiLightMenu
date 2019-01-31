@@ -1030,8 +1030,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
+					loadVolumeImage();
+					loadBatteryImage();
 					swiWaitForVBlank(); 
-					
+
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
 					|| (held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright))
 					{
@@ -1039,8 +1041,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_select);
 							titleboxXmoveleft = true;
 							cursorPosition[secondaryDevice]--;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2) {
+								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+								defer(reloadFontTextures);
+							}
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1052,8 +1056,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_select);
 							titleboxXmoveright = true;
 							cursorPosition[secondaryDevice]++;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2)
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+								defer(reloadFontTextures);
+							}
 						} else {
 							mmEffectEx(&snd_wrong);
 						}
@@ -1080,33 +1086,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents);
 
-							// Draw icons 1 per vblank to prevent corruption
-							if (cursorPosition[secondaryDevice] <= 1) {
-								for(int i = 0; i < 5; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-									}
-								}
-							} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-								for(int i = 0; i < 6; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
-									}
-								}
-							} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
-								for(int i = 0; i < 5; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
-									}
-								}
-							}
 							while (!screenFadedOut());
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							fadeType = true;	// Fade in from white
+							for (int i = 0; i < 5; i++) swiWaitForVBlank();
+							reloadIconPalettes();
+							reloadFontPalettes();
 							clearText();
 						} else {
 							mmEffectEx(&snd_wrong);
@@ -1126,33 +1112,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents);
 
-							// Draw icons 1 per vblank to prevent corruption
-							if (cursorPosition[secondaryDevice] <= 1) {
-								for(int i = 0; i < 5; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
-									}
-								}
-							} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-								for(int i = 0; i < 6; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
-									}
-								}
-							} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
-								for(int i = 0; i < 5; i++) {
-									swiWaitForVBlank();
-									if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
-									}
-								}
-							}
 							while (!screenFadedOut());
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							fadeType = true;	// Fade in from white
+							for (int i = 0; i < 5; i++) swiWaitForVBlank();
+							reloadIconPalettes();
+							reloadFontPalettes();
 							clearText();
 						} else {
 							mmEffectEx(&snd_wrong);
