@@ -132,6 +132,7 @@ extern int titleboxXpos[2];
 extern int titlewindowXpos[2];
 int movingApp = -1;
 int movingAppYpos = 0;
+bool movingAppIsDir = false;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -1014,6 +1015,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mkdir ("sd:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
 				movingApp = (pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice]);
+				if(dirContents[scrn][movingApp].isDirectory)	movingAppIsDir = true;
+				else	movingAppIsDir = false;
 				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
 					movingAppYpos += 7;
