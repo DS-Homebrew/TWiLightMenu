@@ -442,65 +442,6 @@ int main(int argc, char **argv)
 	int pressed = 0;
 #pragma endregion
 
-SettingsPage mainPage(STR_MAIN_SETTINGS);
-
-	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
-	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
-	mainPage
-		// Language
-		.option(STR_LANGUAGE,
-				STR_DESCRIPTION_LANGUAGE_1,
-				Option::Int(&ms().guiLanguage),
-				{STR_SYSTEM,
-				 "Japanese",
-				 "English",
-				 "French",
-				 "German",
-				 "Italian",
-				 "Spanish"},
-				{TLanguage::ELangDefault,
-				 TLanguage::ELangJapanese,
-				 TLanguage::ELangEnglish,
-				 TLanguage::ELangFrench,
-				 TLanguage::ELangGerman,
-				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish});
-
-	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
-		mainPage.option(STR_S1SDACCESS,
-				STR_DESCRIPTION_S1SDACCESS_1,
-				Option::Bool(&ms().secondaryAccess),
-				{STR_ON, STR_OFF},
-				{true, false});
-	}
-
-	mainPage
-		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
-		.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false});
-
-	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
-		mainPage
-			.option(STR_SYSREGION,
-				STR_DESCRIPTION_SYSREGION_1,
-				Option::Int(&ms().sysRegion),
-				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
-				{-1, 0, 1, 2, 3, 4, 5})
-			.option(STR_LAUNCHERAPP,
-				STR_DESCRIPTION_LAUNCHERAPP_1,
-				Option::Int(&ms().launcherApp),
-				{STR_NONE,
-				"00000000.app",
-				"00000001.app",
-				"00000002.app",
-				"00000003.app",
-				"00000004.app",
-				"00000005.app",
-				"00000006.app",
-				"00000007.app",
-				"00000008.app"},
-				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
-	}
-
 	// consoleDemoInit();
 	SettingsPage guiPage(STR_GUI_SETTINGS);
 
@@ -516,7 +457,6 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 				{"DSi", "3DS", "R4", "Acekard"},
 				{0, 1, 2, 3})
 
-		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
@@ -603,6 +543,66 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
 
+SettingsPage miscPage(STR_MISC_SETTINGS);
+
+	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
+	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
+	miscPage
+		// Language
+		.option(STR_LANGUAGE,
+				STR_DESCRIPTION_LANGUAGE_1,
+				Option::Int(&ms().guiLanguage),
+				{STR_SYSTEM,
+				 "Japanese",
+				 "English",
+				 "French",
+				 "German",
+				 "Italian",
+				 "Spanish"},
+				{TLanguage::ELangDefault,
+				 TLanguage::ELangJapanese,
+				 TLanguage::ELangEnglish,
+				 TLanguage::ELangFrench,
+				 TLanguage::ELangGerman,
+				 TLanguage::ELangItalian,
+				 TLanguage::ELangSpanish});
+
+	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
+		miscPage.option(STR_S1SDACCESS,
+				STR_DESCRIPTION_S1SDACCESS_1,
+				Option::Bool(&ms().secondaryAccess),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
+	miscPage
+		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
+		.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false})
+		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
+
+	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+		miscPage
+			.option(STR_SYSREGION,
+				STR_DESCRIPTION_SYSREGION_1,
+				Option::Int(&ms().sysRegion),
+				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
+				{-1, 0, 1, 2, 3, 4, 5})
+			.option(STR_LAUNCHERAPP,
+				STR_DESCRIPTION_LAUNCHERAPP_1,
+				Option::Int(&ms().launcherApp),
+				{STR_NONE,
+				"00000000.app",
+				"00000001.app",
+				"00000002.app",
+				"00000003.app",
+				"00000004.app",
+				"00000005.app",
+				"00000006.app",
+				"00000007.app",
+				"00000008.app"},
+				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
+	}
+
 	if (isDSiMode() && ms().consoleModel < 2)
 	{
 		// Actions do not have to bound to an object.
@@ -611,14 +611,14 @@ SettingsPage mainPage(STR_MAIN_SETTINGS);
 
 		// We are also using the changed callback to write
 		// or delete the hiya autoboot file.
-		mainPage
+		miscPage
 			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", "System Menu"}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	gui()
-		.addPage(mainPage)
 		.addPage(guiPage)
 		.addPage(gamesPage)
+		.addPage(miscPage)
 		.onExit(defaultExitHandler)
 		// Prep and show the first page.
 		.show();

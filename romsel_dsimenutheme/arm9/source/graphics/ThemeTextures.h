@@ -18,6 +18,7 @@ public:
     bipsTexID = 0;
     scrollwindowTexID = 0;
     buttonarrowTexID = 0;
+    movingarrowTexID = 0;
     launchdotTexID = 0;
     startTexID = 0;
     startbrdTexID = 0;
@@ -55,6 +56,7 @@ private:
   void loadBipsImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadScrollwindowImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadButtonarrowImage(const unsigned short *palette, const unsigned int *bitmap);
+  void loadMovingarrowImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadLaunchdotImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadStartImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadStartbrdImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize, int palLength,
@@ -91,6 +93,7 @@ public:
   const glImage *bipsImage() { return _bipsImage.get(); }
   const glImage *scrollwindowImage() { return _scrollwindowImage.get(); }
   const glImage *buttonarrowImage() { return _buttonarrowImage.get(); }
+  const glImage *movingArrowImage() { return _movingarrowImage.get(); }
   const glImage *launchdotImage() { return _launchdotImage.get(); }
   const glImage *startImage() { return _startImage.get(); }
   const glImage *startbrdImage() { return _startbrdImage.get(); }
@@ -118,6 +121,7 @@ private:
   unique_ptr<glImage[]> _bipsImage;
   unique_ptr<glImage[]> _scrollwindowImage;
   unique_ptr<glImage[]> _buttonarrowImage;
+  unique_ptr<glImage[]> _movingarrowImage;
   unique_ptr<glImage[]> _launchdotImage;
   unique_ptr<glImage[]> _startImage;
   unique_ptr<glImage[]> _startbrdImage;
@@ -154,6 +158,7 @@ private:
   int bipsTexID;
   int scrollwindowTexID;
   int buttonarrowTexID;
+  int movingarrowTexID;
   int launchdotTexID;
   int startTexID;
   int startbrdTexID;

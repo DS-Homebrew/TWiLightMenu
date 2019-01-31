@@ -88,7 +88,7 @@
 
 #define SFN_ICONS_DIRECTORY         SFN_SYSTEM_DIR"icons/"
 
-#define SFN_CHEATS                  "/_nds/TWiLightMenu/cheats/usrcheat.dat"
+#define SFN_CHEATS                  "/_nds/TWiLightMenu/extras/usrcheat.dat"
 
 class SystemFilenames
 {
