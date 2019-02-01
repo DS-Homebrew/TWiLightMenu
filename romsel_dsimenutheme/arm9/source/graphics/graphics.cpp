@@ -107,6 +107,7 @@ extern bool useGbarunner;
 extern int theme;
 extern int subtheme;
 std::vector<std::string> photoList;
+static std::string photoPath;
 extern int cursorPosition[2];
 extern int pagenum[2];
 //int titleboxXmovespeed[8] = {8};
@@ -1185,12 +1186,12 @@ void loadPhotoList()
 		}
 		closedir(dir);
 	}
+
+	photoPath = photoList[rand()/((RAND_MAX+1u)/photoList.size())];
 }
 
 void loadPhoto() {
-	loadPhotoList();
-	srand(time(NULL));
-	FILE* file = fopen(photoList[rand()/((RAND_MAX+1u)/photoList.size())].c_str(), "rb");
+	FILE* file = fopen(photoPath.c_str(), "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
@@ -1218,9 +1219,7 @@ void loadPhoto() {
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	loadPhotoList();
-	srand(time(NULL));
-	FILE* file = fopen(photoList[rand()/((RAND_MAX+1u)/photoList.size())].c_str(), "rb");
+	FILE* file = fopen(photoPath.c_str(), "rb");
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
@@ -1597,7 +1596,11 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-	if (theme < 1) loadPhoto();
+	if (theme < 1) {
+		loadPhotoList();
+		srand(time(NULL));
+		loadPhoto();
+	}
 
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
