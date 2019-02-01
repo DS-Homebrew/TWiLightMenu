@@ -1597,8 +1597,8 @@ void graphicsInit()
 	REG_BG3PD_SUB = 1<<8;
 
 	if (theme < 1) {
-		loadPhotoList();
 		srand(time(NULL));
+		loadPhotoList();
 		loadPhoto();
 	}
 
