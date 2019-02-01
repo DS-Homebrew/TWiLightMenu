@@ -1024,6 +1024,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if(dirContents[scrn][movingApp].isDirectory)	movingAppIsDir = true;
 				else	movingAppIsDir = false;
 				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
+				getGameInfo(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
 					movingAppYpos += 7;
 					swiWaitForVBlank();

@@ -254,17 +254,17 @@ u32 getSDKVersion(FILE* ndsFile);
 bool checkRomAP(FILE *ndsFile);
 
 // bnriconframenum[]
-extern int bnriconPalLine[40];
-extern int bnriconframenumY[40];
-extern int bannerFlip[40];
+extern int bnriconPalLine[41];
+extern int bnriconframenumY[41];
+extern int bannerFlip[41];
 
 // bnriconisDSi[]
 extern bool isDirectory[40];
-extern int bnrRomType[40];
-extern bool bnriconisDSi[40];
-extern int bnrWirelessIcon[40];	// 0 = None, 1 = Local, 2 = WiFi
-extern bool isDSiWare[40];
-extern int isHomebrew[40];		// 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+extern int bnrRomType[41];
+extern bool bnriconisDSi[41];
+extern int bnrWirelessIcon[41];	// 0 = None, 1 = Local, 2 = WiFi
+extern bool isDSiWare[41];
+extern int isHomebrew[41];		// 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

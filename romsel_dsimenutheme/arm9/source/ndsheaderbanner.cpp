@@ -119,20 +119,20 @@ bool checkRomAP(FILE *ndsFile)
 }
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[40][64] = {0x0000};
+static u16 bnriconframeseq[41][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLine[40] = {0};
-int bnriconframenumY[40] = {0};
-int bannerFlip[40] = {GL_FLIP_NONE};
+int bnriconPalLine[41] = {0};
+int bnriconframenumY[41] = {0};
+int bannerFlip[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isDirectory[40] = {false};
-int bnrRomType[40] = {0};
-bool bnriconisDSi[40] = {false};
-int bnrWirelessIcon[40] = {0}; // 0 = None, 1 = Local, 2 = WiFi
-bool isDSiWare[40] = {true};
-int isHomebrew[40] = {0}; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+int bnrRomType[41] = {0};
+bool bnriconisDSi[41] = {false};
+int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
+bool isDSiWare[41] = {true};
+int isHomebrew[41] = {0}; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

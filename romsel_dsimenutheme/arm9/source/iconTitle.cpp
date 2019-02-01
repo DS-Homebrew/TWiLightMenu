@@ -63,8 +63,8 @@ sNDSBannerExt ndsBanner;
 
 #define TITLE_CACHE_SIZE 0x80
 
-static bool infoFound[40] = {false};
-static u16 cachedTitle[40][TITLE_CACHE_SIZE]; 
+static bool infoFound[41] = {false};
+static u16 cachedTitle[41][TITLE_CACHE_SIZE]; 
 static char titleToDisplay[3][384]; 
 
 u8 *tilesModified = new u8[(32 * 256) / 2];
@@ -170,8 +170,8 @@ void drawIcon(int Xpos, int Ypos, int num)
 	} else if(num2 >= 6) {
 		num2 -= 6;
 	}
-	//glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num] & 31]);
+	//glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num]]);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num2==6 ? 40 : num]]);
 }
 
 void drawIconGBA(int Xpos, int Ypos)
@@ -325,6 +325,8 @@ void clearTitle(int num) {
 
 void getGameInfo(bool isDir, const char* name, int num)
 {
+	if (num == -1) num = 40;
+
 	bnriconPalLine[num] = 0;
 	bnriconframenumY[num] = 0;
 	bannerFlip[num] = GL_FLIP_NONE;
