@@ -18,21 +18,24 @@ Then run `compile_docker.ps1` in a PowerShell window. The script accepts `make` 
 To build all artifacts, run `.\compile_docker.ps1 package`.
 
 # Credits
-
-- ahezard: [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
-- Drenn: GameYob
-- Coto: nesDS
+## Main Developers
+- RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
+- Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
+- chyyran: Port of akMenu/Wood UI to TWiLightMenu++ as a theme.
+- Epicpkmn11: Adding new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.
+- shutterbug2000: NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
+## App Launchers
+- [ahezard](https://github.com/ahezard): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
+- [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob)
+- Coto: [nesDS](https://sourceforge.net/projects/nesds/)
+- Apache Thunder: nesDS TWL Edition, and the DSi splash from NTR Launcher.
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
 - archeid (Loopy): [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS)
-- StarvingArtist (deviantArt): Some game console icons used.
-- Apache Thunder: Providing the Miku theme (not made by him) for Acekard theme, nesDS TWL Edition, and the DSi splash from NTR Launcher.
-- Vulpes-Vulpeos: DSiMenu++ logo (v4.3.0-v6.2.1, and for the launcher, after v1.0.0), MHGen and DS Menu themes for Acekard theme.
-- Epicpkmn11: Adding new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.
-- Joom: Original TWLoader logo.
-- Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
-- chyyran: Port of akMenu/Wood UI to TWLMenu++ as a theme.
-- RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
-- shutterbug2000: NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
+## Graphics & Theme
 - spinal_cord: DSi4DS and DSision2 graphics.
+- [StarvingArtist](https://www.deviantart.com/starvingartist/): Some game console icons used.
+- Vulpes-Vulpeos: MHGen and DS Menu themes for Acekard theme.
+## Others
 - profi200: Improved SD code from fastboot3DS.
 - devkitPro, WinterMute: Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
+- DeadSkullzjr: [Cheat Database](https://gbatemp.net/threads/deadskullzjrs-flashcart-cheat-databases.488711/)
