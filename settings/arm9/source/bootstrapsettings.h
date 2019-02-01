@@ -49,6 +49,7 @@ class BootstrapSettings
 	bool bstrap_loadingScreenLocation;
 	int loadingFrames;
 	int loadingFps;
+	int loadingBarYpos;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;
