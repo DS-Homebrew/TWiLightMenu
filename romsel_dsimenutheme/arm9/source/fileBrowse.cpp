@@ -1046,7 +1046,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_select);
 							titleboxXmoveleft = true;
 							cursorPosition[secondaryDevice]--;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2) {
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
@@ -1061,7 +1061,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_select);
 							titleboxXmoveright = true;
 							cursorPosition[secondaryDevice]++;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] > 2) {
+							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
