@@ -1029,6 +1029,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					movingAppYpos += 7;
 					swiWaitForVBlank();
 				}
+				int orgCursorPosition = cursorPosition[secondaryDevice];
+				int orgPage = pagenum[secondaryDevice];
 				showMovingArrow = true;
 
 				while(1){
@@ -1130,6 +1132,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 					}
 				}
+				if ((pagenum[secondaryDevice] != orgPage) || (cursorPosition[secondaryDevice] != orgCursorPosition))
+				{
 				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 				char str[11];
@@ -1175,9 +1179,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				getDirectoryContents(dirContents[scrn], extensionList);
 				getFileInfo(scrn, dirContents, false);
 
-				movingApp = -1;
 				settingsChanged = true;
 				boxArtLoaded = false;
+				}
+				movingApp = -1;
 
 			// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
