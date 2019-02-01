@@ -517,7 +517,7 @@ int main(int argc, char **argv)
 	gamesPage
 		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
 				Option::Int(&bs().bstrap_loadingScreen),
-				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "From TWLMenu++ theme"},
+				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "TWLMenu++ theme"},
 				{TLoadingScreen::ELoadingNone,
 				 TLoadingScreen::ELoadingRegular,
 				 TLoadingScreen::ELoadingPong,
