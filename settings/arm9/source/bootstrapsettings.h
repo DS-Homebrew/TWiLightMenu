@@ -47,6 +47,8 @@ class BootstrapSettings
 	int bstrap_loadingScreen;
 	bool bstrap_loadingScreenTheme;
 	bool bstrap_loadingScreenLocation;
+	int loadingFrames;
+	int loadingFps;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

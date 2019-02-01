@@ -13,6 +13,8 @@ BootstrapSettings::BootstrapSettings()
 	bstrap_loadingScreen = BootstrapSettings::ELoadingRegular;
 	bstrap_loadingScreenTheme = false;
 	bstrap_loadingScreenLocation = false;
+	loadingFrames = 0;
+	loadingFps = 0;
 }
 
 void BootstrapSettings::loadSettings()
@@ -32,19 +34,45 @@ void BootstrapSettings::loadSettings()
 void BootstrapSettings::saveSettings()
 {
 	std::string loadingFolder;
+	std::string themeIniPath;
 	switch (ms().theme) {
 		case 0:
 		default:
 			loadingFolder = "/_nds/TWiLightMenu/dsimenu/loading/";
+			themeIniPath = loadingFolder+"config.ini";
 			break;
 		case 1:
 			loadingFolder = "/_nds/TWiLightMenu/3dsmenu/loading/";
+			themeIniPath = loadingFolder+"config.ini";
 			break;
 		case 2:
 			loadingFolder = "/_nds/TWiLightMenu/r4menu/themes/"+(ms().r4_theme)+"/loading/";
+			themeIniPath = loadingFolder+"theme.ini";
 			break;
 		case 3:
 			loadingFolder = "/_nds/TWiLightMenu/akmenu/themes/"+(ms().ak_theme)+"/loading/";
+			themeIniPath = loadingFolder+"uisettings.ini";
+			break;
+	}
+
+	CIniFile themeini(themeIniPath);
+	switch (ms().theme) {
+		case 0:
+		default:
+			loadingFrames = themeini.GetInt( "loading screen", "frames", 0);
+			loadingFps = themeini.GetInt( "loading screen", "fps", 0);
+			break;
+		case 1:
+			loadingFrames = themeini.GetInt( "loading screen", "frames", 0);
+			loadingFps = themeini.GetInt( "loading screen", "fps", 0);
+			break;
+		case 2:
+			loadingFrames = themeini.GetInt( "Loading", "Frames", 0);
+			loadingFps = themeini.GetInt( "Loading", "Fps", 0);
+			break;
+		case 3:
+			loadingFrames = themeini.GetInt( "loading screen", "frames", 0);
+			loadingFps = themeini.GetInt( "loading screen", "fps", 0);
 			break;
 	}
 
@@ -58,5 +86,7 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_DARK_THEME", bstrap_loadingScreenTheme);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_SWAP_LCDS", bstrap_loadingScreenLocation);
 	bootstrapini.SetString( "NDS-BOOTSTRAP", "LOADING_SCREEN_FOLDER", loadingFolder);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_FRAMES", loadingFrames);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_FPS", loadingFps);
     bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }
