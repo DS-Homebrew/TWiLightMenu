@@ -128,6 +128,7 @@ bool gameSoftReset = false;
 
 int mpuregion = 0;
 int mpusize = 0;
+bool ceCached = false;
 
 bool applaunch = false;
 bool startMenu = false;
@@ -493,6 +494,48 @@ void SetMPUSettings(const char* filename) {
 			mpusize = 3145728;
 			break;
 		}
+	}
+}
+
+/**
+ * Gives some games slight speed bump by moving nds-bootstrap's cardEngine_arm9 to cached memory region.
+ */
+void SetSpeedBump(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+
+	scanKeys();
+	int pressed = keysDownRepeat();
+	
+	ceCached = false;
+
+	static const char list[][4] = {
+		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
+		if (memcmp(game_TID, list[i], 3) == 0) {
+			// Found a match.
+			ceCached = true;
+			break;
+		}
+	}
+
+	if(pressed & KEY_L){
+		ceCached = true;
 	}
 }
 
@@ -1214,6 +1257,7 @@ int main(int argc, char **argv) {
 						SetDonorSDK(argarray[0]);
 						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
+						SetSpeedBump(argarray[0]);
 
 						if (sdFound() && secondaryDevice) {
 							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
@@ -1249,6 +1293,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
