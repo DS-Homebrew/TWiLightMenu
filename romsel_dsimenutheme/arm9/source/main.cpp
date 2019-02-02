@@ -393,7 +393,7 @@ void SetGameSoftReset(const char* filename) {
 	fclose(f_nds_file);
 
 	scanKeys();
-	int pressed = keysDownRepeat();
+	int pressed = keysHeld();
 	
 	gameSoftReset = false;
 
@@ -439,7 +439,7 @@ void SetMPUSettings(const char* filename) {
 	fclose(f_nds_file);
 
 	scanKeys();
-	int pressed = keysDownRepeat();
+	int pressed = keysHeld();
 	
 	if(pressed & KEY_B){
 		mpuregion = 1;
@@ -511,17 +511,34 @@ void SetSpeedBump(const char* filename) {
 	fclose(f_nds_file);
 
 	scanKeys();
-	int pressed = keysDownRepeat();
+	int pressed = keysHeld();
 	
 	ceCached = false;
 
 	static const char list[][4] = {
 		"ASM",	// Super Mario 64 DS
 		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"ABM",	// Bomberman
+		"ACV",	// Castlevania: Dawn of Sorrow
+		"A5T",	// MegaMan Battle Network 5: Double Team DS
+		"ASC",	// Sonic Rush
 		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AFF",	// Final Fantasy III
 		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"ADA",	// Pokemon Diamond
+		"APA",	// Pokemon Pearl
+		"A6A",	// MegaMan Star Force: Pegasus
+		"A6B",	// MegaMan Star Force: Leo
+		"A6C",	// MegaMan Star Force: Dragon
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"A2L",	// Anno 1701: Dawn of Discovery
+		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
+		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
 		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"CRB",	// MegaMan Star Force 3: Black Ace
+		"CRR",	// MegaMan Star Force 3: Red Joker
+		"B62",	// Chibi-Robo: Clean Sweep!
+		"B6X",	// Rockman EXE: Operate Shooting Star
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 
