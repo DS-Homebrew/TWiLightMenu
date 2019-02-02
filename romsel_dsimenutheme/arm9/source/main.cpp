@@ -535,10 +535,13 @@ void SetSpeedBump(const char* filename) {
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
 		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"CPU",	// Pokemon Platinum
 		"CRB",	// MegaMan Star Force 3: Black Ace
 		"CRR",	// MegaMan Star Force 3: Red Joker
 		"B62",	// Chibi-Robo: Clean Sweep!
 		"B6X",	// Rockman EXE: Operate Shooting Star
+		"IPG",	// Pokemon SoulSilver
+		"IPK",	// Pokemon HeartGold
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 
