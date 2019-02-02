@@ -1013,7 +1013,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			// Move apps
-			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
+			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright
+			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
 				showbubble = false;
