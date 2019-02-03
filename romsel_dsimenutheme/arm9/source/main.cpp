@@ -516,24 +516,37 @@ void SetSpeedBump(const char* filename) {
 	ceCached = false;
 
 	static const char list[][4] = {
+		"AYI",	// Yoshi Touch & Go
+		"AZW",	// WarioWare: Touched
+		"ARR",	// Ridge Racer DS
 		"ASM",	// Super Mario 64 DS
 		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"AS2",	// Spider-Man 2
 		"ABM",	// Bomberman
 		"ACV",	// Castlevania: Dawn of Sorrow
+		"AGY",	// Phoenix Wright: Ace Attorney
 		"A5T",	// MegaMan Battle Network 5: Double Team DS
 		"ASC",	// Sonic Rush
 		"ADM",	// Animal Crossing: Wild World
+		"ABH",	// Resident Evil: Deadly Silence
+		"ARJ",	// Kanji Sonomama Rakubiki Jiten
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"AKW",	// Kirby Squeak Squad/Mouse Attack
 		"ADA",	// Pokemon Diamond
 		"APA",	// Pokemon Pearl
+		"A8N",	// Planet Puzzle League
 		"A6A",	// MegaMan Star Force: Pegasus
 		"A6B",	// MegaMan Star Force: Leo
 		"A6C",	// MegaMan Star Force: Dragon
+		"A3Y",	// Sonic Rush Adventure
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"A8T",	// Mario Party DS
 		"A2L",	// Anno 1701: Dawn of Discovery
+		"A5F",	// Professor Layton and the Curious Village
+		"AWL",	// The World Ends With You
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
+		"YKW",	// Kirby Super Star Ultra
 		"YGX",	// Grand Theft Auto: Chinatown Wars
 		"CPU",	// Pokemon Platinum
 		"CRB",	// MegaMan Star Force 3: Black Ace
