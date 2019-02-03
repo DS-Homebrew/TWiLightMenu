@@ -524,7 +524,6 @@ void SetSpeedBump(const char* filename) {
 		"ASC",	// Sonic Rush
 		"ADM",	// Animal Crossing: Wild World
 		"ARZ",	// Rockman ZX/MegaMan ZX
-		"AFF",	// Final Fantasy III
 		"AKW",	// Kirby Squeak Squad/Mouse Attack
 		"ADA",	// Pokemon Diamond
 		"APA",	// Pokemon Pearl
