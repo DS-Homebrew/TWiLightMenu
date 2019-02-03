@@ -347,6 +347,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
@@ -421,6 +422,7 @@ void waitForFadeOut (void) {
 		for (int i = 0; i < 72; i++) {
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -638,6 +640,7 @@ void launchGba(void) {
 			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
@@ -697,6 +700,7 @@ void mdRomTooBig(void) {
 		pressed = keysDown();
 		loadVolumeImage();
 		loadBatteryImage();
+		loadTime();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -829,6 +833,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -964,6 +969,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				loadVolumeImage();
 				loadBatteryImage();
+				loadTime();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1037,6 +1043,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					held = keysDownRepeat();
 					loadVolumeImage();
 					loadBatteryImage();
+					loadTime();
 					swiWaitForVBlank(); 
 
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1139,6 +1146,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 					if(gameOrder[i] == "NULL")
 						gameOrder[i] = dirContents[scrn][i].name;
+				}
+
+				for(int i=0;i<(int)gameOrder.size();i++) {
+					for(int j=0;j<(int)gameOrder.size();j++) {
+						if(i!=j) {
+							if(gameOrder[i] == gameOrder[j]) {
+								gameOrder.erase(gameOrder.begin()+j);
+							}
+						}
+					}
 				}
 
 				for(int i=gameOrder.size();true;i++) {
@@ -1526,6 +1543,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1570,6 +1588,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;

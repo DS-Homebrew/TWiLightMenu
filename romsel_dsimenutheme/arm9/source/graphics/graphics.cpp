@@ -42,6 +42,7 @@
 #include "../perGameSettings.h"
 #include "../flashcard.h"
 #include "iconHandler.h"
+#include "date.h"
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
@@ -1474,6 +1475,150 @@ void topBgLoad() {
 	}
 }
 
+void loadDate() {
+	// loadBMP(tex().topBgPath.c_str());
+
+	// Load username
+	char fontPath[64];
+	FILE* file;
+	int x = 145;
+	char date[6];
+	// sprintf(date, "%s", RetTime().c_str());
+	// char buf[5];
+	GetDate(FORMAT_MD, date, sizeof(date));
+	// GetDate(FORMAT_DM, buf2, sizeof(buf2));
+	// strcpy(date, DrawDate());
+	// std::string test = DrawDate();
+	// char date[test.length()+1];
+	// strcpy(date, buf);
+	// sprintf(date, "%s", "02/01");
+
+	for (int c = 0; c < 5; c++) {
+		unsigned int charIndex = getTopFontSpriteIndex(date[c]);
+		// 42 characters per line.
+		unsigned int texIndex = charIndex / 42;
+		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+		
+		file = fopen(fontPath, "rb");
+
+		if (file) {
+			// Start date
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			for (int y=15; y>=0; y--) {
+				u16 buffer[512];
+				fread(buffer, 2, 0x200, file);
+				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+
+				for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
+					u16 val = *(src++);
+					// u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
+					// Apply palette here.
+					
+					// Magic numbers were found by dumping val to stdout
+					// on case default.
+					// switch (val) {
+					// 	// #ff00ff
+					// 	case 0xFC1F:
+					// 		break;
+					// 	// #414141
+					// 	case 0xA108:
+					// 		val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
+					// 		break;
+					// 	case 0xC210:
+					// 		// blend the colors with the background to make it look better.
+					// 		val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
+					// 		break;
+					// 	case 0xDEF7:
+					// 		val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
+					// 	default:
+					// 		break;
+					// }
+					if (val != 0xFC1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					}
+				}
+			}
+			x += top_font_texcoords[2+(4*charIndex)];
+		}
+
+		fclose(file);
+	}
+}
+
+static std::string loadedTime;
+
+void loadTime() {
+	// loadBMP(tex().topBgPath.c_str());
+
+	// Load time
+	char fontPath[64];
+	FILE* file;
+	int x = 193;
+	char time[10];
+	std::string currentTime = RetTime();
+	if(currentTime != loadedTime) {
+		loadedTime = currentTime;
+		if(currentTime.substr(0,1) == " ")
+			currentTime = "0" + currentTime.substr(1);
+		sprintf(time, "%s", currentTime.c_str());
+
+		for (int c = 0; c < 5; c++) {
+			unsigned int charIndex = getTopFontSpriteIndex(time[c]);
+			// 42 characters per line.
+			unsigned int texIndex = charIndex / 42;
+			sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+			
+			file = fopen(fontPath, "rb");
+
+			if (file) {
+				// Start loading
+				fseek(file, 0xe, SEEK_SET);
+				u8 pixelStart = (u8)fgetc(file) + 0xe;
+				fseek(file, pixelStart, SEEK_SET);
+				for (int y=15; y>=0; y--) {
+					u16 buffer[512];
+					fread(buffer, 2, 0x200, file);
+					u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+
+					for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
+						u16 val = *(src++);
+						// u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
+						// Apply palette here.
+						
+						// Magic numbers were found by dumping val to stdout
+						// on case default.
+						// switch (val) {
+						// 	// #ff00ff
+						// 	case 0xFC1F:
+						// 		break;
+						// 	// #414141
+						// 	case 0xA108:
+						// 		val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
+						// 		break;
+						// 	case 0xC210:
+						// 		// blend the colors with the background to make it look better.
+						// 		val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
+						// 		break;
+						// 	case 0xDEF7:
+						// 		val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
+						// 	default:
+						// 		break;
+						// }
+						if (val != 0xFC1F) {	// Do not render magneta pixel
+							BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						}
+					}
+				}
+				x += top_font_texcoords[2+(4*charIndex)];
+			}
+		}
+
+		fclose(file);
+	}
+}
+
 void clearBoxArt() {
 	if (theme == 1) {
 		loadBMPPart("nitro:/graphics/3ds_top.bmp");
@@ -1613,6 +1758,8 @@ void graphicsInit()
 		bubbleYpos += 10;
 		bubbleXpos += 3;
 		topBgLoad();
+		loadDate();
+		// loadTime();
 		bottomBgLoad(false, true);
 	} else {
 		switch(subtheme) {
@@ -1643,6 +1790,8 @@ void graphicsInit()
 				break;
 		}
 		topBgLoad();
+		loadDate();
+		// loadTime();
 		bottomBgLoad(false, true);
 	}
 
