@@ -143,6 +143,7 @@ bool launchDotDoFrameChange = false;
 
 bool showdialogbox = false;
 bool dbox_showIcon = false;
+bool dbox_selectMenu = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 
@@ -747,6 +748,37 @@ void vBlankHandler()
 				drawDbox();
 				if (dbox_showIcon && !isDirectory[cursorPosition[secondaryDevice]]) {
 					drawIcon(24, dbox_Ypos+20, cursorPosition[secondaryDevice]);
+				}
+				if (dbox_selectMenu) {
+					int selIconYpos = 96;
+					if (isDSiMode() && sdFound()) {
+						for (int i = 0; i < 4; i++) {
+							selIconYpos -= 14;
+						}
+					} else {
+						for (int i = 0; i < 3; i++) {
+							selIconYpos -= 14;
+						}
+					}
+					if (!isRegularDS) {
+						glSprite(32, dbox_Ypos+selIconYpos, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);	// System Menu
+						selIconYpos += 28;
+					}
+					glSprite(32, dbox_Ypos+selIconYpos, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);	// Settings
+					selIconYpos += 28;
+					if (isDSiMode() && sdFound()) {
+						if (secondaryDevice) {
+							glSprite(32, dbox_Ypos+selIconYpos, GL_FLIP_NONE, &tex().smallCartImage()[2]);	// SD card
+						} else {
+							glSprite(32, dbox_Ypos+selIconYpos, GL_FLIP_NONE, &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]);	// Slot-1 card
+						}
+						selIconYpos += 28;
+					}
+					if (useGbarunner) {
+						drawSmallIconGBA(32, dbox_Ypos+selIconYpos);	// GBARunner2
+					} else {
+						glSprite(32, dbox_Ypos+selIconYpos, GL_FLIP_NONE, &tex().smallCartImage()[3]);	// GBA Mode
+					}
 				}
 			}
 			// Show button_arrowPals (debug feature)

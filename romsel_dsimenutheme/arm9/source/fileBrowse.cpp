@@ -106,6 +106,7 @@ extern touchPosition touch;
 
 extern bool showdialogbox;
 extern bool dbox_showIcon;
+extern bool dbox_selectMenu;
 
 extern std::string romfolder[2];
 
@@ -702,6 +703,114 @@ void mdRomTooBig(void) {
 	clearText();
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
+bool selectMenu(void) {
+	clearText();
+	dbox_showIcon = false;
+	dbox_selectMenu = true;
+	showdialogbox = true;
+	int maxCursors = 0;
+	int selCursorPosition = 0;
+	int assignedOp[4] = {-1};
+	int selIconYpos = 96;
+	if (isDSiMode() && sdFound()) {
+		for (int i = 0; i < 4; i++) {
+			selIconYpos -= 14;
+		}
+		assignedOp[0] = 0;
+		assignedOp[1] = 1;
+		assignedOp[2] = 2;
+		assignedOp[3] = 3;
+		maxCursors = 3;
+	} else {
+		for (int i = 0; i < 3; i++) {
+			selIconYpos -= 14;
+		}
+		if (!isRegularDS) {
+			assignedOp[0] = 0;
+			assignedOp[1] = 1;
+			assignedOp[2] = 3;
+			maxCursors = 2;
+		} else {
+			assignedOp[0] = 1;
+			assignedOp[1] = 3;
+			maxCursors = 1;
+		}
+	}
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	int pressed = 0;
+	while (1) {
+		int textYpos = selIconYpos+4;
+		clearText();
+		printSmallCentered(false, 12, "SELECT menu");
+		printSmall(false, 24, -2+textYpos+(28*selCursorPosition), ">");
+		for (int i = 0; i <= maxCursors; i++) {
+			if (assignedOp[i] == 0) {
+				printSmall(false, 64, textYpos, (consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
+			} else if (assignedOp[i] == 1) {
+				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
+			} else if (assignedOp[i] == 2) {
+				if (bothSDandFlashcard()) {
+					if (secondaryDevice) {
+						if (consoleModel < 3) {
+							printSmall(false, 64, textYpos, "Switch to SD Card");
+						} else {
+							printSmall(false, 64, textYpos, "Switch to microSD Card");
+						}
+					} else {
+						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
+					}
+				} else {
+					printSmall(false, 64, textYpos, "Launch Slot-1 card");
+				}
+			} else if (assignedOp[i] == 3) {
+				printSmall(false, 64, textYpos, useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
+			}
+			textYpos += 28;
+		}
+		printSmallCentered(false, 166, "B: Back, A: Select");
+		scanKeys();
+		pressed = keysDown();
+		loadVolumeImage();
+		loadBatteryImage();
+		swiWaitForVBlank();
+		if (pressed & KEY_UP) {
+			selCursorPosition--;
+			if (selCursorPosition < 0) selCursorPosition = maxCursors;
+		}
+		if (pressed & KEY_DOWN) {
+			selCursorPosition++;
+			if (selCursorPosition > maxCursors) selCursorPosition = 0;
+		}
+		if (pressed & KEY_A) {
+			switch (assignedOp[selCursorPosition]) {
+				case 0:
+				default:
+					exitToSystemMenu();
+					break;
+				case 1:
+					launchSettings();
+					break;
+				case 2:
+					switchDevice();
+					return true;
+					break;
+				case 3:
+					launchGba();
+					break;
+			}
+			break;
+		}
+		if (pressed & KEY_B) {
+			break;
+		}
+	};
+	clearText();
+	showdialogbox = false;
+	dbox_selectMenu = false;
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	return false;
 }
 
 void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnBoxes) {
@@ -1640,56 +1749,58 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			// Launch settings by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchSettings();
-			}
-
-			// Exit to system menu by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				exitToSystemMenu();
-			}
-
-			int topIconXpos = 116;
-			int savedTopIconXpos[2] = {0};
-			if (isDSiMode() && sdFound()) {
-				//for (int i = 0; i < 4; i++) {
-					topIconXpos -= 14;
-				//}
-				for (int i = 0; i < 2; i++) {
-					savedTopIconXpos[i] = topIconXpos;
-					topIconXpos += 28;
-				}
-			} else {
-				//for (int i = 0; i < 3; i++) {
-					topIconXpos -= 14;
-				//}
-				for (int i = 1; i < 2; i++) {
-					savedTopIconXpos[i] = topIconXpos;
-					topIconXpos += 28;
-				}
-			}
-
-			if (isDSiMode() && sdFound()) {
-				// Switch devices or launch Slot-1 by touching button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
-				&& !titleboxXmoveleft && !titleboxXmoveright)
+			if (theme == 1) {
+				// Launch settings by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
 				{
-					if (secondaryDevice || REG_SCFG_MC != 0x11) {
-						switchDevice();
-						return "null";
-					} else {
-						mmEffectEx(&snd_wrong);
+					launchSettings();
+				}
+
+				// Exit to system menu by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
+				{
+					exitToSystemMenu();
+				}
+
+				int topIconXpos = 116;
+				int savedTopIconXpos[2] = {0};
+				if (isDSiMode() && sdFound()) {
+					//for (int i = 0; i < 4; i++) {
+						topIconXpos -= 14;
+					//}
+					for (int i = 0; i < 2; i++) {
+						savedTopIconXpos[i] = topIconXpos;
+						topIconXpos += 28;
+					}
+				} else {
+					//for (int i = 0; i < 3; i++) {
+						topIconXpos -= 14;
+					//}
+					for (int i = 1; i < 2; i++) {
+						savedTopIconXpos[i] = topIconXpos;
+						topIconXpos += 28;
 					}
 				}
-			}
 
-			// Launch GBA by touching button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchGba();
+				if (isDSiMode() && sdFound()) {
+					// Switch devices or launch Slot-1 by touching button
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
+					&& !titleboxXmoveleft && !titleboxXmoveright)
+					{
+						if (secondaryDevice || REG_SCFG_MC != 0x11) {
+							switchDevice();
+							return "null";
+						} else {
+							mmEffectEx(&snd_wrong);
+						}
+					}
+				}
+
+				// Launch GBA by touching button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
+				{
+					launchGba();
+				}
 			}
 
 			// page switch
@@ -1835,6 +1946,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showbubble && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
+			}
+
+			if ((pressed & KEY_SELECT) && theme == 0) {
+				if (selectMenu()) {
+					clearText();
+					showdialogbox = false;
+					dbox_selectMenu = false;
+					return "null";
+				}
 			}
 
 		}
