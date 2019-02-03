@@ -82,7 +82,7 @@ extern int waitForNeedToPlayStopSound;
 extern int movingApp;
 extern int movingAppYpos;
 extern bool movingAppIsDir;
-double movingArrowYpos = 70;
+double movingArrowYpos = 59;
 bool movingArrowYdirection = true;
 bool showMovingArrow = false;
 
@@ -568,18 +568,6 @@ void vBlankHandler()
 					else if (bnrRomType[movingApp] == 1) drawIconGB(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else drawIcon(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5], -1);
 				}
-				if(!theme && showMovingArrow) {
-					if(movingArrowYdirection) {
-						movingArrowYpos += 0.33;
-						if(movingArrowYpos>75)
-							movingArrowYdirection = false;
-					} else {
-						movingArrowYpos -= 0.33;
-						if(movingArrowYpos<70)
-							movingArrowYdirection = true;
-					}
-					glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());	
-				}
 			}
 
 			for(int i = 0; i < 40; i++) {
@@ -654,6 +642,19 @@ void vBlankHandler()
 			}
 			if (theme == 0) {
 				glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
+			}
+
+			if(movingApp!=-1 && !theme && showMovingArrow) {
+				if(movingArrowYdirection) {
+					movingArrowYpos += 0.33;
+					if(movingArrowYpos>67)
+						movingArrowYdirection = false;
+				} else {
+					movingArrowYpos -= 0.33;
+					if(movingArrowYpos<59)
+						movingArrowYdirection = true;
+				}
+				glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());	
 			}
 			// Top icons for 3DS theme
 			if (theme==1) {

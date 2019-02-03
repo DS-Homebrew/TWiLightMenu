@@ -1027,7 +1027,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				getGameInfo(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
-					movingAppYpos += 7;
+					if (i == 9) {
+						movingAppYpos += 2;
+					} else {
+						movingAppYpos += 8;
+					}
 					swiWaitForVBlank();
 				}
 				int orgCursorPosition = cursorPosition[secondaryDevice];
@@ -1074,8 +1078,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
 							showMovingArrow = false;
-							movingArrowYpos = 70;
-							movingAppYpos -= 7;
+							movingArrowYpos = 59;
+							if (i == 9) {
+								movingAppYpos -= 2;
+							} else {
+								movingAppYpos -= 8;
+							}
 							swiWaitForVBlank();
 						}
 						break;
