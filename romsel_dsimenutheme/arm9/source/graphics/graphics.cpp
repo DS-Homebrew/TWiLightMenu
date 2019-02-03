@@ -113,7 +113,7 @@ extern int pagenum[2];
 //int titleboxXmovespeed[8] = {8};
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 int titleboxXpos[2] = {0};
-int titleboxYpos = 93;	// 85, when dropped down
+int titleboxYpos = 85;	// 85, when dropped down
 int titlewindowXpos[2] = {0};
 
 bool showLshoulder = false;
@@ -154,7 +154,7 @@ int vblankRefreshCounter = 0;
 
 static u16 bmpImageBuffer[256*192];
 
-int bubbleYpos = 88;
+int bubbleYpos = 80;
 int bubbleXpos = 122;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
@@ -458,7 +458,7 @@ void vBlankHandler()
 				dropSeq[i] = 0;
 				dropSpeed[i] = 5;
 				dropSpeedChange[i] = 0;
-				titleboxYposDropDown[i] = -93-80;
+				titleboxYposDropDown[i] = -85-80;
 			}
 			allowedTitleboxForDropDown = 0;
 			delayForTitleboxToDropDown = 0;
@@ -534,17 +534,17 @@ void vBlankHandler()
 			if (theme==0) {
 				glColor(RGB15(31, 31, 31));
 				int bipXpos = 27;
-				glSprite(16+titlewindowXpos[secondaryDevice], 173, GL_FLIP_NONE, tex().scrollwindowImage());
+				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
 				for(int i = 0; i < 40; i++) {
-					if (i < spawnedtitleboxes) glSprite(bipXpos, 179, GL_FLIP_NONE, tex().bipsImage());
-					else glSprite(bipXpos, 179, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
+					if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
+					else glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
 					bipXpos += 5;
 				}
-				glSprite(16+titlewindowXpos[secondaryDevice], 173, GL_FLIP_NONE, &tex().buttonarrowImage()[2+scrollWindowTouched]);
-				glSprite(0, 173, GL_FLIP_NONE, &tex().buttonarrowImage()[0+buttonArrowTouched[0]]);
-				glSprite(224, 173, GL_FLIP_H, &tex().buttonarrowImage()[0+buttonArrowTouched[1]]);
+				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, &tex().buttonarrowImage()[2+scrollWindowTouched]);
+				glSprite(0, 171, GL_FLIP_NONE, &tex().buttonarrowImage()[0+buttonArrowTouched[0]]);
+				glSprite(224, 171, GL_FLIP_H, &tex().buttonarrowImage()[0+buttonArrowTouched[1]]);
 				glColor(RGB15(31, 31, 31));
-				glSprite(72-titleboxXpos[secondaryDevice], 89, GL_FLIP_NONE, tex().braceImage());
+				glSprite(72-titleboxXpos[secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 			}
 			int spawnedboxXpos = 96;
 			int iconXpos = 112;
@@ -653,7 +653,7 @@ void vBlankHandler()
 				iconXpos += 64;
 			}
 			if (theme == 0) {
-				glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 89, GL_FLIP_H, tex().braceImage());
+				glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
 			// Top icons
 			int topIconXpos = 116;
@@ -733,17 +733,17 @@ void vBlankHandler()
 						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
 					}
-					glSprite(96, 89, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-					glSprite(96+32, 89, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96, 81, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96+32, 81, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glColor(RGB15(31, 31, 31));
-					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 89, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
+					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 				}
 			}
 
 			// Refresh the background layer.
 			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(tex().bubbleImage());
-			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 152, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -1495,7 +1495,7 @@ void graphicsInit()
 		dropSpeed[i] = 5;
 		dropSpeedChange[i] = 0;
 		if (theme == 1) titleboxYposDropDown[i] = 0;
-		else titleboxYposDropDown[i] = -93-80;
+		else titleboxYposDropDown[i] = -85-80;
 	}
 	allowedTitleboxForDropDown = 0;
 	delayForTitleboxToDropDown = 0;
@@ -1610,7 +1610,7 @@ void graphicsInit()
 	if (theme == 1) {
 		tex().load3DSTheme();
 		titleboxYpos = 96;
-		bubbleYpos += 10;
+		bubbleYpos += 18;
 		bubbleXpos += 3;
 		topBgLoad();
 		bottomBgLoad(false, true);
