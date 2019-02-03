@@ -522,6 +522,7 @@ void SetSpeedBump(const char* filename) {
 		"ACV",	// Castlevania: Dawn of Sorrow
 		"A5T",	// MegaMan Battle Network 5: Double Team DS
 		"ASC",	// Sonic Rush
+		"ADM",	// Animal Crossing: Wild World
 		"ARZ",	// Rockman ZX/MegaMan ZX
 		"AFF",	// Final Fantasy III
 		"AKW",	// Kirby Squeak Squad/Mouse Attack
