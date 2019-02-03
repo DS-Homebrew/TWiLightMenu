@@ -655,35 +655,32 @@ void vBlankHandler()
 			if (theme == 0) {
 				glSprite(spawnedboxXpos+10-titleboxXpos[secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 			}
-			// Top icons
-			int topIconXpos = 116;
-			if (isDSiMode() && sdFound()) {
-				//for (int i = 0; i < 4; i++) {
-					topIconXpos -= 14;
-				//}
-				if (secondaryDevice) {
-					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]);	// SD card
-				} else {
-					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]);	// Slot-1 card
-				}
-				topIconXpos += 28;
-				drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
-			} else {
-				//for (int i = 0; i < 3; i++) {
-				//	topIconXpos -= 14;
-				//}
-				if (useGbarunner) {
+			// Top icons for 3DS theme
+			if (theme==1) {
+				int topIconXpos = 116;
+				if (isDSiMode() && sdFound()) {
+					//for (int i = 0; i < 4; i++) {
+						topIconXpos -= 14;
+					//}
+					if (secondaryDevice) {
+						glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]);	// SD card
+					} else {
+						glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1 : 0]);	// Slot-1 card
+					}
+					topIconXpos += 28;
 					drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
 				} else {
-					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]);	// GBA Mode
+					//for (int i = 0; i < 3; i++) {
+					//	topIconXpos -= 14;
+					//}
+					if (useGbarunner) {
+						drawSmallIconGBA(topIconXpos, 1);	// GBARunner2
+					} else {
+						glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]);	// GBA Mode
+					}
 				}
-			}
-			if (theme==1) {
 				glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
 				if (!isRegularDS) glSprite(256-44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
-			} else {
-				glSprite(1, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-				if (!isRegularDS) glSprite(256-25, 1, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 			}
 
 			if (applaunchprep && theme==0) {
