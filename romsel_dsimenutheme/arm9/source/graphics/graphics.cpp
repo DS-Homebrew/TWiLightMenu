@@ -757,7 +757,7 @@ void vBlankHandler()
 				// Draw the dialog box.
 				drawDbox();
 				if (dbox_showIcon && !isDirectory[cursorPosition[secondaryDevice]]) {
-					drawIcon(24, dbox_Ypos+20, cursorPosition[secondaryDevice]);
+					drawIcon(24, dbox_Ypos+22, cursorPosition[secondaryDevice]);
 				}
 				if (dbox_selectMenu) {
 					int selIconYpos = 96;

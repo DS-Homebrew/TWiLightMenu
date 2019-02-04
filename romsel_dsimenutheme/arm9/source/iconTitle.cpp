@@ -784,7 +784,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 {
 	clearText(false);
 	if (showdialogbox) {
-		BOX_PY = 10;
+		BOX_PY = 12;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;

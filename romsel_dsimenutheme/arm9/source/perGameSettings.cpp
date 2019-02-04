@@ -239,7 +239,7 @@ void perGameSettings (std::string filename) {
 		printSmall(false, 16, 64, filename.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
-		printSmall(false, 16, 166, fileCounter);
+		printSmall(false, 16, 160, fileCounter);
 		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {		// Per-game settings for homebrew (no DSi-Extended header)
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
@@ -306,9 +306,9 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 96, "Release");
 				}
 			}
-			printSmall(false, 200, 166, "B: Back");
+			printSmall(false, 200, 160, "B: Back");
 		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
-			printSmall(false, 208, 166, "A: OK");
+			printSmall(false, 208, 160, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
@@ -384,7 +384,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 96, "Release");
 				}
 			}
-			printSmall(false, 135, 166, "X: Cheats B: Back");
+			printSmall(false, 128, 160, "X: Cheats  B: Back");
 		}
 		do {
 			scanKeys();

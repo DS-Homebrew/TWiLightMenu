@@ -632,7 +632,7 @@ void launchGba(void) {
 		printSmallCentered(false, 78, "to run GBA games.");
 		printSmallCentered(false, 112, "Place the BIOS on the root");
 		printSmallCentered(false, 126, "as \"bios.bin\".");
-		printSmall(false, 208, 166, "A: OK");
+		printSmall(false, 208, 160, "A: OK");
 		int pressed = 0;
 		do {
 			scanKeys();
@@ -691,7 +691,7 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 78, "ROM cannot be launched,");
 	printSmallCentered(false, 92, "due to the size of it");
 	printSmallCentered(false, 106, "being above 3MB.");
-	printSmall(false, 208, 166, "A: OK");
+	printSmall(false, 208, 160, "A: OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1645,7 +1645,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else {
 						printSmallCentered(false, 128, "in DS mode.");
 					}
-					printSmall(false, 208, 166, "A: OK");
+					printSmall(false, 208, 160, "A: OK");
 					pressed = 0;
 					do {
 						scanKeys();
@@ -1689,7 +1689,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 112, "If the game freezes, does not");
 					printSmallCentered(false, 126, "start, or doesn't seem normal,");
 					printSmallCentered(false, 140, "it needs to be AP-patched.");
-					printSmallCentered(false, 166, "B/A: OK, X: Don't show again");
+					printSmallCentered(false, 160, "B/A: OK, X: Don't show again");
 					pressed = 0;
 					while (1) {
 						scanKeys();
@@ -1907,8 +1907,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 128, "delete this game?");
 				//}
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
-				printSmall(false, 160, 166, "A: Yes");
-				printSmall(false, 208, 166, "B: No");
+				printSmall(false, 160, 160, "A: Yes");
+				printSmall(false, 208, 160, "B: No");
 				while (1) {
 					do {
 						scanKeys();
