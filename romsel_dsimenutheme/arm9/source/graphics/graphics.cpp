@@ -1536,7 +1536,7 @@ void loadTime() {
 	int x = 200;
 	char time[10];
 	std::string currentTime = RetTime();
-	currentTime.replace(2, 1, ":");
+	currentTime.replace(2, 1, " ");
 	if(currentTime != loadedTime) {
 		loadedTime = currentTime;
 		if(currentTime.substr(0,1) == " ")
@@ -1556,6 +1556,52 @@ void loadTime() {
 
 		for (int c = 0; c < howManyToDraw; c++) {
 			unsigned int charIndex = getDateTimeFontSpriteIndex(time[c]);
+			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+			
+			file = fopen(fontPath, "rb");
+
+			if (file) {
+				// Start loading
+				fseek(file, 0xe, SEEK_SET);
+				u8 pixelStart = (u8)fgetc(file) + 0xe;
+				fseek(file, pixelStart, SEEK_SET);
+				for (int y=14; y>=6; y--) {
+					u16 buffer[512];
+					fread(buffer, 2, 0x200, file);
+					u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
+
+					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
+						u16 val = *(src++);
+						if (val != 0xFC1F) {	// Do not render magneta pixel
+							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						}
+					}
+				}
+				x += date_time_font_texcoords[2+(4*charIndex)];
+				if(c == 2) hourWidth = x;
+			}
+		}
+
+		fclose(file);
+	}
+}
+
+static std::string loadedColon;
+
+void loadClockColon() {
+	// Load time
+	char fontPath[64];
+	FILE* file;
+	int x = 214;
+	char colon[5];
+	std::string currentColon = RetTime().substr(2,1);
+	if(currentColon != ":")	currentColon = ";";
+	if(currentColon != loadedColon) {
+		loadedColon = currentColon;
+		sprintf(colon, currentColon.c_str());
+
+		for (int c = 0; c < 1; c++) {
+			unsigned int charIndex = getDateTimeFontSpriteIndex(colon[c]);
 			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
 			
 			file = fopen(fontPath, "rb");
@@ -1726,7 +1772,8 @@ void graphicsInit()
 		bubbleXpos += 3;
 		topBgLoad();
 		loadDate();
-		// loadTime();
+		loadTime();
+		loadClockColon();
 		bottomBgLoad(false, true);
 	} else {
 		switch(subtheme) {
@@ -1759,6 +1806,7 @@ void graphicsInit()
 		topBgLoad();
 		loadDate();
 		loadTime();
+		loadClockColon();
 		bottomBgLoad(false, true);
 	}
 
