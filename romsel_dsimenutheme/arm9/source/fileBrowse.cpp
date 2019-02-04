@@ -762,7 +762,7 @@ bool selectMenu(void) {
 						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
 					}
 				} else {
-					printSmall(false, 64, textYpos, "Launch Slot-1 card");
+					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted" : "Launch Slot-1 card");
 				}
 			} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos, useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
@@ -793,14 +793,17 @@ bool selectMenu(void) {
 					launchSettings();
 					break;
 				case 2:
-					switchDevice();
-					return true;
+					if (REG_SCFG_MC != 0x11) {
+						switchDevice();
+						return true;
+					} else {
+						mmEffectEx(&snd_wrong);
+					}
 					break;
 				case 3:
 					launchGba();
 					break;
 			}
-			break;
 		}
 		if (pressed & KEY_B) {
 			break;
