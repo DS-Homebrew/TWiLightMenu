@@ -33,6 +33,7 @@
 
 #include "queueControl.h"
 #include "uvcoord_top_font.h"
+#include "uvcoord_date_time_font.h"
 
 #include "../iconTitle.h"
 #include "graphics.h"
@@ -1379,6 +1380,16 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
+unsigned int getDateTimeFontSpriteIndex(const u16 letter) {
+	unsigned int spriteIndex = 0;
+	for (unsigned int i = 0; i < DATE_TIME_FONT_NUM_IMAGES; i++) {
+		if (date_time_utf16_lookup_table[i] == letter) {
+			spriteIndex = i;
+		}
+	}
+	return spriteIndex;
+}
+
 //   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
 #define MASK_RB      0b0111110000011111
 #define MASK_G       0b0000001111100000 
@@ -1476,28 +1487,17 @@ void topBgLoad() {
 }
 
 void loadDate() {
-	// loadBMP(tex().topBgPath.c_str());
-
-	// Load username
+	// Load date
 	char fontPath[64];
 	FILE* file;
-	int x = 145;
+	int x = 162;
 	char date[6];
-	// sprintf(date, "%s", RetTime().c_str());
-	// char buf[5];
+
 	GetDate(FORMAT_MD, date, sizeof(date));
-	// GetDate(FORMAT_DM, buf2, sizeof(buf2));
-	// strcpy(date, DrawDate());
-	// std::string test = DrawDate();
-	// char date[test.length()+1];
-	// strcpy(date, buf);
-	// sprintf(date, "%s", "02/01");
 
 	for (int c = 0; c < 5; c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(date[c]);
-		// 42 characters per line.
-		unsigned int texIndex = charIndex / 42;
-		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
+		sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
 		
 		file = fopen(fontPath, "rb");
 
@@ -1506,41 +1506,19 @@ void loadDate() {
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			for (int y=15; y>=0; y--) {
+			for (int y=14; y>=6; y--) {
 				u16 buffer[512];
 				fread(buffer, 2, 0x200, file);
-				u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
-				for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
+				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
-					// u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
-					// Apply palette here.
-					
-					// Magic numbers were found by dumping val to stdout
-					// on case default.
-					// switch (val) {
-					// 	// #ff00ff
-					// 	case 0xFC1F:
-					// 		break;
-					// 	// #414141
-					// 	case 0xA108:
-					// 		val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
-					// 		break;
-					// 	case 0xC210:
-					// 		// blend the colors with the background to make it look better.
-					// 		val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
-					// 		break;
-					// 	case 0xDEF7:
-					// 		val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
-					// 	default:
-					// 		break;
-					// }
 					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 					}
 				}
 			}
-			x += top_font_texcoords[2+(4*charIndex)];
+			x += date_time_font_texcoords[2+(4*charIndex)];
 		}
 
 		fclose(file);
@@ -1548,27 +1526,37 @@ void loadDate() {
 }
 
 static std::string loadedTime;
+static int hourWidth;
+static bool initialClockDraw = true;
 
 void loadTime() {
-	// loadBMP(tex().topBgPath.c_str());
-
 	// Load time
 	char fontPath[64];
 	FILE* file;
-	int x = 193;
+	int x = 200;
 	char time[10];
 	std::string currentTime = RetTime();
+	currentTime.replace(2, 1, ":");
 	if(currentTime != loadedTime) {
 		loadedTime = currentTime;
 		if(currentTime.substr(0,1) == " ")
 			currentTime = "0" + currentTime.substr(1);
-		sprintf(time, "%s", currentTime.c_str());
+		sprintf(time, currentTime.c_str());
 
-		for (int c = 0; c < 5; c++) {
-			unsigned int charIndex = getTopFontSpriteIndex(time[c]);
-			// 42 characters per line.
-			unsigned int texIndex = charIndex / 42;
-			sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
+		int	howManyToDraw = 5;
+		if(initialClockDraw) {
+			initialClockDraw = false;
+		} else {
+			if(currentTime.substr(3,2) != "00") {
+				strcpy(time, currentTime.substr(3,2).c_str());
+				howManyToDraw = 2;
+				x = hourWidth;
+			}
+		}
+
+		for (int c = 0; c < howManyToDraw; c++) {
+			unsigned int charIndex = getDateTimeFontSpriteIndex(time[c]);
+			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
 			
 			file = fopen(fontPath, "rb");
 
@@ -1577,41 +1565,20 @@ void loadTime() {
 				fseek(file, 0xe, SEEK_SET);
 				u8 pixelStart = (u8)fgetc(file) + 0xe;
 				fseek(file, pixelStart, SEEK_SET);
-				for (int y=15; y>=0; y--) {
+				for (int y=14; y>=6; y--) {
 					u16 buffer[512];
 					fread(buffer, 2, 0x200, file);
-					u16* src = buffer+(top_font_texcoords[0+(4*charIndex)]);
+					u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
-					for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
+					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 						u16 val = *(src++);
-						// u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
-						// Apply palette here.
-						
-						// Magic numbers were found by dumping val to stdout
-						// on case default.
-						// switch (val) {
-						// 	// #ff00ff
-						// 	case 0xFC1F:
-						// 		break;
-						// 	// #414141
-						// 	case 0xA108:
-						// 		val = bmpPal_topSmallFont[1+((PersonalData->theme)*16)];
-						// 		break;
-						// 	case 0xC210:
-						// 		// blend the colors with the background to make it look better.
-						// 		val = alphablend(bmpPal_topSmallFont[2+((PersonalData->theme)*16)], bg, 48);
-						// 		break;
-						// 	case 0xDEF7:
-						// 		val = alphablend(bmpPal_topSmallFont[3+((PersonalData->theme)*16)], bg, 64);
-						// 	default:
-						// 		break;
-						// }
 						if (val != 0xFC1F) {	// Do not render magneta pixel
-							BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 						}
 					}
 				}
-				x += top_font_texcoords[2+(4*charIndex)];
+				x += date_time_font_texcoords[2+(4*charIndex)];
+				if(c == 2) hourWidth = x;
 			}
 		}
 
@@ -1791,7 +1758,7 @@ void graphicsInit()
 		}
 		topBgLoad();
 		loadDate();
-		// loadTime();
+		loadTime();
 		bottomBgLoad(false, true);
 	}
 
