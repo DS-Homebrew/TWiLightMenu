@@ -1572,8 +1572,8 @@ void loadDate() {
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
 			for (int y=14; y>=6; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
+				u16 buffer[128];
+				fread(buffer, 2, 0x80, file);
 				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
@@ -1646,8 +1646,8 @@ void loadTime() {
 				u8 pixelStart = (u8)fgetc(file) + 0xe;
 				fseek(file, pixelStart, SEEK_SET);
 				for (int y=14; y>=6; y--) {
-					u16 buffer[512];
-					fread(buffer, 2, 0x200, file);
+					u16 buffer[128];
+					fread(buffer, 2, 0x80, file);
 					u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
 					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
@@ -1707,8 +1707,8 @@ void loadClockColon() {
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
 			for (int y=14; y>=6; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
+				u16 buffer[128];
+				fread(buffer, 2, 0x80, file);
 				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
