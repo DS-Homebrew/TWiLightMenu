@@ -107,6 +107,8 @@ struct DirEntry {
 
 bool nameEndsWith (const string& name, const vector<string> extensionList) {
 
+	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
+
 	if (name.size() == 0) return false;
 
 	if (extensionList.size() == 0) return true;

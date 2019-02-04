@@ -279,6 +279,8 @@ void chdirFake(const char *dir)
 bool nameEndsWith(const string& name, const vector<string> extensionList)
 {
 
+	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
+
 	if (name.size() == 0) return false;
 
 	if (extensionList.size() == 0) return true;
@@ -348,6 +350,8 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			// loadClockColon();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
@@ -422,6 +426,8 @@ void waitForFadeOut (void) {
 		for (int i = 0; i < 72; i++) {
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			// loadClockColon();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -639,6 +645,8 @@ void launchGba(void) {
 			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			// loadClockColon();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
@@ -698,6 +706,8 @@ void mdRomTooBig(void) {
 		pressed = keysDown();
 		loadVolumeImage();
 		loadBatteryImage();
+		loadTime();
+		// loadClockColon();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -941,6 +951,8 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			// loadClockColon();
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -1076,6 +1088,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				loadVolumeImage();
 				loadBatteryImage();
+				loadTime();
+				// loadClockColon();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1156,6 +1170,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					held = keysDownRepeat();
 					loadVolumeImage();
 					loadBatteryImage();
+					loadTime();
+					// loadClockColon();
 					swiWaitForVBlank(); 
 
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1264,6 +1280,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 					if(gameOrder[i] == "NULL")
 						gameOrder[i] = dirContents[scrn][i].name;
+				}
+
+				for(int i=0;i<(int)gameOrder.size();i++) {
+					for(int j=0;j<(int)gameOrder.size();j++) {
+						if(i!=j) {
+							if(gameOrder[i] == gameOrder[j]) {
+								gameOrder.erase(gameOrder.begin()+j);
+							}
+						}
+					}
 				}
 
 				for(int i=gameOrder.size();true;i++) {
@@ -1652,6 +1678,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
+						// loadClockColon();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1696,6 +1724,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
+						// loadClockColon();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;
