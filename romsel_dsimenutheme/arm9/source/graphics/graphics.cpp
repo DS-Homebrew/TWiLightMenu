@@ -1567,7 +1567,7 @@ void loadDate() {
 
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
-					if (val != 0xFC1F) {	// Do not render magneta pixel
+					if (val != 0x7C1F) {	// Do not render magneta pixel
 						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 					}
 				}
@@ -1641,7 +1641,7 @@ void loadTime() {
 
 					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 						u16 val = *(src++);
-						if (val != 0xFC1F) {	// Do not render magneta pixel
+						if (val != 0x7C1F) {	// Do not render magneta pixel
 							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 						}
 					}
@@ -1702,7 +1702,7 @@ void loadClockColon() {
 
 					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 						u16 val = *(src++);
-						if (val != 0xFC1F) {	// Do not render magneta pixel
+						if (val != 0x7C1F) {	// Do not render magneta pixel
 							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 						}
 					}
