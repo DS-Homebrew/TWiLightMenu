@@ -194,7 +194,7 @@ std::string ReplaceExtASCII(const std::string& input) {
 	std::string res;
 	for(size_t i = 0; i < input.size(); i++) {
 		if(i < input.size() - 3 && (i == 0 || input[i - 1] != '\\') && input[i] == '\\' && (input[i + 1] == 'x' || input[i + 1] == 'X')) {
-			int c = std::stoi(input.substr(i + 2, i + 2), 0, 16);
+			int c = std::stoi(input.substr(i + 2, 2), 0, 16);
 			res += (char)c;
 			i += 3;
 		} else
