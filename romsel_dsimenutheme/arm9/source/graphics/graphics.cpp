@@ -146,6 +146,7 @@ bool dbox_showIcon = false;
 bool dbox_selectMenu = false;
 float dbox_movespeed = 22;
 float dbox_Ypos = -192;
+int bottomScreenBrightness = 255;
 
 int bottomBg;
 
@@ -395,19 +396,24 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		if (showdialogbox) {
-			// Dialogbox moving up...
+			// Dialogbox moving into view...
 			if (dbox_movespeed <= 1) {
 				if (dbox_Ypos >= 0) {
 					// dbox stopped
 					dbox_movespeed = 0;
 					dbox_Ypos = 0;
+					bottomScreenBrightness = 127;
 				} else {
-					// dbox moving up
+					// dbox moving into view
 					dbox_movespeed = 1;
 				}
 			} else {
 				// Dbox decel
 				dbox_movespeed -= 1.25;
+				bottomScreenBrightness -= 7;
+				if (bottomScreenBrightness < 127) {
+					bottomScreenBrightness = 127;
+				}
 			}
 			dbox_Ypos += dbox_movespeed;
 		} else {
@@ -415,9 +421,14 @@ void vBlankHandler()
 			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
 				dbox_movespeed = 22;
 				dbox_Ypos = -192;
+				bottomScreenBrightness = 255;
 			} else {
 				dbox_movespeed += 1;
 				dbox_Ypos += dbox_movespeed;
+				bottomScreenBrightness += 7;
+				if (bottomScreenBrightness > 255) {
+					bottomScreenBrightness = 255;
+				}
 			}
 		}
 
@@ -532,8 +543,8 @@ void vBlankHandler()
 		//	drawBG(subBgImage);
 		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
+		glColor(RGB15(bottomScreenBrightness/8, bottomScreenBrightness/8, bottomScreenBrightness/8));
 			if (theme==0) {
-				glColor(RGB15(31, 31, 31));
 				int bipXpos = 27;
 				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
 				for(int i = 0; i < 40; i++) {
@@ -544,7 +555,6 @@ void vBlankHandler()
 				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, &tex().buttonarrowImage()[2+scrollWindowTouched]);
 				glSprite(0, 171, GL_FLIP_NONE, &tex().buttonarrowImage()[0+buttonArrowTouched[0]]);
 				glSprite(224, 171, GL_FLIP_H, &tex().buttonarrowImage()[0+buttonArrowTouched[1]]);
-				glColor(RGB15(31, 31, 31));
 				glSprite(72-titleboxXpos[secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 			}
 			int spawnedboxXpos = 96;
@@ -724,7 +734,6 @@ void vBlankHandler()
 				if (theme == 1) {
 					glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
-					glColor(RGB15(31, 31, 31));
 					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 				} else if (!isScrolling) {
 					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
@@ -734,7 +743,6 @@ void vBlankHandler()
 					}
 					glSprite(96, 81, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					glSprite(96+32, 81, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-					glColor(RGB15(31, 31, 31));
 					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 				}
 			}
@@ -743,6 +751,8 @@ void vBlankHandler()
 			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+
+			glColor(RGB15(31, 31, 31));
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -805,7 +815,6 @@ void vBlankHandler()
 				vblankRefreshCounter++;
 			}
 			updateText(false);
-			glColor(RGB15(31, 31, 31));
 		//}
 	}
 	glEnd2D();
