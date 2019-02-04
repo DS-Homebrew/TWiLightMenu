@@ -1497,8 +1497,23 @@ void loadDate() {
 
 	for (int c = 0; c < 5; c++) {
 		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
-		sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-		
+		switch (theme) {
+			case 0:
+			default:
+				if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
+				else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
+				else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
+				else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
+				else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
+				else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
+				else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+				else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
+				break;
+			case 1:
+				sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+				break;
+		}
+
 		file = fopen(fontPath, "rb");
 
 		if (file) {
@@ -1556,8 +1571,23 @@ void loadTime() {
 
 		for (int c = 0; c < howManyToDraw; c++) {
 			unsigned int charIndex = getDateTimeFontSpriteIndex(time[c]);
-			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-			
+			switch (theme) {
+				case 0:
+				default:
+					if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
+					else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
+					else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
+					else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
+					else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
+					else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
+					else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+					else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
+					break;
+				case 1:
+					sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+					break;
+			}
+
 			file = fopen(fontPath, "rb");
 
 			if (file) {
@@ -1602,8 +1632,23 @@ void loadClockColon() {
 
 		for (int c = 0; c < 1; c++) {
 			unsigned int charIndex = getDateTimeFontSpriteIndex(colon[c]);
-			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-			
+			switch (theme) {
+				case 0:
+				default:
+					if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
+					else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
+					else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
+					else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
+					else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
+					else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
+					else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+					else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
+					break;
+				case 1:
+					sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+					break;
+			}
+
 			file = fopen(fontPath, "rb");
 
 			if (file) {
