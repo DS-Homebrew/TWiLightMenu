@@ -476,6 +476,8 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 }
 
+static bool inSelectMenu = false;
+
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
@@ -633,8 +635,10 @@ void launchGba(void) {
 		mmEffectEx(&snd_wrong);
 		clearText();
 		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		if (!showdialogbox) {
+			showdialogbox = true;
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		}
 		printLarge(false, 16, 12, "Error code: BINF");
 		printSmallCentered(false, 64, "The GBA BIOS is required");
 		printSmallCentered(false, 78, "to run GBA games.");
@@ -653,8 +657,10 @@ void launchGba(void) {
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		if (!inSelectMenu) {
+			showdialogbox = false;
+			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		}
 		return;
 	}
 
@@ -720,6 +726,7 @@ void mdRomTooBig(void) {
 }
 
 bool selectMenu(void) {
+	inSelectMenu = true;
 	clearText();
 	dbox_showIcon = false;
 	dbox_selectMenu = true;
@@ -809,6 +816,7 @@ bool selectMenu(void) {
 				case 2:
 					if (REG_SCFG_MC != 0x11) {
 						switchDevice();
+						inSelectMenu = false;
 						return true;
 					} else {
 						mmEffectEx(&snd_wrong);
@@ -826,6 +834,7 @@ bool selectMenu(void) {
 	clearText();
 	showdialogbox = false;
 	dbox_selectMenu = false;
+	inSelectMenu = false;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	return false;
 }
