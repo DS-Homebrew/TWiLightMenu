@@ -33,6 +33,7 @@
 #include "_3ds_bottom_bubble.h"
 
 #include "dialogbox.h"
+#include "_3ds_dialogbox.h"
 #include "nintendo_dsi_menu.h"
 #include "org_nintendo_dsi_menu.h"
 #include "bubble.h"
@@ -105,7 +106,7 @@ void ThemeTextures::loadProgressImage(const unsigned short *palette, const unsig
 
 void ThemeTextures::loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap)
 {
-  _dialogboxImage = std::move(loadTexture(&dialogboxTexID, palette, bitmap, (256 / 16) * (256 / 16), 4, 16, 16, 256, 192));
+  _dialogboxImage = std::move(loadTexture(&dialogboxTexID, palette, bitmap, (256 / 16) * (256 / 16), 12, 16, 16, 256, 192));
 }
 
 void ThemeTextures::loadBipsImage(const unsigned short *palette, const unsigned int *bitmap)
@@ -243,8 +244,9 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
 
 void ThemeTextures::reloadPalDialogBox()
 {
+  extern int theme;
   glBindTexture(0, dialogboxTexID);
-  glColorSubTableEXT(0, 0, 4, 0, 0, (u16 *)dialogboxPal);
+  glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
 }
 void ThemeTextures::drawBg(int bgId)
 {
@@ -263,7 +265,6 @@ void ThemeTextures::drawBubbleBg(int bgId)
 void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
-  loadDialogboxImage(dialogboxPal, dialogboxBitmap);
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 
@@ -315,6 +316,8 @@ void ThemeTextures::load3DSTheme()
   //loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   //loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(_3ds_dialogboxPal, _3ds_dialogboxBitmap);
+
   loadCommonTextures();
 }
 
@@ -322,6 +325,22 @@ void ThemeTextures::loadDSiDarkTheme()
 {
 
   setStringPaths("dark");
+
+  _bottomTiles = dark_bottomTiles;
+  _bottomPalette = dark_bottomPal;
+  _bottomMap = dark_bottomMap;
+
+  _bottom_bubbleMap = dark_bottom_bubbleMap;
+  _bottom_bubblePalette = dark_bottom_bubblePal;
+  _bottom_bubbleTiles = dark_bottom_bubbleTiles;
+
+  _bottomTilesLen = dark_bottomTilesLen;
+  _bottomPaletteLen = dark_bottomPalLen;
+  _bottomMapLen = dark_bottomMapLen;
+
+  _bottom_bubbleMapLen = dark_bottom_bubbleMapLen;
+  _bottom_bubblePaletteLen = dark_bottom_bubblePalLen;
+  _bottom_bubbleTilesLen = dark_bottom_bubbleTilesLen;
 
   loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
@@ -339,23 +358,9 @@ void ThemeTextures::loadDSiDarkTheme()
   loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(folderPal, folderBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
   loadCommonTextures();
-
-  _bottomTiles = dark_bottomTiles;
-  _bottomPalette = dark_bottomPal;
-  _bottomMap = dark_bottomMap;
-
-  _bottom_bubbleMap = dark_bottom_bubbleMap;
-  _bottom_bubblePalette = dark_bottom_bubblePal;
-  _bottom_bubbleTiles = dark_bottom_bubbleTiles;
-
-  _bottomTilesLen = dark_bottomTilesLen;
-  _bottomPaletteLen = dark_bottomPalLen;
-  _bottomMapLen = dark_bottomMapLen;
-
-  _bottom_bubbleMapLen = dark_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = dark_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = dark_bottom_bubbleTilesLen;
 }
 
 void ThemeTextures::loadDSiWhiteTheme()
@@ -394,6 +399,8 @@ void ThemeTextures::loadDSiWhiteTheme()
   loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -436,6 +443,8 @@ void ThemeTextures::loadDSiRedTheme()
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
   loadCommonTextures();
 }
 
@@ -477,6 +486,8 @@ void ThemeTextures::loadDSiBlueTheme()
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+ 
   loadCommonTextures();
 }
 
@@ -520,6 +531,8 @@ void ThemeTextures::loadDSiGreenTheme()
   loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
   loadCommonTextures();
 }
 
@@ -561,6 +574,8 @@ void ThemeTextures::loadDSiYellowTheme()
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
   loadCommonTextures();
 }
 
@@ -601,6 +616,8 @@ void ThemeTextures::loadDSiPurpleTheme()
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
   loadCommonTextures();
 }
 
@@ -640,6 +657,8 @@ void ThemeTextures::loadDSiPinkTheme()
   loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }

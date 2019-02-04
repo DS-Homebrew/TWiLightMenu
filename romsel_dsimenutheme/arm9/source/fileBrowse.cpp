@@ -743,7 +743,7 @@ bool selectMenu(void) {
 	while (1) {
 		int textYpos = selIconYpos+4;
 		clearText();
-		printSmallCentered(false, 12, "SELECT menu");
+		printSmallCentered(false, 16, "SELECT menu");
 		printSmall(false, 24, -2+textYpos+(28*selCursorPosition), ">");
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
@@ -769,7 +769,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, 166, "B: Back, A: Select");
+		printSmallCentered(false, 160, "B: Back, A: Select");
 		scanKeys();
 		pressed = keysDown();
 		loadVolumeImage();
