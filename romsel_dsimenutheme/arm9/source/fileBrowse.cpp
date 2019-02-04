@@ -699,6 +699,8 @@ void launchGba(void) {
 }
 
 void mdRomTooBig(void) {
+	//int bottomBright = 0;
+
 	mmEffectEx(&snd_wrong);
 	clearText();
 	dbox_showIcon = false;
@@ -719,6 +721,69 @@ void mdRomTooBig(void) {
 		loadDate();
 		loadClockColon();
 		swiWaitForVBlank();
+
+		// Debug code for changing brightness of BG layer
+
+		/*if (pressed & KEY_UP) {
+			bottomBright--;
+		} else if (pressed & KEY_DOWN) {
+			bottomBright++;
+		}
+		
+		if (bottomBright < 0) bottomBright = 0;
+		if (bottomBright > 15) bottomBright = 15;
+
+		switch (bottomBright) {
+			case 0:
+			default:
+				REG_BLDY = 0;
+				break;
+			case 1:
+				REG_BLDY = (0b0001 << 1);
+				break;
+			case 2:
+				REG_BLDY = (0b0010 << 1);
+				break;
+			case 3:
+				REG_BLDY = (0b0011 << 1);
+				break;
+			case 4:
+				REG_BLDY = (0b0100 << 1);
+				break;
+			case 5:
+				REG_BLDY = (0b0101 << 1);
+				break;
+			case 6:
+				REG_BLDY = (0b0110 << 1);
+				break;
+			case 7:
+				REG_BLDY = (0b0111 << 1);
+				break;
+			case 8:
+				REG_BLDY = (0b1000 << 1);
+				break;
+			case 9:
+				REG_BLDY = (0b1001 << 1);
+				break;
+			case 10:
+				REG_BLDY = (0b1010 << 1);
+				break;
+			case 11:
+				REG_BLDY = (0b1011 << 1);
+				break;
+			case 12:
+				REG_BLDY = (0b1100 << 1);
+				break;
+			case 13:
+				REG_BLDY = (0b1101 << 1);
+				break;
+			case 14:
+				REG_BLDY = (0b1110 << 1);
+				break;
+			case 15:
+				REG_BLDY = (0b1111 << 1);
+				break;
+		}*/
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;

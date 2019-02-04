@@ -407,6 +407,7 @@ void vBlankHandler()
 					dbox_movespeed = 0;
 					dbox_Ypos = 0;
 					bottomScreenBrightness = 127;
+					REG_BLDY = (0b0100 << 1);
 				} else {
 					// dbox moving into view
 					dbox_movespeed = 1;
@@ -418,6 +419,11 @@ void vBlankHandler()
 				if (bottomScreenBrightness < 127) {
 					bottomScreenBrightness = 127;
 				}
+				if (bottomScreenBrightness > 231) REG_BLDY = 0;
+				if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231) REG_BLDY = (0b0001 << 1);
+				if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199) REG_BLDY = (0b0010 << 1);
+				if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167) REG_BLDY = (0b0011 << 1);
+				if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135) REG_BLDY = (0b0100 << 1);
 			}
 			dbox_Ypos += dbox_movespeed;
 		} else {
@@ -426,6 +432,7 @@ void vBlankHandler()
 				dbox_movespeed = 22;
 				dbox_Ypos = -192;
 				bottomScreenBrightness = 255;
+				REG_BLDY = 0;
 			} else {
 				dbox_movespeed += 1;
 				dbox_Ypos += dbox_movespeed;
@@ -433,6 +440,11 @@ void vBlankHandler()
 				if (bottomScreenBrightness > 255) {
 					bottomScreenBrightness = 255;
 				}
+				if (bottomScreenBrightness > 231) REG_BLDY = 0;
+				if (bottomScreenBrightness > 199 && bottomScreenBrightness <= 231) REG_BLDY = (0b0001 << 1);
+				if (bottomScreenBrightness > 167 && bottomScreenBrightness <= 199) REG_BLDY = (0b0010 << 1);
+				if (bottomScreenBrightness > 135 && bottomScreenBrightness <= 167) REG_BLDY = (0b0011 << 1);
+				if (bottomScreenBrightness > 103 && bottomScreenBrightness <= 135) REG_BLDY = (0b0100 << 1);
 			}
 		}
 
@@ -1857,6 +1869,8 @@ void graphicsInit()
 
 	// Initialize the bottom background
 	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
+
+	REG_BLDCNT = BLEND_SRC_BG2 | BLEND_FADE_BLACK;
 
 	swiWaitForVBlank();
 
