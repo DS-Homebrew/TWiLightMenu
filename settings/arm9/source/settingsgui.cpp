@@ -233,7 +233,7 @@ void SettingsGUI::rotateOptionValue(int rotateAmount)
 
     auto selectedOption = _pages[_selectedPage].options()[_selectedOption];
     int currentValueIndex = selectedOption.selected();
-    int nextValueIndex = (currentValueIndex + rotateAmount) % (selectedOption.values().size());
+    int nextValueIndex = (currentValueIndex + rotateAmount + selectedOption.values().size()) % (selectedOption.values().size());
     if (currentValueIndex == -1)
         nextValueIndex = 0;
     auto nextValue = selectedOption.values()[nextValueIndex];
