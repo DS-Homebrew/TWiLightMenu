@@ -769,7 +769,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, 160, "B: Back, A: Select");
+		printSmallCentered(false, 160, "SELECT/B: Back, A: Select");
 		scanKeys();
 		pressed = keysDown();
 		loadVolumeImage();
@@ -805,7 +805,7 @@ bool selectMenu(void) {
 					break;
 			}
 		}
-		if (pressed & KEY_B) {
+		if ((pressed & KEY_B) || (pressed & KEY_SELECT)) {
 			break;
 		}
 	};
