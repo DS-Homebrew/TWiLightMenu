@@ -1678,7 +1678,6 @@ void loadClockColon() {
 	// Blink the ':' once per second.
 	if(colonTimer >= 60) {
 		colonTimer = 0;
-		showColon = !showColon;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
 
@@ -1723,6 +1722,8 @@ void loadClockColon() {
 		}
 
 		fclose(file);
+
+		showColon = !showColon;
 	}
 }
 
