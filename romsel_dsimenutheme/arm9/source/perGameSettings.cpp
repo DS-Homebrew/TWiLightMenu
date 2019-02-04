@@ -391,6 +391,9 @@ void perGameSettings (std::string filename) {
 			pressed = keysDownRepeat();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			loadDate();
+			// loadClockColon();
 			swiWaitForVBlank();
 		} while (!pressed);
 

@@ -27,6 +27,7 @@
 #include "ndsheaderbanner.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
+#include "graphics/graphics.h"
 
 extern bool dbox_showIcon;
 int cheatWnd_cursorPosition = 0;
@@ -253,6 +254,11 @@ void CheatCodelist::selectCheats(std::string filename)
       while(1) {
         scanKeys();
         pressed = keysDownRepeat();
+		loadVolumeImage();
+		loadBatteryImage();
+		loadTime();
+		loadDate();
+		// loadClockColon();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;

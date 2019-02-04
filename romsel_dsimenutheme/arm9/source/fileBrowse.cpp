@@ -351,6 +351,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
+			loadDate();
 			// loadClockColon();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
@@ -427,6 +428,7 @@ void waitForFadeOut (void) {
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
+			loadDate();
 			// loadClockColon();
 			swiWaitForVBlank();
 		}
@@ -645,6 +647,7 @@ void launchGba(void) {
 			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadDate();
 			loadTime();
 			// loadClockColon();
 			swiWaitForVBlank();
@@ -707,6 +710,7 @@ void mdRomTooBig(void) {
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
+		loadDate();
 		// loadClockColon();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
@@ -952,6 +956,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
+			loadDate();
 			// loadClockColon();
 		}
 	}
@@ -1089,6 +1094,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				loadVolumeImage();
 				loadBatteryImage();
 				loadTime();
+				loadDate();
 				// loadClockColon();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
@@ -1171,6 +1177,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					loadVolumeImage();
 					loadBatteryImage();
 					loadTime();
+					loadDate();
 					// loadClockColon();
 					swiWaitForVBlank(); 
 
@@ -1679,6 +1686,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						loadVolumeImage();
 						loadBatteryImage();
 						loadTime();
+						loadDate();
 						// loadClockColon();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));

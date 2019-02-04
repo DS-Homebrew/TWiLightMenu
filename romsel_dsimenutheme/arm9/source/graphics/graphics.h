@@ -28,6 +28,7 @@ void clearBmpScreen();
 void loadBoxArt(const char* filename);
 void loadVolumeImage(void);
 void loadBatteryImage(void);
+void loadDate();
 void loadTime();
 void loadClockColon();
 void clearBoxArt();

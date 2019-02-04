@@ -1525,6 +1525,8 @@ void topBgLoad() {
 	}
 }
 
+static std::string loadedDate;
+
 void loadDate() {
 	// Load date
 	char fontPath[64];
@@ -1532,7 +1534,12 @@ void loadDate() {
 	int x = 162;
 	char date[6];
 
-	GetDate(FORMAT_MD, date, sizeof(date));
+	if (!GetDate(FORMAT_MD, date, sizeof(date))) return;
+	
+	std::string currentDate = date;
+	if (currentDate == loadedDate) return;
+
+	loadedDate = date;
 
 	for (int c = 0; c < 5; c++) {
 		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
