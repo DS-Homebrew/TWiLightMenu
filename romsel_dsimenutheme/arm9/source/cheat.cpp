@@ -258,7 +258,7 @@ void CheatCodelist::selectCheats(std::string filename)
 		loadBatteryImage();
 		loadTime();
 		loadDate();
-		// loadClockColon();
+		loadClockColon();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;
@@ -313,6 +313,11 @@ void CheatCodelist::selectCheats(std::string filename)
 
     scanKeys();
     pressed = keysDownRepeat();
+	loadVolumeImage();
+	loadBatteryImage();
+	loadTime();
+	loadDate();
+	loadClockColon();
     swiWaitForVBlank();
     if(pressed & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
@@ -427,6 +432,11 @@ void CheatCodelist::selectCheats(std::string filename)
         while(1) {
           scanKeys();
           pressed = keysDownRepeat();
+			loadVolumeImage();
+			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
             break;

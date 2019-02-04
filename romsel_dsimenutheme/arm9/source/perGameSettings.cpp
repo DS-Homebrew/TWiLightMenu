@@ -393,7 +393,7 @@ void perGameSettings (std::string filename) {
 			loadBatteryImage();
 			loadTime();
 			loadDate();
-			// loadClockColon();
+			loadClockColon();
 			swiWaitForVBlank();
 		} while (!pressed);
 

@@ -98,6 +98,8 @@ extern bool applaunchprep;
 
 int screenBrightness = 31;
 
+static int colonTimer = 0;
+
 int movetimer = 0;
 
 int titleboxYmovepos = 0;
@@ -821,6 +823,8 @@ void vBlankHandler()
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
+
+	colonTimer++;
 
 	if (showProgressIcon) {
 		progressAnimDelay++;
@@ -1662,61 +1666,60 @@ void loadTime() {
 	}
 }
 
-static std::string loadedColon;
+static bool showColon = true;
 
 void loadClockColon() {
 	// Load time
 	char fontPath[64];
 	FILE* file;
 	int x = 214;
-	char colon[5];
-	std::string currentColon = RetTime().substr(2,1);
-	if(currentColon != ":")	currentColon = ";";
-	if(currentColon != loadedColon) {
-		loadedColon = currentColon;
+	char colon[1];
+
+	// Blink the ':' once per second.
+	if(colonTimer >= 60) {
+		colonTimer = 0;
+		showColon = !showColon;
+		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
 
-		for (int c = 0; c < 1; c++) {
-			unsigned int charIndex = getDateTimeFontSpriteIndex(colon[c]);
-			switch (theme) {
-				case 0:
-				default:
-					if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
-					else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
-					else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
-					else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
-					else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
-					else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
-					else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-					else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
-					break;
-				case 1:
-					sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-					break;
-			}
+		unsigned int charIndex = getDateTimeFontSpriteIndex(colon[0]);
+		switch (theme) {
+			case 0:
+			default:
+				if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
+				else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
+				else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
+				else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
+				else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
+				else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
+				else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+				else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
+				break;
+			case 1:
+				sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+				break;
+		}
 
-			file = fopen(fontPath, "rb");
+		file = fopen(fontPath, "rb");
 
-			if (file) {
-				// Start loading
-				fseek(file, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(file) + 0xe;
-				fseek(file, pixelStart, SEEK_SET);
-				for (int y=14; y>=6; y--) {
-					u16 buffer[512];
-					fread(buffer, 2, 0x200, file);
-					u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
+		if (file) {
+			// Start loading
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			for (int y=14; y>=6; y--) {
+				u16 buffer[512];
+				fread(buffer, 2, 0x200, file);
+				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
 
-					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
-						u16 val = *(src++);
-						if (val != 0x7C1F) {	// Do not render magneta pixel
-							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-						}
+				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
+					u16 val = *(src++);
+					if (val != 0x7C1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 					}
 				}
-				x += date_time_font_texcoords[2+(4*charIndex)];
-				if(c == 2) hourWidth = x;
 			}
+			x += date_time_font_texcoords[2+(4*charIndex)];
 		}
 
 		fclose(file);

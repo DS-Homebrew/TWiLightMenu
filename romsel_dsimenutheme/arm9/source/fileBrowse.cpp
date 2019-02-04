@@ -352,7 +352,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			loadBatteryImage();
 			loadTime();
 			loadDate();
-			// loadClockColon();
+			loadClockColon();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
@@ -429,7 +429,7 @@ void waitForFadeOut (void) {
 			loadBatteryImage();
 			loadTime();
 			loadDate();
-			// loadClockColon();
+			loadClockColon();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -649,7 +649,7 @@ void launchGba(void) {
 			loadBatteryImage();
 			loadDate();
 			loadTime();
-			// loadClockColon();
+			loadClockColon();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
@@ -711,7 +711,7 @@ void mdRomTooBig(void) {
 		loadBatteryImage();
 		loadTime();
 		loadDate();
-		// loadClockColon();
+		loadClockColon();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
@@ -957,7 +957,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 			loadBatteryImage();
 			loadTime();
 			loadDate();
-			// loadClockColon();
+			loadClockColon();
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -1095,7 +1095,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				loadBatteryImage();
 				loadTime();
 				loadDate();
-				// loadClockColon();
+				loadClockColon();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1178,7 +1178,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					loadBatteryImage();
 					loadTime();
 					loadDate();
-					// loadClockColon();
+					loadClockColon();
 					swiWaitForVBlank(); 
 
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1687,7 +1687,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						loadBatteryImage();
 						loadTime();
 						loadDate();
-						// loadClockColon();
+						loadClockColon();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1733,7 +1733,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						loadVolumeImage();
 						loadBatteryImage();
 						loadTime();
-						// loadClockColon();
+						loadClockColon();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;
