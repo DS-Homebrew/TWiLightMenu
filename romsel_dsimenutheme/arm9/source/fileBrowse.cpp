@@ -124,6 +124,7 @@ extern int theme;
 int file_count = 0;
 
 extern bool showDirectories;
+extern bool showHidden;
 extern bool showBoxArt;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
@@ -246,6 +247,7 @@ extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
 const char *gameOrderIniPath;
+const char *hiddenGamesIniPath;
 
 struct DirEntry
 {
@@ -324,6 +326,18 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	}
 	else
 	{
+		CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		vector<std::string> hiddenGames;
+		char str[11];
+
+		for(int i=0;true;i++) {
+			sprintf(str, "%d", i);
+			if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+			} else {
+				break;
+			}
+		}
 
 		while (true)
 		{
@@ -338,13 +352,31 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 			if (showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back(dirEntry);
-					file_count++;
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back(dirEntry);
-					file_count++;
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			}
 
@@ -358,7 +390,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 		CIniFile gameOrderIni(gameOrderIniPath);
 		vector<std::string> gameOrder;
-		char str[9];
 
 		for(int i=0;i<(int)dirContents.size();i++) {
 			sprintf(str, "%d", i);
@@ -1000,6 +1031,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	displayNowLoading();
 
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	int pressed = 0;
 	int held = 0;
@@ -1935,10 +1967,42 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder
-			&& strcmp(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "..") != 0
-			&& !isDirectory[cursorPosition[secondaryDevice]])
+			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder)
 			{
+				CIniFile hiddenGamesIni(hiddenGamesIniPath);
+				vector<std::string> hiddenGames;
+				char str[11];
+
+				for(int i=0;true;i++) {
+					sprintf(str, "%d", i);
+					if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+						hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+					} else {
+						break;
+					}
+				}
+
+				for(int i=0;i<(int)hiddenGames.size();i++) {
+					for(int j=0;j<(int)hiddenGames.size();j++) {
+						if(i!=j) {
+							if(hiddenGames[i] == hiddenGames[j]) {
+								hiddenGames.erase(hiddenGames.begin()+j);
+							}
+						}
+					}
+				}
+				
+				std::string gameBeingHidden = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
+				bool unHide = false;
+				int whichToUnhide;
+
+				for(int i=0;i<(int)hiddenGames.size();i++) {
+					if(hiddenGames[i] == gameBeingHidden) {
+						whichToUnhide = i;
+						unHide = true;
+					}
+				}
+
 				clearText();
 				dbox_showIcon = true;
 				showdialogbox = true;
@@ -1948,14 +2012,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
-				//if (isDirectory[cursorPosition[secondaryDevice]]) {
-				//	printSmallCentered(false, 128, "delete this folder?");
-				//} else {
-					printSmallCentered(false, 128, "delete this game?");
-				//}
+				if (isDirectory[cursorPosition[secondaryDevice]]) {
+					if(unHide)	printSmallCentered(false, 128, "unhide this folder?");
+					else	printSmallCentered(false, 128, "hide this folder?");
+				} else {
+					if(unHide)	printSmallCentered(false, 128, "delete/unhide this game?");
+					else	printSmallCentered(false, 128, "delete/hide this game?");
+				}
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
-				printSmall(false, 160, 160, "A: Yes");
-				printSmall(false, 208, 160, "B: No");
+				if (isDirectory[cursorPosition[secondaryDevice]]) {
+					if(unHide)	printSmall(false, 141, 160, "Y: Unhide");	
+					else	printSmall(false, 155, 160, "Y: Hide");
+					printSmall(false, 208, 160, "B: No");
+				} else {
+					if(unHide)	printSmall(false, 93, 160, "Y: Unhide");	
+					else	printSmall(false, 107, 160, "Y: Hide");
+					printSmall(false, 160, 160, "A: Yes");
+					printSmall(false, 208, 160, "B: No");
+				}
 				while (1) {
 					do {
 						scanKeys();
@@ -1963,7 +2037,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						swiWaitForVBlank();
 					} while (!pressed);
 					
-					if (pressed & KEY_A) {
+					if (pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) {
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
@@ -1983,6 +2057,38 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (pressed & KEY_B) {
 						break;
+					}
+
+					if (pressed & KEY_Y) {
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 30; i++) swiWaitForVBlank();
+						whiteScreen = true;
+
+						if(unHide) {
+							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
+							hiddenGames.push_back("");
+						} else {
+							hiddenGames.push_back(gameBeingHidden);
+						}
+
+						for(int i=0;i<(int)hiddenGames.size();i++) {
+							char str[9];
+							sprintf(str, "%d", i);
+							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+						}
+						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+
+						if (showBoxArt) clearBoxArt();	// Clear box art
+						boxArtLoaded = false;
+						shouldersRendered = false;
+						showbubble = false;
+						showSTARTborder = false;
+						stopSoundPlayed = false;
+						clearText();
+						showdialogbox = false;
+						SaveSettings();
+						settingsChanged = false;
+						return "null";
 					}
 				}
 				clearText();
