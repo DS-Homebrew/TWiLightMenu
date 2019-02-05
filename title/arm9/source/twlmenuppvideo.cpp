@@ -101,6 +101,33 @@ void twlMenuVideo(void) {
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
 
+	// Change TWL letters to user color
+	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)PersonalData->theme);
+	videoFrameFile = fopen(videoFrameFilename, "rb");
+
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x800, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 68;
+		int y = 69;
+		for (int i=0; i<62*14; i++) {
+			if (x >= 130) {
+				x = 68;
+				y--;
+			}
+			u16 val = *(src++);
+			if (val != 0x7C1F) {
+				BG_GFX[(y+22)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			}
+			x++;
+		}
+	}
+	fclose(videoFrameFile);
+
 	for (int i = 0; i < 60 * 2; i++)
 	{
 		scanKeys();
