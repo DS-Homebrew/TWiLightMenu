@@ -35,6 +35,7 @@ bool controlTopBright = true;
 int screenBrightness = 31;
 
 u16 bmpImageBuffer[256*192];
+u16 videoImageBuffer[40][256*144];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -86,7 +87,7 @@ void LoadBMP(void) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, file);
+		fread(bmpImageBuffer, 2, 0x14000, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
 		int y = 143;
@@ -135,7 +136,7 @@ void loadTitleGraphics() {
 	}
 
 	// Display TWiLightMenu++ logo
-	LoadBMP();
+	//LoadBMP();
 	if (ms().useBootstrap || isDSiMode()) {		// Show nds-bootstrap logo, if nds-bootstrap is set to be used
 		swiDecompressLZSSVram ((void*)logo_rocketrobzbootstrapTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], logo_rocketrobzbootstrapPal, logo_rocketrobzbootstrapPalLen);
