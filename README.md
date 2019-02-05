@@ -11,7 +11,7 @@ TWiLight Menu++ comes included with a Docker image for easy building without hav
 
 ## Building with Docker for Windows users.
 
-You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install docker at http://docker.com, and [configured Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) for the drive where DSiMenu++ is cloned. 
+You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install docker at http://docker.com, and [configured Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) for the drive where TWiLight Menu++ is cloned. 
 
 Then run `compile_docker.ps1` in a PowerShell window. The script accepts `make` arguments as well, for example `.\compile_docker.ps1 clean`. Note that Docker compilation is not compatible with native Windows compilation. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker.
 
@@ -28,11 +28,11 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - [ahezard](https://github.com/ahezard): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob)
 - Coto: [nesDS](https://sourceforge.net/projects/nesds/)
-- [Apache Thunder](https://github.com/ApacheThunder): nesDS TWL Edition, and the DSi splash from NTR Launcher.
+- [Apache Thunder](https://github.com/ApacheThunder): [nesDS TWL Edition](https://github.com/ApacheThunder/NesDS), and the DSi splash from [NTR Launcher](https://github.com/ApacheThunder/NTR_Launcher).
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
 - archeid (Loopy): [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS)
 ## Graphics & Theme
-- spinal_cord: [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
+- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Some game console icons used.
 - [Vulpes-Vulpeos](https://www.deviantart.com/vulpes-vulpeos): MHGen and DS Menu themes for Acekard theme.
 ## Others
