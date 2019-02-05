@@ -388,7 +388,7 @@ void perGameSettings (std::string filename) {
 		}
 		do {
 			scanKeys();
-			pressed = keysDownRepeat();
+			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();

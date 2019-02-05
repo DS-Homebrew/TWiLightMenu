@@ -1613,7 +1613,6 @@ void loadTime() {
 	int x = 200;
 	char time[10];
 	std::string currentTime = RetTime();
-	currentTime.replace(2, 1, " ");
 	if(currentTime != loadedTime) {
 		loadedTime = currentTime;
 		if(currentTime.substr(0,1) == " ")
