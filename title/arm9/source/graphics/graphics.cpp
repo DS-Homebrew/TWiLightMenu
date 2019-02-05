@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/dma.h>
 #include <maxmod9.h>
 #include "bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
@@ -76,6 +77,8 @@ void vBlankHandler()
 }
 
 void LoadBMP(void) {
+	dmaFillWords(0, BG_GFX, 256*192);
+
 	FILE* file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
 
 	if (file) {
@@ -86,14 +89,14 @@ void LoadBMP(void) {
 		fread(bmpImageBuffer, 2, 0x1A000, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
+		int y = 143;
+		for (int i=0; i<256*144; i++) {
 			if (x >= 256) {
 				x = 0;
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX[(y+22)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 			x++;
 		}
 	}
