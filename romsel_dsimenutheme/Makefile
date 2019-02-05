@@ -9,8 +9,8 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
-export VERSION_MAJOR	:= 1
-export VERSION_MINOR	:= 1
+export VERSION_MAJOR	:= 7
+export VERSION_MINOR	:= 4
 export VERSION_PATCH	:= 0
 
 

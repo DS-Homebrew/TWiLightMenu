@@ -1,7 +1,7 @@
 <!---
 ##### THIS IS THE ISSUE TRACKER FOR TWiLight Menu++. For support please go to:
 ###### TWiLight Menu++ GBATemp thread: https://gbatemp.net/threads/ds-i-3ds-dsimenu-ds-i-menu-replacement.472200/
-###### Also check the Wiki (https://github.com/Robz8/TWiLightMenu/wiki) before making an issue.
+###### Also check the Wiki (https://github.com/RocketRobz/TWiLightMenu/wiki) before making an issue.
 ###### Keep in mind that TWiLight Menu++ is only a frontend for nds-bootstrap on SD card. DO NOT OPEN AN ISSUE INVOLVING GAMES or APPS! Instead, open an issue here (https://github.com/ahezard/nds-bootstrap/issues)
 ###### Issues that don't attach any log file or any reproducible method will be closed.
 ###### If you want to create a request, please delete all text after this message.
@@ -32,15 +32,6 @@ DSi:
 - [ ]  Rei-Six
 - [ ]  Other CFW [specify]
 - [ ]  Older CFW
-
-### TWiLight Menu++ Launcher version (ignore, if you're using DS/DSi)
-
-This launches TWiLight Menu++ on 3DS/2DS.
-
-Tell us which versions you are using:
-
-- [ ]  Release _[please specify version]_
-- [ ]  Nightly _[insert here commit hash]_
 
 ### TWiLight Menu++ version
 
