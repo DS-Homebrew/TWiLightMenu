@@ -25,6 +25,7 @@ std::string STR_THEME = "STR_THEME";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
+std::string STR_SHOW_HIDDEN = "STR_SHOW_HIDDEN";
 std::string STR_BOXART = "STR_BOXART";
 std::string STR_ANIMATEDSIICONS = "STR_ANIMATEDSIICONS";
 std::string STR_SYSREGION = "STR_SYSREGION";
@@ -47,6 +48,8 @@ std::string STR_DESCRIPTION_LASTPLAYEDROM_1 = "STR_DESCRIPTION_LASTPLAYEDROM_1";
 std::string STR_DESCRIPTION_DSIMENUPPLOGO_1 = "STR_DESCRIPTION_DSIMENUPPLOGO_1";
 
 std::string STR_DESCRIPTION_DIRECTORIES_1 = "STR_DESCRIPTION_DIRECTORIES_1";
+
+std::string STR_DESCRIPTION_SHOW_HIDDEN_1 = "STR_DESCRIPTION_SHOW_HIDDEN_1";
 
 std::string STR_DESCRIPTION_BOXART_1 = "STR_DESCRIPTION_BOXART_1";
 
@@ -257,6 +260,7 @@ void langInit(void)
 	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup."));
 	STR_DSIMENUPPLOGO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen"));
 	STR_DIRECTORIES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders"));
+	STR_SHOW_HIDDEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW_HIDDEN", "Show hidden files"));
 	STR_BOXART = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers"));
 	STR_ANIMATEDSIICONS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons"));
 	STR_SYSREGION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SYSREGION", "SysNAND Region"));
@@ -279,6 +283,8 @@ void langInit(void)
 	STR_DESCRIPTION_DSIMENUPPLOGO_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++."));
 
 	STR_DESCRIPTION_DIRECTORIES_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders."));
+
+	STR_DESCRIPTION_SHOW_HIDDEN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_HIDDEN_1", "If turned on, whether an app is set to hidden or not will be ignored and it will be displayed anyways."));
 
 	STR_DESCRIPTION_BOXART_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen of the DSi/3DS theme."));
 

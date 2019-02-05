@@ -149,6 +149,7 @@ int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
 bool showDirectories = true;
+bool showHidden = false;
 bool showBoxArt = true;
 bool animateDsiIcons = false;
 int launcherApp = -1;
@@ -181,6 +182,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 	if (consoleModel < 2) {

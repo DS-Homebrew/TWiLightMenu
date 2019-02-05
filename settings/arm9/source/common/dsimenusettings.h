@@ -131,6 +131,7 @@ class DSiMenuPlusPlusSettings
     int theme;
     int subtheme;
     bool showDirectories;
+    bool showHidden;
     bool showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
