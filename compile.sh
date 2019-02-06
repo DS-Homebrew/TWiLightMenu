@@ -23,6 +23,10 @@ cd "settings"
 make
 cp "settings.nds" "../7zfile/_nds/TWiLightMenu/settings.srldr"
 cd ..
+cd "mainmenu"
+make
+cp "mainmenu.nds" "../7zfile/_nds/TWiLightMenu/mainmenu.srldr"
+cd..
 cd "romsel_dsimenutheme"
 make
 cp "romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"

@@ -35,12 +35,14 @@ script:
   - export COMMIT_TAG="$(git log --format=%h -1)"
   - export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
   - cd romsel_aktheme/
-  - make
+  - chmod +x compile.sh
+  - ./compile.sh
   - cd ../
-  - unzip libnds.zip
+  - 7z x libnds.7z
   - sudo cp -r libnds/* /opt/devkitpro/libnds/
   - chmod +x compile.sh
   - ./compile.sh
+  - 7z a TWiLightMenu.7z 7zfile/
   
 addons:
   apt:
@@ -61,7 +63,7 @@ deploy:
   provider: releases
   overwrite: true
   api_key: $GITHUB_TOKEN
-  file: romsel_dsimenutheme/romsel_dsimenutheme.nds
+  file: TWiLightMenu.7z
   skip_cleanup: true
   repo: Epicpk11/TWLBuilds-test
   prerelease: true
