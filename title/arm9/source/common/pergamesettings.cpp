@@ -20,7 +20,7 @@
 
 ------------------------------------------------------------------*/
 
-#include "perGameSettings.h"
+#include "pergamesettings.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
