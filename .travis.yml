@@ -70,7 +70,7 @@ after_failure:
   - ./send.sh failure $WEBHOOK_URL
 
 before_deploy:
-  - git config --local user.name "TWLBot"
+  - git config --local user.name $GITHUB_TOKEN
   - git clone https://github.com/TWLBot/Builds.git
   - cd Builds/
   - cp ../TWiLightMenu.7z TWiLightMenu.7z
