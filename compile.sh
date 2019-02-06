@@ -1,7 +1,7 @@
 cd "booter"
 make
 cp "booter.nds" "../7zfile/BOOT.NDS"
-cp "booter.nds" "../7zfile/CFW - SDNAND root/title/00030015/53524c41/content/00000000.app"
+cp "booter.nds" "../7zfile/CFW - SDNAND root/title/00030004/53524c41/content/00000000.app"
 cd ..
 cd "booter_fc"
 make
@@ -26,7 +26,7 @@ cd ..
 cd "mainmenu"
 make
 cp "mainmenu.nds" "../7zfile/_nds/TWiLightMenu/mainmenu.srldr"
-cd..
+cd ..
 cd "romsel_dsimenutheme"
 make
 cp "romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"
