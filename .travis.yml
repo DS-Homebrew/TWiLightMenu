@@ -49,17 +49,17 @@ script:
   - mkdir 7zfile/DSi\ -\ CFW\ users/SDNAND\ root/title/00030015/
   - mkdir 7zfile/DSi\ -\ CFW\ users/SDNAND\ root/title/00030015/534c524e/
   - mkdir 7zfile/DSi\ -\ CFW\ users/SDNAND\ root/title/00030015/534c524e/content/
-  - cp "booter/booter.nds" "../7zfile/BOOT.NDS"
-  - cp "booter/booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
-  - cp "booter_fc/booter_fc.nds" "../7zfile/BOOT_FC.NDS"
-  - cp "mainmenu/mainmenu.nds" "../7zfile/_nds/TWiLightMenu/mainmenu.srldr"
-  - cp "romsel_aktheme.nds" "../7zfile/_nds/TWiLightMenu/akmenu.srldr"
-  - cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"
-  - cp "romsel_r4theme/romsel_r4theme.nds" "../7zfile/_nds/TWiLightMenu/r4menu.srldr"
-  - cp "rungame/rungame.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-  - cp "settings/settings.nds" "../7zfile/_nds/TWiLightMenu/settings.srldr"
-  - cp "slot1launch/slot1launch.nds" "../7zfile/_nds/TWiLightMenu/slot1launch.srldr"
-  - cp "title/title.nds" "../7zfile/_nds/TWiLightMenu/main.srldr"
+  - cp "booter/booter.nds" "7zfile/BOOT.NDS"
+  - cp "booter/booter.nds" "7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
+  - cp "booter_fc/booter_fc.nds" "7zfile/BOOT_FC.NDS"
+  - cp "mainmenu/mainmenu.nds" "7zfile/_nds/TWiLightMenu/mainmenu.srldr"
+  - cp "romsel_aktheme/romsel_aktheme.nds" "7zfile/_nds/TWiLightMenu/akmenu.srldr"
+  - cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "7zfile/_nds/TWiLightMenu/dsimenu.srldr"
+  - cp "romsel_r4theme/romsel_r4theme.nds" "7zfile/_nds/TWiLightMenu/r4menu.srldr"
+  - cp "rungame/rungame.nds" "7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
+  - cp "settings/settings.nds" "7zfile/_nds/TWiLightMenu/settings.srldr"
+  - cp "slot1launch/slot1launch.nds" "7zfile/_nds/TWiLightMenu/slot1launch.srldr"
+  - cp "title/title.nds" "7zfile/_nds/TWiLightMenu/main.srldr"
   - mv 7zfile/ TWiLightMenu/
   - 7z a TWiLightMenu.7z TWiLightMenu/
   
