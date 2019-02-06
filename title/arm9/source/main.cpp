@@ -39,7 +39,7 @@
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
-#include "common/perGameSettings.h"
+#include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
