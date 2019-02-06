@@ -71,8 +71,8 @@ after_failure:
 
 before_deploy:
   - git config --local user.name "TWLBot"
-  - git config --local github.token $GITHUB_TOKEN
-  - git clone https://github.com/TWLBot/Builds.git
+  - git config credential.username $GITHUB_TOKEN
+  - git clone https://github.com/TWLBot/Builds.git -username $GITHUB_TOKEN
   - cd Builds/
   - cp ../TWiLightMenu.7z TWiLightMenu.7z
   - git stage .
