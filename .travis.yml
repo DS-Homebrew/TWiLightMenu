@@ -1,0 +1,61 @@
+language: cpp
+
+os: linux
+sudo: false
+dist: trusty
+
+env:
+  global:
+    - DEVKITPRO=/opt/devkitpro    
+    - DEVKITARM=/opt/devkitpro/devkitARM
+    
+cache:
+  directories:
+    - "$HOME/.local"
+    - "$DEVKITPRO"
+
+before_install:
+  - curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+
+install:
+  - sudo dpkg -i pacman.deb
+  - sudo dkp-pacman -Sy
+  - sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
+  - git clone https://github.com/RocketRobz/libnds.git
+  - cd libnds/
+  - sudo make install
+  - cd ..
+  - sudo rm -r libnds/
+  - 
+  - export DEVKITPRO=/opt/devkitpro
+  - export DEVKITARM=${DEVKITPRO}/devkitARM
+
+script:
+  - cd romsel_aktheme/
+  - make
+  - cd ../
+  - unzip libnds.zip
+  - sudo cp -r libnds/* /opt/devkitpro/libnds/
+  - chmod +x compile.sh
+  - ./compile.sh
+  
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.9
+    - g++-4.9
+    - libstdc++6
+    - lftp
+
+deploy:
+  provider: releases
+  overwrite: true
+  api_key: $GITHUB_TOKEN
+  file: romsel_dsimenutheme/romsel_dsimenutheme.nds
+  skip_cleanup: true
+  repo: Epicpk11/TWLBuilds-test
+  prerelease: true
+  name: TWiLightMenu | $COMMIT_TAG
+  body: $COMMIT_MESSAGE
