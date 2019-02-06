@@ -80,7 +80,7 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillWords(0, BG_GFX, 256*192);
 
-	FILE* file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
+	FILE* file = fopen("nitro:/video/twlmenupp/dsi.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -136,7 +136,7 @@ void loadTitleGraphics() {
 	}
 
 	// Display TWiLightMenu++ logo
-	//LoadBMP();
+	LoadBMP();
 	if (ms().useBootstrap || isDSiMode()) {		// Show nds-bootstrap logo, if nds-bootstrap is set to be used
 		swiDecompressLZSSVram ((void*)logo_rocketrobzbootstrapTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
 		vramcpy_ui (&BG_PALETTE_SUB[0], logo_rocketrobzbootstrapPal, logo_rocketrobzbootstrapPalLen);

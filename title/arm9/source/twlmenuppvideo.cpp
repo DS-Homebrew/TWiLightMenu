@@ -45,6 +45,9 @@ void twlMenuVideo(void) {
 			}
 		}
 		fclose(videoFrameFile);
+
+		scanKeys();
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
 
 	for (int i = 0; i < 40; i++) {
