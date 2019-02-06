@@ -53,6 +53,16 @@ addons:
     - libstdc++6
     - lftp
 
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
+
 before_deploy:
   - git config --local user.name "TWLBot"
   - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
@@ -64,7 +74,7 @@ deploy:
   api_key: $GITHUB_TOKEN
   file: TWiLightMenu.7z
   skip_cleanup: true
-  repo: Epicpk11/TWLBuilds-test
+  repo: TWLBot/Builds
   prerelease: true
   name: TWiLightMenu | $COMMIT_TAG
   body: $COMMIT_MESSAGE
