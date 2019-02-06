@@ -52,6 +52,11 @@ addons:
     - libstdc++6
     - lftp
 
+before_deploy:
+  - git config --local user.name "TWLBot"
+  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+  - git tag v$CURRENT_DATE
+
 deploy:
   provider: releases
   overwrite: true
