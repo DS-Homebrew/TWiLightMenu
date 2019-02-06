@@ -71,8 +71,15 @@ after_failure:
 
 before_deploy:
   - git config --local user.name "TWLBot"
-  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
-  - git tag v$CURRENT_DATE
+  - git clone https://github.com/TWLBot/Builds.git
+  - cd Builds/
+  - cp ../TWiLightMenu.7z TWiLightMenu.7z
+  - git stage .
+  - git commit -m "TWiLight Menu | $COMMIT_TAG"
+  - git push origin master
+  # - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+  # - git tag v$CURRENT_DATE
+  - git tag v$GITHUB_COMMIT
 
 deploy:
   provider: releases
