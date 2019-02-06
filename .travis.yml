@@ -36,6 +36,7 @@ script:
   - cd ../
   - unzip libnds.zip
   - sudo cp -r libnds/* /opt/devkitpro/libnds/
+  - chmod +x compile.sh
   - ./compile.sh
   
 addons:
