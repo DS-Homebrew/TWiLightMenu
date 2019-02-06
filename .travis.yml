@@ -28,6 +28,12 @@ install:
   - cd ..
   - sudo rm -r libnds/
   - 
+  - git clone https://github.com/RocketRobz/libnds.git
+  - cd libnds/
+  - sudo make install
+  - cd ..
+  - sudo rm -r libnds/
+  - 
   - export DEVKITPRO=/opt/devkitpro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
 
