@@ -71,16 +71,14 @@ after_failure:
 
 before_deploy:
   - git config --local user.name "TWLBot"
-  - git config credential.username $GITHUB_TOKEN
-  - git clone https://github.com/TWLBot/Builds.git
+  - git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
   - cd Builds/
-  - cp ../TWiLightMenu.7z TWiLightMenu.7z
+  - cp ../nds-bootstrap.7z nds-bootstrap.7z
   - git stage .
-  - git commit -m "TWiLight Menu | $COMMIT_TAG"
+  - git commit -m "nds-bootstrap | $COMMIT_TAG"
   - git push origin master
-  # - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
-  # - git tag v$CURRENT_DATE
-  - git tag v$GITHUB_COMMIT
+  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+  - git tag v$CURRENT_DATE
 
 deploy:
   provider: releases
