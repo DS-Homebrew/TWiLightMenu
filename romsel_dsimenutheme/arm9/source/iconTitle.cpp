@@ -499,6 +499,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
 		}
 
+		bnrSysSettings[num] = (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
+
 		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;
 		else if (ndsHeader.dsi_flags == 0x0B) bnrWirelessIcon[num] = 2;
 

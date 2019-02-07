@@ -128,6 +128,7 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isDirectory[40] = {false};
+bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};
 bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi

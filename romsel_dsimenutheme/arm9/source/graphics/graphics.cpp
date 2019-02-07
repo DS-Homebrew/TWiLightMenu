@@ -564,8 +564,14 @@ void vBlankHandler()
 				int bipXpos = 27;
 				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
 				for(int i = 0; i < 40; i++) {
-					if (i < spawnedtitleboxes) glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
-					else glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1 & 31]);
+					if (i < spawnedtitleboxes) {
+						if (bnrSysSettings[i]) {
+							glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[2]);
+						} else {
+							glSprite(bipXpos, 178, GL_FLIP_NONE, tex().bipsImage());
+						}
+					}
+					else glSprite(bipXpos, 178, GL_FLIP_NONE, &tex().bipsImage()[1]);
 					bipXpos += 5;
 				}
 				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, &tex().buttonarrowImage()[2+scrollWindowTouched]);
@@ -581,12 +587,15 @@ void vBlankHandler()
 					if (theme == 1) glSprite(96, titleboxYpos-movingAppYpos, GL_FLIP_NONE, tex().folderImage());
 					else glSprite(96, titleboxYpos-movingAppYpos+titleboxYposDropDown[movingApp % 5], GL_FLIP_NONE, tex().folderImage());
 				} else {
-					if (theme == 1) {
-						glSprite(96, titleboxYpos-movingAppYpos, GL_FLIP_NONE, tex().boxfullImage());
-					} else { 
-						glSprite(96, titleboxYpos-movingAppYpos+titleboxYposDropDown[movingApp % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
+					if (!bnrSysSettings[movingApp]) {
+						if (theme == 1) {
+							glSprite(96, titleboxYpos-movingAppYpos, GL_FLIP_NONE, tex().boxfullImage());
+						} else { 
+							glSprite(96, titleboxYpos-movingAppYpos+titleboxYposDropDown[movingApp % 5], GL_FLIP_NONE, &tex().boxfullImage()[0]);
+						}
 					}
-					if (bnrRomType[movingApp] == 7) drawIconSNES(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
+					if (bnrSysSettings[movingApp]) glSprite(96, (titleboxYpos-1)-movingAppYpos+titleboxYposDropDown[movingApp % 5], GL_FLIP_NONE, &tex().settingsImage()[1]);
+					else if (bnrRomType[movingApp] == 7) drawIconSNES(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 6) drawIconMD(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 5) drawIconGG(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
 					else if (bnrRomType[movingApp] == 4) drawIconSMS(112, (titleboxYpos+12)-movingAppYpos+titleboxYposDropDown[movingApp % 5]);
@@ -619,12 +628,15 @@ void vBlankHandler()
 							int j = i;
 							if(i>movingApp-(pagenum[secondaryDevice]*40))	j--;
 							if(j==-1)	continue;
-							if (theme == 1) {
-								glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
-							} else { 
-								glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
+							if (!bnrSysSettings[i]) {
+								if (theme == 1) {
+									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
+								} else { 
+									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0]);
+								}
 							}
-							if (bnrRomType[i] == 7) drawIconSNES((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							if (bnrSysSettings[i]) glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[1]);
+							else if (bnrRomType[i] == 7) drawIconSNES((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 6) drawIconMD((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 5) drawIconGG((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 4) drawIconSMS((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
@@ -633,12 +645,15 @@ void vBlankHandler()
 							else if (bnrRomType[i] == 1) drawIconGB((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else drawIcon((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						} else {
-							if (theme == 1) {
-								glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
-							} else { 
-								glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0 & 63]);
+							if (!bnrSysSettings[i]) {
+								if (theme == 1) {
+									glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
+								} else { 
+									glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0]);
+								}
 							}
-							if (bnrRomType[i] == 7) drawIconSNES(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							if (bnrSysSettings[i]) glSprite(titleboxXpos[secondaryDevice], (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[1]);
+							else if (bnrRomType[i] == 7) drawIconSNES(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 6) drawIconMD(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 5) drawIconGG(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 4) drawIconSMS(iconXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
@@ -716,8 +731,11 @@ void vBlankHandler()
 				if (isDirectory[cursorPosition[secondaryDevice]]) {
 					glSprite(96, 87-titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());
 				} else {
-					glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
-					if (bnrRomType[cursorPosition[secondaryDevice]] == 7) drawIconSNES(112, 96-titleboxYmovepos);
+					if (!bnrSysSettings[cursorPosition[secondaryDevice]]) {
+						glSprite(96, 84-titleboxYmovepos, GL_FLIP_NONE, tex().boxfullImage());
+					}
+					if (bnrSysSettings[cursorPosition[secondaryDevice]]) glSprite(84, 83-titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+					else if (bnrRomType[cursorPosition[secondaryDevice]] == 7) drawIconSNES(112, 96-titleboxYmovepos);
 					else if (bnrRomType[cursorPosition[secondaryDevice]] == 6) drawIconMD(112, 96-titleboxYmovepos);
 					else if (bnrRomType[cursorPosition[secondaryDevice]] == 5) drawIconGG(112, 96-titleboxYmovepos);
 					else if (bnrRomType[cursorPosition[secondaryDevice]] == 4) drawIconSMS(112, 96-titleboxYmovepos);
