@@ -19,6 +19,7 @@
 */
 
 #include "cheat.h"
+#include "flashcard.h"
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
 #include <algorithm>
@@ -26,6 +27,7 @@
 #include "ndsheaderbanner.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
+#include "graphics/graphics.h"
 
 extern bool dbox_showIcon;
 int cheatWnd_cursorPosition = 0;
@@ -57,7 +59,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+    FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
@@ -247,11 +249,16 @@ void CheatCodelist::selectCheats(std::string filename)
     // If no cheats are found
     if(_data.size() == 0) {
       printSmallCentered(false, 100, "No cheats found");
-      printSmallCentered(false, 167, "B: Back");
+      printSmallCentered(false, 160, "B: Back");
 
       while(1) {
         scanKeys();
         pressed = keysDownRepeat();
+		loadVolumeImage();
+		loadBatteryImage();
+		loadTime();
+		loadDate();
+		loadClockColon();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;
@@ -263,19 +270,19 @@ void CheatCodelist::selectCheats(std::string filename)
     // Print bottom text
     if(_data[cheatWnd_cursorPosition]._comment != "") {
       if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 167, "Y: Info X: Save B: Cancel");
+        printSmallCentered(false, 160, "Y: Info  X: Save  B: Cancel");
       } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-        printSmallCentered(false, 167, "A: Deslct Y: Info X: Save B: Cancl");
+        printSmallCentered(false, 160, "A: Deslct  Y: Info  X: Save  B: Cancl");
       } else {
-        printSmallCentered(false, 167, "A: Slct Y: Info X: Save B: Cancl");
+        printSmallCentered(false, 160, "A: Slct  Y: Info  X: Save  B: Cancl");
       }
     } else {
       if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 167, "X: Save B: Cancel");
+        printSmallCentered(false, 160, "X: Save  B: Cancel");
       } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-        printSmallCentered(false, 167, "A: Deselect X: Save B: Cancel");
+        printSmallCentered(false, 160, "A: Deselect  X: Save  B: Cancel");
       } else {
-        printSmallCentered(false, 167, "A: Select X: Save B: Cancel");
+        printSmallCentered(false, 160, "A: Select  X: Save  B: Cancel");
       }
     }
 
@@ -306,6 +313,11 @@ void CheatCodelist::selectCheats(std::string filename)
 
     scanKeys();
     pressed = keysDownRepeat();
+	loadVolumeImage();
+	loadBatteryImage();
+	loadTime();
+	loadDate();
+	loadClockColon();
     swiWaitForVBlank();
     if(pressed & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
@@ -420,6 +432,11 @@ void CheatCodelist::selectCheats(std::string filename)
         while(1) {
           scanKeys();
           pressed = keysDownRepeat();
+			loadVolumeImage();
+			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
             break;

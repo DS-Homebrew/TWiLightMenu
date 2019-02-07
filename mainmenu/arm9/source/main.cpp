@@ -60,7 +60,7 @@
 #include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
 
-#define gbamodeText "Start GBA Mode"
+#define gbamodeText "Start GBA game."
 #define gbarunnerText "Start GBARunner2"
 
 bool whiteScreen = true;

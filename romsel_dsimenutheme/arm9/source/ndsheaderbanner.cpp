@@ -128,11 +128,15 @@ int bannerFlip[41] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isDirectory[40] = {false};
+bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};
 bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare[41] = {true};
 int isHomebrew[41] = {0}; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+
+static u16 bannerDelayNum[41] = {0x0000};
+int currentbnriconframeseq[41] = {0};
 
 /**
  * Get banner sequence from banner file.
@@ -144,6 +148,7 @@ void grabBannerSequence(int iconnum)
 	{
 		bnriconframeseq[iconnum][i] = ndsBanner.dsi_seq[i];
 	}
+	currentbnriconframeseq[iconnum] = 0;
 }
 
 /**
@@ -155,10 +160,8 @@ void clearBannerSequence(int iconnum)
 	{
 		bnriconframeseq[iconnum][i] = 0x0000;
 	}
+	currentbnriconframeseq[iconnum] = 0;
 }
-
-static u16 bannerDelayNum[40] = {0x0000};
-int currentbnriconframeseq[40] = {0};
 
 /**
  * Play banner sequence.

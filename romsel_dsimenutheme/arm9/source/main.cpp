@@ -128,6 +128,7 @@ bool gameSoftReset = false;
 
 int mpuregion = 0;
 int mpusize = 0;
+bool ceCached = false;
 
 bool applaunch = false;
 bool startMenu = false;
@@ -148,6 +149,7 @@ int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
 bool showDirectories = true;
+bool showHidden = false;
 bool showBoxArt = true;
 bool animateDsiIcons = false;
 int launcherApp = -1;
@@ -180,6 +182,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
 	if (consoleModel < 2) {
@@ -392,7 +395,7 @@ void SetGameSoftReset(const char* filename) {
 	fclose(f_nds_file);
 
 	scanKeys();
-	int pressed = keysDownRepeat();
+	int pressed = keysHeld();
 	
 	gameSoftReset = false;
 
@@ -438,7 +441,7 @@ void SetMPUSettings(const char* filename) {
 	fclose(f_nds_file);
 
 	scanKeys();
-	int pressed = keysDownRepeat();
+	int pressed = keysHeld();
 	
 	if(pressed & KEY_B){
 		mpuregion = 1;
@@ -493,6 +496,81 @@ void SetMPUSettings(const char* filename) {
 			mpusize = 3145728;
 			break;
 		}
+	}
+}
+
+/**
+ * Gives some games slight speed bump by moving nds-bootstrap's cardEngine_arm9 to cached memory region.
+ */
+void SetSpeedBump(const char* filename) {
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	fclose(f_nds_file);
+
+	scanKeys();
+	int pressed = keysHeld();
+	
+	ceCached = false;
+
+	static const char list[][4] = {
+		"AYI",	// Yoshi Touch & Go
+		"AZW",	// WarioWare: Touched
+		"ARR",	// Ridge Racer DS
+		"ASM",	// Super Mario 64 DS
+		"SMS",	// Super Mario Star World, and Mario's Holiday
+		"AS2",	// Spider-Man 2
+		"ABM",	// Bomberman
+		"ACV",	// Castlevania: Dawn of Sorrow
+		"AGY",	// Phoenix Wright: Ace Attorney
+		"A5T",	// MegaMan Battle Network 5: Double Team DS
+		"ASC",	// Sonic Rush
+		"ADM",	// Animal Crossing: Wild World
+		"ABH",	// Resident Evil: Deadly Silence
+		"ARJ",	// Kanji Sonomama Rakubiki Jiten
+		"ARZ",	// Rockman ZX/MegaMan ZX
+		"AKW",	// Kirby Squeak Squad/Mouse Attack
+		"ADA",	// Pokemon Diamond
+		"APA",	// Pokemon Pearl
+		"A8N",	// Planet Puzzle League
+		"A6A",	// MegaMan Star Force: Pegasus
+		"A6B",	// MegaMan Star Force: Leo
+		"A6C",	// MegaMan Star Force: Dragon
+		"A3Y",	// Sonic Rush Adventure
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"A8T",	// Mario Party DS
+		"A2L",	// Anno 1701: Dawn of Discovery
+		"A5F",	// Professor Layton and the Curious Village
+		"AWL",	// The World Ends With You
+		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
+		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
+		"YKW",	// Kirby Super Star Ultra
+		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"CPU",	// Pokemon Platinum
+		"CRB",	// MegaMan Star Force 3: Black Ace
+		"CRR",	// MegaMan Star Force 3: Red Joker
+		"B62",	// Chibi-Robo: Clean Sweep!
+		"B6X",	// Rockman EXE: Operate Shooting Star
+		"IPG",	// Pokemon SoulSilver
+		"IPK",	// Pokemon HeartGold
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
+		if (memcmp(game_TID, list[i], 3) == 0) {
+			// Found a match.
+			ceCached = true;
+			break;
+		}
+	}
+
+	if(pressed & KEY_L){
+		ceCached = true;
 	}
 }
 
@@ -1096,7 +1174,24 @@ int main(int argc, char **argv) {
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
 				bool dsModeSwitch = false;
-				if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
+				bool dsModeDSiWare = false;
+
+				char game_TID[5];
+
+				FILE *f_nds_file = fopen(argarray[0], "rb");
+
+				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				fread(game_TID, 1, 4, f_nds_file);
+				game_TID[4] = 0;
+				game_TID[3] = 0;
+				fclose(f_nds_file);
+
+				if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
+					dsModeSwitch = true;
+					dsModeDSiWare = true;
+					useBackend = false;	// Bypass nds-bootstrap
+					homebrewBootstrap = true;
+				} else if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
 					useBackend = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
 				} else if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
@@ -1143,16 +1238,6 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							clearText();
 						}
-
-						char game_TID[5];
-
-						FILE *f_nds_file = fopen(argarray[0], "rb");
-
-						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-						fread(game_TID, 1, 4, f_nds_file);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						fclose(f_nds_file);
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
@@ -1214,6 +1299,7 @@ int main(int argc, char **argv) {
 						SetDonorSDK(argarray[0]);
 						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
+						SetSpeedBump(argarray[0]);
 
 						if (sdFound() && secondaryDevice) {
 							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
@@ -1249,6 +1335,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
@@ -1338,7 +1425,7 @@ int main(int argc, char **argv) {
 					SaveSettings();
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
-					if (isDSiMode()) {
+					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
 						if (perGameSettings_boostCpu == -1) {
 							runNds_boostCpu = boostCpu;

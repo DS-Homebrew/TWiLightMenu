@@ -11,7 +11,7 @@ TWiLight Menu++ comes included with a Docker image for easy building without hav
 
 ## Building with Docker for Windows users.
 
-You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install docker at http://docker.com, and [configured Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) for the drive where DSiMenu++ is cloned. 
+You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install docker at http://docker.com, and [configured Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) for the drive where TWiLight Menu++ is cloned. 
 
 Then run `compile_docker.ps1` in a PowerShell window. The script accepts `make` arguments as well, for example `.\compile_docker.ps1 clean`. Note that Docker compilation is not compatible with native Windows compilation. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker.
 
@@ -19,23 +19,23 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 
 # Credits
 ## Main Developers
-- RocketRobz: Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
+- [RocketRobz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode, and LED functions, to nds-bootstrap.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
-- chyyran: Port of akMenu/Wood UI to TWiLightMenu++ as a theme.
-- Epicpkmn11: Adding new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.
-- shutterbug2000: NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
+- [chyyran](https://github.com/chyyran): Port of akMenu/Wood UI to TWiLightMenu++ as a theme.
+- [Epicpkmn11](https://github.com/Epicpkmn11): Adding new features to the DSi/3DS Themes, new features & bug fixes to Acekard theme, and the Switch themes for the Acekard theme.
+- [shutterbug2000](https://github.com/shutterbug2000): NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
 ## App Launchers
 - [ahezard](https://github.com/ahezard): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob)
 - Coto: [nesDS](https://sourceforge.net/projects/nesds/)
-- Apache Thunder: nesDS TWL Edition, and the DSi splash from NTR Launcher.
+- [Apache Thunder](https://github.com/ApacheThunder): [nesDS TWL Edition](https://github.com/ApacheThunder/NesDS), and the DSi splash from [NTR Launcher](https://github.com/ApacheThunder/NTR_Launcher).
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
 - archeid (Loopy): [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS)
 ## Graphics & Theme
-- spinal_cord: DSi4DS and DSision2 graphics.
+- [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Some game console icons used.
-- Vulpes-Vulpeos: MHGen and DS Menu themes for Acekard theme.
+- [Vulpes-Vulpeos](https://www.deviantart.com/vulpes-vulpeos): MHGen and DS Menu themes for Acekard theme.
 ## Others
-- profi200: Improved SD code from fastboot3DS.
-- devkitPro, WinterMute: Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
-- DeadSkullzjr: [Cheat Database](https://gbatemp.net/threads/deadskullzjrs-flashcart-cheat-databases.488711/)
+- [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
+- [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
+- [DeadSkullzjr](https://github.com/DeadSkullzJr): [Cheat Database](https://gbatemp.net/threads/deadskullzjrs-flashcart-cheat-databases.488711/)

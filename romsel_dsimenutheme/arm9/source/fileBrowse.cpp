@@ -106,6 +106,7 @@ extern touchPosition touch;
 
 extern bool showdialogbox;
 extern bool dbox_showIcon;
+extern bool dbox_selectMenu;
 
 extern std::string romfolder[2];
 
@@ -123,6 +124,7 @@ extern int theme;
 int file_count = 0;
 
 extern bool showDirectories;
+extern bool showHidden;
 extern bool showBoxArt;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
@@ -245,6 +247,7 @@ extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
 const char *gameOrderIniPath;
+const char *hiddenGamesIniPath;
 
 struct DirEntry
 {
@@ -277,6 +280,8 @@ void chdirFake(const char *dir)
 
 bool nameEndsWith(const string& name, const vector<string> extensionList)
 {
+
+	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
 
 	if (name.size() == 0) return false;
 
@@ -321,6 +326,18 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	}
 	else
 	{
+		CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		vector<std::string> hiddenGames;
+		char str[11];
+
+		for(int i=0;true;i++) {
+			sprintf(str, "%d", i);
+			if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+			} else {
+				break;
+			}
+		}
 
 		while (true)
 		{
@@ -335,24 +352,44 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 			if (showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back(dirEntry);
-					file_count++;
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back(dirEntry);
-					file_count++;
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			}
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
 		CIniFile gameOrderIni(gameOrderIniPath);
 		vector<std::string> gameOrder;
-		char str[9];
 
 		for(int i=0;i<(int)dirContents.size();i++) {
 			sprintf(str, "%d", i);
@@ -421,6 +458,9 @@ void waitForFadeOut (void) {
 		for (int i = 0; i < 72; i++) {
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -466,6 +506,8 @@ void updateScrollingState(u32 held, u32 pressed) {
 	} 
 
 }
+
+static bool inSelectMenu = false;
 
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
@@ -624,25 +666,32 @@ void launchGba(void) {
 		mmEffectEx(&snd_wrong);
 		clearText();
 		dbox_showIcon = false;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		if (!showdialogbox) {
+			showdialogbox = true;
+			for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		}
 		printLarge(false, 16, 12, "Error code: BINF");
 		printSmallCentered(false, 64, "The GBA BIOS is required");
 		printSmallCentered(false, 78, "to run GBA games.");
 		printSmallCentered(false, 112, "Place the BIOS on the root");
 		printSmallCentered(false, 126, "as \"bios.bin\".");
-		printSmall(false, 208, 166, "A: OK");
+		printSmall(false, 208, 160, "A: OK");
 		int pressed = 0;
 		do {
 			scanKeys();
 			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadDate();
+			loadTime();
+			loadClockColon();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
-		showdialogbox = false;
-		for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		if (!inSelectMenu) {
+			showdialogbox = false;
+			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		}
 		return;
 	}
 
@@ -681,6 +730,8 @@ void launchGba(void) {
 }
 
 void mdRomTooBig(void) {
+	//int bottomBright = 0;
+
 	mmEffectEx(&snd_wrong);
 	clearText();
 	dbox_showIcon = false;
@@ -690,18 +741,198 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 78, "ROM cannot be launched,");
 	printSmallCentered(false, 92, "due to the size of it");
 	printSmallCentered(false, 106, "being above 3MB.");
-	printSmall(false, 208, 166, "A: OK");
+	printSmall(false, 208, 160, "A: OK");
 	int pressed = 0;
 	do {
 		scanKeys();
 		pressed = keysDown();
 		loadVolumeImage();
 		loadBatteryImage();
+		loadTime();
+		loadDate();
+		loadClockColon();
 		swiWaitForVBlank();
+
+		// Debug code for changing brightness of BG layer
+
+		/*if (pressed & KEY_UP) {
+			bottomBright--;
+		} else if (pressed & KEY_DOWN) {
+			bottomBright++;
+		}
+		
+		if (bottomBright < 0) bottomBright = 0;
+		if (bottomBright > 15) bottomBright = 15;
+
+		switch (bottomBright) {
+			case 0:
+			default:
+				REG_BLDY = 0;
+				break;
+			case 1:
+				REG_BLDY = (0b0001 << 1);
+				break;
+			case 2:
+				REG_BLDY = (0b0010 << 1);
+				break;
+			case 3:
+				REG_BLDY = (0b0011 << 1);
+				break;
+			case 4:
+				REG_BLDY = (0b0100 << 1);
+				break;
+			case 5:
+				REG_BLDY = (0b0101 << 1);
+				break;
+			case 6:
+				REG_BLDY = (0b0110 << 1);
+				break;
+			case 7:
+				REG_BLDY = (0b0111 << 1);
+				break;
+			case 8:
+				REG_BLDY = (0b1000 << 1);
+				break;
+			case 9:
+				REG_BLDY = (0b1001 << 1);
+				break;
+			case 10:
+				REG_BLDY = (0b1010 << 1);
+				break;
+			case 11:
+				REG_BLDY = (0b1011 << 1);
+				break;
+			case 12:
+				REG_BLDY = (0b1100 << 1);
+				break;
+			case 13:
+				REG_BLDY = (0b1101 << 1);
+				break;
+			case 14:
+				REG_BLDY = (0b1110 << 1);
+				break;
+			case 15:
+				REG_BLDY = (0b1111 << 1);
+				break;
+		}*/
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+}
+
+bool selectMenu(void) {
+	inSelectMenu = true;
+	clearText();
+	dbox_showIcon = false;
+	dbox_selectMenu = true;
+	showdialogbox = true;
+	int maxCursors = 0;
+	int selCursorPosition = 0;
+	int assignedOp[4] = {-1};
+	int selIconYpos = 96;
+	if (isDSiMode() && sdFound()) {
+		for (int i = 0; i < 4; i++) {
+			selIconYpos -= 14;
+		}
+		assignedOp[0] = 0;
+		assignedOp[1] = 1;
+		assignedOp[2] = 2;
+		assignedOp[3] = 3;
+		maxCursors = 3;
+	} else {
+		for (int i = 0; i < 3; i++) {
+			selIconYpos -= 14;
+		}
+		if (!isRegularDS) {
+			assignedOp[0] = 0;
+			assignedOp[1] = 1;
+			assignedOp[2] = 3;
+			maxCursors = 2;
+		} else {
+			assignedOp[0] = 1;
+			assignedOp[1] = 3;
+			maxCursors = 1;
+		}
+	}
+	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	int pressed = 0;
+	while (1) {
+		int textYpos = selIconYpos+4;
+		clearText();
+		printSmallCentered(false, 16, "SELECT menu");
+		printSmall(false, 24, -2+textYpos+(28*selCursorPosition), ">");
+		for (int i = 0; i <= maxCursors; i++) {
+			if (assignedOp[i] == 0) {
+				printSmall(false, 64, textYpos, (consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
+			} else if (assignedOp[i] == 1) {
+				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
+			} else if (assignedOp[i] == 2) {
+				if (bothSDandFlashcard()) {
+					if (secondaryDevice) {
+						if (consoleModel < 3) {
+							printSmall(false, 64, textYpos, "Switch to SD Card");
+						} else {
+							printSmall(false, 64, textYpos, "Switch to microSD Card");
+						}
+					} else {
+						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
+					}
+				} else {
+					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted" : "Launch Slot-1 card");
+				}
+			} else if (assignedOp[i] == 3) {
+				printSmall(false, 64, textYpos, useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
+			}
+			textYpos += 28;
+		}
+		printSmallCentered(false, 160, "SELECT/B: Back, A: Select");
+		scanKeys();
+		pressed = keysDown();
+		loadVolumeImage();
+		loadBatteryImage();
+		swiWaitForVBlank();
+		if (pressed & KEY_UP) {
+			selCursorPosition--;
+			if (selCursorPosition < 0) selCursorPosition = maxCursors;
+		}
+		if (pressed & KEY_DOWN) {
+			selCursorPosition++;
+			if (selCursorPosition > maxCursors) selCursorPosition = 0;
+		}
+		if (pressed & KEY_A) {
+			switch (assignedOp[selCursorPosition]) {
+				case 0:
+				default:
+					exitToSystemMenu();
+					break;
+				case 1:
+					launchSettings();
+					break;
+				case 2:
+					if (REG_SCFG_MC != 0x11) {
+						switchDevice();
+						inSelectMenu = false;
+						return true;
+					} else {
+						mmEffectEx(&snd_wrong);
+					}
+					break;
+				case 3:
+					launchGba();
+					break;
+			}
+		}
+		if ((pressed & KEY_B) || (pressed & KEY_SELECT)) {
+			break;
+		}
+	};
+	clearText();
+	showdialogbox = false;
+	dbox_selectMenu = false;
+	inSelectMenu = false;
+	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	return false;
 }
 
 void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnBoxes) {
@@ -829,6 +1060,9 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -862,6 +1096,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	displayNowLoading();
 
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	int pressed = 0;
 	int held = 0;
@@ -964,6 +1199,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				loadVolumeImage();
 				loadBatteryImage();
+				loadTime();
+				loadDate();
+				loadClockColon();
 				swiWaitForVBlank();
 				if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1013,7 +1251,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			// Move apps
-			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright)
+			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright
+			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
 				showbubble = false;
@@ -1026,7 +1265,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				getGameInfo(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
-					movingAppYpos += 7;
+					if (i == 9) {
+						movingAppYpos += 2;
+					} else {
+						movingAppYpos += 8;
+					}
 					swiWaitForVBlank();
 				}
 				int orgCursorPosition = cursorPosition[secondaryDevice];
@@ -1039,6 +1282,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					held = keysDownRepeat();
 					loadVolumeImage();
 					loadBatteryImage();
+					loadTime();
+					loadDate();
+					loadClockColon();
 					swiWaitForVBlank(); 
 
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1073,8 +1319,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
 							showMovingArrow = false;
-							movingArrowYpos = 70;
-							movingAppYpos -= 7;
+							movingArrowYpos = 59;
+							if (i == 9) {
+								movingAppYpos -= 2;
+							} else {
+								movingAppYpos -= 8;
+							}
 							swiWaitForVBlank();
 						}
 						break;
@@ -1145,6 +1395,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						gameOrder[i] = dirContents[scrn][i].name;
 				}
 
+				for(int i=0;i<(int)gameOrder.size();i++) {
+					for(int j=0;j<(int)gameOrder.size();j++) {
+						if(i!=j) {
+							if(gameOrder[i] == gameOrder[j]) {
+								gameOrder.erase(gameOrder.begin()+j);
+							}
+						}
+					}
+				}
+
 				for(int i=gameOrder.size();true;i++) {
 					sprintf(str, "%d", i);
 					if(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
@@ -1175,7 +1435,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 				}
 				gameOrderIni.SaveIniFile(gameOrderIniPath);
-				
+
 				getDirectoryContents(dirContents[scrn], extensionList);
 				getFileInfo(scrn, dirContents, false);
 
@@ -1524,13 +1784,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					} else {
 						printSmallCentered(false, 128, "in DS mode.");
 					}
-					printSmall(false, 208, 166, "A: OK");
+					printSmall(false, 208, 160, "A: OK");
 					pressed = 0;
 					do {
 						scanKeys();
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
+						loadDate();
+						loadClockColon();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1568,13 +1831,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					printSmallCentered(false, 112, "If the game freezes, does not");
 					printSmallCentered(false, 126, "start, or doesn't seem normal,");
 					printSmallCentered(false, 140, "it needs to be AP-patched.");
-					printSmallCentered(false, 166, "B/A: OK, X: Don't show again");
+					printSmallCentered(false, 160, "B/A: OK, X: Don't show again");
 					pressed = 0;
 					while (1) {
 						scanKeys();
 						pressed = keysDown();
 						loadVolumeImage();
 						loadBatteryImage();
+						loadTime();
+						loadClockColon();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;
@@ -1631,56 +1896,58 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			// Launch settings by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchSettings();
-			}
-
-			// Exit to system menu by touching corner button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				exitToSystemMenu();
-			}
-
-			int topIconXpos = 116;
-			int savedTopIconXpos[2] = {0};
-			if (isDSiMode() && sdFound()) {
-				//for (int i = 0; i < 4; i++) {
-					topIconXpos -= 14;
-				//}
-				for (int i = 0; i < 2; i++) {
-					savedTopIconXpos[i] = topIconXpos;
-					topIconXpos += 28;
-				}
-			} else {
-				//for (int i = 0; i < 3; i++) {
-					topIconXpos -= 14;
-				//}
-				for (int i = 1; i < 2; i++) {
-					savedTopIconXpos[i] = topIconXpos;
-					topIconXpos += 28;
-				}
-			}
-
-			if (isDSiMode() && sdFound()) {
-				// Switch devices or launch Slot-1 by touching button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
-				&& !titleboxXmoveleft && !titleboxXmoveright)
+			if (theme == 1) {
+				// Launch settings by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
 				{
-					if (secondaryDevice || REG_SCFG_MC != 0x11) {
-						switchDevice();
-						return "null";
-					} else {
-						mmEffectEx(&snd_wrong);
+					launchSettings();
+				}
+
+				// Exit to system menu by touching corner button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
+				{
+					exitToSystemMenu();
+				}
+
+				int topIconXpos = 116;
+				int savedTopIconXpos[2] = {0};
+				if (isDSiMode() && sdFound()) {
+					//for (int i = 0; i < 4; i++) {
+						topIconXpos -= 14;
+					//}
+					for (int i = 0; i < 2; i++) {
+						savedTopIconXpos[i] = topIconXpos;
+						topIconXpos += 28;
+					}
+				} else {
+					//for (int i = 0; i < 3; i++) {
+						topIconXpos -= 14;
+					//}
+					for (int i = 1; i < 2; i++) {
+						savedTopIconXpos[i] = topIconXpos;
+						topIconXpos += 28;
 					}
 				}
-			}
 
-			// Launch GBA by touching button
-			if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
-			{
-				launchGba();
+				if (isDSiMode() && sdFound()) {
+					// Switch devices or launch Slot-1 by touching button
+					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
+					&& !titleboxXmoveleft && !titleboxXmoveright)
+					{
+						if (secondaryDevice || REG_SCFG_MC != 0x11) {
+							switchDevice();
+							return "null";
+						} else {
+							mmEffectEx(&snd_wrong);
+						}
+					}
+				}
+
+				// Launch GBA by touching button
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] && touch.px < savedTopIconXpos[1]+24 && !titleboxXmoveleft && !titleboxXmoveright)
+				{
+					launchGba();
+				}
 			}
 
 			// page switch
@@ -1765,10 +2032,42 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder
-			&& strcmp(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "..") != 0
-			&& !isDirectory[cursorPosition[secondaryDevice]])
+			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder)
 			{
+				CIniFile hiddenGamesIni(hiddenGamesIniPath);
+				vector<std::string> hiddenGames;
+				char str[11];
+
+				for(int i=0;true;i++) {
+					sprintf(str, "%d", i);
+					if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+						hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+					} else {
+						break;
+					}
+				}
+
+				for(int i=0;i<(int)hiddenGames.size();i++) {
+					for(int j=0;j<(int)hiddenGames.size();j++) {
+						if(i!=j) {
+							if(hiddenGames[i] == hiddenGames[j]) {
+								hiddenGames.erase(hiddenGames.begin()+j);
+							}
+						}
+					}
+				}
+				
+				std::string gameBeingHidden = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
+				bool unHide = false;
+				int whichToUnhide;
+
+				for(int i=0;i<(int)hiddenGames.size();i++) {
+					if(hiddenGames[i] == gameBeingHidden) {
+						whichToUnhide = i;
+						unHide = true;
+					}
+				}
+
 				clearText();
 				dbox_showIcon = true;
 				showdialogbox = true;
@@ -1778,14 +2077,24 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
-				//if (isDirectory[cursorPosition[secondaryDevice]]) {
-				//	printSmallCentered(false, 128, "delete this folder?");
-				//} else {
-					printSmallCentered(false, 128, "delete this game?");
-				//}
+				if (isDirectory[cursorPosition[secondaryDevice]]) {
+					if(unHide)	printSmallCentered(false, 128, "unhide this folder?");
+					else	printSmallCentered(false, 128, "hide this folder?");
+				} else {
+					if(unHide)	printSmallCentered(false, 128, "delete/unhide this game?");
+					else	printSmallCentered(false, 128, "delete/hide this game?");
+				}
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
-				printSmall(false, 160, 166, "A: Yes");
-				printSmall(false, 208, 166, "B: No");
+				if (isDirectory[cursorPosition[secondaryDevice]]) {
+					if(unHide)	printSmall(false, 141, 160, "Y: Unhide");	
+					else	printSmall(false, 155, 160, "Y: Hide");
+					printSmall(false, 208, 160, "B: No");
+				} else {
+					if(unHide)	printSmall(false, 93, 160, "Y: Unhide");	
+					else	printSmall(false, 107, 160, "Y: Hide");
+					printSmall(false, 160, 160, "A: Yes");
+					printSmall(false, 208, 160, "B: No");
+				}
 				while (1) {
 					do {
 						scanKeys();
@@ -1793,7 +2102,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						swiWaitForVBlank();
 					} while (!pressed);
 					
-					if (pressed & KEY_A) {
+					if (pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) {
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
@@ -1814,6 +2123,38 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (pressed & KEY_B) {
 						break;
 					}
+
+					if (pressed & KEY_Y) {
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 30; i++) swiWaitForVBlank();
+						whiteScreen = true;
+
+						if(unHide) {
+							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
+							hiddenGames.push_back("");
+						} else {
+							hiddenGames.push_back(gameBeingHidden);
+						}
+
+						for(int i=0;i<(int)hiddenGames.size();i++) {
+							char str[9];
+							sprintf(str, "%d", i);
+							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+						}
+						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+
+						if (showBoxArt) clearBoxArt();	// Clear box art
+						boxArtLoaded = false;
+						shouldersRendered = false;
+						showbubble = false;
+						showSTARTborder = false;
+						stopSoundPlayed = false;
+						clearText();
+						showdialogbox = false;
+						SaveSettings();
+						settingsChanged = false;
+						return "null";
+					}
 				}
 				clearText();
 				showdialogbox = false;
@@ -1826,6 +2167,15 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showbubble && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
+			}
+
+			if ((pressed & KEY_SELECT) && theme == 0) {
+				if (selectMenu()) {
+					clearText();
+					showdialogbox = false;
+					dbox_selectMenu = false;
+					return "null";
+				}
 			}
 
 		}

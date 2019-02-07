@@ -49,6 +49,7 @@ class BootstrapSettings
 	bool bstrap_loadingScreenLocation;
 	int loadingFrames;
 	int loadingFps;
+	bool loadingBar;
 	int loadingBarYpos;
 };
 

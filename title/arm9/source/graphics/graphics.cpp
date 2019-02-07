@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/dma.h>
 #include <maxmod9.h>
 #include "bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
@@ -34,6 +35,7 @@ bool controlTopBright = true;
 int screenBrightness = 31;
 
 u16 bmpImageBuffer[256*192];
+u16 videoImageBuffer[40][256*144];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -76,24 +78,26 @@ void vBlankHandler()
 }
 
 void LoadBMP(void) {
-	FILE* file = fopen("nitro:/graphics/TWiLightMenu.bmp", "rb");
+	dmaFillWords(0, BG_GFX, 256*192);
+
+	FILE* file = fopen("nitro:/video/twlmenupp/dsi.bmp", "rb");
 
 	if (file) {
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, file);
+		fread(bmpImageBuffer, 2, 0x14000, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
+		int y = 143;
+		for (int i=0; i<256*144; i++) {
 			if (x >= 256) {
 				x = 0;
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX[(y+22)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 			x++;
 		}
 	}

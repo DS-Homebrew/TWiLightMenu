@@ -15,6 +15,7 @@ BootstrapSettings::BootstrapSettings()
 	bstrap_loadingScreenLocation = false;
 	loadingFrames = 0;
 	loadingFps = 0;
+	loadingBar = true;
 	loadingBarYpos = 0;
 }
 
@@ -64,11 +65,13 @@ void BootstrapSettings::saveSettings()
 		default:
 			loadingFrames = themeini.GetInt( "loading screen", "frames", 0);
 			loadingFps = themeini.GetInt( "loading screen", "fps", 0);
+			loadingBar = themeini.GetInt( "loading screen", "showBar", 1);
 			loadingBarYpos = themeini.GetInt( "loading screen", "barYpos", 0);
 			break;
 		case 2:
 			loadingFrames = themeini.GetInt( "Loading", "Frames", 0);
 			loadingFps = themeini.GetInt( "Loading", "Fps", 0);
+			loadingBar = themeini.GetInt( "Loading", "ShowBar", 1);
 			loadingBarYpos = themeini.GetInt( "Loading", "BarYpos", 0);
 			break;
 	}
@@ -85,6 +88,7 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetString( "NDS-BOOTSTRAP", "LOADING_SCREEN_FOLDER", loadingFolder);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_FRAMES", loadingFrames);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_FPS", loadingFps);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_BAR", loadingBar);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_BAR_Y", loadingBarYpos);
     bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }

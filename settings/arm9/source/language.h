@@ -18,6 +18,7 @@ extern std::string STR_THEME;
 extern std::string STR_LASTPLAYEDROM;
 extern std::string STR_DSIMENUPPLOGO;
 extern std::string STR_DIRECTORIES;
+extern std::string STR_SHOW_HIDDEN;
 extern std::string STR_BOXART;
 extern std::string STR_ANIMATEDSIICONS;
 extern std::string STR_SYSREGION;
@@ -40,6 +41,8 @@ extern std::string STR_DESCRIPTION_LASTPLAYEDROM_1;
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
 
 extern std::string STR_DESCRIPTION_DIRECTORIES_1;
+
+extern std::string STR_DESCRIPTION_SHOW_HIDDEN_1;
 
 extern std::string STR_DESCRIPTION_BOXART_1;
 

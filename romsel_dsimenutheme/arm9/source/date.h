@@ -28,8 +28,6 @@ size_t GetDate(DateFormat format, char *buf, size_t size);
 
 /**
  * Get the current time formatted for the top bar.
- * This includes the blinking ':'.
- * @param donotblink If true, reset the blink counter.
  * @return std::string containing the time.
  */
 std::string RetTime();

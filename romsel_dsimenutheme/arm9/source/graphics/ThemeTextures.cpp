@@ -8,11 +8,8 @@
 #include "dark_bottom.h"
 #include "dark_bottom_bubble.h"
 
-//#include "org_bottom.h"
-//#include "org_bottom_bubble.h"
-
-#include "new_bottom.h"
-#include "new_bottom_bubble.h"
+#include "org_bottom.h"
+#include "org_bottom_bubble.h"
 
 #include "red_bottom.h"
 #include "red_bottom_bubble.h"
@@ -36,6 +33,7 @@
 #include "_3ds_bottom_bubble.h"
 
 #include "dialogbox.h"
+#include "_3ds_dialogbox.h"
 #include "nintendo_dsi_menu.h"
 #include "org_nintendo_dsi_menu.h"
 #include "bubble.h"
@@ -57,13 +55,11 @@
 #include "yellow_scroll_window.h"
 #include "pink_scroll_window.h"
 #include "purple_scroll_window.h"
-//#include "button_arrow.h"
-#include "new_button_arrow.h"
+#include "button_arrow.h"
 #include "new_moving_arrow.h"
 #include "launch_dot.h"
 #include "start_text.h"
-//#include "start_border.h"
-#include "new_start_border.h"
+#include "start_border.h"
 #include "../include/startborderpal.h"
 #include "_3ds_cursor.h"
 #include "brace.h"
@@ -110,7 +106,7 @@ void ThemeTextures::loadProgressImage(const unsigned short *palette, const unsig
 
 void ThemeTextures::loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap)
 {
-  _dialogboxImage = std::move(loadTexture(&dialogboxTexID, palette, bitmap, (256 / 16) * (256 / 16), 4, 16, 16, 256, 192));
+  _dialogboxImage = std::move(loadTexture(&dialogboxTexID, palette, bitmap, (256 / 16) * (256 / 16), 12, 16, 16, 256, 192));
 }
 
 void ThemeTextures::loadBipsImage(const unsigned short *palette, const unsigned int *bitmap)
@@ -248,8 +244,9 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
 
 void ThemeTextures::reloadPalDialogBox()
 {
+  extern int theme;
   glBindTexture(0, dialogboxTexID);
-  glColorSubTableEXT(0, 0, 4, 0, 0, (u16 *)dialogboxPal);
+  glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
 }
 void ThemeTextures::drawBg(int bgId)
 {
@@ -268,7 +265,6 @@ void ThemeTextures::drawBubbleBg(int bgId)
 void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
-  loadDialogboxImage(dialogboxPal, dialogboxBitmap);
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
 }
 
@@ -317,8 +313,10 @@ void ThemeTextures::load3DSTheme()
   // loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
 
   //loadBipsImage(bipsPal, bipsBitmap);
-  //loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  //loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   //loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(_3ds_dialogboxPal, _3ds_dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -327,24 +325,6 @@ void ThemeTextures::loadDSiDarkTheme()
 {
 
   setStringPaths("dark");
-
-  loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
-  loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
-  loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
-  loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
-  loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
-  loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
-  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
-  loadSettingsImage(icon_settingsPal, icon_settingsBitmap);
-  loadBraceImage(bracePal, braceBitmap);
-  loadBoxfullImage(boxPal, boxBitmap);
-  loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
-  loadSmallCartImage(small_cartPal, small_cartBitmap);
-  loadFolderImage(folderPal, folderBitmap);
-
-  loadCommonTextures();
 
   _bottomTiles = dark_bottomTiles;
   _bottomPalette = dark_bottomPal;
@@ -361,6 +341,26 @@ void ThemeTextures::loadDSiDarkTheme()
   _bottom_bubbleMapLen = dark_bottom_bubbleMapLen;
   _bottom_bubblePaletteLen = dark_bottom_bubblePalLen;
   _bottom_bubbleTilesLen = dark_bottom_bubbleTilesLen;
+
+  loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
+  loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
+  loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
+  loadBipsImage(bipsPal, bipsBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
+  loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
+  loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
+  loadSettingsImage(icon_settingsPal, icon_settingsBitmap);
+  loadBraceImage(bracePal, braceBitmap);
+  loadBoxfullImage(boxPal, boxBitmap);
+  loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(small_cartPal, small_cartBitmap);
+  loadFolderImage(folderPal, folderBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+
+  loadCommonTextures();
 }
 
 void ThemeTextures::loadDSiWhiteTheme()
@@ -368,21 +368,21 @@ void ThemeTextures::loadDSiWhiteTheme()
 
   setStringPaths("org");
 
-  _bottomTiles = new_bottomTiles;
-  _bottomPalette = new_bottomPal;
-  _bottomMap = new_bottomMap;
+  _bottomTiles = org_bottomTiles;
+  _bottomPalette = org_bottomPal;
+  _bottomMap = org_bottomMap;
 
-  _bottom_bubbleMap = new_bottom_bubbleMap;
-  _bottom_bubblePalette = new_bottom_bubblePal;
-  _bottom_bubbleTiles = new_bottom_bubbleTiles;
+  _bottom_bubbleMap = org_bottom_bubbleMap;
+  _bottom_bubblePalette = org_bottom_bubblePal;
+  _bottom_bubbleTiles = org_bottom_bubbleTiles;
 
-  _bottomTilesLen = new_bottomTilesLen;
-  _bottomPaletteLen = new_bottomPalLen;
-  _bottomMapLen = new_bottomMapLen;
+  _bottomTilesLen = org_bottomTilesLen;
+  _bottomPaletteLen = org_bottomPalLen;
+  _bottomMapLen = org_bottomMapLen;
 
-  _bottom_bubbleMapLen = new_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = new_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = new_bottom_bubbleTilesLen;
+  _bottom_bubbleMapLen = org_bottom_bubbleMapLen;
+  _bottom_bubblePaletteLen = org_bottom_bubblePalLen;
+  _bottom_bubbleTilesLen = org_bottom_bubbleTilesLen;
 
   loadBubbleImage(org_bubblePal, org_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(org_scroll_windowPal, org_scroll_windowBitmap);
@@ -395,10 +395,12 @@ void ThemeTextures::loadDSiWhiteTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -436,10 +438,12 @@ void ThemeTextures::loadDSiRedTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -477,11 +481,13 @@ void ThemeTextures::loadDSiBlueTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+ 
   loadCommonTextures();
 }
 
@@ -518,12 +524,14 @@ void ThemeTextures::loadDSiGreenTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
 
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -560,11 +568,13 @@ void ThemeTextures::loadDSiYellowTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
 
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -601,10 +611,12 @@ void ThemeTextures::loadDSiPurpleTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }
@@ -641,10 +653,12 @@ void ThemeTextures::loadDSiPinkTheme()
 
   loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
   loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), new_start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), new_button_arrowBitmap);
+  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
   loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
   loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
+
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
 }

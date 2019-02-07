@@ -236,28 +236,28 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[cursorPosition[secondaryDevice]], filename.c_str(), cursorPosition[secondaryDevice]);
-		printSmall(false, 16, 64, filename.c_str());
+		printSmall(false, 16, 66, filename.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
-		printSmall(false, 16, 166, fileCounter);
+		printSmall(false, 16, 160, fileCounter);
 		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {		// Per-game settings for homebrew (no DSi-Extended header)
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
-					printSmall(false, 154, 96, ">");
+					printSmall(false, 154, 98, ">");
 				} else {
-					printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+					printSmall(false, 16, 98+(perGameSettings_cursorPosition*14), ">");
 				}
 				if (perGameSettings_directBoot) {
-					printSmall(false, 24, 96, "Direct boot: Yes");
+					printSmall(false, 24, 98, "Direct boot: Yes");
 				} else {
-					printSmall(false, 24, 96, "Direct boot: No");
+					printSmall(false, 24, 98, "Direct boot: No");
 				}
 				if (!secondaryDevice) {
 					if (perGameSettings_ramDiskNo == -1) {
-						printSmall(false, 162, 96, "RAM disk: No");
+						printSmall(false, 162, 98, "RAM disk: No");
 					} else {
 						snprintf (saveNoDisplay, sizeof(saveNoDisplay), "RAM disk: %i", perGameSettings_ramDiskNo);
-						printSmall(false, 162, 96, saveNoDisplay);
+						printSmall(false, 162, 98, saveNoDisplay);
 					}
 				}
 				if(isDSiMode()) {
@@ -273,70 +273,70 @@ void perGameSettings (std::string filename) {
 					}
 				}
 				if (REG_SCFG_EXT != 0) {
-					printSmall(false, 24, 128, "ARM9 CPU Speed:");
-					printSmall(false, 24, 144, "VRAM boost:");
+					printSmall(false, 24, 126, "ARM9 CPU Speed:");
+					printSmall(false, 24, 140, "VRAM boost:");
 					if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-						printSmall(false, 146, 128, "133mhz (TWL)");
-						printSmall(false, 188, 144, "On");
+						printSmall(false, 146, 126, "133mhz (TWL)");
+						printSmall(false, 188, 140, "On");
 					} else {
 						if (perGameSettings_boostCpu == -1) {
-							printSmall(false, 188, 128, "Default");
+							printSmall(false, 188, 126, "Default");
 						} else if (perGameSettings_boostCpu == 1) {
-							printSmall(false, 146, 128, "133mhz (TWL)");
+							printSmall(false, 146, 126, "133mhz (TWL)");
 						} else {
-							printSmall(false, 156, 128, "67mhz (NTR)");
+							printSmall(false, 156, 126, "67mhz (NTR)");
 						}
 						if (perGameSettings_boostVram == -1) {
-							printSmall(false, 188, 144, "Default");
+							printSmall(false, 188, 140, "Default");
 						} else if (perGameSettings_boostVram == 1) {
-							printSmall(false, 188, 144, "On");
+							printSmall(false, 188, 140, "On");
 						} else {
-							printSmall(false, 188, 144, "Off");
+							printSmall(false, 188, 140, "Off");
 						}
 					}
 				}
 			} else {
-				printSmall(false, 16, 96, ">");
-				printSmall(false, 24, 96, "Bootstrap:");
+				printSmall(false, 16, 98, ">");
+				printSmall(false, 24, 98, "Bootstrap:");
 				if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, 188, 96, "Default");
+					printSmall(false, 188, 98, "Default");
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, 188, 96, "Nightly");
+					printSmall(false, 188, 98, "Nightly");
 				} else {
-					printSmall(false, 188, 96, "Release");
+					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 200, 166, "B: Back");
+			printSmall(false, 200, 160, "B: Back");
 		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
-			printSmall(false, 208, 166, "A: OK");
+			printSmall(false, 208, 160, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
-					printSmall(false, 154, 96, ">");
+					printSmall(false, 154, 98, ">");
 				} else {
-					printSmall(false, 16, 96+(perGameSettings_cursorPosition*16), ">");
+					printSmall(false, 16, 98+(perGameSettings_cursorPosition*14), ">");
 				}
 				if (useBootstrap) {
-					printSmall(false, 24, 96, "Language:");
+					printSmall(false, 24, 98, "Language:");
 					if (perGameSettings_language == -2) {
-						printSmall(false, 88, 96, "Default");
+						printSmall(false, 88, 98, "Default");
 					} else if (perGameSettings_language == -1) {
-						printSmall(false, 88, 96, "System");
+						printSmall(false, 88, 98, "System");
 					} else if (perGameSettings_language == 0) {
-						printSmall(false, 88, 96, "Japanese");
+						printSmall(false, 88, 98, "Japanese");
 					} else if (perGameSettings_language == 1) {
-						printSmall(false, 88, 96, "English");
+						printSmall(false, 88, 98, "English");
 					} else if (perGameSettings_language == 2) {
-						printSmall(false, 88, 96, "French");
+						printSmall(false, 88, 98, "French");
 					} else if (perGameSettings_language == 3) {
-						printSmall(false, 88, 96, "German");
+						printSmall(false, 88, 98, "German");
 					} else if (perGameSettings_language == 4) {
-						printSmall(false, 88, 96, "Italian");
+						printSmall(false, 88, 98, "Italian");
 					} else if (perGameSettings_language == 5) {
-						printSmall(false, 88, 96, "Spanish");
+						printSmall(false, 88, 98, "Spanish");
 					}
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "Save no: %i", perGameSettings_saveNo);
-					printSmall(false, 162, 96, saveNoDisplay);
+					printSmall(false, 162, 98, saveNoDisplay);
 				}
 				if (isDSiMode()) {
 					printSmall(false, 24, 112, "Run in:");
@@ -351,46 +351,49 @@ void perGameSettings (std::string filename) {
 					}
 				}
 				if (REG_SCFG_EXT != 0) {
-					printSmall(false, 24, 128, "ARM9 CPU Speed:");
-					printSmall(false, 24, 144, "VRAM boost:");
+					printSmall(false, 24, 126, "ARM9 CPU Speed:");
+					printSmall(false, 24, 140, "VRAM boost:");
 					if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-						printSmall(false, 146, 128, "133mhz (TWL)");
-						printSmall(false, 188, 144, "On");
+						printSmall(false, 146, 126, "133mhz (TWL)");
+						printSmall(false, 188, 140, "On");
 					} else {
 						if (perGameSettings_boostCpu == -1) {
-							printSmall(false, 188, 128, "Default");
+							printSmall(false, 188, 126, "Default");
 						} else if (perGameSettings_boostCpu == 1) {
-							printSmall(false, 146, 128, "133mhz (TWL)");
+							printSmall(false, 146, 126, "133mhz (TWL)");
 						} else {
-							printSmall(false, 156, 128, "67mhz (NTR)");
+							printSmall(false, 156, 126, "67mhz (NTR)");
 						}
 						if (perGameSettings_boostVram == -1) {
-							printSmall(false, 188, 144, "Default");
+							printSmall(false, 188, 140, "Default");
 						} else if (perGameSettings_boostVram == 1) {
-							printSmall(false, 188, 144, "On");
+							printSmall(false, 188, 140, "On");
 						} else {
-							printSmall(false, 188, 144, "Off");
+							printSmall(false, 188, 140, "Off");
 						}
 					}
 				}
 			} else {
-				printSmall(false, 16, 96, ">");
-				printSmall(false, 24, 96, "Bootstrap:");
+				printSmall(false, 16, 98, ">");
+				printSmall(false, 24, 98, "Bootstrap:");
 				if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, 188, 96, "Default");
+					printSmall(false, 188, 98, "Default");
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, 188, 96, "Nightly");
+					printSmall(false, 188, 98, "Nightly");
 				} else {
-					printSmall(false, 188, 96, "Release");
+					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 135, 166, "X: Cheats B: Back");
+			printSmall(false, 128, 160, "X: Cheats  B: Back");
 		}
 		do {
 			scanKeys();
-			pressed = keysDownRepeat();
+			pressed = keysDown();
 			loadVolumeImage();
 			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
 			swiWaitForVBlank();
 		} while (!pressed);
 

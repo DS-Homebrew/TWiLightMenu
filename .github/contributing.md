@@ -1,12 +1,12 @@
 # Contributing Guide
 
-Contributions are always welcome to DSiMenu++! If you have something new to share with us, please, do it.
+Contributions are always welcome to TWiLightMenu++! If you have something new to share with us, please, do it.
 
 ## Issues Guidelines
 
 Before you submit an issue, check that it meets these guidelines:
 
-- specify the version of DSiMenu++ you are using
+- specify the version of TWiLightMenu++ you are using
 - specify what console are you using and your entrypoint
 
 

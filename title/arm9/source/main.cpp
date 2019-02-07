@@ -39,10 +39,11 @@
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
-#include "common/perGameSettings.h"
+#include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
+#include "twlmenuppvideo.h"
 #include "consolemodelselect.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
@@ -460,10 +461,10 @@ int main(int argc, char **argv)
 			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
 		}
 
-		if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
+		/*if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
 			BootSplashInit();
 			fifoSendValue32(FIFO_USER_01, 10);
-		}
+		}*/
 	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
@@ -490,16 +491,12 @@ int main(int argc, char **argv)
 	{
 		loadTitleGraphics();
 		fadeType = true;
-
-		for (int i = 0; i < 60 * 3; i++)
-		{
-			swiWaitForVBlank();
-		}
+		twlMenuVideo();
 	}
 
 	scanKeys();
 
-	if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT))
+	if (keysHeld() & KEY_SELECT)
 	{
 		screenmode = 1;
 	}
