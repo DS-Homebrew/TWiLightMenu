@@ -1174,7 +1174,24 @@ int main(int argc, char **argv) {
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
 			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
 				bool dsModeSwitch = false;
-				if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
+				bool dsModeDSiWare = false;
+
+				char game_TID[5];
+
+				FILE *f_nds_file = fopen(argarray[0], "rb");
+
+				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				fread(game_TID, 1, 4, f_nds_file);
+				game_TID[4] = 0;
+				game_TID[3] = 0;
+				fclose(f_nds_file);
+
+				if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
+					dsModeSwitch = true;
+					dsModeDSiWare = true;
+					useBackend = false;	// Bypass nds-bootstrap
+					homebrewBootstrap = true;
+				} else if (isHomebrew[cursorPosition[secondaryDevice]] == 2) {
 					useBackend = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
 				} else if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
@@ -1221,16 +1238,6 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							clearText();
 						}
-
-						char game_TID[5];
-
-						FILE *f_nds_file = fopen(argarray[0], "rb");
-
-						fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-						fread(game_TID, 1, 4, f_nds_file);
-						game_TID[4] = 0;
-						game_TID[3] = 0;
-						fclose(f_nds_file);
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
@@ -1418,7 +1425,7 @@ int main(int argc, char **argv) {
 					SaveSettings();
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
-					if (isDSiMode()) {
+					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
 						if (perGameSettings_boostCpu == -1) {
 							runNds_boostCpu = boostCpu;

@@ -1435,7 +1435,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 				}
 				gameOrderIni.SaveIniFile(gameOrderIniPath);
-				
+
 				getDirectoryContents(dirContents[scrn], extensionList);
 				getFileInfo(scrn, dirContents, false);
 
