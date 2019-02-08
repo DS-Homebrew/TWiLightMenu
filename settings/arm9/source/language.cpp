@@ -23,6 +23,7 @@ std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_MAINMENU = "STR_MAINMENU";
 std::string STR_THEME = "STR_THEME";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
+std::string STR_DSISPLASH = "STR_DSISPLASH";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
 std::string STR_SHOW_HIDDEN = "STR_SHOW_HIDDEN";
@@ -44,6 +45,8 @@ std::string STR_DESCRIPTION_MAINMENU = "STR_DESCRIPTION_MAINMENU";
 std::string STR_DESCRIPTION_THEME_1 = "STR_DESCRIPTION_THEME_1";
 
 std::string STR_DESCRIPTION_LASTPLAYEDROM_1 = "STR_DESCRIPTION_LASTPLAYEDROM_1";
+
+std::string STR_DESCRIPTION_DSISPLASH = "STR_DESCRIPTION_DSISPLASH";
 
 std::string STR_DESCRIPTION_DSIMENUPPLOGO_1 = "STR_DESCRIPTION_DSIMENUPPLOGO_1";
 
@@ -258,6 +261,7 @@ void langInit(void)
 	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
 	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup."));
+	STR_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSISPLASH", "Nintendo DSi Splash Screen"));
 	STR_DSIMENUPPLOGO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen"));
 	STR_DIRECTORIES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders"));
 	STR_SHOW_HIDDEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW_HIDDEN", "Show hidden files"));
@@ -279,6 +283,8 @@ void langInit(void)
 	STR_DESCRIPTION_THEME_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes."));
 
 	STR_DESCRIPTION_LASTPLAYEDROM_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the ROM select menu."));
+
+	STR_DESCRIPTION_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSISPLASH", "Show the Nintendo DSi splash screen on boot."));
 
 	STR_DESCRIPTION_DSIMENUPPLOGO_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++."));
 

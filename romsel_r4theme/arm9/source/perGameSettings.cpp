@@ -190,12 +190,23 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	if(isHomebrew == 0) {
+	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0 || isHomebrew == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+
+	bool showPerGameSettings =
+		(!isDSiWare && isHomebrew != 2
+		&& strcmp(game_TID, "HND") != 0
+		&& strcmp(game_TID, "HNE") != 0
+		&& (useBootstrap && REG_SCFG_EXT != 0));
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -225,7 +236,7 @@ void perGameSettings (std::string filename) {
 		} else {
 			dialogboxHeight = 1;
 		}
-	} else if (isDSiWare || isHomebrew == 2) {
+	} else if (!showPerGameSettings) {
 		dialogboxHeight = 0;
 	} else {
 		dialogboxHeight = 4+useBootstrap;
@@ -304,7 +315,7 @@ void perGameSettings (std::string filename) {
 			} else {
 				printSmallCentered(false, 126, "B: Back");
 			}
-		} else if (isDSiWare || isHomebrew == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (!showPerGameSettings) {
 			printLargeCentered(false, 84, "Info");
 			if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
 			printSmall(false, 172, 104, gameTIDText);
@@ -472,7 +483,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-		} else if (isDSiWare || isHomebrew == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (!showPerGameSettings) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

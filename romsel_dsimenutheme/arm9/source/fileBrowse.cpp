@@ -1384,6 +1384,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				if ((pagenum[secondaryDevice] != orgPage) || (cursorPosition[secondaryDevice] != orgCursorPosition))
 				{
+				showbubble = true;
+				writeBannerText(0, "Please wait...", "", "");
+
 				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 				char str[11];
@@ -1436,7 +1439,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				gameOrderIni.SaveIniFile(gameOrderIniPath);
 
-				getDirectoryContents(dirContents[scrn], extensionList);
+				//getDirectoryContents(dirContents[scrn], extensionList);
+
+				DirEntry dirEntry;
+
+				dirEntry.name = gameBeingMoved.c_str();
+				dirEntry.isDirectory = movingAppIsDir;
+
+				dirContents[scrn].erase(dirContents[scrn].begin()+movingApp);
+				dirContents[scrn].insert(dirContents[scrn].begin()+cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40), dirEntry);
+
 				getFileInfo(scrn, dirContents, false);
 
 				settingsChanged = true;

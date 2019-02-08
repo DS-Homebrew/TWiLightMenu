@@ -383,7 +383,7 @@ void defaultExitHandler()
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
@@ -449,22 +449,22 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (isDSiMode()) {
-		bool sdAccessible = false;
-		if (access("sd:/", F_OK) == 0) {
-			sdAccessible = true;
-		}
+	bool sdAccessible = false;
+	if (access("sd:/", F_OK) == 0) {
+		sdAccessible = true;
+	}
 
-		bool dsiSplashEnabled = false;
-		if (sdAccessible) {
-			CIniFile hiyacfwini(hiyacfwinipath);
-			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
-		}
+	bool dsiSplashEnabled = false;
+	if (sdAccessible && !sys().arm7SCFGLocked() && ms().consoleModel < 2) {
+		CIniFile hiyacfwini(hiyacfwinipath);
+		dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
+	} else {
+		dsiSplashEnabled = ms().dsiSplash;
+	}
 
-		/*if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
-			BootSplashInit();
-			fifoSendValue32(FIFO_USER_01, 10);
-		}*/
+	if (dsiSplashEnabled && fifoGetValue32(FIFO_USER_01) != 0x01) {
+		BootSplashInit();
+		fifoSendValue32(FIFO_USER_01, 10);
 	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
@@ -491,6 +491,10 @@ int main(int argc, char **argv)
 	{
 		loadTitleGraphics();
 		fadeType = true;
+		for (int i = 0; i < 25; i++)
+		{
+			swiWaitForVBlank();
+		}
 		twlMenuVideo();
 	}
 

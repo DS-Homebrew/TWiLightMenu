@@ -199,15 +199,30 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
+	char game_TID[5];
+	grabTID(f_nds_file, game_TID);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+	
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	if(isHomebrew[cursorPosition[secondaryDevice]] == 0) {
+	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
+		SDKVersion = getSDKVersion(f_nds_file);
+		showSDKVersion = true;
+	} else if(isHomebrew[cursorPosition[secondaryDevice]] == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 		if (!useBootstrap) {
 			perGameSettings_cursorPosition = 2;
 		}
 	}
+	
+	bool showPerGameSettings =
+		(!isDSiWare[cursorPosition[secondaryDevice]]
+		&& isHomebrew[cursorPosition[secondaryDevice]] != 2
+		&& strcmp(game_TID, "HND") != 0
+		&& strcmp(game_TID, "HNE") != 0
+		&& (useBootstrap && REG_SCFG_EXT != 0));
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -307,7 +322,7 @@ void perGameSettings (std::string filename) {
 				}
 			}
 			printSmall(false, 200, 160, "B: Back");
-		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (!showPerGameSettings) {
 			printSmall(false, 208, 160, "A: OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
@@ -476,7 +491,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-		} else if (isDSiWare[cursorPosition[secondaryDevice]] || isHomebrew[cursorPosition[secondaryDevice]] == 2 || (!useBootstrap && REG_SCFG_EXT == 0)) {
+		} else if (!showPerGameSettings) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}

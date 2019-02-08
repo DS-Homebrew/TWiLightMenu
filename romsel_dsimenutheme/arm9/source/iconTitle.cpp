@@ -71,7 +71,7 @@ u8 *tilesModified = new u8[(32 * 256) / 2];
 
 std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
 
-static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
+void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
 	if (theme == 1) {
 		switch(textlines) {
@@ -491,10 +491,9 @@ void getGameInfo(bool isDir, const char* name, int num)
 		&& ndsHeader.makercode[0] != 0x30 && ndsHeader.makercode[1] != 0x30)
 		|| (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize == 0x151BC)) {
 			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
-		} else if ((ndsHeader.unitCode >= 0x02
-		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000)
-		|| (ndsHeader.unitCode == 0x00 && ndsHeader.gameCode[0] == 0x48)) {
-			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header), or is a DS mode DSiWare title
+		} else if (ndsHeader.unitCode >= 0x02
+		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000) {
+			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
 		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)
 		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
 			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
@@ -899,9 +898,12 @@ void titleUpdate(bool isDir, const char* name, int num)
 			} else {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
-		} else {
+		} else if (theme == 1) {
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, name);
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+		} else {
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}

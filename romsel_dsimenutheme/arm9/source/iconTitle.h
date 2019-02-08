@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 #pragma once
+void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3);
 void getGameInfo(bool isDir, const char* name, int num);
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, const char* name, int num);
