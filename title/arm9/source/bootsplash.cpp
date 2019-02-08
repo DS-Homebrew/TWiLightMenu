@@ -216,8 +216,8 @@ void BootSplashInit(void) {
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
-	vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
-	vramSetBankC (VRAM_C_SUB_BG_0x06200000);
+	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256;
 	REG_BG3X = 0;
 	REG_BG3Y = 0;
