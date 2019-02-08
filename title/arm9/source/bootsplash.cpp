@@ -45,11 +45,33 @@ void BootJingleDSi() {
 void BootSplashDSi(void) {
 
 	u16 whiteCol = 0xFFFF;
-	for (int i = 0; i < 256*192; i++) {
+	for (int i = 0; i < 256*256; i++) {
 		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
 	}
 
 	fadeType = true;
+
+	bool cartInserted = (REG_SCFG_MC != 0x11);
+
+	if (cartInserted) {
+		videoFrameFile = fopen("nitro:/video/dsisplash/nintendo.bmp", "rb");
+
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x1B00, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			for (int i=0; i<122*28; i++) {
+				u16 val = *(src++);
+				if (val != 0x7C1F) {
+					BG_GFX[(256*192)+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				}
+			}
+		}
+		fclose(videoFrameFile);
+	}
 
 	for (int selectedFrame = 0; selectedFrame < 40; selectedFrame++) {
 		if (selectedFrame < 10) {
@@ -80,6 +102,22 @@ void BootSplashDSi(void) {
 		}
 		fclose(videoFrameFile);
 
+		if (cartInserted && selectedFrame > 5) {
+			// Draw first half of Nintendo logo
+			int x = 66;
+			int y = 130+13;
+			for (int i=122*14; i<122*28; i++) {
+				if (x >= 66+122) {
+					x = 66;
+					y--;
+				}
+				if (BG_GFX[(256*192)+i] != 0xFFFF) {
+					videoImageBuffer[selectedFrame][y*256+x] = BG_GFX[(256*192)+i];
+				}
+				x++;
+			}
+		}
+
 		//scanKeys();
 		//if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
@@ -93,6 +131,20 @@ void BootSplashDSi(void) {
 
 			if (loadFrame) {
 				dmaCopy((void*)videoImageBuffer[i], (u16*)BG_GFX+(256*12), 0x12000);
+
+				if (cartInserted && i == 6) {
+					// Draw last half of Nintendo logo
+					int x = 66;
+					int y = 144+13;
+					for (int i=0; i<122*14; i++) {
+						if (x >= 66+122) {
+							x = 66;
+							y--;
+						}
+						BG_GFX[(y+12)*256+x] = BG_GFX[(256*192)+i];
+						x++;
+					}
+				}
 
 				//currentFrame++;
 				//if (currentFrame > i) currentFrame = 0;
@@ -130,6 +182,22 @@ void BootSplashDSi(void) {
 				u16 val = *(src++);
 				videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 				x++;
+			}
+
+			if (cartInserted) {
+				// Draw first half of Nintendo logo
+				int x = 66;
+				int y = 130+13;
+				for (int i=122*14; i<122*28; i++) {
+					if (x >= 66+122) {
+						x = 66;
+						y--;
+					}
+					if (BG_GFX[(256*192)+i] != 0xFFFF) {
+						videoImageBuffer[0][y*256+x] = BG_GFX[(256*192)+i];
+					}
+					x++;
+				}
 			}
 			dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
 		}
