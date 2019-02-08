@@ -457,11 +457,15 @@ int main(int argc, char **argv)
 
 		bool dsiSplashEnabled = false;
 		if (sdAccessible) {
-			CIniFile hiyacfwini(hiyacfwinipath);
-			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
+			if (!sys().arm7SCFGLocked() && ms().consoleModel < 2) {
+				CIniFile hiyacfwini(hiyacfwinipath);
+				dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
+			} else {
+				dsiSplashEnabled = ms().dsiSplash;
+			}
 		}
 
-		if (dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
+		if (dsiSplashEnabled && fifoGetValue32(FIFO_USER_01) != 0x01) {
 			BootSplashInit();
 			fifoSendValue32(FIFO_USER_01, 10);
 		}

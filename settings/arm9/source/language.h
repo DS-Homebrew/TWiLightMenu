@@ -16,6 +16,7 @@ extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
 extern std::string STR_THEME;
 extern std::string STR_LASTPLAYEDROM;
+extern std::string STR_DSISPLASH;
 extern std::string STR_DSIMENUPPLOGO;
 extern std::string STR_DIRECTORIES;
 extern std::string STR_SHOW_HIDDEN;
@@ -37,6 +38,8 @@ extern std::string STR_DESCRIPTION_MAINMENU;
 extern std::string STR_DESCRIPTION_THEME_1;
 
 extern std::string STR_DESCRIPTION_LASTPLAYEDROM_1;
+
+extern std::string STR_DESCRIPTION_DSISPLASH;
 
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
 

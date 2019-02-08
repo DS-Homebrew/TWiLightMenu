@@ -577,8 +577,13 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 	}
 
 	miscPage
-		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
-		//.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false})
+		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false});
+		//.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false});
+	if (sys().arm7SCFGLocked() || ms().consoleModel >= 2) {
+		miscPage
+			.option(STR_DSISPLASH, STR_DESCRIPTION_DSISPLASH, Option::Bool(&ms().dsiSplash), {STR_SHOW, STR_HIDE}, {true, false});
+	}
+	miscPage
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
 	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
