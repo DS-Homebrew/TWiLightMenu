@@ -1,6 +1,10 @@
 #include <nds.h>
 #include <fat.h>
 #include <stdio.h>
+#include <maxmod9.h>
+
+#include "soundbank.h"
+#include "soundbank_bin.h"
 
 #include "common/gl2d.h"
 
@@ -32,7 +36,7 @@ static glImage mdIcon[1];
 static glImage snesIcon[1];
 
 extern u16 bmpImageBuffer[256*192];
-extern u16 videoImageBuffer[40][256*144];
+extern u16 videoImageBuffer[39][256*144];
 
 static char videoFrameFilename[256];
 
@@ -269,12 +273,31 @@ void twlMenuVideo_topGraphicRender(void) {
 	}
 }
 
+void BootJingleTwlMenu() {
+	
+	mmInitDefaultMem((mm_addr)soundbank_bin);
+
+	mmLoadEffect( SFX_TWLMENUVIDEO );
+
+	mm_sound_effect twlmenuvideosound = {
+		{ SFX_TWLMENUVIDEO } ,	// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	
+	mmEffectEx(&twlmenuvideosound);
+}
+
 void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	for (int selectedFrame = 0; selectedFrame < 40; selectedFrame++) {
+	BootJingleTwlMenu();
+
+	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
 		if (selectedFrame < 10) {
 			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame0%i.bmp", selectedFrame);
 		} else {
@@ -312,7 +335,7 @@ void twlMenuVideo(void) {
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
 
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 39; i++) {
 		while (1) {
 			if (!loadFrame) {
 				frameDelay++;
@@ -334,7 +357,7 @@ void twlMenuVideo(void) {
 		swiWaitForVBlank();
 	}
 
-	for (int selectedFrame = 40; selectedFrame <= 43; selectedFrame++) {
+	for (int selectedFrame = 39; selectedFrame <= 43; selectedFrame++) {
 		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.bmp", selectedFrame);
 		videoFrameFile = fopen(videoFrameFilename, "rb");
 

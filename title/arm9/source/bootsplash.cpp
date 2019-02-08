@@ -7,7 +7,7 @@
 #include "soundbank_bin.h"
 
 extern u16 bmpImageBuffer[256*192];
-extern u16 videoImageBuffer[40][256*144];
+extern u16 videoImageBuffer[39][256*144];
 
 extern bool fadeType;
 
@@ -73,7 +73,7 @@ void BootSplashDSi(void) {
 		fclose(videoFrameFile);
 	}
 
-	for (int selectedFrame = 0; selectedFrame < 40; selectedFrame++) {
+	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
 		if (selectedFrame < 10) {
 			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame0%i.bmp", selectedFrame);
 		} else {
@@ -119,7 +119,7 @@ void BootSplashDSi(void) {
 		}
 	}
 
-	for (int i = 0; i < 40; i++) {
+	for (int i = 0; i < 39; i++) {
 		while (1) {
 			if (!loadFrame) {
 				frameDelay++;
@@ -152,11 +152,11 @@ void BootSplashDSi(void) {
 			}
 			swiWaitForVBlank();
 		}
-		if (i == 9) BootJingleDSi();
+		if (i == 10) BootJingleDSi();
 		swiWaitForVBlank();
 	}
 
-	for (int selectedFrame = 40; selectedFrame <= 42; selectedFrame++) {
+	for (int selectedFrame = 39; selectedFrame <= 42; selectedFrame++) {
 		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
 		videoFrameFile = fopen(videoFrameFilename, "rb");
 
