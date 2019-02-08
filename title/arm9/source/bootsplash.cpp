@@ -117,9 +117,6 @@ void BootSplashDSi(void) {
 				x++;
 			}
 		}
-
-		//scanKeys();
-		//if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
 
 	for (int i = 0; i < 40; i++) {
@@ -156,8 +153,6 @@ void BootSplashDSi(void) {
 			swiWaitForVBlank();
 		}
 		if (i == 9) BootJingleDSi();
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 		swiWaitForVBlank();
 	}
 
@@ -202,9 +197,6 @@ void BootSplashDSi(void) {
 			dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
 		}
 		fclose(videoFrameFile);
-
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 	}
 
 	swiWaitForVBlank();
