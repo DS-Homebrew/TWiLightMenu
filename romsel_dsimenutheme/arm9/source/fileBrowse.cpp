@@ -1384,6 +1384,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				if ((pagenum[secondaryDevice] != orgPage) || (cursorPosition[secondaryDevice] != orgCursorPosition))
 				{
+				showbubble = true;
+				writeBannerText(0, "Please wait...", "", "");
+
 				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 				char str[11];

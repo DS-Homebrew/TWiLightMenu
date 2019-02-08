@@ -71,7 +71,7 @@ u8 *tilesModified = new u8[(32 * 256) / 2];
 
 std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
 
-static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
+void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
 	if (theme == 1) {
 		switch(textlines) {
@@ -899,9 +899,12 @@ void titleUpdate(bool isDir, const char* name, int num)
 			} else {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
-		} else {
+		} else if (theme == 1) {
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, name);
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+		} else {
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
+			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}
