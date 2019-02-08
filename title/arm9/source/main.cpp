@@ -491,6 +491,10 @@ int main(int argc, char **argv)
 	{
 		loadTitleGraphics();
 		fadeType = true;
+		for (int i = 0; i < 25; i++)
+		{
+			swiWaitForVBlank();
+		}
 		twlMenuVideo();
 	}
 
