@@ -78,7 +78,7 @@ void vBlankHandler()
 }
 
 void LoadBMP(void) {
-	dmaFillWords(0, BG_GFX, 256*192);
+	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
 	FILE* file = fopen("nitro:/video/twlmenupp/dsi.bmp", "rb");
 

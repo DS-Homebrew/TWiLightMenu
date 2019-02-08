@@ -15,7 +15,7 @@ static bool frameDelayEven = true;	// For 24FPS
 static bool loadFrame = true;
 
 void twlMenuVideo(void) {
-	//dmaFillWords(0, BG_GFX, 256*192);
+	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
 	for (int selectedFrame = 0; selectedFrame < 40; selectedFrame++) {
 		if (selectedFrame < 10) {

@@ -461,10 +461,10 @@ int main(int argc, char **argv)
 			dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
 		}
 
-		/*if (ms().consoleModel < 2 && dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
+		if (dsiSplashEnabled && !sys().arm7SCFGLocked() && fifoGetValue32(FIFO_USER_01) != 0x01) {
 			BootSplashInit();
 			fifoSendValue32(FIFO_USER_01, 10);
-		}*/
+		}
 	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {

@@ -1,62 +1,25 @@
-/*
-    NitroHax -- Cheat tool for the Nintendo DS
-    Copyright (C) 2008  Michael "Chishm" Chisholm
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include <nds.h>
+#include <fat.h>
+#include <stdio.h>
 #include <maxmod9.h>
-
-extern bool fadeType;
-
-#include "graphics/graphics.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
+
+extern u16 bmpImageBuffer[256*192];
+extern u16 videoImageBuffer[40][256*144];
+
+extern bool fadeType;
+
+static char videoFrameFilename[256];
+
+static FILE* videoFrameFile;
+
+//static int currentFrame = 0;
+static int frameDelay = 0;
+static bool frameDelayEven = true;	// For 24FPS
+static bool loadFrame = true;
  
-#include "graphics/bios_decompress_callback.h"
-
-#include "DSi01.h"
-#include "DSi02.h"
-#include "DSi03.h"
-#include "DSi04.h"
-#include "DSi05.h"
-#include "DSi06.h"
-#include "DSi07.h"
-#include "DSi08.h"
-#include "DSi09.h"
-#include "DSi10.h"
-#include "DSi11.h"
-#include "DSi12.h"
-#include "DSi13.h"
-#include "DSi14.h"
-#include "DSi15.h"
-#include "DSi16.h"
-#include "DSi17.h"
-#include "DSi18.h"
-#include "DSi19.h"
-#include "DSi20.h"
-#include "DSi21.h"
-#include "DSi22.h"
-#include "DSi23.h"
-#include "DSi24.h"
-#include "DSi25.h"
-#include "DSi26.h"
-#include "DSi27.h"
-#include "DSi28.h"
-
 #include "bootsplash.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
@@ -81,148 +44,105 @@ void BootJingleDSi() {
 
 void BootSplashDSi(void) {
 
-	swiDecompressLZSSVram ((void*)DSi01Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	swiDecompressLZSSVram ((void*)DSi01Tiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi01Pal, DSi01PalLen);
-	vramcpy_ui (&BG_PALETTE_SUB[0], DSi01Pal, DSi01PalLen);
+	u16 whiteCol = 0xFFFF;
+	for (int i = 0; i < 256*192; i++) {
+		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+	}
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	clearBrightness();
+	fadeType = true;
 
-	swiDecompressLZSSVram ((void*)DSi02Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi02Pal, DSi02PalLen);
+	for (int selectedFrame = 0; selectedFrame < 40; selectedFrame++) {
+		if (selectedFrame < 10) {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame0%i.bmp", selectedFrame);
+		} else {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
+		}
+		videoFrameFile = fopen(videoFrameFilename, "rb");
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	
-	swiDecompressLZSSVram ((void*)DSi03Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi03Pal, DSi03PalLen);
-	
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	
-	swiDecompressLZSSVram ((void*)DSi04Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi04Pal, DSi04PalLen);
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x14000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 143;
+			for (int i=0; i<256*144; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				x++;
+			}
+		}
+		fclose(videoFrameFile);
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
+		//scanKeys();
+		//if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+	}
 
-	swiDecompressLZSSVram ((void*)DSi05Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi05Pal, DSi05PalLen);
+	for (int i = 0; i < 40; i++) {
+		while (1) {
+			if (!loadFrame) {
+				frameDelay++;
+				loadFrame = (frameDelay == 2+frameDelayEven);
+			}
 
-	BootJingleDSi();
+			if (loadFrame) {
+				dmaCopy((void*)videoImageBuffer[i], (u16*)BG_GFX+(256*12), 0x12000);
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	
-	swiDecompressLZSSVram ((void*)DSi06Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi06Pal, DSi06PalLen);
-		
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
+				//currentFrame++;
+				//if (currentFrame > i) currentFrame = 0;
+				frameDelay = 0;
+				frameDelayEven = !frameDelayEven;
+				loadFrame = false;
+				break;
+			}
+			swiWaitForVBlank();
+		}
+		if (i == 9) BootJingleDSi();
+		scanKeys();
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		swiWaitForVBlank();
+	}
 
-	swiDecompressLZSSVram ((void*)DSi07Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi07Pal, DSi07PalLen);
+	for (int selectedFrame = 40; selectedFrame <= 42; selectedFrame++) {
+		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
+		videoFrameFile = fopen(videoFrameFilename, "rb");
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x14000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 143;
+			for (int i=0; i<256*144; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				x++;
+			}
+			dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
+		}
+		fclose(videoFrameFile);
 
-	swiDecompressLZSSVram ((void*)DSi08Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi08Pal, DSi08PalLen);
+		scanKeys();
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+	}
 
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	
-	swiDecompressLZSSVram ((void*)DSi09Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi09Pal, DSi09PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi10Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi10Pal, DSi10PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi11Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi11Pal, DSi11PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi12Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi12Pal, DSi12PalLen);
-	
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi13Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi13Pal, DSi13PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi14Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi14Pal, DSi14PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi15Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi15Pal, DSi15PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi16Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi16Pal, DSi16PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi17Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi17Pal, DSi17PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-	
-	swiDecompressLZSSVram ((void*)DSi18Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi18Pal, DSi18PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi19Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi19Pal, DSi19PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi20Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi20Pal, DSi20PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi21Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi21Pal, DSi21PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi22Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi22Pal, DSi22PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi23Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi23Pal, DSi23PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi24Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi24Pal, DSi24PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi25Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi25Pal, DSi25PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi26Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi26Pal, DSi26PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi27Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi27Pal, DSi27PalLen);
-
-	for (int i = 0; i < 3; i++) { swiWaitForVBlank(); }
-
-	swiDecompressLZSSVram ((void*)DSi28Tiles, (void*)CHAR_BASE_BLOCK(2), 0, &decompressBiosCallback);
-	vramcpy_ui (&BG_PALETTE[0], DSi28Pal, DSi28PalLen);
+	swiWaitForVBlank();
+	for (int i = 0; i < 256*60; i++) {
+		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+	}
 
 	// Pause on frame 31 for a second		
 	for (int i = 0; i < 80; i++) { swiWaitForVBlank(); }
@@ -234,18 +154,22 @@ void BootSplashDSi(void) {
 
 void BootSplashInit(void) {
 
-	videoSetMode(MODE_0_2D | DISPLAY_BG0_ACTIVE);
+	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
-	vramSetBankA (VRAM_A_MAIN_BG_0x06000000);
+	vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
 	vramSetBankC (VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2);
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256;
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1<<8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1<<8;
 	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2);
 	BG_PALETTE[0]=0;
-	BG_PALETTE[255]=0xffff;
-	u16* bgMapTop = (u16*)SCREEN_BASE_BLOCK(0);
+	BG_PALETTE_SUB[0]=0x7fff;
 	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapTop[i] = (u16)i;
 		bgMapSub[i] = (u16)i;
 	}
 
