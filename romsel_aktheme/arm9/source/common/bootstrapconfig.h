@@ -21,10 +21,12 @@ class BootstrapConfig
         BootstrapConfig& donorSdk(int sdk);
         BootstrapConfig& mpuSize(int mpuSize);
         BootstrapConfig& mpuRegion(int mpuRegion);
+        BootstrapConfig& ceCached(bool ceCached);
         BootstrapConfig& saveSize(int saveSize);
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
+        BootstrapConfig& speedBump();
         BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
@@ -70,6 +72,7 @@ class BootstrapConfig
         int _donorSdk;
         int _mpuSize;
         int _mpuRegion;
+		bool _ceCached;
         int _forceSleepPatch;
         bool _isHomebrew;
         int _saveSize;
