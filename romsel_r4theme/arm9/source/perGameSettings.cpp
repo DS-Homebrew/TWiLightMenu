@@ -473,7 +473,7 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
 						break;
 				}
-				perGameSettingsChanged = !perGameSettingsChanged;
+				perGameSettingsChanged = true;
 			}
 
 			if (pressed & KEY_B) {
