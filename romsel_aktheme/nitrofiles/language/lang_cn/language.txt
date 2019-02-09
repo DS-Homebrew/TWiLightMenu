@@ -1,9 +1,10 @@
+// Translation By R-YaTian
 [font]
 main = wenquanyi_9pt.pcf
 language = 1
 
 [start menu]
-Start = START
+Start = 菜单
 Copy = 复制
 Cut = 剪切
 Paste = 粘贴
@@ -32,95 +33,86 @@ error_text = 没有找到金手指文件。
 selectrom = 请选择.NDS 文件
 noxml = 没有找到金手指 XML 文件
 ccexists = .CC 金手指文件已经存在，重新创建？
-nonefound = 在 XML文件中没有找到金手指
+nonefound = 在 XML 文件中没有找到金手指
 xmlselect = XML 选择
 confirm = 确定
 confirm_rebuild = 重建 .CC 金手指文件?
 invalid cheatdb = 无效的金手指数据文库
 Rebuild = 重建
-Sel. DB = 选择金手指数据文库
+Sel. DB = 选择金手指数据库
 
 [progress window]
-processing save = 正在处理存档，请不要关机
-processing copy = 正在复制文件，请不要关机，按 %c 取消
-first use sd = 正在为第一次使用 SD 卡做准备
-gba load = 读取 GBA 游戏
-gba save load = 正在读取 GBA 存档
-gba save store = 正在写入 GBA 存档，请不要关机
-erase nor = 清除 NOR 内存数据
+processing save = 正在处理存档，请不要关闭电源！
+processing copy = 正在复制文件，请不要关机，按 %c 取消！
+first use sd = 正在为第一次使用SD卡做准备...
+gba load = 读取GBA游戏
+gba save load = 正在读取GBA存档...
+gba save store = 正在处理GBA存档，请不要关机！
+erase nor = 正在清除NOR内存数据，请不要关机！
 rebuilding cheat data = 正在重建金手指文件
 
 [copy file error]
-title = 文件复制错误
-text = 文件不存在
+title = 错误
+text = 复制文件时发生错误！
 
 [copy file exists]
-title = 覆盖已有文件
-text = 有相同文件名的文件存在，要覆盖吗?
+title = 注意
+text = 有同名文件存在，确定需要覆盖吗？
 
 [copy dest is directory]
-title = 文件复制错误
-text = 有相同名字的目录存在，不能将文件复制到这里
+title = 错误
+text = 有同名目录存在，不能将文件复制到此处！
 
 [move dest is directory]
-title = 剪切文件错误
-text = 有相同名字的目录存在，不能将文件剪切到这里
+title = 错误
+text = 有同名目录存在，不能将文件剪切到此处！
 
 [no copy dir]
-title = 文件夹复制/剪切错误
-text = 不能复制或剪切一个目录
+title = 错误
+text = 不能复制或剪切一个目录！
 
 [stop copying file]
-title = 停止复制文件
-text = 要停止拷贝这个文件吗？
+title = 注意
+text = 确定需要停止复制操作吗？
 
 [confirm delete file]
-title = 确认删除文件/文件夹
-text = 删除文件后不能恢复，确实要删除 “%s” 吗？
+title = 注意
+text = 删除文件后不可以恢复，确定需要删除"%s" 吗？
 text2 = 如果您想继续请按“否”。否则请按“是”。
 
 [do not delete directory]
-title = 文件夹删除代陙E
-text = 该目录下还有文件或者目录，不能直接删除
+title = 警告
+text = 该目录下还有文件或目录，不能直接删除！
 
 [unknown save type]
-title = 未知存档类型
-text = 此程序存档类型未知，按 A 选择存档类型
+title = 注意
+text = 存档类型是未知的，请按需求选择存档类型！
 
 [no savelist]
 title = 读取存档列表错误
-text = 不能读取存档列柄楷“savelist.bin” 丢失
+text = 不能读取存档列表或 “savelist.bin” 丢失
 
 [restore save fail]
-title = 存档恢复失败
-text = 存档恢复失败，要继续吗？
+title = 警告
+text = 恢复存档错误，要继续吗？
 
 [backup save fail]
 title = 存档备份失败
 text = 存档备份失败，磁盘上可能没有足够的空间
 
 [language changed]
-title = 系统语言改变
-text = 系统语言改变，要现在重启更换新的语言吗？选“否”稍后再重启
+title = 询问
+text = 改变了系统语言要现在重启更换新的语言吗？选“否”稍后再重启
 
 [ui style changed]
-title = 改变菜单皮肤
+title = 询问
 text = 改变了用户界面风格，必须重启系统才能生效，要现在重启更换新的风格吗？选“否”保持当前的界面风格
-
-[setting window]
-ok = 确定
-savetype = 存档类型
-cancel = 取消
-confirm = 确认
-confirm text = 要保存当前的设置吗？
-shortcut = 快捷方式
-delete shortcut = 删除快捷方式
 
 [save type]
 title = 设置存档类型
 text = 选择一个存档类型
-Unknown = 未知/自动
-No Save = 没有存档
+Unknown = 自动
+No Save = 无存档
 4K = 4K
 64K = 64K
 512K = 64K/512K
@@ -143,53 +135,53 @@ free = 剩余空间：%s
 
 [no free space]
 title = 磁盘空间不足
-text = 磁盘空间不足，无法完成拷贝
+text = 磁盘空间不足，无法完成拷贝复制
 
 
 [sd speed]
-text = 设置TF卡速度
+text = 设置SD卡速度
 item0 = 极速
 item1 = 快速
 item2 = 中速
 item3 = 慢速
 
 [unsupported sd]
-title = 不兼容的tf卡
-text = 您使用的tf卡(型号:%s) 不适合直接运行 DS 官方程序，请拷贝到 Acekard 内置闪存中再运行
+title = 不兼容的SD卡
+text = 您使用的SD卡(型号:%s)不适合直接运行DS官方程序，请复制到内置闪存中再运行！
 
 [sd card error]
-title = tf卡读取错误
-text = 无法访问tf卡的内容，tf卡可能没有插好
+title = SD卡读取错误
+text = 无法读取SD卡的内容，SD卡可能没有插好！
 
 [no sd for save]
-title = tf卡上的存档无法保存
-text = 无法访问tf卡，之前的存档信息将被备份到内置闪存的：%s 文件中
+title = SD卡上的存档无法保存
+text = 无法读取SD卡，之前的存档信息将被备份到内置闪存的: %s文件中！
 
 [no gba card]
 title = 未检测到扩展卡
-text = SLOT2 并没有插入设备
+text = Slot2端没有插入设备！
 
 [filelist type]
-text = 设置文件列表方式
-item0 = NDS
-item1 = NDS 和 SAV
+text = 列表格式
+item0 = NDS图标
+item1 = NDS和SAV
 item2 = NDS,SAV和BAK
 item3 = 显示所有
 
 [rom trim]
-text = 拷贝时自动裁剪ROM
-item0 = 启用
-item1 = 禁用
+text = 复制时裁剪Rom
+item0 = 禁用
+item1 = 启用
 
 [cheat]
 text = 使用金手指
-item0 = 启用
-Item1 = 禁用
+item0 = 禁用
+item1 = 启用
 
 [autorun]
 text = 自动运行
-item0 = 启用
-item1 = 禁用
+item0 = 禁用
+item1 = 启用
 
 [language]
 text = 语言
@@ -208,46 +200,48 @@ item9 = 荷兰语
 text = 屏幕亮度
 
 [ui style]
-text = 菜单皮肤
+text = 界面风格
 
 [help window]
-title = 帮助信息 中文菜单翻译 摸摸裤 080805
+title = 帮助信息
 item0 = %c  选择游戏（上/下/翻页）
 item1 = %c  开始/确定/是
 item2 = %c  后退/取消/否
 item3 = %c  查看文件信息 / 选择存档类型
-item4 = %c  切换 tf卡 / NAND内磥E
+item4 = %c  切换至 收藏夹
 item5 = %c  返回上一级目录
 item6 = %c  调节亮度（四级亮度调节）
 item7 = %s  开始菜单
-item8 = %s  切换 图标列表模式/文字列表模式
+item8 = %s  列表模式/经典模式
 versions = HW: %02x NDD: %02x
 
 [exp window]
 title = EZ3合1 扩展卡设置
 ram = RAM
-sram = sRAM
-off = 关
-low = 低
-mid = 中
-high = 高
+sram = SRAM
+off = 关闭
+low = 低档
+mid = 中档
+high = 高档
 strength = 震动级别
 NOR Mode = 使用NOR内存运行gba游戏
 auto = 自动
-always = 一直
-notdetected = 没有找到EZ3合1/EWin扩展卡  
+always = 始终
+notdetected = 没有找到EZ3合1/EWin扩展卡
 
 [abort save]
-title = 取消存档
-text = 您确定取消存档？
+title = 询问
+text = 确定需要取消存档操作？
 
 [gba warn]
-title = GBA rom 容量过大
-text = 不支持大于32M的 GBA rom!
+title = GBA游戏错误
+text = 不支持大于32MB的GBA游戏！
 
 [switches]
+Default = 默认
 Enable = 启用
 Disable = 禁用
+auto menu = 自动菜单
 
 [shortcut overwrite]
 title = 覆盖现有快捷方式？
@@ -259,27 +253,28 @@ text = 你是否想要删除现有快捷方式？
 
 [slot2]
 gbamode = 引导到GBA模式
-passme = 引导到NDS模式（PassMe）
-backupsramq = 备份 SRAM Bank1（FAS1）
+passme = 引导到NDS模式(PassMe)
+backupsramq = 备份 SRAM Bank %d（FAS1）
 
 [fas1]
-question = 问题
-title = FAS1 选择
+question = 询问
+title = FAS1 选项
 useFAS1 = 使用 FlashAdvance 功能
-listgba = 列出EGBA/BIN 文件
-verifyFAS1 = 验证写入 ?
+listgba = 列出 GBA/BIN 文件
+verifyFAS1 = 验证写入？
 item0 = 否
 item1 = 是
 StartMenuDescription = FAS1
 prompt = 写入 ROM
 flashquestion = 烧录 ROM 到烧录卡? (%.2fMB / 约 %.1f 分.)
-writeprompt = 写入 Bank 1?
+writeprompt = 写入 Bank %d?
 backupsramq = 备份烧录卡上的 Slot-1 
-backupsram = 备份 Bank 1 [%iKB] (按 %c 取消)
+backupsram = 备份 Bank %d [%iKB] (按 %c 取消)
 saveerror = 并不是 64KB 存档文件, 仍要继续？
 unsupported = FAS1: 不支持的烧录卡
-writingpercent = 已经写入 %iKB of %iKB, (按 %c 取消)
+writingpercent = 已经写入 %iKB/%iKB, (按 %c 取消)
 savebytes = 写入 %i 字节 (按 %c 取消)
+dumpallsram = 备份 SRAM Banks (FAS1)?
 
 [save backup]
 question = 备份存档?
@@ -294,8 +289,8 @@ overwrite = 存档文件已经存在, 是否覆盖?
 [textview]
 confirm = 确定
 exit = 退出文本浏览模式？
-error = 打开文件代码错误
-file open error = 不能打开此文本文件。返回 AKAIO 系统菜单。
+error = 打开文件错误
+file open error = 不能打开此文本文件。返回系统菜单。
 screen angle = 显示角度
 normal = 普通
 rotate 90 = 旋转 90
@@ -317,56 +312,50 @@ text = 选择要使用的存档位置
 [romnametype]
 Normal = 正常
 HideExtName = 隐藏扩展名
-BannerTitle = Internal Name
+BannerTitle = 内部名称
 
 [cheat]
 text = 使用金手指
-item0 = 无效
-Item1 = 有效
+item0 = 禁用
+Item1 = 启用
 
 [setting window]
-ok = OK
+ok = 确定
 savetype = 存档类型
 cancel = 取消
-confirm = 确认保存设置
-confirm text = 您确定要保存当前设置吗？
+confirm = 确认
+confirm text = 确定需要保存当前的设置吗？
 shortcut = 快捷方式
-delete shortcut = 删除
-rominfo = Rom设置
+delete shortcut = 删除快捷方式
+rominfo = 文件信息
 setting = 设置
 
-[switches]
-Default = 默认
-Enable = 有效
-Disable = 无效
-auto menu = 自动菜单
-
 [rom info]
-title = 属性
+title = 文件信息
 title_copywnd = 拷贝存档位置
-file date = 最后一次更改: %d/%d/%d %02d:%02d:%02d(GMT)
+file date = 最后写入: %d/%d/%d/ %02d:%02d:%02d
 file size = 文件大小: %s
 save type = 存档类型: %s
-game code = 游戏代码: %s
+game code = 游戏编码: %s
 save slot = 选择存档位置
 save slot copy = 从 %s 到:
-Slot = 位置
+Slot = Slot
 cheat menu = 金手指菜单
 copy menu = 拷贝存档位置
-save extension = 存档后缀名
+save extension = 存档扩展名
 convert text = 转换存档
 convert text = 确认从 %s 转换到 %s ?
 
 [patches]
-title = 默认补丁设置
+title = 功能设置
 download play = DS Download Play
 cheating system = 金手指
 slow motion = 慢动作
 reset in game = 软复位
 3in1 = 3in1
 ak2 loader = AK2 Loader
-altloadernotfound = 未能找到替换Loader，直接启动？
-patching loader = 为AKAIO使用的替换Loader打补丁
+altloadernotfound = 未能找到可代替的Loader，直接启动？
+patching loader = 为AKAIO使用的代替Loader打补丁
 IRQ Hook = IRQ Hook
 SWI Hook = SWI Hook
 bypass antipiracy = 反烧录补丁
@@ -378,6 +367,7 @@ Show Hidden Files = 显示隐藏文件
 Hide Extension Name = 隐藏 ROM 扩展名
 Scrolling Speed = 滚屏速度
 CopyCut Saves Too = 复制/剪切存档和游戏
+Inverted Touch Scrolling = 触摸滚动反转
 Delete Saves Too = 删除存档和游戏
 Cheat Scrolling = 金手指滚动条
 Cheat Scrolling Speed = 金手指滚动速度
@@ -387,12 +377,13 @@ Homebrew Reset Type = 自制软件软复位类型
 DATorXML = 要下载的文件
 updateDB = 通过Wifi升级
 updateDB = 更新 DB
-startupdatetitle = USRCheat 更新程序
-get whatsnew = 读取 WhatsNew.txt
+SaveList = savelist.bin
+startupdatetitle = 更新程序
+get whatsnew = 获取 WhatsNew.txt
 startupdatequestion = 请问你要启动更新程序吗?
 WFCConnection = 正在使用 WFC, 按 %c 取消
-cantconnect = 接不到, 清查看 WFC 设置
-stopconnectquestion = 请问你要停止 wifi 吗?
+cantconnect = 无法连接, 请查看 WFC 设置
+stopconnectquestion = 请问你要停止 wifi 连接吗?
 stopconnecttitle = 停止
 getwhatsnew = 获取 What's New
 downloadthisfile = 下载金手指文件日期 %s?
@@ -400,29 +391,34 @@ downloaderror = 下载文件错误
 downloadstart = 正在下载文件, 按 %c 取消
 stopdownloadquestion = 请问你要停止下载吗?
 stopdownloadtitle = 停止下载
-downloading = 下载 %.0fKb/%.0fKb, 按 %c 取消
-unzipstop = 要停止 unzipping 吗?
-unzipstoptitle = Unzip 斩停 
-unzipping = Unzipping 文件, 按 %c 取消
+downloading = 已下载 %.0fKb/%.0fKb, 按 %c 取消
+unzipstop = 要停止解压吗?
+unzipstoptitle = 暂停解压
+unzipping = 解压文件中, 按 %c 取消
 unziperror = 解压出现错误
 success = 成功，请享用最新的 %s
 error = 更新错误，仍要继续？
 resumeupdatetitle = 继续下载
-resumethisfile = 继续下载 %s  %.0fKb?
+resumethisfile = 继续下载 %s/%.0fKb?
 deletepartial = 删除未下载完成的文件？
 previousdates = 前一个数据
 previousfiles = 前一个文件
+cheats = 金手指
+loader = 更新Loader
+wifi = Wifi插件
+3version = 版本3
+5version = 版本5
+Checking Site = 查看AKAIO网站
+whatsnew notice = 仅官网
+site = 哪一个金手指文件?
 site1 = 官方网站
+site2 = AKAIO (yusuo)
 previous date notice = 仅Wifi和Loader更新
 
-
-[wifisave]
-
-
 [text viewer]
-text = TXT Viewer
-item0 = Plugin
-item1 = Internal
+text = 文本查看器
+item0 = 插件
+item1 = 内置
 title = 插件设置
 
 [interface settings]
@@ -434,10 +430,6 @@ filelist style = 文件显示风格
 Hide File Extensions = 隐藏扩展名
 Icon Animation = 图标动画
 
-[exp window]
-
-[gba settings]
-
 [ram allocation]
 title = 文件复制错误
 memory allocation error = 内存分配错误
@@ -447,41 +439,43 @@ CheatOn = 此游戏的金手指已经激活。
 CheatOff = 此游戏的金手指未激活。
 SoftresetOn = 此游戏的软复位已经激活。
 SoftresetOff = 此游戏的软复位没有激活。
-[clone card error]
-title = 假卡警告！
-text = 您使用的可能是假Acekard.\n    请联系您的经销商\n   或者访问我们的官网:\n\n      www.acekard.com\n
 
 [game settings]
-Default = Default
-System = System
-Japanese = Japanese
-English = English
-French = French
-German = German
-Italian = Italian
-Spanish = Spanish
-Language = Language
-CPU Frequency = CPU Frequency
-Off = Off
-On = On
-Sound Fix = Sound Fix
-Async Prefetch = Async Prefetch
-Use Bootstrap = Use Bootstrap
-Direct Boot = Direct Boot
-Per Game Settings = Per Game Settings
+Default = 默认
+System = 跟随系统
+Japanese = 日语
+English = 英语
+French = 法语
+German = 德语
+Italian = 意大利语
+Spanish = 西班牙语
+Language = 语言
+CPU Frequency = CPU频率
+Off = 关闭
+On = 开启
+Sound Fix = 音效修正
+Async Prefetch = 异步预取
+Use Bootstrap = 使用Bootstrap
+Direct Boot = 直接启动
+Per Game Settings = 单个游戏设置
 
 [game launch]
-ROM Start Error = ROM Start Error
-error = Error %i
-Please wait = Please wait...
-NDS Bootstrap Error = NDS Bootstrap Error
-GBARunner2 Error = GBARunner2 Error
-Flashcard Error = Flashcard Error
-Launch Error = Launch Error
+ROM Start Error = 游戏启动错误
+error = 错误类型 %i
+Please wait = 请等待...
+NDS Bootstrap Error = NDS Bootstrap 错误
+GBARunner2 Error = GBARunner2 错误
+Sega8bit Error = SEGA 8-bit 内存盘错误
+Sega8bit Error Message = 在 "sd:/_nds/TWiLightMenu/emulators/" 找不到 SEGA 8-bit 内存盘
+SegaMD Error = SEGA MD 内存盘错误
+SegaMD Error Message = 在 "sd:/_nds/TWiLightMenu/emulators/" 找不到 SEGA Mega Drive (Genesis) 内存盘
+SNES Error = SNES 内存盘错误
+SNES Error Message = 在 "sd:/_nds/TWiLightMenu/emulators/" 找不到 SNES 内存盘
+Flashcard Error = 烧录卡错误
+Launch Error = 启动错误
+Preparing Unlaunch Boot = 准备 Unlaunch 启动...
+Unlaunch Error = Unlaunch 错误
+unlaunch boot = 使用Unlaunch启动DSiWare
+unlaunch instructions = 在保存后, 请重启此菜单来转回你保存的数据
 
-Preparing Unlaunch Boot = Preparing Unlaunch Boot...
-Unlaunch Error = Unlaunch Error
-unlaunch boot = Boot DSiWare with Unlaunch
-
-unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
 [end]
