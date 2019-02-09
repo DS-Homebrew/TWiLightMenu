@@ -42,12 +42,13 @@ static char videoFrameFilename[256];
 
 static FILE* videoFrameFile;
 
-//static int currentFrame = 0;
-static int frameDelay = 0;
-static bool frameDelayEven = true;	// For 24FPS
+extern bool rocketVideo_playVideo;
+extern int rocketVideo_videoYpos;
+extern int rocketVideo_videoFrames;
+extern int rocketVideo_currentFrame;
+
 static int frameDelaySprite = 0;
 static bool frameDelaySpriteEven = true;	// For 24FPS
-static bool loadFrame = true;
 static bool loadFrameSprite = true;
 
 static int zoomingIconXpos[9] = {-32, 128, 256, 256, 128, -32, -128, 128, 256+96};
@@ -333,25 +334,14 @@ void twlMenuVideo(void) {
 	while (zoomingIconYpos[8] < 64) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		swiWaitForVBlank();
 	}
 
-	for (int i = 0; i < 39; i++) {
-		while (1) {
-			if (!loadFrame) {
-				frameDelay++;
-				loadFrame = (frameDelay == 2+frameDelayEven);
-			}
+	rocketVideo_videoFrames = 43;
+	rocketVideo_videoYpos = 24;
+	rocketVideo_playVideo = true;
 
-			if (loadFrame) {
-				dmaCopy((void*)videoImageBuffer[i], (u16*)BG_GFX+(256*24), 0x12000);
-
-				frameDelay = 0;
-				frameDelayEven = !frameDelayEven;
-				loadFrame = false;
-				break;
-			}
-			swiWaitForVBlank();
-		}
+	while (rocketVideo_playVideo && rocketVideo_currentFrame < 5) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
 		swiWaitForVBlank();
@@ -376,15 +366,21 @@ void twlMenuVideo(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 				x++;
 			}
-			dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
+			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
 		}
 		fclose(videoFrameFile);
 
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+	}
+
+	while (rocketVideo_playVideo) {
+		scanKeys();
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		swiWaitForVBlank();
 	}
 
 	// Change TWL letters to user color
@@ -407,7 +403,7 @@ void twlMenuVideo(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {
-				BG_GFX[(y+24)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 			}
 			x++;
 		}

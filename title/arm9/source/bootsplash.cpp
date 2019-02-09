@@ -15,11 +15,11 @@ static char videoFrameFilename[256];
 
 static FILE* videoFrameFile;
 
-//static int currentFrame = 0;
-static int frameDelay = 0;
-static bool frameDelayEven = true;	// For 24FPS
-static bool loadFrame = true;
- 
+extern bool rocketVideo_playVideo;
+extern int rocketVideo_videoYpos;
+extern int rocketVideo_videoFrames;
+extern int rocketVideo_currentFrame;
+
 #include "bootsplash.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
@@ -119,40 +119,28 @@ void BootSplashDSi(void) {
 		}
 	}
 
-	for (int i = 0; i < 39; i++) {
-		while (1) {
-			if (!loadFrame) {
-				frameDelay++;
-				loadFrame = (frameDelay == 2+frameDelayEven);
-			}
+	rocketVideo_videoFrames = 42;
+	rocketVideo_videoYpos = 12;
+	rocketVideo_playVideo = true;
 
-			if (loadFrame) {
-				dmaCopy((void*)videoImageBuffer[i], (u16*)BG_GFX+(256*12), 0x12000);
-
-				if (cartInserted && i == 6) {
-					// Draw last half of Nintendo logo
-					int x = 66;
-					int y = 144+13;
-					for (int i=0; i<122*14; i++) {
-						if (x >= 66+122) {
-							x = 66;
-							y--;
-						}
-						BG_GFX[(y+12)*256+x] = BG_GFX[(256*192)+i];
-						x++;
-					}
+	while (rocketVideo_playVideo) {
+		if (cartInserted && rocketVideo_currentFrame == 6) {
+			// Draw last half of Nintendo logo
+			int x = 66;
+			int y = 144+13;
+			for (int i=0; i<122*14; i++) {
+				if (x >= 66+122) {
+					x = 66;
+					y--;
 				}
-
-				//currentFrame++;
-				//if (currentFrame > i) currentFrame = 0;
-				frameDelay = 0;
-				frameDelayEven = !frameDelayEven;
-				loadFrame = false;
-				break;
+				BG_GFX[(y+12)*256+x] = BG_GFX[(256*192)+i];
+				x++;
 			}
-			swiWaitForVBlank();
 		}
-		if (i == 10) BootJingleDSi();
+		if (rocketVideo_currentFrame == 10) {
+			BootJingleDSi();
+			break;
+		}
 		swiWaitForVBlank();
 	}
 
@@ -175,7 +163,7 @@ void BootSplashDSi(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 				x++;
 			}
 
@@ -189,17 +177,21 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					if (BG_GFX[(256*192)+i] != 0xFFFF) {
-						videoImageBuffer[0][y*256+x] = BG_GFX[(256*192)+i];
+						videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
 					}
 					x++;
 				}
 			}
-			dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
+			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
 		}
 		fclose(videoFrameFile);
 	}
 
+	while (rocketVideo_playVideo) {
+		swiWaitForVBlank();
+	}
 	swiWaitForVBlank();
+
 	for (int i = 0; i < 256*60; i++) {
 		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
 	}

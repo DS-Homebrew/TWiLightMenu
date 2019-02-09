@@ -33,6 +33,14 @@ extern bool fadeType;
 bool controlTopBright = true;
 int screenBrightness = 31;
 
+bool rocketVideo_playVideo = false;
+int rocketVideo_videoYpos = 0;
+int rocketVideo_videoFrames = 0;
+int rocketVideo_currentFrame = -1;
+int rocketVideo_frameDelay = 0;
+bool rocketVideo_frameDelayEven = true;	// For 24FPS
+bool rocketVideo_loadFrame = true;
+
 bool twlMenuSplash = false;
 extern void twlMenuVideo_loadTopGraphics(void);
 extern void twlMenuVideo_topGraphicRender(void);
@@ -80,6 +88,29 @@ void vBlankHandler()
 	SetBrightness(1, screenBrightness);
 	if (twlMenuSplash) {
 		twlMenuVideo_topGraphicRender();
+	}
+	if (rocketVideo_playVideo) {
+		if (!rocketVideo_loadFrame) {
+			rocketVideo_frameDelay++;
+			rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
+		}
+
+		if (rocketVideo_loadFrame) {
+			rocketVideo_currentFrame++;
+
+			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+				rocketVideo_playVideo = false;
+				rocketVideo_currentFrame = -1;
+				rocketVideo_frameDelay = 0;
+				rocketVideo_frameDelayEven = true;
+				rocketVideo_loadFrame = false;
+			} else {
+				dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+				rocketVideo_frameDelay = 0;
+				rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+				rocketVideo_loadFrame = false;
+			}
+		}
 	}
 }
 
