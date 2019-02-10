@@ -159,6 +159,17 @@ int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 int vblankRefreshCounter = 0;
 
 static u16 bmpImageBuffer[256*192];
+//static u16 renderedImageBuffer[256*192];
+
+static bool rotatingCubesLoaded = false;
+
+bool rocketVideo_playVideo = false;
+int rocketVideo_videoYpos = 78;
+int rocketVideo_videoFrames = 0xC7;
+int rocketVideo_currentFrame = -1;
+int rocketVideo_frameDelay = 0;
+bool rocketVideo_frameDelayEven = true;	// For 24FPS
+bool rocketVideo_loadFrame = true;
 
 int bubbleYpos = 80;
 int bubbleXpos = 122;
@@ -340,6 +351,29 @@ void reloadDboxPalette() {
 	tex().reloadPalDialogBox();
 }
 
+static void* rotatingCubesLocation = (void*)0x02800000;
+
+void playRotatingCubesVideo(void) {
+	if (rocketVideo_playVideo) {
+		if (!rocketVideo_loadFrame) {
+			rocketVideo_frameDelay++;
+			rocketVideo_loadFrame = (rocketVideo_frameDelay == 6);
+		}
+
+		if (rocketVideo_loadFrame) {
+			rocketVideo_currentFrame++;
+
+			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+				rocketVideo_currentFrame = 0;
+			}
+			dmaCopy(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);
+			rocketVideo_frameDelay = 0;
+			//rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+			rocketVideo_loadFrame = false;
+		}
+	}
+}
+
 void vBlankHandler()
 {
 	execQueue(); // Execute any actions queued during last vblank.
@@ -369,6 +403,10 @@ void vBlankHandler()
 			waitForNeedToPlayStopSound = 0;
 		}
 		needToPlayStopSound = false;
+	}
+
+	if (theme == 1 && rotatingCubesLoaded) {
+		playRotatingCubesVideo();
 	}
 
 	glBegin2D();
@@ -1764,6 +1802,64 @@ void clearBoxArt() {
 	}
 }
 
+//static char videoFrameFilename[256];
+
+void loadRotatingCubes() {
+	FILE* videoFrameFile = fopen("nitro:/video/3dsRotatingCubes.rvid", "rb");
+
+	/*for (u8 selectedFrame = 0; selectedFrame <= 0xC7; selectedFrame++) {
+		if (selectedFrame < 0x10) {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/3dsRotatingCubes/0x0%x.bmp", (int)selectedFrame);
+		} else {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/3dsRotatingCubes/0x%x.bmp", (int)selectedFrame);
+		}
+		videoFrameFile = fopen(videoFrameFilename, "rb");
+
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x7000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 55;
+			for (int i=0; i<256*56; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				renderedImageBuffer[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				x++;
+			}
+		}
+		fclose(videoFrameFile);
+		memcpy(rotatingCubesLocation+(selectedFrame*0x7000), renderedImageBuffer, 0x7000);
+	}*/
+
+	if (videoFrameFile) {
+		bool doRead = false;
+
+		if (isDSiMode()) {
+			doRead = true;
+		} else if (isRegularDS) {
+			sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
+			*(vu32*)(0x09000000) = 0x53524C41;
+			if (*(vu32*)(0x09000000) == 0x53524C41) {
+				// Set to load video into DS Memory Expansion Pak
+				rotatingCubesLocation = (void*)0x09000000;
+				doRead = true;
+			}
+		}
+		if (doRead) {
+			fread(rotatingCubesLocation, 1, 0x580000, videoFrameFile);
+			rotatingCubesLoaded = true;
+			rocketVideo_playVideo = true;
+		}
+	}
+}
+
 void graphicsInit()
 {
 	
@@ -1901,6 +1997,7 @@ void graphicsInit()
 		loadTime();
 		loadClockColon();
 		bottomBgLoad(false, true);
+		loadRotatingCubes();
 	} else {
 		switch(subtheme) {
 			default:

@@ -243,6 +243,8 @@ void InitSound() {
 
 extern bool music;
 
+extern bool rocketVideo_playVideo;
+
 extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
@@ -1139,7 +1141,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
 				if (!boxArtLoaded && showBoxArt) {
-					clearBoxArt();	// Clear box art
+					if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
+					rocketVideo_playVideo = true;
 					boxArtLoaded = true;
 				}
 				showbubble = false;
@@ -1149,7 +1152,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!boxArtLoaded && showBoxArt) {
 					if (isDirectory[cursorPosition[secondaryDevice]]) {
 						clearBoxArt();	// Clear box art, if it's a directory
+						rocketVideo_playVideo = true;
 					} else {
+						rocketVideo_playVideo = false;
+						if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
 						loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
 					}
 					boxArtLoaded = true;
@@ -1285,7 +1291,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					loadTime();
 					loadDate();
 					loadClockColon();
-					swiWaitForVBlank(); 
+					swiWaitForVBlank();
+
+					// RocketVideo video extraction
+					/*if (pressed & KEY_X) {
+						FILE* destinationFile = fopen("sd:/_nds/TWiLightMenu/extractedvideo.rvid", "wb");
+						fwrite((void*)0x02800000, 1, 0x580000, destinationFile);
+						fclose(destinationFile);
+					}*/
 
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
 					|| (held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright))
@@ -1977,6 +1990,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					rocketVideo_playVideo = true;
 					redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
@@ -2003,6 +2017,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
+					rocketVideo_playVideo = true;
 					redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
@@ -2030,6 +2045,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
+				rocketVideo_playVideo = true;
 				redoDropDown = true;
 				shouldersRendered = false;
 				showbubble = false;
@@ -2121,6 +2137,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						remove(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()); // Remove game/folder
 						if (showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
+						rocketVideo_playVideo = true;
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
