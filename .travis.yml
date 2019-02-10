@@ -46,6 +46,16 @@ script:
   - 7z x libnds.7z
   - sudo cp -r libnds/* /opt/devkitpro/libnds/
   - make package
+  - cd booter/
+  - chmod +x make_cia
+  - ./make_cia --srl="booter.nds"
+  - mkdir -p "../7zfile/3DS - CFW users/cia/"
+  - cp "booter.cia" "../7zfile/3DS - CFW users/cia/TWiLight Menu.cia"
+  - cd ../rungame/
+  - chmod +x make_cia
+  - ./make_cia --srl="rungame.nds"
+  - cp "rungame.cia" "../7zfile/3DS - CFW users/cia/TWiLight Menu - Game booter.cia"
+  - cd ../
   - mv 7zfile/ TWiLightMenu/
   - 7z a TWiLightMenu.7z TWiLightMenu/
   
