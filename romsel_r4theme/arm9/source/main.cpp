@@ -137,6 +137,12 @@ int subtheme = 0;
 int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
+bool showNds = true;
+bool showNes = true;
+bool showGb = true;
+bool showSmsGg = true;
+bool showMd = true;
+bool showSnes = true;
 bool showDirectories = true;
 bool animateDsiIcons = false;
 int launcherApp = -1;
@@ -161,6 +167,13 @@ void LoadSettings(void) {
 	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
 	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+
+	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
+	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
+	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
+	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", true);
+	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -884,20 +897,32 @@ int main(int argc, char **argv) {
 	keysSetRepeat(25,5);
 
 	vector<string> extensionList;
-	extensionList.push_back(".nds");
-	extensionList.push_back(".dsi");
-	extensionList.push_back(".ids");
-	extensionList.push_back(".argv");
-	extensionList.push_back(".gb");
-	extensionList.push_back(".sgb");
-	extensionList.push_back(".gbc");
-	extensionList.push_back(".nes");
-	extensionList.push_back(".fds");
-	extensionList.push_back(".sms");
-	extensionList.push_back(".gg");
-	extensionList.push_back(".gen");
-	extensionList.push_back(".smc");
-	extensionList.push_back(".sfc");
+	if (showNds) {
+		extensionList.push_back(".nds");
+		extensionList.push_back(".dsi");
+		extensionList.push_back(".ids");
+		extensionList.push_back(".argv");
+	}
+	if (showGb) {
+		extensionList.push_back(".gb");
+		extensionList.push_back(".sgb");
+		extensionList.push_back(".gbc");
+	}
+	if (showNes) {
+		extensionList.push_back(".nes");
+		extensionList.push_back(".fds");
+	}
+	if (showSmsGg) {
+		extensionList.push_back(".sms");
+		extensionList.push_back(".gg");
+	}
+	if (showMd) {
+		extensionList.push_back(".gen");
+	}
+	if (showSnes) {
+		extensionList.push_back(".smc");
+		extensionList.push_back(".sfc");
+	}
 	srand(time(NULL));
 	
 	bool menuButtonPressed = false;

@@ -840,7 +840,7 @@ void MainWnd::launchSelected()
         extension = fullPath.substr(lastDotPos);
 
     // NES Launch
-    if (extension == ".nes")
+    if (extension == ".nes" || extension == ".fds")
     {
         ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
         ms().saveSettings();

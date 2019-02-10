@@ -47,6 +47,18 @@ extern std::string STR_DESCRIPTION_DIRECTORIES_1;
 
 extern std::string STR_DESCRIPTION_SHOW_HIDDEN_1;
 
+extern std::string STR_DESCRIPTION_SHOW_NDS;
+
+extern std::string STR_DESCRIPTION_SHOW_NES;
+
+extern std::string STR_DESCRIPTION_SHOW_GB;
+
+extern std::string STR_DESCRIPTION_SHOW_SMS;
+
+extern std::string STR_DESCRIPTION_SHOW_MD;
+
+extern std::string STR_DESCRIPTION_SHOW_SNES;
+
 extern std::string STR_DESCRIPTION_BOXART_1;
 
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_1;

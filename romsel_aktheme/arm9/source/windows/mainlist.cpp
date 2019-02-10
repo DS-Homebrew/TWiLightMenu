@@ -229,21 +229,32 @@ bool MainList::enterDir(const std::string &dirName)
 
     std::vector<std::string> extNames;
 
-    extNames.push_back(".nds");
-    extNames.push_back(".ids");
-    extNames.push_back(".dsi");
-
+	if (_showAllFiles || ms().showNds) {
+		extNames.push_back(".nds");
+		extNames.push_back(".ids");
+		extNames.push_back(".dsi");
+		extNames.push_back(".argv");
+	}
     extNames.push_back(".gba");
-    extNames.push_back(".gb");
-    extNames.push_back(".gbc");
-    extNames.push_back(".nes");
-    extNames.push_back(".sms");
-    extNames.push_back(".gg");
-    extNames.push_back(".gen");
-    extNames.push_back(".smc");
-    extNames.push_back(".sfc");
-
-    extNames.push_back(".argv");
+	if (_showAllFiles || ms().showGb) {
+		extNames.push_back(".gb");
+		extNames.push_back(".gbc");
+	}
+	if (_showAllFiles || ms().showNes) {
+		extNames.push_back(".nes");
+		extNames.push_back(".fds");
+	}
+	if (_showAllFiles || ms().showSmsGg) {
+		extNames.push_back(".sms");
+		extNames.push_back(".gg");
+	}
+	if (_showAllFiles || ms().showMd) {
+		extNames.push_back(".gen");
+	}
+	if (_showAllFiles || ms().showSnes) {
+		extNames.push_back(".smc");
+		extNames.push_back(".sfc");
+	}
 
     if (_showAllFiles)
         extNames.clear();

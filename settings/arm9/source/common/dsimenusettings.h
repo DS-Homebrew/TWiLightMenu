@@ -130,6 +130,12 @@ class DSiMenuPlusPlusSettings
     bool showMainMenu;
     int theme;
     int subtheme;
+	bool showNds;
+	bool showNes;
+	bool showGb;
+	bool showSmsGg;
+	bool showMd;
+	bool showSnes;
     bool showDirectories;
     bool showHidden;
     bool showBoxArt;

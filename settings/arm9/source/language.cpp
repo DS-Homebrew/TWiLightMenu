@@ -54,6 +54,18 @@ std::string STR_DESCRIPTION_DIRECTORIES_1 = "STR_DESCRIPTION_DIRECTORIES_1";
 
 std::string STR_DESCRIPTION_SHOW_HIDDEN_1 = "STR_DESCRIPTION_SHOW_HIDDEN_1";
 
+std::string STR_DESCRIPTION_SHOW_NDS = "STR_DESCRIPTION_SHOW_NDS";
+
+std::string STR_DESCRIPTION_SHOW_NES = "STR_DESCRIPTION_SHOW_NES";
+
+std::string STR_DESCRIPTION_SHOW_GB = "STR_DESCRIPTION_SHOW_GB";
+
+std::string STR_DESCRIPTION_SHOW_SMS = "STR_DESCRIPTION_SHOW_SMS";
+
+std::string STR_DESCRIPTION_SHOW_MD = "STR_DESCRIPTION_SHOW_MD";
+
+std::string STR_DESCRIPTION_SHOW_SNES = "STR_DESCRIPTION_SHOW_SNES";
+
 std::string STR_DESCRIPTION_BOXART_1 = "STR_DESCRIPTION_BOXART_1";
 
 std::string STR_DESCRIPTION_ANIMATEDSIICONS_1 = "STR_DESCRIPTION_ANIMATEDSIICONS_1";
@@ -291,6 +303,18 @@ void langInit(void)
 	STR_DESCRIPTION_DIRECTORIES_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders."));
 
 	STR_DESCRIPTION_SHOW_HIDDEN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_HIDDEN_1", "If turned on, whether an app is set to hidden or not will be ignored and it will be displayed anyways."));
+
+	STR_DESCRIPTION_SHOW_NDS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_NDS", "Display Nintendo DS/DSi ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_NES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_NES", "Display NES and Famicom Disk System ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_GB = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_GB", "Display GameBoy, Super GB, and GBC ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_SMS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_SMS", "Display Sega Master System and Game Gear ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_MD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_MD", "Display Sega Genesis/Mega Drive ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_SNES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_SNES", "Display Super Nintendo/Super Famicom ROMs in the ROM list."));
 
 	STR_DESCRIPTION_BOXART_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen of the DSi/3DS theme."));
 

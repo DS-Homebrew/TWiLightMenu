@@ -19,6 +19,12 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     theme = 0;
     subtheme = 0;
 
+	showNds = true;
+	showNes = true;
+	showGb = true;
+	showSmsGg = true;
+	showMd = true;
+	showSnes = true;
     showDirectories = true;
     showHidden = false;
     showBoxArt = true;
@@ -72,6 +78,13 @@ void DSiMenuPlusPlusSettings::loadSettings()
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
+
+	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
+	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
+	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
+	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
     // Customizable UI settings.
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
@@ -155,6 +168,12 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+	settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
+	settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
+	settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);
+	settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+	settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
+	settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
