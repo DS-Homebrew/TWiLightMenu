@@ -49,12 +49,12 @@ script:
   - cd booter/
   - chmod +x make_cia
   - ./make_cia --srl="booter.nds"
-  - mkdir -p "../7zfile/3DS - CFW users/cia/"
-  - cp "booter.cia" "../7zfile/3DS - CFW users/cia/TWiLight Menu.cia"
+  - mkdir -p "../7zfile/3DS - CFW users/"
+  - cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
   - cd ../rungame/
   - chmod +x make_cia
   - ./make_cia --srl="rungame.nds"
-  - cp "rungame.cia" "../7zfile/3DS - CFW users/cia/TWiLight Menu - Game booter.cia"
+  - cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
   - cd ../
   - mv 7zfile/ TWiLightMenu/
   - 7z a TWiLightMenu.7z TWiLightMenu/
