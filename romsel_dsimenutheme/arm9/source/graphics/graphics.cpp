@@ -165,7 +165,7 @@ static bool rotatingCubesLoaded = false;
 
 bool rocketVideo_playVideo = false;
 int rocketVideo_videoYpos = 78;
-int rocketVideo_videoFrames = 0xC7;
+int rocketVideo_videoFrames = 0xEE;
 int rocketVideo_currentFrame = -1;
 int rocketVideo_frameDelay = 0;
 bool rocketVideo_frameDelayEven = true;	// For 24FPS
@@ -357,7 +357,7 @@ void playRotatingCubesVideo(void) {
 	if (rocketVideo_playVideo) {
 		if (!rocketVideo_loadFrame) {
 			rocketVideo_frameDelay++;
-			rocketVideo_loadFrame = (rocketVideo_frameDelay == 6);
+			rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
 		}
 
 		if (rocketVideo_loadFrame) {
@@ -368,7 +368,7 @@ void playRotatingCubesVideo(void) {
 			}
 			dmaCopy(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);
 			rocketVideo_frameDelay = 0;
-			//rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+			rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 			rocketVideo_loadFrame = false;
 		}
 	}
@@ -379,7 +379,7 @@ void vBlankHandler()
 	execQueue(); // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 	if (theme == 1 && waitBeforeMusicPlay) {
-		if (waitBeforeMusicPlayTime == 60) {
+		if (waitBeforeMusicPlayTime == 60*3) {
 			mmEffectEx(&mus_menu);
 			waitBeforeMusicPlay = false;
 		} else {
@@ -1806,8 +1806,9 @@ void clearBoxArt() {
 
 void loadRotatingCubes() {
 	FILE* videoFrameFile = fopen("nitro:/video/3dsRotatingCubes.rvid", "rb");
+	//FILE* videoFrameFile;
 
-	/*for (u8 selectedFrame = 0; selectedFrame <= 0xC7; selectedFrame++) {
+	/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 		if (selectedFrame < 0x10) {
 			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/3dsRotatingCubes/0x0%x.bmp", (int)selectedFrame);
 		} else {
@@ -1853,7 +1854,7 @@ void loadRotatingCubes() {
 			}
 		}
 		if (doRead) {
-			fread(rotatingCubesLocation, 1, 0x580000, videoFrameFile);
+			fread(rotatingCubesLocation, 1, 0x690000, videoFrameFile);
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
 		}

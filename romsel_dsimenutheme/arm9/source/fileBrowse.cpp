@@ -1141,8 +1141,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
 				if (!boxArtLoaded && showBoxArt) {
-					if (theme == 1 && !rocketVideo_playVideo) clearBoxArt();	// Clear box art
-					rocketVideo_playVideo = true;
+					if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
+					if (theme == 1) rocketVideo_playVideo = true;
 					boxArtLoaded = true;
 				}
 				showbubble = false;
@@ -1151,8 +1151,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				if (!boxArtLoaded && showBoxArt) {
 					if (isDirectory[cursorPosition[secondaryDevice]]) {
-						if (theme == 1 && !rocketVideo_playVideo) clearBoxArt();	// Clear box art, if it's a directory
-						rocketVideo_playVideo = true;
+						if (theme == 1) {
+							if (!rocketVideo_playVideo) {
+								clearBoxArt();	// Clear box art, if it's a directory
+								rocketVideo_playVideo = true;
+							}
+						} else {
+							clearBoxArt();	// Clear box art, if it's a directory
+						}
 					} else {
 						rocketVideo_playVideo = false;
 						if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
@@ -1296,7 +1302,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					// RocketVideo video extraction
 					/*if (pressed & KEY_X) {
 						FILE* destinationFile = fopen("sd:/_nds/TWiLightMenu/extractedvideo.rvid", "wb");
-						fwrite((void*)0x02800000, 1, 0x580000, destinationFile);
+						fwrite((void*)0x02800000, 1, 0x6A0000, destinationFile);
 						fclose(destinationFile);
 					}*/
 
