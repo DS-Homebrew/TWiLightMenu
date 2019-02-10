@@ -1141,7 +1141,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
 				if (!boxArtLoaded && showBoxArt) {
-					if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
+					if (theme == 1 && !rocketVideo_playVideo) clearBoxArt();	// Clear box art
 					rocketVideo_playVideo = true;
 					boxArtLoaded = true;
 				}
@@ -1151,7 +1151,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else {
 				if (!boxArtLoaded && showBoxArt) {
 					if (isDirectory[cursorPosition[secondaryDevice]]) {
-						clearBoxArt();	// Clear box art, if it's a directory
+						if (theme == 1 && !rocketVideo_playVideo) clearBoxArt();	// Clear box art, if it's a directory
 						rocketVideo_playVideo = true;
 					} else {
 						rocketVideo_playVideo = false;
