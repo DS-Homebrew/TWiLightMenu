@@ -409,8 +409,32 @@ void twlMenuVideo(void) {
 		}
 	}
 	fclose(videoFrameFile);
+	
+	// Load RocketVideo logo
+	videoFrameFile = fopen("nitro:/graphics/logo_rocketvideo.bmp", "rb");
 
-	for (int i = 0; i < 60 * 2; i++)
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 192;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
+		}
+	}
+	fclose(videoFrameFile);
+	
+	for (int i = 0; i < 60 * 3; i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
