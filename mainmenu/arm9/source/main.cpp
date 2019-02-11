@@ -2043,7 +2043,7 @@ int main(int argc, char **argv) {
 						if(codelist.romData(path,gameCode,crc32))
 						{
                             long cheatOffset; size_t cheatSize;
-                            FILE* dat=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+                            FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
                             if(dat)
                             {
                             if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
