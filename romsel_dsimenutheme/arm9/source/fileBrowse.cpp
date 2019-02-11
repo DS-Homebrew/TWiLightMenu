@@ -1185,20 +1185,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (!shouldersRendered) {
 				showLshoulder = false;
 				showRshoulder = false;
-				if (startMenu) {
-				} else {
-					if (pagenum[secondaryDevice] != 0) {
-						showLshoulder = true;
-					}
-					if (file_count > 40+pagenum[secondaryDevice]*40) {
-						showRshoulder = true;
-					}
+				if (pagenum[secondaryDevice] != 0) {
+					showLshoulder = true;
+				}
+				if (file_count > 40+pagenum[secondaryDevice]*40) {
+					showRshoulder = true;
 				}
 				loadShoulders();
 				shouldersRendered = true;
 			}
 
-			u8 current_SCFG_MC = REG_SCFG_MC;
+			//u8 current_SCFG_MC = REG_SCFG_MC;
 
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
@@ -1218,9 +1215,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				loadDate();
 				loadClockColon();
 				swiWaitForVBlank();
-				if (REG_SCFG_MC != current_SCFG_MC) {
+				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
-				}
+				}*/
 			}
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1988,11 +1985,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (pressed & KEY_L)
 			{
-				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum[secondaryDevice] != 0) {
+				if (cursorPosition[secondaryDevice] == 0 && !showLshoulder) {
+					mmEffectEx(&snd_wrong);
+				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					pagenum[secondaryDevice] -= 1;
+					if (showLshoulder) pagenum[secondaryDevice] -= 1;
 					cursorPosition[secondaryDevice] = 0;
 					titleboxXpos[secondaryDevice] = 0;
 					titlewindowXpos[secondaryDevice] = 0;
@@ -2000,7 +1999,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
-					redoDropDown = true;
+					if (showLshoulder) redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -2010,24 +2009,30 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 					displayNowLoading();
 					break;
-				} else {
-					mmEffectEx(&snd_wrong);
 				}
 			} else 	if (pressed & KEY_R)
 			{
-				if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum[secondaryDevice]*40) {
+				if (cursorPosition[secondaryDevice] == (file_count-1)-pagenum[secondaryDevice]*40 && !showRshoulder) {
+					mmEffectEx(&snd_wrong);
+				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					pagenum[secondaryDevice] += 1;
-					cursorPosition[secondaryDevice] = 0;
-					titleboxXpos[secondaryDevice] = 0;
-					titlewindowXpos[secondaryDevice] = 0;
+					if (showRshoulder) {
+						pagenum[secondaryDevice] += 1;
+						cursorPosition[secondaryDevice] = 0;
+						titleboxXpos[secondaryDevice] = 0;
+						titlewindowXpos[secondaryDevice] = 0;
+					} else {
+						cursorPosition[secondaryDevice] = (file_count-1)-pagenum[secondaryDevice]*40;
+						titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice]*64;
+						titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice]*5;
+					}
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
-					redoDropDown = true;
+					if (showRshoulder) redoDropDown = true;
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
@@ -2037,8 +2042,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					settingsChanged = false;
 					displayNowLoading();
 					break;
-				} else {
-					mmEffectEx(&snd_wrong);
 				}
 			}
 
