@@ -624,9 +624,10 @@ void switchDevice(void) {
 		fadeType = false;	// Fade to white
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		secondaryDevice = !secondaryDevice;
-		if (showBoxArt) clearBoxArt();	// Clear box art
+		if (!rocketVideo_playVideo || showBoxArt) clearBoxArt();	// Clear box art
 		whiteScreen = true;
 		boxArtLoaded = false;
+		rocketVideo_playVideo = true;
 		redoDropDown = true;
 		shouldersRendered = false;
 		showbubble = false;
@@ -829,6 +830,9 @@ bool selectMenu(void) {
 	dbox_showIcon = false;
 	dbox_selectMenu = true;
 	showdialogbox = true;
+	if (!rocketVideo_playVideo || showBoxArt) clearBoxArt();	// Clear box art
+	boxArtLoaded = false;
+	rocketVideo_playVideo = true;
 	int maxCursors = 0;
 	int selCursorPosition = 0;
 	int assignedOp[4] = {-1};
