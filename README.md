@@ -1,4 +1,4 @@
-<span style="float:right">[![Build Status](https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master)](https://travis-ci.org/RocketRobz/TWiLightMenu)</span>
+<span style="text-align:right">[![Build Status](https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master)](https://travis-ci.org/RocketRobz/TWiLightMenu)</span>
 # ![TWiLightMenu++](https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png)
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, 3DS, and flashcards.
 
