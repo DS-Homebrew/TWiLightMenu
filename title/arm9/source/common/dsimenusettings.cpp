@@ -54,6 +54,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     r4_theme = "unused";
     soundfreq = EFreq32KHz;
 	dsiSplash = isDSiMode();
+	hsMsg = false;
     showlogo = true;
     autorun = false;
 }
@@ -79,6 +80,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
+    hsMsg = settingsini.GetInt("SRLOADER", "HS_MSG", hsMsg);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);

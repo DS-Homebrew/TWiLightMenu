@@ -449,20 +449,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	bool sdAccessible = false;
-	if (access("sd:/", F_OK) == 0) {
-		sdAccessible = true;
-	}
-
-	bool dsiSplashEnabled = false;
-	if (sdAccessible && !sys().arm7SCFGLocked() && ms().consoleModel < 2) {
-		CIniFile hiyacfwini(hiyacfwinipath);
-		dsiSplashEnabled = hiyacfwini.GetInt("HIYA-CFW", "DSI_SPLASH", 1);
-	} else {
-		dsiSplashEnabled = ms().dsiSplash;
-	}
-
-	if (dsiSplashEnabled && fifoGetValue32(FIFO_USER_01) != 0x01) {
+	if (ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
 		BootSplashInit();
 		fifoSendValue32(FIFO_USER_01, 10);
 	}

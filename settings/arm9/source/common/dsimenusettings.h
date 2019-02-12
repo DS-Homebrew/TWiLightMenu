@@ -174,6 +174,7 @@ class DSiMenuPlusPlusSettings
     bool homebrewBootstrap;
     bool soundfreq;
 	bool dsiSplash;
+	bool hsMsg;
     bool showlogo;
     std::string r4_theme;
 };
