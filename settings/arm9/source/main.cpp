@@ -459,18 +459,22 @@ int main(int argc, char **argv)
 
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("NDS ROMs", STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Bool(&ms().showMd), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+
+	SettingsPage filetypePage(STR_FILETYPE_SETTINGS);
+
+	filetypePage
+		.option("NDS ROMs", STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Bool(&ms().showMd), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {STR_SHOW, STR_HIDE}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
@@ -626,6 +630,7 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 	}
 	gui()
 		.addPage(guiPage)
+		.addPage(filetypePage)
 		.addPage(gamesPage)
 		.addPage(miscPage)
 		.onExit(defaultExitHandler)

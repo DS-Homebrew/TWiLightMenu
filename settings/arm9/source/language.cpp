@@ -16,6 +16,7 @@ std::string STR_SETTINGS_SAVED = "STR_SETTINGS_SAVED";
 std::string STR_LR_SWITCH = "STR_LR_SWITCH";
 std::string STR_MISC_SETTINGS = "STR_MISC_SETTINGS";
 std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
+std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // GUI settings
@@ -269,6 +270,7 @@ void langInit(void)
 	STR_LR_SWITCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LR_SWITCH", "L/R/Y/X Switch Pages"));
 	STR_MISC_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. Settings"));
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));
+	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype Settings"));
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings"));
 
 	// GUI settings
