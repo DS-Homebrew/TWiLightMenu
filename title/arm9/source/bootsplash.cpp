@@ -324,8 +324,53 @@ void BootSplashDSi(void) {
 		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
 	}
 
-	// Pause on frame 31 for a second		
-	for (int i = 0; i < 80; i++) { swiWaitForVBlank(); }
+	int touchToContinueText_Ypos = (ms().hsMsg ? 160 : 80);
+	int touchToContinueWait = 59;
+	int touchToContinue_secondsWaited = -1;
+	bool touchToContinue_show = true;
+
+	FILE* file = fopen("nitro:/graphics/touchToContinue.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 31;
+		for (int i=0; i<256*32; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			x++;
+		}
+	}
+
+	fclose(file);
+
+	while (1) {
+		touchToContinueWait++;
+		if (touchToContinueWait == 60) {
+			for (int i=0; i<256*32; i++) {
+				if (touchToContinue_show) {
+					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = videoImageBuffer[0][i];
+				} else {
+					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+				}
+			}
+			touchToContinueWait = 0;
+			touchToContinue_show = !touchToContinue_show;
+			touchToContinue_secondsWaited++;
+		}
+		scanKeys();
+		if ((keysDown() & KEY_TOUCH) || (touchToContinue_secondsWaited == 60)) break;
+		swiWaitForVBlank();
+	}
 
 	/*FILE* destinationFile = fopen("sd:/_nds/TWiLightMenu/extractedvideo.rvid", "wb");
 	fwrite(dsiSplashLocation, 1, 0x7C0000, destinationFile);
