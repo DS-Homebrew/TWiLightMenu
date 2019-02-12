@@ -36,6 +36,7 @@ int screenBrightness = 31;
 bool rocketVideo_playVideo = false;
 int rocketVideo_videoYpos = 0;
 int rocketVideo_videoFrames = 0;
+int rocketVideo_videoFps = 60;
 int rocketVideo_currentFrame = -1;
 int rocketVideo_frameDelay = 0;
 bool rocketVideo_frameDelayEven = true;	// For 24FPS
@@ -47,6 +48,7 @@ extern void twlMenuVideo_topGraphicRender(void);
 
 u16 bmpImageBuffer[256*192];
 u16 videoImageBuffer[39][256*144];
+void* dsiSplashLocation = (void*)0x02600000;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -91,8 +93,12 @@ void vBlankHandler()
 	}
 	if (rocketVideo_playVideo) {
 		if (!rocketVideo_loadFrame) {
-			rocketVideo_frameDelay++;
-			rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
+			if (rocketVideo_videoFps != 60) {
+				rocketVideo_frameDelay++;
+				rocketVideo_loadFrame = (rocketVideo_frameDelay == 2+rocketVideo_frameDelayEven);
+			} else {
+				rocketVideo_loadFrame = true;
+			}
 		}
 
 		if (rocketVideo_loadFrame) {
@@ -105,7 +111,11 @@ void vBlankHandler()
 				rocketVideo_frameDelayEven = true;
 				rocketVideo_loadFrame = false;
 			} else {
-				dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+				if (rocketVideo_videoFps == 60) {
+					dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+				} else {
+					dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+				}
 				rocketVideo_frameDelay = 0;
 				rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 				rocketVideo_loadFrame = false;

@@ -45,6 +45,7 @@ static FILE* videoFrameFile;
 extern bool rocketVideo_playVideo;
 extern int rocketVideo_videoYpos;
 extern int rocketVideo_videoFrames;
+extern int rocketVideo_videoFps;
 extern int rocketVideo_currentFrame;
 
 static int frameDelaySprite = 0;
@@ -311,7 +312,7 @@ void twlMenuVideo(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x14000, videoFrameFile);
+			fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
 			u16* src = bmpImageBuffer;
 			int x = 0;
 			int y = 143;
@@ -338,6 +339,7 @@ void twlMenuVideo(void) {
 	}
 
 	rocketVideo_videoFrames = 43;
+	rocketVideo_videoFps = 24;
 	rocketVideo_videoYpos = 24;
 	rocketVideo_playVideo = true;
 
