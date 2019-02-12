@@ -351,7 +351,7 @@ void reloadDboxPalette() {
 	tex().reloadPalDialogBox();
 }
 
-static void* rotatingCubesLocation = (void*)0x02800000;
+static void* rotatingCubesLocation = (void*)0x02700000;
 
 void playRotatingCubesVideo(void) {
 	if (rocketVideo_playVideo) {
@@ -1058,7 +1058,7 @@ void loadVolumeImage(void) {
 	if (!isDSiMode())
 		return;
 
-	u8 volumeLevel = *(u8*)(0x027FF000);
+	u8 volumeLevel = *(u8*)(0x023FF000);
 	const char *volumeImagePath;
 
 	if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
@@ -1205,7 +1205,7 @@ void setBatteryImagePaths(void) {
 }
 
 void loadBatteryImage(void) {
-	u8 batteryLevel = *(u8*)(0x027FF001);
+	u8 batteryLevel = *(u8*)(0x023FF001);
 	const char *batteryImagePath;
 
 	if (isDSiMode()) {

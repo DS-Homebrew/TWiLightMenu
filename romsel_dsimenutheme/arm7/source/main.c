@@ -150,9 +150,9 @@ int main() {
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if (isDSiMode()) {
-				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				*(u8*)(0x023FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
 			}
-			*(u8*)(0x027FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
+			*(u8*)(0x023FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
 			timeTilVolumeLevelRefresh = 0;
 		}
 		swiWaitForVBlank();
