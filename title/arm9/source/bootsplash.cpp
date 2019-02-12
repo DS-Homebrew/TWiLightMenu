@@ -33,13 +33,17 @@ extern int rocketVideo_currentFrame;
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-void BootJingleDSi() {
+mm_sound_effect dsiboot;
+mm_sound_effect proceed;
+
+void splashSoundInit() {
 	
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
 	mmLoadEffect( SFX_DSIBOOT );
+	mmLoadEffect( SFX_SELECT );
 
-	mm_sound_effect dsiboot = {
+	dsiboot = {
 		{ SFX_DSIBOOT } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
@@ -47,7 +51,13 @@ void BootJingleDSi() {
 		128,	// panning
 	};
 	
-	mmEffectEx(&dsiboot);
+	proceed = {
+		{ SFX_SELECT } ,			// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};	
 }
 
 void drawNintendoLogoToVram(void) {
@@ -261,7 +271,7 @@ void BootSplashDSi(void) {
 			}
 		}
 		if (rocketVideo_currentFrame == (sixtyFps ? 24 : 10)) {
-			BootJingleDSi();
+			mmEffectEx(&dsiboot);
 			break;
 		}
 		swiWaitForVBlank();
@@ -368,7 +378,10 @@ void BootSplashDSi(void) {
 			touchToContinue_secondsWaited++;
 		}
 		scanKeys();
-		if ((keysDown() & KEY_TOUCH) || (touchToContinue_secondsWaited == 60)) break;
+		if ((keysDown() & KEY_TOUCH) || (touchToContinue_secondsWaited == 60)) {
+			mmEffectEx(&proceed);
+			break;
+		}
 		swiWaitForVBlank();
 	}
 
@@ -403,6 +416,7 @@ void BootSplashInit(void) {
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
+	splashSoundInit();
 	BootSplashDSi();
 }
 
