@@ -144,7 +144,7 @@ void LoadBMP(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX[(y+24)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX[(y+24)*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -172,7 +172,7 @@ void LoadBMP(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}

@@ -51,6 +51,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int blfLevel;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -199,6 +200,7 @@ void vBlankHandler()
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
+		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		if (startMenu) {
 			if (isDSiMode() && launchType == 0) {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
@@ -287,7 +289,6 @@ void vBlankHandler()
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 		}
 		updateText(false);
-		glColor(RGB15(31, 31, 31));
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
@@ -312,7 +313,7 @@ void loadBoxArt(const char* filename) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -328,7 +329,7 @@ void topBgLoad(void) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, file);
+		fread(bmpImageBuffer, 2, 0x18000, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
 		int y = 191;
@@ -338,7 +339,7 @@ void topBgLoad(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -362,7 +363,7 @@ void topBarLoad(void) {
 			u16* src = buffer;
 			for (int i=0; i<256; i++) {
 				u16 val = *(src++);
-				BG_GFX_SUB[y*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 		}
 	}

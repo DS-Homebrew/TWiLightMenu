@@ -576,7 +576,22 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish});
+				 TLanguage::ELangSpanish})
+		.option(STR_BLF,
+				STR_DESCRIPTION_BLF,
+				Option::Int(&ms().blfLevel),
+				{STR_OFF,
+				 "Lv. 1",
+				 "Lv. 2",
+				 "Lv. 3",
+				 "Lv. 4",
+				 "Lv. 5"},
+				{0,
+				 1,
+				 2,
+				 3,
+				 4,
+				 5,});
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
 		miscPage.option(STR_S1SDACCESS,

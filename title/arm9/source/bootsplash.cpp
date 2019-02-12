@@ -82,8 +82,8 @@ void BootSplashDSi(void) {
 
 	u16 whiteCol = 0xFFFF;
 	for (int i = 0; i < 256*256; i++) {
-		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
-		BG_GFX_SUB[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
+		BG_GFX_SUB[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	}
 
 	if (ms().hsMsg) {
@@ -105,7 +105,7 @@ void BootSplashDSi(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 				x++;
 			}
 		}
@@ -132,7 +132,7 @@ void BootSplashDSi(void) {
 			for (int i=0; i<122*28; i++) {
 				u16 val = *(src++);
 				if (val != 0x7C1F) {
-					BG_GFX[(256*192)+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					BG_GFX[(256*192)+i] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 				}
 			}
 		}
@@ -168,7 +168,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 					x++;
 				}
 			}
@@ -226,7 +226,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 					x++;
 				}
 			}
@@ -297,7 +297,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 					x++;
 				}
 
@@ -331,7 +331,7 @@ void BootSplashDSi(void) {
 	if (!sixtyFps) swiWaitForVBlank();
 
 	for (int i = 0; i < 256*60; i++) {
-		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	}
 
 	int touchToContinueText_Ypos = (ms().hsMsg ? 160 : 80);
@@ -356,7 +356,7 @@ void BootSplashDSi(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -370,7 +370,7 @@ void BootSplashDSi(void) {
 				if (touchToContinue_show) {
 					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = videoImageBuffer[0][i];
 				} else {
-					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&(0x1f<<5)) | (whiteCol&0x1f)<<10 | BIT(15);
+					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 				}
 			}
 			touchToContinueWait = 0;

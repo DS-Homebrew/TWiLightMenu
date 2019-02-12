@@ -14,6 +14,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     consoleModel = 0;
 
     guiLanguage = ELangDefault;
+    blfLevel = 0;
     useGbarunner = false;
     showMainMenu = true;
     theme = 0;
@@ -88,6 +89,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
     // Customizable UI settings.
+	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
@@ -158,7 +160,9 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
+
     // Customizable UI settings.
+	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 

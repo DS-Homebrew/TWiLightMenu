@@ -126,6 +126,7 @@ class DSiMenuPlusPlusSettings
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
+    int blfLevel;
     bool useGbarunner;
     bool showMainMenu;
     int theme;

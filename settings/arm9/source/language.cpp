@@ -20,6 +20,7 @@ std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // GUI settings
+std::string STR_BLF = "STR_BLF";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_MAINMENU = "STR_MAINMENU";
 std::string STR_THEME = "STR_THEME";
@@ -39,6 +40,8 @@ std::string STR_RESTOREDSIMENU = "STR_RESTOREDSIMENU";
 
 std::string STR_SHOW = "STR_SHOW";
 std::string STR_HIDE = "STR_HIDE";
+
+std::string STR_DESCRIPTION_BLF = "STR_DESCRIPTION_BLF";
 
 std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
 
@@ -274,6 +277,7 @@ void langInit(void)
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings"));
 
 	// GUI settings
+	STR_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BLUELIGHTFILTER", "Blue light filter"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
 	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
@@ -293,6 +297,8 @@ void langInit(void)
 
 	STR_SHOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW", "Show"));
 	STR_HIDE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HIDE", "Hide"));
+
+	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain."));
 
 	STR_DESCRIPTION_S1SDACCESS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes."));
 

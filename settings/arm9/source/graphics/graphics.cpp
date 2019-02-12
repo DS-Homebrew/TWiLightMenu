@@ -20,6 +20,7 @@
 
 #include <nds.h>
 #include <maxmod9.h>
+#include "common/dsimenusettings.h"
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
@@ -146,16 +147,15 @@ void vBlankHandler()
 		startRendering(renderingTop);
 		glBegin2D();
 		{
+			glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
 			if (renderingTop)
 			{
 				drawBG(topBgImage);
-				glColor(RGB15(31, 31, 31));
 				updateText(renderingTop);
 			}
 			else
 			{
 				drawBG(subBgImage);
-				glColor(RGB15(31, 31, 31));
 				updateText(renderingTop);
 			}
 		}

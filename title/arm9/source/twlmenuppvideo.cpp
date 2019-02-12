@@ -6,6 +6,7 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+#include "common/dsimenusettings.h"
 #include "common/gl2d.h"
 
 #include "icon_nds.h"
@@ -204,6 +205,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 void twlMenuVideo_topGraphicRender(void) {
 	glBegin2D();
 	{
+		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
 		if (zoomingIconYpos[0] < 64) {
 			glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);
 		}
@@ -234,7 +236,6 @@ void twlMenuVideo_topGraphicRender(void) {
 
 		glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
 		glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
-		glColor(RGB15(31, 31, 31));
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
@@ -322,7 +323,7 @@ void twlMenuVideo(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 				x++;
 			}
 		}
@@ -368,7 +369,7 @@ void twlMenuVideo(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 				x++;
 			}
 			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
@@ -405,7 +406,7 @@ void twlMenuVideo(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {
-				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -430,7 +431,7 @@ void twlMenuVideo(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
