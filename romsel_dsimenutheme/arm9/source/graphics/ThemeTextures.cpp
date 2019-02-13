@@ -2,36 +2,6 @@
 #include <nds.h>
 
 // Graphic files
-//#include "bottom.h"
-//#include "bottom_bubble.h"
-
-#include "dark_bottom.h"
-#include "dark_bottom_bubble.h"
-
-#include "org_bottom.h"
-#include "org_bottom_bubble.h"
-
-#include "red_bottom.h"
-#include "red_bottom_bubble.h"
-
-#include "blue_bottom.h"
-#include "blue_bottom_bubble.h"
-
-#include "green_bottom.h"
-#include "green_bottom_bubble.h"
-
-#include "yellow_bottom.h"
-#include "yellow_bottom_bubble.h"
-
-#include "pink_bottom.h"
-#include "pink_bottom_bubble.h"
-
-#include "purple_bottom.h"
-#include "purple_bottom_bubble.h"
-
-#include "_3ds_bottom.h"
-#include "_3ds_bottom_bubble.h"
-
 #include "dialogbox.h"
 #include "_3ds_dialogbox.h"
 #include "nintendo_dsi_menu.h"
@@ -92,6 +62,9 @@
 #include "wirelessicons.h"
 
 #include "stringtool.h"
+
+static u16 loadedBottomImg[256*192];
+static u16 loadedBottomBubbleImg[256*192];
 
 void ThemeTextures::loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap,
                                     int sprW, int sprH, int texW)
@@ -248,18 +221,68 @@ void ThemeTextures::reloadPalDialogBox()
   glBindTexture(0, dialogboxTexID);
   glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
 }
-void ThemeTextures::drawBg(int bgId)
+void ThemeTextures::drawBg()
 {
-  dmaCopy(_bottomTiles, bgGetGfxPtr(bgId), _bottomTilesLen);
-  dmaCopy(_bottomPalette, BG_PALETTE, _bottomPaletteLen);
-  dmaCopy(_bottomMap, bgGetMapPtr(bgId), _bottomMapLen);
+  dmaCopy(loadedBottomImg, BG_GFX, 0x18000);
 }
 
-void ThemeTextures::drawBubbleBg(int bgId)
+void ThemeTextures::drawBubbleBg()
 {
-  dmaCopy(_bottom_bubbleTiles, bgGetGfxPtr(bgId), _bottom_bubbleTilesLen);
-  dmaCopy(_bottom_bubblePalette, BG_PALETTE, _bottom_bubblePaletteLen);
-  dmaCopy(_bottom_bubbleMap, bgGetMapPtr(bgId), _bottom_bubbleMapLen);
+  dmaCopy(loadedBottomBubbleImg, BG_GFX, 0x18000);
+}
+
+void ThemeTextures::loadBottomImage()
+{
+	extern int blfLevel;
+	extern u16 bmpImageBuffer[256*192];
+
+	FILE* fileBottom = fopen(bottomBgPath.c_str(), "rb");
+
+	if (fileBottom) {
+		// Start loading
+		fseek(fileBottom, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
+		fseek(fileBottom, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, fileBottom);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			loadedBottomImg[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			x++;
+		}
+	}
+
+	fclose(fileBottom);
+
+	fileBottom = fopen(bottomBubbleBgPath.c_str(), "rb");
+
+	if (fileBottom) {
+		// Start loading
+		fseek(fileBottom, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
+		fseek(fileBottom, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, fileBottom);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			loadedBottomBubbleImg[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			x++;
+		}
+	}
+
+	fclose(fileBottom);
 }
 
 void ThemeTextures::loadCommonTextures()
@@ -271,6 +294,8 @@ void ThemeTextures::loadCommonTextures()
 void ThemeTextures::setStringPaths(const std::string theme)
 {
   topBgPath = formatString("nitro:/graphics/%s_top.bmp", theme.c_str());
+  bottomBgPath = formatString("nitro:/graphics/%s_bottom.bmp", theme.c_str());
+  bottomBubbleBgPath = formatString("nitro:/graphics/%s_bottom_bubble.bmp", theme.c_str());
   shoulderRPath = formatString("nitro:/graphics/%s_Rshoulder.bmp", theme.c_str());
   shoulderRGreyPath = formatString("nitro:/graphics/%s_Rshoulder_greyed.bmp", theme.c_str());
 
@@ -282,21 +307,8 @@ void ThemeTextures::load3DSTheme()
 {
 
   setStringPaths("3ds");
-  _bottomTiles = _3ds_bottomTiles;
-  _bottomPalette = _3ds_bottomPal;
-  _bottomMap = _3ds_bottomMap;
 
-  _bottom_bubbleMap = _3ds_bottom_bubbleMap;
-  _bottom_bubblePalette = _3ds_bottom_bubblePal;
-  _bottom_bubbleTiles = _3ds_bottom_bubbleTiles;
-
-  _bottomTilesLen = _3ds_bottomTilesLen;
-  _bottomPaletteLen = _3ds_bottomPalLen;
-  _bottomMapLen = _3ds_bottomMapLen;
-
-  _bottom_bubbleMapLen = _3ds_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = _3ds_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = _3ds_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(_3ds_bubblePal, _3ds_bubbleBitmap, 7, 7, 8);
   loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
@@ -326,21 +338,7 @@ void ThemeTextures::loadDSiDarkTheme()
 
   setStringPaths("dark");
 
-  _bottomTiles = dark_bottomTiles;
-  _bottomPalette = dark_bottomPal;
-  _bottomMap = dark_bottomMap;
-
-  _bottom_bubbleMap = dark_bottom_bubbleMap;
-  _bottom_bubblePalette = dark_bottom_bubblePal;
-  _bottom_bubbleTiles = dark_bottom_bubbleTiles;
-
-  _bottomTilesLen = dark_bottomTilesLen;
-  _bottomPaletteLen = dark_bottomPalLen;
-  _bottomMapLen = dark_bottomMapLen;
-
-  _bottom_bubbleMapLen = dark_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = dark_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = dark_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
@@ -368,21 +366,7 @@ void ThemeTextures::loadDSiWhiteTheme()
 
   setStringPaths("org");
 
-  _bottomTiles = org_bottomTiles;
-  _bottomPalette = org_bottomPal;
-  _bottomMap = org_bottomMap;
-
-  _bottom_bubbleMap = org_bottom_bubbleMap;
-  _bottom_bubblePalette = org_bottom_bubblePal;
-  _bottom_bubbleTiles = org_bottom_bubbleTiles;
-
-  _bottomTilesLen = org_bottomTilesLen;
-  _bottomPaletteLen = org_bottomPalLen;
-  _bottomMapLen = org_bottomMapLen;
-
-  _bottom_bubbleMapLen = org_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = org_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = org_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(org_bubblePal, org_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(org_scroll_windowPal, org_scroll_windowBitmap);
@@ -410,21 +394,7 @@ void ThemeTextures::loadDSiRedTheme()
 
   setStringPaths("red");
 
-  _bottomTiles = red_bottomTiles;
-  _bottomPalette = red_bottomPal;
-  _bottomMap = red_bottomMap;
-
-  _bottom_bubbleMap = red_bottom_bubbleMap;
-  _bottom_bubblePalette = red_bottom_bubblePal;
-  _bottom_bubbleTiles = red_bottom_bubbleTiles;
-
-  _bottomTilesLen = red_bottomTilesLen;
-  _bottomPaletteLen = red_bottomPalLen;
-  _bottomMapLen = red_bottomMapLen;
-
-  _bottom_bubbleMapLen = red_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = red_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = red_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(red_bubblePal, red_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(red_scroll_windowPal, red_scroll_windowBitmap);
@@ -453,21 +423,7 @@ void ThemeTextures::loadDSiBlueTheme()
 
   setStringPaths("blue");
 
-  _bottomTiles = blue_bottomTiles;
-  _bottomPalette = blue_bottomPal;
-  _bottomMap = blue_bottomMap;
-
-  _bottom_bubbleMap = blue_bottom_bubbleMap;
-  _bottom_bubblePalette = blue_bottom_bubblePal;
-  _bottom_bubbleTiles = blue_bottom_bubbleTiles;
-
-  _bottomTilesLen = blue_bottomTilesLen;
-  _bottomPaletteLen = blue_bottomPalLen;
-  _bottomMapLen = blue_bottomMapLen;
-
-  _bottom_bubbleMapLen = blue_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = blue_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = blue_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(blue_bubblePal, blue_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(blue_scroll_windowPal, blue_scroll_windowBitmap);
@@ -496,21 +452,7 @@ void ThemeTextures::loadDSiGreenTheme()
 
   setStringPaths("green");
 
-  _bottomTiles = green_bottomTiles;
-  _bottomPalette = green_bottomPal;
-  _bottomMap = green_bottomMap;
-
-  _bottom_bubbleMap = green_bottom_bubbleMap;
-  _bottom_bubblePalette = green_bottom_bubblePal;
-  _bottom_bubbleTiles = green_bottom_bubbleTiles;
-
-  _bottomTilesLen = green_bottomTilesLen;
-  _bottomPaletteLen = green_bottomPalLen;
-  _bottomMapLen = green_bottomMapLen;
-
-  _bottom_bubbleMapLen = green_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = green_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = green_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(green_bubblePal, green_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(green_scroll_windowPal, green_scroll_windowBitmap);
@@ -540,21 +482,7 @@ void ThemeTextures::loadDSiYellowTheme()
 {
   setStringPaths("yellow");
 
-  _bottomTiles = yellow_bottomTiles;
-  _bottomPalette = yellow_bottomPal;
-  _bottomMap = yellow_bottomMap;
-
-  _bottom_bubbleMap = yellow_bottom_bubbleMap;
-  _bottom_bubblePalette = yellow_bottom_bubblePal;
-  _bottom_bubbleTiles = yellow_bottom_bubbleTiles;
-
-  _bottomTilesLen = yellow_bottomTilesLen;
-  _bottomPaletteLen = yellow_bottomPalLen;
-  _bottomMapLen = yellow_bottomMapLen;
-
-  _bottom_bubbleMapLen = yellow_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = yellow_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = yellow_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(yellow_bubblePal, yellow_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(yellow_scroll_windowPal, yellow_scroll_windowBitmap);
@@ -583,21 +511,7 @@ void ThemeTextures::loadDSiPurpleTheme()
 {
   setStringPaths("purple");
 
-  _bottomTiles = purple_bottomTiles;
-  _bottomPalette = purple_bottomPal;
-  _bottomMap = purple_bottomMap;
-
-  _bottom_bubbleMap = purple_bottom_bubbleMap;
-  _bottom_bubblePalette = purple_bottom_bubblePal;
-  _bottom_bubbleTiles = purple_bottom_bubbleTiles;
-
-  _bottomTilesLen = purple_bottomTilesLen;
-  _bottomPaletteLen = purple_bottomPalLen;
-  _bottomMapLen = purple_bottomMapLen;
-
-  _bottom_bubbleMapLen = purple_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = purple_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = purple_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(purple_bubblePal, purple_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(purple_scroll_windowPal, purple_scroll_windowBitmap);
@@ -625,21 +539,7 @@ void ThemeTextures::loadDSiPinkTheme()
 {
   setStringPaths("pink");
 
-  _bottomTiles = pink_bottomTiles;
-  _bottomPalette = pink_bottomPal;
-  _bottomMap = pink_bottomMap;
-
-  _bottom_bubbleMap = pink_bottom_bubbleMap;
-  _bottom_bubblePalette = pink_bottom_bubblePal;
-  _bottom_bubbleTiles = pink_bottom_bubbleTiles;
-
-  _bottomTilesLen = pink_bottomTilesLen;
-  _bottomPaletteLen = pink_bottomPalLen;
-  _bottomMapLen = pink_bottomMapLen;
-
-  _bottom_bubbleMapLen = pink_bottom_bubbleMapLen;
-  _bottom_bubblePaletteLen = pink_bottom_bubblePalLen;
-  _bottom_bubbleTilesLen = pink_bottom_bubbleTilesLen;
+  loadBottomImage();
 
   loadBubbleImage(pink_bubblePal, pink_bubbleBitmap, 11, 8, 16);
   loadScrollwindowImage(pink_scroll_windowPal, pink_scroll_windowBitmap);

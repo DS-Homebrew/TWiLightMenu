@@ -54,6 +54,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int blfLevel;
 int fadeDelay = 0;
 
 extern bool isRegularDS;
@@ -152,14 +153,12 @@ float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
-int bottomBg;
-
 int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 
 int vblankRefreshCounter = 0;
 
-static u16 bmpImageBuffer[256*192];
-//static u16 renderedImageBuffer[256*192];
+u16 bmpImageBuffer[256*192];
+//u16 renderedImageBuffer[256*192];
 
 static bool rotatingCubesLoaded = false;
 
@@ -306,11 +305,11 @@ void initSubSprites(void)
 
 void bottomBgLoad(bool drawBubble, bool init = false) {
 	if (init || (!drawBubble && bottomBgState == 2)) {
-		tex().drawBg(bottomBg);
+		tex().drawBg();
 		// Set that we've not drawn the bubble.
 		bottomBgState = 1;
 	} else if (drawBubble && bottomBgState == 1){
-		tex().drawBubbleBg(bottomBg);
+		tex().drawBubbleBg();
 		// Set that we've drawn the bubble.
 		bottomBgState = 2;
 	}
@@ -597,7 +596,14 @@ void vBlankHandler()
 		//	drawBG(subBgImage);
 		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
-		glColor(RGB15(bottomScreenBrightness/8, bottomScreenBrightness/8, bottomScreenBrightness/8));
+		int bg_R = bottomScreenBrightness/8;
+		int bg_G = (bottomScreenBrightness/8)-(3*blfLevel);
+		if (bg_G < 0) bg_G = 0;
+		int bg_B = (bottomScreenBrightness/8)-(6*blfLevel);
+		if (bg_B < 0) bg_B = 0;
+
+		glColor(RGB15(bg_R, bg_G, bg_B));
+
 			if (theme==0) {
 				int bipXpos = 27;
 				glSprite(16+titlewindowXpos[secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
@@ -824,7 +830,7 @@ void vBlankHandler()
 			if (showbubble) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
-			glColor(RGB15(31, 31, 31));
+			glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 			if (dbox_Ypos != -192) {
 				// Draw the dialog box.
 				drawDbox();
@@ -870,7 +876,7 @@ void vBlankHandler()
 				}
 			}*/
 			if (whiteScreen) {
-				glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+				glBoxFilled(0, 0, 256, 192, RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 				if (showProgressIcon) glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 			}
 			
@@ -953,7 +959,7 @@ void vBlankHandler()
 void clearBmpScreen() {
 	u16 val = 0xFFFF;
 	for (int i = 0; i < 256*192; i++) {
-		BG_GFX_SUB[i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+		BG_GFX_SUB[i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 	}
 }
 
@@ -976,7 +982,7 @@ void loadBoxArt(const char* filename) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -1103,7 +1109,7 @@ void loadVolumeImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -1262,7 +1268,7 @@ void loadBatteryImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -1322,7 +1328,7 @@ void loadPhoto() {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -1351,7 +1357,7 @@ void loadPhotoPart() {
 			}
 			u16 val = *(src++);
 			if (y <= 24+147) {
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -1379,7 +1385,7 @@ void loadBMP(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (val != 0xFC1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -1408,7 +1414,7 @@ void loadBMPPart(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (y >= 32 && y <= 167 && val != 0xFC1F) {
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			}
 			x++;
 		}
@@ -1440,7 +1446,7 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+i] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					BG_GFX_SUB[(y+172)*256+i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 				}
 			}
 		}
@@ -1469,7 +1475,7 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+(i+178)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+					BG_GFX_SUB[(y+172)*256+(i+178)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 				}
 			}
 		}
@@ -1586,7 +1592,7 @@ void topBgLoad() {
 							break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 					}
 				}
 			}
@@ -1647,7 +1653,7 @@ void loadDate() {
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 					}
 				}
 			}
@@ -1720,7 +1726,7 @@ void loadTime() {
 					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 						u16 val = *(src++);
 						if (val != 0x7C1F) {	// Do not render magneta pixel
-							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 						}
 					}
 				}
@@ -1781,7 +1787,7 @@ void loadClockColon() {
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 					}
 				}
 			}
@@ -1939,7 +1945,7 @@ void graphicsInit()
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D | DISPLAY_BG2_ACTIVE);
+	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
@@ -1967,6 +1973,14 @@ void graphicsInit()
 //	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything... 
 	lcdMainOnBottom();
 	
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1<<8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1<<8;
+
 	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
@@ -1981,10 +1995,7 @@ void graphicsInit()
 		loadPhoto();
 	}
 
-	// Initialize the bottom background
-	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
-
-	REG_BLDCNT = BLEND_SRC_BG2 | BLEND_FADE_BLACK;
+	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
 	swiWaitForVBlank();
 

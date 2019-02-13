@@ -44,6 +44,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int blfLevel;
 int fadeDelay = 0;
 
 extern int colorRvalue;
@@ -170,7 +171,7 @@ void bottomBgLoad(bool startMenu) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -296,6 +297,8 @@ void vBlankHandler()
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
+		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
+
 		/*if (renderingTop)
 		{
 			glBoxFilledGradient(0, -64, 256, 112,
@@ -391,7 +394,6 @@ void vBlankHandler()
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
 		}
 		updateText(false);
-		glColor(RGB15(31, 31, 31));
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
@@ -432,7 +434,7 @@ void topBgLoad(bool startMenu) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 			x++;
 		}
 	}
@@ -500,6 +502,8 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
+
+	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
 
 	// Initialize the bottom background
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);

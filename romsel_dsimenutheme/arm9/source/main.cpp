@@ -65,6 +65,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+int blfLevel = 0;
 
 extern void ClearBrightness();
 extern bool showProgressIcon;
@@ -189,6 +190,7 @@ void LoadSettings(void) {
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
+	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;

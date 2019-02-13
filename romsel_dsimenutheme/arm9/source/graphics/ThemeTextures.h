@@ -71,6 +71,7 @@ private:
   void loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
 
+  void loadBottomImage();
   void setStringPaths(const std::string theme);
 
 private:
@@ -106,14 +107,16 @@ public:
   const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
-  void drawBubbleBg(int bgId);
-  void drawBg(int bgId);
+  void drawBubbleBg();
+  void drawBg();
 
   std::string shoulderLPath;
   std::string shoulderLGreyPath;
   std::string shoulderRPath;
   std::string shoulderRGreyPath;
   std::string topBgPath;
+  std::string bottomBgPath;
+  std::string bottomBubbleBgPath;
 
 private:
   unique_ptr<glImage[]> _progressImage;
@@ -136,24 +139,6 @@ private:
   unique_ptr<glImage[]> _bubbleImage;
 
 private:
-  const unsigned int *_bottomTiles;
-  u32 _bottomTilesLen;
-
-  const unsigned short *_bottomPalette;
-  u32 _bottomPaletteLen;
-
-  const unsigned short *_bottomMap;
-  u32 _bottomMapLen;
-
-  const unsigned int *_bottom_bubbleTiles;
-  u32 _bottom_bubbleTilesLen;
-
-  const unsigned short *_bottom_bubblePalette;
-  u32 _bottom_bubblePaletteLen;
-
-  const unsigned short *_bottom_bubbleMap;
-  u32 _bottom_bubbleMapLen;
-
   int bubbleTexID;
   int bipsTexID;
   int scrollwindowTexID;
