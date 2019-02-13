@@ -298,7 +298,7 @@ void langInit(void)
 	STR_SHOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW", "Show"));
 	STR_HIDE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HIDE", "Hide"));
 
-	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain."));
+	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect issues."));
 
 	STR_DESCRIPTION_S1SDACCESS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes."));
 
