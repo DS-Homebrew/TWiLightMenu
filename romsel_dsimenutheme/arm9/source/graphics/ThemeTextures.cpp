@@ -233,8 +233,8 @@ void ThemeTextures::drawBubbleBg()
 
 void ThemeTextures::loadBottomImage()
 {
-	extern int blfLevel;
 	extern u16 bmpImageBuffer[256*192];
+	extern u16 convertToDsBmp(u16 val);
 
 	FILE* fileBottom = fopen(bottomBgPath.c_str(), "rb");
 
@@ -253,7 +253,7 @@ void ThemeTextures::loadBottomImage()
 				y--;
 			}
 			u16 val = *(src++);
-			loadedBottomImg[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			loadedBottomImg[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -277,7 +277,7 @@ void ThemeTextures::loadBottomImage()
 				y--;
 			}
 			u16 val = *(src++);
-			loadedBottomBubbleImg[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			loadedBottomBubbleImg[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}

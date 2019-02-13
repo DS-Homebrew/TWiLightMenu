@@ -54,6 +54,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
 
@@ -301,6 +302,35 @@ void initSubSprites(void)
 	swiWaitForVBlank();
 
 	oamUpdate(&oamSub);
+}
+
+u16 convertToDsBmp(u16 val) {
+	if (colorMode == 1) {
+		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
+
+		u8 b,g,r,max,min;
+		b = ((newVal)>>10)&31;
+		g = ((newVal)>>5)&31;
+		r = (newVal)&31;
+		// Value decomposition of hsv
+		max = (b > g) ? b : g;
+		max = (max > r) ? max : r;
+
+		// Desaturate
+		min = (b < g) ? b : g;
+		min = (min < r) ? min : r;
+		max = (max + min) / 2;
+		
+		newVal = 32768|(max<<10)|(max<<5)|(max);
+
+		b = ((newVal)>>10)&(31-6*blfLevel);
+		g = ((newVal)>>5)&(31-3*blfLevel);
+		r = (newVal)&31;
+
+		return 32768|(b<<10)|(g<<5)|(r);
+	} else {
+		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+	}
 }
 
 void bottomBgLoad(bool drawBubble, bool init = false) {
@@ -982,7 +1012,7 @@ void loadBoxArt(const char* filename) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -1109,7 +1139,7 @@ void loadVolumeImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -1268,7 +1298,7 @@ void loadBatteryImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -1328,7 +1358,7 @@ void loadPhoto() {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -1357,7 +1387,7 @@ void loadPhotoPart() {
 			}
 			u16 val = *(src++);
 			if (y <= 24+147) {
-				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -1385,7 +1415,7 @@ void loadBMP(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (val != 0xFC1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -1414,7 +1444,7 @@ void loadBMPPart(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (y >= 32 && y <= 167 && val != 0xFC1F) {
-				BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -1446,7 +1476,7 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+					BG_GFX_SUB[(y+172)*256+i] = convertToDsBmp(val);
 				}
 			}
 		}
@@ -1475,7 +1505,7 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+(i+178)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+					BG_GFX_SUB[(y+172)*256+(i+178)] = convertToDsBmp(val);
 				}
 			}
 		}
@@ -1592,7 +1622,7 @@ void topBgLoad() {
 							break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+						BG_GFX_SUB[(y+2)*256+(i+x)] = convertToDsBmp(val);
 					}
 				}
 			}
@@ -1653,7 +1683,7 @@ void loadDate() {
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+						BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
 					}
 				}
 			}
@@ -1726,7 +1756,7 @@ void loadTime() {
 					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 						u16 val = *(src++);
 						if (val != 0x7C1F) {	// Do not render magneta pixel
-							BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+							BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
 						}
 					}
 				}
@@ -1787,7 +1817,7 @@ void loadClockColon() {
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
 					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+						BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
 					}
 				}
 			}
@@ -1837,7 +1867,7 @@ void loadRotatingCubes() {
 					y--;
 				}
 				u16 val = *(src++);
-				renderedImageBuffer[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
+				renderedImageBuffer[y*256+x] = convertToDsBmp(val);
 				x++;
 			}
 		}

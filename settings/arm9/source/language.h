@@ -13,6 +13,7 @@ extern std::string STR_FILETYPE_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
 
 // GUI settings
+extern std::string STR_COLORMODE;
 extern std::string STR_BLF;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
@@ -33,6 +34,8 @@ extern std::string STR_RESTOREDSIMENU;
 
 extern std::string STR_SHOW;
 extern std::string STR_HIDE;
+
+extern std::string STR_DESCRIPTION_COLORMODE;
 
 extern std::string STR_DESCRIPTION_BLF;
 

@@ -577,6 +577,13 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
 				 TLanguage::ELangSpanish})
+		.option(STR_COLORMODE,
+				STR_DESCRIPTION_COLORMODE,
+				Option::Int(&ms().colorMode),
+				{STR_REGULAR,
+				 "B&W/Greyscale"},
+				{0,
+				 1})
 		.option(STR_BLF,
 				STR_DESCRIPTION_BLF,
 				Option::Int(&ms().blfLevel),

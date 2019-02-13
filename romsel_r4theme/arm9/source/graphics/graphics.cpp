@@ -44,6 +44,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
 
@@ -80,6 +81,8 @@ glImage wirelessIcons[(32 / 32) * (64 / 32)];
 int bottomBg;
 
 static u16 bmpImageBuffer[256*192];
+static u16 topImage[2][256*192];
+static u16 bottomImage[2][256*192];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -136,122 +139,37 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
-void bottomBgLoad(bool startMenu) {
-	extern std::string r4_theme;
+u16 convertToDsBmp(u16 val) {
+	if (colorMode == 1) {
+		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
 
-	char pathBottom[256];
-	if (startMenu) {
-		std::ifstream file((r4_theme+"icons.bmp").c_str());
-		if(file)
-			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str());
-		else
-			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp");
+		u8 b,g,r,max,min;
+		b = ((newVal)>>10)&31;
+		g = ((newVal)>>5)&31;
+		r = (newVal)&31;
+		// Value decomposition of hsv
+		max = (b > g) ? b : g;
+		max = (max > r) ? max : r;
+
+		// Desaturate
+		min = (b < g) ? b : g;
+		min = (min < r) ? min : r;
+		max = (max + min) / 2;
+		
+		newVal = 32768|(max<<10)|(max<<5)|(max);
+
+		b = ((newVal)>>10)&(31-6*blfLevel);
+		g = ((newVal)>>5)&(31-3*blfLevel);
+		r = (newVal)&31;
+
+		return 32768|(b<<10)|(g<<5)|(r);
 	} else {
-		std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
-		if(file)
-			snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str());
-		else
-			snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp");
+		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 	}
+}
 
-	FILE* fileBottom = fopen(pathBottom, "rb");
-
-	if (fileBottom) {
-		// Start loading
-		fseek(fileBottom, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
-		fseek(fileBottom, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, fileBottom);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(fileBottom);
-
-	/*if (startMenu) {
-		switch (subtheme) {
-			case 0:
-			default:
-				dmaCopy(theme01_iconsTiles, bgGetGfxPtr(bottomBg), theme01_iconsTilesLen);
-				dmaCopy(theme01_iconsPal, BG_PALETTE, theme01_iconsPalLen);
-				dmaCopy(theme01_iconsMap, bgGetMapPtr(bottomBg), theme01_iconsMapLen);
-				break;
-			case 1:
-				dmaCopy(theme02_iconsTiles, bgGetGfxPtr(bottomBg), theme02_iconsTilesLen);
-				dmaCopy(theme02_iconsPal, BG_PALETTE, theme02_iconsPalLen);
-				dmaCopy(theme02_iconsMap, bgGetMapPtr(bottomBg), theme02_iconsMapLen);
-				break;
-			case 2:
-				dmaCopy(theme03_iconsTiles, bgGetGfxPtr(bottomBg), theme03_iconsTilesLen);
-				dmaCopy(theme03_iconsPal, BG_PALETTE, theme03_iconsPalLen);
-				dmaCopy(theme03_iconsMap, bgGetMapPtr(bottomBg), theme03_iconsMapLen);
-				break;
-			case 3:
-				dmaCopy(theme04_iconsTiles, bgGetGfxPtr(bottomBg), theme04_iconsTilesLen);
-				dmaCopy(theme04_iconsPal, BG_PALETTE, theme04_iconsPalLen);
-				dmaCopy(theme04_iconsMap, bgGetMapPtr(bottomBg), theme04_iconsMapLen);
-				break;
-			case 4:
-				dmaCopy(theme05_iconsTiles, bgGetGfxPtr(bottomBg), theme05_iconsTilesLen);
-				dmaCopy(theme05_iconsPal, BG_PALETTE, theme05_iconsPalLen);
-				dmaCopy(theme05_iconsMap, bgGetMapPtr(bottomBg), theme05_iconsMapLen);
-				break;
-			case 5:
-				dmaCopy(theme06_iconsTiles, bgGetGfxPtr(bottomBg), theme06_iconsTilesLen);
-				dmaCopy(theme06_iconsPal, BG_PALETTE, theme06_iconsPalLen);
-				dmaCopy(theme06_iconsMap, bgGetMapPtr(bottomBg), theme06_iconsMapLen);
-				break;
-			case 6:
-				dmaCopy(theme07_iconsTiles, bgGetGfxPtr(bottomBg), theme07_iconsTilesLen);
-				dmaCopy(theme07_iconsPal, BG_PALETTE, theme07_iconsPalLen);
-				dmaCopy(theme07_iconsMap, bgGetMapPtr(bottomBg), theme07_iconsMapLen);
-				break;
-			case 7:
-				dmaCopy(theme08_iconsTiles, bgGetGfxPtr(bottomBg), theme08_iconsTilesLen);
-				dmaCopy(theme08_iconsPal, BG_PALETTE, theme08_iconsPalLen);
-				dmaCopy(theme08_iconsMap, bgGetMapPtr(bottomBg), theme08_iconsMapLen);
-				break;
-			case 8:
-				dmaCopy(theme09_iconsTiles, bgGetGfxPtr(bottomBg), theme09_iconsTilesLen);
-				dmaCopy(theme09_iconsPal, BG_PALETTE, theme09_iconsPalLen);
-				dmaCopy(theme09_iconsMap, bgGetMapPtr(bottomBg), theme09_iconsMapLen);
-				break;
-			case 9:
-				dmaCopy(theme10_iconsTiles, bgGetGfxPtr(bottomBg), theme10_iconsTilesLen);
-				dmaCopy(theme10_iconsPal, BG_PALETTE, theme10_iconsPalLen);
-				dmaCopy(theme10_iconsMap, bgGetMapPtr(bottomBg), theme10_iconsMapLen);
-				break;
-			case 10:
-				dmaCopy(theme11_iconsTiles, bgGetGfxPtr(bottomBg), theme11_iconsTilesLen);
-				dmaCopy(theme11_iconsPal, BG_PALETTE, theme11_iconsPalLen);
-				dmaCopy(theme11_iconsMap, bgGetMapPtr(bottomBg), theme11_iconsMapLen);
-				break;
-			case 11:
-				dmaCopy(theme12_iconsTiles, bgGetGfxPtr(bottomBg), theme12_iconsTilesLen);
-				dmaCopy(theme12_iconsPal, BG_PALETTE, theme12_iconsPalLen);
-				dmaCopy(theme12_iconsMap, bgGetMapPtr(bottomBg), theme12_iconsMapLen);
-				break;
-			case 12:
-				dmaCopy(bluemoon_iconsTiles, bgGetGfxPtr(bottomBg), bluemoon_iconsTilesLen);
-				dmaCopy(bluemoon_iconsPal, BG_PALETTE, bluemoon_iconsPalLen);
-				dmaCopy(bluemoon_iconsMap, bgGetMapPtr(bottomBg), bluemoon_iconsMapLen);
-				break;
-		}
-	} else if (subtheme == 12) {
-		dmaCopy(bluemoon_bckgrd2Tiles, bgGetGfxPtr(bottomBg), bluemoon_bckgrd2TilesLen);
-		dmaCopy(bluemoon_bckgrd2Pal, BG_PALETTE, bluemoon_bckgrd2PalLen);
-		dmaCopy(bluemoon_bckgrd2Map, bgGetMapPtr(bottomBg), bluemoon_bckgrd2MapLen);
-	}*/
+void bottomBgLoad(bool startMenu) {
+	dmaCopy(bottomImage[startMenu], BG_GFX, 0x18000);
 }
 
 // No longer used.
@@ -400,44 +318,7 @@ void vBlankHandler()
 }
 
 void topBgLoad(bool startMenu) {
-	extern std::string r4_theme;
-
-	char pathTop[256];
-	if (startMenu) {
-		std::ifstream file((r4_theme+"logo.bmp").c_str());
-		if(file)
-			snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str());
-		else
-			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp");
-	} else {
-		std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
-		if(file)
-			snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str());
-		else
-			snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp");
-	}
-
-	FILE* fileTop = fopen(pathTop, "rb");
-
-	if (fileTop) {
-		// Start loading
-		fseek(fileTop, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
-		fseek(fileTop, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, fileTop);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191+32;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 0+256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
-			x++;
-		}
-	}
+	dmaCopy(topImage[startMenu], (u16*)BG_GFX_SUB+(256*32), 0x18000);
 }
 
 void graphicsInit()
@@ -504,6 +385,86 @@ void graphicsInit()
 	REG_BG3PD_SUB = 1<<8;
 
 	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
+
+	for (int startMenu = 0; startMenu < 2; startMenu++) {
+		extern std::string r4_theme;
+
+		char pathTop[256];
+		if (startMenu) {
+			std::ifstream file((r4_theme+"logo.bmp").c_str());
+			if(file)
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str());
+			else
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp");
+		} else {
+			std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
+			if(file)
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str());
+			else
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp");
+		}
+
+		char pathBottom[256];
+		if (startMenu) {
+			std::ifstream file((r4_theme+"icons.bmp").c_str());
+			if(file)
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str());
+			else
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp");
+		} else {
+			std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+			if(file)
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str());
+			else
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp");
+		}
+
+		FILE* fileTop = fopen(pathTop, "rb");
+
+		if (fileTop) {
+			// Start loading
+			fseek(fileTop, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
+			fseek(fileTop, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x18000, fileTop);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 191;
+			for (int i=0; i<256*192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				topImage[startMenu][y*256+x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+		fclose(fileTop);
+
+		FILE* fileBottom = fopen(pathBottom, "rb");
+
+		if (fileBottom) {
+			// Start loading
+			fseek(fileBottom, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
+			fseek(fileBottom, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x18000, fileBottom);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 191;
+			for (int i=0; i<256*192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				bottomImage[startMenu][y*256+x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+		fclose(fileBottom);
+	}
 
 	// Initialize the bottom background
 	// bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);

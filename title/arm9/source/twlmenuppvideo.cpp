@@ -39,6 +39,8 @@ static glImage snesIcon[1];
 extern u16 bmpImageBuffer[256*192];
 extern u16 videoImageBuffer[39][256*144];
 
+extern u16 convertToDsBmp(u16 val);
+
 static char videoFrameFilename[256];
 
 static FILE* videoFrameFile;
@@ -202,7 +204,35 @@ void twlMenuVideo_loadTopGraphics(void) {
 				);
 }
 
+void BootJingleTwlMenu() {
+	
+	mmInitDefaultMem((mm_addr)soundbank_bin);
+
+	mmLoadEffect( SFX_TWLMENUVIDEO );
+
+	mm_sound_effect twlmenuvideosound = {
+		{ SFX_TWLMENUVIDEO } ,	// id
+		(int)(1.0f * (1<<10)),	// rate
+		0,		// handle
+		255,	// volume
+		128,	// panning
+	};
+	
+	mmEffectEx(&twlmenuvideosound);
+}
+
+static bool waitTillSoundPlay = true;
+static int timeTillSoundPlay = 0;
+
 void twlMenuVideo_topGraphicRender(void) {
+	if (ms().colorMode == 1 && waitTillSoundPlay) {
+		timeTillSoundPlay++;
+		if (timeTillSoundPlay > 60) {
+			BootJingleTwlMenu();
+			waitTillSoundPlay = false;
+		}
+	}
+
 	glBegin2D();
 	{
 		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
@@ -276,29 +306,14 @@ void twlMenuVideo_topGraphicRender(void) {
 	}
 }
 
-void BootJingleTwlMenu() {
-	
-	mmInitDefaultMem((mm_addr)soundbank_bin);
-
-	mmLoadEffect( SFX_TWLMENUVIDEO );
-
-	mm_sound_effect twlmenuvideosound = {
-		{ SFX_TWLMENUVIDEO } ,	// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
-	
-	mmEffectEx(&twlmenuvideosound);
-}
-
 void twlMenuVideo(void) {
 	extern bool twlMenuSplash;
 	twlMenuSplash = true;
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	BootJingleTwlMenu();
+	if (ms().colorMode == 0) {
+		BootJingleTwlMenu();
+	}
 
 	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
 		if (selectedFrame < 10) {
@@ -323,7 +338,7 @@ void twlMenuVideo(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -369,7 +384,7 @@ void twlMenuVideo(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+				videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
 				x++;
 			}
 			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
@@ -406,7 +421,7 @@ void twlMenuVideo(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {
-				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
@@ -431,7 +446,7 @@ void twlMenuVideo(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}

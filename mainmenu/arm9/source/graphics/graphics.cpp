@@ -50,6 +50,7 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
+extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
 
@@ -148,6 +149,35 @@ void initSubSprites(void)
 	oamUpdate(&oamSub);
 }
 
+u16 convertToDsBmp(u16 val) {
+	if (colorMode == 1) {
+		u16 newVal = ((val>>10)&31) | (val&31<<5) | (val&31)<<10 | BIT(15);
+
+		u8 b,g,r,max,min;
+		b = ((newVal)>>10)&31;
+		g = ((newVal)>>5)&31;
+		r = (newVal)&31;
+		// Value decomposition of hsv
+		max = (b > g) ? b : g;
+		max = (max > r) ? max : r;
+
+		// Desaturate
+		min = (b < g) ? b : g;
+		min = (min < r) ? min : r;
+		max = (max + min) / 2;
+		
+		newVal = 32768|(max<<10)|(max<<5)|(max);
+
+		b = ((newVal)>>10)&(31-6*blfLevel);
+		g = ((newVal)>>5)&(31-3*blfLevel);
+		r = (newVal)&31;
+
+		return 32768|(b<<10)|(g<<5)|(r);
+	} else {
+		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+	}
+}
+
 void bottomBgLoad(void) {
 	FILE* file = fopen("nitro:/graphics/bottombg.bmp", "rb");
 
@@ -166,7 +196,7 @@ void bottomBgLoad(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			BG_GFX[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -330,7 +360,7 @@ void loadBoxArt(const char* filename) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -356,7 +386,7 @@ void topBgLoad(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -380,7 +410,7 @@ void topBarLoad(void) {
 			u16* src = buffer;
 			for (int i=0; i<256; i++) {
 				u16 val = *(src++);
-				BG_GFX_SUB[y*256+i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+i] = convertToDsBmp(val);
 			}
 		}
 	}

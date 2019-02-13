@@ -20,6 +20,7 @@ std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // GUI settings
+std::string STR_COLORMODE = "STR_COLORMODE";
 std::string STR_BLF = "STR_BLF";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_MAINMENU = "STR_MAINMENU";
@@ -40,6 +41,8 @@ std::string STR_RESTOREDSIMENU = "STR_RESTOREDSIMENU";
 
 std::string STR_SHOW = "STR_SHOW";
 std::string STR_HIDE = "STR_HIDE";
+
+std::string STR_DESCRIPTION_COLORMODE = "STR_DESCRIPTION_COLORMODE";
 
 std::string STR_DESCRIPTION_BLF = "STR_DESCRIPTION_BLF";
 
@@ -277,6 +280,7 @@ void langInit(void)
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings"));
 
 	// GUI settings
+	STR_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "COLORMODE", "Color mode"));
 	STR_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BLUELIGHTFILTER", "Blue light filter"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
 	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu"));
@@ -297,6 +301,8 @@ void langInit(void)
 
 	STR_SHOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW", "Show"));
 	STR_HIDE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HIDE", "Hide"));
+
+	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas."));
 
 	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect issues."));
 

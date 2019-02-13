@@ -12,6 +12,8 @@
 extern u16 bmpImageBuffer[256*192];
 extern u16 videoImageBuffer[39][256*144];
 
+extern u16 convertToDsBmp(u16 val);
+
 extern void* dsiSplashLocation;
 
 extern bool fadeType;
@@ -105,7 +107,7 @@ void BootSplashDSi(void) {
 					y--;
 				}
 				u16 val = *(src++);
-				BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -132,7 +134,7 @@ void BootSplashDSi(void) {
 			for (int i=0; i<122*28; i++) {
 				u16 val = *(src++);
 				if (val != 0x7C1F) {
-					BG_GFX[(256*192)+i] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+					BG_GFX[(256*192)+i] = convertToDsBmp(val);
 				}
 			}
 		}
@@ -168,7 +170,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+					videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
 					x++;
 				}
 			}
@@ -226,7 +228,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[selectedFrame][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+					videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
 					x++;
 				}
 			}
@@ -297,7 +299,7 @@ void BootSplashDSi(void) {
 						y--;
 					}
 					u16 val = *(src++);
-					videoImageBuffer[selectedFrame-39][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+					videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
 					x++;
 				}
 
@@ -356,7 +358,7 @@ void BootSplashDSi(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			videoImageBuffer[0][y*256+x] = ((val>>10)&0x1f) | ((val)&((31-3*ms().blfLevel)<<5)) | (val&(31-6*ms().blfLevel))<<10 | BIT(15);
+			videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}

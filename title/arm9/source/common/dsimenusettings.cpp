@@ -14,6 +14,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     consoleModel = -1;
 
     guiLanguage = ELangDefault;
+    colorMode = 0;
     blfLevel = 0;
     useGbarunner = false;
     showMainMenu = true;
@@ -73,6 +74,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
     // Customizable UI settings.
+	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
