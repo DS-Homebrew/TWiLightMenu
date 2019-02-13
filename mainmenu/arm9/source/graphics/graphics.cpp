@@ -25,7 +25,6 @@
 #include "FontGraphic.h"
 
 // Graphic files
-#include "bottombg.h"
 #include "cursor.h"
 #include "iconbox.h"
 #include "wirelessicons.h"
@@ -92,8 +91,6 @@ glImage gbaIconImage[(32 / 32) * (32 / 32)];
 glImage cornerIcons[(32 / 32) * (128 / 32)];
 glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
-int bottomBg;
-
 static u16 bmpImageBuffer[256*192];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
@@ -152,9 +149,29 @@ void initSubSprites(void)
 }
 
 void bottomBgLoad(void) {
-	dmaCopy(bottombgTiles, bgGetGfxPtr(bottomBg), bottombgTilesLen);
-	dmaCopy(bottombgPal, BG_PALETTE, bottombgPalLen);
-	dmaCopy(bottombgMap, bgGetMapPtr(bottomBg), bottombgMapLen);
+	FILE* file = fopen("nitro:/graphics/bottombg.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX[y*256+x] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+			x++;
+		}
+	}
+
+	fclose(file);
 }
 
 // No longer used.
@@ -379,7 +396,7 @@ void graphicsInit()
 	SetBrightness(1, 31);
 
 	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D | DISPLAY_BG2_ACTIVE);
+	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
 	// Initialize gl2d
@@ -406,6 +423,14 @@ void graphicsInit()
 
 	lcdMainOnBottom();
 	
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1<<8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1<<8;
+
 	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
 	REG_BG3X_SUB = 0;
 	REG_BG3Y_SUB = 0;
@@ -413,9 +438,6 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
-
-	// Initialize the bottom background
-	bottomBg = bgInit(2, BgType_ExRotation, BgSize_ER_256x256, 0,1);
 
 	swiWaitForVBlank();
 
