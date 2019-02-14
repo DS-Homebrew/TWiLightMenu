@@ -302,7 +302,7 @@ void langInit(void)
 	STR_SHOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW", "Show"));
 	STR_HIDE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HIDE", "Hide"));
 
-	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas."));
+	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect."));
 
 	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect issues."));
 

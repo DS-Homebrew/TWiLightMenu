@@ -413,6 +413,11 @@ void playRotatingCubesVideo(void) {
 				rocketVideo_currentFrame = 0;
 			}
 			dmaCopy(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);
+			if (colorMode == 1) {
+				for (u16 i = 0; i < 256*56; i++) {
+					BG_GFX_SUB[(rocketVideo_videoYpos*256)+i] = convertVramColorToGrayscale(BG_GFX_SUB[(rocketVideo_videoYpos*256)+i]);
+				}
+			}
 			rocketVideo_frameDelay = 0;
 			rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 			rocketVideo_loadFrame = false;
