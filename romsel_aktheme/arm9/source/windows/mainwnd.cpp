@@ -48,16 +48,6 @@
 #include "language.h"
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
-// #include "helpwnd.h"
-// #include "expwnd.h"
-// #include "gbaloader.h"
-// #include "romlauncher.h"
-// #include "sdidentify.h"
-// #include "favorites.h"
-
-// #ifdef DEBUG
-// #include "iocmn.h"
-// #endif
 
 #include <sys/iosupport.h>
 
@@ -142,15 +132,6 @@ void MainWnd::init()
     addChildWindow(_startButton);
 
     // // init brightness button
-	    // x = ini.GetInt("brightness btn", "x", 240);
-	    // y = ini.GetInt("brightness btn", "y", 1);
-	    // w = ini.GetInt("brightness btn", "w", 16);
-	    // h = ini.GetInt("brightness btn", "h", 16);
-	    // _brightnessButton = new Button(x, y, w, h, this, "");
-	    // _brightnessButton->setRelativePosition(Point(x, y));
-	    // _brightnessButton->loadAppearance(SFN_BRIGHTNESS_BUTTON);
-	    // _brightnessButton->pressed.connect(this, &MainWnd::brightnessButtonClicked);
-	    // addChildWindow(_brightnessButton);
 	
 	    x = ini.GetInt("battery icon", "x", 238);
 	    y = ini.GetInt("battery icon", "y", 172);
@@ -217,13 +198,11 @@ void MainWnd::init()
     }
     // init startmenu
     _startMenu = new StartMenu(160, 40, 61, 108, this, "start menu");
-    //_startMenu->setRelativePosition( Point(160, 40) );
     _startMenu->init();
     _startMenu->itemClicked.connect(this, &MainWnd::startMenuItemClicked);
     _startMenu->hide();
     _startMenu->setRelativePosition(_startMenu->position());
     addChildWindow(_startMenu);
-    //windowManager().addWindow( _startMenu );
     dbg_printf("startMenu %08x\n", _startMenu);
 
     arrangeChildren();
@@ -264,7 +243,7 @@ void MainWnd::startMenuItemClicked(s16 i)
     // ------------------- Copy and Paste ---
     if (START_MENU_ITEM_COPY == i)
     {
-        if ("" == _mainList->getSelectedFullPath())
+        if (_mainList->getSelectedFullPath() == "")
             return;
         struct stat st;
         stat(_mainList->getSelectedFullPath().c_str(), &st);
@@ -278,7 +257,7 @@ void MainWnd::startMenuItemClicked(s16 i)
 
     else if (START_MENU_ITEM_CUT == i)
     {
-        if ("" == _mainList->getSelectedFullPath())
+        if (_mainList->getSelectedFullPath() == "")
             return;
         struct stat st;
         stat(_mainList->getSelectedFullPath().c_str(), &st);
@@ -293,14 +272,7 @@ void MainWnd::startMenuItemClicked(s16 i)
     else if (START_MENU_ITEM_PASTE == i)
     {
         bool ret = false;
-        // if (_mainList->IsFavorites())
-        // {
-        //     ret = Favorites::AddToFavorites(getSrcFile());
-        // }
-        // else
-        // {
-            ret = copyOrMoveFile(_mainList->getCurrentDir());
-        // }
+        ret = copyOrMoveFile(_mainList->getCurrentDir());
         if (ret) // refresh current directory
             _mainList->enterDir(_mainList->getCurrentDir());
     }
@@ -308,17 +280,10 @@ void MainWnd::startMenuItemClicked(s16 i)
     else if (START_MENU_ITEM_DELETE == i)
     {
         std::string fullPath = _mainList->getSelectedFullPath();
-        if ("" != fullPath)
+        if (fullPath != "")
         {
             bool ret = false;
-            // if (_mainList->IsFavorites())
-            // {
-                // ret = Favorites::RemoveFromFavorites(fullPath);
-            // }
-            // else
-            // {
-                ret = deleteFile(fullPath);
-            // }
+            ret = deleteFile(fullPath);
             if (ret)
                 _mainList->enterDir(_mainList->getCurrentDir());
         }
@@ -421,22 +386,6 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             }
             ret = true;
             break;
-            //         case KeyMessage::UI_KEY_X:
-            //         {
-            //             if (isL)
-            //             {
-            //                 if (allow)
-            //                 {
-            //                     DSRomInfo rominfo;
-            //                     if (_mainList->getRomInfo(_mainList->selectedRowId(), rominfo) && rominfo.isDSRom() && !rominfo.isHomebrew())
-            //                     {
-            //                         RomInfoWnd::showCheats(_mainList->getSelectedFullPath());
-            //                     }
-            //                 }
-            //                 _processL = false;
-            //             }
-            //             else
-            //             {
 
         case KeyMessage::UI_KEY_START:
             startButtonClicked();
@@ -593,10 +542,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 	if (settingsIni.checkIfShowAPMsg()) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
-		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)		// Girls Mode (JAP version of Style Savvy)
-		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)		// Inazuma Eleven (J)
-		|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)		// Sonic Classic Collection
-		|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
+		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)   // Girls Mode (JAP version of Style Savvy)
+		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)    // Inazuma Eleven (J)
+		|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)     // Sonic Classic Collection
+		|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0)     // Doctor Who: Evacuation Earth
+		|| (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0))   // Rune Factory 3 - A Fantasy Harvest Moon
 		{
 			hasAP = false;
 		}
@@ -726,11 +676,6 @@ void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
         progressWnd().hide();
     }
 }
-
-// void MainWnd::bootUnlaunch(DSRomInfo& rominfo)
-// {
-
-// }
 
 void MainWnd::launchSelected()
 {

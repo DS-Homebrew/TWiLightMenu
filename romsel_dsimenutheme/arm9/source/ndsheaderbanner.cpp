@@ -59,10 +59,11 @@ bool checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
-	if ((strcmp(game_TID, "AZLJ") == 0)		// Girls Mode (JAP version of Style Savvy)
-	|| (strcmp(game_TID, "YEEJ") == 0)			// Inazuma Eleven (J)
-	|| (strncmp(game_TID, "VSO", 3) == 0)		// Sonic Classic Collection
-	|| (strncmp(game_TID, "B2D", 3) == 0))		// Doctor Who: Evacuation Earth
+	if ((strcmp(game_TID, "AZLJ") == 0)     // Girls Mode (JAP version of Style Savvy)
+	|| (strcmp(game_TID, "YEEJ") == 0)      // Inazuma Eleven (J)
+	|| (strncmp(game_TID, "VSO", 3) == 0)   // Sonic Classic Collection
+	|| (strncmp(game_TID, "B2D", 3) == 0)   // Doctor Who: Evacuation Earth
+	|| (strncmp(game_TID, "BRFP") == 0))    // Rune Factory 3 - A Fantasy Harvest Moon
 	{
 		return false;
 	}
