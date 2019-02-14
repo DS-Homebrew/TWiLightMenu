@@ -52,8 +52,11 @@
 #include "icon_snes.h"
 
 extern int theme;
+extern int colorMode;
 extern bool useGbarunner;
 extern bool animateDsiIcons;
+
+extern u16 convertVramColorToGrayscale(u16 val);
 
 static int iconTexID[8];
 static int folderTexID;
@@ -145,6 +148,11 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 		glDeleteTextures(1, &iconTexID[i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
+		if (colorMode == 1) {
+			for (int i2 = 0; i2 < 16; i2++) {
+				*(palSrc+i2+(i*16)) = convertVramColorToGrayscale(*(palSrc+i2+(i*16)));
+			}
+		}
 		iconTexID[i] =
 		glLoadTileSet(ndsIcon[i], // pointer to glImage array
 					32, // sprite width

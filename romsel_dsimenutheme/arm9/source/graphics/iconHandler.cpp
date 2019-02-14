@@ -208,6 +208,17 @@ static inline GL_TEXTURE_SIZE_ENUM tex_height(int texHeight)
  */
 void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, bool init)
 {
+	u16* newPalette = (u16*)_palette;
+
+	extern int colorMode;
+	extern u16 convertVramColorToGrayscale(u16 val);
+
+	if (colorMode == 1) {
+		for (int i2 = 0; i2 < 16; i2++) {
+			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
+		}
+	}
+
     if (!BAD_ICON_IDX(num))
         swiCopy(_palette, _paletteCache[num], 4 * sizeof(u16) | COPY_MODE_COPY | COPY_MODE_WORD);
 
@@ -222,7 +233,7 @@ void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, b
         tex_height(texHeight), // sizeY for glTexImage2D() in videoGL.h
         TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
         16,              // Length of the palette to use (16 colors)
-        (u16 *)_palette, // Image palette
+        (u16 *)newPalette, // Image palette
         (u8 *)_tiles,    // Raw image data
         init);
 }

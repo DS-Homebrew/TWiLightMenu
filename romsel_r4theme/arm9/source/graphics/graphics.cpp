@@ -168,6 +168,23 @@ u16 convertToDsBmp(u16 val) {
 	}
 }
 
+u16 convertVramColorToGrayscale(u16 val) {
+	u8 b,g,r,max,min;
+	b = ((val)>>10)&31;
+	g = ((val)>>5)&31;
+	r = (val)&31;
+	// Value decomposition of hsv
+	max = (b > g) ? b : g;
+	max = (max > r) ? max : r;
+
+	// Desaturate
+	min = (b < g) ? b : g;
+	min = (min < r) ? min : r;
+	max = (max + min) / 2;
+
+	return 32768|(max<<10)|(max<<5)|(max);
+}
+
 void bottomBgLoad(bool startMenu) {
 	dmaCopy(bottomImage[startMenu], BG_GFX, 0x18000);
 }
