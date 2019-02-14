@@ -29,7 +29,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 - [ahezard](https://github.com/ahezard): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob)
 - Coto: [nesDS](https://sourceforge.net/projects/nesds/)
-- [Apache Thunder](https://github.com/ApacheThunder): [nesDS TWL Edition](https://github.com/ApacheThunder/NesDS), and the DSi splash from [NTR Launcher](https://github.com/ApacheThunder/NTR_Launcher).
+- [Apache Thunder](https://github.com/ApacheThunder): [nesDS TWL Edition](https://github.com/ApacheThunder/NesDS), and the DSi splash from [NTR Launcher](https://github.com/ApacheThunder/NTR_Launcher) (only used from v6.6.0 to 7.3.0).
 - Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
 - archeid (Loopy): [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS)
 ## Graphics & Theme
