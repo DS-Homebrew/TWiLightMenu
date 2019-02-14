@@ -583,8 +583,8 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				{STR_REGULAR,
 				 "B&W/Greyscale"},
 				{0,
-				 1})
-		.option(STR_BLF,
+				 1});
+		/*.option(STR_BLF,
 				STR_DESCRIPTION_BLF,
 				Option::Int(&ms().blfLevel),
 				{STR_OFF,
@@ -598,7 +598,7 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				 2,
 				 3,
 				 4,
-				 5,});
+				 5,});*/
 
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
 		miscPage.option(STR_S1SDACCESS,
