@@ -82,6 +82,7 @@ void BootstrapSettings::saveSettings()
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", bstrap_debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", bstrap_logging);
 	if (isDSiMode()) bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", bstrap_romreadled);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_SCREEN", bstrap_loadingScreen);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_DARK_THEME", bstrap_loadingScreenTheme);
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "LOADING_SWAP_LCDS", bstrap_loadingScreenLocation);
