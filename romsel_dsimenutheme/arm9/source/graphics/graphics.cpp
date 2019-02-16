@@ -189,6 +189,7 @@ void vramcpy_ui (void* dest, const void* src, int size)
 extern mm_sound_effect snd_stop;
 extern mm_sound_effect mus_menu;
 
+
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
@@ -419,7 +420,7 @@ void playRotatingCubesVideo(void) {
 			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
 				rocketVideo_currentFrame = 0;
 			}
-			dmaCopyWordsAsynch(2, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
+			dmaCopyWordsAsynch(0, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
 
 			if (colorMode == 1) {
 				for (u16 i = 0; i < 256*56; i++) {
