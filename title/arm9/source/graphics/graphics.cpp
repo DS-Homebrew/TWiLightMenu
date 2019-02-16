@@ -31,6 +31,7 @@
 
 extern bool fadeType;
 bool controlTopBright = true;
+bool controlBottomBright = true;
 int screenBrightness = 31;
 
 bool rocketVideo_playVideo = false;
@@ -136,7 +137,7 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	if (controlTopBright) SetBrightness(0, screenBrightness);
-	SetBrightness(1, screenBrightness);
+	if (controlBottomBright) SetBrightness(1, screenBrightness);
 	if (twlMenuSplash) {
 		twlMenuVideo_topGraphicRender();
 	}

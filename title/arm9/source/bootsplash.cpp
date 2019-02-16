@@ -17,6 +17,9 @@ extern u16 convertToDsBmp(u16 val);
 extern void* dsiSplashLocation;
 
 extern bool fadeType;
+extern bool controlTopBright;
+extern bool controlBottomBright;
+extern int screenBrightness;
 
 bool cartInserted;
 
@@ -122,6 +125,7 @@ void BootSplashDSi(void) {
 
 	cartInserted = (REG_SCFG_MC != 0x11);
 
+	controlBottomBright = false;
 	fadeType = true;
 	
 	if (cartInserted) {
@@ -255,10 +259,17 @@ void BootSplashDSi(void) {
 		}
 	}
 
+	controlTopBright = false;
+	fadeType = false;
+	screenBrightness = 20;
+	swiWaitForVBlank();
+
 	rocketVideo_videoYpos = 12;
 	rocketVideo_videoYsize = 144;
 	rocketVideo_screen = true;
 	rocketVideo_playVideo = true;
+	controlBottomBright = true;
+	fadeType = true;
 
 	while (rocketVideo_playVideo) {
 		if (sixtyFps && rocketVideo_currentFrame >= 16) {
@@ -412,6 +423,8 @@ void BootSplashDSi(void) {
 	fclose(destinationFile);*/
 
 	// Fade out
+	controlTopBright = true;
+	controlBottomBright = true;
 	fadeType = false;
 	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 
