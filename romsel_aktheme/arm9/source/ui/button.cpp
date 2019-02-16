@@ -206,11 +206,11 @@ void ButtonDesc::draw(const Rect &area, GRAPHICS_ENGINE engine) const
 
 void ButtonDesc::loadData(const std::string &filename)
 {
-    int width = 40;
+    // int width = 40;
     int height = 16;
     if (_button)
     {
-        width = _button->size().x;
+        // width = _button->size().x;
         height = _button->size().y;
     }
 

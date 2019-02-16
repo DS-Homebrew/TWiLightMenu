@@ -66,10 +66,12 @@ private:
   bool loadDSRomInfo(const std::string &filename, bool loadBanner);
 
 public:
-  DSRomInfo() : _isDSRom(EFalse), _isHomebrew(EFalse), _isGbaRom(EFalse), _extIcon(-1), _romVersion(0), 
-  _isDSiWare(EFalse), 
+  DSRomInfo() : _isDSRom(EFalse), _isHomebrew(EFalse), _isDSiWare(EFalse), 
+  _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
-  _isArgv(EFalse)
+  _isArgv(EFalse),
+  _extIcon(-1), 
+  _romVersion(0)
   {
     //memcpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
     memset(&_banner, 0, sizeof(_banner));
