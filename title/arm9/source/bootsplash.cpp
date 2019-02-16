@@ -25,7 +25,10 @@ static char videoFrameFilename[256];
 static FILE* videoFrameFile;
 
 extern bool rocketVideo_playVideo;
+extern bool rocketVideo_playBackwards;
+extern bool rocketVideo_screen;
 extern int rocketVideo_videoYpos;
+extern int rocketVideo_videoYsize;
 extern int rocketVideo_videoFrames;
 extern int rocketVideo_videoFps;
 extern int rocketVideo_currentFrame;
@@ -253,6 +256,8 @@ void BootSplashDSi(void) {
 	}
 
 	rocketVideo_videoYpos = 12;
+	rocketVideo_videoYsize = 144;
+	rocketVideo_screen = true;
 	rocketVideo_playVideo = true;
 
 	while (rocketVideo_playVideo) {
@@ -336,47 +341,59 @@ void BootSplashDSi(void) {
 		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	}
 
-	int touchToContinueText_Ypos = (ms().hsMsg ? 160 : 80);
-	int touchToContinueWait = 59;
-	int touchToContinue_secondsWaited = -1;
-	bool touchToContinue_show = true;
+	rocketVideo_videoFrames = 29;
+	rocketVideo_videoFps = 60;
 
-	FILE* file = fopen("nitro:/graphics/touchToContinue.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 31;
-		for (int i=0; i<256*32; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
-			x++;
+	for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
+		if (selectedFrame < 0x10) {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_1/0x0%x.bmp", (int)selectedFrame);
+		} else {
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_1/0x%x.bmp", (int)selectedFrame);
 		}
+		videoFrameFile = fopen(videoFrameFilename, "rb");
+
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x4000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 31;
+			for (int i=0; i<256*32; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+		fclose(videoFrameFile);
 	}
 
-	fclose(file);
+	rocketVideo_videoYpos = (ms().hsMsg ? 160 : 80);
+	rocketVideo_videoYsize = 32;
+	rocketVideo_screen = false;
+	rocketVideo_playVideo = true;
+	int touchToContinueWait = 59;
+	int touchToContinue_secondsWaited = -1;
 
 	while (1) {
 		touchToContinueWait++;
-		if (touchToContinueWait == 60) {
-			for (int i=0; i<256*32; i++) {
-				if (touchToContinue_show) {
-					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = videoImageBuffer[0][i];
-				} else {
-					BG_GFX_SUB[touchToContinueText_Ypos*256+i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
-				}
+		if (!rocketVideo_playVideo) {
+			rocketVideo_playBackwards = !rocketVideo_playBackwards;
+			if (rocketVideo_playBackwards) {
+				rocketVideo_currentFrame = rocketVideo_videoFrames+1;
+			} else {
+				rocketVideo_currentFrame = -1;
 			}
+			rocketVideo_playVideo = true;
+		}
+		if (touchToContinueWait == 60) {
 			touchToContinueWait = 0;
-			touchToContinue_show = !touchToContinue_show;
 			touchToContinue_secondsWaited++;
 		}
 		scanKeys();
@@ -397,6 +414,8 @@ void BootSplashDSi(void) {
 	// Fade out
 	fadeType = false;
 	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
+
+	rocketVideo_playVideo = false;
 }
 
 void BootSplashInit(void) {

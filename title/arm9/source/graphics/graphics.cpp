@@ -34,7 +34,10 @@ bool controlTopBright = true;
 int screenBrightness = 31;
 
 bool rocketVideo_playVideo = false;
+bool rocketVideo_playBackwards = false;
+bool rocketVideo_screen = true;			// true == top, false == bottom
 int rocketVideo_videoYpos = 0;
+int rocketVideo_videoYsize = 144;
 int rocketVideo_videoFrames = 0;
 int rocketVideo_videoFps = 60;
 int rocketVideo_currentFrame = -1;
@@ -148,23 +151,44 @@ void vBlankHandler()
 		}
 
 		if (rocketVideo_loadFrame) {
-			rocketVideo_currentFrame++;
+			if (rocketVideo_playBackwards) {
+				rocketVideo_currentFrame--;
 
-			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-				rocketVideo_playVideo = false;
-				rocketVideo_currentFrame = -1;
-				rocketVideo_frameDelay = 0;
-				rocketVideo_frameDelayEven = true;
-				rocketVideo_loadFrame = false;
-			} else {
-				if (rocketVideo_videoFps == 60) {
-					dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+				if (rocketVideo_currentFrame < 0) {
+					rocketVideo_playVideo = false;
+					rocketVideo_currentFrame = rocketVideo_videoFrames+1;
+					rocketVideo_frameDelay = 0;
+					rocketVideo_frameDelayEven = true;
+					rocketVideo_loadFrame = false;
 				} else {
-					dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+					if (rocketVideo_videoFps == 60 && rocketVideo_screen) {
+						dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+					} else {
+						dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)(rocketVideo_screen ? BG_GFX+(256*rocketVideo_videoYpos) : BG_GFX_SUB+(256*rocketVideo_videoYpos)), 0x200*rocketVideo_videoYsize);
+					}
+					rocketVideo_frameDelay = 0;
+					rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+					rocketVideo_loadFrame = false;
 				}
-				rocketVideo_frameDelay = 0;
-				rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-				rocketVideo_loadFrame = false;
+			} else {
+				rocketVideo_currentFrame++;
+
+				if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+					rocketVideo_playVideo = false;
+					rocketVideo_currentFrame = -1;
+					rocketVideo_frameDelay = 0;
+					rocketVideo_frameDelayEven = true;
+					rocketVideo_loadFrame = false;
+				} else {
+					if (rocketVideo_videoFps == 60 && rocketVideo_screen) {
+						dmaCopy(dsiSplashLocation+(0x12000*rocketVideo_currentFrame), (u16*)BG_GFX+(256*rocketVideo_videoYpos), 0x12000);
+					} else {
+						dmaCopy((void*)videoImageBuffer[rocketVideo_currentFrame % 39], (u16*)(rocketVideo_screen ? BG_GFX+(256*rocketVideo_videoYpos) : BG_GFX_SUB+(256*rocketVideo_videoYpos)), 0x200*rocketVideo_videoYsize);
+					}
+					rocketVideo_frameDelay = 0;
+					rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+					rocketVideo_loadFrame = false;
+				}
 			}
 		}
 	}
