@@ -54,7 +54,7 @@ void dsiSysMenuLaunch()
 		*(u32 *)(0x02000310) = 0x4D454E55;	// "MENU"
 		unlaunchSetHiyaBoot();
 	} else {
-		u8 setRegion;
+		u8 setRegion = 0;
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
@@ -136,8 +136,8 @@ void dsiLaunch(u32 *tid)
 }
 void dsiLaunchSystemSettings()
 {
-    char tmdpath[256];
-    u8 titleID[4];
+    char tmdpath[256] = {'\0'};
+    u8 titleID[4] = {0};
     for (u8 i = 0x41; i <= 0x5A; i++)
     {
         snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);

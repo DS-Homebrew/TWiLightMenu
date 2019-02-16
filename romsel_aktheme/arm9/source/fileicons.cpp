@@ -72,7 +72,7 @@ void FileIcons::LoadFolder(IconPaths &aPaths, const std::string &aFolder)
   {
     struct stat st;
     struct dirent *entry;
-    char lfn[256]; 
+    char lfn[aFolder.length() + 256 + 2] = {'\0'}; 
 
     // char longFilename[MAX_FILENAME_LENGTH];
     while ((entry = readdir(dir)) != NULL)
