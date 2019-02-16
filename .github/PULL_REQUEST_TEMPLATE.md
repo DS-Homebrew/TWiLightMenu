@@ -9,7 +9,7 @@ _Tell us where have you tested it._
 
 *** 
 #### Pull Request status
-- [ ]  This PR has been tested using latest devkitPro, devkitARM, and EasyGL2D.  
+- [ ]  This PR has been tested using the provided devkitPro, devkitARM, and EasyGL2D.  
 
 _(Do not edit after this point)_
 - [ ]  This PR is fully documented.
