@@ -161,6 +161,8 @@ int vblankRefreshCounter = 0;
 u16 bmpImageBuffer[256*192];
 //u16 renderedImageBuffer[256*192];
 
+u16 dateFontImage[128*16];
+
 static bool rotatingCubesLoaded = false;
 
 bool rocketVideo_playVideo = false;
@@ -1426,7 +1428,7 @@ void loadBMP(const char* filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1A000, file);
+		fread(bmpImageBuffer, 2, 0x18000, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
 		int y = 191;
@@ -1655,12 +1657,58 @@ void topBgLoad() {
 	}
 }
 
+void loadDateFont() {
+	char fontPath[64];
+	switch (theme) {
+		case 0:
+		default:
+			if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
+			else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
+			else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
+			else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
+			else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
+			else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
+			else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+			else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
+			break;
+		case 1:
+			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
+			break;
+	}
+
+	FILE* file = fopen(fontPath, "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x1000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 15;
+		for (int i=0; i<128*16; i++) {
+			if (x >= 128) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			if (val != 0x7C1F) {	// Do not render magneta pixel
+				dateFontImage[y*128+x] = convertToDsBmp(val);
+			} else {
+				dateFontImage[y*128+x] = 0x7C1F;
+			}
+			x++;
+		}
+	}
+
+	fclose(file);
+}
+
 static std::string loadedDate;
 
 void loadDate() {
 	// Load date
-	char fontPath[64];
-	FILE* file;
 	int x = 162;
 	char date[6];
 
@@ -1672,47 +1720,21 @@ void loadDate() {
 	loadedDate = date;
 
 	for (int c = 0; c < 5; c++) {
+		int imgY = 15;
+
 		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
-		switch (theme) {
-			case 0:
-			default:
-				if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
-				else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
-				else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
-				else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
-				else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
-				else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
-				else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-				else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
-				break;
-			case 1:
-				sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-				break;
-		}
 
-		file = fopen(fontPath, "rb");
-
-		if (file) {
-			// Start date
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			for (int y=14; y>=6; y--) {
-				u16 buffer[128];
-				fread(buffer, 2, 0x80, file);
-				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
-
-				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
-					u16 val = *(src++);
-					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
-					}
+		// Start date
+		for (int y=14; y>=6; y--) {
+			for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
+				if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 				}
 			}
-			x += date_time_font_texcoords[2+(4*charIndex)];
+			imgY--;
 		}
+		x += date_time_font_texcoords[2+(4*charIndex)];
 
-		fclose(file);
 	}
 }
 
@@ -1722,8 +1744,6 @@ static bool initialClockDraw = true;
 
 void loadTime() {
 	// Load time
-	char fontPath[64];
-	FILE* file;
 	int x = 200;
 	char time[10];
 	std::string currentTime = RetTime();
@@ -1745,49 +1765,21 @@ void loadTime() {
 		}
 
 		for (int c = 0; c < howManyToDraw; c++) {
+			int imgY = 15;
+
 			unsigned int charIndex = getDateTimeFontSpriteIndex(time[c]);
-			switch (theme) {
-				case 0:
-				default:
-					if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
-					else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
-					else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
-					else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
-					else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
-					else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
-					else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-					else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
-					break;
-				case 1:
-					sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-					break;
-			}
 
-			file = fopen(fontPath, "rb");
-
-			if (file) {
-				// Start loading
-				fseek(file, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(file) + 0xe;
-				fseek(file, pixelStart, SEEK_SET);
-				for (int y=14; y>=6; y--) {
-					u16 buffer[128];
-					fread(buffer, 2, 0x80, file);
-					u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
-
-					for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
-						u16 val = *(src++);
-						if (val != 0x7C1F) {	// Do not render magneta pixel
-							BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
-						}
+			for (int y=14; y>=6; y--) {
+				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
+					if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
+						BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 					}
 				}
-				x += date_time_font_texcoords[2+(4*charIndex)];
-				if(c == 2) hourWidth = x;
+				imgY--;
 			}
+			x += date_time_font_texcoords[2+(4*charIndex)];
+			if(c == 2) hourWidth = x;
 		}
-
-		fclose(file);
 	}
 }
 
@@ -1795,9 +1787,8 @@ static bool showColon = true;
 
 void loadClockColon() {
 	// Load time
-	char fontPath[64];
-	FILE* file;
 	int x = 214;
+	int imgY = 15;
 	char colon[1];
 
 	// Blink the ':' once per second.
@@ -1807,46 +1798,16 @@ void loadClockColon() {
 		sprintf(colon, currentColon.c_str());
 
 		unsigned int charIndex = getDateTimeFontSpriteIndex(colon[0]);
-		switch (theme) {
-			case 0:
-			default:
-				if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
-				else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
-				else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
-				else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
-				else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
-				else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
-				else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-				else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
-				break;
-			case 1:
-				sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-				break;
-		}
 
-		file = fopen(fontPath, "rb");
-
-		if (file) {
-			// Start loading
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			for (int y=14; y>=6; y--) {
-				u16 buffer[128];
-				fread(buffer, 2, 0x80, file);
-				u16* src = buffer+(date_time_font_texcoords[0+(4*charIndex)]);
-
-				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
-					u16 val = *(src++);
-					if (val != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y)*256+(i+x)] = convertToDsBmp(val);
-					}
+		for (int y=14; y>=6; y--) {
+			for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
+				if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
+					BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 				}
 			}
-			x += date_time_font_texcoords[2+(4*charIndex)];
+			imgY--;
 		}
-
-		fclose(file);
+		x += date_time_font_texcoords[2+(4*charIndex)];
 
 		showColon = !showColon;
 	}
@@ -2050,6 +2011,8 @@ void graphicsInit()
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
 	swiWaitForVBlank();
+
+	loadDateFont();
 
 	if (theme == 1) {
 		tex().load3DSTheme();
