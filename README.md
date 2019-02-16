@@ -10,13 +10,19 @@ Building this app by yourself requires devkitPRO with devkitARM and [RocketRobz 
 
 TWiLight Menu++ comes included with a Docker image for easy building without having to manually set up the required version of devkitARM.
 
-## Building with Docker for Windows users.
+You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install Docker at http://docker.com or through your package manager of choice.
 
-You can compile TWiLight Menu++ with Docker using the provided PowerShell (`.ps1`) scripts. First, install docker at http://docker.com, and [configured Shared Drives](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/) for the drive where TWiLight Menu++ is cloned. 
 
-Then run `compile_docker.ps1` in a PowerShell window. The script accepts `make` arguments as well, for example `.\compile_docker.ps1 clean`. Note that Docker compilation is not compatible with native Windows compilation. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker.
+Then run `compile_docker.ps1` or `compile_docker.sh`. The script accepts `make` arguments as well, for example `.\compile_docker.ps1 clean`. 
 
 To build all artifacts, run `.\compile_docker.ps1 package`.
+
+## Notes about Docker builds for Windows users
+
+Note that Docker compilation is not compatible with native compilation (if on Windows). You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker.
+
+If a notification appears 
+
 
 # Credits
 ## Main Developers
