@@ -265,7 +265,7 @@ bool MainList::enterDir(const std::string &dirName)
     dirent *direntry;
     std::string extName;
     u8 attr = 0;
-    char lfnBuf[256];
+    char lfnBuf[strlen(dirName.c_str()) + 256 + 2] = {'\0'};
     // list dir
     {
         cwl();

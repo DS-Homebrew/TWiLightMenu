@@ -469,15 +469,15 @@ bool copyOrMoveFile(const std::string & destDir)
 //     return true;
 // }
 
-static bool getDiskFromString(const std::string& diskName,u32& disk)
-{
-  if(tolower(diskName[0])=='f'&&tolower(diskName[1])=='a'&&tolower(diskName[2])=='t'&&(diskName[3]=='0'||diskName[3]=='1')&&diskName[4]==':')
-  {
-    disk=diskName[3]-'0';
-    return true;
-  }
-  return false;
-}
+// static bool getDiskFromString(const std::string& diskName,u32& disk)
+// {
+//   if(tolower(diskName[0])=='f'&&tolower(diskName[1])=='a'&&tolower(diskName[2])=='t'&&(diskName[3]=='0'||diskName[3]=='1')&&diskName[4]==':')
+//   {
+//     disk=diskName[3]-'0';
+//     return true;
+//   }
+//   return false;
+// }
 
 // static bool getDiskTotalSpace(u32 disk,u64& diskSpace)
 // {

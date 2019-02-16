@@ -17,8 +17,9 @@ UnlaunchBoot::UnlaunchBoot(const std::string &fileName, u32 pubSavSize, u32 prvS
 void UnlaunchBoot::createSaveIfNotExists(const std::string &fileExt, const std::string &savExt, u32 saveSize)
 {
     std::string saveName = replaceAll(_fileName, fileExt, savExt);
-    if (access(saveName.c_str(), F_OK) == 0)
+    if (access(saveName.c_str(), F_OK) == 0) {
         return;
+	}
 
 	if (saveSize > 0) {
 		static const int BUFFER_SIZE = 0x1000;

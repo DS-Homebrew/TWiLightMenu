@@ -599,7 +599,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		}
 
-        int optionPicked;
+        int optionPicked = 0;
 
 		if (hasAP)
 		{
