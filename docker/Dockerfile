@@ -1,7 +1,10 @@
-FROM devkitpro/devkitarm:20180613
+FROM devkitpro/devkitarm:20190212
 # ADD libnds.tar /devkitpro
 RUN \
   apt-get update && \
   apt-get install -y python && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  git clone https://github.com/RocketRobz/libnds /temp/libnds && \
+  cd /temp/libnds && \
+  make install
 WORKDIR /data

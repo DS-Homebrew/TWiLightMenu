@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	booter
 BUILD		:=	build
 SOURCES		:=	source source/graphics
-INCLUDES	:=	include
+INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
@@ -44,7 +44,7 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lgl2d -lnds9
+LIBS	:= 	-lfat -lnds9
  
  
 #---------------------------------------------------------------------------------
