@@ -21,7 +21,7 @@ To build all artifacts, run `.\compile_docker.ps1 package`.
 
 Note that Docker compilation is not compatible with native compilation (if on Windows). You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker.
 
-If a notification appears 
+If a notification appears to share your drive, you must choose to enable drive sharing for Docker to work on Windows.
 
 
 # Credits

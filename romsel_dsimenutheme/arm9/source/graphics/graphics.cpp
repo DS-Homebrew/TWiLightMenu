@@ -158,8 +158,8 @@ int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 
 int vblankRefreshCounter = 0;
 
-u16 bmpImageBuffer[256*192];
-//u16 renderedImageBuffer[256*192];
+u16 bmpImageBuffer[256*192] = {0};
+u16 bgSubBuffer[256*192] = {0};
 
 u16 dateFontImage[128*16];
 
@@ -189,6 +189,7 @@ void vramcpy_ui (void* dest, const void* src, int size)
 extern mm_sound_effect snd_stop;
 extern mm_sound_effect mus_menu;
 
+
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
@@ -203,6 +204,23 @@ bool screenFadedIn(void) {
 bool screenFadedOut(void) {
 	return (screenBrightness > 24);
 }
+
+
+void beginBgSubModify(){
+	dmaCopyWords(0, BG_GFX_SUB, bgSubBuffer, sizeof(bgSubBuffer));
+}
+
+
+void commitBgSubModify(){
+	DC_FlushRange(bgSubBuffer, sizeof(bgSubBuffer));
+	dmaCopyWords(2, bgSubBuffer, BG_GFX_SUB, sizeof(bgSubBuffer));
+}
+
+void commitBgSubModifyAsync(){
+	DC_FlushRange(bgSubBuffer, sizeof(bgSubBuffer));
+	dmaCopyWordsAsynch(2, bgSubBuffer, BG_GFX_SUB, sizeof(bgSubBuffer));
+}
+
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -364,6 +382,11 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 	}
 }
 
+
+void bottomBgRefresh()
+{
+	bottomBgLoad(showbubble, false);
+}
 // No longer used.
 // void drawBG(glImage *images)
 // {
@@ -414,11 +437,16 @@ void playRotatingCubesVideo(void) {
 			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
 				rocketVideo_currentFrame = 0;
 			}
-			dmaCopy(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);
+			
+			DC_FlushRange(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), 0x7000);
+			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
+
 			if (colorMode == 1) {
+				beginBgSubModify();
 				for (u16 i = 0; i < 256*56; i++) {
-					BG_GFX_SUB[(rocketVideo_videoYpos*256)+i] = convertVramColorToGrayscale(BG_GFX_SUB[(rocketVideo_videoYpos*256)+i]);
+					bgSubBuffer[(rocketVideo_videoYpos*256)+i] = convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos*256)+i]);
 				}
+				commitBgSubModifyAsync();
 			}
 			rocketVideo_frameDelay = 0;
 			rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
@@ -431,6 +459,7 @@ void vBlankHandler()
 {
 	execQueue(); // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
+
 	if (theme == 1 && waitBeforeMusicPlay) {
 		if (waitBeforeMusicPlayTime == 60*3) {
 			mmEffectEx(&mus_menu);
@@ -880,7 +909,6 @@ void vBlankHandler()
 			}
 
 			// Refresh the background layer.
-			bottomBgLoad(showbubble);
 			if (showbubble) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
@@ -970,6 +998,7 @@ void vBlankHandler()
 			}
 		}
 	}
+
 	if (theme == 1) {
 		startBorderZoomAnimDelay++;
 		if (startBorderZoomAnimDelay == 8) {
@@ -1008,13 +1037,16 @@ void vBlankHandler()
 		if (launchDotCurrentChangingFrame > 11) launchDotCurrentChangingFrame = 11;
 	}
 	if (applaunchprep && theme==0) launchDotDoFrameChange = !launchDotDoFrameChange;
+	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
 void clearBmpScreen() {
+	beginBgSubModify();
 	u16 val = 0xFFFF;
 	for (int i = 0; i < 256*192; i++) {
-		BG_GFX_SUB[i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
+		bgSubBuffer[i] = ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 	}
+	commitBgSubModify();
 }
 
 void loadBoxArt(const char* filename) {
@@ -1023,6 +1055,7 @@ void loadBoxArt(const char* filename) {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1036,9 +1069,10 @@ void loadBoxArt(const char* filename) {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+			bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1149,6 +1183,7 @@ void loadVolumeImage(void) {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1163,10 +1198,11 @@ void loadVolumeImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1308,6 +1344,7 @@ void loadBatteryImage(void) {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1322,10 +1359,11 @@ void loadBatteryImage(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1368,6 +1406,7 @@ void loadPhoto() {
 	if (!file) file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
+		beginBgSubModify();
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -1382,9 +1421,10 @@ void loadPhoto() {
 				y--;
 			}
 			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+			bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1397,6 +1437,7 @@ void loadPhotoPart() {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1411,10 +1452,11 @@ void loadPhotoPart() {
 			}
 			u16 val = *(src++);
 			if (y <= 24+147) {
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1422,9 +1464,9 @@ void loadPhotoPart() {
 
 void loadBMP(const char* filename) {
 	FILE* file = fopen(filename, "rb");
-
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1439,12 +1481,12 @@ void loadBMP(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (val != 0xFC1F) {	// Do not render magneta pixel
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
+		commitBgSubModify();
 	}
-
 	fclose(file);
 }
 
@@ -1454,6 +1496,7 @@ void loadBMPPart(const char* filename) {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1468,10 +1511,11 @@ void loadBMPPart(const char* filename) {
 			}
 			u16 val = *(src++);
 			if (y >= 32 && y <= 167 && val != 0xFC1F) {
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				bgSubBuffer[y*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1479,7 +1523,6 @@ void loadBMPPart(const char* filename) {
 
 void loadShoulders() {
 	FILE* file;
-
 	// Draw L shoulder
 	if (showLshoulder)
 	{ 
@@ -1490,6 +1533,7 @@ void loadShoulders() {
 
 	if (file) {
 		// Start loading
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1500,10 +1544,11 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+i] = convertToDsBmp(val);
+					bgSubBuffer[(y+172)*256+i] = convertToDsBmp(val);
 				}
 			}
 		}
+		commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1518,6 +1563,7 @@ void loadShoulders() {
 	}
 	
 	if (file) {
+		beginBgSubModify();
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -1529,12 +1575,12 @@ void loadShoulders() {
 			for (int i=0; i<78; i++) {
 				u16 val = *(src++);
 				if (val != 0xFC1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[(y+172)*256+(i+178)] = convertToDsBmp(val);
+					bgSubBuffer[(y+172)*256+(i+178)] = convertToDsBmp(val);
 				}
 			}
 		}
+		commitBgSubModify();
 	}
-
 	fclose(file);
 }
 
@@ -1612,6 +1658,7 @@ void topBgLoad() {
 		file = fopen(fontPath, "rb");
 
 		if (file) {
+			beginBgSubModify();
 			// Start loading
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -1623,7 +1670,7 @@ void topBgLoad() {
 
 				for (u16 i=0; i < top_font_texcoords[2+(4*charIndex)]; i++) {
 					u16 val = *(src++);
-					u16 bg = BG_GFX_SUB[(y+2)*256+(i+x)]; //grab the background pixel
+					u16 bg = bgSubBuffer[(y+2)*256+(i+x)]; //grab the background pixel
 					// Apply palette here.
 					
 					// Magic numbers were found by dumping val to stdout
@@ -1646,11 +1693,12 @@ void topBgLoad() {
 							break;
 					}
 					if (val != 0xFC1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[(y+2)*256+(i+x)] = convertToDsBmp(val);
+						bgSubBuffer[(y+2)*256+(i+x)] = convertToDsBmp(val);
 					}
 				}
 			}
 			x += top_font_texcoords[2+(4*charIndex)];
+			commitBgSubModify();
 		}
 
 		fclose(file);
@@ -1718,24 +1766,24 @@ void loadDate() {
 	if (currentDate == loadedDate) return;
 
 	loadedDate = date;
-
+	
+	beginBgSubModify();
 	for (int c = 0; c < 5; c++) {
 		int imgY = 15;
 
 		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
-
 		// Start date
 		for (int y=14; y>=6; y--) {
 			for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 				if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
+					bgSubBuffer[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 				}
 			}
 			imgY--;
 		}
 		x += date_time_font_texcoords[2+(4*charIndex)];
-
 	}
+	commitBgSubModify();
 }
 
 static std::string loadedTime;
@@ -1764,6 +1812,7 @@ void loadTime() {
 			}
 		}
 
+		beginBgSubModify();
 		for (int c = 0; c < howManyToDraw; c++) {
 			int imgY = 15;
 
@@ -1772,7 +1821,7 @@ void loadTime() {
 			for (int y=14; y>=6; y--) {
 				for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 					if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
-						BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
+						bgSubBuffer[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 					}
 				}
 				imgY--;
@@ -1780,6 +1829,7 @@ void loadTime() {
 			x += date_time_font_texcoords[2+(4*charIndex)];
 			if(c == 2) hourWidth = x;
 		}
+		commitBgSubModify();
 	}
 }
 
@@ -1796,19 +1846,19 @@ void loadClockColon() {
 		colonTimer = 0;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
-
+		beginBgSubModify();
 		unsigned int charIndex = getDateTimeFontSpriteIndex(colon[0]);
 
 		for (int y=14; y>=6; y--) {
 			for (u16 i=0; i < date_time_font_texcoords[2+(4*charIndex)]; i++) {
 				if (dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)] != 0x7C1F) {	// Do not render magneta pixel
-					BG_GFX_SUB[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
+					bgSubBuffer[y*256+(i+x)] = dateFontImage[(imgY*128)+(date_time_font_texcoords[0+(4*charIndex)]+i)];
 				}
 			}
 			imgY--;
 		}
 		x += date_time_font_texcoords[2+(4*charIndex)];
-
+		commitBgSubModify();
 		showColon = !showColon;
 	}
 }
@@ -2002,6 +2052,7 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
+
 	if (theme < 1) {
 		srand(time(NULL));
 		loadPhotoList();
@@ -2009,7 +2060,7 @@ void graphicsInit()
 	}
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
-
+	
 	swiWaitForVBlank();
 
 	loadDateFont();
@@ -2064,7 +2115,6 @@ void graphicsInit()
 	loadVolumeImage();
 	setBatteryImagePaths();
 	loadBatteryImage();
-
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	//consoleDemoInit();
