@@ -380,7 +380,10 @@ void BootSplashDSi(void) {
 			touchToContinue_secondsWaited++;
 		}
 		scanKeys();
-		if ((keysDown() & KEY_TOUCH) || (touchToContinue_secondsWaited == 60)) {
+		if ((keysDown() & (KEY_L | KEY_R
+				| KEY_A | KEY_B | KEY_X | KEY_Y
+				| KEY_UP | KEY_DOWN | KEY_LEFT | KEY_RIGHT
+				| KEY_START | KEY_SELECT | KEY_TOUCH)) || (touchToContinue_secondsWaited == 60)) {
 			mmEffectEx(&proceed);
 			break;
 		}
