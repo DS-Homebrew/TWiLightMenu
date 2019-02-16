@@ -207,7 +207,7 @@ bool screenFadedOut(void) {
 
 
 void beginBgSubModify(){
-	dmaCopyWords(0, BG_GFX_SUB, bgSubBuffer, sizeof(bgSubBuffer));
+	dmaCopyWords(1, BG_GFX_SUB, bgSubBuffer, sizeof(bgSubBuffer));
 }
 
 
