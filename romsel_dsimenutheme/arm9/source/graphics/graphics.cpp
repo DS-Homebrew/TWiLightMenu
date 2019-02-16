@@ -420,7 +420,7 @@ void playRotatingCubesVideo(void) {
 			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
 				rocketVideo_currentFrame = 0;
 			}
-			dmaCopyWordsAsynch(0, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
+			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
 
 			if (colorMode == 1) {
 				for (u16 i = 0; i < 256*56; i++) {
