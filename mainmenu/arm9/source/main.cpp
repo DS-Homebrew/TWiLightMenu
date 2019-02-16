@@ -614,7 +614,7 @@ void SetSpeedBump(const char* filename) {
 		"ADM",	// Animal Crossing: Wild World
 		"ABH",	// Resident Evil: Deadly Silence
 		"ARJ",	// Kanji Sonomama Rakubiki Jiten
-		"ARZ",	// Rockman ZX/MegaMan ZX
+		//"ARZ",	// Rockman ZX/MegaMan ZX
 		"AKW",	// Kirby Squeak Squad/Mouse Attack
 		"ADA",	// Pokemon Diamond
 		"APA",	// Pokemon Pearl
@@ -623,7 +623,7 @@ void SetSpeedBump(const char* filename) {
 		"A6B",	// MegaMan Star Force: Leo
 		"A6C",	// MegaMan Star Force: Dragon
 		"A3Y",	// Sonic Rush Adventure
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		//"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"A8T",	// Mario Party DS
 		"A2L",	// Anno 1701: Dawn of Discovery
 		"A5F",	// Professor Layton and the Curious Village
