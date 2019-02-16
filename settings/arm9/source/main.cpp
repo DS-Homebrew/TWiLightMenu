@@ -569,14 +569,16 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				 "French",
 				 "German",
 				 "Italian",
-				 "Spanish"},
+				 "Spanish",
+				 "Chinese"},
 				{TLanguage::ELangDefault,
 				 TLanguage::ELangJapanese,
 				 TLanguage::ELangEnglish,
 				 TLanguage::ELangFrench,
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
-				 TLanguage::ELangSpanish})
+				 TLanguage::ELangSpanish,
+				 TLanguage::ELangChinese})
 		.option(STR_COLORMODE,
 				STR_DESCRIPTION_COLORMODE,
 				Option::Int(&ms().colorMode),

@@ -266,6 +266,9 @@ void langInit(void)
 	case 5:
 		languageIniPath = "nitro:/languages/spanish.ini";
 		break;
+	case 6:
+		languageIniPath = "nitro:/languages/english.ini";
+		break;
 	}
 
 	CIniFile languageini(languageIniPath);
