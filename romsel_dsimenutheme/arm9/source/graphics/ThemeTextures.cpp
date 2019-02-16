@@ -235,12 +235,12 @@ void ThemeTextures::reloadPalDialogBox()
 }
 void ThemeTextures::drawBg()
 {
-  dmaCopy(loadedBottomImg, BG_GFX, 0x18000);
+  dmaCopyWordsAsynch(0, loadedBottomImg, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBubbleBg()
 {
-  dmaCopy(loadedBottomBubbleImg, BG_GFX, 0x18000);
+  dmaCopyWordsAsynch(0, loadedBottomBubbleImg, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::loadBottomImage()

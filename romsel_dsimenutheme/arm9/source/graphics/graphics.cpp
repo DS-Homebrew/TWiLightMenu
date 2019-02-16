@@ -364,6 +364,11 @@ void bottomBgLoad(bool drawBubble, bool init = false) {
 	}
 }
 
+
+void bottomBgRefresh()
+{
+	bottomBgLoad(showbubble, false);
+}
 // No longer used.
 // void drawBG(glImage *images)
 // {
@@ -414,7 +419,8 @@ void playRotatingCubesVideo(void) {
 			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
 				rocketVideo_currentFrame = 0;
 			}
-			dmaCopy(rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);
+			dmaCopyWordsAsynch(2, rotatingCubesLocation+(rocketVideo_currentFrame*0x7000), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x7000);		
+
 			if (colorMode == 1) {
 				for (u16 i = 0; i < 256*56; i++) {
 					BG_GFX_SUB[(rocketVideo_videoYpos*256)+i] = convertVramColorToGrayscale(BG_GFX_SUB[(rocketVideo_videoYpos*256)+i]);
@@ -462,6 +468,7 @@ void vBlankHandler()
 		playRotatingCubesVideo();
 	}
 
+	bottomBgRefresh();
 	glBegin2D();
 	{
 		if(fadeType == true) {
@@ -880,7 +887,7 @@ void vBlankHandler()
 			}
 
 			// Refresh the background layer.
-			bottomBgLoad(showbubble);
+			bottomBgRefresh();
 			if (showbubble) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
@@ -970,6 +977,7 @@ void vBlankHandler()
 			}
 		}
 	}
+
 	if (theme == 1) {
 		startBorderZoomAnimDelay++;
 		if (startBorderZoomAnimDelay == 8) {
