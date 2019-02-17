@@ -8,6 +8,7 @@
 
 #include <string>
 using std::string;
+char date_str[24] = {'\0'};
 
 /**
  * Get the current date as a C string.
@@ -70,6 +71,7 @@ string RetTime()
 
 /**
  * Draw the date using the specified format.
+ * @param screen Top or Bottom screen.
  * @param Xpos X position.
  * @param Ypos Y position.
  * @param size Text size.
@@ -77,10 +79,8 @@ string RetTime()
  */
 char* DrawDateF(DateFormat format)
 {
-	char date_str[24];
+	memset(date_str, 0, sizeof(date_str));
 	GetDate(format, date_str, sizeof(date_str));
-	if (date_str[0] == 0)
-		return "";
 	return date_str;
 }
 
