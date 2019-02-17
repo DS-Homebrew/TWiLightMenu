@@ -972,6 +972,7 @@ int main(int argc, char **argv) {
 
 		if (applaunch) {
 			// Clear screen with white
+			rocketVideo_playVideo = false;
 			whiteScreen = true;
 			clearText();
 			clearBmpScreen();
