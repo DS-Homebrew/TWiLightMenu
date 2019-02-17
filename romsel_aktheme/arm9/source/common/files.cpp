@@ -36,7 +36,7 @@
 // #include "favorites.h"
 #include <sys/statvfs.h>
 
-#define USE_OPEN
+// #define USE_OPEN
 #ifdef USE_OPEN
 #include <fcntl.h>
 #endif

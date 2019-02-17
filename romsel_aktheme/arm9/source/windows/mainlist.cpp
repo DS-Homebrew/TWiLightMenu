@@ -158,40 +158,41 @@ bool MainList::enterDir(const std::string &dirName)
     dbg_printf("Enter Dir: %s\n", dirName.c_str());
     if (SPATH_ROOT == dirName) // select RPG or SD card
     {
-		listNum = 0;
+        listNum = 0;
         removeAllRows();
         _romInfoList.clear();
 
         if (sdFound())
         {
-			addDirEntry(listNum, LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
-			listNum++;
+            addDirEntry(listNum, LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+            listNum++;
         }
         if (flashcardFound())
         {
             addDirEntry(listNum, LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
-			listNum++;
+            listNum++;
         }
         addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
-		listNum++;
+        listNum++;
         if (!sys().isRegularDS())
         {
-			if (!flashcardFound() && sdFound()) {
-				addDirEntry(listNum, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
-				listNum++;
-			}
+            if (!flashcardFound() && sdFound())
+            {
+                addDirEntry(listNum, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+                listNum++;
+            }
             addDirEntry(listNum, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
-			listNum++;
+            listNum++;
             //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
         }
         addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-		//listNum++;
+        //listNum++;
         _currentDir = SPATH_ROOT;
         directoryChanged();
         return true;
     }
 
-    if (!strncmp(dirName.c_str(), "^*::", 2))
+    if (!strncmp(dirName.c_str(), "^*::", 4))
     {
         dbg_printf("Special directory entered");
         _currentDir = dirName;
@@ -214,47 +215,53 @@ bool MainList::enterDir(const std::string &dirName)
         dbg_printf("Unable to open directory<%s>.\n", dirName.c_str());
         return false;
     }
-	
-	if (strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0)
-	{
-		ms().secondaryDevice = true;
-	}
-	else
-	{
-		ms().secondaryDevice = false;
-	}
+
+    if (strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0)
+    {
+        ms().secondaryDevice = true;
+    }
+    else
+    {
+        ms().secondaryDevice = false;
+    }
 
     removeAllRows();
     _romInfoList.clear();
 
     std::vector<std::string> extNames;
 
-	if (_showAllFiles || ms().showNds) {
-		extNames.push_back(".nds");
-		extNames.push_back(".ids");
-		extNames.push_back(".dsi");
-		extNames.push_back(".argv");
-	}
+    if (_showAllFiles || ms().showNds)
+    {
+        extNames.push_back(".nds");
+        extNames.push_back(".ids");
+        extNames.push_back(".dsi");
+        extNames.push_back(".argv");
+    }
     extNames.push_back(".gba");
-	if (_showAllFiles || ms().showGb) {
-		extNames.push_back(".gb");
-		extNames.push_back(".gbc");
-	}
-	if (_showAllFiles || ms().showNes) {
-		extNames.push_back(".nes");
-		extNames.push_back(".fds");
-	}
-	if (_showAllFiles || ms().showSmsGg) {
-		extNames.push_back(".sms");
-		extNames.push_back(".gg");
-	}
-	if (_showAllFiles || ms().showMd) {
-		extNames.push_back(".gen");
-	}
-	if (_showAllFiles || ms().showSnes) {
-		extNames.push_back(".smc");
-		extNames.push_back(".sfc");
-	}
+    if (_showAllFiles || ms().showGb)
+    {
+        extNames.push_back(".gb");
+        extNames.push_back(".gbc");
+    }
+    if (_showAllFiles || ms().showNes)
+    {
+        extNames.push_back(".nes");
+        extNames.push_back(".fds");
+    }
+    if (_showAllFiles || ms().showSmsGg)
+    {
+        extNames.push_back(".sms");
+        extNames.push_back(".gg");
+    }
+    if (_showAllFiles || ms().showMd)
+    {
+        extNames.push_back(".gen");
+    }
+    if (_showAllFiles || ms().showSnes)
+    {
+        extNames.push_back(".smc");
+        extNames.push_back(".sfc");
+    }
 
     if (_showAllFiles)
         extNames.clear();
@@ -267,46 +274,47 @@ bool MainList::enterDir(const std::string &dirName)
     u8 attr = 0;
     char lfnBuf[strlen(dirName.c_str()) + 256 + 2] = {'\0'};
     // list dir
+
+    cwl();
+    if (dir)
     {
-        cwl();
-        if (dir)
+
+        while ((direntry = readdir(dir)) != NULL)
         {
+            memset(lfnBuf, 0, sizeof(lfnBuf));
+            snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
+            stat(lfnBuf, &st);
+            attr = st.st_spare1;
+            std::string lfn(direntry->d_name);
 
-            while ((direntry = readdir(dir)) != NULL)
+            // st.st_mode & S_IFDIR indicates a directory
+            size_t lastDotPos = lfn.find_last_of('.');
+            if (lfn.npos != lastDotPos)
+                extName = lfn.substr(lastDotPos);
+            else
+                extName = "";
+
+            dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
+            bool showThis = (st.st_mode & S_IFDIR) ? ((strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..") && strcmp(lfn.c_str(), "_nds") && strcmp(lfn.c_str(), "saves") && ms().showDirectories)) // directory filter
+                                                   : extnameFilter(extNames, extName);                                                                                                                // extension name filter
+            showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));                                                                                                           // Hide dotfiles
+
+            if (showThis)
             {
-                snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
-                stat(lfnBuf, &st);
-                attr = st.st_spare1;
-                std::string lfn(direntry->d_name);
+                u32 row_count = getRowCount();
+                size_t insertPos(row_count);
 
-                // st.st_mode & S_IFDIR indicates a directory
-                size_t lastDotPos = lfn.find_last_of('.');
-                if (lfn.npos != lastDotPos)
-                    extName = lfn.substr(lastDotPos);
-                else
-                    extName = "";
-
-                dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
-                bool showThis = (st.st_mode & S_IFDIR) ? (strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..") && strcmp(lfn.c_str(), "_nds") && strcmp(lfn.c_str(), "saves") && ms().showDirectories) : extnameFilter(extNames, extName);
-                showThis = showThis && (_showAllFiles || !(attr & ATTRIB_HID));
-                if(lfn.substr(0,2) == "._")    showThis = false;    // Don't show macOS's index files
-
-                if (showThis)
+                std::string real_name = dirName + lfn;
+                if (st.st_mode & S_IFDIR)
                 {
-                    u32 row_count = getRowCount();
-                    size_t insertPos(row_count);
-
-                    std::string real_name = dirName + lfn;
-                    if (st.st_mode & S_IFDIR)
-                    {
-                        real_name += "/";
-                    }
-
-                    addDirEntry(insertPos, lfn, "", real_name, "", NULL);
+                    real_name += "/";
                 }
+
+                addDirEntry(insertPos, lfn, "", real_name, "", NULL);
             }
-            closedir(dir);
         }
+        closedir(dir);
+
         std::sort(_rows.begin(), _rows.end(), itemSortComp);
 
         for (size_t ii = 0; ii < _rows.size(); ++ii)
@@ -414,7 +422,7 @@ void MainList::backParentDir()
         return;
 
     dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
-    if ("" == _currentDir || SD_ROOT == _currentDir  || S1SD_ROOT == _currentDir || !ms().showDirectories)
+    if ("" == _currentDir || SD_ROOT == _currentDir || S1SD_ROOT == _currentDir || !ms().showDirectories)
     {
         dbg_printf("Entering HOME\n");
         enterDir(SPATH_ROOT);
