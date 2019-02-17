@@ -1214,6 +1214,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
 					updateBoxArt(dirContents, scrn);
+				} else {
+					if (boxArtLoaded)
+						clearBoxArt();
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
