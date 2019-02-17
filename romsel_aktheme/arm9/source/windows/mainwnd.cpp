@@ -55,7 +55,7 @@ using namespace akui;
 
 MainWnd::MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
     : Form(x, y, w, h, parent, text), _mainList(NULL), _startMenu(NULL), _startButton(NULL),
-      _brightnessButton(NULL), _folderUpButton(NULL), _batteryIcon(NULL), _folderText(NULL), _processL(false)
+      _brightnessButton(NULL), _batteryIcon(NULL), _folderUpButton(NULL),  _folderText(NULL), _processL(false)
 {
 }
 

@@ -26,7 +26,7 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
         exitSub();
         return;
     }
-    else if (pressed & KEY_B && !inSub() || (pressed & KEY_TOUCH && touch.py >= 170) && !inSub())
+    else if ((pressed & KEY_B && !inSub()) || ((pressed & KEY_TOUCH && touch.py >= 170) && !inSub()))
     {
         saveAndExit();
     }
@@ -91,7 +91,7 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 
 void SettingsGUI::draw()
 {
-    if (_selectedPage < 0 || _pages.size() < 1 || _selectedPage >= _pages.size())
+    if (_selectedPage < 0 || (int)_pages.size() < 1 || _selectedPage >= (int)_pages.size())
         return;
     if (inSub())
     {
@@ -204,7 +204,7 @@ void SettingsGUI::drawTopText()
 	printSmall(true, 4, 0, "nds-bootstrap Ver:");
 	printSmall(true, 114, 0, bsVerText[ms().bootstrapFile]);
     printSmall(true, 194, 174, vertext);
-    for (int i = 0; i < _topText.size(); i++)
+    for (unsigned int i = 0; i < _topText.size(); i++)
     {
         printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
     }
@@ -214,8 +214,8 @@ void SettingsGUI::rotatePage(int rotateAmount)
 {
     // int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
     int pageIndex = (_selectedPage + rotateAmount);
-    if(pageIndex<0) pageIndex = _pages.size()-1;
-    else if(pageIndex>_pages.size()-1) pageIndex = 0;
+    if (pageIndex < 0) pageIndex = _pages.size()-1;
+    else if ( pageIndex > ((int)_pages.size()) - 1) pageIndex = 0;
     _selectedPage = pageIndex;
     _bottomCursor = std::min<int>(_pages[_selectedPage].options().size(), MAX_ELEMENTS);
     _topCursor = 0;
@@ -265,7 +265,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
     if (!inSub())
     {
         // If we're not in the sub option menu, change the option.
-        if ((_selectedOption + rotateAmount) < 0 || ((_selectedOption + rotateAmount) >= _pages[_selectedPage].options().size()))
+        if ((_selectedOption + rotateAmount) < 0 || ((_selectedOption + rotateAmount) >= (int)_pages[_selectedPage].options().size()))
         {
             return;
         }
@@ -297,7 +297,7 @@ void SettingsGUI::rotateOption(int rotateAmount)
             int currentValueIndex = sub.selected();
 
             // Update cursors.
-            if ((currentValueIndex + rotateAmount) < 0 || ((currentValueIndex + rotateAmount) >= sub.values().size()))
+            if ((currentValueIndex + rotateAmount) < 0 || ((currentValueIndex + rotateAmount) >= (int)sub.values().size()))
             {
                 // Prevent overflows...
                 return;
@@ -316,8 +316,9 @@ void SettingsGUI::rotateOption(int rotateAmount)
             }
 
             int nextValueIndex = (currentValueIndex + rotateAmount) % (sub.values().size());
-            if (currentValueIndex == -1)
+            if (currentValueIndex == -1) {
                 nextValueIndex = 0;
+            }
             auto nextValue = sub.values()[nextValueIndex];
 
             if (auto subaction = std::get_if<Option::Bool>(&sub.action()))
@@ -353,8 +354,9 @@ void SettingsGUI::saveAndExit()
     draw();
 
 	fadeType = false;
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 30; i++) {
         swiWaitForVBlank();
+    }
 	renderScreens = false;
     ms().saveSettings();
     bs().saveSettings();
