@@ -251,6 +251,8 @@ extern bool usernameRenderedDone;
 const char *gameOrderIniPath;
 const char *hiddenGamesIniPath;
 
+static bool inSelectMenu = false;
+
 struct DirEntry
 {
 	string name;
@@ -509,7 +511,38 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 }
 
-static bool inSelectMenu = false;
+void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
+	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
+		if (!boxArtLoaded && showBoxArt) {
+			if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
+			if (theme == 1) rocketVideo_playVideo = true;
+			boxArtLoaded = true;
+		}
+		showbubble = false;
+		showSTARTborder = (theme == 1 ? true : false);
+		clearText(false);	// Clear title
+	} else {
+		if (!boxArtLoaded && showBoxArt) {
+			if (isDirectory[cursorPosition[secondaryDevice]]) {
+				if (theme == 1) {
+					if (!rocketVideo_playVideo) {
+						clearBoxArt();	// Clear box art, if it's a directory
+						rocketVideo_playVideo = true;
+					}
+				} else {
+					clearBoxArt();	// Clear box art, if it's a directory
+				}
+			} else {
+				rocketVideo_playVideo = false;
+				if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
+				loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
+			}
+			boxArtLoaded = true;
+		}
+		showbubble = true;
+		showSTARTborder = true;
+	}
+}
 
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
@@ -1146,38 +1179,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->finalY = 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW);
 			// cursor->delay = TextEntry::ACTIVE;
 
-			if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
-				if (!boxArtLoaded && showBoxArt) {
-					if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
-					if (theme == 1) rocketVideo_playVideo = true;
-					boxArtLoaded = true;
-				}
-				showbubble = false;
-				showSTARTborder = (theme == 1 ? true : false);
-				clearText(false);	// Clear title
-			} else {
-				if (!boxArtLoaded && showBoxArt) {
-					if (isDirectory[cursorPosition[secondaryDevice]]) {
-						if (theme == 1) {
-							if (!rocketVideo_playVideo) {
-								clearBoxArt();	// Clear box art, if it's a directory
-								rocketVideo_playVideo = true;
-							}
-						} else {
-							clearBoxArt();	// Clear box art, if it's a directory
-						}
-					} else {
-						rocketVideo_playVideo = false;
-						if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
-						loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
-					}
-					boxArtLoaded = true;
-				}
-				showbubble = true;
-				showSTARTborder = true;
-				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
-			}
-
 			if (!stopSoundPlayed) {
 				if ((theme == 0 && !startMenu && cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
 				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardFound()))) {
@@ -1212,7 +1213,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (!isScrolling) {
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
+					updateBoxArt(dirContents, scrn);
+				} else {
+					if (boxArtLoaded)
+						clearBoxArt();
 				}
+				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				loadVolumeImage();
 				loadBatteryImage();
 				loadTime();
@@ -1223,6 +1230,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					break;
 				}*/
 			}
+
 			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)

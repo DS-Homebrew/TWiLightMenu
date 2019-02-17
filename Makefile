@@ -61,7 +61,7 @@ title:
 	@$(MAKE) -C title
 
 clean:
-	@echo clean build direcotiries
+	@echo clean build directories
 	@$(MAKE) -C booter clean
 	@$(MAKE) -C booter_fc clean
 	@$(MAKE) -C mainmenu clean
