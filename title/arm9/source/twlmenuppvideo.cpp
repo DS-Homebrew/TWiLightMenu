@@ -48,6 +48,7 @@ static char videoFrameFilename[256];
 static FILE* videoFrameFile;
 
 extern bool rocketVideo_playVideo;
+extern bool rocketVideo_playBackwards;
 extern bool rocketVideo_screen;
 extern int rocketVideo_videoYpos;
 extern int rocketVideo_videoYsize;
@@ -410,9 +411,11 @@ void twlMenuVideo(void) {
 
 	rocketVideo_videoFrames = 43;
 	rocketVideo_videoFps = 24;
+	rocketVideo_currentFrame = -1;
 	rocketVideo_videoYpos = 24;
 	rocketVideo_videoYsize = 144;
 	rocketVideo_screen = true;
+	rocketVideo_playBackwards = false;
 	rocketVideo_playVideo = true;
 
 	while (rocketVideo_playVideo && rocketVideo_currentFrame < 5) {
