@@ -411,9 +411,6 @@ public:
     {
       return *action;
     }
-
-    // Should never happen.
-    return nullptr;
   }
 
   int selected()
