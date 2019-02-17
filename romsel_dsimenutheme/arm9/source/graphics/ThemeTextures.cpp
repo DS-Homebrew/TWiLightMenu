@@ -232,7 +232,18 @@ void ThemeTextures::reloadPalDialogBox()
   extern int theme;
   glBindTexture(0, dialogboxTexID);
   glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
+  if (theme != 1) {
+    glBindTexture(0, cornerButtonTexID);
+    glColorSubTableEXT(0, 0, 16, 0, 0, (u16 *)(cornerbuttonPal));
+  }
 }
+
+void ThemeTextures::reloadPal3dsCornerButton()
+{
+  glBindTexture(0, cornerButtonTexID);
+  glColorSubTableEXT(0, 0, 16, 0, 0, (u16 *)(_3ds_cornerbuttonPal));
+}
+
 void ThemeTextures::drawBg()
 {
   DC_FlushRange(loadedBottomImg, 0x18000);

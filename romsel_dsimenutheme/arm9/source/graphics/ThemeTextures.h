@@ -48,6 +48,7 @@ public:
   void load3DSTheme();
 
   void reloadPalDialogBox();
+  void reloadPal3dsCornerButton();
 
 private:
   void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);

@@ -970,6 +970,10 @@ void vBlankHandler()
 					// Reload the dialog box palettes here...
 					reloadDboxPalette();
 				} else if (!showdialogbox) {
+					if (theme == 1) {
+						// on other themes, reloadDboxPalettes also reloads cornerbutton palettes
+						tex().reloadPal3dsCornerButton();
+					}
 					reloadIconPalettes();
 					reloadFontPalettes();
 				}
