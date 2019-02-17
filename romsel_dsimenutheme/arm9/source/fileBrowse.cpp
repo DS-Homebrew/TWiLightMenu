@@ -512,7 +512,6 @@ void updateScrollingState(u32 held, u32 pressed) {
 }
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
-
 	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 > ((int) dirContents[scrn].size() - 1)) {
 		if (!boxArtLoaded && showBoxArt) {
 			if (!rocketVideo_playVideo) clearBoxArt();	// Clear box art
@@ -523,7 +522,6 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 		showSTARTborder = (theme == 1 ? true : false);
 		clearText(false);	// Clear title
 	} else {
-
 		if (!boxArtLoaded && showBoxArt) {
 			if (isDirectory[cursorPosition[secondaryDevice]]) {
 				if (theme == 1) {
@@ -543,7 +541,6 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 		}
 		showbubble = true;
 		showSTARTborder = true;
-		titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 	}
 }
 
@@ -1218,6 +1215,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					buttonArrowTouched[1] = false;
 					updateBoxArt(dirContents, scrn);
 				}
+				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				loadVolumeImage();
 				loadBatteryImage();
 				loadTime();
