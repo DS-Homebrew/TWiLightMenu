@@ -13,12 +13,15 @@ class SettingsGUI
 {
 public:
   SettingsGUI()
-      : _selectedPage(0), _selectedOption(0), _inSub(false), _selectedSub(0), _topCursor(0),
-        _bottomCursor(0), _subOption(nullptr), _subBottomCursor(0), _subTopCursor(0), _isExited(false), _isSaved(false),
+      : _selectedPage(0), _selectedOption(0),_topCursor(0),_bottomCursor(0),
+        _selectedSub(0), _inSub(false),
+        _subTopCursor(0), _subBottomCursor(0), 
+        _isExited(false), _isSaved(false),
+        _subOption(nullptr),
         _exitCallback(nullptr)
   {
 
-    snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 7, 4, 1);
+  snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 7, 4, 1);
 	// Read nds-bootstrap version
 	FILE* bsVerFile;
 	for (int i = 0; i < 2; i++) {
@@ -228,7 +231,7 @@ private:
   std::function<void(void)> _exitCallback;
   
   char vertext[13];
-  char bsVerText[2][24];
+  char bsVerText[2][25];
 };
 
 typedef singleton<SettingsGUI> settingsGui_s;

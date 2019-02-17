@@ -411,13 +411,16 @@ public:
     {
       return *action;
     }
+
+    // Should never happen.
+    return nullptr;
   }
 
   int selected()
   {
     if (auto value = std::get_if<Bool>(&action()))
     {
-      for (int i = 0; i < _values.size(); i++)
+      for (int i = 0; i < ((int)_values.size()); i++)
       {
         if (auto _value = std::get_if<bool>(&_values[i]))
         {
@@ -429,7 +432,7 @@ public:
 
     if (auto value = std::get_if<Int>(&action()))
     {
-      for (int i = 0; i < _values.size(); i++)
+      for (unsigned int i = 0; i < _values.size(); i++)
       {
         if (auto _value = std::get_if<int>(&_values[i]))
         {
@@ -442,7 +445,7 @@ public:
     if (auto value = std::get_if<Str>(&action()))
     {
       //nocashMessage(value->get().c_str());
-      for (int i = 0; i < _values.size(); i++)
+      for (unsigned int i = 0; i < _values.size(); i++)
       {
         if (auto _value = std::get_if<cstr>(&_values[i]))
         {
