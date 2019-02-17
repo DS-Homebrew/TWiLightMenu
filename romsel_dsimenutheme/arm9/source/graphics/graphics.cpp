@@ -1399,9 +1399,8 @@ void loadPhotoList()
 			photoList.emplace_back(dirPath+photoDir);
 		}
 		closedir(dir);
+		photoPath = photoList[rand()/((RAND_MAX+1u)/photoList.size())];
 	}
-
-	photoPath = photoList[rand()/((RAND_MAX+1u)/photoList.size())];
 }
 
 void loadPhoto() {
@@ -1948,6 +1947,7 @@ void graphicsInit()
 		if (theme == 1) titleboxYposDropDown[i] = 0;
 		else titleboxYposDropDown[i] = -85-80;
 	}
+
 	allowedTitleboxForDropDown = 0;
 	delayForTitleboxToDropDown = 0;
 	dropDown = false;
@@ -2055,12 +2055,12 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-
 	if (theme < 1) {
 		srand(time(NULL));
 		loadPhotoList();
 		loadPhoto();
 	}
+
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 	
