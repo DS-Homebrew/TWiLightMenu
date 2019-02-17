@@ -271,7 +271,6 @@ bool MainList::enterDir(const std::string &dirName)
     struct stat st;
     dirent *direntry;
     std::string extName;
-    u8 attr = 0;
     char lfnBuf[strlen(dirName.c_str()) + 256 + 2] = {'\0'};
     // list dir
 
@@ -284,7 +283,6 @@ bool MainList::enterDir(const std::string &dirName)
             memset(lfnBuf, 0, sizeof(lfnBuf));
             snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
             stat(lfnBuf, &st);
-            attr = st.st_spare1;
             std::string lfn(direntry->d_name);
 
             // st.st_mode & S_IFDIR indicates a directory
