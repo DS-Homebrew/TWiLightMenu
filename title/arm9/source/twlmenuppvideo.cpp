@@ -411,6 +411,7 @@ void twlMenuVideo(void) {
 
 	rocketVideo_videoFrames = 43;
 	rocketVideo_videoFps = 24;
+	rocketVideo_currentFrame = -1;
 	rocketVideo_videoYpos = 24;
 	rocketVideo_videoYsize = 144;
 	rocketVideo_screen = true;
