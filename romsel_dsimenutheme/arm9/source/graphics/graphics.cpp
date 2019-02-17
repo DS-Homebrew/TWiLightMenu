@@ -739,6 +739,8 @@ void vBlankHandler()
 				} else {
 					movecloseXpos = 0;
 				}
+				if (i >= cursorPosition[secondaryDevice]-3 && i <= cursorPosition[secondaryDevice]+3)
+				{
 				if (i < spawnedtitleboxes) {
 					if (isDirectory[i]) {
 						if(movingApp!=-1) {
@@ -805,6 +807,7 @@ void vBlankHandler()
 							glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
 						}
 					}
+				}
 				}
 				spawnedboxXpos += 64;
 				iconXpos += 64;
