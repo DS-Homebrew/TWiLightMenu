@@ -869,7 +869,7 @@ int main(int argc, char **argv) {
 	}
 
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
-	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
+	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
 	{
 		fadeType = true;	// Fade in from white
 		printLargeCentered(false, 88, "Now copying data...");
@@ -1407,7 +1407,7 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gb") == 0)
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gb" ) == 0)
 					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sgb") == 0)
 					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".gbc") == 0))
 			{
@@ -1479,7 +1479,7 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4, ".gen")) == 0) {
+			} else if (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".gen") == 0) {
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char genROMpath[256];
