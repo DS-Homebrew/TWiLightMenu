@@ -94,10 +94,13 @@ void MainWnd::init()
     _mainList->init();
     _mainList->selectChanged.connect(this, &MainWnd::listSelChange);
     _mainList->selectedRowClicked.connect(this, &MainWnd::onMainListSelItemClicked);
-    _mainList->selectedRowHeadClicked.connect(this, &MainWnd::onMainListSelItemHeadClicked);
     _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
     _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
+
+    // This is commented out to prevent a double call of the list select handler when the head (file icon) is clicked.
+    // _mainList->selectedRowHeadClicked.connect(this, &MainWnd::onMainListSelItemHeadClicked);
+ 
     addChildWindow(_mainList);
     dbg_printf("mainlist %08x\n", _mainList);
 
@@ -448,11 +451,6 @@ void MainWnd::onKeyYPressed()
 }
 
 void MainWnd::onMainListSelItemClicked(u32 index)
-{
-    onKeyAPressed();
-}
-
-void MainWnd::onMainListSelItemHeadClicked(u32 index)
 {
     onKeyAPressed();
 }
