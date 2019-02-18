@@ -516,11 +516,11 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion);
 
     config.dsiMode(gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
-		.saveNo((int)gameConfig.saveNo)
-		.ramDiskNo((int)gameConfig.ramDiskNo)
-        .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
-        .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
-        .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);
+		  .saveNo((int)gameConfig.saveNo)
+		  .ramDiskNo((int)gameConfig.ramDiskNo)
+		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
+		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
+		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);
 
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
@@ -543,18 +543,18 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if (settingsIni.checkIfShowAPMsg()) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)   // Girls Mode (JAP version of Style Savvy)
-		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ",  4) == 0)   // Inazuma Eleven (J)
-		|| (memcmp(rominfo.saveInfo().gameCode, "VSO",   3) == 0)   // Sonic Classic Collection
-		|| (memcmp(rominfo.saveInfo().gameCode, "B2D",   3) == 0)   // Doctor Who: Evacuation Earth
-		|| (memcmp(rominfo.saveInfo().gameCode, "BRFP",  4) == 0))  // Rune Factory 3 - A Fantasy Harvest Moon
+		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)   // Inazuma Eleven (J)
+		 || (memcmp(rominfo.saveInfo().gameCode, "VSO",  3) == 0)   // Sonic Classic Collection
+		 || (memcmp(rominfo.saveInfo().gameCode, "B2D",  3) == 0)   // Doctor Who: Evacuation Earth
+		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0))  // Rune Factory 3 - A Fantasy Harvest Moon
 		{
 			hasAP = false;
 		}
 		else
 		// Check for ROMs that have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "B", 1) == 0)
-		|| (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
-		|| (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
+		 || (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
+		 || (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
 			hasAP = true;
 		} else {
 			static const char ap_list[][4] = {

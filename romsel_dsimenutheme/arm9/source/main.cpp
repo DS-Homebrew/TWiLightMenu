@@ -666,49 +666,7 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
-	/*switch (flashcard) {
-		case 0:
-		case 1:
-		default: {
-			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-			path = ReplaceAll(ndsPath, "fat:/", slashchar);
-			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
 
-		case 2:
-		case 4:
-		case 5: {
-			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 3: {
-			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 6: {
-			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-			path = ReplaceAll(ndsPath, "fat:/", dstwofat);
-			fcrompathini.SetString("Dir Info", "fullName", path);
-			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-	}*/
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
@@ -767,31 +725,16 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
-	
-	//SetBrightness(0, 0);
-	//SetBrightness(1, 0);
-	//consoleDemoInit();
 
 	bool fatInited = fatInitDefault();
-	// if (fatInited) {
-	// 	printf("fat inited!");
-	// }
-
-	// consoleDemoInit();
-	// iprintf("Hello World");
-	
-	// while(1) {
-	// 	swiWaitForVBlank();
-	// }
-	// return 0;
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
 	//swiCopy(PersonalData->name, usernameRendered, )
-	
+
 	// Read user name
   	char *username = (char*)PersonalData->name;
-		
+
 	// text
 	for (int i = 0; i < 10; i++) {
 		if (username[i*2] == 0x00)
@@ -799,9 +742,6 @@ int main(int argc, char **argv) {
 		else
 			username[i*2/2] = username[i*2];
 	}
-	
-	//snprintf (usernameRendered, sizeof(usernameRendered), "%s", username);
-	//printf("Username read!");
 
 	if (!fatInited) {
 		graphicsInit();
@@ -855,7 +795,6 @@ int main(int argc, char **argv) {
 	}
 
 	nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
-	//printf("nitroFS inited!");
 
 	flashcardInit();
 
@@ -864,7 +803,6 @@ int main(int argc, char **argv) {
 	}
 
 	langInit();
-	//printf("lang inited!");
 
 	std::string filename;
 
@@ -875,16 +813,13 @@ int main(int argc, char **argv) {
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();
-	//printf("settings loaded!");
 	
-	if (access("sd:/bios.bin", F_OK) == 0) {
+	if (sdFound() && access("sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[0] = true;
-	}
-	if (access("fat:/bios.bin", F_OK) == 0) {
+	} else if (secondaryDevice && access("fat:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[1] = true;
 	}
 
-	//printf("initing graphics...");
 	graphicsInit();
 	fontInit();
 	iconManagerInit();
@@ -932,8 +867,6 @@ int main(int argc, char **argv) {
 		}
 		music = true;
 	}
-
-	//fcopy("sd:/test.txt", "fat:/delivery from SD.txt");
 
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
 	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
@@ -1198,12 +1131,10 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".DSI") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
+			if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".nds") == 0)
+			 || (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".dsi") == 0)
+			 || (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".ids") == 0))
+			{
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -1378,20 +1309,20 @@ int main(int argc, char **argv) {
 
 						if (isHomebrew[cursorPosition[secondaryDevice]] == 0)
 						{
-						if(codelist.romData(path,gameCode,crc32))
-						{
-                            long cheatOffset; size_t cheatSize;
-                            FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-                            if(dat)
-                            {
-                            if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
-                            {
-                                codelist.parse(path);
-                                bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
-                            }
-                            fclose(dat);
-                            }
-						}
+							if(codelist.romData(path,gameCode,crc32))
+							{
+								long cheatOffset; size_t cheatSize;
+								FILE* dat = fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat", "rb");
+								if(dat)
+								{
+									if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
+									{
+										codelist.parse(path);
+										bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
+									}
+									fclose(dat);
+								}
+							}
 						}
 
 						bootstrapini.SaveIniFile( bootstrapinipath );
@@ -1469,7 +1400,6 @@ int main(int argc, char **argv) {
 							runNds_boostVram = perGameSettings_boostVram;
 						}
 					}
-					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1477,12 +1407,9 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".GB") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SGB") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GBC") == 0))
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gb") == 0)
+					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sgb") == 0)
+					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".gbc") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1495,22 +1422,17 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(gbROMpath);
 				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				} else {
-					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				}
+
+				argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".FDS") == 0))
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".nes") == 0)
+					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".fds") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1523,22 +1445,17 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(nesROMpath);
 				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
-				} else {
-					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
-				}
+
+				argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
+
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".sms") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMS") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".gg") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".GG") == 0))
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sms") == 0)
+					|| (strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gg" ) == 0))
 			{
 				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
@@ -1553,21 +1470,16 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(smsROMpath);
 				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/S8DS.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				} else {
-					argarray.at(0) = (char*)(!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				}
+
+				argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to S8DS as argument
+
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".gen") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GEN") == 0))
-			{
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4, ".gen")) == 0) {
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char genROMpath[256];
@@ -1594,10 +1506,8 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".smc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMC") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sfc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SFC") == 0))
+			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".smc") == 0)
+					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sfc") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1631,12 +1541,6 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.erase(argarray.begin());
 			}
-
-			// while (1) {
-			// 	swiWaitForVBlank();
-			// 	scanKeys();
-			// 	if (!(keysHeld() & KEY_A)) break;
-			// }
 		}
 	}
 
