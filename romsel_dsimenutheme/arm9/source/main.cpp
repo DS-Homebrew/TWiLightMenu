@@ -814,9 +814,10 @@ int main(int argc, char **argv) {
 
 	LoadSettings();
 	
-	if (sdFound() && access("sd:/bios.bin", F_OK) == 0) {
+	if (access("sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[0] = true;
-	} else if (secondaryDevice && access("fat:/bios.bin", F_OK) == 0) {
+	}
+	if (access("fat:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[1] = true;
 	}
 
