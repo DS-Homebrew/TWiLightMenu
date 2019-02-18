@@ -1202,23 +1202,27 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
-				if (!isScrolling) {
+				if (isScrolling) {
+					if (boxArtLoaded) {
+						if (!rocketVideo_playVideo) clearBoxArt();
+						rocketVideo_playVideo = (theme == 1 ? true : false);
+					}
+				} else {
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
 					updateBoxArt(dirContents, scrn);
-				} else {
-					if (boxArtLoaded) {
-						clearBoxArt();
-						if (theme == 1) rocketVideo_playVideo = true;
-					}
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true;
+					showbubble = true, showBoxArt = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
+					if (showBoxArt && !rocketVideo_playVideo) {
+						clearBoxArt();
+						showBoxArt = false;
+					}
 					clearText(false);
 					showbubble = false;
-					showSTARTborder = (theme == 1 ? true : false);
+					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
 				}
 				loadVolumeImage();
 				loadBatteryImage();
