@@ -89,7 +89,6 @@ void MainWnd::init()
     windowManager().addWindow(this);
 
     // init game file list
-    //waitMs( 2000 );
     _mainList = new MainList(4, 20, 248, 152, this, "main list");
     _mainList->setRelativePosition(Point(4, 20));
     _mainList->init();
@@ -120,7 +119,6 @@ void MainWnd::init()
     {
         text = LANG("start menu", "START");
     }
-    //_startButton = new Button( 0, 172, 48, 18, this, " Start" );
     _startButton = new Button(x, y, w, h, this, text);
     _startButton->setStyle(Button::press);
     _startButton->setRelativePosition(Point(x, y));
@@ -238,7 +236,6 @@ void MainWnd::startMenuItemClicked(s16 i)
     if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
     
     dbg_printf("start menu item %d\n", i);
-    //messageBox( this, "Power Off", "Are you sure you want to turn off ds?", MB_YES | MB_NO );
 
     // ------------------- Copy and Paste ---
     if (START_MENU_ITEM_COPY == i)
@@ -410,7 +407,6 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
             ret = true;
             break;
         case KeyMessage::UI_KEY_R:
-            // brightnessButtonClicked();
 #ifdef DEBUG
             gdi().switchSubEngineMode();
             gdi().present(GE_SUB);
@@ -928,7 +924,7 @@ void MainWnd::bootSlot1(void)
     if (int err = slot1Loader.launch())
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+        messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
     }
 }
 
@@ -966,7 +962,7 @@ void MainWnd::bootGbaRunner(void)
 
     LoaderConfig gbaRunner(bootstrapPath, ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI);
 	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", GBARUNNER_BOOTSTRAP)
-		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
     if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
@@ -1012,38 +1008,28 @@ void MainWnd::onFolderChanged()
 
     if (!strncmp(dirShowName.c_str(), "^*::", 2))
     {
+		switch ( dirShowName ) {
+			case SPATH_TITLEANDSETTINGS:
+				showSettings();
+				break;
+			case SPATH_SLOT1:
+				if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
+					cardLaunch();
+				} else {
+					bootSlot1();
+				}
+				break;
+			case SPATH_GBARUNNER:
+				bootGbaRunner();
+				break;
+			case SPATH_SYSMENU:
+				dsiSysMenuLaunch();
+				break;
+			case SPATH_SYSTEMSETTINGS:
+				dsiLaunchSystemSettings();
+				break;
+		}
 
-        if (dirShowName == SPATH_TITLEANDSETTINGS)
-        {
-            showSettings();
-        }
-
-        if (dirShowName == SPATH_SLOT1)
-        {
-            if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
-            {
-                cardLaunch();
-            }
-            else
-            {
-                bootSlot1();
-            }
-        }
-
-        if (dirShowName == SPATH_GBARUNNER)
-        {
-            bootGbaRunner();
-        }
-
-        if (dirShowName == SPATH_SYSMENU)
-        {
-            dsiSysMenuLaunch();
-        }
-
-        if (dirShowName == SPATH_SYSTEMSETTINGS)
-        {
-            dsiLaunchSystemSettings();
-        }
         dirShowName.clear();
     }
 

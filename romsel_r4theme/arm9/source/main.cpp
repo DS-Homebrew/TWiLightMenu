@@ -793,7 +793,7 @@ void dsCardLaunch() {
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
-bool extention(char* ext, int number) {
+bool extention(std::string filename, const char* ext, int number) {
 	if(strcasecmp(filename.c_str() + filename.size() - number, ext)) {
 		return false;
 	} else {
@@ -1200,7 +1200,7 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 
 			bool isArgv = false;
-			if (extention(".argv", 5))
+			if (extention(filename, ".argv", 5))
 			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
@@ -1226,12 +1226,18 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
+			bool SNES;
+			bool GENESIS;
+			bool gameboy;
+			bool nes;
+			bool gamegear;
+
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
 				const char *typeToReplace = ".nds";
-				if (extention(".dsi", 4)) {
+				if (extention(filename, ".dsi", 4)) {
 					typeToReplace = ".dsi";
-				} else if (extention(".ids", 4)) {
+				} else if (extention(filename, ".ids", 4)) {
 					typeToReplace = ".ids";
 				}
 
@@ -1379,7 +1385,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(".nds", 4) || extention(".dsi", 4) || extention(".ids", 4)) {
+			if (extention(filename, ".nds", 4) || extention(filename, ".dsi", 4) || extention(filename, ".ids", 4)) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -1654,18 +1660,18 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, text);
 					stop();
 				}
-			} else if (extention(".gb", 3) || extention(".sgb", 4) || extention(".gbc", 4)) {
+			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) || extention(filename, ".gbc", 4)) {
 				gameboy = true;
-			} else if (extention(".nes", 4) || extention(".fds", 4)) {
+			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
 				nes = true;
-			} else if (extention(".sms", 4) || extention(".gg", 3)) {
+			} else if (extention(filename, ".sms", 4) || extention(filename, ".gg", 3)) {
 				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 				gamegear = true;
-			} else if (extention(".gen", 4)) {
+			} else if (extention(filename, ".gen", 4)) {
 				GENESIS = true;
-			} else if (extention(".smc", 4) || extention(".sfc", 4)) {
+			} else if (extention(filename, ".smc", 4) || extention(filename, ".sfc", 4)) {
 				SNES = true;
 			}
 
