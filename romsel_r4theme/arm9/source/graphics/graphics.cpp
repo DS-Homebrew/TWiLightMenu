@@ -190,7 +190,7 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void bottomBgLoad(bool startMenu) {
-	dmaCopy(bottomImage[startMenu], BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(1, bottomImage[startMenu], BG_GFX, 0x18000);
 }
 
 // No longer used.
@@ -274,7 +274,7 @@ void vBlankHandler()
 }
 
 void topBgLoad(bool startMenu) {
-	dmaCopy(topImage[startMenu], (u16*)BG_GFX_SUB+(256*32), 0x18000);
+	dmaCopyWordsAsynch(0, topImage[startMenu], (u16*)BG_GFX_SUB+(256*32), 0x18000);
 }
 
 void graphicsInit()
