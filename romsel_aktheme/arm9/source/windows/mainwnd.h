@@ -56,8 +56,6 @@ class MainWnd : public akui::Form
   protected:
     void onMainListSelItemClicked(u32 index);
 
-    void onMainListSelItemHeadClicked(u32 index);
-
     void onKeyAPressed();
 
     void onKeyBPressed();
