@@ -692,6 +692,7 @@ void launchGba(void) {
 		mmEffectEx(&snd_wrong);
 		clearText();
 		dbox_showIcon = false;
+		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
 			for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -714,6 +715,7 @@ void launchGba(void) {
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
+		dbox_selectMenu = true;
 		if (!inSelectMenu) {
 			showdialogbox = false;
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
