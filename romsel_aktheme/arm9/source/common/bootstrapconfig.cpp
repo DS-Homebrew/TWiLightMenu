@@ -186,6 +186,10 @@ BootstrapConfig &BootstrapConfig::speedBump()
 			return ceCached(true);
 		}
 	}
+	if (strncmp(_gametid.c_str(), "AP2E", 4) == 0)	// Metroid Prime Pinball (USA)
+	{
+		return ceCached(true);
+	}
 	return ceCached(false);
 }
 BootstrapConfig &BootstrapConfig::donorSdk()
