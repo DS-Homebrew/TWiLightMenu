@@ -1226,11 +1226,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
-			bool SNES;
-			bool GENESIS;
-			bool gameboy;
-			bool nes;
-			bool gamegear;
+			bool SNES = false;
+			bool GENESIS = false;
+			bool gameboy = false;
+			bool nes = false;
+			bool gamegear = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
