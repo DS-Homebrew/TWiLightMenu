@@ -1008,28 +1008,38 @@ void MainWnd::onFolderChanged()
 
     if (!strncmp(dirShowName.c_str(), "^*::", 2))
     {
-		switch ( dirShowName ) {
-			case SPATH_TITLEANDSETTINGS:
-				showSettings();
-				break;
-			case SPATH_SLOT1:
-				if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
-					cardLaunch();
-				} else {
-					bootSlot1();
-				}
-				break;
-			case SPATH_GBARUNNER:
-				bootGbaRunner();
-				break;
-			case SPATH_SYSMENU:
-				dsiSysMenuLaunch();
-				break;
-			case SPATH_SYSTEMSETTINGS:
-				dsiLaunchSystemSettings();
-				break;
-		}
 
+        if (dirShowName == SPATH_TITLEANDSETTINGS)
+        {
+            showSettings();
+        }
+
+        if (dirShowName == SPATH_SLOT1)
+        {
+            if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
+            {
+                cardLaunch();
+            }
+            else
+            {
+                bootSlot1();
+            }
+        }
+
+        if (dirShowName == SPATH_GBARUNNER)
+        {
+            bootGbaRunner();
+        }
+
+        if (dirShowName == SPATH_SYSMENU)
+        {
+            dsiSysMenuLaunch();
+        }
+
+        if (dirShowName == SPATH_SYSTEMSETTINGS)
+        {
+            dsiLaunchSystemSettings();
+        }
         dirShowName.clear();
     }
 
