@@ -1204,7 +1204,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				updateScrollingState(held, pressed);
 				if (isScrolling) {
 					if (boxArtLoaded) {
-						clearBoxArt();
+						if (!rocketVideo_playVideo) clearBoxArt();
 						rocketVideo_playVideo = (theme == 1 ? true : false);
 					}
 				} else {
@@ -1216,7 +1216,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = true, showBoxArt = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
-					if (showBoxArt) {
+					if (showBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
 						showBoxArt = false;
 					}
