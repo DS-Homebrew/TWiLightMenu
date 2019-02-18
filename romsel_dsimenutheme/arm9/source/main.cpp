@@ -1450,7 +1450,7 @@ int main(int argc, char **argv) {
 
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-				argarray.push_back(smsROMpath);
+				argarray.push_back(ROMpath);
 				int err = 0;
 
 				if (gameboy) {
