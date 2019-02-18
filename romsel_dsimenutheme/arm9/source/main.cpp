@@ -1443,7 +1443,7 @@ int main(int argc, char **argv) {
 				if (gameboy) {
 					launchType = 4;
 				} else if (nes) {
-					launchType = 3
+					launchType = 3;
 				} else {
 					launchType = 5;
 				}
