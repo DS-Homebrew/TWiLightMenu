@@ -931,9 +931,7 @@ int main(int argc, char **argv) {
 			vector<char*> argarray;
 
 			bool isArgv = false;
-			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 5, ".ARGV") == 0))
-			{
+			if (strcasecmp(filename.c_str() + filename.size() - 5, ".argv") == 0) {
 				romPath = filePath+filename;
 
 				FILE *argfile = fopen(filename.c_str(),"rb");
@@ -994,10 +992,10 @@ int main(int argc, char **argv) {
 				fadeSpeed = true;	// Fast fading
 
 				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
-					const char* savecreate = "Creating public save file...";
-					const char* savecreated = "Public save file created!";
+					const char* savecreating = "Creating public save file...";
+					const char* savecreated  = "Public save file created!";
 					clearText();
-					printLarge(false, 4, 4, savecreate);
+					printLarge(false, 4, 4, savecreating);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -1029,10 +1027,10 @@ int main(int argc, char **argv) {
 				}
 
 				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
-					const char* savecreate = "Creating private save file...";
-					const char* savecreated = "Private save file created!";
+					const char* savecreating = "Creating private save file...";
+					const char* savecreated  = "Private save file created!";
 					clearText();
-					printLarge(false, 4, 4, savecreate);
+					printLarge(false, 4, 4, savecreating);
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -1132,9 +1130,9 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".nds") == 0)
-			 || (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".dsi") == 0)
-			 || (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".ids") == 0))
+			if ((strcasecmp(filename.c_str() + filename.size() - 4, ".nds") == 0)
+			 || (strcasecmp(filename.c_str() + filename.size() - 4, ".dsi") == 0)
+			 || (strcasecmp(filename.c_str() + filename.size() - 4, ".ids") == 0))
 			{
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
@@ -1213,9 +1211,9 @@ int main(int argc, char **argv) {
 
 						if (access(savepath.c_str(), F_OK) != 0 && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
 							ClearBrightness();
-							const char* savecreate = "Creating save file...";
+							const char* savecreating = "Creating save file...";
 							const char* savecreated = "Save file created!";
-							printLarge(false, 4, 4, savecreate);
+							printLarge(false, 4, 4, savecreating);
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1224,26 +1222,26 @@ int main(int argc, char **argv) {
 							int savesize = 524288;	// 512KB (default size for most games)
 
 							// Set save size to 8KB for the following games
-							if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+							if (memcmp(game_TID, "ASC", 3) == 0)	// Sonic Rush
 							{
 								savesize = 8192;
 							}
 
 							// Set save size to 256KB for the following games
-							if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+							if (memcmp(game_TID, "AMH", 3) == 0 )	// Metroid Prime Hunters
 							{
 								savesize = 262144;
 							}
 
 							// Set save size to 1MB for the following games
-							if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-								|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+							if (memcmp(game_TID, "AZL", 3) == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+							 || memcmp(game_TID, "BKI", 3) == 0 )	// The Legend of Zelda: Spirit Tracks
 							{
 								savesize = 1048576;
 							}
 
 							// Set save size to 32MB for the following games
-							if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+							if (memcmp(game_TID, "UOR", 3) == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
 							{
 								savesize = 1048576*32;
 							}
@@ -1408,9 +1406,9 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gb" ) == 0)
-					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sgb") == 0)
-					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".gbc") == 0))
+			} else if ((strcasecmp(filename.c_str() + filename.size() - 3, ".gb" ) == 0)
+					|| (strcasecmp(filename.c_str() + filename.size() - 4, ".sgb") == 0)
+					|| (strcasecmp(filename.c_str() + filename.size() - 4, ".gbc") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1432,8 +1430,8 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".nes") == 0)
-					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".fds") == 0))
+			} else if ((strcasecmp(filename.c_str() + filename.size() - 4, ".nes") == 0)
+					|| (strcasecmp(filename.c_str() + filename.size() - 4, ".fds") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1455,8 +1453,8 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sms") == 0)
-					|| (strcasecmp (substr(filename.c_str() + filename.size() - 3), ".gg" ) == 0))
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".sms") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".gg" ) == 0))
 			{
 				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
@@ -1480,7 +1478,7 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".gen") == 0) {
+			} else if (strcasecmp(filename.c_str() + filename.size() - 4, ".gen") == 0) {
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char genROMpath[256];
@@ -1507,8 +1505,8 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (substr(filename.c_str() + filename.size() - 4), ".smc") == 0)
-					|| (strcasecmp (substr(filename.c_str() + filename.size() - 4), ".sfc") == 0))
+			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".smc") == 0)
+					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sfc") == 0))
 			{
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
