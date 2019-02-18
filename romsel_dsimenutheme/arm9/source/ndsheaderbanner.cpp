@@ -59,19 +59,19 @@ bool checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
-	if ((strcmp(game_TID, "AZLJ") == 0)     // Girls Mode (JAP version of Style Savvy)
-	|| (strcmp(game_TID, "YEEJ") == 0)      // Inazuma Eleven (J)
-	|| (strncmp(game_TID, "VSO", 3) == 0)   // Sonic Classic Collection
-	|| (strncmp(game_TID, "B2D", 3) == 0)   // Doctor Who: Evacuation Earth
-	|| (strcmp(game_TID, "BRFP") == 0))    // Rune Factory 3 - A Fantasy Harvest Moon
+	if ((memcmp(game_TID, "AZLJ", 4) == 0)  // Girls Mode (JAP version of Style Savvy)
+	 || (memcmp(game_TID, "YEEJ", 4) == 0)  // Inazuma Eleven (J)
+	 || (memcmp(game_TID, "VSO",  3) == 0)  // Sonic Classic Collection
+	 || (memcmp(game_TID, "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
+	 || (memcmp(game_TID, "BRFP", 4) == 0)) // Rune Factory 3 - A Fantasy Harvest Moon
 	{
 		return false;
 	}
 	else
 	// Check for ROMs that have AP measures.
-	if ((strncmp(game_TID, "B", 1) == 0)
-	|| (strncmp(game_TID, "T", 1) == 0)
-	|| (strncmp(game_TID, "V", 1) == 0)) {
+	if ((memcmp(game_TID, "B", 1) == 0)
+	 || (memcmp(game_TID, "T", 1) == 0)
+	 || (memcmp(game_TID, "V", 1) == 0)) {
 		return true;
 	} else {
 		static const char ap_list[][4] = {

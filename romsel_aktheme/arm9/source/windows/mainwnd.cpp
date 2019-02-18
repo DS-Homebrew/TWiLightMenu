@@ -543,10 +543,10 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if (settingsIni.checkIfShowAPMsg()) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)   // Girls Mode (JAP version of Style Savvy)
-		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)    // Inazuma Eleven (J)
-		|| (memcmp(rominfo.saveInfo().gameCode, "VSO", 3) == 0)     // Sonic Classic Collection
-		|| (memcmp(rominfo.saveInfo().gameCode, "B2D", 3) == 0)     // Doctor Who: Evacuation Earth
-		|| (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0))   // Rune Factory 3 - A Fantasy Harvest Moon
+		|| (memcmp(rominfo.saveInfo().gameCode, "YEEJ",  4) == 0)   // Inazuma Eleven (J)
+		|| (memcmp(rominfo.saveInfo().gameCode, "VSO",   3) == 0)   // Sonic Classic Collection
+		|| (memcmp(rominfo.saveInfo().gameCode, "B2D",   3) == 0)   // Doctor Who: Evacuation Earth
+		|| (memcmp(rominfo.saveInfo().gameCode, "BRFP",  4) == 0))  // Rune Factory 3 - A Fantasy Harvest Moon
 		{
 			hasAP = false;
 		}
@@ -850,13 +850,13 @@ void MainWnd::launchSelected()
 
 			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
-				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
-				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
+			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
+			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0]))
 			{
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 			}
 		}
 	}
@@ -886,7 +886,7 @@ void MainWnd::launchSelected()
 			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0]))
 			{
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 			}
 		}
 	}
