@@ -511,6 +511,8 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 }
 
+int waitBeforeShowingSTARTborder = 30;
+
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 		if (!boxArtLoaded && showBoxArt) {
@@ -530,7 +532,12 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 			}
 			boxArtLoaded = true;
 		}
-		showSTARTborder = true;
+		if (waitBeforeShowingSTARTborder == 30) {
+			showSTARTborder = true;
+			waitBeforeShowingSTARTborder = 0;
+		} else {
+			waitBeforeShowingSTARTborder++;
+		}
 	}
 }
 
@@ -655,6 +662,7 @@ void switchDevice(void) {
 		shouldersRendered = false;
 		showbubble = false;
 		showSTARTborder = false;
+		waitBeforeShowingSTARTborder = 30;
 		stopSoundPlayed = false;
 		clearText();
 		SaveSettings();
@@ -1207,6 +1215,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (!rocketVideo_playVideo) clearBoxArt();
 						rocketVideo_playVideo = (theme == 1 ? true : false);
 					}
+					showSTARTborder = (theme == 1 ? true : false);
 				} else {
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
@@ -1222,6 +1231,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					clearText(false);
 					showbubble = false;
+					waitBeforeShowingSTARTborder = 30;
 					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
 				}
 				loadVolumeImage();
@@ -1283,6 +1293,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
+				waitBeforeShowingSTARTborder = 30;
 				showbubble = false;
 				clearText();
 				mkdir (sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
@@ -1497,6 +1508,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchPosition startTouch = touch;
 				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
+				waitBeforeShowingSTARTborder = 30;
 				scrollWindowTouched = true;
 				while(1) {
 					scanKeys();
@@ -1606,6 +1618,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchPosition prevTouch2 = touch;
 				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
+				waitBeforeShowingSTARTborder = 30;
 
 				if(touch.px > 96 && touch.px < 160 && touch.py < 144 && touch.py > 88) {
 					while(1) {
@@ -1772,6 +1785,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touch = startTouch;
 				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = (theme == 1 ? true : false);
+				waitBeforeShowingSTARTborder = 30;
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
@@ -1802,6 +1816,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					waitBeforeShowingSTARTborder = 30;
 					stopSoundPlayed = false;
 					clearText();
 					chdir(entry->name.c_str());
@@ -1919,6 +1934,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (theme == 0) {
 						showbubble = false;
 						showSTARTborder = false;
+						waitBeforeShowingSTARTborder = 30;
 						clearText(false);	// Clear title
 
 						fadeSpeed = false;	// Slow fade speed
@@ -2019,6 +2035,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					waitBeforeShowingSTARTborder = 30;
 					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
@@ -2052,6 +2069,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
+					waitBeforeShowingSTARTborder = 30;
 					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
@@ -2078,6 +2096,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
+				waitBeforeShowingSTARTborder = 30;
 				stopSoundPlayed = false;
 				clearText();
 				chdir("..");
@@ -2169,6 +2188,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
+						waitBeforeShowingSTARTborder = 30;
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
@@ -2205,6 +2225,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
+						waitBeforeShowingSTARTborder = 30;
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;

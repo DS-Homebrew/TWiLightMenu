@@ -899,7 +899,7 @@ void vBlankHandler()
 					glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
-				} else if (!isScrolling) {
+				} else {
 					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
 						mmEffectEx(&snd_stop);
 						waitForNeedToPlayStopSound = 1;
@@ -913,7 +913,7 @@ void vBlankHandler()
 
 			// Refresh the background layer.
 			if (showbubble) drawBubble(tex().bubbleImage());
-			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+			if (showSTARTborder && theme == 0) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
 			glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 			if (dbox_Ypos != -192) {
