@@ -14,6 +14,10 @@ LARGE_FONT texture coordinates
 
 #define TEXT_LY 17
 
+// The order of these font coordinates must be the same order as the lookup table
+// meaning that they must be in sorted ascending order from lowest UTF16 codepoint 
+// to highest
+
 static constexpr unsigned int large_font_texcoords[] = {
     0, 0, 5, TEXT_LY, // SPACE
     14, 0, 5, TEXT_LY, // EXCLAMATION MARK
@@ -555,6 +559,9 @@ static constexpr unsigned int large_font_texcoords[] = {
     462, 238, 14, TEXT_LY, // FULLWIDTH MACRON
 
 };
+
+// WARNING
+// Lookup Table MUST BE SORTED for the font to work.
 
 static constexpr unsigned short int large_utf16_lookup_table[] = {
 0x0020,0x0021,0x0022,0x0023,0x0024,0x0025,0x0026,0x0027,0x0028,0x0029,0x002A,0x002B,0x002C,0x002D,0x002E,0x002F,0x0030,0x0031,0x0032,0x0033,0x0034,0x0035,0x0036,0x0037,0x0038,0x0039,0x003A,0x003B,0x003C,0x003D,0x003E,0x003F,0x0040,
