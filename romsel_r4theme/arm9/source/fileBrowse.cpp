@@ -71,6 +71,7 @@ extern int consoleModel;
 extern bool isRegularDS;
 
 extern bool showdialogbox;
+extern bool showdeletedialogbox;
 extern int dialogboxHeight;
 
 extern std::string romfolder[2];
@@ -88,7 +89,10 @@ extern bool startMenu;
 
 extern int theme;
 
+int file_count = 0;
+
 extern bool showDirectories;
+extern bool showHidden;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
@@ -98,6 +102,11 @@ bool settingsChanged = false;
 
 extern void SaveSettings();
 
+const char *gameOrderIniPath;
+const char *hiddenGamesIniPath;
+
+char *path = new char[PATH_MAX];
+
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 struct DirEntry {
@@ -105,7 +114,8 @@ struct DirEntry {
 	bool isDirectory;
 } ;
 
-bool nameEndsWith (const string& name, const vector<string> extensionList) {
+bool nameEndsWith (const string& name, const vector<string> extensionList)
+{
 
 	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
 
@@ -113,9 +123,10 @@ bool nameEndsWith (const string& name, const vector<string> extensionList) {
 
 	if (extensionList.size() == 0) return true;
 
-	for (int i = 0; i < (int)extensionList.size(); i++) {
+	for (int i = 0; i < (int) extensionList.size(); i++)
+	{
 		const string ext = extensionList.at(i);
-		if ( strcasecmp (name.c_str() + name.size() - ext.size(), ext.c_str()) == 0) return true;
+		if (strcasecmp(name.c_str() + name.size() - ext.size(), ext.c_str()) == 0) return true;
 	}
 	return false;
 }
@@ -123,10 +134,12 @@ bool nameEndsWith (const string& name, const vector<string> extensionList) {
 bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs)
 {
 
-	if (!lhs.isDirectory && rhs.isDirectory) {
+	if (!lhs.isDirectory && rhs.isDirectory)
+	{
 		return false;
 	}
-	if (lhs.isDirectory && !rhs.isDirectory) {
+	if (lhs.isDirectory && !rhs.isDirectory)
+	{
 		return true;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
@@ -140,27 +153,63 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 
 	DIR *pdir = opendir ("."); 
 	
-	if (pdir == NULL) {
-		iprintf ("Unable to open the directory.\n");
-	} else {
+	if (pdir == NULL)
+	{
+		printSmall (false, 4, 4, "Unable to open the directory.");
+	}
+	else
+	{
+		CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		vector<std::string> hiddenGames;
+		char str[11];
 
-		while(true) {
+		for(int i=0;true;i++) {
+			sprintf(str, "%d", i);
+			if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+			} else {
+				break;
+			}
+		}
+
+		while (true)
+		{
 			DirEntry dirEntry;
 
 			struct dirent* pent = readdir(pdir);
-			if(pent == NULL) break;
+			if (pent == NULL) break;
 				
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
 			if (showDirectories) {
-				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back (dirEntry);
+				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back (dirEntry);
+					bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) {
+						dirContents.push_back(dirEntry);
+						file_count++;
+					}
 				}
 			}
 
@@ -251,6 +300,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 
+	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
+
 	fileOffset = cursorPosition[secondaryDevice];
 	if (pagenum[secondaryDevice] > 0) {
 		fileOffset += pagenum[secondaryDevice]*40;
@@ -275,68 +327,60 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
 			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
+			}
+			else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+				 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb"))
 			{
 				bnrRomType = 1;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
+			}
+			else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
 			{
 				bnrRomType = 2;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
+			}
+			else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+				 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds"))
 			{
 				bnrRomType = 3;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
+			}
+			else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
 			{
 				bnrRomType = 4;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
+			}
+			else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
 			{
 				bnrRomType = 5;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
+			}
+			else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
 			{
 				bnrRomType = 6;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
+			}
+			else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
+				 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc"))
 			{
 				bnrRomType = 7;
 				bnrWirelessIcon = 0;
@@ -345,7 +389,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if (bnrRomType==0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+		if (bnrRomType == 0)
+			iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
 		if (!isRegularDS) {
@@ -546,30 +591,89 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		}
 
 		if ((pressed & KEY_X)
-		&& strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0 && !isDirectory)
+		&& strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0)
 		{
-			showdialogbox = true;
-			printLargeCentered(false, 84, "Warning!");
-			//if (isDirectory) {
-			//	printSmallCentered(false, 104, "Delete this folder?");
-			//} else {
-				printSmallCentered(false, 104, "Delete this game?");
-			//}
+			CIniFile hiddenGamesIni(hiddenGamesIniPath);
+			vector<std::string> hiddenGames;
+			char str[11];
+
+			for(int i = 0; true; i++) {
+				sprintf(str, "%d", i);
+				if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+					hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+				} else {
+					break;
+				}
+			}
+
+			for(int i = 0; i < (int)hiddenGames.size(); i++) {
+				for(int j = 0; j < (int)hiddenGames.size(); j++) {
+					if(i != j && hiddenGames[i] == hiddenGames[j]) {
+						hiddenGames.erase(hiddenGames.begin()+j);
+					}
+				}
+			}
+
+			std::string gameBeingHidden = dirContents.at(fileOffset).name;
+			bool unHide = false;
+			int whichToUnhide;
+
+			for(int i = 0; i < (int)hiddenGames.size(); i++) {
+				if(hiddenGames[i] == gameBeingHidden) {
+					whichToUnhide = i;
+					unHide = true;
+				}
+			}
+
+			showdeletedialogbox = true;
+			printLargeCentered(false, 84, "ROM Management options");
+			printSmallCentered(false, 104, "What would you like");
+			printSmallCentered(false, 112, "to do with this ROM?");
+
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
-			printSmallCentered(false, 118, "A: Yes  B: No");
+
+			if (isDirectory) {
+				if(unHide)	printSmallCentered(false, 118, "Y: Unhide  B: Nothing");
+				else		printSmallCentered(false, 118, "Y: Hide  B: Nothing");
+			} else {
+				if(unHide)	printSmallCentered(false, 118, "Y: Unhide  A: Delete  B: Nothing");
+				else		printSmallCentered(false, 118, "Y: Hide  A: Delete  B: Nothing");
+			}
 			while (1) {
 				do {
 					scanKeys();
 					pressed = keysDownRepeat();
 					swiWaitForVBlank();
 				} while (!pressed);
+
+				if (pressed & KEY_B) {
+					break;
+				}
 				
-				if (pressed & KEY_A) {
+				if ((pressed & KEY_A && !isDirectory) || (pressed & KEY_Y)) {
 					clearText();
 					showdialogbox = false;
 					consoleClear();
 					printf("Please wait...\n");
-					remove(dirContents.at(fileOffset).name.c_str()); // Remove game/folder
+
+					if (pressed & KEY_A && !isDirectory) {
+						remove(dirContents.at(fileOffset).name.c_str()); // Remove game/folder
+					} else if (pressed & KEY_Y) {
+						if(unHide) {
+							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
+							hiddenGames.push_back("");
+						} else {
+							hiddenGames.push_back(gameBeingHidden);
+						}
+
+						for(int i=0;i<(int)hiddenGames.size();i++) {
+							char str[9];
+							sprintf(str, "%d", i);
+							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+						}
+						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+					}
+					 // Remove game/folder
 					if (settingsChanged) {
 						cursorPosition[secondaryDevice] = fileOffset;
 						pagenum[secondaryDevice] = 0;
@@ -585,10 +689,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					SaveSettings();
 					settingsChanged = false;
 					return "null";
-				}
-
-				if (pressed & KEY_B) {
-					break;
 				}
 			}
 			clearText();

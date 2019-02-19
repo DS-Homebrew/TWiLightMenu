@@ -111,10 +111,6 @@ int main(int argc, char **argv)
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
-	// consoleDemoInit();
-	// printf("Ok...");
-	// stop();
-
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	ms().loadSettings();
@@ -155,28 +151,13 @@ int main(int argc, char **argv)
 		stop();
 	}
 	dbg_printf("UISETTINGS: %s\n", SFN_BUTTON2);
-	//stop();
-	// if (!nitroFSInitOk)
-	// {
-	// 	consoleDemoInit();
-	// 	printf("Failed to init NitroFS");
-	// 	stop();
-	// }
 
-
-	
-	// init unicode
-	//if( initUnicode() )
-	//    _FAT_unicode_init( unicodeL2UTable, unicodeU2LTable, unicodeAnkTable );
 	cwl();
 
 	lang(); // load language file
 
 	fontFactory().makeFont(); // load font file
 	uiSettings().loadSettings();
-
-	// diskIcon().loadAppearance(SFN_CARD_ICON_BLUE);
-	// diskIcon().show();
 
 	batteryIcon().draw();
 
@@ -221,7 +202,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
 	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
 
 	irq().vblankStart();

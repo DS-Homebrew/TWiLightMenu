@@ -146,6 +146,7 @@ bool showSmsGg = true;
 bool showMd = true;
 bool showSnes = true;
 bool showDirectories = true;
+bool showHidden = false;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -186,9 +187,11 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 	}
 
 	r4_theme = "sd:/";
@@ -237,7 +240,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
 	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
-	//settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	if (bothSDandFlashcard()) {
@@ -253,8 +255,6 @@ void SaveSettings(void) {
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
-	//settingsini.SetInt("SRLOADER", "THEME", theme);
-	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 
@@ -724,6 +724,10 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	}
 	std::string path;
 	int err = 0;
+
+	// Flashcards that will not be supported due to a lack of autoboot:
+	// DSTT DLDI(boyakkey ver.)
+
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	{
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
@@ -1467,9 +1471,9 @@ int main(int argc, char **argv) {
 						if (access(savepath.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
-							const char* savecreate = "Creating save file...";
+							const char* savecreating = "Creating save file...";
 							const char* savecreated = "Save file created!";
-							printSmall(false, 2, 80, savecreate);
+							printSmall(false, 2, 80, savecreating);
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1553,6 +1557,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
@@ -1755,7 +1760,7 @@ int main(int argc, char **argv) {
 				stop();
 			}
 
-			while(argarray.size() !=0 ) {
+			while(argarray.size() != 0) {
 				free(argarray.at(0));
 				argarray.erase(argarray.begin());
 			}

@@ -150,7 +150,6 @@ bool shouldersRendered = false;
 bool settingsChanged = false;
 
 bool isScrolling = false;
-bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
@@ -283,7 +282,7 @@ void chdirFake(const char *dir)
 }
 #endif
 
-bool nameEndsWith(const string& name, const vector<string> extensionList)
+bool nameEndsWith (const string& name, const vector<string> extensionList)
 {
 
 	if (name.substr(0,2) == "._")	return false;	// Don't show macOS's index files
@@ -504,21 +503,12 @@ void updateScrollingState(u32 held, u32 pressed) {
 	 if (isHeld && !isPressed 
 	 	&&(
 			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
-		))
-	{
+		)){
 		isScrolling = true;
-		if (edgeBumpSoundPlayed) {
-			edgeBumpSoundPlayed = false;
-		}
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
 		isScrolling = false;
 	} 
 
-	if (isPressed && !isHeld) {
-		if (edgeBumpSoundPlayed) {
-			edgeBumpSoundPlayed = false;
-		}
-	}
 }
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
@@ -725,11 +715,10 @@ void launchGba(void) {
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
+		dbox_selectMenu = true;
 		if (!inSelectMenu) {
 			showdialogbox = false;
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		} else {
-			dbox_selectMenu = true;
 		}
 		return;
 	}
@@ -769,8 +758,6 @@ void launchGba(void) {
 }
 
 void mdRomTooBig(void) {
-	//int bottomBright = 0;
-
 	mmEffectEx(&snd_wrong);
 	clearText();
 	dbox_showIcon = false;
@@ -791,69 +778,6 @@ void mdRomTooBig(void) {
 		loadDate();
 		loadClockColon();
 		swiWaitForVBlank();
-
-		// Debug code for changing brightness of BG layer
-
-		/*if (pressed & KEY_UP) {
-			bottomBright--;
-		} else if (pressed & KEY_DOWN) {
-			bottomBright++;
-		}
-		
-		if (bottomBright < 0) bottomBright = 0;
-		if (bottomBright > 15) bottomBright = 15;
-
-		switch (bottomBright) {
-			case 0:
-			default:
-				REG_BLDY = 0;
-				break;
-			case 1:
-				REG_BLDY = (0b0001 << 1);
-				break;
-			case 2:
-				REG_BLDY = (0b0010 << 1);
-				break;
-			case 3:
-				REG_BLDY = (0b0011 << 1);
-				break;
-			case 4:
-				REG_BLDY = (0b0100 << 1);
-				break;
-			case 5:
-				REG_BLDY = (0b0101 << 1);
-				break;
-			case 6:
-				REG_BLDY = (0b0110 << 1);
-				break;
-			case 7:
-				REG_BLDY = (0b0111 << 1);
-				break;
-			case 8:
-				REG_BLDY = (0b1000 << 1);
-				break;
-			case 9:
-				REG_BLDY = (0b1001 << 1);
-				break;
-			case 10:
-				REG_BLDY = (0b1010 << 1);
-				break;
-			case 11:
-				REG_BLDY = (0b1011 << 1);
-				break;
-			case 12:
-				REG_BLDY = (0b1100 << 1);
-				break;
-			case 13:
-				REG_BLDY = (0b1101 << 1);
-				break;
-			case 14:
-				REG_BLDY = (0b1110 << 1);
-				break;
-			case 15:
-				REG_BLDY = (0b1111 << 1);
-				break;
-		}*/
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;
@@ -988,68 +912,60 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str();
 				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv"))
 				{
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
 					bnrRomType[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
+				}
+				else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
+					 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb"))
 				{
 					bnrRomType[i] = 1;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
+				}
+				else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
 				{
 					bnrRomType[i] = 2;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
+				}
+				else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
+					 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds"))
 				{
 					bnrRomType[i] = 3;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
+				}
+				else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
 				{
 					bnrRomType[i] = 4;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
+				}
+				else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
 				{
 					bnrRomType[i] = 5;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
+				}
+				else if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
 				{
 					bnrRomType[i] = 6;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
+				}
+				else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
+					 || (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc"))
 				{
 					bnrRomType[i] = 7;
 					bnrWirelessIcon[i] = 0;
@@ -1062,8 +978,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 					snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
 					if (!access(boxArtPath[i], F_OK)) {
 					} else if (bnrRomType[i] == 0) {
-						if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+						if(std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
 						{
 							vector<char*> argarray;
 
@@ -1143,8 +1058,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
-	bool displayBoxArt = showBoxArt;
-
 	int pressed = 0;
 	int held = 0;
 	SwitchState scrn(3);
@@ -1165,25 +1078,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;
-		/* clearText(false);
-		updatePath();
-		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-		for (auto &i : dirContents[scrn])
-			pane->addLine(i.visibleName.c_str());
-		pane->createDefaultEntries();
-		pane->slideTransition(true);
-
-		printSmall(false, 12 - 16, 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW), ">");
-		TextEntry *cursor = getPreviousTextEntry(false);
-		cursor->fade = TextEntry::FadeType::IN;
-		cursor->finalX += 16; */
-		
 
 		while (1)
 		{
-			// cursor->finalY = 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW);
-			// cursor->delay = TextEntry::ACTIVE;
-
 			if (!stopSoundPlayed) {
 				if ((theme == 0 && !startMenu && cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
 				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardFound()))) {
@@ -1205,8 +1102,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = true;
 			}
 
-			//u8 current_SCFG_MC = REG_SCFG_MC;
-
 			// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 			do
 			{
@@ -1215,28 +1110,23 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
-			
-				if (isScrolling) {
-					if (boxArtLoaded) {
-						if (!rocketVideo_playVideo) clearBoxArt();
-						rocketVideo_playVideo = (theme == 1 ? true : false);
-					}
-				} else {
+				if (!isScrolling) {
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
 					updateBoxArt(dirContents, scrn);
+				} else {
+					if (boxArtLoaded) {
+						clearBoxArt();
+						if (theme == 1) rocketVideo_playVideo = true;
+					}
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true, displayBoxArt = showBoxArt;
+					showbubble = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
-					if (displayBoxArt && !rocketVideo_playVideo) {
-						clearBoxArt();
-						displayBoxArt = false;
-					}
 					clearText(false);
 					showbubble = false;
-					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
+					showSTARTborder = (theme == 1 ? true : false);
 				}
 				loadVolumeImage();
 				loadBatteryImage();
@@ -1244,11 +1134,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				loadDate();
 				loadClockColon();
 				swiWaitForVBlank();
-				/*if (REG_SCFG_MC != current_SCFG_MC) {
-					break;
-				}*/
-			} while (!pressed && !held);
+			}
 
+			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
@@ -1261,10 +1149,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} 
-				else if (!edgeBumpSoundPlayed) {
+				} else {
 					mmEffectEx(&snd_wrong);
-					edgeBumpSoundPlayed = true;
 				}
 				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
@@ -1284,12 +1170,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} 
-				else if (!edgeBumpSoundPlayed){
+				} else {
 					mmEffectEx(&snd_wrong);
-					edgeBumpSoundPlayed = true;
 				}
-		
 				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
 					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
@@ -1351,9 +1234,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
-						} else if (!edgeBumpSoundPlayed){
+						} else {
 							mmEffectEx(&snd_wrong);
-							edgeBumpSoundPlayed = true;
 						}
 					}
 					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1367,9 +1249,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
-						} else  if (!edgeBumpSoundPlayed){
+						} else {
 							mmEffectEx(&snd_wrong);
-							edgeBumpSoundPlayed = true;
 						}
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
@@ -1493,8 +1374,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 				}
 				gameOrderIni.SaveIniFile(gameOrderIniPath);
-
-				//getDirectoryContents(dirContents[scrn], extensionList);
 
 				DirEntry dirEntry;
 
@@ -2152,24 +2031,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
-				printSmallCentered(false, 112, "Are you sure you want to");
-				if (isDirectory[cursorPosition[secondaryDevice]]) {
-					if(unHide)	printSmallCentered(false, 128, "unhide this folder?");
-					else	printSmallCentered(false, 128, "hide this folder?");
-				} else {
-					if(unHide)	printSmallCentered(false, 128, "delete/unhide this game?");
-					else	printSmallCentered(false, 128, "delete/hide this game?");
-				}
+
+				printSmallCentered(false, 112, "What would you like");
+				printSmallCentered(false, 128, "to do with this ROM?");
+
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
+
 				if (isDirectory[cursorPosition[secondaryDevice]]) {
 					if(unHide)	printSmall(false, 141, 160, "Y: Unhide");	
 					else	printSmall(false, 155, 160, "Y: Hide");
-					printSmall(false, 208, 160, "B: No");
+					printSmall(false, 208, 160, "B: Nothing");
 				} else {
 					if(unHide)	printSmall(false, 93, 160, "Y: Unhide");	
 					else	printSmall(false, 107, 160, "Y: Hide");
-					printSmall(false, 160, 160, "A: Yes");
-					printSmall(false, 208, 160, "B: No");
+					printSmall(false, 160, 160, "A: Delete");
+					printSmall(false, 208, 160, "B: Nothing");
 				}
 				while (1) {
 					do {
@@ -2177,51 +2053,37 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						pressed = keysDownRepeat();
 						swiWaitForVBlank();
 					} while (!pressed);
-					
-					if (pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) {
-						fadeType = false;	// Fade to white
-						for (int i = 0; i < 30; i++) swiWaitForVBlank();
-						whiteScreen = true;
-						remove(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()); // Remove game/folder
-						if (showBoxArt) clearBoxArt();	// Clear box art
-						boxArtLoaded = false;
-						rocketVideo_playVideo = true;
-						shouldersRendered = false;
-						showbubble = false;
-						showSTARTborder = false;
-						stopSoundPlayed = false;
-						clearText();
-						showdialogbox = false;
-						SaveSettings();
-						settingsChanged = false;
-						return "null";
-					}
 
 					if (pressed & KEY_B) {
 						break;
 					}
 
-					if (pressed & KEY_Y) {
+					if ((pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) || (pressed & KEY_Y)) {
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
 
-						if(unHide) {
-							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
-							hiddenGames.push_back("");
-						} else {
-							hiddenGames.push_back(gameBeingHidden);
-						}
+						if (pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) {
+							remove(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()); // Remove game/folder
+						} else if (pressed & KEY_Y) {
+							if(unHide) {
+								hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
+								hiddenGames.push_back("");
+							} else {
+								hiddenGames.push_back(gameBeingHidden);
+							}
 
-						for(int i=0;i<(int)hiddenGames.size();i++) {
-							char str[9];
-							sprintf(str, "%d", i);
-							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+							for(int i=0;i<(int)hiddenGames.size();i++) {
+								char str[9];
+								sprintf(str, "%d", i);
+								hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+							}
+							hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
 						}
-						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
-
+	
 						if (showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
+						rocketVideo_playVideo = true;
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;

@@ -53,8 +53,8 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
-#define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
-#define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
+#define AK_THEME_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
+#define R4_THEME_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
 std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
@@ -62,7 +62,6 @@ std::vector<std::string> r4ThemeList;
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
-//bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
 //static int flashcard;
 /* Flashcard value
@@ -147,7 +146,7 @@ void rebootDSiMenuPP()
 		swiWaitForVBlank();
 	snd().stopBgMusic();
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWLMenu++ to avoid potential crashing
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
 }
@@ -165,13 +164,6 @@ void loadMainMenu()
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
 
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
 	stop();
@@ -184,8 +176,6 @@ void loadROMselect()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	snd().stopBgMusic();
-	// music = false;
-	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -193,13 +183,7 @@ void loadROMselect()
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
+
 	if (ms().theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
@@ -214,12 +198,12 @@ void loadROMselect()
 	}
 }
 
-void loadAkThemeList()
+void loadThemeList(const char* directory, std::vector<std::string>& list)
 {
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
+	if ((dir = opendir(directory)) != NULL)
 	{
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
@@ -229,41 +213,10 @@ void loadAkThemeList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
 
-			akThemeList.emplace_back(themeDir);
+			list.emplace_back(themeDir);
 		}
 		closedir(dir);
 	}
-	// for (auto &p : std::filesystem::directory_iterator(path))
-	// {
-	// 	if (p.is_directory())
-	// 		akThemeList.emplace_back(p);
-	// }
-}
-
-void loadR4ThemeList()
-{
-	DIR *dir;
-	struct dirent *ent;
-	std::string themeDir;
-	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
-		/* print all the files and directories within directory */
-		while ((ent = readdir(dir)) != NULL)
-		{
-			// Reallocation here, but prevents our vector from being filled with
-
-			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
-
-			r4ThemeList.emplace_back(themeDir);
-		}
-		closedir(dir);
-	}
-	// for (auto &p : std::filesystem::directory_iterator(path))
-	// {
-	// 	if (p.is_directory())
-	// 		r4ThemeList.emplace_back(p);
-	// }
 }
 
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
@@ -287,10 +240,6 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-	/*if (!sys().arm7SCFGLocked())
-	{
-		rebootDSiMenuPP();
-	}*/
 	if (ms().showMainMenu)
 	{
 		loadMainMenu();
@@ -308,14 +257,6 @@ void opt_reset_subtheme(int prev, int next)
 	}
 }
 
-// void opt_sound_freq_changed(bool prev, bool next)
-// {
-// 	if (prev != next && !soundfreqsettingChanged)
-// 	{
-// 		soundfreqsettingChanged = true;
-// 	}
-// }
-
 void opt_reboot_system_menu()
 {
 	gui().onExit(launchSystemSettings).saveAndExit();
@@ -325,10 +266,7 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 {
 	if (!next)
 	{
-		if (remove("sd:/hiya/autoboot.bin") != 0)
-		{
-		}
-		else
+		if (remove("sd:/hiya/autoboot.bin") == 0)
 		{
 			hiyaAutobootFound = false;
 		}
@@ -358,9 +296,6 @@ int main(int argc, char **argv)
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 #pragma region init
-	//consoleDemoInit();
-	//gotosettings = true;
-	//bool fatInited = fatInitDefault();
 
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
@@ -369,9 +304,6 @@ int main(int argc, char **argv)
 	sys().initFilesystem();
 	sys().flashcardUsed();
 	ms();
-	// consoleDemoInit();
-	// printf("%i", sys().flashcardUsed());
-	// stop();
 	defaultExceptionHandler();
 
 	// Read user name
@@ -400,13 +332,10 @@ int main(int argc, char **argv)
 
 	ms().loadSettings();
 	bs().loadSettings();
-	loadAkThemeList();
-	loadR4ThemeList();
+	loadThemeList(AK_THEME_DIRECTORY, &akThemeList);
+	loadThemeList(R4_THEME_DIRECTORY, &r4ThemeList);
 
 	swiWaitForVBlank();
-
-	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	// if (arm7_SNDEXCNT != 0) stop();
 
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
@@ -414,7 +343,6 @@ int main(int argc, char **argv)
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
 
-	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
