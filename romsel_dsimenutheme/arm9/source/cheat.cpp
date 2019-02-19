@@ -311,14 +311,16 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
 
-    scanKeys();
-    pressed = keysDownRepeat();
-	loadVolumeImage();
-	loadBatteryImage();
-	loadTime();
-	loadDate();
-	loadClockColon();
-    swiWaitForVBlank();
+	do {
+		scanKeys();
+		pressed = keysDownRepeat();
+		loadVolumeImage();
+		loadBatteryImage();
+		loadTime();
+		loadDate();
+		loadClockColon();
+		swiWaitForVBlank();
+	} while (!pressed);
     if(pressed & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;

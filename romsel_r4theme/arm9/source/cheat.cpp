@@ -308,9 +308,11 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
 
-    scanKeys();
-    pressed = keysDownRepeat();
-    swiWaitForVBlank();
+	do {
+		scanKeys();
+		pressed = keysDownRepeat();
+		swiWaitForVBlank();
+	} while (!pressed);
     if(pressed & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
