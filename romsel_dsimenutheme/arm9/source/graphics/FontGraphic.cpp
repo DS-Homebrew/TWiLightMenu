@@ -56,12 +56,13 @@ int FontGraphic::load(int textureID, glImage *_font_sprite,
  */
 unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
-	unsigned int left = 0;
-	unsigned int right = imageCount;
+	long int left = 0;
+	long int right = imageCount;
+	long int mid = 0;
 
 	while (left <= right)
 	{
-		unsigned int mid = left + ((right - left) / 2);
+		mid = left + ((right - left) / 2);
 		if (mapping[mid] == letter) {
 			spriteIndex = mid;
 			break;
