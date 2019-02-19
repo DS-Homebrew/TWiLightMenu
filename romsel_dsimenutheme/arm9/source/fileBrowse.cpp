@@ -523,7 +523,12 @@ void updateScrollingState(u32 held, u32 pressed) {
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-		if (!boxArtLoaded && showBoxArt) {
+		showSTARTborder = true;
+		if (!showBoxArt) {
+			return;
+		}
+
+		if (!boxArtLoaded) {
 			if (isDirectory[cursorPosition[secondaryDevice]]) {
 				if (theme == 1) {
 					if (!rocketVideo_playVideo) {
@@ -540,7 +545,6 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 			}
 			boxArtLoaded = true;
 		}
-		showSTARTborder = true;
 	}
 }
 
