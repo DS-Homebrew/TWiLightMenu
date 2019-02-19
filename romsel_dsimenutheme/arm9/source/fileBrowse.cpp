@@ -1222,7 +1222,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					updateBoxArt(dirContents, scrn);
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true, showBoxArt = true;
+					showbubble = true;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
 					if (showBoxArt && !rocketVideo_playVideo) {
