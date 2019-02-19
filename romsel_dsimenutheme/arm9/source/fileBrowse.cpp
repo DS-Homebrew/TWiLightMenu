@@ -727,10 +727,13 @@ void launchGba(void) {
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
-		dbox_selectMenu = true;
 		if (!inSelectMenu) {
 			showdialogbox = false;
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		}
+		else
+		{
+		dbox_selectMenu = true;
 		}
 		return;
 	}
