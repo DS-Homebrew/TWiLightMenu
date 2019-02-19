@@ -1140,6 +1140,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
+	bool displayBoxArt = showBoxArt;
+
 	int pressed = 0;
 	int held = 0;
 	SwitchState scrn(3);
@@ -1222,12 +1224,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					updateBoxArt(dirContents, scrn);
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true;
+					showbubble = true, displayBoxArt = showBoxArt;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
-					if (showBoxArt && !rocketVideo_playVideo) {
+					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
-						showBoxArt = false;
+						displayBoxArt = false;
 					}
 					clearText(false);
 					showbubble = false;
