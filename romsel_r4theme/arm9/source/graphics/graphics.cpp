@@ -68,7 +68,6 @@ extern int pagenum;
 extern int dsiWarePageNum;
 
 bool showdialogbox = false;
-bool showdeletedialogbox = false;
 int dialogboxHeight = 0;
 
 int icon1TexID, icon2TexID, icon3TexID, iconboxTexID, wirelessiconTexID;
@@ -251,11 +250,6 @@ void vBlankHandler()
 			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
 			glBoxFilledGradient(16, 80, 240, 94, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
 			glBoxFilled(16, 96, 240, 128+(dialogboxHeight*8), RGB15(31, 31, 31));
-		}
-		if (showdeletedialogbox) {
-			glBoxFilled(15, 79, 241, 129+(1*8), RGB15(0, 0, 0));
-			glBoxFilledGradient(16, 80, 240, 94, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
-			glBoxFilled(16, 96, 240, 128+(1*8), RGB15(31, 31, 31));
 		}
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));

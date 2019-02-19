@@ -71,7 +71,6 @@ extern int consoleModel;
 extern bool isRegularDS;
 
 extern bool showdialogbox;
-extern bool showdeletedialogbox;
 extern int dialogboxHeight;
 
 extern std::string romfolder[2];
@@ -490,13 +489,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (hasAP) {
 				dialogboxHeight = 5;
 				showdialogbox = true;
-				printLargeCentered(false, 84, "Warning");
-				printSmallCentered(false, 104, "This game may not work right,");
-				printSmallCentered(false, 112, "if it's not AP-patched.");
-				printSmallCentered(false, 128, "If the game freezes, does not");
-				printSmallCentered(false, 136, "start, or doesn't seem normal,");
-				printSmallCentered(false, 144, "it needs to be AP-patched.");
-				printSmallCentered(false, 158, "B/A: OK, X: Don't show again");
+				printLargeCentered(false, 84, "Anti-Piracy Warning");
+				printSmallCentered(false, 104, "If this ROM does not have");
+				printSmallCentered(false, 112, "its Anti-Piracy patched,");
+				printSmallCentered(false, 128, "it may not work correctly!");
+				printSmallCentered(false, 158, "B: Return A: Launch, X: Don't show again");
 				pressed = 0;
 				while (1) {
 					scanKeys();
@@ -625,7 +622,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			showdeletedialogbox = true;
+			dialogboxHeight = 5;
+			showdialogbox = true;
 			printLargeCentered(false, 84, "ROM Management options");
 			printSmallCentered(false, 104, "What would you like");
 			printSmallCentered(false, 112, "to do with this ROM?");
@@ -633,11 +631,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isDirectory) {
-				if(unHide)	printSmallCentered(false, 118, "Y: Unhide  B: Nothing");
-				else		printSmallCentered(false, 118, "Y: Hide  B: Nothing");
+				if(unHide)	printSmallCentered(false, 158, "Y: Unhide  B: Nothing");
+				else		printSmallCentered(false, 158, "Y: Hide  B: Nothing");
 			} else {
-				if(unHide)	printSmallCentered(false, 118, "Y: Unhide  A: Delete  B: Nothing");
-				else		printSmallCentered(false, 118, "Y: Hide  A: Delete  B: Nothing");
+				if(unHide)	printSmallCentered(false, 158, "Y: Unhide  A: Delete  B: Nothing");
+				else		printSmallCentered(false, 158, "Y: Hide  A: Delete  B: Nothing");
 			}
 			while (1) {
 				do {
