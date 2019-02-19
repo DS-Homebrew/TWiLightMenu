@@ -836,7 +836,7 @@ int main(int argc, char **argv) {
 	fontInit();
 	iconManagerInit();
 
-	keysSetRepeat(25, 5);
+	keysSetRepeat(10, 2);
 
 	vector<string> extensionList;
 	if (showNds) {

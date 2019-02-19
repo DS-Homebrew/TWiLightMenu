@@ -150,7 +150,7 @@ bool shouldersRendered = false;
 bool settingsChanged = false;
 
 bool isScrolling = false;
-bool isScrollingClone = false;
+bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
@@ -504,25 +504,26 @@ void updateScrollingState(u32 held, u32 pressed) {
 	 if (isHeld && !isPressed 
 	 	&&(
 			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
-		)){
+		))
+	{
 		isScrolling = true;
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
 		isScrolling = false;
 	} 
 
+	if (isPressed && !isHeld) {
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
+	}
 }
-
-int waitBeforeShowingSTARTborder = 10;
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-		if (waitBeforeShowingSTARTborder == 10) {
-			showSTARTborder = true;
-			isScrollingClone = false;
-		}
-		waitBeforeShowingSTARTborder++;
-		if (waitBeforeShowingSTARTborder < 10) return;
-		if (!boxArtLoaded && showBoxArt && !isScrollingClone && waitBeforeShowingSTARTborder == 12) {
+		if (!boxArtLoaded && showBoxArt) {
 			if (isDirectory[cursorPosition[secondaryDevice]]) {
 				if (theme == 1) {
 					if (!rocketVideo_playVideo) {
@@ -539,9 +540,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 			}
 			boxArtLoaded = true;
 		}
-		if (waitBeforeShowingSTARTborder == 12) {
-			waitBeforeShowingSTARTborder = 0;
-		}
+		showSTARTborder = true;
 	}
 }
 
@@ -666,7 +665,6 @@ void switchDevice(void) {
 		shouldersRendered = false;
 		showbubble = false;
 		showSTARTborder = false;
-		waitBeforeShowingSTARTborder = 10;
 		stopSoundPlayed = false;
 		clearText();
 		SaveSettings();
@@ -730,10 +728,8 @@ void launchGba(void) {
 		if (!inSelectMenu) {
 			showdialogbox = false;
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
-		}
-		else
-		{
-		dbox_selectMenu = true;
+		} else {
+			dbox_selectMenu = true;
 		}
 		return;
 	}
@@ -1169,7 +1165,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;
-
 		/* clearText(false);
 		updatePath();
 		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -1182,6 +1177,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		TextEntry *cursor = getPreviousTextEntry(false);
 		cursor->fade = TextEntry::FadeType::IN;
 		cursor->finalX += 16; */
+		
 
 		while (1)
 		{
@@ -1219,13 +1215,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
+			
 				if (isScrolling) {
 					if (boxArtLoaded) {
 						if (!rocketVideo_playVideo) clearBoxArt();
 						rocketVideo_playVideo = (theme == 1 ? true : false);
 					}
-					showSTARTborder = (theme == 1 ? true : false);
-					isScrollingClone = true;
 				} else {
 					buttonArrowTouched[0] = false;
 					buttonArrowTouched[1] = false;
@@ -1241,7 +1236,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					clearText(false);
 					showbubble = false;
-					waitBeforeShowingSTARTborder = 10;
 					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
 				}
 				loadVolumeImage();
@@ -1253,9 +1247,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/
-			}
+			} while (!pressed && !held);
 
-			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
@@ -1268,8 +1261,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed) {
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
 				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
@@ -1289,9 +1284,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed){
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
+		
 				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
 					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
@@ -1303,7 +1301,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
-				waitBeforeShowingSTARTborder = 10;
 				showbubble = false;
 				clearText();
 				mkdir (sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
@@ -1354,8 +1351,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					}
 					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1369,8 +1367,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else  if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
@@ -1518,7 +1517,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchPosition startTouch = touch;
 				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
-				waitBeforeShowingSTARTborder = 10;
 				scrollWindowTouched = true;
 				while(1) {
 					scanKeys();
@@ -1628,7 +1626,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchPosition prevTouch2 = touch;
 				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
-				waitBeforeShowingSTARTborder = 10;
 
 				if(touch.px > 96 && touch.px < 160 && touch.py < 144 && touch.py > 88) {
 					while(1) {
@@ -1795,7 +1792,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touch = startTouch;
 				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = (theme == 1 ? true : false);
-				waitBeforeShowingSTARTborder = 10;
 			}
 
 			if (cursorPosition[secondaryDevice] < 0)
@@ -1826,7 +1822,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
-					waitBeforeShowingSTARTborder = 10;
 					stopSoundPlayed = false;
 					clearText();
 					chdir(entry->name.c_str());
@@ -1944,7 +1939,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if (theme == 0) {
 						showbubble = false;
 						showSTARTborder = false;
-						waitBeforeShowingSTARTborder = 10;
 						clearText(false);	// Clear title
 
 						fadeSpeed = false;	// Slow fade speed
@@ -2045,7 +2039,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
-					waitBeforeShowingSTARTborder = 10;
 					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
@@ -2079,7 +2072,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					shouldersRendered = false;
 					showbubble = false;
 					showSTARTborder = false;
-					waitBeforeShowingSTARTborder = 10;
 					stopSoundPlayed = false;
 					clearText();
 					SaveSettings();
@@ -2106,7 +2098,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				shouldersRendered = false;
 				showbubble = false;
 				showSTARTborder = false;
-				waitBeforeShowingSTARTborder = 10;
 				stopSoundPlayed = false;
 				clearText();
 				chdir("..");
@@ -2198,7 +2189,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
-						waitBeforeShowingSTARTborder = 10;
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
@@ -2235,7 +2225,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						shouldersRendered = false;
 						showbubble = false;
 						showSTARTborder = false;
-						waitBeforeShowingSTARTborder = 10;
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
