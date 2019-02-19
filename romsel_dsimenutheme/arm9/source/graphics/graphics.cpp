@@ -116,8 +116,8 @@ std::vector<std::string> photoList;
 static std::string photoPath;
 extern int cursorPosition[2];
 extern int pagenum[2];
-//int titleboxXmovespeed[8] = {8};
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
+#define titleboxXscrollspeed 8
 int titleboxXpos[2] = {0};
 int titleboxYpos = 85;	// 85, when dropped down
 int titlewindowXpos[2] = {0};
@@ -576,7 +576,7 @@ void vBlankHandler()
 				titlewindowXpos[secondaryDevice] -= 1;
 				movetimer++;
 			} else if (movetimer < 8) {
-				titleboxXpos[secondaryDevice] -= titleboxXmovespeed[movetimer];
+				titleboxXpos[secondaryDevice] -= (isScrolling ? titleboxXscrollspeed : titleboxXmovespeed[movetimer]);
 				if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos[secondaryDevice] -= 1;
 				movetimer++;
 			} else {
@@ -591,7 +591,7 @@ void vBlankHandler()
 				titlewindowXpos[secondaryDevice] += 1;
 				movetimer++;
 			} else if (movetimer < 8) {
-				titleboxXpos[secondaryDevice] += titleboxXmovespeed[movetimer];
+				titleboxXpos[secondaryDevice] += (isScrolling ? titleboxXscrollspeed : titleboxXmovespeed[movetimer]);
 				if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos[secondaryDevice] += 1;
 				movetimer++;
 			} else {

@@ -150,6 +150,7 @@ bool shouldersRendered = false;
 bool settingsChanged = false;
 
 bool isScrolling = false;
+bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
@@ -503,12 +504,21 @@ void updateScrollingState(u32 held, u32 pressed) {
 	 if (isHeld && !isPressed 
 	 	&&(
 			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
-		)){
+		))
+	{
 		isScrolling = true;
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
 		isScrolling = false;
 	} 
 
+	if (isPressed && !isHeld) {
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
+	}
 }
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
@@ -715,10 +725,11 @@ void launchGba(void) {
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
-		dbox_selectMenu = true;
 		if (!inSelectMenu) {
 			showdialogbox = false;
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
+		} else {
+			dbox_selectMenu = true;
 		}
 		return;
 	}
@@ -1132,6 +1143,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
+	bool displayBoxArt = showBoxArt;
+
 	int pressed = 0;
 	int held = 0;
 	SwitchState scrn(3);
@@ -1152,7 +1165,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;
-
 		/* clearText(false);
 		updatePath();
 		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -1165,6 +1177,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		TextEntry *cursor = getPreviousTextEntry(false);
 		cursor->fade = TextEntry::FadeType::IN;
 		cursor->finalX += 16; */
+		
 
 		while (1)
 		{
@@ -1202,6 +1215,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
+			
 				if (isScrolling) {
 					if (boxArtLoaded) {
 						if (!rocketVideo_playVideo) clearBoxArt();
@@ -1213,12 +1227,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					updateBoxArt(dirContents, scrn);
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true, showBoxArt = true;
+					showbubble = true, displayBoxArt = showBoxArt;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
-					if (showBoxArt && !rocketVideo_playVideo) {
+					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
-						showBoxArt = false;
+						displayBoxArt = false;
 					}
 					clearText(false);
 					showbubble = false;
@@ -1233,9 +1247,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/
-			}
+			} while (!pressed && !held);
 
-			while (!pressed && !held);
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
@@ -1248,8 +1261,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed) {
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
 				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
@@ -1269,9 +1284,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed){
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
+		
 				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
 					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
@@ -1333,8 +1351,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					}
 					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1348,8 +1367,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else  if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
