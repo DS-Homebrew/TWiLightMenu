@@ -150,6 +150,7 @@ bool shouldersRendered = false;
 bool settingsChanged = false;
 
 bool isScrolling = false;
+bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
@@ -503,12 +504,21 @@ void updateScrollingState(u32 held, u32 pressed) {
 	 if (isHeld && !isPressed 
 	 	&&(
 			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
-		)){
+		))
+	{
 		isScrolling = true;
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
 	} else if (!isHeld && !isPressed && !titleboxXmoveleft && !titleboxXmoveright) {
 		isScrolling = false;
 	} 
 
+	if (isPressed && !isHeld) {
+		if (edgeBumpSoundPlayed) {
+			edgeBumpSoundPlayed = false;
+		}
+	}
 }
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
@@ -1154,7 +1164,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;
-
 		/* clearText(false);
 		updatePath();
 		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
@@ -1167,6 +1176,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		TextEntry *cursor = getPreviousTextEntry(false);
 		cursor->fade = TextEntry::FadeType::IN;
 		cursor->finalX += 16; */
+		
 
 		while (1)
 		{
@@ -1204,6 +1214,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
+			
+
 				if (isScrolling) {
 					if (boxArtLoaded) {
 						if (!rocketVideo_playVideo) clearBoxArt();
@@ -1238,6 +1250,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			while (!pressed && !held);
+
+
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
@@ -1250,8 +1264,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed) {
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
 				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
 					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
@@ -1271,9 +1287,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_select);
 					boxArtLoaded = false;
 					settingsChanged = true;
-				} else {
+				} 
+				else if (!edgeBumpSoundPlayed){
 					mmEffectEx(&snd_wrong);
+					edgeBumpSoundPlayed = true;
 				}
+		
 				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
 					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
