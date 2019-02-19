@@ -515,7 +515,7 @@ int waitBeforeShowingSTARTborder = 30;
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-		if (!boxArtLoaded && showBoxArt) {
+		if (!boxArtLoaded && showBoxArt && waitBeforeShowingSTARTborder == 15) {
 			if (isDirectory[cursorPosition[secondaryDevice]]) {
 				if (theme == 1) {
 					if (!rocketVideo_playVideo) {
