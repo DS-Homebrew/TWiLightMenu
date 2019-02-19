@@ -1215,7 +1215,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
 			
-
 				if (isScrolling) {
 					if (boxArtLoaded) {
 						if (!rocketVideo_playVideo) clearBoxArt();
@@ -1247,10 +1246,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
 				}*/
-			}
-
-			while (!pressed && !held);
-
+			} while (!pressed && !held);
 
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1354,8 +1350,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					}
 					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
@@ -1369,8 +1366,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
-						} else {
+						} else  if (!edgeBumpSoundPlayed){
 							mmEffectEx(&snd_wrong);
+							edgeBumpSoundPlayed = true;
 						}
 					} else if(pressed & KEY_DOWN) {
 						for(int i=0;i<10;i++) {
