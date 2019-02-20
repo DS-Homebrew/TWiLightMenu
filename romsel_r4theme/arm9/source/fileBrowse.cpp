@@ -88,8 +88,6 @@ extern bool startMenu;
 
 extern int theme;
 
-int file_count = 0;
-
 extern bool showDirectories;
 extern bool showHidden;
 extern int spawnedtitleboxes;
@@ -101,7 +99,6 @@ bool settingsChanged = false;
 
 extern void SaveSettings();
 
-const char *gameOrderIniPath;
 const char *hiddenGamesIniPath;
 
 char *path = new char[PATH_MAX];
@@ -193,7 +190,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 					}
 					if(!isHidden || showHidden) {
 						dirContents.push_back(dirEntry);
-						file_count++;
 					}
 				}
 			} else {
@@ -207,7 +203,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 					}
 					if(!isHidden || showHidden) {
 						dirContents.push_back(dirEntry);
-						file_count++;
 					}
 				}
 			}
@@ -271,7 +266,7 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This Mega Drive or Genesis");
+	printSmallCentered(false, 104, "This SEGA Mega Drive/Genesis");
 	printSmallCentered(false, 112, "ROM cannot be launched,");
 	printSmallCentered(false, 120, "due to the size of it");
 	printSmallCentered(false, 128, "being above 3MB.");
@@ -299,7 +294,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
 
-	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	fileOffset = cursorPosition[secondaryDevice];
@@ -487,13 +481,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 				if (hasAP) {
-				dialogboxHeight = 5;
+				dialogboxHeight = 3;
 				showdialogbox = true;
 				printLargeCentered(false, 84, "Anti-Piracy Warning");
 				printSmallCentered(false, 104, "If this ROM does not have");
 				printSmallCentered(false, 112, "its Anti-Piracy patched,");
-				printSmallCentered(false, 128, "it may not work correctly!");
-				printSmallCentered(false, 158, "B: Return   A: Launch   X: Don't show again");
+				printSmallCentered(false, 120, "it may not work correctly!");
+				printSmallCentered(false, 142, "B: Return   A: Launch   X: Don't show again");
 				pressed = 0;
 				while (1) {
 					scanKeys();
@@ -622,7 +616,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			dialogboxHeight = 5;
+			dialogboxHeight = 3;
 			showdialogbox = true;
 			printLargeCentered(false, 84, "ROM Management options");
 			printSmallCentered(false, 104, "What would you like");
@@ -631,11 +625,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isDirectory) {
-				if(unHide)	printSmallCentered(false, 158, "Y: Unhide  B: Nothing");
-				else		printSmallCentered(false, 158, "Y: Hide    B: Nothing");
+				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  B: Nothing");
+				else		printSmallCentered(false, 142, "Y: Hide    B: Nothing");
 			} else {
-				if(unHide)	printSmallCentered(false, 158, "Y: Unhide  A: Delete  B: Nothing");
-				else		printSmallCentered(false, 158, "Y: Hide   A: Delete   B: Nothing");
+				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  A: Delete  B: Nothing");
+				else		printSmallCentered(false, 142, "Y: Hide   A: Delete   B: Nothing");
 			}
 			while (1) {
 				do {
