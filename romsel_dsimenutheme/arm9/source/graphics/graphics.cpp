@@ -1921,8 +1921,8 @@ void loadRotatingCubes() {
 			doRead = true;
 		} else if (isRegularDS) {
 			sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-			*(vu32*)(0x09000000) = 0x53524C41;
-			if (*(vu32*)(0x09000000) == 0x53524C41) {
+			*(vu32*)(0x08240000) = 1;
+			if (*(vu32*)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
 				rotatingCubesLocation = (void*)0x09000000;
 				doRead = true;
