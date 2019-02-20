@@ -23,6 +23,7 @@
 #include <sys/dirent.h>
 #define ATTRIB_HID 0x02
 #include "mainlist.h"
+//#include "files.h"
 #include "windows/startmenu.h"
 #include "systemfilenames.h"
 #include "common/systemdetails.h"
@@ -99,11 +100,11 @@ static bool itemSortComp(const ListView::itemVector &item1, const ListView::item
 {
     const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
     const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
-    if (fn1 == "../")
+    if ("../" == fn1)
         return true;
-    if (fn2 == "../")
+    if ("../" == fn2)
         return false;
-    if (fn1[fn1.size() - 1] == '/' && fn2[fn2.size() - 1] == '/')
+    if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
         return fn1 < fn2;
     if ('/' == fn1[fn1.size() - 1])
         return true;
@@ -182,8 +183,10 @@ bool MainList::enterDir(const std::string &dirName)
             }
             addDirEntry(listNum, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
             listNum++;
+            //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
         }
         addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+        //listNum++;
         _currentDir = SPATH_ROOT;
         directoryChanged();
         return true;
@@ -325,36 +328,37 @@ bool MainList::enterDir(const std::string &dirName)
             for (size_t jj = 0; jj < extName.size(); ++jj)
                 extName[jj] = tolower(extName[jj]);
 
-            if (filename[filename.size() - 1] == '/')
+            if ('/' == filename[filename.size() - 1])
             {
                 rominfo.setBanner("folder", folder_banner_bin);
             }
             else
             {
                 bool allowExt = true, allowUnknown = false;
-                if (extName == ".gba")
+                if (".gba" == extName)
                 {
                     rominfo.MayBeGbaRom(filename);
                 }
-                else if (extName == ".argv")
+                //else if (".launcharg" == extName || ".argv" == extName)
+                else if (".argv" == extName)
                 {
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
-                else if (extName == ".gb")
+                else if (".gb" == extName)
                 {
                     rominfo.setBanner("gb", gbrom_banner_bin);
                 }
-                else if (extName == ".gbc")
+                else if (".gbc" == extName)
                 {
                     rominfo.setBanner("gbc", gbcrom_banner_bin);
                 }
-                else if (extName == ".nes")
+                else if (".nes" == extName)
                 {
                     rominfo.setBanner("nes", nesrom_banner_bin);
                 }
-                else if (extName == ".sms" || extName == ".gg")
+                else if (".sms" == extName || ".gg" == extName)
                 {
                     rominfo.setBanner("sms", s8ds_banner_bin);
                 }
@@ -362,19 +366,19 @@ bool MainList::enterDir(const std::string &dirName)
                 {
                     rominfo.setBanner("sms", smdrom_banner_bin);
                 }
-                else if (extName == ".smc" || extName == ".sfc")
+                else if (".smc" == extName || ".sfc" == extName)
                 {
                     rominfo.setBanner("sms", snemulds_banner_bin);
                 }
-                else if (extName == ".nds" || extName == ".ids" || extName == ".dsi")
+                else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
                 {
-					rominfo.MayBeDSRom(filename);
-                    allowExt = false;
+                    memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    allowUnknown = true;
                 }
                 else
                 {
-					memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
-                    allowUnknown = true;
+                    rominfo.MayBeDSRom(filename);
+                    allowExt = false;
                 }
                 rominfo.setExtIcon(_rows[ii][SHOWNAME_COLUMN].text());
                 if (allowExt && extName.length() && !rominfo.isExtIcon())
@@ -399,6 +403,7 @@ void MainList::onSelectChanged(u32 index)
 void MainList::onSelectedRowClicked(u32 index)
 {
     const INPUT &input = getInput();
+    //dbg_printf("%d %d", input.touchPt.px, _position.x );
     if (input.touchPt.px > _position.x && input.touchPt.px < _position.x + 32)
         selectedRowHeadClicked(index);
 }
@@ -406,11 +411,12 @@ void MainList::onSelectedRowClicked(u32 index)
 void MainList::onScrolled(u32 index)
 {
     _activeIconScale = 1;
+    //updateActiveIcon( CONTENT );
 }
 
 void MainList::backParentDir()
 {
-    if (_currentDir == "...")
+    if ("..." == _currentDir)
         return;
 
     dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
@@ -579,6 +585,17 @@ void MainList::updateActiveIcon(bool updateContent)
         {
             u8 backBuffer[32 * 32 * 2];
             zeroMemory(backBuffer, 32 * 32 * 2);
+
+            // if (_romInfoList[_selectedRowId].isBannerAnimated()) {
+            //       int seqIdx = seq().allocate_sequence(
+            //         _romInfoList[_selectedRowId].saveInfo().gameCode,
+            //         _romInfoList[_selectedRowId].animatedIcon().sequence);
+
+            //     int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+            //     int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+
+            //     _romInfoList[_selectedRowId].drawDSiAnimatedRomIconMem(backBuffer, bmpIdx, palIdx);
+            // }
 
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
             memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * 2);

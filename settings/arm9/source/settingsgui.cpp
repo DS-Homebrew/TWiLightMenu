@@ -99,6 +99,19 @@ void SettingsGUI::draw()
         return;
     }
 
+    /*if (_isSaved)
+    {
+        clearText();
+        printSmall(false, 4, 2, "Settings saved.");
+        return;
+    }
+    else if (_isExited)
+    {
+        clearText();
+        printSmall(false, 4, 2, "Saving settings...");
+        return;
+    }*/
+
     clearText();
     printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
     drawTopText();
@@ -199,6 +212,7 @@ void SettingsGUI::drawTopText()
 
 void SettingsGUI::rotatePage(int rotateAmount)
 {
+    // int pageIndex = (_selectedPage + rotateAmount) % (_pages.size());
     int pageIndex = (_selectedPage + rotateAmount);
     if (pageIndex < 0) pageIndex = _pages.size()-1;
     else if ( pageIndex > ((int)_pages.size()) - 1) pageIndex = 0;

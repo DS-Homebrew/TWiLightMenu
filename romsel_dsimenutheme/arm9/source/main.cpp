@@ -261,6 +261,8 @@ void SaveSettings(void) {
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
+	//settingsini.SetInt("SRLOADER", "THEME", theme);
+	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 
@@ -643,10 +645,6 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	}
 	std::string path;
 	int err = 0;
-
-	// Flashcards that will not be supported due to a lack of autoboot:
-	// DSTT DLDI(boyakkey ver.)
-
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
 	{
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
@@ -820,7 +818,7 @@ int main(int argc, char **argv) {
 	std::string filename;
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWLMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -1087,7 +1085,7 @@ int main(int argc, char **argv) {
 
 				if (secondaryDevice) {
 					clearText();
-					printLargeCentered(false, 88,  "Now copying data...");
+					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
 					fadeType = true;	// Fade in from white
 					for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -1225,7 +1223,7 @@ int main(int argc, char **argv) {
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (access(savepath.c_str(), F_OK) && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
+						if (access(savepath.c_str(), F_OK) != 0 && isHomebrew[cursorPosition[secondaryDevice]] == 0) {		// Create save if game isn't homebrew
 							ClearBrightness();
 							const char* savecreating = "Creating save file...";
 							const char* savecreated = "Save file created!";
@@ -1285,7 +1283,6 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
@@ -1515,7 +1512,7 @@ int main(int argc, char **argv) {
 				stop();
 			}
 
-			while(argarray.size() != 0) {
+			while(argarray.size() !=0 ) {
 				free(argarray.at(0));
 				argarray.erase(argarray.begin());
 			}

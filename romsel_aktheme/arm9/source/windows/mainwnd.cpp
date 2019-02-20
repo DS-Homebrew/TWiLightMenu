@@ -97,8 +97,14 @@ void MainWnd::init()
     _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
     _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
+
+    // This is commented out to prevent a double call of the list select handler when the head (file icon) is clicked.
+    // _mainList->selectedRowHeadClicked.connect(this, &MainWnd::onMainListSelItemHeadClicked);
+ 
     addChildWindow(_mainList);
     dbg_printf("mainlist %08x\n", _mainList);
+
+    //waitMs( 1000 );
 
     // init start button
     x = ini.GetInt("start button", "x", 0);
@@ -896,7 +902,7 @@ void MainWnd::showSettings(void)
     if (int err = settingsLoader.launch())
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "nds-bootstrap Error"), errorString, MB_OK);
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
     }
 }
 
@@ -1000,11 +1006,13 @@ void MainWnd::onFolderChanged()
 
     if (!strncmp(dirShowName.c_str(), "^*::", 2))
     {
+
         if (dirShowName == SPATH_TITLEANDSETTINGS)
         {
             showSettings();
         }
-        else if (dirShowName == SPATH_SLOT1)
+
+        if (dirShowName == SPATH_SLOT1)
         {
             if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
             {
@@ -1015,15 +1023,18 @@ void MainWnd::onFolderChanged()
                 bootSlot1();
             }
         }
-        else if (dirShowName == SPATH_GBARUNNER)
+
+        if (dirShowName == SPATH_GBARUNNER)
         {
             bootGbaRunner();
         }
-        else if (dirShowName == SPATH_SYSMENU)
+
+        if (dirShowName == SPATH_SYSMENU)
         {
             dsiSysMenuLaunch();
         }
-        else if (dirShowName == SPATH_SYSTEMSETTINGS)
+
+        if (dirShowName == SPATH_SYSTEMSETTINGS)
         {
             dsiLaunchSystemSettings();
         }
