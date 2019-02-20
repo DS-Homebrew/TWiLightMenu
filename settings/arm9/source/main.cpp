@@ -198,12 +198,13 @@ void loadROMselect()
 	}
 }
 
-void loadThemeList(const char* directory, std::vector<std::string>& list)
+// TODO: Combine these two functions into one list
+void loadAkThemeList()
 {
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(directory)) != NULL)
+	if ((dir = opendir(AK_THEME_DIRECTORY)) != NULL)
 	{
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
@@ -213,7 +214,28 @@ void loadThemeList(const char* directory, std::vector<std::string>& list)
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
 
-			list.emplace_back(themeDir);
+			akThemeList.emplace_back(themeDir);
+		}
+		closedir(dir);
+	}
+}
+
+void loadR4ThemeList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(R4_THEME_DIRECTORY)) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			r4ThemeList.emplace_back(themeDir);
 		}
 		closedir(dir);
 	}
@@ -332,8 +354,8 @@ int main(int argc, char **argv)
 
 	ms().loadSettings();
 	bs().loadSettings();
-	loadThemeList(AK_THEME_DIRECTORY, &akThemeList);
-	loadThemeList(R4_THEME_DIRECTORY, &r4ThemeList);
+	loadAkThemeList();
+	loadR4ThemeList();
 
 	swiWaitForVBlank();
 
