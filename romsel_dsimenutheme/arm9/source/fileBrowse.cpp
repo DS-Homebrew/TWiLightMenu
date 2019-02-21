@@ -1631,6 +1631,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				int prevPos = cursorPosition[secondaryDevice];
 				showSTARTborder = false;
 
+				// Tap start
 				if(touch.px > 96 && touch.px < 160 && touch.py < 144 && touch.py > 88) {
 					while(1) {
 						scanKeys();
@@ -1638,7 +1639,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if(!(keysHeld() & KEY_TOUCH)) {
 							int index = cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40;
 							// this will only work if dirContents[scrn] is a contiguous vector.
-							if (index < dirContents[scrn].size()) {
+							if (index < (int)dirContents[scrn].size()) {
 								gameTapped = true;
 								break;
 							}
