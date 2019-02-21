@@ -20,7 +20,7 @@ cache:
   bundler: true
   directories:
     - $HOME/docker
-    
+
 # install:
 #   - sudo dpkg -i pacman.deb
 #   - sudo dkp-pacman -Sy
@@ -70,7 +70,7 @@ script:
   # - 7z x libnds.7z
   # - sudo cp -r libnds/* /opt/devkitpro/libnds/
   # - make package
-  - docker run --rm -t -i -v "$(pwd)\:/data" twilightmenu make package
+  - docker run --rm -t -i -v "$TRAVIS_BUILD_DIR\:/data" twilightmenu make package
   - cd booter/
   - chmod +x make_cia
   - ./make_cia --srl="booter.nds"
