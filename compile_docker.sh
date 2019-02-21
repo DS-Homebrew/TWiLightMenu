@@ -13,4 +13,4 @@ if [ $? -ne 0 ]; then
     docker build -t twilightmenu --label twilightmenu ./docker
 fi
 
-docker run --rm -t -i -v "$(pwd)\:/data" twilightmenu make $@
+docker run --rm -t -i -v "$(pwd):/data" twilightmenu make $@
