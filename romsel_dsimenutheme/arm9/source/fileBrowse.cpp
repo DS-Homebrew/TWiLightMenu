@@ -1636,11 +1636,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						scanKeys();
 						touchRead(&touch);
 						if(!(keysHeld() & KEY_TOUCH)) {
-							gameTapped = true;
-							break;
+							int index = cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40;
+							// this will only work if dirContents[scrn] is a contiguous vector.
+							if (index < dirContents[scrn].size()) {
+								gameTapped = true;
+								break;
+							}
 						}
 						else if(touch.px < startTouch.px-10 || touch.px > startTouch.px+10)
+						{
 							break;
+						}
 					}
 				}
 
