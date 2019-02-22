@@ -1926,7 +1926,6 @@ void loadRotatingCubes() {
 				// Set to load video into DS Memory Expansion Pak
 				rotatingCubesLocation = (void*)0x09000000;
 				doRead = true;
-				*(vu32*)(0x08240000) = 0;
 			}
 		}
 		if (doRead) {
