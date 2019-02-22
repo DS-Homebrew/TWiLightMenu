@@ -1312,8 +1312,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				movingApp = (pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice]);
 				if(dirContents[scrn][movingApp].isDirectory)	movingAppIsDir = true;
 				else	movingAppIsDir = false;
-				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				getGameInfo(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
+				iconUpdate(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for(int i=0;i<10;i++) {
 					if (i == 9) {
 						movingAppYpos += 2;
