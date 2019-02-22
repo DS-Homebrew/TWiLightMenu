@@ -579,25 +579,26 @@ void iconUpdate(bool isDir, const char* name, int num)
 {
 	int num2 = num;
 	if(num == -1) {
-		num = 6;
+		num2 = 6;
+		num = 40;
 	} else if(num >= 36) {
-		num -= 36;
+		num2 -= 36;
 	} else if(num >= 30) {
-		num -= 30;
+		num2 -= 30;
 	} else if(num >= 24) {
-		num -= 24;
+		num2 -= 24;
 	} else if(num >= 18) {
-		num -= 18;
+		num2 -= 18;
 	} else if(num >= 12) {
-		num -= 12;
+		num2 -= 12;
 	} else if(num >= 6) {
-		num -= 6;
+		num2 -= 6;
 	}
 
 	if (isDir)
 	{
 		// icon
-		clearIcon(num);
+		clearIcon(num2);
 	}
 	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
 		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
@@ -612,7 +613,7 @@ void iconUpdate(bool isDir, const char* name, int num)
 		fp = fopen(name, "rb");
 		if (fp == NULL)
 		{
-			clearIcon(num);
+			clearIcon(num2);
 			fclose(fp);
 			return;
 		}
@@ -657,27 +658,27 @@ void iconUpdate(bool isDir, const char* name, int num)
 				if (rc != 0)
 				{
 					// stat failed
-					clearIcon(num);
+					clearIcon(num2);
 				}
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
-					clearIcon(num);
+					clearIcon(num2);
 				}
 				else
 				{
-					iconUpdate(false, p, num);
+					iconUpdate(false, p, num2);
 				}
 			}
 			else
 			{
 				// this is not an nds/app file!
-				clearIcon(num);
+				clearIcon(num2);
 			}
 		}
 		else
 		{
-			clearIcon(num);
+			clearIcon(num2);
 		}
 		// clean up the allocated line
 		free(line);
@@ -692,14 +693,14 @@ void iconUpdate(bool isDir, const char* name, int num)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
-		memcpy((char*)&ndsBanner, bnriconTile[num2], 0x23C0);
+		memcpy((char*)&ndsBanner, bnriconTile[num], 0x23C0);
 
 		// icon
 		DC_FlushAll();
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num, true);
+			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num2, true);
 		} else {
-			loadIcon(ndsBanner.icon, ndsBanner.palette, num, false);
+			loadIcon(ndsBanner.icon, ndsBanner.palette, num2, false);
 		}
 	}
 }
