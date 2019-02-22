@@ -1545,13 +1545,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					// Load icons
 					if (prevPos == cursorPosition[secondaryDevice]+1) {
-						if(cursorPosition[secondaryDevice] > 2) {
+						if(cursorPosition[secondaryDevice] >= 2) {
 							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 							}
 						}
 					} else if (prevPos == cursorPosition[secondaryDevice]-1) {
-						if(cursorPosition[secondaryDevice] < 37) {
+						if(cursorPosition[secondaryDevice] <= 37) {
 							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 							}
@@ -1683,7 +1683,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
 
-								if(cursorPosition[secondaryDevice] < 37) {
+								if(cursorPosition[secondaryDevice] <= 37) {
 									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
 										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
 									}
@@ -1711,7 +1711,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
 
-								if(cursorPosition[secondaryDevice] > 2) {
+								if(cursorPosition[secondaryDevice] >= 2) {
 									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
 										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
 									}
