@@ -629,13 +629,17 @@ void SetSpeedBump(const char* filename) {
 		"AWL",	// The World Ends With You
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
+		"YF4",	// Final Fantasy IV
 		"YKW",	// Kirby Super Star Ultra
+		"YBA",	// Bomberman 2
 		"YGX",	// Grand Theft Auto: Chinatown Wars
 		"CPU",	// Pokemon Platinum
 		"CRB",	// MegaMan Star Force 3: Black Ace
 		"CRR",	// MegaMan Star Force 3: Red Joker
 		"B62",	// Chibi-Robo: Clean Sweep!
 		"B6X",	// Rockman EXE: Operate Shooting Star
+		"BKI",	// Legend of Zelda: Spirit Tracks
+		"AZL",	// Girls Mode/Style Savvy/Style Boutique
 		"IPG",	// Pokemon SoulSilver
 		"IPK",	// Pokemon HeartGold
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
