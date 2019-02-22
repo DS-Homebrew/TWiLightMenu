@@ -37,7 +37,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 		->saveSize()
 		.softReset()
 		.mpuSettings()
-		.speedBump()
+		.speedBumpExclude()
 		.donorSdk();
 }
 
@@ -135,66 +135,20 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 	}
 	return mpuRegion(0).mpuSize(0);
 }
-BootstrapConfig &BootstrapConfig::speedBump()
+BootstrapConfig &BootstrapConfig::speedBumpExclude()
 {
 	static const char list[][4] = {
-		"AYI",	// Yoshi Touch & Go
-		"AZW",	// WarioWare: Touched
-		"ARR",	// Ridge Racer DS
-		"ASM",	// Super Mario 64 DS
-		"SMS",	// Super Mario Star World, and Mario's Holiday
-		"AS2",	// Spider-Man 2
-		"ABM",	// Bomberman
-		//"ACV",	// Castlevania: Dawn of Sorrow
-		"AGY",	// Phoenix Wright: Ace Attorney
-		"A5T",	// MegaMan Battle Network 5: Double Team DS
-		"ASC",	// Sonic Rush
-		"ADM",	// Animal Crossing: Wild World
-		"ABH",	// Resident Evil: Deadly Silence
-		"ARJ",	// Kanji Sonomama Rakubiki Jiten
-		"ARZ",	// Rockman ZX/MegaMan ZX
-		"AKW",	// Kirby Squeak Squad/Mouse Attack
-		"ADA",	// Pokemon Diamond
-		"APA",	// Pokemon Pearl
-		"A8N",	// Planet Puzzle League
-		"A6A",	// MegaMan Star Force: Pegasus
-		"A6B",	// MegaMan Star Force: Leo
-		"A6C",	// MegaMan Star Force: Dragon
-		"A3Y",	// Sonic Rush Adventure
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"A8T",	// Mario Party DS
-		"A2L",	// Anno 1701: Dawn of Discovery
-		"A5F",	// Professor Layton and the Curious Village
-		"AWL",	// The World Ends With You
-		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
-		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
-		"YF4",	// Final Fantasy IV
-		"YKW",	// Kirby Super Star Ultra
-		"YBA",	// Bomberman 2
-		"YGX",	// Grand Theft Auto: Chinatown Wars
-		"CPU",	// Pokemon Platinum
-		"CRB",	// MegaMan Star Force 3: Black Ace
-		"CRR",	// MegaMan Star Force 3: Red Joker
-		"B62",	// Chibi-Robo: Clean Sweep!
-		"B6X",	// Rockman EXE: Operate Shooting Star
-		"BKI",	// Legend of Zelda: Spirit Tracks
-		"AZL",	// Girls Mode/Style Savvy/Style Boutique
-		"IPG",	// Pokemon SoulSilver
-		"IPK",	// Pokemon HeartGold
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"ACV",	// Castlevania: Dawn of Sorrow
+		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 	};
 	for (const char *speedtid : list)
 	{
 		if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
 		{
-			return ceCached(true);
+			return ceCached(false);
 		}
 	}
-	if (strncmp(_gametid.c_str(), "AP2E", 4) == 0)	// Metroid Prime Pinball (USA)
-	{
-		return ceCached(true);
-	}
-	return ceCached(false);
+	return ceCached(true);
 }
 BootstrapConfig &BootstrapConfig::donorSdk()
 {
