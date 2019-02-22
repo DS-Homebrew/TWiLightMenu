@@ -28,10 +28,9 @@ class GritTexture
     public:
         GritTexture(std::string& filePath);
         ~GritTexture() { };
-        void applyPaletteEffect(PaletteEffect effect);
+        void applyEffect(PaletteEffect effect);
         const u16 *palette() { return (u16*)_palette.get(); }
         const u8 *texture() { return (u8*)_texture.get(); }
-    
     
 };
 
