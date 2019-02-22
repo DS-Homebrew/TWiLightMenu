@@ -1624,12 +1624,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// Dragging icons
 			} else if (((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft && !titleboxXmoveright)) {
 				touchPosition startTouch = touch;
-				touchPosition prevTouch1 = touch;
-				touchPosition prevTouch2 = touch;
-				int prevPos = cursorPosition[secondaryDevice];
-				showSTARTborder = false;
 
-				if(touch.px > 96 && touch.px < 160 && touch.py < 144 && touch.py > 88) {
+				if(touch.px > 96 && touch.px < 160) {
 					while(1) {
 						scanKeys();
 						touchRead(&touch);
@@ -1641,6 +1637,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							break;
 					}
 				}
+
+				touchPosition prevTouch1 = touch;
+				touchPosition prevTouch2 = touch;
+				int prevPos = cursorPosition[secondaryDevice];
+				showSTARTborder = false;
 
 				while(1) {
 					if(gameTapped)
@@ -1792,7 +1793,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+				if(!gameTapped && cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = (theme == 1 ? true : false);
 			}
 
@@ -1804,7 +1805,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// Startup...
 			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| gameTapped)
+			|| (gameTapped && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
@@ -1915,7 +1916,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							break;
 						}
 						if (pressed & KEY_B) {
-							gameTapped = false;
 							proceedToLaunch = false;
 							pressed = 0;
 							break;
@@ -1964,6 +1964,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 			}
+			gameTapped = false;
 
 			if (theme == 1) {
 				// Launch settings by touching corner button
