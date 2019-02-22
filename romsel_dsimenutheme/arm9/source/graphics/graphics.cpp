@@ -580,6 +580,7 @@ void vBlankHandler()
 				if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos[secondaryDevice] -= 1;
 				movetimer++;
 			} else {
+				buttonArrowTouched[0] = false;
 				titleboxXmoveleft = false;
 				movetimer = 0;
 			}
@@ -595,6 +596,7 @@ void vBlankHandler()
 				if(movetimer==0 || movetimer==2 || movetimer==4 || movetimer==6 ) titlewindowXpos[secondaryDevice] += 1;
 				movetimer++;
 			} else {
+				buttonArrowTouched[1] = false;
 				titleboxXmoveright = false;
 				movetimer = 0;
 			}

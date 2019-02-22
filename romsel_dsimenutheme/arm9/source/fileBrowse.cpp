@@ -1226,8 +1226,6 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						rocketVideo_playVideo = (theme == 1 ? true : false);
 					}
 				} else {
-					buttonArrowTouched[0] = false;
-					buttonArrowTouched[1] = false;
 					updateBoxArt(dirContents, scrn);
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
