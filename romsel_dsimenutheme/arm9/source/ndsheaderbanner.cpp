@@ -119,6 +119,8 @@ bool checkRomAP(FILE *ndsFile)
 	return false;
 }
 
+char bnriconTile[40][0x23C0];
+
 // bnriconframeseq[]
 static u16 bnriconframeseq[41][64] = {0x0000};
 

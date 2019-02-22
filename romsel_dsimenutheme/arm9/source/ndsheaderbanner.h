@@ -253,6 +253,8 @@ u32 getSDKVersion(FILE* ndsFile);
  */
 bool checkRomAP(FILE *ndsFile);
 
+extern char bnriconTile[40][0x23C0];
+
 // bnriconframenum[]
 extern int bnriconPalLine[41];
 extern int bnriconframenumY[41];

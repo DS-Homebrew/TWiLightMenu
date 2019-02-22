@@ -512,6 +512,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
+			memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
+
 			for (int i = 0; i < 128; i++) {
 				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 			}
@@ -541,6 +543,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
+				memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
+
 				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 				}
@@ -555,6 +559,8 @@ void getGameInfo(bool isDir, const char* name, int num)
 		loadFixedBanner();
 
 		DC_FlushAll();
+
+		memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
 
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -571,6 +577,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 void iconUpdate(bool isDir, const char* name, int num)
 {
+	int num2 = num;
 	if(num == -1) {
 		num = 6;
 	} else if(num >= 36) {
@@ -685,70 +692,7 @@ void iconUpdate(bool isDir, const char* name, int num)
 			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
 	{
 		// this is an nds/app file!
-		FILE *fp;
-		unsigned int iconTitleOffset;
-		int ret;
-
-		// open file for reading info
-		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
-			// icon
-			clearIcon(num);
-			fclose(fp);
-			return;
-		}
-
-		
-		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
-		if (ret == 0)
-			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
-		{
-			// icon
-			loadUnkIcon(num);
-			fclose(fp);
-			return;
-		}
-
-		if (iconTitleOffset == 0)
-		{
-			// icon
-			loadUnkIcon(num);
-			fclose(fp);
-			return;
-		}
-		ret = fseek(fp, iconTitleOffset, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
-		{
-			// try again, but using regular banner size
-			ret = fseek(fp, iconTitleOffset, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1)
-			{
-				// icon
-				loadUnkIcon(num);
-				fclose(fp);
-				return;
-			}
-		}
-
-		// close file!
-		fclose(fp);
-
-		loadFixedBanner();
+		memcpy((char*)&ndsBanner, bnriconTile[num2], 0x23C0);
 
 		// icon
 		DC_FlushAll();
