@@ -3,6 +3,7 @@
 #define __DSIMENUPP_THEME_TEXTURES__
 #include "common/gl2d.h"
 #include "common/singleton.h"
+#include "GritTexture.h"
 #include <memory>
 #include <string>
 
@@ -139,6 +140,7 @@ private:
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
 
+  unique_ptr<GritTexture> _boxTexture;
 private:
   int bubbleTexID;
   int bipsTexID;

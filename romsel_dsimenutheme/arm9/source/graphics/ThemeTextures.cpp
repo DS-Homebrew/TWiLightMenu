@@ -1,4 +1,5 @@
 #include "ThemeTextures.h"
+
 #include <nds.h>
 
 // Graphic files
@@ -376,7 +377,13 @@ void ThemeTextures::loadDSiDarkTheme()
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
   loadSettingsImage(icon_settingsPal, icon_settingsBitmap);
   loadBraceImage(bracePal, braceBitmap);
-  loadBoxfullImage(boxPal, boxBitmap);
+
+
+  _boxTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/box.grf", "nitro:/themes/dsi/dark/grf/box.grf");
+  loadBoxfullImage(_boxTexture->palette(), (const unsigned int*)_boxTexture->texture());
+
+
+
   loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
   loadSmallCartImage(small_cartPal, small_cartBitmap);
   loadFolderImage(folderPal, folderBitmap);

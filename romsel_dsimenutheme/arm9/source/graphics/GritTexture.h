@@ -2,6 +2,11 @@
 #ifndef __TWILIGHTMENU_GRIT_TEXTURES__
 #define __TWILIGHTMENU_GRIT_TEXTURES__
 
+
+#define CHUNK_ID(a,b,c,d)   ((u32)( (a) | (b)<<8 | (c)<<16 | (d)<<24 ))
+#define ID_RIFF             CHUNK_ID('R','I','F','F')
+#define ID_GRF              CHUNK_ID('G','R','F',' ')
+
 #include <memory>
 #include <string>
 #include "nds.h"
@@ -23,10 +28,10 @@ class GritTexture
         unique_ptr<unsigned short []> _palette;
         unique_ptr<unsigned int []> _texture;
         u8 _paletteLength;
-        u32 _graphicsLength;
+        unsigned int _textureLength;
         GrfHeader _header;
     public:
-        GritTexture(std::string& filePath);
+        GritTexture(const char* filePath, const char* fallback);
         ~GritTexture() { };
         void applyEffect(PaletteEffect effect);
         const u16 *palette() { return (u16*)_palette.get(); }
