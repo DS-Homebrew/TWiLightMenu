@@ -3,15 +3,25 @@
 #include "bootstrappaths.h"
 #include "systemdetails.h"
 #include "common/inifile.h"
+#include "flashcard.h"
 #include <string.h>
 
 DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 {
-    romfolder = "";
-    pagenum = 0;
-    cursorPosition = 0;
+    
+    romfolder[0] = "sd:/";
+    romfolder[1] = "fat:/";
+
+    pagenum[0] = 0;
+    pagenum[1] = 0;
+
+    cursorPosition[0] = 0;
+    cursorPosition[1] = 0;
+
     startMenu_cursorPosition = 0;
     consoleModel = 0;
+
+    gotosettings = false;
 
     guiLanguage = ELangDefault;
     colorMode = 0;
@@ -75,10 +85,15 @@ void DSiMenuPlusPlusSettings::loadSettings()
     CIniFile settingsini(DSIMENUPP_INI);
 
     // UI settings.
-    romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
+    romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
+    romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
 
-    pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-    cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+    pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+    pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+
+    cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+    cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
@@ -105,7 +120,20 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-    secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+   	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+
+    // secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+    // flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
+
+    if (bothSDandFlashcard()) {
+		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+	} else if (flashcardFound()) {
+		secondaryDevice = true;
+	} else {
+		secondaryDevice = false;
+	}
+    
+    flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -118,7 +146,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}
 
-    flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
@@ -157,10 +184,15 @@ void DSiMenuPlusPlusSettings::saveSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);
 
-    settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
+    settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
+    settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
+    
+    settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+    settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
 
-    settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-    settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+    settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+    settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 
@@ -189,6 +221,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+
 	if (consoleModel < 2) {
 		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);
 		settingsini.SetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
@@ -207,17 +240,28 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 
-    settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
-    settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
-    settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
-    settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
-
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
     settingsini.SetString("SRLOADER", "R4_THEME", r4_theme);
     settingsini.SetString("SRLOADER", "DSI_THEME", dsi_theme);
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+
+    if (bothSDandFlashcard()) {
+		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+	}
+
+    if (!gotosettings) {
+		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
+		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+	}
+	
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }

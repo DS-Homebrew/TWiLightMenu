@@ -32,7 +32,7 @@
 #include "common/flashcard.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
-
+#include "common/dsimenusettings.h"
 #include "icon_unk.h"
 
 #define LEFT_ALIGN 70
@@ -44,13 +44,9 @@ static int BOX_PY_spacing1 = 19;
 static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
 
-
+extern int theme;
 extern bool showdialogbox;
 extern bool startMenu;
-extern int startMenu_cursorPosition;
-
-extern int theme;
-extern bool useGbarunner;
 
 extern bool animateDsiIcons;
 
@@ -748,9 +744,9 @@ void titleUpdate(bool isDir, const char* name, int num)
 	}
 	
 	if (startMenu) {
-		if (startMenu_cursorPosition == 0) {
+		if (ms().startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
-		} else if (startMenu_cursorPosition == 1) {
+		} else if (ms().startMenu_cursorPosition == 1) {
 			if (!flashcardFound()) {
 				if (REG_SCFG_MC == 0x11) {
 					writeBannerText(1, "There is nothing inserted in", "the Game Card slot.", "");
@@ -758,13 +754,13 @@ void titleUpdate(bool isDir, const char* name, int num)
 					writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
 				}
 			} else {
-				if (useGbarunner) {
+				if (ms().useGbarunner) {
 					writeBannerText(0, "Start GBARunner2", "", "");
 				} else {
 					writeBannerText(0, "Start GBA Mode", "", "");
 				}
 			}
-		} else if (startMenu_cursorPosition == 2) {
+		} else if (ms().startMenu_cursorPosition == 2) {
 			writeBannerText(0, "Start GBARunner2", "", "");
 		}
 		return;

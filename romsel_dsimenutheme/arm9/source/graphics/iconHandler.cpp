@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "common/gl2d.h"
 #include "tool/colortool.h"
+#include "common/dsimenusettings.h"
 // Graphic files
 #include "icon_unk.h"
 #include "icon_gbamode.h"
@@ -43,9 +44,6 @@ glImage _snesIcon[1];
 //glImage _msxIcon[1];
 //glImage _colIcon[1];
 
-extern bool useGbarunner;
-
-extern int theme;
 
 u8 *clearTiles;
 u16 *blackPalette;
@@ -250,7 +248,7 @@ void glReloadIconPalette(int num)
     {
     case GBA_ICON:
         textureID = _gbaTexID;
-        cachedPalette = useGbarunner ? (u16 *)icon_gbaPal : (u16 *)icon_gbamodePal;
+        cachedPalette = ms().useGbarunner ? (u16 *)icon_gbaPal : (u16 *)icon_gbamodePal;
         break;
     case GBC_ICON:
         textureID = _gbcTexID;
@@ -375,9 +373,9 @@ void iconManagerInit()
 
     glLoadIcon(SNES_ICON, (u16 *)icon_snesPal, (u8 *)icon_snesBitmap, 32, true);
 
-    if (useGbarunner)
+    if (ms().useGbarunner)
     {
-		if (theme == 1)
+		if (ms().theme == 1)
 		{
 			glLoadIcon(GBA_ICON, (u16 *)_3ds_icon_gbaPal, (u8 *)_3ds_icon_gbaBitmap, 64, true);
 		}

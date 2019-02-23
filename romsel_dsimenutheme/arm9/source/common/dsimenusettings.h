@@ -121,11 +121,13 @@ class DSiMenuPlusPlusSettings
     TLanguage getGuiLanguage();
     const char* getAppName();
   public:
-    std::string romfolder;
-    int pagenum;
-    int cursorPosition;
+    std::string romfolder[2];
+    int pagenum[2];
+    int cursorPosition[2];
     int startMenu_cursorPosition;
     int consoleModel;
+    bool gotosettings;
+    
     int guiLanguage;
     int colorMode;
     int blfLevel;
@@ -171,6 +173,8 @@ class DSiMenuPlusPlusSettings
     std::string dsiWareSrlPath;
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
+
+    std::string romPath;
 
     int launchType;
     std::string homebrewArg;

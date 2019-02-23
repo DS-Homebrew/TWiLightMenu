@@ -53,6 +53,8 @@
 
 #include "common/inifile.h"
 #include "common/flashcard.h"
+#include "common/dsimenusettings.h"
+#include "common/systemdetails.h"
 
 #include "fileCopy.h"
 
@@ -72,18 +74,12 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
-extern std::string romPath;
-
-extern int launchType;
 extern bool slot1LaunchMethod;
-extern bool useBootstrap;
 extern bool bootstrapFile;
 extern bool homebrewBootstrap;
 extern bool gbaBiosFound[2];
-extern bool useGbarunner;
-extern bool arm7SCFGLocked;
 extern int consoleModel;
-extern bool isRegularDS;
+
 extern int launcherApp;
 extern int sysRegion;
 extern bool snesEmulator;
@@ -108,8 +104,6 @@ extern bool showdialogbox;
 extern bool dbox_showIcon;
 extern bool dbox_selectMenu;
 
-extern std::string romfolder[2];
-
 extern bool applaunch;
 
 extern bool gotosettings;
@@ -127,9 +121,7 @@ extern bool showDirectories;
 extern bool showHidden;
 extern bool showBoxArt;
 extern int spawnedtitleboxes;
-extern int cursorPosition[2];
-extern int startMenu_cursorPosition;
-extern int pagenum[2];
+
 extern int titleboxXpos[2];
 extern int titlewindowXpos[2];
 int movingApp = -1;
@@ -154,8 +146,6 @@ bool edgeBumpSoundPlayed = false;
 bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
-
-extern void SaveSettings();
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
@@ -478,9 +468,9 @@ bool nowLoadingDisplaying = false;
 void displayNowLoading(void) {
 	fadeType = true;	// Fade in from white
 	printLargeCentered(false, 88, "Now Loading...");
-	if (!isRegularDS) {
+	if (!sys().isRegularDS()) {
 		printSmall(false, 8, 152, "Location:");
-		if (secondaryDevice) {
+		if (ms().secondaryDevice) {
 			printSmall(false, 8, 168, "Slot-1 microSD Card");
 		} else if (consoleModel < 3) {
 			printSmall(false, 8, 168, "SD Card");
@@ -503,7 +493,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 	// If we were scrolling before, but now let go of all keys, stop scrolling.
 	 if (isHeld && !isPressed 
 	 	&&(
-			(cursorPosition[secondaryDevice] != 0 && cursorPosition[secondaryDevice] != 39) 
+			(ms().cursorPosition[ms().secondaryDevice] != 0 && ms().cursorPosition[ms().secondaryDevice] != 39) 
 		))
 	{
 		isScrolling = true;
@@ -522,14 +512,14 @@ void updateScrollingState(u32 held, u32 pressed) {
 }
 
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
-	if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
+	if (ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 		showSTARTborder = true;
 		if (!showBoxArt) {
 			return;
 		}
 
 		if (!boxArtLoaded) {
-			if (isDirectory[cursorPosition[secondaryDevice]]) {
+			if (isDirectory[ms().cursorPosition[ms().secondaryDevice]]) {
 				if (theme == 1) {
 					if (!rocketVideo_playVideo) {
 						clearBoxArt();	// Clear box art, if it's a directory
@@ -541,7 +531,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 			} else {
 				rocketVideo_playVideo = false;
 				if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
-				loadBoxArt(boxArtPath[cursorPosition[secondaryDevice]]);	// Load box art
+				loadBoxArt(boxArtPath[ms().cursorPosition[ms().secondaryDevice]]);	// Load box art
 			}
 			boxArtLoaded = true;
 		}
@@ -551,7 +541,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
-	gotosettings = true;
+	ms().gotosettings = true;
 
 	fadeType = false;	// Fade to white
 	fifoSendValue32(FIFO_USER_01, 1);	// Fade out sound
@@ -562,7 +552,7 @@ void launchSettings(void) {
 	mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
-	SaveSettings();
+	ms().saveSettings();
 	// Launch settings
 	if (sdFound()) {
 		chdir("sd:/");
@@ -585,7 +575,7 @@ void exitToSystemMenu(void) {
 	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
 	if (settingsChanged) {
-		SaveSettings();
+		ms().saveSettings();
 		settingsChanged = false;
 	}
 	if (!isDSiMode() || launcherApp == -1) {
@@ -660,7 +650,7 @@ void switchDevice(void) {
 		mmEffectEx(&snd_switch);
 		fadeType = false;	// Fade to white
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		secondaryDevice = !secondaryDevice;
+		ms().secondaryDevice = !ms().secondaryDevice;
 		if (!rocketVideo_playVideo || showBoxArt) clearBoxArt();	// Clear box art
 		whiteScreen = true;
 		boxArtLoaded = false;
@@ -671,7 +661,7 @@ void switchDevice(void) {
 		showSTARTborder = false;
 		stopSoundPlayed = false;
 		clearText();
-		SaveSettings();
+		ms().saveSettings();
 		settingsChanged = false;
 	} else {
 		mmEffectEx(&snd_launch);
@@ -686,10 +676,11 @@ void switchDevice(void) {
 		mmEffectCancelAll();
 		fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
-		romPath = "";
-		launchType = 0;
-		SaveSettings();
-		if (!slot1LaunchMethod || arm7SCFGLocked) {
+		ms().romPath = "";
+		ms().launchType = 0;
+		ms().saveSettings();
+		
+		if (!slot1LaunchMethod || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else {
 			if (sdFound()) {
@@ -702,7 +693,7 @@ void switchDevice(void) {
 }
 
 void launchGba(void) {
-	if (!gbaBiosFound[secondaryDevice] && useGbarunner) {
+	if (!gbaBiosFound[ms().secondaryDevice] && ms().useGbarunner) {
 		mmEffectEx(&snd_wrong);
 		clearText();
 		dbox_showIcon = false;
@@ -750,11 +741,12 @@ void launchGba(void) {
 	mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
-	SaveSettings();
+	ms().saveSettings();
+	
 	// Switch to GBA mode
-	if (useGbarunner) {
-		if (secondaryDevice) {
-			if (useBootstrap) {
+	if (ms().useGbarunner) {
+		if (ms().secondaryDevice) {
+			if (ms().useBootstrap) {
 				int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
 				iprintf ("Start failed. Error %i\n", err);
 			} else {
@@ -890,7 +882,7 @@ bool selectMenu(void) {
 		for (int i = 0; i < 3; i++) {
 			selIconYpos -= 14;
 		}
-		if (!isRegularDS) {
+		if (!sys().isRegularDS()) {
 			assignedOp[0] = 0;
 			assignedOp[1] = 1;
 			assignedOp[2] = 3;
@@ -915,7 +907,7 @@ bool selectMenu(void) {
 				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
-					if (secondaryDevice) {
+					if (ms().secondaryDevice) {
 						if (consoleModel < 3) {
 							printSmall(false, 64, textYpos, "Switch to SD Card");
 						} else {
@@ -928,7 +920,7 @@ bool selectMenu(void) {
 					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted" : "Launch Slot-1 card");
 				}
 			} else if (assignedOp[i] == 3) {
-				printSmall(false, 64, textYpos, useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
+				printSmall(false, 64, textYpos, ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
 			}
 			textYpos += 28;
 		}
@@ -984,13 +976,13 @@ bool selectMenu(void) {
 void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnBoxes) {
 	if (reSpawnBoxes) spawnedtitleboxes = 0;
 	for(int i = 0; i < 40; i++) {
-		if (i+pagenum[secondaryDevice]*40 < file_count) {
-			if (dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory) {
+		if (i+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+			if (dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).isDirectory) {
 				isDirectory[i] = true;
 				bnrWirelessIcon[i] = 0;
 			} else {
 				isDirectory[i] = false;
-				std::string std_romsel_filename = dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str();
+				std::string std_romsel_filename = dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str();
 				if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
@@ -1002,7 +994,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
 				|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
 				{
-					getGameInfo(isDirectory[i], dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+					getGameInfo(isDirectory[i], dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), i);
 					bnrRomType[i] = 0;
 				} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 						|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
@@ -1063,7 +1055,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 
 				if (showBoxArt) {
 					// Store box art path
-					snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str());
+					snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str());
 					if (!access(boxArtPath[i], F_OK)) {
 					} else if (bnrRomType[i] == 0) {
 						if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
@@ -1116,25 +1108,25 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 		fadeType = false;	// Fade to white
 	}
 	// Load correct icons depending on cursor position
-	if (cursorPosition[secondaryDevice] <= 1) {
+	if (ms().cursorPosition[ms().secondaryDevice] <= 1) {
 		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
+			if (bnrRomType[i] == 0 && i+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
 				swiWaitForVBlank();
-				iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+				iconUpdate(dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), i);
 			}
 		}
-	} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+	} else if (ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
 		for(int i = 0; i < 6; i++) {
-			if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
+			if (bnrRomType[i] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
 				swiWaitForVBlank();
-				iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+				iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2+i);
 			}
 		}
-	} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+	} else if (ms().cursorPosition[ms().secondaryDevice] >= 37 && ms().cursorPosition[ms().secondaryDevice] <= 39) {
 		for(int i = 0; i < 5; i++) {
-			if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
+			if (bnrRomType[i] == 0 && (35+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
 				swiWaitForVBlank();
-				iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+				iconUpdate(dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), 35+i);
 			}
 		}
 	}
@@ -1177,7 +1169,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		pane->createDefaultEntries();
 		pane->slideTransition(true);
 
-		printSmall(false, 12 - 16, 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW), ">");
+		printSmall(false, 12 - 16, 4 + 10 * (ms().cursorPosition[ms().secondaryDevice] - screenOffset + ENTRIES_START_ROW), ">");
 		TextEntry *cursor = getPreviousTextEntry(false);
 		cursor->fade = TextEntry::FadeType::IN;
 		cursor->finalX += 16; */
@@ -1185,12 +1177,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 		while (1)
 		{
-			// cursor->finalY = 4 + 10 * (cursorPosition[secondaryDevice] - screenOffset + ENTRIES_START_ROW);
+			// cursor->finalY = 4 + 10 * (ms().cursorPosition[ms().secondaryDevice] - screenOffset + ENTRIES_START_ROW);
 			// cursor->delay = TextEntry::ACTIVE;
 
 			if (!stopSoundPlayed) {
-				if ((theme == 0 && !startMenu && cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
-				|| (theme == 0 && startMenu && startMenu_cursorPosition < (3-flashcardFound()))) {
+				if ((theme == 0 && !startMenu && ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
+				|| (theme == 0 && startMenu && ms().startMenu_cursorPosition < (3-flashcardFound()))) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;
@@ -1199,10 +1191,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			if (!shouldersRendered) {
 				showLshoulder = false;
 				showRshoulder = false;
-				if (pagenum[secondaryDevice] != 0) {
+				if (ms().pagenum[ms().secondaryDevice] != 0) {
 					showLshoulder = true;
 				}
-				if (file_count > 40+pagenum[secondaryDevice]*40) {
+				if (file_count > 40+ms().pagenum[ms().secondaryDevice]*40) {
 					showRshoulder = true;
 				}
 				loadShoulders();
@@ -1228,9 +1220,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				} else {
 					updateBoxArt(dirContents, scrn);
 				}
-				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
+				if (ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 					showbubble = true, displayBoxArt = showBoxArt;
-					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
@@ -1255,8 +1247,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
-				cursorPosition[secondaryDevice] -= 1;
-				if (cursorPosition[secondaryDevice] >= 0) {
+				ms().cursorPosition[ms().secondaryDevice] -= 1;
+				if (ms().cursorPosition[ms().secondaryDevice] >= 0) {
 					if (pressed & KEY_TOUCH) buttonArrowTouched[0] = true;
 					titleboxXmoveleft = true;
 					waitForNeedToPlayStopSound = 1;
@@ -1268,9 +1260,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					mmEffectEx(&snd_wrong);
 					edgeBumpSoundPlayed = true;
 				}
-				if(cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-					if (bnrRomType[cursorPosition[secondaryDevice]-2] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
-						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+				if(ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
+					if (bnrRomType[ms().cursorPosition[ms().secondaryDevice]-2] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2);
 						defer(reloadFontTextures);
 					}
 				}
@@ -1278,8 +1270,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					|| ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
 					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
-				cursorPosition[secondaryDevice] += 1;
-				if (cursorPosition[secondaryDevice] <= 39) {
+				ms().cursorPosition[ms().secondaryDevice] += 1;
+				if (ms().cursorPosition[ms().secondaryDevice] <= 39) {
 					if (pressed & KEY_TOUCH) buttonArrowTouched[1] = true;
 					titleboxXmoveright = true;
 					waitForNeedToPlayStopSound = 1;
@@ -1292,22 +1284,22 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					edgeBumpSoundPlayed = true;
 				}
 		
-				if(cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
-					if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
-						iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+				if(ms().cursorPosition[ms().secondaryDevice] >= 3 && ms().cursorPosition[ms().secondaryDevice] <= 37) {
+					if (bnrRomType[ms().cursorPosition[ms().secondaryDevice]+2] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+						iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]+2);
 						defer(reloadFontTextures);
 					}
 				}
 			// Move apps
 			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright
-			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+			&& ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
 				showbubble = false;
 				clearText();
 				mkdir (sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
-				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
-				movingApp = (pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice]);
+				std::string gameBeingMoved = dirContents[scrn].at((ms().pagenum[ms().secondaryDevice]*40)+(ms().cursorPosition[ms().secondaryDevice])).name;
+				movingApp = (ms().pagenum[ms().secondaryDevice]*40)+(ms().cursorPosition[ms().secondaryDevice]);
 				if(dirContents[scrn][movingApp].isDirectory)	movingAppIsDir = true;
 				else	movingAppIsDir = false;
 				getGameInfo(dirContents[scrn].at(movingApp).isDirectory, dirContents[scrn].at(movingApp).name.c_str(), -1);
@@ -1320,8 +1312,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					swiWaitForVBlank();
 				}
-				int orgCursorPosition = cursorPosition[secondaryDevice];
-				int orgPage = pagenum[secondaryDevice];
+				int orgCursorPosition = ms().cursorPosition[ms().secondaryDevice];
+				int orgPage = ms().pagenum[ms().secondaryDevice];
 				showMovingArrow = true;
 
 				while(1){
@@ -1345,12 +1337,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)
 					|| (held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright))
 					{
-						if(cursorPosition[secondaryDevice] > 0) {
+						if(ms().cursorPosition[ms().secondaryDevice] > 0) {
 							mmEffectEx(&snd_select);
 							titleboxXmoveleft = true;
-							cursorPosition[secondaryDevice]--;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+							ms().cursorPosition[ms().secondaryDevice]--;
+							if (bnrRomType[ms().cursorPosition[ms().secondaryDevice]+2] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count && ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2);
 								defer(reloadFontTextures);
 							}
 						} else if (!edgeBumpSoundPlayed){
@@ -1361,12 +1353,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					else if((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)
 					|| (held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright))
 					{
-						if(cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40)<(int)dirContents[scrn].size()-1 && cursorPosition[secondaryDevice] < 39) {
+						if(ms().cursorPosition[ms().secondaryDevice]+(ms().pagenum[ms().secondaryDevice]*40)<(int)dirContents[scrn].size()-1 && ms().cursorPosition[ms().secondaryDevice] < 39) {
 							mmEffectEx(&snd_select);
 							titleboxXmoveright = true;
-							cursorPosition[secondaryDevice]++;
-							if (bnrRomType[cursorPosition[secondaryDevice]+2] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count && cursorPosition[secondaryDevice] >= 3 && cursorPosition[secondaryDevice] <= 37) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+							ms().cursorPosition[ms().secondaryDevice]++;
+							if (bnrRomType[ms().cursorPosition[ms().secondaryDevice]+2] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count && ms().cursorPosition[ms().secondaryDevice] >= 3 && ms().cursorPosition[ms().secondaryDevice] <= 37) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]+2);
 								defer(reloadFontTextures);
 							}
 						} else  if (!edgeBumpSoundPlayed){
@@ -1386,14 +1378,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						break;
 					} else if(pressed & KEY_L) {
-						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && pagenum[secondaryDevice] != 0) {
+						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && ms().pagenum[ms().secondaryDevice] != 0) {
 							mmEffectEx(&snd_switch);
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-							pagenum[secondaryDevice] -= 1;
-							cursorPosition[secondaryDevice] = 0;
-							titleboxXpos[secondaryDevice] = 0;
-							titlewindowXpos[secondaryDevice] = 0;
+							ms().pagenum[ms().secondaryDevice] -= 1;
+							ms().cursorPosition[ms().secondaryDevice] = 0;
+							titleboxXpos[ms().secondaryDevice] = 0;
+							titlewindowXpos[ms().secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
@@ -1412,14 +1404,14 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							mmEffectEx(&snd_wrong);
 						}
 					} else if(pressed & KEY_R) {
-						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+pagenum[secondaryDevice]*40) {
+						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright && file_count > 40+ms().pagenum[ms().secondaryDevice]*40) {
 							mmEffectEx(&snd_switch);
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-							pagenum[secondaryDevice] += 1;
-							cursorPosition[secondaryDevice] = 0;
-							titleboxXpos[secondaryDevice] = 0;
-							titlewindowXpos[secondaryDevice] = 0;
+							ms().pagenum[ms().secondaryDevice] += 1;
+							ms().cursorPosition[ms().secondaryDevice] = 0;
+							titleboxXpos[ms().secondaryDevice] = 0;
+							titlewindowXpos[ms().secondaryDevice] = 0;
 							whiteScreen = true;
 							shouldersRendered = false;
 							displayNowLoading();
@@ -1439,7 +1431,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 					}
 				}
-				if ((pagenum[secondaryDevice] != orgPage) || (cursorPosition[secondaryDevice] != orgCursorPosition))
+				if ((ms().pagenum[ms().secondaryDevice] != orgPage) || (ms().cursorPosition[ms().secondaryDevice] != orgCursorPosition))
 				{
 				showbubble = true;
 				writeBannerText(0, "Please wait...", "", "");
@@ -1487,7 +1479,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 
 				gameOrder.erase(gameOrder.begin()+movingApp);
-				gameOrder.insert(gameOrder.begin()+cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40), gameBeingMoved);
+				gameOrder.insert(gameOrder.begin()+ms().cursorPosition[ms().secondaryDevice]+(ms().pagenum[ms().secondaryDevice]*40), gameBeingMoved);
 
 				for(int i=0;i<(int)gameOrder.size();i++) {
 					char str[9];
@@ -1504,7 +1496,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				dirEntry.isDirectory = movingAppIsDir;
 
 				dirContents[scrn].erase(dirContents[scrn].begin()+movingApp);
-				dirContents[scrn].insert(dirContents[scrn].begin()+cursorPosition[secondaryDevice]+(pagenum[secondaryDevice]*40), dirEntry);
+				dirContents[scrn].insert(dirContents[scrn].begin()+ms().cursorPosition[ms().secondaryDevice]+(ms().pagenum[ms().secondaryDevice]*40), dirEntry);
 
 				getFileInfo(scrn, dirContents, false);
 
@@ -1517,7 +1509,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
 				touchPosition startTouch = touch;
-				int prevPos = cursorPosition[secondaryDevice];
+				int prevPos = ms().cursorPosition[ms().secondaryDevice];
 				showSTARTborder = false;
 				scrollWindowTouched = true;
 				while(1) {
@@ -1526,97 +1518,97 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					if (!(keysHeld() & KEY_TOUCH)) break;
 
-					cursorPosition[secondaryDevice] = round((touch.px-30)/4.925);
-					if(cursorPosition[secondaryDevice] > 39) {
-						cursorPosition[secondaryDevice] = 39;
-						titlewindowXpos[secondaryDevice] = 192.075;
-						titleboxXpos[secondaryDevice] = 2496;
-					} else if(cursorPosition[secondaryDevice] < 0) {
-						cursorPosition[secondaryDevice] = 0;
-						titlewindowXpos[secondaryDevice] = 0;
-						titleboxXpos[secondaryDevice] = 0;
+					ms().cursorPosition[ms().secondaryDevice] = round((touch.px-30)/4.925);
+					if(ms().cursorPosition[ms().secondaryDevice] > 39) {
+						ms().cursorPosition[ms().secondaryDevice] = 39;
+						titlewindowXpos[ms().secondaryDevice] = 192.075;
+						titleboxXpos[ms().secondaryDevice] = 2496;
+					} else if(ms().cursorPosition[ms().secondaryDevice] < 0) {
+						ms().cursorPosition[ms().secondaryDevice] = 0;
+						titlewindowXpos[ms().secondaryDevice] = 0;
+						titleboxXpos[ms().secondaryDevice] = 0;
 					} else {
-						titlewindowXpos[secondaryDevice] = touch.px-30;
-						titleboxXpos[secondaryDevice] = (touch.px-30)/4.925 * 64;
+						titlewindowXpos[ms().secondaryDevice] = touch.px-30;
+						titleboxXpos[ms().secondaryDevice] = (touch.px-30)/4.925 * 64;
 					}
 					
 
 					// Load icons
-					if (prevPos == cursorPosition[secondaryDevice]+1) {
-						if(cursorPosition[secondaryDevice] >= 2) {
-							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+					if (prevPos == ms().cursorPosition[ms().secondaryDevice]+1) {
+						if(ms().cursorPosition[ms().secondaryDevice] >= 2) {
+							if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2);
 							}
 						}
-					} else if (prevPos == cursorPosition[secondaryDevice]-1) {
-						if(cursorPosition[secondaryDevice] <= 37) {
-							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+					} else if (prevPos == ms().cursorPosition[ms().secondaryDevice]-1) {
+						if(ms().cursorPosition[ms().secondaryDevice] <= 37) {
+							if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]+2);
 							}
 						}
-					} else if (cursorPosition[secondaryDevice] <= 1) {
+					} else if (ms().cursorPosition[ms().secondaryDevice] <= 1) {
 						for(int i = 0; i < 5; i++) {
 							if(i%2)	swiWaitForVBlank();
-							if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+							if (bnrRomType[i] == 0 && i+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), i);
 							}
 						}
-					} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+					} else if (ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
 						for(int i = 0; i < 6; i++) {
 							if(i%2)	swiWaitForVBlank();
-							if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+							if (bnrRomType[i] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2+i);
 							}
 						}
-					} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+					} else if (ms().cursorPosition[ms().secondaryDevice] >= 37 && ms().cursorPosition[ms().secondaryDevice] <= 39) {
 						for(int i = 0; i < 5; i++) {
 							if(i%2)	swiWaitForVBlank();
-							if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+							if (bnrRomType[i] == 0 && (35+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), 35+i);
 							}
 						}
 					}
 
 					clearText();
-					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
+					if(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 						showbubble = true;
-						titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+						titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 					} else {
 						showbubble = false;
 					}
-					prevPos = cursorPosition[secondaryDevice];
+					prevPos = ms().cursorPosition[ms().secondaryDevice];
 				}
 				scrollWindowTouched = false;
-				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
-				titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 5;
+				titleboxXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice] * 64;
+				titlewindowXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice] * 5;
 				waitForNeedToPlayStopSound = 1;
 				mmEffectEx(&snd_select);
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+				if(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = true;
 
 				// Draw icons 1 per vblank to prevent corruption
-				if (cursorPosition[secondaryDevice] <= 1) {
+				if (ms().cursorPosition[ms().secondaryDevice] <= 1) {
 					for(int i = 0; i < 5; i++) {
 						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+						if (bnrRomType[i] == 0 && i+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), i);
 						}
 					}
-				} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+				} else if (ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
 					for(int i = 0; i < 6; i++) {
 						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+						if (bnrRomType[i] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2+i);
 						}
 					}
-				} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+				} else if (ms().cursorPosition[ms().secondaryDevice] >= 37 && ms().cursorPosition[ms().secondaryDevice] <= 39) {
 					for(int i = 0; i < 5; i++) {
 						swiWaitForVBlank();
-						if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-							iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+						if (bnrRomType[i] == 0 && (35+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+							iconUpdate(dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), 35+i);
 						}
 					}
 				}
@@ -1640,7 +1632,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 				touchPosition prevTouch1 = touch;
 				touchPosition prevTouch2 = touch;
-				int prevPos = cursorPosition[secondaryDevice];
+				int prevPos = ms().cursorPosition[ms().secondaryDevice];
 				showSTARTborder = false;
 
 				while(1) {
@@ -1655,7 +1647,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						int decAmount = abs(dX);
 						if(dX>0) {
 							while(decAmount>.25) {
-								if(theme && titleboxXpos[secondaryDevice] > 2496)
+								if(theme && titleboxXpos[ms().secondaryDevice] > 2496)
 									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
@@ -1663,27 +1655,27 @@ string browseForFile(const vector<string> extensionList, const char* username)
 									break;
 								}
 
-								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
-								if(titlewindowXpos[secondaryDevice] > 192.075)	titlewindowXpos[secondaryDevice] = 192.075;
+								titlewindowXpos[ms().secondaryDevice] = (titleboxXpos[ms().secondaryDevice]+32)*0.078125;;
+								if(titlewindowXpos[ms().secondaryDevice] > 192.075)	titlewindowXpos[ms().secondaryDevice] = 192.075;
 
 								for(int i=0;i<2;i++) {
 									swiWaitForVBlank();
-									if(titleboxXpos[secondaryDevice] < 2496)	titleboxXpos[secondaryDevice] += decAmount/2;
-									else	titleboxXpos[secondaryDevice] += decAmount/4;
+									if(titleboxXpos[ms().secondaryDevice] < 2496)	titleboxXpos[ms().secondaryDevice] += decAmount/2;
+									else	titleboxXpos[ms().secondaryDevice] += decAmount/4;
 								}
 								decAmount = decAmount/1.25;
 
-								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+								ms().cursorPosition[ms().secondaryDevice] = round((titleboxXpos[ms().secondaryDevice]+32)/64);
 
-								if(cursorPosition[secondaryDevice] <= 37) {
-									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+								if(ms().cursorPosition[ms().secondaryDevice] <= 37) {
+									if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]+2);
 									}
 								}
 							}
 						} else if (dX<0) {
 							while(decAmount>.25) {
-								if(theme && titleboxXpos[secondaryDevice]<0)
+								if(theme && titleboxXpos[ms().secondaryDevice]<0)
 									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
@@ -1691,133 +1683,133 @@ string browseForFile(const vector<string> extensionList, const char* username)
 									break;
 								}
 
-								titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;;
-								if(titlewindowXpos[secondaryDevice] < 0)	titlewindowXpos[secondaryDevice] = 0;
+								titlewindowXpos[ms().secondaryDevice] = (titleboxXpos[ms().secondaryDevice]+32)*0.078125;;
+								if(titlewindowXpos[ms().secondaryDevice] < 0)	titlewindowXpos[ms().secondaryDevice] = 0;
 
 								for(int i=0;i<2;i++) {
 									swiWaitForVBlank();
-									if(titleboxXpos[secondaryDevice]>0)	titleboxXpos[secondaryDevice] -= decAmount/2;
-									else	titleboxXpos[secondaryDevice] -= decAmount/4;	
+									if(titleboxXpos[ms().secondaryDevice]>0)	titleboxXpos[ms().secondaryDevice] -= decAmount/2;
+									else	titleboxXpos[ms().secondaryDevice] -= decAmount/4;	
 								}
 								decAmount = decAmount/1.25;
 
-								cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
+								ms().cursorPosition[ms().secondaryDevice] = round((titleboxXpos[ms().secondaryDevice]+32)/64);
 
-								if(cursorPosition[secondaryDevice] >= 2) {
-									if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
-										iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+								if(ms().cursorPosition[ms().secondaryDevice] >= 2) {
+									if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+										iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2);
 									}
 								}
 							}
 						}
 						if(tapped) continue;
 
-						if (cursorPosition[secondaryDevice] < 0)
-							cursorPosition[secondaryDevice] = 0;
-						else if (cursorPosition[secondaryDevice] > 39)
-							cursorPosition[secondaryDevice] = 39;
+						if (ms().cursorPosition[ms().secondaryDevice] < 0)
+							ms().cursorPosition[ms().secondaryDevice] = 0;
+						else if (ms().cursorPosition[ms().secondaryDevice] > 39)
+							ms().cursorPosition[ms().secondaryDevice] = 39;
 
 						// Load icons
-						if (cursorPosition[secondaryDevice] <= 1) {
+						if (ms().cursorPosition[ms().secondaryDevice] <= 1) {
 							for(int i = 0; i < 5; i++) {
 								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 && i+pagenum[secondaryDevice]*40 < file_count) {
-									iconUpdate(dirContents[scrn].at(i+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+pagenum[secondaryDevice]*40).name.c_str(), i);
+								if (bnrRomType[i] == 0 && i+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), i);
 								}
 							}
-						} else if (cursorPosition[secondaryDevice] >= 2 && cursorPosition[secondaryDevice] <= 36) {
+						} else if (ms().cursorPosition[ms().secondaryDevice] >= 2 && ms().cursorPosition[ms().secondaryDevice] <= 36) {
 							for(int i = 0; i < 6; i++) {
 								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 && (cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40 < file_count) {
-									iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2+i)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2+i);
+								if (bnrRomType[i] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2+i);
 								}
 							}
-						} else if (cursorPosition[secondaryDevice] >= 37 && cursorPosition[secondaryDevice] <= 39) {
+						} else if (ms().cursorPosition[ms().secondaryDevice] >= 37 && ms().cursorPosition[ms().secondaryDevice] <= 39) {
 							for(int i = 0; i < 5; i++) {
 								swiWaitForVBlank();
-								if (bnrRomType[i] == 0 && (35+i)+pagenum[secondaryDevice]*40 < file_count) {
-									iconUpdate(dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+pagenum[secondaryDevice]*40).name.c_str(), 35+i);
+								if (bnrRomType[i] == 0 && (35+i)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+									iconUpdate(dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((35+i)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), 35+i);
 								}
 							}
 						}
 						break;
 					}
 
-					titleboxXpos[secondaryDevice] += (-(touch.px-prevTouch1.px));
-					cursorPosition[secondaryDevice] = round((titleboxXpos[secondaryDevice]+32)/64);
-					titlewindowXpos[secondaryDevice] = (titleboxXpos[secondaryDevice]+32)*0.078125;
-					if(titleboxXpos[secondaryDevice] > 2496) {
+					titleboxXpos[ms().secondaryDevice] += (-(touch.px-prevTouch1.px));
+					ms().cursorPosition[ms().secondaryDevice] = round((titleboxXpos[ms().secondaryDevice]+32)/64);
+					titlewindowXpos[ms().secondaryDevice] = (titleboxXpos[ms().secondaryDevice]+32)*0.078125;
+					if(titleboxXpos[ms().secondaryDevice] > 2496) {
 						if(theme)
-							titleboxXpos[secondaryDevice] = 2496;
-						cursorPosition[secondaryDevice] = 39;
-						titlewindowXpos[secondaryDevice] = 192.075;
-					} else if(titleboxXpos[secondaryDevice] < 0) {
+							titleboxXpos[ms().secondaryDevice] = 2496;
+						ms().cursorPosition[ms().secondaryDevice] = 39;
+						titlewindowXpos[ms().secondaryDevice] = 192.075;
+					} else if(titleboxXpos[ms().secondaryDevice] < 0) {
 						if(theme)
-							titleboxXpos[secondaryDevice] = 0;
-						cursorPosition[secondaryDevice] = 0;
-						titlewindowXpos[secondaryDevice] = 0;
+							titleboxXpos[ms().secondaryDevice] = 0;
+						ms().cursorPosition[ms().secondaryDevice] = 0;
+						titlewindowXpos[ms().secondaryDevice] = 0;
 					}
 
 					// Load icons
-					if (prevPos == cursorPosition[secondaryDevice]+1) {
-						if(cursorPosition[secondaryDevice] > 2) {
-							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]-2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]-2);
+					if (prevPos == ms().cursorPosition[ms().secondaryDevice]+1) {
+						if(ms().cursorPosition[ms().secondaryDevice] > 2) {
+							if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]-2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]-2);
 							}
 						}
-					} else if (prevPos == cursorPosition[secondaryDevice]-1) {
-						if(cursorPosition[secondaryDevice] < 37) {
-							if (bnrRomType[0] == 0 && (cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40 < file_count) {
-								iconUpdate(dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at((cursorPosition[secondaryDevice]+2)+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]+2);
+					} else if (prevPos == ms().cursorPosition[ms().secondaryDevice]-1) {
+						if(ms().cursorPosition[ms().secondaryDevice] < 37) {
+							if (bnrRomType[0] == 0 && (ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40 < file_count) {
+								iconUpdate(dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at((ms().cursorPosition[ms().secondaryDevice]+2)+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]+2);
 							}
 						}
 					}
 
-					if(prevPos != cursorPosition[secondaryDevice]) {
+					if(prevPos != ms().cursorPosition[ms().secondaryDevice]) {
 						clearText();
-						if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
+						if(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 							showbubble = true;
-							titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+							titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 						} else {
 							showbubble = false;
 						}
 					}
 					prevTouch2 = prevTouch1;
 					prevTouch1 = touch;
-					prevPos = cursorPosition[secondaryDevice];
+					prevPos = ms().cursorPosition[ms().secondaryDevice];
 					swiWaitForVBlank();
 					swiWaitForVBlank();
 				}
-				titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 5;;
-				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice]*64;
+				titlewindowXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice] * 5;;
+				titleboxXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice]*64;
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if(!gameTapped && cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
+				if(!gameTapped && ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 					showSTARTborder = (theme == 1 ? true : false);
 			}
 
-			if (cursorPosition[secondaryDevice] < 0)
-				cursorPosition[secondaryDevice] = 0;
-			else if (cursorPosition[secondaryDevice] > 39)
-				cursorPosition[secondaryDevice] = 39;
+			if (ms().cursorPosition[ms().secondaryDevice] < 0)
+				ms().cursorPosition[ms().secondaryDevice] = 0;
+			else if (ms().cursorPosition[ms().secondaryDevice] > 39)
+				ms().cursorPosition[ms().secondaryDevice] = 39;
 
 			// Startup...
 			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| (gameTapped && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))
 			{
-				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
+				DirEntry* entry = &dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40);
 				if (entry->isDirectory)
 				{
 					// Enter selected directory
 					mmEffectEx(&snd_select);
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					pagenum[secondaryDevice] = 0;
-					cursorPosition[secondaryDevice] = 0;
-					titleboxXpos[secondaryDevice] = 0;
-					titlewindowXpos[secondaryDevice] = 0;
+					ms().pagenum[ms().secondaryDevice] = 0;
+					ms().cursorPosition[ms().secondaryDevice] = 0;
+					titleboxXpos[ms().secondaryDevice] = 0;
+					titlewindowXpos[ms().secondaryDevice] = 0;
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
@@ -1829,21 +1821,21 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					clearText();
 					chdir(entry->name.c_str());
 					char buf[256];
-					romfolder[secondaryDevice] = getcwd(buf, 256);
-					SaveSettings();
+					ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
+					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
 				}
-				else if ((isDSiWare[cursorPosition[secondaryDevice]] && !isDSiMode())
-						|| (isDSiWare[cursorPosition[secondaryDevice]] && !sdFound())
-						|| (isDSiWare[cursorPosition[secondaryDevice]] && consoleModel > 1))
+				else if ((isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && !isDSiMode())
+						|| (isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && !sdFound())
+						|| (isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && consoleModel > 1))
 				{
 					mmEffectEx(&snd_wrong);
 					clearText();
 					dbox_showIcon = true;
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 					printSmallCentered(false, 112, "This game cannot be launched");
 					if (isDSiMode()) {
 						if (sdFound()) {
@@ -1875,17 +1867,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				{
 					bool hasAP = false;
 					bool proceedToLaunch = true;
-					if (useBootstrap
-					&& bnrRomType[cursorPosition[secondaryDevice]] == 0 && !isDSiWare[cursorPosition[secondaryDevice]]
-					&& isHomebrew[cursorPosition[secondaryDevice]] == 0 && checkIfShowAPMsg(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name))
+					if (ms().useBootstrap
+					&& bnrRomType[ms().cursorPosition[ms().secondaryDevice]] == 0 && !isDSiWare[ms().cursorPosition[ms().secondaryDevice]]
+					&& isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 0 && checkIfShowAPMsg(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name))
 					{
-						FILE *f_nds_file = fopen(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), "rb");
+						FILE *f_nds_file = fopen(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
 					}
-					else if (bnrRomType[cursorPosition[secondaryDevice]] == 6)
+					else if (bnrRomType[ms().cursorPosition[ms().secondaryDevice]] == 6)
 					{
-						if (getFileSize(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()) > 0x300000) {
+						if (getFileSize(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str()) > 0x300000) {
 							proceedToLaunch = false;
 							mdRomTooBig();
 						}
@@ -1895,7 +1887,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					dbox_showIcon = true;
 					showdialogbox = true;
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
+					titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 					printSmallCentered(false, 64, "This game may not work correctly,");
 					printSmallCentered(false, 78, "if it's not AP-patched.");
 					printSmallCentered(false, 112, "If the game freezes, does not");
@@ -1921,7 +1913,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							break;
 						}
 						if (pressed & KEY_X) {
-							dontShowAPMsgAgain(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
+							dontShowAPMsgAgain(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name);
 							pressed = 0;
 							break;
 						}
@@ -1974,7 +1966,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 
 				// Exit to system menu by touching corner button
-				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !isRegularDS && !titleboxXmoveleft && !titleboxXmoveright)
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 && !sys().isRegularDS() && !titleboxXmoveleft && !titleboxXmoveright)
 				{
 					exitToSystemMenu();
 				}
@@ -2004,7 +1996,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0]+24
 					&& !titleboxXmoveleft && !titleboxXmoveright)
 					{
-						if (secondaryDevice || REG_SCFG_MC != 0x11) {
+						if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
 							switchDevice();
 							return "null";
 						} else {
@@ -2024,16 +2016,16 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (pressed & KEY_L)
 			{
-				if (cursorPosition[secondaryDevice] == 0 && !showLshoulder) {
+				if (ms().cursorPosition[ms().secondaryDevice] == 0 && !showLshoulder) {
 					mmEffectEx(&snd_wrong);
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
-					if (showLshoulder) pagenum[secondaryDevice] -= 1;
-					cursorPosition[secondaryDevice] = 0;
-					titleboxXpos[secondaryDevice] = 0;
-					titlewindowXpos[secondaryDevice] = 0;
+					if (showLshoulder) ms().pagenum[ms().secondaryDevice] -= 1;
+					ms().cursorPosition[ms().secondaryDevice] = 0;
+					titleboxXpos[ms().secondaryDevice] = 0;
+					titlewindowXpos[ms().secondaryDevice] = 0;
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
@@ -2044,28 +2036,28 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
-					SaveSettings();
+					ms().saveSettings();
 					settingsChanged = false;
 					displayNowLoading();
 					break;
 				}
 			} else 	if (pressed & KEY_R)
 			{
-				if (cursorPosition[secondaryDevice] == (file_count-1)-pagenum[secondaryDevice]*40 && !showRshoulder) {
+				if (ms().cursorPosition[ms().secondaryDevice] == (file_count-1)-ms().pagenum[ms().secondaryDevice]*40 && !showRshoulder) {
 					mmEffectEx(&snd_wrong);
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					mmEffectEx(&snd_switch);
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 30; i++) swiWaitForVBlank();
 					if (showRshoulder) {
-						pagenum[secondaryDevice] += 1;
-						cursorPosition[secondaryDevice] = 0;
-						titleboxXpos[secondaryDevice] = 0;
-						titlewindowXpos[secondaryDevice] = 0;
+						ms().pagenum[ms().secondaryDevice] += 1;
+						ms().cursorPosition[ms().secondaryDevice] = 0;
+						titleboxXpos[ms().secondaryDevice] = 0;
+						titlewindowXpos[ms().secondaryDevice] = 0;
 					} else {
-						cursorPosition[secondaryDevice] = (file_count-1)-pagenum[secondaryDevice]*40;
-						titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice]*64;
-						titlewindowXpos[secondaryDevice] = cursorPosition[secondaryDevice]*5;
+						ms().cursorPosition[ms().secondaryDevice] = (file_count-1)-ms().pagenum[ms().secondaryDevice]*40;
+						titleboxXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice]*64;
+						titlewindowXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice]*5;
 					}
 					whiteScreen = true;
 					if (showBoxArt) clearBoxArt();	// Clear box art
@@ -2077,7 +2069,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
-					SaveSettings();
+					ms().saveSettings();
 					settingsChanged = false;
 					displayNowLoading();
 					break;
@@ -2089,10 +2081,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				pagenum[secondaryDevice] = 0;
-				cursorPosition[secondaryDevice] = 0;
-				titleboxXpos[secondaryDevice] = 0;
-				titlewindowXpos[secondaryDevice] = 0;
+				ms().pagenum[ms().secondaryDevice] = 0;
+				ms().cursorPosition[ms().secondaryDevice] = 0;
+				titleboxXpos[ms().secondaryDevice] = 0;
+				titlewindowXpos[ms().secondaryDevice] = 0;
 				whiteScreen = true;
 				if (showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
@@ -2105,8 +2097,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				clearText();
 				chdir("..");
 				char buf[256];
-				romfolder[secondaryDevice] = getcwd(buf, 256);
-				SaveSettings();
+				
+				ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
+				ms().saveSettings();
 				settingsChanged = false;
 				return "null";
 			}
@@ -2136,7 +2129,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 				
-				std::string gameBeingHidden = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
+				std::string gameBeingHidden = dirContents[scrn].at((ms().pagenum[ms().secondaryDevice]*40)+(ms().cursorPosition[ms().secondaryDevice])).name;
 				bool unHide = false;
 				int whichToUnhide;
 
@@ -2151,12 +2144,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				dbox_showIcon = true;
 				showdialogbox = true;
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
-				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
-				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
-				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
+				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (ms().cursorPosition[ms().secondaryDevice]+1)+ms().pagenum[ms().secondaryDevice]*40, file_count);
+				titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
+				printSmall(false, 16, 64, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
-				if (isDirectory[cursorPosition[secondaryDevice]]) {
+				if (isDirectory[ms().cursorPosition[ms().secondaryDevice]]) {
 					if(unHide)	printSmallCentered(false, 128, "unhide this folder?");
 					else	printSmallCentered(false, 128, "hide this folder?");
 				} else {
@@ -2164,7 +2157,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					else	printSmallCentered(false, 128, "delete/hide this game?");
 				}
 				for (int i = 0; i < 90; i++) swiWaitForVBlank();
-				if (isDirectory[cursorPosition[secondaryDevice]]) {
+				if (isDirectory[ms().cursorPosition[ms().secondaryDevice]]) {
 					if(unHide)	printSmall(false, 141, 160, "Y: Unhide");	
 					else	printSmall(false, 155, 160, "Y: Hide");
 					printSmall(false, 208, 160, "B: No");
@@ -2181,11 +2174,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						swiWaitForVBlank();
 					} while (!pressed);
 					
-					if (pressed & KEY_A && !isDirectory[cursorPosition[secondaryDevice]]) {
+					if (pressed & KEY_A && !isDirectory[ms().cursorPosition[ms().secondaryDevice]]) {
 						fadeType = false;	// Fade to white
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
-						remove(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str()); // Remove game/folder
+						remove(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str()); // Remove game/folder
 						if (showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
 						rocketVideo_playVideo = true;
@@ -2195,7 +2188,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
-						SaveSettings();
+						ms().saveSettings();
 						settingsChanged = false;
 						return "null";
 					}
@@ -2231,7 +2224,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
-						SaveSettings();
+						ms().saveSettings();
 						settingsChanged = false;
 						return "null";
 					}
@@ -2243,10 +2236,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 
 			if ((pressed & KEY_Y) && !startMenu
-			&& (isDirectory[cursorPosition[secondaryDevice]] == false) && (bnrRomType[cursorPosition[secondaryDevice]] == 0)
+			&& (isDirectory[ms().cursorPosition[ms().secondaryDevice]] == false) && (bnrRomType[ms().cursorPosition[ms().secondaryDevice]] == 0)
 			&& !titleboxXmoveleft && !titleboxXmoveright && showbubble && showSTARTborder)
 			{
-				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
+				perGameSettings(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name);
 			}
 
 			if ((pressed & KEY_SELECT) && theme == 0) {
