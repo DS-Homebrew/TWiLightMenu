@@ -1184,7 +1184,7 @@ void loadVolumeImage(void) {
 		u16* src = bmpImageBuffer;
 		int x = 4;
 		int y = 5+11;
-		for (int i=0; i<18*12; i++) {
+		for (int i = 0; i < 18*12; i++) {
 			if (x >= 4+18) {
 				x = 4;
 				y--;
@@ -1581,9 +1581,22 @@ void loadShoulders() {
  */
 unsigned int getTopFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
-	for (unsigned int i = 0; i < TOP_FONT_NUM_IMAGES; i++) {
-		if (top_utf16_lookup_table[i] == letter) {
-			spriteIndex = i;
+	long int left = 0;
+	long int right = TOP_FONT_NUM_IMAGES;
+	long int mid = 0;
+
+	while (left <= right)
+	{
+		mid = left + ((right - left) / 2);
+		if (top_utf16_lookup_table[mid]== letter) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if (top_utf16_lookup_table[mid] < letter) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
 		}
 	}
 	return spriteIndex;
@@ -1591,9 +1604,22 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 
 unsigned int getDateTimeFontSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
-	for (unsigned int i = 0; i < DATE_TIME_FONT_NUM_IMAGES; i++) {
-		if (date_time_utf16_lookup_table[i] == letter) {
-			spriteIndex = i;
+	long int left = 0;
+	long int right = DATE_TIME_FONT_NUM_IMAGES;
+	long int mid = 0;
+
+	while (left <= right)
+	{
+		mid = left + ((right - left) / 2);
+		if (date_time_utf16_lookup_table[mid]== letter) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if (date_time_utf16_lookup_table[mid] < letter) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
 		}
 	}
 	return spriteIndex;

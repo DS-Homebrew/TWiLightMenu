@@ -421,8 +421,6 @@ void ThemeTextures::loadDSiDarkTheme()
 
   loadBoxfullImage(_boxTexture->palette(), (const unsigned int*)_boxTexture->texture());
 
-
-
   loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int*)_cornerButtonTexture->texture(), (32 / 16) * (32 / 32), 32, 32, 32, 64);
   loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int*)_smallCartTexture->texture());
   loadFolderImage(_folderTexture->palette(), (const unsigned int*)_folderTexture->texture());
