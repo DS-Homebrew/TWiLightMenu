@@ -4,6 +4,7 @@
 #include "common/gl2d.h"
 #include "common/singleton.h"
 #include "GritTexture.h"
+#include "BmpTexture.h"
 #include <memory>
 #include <string>
 
@@ -47,6 +48,7 @@ public:
   void loadDSiPinkTheme();
   void loadDSiPurpleTheme();
   void load3DSTheme();
+  void loadVolumeTextures();
 
   void reloadPalDialogBox();
   void reloadPal3dsCornerButton();
@@ -75,6 +77,7 @@ private:
 
   void loadBottomImage();
   void setStringPaths(const std::string theme);
+
 
 private:
 
@@ -108,6 +111,22 @@ public:
   const glImage *cornerButtonImage() { return _cornerButtonImage.get(); }
   const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
+
+  BmpTexture *volumeTexture(int texture) { 
+    switch(texture) {
+      case 4:
+        return _volume4Texture.get();
+      case 3:
+        return _volume3Texture.get();
+      case 2:
+        return _volume2Texture.get();
+      case 1:
+        return _volume1Texture.get();
+      case 0:
+      default:
+        return _volume0Texture.get();
+    }
+  }
 
   void drawBubbleBg();
   void drawBg();
@@ -165,6 +184,12 @@ NAMES 			+= scroll_window small_cart start_border start_text wirelessicons
   unique_ptr<GritTexture> _startTextTexture;
   unique_ptr<GritTexture> _wirelessIconsTexture;
   unique_ptr<GritTexture> _settingsIconTexture;
+
+  unique_ptr<BmpTexture> _volume0Texture;
+  unique_ptr<BmpTexture> _volume1Texture;
+  unique_ptr<BmpTexture> _volume2Texture;
+  unique_ptr<BmpTexture> _volume3Texture;
+  unique_ptr<BmpTexture> _volume4Texture;
 
 private:
   int bubbleTexID;

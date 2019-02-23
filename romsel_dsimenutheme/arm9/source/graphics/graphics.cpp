@@ -1172,33 +1172,24 @@ void loadVolumeImage(void) {
 		return;
 	}
 
-	FILE* file = fopen(volumeImagePath, "rb");
-
-	if (file) {
-		// Start loading
-		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x200, file);
-		u16* src = bmpImageBuffer;
-		int x = 4;
-		int y = 5+11;
-		for (int i = 0; i < 18*12; i++) {
-			if (x >= 4+18) {
-				x = 4;
-				y--;
-			}
-			u16 val = *(src++);
-			if (val != 0x7C1F) {	// Do not render magneta pixel
-				bgSubBuffer[y*256+x] = convertToDsBmp(val);
-			}
-			x++;
+	beginBgSubModify();
+	
+	const u16* src = tex().volumeTexture(loadedVolumeImage)->texture();
+	int x = 4;
+	int y = 5+11;
+	for (int i = 0; i < 18*12; i++) {
+		if (x >= 4+18) {
+			x = 4;
+			y--;
 		}
-		commitBgSubModify();
+		u16 val = *(src++);
+		if (val != 0x7C1F) {	// Do not render magneta pixel
+			bgSubBuffer[y*256+x] = convertToDsBmp(val);
+		}
+		x++;
 	}
-
-	fclose(file);
+	commitBgSubModify();
+	
 }
 
 static int loadedBatteryImage = -1;

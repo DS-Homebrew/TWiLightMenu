@@ -316,6 +316,10 @@ void ThemeTextures::loadCommonTextures()
 {
   loadProgressImage(progressPal, progressBitmap);
   loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
+
+  // todo: make theme unique
+
+  loadVolumeTextures();
 }
 
 void ThemeTextures::setStringPaths(const std::string theme)
@@ -628,4 +632,13 @@ void ThemeTextures::loadDSiPinkTheme()
   loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
 
   loadCommonTextures();
+}
+
+void ThemeTextures::loadVolumeTextures()
+{
+  _volume0Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume0.bmp");
+  _volume1Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume1.bmp");
+  _volume2Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume2.bmp");
+  _volume3Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume3.bmp");
+  _volume4Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume4.bmp");
 }

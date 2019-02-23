@@ -13,10 +13,11 @@ class BmpTexture
     typedef void (*BitmapEffect)(u16* palette, u8 paletteLength);
     private:
         unique_ptr<u16[]> _texture;
-        u8 _texHeight;
-        u8 _texWidth;
+        u32 _texHeight;
+        u32 _texWidth;
+        u32 _texLength;
     public:
-        BmpTexture(std::string& filePath, const u8 texHeight, const u8 texWidth);
+        BmpTexture(const char* filePath);
         ~BmpTexture() { };
         void applyEffect(BitmapEffect effect);
         const u16 *texture() { return (u16*)_texture.get(); }
