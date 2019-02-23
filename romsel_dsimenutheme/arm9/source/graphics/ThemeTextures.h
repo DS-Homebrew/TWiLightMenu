@@ -140,7 +140,32 @@ private:
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
 
+
+/**
+ * 
+NAMES			:= bips box brace bubble button_arrow cornerbutton dialogbox folder 
+NAMES 			+= icon_gb icon_gba icon_gbamode icon_gg icon_md icon_nes icon_settings 
+NAMES 			+= icon_sms icon_snes icon_unk launch_dot new_moving_arrow progress 
+NAMES 			+= scroll_window small_cart start_border start_text wirelessicons
+ */
+  unique_ptr<GritTexture> _bipsTexture;
   unique_ptr<GritTexture> _boxTexture;
+  unique_ptr<GritTexture> _braceTexture;
+  unique_ptr<GritTexture> _bubbleTexture;
+  unique_ptr<GritTexture> _buttonArrowTexture;
+  unique_ptr<GritTexture> _cornerButtonTexture;
+  unique_ptr<GritTexture> _dialogBoxTexture;
+  unique_ptr<GritTexture> _folderTexture;
+  unique_ptr<GritTexture> _launchDotTexture;
+  unique_ptr<GritTexture> _movingArrowTexture;
+  unique_ptr<GritTexture> _progressTexture;
+  unique_ptr<GritTexture> _scrollWindowTexture;
+  unique_ptr<GritTexture> _smallCartTexture;
+  unique_ptr<GritTexture> _startBorderTexture;
+  unique_ptr<GritTexture> _startTextTexture;
+  unique_ptr<GritTexture> _wirelessIconsTexture;
+  unique_ptr<GritTexture> _settingsIconTexture;
+
 private:
   int bubbleTexID;
   int bipsTexID;

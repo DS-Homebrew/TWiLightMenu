@@ -1,5 +1,7 @@
 #include "GritTexture.h"
+#include "../include/startborderpal.h"
 #include "stdio.h"
+#include "string.h"
 #include <cstdbool>
 
 bool verify_grif(FILE *file)
@@ -66,11 +68,16 @@ GritTexture::GritTexture(const char* filePath, const char *fallback)
     }
 
 
-
     fclose(file);
 }
 
 void GritTexture::applyEffect(GritTexture::PaletteEffect effect)
 {
-    return;
+    effect(_palette.get(), _paletteLength);
+}
+
+void GritTexture::effectDsiButtonArrowPals(u16* palette, u8 paletteLength)
+{
+    int offset = ((PersonalData->theme) * 16);
+    memcpy(palette, button_arrowPals + offset, paletteLength * sizeof(u16));
 }

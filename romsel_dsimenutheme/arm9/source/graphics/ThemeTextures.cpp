@@ -354,6 +354,17 @@ void ThemeTextures::load3DSTheme()
   loadCommonTextures();
 }
 
+  // unique_ptr<GritTexture> _folder;
+  // unique_ptr<GritTexture> _launchDot;
+  // unique_ptr<GritTexture> _movingArrow;
+  // unique_ptr<GritTexture> _progress;
+  // unique_ptr<GritTexture> _scrollWindow;
+  // unique_ptr<GritTexture> _smallCart;
+  // unique_ptr<GritTexture> _startBorder;
+  // unique_ptr<GritTexture> _startText;
+  // unique_ptr<GritTexture> _wirelessIcons;
+
+
 void ThemeTextures::loadDSiDarkTheme()
 {
 
@@ -361,29 +372,52 @@ void ThemeTextures::loadDSiDarkTheme()
 
   loadBottomImage();
 
-  loadBubbleImage(bubblePal, bubbleBitmap, 11, 8, 16);
-  loadScrollwindowImage(scroll_windowPal, scroll_windowBitmap);
-  loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
-  loadBipsImage(bipsPal, bipsBitmap);
-  loadStartbrdImage(apply_personal_theme(start_borderPals), start_borderBitmap, (32 / 32) * (256 / 80), 16, 80, 256);
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
-  loadMovingarrowImage(apply_personal_theme(button_arrowPals), new_moving_arrowBitmap);
-  loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
-  loadWirelessIcons(wirelessiconsPal, wirelessiconsBitmap);
-  loadSettingsImage(icon_settingsPal, icon_settingsBitmap);
-  loadBraceImage(bracePal, braceBitmap);
-
-
+  _bipsTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/bips.grf", "nitro:/themes/dsi/dark/grf/bips.grf");
   _boxTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/box.grf", "nitro:/themes/dsi/dark/grf/box.grf");
+  _braceTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/brace.grf", "nitro:/themes/dsi/dark/grf/brace.grf");
+  _bubbleTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/bubble.grf", "nitro:/themes/dsi/dark/grf/bubble.grf");
+  _buttonArrowTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/button_arrow.grf", "nitro:/themes/dsi/dark/grf/button_arrow.grf");
+  _cornerButtonTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/cornerbutton.grf", "nitro:/themes/dsi/dark/grf/cornerbutton.grf");
+  _dialogBoxTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/dialogbox.grf", "nitro:/themes/dsi/dark/grf/dialogbox.grf");
+ 
+  _folderTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/folder.grf", "nitro:/themes/dsi/dark/grf/folder.grf");
+  _launchDotTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/launch_dot.grf", "nitro:/themes/dsi/dark/grf/launch_dot.grf");
+  _movingArrowTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/moving_arrow.grf", "nitro:/themes/dsi/dark/grf/moving_arrow.grf");
+  _progressTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/progress.grf", "nitro:/themes/dsi/dark/grf/progress.grf");
+  _scrollWindowTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/scroll_window.grf", "nitro:/themes/dsi/dark/grf/scroll_Window.grf");
+  _smallCartTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/small_cart.grf", "nitro:/themes/dsi/dark/grf/small_cart.grf");
+  _startBorderTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/start_border.grf", "nitro:/themes/dsi/dark/grf/start_border.grf");
+  _startTextTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/start_text.grf", "nitro:/themes/dsi/dark/grf/start_text.grf");
+  _wirelessIconsTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/wirelessicons.grf", "nitro:/themes/dsi/dark/grf/wirelessicons.grf");
+  
+  _settingsIconTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/icon_settings.grf", "nitro:/themes/dsi/dark/grf/icon_settings.grf");
+
+  loadBipsImage(_bipsTexture->palette(), (const unsigned int*)_bipsTexture->texture());
+
+
+  loadBubbleImage(_bubbleTexture->palette(), (const unsigned int*)_bubbleTexture->texture(), 11, 8, 16);
+  loadScrollwindowImage(_scrollWindowTexture->palette(), (const unsigned int*)_scrollWindowTexture->texture());
+  loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int*)_wirelessIconsTexture->texture());
+  loadSettingsImage(_settingsIconTexture->palette(),  (const unsigned int*)_settingsIconTexture->texture());
+  loadBraceImage(_braceTexture->palette(),  (const unsigned int*)_braceTexture->texture());
+
+
+  loadStartImage(apply_personal_theme(start_textPals), (const unsigned int*)_startTextTexture->texture());
+  loadStartbrdImage(apply_personal_theme(start_borderPals), (const unsigned int*)_startBorderTexture->texture(), (32 / 32) * (256 / 80), 16, 80, 256);  
+
+  loadButtonarrowImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_buttonArrowTexture->texture());
+  loadMovingarrowImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_movingArrowTexture->texture());
+  loadLaunchdotImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_launchDotTexture->texture());
+  loadDialogboxImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_dialogBoxTexture->texture());
+
+
   loadBoxfullImage(_boxTexture->palette(), (const unsigned int*)_boxTexture->texture());
 
 
 
-  loadCornerButtonImage(cornerbuttonPal, cornerbuttonBitmap, (32 / 16) * (32 / 32), 32, 32, 32, 64);
-  loadSmallCartImage(small_cartPal, small_cartBitmap);
-  loadFolderImage(folderPal, folderBitmap);
-
-  loadDialogboxImage(apply_personal_theme(button_arrowPals), dialogboxBitmap);
+  loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int*)_cornerButtonTexture->texture(), (32 / 16) * (32 / 32), 32, 32, 32, 64);
+  loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int*)_smallCartTexture->texture());
+  loadFolderImage(_folderTexture->palette(), (const unsigned int*)_folderTexture->texture());
 
   loadCommonTextures();
 }
