@@ -381,7 +381,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if(pressed & KEY_B) {
       break;
     }
-    if(pressed & KEY_X) {
+    if(keysDown() & KEY_X) {
       clearText();
       printLargeCentered(false, 30, "Cheats");
       printSmallCentered(false, 100, "Saving...");

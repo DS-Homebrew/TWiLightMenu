@@ -373,7 +373,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if(pressed & KEY_B) {
       break;
     }
-    if(pressed & KEY_X) {
+    if(keysDown() & KEY_X) {
       clearText();
       titleUpdate(isDirectory, filename.c_str());
       printLargeCentered(false, 84, "Cheats");
