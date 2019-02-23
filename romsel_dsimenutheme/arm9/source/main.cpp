@@ -38,7 +38,9 @@
 #include "graphics/graphics.h"
 
 #include "common/nitrofs.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
+#include "common/systemdetails.h"
+
 #include "ndsheaderbanner.h"
 #include "nds_loader_arm9.h"
 #include "fileBrowse.h"
@@ -47,7 +49,7 @@
 #include "graphics/iconHandler.h"
 #include "graphics/fontHandler.h"
 
-#include "inifile.h"
+#include "common/inifile.h"
 
 #include "language.h"
 
@@ -736,8 +738,7 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
-
-	bool fatInited = fatInitDefault();
+	sys().initFilesystem();
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -754,7 +755,7 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 
-	if (!fatInited) {
+	if (!sys().fatInitOk()) {
 		graphicsInit();
 		fontInit();
 		InitSound();
@@ -804,10 +805,6 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-
-	nitroFSInit("/_nds/TWiLightMenu/dsimenu.srldr");
-
-	flashcardInit();
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled

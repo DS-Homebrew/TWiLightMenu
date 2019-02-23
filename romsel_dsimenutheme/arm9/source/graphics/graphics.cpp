@@ -42,7 +42,7 @@
 #include "../ndsheaderbanner.h"
 #include "../language.h"
 #include "../perGameSettings.h"
-#include "../flashcard.h"
+#include "common/flashcard.h"
 #include "iconHandler.h"
 #include "date.h"
 #define CONSOLE_SCREEN_WIDTH 32
@@ -1937,7 +1937,10 @@ void loadShoulders()
 				bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
 			}
 		}
+	}
 
+	for (int y = 19; y >= 0; y--)
+	{
 		// Draw L Shoulders
 		for (int i = 0; i < 78; i++)
 		{

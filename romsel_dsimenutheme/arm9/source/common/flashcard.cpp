@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "graphics/graphics.h"
-#include "inifile.h"
+#include "common/inifile.h"
 
 static sNDSHeader nds;
 

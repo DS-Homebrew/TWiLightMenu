@@ -29,7 +29,7 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
 

@@ -47,8 +47,8 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
-#include "flashcard.h"
+#include "common/inifile.h"
+#include "common/flashcard.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"

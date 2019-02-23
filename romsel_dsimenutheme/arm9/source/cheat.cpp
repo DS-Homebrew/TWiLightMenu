@@ -19,7 +19,7 @@
 */
 
 #include "cheat.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
 #include <algorithm>
