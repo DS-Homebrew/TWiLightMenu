@@ -20,7 +20,7 @@ class BmpTexture
         BmpTexture(const char* filePath);
         ~BmpTexture() { };
         void applyEffect(BitmapEffect effect);
-        const u16 *texture() { return (u16*)_texture.get(); }
+        const u16 *texture() const { return (u16*)_texture.get(); }
 };
 
 #endif

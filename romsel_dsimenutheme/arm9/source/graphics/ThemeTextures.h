@@ -48,7 +48,9 @@ public:
   void loadDSiPinkTheme();
   void loadDSiPurpleTheme();
   void load3DSTheme();
+
   void loadVolumeTextures();
+  void loadBatteryTextures();
 
   void reloadPalDialogBox();
   void reloadPal3dsCornerButton();
@@ -112,7 +114,16 @@ public:
   const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
-  BmpTexture *volumeTexture(int texture) { 
+  const BmpTexture *topBackgroundTexture() { return _topBackgroundTexture.get(); }
+  const BmpTexture *bottomBackgroundTexture() { return _bottomBackgroundTexture.get(); }
+  const BmpTexture *bottomBackgroundBubbleTexture() { return _bottomBackgroundBubbleTexture.get(); }
+  const BmpTexture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
+  const BmpTexture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
+  const BmpTexture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
+  const BmpTexture *leftShoulderGreyedTexture() { return _leftShoulderGreyedTexture.get(); }
+  const BmpTexture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
+
+  const BmpTexture *volumeTexture(int texture) { 
     switch(texture) {
       case 4:
         return _volume4Texture.get();
@@ -127,6 +138,37 @@ public:
         return _volume0Texture.get();
     }
   }
+
+  
+  const BmpTexture *batteryTexture(int texture, bool dsiMode, bool regularDS) { 
+    if (dsiMode) {
+      switch(texture) {
+        case 7:
+          return _batterychargeTexture.get();
+        case 4:
+          return _battery4Texture.get();
+        case 3:
+          return _battery3Texture.get();
+        case 2:
+          return _battery2Texture.get();
+        case 1:
+          return _battery1Texture.get();
+        case 0:
+        default:
+          return _battery1Texture.get();
+      }
+    } else {
+      switch (texture)
+      {
+        case 1:
+          return _batterylowTexture.get();
+        case 0:
+        default:
+          return regularDS ? _batteryfullDSTexture.get() : _batteryfullTexture.get();
+      }
+    }
+  }
+
 
   void drawBubbleBg();
   void drawBg();
@@ -190,6 +232,24 @@ NAMES 			+= scroll_window small_cart start_border start_text wirelessicons
   unique_ptr<BmpTexture> _volume2Texture;
   unique_ptr<BmpTexture> _volume3Texture;
   unique_ptr<BmpTexture> _volume4Texture;
+
+  unique_ptr<BmpTexture> _battery1Texture;
+  unique_ptr<BmpTexture> _battery2Texture;
+  unique_ptr<BmpTexture> _battery3Texture;
+  unique_ptr<BmpTexture> _battery4Texture;
+  unique_ptr<BmpTexture> _batterychargeTexture;
+  unique_ptr<BmpTexture> _batteryfullTexture;
+  unique_ptr<BmpTexture> _batteryfullDSTexture;
+  unique_ptr<BmpTexture> _batterylowTexture;
+
+  unique_ptr<BmpTexture> _topBackgroundTexture;
+  unique_ptr<BmpTexture> _bottomBackgroundTexture;
+  unique_ptr<BmpTexture> _bottomBackgroundBubbleTexture;
+  unique_ptr<BmpTexture> _dateTimeFontTexture;
+  unique_ptr<BmpTexture> _leftShoulderTexture;
+  unique_ptr<BmpTexture> _rightShoulderTexture;
+  unique_ptr<BmpTexture> _leftShoulderGreyedTexture;
+  unique_ptr<BmpTexture> _rightShoulderGreyedTexture;
 
 private:
   int bubbleTexID;

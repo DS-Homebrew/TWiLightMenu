@@ -255,7 +255,7 @@ void ThemeTextures::drawBg()
 void ThemeTextures::drawBubbleBg()
 {
   DC_FlushRange(loadedBottomBubbleImg, 0x18000);
-  dmaCopyWords(0, loadedBottomBubbleImg, BG_GFX, 0x18000);
+  dmaCopyWords(0,loadedBottomBubbleImg, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::loadBottomImage()
@@ -263,53 +263,35 @@ void ThemeTextures::loadBottomImage()
 	extern u16 bmpImageBuffer[256*192];
 	extern u16 convertToDsBmp(u16 val);
 
-	FILE* fileBottom = fopen(bottomBgPath.c_str(), "rb");
+  {
+    const u16 *src = _bottomBackgroundTexture->texture();
+    int x = 0;
+    int y = 191;
+    for (int i=0; i<256*192; i++) {
+      if (x >= 256) {
+        x = 0;
+        y--;
+      }
+      u16 val = *(src++);
+      loadedBottomImg[y*256+x] = convertToDsBmp(val);
+      x++;
+    }
+  }
 
-	if (fileBottom) {
-		// Start loading
-		fseek(fileBottom, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
-		fseek(fileBottom, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, fileBottom);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			loadedBottomImg[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-
-	fclose(fileBottom);
-
-	fileBottom = fopen(bottomBubbleBgPath.c_str(), "rb");
-
-	if (fileBottom) {
-		// Start loading
-		fseek(fileBottom, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
-		fseek(fileBottom, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, fileBottom);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			loadedBottomBubbleImg[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-
-	fclose(fileBottom);
+  {
+    const u16 *src = _bottomBackgroundBubbleTexture->texture();
+    int x = 0;
+    int y = 191;
+    for (int i=0; i<256*192; i++) {
+      if (x >= 256) {
+        x = 0;
+        y--;
+      }
+      u16 val = *(src++);
+      loadedBottomBubbleImg[y*256+x] = convertToDsBmp(val);
+      x++;
+    }
+  }
 }
 
 void ThemeTextures::loadCommonTextures()
@@ -320,6 +302,7 @@ void ThemeTextures::loadCommonTextures()
   // todo: make theme unique
 
   loadVolumeTextures();
+  loadBatteryTextures();
 }
 
 void ThemeTextures::setStringPaths(const std::string theme)
@@ -375,6 +358,17 @@ void ThemeTextures::loadDSiDarkTheme()
 
   setStringPaths("dark");
 
+
+  _topBackgroundTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/top.bmp");
+  _bottomBackgroundTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/bottom.bmp");
+  _bottomBackgroundBubbleTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/bottom_bubble.bmp");
+  _dateTimeFontTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/date_time_font.bmp");
+
+  _leftShoulderTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/Lshoulder.bmp");
+  _rightShoulderTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/Rshoulder.bmp");
+  _leftShoulderGreyedTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/Lshoulder_greyed.bmp");
+  _rightShoulderGreyedTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/ui/Rshoulder_greyed.bmp");
+
   loadBottomImage();
 
   _bipsTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/bips.grf", "nitro:/themes/dsi/dark/grf/bips.grf");
@@ -394,11 +388,11 @@ void ThemeTextures::loadDSiDarkTheme()
   _startBorderTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/start_border.grf", "nitro:/themes/dsi/dark/grf/start_border.grf");
   _startTextTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/start_text.grf", "nitro:/themes/dsi/dark/grf/start_text.grf");
   _wirelessIconsTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/wirelessicons.grf", "nitro:/themes/dsi/dark/grf/wirelessicons.grf");
-  
   _settingsIconTexture = std::make_unique<GritTexture>("nitro:/themes/dsi/dark/grf/icon_settings.grf", "nitro:/themes/dsi/dark/grf/icon_settings.grf");
 
-  loadBipsImage(_bipsTexture->palette(), (const unsigned int*)_bipsTexture->texture());
 
+
+  loadBipsImage(_bipsTexture->palette(), (const unsigned int*)_bipsTexture->texture());
 
   loadBubbleImage(_bubbleTexture->palette(), (const unsigned int*)_bubbleTexture->texture(), 11, 8, 16);
   loadScrollwindowImage(_scrollWindowTexture->palette(), (const unsigned int*)_scrollWindowTexture->texture());
@@ -641,4 +635,18 @@ void ThemeTextures::loadVolumeTextures()
   _volume2Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume2.bmp");
   _volume3Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume3.bmp");
   _volume4Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/volume/volume4.bmp");
+}
+
+
+void ThemeTextures::loadBatteryTextures()
+{
+  _battery1Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/battery1.bmp");
+  _battery2Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/battery2.bmp");
+  _battery3Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/battery3.bmp");
+  _battery4Texture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/battery4.bmp");
+  _batterychargeTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/batterycharge.bmp");
+  _batteryfullTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/batteryfull.bmp");
+  _batteryfullDSTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/batteryfullDS.bmp");
+  _batterylowTexture = std::make_unique<BmpTexture>("nitro:/themes/dsi/dark/battery/batterylow.bmp");
+
 }

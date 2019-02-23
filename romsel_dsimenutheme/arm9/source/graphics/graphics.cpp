@@ -643,28 +643,6 @@ void vBlankHandler()
 			}
 		}
 
-		//if (renderingTop)
-		//{
-			/*glBoxFilledGradient(0, -64, 256, 112,
-						  RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0), RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue)
-						);
-			glBoxFilledGradient(0, 112, 256, 192,
-						  RGB15(0,0,0), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(colorRvalue,colorGvalue,colorBvalue), RGB15(0,0,0)
-						);
-			drawBG(mainBgImage);
-			glSprite(-2, 172, GL_FLIP_NONE, &shoulderImage[0 & 31]);
-			glSprite(178, 172, GL_FLIP_NONE, &shoulderImage[1 & 31]);
-			if (whiteScreen) glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
-			updateText(renderingTop);
-			glColor(RGB15(31, 31, 31));*/
-		//}
-		//else
-		//{
-
-
-		//	drawBG(subBgImage);
-		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
-
 		int bg_R = bottomScreenBrightness/8;
 		int bg_G = (bottomScreenBrightness/8)-(3*blfLevel);
 		if (bg_G < 0) bg_G = 0;
@@ -1324,33 +1302,23 @@ void loadBatteryImage(void) {
 		}
 	}
 
-	FILE* file = fopen(batteryImagePath, "rb");
-
-	if (file) {
 		// Start loading
-		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x200, file);
-		u16* src = bmpImageBuffer;
-		int x = 235;
-		int y = 5+10;
-		for (int i=0; i<18*11; i++) {
-			if (x >= 235+18) {
-				x = 235;
-				y--;
-			}
-			u16 val = *(src++);
-			if (val != 0x7C1F) {	// Do not render magneta pixel
-				bgSubBuffer[y*256+x] = convertToDsBmp(val);
-			}
-			x++;
+	beginBgSubModify();
+	const u16* src = tex().batteryTexture(loadedBatteryImage, isDSiMode(), isRegularDS)->texture();
+	int x = 235;
+	int y = 5+10;
+	for (int i=0; i<18*11; i++) {
+		if (x >= 235+18) {
+			x = 235;
+			y--;
 		}
-		commitBgSubModify();
+		u16 val = *(src++);
+		if (val != 0x7C1F) {	// Do not render magneta pixel
+			bgSubBuffer[y*256+x] = convertToDsBmp(val);
+		}
+		x++;
 	}
-
-	fclose(file);
+	commitBgSubModify();
 }
 
 void loadPhotoList()
@@ -1372,11 +1340,11 @@ void loadPhotoList()
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL)
 		{
-			// Reallocation here, but prevents our vector from being filled with
 
 			photoDir = ent->d_name;
 			if (photoDir == ".." || photoDir == "..." || photoDir == "." || photoDir.substr(0,2) == "._" || photoDir.substr(photoDir.find_last_of(".") + 1) != "bmp") continue;
-
+			
+			// Reallocation here, but prevents our vector from being filled with garbage
 			photoList.emplace_back(dirPath+photoDir);
 		}
 		closedir(dir);
@@ -1445,16 +1413,10 @@ void loadPhotoPart() {
 	fclose(file);
 }
 
-void loadBMP(const char* filename) {
-	FILE* file = fopen(filename, "rb");
-	if (file) {
-		// Start loading
+void drawTopBg() {
+	
 		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
+		const u16 *src = tex().topBackgroundTexture()->texture();
 		int x = 0;
 		int y = 191;
 		for (int i=0; i<256*192; i++) {
@@ -1469,8 +1431,7 @@ void loadBMP(const char* filename) {
 			x++;
 		}
 		commitBgSubModify();
-	}
-	fclose(file);
+	
 }
 
 // Load .bmp file without overwriting shoulder button images or username
@@ -1505,66 +1466,40 @@ void loadBMPPart(const char* filename) {
 }
 
 void loadShoulders() {
-	FILE* file;
-	// Draw L shoulder
-	if (showLshoulder)
-	{ 
-		file = fopen(tex().shoulderLPath.c_str(), "rb");
-	} else {
-		file = fopen(tex().shoulderLGreyPath.c_str(), "rb");
-	}
-
-	if (file) {
-		// Start loading
+	{
 		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
+
 		for (int y=19; y>=0; y--) {
-			u16 buffer[78];
-			fread(buffer, 2, 0x4E, file);
-			u16* src = buffer;
-			for (int i=0; i<78; i++) {
-				u16 val = *(src++);
-				if (val != 0xFC1F) {	// Do not render magneta pixel
-					bgSubBuffer[(y+172)*256+i] = convertToDsBmp(val);
+				const u16 *src = showLshoulder ? tex().leftShoulderTexture()->texture() 
+					: tex().leftShoulderGreyedTexture()->texture();
+				for (int i=0; i<78; i++) {
+					u16 val = *(src++);
+					if (val != 0xFC1F) {	// Do not render magneta pixel
+						bgSubBuffer[(y+172)*256+i] = convertToDsBmp(val);
+					}
 				}
-			}
 		}
 		commitBgSubModify();
 	}
-
-	fclose(file);
-
 	// Draw R shoulder
 
-	if (showRshoulder)
-	{ 
-		file = fopen(tex().shoulderRPath.c_str(), "rb");
-	} else {
-		file = fopen(tex().shoulderRGreyPath.c_str(), "rb");
-	}
-	
-	if (file) {
+	{
 		beginBgSubModify();
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
+
 		for (int y=19; y>=0; y--) {
-			u16 buffer[78];
-			fread(buffer, 2, 0x4E, file);
-			u16* src = buffer;
-			for (int i=0; i<78; i++) {
-				u16 val = *(src++);
-				if (val != 0xFC1F) {	// Do not render magneta pixel
-					bgSubBuffer[(y+172)*256+(i+178)] = convertToDsBmp(val);
+				const u16 *src = showRshoulder ? tex().rightShoulderTexture()->texture() 
+					: tex().rightShoulderGreyedTexture()->texture();
+				for (int y=19; y>=0; y--) {
+					for (int i=0; i<78; i++) {
+						u16 val = *(src++);
+						if (val != 0xFC1F) {	// Do not render magneta pixel
+							bgSubBuffer[(y+172)*256+(i+178)] = convertToDsBmp(val);
+						}
+					}
 				}
-			}
 		}
 		commitBgSubModify();
 	}
-	fclose(file);
 }
 
 /**
@@ -1651,7 +1586,7 @@ inline u16 alphablend(u16 fg, u16 bg, u8 alpha)
 }
 
 void topBgLoad() {
-	loadBMP(tex().topBgPath.c_str());
+	drawTopBg();
 
 	// Load username
 	char fontPath[64];
@@ -1715,51 +1650,22 @@ void topBgLoad() {
 }
 
 void loadDateFont() {
-	char fontPath[64];
-	switch (theme) {
-		case 0:
-		default:
-			if (subtheme == 7) sprintf(fontPath, "nitro:/graphics/top_font/purple_date_time_font.bmp");
-			else if (subtheme == 6) sprintf(fontPath, "nitro:/graphics/top_font/pink_date_time_font.bmp");
-			else if (subtheme == 5) sprintf(fontPath, "nitro:/graphics/top_font/yellow_date_time_font.bmp");
-			else if (subtheme == 4) sprintf(fontPath, "nitro:/graphics/top_font/green_date_time_font.bmp");
-			else if (subtheme == 3) sprintf(fontPath, "nitro:/graphics/top_font/blue_date_time_font.bmp");
-			else if (subtheme == 2) sprintf(fontPath, "nitro:/graphics/top_font/red_date_time_font.bmp");
-			else if (subtheme == 1) sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-			else sprintf(fontPath, "nitro:/graphics/top_font/dark_date_time_font.bmp");
-			break;
-		case 1:
-			sprintf(fontPath, "nitro:/graphics/top_font/date_time_font.bmp");
-			break;
-	}
-
-	FILE* file = fopen(fontPath, "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x1000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 15;
-		for (int i=0; i<128*16; i++) {
-			if (x >= 128) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			if (val != 0x7C1F) {	// Do not render magneta pixel
-				dateFontImage[y*128+x] = convertToDsBmp(val);
-			} else {
-				dateFontImage[y*128+x] = 0x7C1F;
-			}
-			x++;
+	const u16 *src = tex().dateTimeFontTexture()->texture();
+	int x = 0;
+	int y = 15;
+	for (int i=0; i<128*16; i++) {
+		if (x >= 128) {
+			x = 0;
+			y--;
 		}
+		u16 val = *(src++);
+		if (val != 0x7C1F) {	// Do not render magneta pixel
+			dateFontImage[y*128+x] = convertToDsBmp(val);
+		} else {
+			dateFontImage[y*128+x] = 0x7C1F;
+		}
+		x++;
 	}
-
-	fclose(file);
 }
 
 static std::string loadedDate;
@@ -2073,7 +1979,6 @@ void graphicsInit()
 	
 	swiWaitForVBlank();
 
-	loadDateFont();
 
 	if (theme == 1) {
 		tex().load3DSTheme();
@@ -2115,6 +2020,7 @@ void graphicsInit()
 				break;
 		}
 		topBgLoad();
+		loadDateFont();
 		loadDate();
 		loadTime();
 		loadClockColon();
