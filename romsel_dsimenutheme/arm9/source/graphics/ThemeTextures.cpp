@@ -348,11 +348,6 @@ void ThemeTextures::load3DSTheme()
 
   loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
 
-  // loadStartImage(apply_personal_theme(start_textPals), start_textBitmap);
-
-  //loadBipsImage(bipsPal, bipsBitmap);
-  //loadButtonarrowImage(apply_personal_theme(button_arrowPals), button_arrowBitmap);
-  //loadLaunchdotImage(apply_personal_theme(button_arrowPals), launch_dotBitmap);
 
   loadDialogboxImage(_3ds_dialogboxPal, _3ds_dialogboxBitmap);
 
