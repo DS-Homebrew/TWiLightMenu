@@ -313,7 +313,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
 	do {
 		scanKeys();
-		pressed = keysDownRepeat();
+		pressed = keysDown();
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
@@ -381,7 +381,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if(pressed & KEY_B) {
       break;
     }
-    if(keysDown() & KEY_X) {
+    if(pressed & KEY_X) {
       clearText();
       printLargeCentered(false, 30, "Cheats");
       printSmallCentered(false, 100, "Saving...");
