@@ -44,6 +44,8 @@
 #include "../perGameSettings.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
+#include "common/systemdetails.h"
+
 #include "iconHandler.h"
 #include "date.h"
 #define CONSOLE_SCREEN_WIDTH 32
@@ -59,8 +61,6 @@ extern bool controlBottomBright;
 extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
-
-extern bool isRegularDS;
 
 extern bool music;
 static int musicTime = 0;
@@ -1092,7 +1092,7 @@ void vBlankHandler()
 				}
 			}
 			glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-			if (!isRegularDS)
+			if (!sys().isRegularDS())
 				glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 		}
 
@@ -1215,7 +1215,7 @@ void vBlankHandler()
 						selIconYpos -= 14;
 					}
 				}
-				if (!isRegularDS)
+				if (!sys().isRegularDS())
 				{
 					glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE, &tex().cornerButtonImage()[1]); // System Menu
 					selIconYpos += 28;
@@ -1565,105 +1565,10 @@ void loadVolumeImage(void)
 
 static int loadedBatteryImage = -1;
 
-static const char *batteryChargeImagePath;
-static const char *battery4ImagePath;
-static const char *battery3ImagePath;
-static const char *battery2ImagePath;
-static const char *battery1ImagePath;
-static const char *batteryFullImagePath;
-static const char *batteryLowImagePath;
-
-void setBatteryImagePaths(void)
-{
-	switch (subtheme)
-	{
-	case 0:
-		batteryChargeImagePath = (theme == 1) ? "nitro:/graphics/batterycharge.bmp" : "nitro:/graphics/dark_batterycharge.bmp";
-		battery4ImagePath = (theme == 1) ? "nitro:/graphics/battery4.bmp" : "nitro:/graphics/dark_battery4.bmp";
-		battery3ImagePath = (theme == 1) ? "nitro:/graphics/battery3.bmp" : "nitro:/graphics/dark_battery3.bmp";
-		battery2ImagePath = (theme == 1) ? "nitro:/graphics/battery2.bmp" : "nitro:/graphics/dark_battery2.bmp";
-		battery1ImagePath = (theme == 1) ? "nitro:/graphics/battery1.bmp" : "nitro:/graphics/dark_battery1.bmp";
-		if (isRegularDS)
-		{
-			batteryFullImagePath = (theme == 1) ? "nitro:/graphics/batteryfullDS.bmp" : "nitro:/graphics/dark_batteryfullDS.bmp";
-		}
-		else
-		{
-			batteryFullImagePath = (theme == 1) ? "nitro:/graphics/batteryfull.bmp" : "nitro:/graphics/dark_batteryfull.bmp";
-		}
-		batteryLowImagePath = (theme == 1) ? "nitro:/graphics/batterylow.bmp" : "nitro:/graphics/dark_batterylow.bmp";
-		break;
-	case 1:
-	default:
-		batteryChargeImagePath = "nitro:/graphics/batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/batteryfullDS.bmp" : "nitro:/graphics/batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/batterylow.bmp";
-		break;
-	case 2:
-		batteryChargeImagePath = "nitro:/graphics/red_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/red_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/red_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/red_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/red_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/red_batteryfullDS.bmp" : "nitro:/graphics/red_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/red_batterylow.bmp";
-		break;
-	case 3:
-		batteryChargeImagePath = "nitro:/graphics/blue_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/blue_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/blue_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/blue_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/blue_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/blue_batteryfullDS.bmp" : "nitro:/graphics/blue_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/blue_batterylow.bmp";
-		break;
-	case 4:
-		batteryChargeImagePath = "nitro:/graphics/green_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/green_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/green_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/green_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/green_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/green_batteryfullDS.bmp" : "nitro:/graphics/green_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/green_batterylow.bmp";
-		break;
-	case 5:
-		batteryChargeImagePath = "nitro:/graphics/yellow_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/yellow_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/yellow_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/yellow_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/yellow_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/yellow_batteryfullDS.bmp" : "nitro:/graphics/yellow_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/yellow_batterylow.bmp";
-		break;
-	case 6:
-		batteryChargeImagePath = "nitro:/graphics/pink_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/pink_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/pink_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/pink_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/pink_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/pink_batteryfullDS.bmp" : "nitro:/graphics/pink_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/pink_batterylow.bmp";
-		break;
-	case 7:
-		batteryChargeImagePath = "nitro:/graphics/purple_batterycharge.bmp";
-		battery4ImagePath = "nitro:/graphics/purple_battery4.bmp";
-		battery3ImagePath = "nitro:/graphics/purple_battery3.bmp";
-		battery2ImagePath = "nitro:/graphics/purple_battery2.bmp";
-		battery1ImagePath = "nitro:/graphics/purple_battery1.bmp";
-		batteryFullImagePath = isRegularDS ? "nitro:/graphics/purple_batteryfullDS.bmp" : "nitro:/graphics/purple_batteryfull.bmp";
-		batteryLowImagePath = "nitro:/graphics/purple_batterylow.bmp";
-		break;
-	}
-}
 
 void loadBatteryImage(void)
 {
 	u8 batteryLevel = *(u8 *)(0x023FF001);
-	const char *batteryImagePath;
 
 	if (isDSiMode())
 	{
@@ -1671,35 +1576,30 @@ void loadBatteryImage(void)
 		{
 			if (loadedBatteryImage == 7)
 				return;
-			batteryImagePath = batteryChargeImagePath;
 			loadedBatteryImage = 7;
 		}
 		else if (batteryLevel == 0xF)
 		{
 			if (loadedBatteryImage == 4)
 				return;
-			batteryImagePath = battery4ImagePath;
 			loadedBatteryImage = 4;
 		}
 		else if (batteryLevel == 0xB)
 		{
 			if (loadedBatteryImage == 3)
 				return;
-			batteryImagePath = battery3ImagePath;
 			loadedBatteryImage = 3;
 		}
 		else if (batteryLevel == 0x7)
 		{
 			if (loadedBatteryImage == 2)
 				return;
-			batteryImagePath = battery2ImagePath;
 			loadedBatteryImage = 2;
 		}
 		else if (batteryLevel == 0x3 || batteryLevel == 0x1)
 		{
 			if (loadedBatteryImage == 1)
 				return;
-			batteryImagePath = battery1ImagePath;
 			loadedBatteryImage = 1;
 		}
 		else
@@ -1713,21 +1613,19 @@ void loadBatteryImage(void)
 		{
 			if (loadedBatteryImage == 1)
 				return;
-			batteryImagePath = batteryLowImagePath;
 			loadedBatteryImage = 1;
 		}
 		else
 		{
 			if (loadedBatteryImage == 0)
 				return;
-			batteryImagePath = batteryFullImagePath;
 			loadedBatteryImage = 0;
 		}
 	}
 
 	// Start loading
 	beginBgSubModify();
-	const u16 *src = tex().batteryTexture(loadedBatteryImage, isDSiMode(), isRegularDS)->texture();
+	const u16 *src = tex().batteryTexture(loadedBatteryImage, isDSiMode(), sys().isRegularDS())->texture();
 	int x = 235;
 	int y = 5 + 10;
 	for (int i = 0; i < 18 * 11; i++)
@@ -2333,7 +2231,7 @@ void loadRotatingCubes()
 		{
 			doRead = true;
 		}
-		else if (isRegularDS && colorMode == 0)
+		else if (sys().isRegularDS() && colorMode == 0)
 		{
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
 			*(vu32 *)(0x08240000) = 1;
@@ -2546,7 +2444,6 @@ void graphicsInit()
 
 	setVolumeImagePaths();
 	loadVolumeImage();
-	setBatteryImagePaths();
 	loadBatteryImage();
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

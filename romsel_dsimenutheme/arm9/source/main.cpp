@@ -86,13 +86,7 @@ std::string homebrewArg;
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
-bool arm7SCFGLocked = false;
 int consoleModel = 0;
-/*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
-bool isRegularDS = true;
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -667,6 +661,8 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 	sys().initFilesystem();
+	ms().loadSettings();
+	LoadSettings();
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -741,15 +737,6 @@ int main(int argc, char **argv) {
 	langInit();
 
 	std::string filename;
-
-	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
-	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
-	fifoSendValue32(FIFO_USER_07, 0);
-
-	ms().loadSettings();
-	LoadSettings();
 
 	if (access("sd:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[0] = true;
@@ -1238,7 +1225,7 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt( "NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
-						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS) {
+						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()) {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
 							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
@@ -1389,7 +1376,7 @@ int main(int argc, char **argv) {
 				} else if (nes) {
 					argarray.at(0) = (char*)(ms().secondaryDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 				} else {
-					argarray.at(0) = (char*)(ms().secondaryDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
+					argarray.at(0) = (char*)(ms().secondaryDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!sys().arm7SCFGLocked() ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
 				}
 
 				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to emulator as argument
