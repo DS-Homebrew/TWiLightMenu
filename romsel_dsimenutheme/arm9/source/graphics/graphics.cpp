@@ -1919,41 +1919,37 @@ void loadBMPPart(const char *filename)
 
 void loadShoulders()
 {
-	
+
 	beginBgSubModify();
 	const u16 *rightSrc = showRshoulder ? tex().rightShoulderTexture()->texture()
-									   : tex().rightShoulderGreyedTexture()->texture();
+										: tex().rightShoulderGreyedTexture()->texture();
 
 	const u16 *leftSrc = showLshoulder ? tex().leftShoulderTexture()->texture()
 									   : tex().leftShoulderGreyedTexture()->texture();
-
 	for (int y = 19; y >= 0; y--)
 	{
-		for (int y = 19; y >= 0; y--)
+		// Draw R Shoulders
+		for (int i = 0; i < 78; i++)
 		{
-			// Draw R Shoulders
-			for (int i = 0; i < 78; i++)
-			{
-				u16 val = *(rightSrc++);
-				if (val != 0xFC1F)
-				{ // Do not render magneta pixel
-					bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
-				}
-			}
-
-			// Draw L Shoulders
-			for (int i = 0; i < 78; i++)
-			{
-				u16 val = *(leftSrc++);
-				if (val != 0xFC1F)
-				{ // Do not render magneta pixel
-					bgSubBuffer[(y + 172) * 256 + i] = convertToDsBmp(val);
-				}
+			u16 val = *(rightSrc++);
+			if (val != 0xFC1F)
+			{ // Do not render magneta pixel
+				bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
 			}
 		}
 
-		commitBgSubModify();
+		// Draw L Shoulders
+		for (int i = 0; i < 78; i++)
+		{
+			u16 val = *(leftSrc++);
+			if (val != 0xFC1F)
+			{ // Do not render magneta pixel
+				bgSubBuffer[(y + 172) * 256 + i] = convertToDsBmp(val);
+			}
+		}
 	}
+
+	commitBgSubModify();
 }
 
 /**
