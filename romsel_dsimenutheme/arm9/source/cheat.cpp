@@ -313,7 +313,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
 	do {
 		scanKeys();
-		pressed = keysDownRepeat();
+		pressed = keysDown();
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
