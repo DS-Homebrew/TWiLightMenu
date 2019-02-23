@@ -30,6 +30,7 @@
 #include "../include/startborderpal.h"
 
 #include "graphics/ThemeTextures.h"
+#include "tool/colortool.h"
 
 #include "queueControl.h"
 #include "uvcoord_top_font.h"
@@ -351,23 +352,6 @@ u16 convertToDsBmp(u16 val) {
 	} else {
 		return ((val>>10)&31) | (val&(31-3*blfLevel)<<5) | (val&(31-6*blfLevel))<<10 | BIT(15);
 	}
-}
-
-u16 convertVramColorToGrayscale(u16 val) {
-	u8 b,g,r,max,min;
-	b = ((val)>>10)&31;
-	g = ((val)>>5)&31;
-	r = (val)&31;
-	// Value decomposition of hsv
-	max = (b > g) ? b : g;
-	max = (max > r) ? max : r;
-
-	// Desaturate
-	min = (b < g) ? b : g;
-	min = (min < r) ? min : r;
-	max = (max + min) / 2;
-
-	return 32768|(max<<10)|(max<<5)|(max);
 }
 
 void bottomBgLoad(bool drawBubble, bool init = false) {

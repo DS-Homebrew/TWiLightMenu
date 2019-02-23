@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include "common/gl2d.h"
-
+#include "tool/colortool.h"
 // Graphic files
 #include "icon_unk.h"
 #include "icon_gbamode.h"
@@ -211,7 +211,6 @@ void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, b
 	u16* newPalette = (u16*)_palette;
 
 	extern int colorMode;
-	extern u16 convertVramColorToGrayscale(u16 val);
 
 	if (colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {

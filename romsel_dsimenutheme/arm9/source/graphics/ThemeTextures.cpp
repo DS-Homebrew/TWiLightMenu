@@ -2,6 +2,8 @@
 
 #include <nds.h>
 
+#include "paletteEffects.h"
+#include "tool/colortool.h"
 // Graphic files
 #include "dialogbox.h"
 #include "_3ds_dialogbox.h"
@@ -62,7 +64,7 @@
 #include "_3ds_cornerbutton.h"
 #include "wirelessicons.h"
 
-#include "stringtool.h"
+#include "tool/stringtool.h"
 
 static u16 loadedBottomImg[256*192];
 static u16 loadedBottomBubbleImg[256*192];
@@ -202,7 +204,6 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
   u16* newPalette = (u16*)palette;
 
   extern int colorMode;
-  extern u16 convertVramColorToGrayscale(u16 val);
 
   if (colorMode == 1) {
 	// Convert palette to grayscale
@@ -401,14 +402,21 @@ void ThemeTextures::loadDSiDarkTheme()
   loadSettingsImage(_settingsIconTexture->palette(),  (const unsigned int*)_settingsIconTexture->texture());
   loadBraceImage(_braceTexture->palette(),  (const unsigned int*)_braceTexture->texture());
 
+  _startTextTexture->applyEffect(effectDSiStartTextPalettes);
+  _startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
 
-  loadStartImage(apply_personal_theme(start_textPals), (const unsigned int*)_startTextTexture->texture());
-  loadStartbrdImage(apply_personal_theme(start_borderPals), (const unsigned int*)_startBorderTexture->texture(), (32 / 32) * (256 / 80), 16, 80, 256);  
+  _buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+   _movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+  _launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
+  _dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
 
-  loadButtonarrowImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_buttonArrowTexture->texture());
-  loadMovingarrowImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_movingArrowTexture->texture());
-  loadLaunchdotImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_launchDotTexture->texture());
-  loadDialogboxImage(apply_personal_theme(button_arrowPals), (const unsigned int*)_dialogBoxTexture->texture());
+  loadStartImage(_startTextTexture->palette(), (const unsigned int*)_startTextTexture->texture());
+  loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int*)_startBorderTexture->texture(), (32 / 32) * (256 / 80), 16, 80, 256);  
+
+  loadButtonarrowImage(_buttonArrowTexture->palette(), (const unsigned int*)_buttonArrowTexture->texture());
+  loadMovingarrowImage(_movingArrowTexture->palette(), (const unsigned int*)_movingArrowTexture->texture());
+  loadLaunchdotImage(_launchDotTexture->palette(), (const unsigned int*)_launchDotTexture->texture());
+  loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int*)_dialogBoxTexture->texture());
 
 
   loadBoxfullImage(_boxTexture->palette(), (const unsigned int*)_boxTexture->texture());

@@ -36,9 +36,7 @@ class GritTexture
         void applyEffect(PaletteEffect effect);
         const u16 *palette() { return (u16*)_palette.get(); }
         const u8 *texture() { return (u8*)_texture.get(); }
-        static void effectDsiButtonArrowPals(u16* palette, u8 paletteLength);
 };
-
 
 
 #endif
