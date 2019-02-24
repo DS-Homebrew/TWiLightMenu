@@ -78,7 +78,7 @@ int dropSpeedChange[5] = {0};
 int titleboxYposDropDown[5] = {-85-80};
 int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
-extern bool showbubble;
+extern int currentBg;
 extern bool showSTARTborder;
 extern bool isScrolling;
 extern bool needToPlayStopSound;
@@ -154,7 +154,7 @@ float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
-int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
+int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.
 
 int vblankRefreshCounter = 0;
 
@@ -370,22 +370,26 @@ u16 convertVramColorToGrayscale(u16 val) {
 	return 32768|(max<<10)|(max<<5)|(max);
 }
 
-void bottomBgLoad(bool drawBubble, bool init = false) {
-	if (init || (!drawBubble && bottomBgState == 2)) {
+void bottomBgLoad(int drawBubble, bool init = false) {
+	if (init || (drawBubble == 0 && bottomBgState == 2) || (drawBubble == 0 && bottomBgState == 3)) {
 		tex().drawBg();
 		// Set that we've not drawn the bubble.
 		bottomBgState = 1;
-	} else if (drawBubble && bottomBgState == 1){
+	} else if ((drawBubble == 1 && bottomBgState == 1) || (drawBubble == 1 && bottomBgState == 3)){
 		tex().drawBubbleBg();
 		// Set that we've drawn the bubble.
 		bottomBgState = 2;
+	} else if ((drawBubble == 2 && bottomBgState == 1) || (drawBubble == 2 && bottomBgState == 2)){
+		tex().drawMovingBg();
+		// Set that we've drawn the bubble.
+		bottomBgState = 3;
 	}
 }
 
 
 void bottomBgRefresh()
 {
-	bottomBgLoad(showbubble, false);
+	bottomBgLoad(currentBg, false);
 }
 // No longer used.
 // void drawBG(glImage *images)
@@ -570,7 +574,7 @@ void vBlankHandler()
 
 		if (titleboxXmoveleft) {
 			if (movetimer == 8) {
-			//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+			//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
 				titlewindowXpos[secondaryDevice] -= 1;
@@ -585,7 +589,7 @@ void vBlankHandler()
 			}
 		} else if (titleboxXmoveright) {
 			if (movetimer == 8) {
-			//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+			//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
 				titlewindowXpos[secondaryDevice] += 1;
@@ -677,7 +681,7 @@ void vBlankHandler()
 
 
 		//	drawBG(subBgImage);
-		//	if (!showbubble && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
+		//	if (!currentBg && theme==0) glSprite(0, 29, GL_FLIP_NONE, ndsimenutextImage);
 
 		int bg_R = bottomScreenBrightness/8;
 		int bg_G = (bottomScreenBrightness/8)-(3*blfLevel);
@@ -900,7 +904,7 @@ void vBlankHandler()
 					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 				} else if (!isScrolling) {
-					if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
+					if (currentBg && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
 						mmEffectEx(&snd_stop);
 						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
@@ -912,7 +916,7 @@ void vBlankHandler()
 			}
 
 			// Refresh the background layer.
-			if (showbubble) drawBubble(tex().bubbleImage());
+			if (currentBg) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
 			glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));

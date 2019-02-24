@@ -108,8 +108,9 @@ public:
   const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
-  void drawBubbleBg();
   void drawBg();
+  void drawBubbleBg();
+  void drawMovingBg();
 
   std::string shoulderLPath;
   std::string shoulderLGreyPath;
@@ -118,6 +119,7 @@ public:
   std::string topBgPath;
   std::string bottomBgPath;
   std::string bottomBubbleBgPath;
+  std::string bottomMovingBgPath;
 
 private:
   unique_ptr<glImage[]> _progressImage;

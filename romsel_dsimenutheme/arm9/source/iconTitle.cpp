@@ -54,7 +54,7 @@ extern bool useGbarunner;
 
 extern bool animateDsiIcons;
 
-extern bool showbubble;
+extern bool currentBg;
 
 extern int movingApp;
 
@@ -150,7 +150,7 @@ void execDeferredIconUpdates() {
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)
 {
 	// Hack to prevent glitched icons on startup.
-	if (showbubble) {
+	if (currentBg == 0) {
 		deferLoadIcon(tilesSrc, palSrc, num, twl);
 	} else {
  		convertIconTilesToRaw(tilesSrc, tilesModified, twl);

@@ -272,7 +272,7 @@ using namespace std;
 
 bool dropDown = false;
 bool redoDropDown = false;
-bool showbubble = false;
+bool currentBg = 0;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
 bool scrollWindowTouched = false;
@@ -771,7 +771,7 @@ int main(int argc, char **argv) {
 		} else {
 			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
-		showbubble = true;
+		currentBg = 1;
 		printLargeCentered(false, 32, "fatInitDefault failed!");
 
 		// Control the DSi Menu, but can't launch anything.

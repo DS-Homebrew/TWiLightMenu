@@ -92,7 +92,7 @@ extern const char *unlaunchAutoLoadID;
 
 extern bool dropDown;
 extern bool redoDropDown;
-extern bool showbubble;
+extern bool currentBg;
 extern bool showSTARTborder;
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
@@ -667,7 +667,7 @@ void switchDevice(void) {
 		rocketVideo_playVideo = true;
 		redoDropDown = true;
 		shouldersRendered = false;
-		showbubble = false;
+		currentBg = 0;
 		showSTARTborder = false;
 		stopSoundPlayed = false;
 		clearText();
@@ -1231,7 +1231,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					updateBoxArt(dirContents, scrn);
 				}
 				if (cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true, displayBoxArt = showBoxArt;
+					currentBg = 1, displayBoxArt = showBoxArt;
 					titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
@@ -1239,7 +1239,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						displayBoxArt = false;
 					}
 					clearText(false);
-					showbubble = false;
+					currentBg = 0;
 					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
 				}
 				loadVolumeImage();
@@ -1305,7 +1305,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			&& cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size()))
 			{
 				showSTARTborder = false;
-				showbubble = false;
+				currentBg = 2;
 				clearText();
 				mkdir (sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
 				std::string gameBeingMoved = dirContents[scrn].at((pagenum[secondaryDevice]*40)+(cursorPosition[secondaryDevice])).name;
@@ -1443,7 +1443,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				if ((pagenum[secondaryDevice] != orgPage) || (cursorPosition[secondaryDevice] != orgCursorPosition))
 				{
-				showbubble = true;
+				currentBg = 1;
 				writeBannerText(0, "Please wait...", "", "");
 
 				CIniFile gameOrderIni(gameOrderIniPath);
@@ -1581,10 +1581,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 					clearText();
 					if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-						showbubble = true;
+						currentBg = 1;
 						titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 					} else {
-						showbubble = false;
+						currentBg = 0;
 					}
 					prevPos = cursorPosition[secondaryDevice];
 				}
@@ -1784,10 +1784,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					if(prevPos != cursorPosition[secondaryDevice]) {
 						clearText();
 						if(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-							showbubble = true;
+							currentBg = 1;
 							titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
 						} else {
-							showbubble = false;
+							currentBg = 0;
 						}
 					}
 					prevTouch2 = prevTouch1;
@@ -1811,8 +1811,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				cursorPosition[secondaryDevice] = 39;
 
 			// Startup...
-			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			if (((pressed & KEY_A) && currentBg && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && currentBg && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| gameTapped)
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
@@ -1831,7 +1831,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					boxArtLoaded = false;
 					redoDropDown = true;
 					shouldersRendered = false;
-					showbubble = false;
+					currentBg = 0;
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
@@ -1948,7 +1948,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					applaunchprep = true;
 
 					if (theme == 0) {
-						showbubble = false;
+						currentBg = 0;
 						showSTARTborder = false;
 						clearText(false);	// Clear title
 
@@ -2048,7 +2048,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					rocketVideo_playVideo = true;
 					if (showLshoulder) redoDropDown = true;
 					shouldersRendered = false;
-					showbubble = false;
+					currentBg = 0;
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
@@ -2081,7 +2081,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					rocketVideo_playVideo = true;
 					if (showRshoulder) redoDropDown = true;
 					shouldersRendered = false;
-					showbubble = false;
+					currentBg = 0;
 					showSTARTborder = false;
 					stopSoundPlayed = false;
 					clearText();
@@ -2107,7 +2107,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				rocketVideo_playVideo = true;
 				redoDropDown = true;
 				shouldersRendered = false;
-				showbubble = false;
+				currentBg = 0;
 				showSTARTborder = false;
 				stopSoundPlayed = false;
 				clearText();
@@ -2119,7 +2119,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && showbubble && showSTARTborder)
+			if ((pressed & KEY_X) && !startMenu && currentBg && showSTARTborder)
 			{
 				CIniFile hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
@@ -2198,7 +2198,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						boxArtLoaded = false;
 						rocketVideo_playVideo = true;
 						shouldersRendered = false;
-						showbubble = false;
+						currentBg = 0;
 						showSTARTborder = false;
 						stopSoundPlayed = false;
 						clearText();
@@ -2234,7 +2234,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						if (showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
 						shouldersRendered = false;
-						showbubble = false;
+						currentBg = 0;
 						showSTARTborder = false;
 						stopSoundPlayed = false;
 						clearText();
@@ -2252,7 +2252,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if ((pressed & KEY_Y) && !startMenu
 			&& (isDirectory[cursorPosition[secondaryDevice]] == false) && (bnrRomType[cursorPosition[secondaryDevice]] == 0)
-			&& !titleboxXmoveleft && !titleboxXmoveright && showbubble && showSTARTborder)
+			&& !titleboxXmoveleft && !titleboxXmoveright && currentBg && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
 			}
