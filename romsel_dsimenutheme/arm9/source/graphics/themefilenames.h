@@ -90,6 +90,7 @@
 #define TFN_GRF_START_BORDER        TFN_UI_DIRECTORY"/grf/start_border.grf"
 #define TFN_GRF_START_TEXT          TFN_UI_DIRECTORY"/grf/start_text.grf"
 #define TFN_GRF_WIRELESSICONS       TFN_UI_DIRECTORY"/grf/wirelessicons.grf"
+#define TFN_RVID_CUBES              TFN_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 
 // We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme
 // Leaving the user with no way to fix it well.
@@ -147,6 +148,8 @@
 #define TFN_FALLBACK_GRF_START_BORDER        TFN_FALLBACK_UI_DIRECTORY"/grf/start_border.grf"
 #define TFN_FALLBACK_GRF_START_TEXT          TFN_FALLBACK_UI_DIRECTORY"/grf/start_text.grf"
 #define TFN_FALLBACK_GRF_WIRELESSICONS       TFN_FALLBACK_UI_DIRECTORY"/grf/wirelessicons.grf"
+
+#define TFN_FALLBACK_RVID_CUBES              TFN_FALLBACK_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 
 
 class ThemeFilenames

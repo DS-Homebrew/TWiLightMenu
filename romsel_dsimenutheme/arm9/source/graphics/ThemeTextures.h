@@ -201,14 +201,6 @@ private:
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
 
-
-/**
- * 
-NAMES			:= bips box brace bubble button_arrow cornerbutton dialogbox folder 
-NAMES 			+= icon_gb icon_gba icon_gbamode icon_gg icon_md icon_nes icon_settings 
-NAMES 			+= icon_sms icon_snes icon_unk launch_dot new_moving_arrow progress 
-NAMES 			+= scroll_window small_cart start_border start_text wirelessicons
- */
   unique_ptr<GritTexture> _bipsTexture;
   unique_ptr<GritTexture> _boxTexture;
   unique_ptr<GritTexture> _braceTexture;
@@ -272,23 +264,6 @@ private:
   int dialogboxTexID;
   int wirelessiconTexID;
 
-  // unique_ptr<glImage[1]> bubbleImage[1];
-  // glImage progressImage[(16 / 16) * (128 / 16)];
-  // glImage dialogboxImage[(256 / 16) * (256 / 16)];
-  // glImage bipsImage[(8 / 8) * (32 / 8)];
-  // glImage scrollwindowImage[(32 / 16) * (32 / 16)];
-  // glImage buttonarrowImage[(32 / 32) * (64 / 32)];
-  // glImage launchdotImage[(16 / 16) * (96 / 16)];
-  // glImage startImage[(64 / 16) * (128 / 16)];
-  // glImage startbrdImage[(32 / 32) * (256 / 80)];
-
-  // glImage _3dsstartbrdImage[(32 / 32) * (192 / 64)];
-  // glImage braceImage[(16 / 16) * (128 / 16)];
-  // glImage settingsImage[(64 / 16) * (128 / 64)];
-  // glImage boxfullImage[(64 / 16) * (128 / 64)];
-  // glImage boxemptyImage[(64 / 16) * (64 / 16)];
-  // glImage folderImage[(64 / 16) * (64 / 16)];
-  // glImage wirelessIcons[(32 / 32) * (64 / 32)];
 };
 
 typedef singleton<ThemeTextures> themeTextures_s;
