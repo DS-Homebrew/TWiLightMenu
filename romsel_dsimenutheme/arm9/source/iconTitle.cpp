@@ -21,23 +21,23 @@
 
 ------------------------------------------------------------------*/
 
-#include <nds.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <sys/stat.h>
+#include "common/dsimenusettings.h"
+#include "common/flashcard.h"
 #include "common/gl2d.h"
 #include "graphics/fontHandler.h"
-#include "ndsheaderbanner.h"
-#include "language.h"
-#include "common/flashcard.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
-#include "common/dsimenusettings.h"
 #include "icon_unk.h"
+#include "language.h"
+#include "ndsheaderbanner.h"
+#include <ctype.h>
+#include <nds.h>
+#include <stdio.h>
+#include <sys/stat.h>
 
 #define LEFT_ALIGN 70
-#define ICON_POS_X	112
-#define ICON_POS_Y	96
+#define ICON_POS_X 112
+#define ICON_POS_Y 96
 
 static int BOX_PY = 11;
 static int BOX_PY_spacing1 = 19;
@@ -59,67 +59,66 @@ sNDSBannerExt ndsBanner;
 #define TITLE_CACHE_SIZE 0x80
 
 static bool infoFound[41] = {false};
-static u16 cachedTitle[41][TITLE_CACHE_SIZE]; 
-static char titleToDisplay[3][384]; 
+static u16 cachedTitle[41][TITLE_CACHE_SIZE];
+static char titleToDisplay[3][384];
 
 u8 *tilesModified = new u8[(32 * 256) / 2];
 
-std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
+std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
 
-void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
-{
+void writeBannerText(int textlines, const char *text1, const char *text2, const char *text3) {
 	if (ms().theme == 1) {
-		switch(textlines) {
-			case 0:
-			default:
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text1);
-				break;
-			case 1:
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing2, text1);
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing3, text2);
-				break;
-			case 2:
-				printSmallCentered(false, BOX_PY, text1);
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1, text2);
-				printSmallCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
-				break;
+		switch (textlines) {
+		case 0:
+		default:
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+			break;
+		case 1:
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+			break;
+		case 2:
+			printSmallCentered(false, BOX_PY, text1);
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+			break;
 		}
 	} else {
-		switch(textlines) {
-			case 0:
-			default:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text1);
-				break;
-			case 1:
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing2, text1);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing3, text2);
-				break;
-			case 2:
-				printLargeCentered(false, BOX_PY, text1);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1, text2);
-				printLargeCentered(false, BOX_PY+BOX_PY_spacing1*2, text3);
-				break;
+		switch (textlines) {
+		case 0:
+		default:
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+			break;
+		case 1:
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, text1);
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+			break;
+		case 2:
+			printLargeCentered(false, BOX_PY, text1);
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text2);
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+			break;
 		}
 	}
 }
 
-static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
-{
+static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl) {
 	int PY = 32;
-	if(twl) PY = 32*8;
+	if (twl)
+		PY = 32 * 8;
 	const int PX = 16;
 	const int TILE_SIZE_Y = 8;
 	const int TILE_SIZE_X = 4;
 	int index = 0;
-	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY)
-	{
+	for (int tileY = 0; tileY < PY / TILE_SIZE_Y; ++tileY) {
 		for (int tileX = 0; tileX < PX / TILE_SIZE_X; ++tileX)
 			for (int pY = 0; pY < TILE_SIZE_Y; ++pY)
-				for (int pX = 0; pX < TILE_SIZE_X; ++pX)//TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
-					tilesNew[pX + tileX * TILE_SIZE_X + PX * (pY + tileY * TILE_SIZE_Y)] = tilesSrc[index++];
+				for (int pX = 0; pX < TILE_SIZE_X;
+				     ++pX) // TILE_SIZE/2 since one u8 equals two pixels (4 bit depth)
+					tilesNew[pX + tileX * TILE_SIZE_X + PX * (pY + tileY * TILE_SIZE_Y)] =
+					    tilesSrc[index++];
 	}
 }
-
 
 /**
  * Queue the icon update.
@@ -134,196 +133,134 @@ void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
  */
 void execDeferredIconUpdates() {
 	for (auto arg : queuedIconUpdateCache) {
-		auto& [tilesSrc, palSrc, num, twl] = arg;
-     	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+		auto &[tilesSrc, palSrc, num, twl] = arg;
+		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+		glLoadIcon(num, (u16 *)palSrc, (u8 *)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
 	}
 	queuedIconUpdateCache.clear();
 }
 
 //(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
-void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl)
-{
+void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	// Hack to prevent glitched icons on startup.
 	if (showbubble) {
 		deferLoadIcon(tilesSrc, palSrc, num, twl);
 	} else {
- 		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
-	 	glLoadIcon(num, (u16*) palSrc, (u8*)tilesModified, twl ? TWL_TEX_HEIGHT : 32); 
+		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
+		glLoadIcon(num, (u16 *)palSrc, (u8 *)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
 	}
 }
 
-void loadUnkIcon(int num)
-{
-	glLoadIcon(num, (u16*) icon_unkPal, (u8*) icon_unkBitmap);
-}
+void loadUnkIcon(int num) { glLoadIcon(num, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap); }
 
-static void clearIcon(int num)
-{
- 	glClearIcon(num);
-}
+static void clearIcon(int num) { glClearIcon(num); }
 
-
-void drawIcon(int Xpos, int Ypos, int num)
-{
+void drawIcon(int Xpos, int Ypos, int num) {
 	int num2 = num;
-	if(num == -1) {
+	if (num == -1) {
 		num2 = 6;
 		num = movingApp;
-	} else if(num >= 36) {
+	} else if (num >= 36) {
 		num2 -= 36;
-	} else if(num2 >= 30) {
+	} else if (num2 >= 30) {
 		num2 -= 30;
-	} else if(num2 >= 24) {
+	} else if (num2 >= 24) {
 		num2 -= 24;
-	} else if(num2 >= 18) {
+	} else if (num2 >= 18) {
 		num2 -= 18;
-	} else if(num2 >= 12) {
+	} else if (num2 >= 12) {
 		num2 -= 12;
-	} else if(num2 >= 6) {
+	} else if (num2 >= 6) {
 		num2 -= 6;
 	}
-	//glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num]]);
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num2==6 ? 40 : num]]);
+	// glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num2][bnriconPalLine[num]][bnriconframenumY[num]]);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(num2)[bnriconframenumY[num2 == 6 ? 40 : num]]);
 }
 
-void drawIconGBA(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]);
-}
-void drawSmallIconGBA(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[1 & 31]);
-}
-void drawIconGB(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[0 & 31]);
-}
-void drawIconGBC(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[1 & 31]);
-}
-void drawIconNES(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NES_ICON));
-}
-void drawIconSMS(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SMS_ICON));
-}
-void drawIconGG(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(GG_ICON));
-}
-void drawIconMD(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(MD_ICON));
-}
-void drawIconSNES(int Xpos, int Ypos)
-{
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SNES_ICON));
-}
+void drawIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[0 & 31]); }
+void drawSmallIconGBA(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBA_ICON)[1 & 31]); }
+void drawIconGB(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[0 & 31]); }
+void drawIconGBC(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, &getIcon(GBC_ICON)[1 & 31]); }
+void drawIconNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(NES_ICON)); }
+void drawIconSMS(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SMS_ICON)); }
+void drawIconGG(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(GG_ICON)); }
+void drawIconMD(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(MD_ICON)); }
+void drawIconSNES(int Xpos, int Ypos) { glSprite(Xpos, Ypos, GL_FLIP_NONE, getIcon(SNES_ICON)); }
 
 void loadFixedBanner(void) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
 
 	// Fire Emblem - Heroes of Light and Shadow (English Translation)
-	if(ndsBanner.crc[0] == 0xECF9
-	&& ndsBanner.crc[1] == 0xD18F
-	&& ndsBanner.crc[2] == 0xE22A
-	&& ndsBanner.crc[3] == 0xD8F4)
-	{
+	if (ndsBanner.crc[0] == 0xECF9 && ndsBanner.crc[1] == 0xD18F && ndsBanner.crc[2] == 0xE22A &&
+	    ndsBanner.crc[3] == 0xD8F4) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
+		FILE *fixedBannerFile =
+		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Black Version
-	if(ndsBanner.crc[0] == 0x4A19
-	&& ndsBanner.crc[1] == 0x40AD
-	&& ndsBanner.crc[2] == 0x5641
-	&& ndsBanner.crc[3] == 0xEE5D)
-	{
+	    if (ndsBanner.crc[0] == 0x4A19 && ndsBanner.crc[1] == 0x40AD && ndsBanner.crc[2] == 0x5641 &&
+		ndsBanner.crc[3] == 0xEE5D) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Blaze Black (Clean Version)
-	if(ndsBanner.crc[0] == 0x4683
-	&& ndsBanner.crc[1] == 0x40AD
-	&& ndsBanner.crc[2] == 0x5641
-	&& ndsBanner.crc[3] == 0xEE5D)
-	{
+	    if (ndsBanner.crc[0] == 0x4683 && ndsBanner.crc[1] == 0x40AD && ndsBanner.crc[2] == 0x5641 &&
+		ndsBanner.crc[3] == 0xEE5D) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Blaze Black (Full Version)
-	if(ndsBanner.crc[0] == 0xA251
-	&& ndsBanner.crc[1] == 0x40AD
-	&& ndsBanner.crc[2] == 0x5641
-	&& ndsBanner.crc[3] == 0xEE5D)
-	{
+	    if (ndsBanner.crc[0] == 0xA251 && ndsBanner.crc[1] == 0x40AD && ndsBanner.crc[2] == 0x5641 &&
+		ndsBanner.crc[3] == 0xEE5D) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon White Version
-	if(ndsBanner.crc[0] == 0xE249
-	&& ndsBanner.crc[1] == 0x5C94
-	&& ndsBanner.crc[2] == 0xBF18
-	&& ndsBanner.crc[3] == 0x0C88)
-	{
+	    if (ndsBanner.crc[0] == 0xE249 && ndsBanner.crc[1] == 0x5C94 && ndsBanner.crc[2] == 0xBF18 &&
+		ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Volt White (Clean Version)
-	if(ndsBanner.crc[0] == 0x77F4
-	&& ndsBanner.crc[1] == 0x5C94
-	&& ndsBanner.crc[2] == 0xBF18
-	&& ndsBanner.crc[3] == 0x0C88)
-	{
+	    if (ndsBanner.crc[0] == 0x77F4 && ndsBanner.crc[1] == 0x5C94 && ndsBanner.crc[2] == 0xBF18 &&
+		ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Volt White (Full Version)
-	if(ndsBanner.crc[0] == 0x9CA8
-	&& ndsBanner.crc[1] == 0x5C94
-	&& ndsBanner.crc[2] == 0xBF18
-	&& ndsBanner.crc[3] == 0x0C88)
-	{
+	    if (ndsBanner.crc[0] == 0x9CA8 && ndsBanner.crc[1] == 0x5C94 && ndsBanner.crc[2] == 0xBF18 &&
+		ndsBanner.crc[3] == 0x0C88) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon Black Version 2
-	if(ndsBanner.crc[0] == 0xF996
-	&& ndsBanner.crc[1] == 0xD784
-	&& ndsBanner.crc[2] == 0xA257
-	&& ndsBanner.crc[3] == 0x2CA3)
-	{
+	    if (ndsBanner.crc[0] == 0xF996 && ndsBanner.crc[1] == 0xD784 && ndsBanner.crc[2] == 0xA257 &&
+		ndsBanner.crc[3] == 0x2CA3) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon Black Version 2.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
 	} else // Pokemon White Version 2
-	if(ndsBanner.crc[0] == 0xA487
-	&& ndsBanner.crc[1] == 0xF58C
-	&& ndsBanner.crc[2] == 0xAF9E
-	&& ndsBanner.crc[3] == 0x3B18)
-	{
+	    if (ndsBanner.crc[0] == 0xA487 && ndsBanner.crc[1] == 0xF58C && ndsBanner.crc[2] == 0xAF9E &&
+		ndsBanner.crc[3] == 0x3B18) {
 		// Use fixed banner.
-		FILE* fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Pokemon White Version 2.bnr", "rb");
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
@@ -336,9 +273,9 @@ void clearTitle(int num) {
 	}
 }
 
-void getGameInfo(bool isDir, const char* name, int num)
-{
-	if (num == -1) num = 40;
+void getGameInfo(bool isDir, const char *name, int num) {
+	if (num == -1)
+		num = 40;
 
 	bnriconPalLine[num] = 0;
 	bnriconframenumY[num] = 0;
@@ -349,14 +286,11 @@ void getGameInfo(bool isDir, const char* name, int num)
 	isHomebrew[num] = 0;
 	infoFound[num] = false;
 
-	if (isDir)
-	{
+	if (isDir) {
 		clearTitle(num);
-		clearBannerSequence(num);	// banner sequence
-	}
-	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
-	{
+		clearBannerSequence(num); // banner sequence
+	} else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0) ||
+		   (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)) {
 		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -365,8 +299,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearTitle(num);
 			clearBannerSequence(num);
 			fclose(fp);
@@ -374,14 +307,13 @@ void getGameInfo(bool isDir, const char* name, int num)
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
 
 			// skip leading whitespace
-			for (p = line; *p && isspace((int) *p); ++p)
+			for (p = line; *p && isspace((int)*p); ++p)
 				;
 
 			if (*p)
@@ -391,123 +323,108 @@ void getGameInfo(bool isDir, const char* name, int num)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
-			{
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0)) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearTitle(num);
 					clearBannerSequence(num);
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearTitle(num);
 					clearBannerSequence(num);
-				}
-				else
-				{
+				} else {
 					getGameInfo(false, p, num);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearTitle(num);
 				clearBannerSequence(num);
 			}
-		}
-		else
-		{
+		} else {
 			clearTitle(num);
 			clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
-	{
+	} else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0)) {
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
 
 		// open file for reading info
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearTitle(num);
-			clearBannerSequence(num);	// banner sequence
+			clearBannerSequence(num); // banner sequence
 			fclose(fp);
 			return;
 		}
 
-		
 		ret = fseek(fp, 0, SEEK_SET);
 		if (ret == 0)
-			ret = fread(&ndsHeader, sizeof (ndsHeader), 1, fp); // read if seek succeed
+			ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
+		if (ret != 1) {
 			clearTitle(num);
 			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
 
-		if ((ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000)
-		|| (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48
-		&& ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0
-		&& ndsHeader.makercode[0] != 0x30 && ndsHeader.makercode[1] != 0x30)
-		|| (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize == 0x151BC)) {
-			isDSiWare[num] = true;	// Is a DSi-Exclusive/DSiWare game
-		} else if (ndsHeader.unitCode >= 0x02
-		&& ndsHeader.arm9romOffset == 0x4000 && ndsHeader.arm7binarySize < 0x20000) {
-			isHomebrew[num] = 2;		// Homebrew is recent (may have DSi-extended header)
-		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)
-		|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
-			isHomebrew[num] = 1;		// Homebrew has no DSi-extended header
+		if ((ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize > 0x20000) ||
+		    (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 &&
+		     ndsHeader.makercode[1] != 0 && ndsHeader.makercode[0] != 0x30 && ndsHeader.makercode[1] != 0x30) ||
+		    (ndsHeader.unitCode == 0x03 && ndsHeader.arm7binarySize == 0x151BC)) {
+			isDSiWare[num] = true; // Is a DSi-Exclusive/DSiWare game
+		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000 &&
+			   ndsHeader.arm7binarySize < 0x20000) {
+			isHomebrew[num] = 2; // Homebrew is recent (may have DSi-extended header)
+		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) ||
+			   (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
+			isHomebrew[num] = 1; // Homebrew has no DSi-extended header
 		}
 
-		bnrSysSettings[num] = (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
+		bnrSysSettings[num] =
+		    (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
 
-		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon[num] = 1;
-		else if (ndsHeader.dsi_flags == 0x0B) bnrWirelessIcon[num] = 2;
+		if (ndsHeader.dsi_flags == 0x10)
+			bnrWirelessIcon[num] = 1;
+		else if (ndsHeader.dsi_flags == 0x0B)
+			bnrWirelessIcon[num] = 2;
 
-		if (ndsHeader.bannerOffset == 0)
-		{
+		if (ndsHeader.bannerOffset == 0) {
 			fclose(fp);
 
-			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+			FILE *bannerFile = fopen("nitro:/noinfo.bnr", "rb");
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
+			memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 			for (int i = 0; i < 128; i++) {
 				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -517,12 +434,11 @@ void getGameInfo(bool isDir, const char* name, int num)
 		}
 		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
+			ret = fread(&ndsBanner, sizeof(ndsBanner), 1, fp); // read if seek succeed
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
+		if (ret != 1) {
 			// try again, but using regular banner size
 			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 			if (ret == 0)
@@ -530,15 +446,14 @@ void getGameInfo(bool isDir, const char* name, int num)
 			else
 				ret = 0; // if seek fails set to !=1
 
-			if (ret != 1)
-			{
+			if (ret != 1) {
 				fclose(fp);
 
-				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+				FILE *bannerFile = fopen("nitro:/noinfo.bnr", "rb");
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
+				memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -555,7 +470,7 @@ void getGameInfo(bool isDir, const char* name, int num)
 
 		DC_FlushAll();
 
-		memcpy(bnriconTile[num], (char*)&ndsBanner, 0x23C0);
+		memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -563,41 +478,37 @@ void getGameInfo(bool isDir, const char* name, int num)
 		infoFound[num] = true;
 
 		// banner sequence
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
 		}
 	}
 }
 
-void iconUpdate(bool isDir, const char* name, int num)
-{
+void iconUpdate(bool isDir, const char *name, int num) {
 	int num2 = num;
-	if(num == -1) {
+	if (num == -1) {
 		num2 = 6;
 		num = 40;
-	} else if(num >= 36) {
+	} else if (num >= 36) {
 		num2 -= 36;
-	} else if(num >= 30) {
+	} else if (num >= 30) {
 		num2 -= 30;
-	} else if(num >= 24) {
+	} else if (num >= 24) {
 		num2 -= 24;
-	} else if(num >= 18) {
+	} else if (num >= 18) {
 		num2 -= 18;
-	} else if(num >= 12) {
+	} else if (num >= 12) {
 		num2 -= 12;
-	} else if(num >= 6) {
+	} else if (num >= 6) {
 		num2 -= 6;
 	}
 
-	if (isDir)
-	{
+	if (isDir) {
 		// icon
 		clearIcon(num2);
-	}
-	else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0)
-		|| (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0))
-	{
+	} else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0) ||
+		   (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)) {
 		// look through the argv file for the corresponding nds/app file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
@@ -606,22 +517,20 @@ void iconUpdate(bool isDir, const char* name, int num)
 
 		// open the argv file
 		fp = fopen(name, "rb");
-		if (fp == NULL)
-		{
+		if (fp == NULL) {
 			clearIcon(num2);
 			fclose(fp);
 			return;
 		}
 
 		// read each line
-		while ((rc = __getline(&line, &size, fp)) > 0)
-		{
+		while ((rc = __getline(&line, &size, fp)) > 0) {
 			// remove comments
 			if ((p = strchr(line, '#')) != NULL)
 				*p = 0;
 
 			// skip leading whitespace
-			for (p = line; *p && isspace((int) *p); ++p)
+			for (p = line; *p && isspace((int)*p); ++p)
 				;
 
 			if (*p)
@@ -631,68 +540,55 @@ void iconUpdate(bool isDir, const char* name, int num)
 		// done with the file at this point
 		fclose(fp);
 
-		if (p && *p)
-		{
+		if (p && *p) {
 			// we found an argument
 			struct stat st;
 
 			// truncate everything after first argument
 			strtok(p, "\n\r\t ");
 
-			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0)
-			|| (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0))
-			{
+			if ((strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".nds") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".NDS") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".dsi") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".DSI") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".ids") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".IDS") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".app") == 0) ||
+			    (strlen(p) >= 4 && strcasecmp(p + strlen(p) - 4, ".APP") == 0)) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
-				if (rc != 0)
-				{
+				if (rc != 0) {
 					// stat failed
 					clearIcon(num2);
-				}
-				else if (S_ISDIR(st.st_mode))
-				{
+				} else if (S_ISDIR(st.st_mode)) {
 					// this is a directory!
 					clearIcon(num2);
-				}
-				else
-				{
+				} else {
 					iconUpdate(false, p, num2);
 				}
-			}
-			else
-			{
+			} else {
 				// this is not an nds/app file!
 				clearIcon(num2);
 			}
-		}
-		else
-		{
+		} else {
 			clearIcon(num2);
 		}
 		// clean up the allocated line
 		free(line);
-	}
-	else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0)
-			|| (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0))
-	{
+	} else if ((strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".nds") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".NDS") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".dsi") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".DSI") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".ids") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".IDS") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0) ||
+		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0)) {
 		// this is an nds/app file!
-		memcpy((char*)&ndsBanner, bnriconTile[num], 0x23C0);
+		memcpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
 
 		// icon
 		DC_FlushAll();
-		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num2, true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, num2, false);
@@ -700,30 +596,26 @@ void iconUpdate(bool isDir, const char* name, int num)
 	}
 }
 
-
-static inline void writeDialogTitle(int textlines, const char* text1, const char* text2, const char* text3)
-{
+static inline void writeDialogTitle(int textlines, const char *text1, const char *text2, const char *text3) {
 	// Ensure that the font isn't corrupted.
-	switch(textlines) {
-		case 0:
-		default:
-			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing2, text1);
-			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printLarge(false, LEFT_ALIGN, BOX_PY, text1);
-			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1, text2);
-			printLarge(false, LEFT_ALIGN, BOX_PY+BOX_PY_spacing1*2, text3);
-			break;
+	switch (textlines) {
+	case 0:
+	default:
+		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1, text1);
+		break;
+	case 1:
+		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing2, text1);
+		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing3, text2);
+		break;
+	case 2:
+		printLarge(false, LEFT_ALIGN, BOX_PY, text1);
+		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1, text2);
+		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1 * 2, text3);
+		break;
 	}
 }
 
-
-void titleUpdate(bool isDir, const char* name, int num)
-{
+void titleUpdate(bool isDir, const char *name, int num) {
 	clearText(false);
 	if (showdialogbox) {
 		BOX_PY = 14;
@@ -741,7 +633,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 		BOX_PY_spacing2 = 9;
 		BOX_PY_spacing3 = 28;
 	}
-	
+
 	if (startMenu) {
 		if (ms().startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
@@ -765,40 +657,33 @@ void titleUpdate(bool isDir, const char* name, int num)
 		return;
 	}
 
-	if (isDir)
-	{
+	if (isDir) {
 		// text
 		if (strcmp(name, "..") == 0) {
 			writeBannerText(0, "Back", "", "");
 		} else {
 			writeBannerText(0, name, "", "");
 		}
-	}
-	else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".GB") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".SGB") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".gbc") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".GBC") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".nes") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".NES") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".fds") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".FDS") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".sms") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".SMS") == 0 ||
-				strcasecmp (name + strlen(name) - 3, ".gg") == 0 ||
-				strcasecmp (name + strlen(name) - 3, ".GG") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".gen") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".GEN") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".smc") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".SMC") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".sfc") == 0 ||
-				strcasecmp (name + strlen(name) - 4, ".SFC") == 0 )
-	{
+	} else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 || strcasecmp(name + strlen(name) - 4, ".GB") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sgb") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".SGB") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".gbc") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".GBC") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".nes") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".NES") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".fds") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".FDS") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sms") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".SMS") == 0 ||
+		   strcasecmp(name + strlen(name) - 3, ".gg") == 0 || strcasecmp(name + strlen(name) - 3, ".GG") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".gen") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".GEN") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".smc") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".SMC") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sfc") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".SFC") == 0) {
 		writeBannerText(0, name, "", "");
-	}
-	else
-	{
+	} else {
 		// this is an nds/app file!
 
 		// turn unicode into ascii (kind of)
@@ -806,8 +691,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 		int bannerlines = 0;
 		// The index of the character array
 		int charIndex = 0;
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
-		{
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			// todo: fix crash on titles that are too long (homebrew)
 			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
 				titleToDisplay[bannerlines][charIndex] = 0;
@@ -820,13 +704,13 @@ void titleUpdate(bool isDir, const char* name, int num)
 			} else {
 				// We need to split U16 into two characters here.
 				char lowerBits = cachedTitle[num][i] & 0xFF;
- 				char higherBits = cachedTitle[num][i] >> 8;
+				char higherBits = cachedTitle[num][i] >> 8;
 				// Since we have UTF16LE, assemble in FontGraphic the other way.
 				// We will need to peek in FontGraphic.cpp since the higher bit is significant.
-				titleToDisplay[bannerlines][charIndex] = UTF16_SIGNAL_BYTE; 
+				titleToDisplay[bannerlines][charIndex] = UTF16_SIGNAL_BYTE;
 				// 0x0F signal bit to treat the next two characters as UTF
-				titleToDisplay[bannerlines][charIndex+1] = lowerBits;
-				titleToDisplay[bannerlines][charIndex+2] = higherBits;
+				titleToDisplay[bannerlines][charIndex + 1] = lowerBits;
+				titleToDisplay[bannerlines][charIndex + 2] = higherBits;
 				charIndex += 3;
 			}
 		}
@@ -839,12 +723,11 @@ void titleUpdate(bool isDir, const char* name, int num)
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
 		} else if (ms().theme == 1) {
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, name);
-			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, name);
+			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
 		} else {
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing2, name);
-			printLargeCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, name);
+			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
 		}
-		
 	}
 }
