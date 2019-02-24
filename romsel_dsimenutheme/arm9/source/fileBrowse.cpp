@@ -2153,7 +2153,17 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				for (int i = 0; i < 30; i++) swiWaitForVBlank();
 				snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
 				titleUpdate(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).isDirectory, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str(), cursorPosition[secondaryDevice]);
-				printSmall(false, 16, 64, dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name.c_str());
+				std::string dirContName = dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name;
+				// About 38 characters fit in the box.
+				if (strlen(dirContName.c_str()) > 38) {
+					// Truncate to 35, 35 + 3 = 38 (because we append "...").
+					dirContName.resize(35, ' ');
+					size_t first = dirContName.find_first_not_of(' ');
+					size_t last = dirContName.find_last_not_of(' ');
+					dirContName = dirContName.substr(first, (last - first + 1));
+					dirContName.append("...");
+				}
+				printSmall(false, 16, 64, dirContName.c_str());
 				printSmall(false, 16, 166, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
 				if (isDirectory[cursorPosition[secondaryDevice]]) {
