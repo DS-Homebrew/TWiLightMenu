@@ -75,12 +75,6 @@ extern bool showProgressIcon;
 const char *settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char *bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
-// std::string romPath;
-// std::string dsiWareSrlPath;
-// std::string dsiWarePubPath;
-// std::string dsiWarePrvPath;
-// std::string homebrewArg;
-
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s', 'd', 'm', 'c', ':', '/', 'h', 'i', 'y', 'a', '.', 'd', 's', 'i'};
 
@@ -128,104 +122,8 @@ bool applaunch = false;
 bool startMenu = false;
 
 // int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
-bool slot1LaunchMethod = true; // false == Reboot, true == Direct
-bool useBootstrap = true;
-bool bootstrapFile = false;
-bool homebrewBootstrap = false;
-bool snesEmulator = true;
 
 bool gbaBiosFound[2] = {false};
-int subtheme = 0;
-
-bool showNds = true;
-bool showNes = true;
-bool showGb = true;
-bool showSmsGg = true;
-bool showMd = true;
-bool showSnes = true;
-bool showDirectories = true;
-bool showHidden = false;
-bool showBoxArt = true;
-bool animateDsiIcons = false;
-int launcherApp = -1;
-int sysRegion = -1;
-
-// int bstrap_language = -1;
-bool boostCpu = false; // false == NTR, true == TWL
-bool boostVram = false;
-int bstrap_dsiMode = 0;
-
-void LoadSettings(void) {
-	// GUI
-	CIniFile settingsini(settingsinipath);
-
-	// // UI settings.
-	// romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", "sd:/");
-	// romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", "fat:/");
-
-	// pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", 0);
-	// pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", 0);
-
-	// ms().cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
-	// ms().cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
-	// startMenu_ms().cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
-
-	// consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
-
-	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
-	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
-	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
-	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
-	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", true);
-	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
-
-	// Customizable UI settings.
-	// colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
-	// blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
-	// guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
-
-	// useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
-	// if (!isRegularDS) useGbarunner = true;
-	// theme = settingsini.GetInt("SRLOADER", "THEME", 0);
-	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
-	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
-	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
-	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", 1);
-	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 1);
-
-	// if (ms().consoleModel < 2) {
-	// 	launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
-	// 	sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
-	// }
-
-	// ms().previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", ms().previousUsedDevice);
-	// if (bothSDandFlashcard()) {
-	// 	ms().secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", ms().secondaryDevice);
-	// } else if (flashcardFound()) {
-	// 	flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
-	// 	ms().secondaryDevice = true;
-	// } else {
-	// 	ms().secondaryDevice = false;
-	// }
-
-	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
-	if (!isDSiMode())
-		useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
-	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
-
-	// Default nds-bootstrap settings
-	// bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
-	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-
-	// romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
-	// dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
-	// dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
-	// dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-	// launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
-}
 
 bool useBackend = false;
 
@@ -553,12 +451,12 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
 		if (perGameSettings_boostCpu == -1) {
-			runNds_boostCpu = boostCpu;
+			runNds_boostCpu = ms().boostCpu;
 		} else {
 			runNds_boostCpu = perGameSettings_boostCpu;
 		}
 		if (perGameSettings_boostVram == -1) {
-			runNds_boostVram = boostVram;
+			runNds_boostVram = ms().boostVram;
 		} else {
 			runNds_boostVram = perGameSettings_boostVram;
 		}
@@ -655,7 +553,6 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	ms().loadSettings();
-	LoadSettings();
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -748,29 +645,29 @@ int main(int argc, char **argv) {
 	keysSetRepeat(10, 2);
 
 	vector<string> extensionList;
-	if (showNds) {
+	if (ms().showNds) {
 		extensionList.push_back(".nds");
 		extensionList.push_back(".dsi");
 		extensionList.push_back(".ids");
 		extensionList.push_back(".argv");
 	}
-	if (showGb) {
+	if (ms().showGb) {
 		extensionList.push_back(".gb");
 		extensionList.push_back(".sgb");
 		extensionList.push_back(".gbc");
 	}
-	if (showNes) {
+	if (ms().showNes) {
 		extensionList.push_back(".nes");
 		extensionList.push_back(".fds");
 	}
-	if (showSmsGg) {
+	if (ms().showSmsGg) {
 		extensionList.push_back(".sms");
 		extensionList.push_back(".gg");
 	}
-	if (showMd) {
+	if (ms().showMd) {
 		extensionList.push_back(".gen");
 	}
-	if (showSnes) {
+	if (ms().showSnes) {
 		extensionList.push_back(".smc");
 		extensionList.push_back(".sfc");
 	}
@@ -1103,13 +1000,13 @@ int main(int argc, char **argv) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
-					homebrewBootstrap = true;
+					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 2) {
 					useBackend = false; // Bypass nds-bootstrap
-					homebrewBootstrap = true;
+					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 1) {
 					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot || (useBootstrap && ms().secondaryDevice)) {
+					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
 						useBackend = false; // Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -1117,11 +1014,11 @@ int main(int argc, char **argv) {
 					if (isDSiMode() && !perGameSettings_dsiMode) {
 						dsModeSwitch = true;
 					}
-					homebrewBootstrap = true;
+					ms().homebrewBootstrap = true;
 				} else {
 					loadPerGameSettings(filename);
 					useBackend = true;
-					homebrewBootstrap = false;
+					ms().homebrewBootstrap = false;
 				}
 
 				char *name = argarray.at(0);
@@ -1129,7 +1026,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBackend) {
-					if (useBootstrap || isDSiMode()) {
+					if (ms().useBootstrap || isDSiMode()) {
 						if (ms().secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
 							ClearBrightness();
@@ -1253,21 +1150,21 @@ int main(int argc, char **argv) {
 						if (isDSiMode()) {
 							if (perGameSettings_dsiMode == -1) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
-										    bstrap_dsiMode);
+										    ms().bstrap_dsiMode);
 							} else {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
 										    perGameSettings_dsiMode);
 							}
 							if (perGameSettings_boostCpu == -1) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
-										    boostCpu);
+										    ms().boostCpu);
 							} else {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
 										    perGameSettings_boostCpu);
 							}
 							if (perGameSettings_boostVram == -1) {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
-										    boostVram);
+										    ms().boostVram);
 							} else {
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
 										    perGameSettings_boostVram);
@@ -1320,10 +1217,10 @@ int main(int argc, char **argv) {
 						// SaveSettings();
 						if (ms().secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
-								if (homebrewBootstrap) {
+								if (ms().homebrewBootstrap) {
 									argarray.at(0) =
 									    (char
-										 *)(bootstrapFile
+										 *)(ms().bootstrapFile
 											? "fat:/_nds/"
 											  "nds-bootstrap-hb-nightly.nds"
 											: "fat:/_nds/"
@@ -1331,14 +1228,14 @@ int main(int argc, char **argv) {
 											  "nds");
 								} else {
 									argarray.at(0) =
-									    (char *)(bootstrapFile
+									    (char *)(ms().bootstrapFile
 											 ? "fat:/_nds/"
 											   "nds-bootstrap-nightly.nds"
 											 : "fat:/_nds/"
 											   "nds-bootstrap-release.nds");
 								}
 							} else {
-								if (homebrewBootstrap) {
+								if (ms().homebrewBootstrap) {
 									argarray.at(0) =
 									    (char
 										 *)(perGameSettings_bootstrapFile
@@ -1358,10 +1255,10 @@ int main(int argc, char **argv) {
 							}
 						} else {
 							if (perGameSettings_bootstrapFile == -1) {
-								if (homebrewBootstrap) {
+								if (ms().homebrewBootstrap) {
 									argarray.at(0) =
 									    (char
-										 *)(bootstrapFile
+										 *)(ms().bootstrapFile
 											? "sd:/_nds/"
 											  "nds-bootstrap-hb-nightly.nds"
 											: "sd:/_nds/"
@@ -1369,14 +1266,14 @@ int main(int argc, char **argv) {
 											  "nds");
 								} else {
 									argarray.at(0) =
-									    (char *)(bootstrapFile
+									    (char *)(ms().bootstrapFile
 											 ? "sd:/_nds/"
 											   "nds-bootstrap-nightly.nds"
 											 : "sd:/_nds/"
 											   "nds-bootstrap-release.nds");
 								}
 							} else {
-								if (homebrewBootstrap) {
+								if (ms().homebrewBootstrap) {
 									argarray.at(0) =
 									    (char
 										 *)(perGameSettings_bootstrapFile
@@ -1427,12 +1324,12 @@ int main(int argc, char **argv) {
 					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
 						if (perGameSettings_boostCpu == -1) {
-							runNds_boostCpu = boostCpu;
+							runNds_boostCpu = ms().boostCpu;
 						} else {
 							runNds_boostCpu = perGameSettings_boostCpu;
 						}
 						if (perGameSettings_boostVram == -1) {
-							runNds_boostVram = boostVram;
+							runNds_boostVram = ms().boostVram;
 						} else {
 							runNds_boostVram = perGameSettings_boostVram;
 						}
@@ -1529,7 +1426,7 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					argarray.at(0) =
-					    (char *)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
+					    (char *)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
 								   : "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 

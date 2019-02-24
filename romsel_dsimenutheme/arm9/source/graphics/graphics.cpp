@@ -109,7 +109,6 @@ int titleboxYmovepos = 0;
 extern int spawnedtitleboxes;
 
 
-extern int subtheme;
 std::vector<std::string> photoList;
 static std::string photoPath;
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
@@ -2318,7 +2317,7 @@ void graphicsInit()
 	}
 	else
 	{
-		switch (subtheme)
+		switch (ms().subtheme)
 		{
 		default:
 		case 0:

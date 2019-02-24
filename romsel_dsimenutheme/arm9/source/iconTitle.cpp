@@ -47,7 +47,6 @@ static int BOX_PY_spacing3 = 28;
 extern bool showdialogbox;
 extern bool startMenu;
 
-extern bool animateDsiIcons;
 
 extern bool showbubble;
 
@@ -478,7 +477,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		infoFound[num] = true;
 
 		// banner sequence
-		if (animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			grabBannerSequence(num);
 			bnriconisDSi[num] = true;
 		}
@@ -588,7 +587,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 
 		// icon
 		DC_FlushAll();
-		if (animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
+		if (ms().animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
 			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], num2, true);
 		} else {
 			loadIcon(ndsBanner.icon, ndsBanner.palette, num2, false);

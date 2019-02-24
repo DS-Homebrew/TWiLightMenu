@@ -74,14 +74,7 @@ extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 
-extern bool slot1LaunchMethod;
-extern bool bootstrapFile;
-extern bool homebrewBootstrap;
 extern bool gbaBiosFound[2];
-
-extern int launcherApp;
-extern int sysRegion;
-extern bool snesEmulator;
 
 extern const char *unlaunchAutoLoadID;
 
@@ -114,9 +107,6 @@ extern bool startMenu;
 
 int file_count = 0;
 
-extern bool showDirectories;
-extern bool showHidden;
-extern bool showBoxArt;
 extern int spawnedtitleboxes;
 
 extern int titleboxXpos[2];
@@ -342,7 +332,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if (showDirectories) {
+			if (ms().showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					bool isHidden = false;
 					for(int i=0;i<(int)hiddenGames.size();i++) {
@@ -351,7 +341,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 							break;
 						}
 					}
-					if(!isHidden || showHidden) {
+					if(!isHidden || ms().showHidden) {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
@@ -365,7 +355,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 							break;
 						}
 					}
-					if(!isHidden || showHidden) {
+					if(!isHidden || ms().showHidden) {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
@@ -511,7 +501,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 	if (ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
 		showSTARTborder = true;
-		if (!showBoxArt) {
+		if (!ms().showBoxArt) {
 			return;
 		}
 
@@ -575,14 +565,14 @@ void exitToSystemMenu(void) {
 		ms().saveSettings();
 		settingsChanged = false;
 	}
-	if (!isDSiMode() || launcherApp == -1) {
+	if (!isDSiMode() || ms().launcherApp == -1) {
 		*(u32*)(0x02000300) = 0x434E4C54;	// Set "CNLT" warmboot flag
 		*(u16*)(0x02000304) = 0x1801;
 		*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 		unlaunchSetHiyaBoot();
 	} else {
 		u8 setRegion = 0;
-		if (sysRegion == -1) {
+		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
 			for (u8 i = 0x41; i <= 0x5A; i++)
@@ -595,7 +585,7 @@ void exitToSystemMenu(void) {
 				}
 			}
 		} else {
-			switch(sysRegion) {
+			switch(ms().sysRegion) {
 				case 0:
 				default:
 					setRegion = 0x4A;	// JAP
@@ -619,7 +609,7 @@ void exitToSystemMenu(void) {
 		}
 
 		char unlaunchDevicePath[256];
-		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 
 		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -648,7 +638,7 @@ void switchDevice(void) {
 		fadeType = false;	// Fade to white
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		ms().secondaryDevice = !ms().secondaryDevice;
-		if (!rocketVideo_playVideo || showBoxArt) clearBoxArt();	// Clear box art
+		if (!rocketVideo_playVideo || ms().showBoxArt) clearBoxArt();	// Clear box art
 		whiteScreen = true;
 		boxArtLoaded = false;
 		rocketVideo_playVideo = true;
@@ -677,7 +667,7 @@ void switchDevice(void) {
 		ms().launchType = DSiMenuPlusPlusSettings::TLaunchType::ESlot1; // 0
 		ms().saveSettings();
 		
-		if (!slot1LaunchMethod || sys().arm7SCFGLocked()) {
+		if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else {
 			if (sdFound()) {
@@ -753,7 +743,7 @@ void launchGba(void) {
 			CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 			bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-			int err = runNdsFile (bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
+			int err = runNdsFile (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds" : "sd:/_nds/nds-bootstrap-gbar2-release.nds", 0, NULL, true, false, true, true);
 			iprintf ("Start failed. Error %i\n", err);
 		}
 	} else {
@@ -859,7 +849,7 @@ bool selectMenu(void) {
 	dbox_showIcon = false;
 	dbox_selectMenu = true;
 	showdialogbox = true;
-	if (!rocketVideo_playVideo || showBoxArt) clearBoxArt();	// Clear box art
+	if (!rocketVideo_playVideo || ms().showBoxArt) clearBoxArt();	// Clear box art
 	boxArtLoaded = false;
 	rocketVideo_playVideo = true;
 	int maxCursors = 0;
@@ -1050,7 +1040,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 					isHomebrew[i] = 0;
 				}
 
-				if (showBoxArt) {
+				if (ms().showBoxArt) {
 					// Store box art path
 					snprintf (boxArtPath[i], sizeof(boxArtPath[i]), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), dirContents[scrn].at(i+ms().pagenum[ms().secondaryDevice]*40).name.c_str());
 					if (!access(boxArtPath[i], F_OK)) {
@@ -1136,7 +1126,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
-	bool displayBoxArt = showBoxArt;
+	bool displayBoxArt = ms().showBoxArt;
 
 	int pressed = 0;
 	int held = 0;
@@ -1218,7 +1208,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					updateBoxArt(dirContents, scrn);
 				}
 				if (ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size())) {
-					showbubble = true, displayBoxArt = showBoxArt;
+					showbubble = true, displayBoxArt = ms().showBoxArt;
 					titleUpdate(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).isDirectory, dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str(), ms().cursorPosition[ms().secondaryDevice]);
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
@@ -1808,7 +1798,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
 					whiteScreen = true;
-					if (showBoxArt) clearBoxArt();	// Clear box art
+					if (ms().showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					redoDropDown = true;
 					shouldersRendered = false;
@@ -2024,7 +2014,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
 					whiteScreen = true;
-					if (showBoxArt) clearBoxArt();	// Clear box art
+					if (ms().showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
 					if (showLshoulder) redoDropDown = true;
@@ -2057,7 +2047,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						titlewindowXpos[ms().secondaryDevice] = ms().cursorPosition[ms().secondaryDevice]*5;
 					}
 					whiteScreen = true;
-					if (showBoxArt) clearBoxArt();	// Clear box art
+					if (ms().showBoxArt) clearBoxArt();	// Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
 					if (showRshoulder) redoDropDown = true;
@@ -2073,7 +2063,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			}
 
-			if ((pressed & KEY_B) && showDirectories) {
+			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
 				mmEffectEx(&snd_select);
 				fadeType = false;	// Fade to white
@@ -2083,7 +2073,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				titleboxXpos[ms().secondaryDevice] = 0;
 				titlewindowXpos[ms().secondaryDevice] = 0;
 				whiteScreen = true;
-				if (showBoxArt) clearBoxArt();	// Clear box art
+				if (ms().showBoxArt) clearBoxArt();	// Clear box art
 				boxArtLoaded = false;
 				rocketVideo_playVideo = true;
 				redoDropDown = true;
@@ -2176,7 +2166,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						whiteScreen = true;
 						remove(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name.c_str()); // Remove game/folder
-						if (showBoxArt) clearBoxArt();	// Clear box art
+						if (ms().showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
 						rocketVideo_playVideo = true;
 						shouldersRendered = false;
@@ -2213,7 +2203,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						}
 						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
 
-						if (showBoxArt) clearBoxArt();	// Clear box art
+						if (ms().showBoxArt) clearBoxArt();	// Clear box art
 						boxArtLoaded = false;
 						shouldersRendered = false;
 						showbubble = false;
