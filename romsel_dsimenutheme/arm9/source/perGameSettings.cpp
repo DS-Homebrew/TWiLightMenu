@@ -253,6 +253,9 @@ void perGameSettings (std::string filename) {
 		titleUpdate(isDirectory[cursorPosition[secondaryDevice]], filename.c_str(), cursorPosition[secondaryDevice]);
 		if (strlen(filename.c_str()) > 38) {
 			filename.resize(35, ' ');
+			size_t first = filename.find_first_not_of(' ');
+			size_t last = filename.find_last_not_of(' ');
+			filename = filename.substr(first, (last - first + 1));
 			filename.append("...");
 		}
 		printSmall(false, 16, 66, filename.c_str());
