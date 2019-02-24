@@ -33,8 +33,8 @@
 
 #define TFN_SYSTEM_UI_DIRECTORY    TFN_SYSTEM_DIR"themes/"
 
-#define TFN_UI_DIRECTORY           sfn().uiDirectory() + 
-#define TFN_FALLBACK_UI_DIRECTORY  sfn().fallbackDirectory() + 
+#define TFN_UI_DIRECTORY           tfn().uiDirectory() + 
+#define TFN_FALLBACK_UI_DIRECTORY  tfn().fallbackDirectory() + 
 
 #define TFN_UI_CURRENT_DIRECTORY    TFN_UI_DIRECTORY"/"
 #define TFN_THEME_SETTINGS          TFN_UI_DIRECTORY"/theme.ini"

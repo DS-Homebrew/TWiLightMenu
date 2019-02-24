@@ -16,8 +16,9 @@ class BmpTexture
         u32 _texHeight;
         u32 _texWidth;
         u32 _texLength;
+        int loadUnchecked(FILE* file);
     public:
-        BmpTexture(const char* filePath);
+        BmpTexture(const std::string& file, const std::string& fallbackPath);
         ~BmpTexture() { };
         void applyEffect(BitmapEffect effect);
         const u16 *texture() const { return (u16*)_texture.get(); }

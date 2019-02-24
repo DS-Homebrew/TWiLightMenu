@@ -30,8 +30,9 @@ class GritTexture
         u8 _paletteLength;
         unsigned int _textureLength;
         GrfHeader _header;
+        int loadUnchecked(FILE* file);
     public:
-        GritTexture(const char* filePath, const char* fallback);
+        GritTexture(const std::string& filePath, const std::string& fallback);
         ~GritTexture() { };
         void applyEffect(PaletteEffect effect);
         const u16 *palette() { return (u16*)_palette.get(); }

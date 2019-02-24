@@ -1,11 +1,8 @@
 #include "BmpTexture.h"
 
-BmpTexture::BmpTexture(const char* filePath)
-    : _texHeight(0), _texWidth(0), _texLength(0)
+int BmpTexture::loadUnchecked(FILE* file)
 {
-    FILE *file = fopen(filePath, "rb");
-    if (file) {
-        fseek(file, 0, SEEK_SET);
+  fseek(file, 0, SEEK_SET);
         u16 identifier = 0;
         u16 offset = 0;
         u32 texLength = 0;
@@ -30,7 +27,20 @@ BmpTexture::BmpTexture(const char* filePath)
 
         fseek(file, offset, SEEK_SET);
         fread(_texture.get(), sizeof(u16), _texLength, file);
+}
+
+BmpTexture::BmpTexture(const std::string& filePath, const std::string& fallback)
+    : _texHeight(0), _texWidth(0), _texLength(0)
+{
+    FILE *file = fopen(filePath.c_str(), "rb");
+    if (file) {
+      loadUnchecked(file);
+    } else {
         fclose(file);
+        file = fopen(fallback.c_str(), "rb");
+        loadUnchecked(file);
     }
+
+    fclose(file);
 
 }

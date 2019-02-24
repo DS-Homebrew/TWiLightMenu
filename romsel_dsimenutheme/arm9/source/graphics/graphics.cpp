@@ -2317,34 +2317,7 @@ void graphicsInit()
 	}
 	else
 	{
-		switch (ms().subtheme)
-		{
-		default:
-		case 0:
-			tex().loadDSiDarkTheme();
-			break;
-		case 1:
-			tex().loadDSiWhiteTheme();
-			break;
-		case 2:
-			tex().loadDSiRedTheme();
-			break;
-		case 3:
-			tex().loadDSiBlueTheme();
-			break;
-		case 4:
-			tex().loadDSiGreenTheme();
-			break;
-		case 5:
-			tex().loadDSiYellowTheme();
-			break;
-		case 6:
-			tex().loadDSiPinkTheme();
-			break;
-		case 7:
-			tex().loadDSiPurpleTheme();
-			break;
-		}
+		tex().loadDSiDarkTheme();
 
 		topBgLoad();
 		loadDateFont();

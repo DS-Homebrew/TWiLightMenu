@@ -41,6 +41,7 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
+#include "graphics/themefilenames.h"
 
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
@@ -553,7 +554,8 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	ms().loadSettings();
-
+	tfn();
+	
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
 	// swiCopy(PersonalData->name, usernameRendered, )
