@@ -25,84 +25,146 @@
 #include "common/singleton.h"
 
 
-#define TFN_SYSTEM_DIR              "/_nds/TWiLightMenu/akmenu/"
+#define TFN_SYSTEM_DIR              "/_nds/TWiLightMenu/dsimenu/"
 
 
-#define TFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
+#define TFN_FALLBACK_DSI_UI_DIRECTORY  "nitro:/themes/dsi/dark"
+#define TFN_FALLBACK_3DS_UI_DIRECTORY  "nitro:/themes/3ds/light"
+
 #define TFN_SYSTEM_UI_DIRECTORY    TFN_SYSTEM_DIR"themes/"
+
 #define TFN_UI_DIRECTORY           sfn().uiDirectory() + 
+#define TFN_FALLBACK_UI_DIRECTORY  sfn().fallbackDirectory() + 
 
 #define TFN_UI_CURRENT_DIRECTORY    TFN_UI_DIRECTORY"/"
-#define TFN_USER_CUSTOM             TFN_UI_DIRECTORY"/custom.ini"
-#define TFN_UI_SETTINGS             TFN_UI_DIRECTORY"/uisettings.ini"
-#define TFN_UPPER_SCREEN_BG         TFN_UI_DIRECTORY"/upper_screen.bmp"
-#define TFN_LOWER_SCREEN_BG         TFN_UI_DIRECTORY"/lower_screen.bmp"
-#define TFN_FORM_TITLE_L            TFN_UI_DIRECTORY"/title_left.bmp"
-#define TFN_FORM_TITLE_M            TFN_UI_DIRECTORY"/title_bg.bmp"
-#define TFN_FORM_TITLE_R            TFN_UI_DIRECTORY"/title_right.bmp"
-#define TFN_BUTTON2                 TFN_UI_DIRECTORY"/btn2.bmp"
-#define TFN_BUTTON3                 TFN_UI_DIRECTORY"/btn3.bmp"
-#define TFN_BUTTON4                 TFN_UI_DIRECTORY"/btn4.bmp"
-#define TFN_SPINBUTTON_L            TFN_UI_DIRECTORY"/spin_btn_left.bmp"
-#define TFN_SPINBUTTON_R            TFN_UI_DIRECTORY"/spin_btn_right.bmp"
-#define TFN_BRIGHTNESS_BUTTON       TFN_UI_DIRECTORY"/brightness.bmp"
-#define TFN_FOLDERUP_BUTTON         TFN_UI_DIRECTORY"/folder_up.bmp"
-#define TFN_STARTMENU_BG            TFN_UI_DIRECTORY"/menu_bg.bmp"
-#define TFN_CLOCK_NUMBERS           TFN_UI_DIRECTORY"/calendar/clock_numbers.bmp"
-#define TFN_CLOCK_COLON             TFN_UI_DIRECTORY"/calendar/clock_colon.bmp"
-#define TFN_DAY_NUMBERS             TFN_UI_DIRECTORY"/calendar/day_numbers.bmp"
-#define TFN_YEAR_NUMBERS            TFN_UI_DIRECTORY"/calendar/year_numbers.bmp"
-#define TFN_WEEKDAY_TEXT            TFN_UI_DIRECTORY"/calendar/weekday_text.bmp"
-#define TFN_CARD_ICON_BLUE          TFN_UI_DIRECTORY"/card_icon_blue.bmp"
-#define TFN_PROGRESS_WND_BG         TFN_UI_DIRECTORY"/progress_wnd.bmp"
-#define TFN_PROGRESS_BAR_BG         TFN_UI_DIRECTORY"/progress_bar.bmp"
-#define TFN_GBAFRAME                TFN_UI_DIRECTORY"/gbaframe.bmp"
-#define TFN_UI_ICONS_DIRECTORY      TFN_UI_DIRECTORY"/icons/"
+#define TFN_THEME_SETTINGS          TFN_UI_DIRECTORY"/theme.ini"
 
-#define TFN_BATTERY1                TFN_UI_DIRECTORY"/icons/battery1.bmp"
-#define TFN_BATTERY2                TFN_UI_DIRECTORY"/icons/battery2.bmp"
-#define TFN_BATTERY3                TFN_UI_DIRECTORY"/icons/battery3.bmp"
-#define TFN_BATTERY4                TFN_UI_DIRECTORY"/icons/battery4.bmp"
-#define TFN_BATTERY_CHARGE          TFN_UI_DIRECTORY"/icons/batterycharge.bmp"
-#define TFN_VOLUME0                 TFN_UI_DIRECTORY"/icons/volume0.bmp"
-#define TFN_VOLUME1                 TFN_UI_DIRECTORY"/icons/volume1.bmp"
-#define TFN_VOLUME2                 TFN_UI_DIRECTORY"/icons/volume2.bmp"
-#define TFN_VOLUME3                 TFN_UI_DIRECTORY"/icons/volume3.bmp"
-#define TFN_VOLUME4                 TFN_UI_DIRECTORY"/icons/volume4.bmp"
-
-#define TFN_CLOCK_NUMBERS_2         TFN_UI_DIRECTORY"/calendar/clock_numbers_2.bmp"
-#define TFN_CLOCK_COLON_2           TFN_UI_DIRECTORY"/calendar/clock_colon_2.bmp"
-#define TFN_DAY_NUMBERS_2           TFN_UI_DIRECTORY"/calendar/day_numbers_2.bmp"
-#define TFN_YEAR_NUMBERS_2          TFN_UI_DIRECTORY"/calendar/year_numbers_2.bmp"
-#define TFN_WEEKDAY_TEXT_2          TFN_UI_DIRECTORY"/calendar/weekday_text_2.bmp"
-
-#define TFN_LIST_BAR_BG             TFN_UI_DIRECTORY"/selection_bar_bg.bmp"
-
-#define TFN_LANGUAGE_DIRECTORY      "nitro:/language/"
-#define TFN_LANGUAGE_TEXT           TFN_LANGUAGE_DIRECTORY "%s/language.txt"
-
-#define TFN_FONTS_DIRECTORY         "nitro:/fonts/"
-#define TFN_DEFAULT_FONT            "tahoma.pcf"
-#define TFN_FALLBACK_FONT           "nitro:/fonts/tahoma.pcf"
+#define TFN_UI_TOPBG                TFN_UI_DIRECTORY"/ui/top.bmp"
+#define TFN_UI_BOTTOMBG             TFN_UI_DIRECTORY"/ui/bottom.bmp"
+#define TFN_UI_BOTTOMBUBBLEBG       TFN_UI_DIRECTORY"/ui/bottom_bubble.bmp"
+#define TFN_UI_DATE_TIME_FONT       TFN_UI_DIRECTORY"/ui/date_time_font.bmp"
+#define TFN_UI_LSHOULDER            TFN_UI_DIRECTORY"/ui/Lshoulder.bmp"
+#define TFN_UI_LSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Lshoulder_greyed.bmp"
+#define TFN_UI_RSHOULDER            TFN_UI_DIRECTORY"/ui/Rshoulder.bmp"
+#define TFN_UI_RSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Rshoulder_greyed.bmp"
 
 
-#define TFN_ICONS_DIRECTORY         TFN_SYSTEM_DIR"icons/"
+#define TFN_BATTERY1                TFN_UI_DIRECTORY"/battery/battery1.bmp"
+#define TFN_BATTERY2                TFN_UI_DIRECTORY"/battery/battery2.bmp"
+#define TFN_BATTERY3                TFN_UI_DIRECTORY"/battery/battery3.bmp"
+#define TFN_BATTERY4                TFN_UI_DIRECTORY"/battery/battery4.bmp"
+#define TFN_BATTERY_CHARGE          TFN_UI_DIRECTORY"/battery/batterycharge.bmp"
+#define TFN_BATTERY_FULL            TFN_UI_DIRECTORY"/battery/batteryfull.bmp"
+#define TFN_BATTERY_FULLDS          TFN_UI_DIRECTORY"/battery/batteryfullDS.bmp"
+#define TFN_BATTERY_LOW             TFN_UI_DIRECTORY"/battery/batterylow.bmp"
 
-#define TFN_CHEATS                  "/_nds/TWiLightMenu/extras/usrcheat.dat"
+#define TFN_VOLUME0                 TFN_UI_DIRECTORY"/volume/volume0.bmp"
+#define TFN_VOLUME1                 TFN_UI_DIRECTORY"/volume/volume1.bmp"
+#define TFN_VOLUME2                 TFN_UI_DIRECTORY"/volume/volume2.bmp"
+#define TFN_VOLUME3                 TFN_UI_DIRECTORY"/volume/volume3.bmp"
+#define TFN_VOLUME4                 TFN_UI_DIRECTORY"/volume/volume4.bmp"
+
+#define TFN_GRF_BIPS                TFN_UI_DIRECTORY"/grf/bips.grf"
+#define TFN_GRF_BOX                 TFN_UI_DIRECTORY"/grf/box.grf"
+#define TFN_GRF_BRACE               TFN_UI_DIRECTORY"/grf/brace.grf"
+#define TFN_GRF_BUBBLE              TFN_UI_DIRECTORY"/grf/bubble.grf"
+#define TFN_GRF_BUTTON_ARROW        TFN_UI_DIRECTORY"/grf/button_arrow.grf"
+#define TFN_GRF_CORNERBUTTON        TFN_UI_DIRECTORY"/grf/cornerbutton.grf"
+#define TFN_GRF_DIALOGBOX           TFN_UI_DIRECTORY"/grf/dialogbox.grf"
+#define TFN_GRF_FOLDER              TFN_UI_DIRECTORY"/grf/folder.grf"
+#define TFN_GRF_ICON_GB             TFN_UI_DIRECTORY"/grf/icon_gb.grf"
+#define TFN_GRF_ICON_GBA            TFN_UI_DIRECTORY"/grf/icon_gba.grf"
+#define TFN_GRF_ICON_GBAMODE        TFN_UI_DIRECTORY"/grf/icon_gbamode.grf"
+#define TFN_GRF_ICON_GG             TFN_UI_DIRECTORY"/grf/icon_gg.grf"
+#define TFN_GRF_ICON_MD             TFN_UI_DIRECTORY"/grf/icon_md.grf"
+#define TFN_GRF_ICON_NES            TFN_UI_DIRECTORY"/grf/icon_nes.grf"
+#define TFN_GRF_ICON_SETTINGS       TFN_UI_DIRECTORY"/grf/icon_settings.grf"
+#define TFN_GRF_ICON_SMS            TFN_UI_DIRECTORY"/grf/icon_sms.grf"
+#define TFN_GRF_ICON_SNES           TFN_UI_DIRECTORY"/grf/icon_snes.grf"
+#define TFN_GRF_ICON_UNK            TFN_UI_DIRECTORY"/grf/icon_unk.grf"
+#define TFN_GRF_LAUNCH_DOT          TFN_UI_DIRECTORY"/grf/launch_dot.grf"
+#define TFN_GRF_MOVING_ARROW        TFN_UI_DIRECTORY"/grf/moving_arrow.grf"
+#define TFN_GRF_PROGRESS            TFN_UI_DIRECTORY"/grf/progress.grf"
+#define TFN_GRF_SCROLL_WINDOW       TFN_UI_DIRECTORY"/grf/scroll_window.grf"
+#define TFN_GRF_SMALL_CART          TFN_UI_DIRECTORY"/grf/small_cart.grf"
+#define TFN_GRF_START_BORDER        TFN_UI_DIRECTORY"/grf/start_border.grf"
+#define TFN_GRF_START_TEXT          TFN_UI_DIRECTORY"/grf/start_text.grf"
+#define TFN_GRF_WIRELESSICONS       TFN_UI_DIRECTORY"/grf/wirelessicons.grf"
+
+// We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme
+// Leaving the user with no way to fix it well.
+
+#define TFN_FALLBACK_UI_CURRENT_DIRECTORY    TFN_FALLBACK_UI_DIRECTORY"/"
+#define TFN_FALLBACK_THEME_SETTINGS          TFN_FALLBACK_UI_DIRECTORY"/theme.ini"
+
+#define TFN_FALLBACK_UI_TOPBG                TFN_FALLBACK_UI_DIRECTORY"/ui/top.bmp"
+#define TFN_FALLBACK_UI_BOTTOMBG             TFN_FALLBACK_UI_DIRECTORY"/ui/bottom.bmp"
+#define TFN_FALLBACK_UI_BOTTOMBUBBLEBG       TFN_FALLBACK_UI_DIRECTORY"/ui/bottom_bubble.bmp"
+#define TFN_FALLBACK_UI_DATE_TIME_FONT       TFN_FALLBACK_UI_DIRECTORY"/ui/date_time_font.bmp"
+#define TFN_FALLBACK_UI_LSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Lshoulder.bmp"
+#define TFN_FALLBACK_UI_LSHOULDER_GREYED     TFN_FALLBACK_UI_DIRECTORY"/ui/Lshoulder_greyed.bmp"
+#define TFN_FALLBACK_UI_RSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Rshoulder.bmp"
+#define TFN_FALLBACK_UI_RSHOULDER_GREYED     TFN_FALLBACK_UI_DIRECTORY"/ui/Rshoulder_greyed.bmp"
+
+#define TFN_FALLBACK_BATTERY1                TFN_FALLBACK_UI_DIRECTORY"/battery/battery1.bmp"
+#define TFN_FALLBACK_BATTERY2                TFN_FALLBACK_UI_DIRECTORY"/battery/battery2.bmp"
+#define TFN_FALLBACK_BATTERY3                TFN_FALLBACK_UI_DIRECTORY"/battery/battery3.bmp"
+#define TFN_FALLBACK_BATTERY4                TFN_FALLBACK_UI_DIRECTORY"/battery/battery4.bmp"
+#define TFN_FALLBACK_BATTERY_CHARGE          TFN_FALLBACK_UI_DIRECTORY"/battery/batterycharge.bmp"
+#define TFN_FALLBACK_BATTERY_FULL            TFN_FALLBACK_UI_DIRECTORY"/battery/batteryfull.bmp"
+#define TFN_FALLBACK_BATTERY_FULLDS          TFN_FALLBACK_UI_DIRECTORY"/battery/batteryfullDS.bmp"
+#define TFN_FALLBACK_BATTERY_LOW             TFN_FALLBACK_UI_DIRECTORY"/battery/batterylow.bmp"
+
+#define TFN_FALLBACK_VOLUME0                 TFN_FALLBACK_UI_DIRECTORY"/volume/volume0.bmp"
+#define TFN_FALLBACK_VOLUME1                 TFN_FALLBACK_UI_DIRECTORY"/volume/volume1.bmp"
+#define TFN_FALLBACK_VOLUME2                 TFN_FALLBACK_UI_DIRECTORY"/volume/volume2.bmp"
+#define TFN_FALLBACK_VOLUME3                 TFN_FALLBACK_UI_DIRECTORY"/volume/volume3.bmp"
+#define TFN_FALLBACK_VOLUME4                 TFN_FALLBACK_UI_DIRECTORY"/volume/volume4.bmp"
+
+#define TFN_FALLBACK_GRF_BIPS                TFN_FALLBACK_UI_DIRECTORY"/grf/bips.grf"
+#define TFN_FALLBACK_GRF_BOX                 TFN_FALLBACK_UI_DIRECTORY"/grf/box.grf"
+#define TFN_FALLBACK_GRF_BRACE               TFN_FALLBACK_UI_DIRECTORY"/grf/brace.grf"
+#define TFN_FALLBACK_GRF_BUBBLE              TFN_FALLBACK_UI_DIRECTORY"/grf/bubble.grf"
+#define TFN_FALLBACK_GRF_BUTTON_ARROW        TFN_FALLBACK_UI_DIRECTORY"/grf/button_arrow.grf"
+#define TFN_FALLBACK_GRF_CORNERBUTTON        TFN_FALLBACK_UI_DIRECTORY"/grf/cornerbutton.grf"
+#define TFN_FALLBACK_GRF_DIALOGBOX           TFN_FALLBACK_UI_DIRECTORY"/grf/dialogbox.grf"
+#define TFN_FALLBACK_GRF_FOLDER              TFN_FALLBACK_UI_DIRECTORY"/grf/folder.grf"
+#define TFN_FALLBACK_GRF_ICON_GB             TFN_FALLBACK_UI_DIRECTORY"/grf/icon_gb.grf"
+#define TFN_FALLBACK_GRF_ICON_GBA            TFN_FALLBACK_UI_DIRECTORY"/grf/icon_gba.grf"
+#define TFN_FALLBACK_GRF_ICON_GBAMODE        TFN_FALLBACK_UI_DIRECTORY"/grf/icon_gbamode.grf"
+#define TFN_FALLBACK_GRF_ICON_GG             TFN_FALLBACK_UI_DIRECTORY"/grf/icon_gg.grf"
+#define TFN_FALLBACK_GRF_ICON_MD             TFN_FALLBACK_UI_DIRECTORY"/grf/icon_md.grf"
+#define TFN_FALLBACK_GRF_ICON_NES            TFN_FALLBACK_UI_DIRECTORY"/grf/icon_nes.grf"
+#define TFN_FALLBACK_GRF_ICON_SETTINGS       TFN_FALLBACK_UI_DIRECTORY"/grf/icon_settings.grf"
+#define TFN_FALLBACK_GRF_ICON_SMS            TFN_FALLBACK_UI_DIRECTORY"/grf/icon_sms.grf"
+#define TFN_FALLBACK_GRF_ICON_SNES           TFN_FALLBACK_UI_DIRECTORY"/grf/icon_snes.grf"
+#define TFN_FALLBACK_GRF_ICON_UNK            TFN_FALLBACK_UI_DIRECTORY"/grf/icon_unk.grf"
+#define TFN_FALLBACK_GRF_LAUNCH_DOT          TFN_FALLBACK_UI_DIRECTORY"/grf/launch_dot.grf"
+#define TFN_FALLBACK_GRF_MOVING_ARROW        TFN_FALLBACK_UI_DIRECTORY"/grf/moving_arrow.grf"
+#define TFN_FALLBACK_GRF_PROGRESS            TFN_FALLBACK_UI_DIRECTORY"/grf/progress.grf"
+#define TFN_FALLBACK_GRF_SCROLL_WINDOW       TFN_FALLBACK_UI_DIRECTORY"/grf/scroll_window.grf"
+#define TFN_FALLBACK_GRF_SMALL_CART          TFN_FALLBACK_UI_DIRECTORY"/grf/small_cart.grf"
+#define TFN_FALLBACK_GRF_START_BORDER        TFN_FALLBACK_UI_DIRECTORY"/grf/start_border.grf"
+#define TFN_FALLBACK_GRF_START_TEXT          TFN_FALLBACK_UI_DIRECTORY"/grf/start_text.grf"
+#define TFN_FALLBACK_GRF_WIRELESSICONS       TFN_FALLBACK_UI_DIRECTORY"/grf/wirelessicons.grf"
+
 
 class ThemeFilenames
 {
     private:
         std::string _uiDirectory;
+        std::string _fallbackDirectory;
     public:
         ThemeFilenames();
         
         ~ThemeFilenames(){}
     public: 
         inline const std::string& uiDirectory() { return _uiDirectory; }
+        inline const std::string& fallbackDirectory() { return _fallbackDirectory; }
+
   
 };
 
-typedef singleton<ThemeFilenames> sysFilenames_s;
-inline ThemeFilenames &tfn() { return sysFilenames_s::instance(); }
+typedef singleton<ThemeFilenames> themeFilenames_s;
+inline ThemeFilenames &tfn() { return themeFilenames_s::instance(); }
 #endif//_THEMEFILENAMES_H_
