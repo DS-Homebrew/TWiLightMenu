@@ -251,6 +251,10 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[cursorPosition[secondaryDevice]], filename.c_str(), cursorPosition[secondaryDevice]);
+		if (strlen(filename.c_str()) > 38) {
+			filename.resize(35, ' ');
+			filename.append("...");
+		}
 		printSmall(false, 16, 66, filename.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
