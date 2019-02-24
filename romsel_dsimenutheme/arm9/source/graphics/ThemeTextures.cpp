@@ -8,15 +8,7 @@
 #include "tool/colortool.h"
 // Graphic files
 #include "../include/startborderpal.h"
-#include "_3ds_box_empty.h"
-#include "_3ds_box_full.h"
-#include "_3ds_bubble.h"
-#include "_3ds_cornerbutton.h"
-#include "_3ds_cursor.h"
-#include "_3ds_dialogbox.h"
-#include "_3ds_folder.h"
-#include "_3ds_small_cart.h"
-#include "org_icon_settings.h"
+
 
 #include "tool/stringtool.h"
 
@@ -184,7 +176,7 @@ void ThemeTextures::reloadPalDialogBox() {
 
 void ThemeTextures::reloadPal3dsCornerButton() {
 	glBindTexture(0, cornerButtonTexID);
-	glColorSubTableEXT(0, 0, 16, 0, 0, (u16 *)(_3ds_cornerbuttonPal));
+	glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
 }
 
 void ThemeTextures::drawBg() {
@@ -232,12 +224,6 @@ void ThemeTextures::loadBottomImage() {
 	}
 }
 
-void ThemeTextures::loadCommonTextures() {
-
-	loadVolumeTextures();
-	loadBatteryTextures();
-}
-
 void ThemeTextures::setStringPaths(const std::string theme) {
 	topBgPath = formatString("nitro:/graphics/%s_top.bmp", theme.c_str());
 	bottomBgPath = formatString("nitro:/graphics/%s_bottom.bmp", theme.c_str());
@@ -251,40 +237,42 @@ void ThemeTextures::setStringPaths(const std::string theme) {
 
 void ThemeTextures::load3DSTheme() {
 
-	setStringPaths("3ds");
-
+	loadUiTextures();
+	loadVolumeTextures();
+	loadBatteryTextures();
 	loadBottomImage();
 
-	loadBubbleImage(_3ds_bubblePal, _3ds_bubbleBitmap, 7, 7, 8);
-	loadSettingsImage(org_icon_settingsPal, org_icon_settingsBitmap);
+	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
+	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
+	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
-	loadBoxfullImage(_3ds_box_fullPal, _3ds_box_fullBitmap);
-	loadBoxemptyImage(_3ds_box_emptyPal, _3ds_box_emptyBitmap);
-	loadFolderImage(_3ds_folderPal, _3ds_folderBitmap);
+	_boxFullTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
+	_boxEmptyTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
+	_folderTexture = std::make_unique<GritTexture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
 
-	loadCornerButtonImage(_3ds_cornerbuttonPal, _3ds_cornerbuttonBitmap, (64 / 16) * (64 / 32), 64, 32, 64, 64);
-	loadSmallCartImage(_3ds_small_cartPal, _3ds_small_cartBitmap);
-	loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
-	loadDialogboxImage(_3ds_dialogboxPal, _3ds_dialogboxBitmap);
+	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
+	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_startBorderTexture = std::make_unique<GritTexture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
+	_dialogBoxTexture = std::make_unique<GritTexture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
 
-	loadCommonTextures();
+	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 7, 7, 8);
+	loadSettingsImage(_settingsIconTexture->palette(),  (const unsigned int *)_settingsIconTexture->texture());
+
+	loadBoxfullImage(_boxFullTexture->palette(), (const unsigned int *)_boxFullTexture->texture());
+	loadBoxemptyImage(_boxEmptyTexture->palette(), (const unsigned int *)_boxEmptyTexture->texture());
+	loadFolderImage(_folderTexture->palette(), (const unsigned int *)_folderTexture->texture());
+
+	loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int *)_cornerButtonTexture->texture(), (64 / 16) * (64 / 32), 64, 32, 64, 64);
+	loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int *)_smallCartTexture->texture());
+	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(), (32 / 32) * (192 / 64), 6, 64, 192);
+	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
 }
 
 void ThemeTextures::loadDSiDarkTheme() {
 
-	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
-	_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-	_bottomBackgroundBubbleTexture =
-	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
-	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
-
-	_leftShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
-	_rightShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
-	_leftShoulderGreyedTexture =
-	    std::make_unique<BmpTexture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
-	_rightShoulderGreyedTexture =
-	    std::make_unique<BmpTexture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
-
+	loadUiTextures();
+	loadVolumeTextures();
+	loadBatteryTextures();
 	loadBottomImage();
 
 	_bipsTexture = std::make_unique<GritTexture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
@@ -343,7 +331,6 @@ void ThemeTextures::loadDSiDarkTheme() {
 	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
 	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
 
-	loadCommonTextures();
 }
 
 void ThemeTextures::loadVolumeTextures() {
@@ -364,4 +351,21 @@ void ThemeTextures::loadBatteryTextures() {
 	_batteryfullTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULL, TFN_FALLBACK_BATTERY_FULL);
 	_batteryfullDSTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULLDS, TFN_FALLBACK_BATTERY_FULLDS);
 	_batterylowTexture = std::make_unique<BmpTexture>(TFN_BATTERY_LOW, TFN_FALLBACK_BATTERY_LOW);
+}
+
+void ThemeTextures::loadUiTextures() {
+	
+	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
+	_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
+	_bottomBackgroundBubbleTexture =
+	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
+
+	_leftShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
+	_rightShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
+	_leftShoulderGreyedTexture =
+	    std::make_unique<BmpTexture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
+	_rightShoulderGreyedTexture =
+	    std::make_unique<BmpTexture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+
 }

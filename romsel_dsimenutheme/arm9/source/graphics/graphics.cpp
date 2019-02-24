@@ -2309,6 +2309,7 @@ void graphicsInit()
 		bubbleYpos += 18;
 		bubbleXpos += 3;
 		topBgLoad();
+		loadDateFont();
 		loadDate();
 		loadTime();
 		loadClockColon();
@@ -2318,7 +2319,6 @@ void graphicsInit()
 	else
 	{
 		tex().loadDSiDarkTheme();
-
 		topBgLoad();
 		loadDateFont();
 		loadDate();

@@ -44,6 +44,7 @@ public:
 
   void loadVolumeTextures();
   void loadBatteryTextures();
+  void loadUiTextures();
 
   void reloadPalDialogBox();
   void reloadPal3dsCornerButton();
@@ -85,7 +86,6 @@ private:
    */
   unique_ptr<glImage[]> loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
                                     unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int texH);
-  void loadCommonTextures();
 
 public:
   const glImage *bubbleImage() { return _bubbleImage.get(); }
@@ -211,6 +211,9 @@ private:
   unique_ptr<GritTexture> _startTextTexture;
   unique_ptr<GritTexture> _wirelessIconsTexture;
   unique_ptr<GritTexture> _settingsIconTexture;
+
+  unique_ptr<GritTexture> _boxFullTexture;
+  unique_ptr<GritTexture> _boxEmptyTexture;
 
   unique_ptr<BmpTexture> _volume0Texture;
   unique_ptr<BmpTexture> _volume1Texture;

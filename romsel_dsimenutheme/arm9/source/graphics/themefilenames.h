@@ -66,6 +66,11 @@
 
 #define TFN_GRF_BIPS                TFN_UI_DIRECTORY"/grf/bips.grf"
 #define TFN_GRF_BOX                 TFN_UI_DIRECTORY"/grf/box.grf"
+
+#define TFN_GRF_BOX_FULL            TFN_UI_DIRECTORY"/grf/box_full.grf"
+#define TFN_GRF_BOX_EMPTY           TFN_UI_DIRECTORY"/grf/box_empty.grf"
+#define TFN_GRF_CURSOR              TFN_UI_DIRECTORY"/grf/cursor.grf"
+
 #define TFN_GRF_BRACE               TFN_UI_DIRECTORY"/grf/brace.grf"
 #define TFN_GRF_BUBBLE              TFN_UI_DIRECTORY"/grf/bubble.grf"
 #define TFN_GRF_BUTTON_ARROW        TFN_UI_DIRECTORY"/grf/button_arrow.grf"
@@ -151,6 +156,10 @@
 
 #define TFN_FALLBACK_RVID_CUBES              TFN_FALLBACK_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 
+
+#define TFN_FALLBACK_GRF_BOX_FULL            TFN_FALLBACK_UI_DIRECTORY"/grf/box_full.grf"
+#define TFN_FALLBACK_GRF_BOX_EMPTY           TFN_FALLBACK_UI_DIRECTORY"/grf/box_empty.grf"
+#define TFN_FALLBACK_GRF_CURSOR              TFN_FALLBACK_UI_DIRECTORY"/grf/cursor.grf"
 
 class ThemeFilenames
 {
