@@ -264,17 +264,13 @@ void ThemeTextures::load3DSTheme() {
 
 	loadCornerButtonImage(_3ds_cornerbuttonPal, _3ds_cornerbuttonBitmap, (64 / 16) * (64 / 32), 64, 32, 64, 64);
 	loadSmallCartImage(_3ds_small_cartPal, _3ds_small_cartBitmap);
-
 	loadStartbrdImage(_3ds_cursorPal, _3ds_cursorBitmap, (32 / 32) * (192 / 64), 6, 64, 192);
-
 	loadDialogboxImage(_3ds_dialogboxPal, _3ds_dialogboxBitmap);
 
 	loadCommonTextures();
 }
 
 void ThemeTextures::loadDSiDarkTheme() {
-
-	setStringPaths("dark");
 
 	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
 	_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);

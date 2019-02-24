@@ -71,15 +71,35 @@ GritTexture::GritTexture(const std::string& filePath, const std::string& fallbac
 		file = fopen(fallback.c_str(), "rb");
 	}
 
-	if (file) {
-		// read in header
-        // failed
-        if (loadUnchecked(file)) {
-            fclose(file);
-            file = fopen(fallback.c_str(), "rb");
-            loadUnchecked(file);
-        }
-	}
+    if (file) {
+        // read in header        
+
+        fseek(file, 5 * sizeof(u32), SEEK_SET);
+        fread(&_header, sizeof(GrfHeader), 1, file);
+
+        // Skip 'G' 'F' 'X'[datasize]
+        // todo: verify
+        fseek(file, 2 * sizeof(u32), SEEK_CUR);
+        u32 textureLengthInBytes = 0;
+        fread(&textureLengthInBytes, sizeof(u32), 1, file);
+
+        
+        _textureLength = (textureLengthInBytes >> 8) / sizeof(unsigned int);
+    
+        _texture = std::make_unique<unsigned int[]>(_textureLength);
+        fread(_texture.get(), sizeof(unsigned int), _textureLength, file);
+
+
+        // Skip 'P' 'A' 'L'[datasize]
+        // todo: verify
+        fseek(file, 2 * sizeof(u32), SEEK_CUR);
+        u32 paletteLength = 0;
+        fread(&paletteLength, sizeof(u32), 1, file);
+        _paletteLength = (paletteLength >> 8) / sizeof(unsigned short);
+
+        _palette = std::make_unique<unsigned short[]>(_paletteLength);
+        fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);
+    }
 
 	fclose(file);
 }

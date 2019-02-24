@@ -159,7 +159,6 @@ class ThemeFilenames
         std::string _fallbackDirectory;
     public:
         ThemeFilenames();
-        
         ~ThemeFilenames(){}
     public: 
         inline const std::string& uiDirectory() { return _uiDirectory; }
