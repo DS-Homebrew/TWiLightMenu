@@ -5,12 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "common/dsimenusettings.h"
 #include "common/inifile.h"
 
 const char* languageIniPath;
 
-extern int guiLanguage;
-extern int bstrap_language;
 int setLanguage = 0;
 int setGameLanguage = 0;
 
@@ -20,15 +19,15 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
-	if (guiLanguage == -1) {
+	if (ms().guiLanguage == -1) {
 		setLanguage = PersonalData->language;
 	} else {
-		setLanguage = guiLanguage;
+		setLanguage = ms().guiLanguage;
 	}
 
-	if (bstrap_language == -1) {
+	if (ms().bstrap_language == -1) {
 		setGameLanguage = PersonalData->language;
 	} else {
-		setGameLanguage = bstrap_language;
+		setGameLanguage = ms().bstrap_language;
 	}
 }

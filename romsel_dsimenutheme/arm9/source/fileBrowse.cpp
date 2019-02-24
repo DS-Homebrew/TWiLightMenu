@@ -78,7 +78,6 @@ extern bool slot1LaunchMethod;
 extern bool bootstrapFile;
 extern bool homebrewBootstrap;
 extern bool gbaBiosFound[2];
-extern int consoleModel;
 
 extern int launcherApp;
 extern int sysRegion;
@@ -106,14 +105,12 @@ extern bool dbox_selectMenu;
 
 extern bool applaunch;
 
-extern bool gotosettings;
 
 extern int vblankRefreshCounter;
 using namespace std;
 
 extern bool startMenu;
 
-extern int theme;
 
 int file_count = 0;
 
@@ -448,7 +445,7 @@ bool isTopLevel(const char *path)
 }
 
 void waitForFadeOut (void) {
-	if (!dropDown && theme == 0) {
+	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 72; i++) {
 			loadVolumeImage();
@@ -472,7 +469,7 @@ void displayNowLoading(void) {
 		printSmall(false, 8, 152, "Location:");
 		if (ms().secondaryDevice) {
 			printSmall(false, 8, 168, "Slot-1 microSD Card");
-		} else if (consoleModel < 3) {
+		} else if (ms().consoleModel < 3) {
 			printSmall(false, 8, 168, "SD Card");
 		} else {
 			printSmall(false, 8, 168, "microSD Card");
@@ -520,7 +517,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 
 		if (!boxArtLoaded) {
 			if (isDirectory[ms().cursorPosition[ms().secondaryDevice]]) {
-				if (theme == 1) {
+				if (ms().theme == 1) {
 					if (!rocketVideo_playVideo) {
 						clearBoxArt();	// Clear box art, if it's a directory
 						rocketVideo_playVideo = true;
@@ -530,7 +527,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 				}
 			} else {
 				rocketVideo_playVideo = false;
-				if (theme == 1) clearBoxArt();	// Clear top screen cubes or box art
+				if (ms().theme == 1) clearBoxArt();	// Clear top screen cubes or box art
 				loadBoxArt(boxArtPath[ms().cursorPosition[ms().secondaryDevice]]);	// Load box art
 			}
 			boxArtLoaded = true;
@@ -677,7 +674,7 @@ void switchDevice(void) {
 		fifoSendValue32(FIFO_USER_01, 0);	// Cancel sound fade-out
 
 		ms().romPath = "";
-		ms().launchType = 0;
+		ms().launchType = DSiMenuPlusPlusSettings::TLaunchType::ESlot1; // 0
 		ms().saveSettings();
 		
 		if (!slot1LaunchMethod || sys().arm7SCFGLocked()) {
@@ -902,13 +899,13 @@ bool selectMenu(void) {
 		printSmall(false, 24, -2+textYpos+(28*selCursorPosition), ">");
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
-				printSmall(false, 64, textYpos, (consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
+				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
 			} else if (assignedOp[i] == 1) {
 				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
-						if (consoleModel < 3) {
+						if (ms().consoleModel < 3) {
 							printSmall(false, 64, textYpos, "Switch to SD Card");
 						} else {
 							printSmall(false, 64, textYpos, "Switch to microSD Card");
@@ -1181,8 +1178,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			// cursor->delay = TextEntry::ACTIVE;
 
 			if (!stopSoundPlayed) {
-				if ((theme == 0 && !startMenu && ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
-				|| (theme == 0 && startMenu && ms().startMenu_cursorPosition < (3-flashcardFound()))) {
+				if ((ms().theme == 0 && !startMenu && ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 <= ((int) dirContents[scrn].size() - 1))
+				|| (ms().theme == 0 && startMenu && ms().startMenu_cursorPosition < (3-flashcardFound()))) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;
@@ -1215,7 +1212,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (isScrolling) {
 					if (boxArtLoaded) {
 						if (!rocketVideo_playVideo) clearBoxArt();
-						rocketVideo_playVideo = (theme == 1 ? true : false);
+						rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 					}
 				} else {
 					updateBoxArt(dirContents, scrn);
@@ -1230,7 +1227,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 					clearText(false);
 					showbubble = false;
-					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
+					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
 				loadVolumeImage();
 				loadBatteryImage();
@@ -1245,7 +1242,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
 			|| ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
+			|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				ms().cursorPosition[ms().secondaryDevice] -= 1;
 				if (ms().cursorPosition[ms().secondaryDevice] >= 0) {
@@ -1268,7 +1265,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
 					|| ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright)
-					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
+					|| ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Button arrow (DSi theme)
 			{
 				ms().cursorPosition[ms().secondaryDevice] += 1;
 				if (ms().cursorPosition[ms().secondaryDevice] <= 39) {
@@ -1506,7 +1503,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				movingApp = -1;
 
 			// Scrollbar
-			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
+			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 && ms().theme == 0 && !titleboxXmoveleft && !titleboxXmoveright))		// Scroll bar (DSi theme))
 			{
 				touchPosition startTouch = touch;
 				int prevPos = ms().cursorPosition[ms().secondaryDevice];
@@ -1647,7 +1644,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						int decAmount = abs(dX);
 						if(dX>0) {
 							while(decAmount>.25) {
-								if(theme && titleboxXpos[ms().secondaryDevice] > 2496)
+								if(ms().theme && titleboxXpos[ms().secondaryDevice] > 2496)
 									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
@@ -1675,7 +1672,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 							}
 						} else if (dX<0) {
 							while(decAmount>.25) {
-								if(theme && titleboxXpos[ms().secondaryDevice]<0)
+								if(ms().theme && titleboxXpos[ms().secondaryDevice]<0)
 									break;
 								scanKeys();
 								if(keysHeld() & KEY_TOUCH) {
@@ -1739,12 +1736,12 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					ms().cursorPosition[ms().secondaryDevice] = round((titleboxXpos[ms().secondaryDevice]+32)/64);
 					titlewindowXpos[ms().secondaryDevice] = (titleboxXpos[ms().secondaryDevice]+32)*0.078125;
 					if(titleboxXpos[ms().secondaryDevice] > 2496) {
-						if(theme)
+						if(ms().theme)
 							titleboxXpos[ms().secondaryDevice] = 2496;
 						ms().cursorPosition[ms().secondaryDevice] = 39;
 						titlewindowXpos[ms().secondaryDevice] = 192.075;
 					} else if(titleboxXpos[ms().secondaryDevice] < 0) {
-						if(theme)
+						if(ms().theme)
 							titleboxXpos[ms().secondaryDevice] = 0;
 						ms().cursorPosition[ms().secondaryDevice] = 0;
 						titlewindowXpos[ms().secondaryDevice] = 0;
@@ -1786,7 +1783,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				settingsChanged = true;
 				touch = startTouch;
 				if(!gameTapped && ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40 < ((int) dirContents[scrn].size()))
-					showSTARTborder = (theme == 1 ? true : false);
+					showSTARTborder = (ms().theme == 1 ? true : false);
 			}
 
 			if (ms().cursorPosition[ms().secondaryDevice] < 0)
@@ -1828,7 +1825,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				}
 				else if ((isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && !isDSiMode())
 						|| (isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && !sdFound())
-						|| (isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && consoleModel > 1))
+						|| (isDSiWare[ms().cursorPosition[ms().secondaryDevice]] && ms().consoleModel > 1))
 				{
 					mmEffectEx(&snd_wrong);
 					clearText();
@@ -1930,7 +1927,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					applaunch = true;
 					applaunchprep = true;
 
-					if (theme == 0) {
+					if (ms().theme == 0) {
 						showbubble = false;
 						showSTARTborder = false;
 						clearText(false);	// Clear title
@@ -1958,7 +1955,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 			gameTapped = false;
 
-			if (theme == 1) {
+			if (ms().theme == 1) {
 				// Launch settings by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft && !titleboxXmoveright)
 				{
@@ -2242,7 +2239,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				perGameSettings(dirContents[scrn].at(ms().cursorPosition[ms().secondaryDevice]+ms().pagenum[ms().secondaryDevice]*40).name);
 			}
 
-			if ((pressed & KEY_SELECT) && theme == 0) {
+			if ((pressed & KEY_SELECT) && ms().theme == 0) {
 				if (selectMenu()) {
 					clearText();
 					showdialogbox = false;

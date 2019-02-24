@@ -4,6 +4,7 @@
 
 #include "paletteEffects.h"
 #include "tool/colortool.h"
+#include "common/dsimenusettings.h"
 // Graphic files
 #include "dialogbox.h"
 #include "_3ds_dialogbox.h"
@@ -203,9 +204,8 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
 
   u16* newPalette = (u16*)palette;
 
-  extern int colorMode;
 
-  if (colorMode == 1) {
+  if (ms().colorMode == 1) {
 	// Convert palette to grayscale
   	for (int i2 = 0; i2 < paletteLength; i2++) {
   		*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
@@ -231,10 +231,9 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const unsigned 
 
 void ThemeTextures::reloadPalDialogBox()
 {
-  extern int theme;
   glBindTexture(0, dialogboxTexID);
-  glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
-  if (theme != 1) {
+  glColorSubTableEXT(0, 0, 12, 0, 0, (u16 *)(ms().theme==1 ? dialogboxPal : apply_personal_theme(button_arrowPals)));
+  if (ms().theme != 1) {
     glBindTexture(0, cornerButtonTexID);
     glColorSubTableEXT(0, 0, 16, 0, 0, (u16 *)(cornerbuttonPal));
   }

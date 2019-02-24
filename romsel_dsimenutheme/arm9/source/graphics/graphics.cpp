@@ -58,8 +58,6 @@ extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
 extern bool controlBottomBright;
-extern int colorMode;
-extern int blfLevel;
 int fadeDelay = 0;
 
 extern bool music;
@@ -111,7 +109,6 @@ int titleboxYmovepos = 0;
 extern int spawnedtitleboxes;
 
 
-extern int theme;
 extern int subtheme;
 std::vector<std::string> photoList;
 static std::string photoPath;
@@ -400,7 +397,7 @@ void initSubSprites(void)
 
 u16 convertToDsBmp(u16 val)
 {
-	if (colorMode == 1)
+	if (ms().colorMode == 1)
 	{
 		u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
 
@@ -419,15 +416,15 @@ u16 convertToDsBmp(u16 val)
 
 		newVal = 32768 | (max << 10) | (max << 5) | (max);
 
-		b = ((newVal) >> 10) & (31 - 6 * blfLevel);
-		g = ((newVal) >> 5) & (31 - 3 * blfLevel);
+		b = ((newVal) >> 10) & (31 - 6 * ms().blfLevel);
+		g = ((newVal) >> 5) & (31 - 3 * ms().blfLevel);
 		r = (newVal)&31;
 
 		return 32768 | (b << 10) | (g << 5) | (r);
 	}
 	else
 	{
-		return ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		return ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) | (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
 	}
 }
 
@@ -510,7 +507,7 @@ void playRotatingCubesVideo(void)
 			DC_FlushRange(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000), 0x7000);
 			dmaCopyWordsAsynch(1, rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000), (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
 
-			if (colorMode == 1)
+			if (ms().colorMode == 1)
 			{
 				beginBgSubModify();
 				for (u16 i = 0; i < 256 * 56; i++)
@@ -531,7 +528,7 @@ void vBlankHandler()
 	execQueue();			   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 
-	if (theme == 1 && waitBeforeMusicPlay)
+	if (ms().theme == 1 && waitBeforeMusicPlay)
 	{
 		if (waitBeforeMusicPlayTime == 60 * 3)
 		{
@@ -568,7 +565,7 @@ void vBlankHandler()
 		needToPlayStopSound = false;
 	}
 
-	if (theme == 1 && rotatingCubesLoaded)
+	if (ms().theme == 1 && rotatingCubesLoaded)
 	{
 		playRotatingCubesVideo();
 	}
@@ -740,7 +737,7 @@ void vBlankHandler()
 			}
 		}
 
-		if (redoDropDown && theme == 0)
+		if (redoDropDown && ms().theme == 0)
 		{
 			for (int i = 0; i < 5; i++)
 			{
@@ -756,7 +753,7 @@ void vBlankHandler()
 			redoDropDown = false;
 		}
 
-		if (!whiteScreen && dropDown && theme == 0)
+		if (!whiteScreen && dropDown && ms().theme == 0)
 		{
 			for (int i = 0; i <= allowedTitleboxForDropDown; i++)
 			{
@@ -818,16 +815,16 @@ void vBlankHandler()
 		}
 
 		int bg_R = bottomScreenBrightness / 8;
-		int bg_G = (bottomScreenBrightness / 8) - (3 * blfLevel);
+		int bg_G = (bottomScreenBrightness / 8) - (3 * ms().blfLevel);
 		if (bg_G < 0)
 			bg_G = 0;
-		int bg_B = (bottomScreenBrightness / 8) - (6 * blfLevel);
+		int bg_B = (bottomScreenBrightness / 8) - (6 * ms().blfLevel);
 		if (bg_B < 0)
 			bg_B = 0;
 
 		glColor(RGB15(bg_R, bg_G, bg_B));
 
-		if (theme == 0)
+		if (ms().theme == 0)
 		{
 			int bipXpos = 27;
 			glSprite(16 + titlewindowXpos[ms().secondaryDevice], 171, GL_FLIP_NONE, tex().scrollwindowImage());
@@ -860,7 +857,7 @@ void vBlankHandler()
 		{
 			if (movingAppIsDir)
 			{
-				if (theme == 1)
+				if (ms().theme == 1)
 					glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().folderImage());
 				else
 					glSprite(96, titleboxYpos - movingAppYpos + titleboxYposDropDown[movingApp % 5], GL_FLIP_NONE, tex().folderImage());
@@ -869,7 +866,7 @@ void vBlankHandler()
 			{
 				if (!bnrSysSettings[movingApp])
 				{
-					if (theme == 1)
+					if (ms().theme == 1)
 					{
 						glSprite(96, titleboxYpos - movingAppYpos, GL_FLIP_NONE, tex().boxfullImage());
 					}
@@ -901,7 +898,7 @@ void vBlankHandler()
 
 		for (int i = 0; i < 40; i++)
 		{
-			if (theme == 0)
+			if (ms().theme == 0)
 			{
 				moveIconClose(i);
 			}
@@ -920,14 +917,14 @@ void vBlankHandler()
 							int j = i;
 							if (i > movingApp - (ms().pagenum[ms().secondaryDevice] * 40))
 								j--;
-							if (theme == 1)
+							if (ms().theme == 1)
 								glSprite((j * 2496 / 39) + 128 - titleboxXpos[ms().secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().folderImage());
 							else
 								glSprite((j * 2496 / 39) + 128 - titleboxXpos[ms().secondaryDevice], (titleboxYpos - 3) + titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
 						}
 						else
 						{
-							if (theme == 1)
+							if (ms().theme == 1)
 								glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice] + movecloseXpos, titleboxYpos, GL_FLIP_NONE, tex().folderImage());
 							else
 								glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice] + movecloseXpos, (titleboxYpos - 3) + titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
@@ -944,7 +941,7 @@ void vBlankHandler()
 								continue;
 							if (!bnrSysSettings[i])
 							{
-								if (theme == 1)
+								if (ms().theme == 1)
 								{
 									glSprite((j * 2496 / 39) + 128 - titleboxXpos[ms().secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 								}
@@ -976,7 +973,7 @@ void vBlankHandler()
 						{
 							if (!bnrSysSettings[i])
 							{
-								if (theme == 1)
+								if (ms().theme == 1)
 								{
 									glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 								}
@@ -1011,7 +1008,7 @@ void vBlankHandler()
 					// Empty box
 					if (movingApp != -1)
 					{
-						if (theme == 1)
+						if (ms().theme == 1)
 						{
 							glSprite(((i - 1) * 2496 / 39) + 128 - titleboxXpos[ms().secondaryDevice], titleboxYpos + titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().boxemptyImage());
 						}
@@ -1022,7 +1019,7 @@ void vBlankHandler()
 					}
 					else
 					{
-						if (theme == 1)
+						if (ms().theme == 1)
 						{
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice], titleboxYpos + titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().boxemptyImage());
 						}
@@ -1036,12 +1033,12 @@ void vBlankHandler()
 			spawnedboxXpos += 64;
 			iconXpos += 64;
 		}
-		if (theme == 0)
+		if (ms().theme == 0)
 		{
 			glSprite(spawnedboxXpos + 10 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H, tex().braceImage());
 		}
 
-		if (movingApp != -1 && !theme && showMovingArrow)
+		if (movingApp != -1 && !ms().theme && showMovingArrow)
 		{
 			if (movingArrowYdirection)
 			{
@@ -1058,7 +1055,7 @@ void vBlankHandler()
 			glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
 		}
 		// Top icons for 3DS theme
-		if (theme == 1)
+		if (ms().theme == 1)
 		{
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound())
@@ -1096,7 +1093,7 @@ void vBlankHandler()
 				glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 		}
 
-		if (applaunchprep && theme == 0)
+		if (applaunchprep && ms().theme == 0)
 		{
 
 			if (isDirectory[ms().cursorPosition[ms().secondaryDevice]])
@@ -1161,7 +1158,7 @@ void vBlankHandler()
 		}
 		if (showSTARTborder)
 		{
-			if (theme == 1)
+			if (ms().theme == 1)
 			{
 				glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 				glSprite(96 + 32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
@@ -1170,7 +1167,7 @@ void vBlankHandler()
 			}
 			else if (!isScrolling)
 			{
-				if (showbubble && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0)
+				if (showbubble && ms().theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0)
 				{
 					mmEffectEx(&snd_stop);
 					waitForNeedToPlayStopSound = 1;
@@ -1186,10 +1183,10 @@ void vBlankHandler()
 		// Refresh the background layer.
 		if (showbubble)
 			drawBubble(tex().bubbleImage());
-		if (showSTARTborder && theme == 0 && !isScrolling)
+		if (showSTARTborder && ms().theme == 0 && !isScrolling)
 			glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
-		glColor(RGB15(31, 31 - (3 * blfLevel), 31 - (6 * blfLevel)));
+		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
 		if (dbox_Ypos != -192)
 		{
 			// Draw the dialog box.
@@ -1252,7 +1249,7 @@ void vBlankHandler()
 			}*/
 		if (whiteScreen)
 		{
-			glBoxFilled(0, 0, 256, 192, RGB15(31, 31 - (3 * blfLevel), 31 - (6 * blfLevel)));
+			glBoxFilled(0, 0, 256, 192, RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
 			if (showProgressIcon)
 				glSprite(224, 152, GL_FLIP_NONE, &tex().progressImage()[progressAnimNum]);
 		}
@@ -1266,7 +1263,7 @@ void vBlankHandler()
 			}
 			else if (!showdialogbox)
 			{
-				if (theme == 1)
+				if (ms().theme == 1)
 				{
 					// on other themes, reloadDboxPalettes also reloads cornerbutton palettes
 					tex().reloadPal3dsCornerButton();
@@ -1311,7 +1308,7 @@ void vBlankHandler()
 		}
 	}
 
-	if (theme == 1)
+	if (ms().theme == 1)
 	{
 		startBorderZoomAnimDelay++;
 		if (startBorderZoomAnimDelay == 8)
@@ -1337,7 +1334,7 @@ void vBlankHandler()
 	{
 		startBorderZoomAnimNum = 0;
 	}
-	if (applaunchprep && theme == 0 && launchDotDoFrameChange)
+	if (applaunchprep && ms().theme == 0 && launchDotDoFrameChange)
 	{
 		launchDotFrame[0]--;
 		if (launchDotCurrentChangingFrame >= 1)
@@ -1371,7 +1368,7 @@ void vBlankHandler()
 		if (launchDotCurrentChangingFrame > 11)
 			launchDotCurrentChangingFrame = 11;
 	}
-	if (applaunchprep && theme == 0)
+	if (applaunchprep && ms().theme == 0)
 		launchDotDoFrameChange = !launchDotDoFrameChange;
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
@@ -1382,7 +1379,7 @@ void clearBmpScreen()
 	u16 val = 0xFFFF;
 	for (int i = 0; i < 256 * 192; i++)
 	{
-		bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) | (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
 	}
 	commitBgSubModify();
 }
@@ -1423,117 +1420,41 @@ void loadBoxArt(const char *filename)
 
 static int loadedVolumeImage = -1;
 
-static const char *volume4ImagePath;
-static const char *volume3ImagePath;
-static const char *volume2ImagePath;
-static const char *volume1ImagePath;
-static const char *volume0ImagePath;
-
-void setVolumeImagePaths(void)
-{
-	switch (subtheme)
-	{
-	case 0:
-		volume4ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume4.bmp" : "nitro:/graphics/dark_volume4.bmp";
-		volume3ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume3.bmp" : "nitro:/graphics/dark_volume3.bmp";
-		volume2ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume2.bmp" : "nitro:/graphics/dark_volume2.bmp";
-		volume1ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume1.bmp" : "nitro:/graphics/dark_volume1.bmp";
-		volume0ImagePath = (theme == 1) ? "nitro:/graphics/3ds_volume0.bmp" : "nitro:/graphics/dark_volume0.bmp";
-		break;
-	case 1:
-	default:
-		volume4ImagePath = "nitro:/graphics/volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/volume0.bmp";
-		break;
-	case 2:
-		volume4ImagePath = "nitro:/graphics/red_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/red_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/red_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/red_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/red_volume0.bmp";
-		break;
-	case 3:
-		volume4ImagePath = "nitro:/graphics/blue_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/blue_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/blue_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/blue_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/blue_volume0.bmp";
-		break;
-	case 4:
-		volume4ImagePath = "nitro:/graphics/green_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/green_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/green_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/green_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/green_volume0.bmp";
-		break;
-	case 5:
-		volume4ImagePath = "nitro:/graphics/yellow_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/yellow_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/yellow_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/yellow_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/yellow_volume0.bmp";
-		break;
-	case 6:
-		volume4ImagePath = "nitro:/graphics/pink_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/pink_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/pink_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/pink_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/pink_volume0.bmp";
-		break;
-	case 7:
-		volume4ImagePath = "nitro:/graphics/purple_volume4.bmp";
-		volume3ImagePath = "nitro:/graphics/purple_volume3.bmp";
-		volume2ImagePath = "nitro:/graphics/purple_volume2.bmp";
-		volume1ImagePath = "nitro:/graphics/purple_volume1.bmp";
-		volume0ImagePath = "nitro:/graphics/purple_volume0.bmp";
-		break;
-	}
-}
-
 void loadVolumeImage(void)
 {
 	if (!isDSiMode())
 		return;
 
 	u8 volumeLevel = *(u8 *)(0x023FF000);
-	const char *volumeImagePath;
 
 	if (volumeLevel >= 0x1C && volumeLevel < 0x20)
 	{
 		if (loadedVolumeImage == 4)
 			return;
-		volumeImagePath = volume4ImagePath;
 		loadedVolumeImage = 4;
 	}
 	else if (volumeLevel >= 0x11 && volumeLevel < 0x1C)
 	{
 		if (loadedVolumeImage == 3)
 			return;
-		volumeImagePath = volume3ImagePath;
 		loadedVolumeImage = 3;
 	}
 	else if (volumeLevel >= 0x07 && volumeLevel < 0x11)
 	{
 		if (loadedVolumeImage == 2)
 			return;
-		volumeImagePath = volume2ImagePath;
 		loadedVolumeImage = 2;
 	}
 	else if (volumeLevel > 0x00 && volumeLevel < 0x07)
 	{
 		if (loadedVolumeImage == 1)
 			return;
-		volumeImagePath = volume1ImagePath;
 		loadedVolumeImage = 1;
 	}
 	else if (volumeLevel == 0x00)
 	{
 		if (loadedVolumeImage == 0)
 			return;
-		volumeImagePath = volume0ImagePath;
 		loadedVolumeImage = 0;
 	}
 	else
@@ -2175,7 +2096,7 @@ void loadClockColon()
 
 void clearBoxArt()
 {
-	if (theme == 1)
+	if (ms().theme == 1)
 	{
 		loadBMPPart("nitro:/graphics/3ds_top.bmp");
 	}
@@ -2231,7 +2152,7 @@ void loadRotatingCubes()
 		{
 			doRead = true;
 		}
-		else if (sys().isRegularDS() && colorMode == 0)
+		else if (sys().isRegularDS() && ms().colorMode == 0)
 		{
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
 			*(vu32 *)(0x08240000) = 1;
@@ -2265,7 +2186,7 @@ void graphicsInit()
 		dropSeq[i] = 0;
 		dropSpeed[i] = 5;
 		dropSpeedChange[i] = 0;
-		if (theme == 1)
+		if (ms().theme == 1)
 			titleboxYposDropDown[i] = 0;
 		else
 			titleboxYposDropDown[i] = -85 - 80;
@@ -2382,7 +2303,7 @@ void graphicsInit()
 
 	swiWaitForVBlank();
 
-	if (theme == 1)
+	if (ms().theme == 1)
 	{
 		tex().load3DSTheme();
 		titleboxYpos = 96;
@@ -2432,7 +2353,7 @@ void graphicsInit()
 		loadTime();
 		loadClockColon();
 
-		if (theme < 1)
+		if (ms().theme < 1)
 		{
 			srand(time(NULL));
 			loadPhotoList();
@@ -2442,7 +2363,6 @@ void graphicsInit()
 		bottomBgLoad(false, true);
 	}
 
-	setVolumeImagePaths();
 	loadVolumeImage();
 	loadBatteryImage();
 	irqSet(IRQ_VBLANK, vBlankHandler);

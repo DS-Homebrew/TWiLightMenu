@@ -44,7 +44,6 @@ static int BOX_PY_spacing1 = 19;
 static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
 
-extern int theme;
 extern bool showdialogbox;
 extern bool startMenu;
 
@@ -69,7 +68,7 @@ std::vector<std::tuple<u8*, u16*, int, bool>> queuedIconUpdateCache;
 
 void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
 {
-	if (theme == 1) {
+	if (ms().theme == 1) {
 		switch(textlines) {
 			case 0:
 			default:
@@ -731,7 +730,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
 		BOX_PY_spacing3 = 26;
-	} else if (theme == 1) {
+	} else if (ms().theme == 1) {
 		BOX_PY = 39;
 		BOX_PY_spacing1 = 16;
 		BOX_PY_spacing2 = 8;
@@ -839,7 +838,7 @@ void titleUpdate(bool isDir, const char* name, int num)
 			} else {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
-		} else if (theme == 1) {
+		} else if (ms().theme == 1) {
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing2, name);
 			printSmallCentered(false, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		} else {

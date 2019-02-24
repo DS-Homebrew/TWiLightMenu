@@ -82,6 +82,7 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
+// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = -1,
@@ -89,7 +90,8 @@ class DSiMenuPlusPlusSettings
         ESDFlashcardLaunch = 1,
         EDSiWareLaunch = 2,
         ENESDSLaunch = 3,
-        EGameYobLaunch = 4
+        EGameYobLaunch = 4,
+        EJenesisLaunch = 5,
     };
 
     /*	0 = Nintendo DSi (Retail)

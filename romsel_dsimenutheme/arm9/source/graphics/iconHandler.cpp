@@ -208,9 +208,7 @@ void glLoadIcon(int num, const u16 *_palette, const u8 *_tiles, int texHeight, b
 {
 	u16* newPalette = (u16*)_palette;
 
-	extern int colorMode;
-
-	if (colorMode == 1) {
+	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
 			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 		}
