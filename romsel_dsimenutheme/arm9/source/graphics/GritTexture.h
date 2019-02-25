@@ -37,6 +37,7 @@ class GritTexture
         void applyEffect(PaletteEffect effect);
         const u16 *palette() const { return (u16*)_palette.get(); }
         const u8 *texture() const { return (u8*)_texture.get(); }
+        const GrfHeader& header() { return _header; }
 };
 
 
