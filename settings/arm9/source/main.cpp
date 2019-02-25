@@ -106,7 +106,6 @@ void doPause(void)
 {
 	//---------------------------------------------------------------------------------
 	printf("Press start...\n");
-	//printSmall(false, x, y, "Press start...");
 	while (1)
 	{
 		scanKeys();
@@ -147,7 +146,7 @@ void rebootDSiMenuPP()
 		swiWaitForVBlank();
 	snd().stopBgMusic();
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLightMenu++ to avoid potential crashing
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
 }
@@ -165,13 +164,6 @@ void loadMainMenu()
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
 
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
 	stop();
@@ -184,8 +176,6 @@ void loadROMselect()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	snd().stopBgMusic();
-	// music = false;
-	// mmEffectCancelAll();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -193,13 +183,6 @@ void loadROMselect()
 		fifoSendValue32(FIFO_USER_07, 2);
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
 	if (ms().theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
@@ -221,7 +204,7 @@ void loadAkThemeList()
 	std::string themeDir;
 	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
 	{
-		/* print all the files and directories within directory */
+		// print all the files and directories within directory
 		while ((ent = readdir(dir)) != NULL)
 		{
 			// Reallocation here, but prevents our vector from being filled with
@@ -233,11 +216,6 @@ void loadAkThemeList()
 		}
 		closedir(dir);
 	}
-	// for (auto &p : std::filesystem::directory_iterator(path))
-	// {
-	// 	if (p.is_directory())
-	// 		akThemeList.emplace_back(p);
-	// }
 }
 
 void loadR4ThemeList()
@@ -247,7 +225,7 @@ void loadR4ThemeList()
 	std::string themeDir;
 	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL)
 	{
-		/* print all the files and directories within directory */
+		// print all the files and directories within directory 
 		while ((ent = readdir(dir)) != NULL)
 		{
 			// Reallocation here, but prevents our vector from being filled with
@@ -259,11 +237,6 @@ void loadR4ThemeList()
 		}
 		closedir(dir);
 	}
-	// for (auto &p : std::filesystem::directory_iterator(path))
-	// {
-	// 	if (p.is_directory())
-	// 		r4ThemeList.emplace_back(p);
-	// }
 }
 
 std::optional<Option> opt_subtheme_select(Option::Int &optVal)
@@ -287,10 +260,7 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-	/*if (!sys().arm7SCFGLocked())
-	{
-		rebootDSiMenuPP();
-	}*/
+
 	if (ms().showMainMenu)
 	{
 		loadMainMenu();
@@ -307,14 +277,6 @@ void opt_reset_subtheme(int prev, int next)
 		ms().subtheme = 0;
 	}
 }
-
-// void opt_sound_freq_changed(bool prev, bool next)
-// {
-// 	if (prev != next && !soundfreqsettingChanged)
-// 	{
-// 		soundfreqsettingChanged = true;
-// 	}
-// }
 
 void opt_reboot_system_menu()
 {
@@ -358,9 +320,6 @@ int main(int argc, char **argv)
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 #pragma region init
-	//consoleDemoInit();
-	//gotosettings = true;
-	//bool fatInited = fatInitDefault();
 
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
@@ -369,9 +328,6 @@ int main(int argc, char **argv)
 	sys().initFilesystem();
 	sys().flashcardUsed();
 	ms();
-	// consoleDemoInit();
-	// printf("%i", sys().flashcardUsed());
-	// stop();
 	defaultExceptionHandler();
 
 	// Read user name
@@ -405,9 +361,6 @@ int main(int argc, char **argv)
 
 	swiWaitForVBlank();
 
-	// u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
-	// if (arm7_SNDEXCNT != 0) stop();
-
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
 		fifoSendValue32(FIFO_USER_07, 2);
@@ -417,8 +370,7 @@ int main(int argc, char **argv)
 	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
-	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
-
+	
 	bool sdAccessible = false;
 	if (access("sd:/", F_OK) == 0) {
 		sdAccessible = true;
@@ -454,8 +406,8 @@ int main(int argc, char **argv)
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard"},
-				{0, 1, 2, 3})
+				{"DSi", "3DS", "R4", "Acekard", "Random"},
+				{0, 1, 2, 3, 4})
 
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
@@ -612,7 +564,6 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 
 	miscPage
 		.option(STR_LASTPLAYEDROM, STR_DESCRIPTION_LASTPLAYEDROM_1, Option::Bool(&ms().autorun), {STR_YES, STR_NO}, {true, false})
-		//.option(STR_SNES_EMULATOR, STR_DESCRIPTION_SNES_EMULATOR, Option::Bool(&ms().snesEmulator), {"SNEmulDS", "lolSNES"}, {true, false});
 		.option(STR_DSISPLASH, STR_DESCRIPTION_DSISPLASH, Option::Bool(&ms().dsiSplash), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_HSMSG, STR_DESCRIPTION_HSMSG, Option::Bool(&ms().hsMsg), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
