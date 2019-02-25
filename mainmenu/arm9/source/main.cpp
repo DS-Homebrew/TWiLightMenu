@@ -763,49 +763,7 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
-	/*switch (flashcard) {
-		case 0:
-		case 1:
-		default: {
-			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-			path = ReplaceAll(ndsPath, "fat:/", slashchar);
-			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
 
-		case 2:
-		case 4:
-		case 5: {
-			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 3: {
-			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 6: {
-			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-			path = ReplaceAll(ndsPath, "fat:/", dstwofat);
-			fcrompathini.SetString("Dir Info", "fullName", path);
-			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-	}*/
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
@@ -822,7 +780,7 @@ void loadROMselect()
 		chdir("sd:/");
 	}
 	if (theme == 4) {
-		theme = rand() % 3
+		theme = rand() % 3;
 	}
 
 	if (theme == 3)
