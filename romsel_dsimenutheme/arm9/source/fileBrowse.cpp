@@ -462,6 +462,7 @@ void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 72; i++) {
+			checkSdEject();
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
@@ -470,7 +471,15 @@ void waitForFadeOut (void) {
 			swiWaitForVBlank();
 		}
 	} else {
-		for (int i = 0; i < 25; i++) swiWaitForVBlank();
+		for (int i = 0; i < 25; i++) {
+			checkSdEject();
+			loadVolumeImage();
+			loadBatteryImage();
+			loadTime();
+			loadDate();
+			loadClockColon();
+			swiWaitForVBlank();
+		}
 	}
 }
 
@@ -722,6 +731,7 @@ void launchGba(void) {
 		do {
 			scanKeys();
 			pressed = keysDown();
+			checkSdEject();
 			loadVolumeImage();
 			loadBatteryImage();
 			loadDate();
@@ -790,6 +800,7 @@ void mdRomTooBig(void) {
 	do {
 		scanKeys();
 		pressed = keysDown();
+		checkSdEject();
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
@@ -936,8 +947,12 @@ bool selectMenu(void) {
 		printSmallCentered(false, 160, "SELECT/B: Back, A: Select");
 		scanKeys();
 		pressed = keysDown();
+		checkSdEject();
 		loadVolumeImage();
 		loadBatteryImage();
+		loadTime();
+		loadDate();
+		loadClockColon();
 		swiWaitForVBlank();
 		if (pressed & KEY_UP) {
 			selCursorPosition--;
@@ -1105,6 +1120,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 			}
 			if (reSpawnBoxes) spawnedtitleboxes++;
 
+			checkSdEject();
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
@@ -1330,6 +1346,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
+					checkSdEject();
 					loadVolumeImage();
 					loadBatteryImage();
 					loadTime();
@@ -1587,6 +1604,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 						showbubble = false;
 					}
 					prevPos = cursorPosition[secondaryDevice];
+
+					checkSdEject();
+					loadVolumeImage();
+					loadBatteryImage();
+					loadTime();
+					loadDate();
+					loadClockColon();
 				}
 				scrollWindowTouched = false;
 				titleboxXpos[secondaryDevice] = cursorPosition[secondaryDevice] * 64;
@@ -1787,6 +1811,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					prevTouch2 = prevTouch1;
 					prevTouch1 = touch;
 					prevPos = cursorPosition[secondaryDevice];
+
+					checkSdEject();
+					loadVolumeImage();
+					loadBatteryImage();
+					loadTime();
+					loadDate();
+					loadClockColon();
 					swiWaitForVBlank();
 					swiWaitForVBlank();
 				}
@@ -1861,6 +1892,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDown();
+						checkSdEject();
 						loadVolumeImage();
 						loadBatteryImage();
 						loadTime();
@@ -1908,9 +1940,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					while (1) {
 						scanKeys();
 						pressed = keysDown();
+						checkSdEject();
 						loadVolumeImage();
 						loadBatteryImage();
 						loadTime();
+						loadDate();
 						loadClockColon();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
@@ -2189,7 +2223,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				while (1) {
 					do {
 						scanKeys();
-						pressed = keysDownRepeat();
+						pressed = keysDown();
+						checkSdEject();
+						loadVolumeImage();
+						loadBatteryImage();
+						loadTime();
+						loadDate();
+						loadClockColon();
 						swiWaitForVBlank();
 					} while (!pressed);
 					

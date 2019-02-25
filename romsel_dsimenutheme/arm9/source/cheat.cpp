@@ -28,6 +28,7 @@
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
+#include "errorScreen.h"
 
 extern bool dbox_showIcon;
 int cheatWnd_cursorPosition = 0;
@@ -254,6 +255,7 @@ void CheatCodelist::selectCheats(std::string filename)
       while(1) {
         scanKeys();
         pressed = keysDownRepeat();
+		checkSdEject();
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
@@ -314,6 +316,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	do {
 		scanKeys();
 		pressed = keysDown();
+		checkSdEject();
 		loadVolumeImage();
 		loadBatteryImage();
 		loadTime();
@@ -433,7 +436,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
         while(1) {
           scanKeys();
-          pressed = keysDownRepeat();
+          pressed = keysDown();
+		  checkSdEject();
 			loadVolumeImage();
 			loadBatteryImage();
 			loadTime();
