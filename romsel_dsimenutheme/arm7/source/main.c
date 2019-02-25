@@ -68,20 +68,6 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
-		*(u8*)(0x023FF002) = 1;
-	} else {
-		*(u8*)(0x023FF002) = 0;
-	}
-	if(fifoCheckValue32(FIFO_USER_01)) {
-		soundFadeOut();
-	} else {
-		soundVolume = 127;
-	}
-	REG_MASTER_VOLUME = soundVolume;
-	if(fifoCheckValue32(FIFO_USER_02)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -159,6 +145,22 @@ int main() {
 			}
 			*(u8*)(0x023FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
 			timeTilVolumeLevelRefresh = 0;
+		}
+		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
+			*(u8*)(0x023FF002) = 2;
+		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
+			*(u8*)(0x023FF002) = 1;
+		} else {
+			*(u8*)(0x023FF002) = 0;
+		}
+		if(fifoCheckValue32(FIFO_USER_01)) {
+			soundFadeOut();
+		} else {
+			soundVolume = 127;
+		}
+		REG_MASTER_VOLUME = soundVolume;
+		if(fifoCheckValue32(FIFO_USER_02)) {
+			ReturntoDSiMenu();
 		}
 		swiWaitForVBlank();
 	}

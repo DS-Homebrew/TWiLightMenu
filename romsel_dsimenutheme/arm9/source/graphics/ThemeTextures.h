@@ -53,7 +53,6 @@ public:
   void drawTopBg();
   void drawTopBgAvoidingShoulders();
 
-
   void drawProfileName();
   void drawBottomBubbleBg();
   void drawBottomBg();
@@ -63,12 +62,10 @@ public:
   void drawVolumeImage(int volumeLevel);
   void drawVolumeImageCached();
 
-  
   void drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS);
   void drawBatteryImageCached();
-  
-  void drawShoulders(bool showLShoulder, bool showRshoulder) ;
 
+  void drawShoulders(bool showLShoulder, bool showRshoulder) ;
   void drawDateTime(const char* date, const int posX, const int posY, const int drawCount, int *hourWidthPointer);
 
   void clearTopScreen();
@@ -265,6 +262,7 @@ private:
   unique_ptr<u16[]> _bottomBubbleBgImage;
 
   unique_ptr<u16[]> _dateFontImage;
+
 private:
   int bubbleTexID;
   int bipsTexID;
