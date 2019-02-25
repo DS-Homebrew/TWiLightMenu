@@ -2063,7 +2063,9 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-	loadSdRemovedImage();
+	if (isDSiMode()) {
+		loadSdRemovedImage();
+	}
 
 	if (theme < 1) {
 		srand(time(NULL));
