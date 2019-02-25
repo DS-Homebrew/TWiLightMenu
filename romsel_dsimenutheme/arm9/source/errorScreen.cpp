@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-extern bool arm7SCFGLocked;
+#include "common/systemdetails.h"
+#include "graphics/ThemeTextures.h"
 
 extern u16 bmpImageBuffer[256*192];
 u16* sdRemovedImage = (u16*)0x026E0000;
@@ -10,7 +11,7 @@ u16* sdRemovedImage = (u16*)0x026E0000;
 extern u16 convertToDsBmp(u16 val);
 
 void loadSdRemovedImage(void) {
-	const char* filename = (arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp");
+	const char* filename = (sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp");
 	FILE* file = fopen(filename, "rb");
 	if (file) {
 		// Start loading
@@ -27,7 +28,7 @@ void loadSdRemovedImage(void) {
 				y--;
 			}
 			u16 val = *(src++);
-			sdRemovedImage[y*256+x] = convertToDsBmp(val);
+			sdRemovedImage[y*256+x] = tex().convertToDsBmp(val);
 			x++;
 		}
 	}
