@@ -96,7 +96,6 @@ private:
   void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
 
   void loadBottomImage();
-  void setStringPaths(const std::string theme);
 
   void loadDateFont(const unsigned short *bitmap);
 

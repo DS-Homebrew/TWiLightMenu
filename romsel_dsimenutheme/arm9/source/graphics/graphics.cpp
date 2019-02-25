@@ -987,7 +987,8 @@ void vBlankHandler() {
 					launchDotY[i]++;
 				}
 			}
-			if (showSTARTborder) {
+		}
+		if (showSTARTborder) {
 				if (ms().theme == 1) {
 					glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
@@ -1012,14 +1013,16 @@ void vBlankHandler() {
 					    &tex().wirelessIcons()
 						 [(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] - 1) &
 						  31]);
-			}
 		}
+		
 
 		// Refresh the background layer.
 		if (currentBg == 1)
 			drawBubble(tex().bubbleImage());
-		if (showSTARTborder && ms().theme == 0 && !isScrolling)
+		if (showSTARTborder && ms().theme == 0 && !isScrolling) {
 			glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+
+		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
 		if (dbox_Ypos != -192) {
