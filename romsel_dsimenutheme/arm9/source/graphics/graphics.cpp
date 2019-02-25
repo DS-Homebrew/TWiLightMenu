@@ -739,16 +739,46 @@ void vBlankHandler()
 
 			for(int i = 0; i < 40; i++) {
 				int movingAppXFix = 0;
-				if(i == cursorPosition[secondaryDevice]-2)
-					movingAppXFix = -20;
-				else if(i == cursorPosition[secondaryDevice]-1)
-					movingAppXFix = -5;
-				else if(i == cursorPosition[secondaryDevice])
-					movingAppXFix = 5;
-				else if(i == cursorPosition[secondaryDevice]+1)
-					movingAppXFix = 5;
-				else if(i == cursorPosition[secondaryDevice]+2)
-					movingAppXFix = 20;
+				if(cursorPosition[secondaryDevice] <= movingApp) {
+					if(i == cursorPosition[secondaryDevice]-2)
+						movingAppXFix = -20;
+					else if(i == cursorPosition[secondaryDevice]-1)
+						movingAppXFix = -5;
+					else if(i == cursorPosition[secondaryDevice])
+						movingAppXFix = 5;
+					else if(cursorPosition[secondaryDevice] < movingApp-1) {
+						if(i == cursorPosition[secondaryDevice]+1)
+							movingAppXFix = 20;
+					} else if(cursorPosition[secondaryDevice] == movingApp-1) {
+						if(i == cursorPosition[secondaryDevice]+1)
+							movingAppXFix = 20;
+						else if(i == cursorPosition[secondaryDevice]+2)
+							movingAppXFix = 20;
+					} else {
+						if(i == cursorPosition[secondaryDevice]+1)
+							movingAppXFix = 5;
+						else if(i == cursorPosition[secondaryDevice]+2)
+							movingAppXFix = 20;
+					}
+				} else {
+					if(cursorPosition[secondaryDevice] == movingApp+1) {
+						if(i == cursorPosition[secondaryDevice]-2)
+							movingAppXFix = -20;
+						else if(i == cursorPosition[secondaryDevice]-1)
+							movingAppXFix = -5;
+					} else {
+						if(i == cursorPosition[secondaryDevice]-2)
+							movingAppXFix = -20;
+						else if(i == cursorPosition[secondaryDevice]-1)
+							movingAppXFix = -20;
+					}
+					if(i == cursorPosition[secondaryDevice])
+						movingAppXFix = -5;
+					else if(i == cursorPosition[secondaryDevice]+1)
+						movingAppXFix = 5;
+					else if(i == cursorPosition[secondaryDevice]+2)
+						movingAppXFix = 20;
+				}
 
 				if (theme == 0) {
 					moveIconClose(i);
