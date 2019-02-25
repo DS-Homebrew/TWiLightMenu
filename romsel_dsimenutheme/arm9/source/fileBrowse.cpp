@@ -1805,9 +1805,9 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				cursorPosition[secondaryDevice] = 39;
 
 			// Startup...
-			if (((pressed & KEY_A) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_START) && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| (gameTapped && showbubble && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))
+			if (((pressed & KEY_A) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| (gameTapped && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright))
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
 				if (entry->isDirectory)
