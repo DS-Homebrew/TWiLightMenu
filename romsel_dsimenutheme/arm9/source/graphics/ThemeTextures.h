@@ -252,6 +252,8 @@ private:
   unique_ptr<BmpTexture> _topBackgroundTexture;
   unique_ptr<BmpTexture> _bottomBackgroundTexture;
   unique_ptr<BmpTexture> _bottomBackgroundBubbleTexture;
+  unique_ptr<BmpTexture> _bottomBackgroundMovingTexture;
+
   unique_ptr<BmpTexture> _dateTimeFontTexture;
   unique_ptr<BmpTexture> _leftShoulderTexture;
   unique_ptr<BmpTexture> _rightShoulderTexture;

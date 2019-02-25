@@ -181,15 +181,9 @@ void ThemeTextures::reloadPal3dsCornerButton() {
 	glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
 }
 
-void ThemeTextures::drawMovingBg()
-{
-  DC_FlushRange(loadedBottomMovingImg, 0x18000);
-  dmaCopyWords(0, loadedBottomMovingImg, BG_GFX, 0x18000);
-}
-
 void ThemeTextures::loadBottomImage() {
 
-	{
+	if(_bottomBackgroundTexture){
 		const u16 *src = _bottomBackgroundTexture->texture();
 		int x = 0;
 		int y = 191;
@@ -204,7 +198,7 @@ void ThemeTextures::loadBottomImage() {
 		}
 	}
 
-	{
+	if(_bottomBackgroundBubbleTexture){
 		const u16 *src = _bottomBackgroundBubbleTexture->texture();
 		int x = 0;
 		int y = 191;
@@ -215,6 +209,21 @@ void ThemeTextures::loadBottomImage() {
 			}
 			u16 val = *(src++);
 			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+
+	if (_bottomBackgroundMovingTexture) {
+		const u16 *src = _bottomBackgroundMovingTexture->texture();
+		int x = 0;
+		int y = 191;
+		for (int i = 0; i < 256 * 192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -233,8 +242,50 @@ void ThemeTextures::load3DSTheme() {
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
+	_boxFullTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
+	_boxEmptyTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
 	_folderTexture = std::make_unique<GritTexture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
 	_progressTexture = std::make_unique<GritTexture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
+
+	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
+	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_startBorderTexture = std::make_unique<GritTexture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
+	_dialogBoxTexture = std::make_unique<GritTexture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
+
+	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 7, 7, 8);
+	loadSettingsImage(_settingsIconTexture->palette(), (const unsigned int *)_settingsIconTexture->texture());
+
+	loadBoxfullImage(_boxFullTexture->palette(), (const unsigned int *)_boxFullTexture->texture());
+	loadBoxemptyImage(_boxEmptyTexture->palette(), (const unsigned int *)_boxEmptyTexture->texture());
+	loadFolderImage(_folderTexture->palette(), (const unsigned int *)_folderTexture->texture());
+
+	loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int *)_cornerButtonTexture->texture(),
+			      (64 / 16) * (64 / 32), 64, 32, 64, 64);
+	loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int *)_smallCartTexture->texture());
+	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(),
+			  (32 / 32) * (192 / 64), 6, 64, 192);
+	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
+	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
+	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
+}
+
+void ThemeTextures::loadDSiTheme() {
+
+	loadUiTextures();
+
+	// only ds theme has moving texture
+	_bottomBackgroundMovingTexture =
+	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+
+	loadVolumeTextures();
+	loadBatteryTextures();
+	loadBottomImage();
+
+	loadDateFont(_dateTimeFontTexture->texture());
+
+	_bipsTexture = std::make_unique<GritTexture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
+	_boxTexture = std::make_unique<GritTexture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
+	_braceTexture = std::make_unique<GritTexture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_buttonArrowTexture = std::make_unique<GritTexture>(TFN_GRF_BUTTON_ARROW, TFN_FALLBACK_GRF_BUTTON_ARROW);
 	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
@@ -288,7 +339,6 @@ void ThemeTextures::load3DSTheme() {
 	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
 	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
 }
-
 void ThemeTextures::loadVolumeTextures() {
 	_volume0Texture = std::make_unique<BmpTexture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
 	_volume1Texture = std::make_unique<BmpTexture>(TFN_VOLUME1, TFN_FALLBACK_VOLUME1);
@@ -315,6 +365,9 @@ void ThemeTextures::loadUiTextures() {
 	_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
 	_bottomBackgroundBubbleTexture =
 	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+
+
+
 	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
 
 	_leftShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
@@ -369,7 +422,6 @@ void ThemeTextures::drawBottomBubbleBg() {
 	DC_FlushRange(_bottomBubbleBgImage.get(), 0x18000);
 	dmaCopyWords(0, _bottomBubbleBgImage.get(), BG_GFX, 0x18000);
 }
-
 
 void ThemeTextures::drawBottomMovingBg() {
 	DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
@@ -721,8 +773,8 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::drawDateTime(const char* str, const int posX, const int posY, const int drawCount, int *hourWidthPointer)
-{
+void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY, const int drawCount,
+				 int *hourWidthPointer) {
 	int x = posX;
 
 	beginSubModify();
@@ -733,18 +785,17 @@ void ThemeTextures::drawDateTime(const char* str, const int posX, const int posY
 		// Start date
 		for (int y = 14; y >= 6; y--) {
 			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-				if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] + i)] !=
-				    0x7C1F) { // Do not render magneta pixel
+				if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] +
+								   i)] != 0x7C1F) { // Do not render magneta pixel
 					_bgSubBuffer[y * 256 + (i + x)] =
 					    _dateFontImage[(imgY * 128) +
-							  (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
+							   (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
 				}
 			}
 			imgY--;
 		}
 		x += date_time_font_texcoords[2 + (4 * charIndex)];
-		if (hourWidthPointer != NULL)
-		{
+		if (hourWidthPointer != NULL) {
 			if (c == 2)
 				*hourWidthPointer = x;
 		}
