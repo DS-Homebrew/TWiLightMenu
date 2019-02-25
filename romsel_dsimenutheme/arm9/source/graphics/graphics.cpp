@@ -619,37 +619,39 @@ void vBlankHandler()
 		}
 
 		if (!whiteScreen && dropDown && theme == 0) {
-			for (int i = 0; i <= allowedTitleboxForDropDown; i++) {
-				if (dropSeq[i] == 0) {
-					titleboxYposDropDown[i] += dropSpeed[i];
-					if (titleboxYposDropDown[i] > 0) dropSeq[i] = 1;
-				} else if (dropSeq[i] == 1) {
-					titleboxYposDropDown[i] -= dropSpeed[i];
-					dropTime[i]++;
-					dropSpeedChange[i]++;
-					if (dropTime[i] >= 15) {
-						dropSpeedChange[i] = -1;
-						dropSeq[i] = 2;
+			int i2 = cursorPosition[secondaryDevice]-2;
+			if (i2 < 0) i2 += 5;
+			for (int i = i2; i <= allowedTitleboxForDropDown+i2; i++) {
+				if (dropSeq[i%5] == 0) {
+					titleboxYposDropDown[i%5] += dropSpeed[i%5];
+					if (titleboxYposDropDown[i%5] > 0) dropSeq[i%5] = 1;
+				} else if (dropSeq[i%5] == 1) {
+					titleboxYposDropDown[i%5] -= dropSpeed[i%5];
+					dropTime[i%5]++;
+					dropSpeedChange[i%5]++;
+					if (dropTime[i%5] >= 15) {
+						dropSpeedChange[i%5] = -1;
+						dropSeq[i%5] = 2;
 					}
-					if (dropSpeedChange[i] == 2) {
-						dropSpeed[i]--;
-						if (dropSpeed[i] < 0) dropSpeed[i] = 0;
-						dropSpeedChange[i] = -1;
+					if (dropSpeedChange[i%5] == 2) {
+						dropSpeed[i%5]--;
+						if (dropSpeed[i%5] < 0) dropSpeed[i%5] = 0;
+						dropSpeedChange[i%5] = -1;
 					}
-				} else if (dropSeq[i] == 2) {
-					titleboxYposDropDown[i] += dropSpeed[i];
-					if (titleboxYposDropDown[i] >= 0) {
-						dropSeq[i] = 3;
-						titleboxYposDropDown[i] = 0;
+				} else if (dropSeq[i%5] == 2) {
+					titleboxYposDropDown[i%5] += dropSpeed[i%5];
+					if (titleboxYposDropDown[i%5] >= 0) {
+						dropSeq[i%5] = 3;
+						titleboxYposDropDown[i%5] = 0;
 					}
-					dropSpeedChange[i]++;
-					if (dropSpeedChange[i] == 1) {
-						dropSpeed[i]++;
-						if (dropSpeed[i] > 4) dropSpeed[i] = 4;
-						dropSpeedChange[i] = -1;
+					dropSpeedChange[i%5]++;
+					if (dropSpeedChange[i%5] == 1) {
+						dropSpeed[i%5]++;
+						if (dropSpeed[i%5] > 4) dropSpeed[i%5] = 4;
+						dropSpeedChange[i%5] = -1;
 					}
-				} else if (dropSeq[i] == 3) {
-					titleboxYposDropDown[i] = 0;
+				} else if (dropSeq[i%5] == 3) {
+					titleboxYposDropDown[i%5] = 0;
 				}
 			}
 
