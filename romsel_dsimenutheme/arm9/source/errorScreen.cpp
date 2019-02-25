@@ -5,7 +5,7 @@
 extern bool arm7SCFGLocked;
 
 extern u16 bmpImageBuffer[256*192];
-u16 sdRemovedImage[256*192];
+u16* sdRemovedImage = (u16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 

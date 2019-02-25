@@ -830,14 +830,14 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	/*if (!music) {
+	if (!music) {
 		if (theme == 1) {
 			mmEffectEx(&mus_startup);
 		} else {
 			mmEffectEx(&mus_menu);
 		}
 		music = true;
-	}*/
+	}
 	
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
 	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
