@@ -65,6 +65,7 @@
 
 static u16 loadedBottomImg[256*192];
 static u16 loadedBottomBubbleImg[256*192];
+static u16 loadedBottomMovingImg[256*192];
 
 void ThemeTextures::loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap,
                                     int sprW, int sprH, int texW)
@@ -256,6 +257,12 @@ void ThemeTextures::drawBubbleBg()
   dmaCopyWords(0, loadedBottomBubbleImg, BG_GFX, 0x18000);
 }
 
+void ThemeTextures::drawMovingBg()
+{
+  DC_FlushRange(loadedBottomMovingImg, 0x18000);
+  dmaCopyWords(0, loadedBottomMovingImg, BG_GFX, 0x18000);
+}
+
 void ThemeTextures::loadBottomImage()
 {
 	extern u16 bmpImageBuffer[256*192];
@@ -308,6 +315,30 @@ void ThemeTextures::loadBottomImage()
 	}
 
 	fclose(fileBottom);
+
+  fileBottom = fopen(bottomMovingBgPath.c_str(), "rb");
+
+	if (fileBottom) {
+		// Start loading
+		fseek(fileBottom, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
+		fseek(fileBottom, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, fileBottom);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			loadedBottomMovingImg[y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+
+	fclose(fileBottom);
 }
 
 void ThemeTextures::loadCommonTextures()
@@ -321,6 +352,7 @@ void ThemeTextures::setStringPaths(const std::string theme)
   topBgPath = formatString("nitro:/graphics/%s_top.bmp", theme.c_str());
   bottomBgPath = formatString("nitro:/graphics/%s_bottom.bmp", theme.c_str());
   bottomBubbleBgPath = formatString("nitro:/graphics/%s_bottom_bubble.bmp", theme.c_str());
+  bottomMovingBgPath = formatString("nitro:/graphics/%s_bottom_moving.bmp", theme.c_str());
   shoulderRPath = formatString("nitro:/graphics/%s_Rshoulder.bmp", theme.c_str());
   shoulderRGreyPath = formatString("nitro:/graphics/%s_Rshoulder_greyed.bmp", theme.c_str());
 
