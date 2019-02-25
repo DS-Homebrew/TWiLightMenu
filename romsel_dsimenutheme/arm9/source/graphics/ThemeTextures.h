@@ -39,14 +39,17 @@ public:
   void loadDSiTheme();
   void load3DSTheme();
 
-  void loadVolumeTextures();
-  void loadBatteryTextures();
-  void loadUiTextures();
-
   void reloadPalDialogBox();
   void reloadPal3dsCornerButton();
 
   static unsigned short convertToDsBmp(unsigned short val);
+
+private:
+  void loadVolumeTextures();
+  void loadBatteryTextures();
+  void loadUiTextures();
+  void loadIconTextures();
+
 public:
   unsigned short *beginSubModify();
   void commitSubModify();  
@@ -137,6 +140,17 @@ public:
   const glImage *smallCartImage() { return _smallCartImage.get(); }
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
+
+  const GritTexture *iconGBTexture() { return _iconGBTexture.get(); }
+  const GritTexture *iconGBATexture() { return _iconGBATexture.get(); }
+  const GritTexture *iconGBAModeTexture() { return _iconGBAModeTexture.get(); }
+  const GritTexture *iconGGTexture() { return _iconGGTexture.get(); }
+  const GritTexture *iconMDTexture() { return _iconMDTexture.get(); }
+  const GritTexture *iconNESTexture() { return _iconNESTexture.get(); }
+  const GritTexture *iconSMSTexture() { return _iconSMSTexture.get(); }
+  const GritTexture *iconSNESTexture() { return _iconSNESTexture.get(); }
+  const GritTexture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
+  
   const BmpTexture *topBackgroundTexture() { return _topBackgroundTexture.get(); }
   const BmpTexture *bottomBackgroundTexture() { return _bottomBackgroundTexture.get(); }
   const BmpTexture *bottomBackgroundBubbleTexture() { return _bottomBackgroundBubbleTexture.get(); }
@@ -232,6 +246,16 @@ private:
 
   unique_ptr<GritTexture> _boxFullTexture;
   unique_ptr<GritTexture> _boxEmptyTexture;
+
+  unique_ptr<GritTexture> _iconGBTexture;
+  unique_ptr<GritTexture> _iconGBATexture;
+  unique_ptr<GritTexture> _iconGBAModeTexture;
+  unique_ptr<GritTexture> _iconGGTexture;
+  unique_ptr<GritTexture> _iconMDTexture;
+  unique_ptr<GritTexture> _iconNESTexture;
+  unique_ptr<GritTexture> _iconSMSTexture;
+  unique_ptr<GritTexture> _iconSNESTexture;
+  unique_ptr<GritTexture> _iconUnknownTexture;
 
   unique_ptr<BmpTexture> _volume0Texture;
   unique_ptr<BmpTexture> _volume1Texture;

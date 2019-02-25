@@ -6,17 +6,7 @@
 #include "common/gl2d.h"
 #include "tool/colortool.h"
 #include "common/dsimenusettings.h"
-// Graphic files
-#include "icon_unk.h"
-#include "icon_gbamode.h"
-#include "icon_gba.h"
-#include "_3ds_icon_gba.h"
-#include "icon_gb.h"
-#include "icon_nes.h"
-#include "icon_sms.h"
-#include "icon_gg.h"
-#include "icon_md.h"
-#include "icon_snes.h"
+#include "ThemeTextures.h"
 
 bool initialized;
 
@@ -241,36 +231,36 @@ void glReloadIconPalette(int num)
 {
 
     int textureID;
-    u16 *cachedPalette;
+    const u16 *cachedPalette;
     switch (num)
     {
     case GBA_ICON:
         textureID = _gbaTexID;
-        cachedPalette = ms().useGbarunner ? (u16 *)icon_gbaPal : (u16 *)icon_gbamodePal;
+        cachedPalette = ms().useGbarunner ? tex().iconGBATexture()->palette(): tex().iconGBAModeTexture()->palette();
         break;
     case GBC_ICON:
         textureID = _gbcTexID;
-        cachedPalette = (u16 *)icon_gbPal;
+        cachedPalette = tex().iconGBTexture()->palette();
         break;
     case NES_ICON:
         textureID = _nesTexID;
-        cachedPalette = (u16 *)icon_nesPal;
+        cachedPalette = tex().iconNESTexture()->palette();
         break;
     case SMS_ICON:
         textureID = _smsTexID;
-        cachedPalette = (u16 *)icon_smsPal;
+        cachedPalette = tex().iconSMSTexture()->palette();
         break;
     case GG_ICON:
         textureID = _ggTexID;
-        cachedPalette = (u16 *)icon_ggPal;
+        cachedPalette = tex().iconGGTexture()->palette();
         break;
     case MD_ICON:
         textureID = _mdTexID;
-        cachedPalette = (u16 *)icon_mdPal;
+        cachedPalette = tex().iconMDTexture()->palette();
         break;
     case SNES_ICON:
         textureID = _snesTexID;
-        cachedPalette = (u16 *)icon_snesPal;
+        cachedPalette = tex().iconSNESTexture()->palette();
         break;
     default:
         if (BAD_ICON_IDX(num))
@@ -355,36 +345,29 @@ void iconManagerInit()
     for (int i = 0; i < NDS_ICON_BANK_COUNT; i++)
     {
         // Todo: Check if this is too much VRAM for NDS icons.
-        glLoadIcon(i, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap, TWL_TEX_HEIGHT, true);
+        glLoadIcon(i, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->texture(), TWL_TEX_HEIGHT, true);
     }
 
     // Load GB Icon
-    glLoadIcon(GBC_ICON, (u16 *)icon_gbPal, (u8 *)icon_gbBitmap, 64, true);
+    glLoadIcon(GBC_ICON, tex().iconGBTexture()->palette(),  tex().iconGBTexture()->texture(), 64, true);
 
-    glLoadIcon(NES_ICON, (u16 *)icon_nesPal, (u8 *)icon_nesBitmap, 32, true);
+    glLoadIcon(NES_ICON, tex().iconNESTexture()->palette(),  tex().iconNESTexture()->texture(), 32, true);
 
-    glLoadIcon(SMS_ICON, (u16 *)icon_smsPal, (u8 *)icon_smsBitmap, 32, true);
+    glLoadIcon(SMS_ICON, tex().iconSMSTexture()->palette(),  tex().iconSMSTexture()->texture(), 32, true);
 
-    glLoadIcon(GG_ICON, (u16 *)icon_ggPal, (u8 *)icon_ggBitmap, 32, true);
+    glLoadIcon(GG_ICON, tex().iconGGTexture()->palette(),  tex().iconGGTexture()->texture(), 32, true);
 
-    glLoadIcon(MD_ICON, (u16 *)icon_mdPal, (u8 *)icon_mdBitmap, 32, true);
+    glLoadIcon(MD_ICON, tex().iconMDTexture()->palette(),  tex().iconMDTexture()->texture(), 32, true);
 
-    glLoadIcon(SNES_ICON, (u16 *)icon_snesPal, (u8 *)icon_snesBitmap, 32, true);
+    glLoadIcon(SNES_ICON, tex().iconSNESTexture()->palette(),  tex().iconSNESTexture()->texture(), 32, true);
 
     if (ms().useGbarunner)
     {
-		if (ms().theme == 1)
-		{
-			glLoadIcon(GBA_ICON, (u16 *)_3ds_icon_gbaPal, (u8 *)_3ds_icon_gbaBitmap, 64, true);
-		}
-		else
-		{
-			glLoadIcon(GBA_ICON, (u16 *)icon_gbaPal, (u8 *)icon_gbaBitmap, 64, true);
-		}
+		glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(),  tex().iconGBATexture()->texture(), 64, true);
     }
     else
     {
-        glLoadIcon(GBA_ICON, (u16 *)icon_gbamodePal, (u8 *)icon_gbamodeBitmap, 32, true);
+        glLoadIcon(GBA_ICON, tex().iconGBAModeTexture()->palette(),  tex().iconGBAModeTexture()->texture(), 32, true);
     }
 
     // set initialized.

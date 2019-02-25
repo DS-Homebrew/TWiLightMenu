@@ -27,7 +27,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
-#include "icon_unk.h"
+#include "graphics/ThemeTextures.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
 #include <ctype.h>
@@ -150,7 +150,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	}
 }
 
-void loadUnkIcon(int num) { glLoadIcon(num, (u16 *)icon_unkPal, (u8 *)icon_unkBitmap); }
+void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->texture()); }
 
 static void clearIcon(int num) { glClearIcon(num); }
 

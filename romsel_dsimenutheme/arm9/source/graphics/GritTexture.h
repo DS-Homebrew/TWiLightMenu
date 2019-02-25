@@ -35,8 +35,8 @@ class GritTexture
         GritTexture(const std::string& filePath, const std::string& fallback);
         ~GritTexture() { };
         void applyEffect(PaletteEffect effect);
-        const u16 *palette() { return (u16*)_palette.get(); }
-        const u8 *texture() { return (u8*)_texture.get(); }
+        const u16 *palette() const { return (u16*)_palette.get(); }
+        const u8 *texture() const { return (u8*)_texture.get(); }
 };
 
 

@@ -183,7 +183,7 @@ void ThemeTextures::reloadPal3dsCornerButton() {
 
 void ThemeTextures::loadBottomImage() {
 
-	if(_bottomBackgroundTexture){
+	if (_bottomBackgroundTexture) {
 		const u16 *src = _bottomBackgroundTexture->texture();
 		int x = 0;
 		int y = 191;
@@ -198,7 +198,7 @@ void ThemeTextures::loadBottomImage() {
 		}
 	}
 
-	if(_bottomBackgroundBubbleTexture){
+	if (_bottomBackgroundBubbleTexture) {
 		const u16 *src = _bottomBackgroundBubbleTexture->texture();
 		int x = 0;
 		int y = 191;
@@ -234,7 +234,7 @@ void ThemeTextures::load3DSTheme() {
 	loadUiTextures();
 	loadVolumeTextures();
 	loadBatteryTextures();
-
+	loadIconTextures();
 	loadBottomImage();
 	loadDateFont(_dateTimeFontTexture->texture());
 
@@ -251,7 +251,7 @@ void ThemeTextures::load3DSTheme() {
 	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
 
 	_startBorderTexture = std::make_unique<GritTexture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
-	
+
 	_dialogBoxTexture = std::make_unique<GritTexture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
 
 	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 7, 7, 8);
@@ -281,6 +281,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadVolumeTextures();
 	loadBatteryTextures();
+	loadIconTextures();
 	loadBottomImage();
 
 	loadDateFont(_dateTimeFontTexture->texture());
@@ -368,8 +369,6 @@ void ThemeTextures::loadUiTextures() {
 	_bottomBackgroundBubbleTexture =
 	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
 
-
-
 	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
 
 	_leftShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
@@ -380,6 +379,31 @@ void ThemeTextures::loadUiTextures() {
 	    std::make_unique<BmpTexture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
 }
 
+void ThemeTextures::loadIconTextures() {
+	_iconGBTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_GB, TFN_FALLBACK_GRF_ICON_GB);
+	_iconGBATexture = std::make_unique<GritTexture>(TFN_GRF_ICON_GBA, TFN_FALLBACK_GRF_ICON_GBA);
+	_iconGBAModeTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_GBAMODE, TFN_FALLBACK_GRF_ICON_GBAMODE);
+	_iconGGTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_GG, TFN_FALLBACK_GRF_ICON_GG);
+	_iconMDTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_MD, TFN_FALLBACK_GRF_ICON_MD);
+	_iconNESTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_NES, TFN_FALLBACK_GRF_ICON_NES);
+	_iconSMSTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SMS, TFN_FALLBACK_GRF_ICON_SMS);
+	_iconSNESTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SNES, TFN_FALLBACK_GRF_ICON_SNES);
+	_iconUnknownTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_UNK, TFN_FALLBACK_GRF_ICON_UNK);
+
+	// if (ms().colorMode == 1)
+	// {
+	// 	_iconGBTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconGBATexture->applyEffect(effectGrayscalePalette);
+	// 	_iconGBAModeTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconGGTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconMDTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconNESTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconSMSTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconSNESTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconUnknownTexture->applyEffect(effectGrayscalePalette);
+	// }
+
+}
 u16 *ThemeTextures::beginSubModify() {
 	dmaCopyWords(0, BG_GFX_SUB, _bgSubBuffer.get(), sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	return _bgSubBuffer.get();
