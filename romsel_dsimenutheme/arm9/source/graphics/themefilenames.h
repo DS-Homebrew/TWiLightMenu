@@ -25,7 +25,7 @@
 #include "common/singleton.h"
 
 
-#define TFN_SYSTEM_DIR              "/_nds/TWiLightMenu/dsimenu/"
+#define TFN_SYSTEM_DIR              "/_nds/TWiLightMenu/%smenu/"
 
 
 #define TFN_FALLBACK_DSI_UI_DIRECTORY  "nitro:/themes/dsi/dark"

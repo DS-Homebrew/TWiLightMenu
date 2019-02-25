@@ -8,7 +8,8 @@
 
 ThemeFilenames::ThemeFilenames() {
 	std::string systemDirectory =
-	    formatString(TFN_SYSTEM_UI_DIRECTORY "%s/%s", ms().theme == 1 ? "3ds" : "dsi",  ms().theme == 1 ? ms()._3ds_theme.c_str() : ms().dsi_theme.c_str());
+	    formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
+			ms().theme == 1 ? "3ds" : "dsi",  ms().theme == 1 ? ms()._3ds_theme.c_str() : ms().dsi_theme.c_str());
 	if (!sys().useNitroFS()) {
 		// nocashMessage("NNONITROFS");
 		// nocashMessage(systemDirectory.c_str());
