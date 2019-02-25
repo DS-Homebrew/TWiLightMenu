@@ -17,91 +17,81 @@
 
 extern u16 usernameRendered[10];
 
-void ThemeTextures::loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH,
-				    int texW) {
-	_bubbleImage = std::move(loadTexture(&bubbleTexID, palette, bitmap, 1, 12, sprW, sprH, texW, 8));
+void ThemeTextures::loadBubbleImage(const GritTexture &tex, int sprW, int sprH) {
+	_bubbleImage = std::move(loadTexture(&bubbleTexID, tex, 1, sprW, sprH));
 }
 
-void ThemeTextures::loadProgressImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_progressImage =
-	    std::move(loadTexture(&progressTexID, palette, bitmap, (16 / 16) * (128 / 16), 9, 16, 16, 16, 128));
+// loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
+//                                    unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int
+//                                    texH);
+
+void ThemeTextures::loadProgressImage(const GritTexture &tex) {
+	// todo: 9 palette
+	_progressImage = std::move(loadTexture(&progressTexID, tex, (16 / 16) * (128 / 16), 16, 16));
 }
 
-void ThemeTextures::loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_dialogboxImage =
-	    std::move(loadTexture(&dialogboxTexID, palette, bitmap, (256 / 16) * (256 / 16), 12, 16, 16, 256, 192));
+void ThemeTextures::loadDialogboxImage(const GritTexture &tex) {
+	_dialogboxImage = std::move(loadTexture(&dialogboxTexID, tex, (256 / 16) * (256 / 16), 16, 16));
 }
 
-void ThemeTextures::loadBipsImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_bipsImage = std::move(loadTexture(&bipsTexID, palette, bitmap, (8 / 8) * (32 / 8), 16, 8, 8, 8, 32));
+void ThemeTextures::loadBipsImage(const GritTexture &tex) {
+	_bipsImage = std::move(loadTexture(&bipsTexID, tex, (8 / 8) * (32 / 8), 8, 8));
 }
 
-void ThemeTextures::loadScrollwindowImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_scrollwindowImage =
-	    std::move(loadTexture(&scrollwindowTexID, palette, bitmap, (32 / 16) * (32 / 16), 16, 32, 32, 32, 32));
+void ThemeTextures::loadScrollwindowImage(const GritTexture &tex) {
+	_scrollwindowImage = std::move(loadTexture(&scrollwindowTexID, tex, (32 / 16) * (32 / 16), 32, 32));
 }
 
-void ThemeTextures::loadButtonarrowImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_buttonarrowImage =
-	    std::move(loadTexture(&buttonarrowTexID, palette, bitmap, (32 / 32) * (128 / 32), 16, 32, 32, 32, 128));
+void ThemeTextures::loadButtonarrowImage(const GritTexture &tex) {
+	_buttonarrowImage = std::move(loadTexture(&buttonarrowTexID, tex, (32 / 32) * (128 / 32), 32, 32));
 }
 
-void ThemeTextures::loadMovingarrowImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_movingarrowImage =
-	    std::move(loadTexture(&movingarrowTexID, palette, bitmap, (32 / 32) * (32 / 32), 16, 32, 32, 32, 32));
+void ThemeTextures::loadMovingarrowImage(const GritTexture &tex) {
+	_movingarrowImage = std::move(loadTexture(&movingarrowTexID, tex, (32 / 32) * (32 / 32), 32, 32));
 }
 
-void ThemeTextures::loadLaunchdotImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_launchdotImage =
-	    std::move(loadTexture(&launchdotTexID, palette, bitmap, (16 / 16) * (96 / 16), 16, 16, 16, 16, 96));
+void ThemeTextures::loadLaunchdotImage(const GritTexture &tex) {
+	_launchdotImage = std::move(loadTexture(&launchdotTexID, tex, (16 / 16) * (96 / 16), 16, 16));
 }
 
-void ThemeTextures::loadStartImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_startImage = std::move(loadTexture(&startTexID, palette, bitmap, (64 / 16) * (128 / 16), 4, 64, 16, 64, 128));
+void ThemeTextures::loadStartImage(const GritTexture &tex) {
+	_startImage = std::move(loadTexture(&startTexID, tex, (64 / 16) * (128 / 16), 64, 16));
 }
 
-void ThemeTextures::loadStartbrdImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize,
-				      int palLength, int sprH, int texH) {
-	_startbrdImage =
-	    std::move(loadTexture(&startbrdTexID, palette, bitmap, arraysize, palLength, 32, sprH, 32, texH));
+void ThemeTextures::loadStartbrdImage(const GritTexture &tex, int arraysize, int sprH) {
+	_startbrdImage = std::move(loadTexture(&startbrdTexID, tex, arraysize, 32, sprH));
 }
-void ThemeTextures::loadBraceImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_braceImage = std::move(loadTexture(&braceTexID, palette, bitmap, (16 / 16) * (128 / 16), 4, 16, 128, 16, 128));
-}
-
-void ThemeTextures::loadSettingsImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_settingsImage =
-	    std::move(loadTexture(&settingsTexID, palette, bitmap, (64 / 16) * (128 / 64), 16, 64, 64, 64, 128));
+void ThemeTextures::loadBraceImage(const GritTexture &tex) {
+	// todo: confirm 4 palette
+	_braceImage = std::move(loadTexture(&braceTexID, tex, (16 / 16) * (128 / 16), 16, 128));
 }
 
-void ThemeTextures::loadBoxfullImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_boxfullImage =
-	    std::move(loadTexture(&boxfullTexID, palette, bitmap, (64 / 16) * (128 / 64), 16, 64, 64, 64, 128));
+void ThemeTextures::loadSettingsImage(const GritTexture &tex) {
+	_settingsImage = std::move(loadTexture(&settingsTexID, tex, (64 / 16) * (128 / 64), 64, 64));
 }
 
-void ThemeTextures::loadBoxemptyImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_boxemptyImage =
-	    std::move(loadTexture(&boxemptyTexID, palette, bitmap, (64 / 16) * (64 / 16), 16, 64, 64, 64, 64));
+void ThemeTextures::loadBoxfullImage(const GritTexture &tex) {
+	_boxfullImage = std::move(loadTexture(&boxfullTexID, tex, (64 / 16) * (128 / 64), 64, 64));
 }
 
-void ThemeTextures::loadFolderImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_folderImage = std::move(loadTexture(&folderTexID, palette, bitmap, (64 / 16) * (64 / 16), 16, 64, 64, 64, 64));
+void ThemeTextures::loadBoxemptyImage(const GritTexture &tex) {
+	_boxemptyImage = std::move(loadTexture(&boxemptyTexID, tex, (64 / 16) * (64 / 16), 64, 64));
 }
 
-void ThemeTextures::loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize,
-					  int sprW, int sprH, int texW, int texH) {
-	_cornerButtonImage =
-	    std::move(loadTexture(&cornerButtonTexID, palette, bitmap, arraysize, 16, sprW, sprH, texW, texH));
+void ThemeTextures::loadFolderImage(const GritTexture &tex) {
+	_folderImage = std::move(loadTexture(&folderTexID, tex, (64 / 16) * (64 / 16), 64, 64));
 }
 
-void ThemeTextures::loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap) {
-	_smallCartImage =
-	    std::move(loadTexture(&smallCartTexID, palette, bitmap, (32 / 16) * (256 / 32), 16, 32, 32, 32, 256));
+void ThemeTextures::loadCornerButtonImage(const GritTexture &tex, int arraysize, int sprW, int sprH) {
+	_cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, tex, arraysize, sprW, sprH));
 }
 
-void ThemeTextures::loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap) {
-	_wirelessIcons =
-	    std::move(loadTexture(&wirelessiconTexID, palette, bitmap, (32 / 32) * (64 / 32), 7, 32, 32, 32, 64));
+void ThemeTextures::loadSmallCartImage(const GritTexture &tex) {
+	_smallCartImage = std::move(loadTexture(&smallCartTexID, tex, (32 / 16) * (256 / 32), 32, 32));
+}
+
+void ThemeTextures::loadWirelessIcons(const GritTexture &tex) {
+	_wirelessIcons = std::move(loadTexture(&wirelessiconTexID, tex, (32 / 32) * (64 / 32), 32, 32));
 }
 
 inline GL_TEXTURE_SIZE_ENUM get_tex_size(int texSize) {
@@ -126,14 +116,16 @@ inline const unsigned short *apply_personal_theme(const unsigned short *palette)
 	return palette + ((PersonalData->theme) * 16);
 }
 
-unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, GritTexture& texture,
-						 unsigned int arraySize, int paletteLength,
+unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const GritTexture &texture, unsigned int arraySize,
 						 int sprW, int sprH) {
 
 	// We need to delete the texture since the resource held by the unique pointer will be
 	// immediately dropped when we assign it to the pointer.
 
-	int texW = texture.
+	u32 texW = texture.header().texWidth;
+	u32 texH = texture.header().texHeight;
+	u8 paletteLength = texture.paletteLength();
+
 	if (*textureId != 0) {
 		nocashMessage("Existing texture found!?");
 		glDeleteTextures(1, textureId);
@@ -152,9 +144,9 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, GritTexture& te
 				   get_tex_size(texW), // sizeX for glTexImage2D() in videoGL.h
 				   get_tex_size(texH), // sizeY for glTexImage2D() in videoGL.h
 				   TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
-				   paletteLength,     // Length of the palette to use (16 colors)
+				   paletteLength,	    // Length of the palette to use (16 colors)
 				   (u16 *)texture.palette(), // Load our 16 color tiles palette
-				   (u8 *)texture.texture()       // image data generated by GRIT
+				   (u8 *)texture.texture()   // image data generated by GRIT
 	);
 	return texturePtr;
 }
@@ -250,21 +242,19 @@ void ThemeTextures::load3DSTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 7, 7, 8);
-	loadSettingsImage(_settingsIconTexture->palette(), (const unsigned int *)_settingsIconTexture->texture());
+	loadBubbleImage(*_bubbleTexture, 7, 7);
+	loadSettingsImage(*_settingsIconTexture);
 
-	loadBoxfullImage(_boxFullTexture->palette(), (const unsigned int *)_boxFullTexture->texture());
-	loadBoxemptyImage(_boxEmptyTexture->palette(), (const unsigned int *)_boxEmptyTexture->texture());
-	loadFolderImage(_folderTexture->palette(), (const unsigned int *)_folderTexture->texture());
+	loadBoxfullImage(*_boxFullTexture);
+	loadBoxemptyImage(*_boxEmptyTexture);
+	loadFolderImage(*_folderTexture);
 
-	loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int *)_cornerButtonTexture->texture(),
-			      (64 / 16) * (64 / 32), 64, 32, 64, 64);
-	loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int *)_smallCartTexture->texture());
-	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(),
-			  (32 / 32) * (192 / 64), 6, 64, 192);
-	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
-	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
-	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
+	loadCornerButtonImage(*_cornerButtonTexture, (64 / 16) * (64 / 32), 64, 32);
+	loadSmallCartImage(*_smallCartTexture);
+	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (192 / 64), 64);
+	loadDialogboxImage(*_dialogBoxTexture);
+	loadProgressImage(*_progressTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
 }
 
 void ThemeTextures::loadDSiTheme() {
@@ -315,32 +305,31 @@ void ThemeTextures::loadDSiTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadBipsImage(_bipsTexture->palette(), (const unsigned int *)_bipsTexture->texture());
+	loadBipsImage(*_bipsTexture);
 
-	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 11, 8, 16);
-	loadScrollwindowImage(_scrollWindowTexture->palette(), (const unsigned int *)_scrollWindowTexture->texture());
-	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
-	loadSettingsImage(_settingsIconTexture->palette(), (const unsigned int *)_settingsIconTexture->texture());
-	loadBraceImage(_braceTexture->palette(), (const unsigned int *)_braceTexture->texture());
+	loadBubbleImage(*_bubbleTexture, 11, 8);
+	loadScrollwindowImage(*_scrollWindowTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
+	loadSettingsImage(*_settingsIconTexture);
+	loadBraceImage(*_braceTexture);
 
-	loadStartImage(_startTextTexture->palette(), (const unsigned int *)_startTextTexture->texture());
-	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(),
-			  (32 / 32) * (256 / 80), 16, 80, 256);
+	loadStartImage(*_startTextTexture);
+	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (256 / 80), 80);
 
-	loadButtonarrowImage(_buttonArrowTexture->palette(), (const unsigned int *)_buttonArrowTexture->texture());
-	loadMovingarrowImage(_movingArrowTexture->palette(), (const unsigned int *)_movingArrowTexture->texture());
-	loadLaunchdotImage(_launchDotTexture->palette(), (const unsigned int *)_launchDotTexture->texture());
-	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
+	loadButtonarrowImage(*_buttonArrowTexture);
+	loadMovingarrowImage(*_movingArrowTexture);
+	loadLaunchdotImage(*_launchDotTexture);
+	loadDialogboxImage(*_dialogBoxTexture);
 
-	loadBoxfullImage(_boxTexture->palette(), (const unsigned int *)_boxTexture->texture());
+	// careful here, it's boxTexture, not boxFulltexture.
+	loadBoxfullImage(*_boxTexture);
 
-	loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int *)_cornerButtonTexture->texture(),
-			      (32 / 16) * (32 / 32), 32, 32, 32, 64);
-	loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int *)_smallCartTexture->texture());
-	loadFolderImage(_folderTexture->palette(), (const unsigned int *)_folderTexture->texture());
+	loadCornerButtonImage(*_cornerButtonTexture,  (32 / 16) * (32 / 32), 32, 32);
+	loadSmallCartImage(*_smallCartTexture);
+	loadFolderImage(*_folderTexture);
 
-	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
-	loadWirelessIcons(_wirelessIconsTexture->palette(), (const unsigned int *)_wirelessIconsTexture->texture());
+	loadProgressImage(*_progressTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
 }
 void ThemeTextures::loadVolumeTextures() {
 	_volume0Texture = std::make_unique<BmpTexture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);

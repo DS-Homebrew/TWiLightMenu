@@ -31,7 +31,7 @@ public:
     _bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
 
-  }
+  };
 
   ~ThemeTextures() {}
 
@@ -79,26 +79,26 @@ public:
 private:
   void applyGrayscaleToAllGrfTextures();
 
-  void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);
-  void loadProgressImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadBipsImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadScrollwindowImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadButtonarrowImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadMovingarrowImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadLaunchdotImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadStartImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadStartbrdImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize, int palLength,
-                         int sprH, int texH);
-  void loadBraceImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadSettingsImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadBoxfullImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadBoxemptyImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadFolderImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadCornerButtonImage(const unsigned short *palette, const unsigned int *bitmap, int arraysize,
-											int sprW, int sprH, int texW, int texH);
-  void loadSmallCartImage(const unsigned short *palette, const unsigned int *bitmap);
-  void loadWirelessIcons(const unsigned short *palette, const unsigned int *bitmap);
+  void loadBubbleImage(const GritTexture& tex, int sprW, int sprH);
+  void loadProgressImage(const GritTexture& tex);
+  void loadDialogboxImage(const GritTexture& tex);
+  void loadBipsImage(const GritTexture& tex);
+  void loadScrollwindowImage(const GritTexture& tex);
+  void loadButtonarrowImage(const GritTexture& tex);
+  void loadMovingarrowImage(const GritTexture& tex);
+  void loadLaunchdotImage(const GritTexture& tex);
+  void loadStartImage(const GritTexture& tex);
+  void loadStartbrdImage(const GritTexture& tex, int arraysize,
+                         int sprH);
+  void loadBraceImage(const GritTexture& tex);
+  void loadSettingsImage(const GritTexture& tex);
+  void loadBoxfullImage(const GritTexture& tex);
+  void loadBoxemptyImage(const GritTexture& tex);
+  void loadFolderImage(const GritTexture& tex);
+  void loadCornerButtonImage(const GritTexture& tex, int arraysize,
+											int sprW, int sprH);
+  void loadSmallCartImage(const GritTexture& tex);
+  void loadWirelessIcons(const GritTexture& tex);
 
   void loadBottomImage();
 
@@ -119,8 +119,10 @@ private:
    * 
    * arraySize is the size of the glImage array.
    */
-  unique_ptr<glImage[]> loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
-                                    unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int texH);
+  unique_ptr<glImage[]> loadTexture(
+            int *textureId, const GritTexture& texture,
+						unsigned int arraySize,
+						int sprW, int sprH);
 
 public:
   const glImage *bubbleImage() { return _bubbleImage.get(); }

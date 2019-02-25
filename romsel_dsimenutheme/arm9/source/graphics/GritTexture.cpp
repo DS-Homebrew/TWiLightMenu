@@ -84,7 +84,7 @@ GritTexture::GritTexture(const std::string& filePath, const std::string& fallbac
         fread(&textureLengthInBytes, sizeof(u32), 1, file);
 
         
-        _textureLength = (textureLengthInBytes >> 8) / sizeof(unsigned int);
+        _textureLength = (textureLengthInBytes >> 10); // palette length in ints sizeof(unsigned int);
     
         _texture = std::make_unique<unsigned int[]>(_textureLength);
         fread(_texture.get(), sizeof(unsigned int), _textureLength, file);
@@ -95,7 +95,7 @@ GritTexture::GritTexture(const std::string& filePath, const std::string& fallbac
         fseek(file, 2 * sizeof(u32), SEEK_CUR);
         u32 paletteLength = 0;
         fread(&paletteLength, sizeof(u32), 1, file);
-        _paletteLength = (paletteLength >> 8) / sizeof(unsigned short);
+        _paletteLength = (paletteLength >> 9); // palette length in shorts. / sizoef(unsighed shor)
 
         _palette = std::make_unique<unsigned short[]>(_paletteLength);
         fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);

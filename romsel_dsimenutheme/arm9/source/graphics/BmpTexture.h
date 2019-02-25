@@ -19,7 +19,7 @@ class BmpTexture
         int loadUnchecked(FILE* file);
     public:
         BmpTexture(const std::string& file, const std::string& fallbackPath);
-        ~BmpTexture() { };
+        virtual ~BmpTexture() = default;
         void applyEffect(BitmapEffect effect);
         const u16 *texture() const { return (u16*)_texture.get(); }
 };
