@@ -41,6 +41,7 @@ If a notification appears to share your drive, you must choose to enable drive s
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Some game console icons used.
 - [Vulpes-Vulpeos](https://www.deviantart.com/vulpes-vulpeos): MHGen and DS Menu themes for Acekard theme.
+- [Daniel](https://github.com/XD-Daniel-XD): Loading screen for 3DS theme.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
