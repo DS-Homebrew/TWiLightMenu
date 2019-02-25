@@ -143,19 +143,11 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
-
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
 	stop();
 }
 
-void loadROMselect()
+void loadROMselect(int number)
 {
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
@@ -169,24 +161,20 @@ void loadROMselect()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
-	if (ms().theme == 3)
-	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
+	if (number == 4) {
+		number = rand() % 3
 	}
-	else if (ms().theme == 2)
-	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
-	}
-	else
-	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
+
+	switch (number) {
+		case 3:
+			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
+			break;
+		case 2:
+			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
+			break;
+		default:
+			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
+			break;
 	}
 	stop();
 }
@@ -203,14 +191,6 @@ int lastRunROM()
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
-	// if (soundfreqsettingChanged)
-	// {
-	// 	if (ms().soundfreq)
-	// 		fifoSendValue32(FIFO_USER_07, 2);
-	// 	else
-	// 		fifoSendValue32(FIFO_USER_07, 1);
-	// }
 
 	vector<char *> argarray;
 	if (ms().launchType > 2)
@@ -377,7 +357,7 @@ void defaultExitHandler()
 	{
 		rebootDSiMenuPP();
 	}*/
-	loadROMselect();
+	loadROMselect(ms().theme);
 }
 
 //---------------------------------------------------------------------------------
@@ -389,10 +369,6 @@ int main(int argc, char **argv)
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
 
-	//consoleDemoInit();
-	//gotosettings = true;
-	//bool fatInited = fatInitDefault();
-
 	// overwrite reboot stub identifier
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
@@ -400,9 +376,6 @@ int main(int argc, char **argv)
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");
 	sys().flashcardUsed();
 	ms();
-	// consoleDemoInit();
-	// printf("%i", sys().flashcardUsed());
-	// stop();
 	defaultExceptionHandler();
 
 	if (!sys().fatInitOk())
@@ -495,25 +468,18 @@ int main(int argc, char **argv)
 	srand(time(NULL));
 
 	int pressed = 0;
-	while (1)
-	{
-		if (screenmode == 1)
-		{
+	while (1) {
+		if (screenmode == 1) {
 			fadeType = false;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
 			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false);
-		}
-		else
-		{
-			if (ms().showMainMenu)
-			{
+		} else {
+			if (ms().showMainMenu) {
 				loadMainMenu();
-			}
-			else
-			{
-				loadROMselect();
+			} else {
+				loadROMselect(ms().theme);
 			}
 		}
 	}

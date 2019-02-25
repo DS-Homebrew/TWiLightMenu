@@ -48,9 +48,6 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_02)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -114,6 +111,16 @@ int main() {
 			exitflag = true;
 		}
 		resyncClock();
+		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
+			*(u8*)(0x023FF002) = 2;
+		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
+			*(u8*)(0x023FF002) = 1;
+		} else {
+			*(u8*)(0x023FF002) = 0;
+		}
+		if(fifoCheckValue32(FIFO_USER_02)) {
+			ReturntoDSiMenu();
+		}
 		swiWaitForVBlank();
 	}
 	return 0;

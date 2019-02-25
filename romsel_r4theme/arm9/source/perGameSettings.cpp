@@ -43,6 +43,7 @@
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
 #include "cheat.h"
+#include "errorScreen.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -396,11 +397,12 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 180, 144, "Release");
 				}
 			}
-			printSmallCentered(false, 150+(useBootstrap*8), "X: Cheats B: Back");
+			printSmallCentered(false, 150+(useBootstrap*8), "X: Cheats  B: Back");
 		}
 		do {
 			scanKeys();
 			pressed = keysDown();
+			checkSdEject();
 			swiWaitForVBlank();
 		} while (!pressed);
 

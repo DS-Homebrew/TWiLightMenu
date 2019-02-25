@@ -44,6 +44,7 @@
 #include "graphics/TextPane.h"
 #include "SwitchState.h"
 #include "perGameSettings.h"
+#include "errorScreen.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -231,7 +232,8 @@ void mdRomTooBig(void) {
 	int pressed = 0;
 	do {
 		scanKeys();
-		pressed = keysDownRepeat();
+		pressed = keysDown();
+		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	showdialogbox = false;
@@ -363,6 +365,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		do {
 			scanKeys();
 			pressed = keysDownRepeat();
+			checkSdEject();
 			swiWaitForVBlank();
 		} while (!pressed);
 
@@ -421,7 +424,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pressed = 0;
 				do {
 					scanKeys();
-					pressed = keysDownRepeat();
+					pressed = keysDown();
+					checkSdEject();
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
@@ -455,7 +459,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				pressed = 0;
 				while (1) {
 					scanKeys();
-					pressed = keysDownRepeat();
+					pressed = keysDown();
+					checkSdEject();
 					swiWaitForVBlank();
 					if (pressed & KEY_A) {
 						pressed = 0;
@@ -560,7 +565,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			while (1) {
 				do {
 					scanKeys();
-					pressed = keysDownRepeat();
+					pressed = keysDown();
+					checkSdEject();
 					swiWaitForVBlank();
 				} while (!pressed);
 				
