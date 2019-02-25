@@ -77,6 +77,8 @@ public:
   void clearTopScreen();
 
 private:
+  void applyGrayscaleToAllGrfTextures();
+
   void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);
   void loadProgressImage(const unsigned short *palette, const unsigned int *bitmap);
   void loadDialogboxImage(const unsigned short *palette, const unsigned int *bitmap);
