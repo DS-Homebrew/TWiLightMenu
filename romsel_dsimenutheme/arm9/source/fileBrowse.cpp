@@ -461,7 +461,7 @@ bool isTopLevel(const char *path)
 void waitForFadeOut (void) {
 	if (!dropDown && theme == 0) {
 		dropDown = true;
-		for (int i = 0; i < 72; i++) {
+		for (int i = 0; i < 66; i++) {
 			checkSdEject();
 			loadVolumeImage();
 			loadBatteryImage();
