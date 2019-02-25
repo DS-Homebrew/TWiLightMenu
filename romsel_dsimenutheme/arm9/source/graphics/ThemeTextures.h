@@ -18,33 +18,19 @@ class ThemeTextures
 
 public:
   ThemeTextures()
+    : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
+      movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0),
+      settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
+      folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
+      dialogboxTexID(0), wirelessiconTexID(0),
+      _cachedVolumeLevel(-1), _cachedBatteryLevel(0)
   {
-    bubbleTexID = 0;
-    bipsTexID = 0;
-    scrollwindowTexID = 0;
-    buttonarrowTexID = 0;
-    movingarrowTexID = 0;
-    launchdotTexID = 0;
-    startTexID = 0;
-    startbrdTexID = 0;
-    settingsTexID = 0;
-    braceTexID = 0;
-    boxfullTexID = 0;
-    boxemptyTexID = 0;
-    folderTexID = 0;
-    cornerButtonTexID = 0;
-    smallCartTexID = 0;
-
-    progressTexID = 0;
-    dialogboxTexID = 0;
-    wirelessiconTexID = 0;
-    _cachedVolumeLevel = 0;
-    _cachedBatteryLevel = 0;
-
     _bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bmpImageBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-
+    _bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+    _bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
   }
+  
   ~ThemeTextures() {}
 
 public:
@@ -274,6 +260,9 @@ private:
 
   unique_ptr<u16[]> _bgSubBuffer;
   unique_ptr<u16[]> _bmpImageBuffer;
+
+  unique_ptr<u16[]> _bottomBgImage;
+  unique_ptr<u16[]> _bottomBubbleBgImage;
 
   unique_ptr<u16[]> _dateFontImage;
 private:

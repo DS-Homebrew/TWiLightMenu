@@ -15,8 +15,6 @@
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 
-static u16 loadedBottomImg[256 * 192];
-static u16 loadedBottomBubbleImg[256 * 192];
 extern u16 usernameRendered[10];
 
 void ThemeTextures::loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH,
@@ -195,7 +193,7 @@ void ThemeTextures::loadBottomImage() {
 				y--;
 			}
 			u16 val = *(src++);
-			loadedBottomImg[y * 256 + x] = convertToDsBmp(val);
+			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -210,7 +208,7 @@ void ThemeTextures::loadBottomImage() {
 				y--;
 			}
 			u16 val = *(src++);
-			loadedBottomBubbleImg[y * 256 + x] = convertToDsBmp(val);
+			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
 			x++;
 		}
 	}
@@ -232,6 +230,7 @@ void ThemeTextures::load3DSTheme() {
 	_boxFullTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
 	_boxEmptyTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
 	_folderTexture = std::make_unique<GritTexture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+	_progressTexture = std::make_unique<GritTexture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 
 	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
 	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
@@ -251,6 +250,8 @@ void ThemeTextures::load3DSTheme() {
 	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(),
 			  (32 / 32) * (192 / 64), 6, 64, 192);
 	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
+	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
+
 }
 
 void ThemeTextures::loadDSiTheme() {
@@ -391,13 +392,13 @@ void ThemeTextures::drawTopBg() {
 }
 
 void ThemeTextures::drawBottomBg() {
-	DC_FlushRange(loadedBottomImg, 0x18000);
-	dmaCopyWords(0, loadedBottomImg, BG_GFX, 0x18000);
+	DC_FlushRange(_bottomBgImage.get(), 0x18000);
+	dmaCopyWords(0, _bottomBgImage.get(), BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBottomBubbleBg() {
-	DC_FlushRange(loadedBottomBubbleImg, 0x18000);
-	dmaCopyWords(0, loadedBottomBubbleImg, BG_GFX, 0x18000);
+	DC_FlushRange(_bottomBubbleBgImage.get(), 0x18000);
+	dmaCopyWords(0, _bottomBubbleBgImage.get(), BG_GFX, 0x18000);
 }
 
 void ThemeTextures::clearTopScreen() {
