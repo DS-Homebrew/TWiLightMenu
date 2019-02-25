@@ -46,7 +46,7 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (*(u8*)(0x023FF002) == 0) return;
+	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) return;
 	
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
