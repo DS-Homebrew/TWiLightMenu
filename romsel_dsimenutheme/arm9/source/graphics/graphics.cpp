@@ -80,7 +80,7 @@ int dropSpeedChange[5] = {0};
 int titleboxYposDropDown[5] = {-85 - 80};
 int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
-extern bool showbubble;
+extern int currentBg;
 extern bool showSTARTborder;
 extern bool isScrolling;
 extern bool needToPlayStopSound;
@@ -150,7 +150,7 @@ float dbox_movespeed = 22;
 float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
-int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
+int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.
 
 int vblankRefreshCounter = 0;
 
@@ -328,19 +328,17 @@ void initSubSprites(void) {
 	oamUpdate(&oamSub);
 }
 
-void bottomBgLoad(bool drawBubble, bool init = false) {
-	if (init || (!drawBubble && bottomBgState == 2)) {
+void bottomBgLoad(int drawBubble, bool init = false) {
+	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == 1)) {
 		tex().drawBottomBg();
-		// Set that we've not drawn the bubble.
-		bottomBgState = 1;
-	} else if (drawBubble && bottomBgState == 1) {
+	} else if (drawBubble == 1){
 		tex().drawBottomBubbleBg();
-		// Set that we've drawn the bubble.
-		bottomBgState = 2;
+	} else if (drawBubble == 2 && ms().theme == 0){
+		tex().drawBottomMovingBg();
 	}
 }
 
-void bottomBgRefresh() { bottomBgLoad(showbubble, false); }
+void bottomBgRefresh() { bottomBgLoad(currentBg, false); }
 
 void drawBubble(const glImage *images) { glSprite(bubbleXpos, bubbleYpos, GL_FLIP_NONE, &images[0]); }
 
@@ -520,7 +518,7 @@ void vBlankHandler() {
 
 		if (titleboxXmoveleft) {
 			if (movetimer == 8) {
-				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+			//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
 				titlewindowXpos[ms().secondaryDevice] -= 1;
@@ -538,7 +536,7 @@ void vBlankHandler() {
 			}
 		} else if (titleboxXmoveright) {
 			if (movetimer == 8) {
-				//	if (showbubble && theme == 0) mmEffectEx(&snd_stop);
+			//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
 				titlewindowXpos[ms().secondaryDevice] += 1;
@@ -989,26 +987,20 @@ void vBlankHandler() {
 					launchDotY[i]++;
 				}
 			}
-			titleboxYmovepos += 5;
-		}
-		if (showSTARTborder) {
-			if (ms().theme == 1) {
-				glSprite(96, 92, GL_FLIP_NONE,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
-				glSprite(96 + 32, 92, GL_FLIP_H,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
-				if (bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] > 0)
-					glSprite(
-					    96, 92, GL_FLIP_NONE,
-					    &tex().wirelessIcons()
-						 [(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] - 1) &
-						  31]);
-			} else if (!isScrolling) {
-				if (showbubble && ms().theme == 0 && needToPlayStopSound &&
-				    waitForNeedToPlayStopSound == 0) {
-					mmEffectEx(&snd_stop);
-					waitForNeedToPlayStopSound = 1;
-					needToPlayStopSound = false;
+			if (showSTARTborder) {
+				if (ms().theme == 1) {
+					glSprite(96, 92, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+					if (bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]]-1) & 31]);
+				} else if (!isScrolling) {
+					if (currentBg == 1 && ms().theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
+						mmEffectEx(&snd_stop);
+						waitForNeedToPlayStopSound = 1;
+						needToPlayStopSound = false;
+					}
+					glSprite(96, 81, GL_FLIP_NONE, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					glSprite(96+32, 81, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
+					if (bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]]-1) & 31]);
 				}
 				glSprite(96, 81, GL_FLIP_NONE,
 					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
@@ -1024,7 +1016,7 @@ void vBlankHandler() {
 		}
 
 		// Refresh the background layer.
-		if (showbubble)
+		if (currentBg == 1)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && ms().theme == 0 && !isScrolling)
 			glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);

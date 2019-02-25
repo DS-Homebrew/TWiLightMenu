@@ -29,6 +29,8 @@ public:
     _bmpImageBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+    _bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+
   }
 
   ~ThemeTextures() {}
@@ -55,6 +57,7 @@ public:
 
   void drawProfileName();
   void drawBottomBubbleBg();
+  void drawBottomMovingBg();
   void drawBottomBg();
 
   void drawBoxArt(const char* filename);
@@ -260,6 +263,7 @@ private:
 
   unique_ptr<u16[]> _bottomBgImage;
   unique_ptr<u16[]> _bottomBubbleBgImage;
+  unique_ptr<u16[]> _bottomMovingBgImage;
 
   unique_ptr<u16[]> _dateFontImage;
 

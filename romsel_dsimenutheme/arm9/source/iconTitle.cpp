@@ -48,7 +48,7 @@ extern bool showdialogbox;
 extern bool startMenu;
 
 
-extern bool showbubble;
+extern int currentBg;
 
 extern int movingApp;
 
@@ -142,7 +142,7 @@ void execDeferredIconUpdates() {
 //(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	// Hack to prevent glitched icons on startup.
-	if (showbubble) {
+	if (currentBg == 1) {
 		deferLoadIcon(tilesSrc, palSrc, num, twl);
 	} else {
 		convertIconTilesToRaw(tilesSrc, tilesModified, twl);

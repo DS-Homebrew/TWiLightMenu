@@ -181,6 +181,12 @@ void ThemeTextures::reloadPal3dsCornerButton() {
 	glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
 }
 
+void ThemeTextures::drawMovingBg()
+{
+  DC_FlushRange(loadedBottomMovingImg, 0x18000);
+  dmaCopyWords(0, loadedBottomMovingImg, BG_GFX, 0x18000);
+}
+
 void ThemeTextures::loadBottomImage() {
 
 	{
@@ -227,45 +233,8 @@ void ThemeTextures::load3DSTheme() {
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
-	_boxFullTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
-	_boxEmptyTexture = std::make_unique<GritTexture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
 	_folderTexture = std::make_unique<GritTexture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
 	_progressTexture = std::make_unique<GritTexture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
-
-	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
-	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
-	_startBorderTexture = std::make_unique<GritTexture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
-	_dialogBoxTexture = std::make_unique<GritTexture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
-
-	loadBubbleImage(_bubbleTexture->palette(), (const unsigned int *)_bubbleTexture->texture(), 7, 7, 8);
-	loadSettingsImage(_settingsIconTexture->palette(), (const unsigned int *)_settingsIconTexture->texture());
-
-	loadBoxfullImage(_boxFullTexture->palette(), (const unsigned int *)_boxFullTexture->texture());
-	loadBoxemptyImage(_boxEmptyTexture->palette(), (const unsigned int *)_boxEmptyTexture->texture());
-	loadFolderImage(_folderTexture->palette(), (const unsigned int *)_folderTexture->texture());
-
-	loadCornerButtonImage(_cornerButtonTexture->palette(), (const unsigned int *)_cornerButtonTexture->texture(),
-			      (64 / 16) * (64 / 32), 64, 32, 64, 64);
-	loadSmallCartImage(_smallCartTexture->palette(), (const unsigned int *)_smallCartTexture->texture());
-	loadStartbrdImage(_startBorderTexture->palette(), (const unsigned int *)_startBorderTexture->texture(),
-			  (32 / 32) * (192 / 64), 6, 64, 192);
-	loadDialogboxImage(_dialogBoxTexture->palette(), (const unsigned int *)_dialogBoxTexture->texture());
-	loadProgressImage(_progressTexture->palette(), (const unsigned int *)_progressTexture->texture());
-
-}
-
-void ThemeTextures::loadDSiTheme() {
-
-	loadUiTextures();
-	loadVolumeTextures();
-	loadBatteryTextures();
-	loadBottomImage();
-	
-	loadDateFont(_dateTimeFontTexture->texture());
-
-	_bipsTexture = std::make_unique<GritTexture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
-	_boxTexture = std::make_unique<GritTexture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
-	_braceTexture = std::make_unique<GritTexture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_buttonArrowTexture = std::make_unique<GritTexture>(TFN_GRF_BUTTON_ARROW, TFN_FALLBACK_GRF_BUTTON_ARROW);
 	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
@@ -399,6 +368,12 @@ void ThemeTextures::drawBottomBg() {
 void ThemeTextures::drawBottomBubbleBg() {
 	DC_FlushRange(_bottomBubbleBgImage.get(), 0x18000);
 	dmaCopyWords(0, _bottomBubbleBgImage.get(), BG_GFX, 0x18000);
+}
+
+
+void ThemeTextures::drawBottomMovingBg() {
+	DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
+	dmaCopyWords(0, _bottomMovingBgImage.get(), BG_GFX, 0x18000);
 }
 
 void ThemeTextures::clearTopScreen() {
