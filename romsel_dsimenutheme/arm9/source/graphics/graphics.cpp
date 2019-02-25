@@ -42,6 +42,7 @@
 #include "../language.h"
 #include "../perGameSettings.h"
 #include "../flashcard.h"
+#include "../errorScreen.h"
 #include "iconHandler.h"
 #include "date.h"
 #define CONSOLE_SCREEN_WIDTH 32
@@ -161,6 +162,7 @@ int vblankRefreshCounter = 0;
 u16 bmpImageBuffer[256*192] = {0};
 u16 bgSubBuffer[256*192] = {0};
 
+extern u16 sdRemovedImage[256*192];
 u16 dateFontImage[128*16];
 
 static bool rotatingCubesLoaded = false;
@@ -2060,6 +2062,8 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
+
+	loadSdRemovedImage();
 
 	if (theme < 1) {
 		srand(time(NULL));

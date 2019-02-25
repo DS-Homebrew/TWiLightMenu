@@ -47,6 +47,7 @@
 #include "SwitchState.h"
 #include "perGameSettings.h"
 #include "graphics/ThemeTextures.h"
+#include "errorScreen.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -182,7 +183,7 @@ void InitSound() {
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
 	mmLoadEffect( SFX_STARTUP );
-	mmLoadEffect( SFX_MENU );
+	//mmLoadEffect( SFX_MENU );
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -233,13 +234,13 @@ void InitSound() {
 		255,	// volume
 		128,	// panning
 	};
-	mus_menu = {
+	/*mus_menu = {
 		{ SFX_MENU } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
 		128,	// panning
-	};
+	};*/
 }
 
 extern bool music;
@@ -1240,6 +1241,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = false;
 					showSTARTborder = rocketVideo_playVideo = (theme == 1 ? true : false);
 				}
+				checkSdEject();
 				loadVolumeImage();
 				loadBatteryImage();
 				loadTime();
