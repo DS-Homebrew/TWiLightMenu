@@ -1003,16 +1003,6 @@ void vBlankHandler() {
 					glSprite(96+32, 81, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
 					if (bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] > 0) glSprite(96, 81, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]]-1) & 31]);
 				}
-				glSprite(96, 81, GL_FLIP_NONE,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-				glSprite(96 + 32, 81, GL_FLIP_H,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-				if (bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] > 0)
-					glSprite(
-					    96, 81, GL_FLIP_NONE,
-					    &tex().wirelessIcons()
-						 [(bnrWirelessIcon[ms().cursorPosition[ms().secondaryDevice]] - 1) &
-						  31]);
 		}
 		
 
@@ -1021,7 +1011,6 @@ void vBlankHandler() {
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && ms().theme == 0 && !isScrolling) {
 			glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
-
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
