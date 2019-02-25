@@ -42,6 +42,7 @@
 #include "../perGameSettings.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
+#include "../errorScreen.h"
 #include "common/systemdetails.h"
 #include "themefilenames.h"
 #include "fontHandler.h"
@@ -155,7 +156,7 @@ int vblankRefreshCounter = 0;
 
 u16 bmpImageBuffer[256 * 192] = {0};
 
-// u16 dateFontImage[128 * 16];
+extern u16 sdRemovedImage[256*192];
 
 static bool rotatingCubesLoaded = false;
 
@@ -1560,6 +1561,10 @@ void graphicsInit() {
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1 << 8;
+
+	if (isDSiMode()) {
+		loadSdRemovedImage();
+	}
 
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 

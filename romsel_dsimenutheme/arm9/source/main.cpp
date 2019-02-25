@@ -688,7 +688,7 @@ int main(int argc, char **argv) {
 		}
 		music = true;
 	}
-
+	
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0) ||
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&

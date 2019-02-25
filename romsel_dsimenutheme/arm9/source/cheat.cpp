@@ -30,6 +30,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
+#include "errorScreen.h"
 
 
 extern bool dbox_showIcon;
@@ -257,6 +258,7 @@ void CheatCodelist::selectCheats(std::string filename)
       while(1) {
         scanKeys();
         pressed = keysDownRepeat();
+		checkSdEject();
 		tex().drawVolumeImageCached();
 		tex().drawBatteryImageCached();
 		drawCurrentTime();
@@ -317,6 +319,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	do {
 		scanKeys();
 		pressed = keysDown();
+		checkSdEject();
 		tex().drawVolumeImageCached();
 		tex().drawBatteryImageCached();
 		drawCurrentTime();
@@ -436,7 +439,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
         while(1) {
           scanKeys();
-          pressed = keysDownRepeat();
+          pressed = keysDown();
+		  checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
 			drawCurrentTime();

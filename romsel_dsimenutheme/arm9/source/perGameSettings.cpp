@@ -45,6 +45,7 @@
 
 #include "SwitchState.h"
 #include "cheat.h"
+#include "errorScreen.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -412,6 +413,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDown();
+			checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
 			drawCurrentTime();
