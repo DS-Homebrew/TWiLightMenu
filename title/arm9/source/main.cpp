@@ -357,7 +357,7 @@ void defaultExitHandler()
 	{
 		rebootDSiMenuPP();
 	}*/
-	loadROMselect();
+	loadROMselect(ms().theme);
 }
 
 //---------------------------------------------------------------------------------
