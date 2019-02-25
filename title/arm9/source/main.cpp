@@ -161,10 +161,6 @@ void loadROMselect(int number)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	if (number == 4) {
-		number = rand() % 3;
-	}
-
 	switch (number) {
 		case 3:
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);

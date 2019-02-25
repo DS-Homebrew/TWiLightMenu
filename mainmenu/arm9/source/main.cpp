@@ -779,21 +779,17 @@ void loadROMselect()
 	if (sdFound()) {
 		chdir("sd:/");
 	}
-	if (theme == 4) {
-		theme = rand() % 3;
-	}
 
-	if (theme == 3)
-	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
-	}
-	else if (theme == 2)
-	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
-	}
-	else
-	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
+	switch (theme) {
+		case 3:
+			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
+			break;
+		case 2:
+			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
+			break;
+		default:
+			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
+			break;
 	}
 }
 
