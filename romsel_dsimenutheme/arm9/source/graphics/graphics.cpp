@@ -156,8 +156,6 @@ int vblankRefreshCounter = 0;
 
 u16 bmpImageBuffer[256 * 192] = {0};
 
-extern u16 sdRemovedImage[256*192];
-
 static bool rotatingCubesLoaded = false;
 
 bool rocketVideo_playVideo = false;

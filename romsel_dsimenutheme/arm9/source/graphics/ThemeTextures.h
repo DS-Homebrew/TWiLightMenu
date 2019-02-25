@@ -23,14 +23,14 @@ public:
       settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
       dialogboxTexID(0), wirelessiconTexID(0),
-      _cachedVolumeLevel(-1), _cachedBatteryLevel(0)
+      _cachedVolumeLevel(-1), _cachedBatteryLevel(-1)
   {
     _bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bmpImageBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
     _bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
   }
-  
+
   ~ThemeTextures() {}
 
 public:
