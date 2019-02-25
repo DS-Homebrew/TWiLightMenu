@@ -154,9 +154,8 @@ int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble.
 int vblankRefreshCounter = 0;
 
 u16 bmpImageBuffer[256 * 192] = {0};
-u16 bgSubBuffer[256 * 192] = {0};
 
-u16 dateFontImage[128 * 16];
+// u16 dateFontImage[128 * 16];
 
 static bool rotatingCubesLoaded = false;
 
@@ -193,18 +192,6 @@ void ClearBrightness(void) {
 bool screenFadedIn(void) { return (screenBrightness == 0); }
 
 bool screenFadedOut(void) { return (screenBrightness > 24); }
-
-void beginBgSubModify() { dmaCopyWords(0, BG_GFX_SUB, bgSubBuffer, sizeof(bgSubBuffer)); }
-
-void commitBgSubModify() {
-	DC_FlushRange(bgSubBuffer, sizeof(bgSubBuffer));
-	dmaCopyWords(2, bgSubBuffer, BG_GFX_SUB, sizeof(bgSubBuffer));
-}
-
-void commitBgSubModifyAsync() {
-	DC_FlushRange(bgSubBuffer, sizeof(bgSubBuffer));
-	dmaCopyWordsAsynch(2, bgSubBuffer, BG_GFX_SUB, sizeof(bgSubBuffer));
-}
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -342,43 +329,13 @@ void initSubSprites(void) {
 	oamUpdate(&oamSub);
 }
 
-u16 convertToDsBmp(u16 val) {
-	if (ms().colorMode == 1) {
-		u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
-
-		u8 b, g, r, max, min;
-		b = ((newVal) >> 10) & 31;
-		g = ((newVal) >> 5) & 31;
-		r = (newVal)&31;
-		// Value decomposition of hsv
-		max = (b > g) ? b : g;
-		max = (max > r) ? max : r;
-
-		// Desaturate
-		min = (b < g) ? b : g;
-		min = (min < r) ? min : r;
-		max = (max + min) / 2;
-
-		newVal = 32768 | (max << 10) | (max << 5) | (max);
-
-		b = ((newVal) >> 10) & (31 - 6 * ms().blfLevel);
-		g = ((newVal) >> 5) & (31 - 3 * ms().blfLevel);
-		r = (newVal)&31;
-
-		return 32768 | (b << 10) | (g << 5) | (r);
-	} else {
-		return ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
-		       (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
-	}
-}
-
 void bottomBgLoad(bool drawBubble, bool init = false) {
 	if (init || (!drawBubble && bottomBgState == 2)) {
-		tex().drawBg();
+		tex().drawBottomBg();
 		// Set that we've not drawn the bubble.
 		bottomBgState = 1;
 	} else if (drawBubble && bottomBgState == 1) {
-		tex().drawBubbleBg();
+		tex().drawBottomBubbleBg();
 		// Set that we've drawn the bubble.
 		bottomBgState = 2;
 	}
@@ -420,12 +377,12 @@ void playRotatingCubesVideo(void) {
 					   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
 
 			if (ms().colorMode == 1) {
-				beginBgSubModify();
+				u16 *bgSubBuffer = tex().beginSubModify();
 				for (u16 i = 0; i < 256 * 56; i++) {
 					bgSubBuffer[(rocketVideo_videoYpos * 256) + i] =
 					    convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos * 256) + i]);
 				}
-				commitBgSubModifyAsync();
+				tex().commitSubModifyAsync();
 			}
 			rocketVideo_frameDelay = 0;
 			rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
@@ -1247,156 +1204,6 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
-void clearBmpScreen() {
-	beginBgSubModify();
-	u16 val = 0xFFFF;
-	for (int i = 0; i < 256 * 192; i++) {
-		bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
-				 (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
-	}
-	commitBgSubModify();
-}
-
-void loadBoxArt(const char *filename) {
-	FILE *file = fopen(filename, "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x7800, file);
-		u16 *src = bmpImageBuffer;
-		int x = 64;
-		int y = 40 + 114;
-		for (int i = 0; i < 128 * 115; i++) {
-			if (x >= 64 + 128) {
-				x = 64;
-				y--;
-			}
-			u16 val = *(src++);
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-			x++;
-		}
-		commitBgSubModify();
-	}
-
-	fclose(file);
-}
-
-static int loadedVolumeImage = -1;
-
-void loadVolumeImage(void) {
-	if (!isDSiMode())
-		return;
-
-	u8 volumeLevel = *(u8 *)(0x023FF000);
-
-	if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-		if (loadedVolumeImage == 4)
-			return;
-		loadedVolumeImage = 4;
-	} else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
-		if (loadedVolumeImage == 3)
-			return;
-		loadedVolumeImage = 3;
-	} else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
-		if (loadedVolumeImage == 2)
-			return;
-		loadedVolumeImage = 2;
-	} else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
-		if (loadedVolumeImage == 1)
-			return;
-		loadedVolumeImage = 1;
-	} else if (volumeLevel == 0x00) {
-		if (loadedVolumeImage == 0)
-			return;
-		loadedVolumeImage = 0;
-	} else {
-		return;
-	}
-
-	beginBgSubModify();
-
-	const u16 *src = tex().volumeTexture(loadedVolumeImage)->texture();
-	int x = 4;
-	int y = 5 + 11;
-	for (int i = 0; i < 18 * 12; i++) {
-		if (x >= 4 + 18) {
-			x = 4;
-			y--;
-		}
-		u16 val = *(src++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
-	commitBgSubModify();
-}
-
-static int loadedBatteryImage = -1;
-
-void loadBatteryImage(void) {
-	u8 batteryLevel = *(u8 *)(0x023FF001);
-
-	if (isDSiMode()) {
-		if (batteryLevel & BIT(7)) {
-			if (loadedBatteryImage == 7)
-				return;
-			loadedBatteryImage = 7;
-		} else if (batteryLevel == 0xF) {
-			if (loadedBatteryImage == 4)
-				return;
-			loadedBatteryImage = 4;
-		} else if (batteryLevel == 0xB) {
-			if (loadedBatteryImage == 3)
-				return;
-			loadedBatteryImage = 3;
-		} else if (batteryLevel == 0x7) {
-			if (loadedBatteryImage == 2)
-				return;
-			loadedBatteryImage = 2;
-		} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
-			if (loadedBatteryImage == 1)
-				return;
-			loadedBatteryImage = 1;
-		} else {
-			return;
-		}
-	} else {
-		if (batteryLevel & BIT(0)) {
-			if (loadedBatteryImage == 1)
-				return;
-			loadedBatteryImage = 1;
-		} else {
-			if (loadedBatteryImage == 0)
-				return;
-			loadedBatteryImage = 0;
-		}
-	}
-
-	// Start loading
-	beginBgSubModify();
-	const u16 *src = tex().batteryTexture(loadedBatteryImage, isDSiMode(), sys().isRegularDS())->texture();
-	int x = 235;
-	int y = 5 + 10;
-	for (int i = 0; i < 18 * 11; i++) {
-		if (x >= 235 + 18) {
-			x = 235;
-			y--;
-		}
-		u16 val = *(src++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
-	commitBgSubModify();
-}
 
 void loadPhotoList() {
 	DIR *dir;
@@ -1435,7 +1242,7 @@ void loadPhoto() {
 		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
-		beginBgSubModify();
+		u16* bgSubBuffer = tex().beginSubModify();
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -1450,10 +1257,10 @@ void loadPhoto() {
 				y--;
 			}
 			u16 val = *(src++);
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
+			bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
 			x++;
 		}
-		commitBgSubModify();
+		tex().commitSubModify();
 	}
 
 	fclose(file);
@@ -1467,7 +1274,7 @@ void loadPhotoPart() {
 
 	if (file) {
 		// Start loading
-		beginBgSubModify();
+		u16* bgSubBuffer = tex().beginSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1482,255 +1289,20 @@ void loadPhotoPart() {
 			}
 			u16 val = *(src++);
 			if (y <= 24 + 147) {
-				bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
+				bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
 			}
 			x++;
 		}
-		commitBgSubModify();
+		tex().commitSubModify();
 	}
 
 	fclose(file);
 }
 
-void drawTopBg() {
-
-	beginBgSubModify();
-	const u16 *src = tex().topBackgroundTexture()->texture();
-	int x = 0;
-	int y = 191;
-	for (int i = 0; i < 256 * 192; i++) {
-		if (x >= 256) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(src++);
-		if (val != 0xFC1F) { // Do not render magneta pixel
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
-	commitBgSubModify();
-}
-
-// Load .bmp file without overwriting shoulder button images or username
-void draw3DSTopBgPart() {
-	beginBgSubModify();
-	
-	const u16 *src = tex().topBackgroundTexture()->texture();
-	int x = 0;
-	int y = 191;
-	for (int i = 0; i < 256 * 192; i++) {
-		if (x >= 256) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(src++);
-		if (y >= 32 && y <= 167 && val != 0xFC1F) {
-			bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
-	commitBgSubModify();
-}
-
-void loadShoulders() {
-
-	beginBgSubModify();
-	const u16 *rightSrc =
-	    showRshoulder ? tex().rightShoulderTexture()->texture() : tex().rightShoulderGreyedTexture()->texture();
-
-	const u16 *leftSrc =
-	    showLshoulder ? tex().leftShoulderTexture()->texture() : tex().leftShoulderGreyedTexture()->texture();
-	for (int y = 19; y >= 0; y--) {
-		// Draw R Shoulders
-		for (int i = 0; i < 78; i++) {
-			u16 val = *(rightSrc++);
-			if (val != 0xFC1F) { // Do not render magneta pixel
-				bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
-			}
-		}
-	}
-
-	for (int y = 19; y >= 0; y--) {
-		// Draw L Shoulders
-		for (int i = 0; i < 78; i++) {
-			u16 val = *(leftSrc++);
-			if (val != 0xFC1F) { // Do not render magneta pixel
-				bgSubBuffer[(y + 172) * 256 + i] = convertToDsBmp(val);
-			}
-		}
-	}
-
-	commitBgSubModify();
-}
-
-/**
- * Get the index in the UV coordinate array where the letter appears
- */
-unsigned int getTopFontSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = TOP_FONT_NUM_IMAGES;
-	long int mid = 0;
-
-	while (left <= right) {
-		mid = left + ((right - left) / 2);
-		if (top_utf16_lookup_table[mid] == letter) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if (top_utf16_lookup_table[mid] < letter) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
-	return spriteIndex;
-}
-
-unsigned int getDateTimeFontSpriteIndex(const u16 letter) {
-	unsigned int spriteIndex = 0;
-	long int left = 0;
-	long int right = DATE_TIME_FONT_NUM_IMAGES;
-	long int mid = 0;
-
-	while (left <= right) {
-		mid = left + ((right - left) / 2);
-		if (date_time_utf16_lookup_table[mid] == letter) {
-			spriteIndex = mid;
-			break;
-		}
-
-		if (date_time_utf16_lookup_table[mid] < letter) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
-	return spriteIndex;
-}
-
-//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
-#define MASK_RB 0b0111110000011111
-#define MASK_G 0b0000001111100000
-#define MASK_MUL_RB 0b0111110000011111000000
-#define MASK_MUL_G 0b0000001111100000000000
-#define MAX_ALPHA 64 // 6bits+1 with rounding
-
-/**
- * Adapted from https://stackoverflow.com/questions/18937701/
- * applies alphablending with the given
- * RGB555 foreground, RGB555 background, and alpha from
- * 0 to 128 (0, 1.0).
- * The lower the alpha the more transparent, but
- * this function does not produce good results at the extremes
- * (near 0 or 128).
- */
-inline u16 alphablend(u16 fg, u16 bg, u8 alpha) {
-
-	// alpha for foreground multiplication
-	// convert from 8bit to (6bit+1) with rounding
-	// will be in [0..64] inclusive
-	alpha = (alpha + 2) >> 2;
-	// "beta" for background multiplication; (6bit+1);
-	// will be in [0..64] inclusive
-	u8 beta = MAX_ALPHA - alpha;
-	// so (0..64)*alpha + (0..64)*beta always in 0..64
-
-	return (u16)((((alpha * (u32)(fg & MASK_RB) + beta * (u32)(bg & MASK_RB)) & MASK_MUL_RB) |
-		      ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >>
-		     5);
-}
-
-void topBgLoad() {
-	drawTopBg();
-
-	// Load username
-	char fontPath[64];
-	FILE *file;
-	int x = (isDSiMode() ? 28 : 4);
-
-	for (int c = 0; c < 10; c++) {
-		unsigned int charIndex = getTopFontSpriteIndex(usernameRendered[c]);
-		// 42 characters per line.
-		unsigned int texIndex = charIndex / 42;
-		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
-
-		file = fopen(fontPath, "rb");
-
-		if (file) {
-			beginBgSubModify();
-			// Start loading
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			for (int y = 15; y >= 0; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
-				u16 *src = buffer + (top_font_texcoords[0 + (4 * charIndex)]);
-
-				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
-					u16 val = *(src++);
-					u16 bg = bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
-					// Apply palette here.
-
-					// Magic numbers were found by dumping val to stdout
-					// on case default.
-					switch (val) {
-					// #ff00ff
-					case 0xFC1F:
-						break;
-					// #414141
-					case 0xA108:
-						val = bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)];
-						break;
-					case 0xC210:
-						// blend the colors with the background to make it look better.
-						val = alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)],
-								 bg, 48);
-						break;
-					case 0xDEF7:
-						val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
-								 bg, 64);
-					default:
-						break;
-					}
-					if (val != 0xFC1F) { // Do not render magneta pixel
-						bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(val);
-					}
-				}
-			}
-			x += top_font_texcoords[2 + (4 * charIndex)];
-			commitBgSubModify();
-		}
-
-		fclose(file);
-	}
-}
-
-void loadDateFont() {
-	const u16 *src = tex().dateTimeFontTexture()->texture();
-	int x = 0;
-	int y = 15;
-	for (int i = 0; i < 128 * 16; i++) {
-		if (x >= 128) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(src++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			dateFontImage[y * 128 + x] = convertToDsBmp(val);
-		} else {
-			dateFontImage[y * 128 + x] = 0x7C1F;
-		}
-		x++;
-	}
-}
 
 static std::string loadedDate;
 
-void loadDate() {
+void drawCurrentDate() {
 	// Load date
 	int x = 162;
 	char date[6];
@@ -1744,33 +1316,14 @@ void loadDate() {
 
 	loadedDate = date;
 
-	beginBgSubModify();
-	for (int c = 0; c < 5; c++) {
-		int imgY = 15;
-
-		unsigned int charIndex = getDateTimeFontSpriteIndex(date[c]);
-		// Start date
-		for (int y = 14; y >= 6; y--) {
-			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-				if (dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] + i)] !=
-				    0x7C1F) { // Do not render magneta pixel
-					bgSubBuffer[y * 256 + (i + x)] =
-					    dateFontImage[(imgY * 128) +
-							  (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
-				}
-			}
-			imgY--;
-		}
-		x += date_time_font_texcoords[2 + (4 * charIndex)];
-	}
-	commitBgSubModify();
+	tex().drawDateTime(date, x, 15, 5, NULL);
 }
 
 static std::string loadedTime;
 static int hourWidth;
 static bool initialClockDraw = true;
 
-void loadTime() {
+void drawCurrentTime() {
 	// Load time
 	int x = 200;
 	char time[10];
@@ -1791,36 +1344,13 @@ void loadTime() {
 				x = hourWidth;
 			}
 		}
-
-		beginBgSubModify();
-		for (int c = 0; c < howManyToDraw; c++) {
-			int imgY = 15;
-
-			unsigned int charIndex = getDateTimeFontSpriteIndex(time[c]);
-
-			for (int y = 14; y >= 6; y--) {
-				for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-					if (dateFontImage[(imgY * 128) +
-							  (date_time_font_texcoords[0 + (4 * charIndex)] + i)] !=
-					    0x7C1F) { // Do not render magneta pixel
-						bgSubBuffer[y * 256 + (i + x)] =
-						    dateFontImage[(imgY * 128) +
-								  (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
-					}
-				}
-				imgY--;
-			}
-			x += date_time_font_texcoords[2 + (4 * charIndex)];
-			if (c == 2)
-				hourWidth = x;
-		}
-		commitBgSubModify();
+		tex().drawDateTime(time, x, 15, howManyToDraw, &hourWidth);
 	}
 }
 
 static bool showColon = true;
 
-void loadClockColon() {
+void drawClockColon() {
 	// Load time
 	int x = 214;
 	int imgY = 15;
@@ -1831,29 +1361,14 @@ void loadClockColon() {
 		colonTimer = 0;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
-		beginBgSubModify();
-		unsigned int charIndex = getDateTimeFontSpriteIndex(colon[0]);
-
-		for (int y = 14; y >= 6; y--) {
-			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-				if (dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] + i)] !=
-				    0x7C1F) { // Do not render magneta pixel
-					bgSubBuffer[y * 256 + (i + x)] =
-					    dateFontImage[(imgY * 128) +
-							  (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
-				}
-			}
-			imgY--;
-		}
-		x += date_time_font_texcoords[2 + (4 * charIndex)];
-		commitBgSubModify();
+		tex().drawDateTime(colon, x, imgY, 1, NULL);
 		showColon = !showColon;
 	}
 }
 
 void clearBoxArt() {
 	if (ms().theme == 1) {
-		draw3DSTopBgPart();
+		tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();
 	}
@@ -2055,20 +1570,21 @@ void graphicsInit() {
 		titleboxYpos = 96;
 		bubbleYpos += 18;
 		bubbleXpos += 3;
-		topBgLoad();
-		loadDateFont();
-		loadDate();
-		loadTime();
-		loadClockColon();
+		tex().drawTopBg();
+		tex().drawProfileName();
+		drawCurrentDate();
+		drawCurrentTime();
+		drawClockColon();
 		bottomBgLoad(false, true);
 		loadRotatingCubes();
 	} else {
-		tex().loadDSiDarkTheme();
-		topBgLoad();
-		loadDateFont();
-		loadDate();
-		loadTime();
-		loadClockColon();
+		tex().loadDSiTheme();
+		tex().drawTopBg();
+		tex().drawProfileName();
+
+		drawCurrentDate();
+		drawCurrentTime();
+		drawClockColon();
 
 		if (ms().theme < 1) {
 			srand(time(NULL));
@@ -2079,8 +1595,8 @@ void graphicsInit() {
 		bottomBgLoad(false, true);
 	}
 
-	loadVolumeImage();
-	loadBatteryImage();
+	tex().drawVolumeImageCached();
+	tex().drawBatteryImageCached();
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
 	// consoleDemoInit();

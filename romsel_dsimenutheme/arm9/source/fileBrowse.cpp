@@ -362,11 +362,11 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 				}
 			}
 
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
 		}
 		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
@@ -438,11 +438,11 @@ void waitForFadeOut (void) {
 	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 72; i++) {
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -518,7 +518,7 @@ void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
 			} else {
 				rocketVideo_playVideo = false;
 				if (ms().theme == 1) clearBoxArt();	// Clear top screen cubes or box art
-				loadBoxArt(boxArtPath[ms().cursorPosition[ms().secondaryDevice]]);	// Load box art
+				tex().drawBoxArt(boxArtPath[ms().cursorPosition[ms().secondaryDevice]]);	// Load box art
 			}
 			boxArtLoaded = true;
 		}
@@ -699,11 +699,11 @@ void launchGba(void) {
 		do {
 			scanKeys();
 			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			loadDate();
-			loadTime();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentDate();
+			drawCurrentTime();
+			drawClockColon();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
@@ -768,11 +768,11 @@ void mdRomTooBig(void) {
 	do {
 		scanKeys();
 		pressed = keysDown();
-		loadVolumeImage();
-		loadBatteryImage();
-		loadTime();
-		loadDate();
-		loadClockColon();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
 		swiWaitForVBlank();
 
 		// Debug code for changing brightness of BG layer
@@ -914,8 +914,8 @@ bool selectMenu(void) {
 		printSmallCentered(false, 160, "SELECT/B: Back, A: Select");
 		scanKeys();
 		pressed = keysDown();
-		loadVolumeImage();
-		loadBatteryImage();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
 		swiWaitForVBlank();
 		if (pressed & KEY_UP) {
 			selCursorPosition--;
@@ -1083,11 +1083,11 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 			}
 			if (reSpawnBoxes) spawnedtitleboxes++;
 
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
 		}
 	}
 	if (nowLoadingDisplaying) {
@@ -1184,7 +1184,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				if (file_count > 40+ms().pagenum[ms().secondaryDevice]*40) {
 					showRshoulder = true;
 				}
-				loadShoulders();
+				tex().drawShoulders(showLshoulder, showRshoulder);
 				shouldersRendered = true;
 			}
 
@@ -1219,11 +1219,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					showbubble = false;
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
-				loadVolumeImage();
-				loadBatteryImage();
-				loadTime();
-				loadDate();
-				loadClockColon();
+				tex().drawVolumeImageCached();
+				tex().drawBatteryImageCached();
+				drawCurrentTime();
+				drawCurrentDate();
+				drawClockColon();
 				swiWaitForVBlank();
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1307,11 +1307,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					scanKeys();
 					pressed = keysDown();
 					held = keysDownRepeat();
-					loadVolumeImage();
-					loadBatteryImage();
-					loadTime();
-					loadDate();
-					loadClockColon();
+					tex().drawVolumeImageCached();
+					tex().drawBatteryImageCached();
+					drawCurrentTime();
+					drawCurrentDate();
+					drawClockColon();
 					swiWaitForVBlank();
 
 					// RocketVideo video extraction
@@ -1838,11 +1838,11 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					do {
 						scanKeys();
 						pressed = keysDown();
-						loadVolumeImage();
-						loadBatteryImage();
-						loadTime();
-						loadDate();
-						loadClockColon();
+						tex().drawVolumeImageCached();
+						tex().drawBatteryImageCached();
+						drawCurrentTime();
+						drawCurrentDate();
+						drawClockColon();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
@@ -1885,10 +1885,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					while (1) {
 						scanKeys();
 						pressed = keysDown();
-						loadVolumeImage();
-						loadBatteryImage();
-						loadTime();
-						loadClockColon();
+						tex().drawVolumeImageCached();
+						tex().drawBatteryImageCached();
+						drawCurrentTime();
+						drawClockColon();
 						swiWaitForVBlank();
 						if (pressed & KEY_A) {
 							pressed = 0;

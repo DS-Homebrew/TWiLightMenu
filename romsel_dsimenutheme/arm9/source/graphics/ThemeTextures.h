@@ -8,6 +8,9 @@
 #include <memory>
 #include <string>
 
+
+#define BG_BUFFER_PIXELCOUNT 256 * 192
+
 using std::unique_ptr;
 
 class ThemeTextures
@@ -35,11 +38,17 @@ public:
     progressTexID = 0;
     dialogboxTexID = 0;
     wirelessiconTexID = 0;
+    _cachedVolumeLevel = 0;
+    _cachedBatteryLevel = 0;
+
+    _bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+    _bmpImageBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+
   }
   ~ThemeTextures() {}
 
 public:
-  void loadDSiDarkTheme();
+  void loadDSiTheme();
   void load3DSTheme();
 
   void loadVolumeTextures();
@@ -48,6 +57,35 @@ public:
 
   void reloadPalDialogBox();
   void reloadPal3dsCornerButton();
+
+  static unsigned short convertToDsBmp(unsigned short val);
+public:
+  unsigned short *beginSubModify();
+  void commitSubModify();  
+  void commitSubModifyAsync();
+
+  void drawTopBg();
+  void drawTopBgAvoidingShoulders();
+
+
+  void drawProfileName();
+  void drawBottomBubbleBg();
+  void drawBottomBg();
+
+  void drawBoxArt(const char* filename);
+
+  void drawVolumeImage(int volumeLevel);
+  void drawVolumeImageCached();
+
+  
+  void drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS);
+  void drawBatteryImageCached();
+  
+  void drawShoulders(bool showLShoulder, bool showRshoulder) ;
+
+  void drawDateTime(const char* date, const int posX, const int posY, const int drawCount, int *hourWidthPointer);
+
+  void clearTopScreen();
 
 private:
   void loadBubbleImage(const unsigned short *palette, const unsigned int *bitmap, int sprW, int sprH, int texW);
@@ -74,6 +112,13 @@ private:
   void loadBottomImage();
   void setStringPaths(const std::string theme);
 
+  void loadDateFont(const unsigned short *bitmap);
+
+  static unsigned int getTopFontSpriteIndex(const u16 character);
+  static unsigned int getDateTimeFontSpriteIndex(const u16 character);
+
+  static int getVolumeLevel();
+  static int getBatteryLevel();
 
 private:
 
@@ -162,18 +207,6 @@ public:
     }
   }
 
-
-  void drawBubbleBg();
-  void drawBg();
-
-  std::string shoulderLPath;
-  std::string shoulderLGreyPath;
-  std::string shoulderRPath;
-  std::string shoulderRGreyPath;
-  std::string topBgPath;
-  std::string bottomBgPath;
-  std::string bottomBubbleBgPath;
-
 private:
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
@@ -239,6 +272,10 @@ private:
   unique_ptr<BmpTexture> _leftShoulderGreyedTexture;
   unique_ptr<BmpTexture> _rightShoulderGreyedTexture;
 
+  unique_ptr<u16[]> _bgSubBuffer;
+  unique_ptr<u16[]> _bmpImageBuffer;
+
+  unique_ptr<u16[]> _dateFontImage;
 private:
   int bubbleTexID;
   int bipsTexID;
@@ -260,7 +297,44 @@ private:
   int dialogboxTexID;
   int wirelessiconTexID;
 
+private:
+  int _cachedVolumeLevel;
+  int _cachedBatteryLevel;
 };
+
+
+//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
+#define MASK_RB 0b0111110000011111
+#define MASK_G 0b0000001111100000
+#define MASK_MUL_RB 0b0111110000011111000000
+#define MASK_MUL_G 0b0000001111100000000000
+#define MAX_ALPHA 64 // 6bits+1 with rounding
+
+/**
+ * Adapted from https://stackoverflow.com/questions/18937701/
+ * applies alphablending with the given
+ * RGB555 foreground, RGB555 background, and alpha from
+ * 0 to 128 (0, 1.0).
+ * The lower the alpha the more transparent, but
+ * this function does not produce good results at the extremes
+ * (near 0 or 128).
+ */
+inline u16 alphablend(u16 fg, u16 bg, u8 alpha) {
+
+	// alpha for foreground multiplication
+	// convert from 8bit to (6bit+1) with rounding
+	// will be in [0..64] inclusive
+	alpha = (alpha + 2) >> 2;
+	// "beta" for background multiplication; (6bit+1);
+	// will be in [0..64] inclusive
+	u8 beta = MAX_ALPHA - alpha;
+	// so (0..64)*alpha + (0..64)*beta always in 0..64
+
+	return (u16)((((alpha * (u32)(fg & MASK_RB) + beta * (u32)(bg & MASK_RB)) & MASK_MUL_RB) |
+		      ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >>
+		     5);
+}
+
 
 typedef singleton<ThemeTextures> themeTextures_s;
 inline ThemeTextures &tex() { return themeTextures_s::instance(); }

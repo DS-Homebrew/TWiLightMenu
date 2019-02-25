@@ -24,15 +24,12 @@ bool screenFadedIn(void);
 bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
-void clearBmpScreen();
-void loadBoxArt(const char* filename);
-void loadVolumeImage(void);
-void loadBatteryImage(void);
-void loadDate();
-void loadTime();
-void loadClockColon();
+
+void drawCurrentDate();
+void drawCurrentTime();
+void drawClockColon();
+
 void clearBoxArt();
-void loadShoulders();
 void graphicsInit();
 void startRendering(bool top);
 bool isRenderingTop();

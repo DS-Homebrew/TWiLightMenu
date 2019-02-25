@@ -41,6 +41,8 @@
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
+#include "graphics/ThemeTextures.h"
+
 #include "SwitchState.h"
 #include "cheat.h"
 
@@ -410,11 +412,11 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDown();
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
 			swiWaitForVBlank();
 		} while (!pressed);
 

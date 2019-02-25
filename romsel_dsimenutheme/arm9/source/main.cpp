@@ -42,6 +42,7 @@
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
 #include "graphics/themefilenames.h"
+#include "graphics/ThemeTextures.h"
 
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
@@ -733,7 +734,7 @@ int main(int argc, char **argv) {
 			rocketVideo_playVideo = false;
 			whiteScreen = true;
 			clearText();
-			clearBmpScreen();
+			tex().clearTopScreen();
 
 			// Delete previously used DSiWare of flashcard from SD
 			if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice &&
