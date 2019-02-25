@@ -821,6 +821,10 @@ void loadROMselect()
 	if (sdFound()) {
 		chdir("sd:/");
 	}
+	if (theme == 4) {
+		theme = rand() % 3
+	}
+
 	if (theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
