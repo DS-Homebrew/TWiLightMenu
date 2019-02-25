@@ -609,18 +609,18 @@ int main(int argc, char **argv) {
 			} while (!pressed);
 
 			if ((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				ms().cursorPosition[ms().secondaryDevice] -= 1;
-				if (ms().cursorPosition[ms().secondaryDevice] >= 0)
+				CURPOS -= 1;
+				if (CURPOS >= 0)
 					titleboxXmoveleft = true;
 			} else if ((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) {
-				ms().cursorPosition[ms().secondaryDevice] += 1;
-				if (ms().cursorPosition[ms().secondaryDevice] <= 39)
+				CURPOS += 1;
+				if (CURPOS <= 39)
 					titleboxXmoveright = true;
 			}
-			if (ms().cursorPosition[ms().secondaryDevice] < 0) {
-				ms().cursorPosition[ms().secondaryDevice] = 0;
-			} else if (ms().cursorPosition[ms().secondaryDevice] > 39) {
-				ms().cursorPosition[ms().secondaryDevice] = 39;
+			if (CURPOS < 0) {
+				CURPOS = 0;
+			} else if (CURPOS > 39) {
+				CURPOS = 39;
 			}
 		}
 	}
@@ -833,7 +833,7 @@ int main(int argc, char **argv) {
 			bool gamegear = false;
 
 			// Launch DSiWare .nds via Unlaunch
-			if (isDSiMode() && isDSiWare[ms().cursorPosition[ms().secondaryDevice]]) {
+			if (isDSiMode() && isDSiWare[CURPOS]) {
 				const char *typeToReplace = ".nds";
 				if (extention(filename, ".dsi", 4)) {
 					typeToReplace = ".dsi";
@@ -1047,10 +1047,10 @@ int main(int argc, char **argv) {
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else if (isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 2) {
+				} else if (isHomebrew[CURPOS] == 2) {
 					useBackend = false; // Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else if (isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 1) {
+				} else if (isHomebrew[CURPOS] == 1) {
 					loadPerGameSettings(filename);
 					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
 						useBackend = false; // Bypass nds-bootstrap
@@ -1102,7 +1102,7 @@ int main(int argc, char **argv) {
 						    filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir((isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 1)
+						mkdir((isHomebrew[CURPOS] == 1)
 							  ? "ramdisks"
 							  : "saves",
 						      0777);
@@ -1110,7 +1110,7 @@ int main(int argc, char **argv) {
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
 						if (access(savepath.c_str(), F_OK) != 0 &&
-						    isHomebrew[ms().cursorPosition[ms().secondaryDevice]] ==
+						    isHomebrew[CURPOS] ==
 							0) { // Create save if game isn't homebrew
 							ClearBrightness();
 							const char *savecreating = "Creating save file...";
@@ -1231,7 +1231,7 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode, crc32;
 
-						if (isHomebrew[ms().cursorPosition[ms().secondaryDevice]] == 0) {
+						if (isHomebrew[CURPOS] == 0) {
 							if (codelist.romData(path, gameCode, crc32)) {
 								long cheatOffset;
 								size_t cheatSize;

@@ -7,6 +7,10 @@
 #ifndef _DSIMENUPPSETTINGS_H_
 #define _DSIMENUPPSETTINGS_H_
 
+#define CURPOS (ms().cursorPosition[ms().secondaryDevice])
+#define PAGENUM (ms().pagenum[ms().secondaryDevice])
+#define SD(A) (A[ms().secondaryDevice])
+
 /**
  * Multi use class for DSiMenuPlusPlus INI file.
  * 
