@@ -642,9 +642,10 @@ int main(int argc, char **argv) {
 		gbaBiosFound[1] = true;
 	}
 	
-	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
+	if (isDSiMode() && sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
 		u8 setRegion = 0;
-		if (sysRegion == -1) {
+		
+		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
 			for (u8 i = 0x41; i <= 0x5A; i++)
@@ -657,7 +658,7 @@ int main(int argc, char **argv) {
 				}
 			}
 		} else {
-			switch(sysRegion) {
+			switch(ms().sysRegion) {
 				case 0:
 				default:
 					setRegion = 0x4A;	// JAP
@@ -680,7 +681,7 @@ int main(int argc, char **argv) {
 			}
 		}
 
-		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 	}
 
 	graphicsInit();
