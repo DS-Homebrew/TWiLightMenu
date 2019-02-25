@@ -35,6 +35,7 @@
 #include "graphics.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
+#include "../errorScreen.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -80,7 +81,7 @@ glImage wirelessIcons[(32 / 32) * (64 / 32)];
 
 int bottomBg;
 
-static u16 bmpImageBuffer[256*192];
+u16 bmpImageBuffer[256*192];
 static u16 topImage[2][256*192];
 static u16 bottomImage[2][256*192];
 
@@ -339,6 +340,10 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
+
+	if (isDSiMode()) {
+		loadSdRemovedImage();
+	}
 
 	BG_PALETTE_SUB[255] = RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel));
 

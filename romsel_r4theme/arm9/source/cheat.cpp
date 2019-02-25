@@ -26,6 +26,7 @@
 #include "ndsheaderbanner.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
+#include "errorScreen.h"
 
 extern int dialogboxHeight;
 extern bool useBootstrap;
@@ -255,7 +256,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
       while(1) {
         scanKeys();
-        pressed = keysDownRepeat();
+        pressed = keysDown();
+		checkSdEject();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;
@@ -311,6 +313,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	do {
 		scanKeys();
 		pressed = keysDown();
+		checkSdEject();
 		swiWaitForVBlank();
 	} while (!pressed);
     if(pressed & KEY_UP) {
@@ -426,7 +429,8 @@ void CheatCodelist::selectCheats(std::string filename)
         printSmallCentered(false, 167, "B: Back");
         while(1) {
           scanKeys();
-          pressed = keysDownRepeat();
+          pressed = keysDown();
+		  checkSdEject();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
             break;
