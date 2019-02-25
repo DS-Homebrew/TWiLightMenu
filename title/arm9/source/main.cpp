@@ -162,7 +162,7 @@ void loadROMselect(int number)
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	if (number == 4) {
-		number = rand() % 3
+		number = rand() % 3;
 	}
 
 	switch (number) {
