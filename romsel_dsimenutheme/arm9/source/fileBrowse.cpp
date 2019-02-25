@@ -92,7 +92,7 @@ extern const char *unlaunchAutoLoadID;
 
 extern bool dropDown;
 extern bool redoDropDown;
-extern bool currentBg;
+extern int currentBg;
 extern bool showSTARTborder;
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
@@ -1811,8 +1811,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				cursorPosition[secondaryDevice] = 39;
 
 			// Startup...
-			if (((pressed & KEY_A) && currentBg && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
-			|| ((pressed & KEY_START) && currentBg && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			if (((pressed & KEY_A) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
+			|| ((pressed & KEY_START) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft && !titleboxXmoveright)
 			|| gameTapped)
 			{
 				DirEntry* entry = &dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40);
@@ -2119,7 +2119,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && currentBg && showSTARTborder)
+			if ((pressed & KEY_X) && !startMenu && (currentBg == 1) && showSTARTborder)
 			{
 				CIniFile hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
@@ -2252,7 +2252,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 
 			if ((pressed & KEY_Y) && !startMenu
 			&& (isDirectory[cursorPosition[secondaryDevice]] == false) && (bnrRomType[cursorPosition[secondaryDevice]] == 0)
-			&& !titleboxXmoveleft && !titleboxXmoveright && currentBg && showSTARTborder)
+			&& !titleboxXmoveleft && !titleboxXmoveright && (currentBg == 1) && showSTARTborder)
 			{
 				perGameSettings(dirContents[scrn].at(cursorPosition[secondaryDevice]+pagenum[secondaryDevice]*40).name);
 			}

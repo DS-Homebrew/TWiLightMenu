@@ -272,7 +272,7 @@ using namespace std;
 
 bool dropDown = false;
 bool redoDropDown = false;
-bool currentBg = 0;
+int currentBg = 0;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};
 bool scrollWindowTouched = false;

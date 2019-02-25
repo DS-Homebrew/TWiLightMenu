@@ -371,18 +371,12 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void bottomBgLoad(int drawBubble, bool init = false) {
-	if (init || (drawBubble == 0 && bottomBgState == 2) || (drawBubble == 0 && bottomBgState == 3)) {
+	if (init || drawBubble == 0) {
 		tex().drawBg();
-		// Set that we've not drawn the bubble.
-		bottomBgState = 1;
-	} else if ((drawBubble == 1 && bottomBgState == 1) || (drawBubble == 1 && bottomBgState == 3)){
+	} else if (drawBubble == 1 || (drawBubble == 2 && theme == 1)){
 		tex().drawBubbleBg();
-		// Set that we've drawn the bubble.
-		bottomBgState = 2;
-	} else if ((drawBubble == 2 && bottomBgState == 1) || (drawBubble == 2 && bottomBgState == 2)){
+	} else if (drawBubble == 2 && theme == 0){
 		tex().drawMovingBg();
-		// Set that we've drawn the bubble.
-		bottomBgState = 3;
 	}
 }
 
@@ -904,7 +898,7 @@ void vBlankHandler()
 					glSprite(96+32, 92, GL_FLIP_H, &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
 					if (bnrWirelessIcon[cursorPosition[secondaryDevice]] > 0) glSprite(96, 92, GL_FLIP_NONE, &tex().wirelessIcons()[(bnrWirelessIcon[cursorPosition[secondaryDevice]]-1) & 31]);
 				} else if (!isScrolling) {
-					if (currentBg && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
+					if (currentBg == 1 && theme == 0 && needToPlayStopSound && waitForNeedToPlayStopSound == 0) {
 						mmEffectEx(&snd_stop);
 						waitForNeedToPlayStopSound = 1;
 						needToPlayStopSound = false;
@@ -916,7 +910,7 @@ void vBlankHandler()
 			}
 
 			// Refresh the background layer.
-			if (currentBg) drawBubble(tex().bubbleImage());
+			if (currentBg == 1) drawBubble(tex().bubbleImage());
 			if (showSTARTborder && theme == 0 && !isScrolling) glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 
 			glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
