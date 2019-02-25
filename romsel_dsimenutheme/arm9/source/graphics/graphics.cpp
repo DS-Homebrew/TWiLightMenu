@@ -738,6 +738,18 @@ void vBlankHandler()
 			}
 
 			for(int i = 0; i < 40; i++) {
+				int movingAppXFix = 0;
+				if(i == cursorPosition[secondaryDevice]-2)
+					movingAppXFix = -20;
+				else if(i == cursorPosition[secondaryDevice]-1)
+					movingAppXFix = -5;
+				else if(i == cursorPosition[secondaryDevice])
+					movingAppXFix = 5;
+				else if(i == cursorPosition[secondaryDevice]+1)
+					movingAppXFix = 5;
+				else if(i == cursorPosition[secondaryDevice]+2)
+					movingAppXFix = 20;
+
 				if (theme == 0) {
 					moveIconClose(i);
 				} else {
@@ -750,8 +762,8 @@ void vBlankHandler()
 						if(movingApp!=-1) {
 							int j = i;
 								if(i>movingApp-(pagenum[secondaryDevice]*40))	j--;
-							if (theme == 1) glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().folderImage());
-							else glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
+							if (theme == 1) glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, titleboxYpos, GL_FLIP_NONE, tex().folderImage());
+							else glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
 						} else {
 							if (theme == 1) glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, titleboxYpos, GL_FLIP_NONE, tex().folderImage());
 							else glSprite(spawnedboxXpos-titleboxXpos[secondaryDevice]+movecloseXpos, (titleboxYpos-3)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().folderImage());
@@ -763,20 +775,20 @@ void vBlankHandler()
 							if(j==-1)	continue;
 							if (!bnrSysSettings[i]) {
 								if (theme == 1) {
-									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
+									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, titleboxYpos, GL_FLIP_NONE, tex().boxfullImage());
 								} else { 
-									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0]);
+									glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[0]);
 								}
 							}
-							if (bnrSysSettings[i]) glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice], (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[1]);
-							else if (bnrRomType[i] == 7) drawIconSNES((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 6) drawIconMD((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 5) drawIconGG((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 4) drawIconSMS((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 3) drawIconNES((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 2) drawIconGBC((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 1) drawIconGB((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
-							else drawIcon((j*2496/39)+144-titleboxXpos[secondaryDevice], (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
+							if (bnrSysSettings[i]) glSprite((j*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos-1)+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().settingsImage()[1]);
+							else if (bnrRomType[i] == 7) drawIconSNES((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 6) drawIconMD((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 5) drawIconGG((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 4) drawIconSMS((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 3) drawIconNES((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 2) drawIconGBC((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1) drawIconGB((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5]);
+							else drawIcon((j*2496/39)+144-titleboxXpos[secondaryDevice]+movingAppXFix, (titleboxYpos+12)+titleboxYposDropDown[i % 5], i);
 						} else {
 							if (!bnrSysSettings[i]) {
 								if (theme == 1) {
@@ -800,9 +812,9 @@ void vBlankHandler()
 					// Empty box
 					if(movingApp!=-1) {
 						if (theme == 1) {
-							glSprite(((i-1)*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().boxemptyImage());
+							glSprite(((i-1)*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, tex().boxemptyImage());
 						} else {
-							glSprite(((i-1)*2496/39)+128-titleboxXpos[secondaryDevice], titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
+							glSprite(((i-1)*2496/39)+128-titleboxXpos[secondaryDevice]+movingAppXFix, titleboxYpos+titleboxYposDropDown[i % 5], GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
 						}
 					} else {
 						if (theme == 1) {
