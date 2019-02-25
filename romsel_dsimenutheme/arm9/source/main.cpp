@@ -82,6 +82,7 @@ std::string homebrewArg;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+char unlaunchDevicePath[256];
 
 bool arm7SCFGLocked = false;
 int consoleModel = 0;
@@ -643,8 +644,8 @@ void unlaunchSetHiyaBoot(void) {
 	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
-	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
-	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u32*)(0x02000810) = (BIT(0) | BIT(1));		// Load the title at 2000838h
+													// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
@@ -789,6 +790,47 @@ int main(int argc, char **argv) {
 	}
 	if (access("fat:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[1] = true;
+	}
+	
+	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
+		u8 setRegion = 0;
+		if (sysRegion == -1) {
+			// Determine SysNAND region by searching region of System Settings on SDNAND
+			char tmdpath[256];
+			for (u8 i = 0x41; i <= 0x5A; i++)
+			{
+				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+				if (access(tmdpath, F_OK) == 0)
+				{
+					setRegion = i;
+					break;
+				}
+			}
+		} else {
+			switch(sysRegion) {
+				case 0:
+				default:
+					setRegion = 0x4A;	// JAP
+					break;
+				case 1:
+					setRegion = 0x45;	// USA
+					break;
+				case 2:
+					setRegion = 0x50;	// EUR
+					break;
+				case 3:
+					setRegion = 0x55;	// AUS
+					break;
+				case 4:
+					setRegion = 0x43;	// CHN
+					break;
+				case 5:
+					setRegion = 0x4B;	// KOR
+					break;
+			}
+		}
+
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
 	}
 
 	graphicsInit();
