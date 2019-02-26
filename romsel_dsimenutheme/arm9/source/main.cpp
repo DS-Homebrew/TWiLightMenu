@@ -43,6 +43,7 @@
 #include "common/systemdetails.h"
 #include "graphics/themefilenames.h"
 #include "graphics/ThemeTextures.h"
+#include "graphics/ThemeConfig.h"
 
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
@@ -556,6 +557,7 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	ms().loadSettings();
+	tc().loadConfig();
 	tfn();
 	
 	// TODO: turn this into swiCopy
