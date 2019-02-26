@@ -41,9 +41,9 @@
 #include "common/flashcard.h"
 #include "common/nitrofs.h"
 #include "common/systemdetails.h"
-#include "graphics/themefilenames.h"
-#include "graphics/ThemeTextures.h"
 #include "graphics/ThemeConfig.h"
+#include "graphics/ThemeTextures.h"
+#include "graphics/themefilenames.h"
 
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
@@ -501,8 +501,8 @@ void unlaunchSetHiyaBoot(void) {
 	memcpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16 *)(0x0200080E) = 0;			   // Unlaunch CRC16 (empty)
-	*(u32*)(0x02000810) = (BIT(0) | BIT(1));		// Load the title at 2000838h
-													// Use colors 2000814h
+	*(u32 *)(0x02000810) = (BIT(0) | BIT(1));	  // Load the title at 2000838h
+							   // Use colors 2000814h
 	*(u16 *)(0x02000814) = 0x7FFF;			   // Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16 *)(0x02000816) = 0x7FFF;			   // Unlaunch Lower screen BG color (0..7FFFh)
 	memset((u8 *)0x02000818, 0, 0x20 + 0x208 + 0x1C0); // Unlaunch Reserved (zero)
@@ -559,7 +559,7 @@ int main(int argc, char **argv) {
 	ms().loadSettings();
 	tc().loadConfig();
 	tfn();
-	
+
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
 	// swiCopy(PersonalData->name, usernameRendered, )
@@ -643,47 +643,46 @@ int main(int argc, char **argv) {
 	if (access("fat:/bios.bin", F_OK) == 0) {
 		gbaBiosFound[1] = true;
 	}
-	
+
 	if (isDSiMode() && sdFound() && ms().consoleModel < 2 && ms().launcherApp != -1) {
 		u8 setRegion = 0;
-		
+
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
 			char tmdpath[256];
-			for (u8 i = 0x41; i <= 0x5A; i++)
-			{
+			for (u8 i = 0x41; i <= 0x5A; i++) {
 				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-				if (access(tmdpath, F_OK) == 0)
-				{
+				if (access(tmdpath, F_OK) == 0) {
 					setRegion = i;
 					break;
 				}
 			}
 		} else {
-			switch(ms().sysRegion) {
-				case 0:
-				default:
-					setRegion = 0x4A;	// JAP
-					break;
-				case 1:
-					setRegion = 0x45;	// USA
-					break;
-				case 2:
-					setRegion = 0x50;	// EUR
-					break;
-				case 3:
-					setRegion = 0x55;	// AUS
-					break;
-				case 4:
-					setRegion = 0x43;	// CHN
-					break;
-				case 5:
-					setRegion = 0x4B;	// KOR
-					break;
+			switch (ms().sysRegion) {
+			case 0:
+			default:
+				setRegion = 0x4A; // JAP
+				break;
+			case 1:
+				setRegion = 0x45; // USA
+				break;
+			case 2:
+				setRegion = 0x50; // EUR
+				break;
+			case 3:
+				setRegion = 0x55; // AUS
+				break;
+			case 4:
+				setRegion = 0x43; // CHN
+				break;
+			case 5:
+				setRegion = 0x4B; // KOR
+				break;
 			}
 		}
 
-		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath),
+			 "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 	}
 
 	graphicsInit();
@@ -733,7 +732,7 @@ int main(int argc, char **argv) {
 		}
 		music = true;
 	}
-	
+
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0) ||
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
@@ -1104,16 +1103,12 @@ int main(int argc, char **argv) {
 						    filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir((isHomebrew[CURPOS] == 1)
-							  ? "ramdisks"
-							  : "saves",
-						      0777);
+						mkdir((isHomebrew[CURPOS] == 1) ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
 						if (access(savepath.c_str(), F_OK) != 0 &&
-						    isHomebrew[CURPOS] ==
-							0) { // Create save if game isn't homebrew
+						    isHomebrew[CURPOS] == 0) { // Create save if game isn't homebrew
 							ClearBrightness();
 							const char *savecreating = "Creating save file...";
 							const char *savecreated = "Save file created!";
@@ -1475,7 +1470,7 @@ int main(int argc, char **argv) {
 				} else {
 					argarray.at(0) =
 					    (char *)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-								   : "sd:/_nds/nds-bootstrap-hb-release.nds");
+									: "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
 					if (SNES) {

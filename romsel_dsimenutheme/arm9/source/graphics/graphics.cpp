@@ -31,8 +31,8 @@
 
 #include "tool/colortool.h"
 
-#include "queueControl.h"
 #include "ThemeConfig.h"
+#include "queueControl.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 
@@ -1079,15 +1079,17 @@ void vBlankHandler() {
 			titleboxYmovepos += 5;
 		}
 		if (showSTARTborder && (!isScrolling || ms().theme == 1)) {
+			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
+				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
+							(tc().startBorderSpriteH() - 1)]);
+			glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
+				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
+							(tc().startBorderSpriteH() - 1)]);
+			if (bnrWirelessIcon[CURPOS] > 0)
 				glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
-				glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
-				if (bnrWirelessIcon[CURPOS] > 0)
-					glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
-						 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
-			
-			 if (ms().theme == 0) {
+					 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
+
+			if (ms().theme == 0) {
 				if (currentBg == 1 && ms().theme == 0 && needToPlayStopSound &&
 				    waitForNeedToPlayStopSound == 0) {
 					mmEffectEx(&snd_stop);
@@ -1095,11 +1097,12 @@ void vBlankHandler() {
 					needToPlayStopSound = false;
 				}
 				// glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
-				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
-				// glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
-				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
-				// if (bnrWirelessIcon[CURPOS] > 0)
-				// 	glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
+				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
+				// (tc().startBorderSpriteH() - 1)]); glSprite(96 + tc().startBorderSpriteW(),
+				// tc().startBorderRenderY(), GL_FLIP_H,
+				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
+				// (tc().startBorderSpriteH() - 1)]); if (bnrWirelessIcon[CURPOS] > 0) 	glSprite(96,
+				// tc().startBorderRenderY(), GL_FLIP_NONE,
 				// 		 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
 			}
 		}
@@ -1174,7 +1177,7 @@ void vBlankHandler() {
 				// Reload the dialog box palettes here...
 				reloadDboxPalette();
 			} else if (!showdialogbox) {
-			
+
 				reloadIconPalettes();
 				reloadFontPalettes();
 			}
