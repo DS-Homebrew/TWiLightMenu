@@ -21,41 +21,6 @@ bool verify_grif(FILE *file) {
 	return true;
 }
 
-int GritTexture::loadUnchecked(FILE *file) {
-
-	fseek(file, 5 * sizeof(u32), SEEK_SET);
-	fread(&_header, sizeof(GrfHeader), 1, file);
-
-    u32 gfxId = 0;
-    fread(&gfxId, sizeof(u32), 1, file);
-    if (gfxId != CHUNK_ID('G', 'F', 'X', ' ')) return 1;
-
-    // skip size of GFX data (since it includes textureLength u32 length).
-	fseek(file, sizeof(u32), SEEK_CUR);
-
-	u32 textureLengthInBytes = 0;
-	fread(&textureLengthInBytes, sizeof(u32), 1, file);
-
-	_textureLength = (textureLengthInBytes >> 10);
-    
-	_texture = std::make_unique<unsigned int[]>(_textureLength);
-	fread(_texture.get(), sizeof(unsigned int), _textureLength, file);
-
-    u32 palId = 0;
-    fread(&palId, sizeof(u32), 1, file);
-    if (palId != CHUNK_ID('P', 'A', 'L', ' ')) return 1;
-	fseek(file, sizeof(u32), SEEK_CUR);
-
-	u32 paletteLength = 0;
-	fread(&paletteLength, sizeof(u32), 1, file);
-	_paletteLength = std::min((paletteLength >> 9), 16UL);
-
-	_palette = std::make_unique<unsigned short[]>(_paletteLength);
-	fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);
-
-    return 0;
-}
-
 GritTexture::GritTexture(const std::string& filePath, const std::string& fallback) {
 	FILE *file = fopen(filePath.c_str(), "rb");
 	bool isValidGrif = false;

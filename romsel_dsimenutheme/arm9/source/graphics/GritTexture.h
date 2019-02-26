@@ -30,7 +30,6 @@ class GritTexture
         u8 _paletteLength;
         unsigned int _textureLength;
         GrfHeader _header;
-        int loadUnchecked(FILE* file);
     public:
         GritTexture(const std::string& filePath, const std::string& fallback) noexcept;
         virtual ~GritTexture() = default;

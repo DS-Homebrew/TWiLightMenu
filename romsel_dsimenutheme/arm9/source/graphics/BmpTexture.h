@@ -10,14 +10,12 @@ using std::unique_ptr;
 
 class BmpTexture
 {
-    typedef void (*BitmapEffect)(u16* palette, u8 paletteLength);
+    typedef void (*BitmapEffect)(u16* texture, u32 texLength);
     private:
         unique_ptr<u16[]> _texture;
         u32 _texHeight;
         u32 _texWidth;
         u32 _texLength;
-
-        int loadUnchecked(FILE* file);
     public:
         BmpTexture(const std::string& file, const std::string& fallbackPath) noexcept;
         virtual ~BmpTexture() = default;
