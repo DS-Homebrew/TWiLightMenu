@@ -1439,9 +1439,10 @@ void clearBoxArt() {
 
 void loadRotatingCubes() {
 	FILE *videoFrameFile = fopen(std::string(TFN_RVID_CUBES).c_str(), "rb");
-	if (!videoFrameFile) {
-		videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
-	}
+	
+	// if (!videoFrameFile) {
+	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
+	// }
 	// FILE* videoFrameFile;
 
 	/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
