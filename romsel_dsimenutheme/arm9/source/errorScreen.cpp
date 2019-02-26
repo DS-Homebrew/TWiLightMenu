@@ -53,8 +53,10 @@ void checkSdEject(void) {
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
 	music = false;
-	showdialogbox = false;
-	dbox_Ypos = -192;
+	if (showdialogbox) {
+		showdialogbox = false;
+		dbox_Ypos = 192;
+	}
 	mmEffectCancelAll();
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
