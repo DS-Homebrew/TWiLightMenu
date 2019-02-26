@@ -33,10 +33,6 @@ void ThemeTextures::loadBubbleImage(const GritTexture &tex, int sprW, int sprH) 
 	_bubbleImage = std::move(loadTexture(&bubbleTexID, tex, 1, sprW, sprH));
 }
 
-// loadTexture(int *textureId, const unsigned short *palette, const unsigned int *bitmap,
-//                                    unsigned int arraySize, int paletteLength, int sprW, int sprH, int texW, int
-//                                    texH);
-
 void ThemeTextures::loadProgressImage(const GritTexture &tex) {
 	// todo: 9 palette
 	_progressImage = std::move(loadTexture(&progressTexID, tex, (16 / 16) * (128 / 16), 16, 16));
@@ -172,10 +168,31 @@ void ThemeTextures::reloadPalDialogBox() {
 	}
 }
 
-void ThemeTextures::loadBottomImage() {
+void ThemeTextures::loadBottomBackgrounds() {
 
-	if (_bottomBackgroundTexture) {
-		const u16 *src = _bottomBackgroundTexture->texture();
+	// unique_ptrs are freed after this function returns.
+	unique_ptr<BmpTexture> bottomBackgroundTexture;
+	unique_ptr<BmpTexture> bottomBackgroundBubbleTexture;
+	unique_ptr<BmpTexture> bottomBackgroundMovingTexture;
+
+	if (!sys().isRegularDS() || ms().theme == 0) {
+		bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
+		bottomBackgroundBubbleTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+
+		if (ms().theme == 0) {
+			// only ds theme has moving texture
+			bottomBackgroundMovingTexture =
+				std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+		}
+	} else {
+		// sys().isRegularDS() == true && ms().theme != 0 => ms().theme == 1 (in this theme)
+		bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
+		bottomBackgroundBubbleTexture =
+	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
+	}
+
+	if (bottomBackgroundTexture) {
+		const u16 *src = bottomBackgroundTexture->texture();
 		int x = 0;
 		int y = 191;
 		for (int i = 0; i < 256 * 192; i++) {
@@ -189,8 +206,8 @@ void ThemeTextures::loadBottomImage() {
 		}
 	}
 
-	if (_bottomBackgroundBubbleTexture) {
-		const u16 *src = _bottomBackgroundBubbleTexture->texture();
+	if (bottomBackgroundBubbleTexture) {
+		const u16 *src = bottomBackgroundBubbleTexture->texture();
 		int x = 0;
 		int y = 191;
 		for (int i = 0; i < 256 * 192; i++) {
@@ -204,8 +221,8 @@ void ThemeTextures::loadBottomImage() {
 		}
 	}
 
-	if (_bottomBackgroundMovingTexture) {
-		const u16 *src = _bottomBackgroundMovingTexture->texture();
+	if (bottomBackgroundMovingTexture) {
+		const u16 *src = bottomBackgroundMovingTexture->texture();
 		int x = 0;
 		int y = 191;
 		for (int i = 0; i < 256 * 192; i++) {
@@ -222,12 +239,12 @@ void ThemeTextures::loadBottomImage() {
 
 void ThemeTextures::load3DSTheme() {
 
-	loadUiTextures();
-	
+	loadUITextures();
+	loadBottomBackgrounds();
+
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-	loadBottomImage();
 	loadDateFont(_dateTimeFontTexture->texture());
 
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
@@ -264,12 +281,12 @@ void ThemeTextures::load3DSTheme() {
 
 void ThemeTextures::loadDSiTheme() {
 
-	loadUiTextures();
+	loadUITextures();
+	loadBottomBackgrounds();
 
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-	loadBottomImage();
 
 	loadDateFont(_dateTimeFontTexture->texture());
 
@@ -352,26 +369,10 @@ void ThemeTextures::loadBatteryTextures() {
 	_batterylowTexture = std::make_unique<BmpTexture>(TFN_BATTERY_LOW, TFN_FALLBACK_BATTERY_LOW);
 }
 
-void ThemeTextures::loadUiTextures() {
+void ThemeTextures::loadUITextures() {
 
 	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
 	
-	if (!sys().isRegularDS() || ms().theme == 0) {
-		_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-		_bottomBackgroundBubbleTexture =
-	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
-
-		if (ms().theme == 0) {
-			// only ds theme has moving texture
-			_bottomBackgroundMovingTexture =
-				std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
-		}
-	} else {
-		// sys().isRegularDS() == true && ms().theme != 0 => ms().theme == 1 (in this theme)
-		_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
-		_bottomBackgroundBubbleTexture =
-	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
-	}
 
 	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
 

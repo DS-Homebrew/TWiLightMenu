@@ -31,7 +31,7 @@ public:
 private:
   void loadVolumeTextures();
   void loadBatteryTextures();
-  void loadUiTextures();
+  void loadUITextures();
   void loadIconTextures();
 
 public:
@@ -84,7 +84,7 @@ private:
   void loadSmallCartImage(const GritTexture& tex);
   void loadWirelessIcons(const GritTexture& tex);
 
-  void loadBottomImage();
+  void loadBottomBackgrounds();
 
   void loadDateFont(const unsigned short *bitmap);
 
@@ -140,8 +140,7 @@ public:
   const GritTexture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
   
   const BmpTexture *topBackgroundTexture() { return _topBackgroundTexture.get(); }
-  const BmpTexture *bottomBackgroundTexture() { return _bottomBackgroundTexture.get(); }
-  const BmpTexture *bottomBackgroundBubbleTexture() { return _bottomBackgroundBubbleTexture.get(); }
+
   const BmpTexture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
   const BmpTexture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
   const BmpTexture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
@@ -261,10 +260,6 @@ private:
   unique_ptr<BmpTexture> _batterylowTexture;
 
   unique_ptr<BmpTexture> _topBackgroundTexture;
-  unique_ptr<BmpTexture> _bottomBackgroundTexture;
-  unique_ptr<BmpTexture> _bottomBackgroundBubbleTexture;
-  unique_ptr<BmpTexture> _bottomBackgroundMovingTexture;
-
   unique_ptr<BmpTexture> _dateTimeFontTexture;
   unique_ptr<BmpTexture> _leftShoulderTexture;
   unique_ptr<BmpTexture> _rightShoulderTexture;
