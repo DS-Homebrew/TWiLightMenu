@@ -1979,8 +1979,9 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 			     !titleboxXmoveright) ||
 			    ((pressed & KEY_START) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft &&
 			     !titleboxXmoveright) ||
-			    (gameTapped && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft &&
-			     !titleboxXmoveright)) {
+			    (gameTapped && (currentBg == 1)
+				// && showSTARTborder && !titleboxXmoveleft &&!titleboxXmoveright
+			     )) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
