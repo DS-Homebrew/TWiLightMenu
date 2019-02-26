@@ -1020,7 +1020,8 @@ void vBlankHandler() {
 				}
 			}
 
-			// Replace by baked-in backgrounds
+			// Replace by baked-in backgrounds on 3DS.
+
 			// glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
 			// if (!sys().isRegularDS())
 			// 	glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
@@ -1427,7 +1428,7 @@ void drawClockColon() {
 }
 
 void clearBoxArt() {
-	if (ms().theme == 1) {
+	if (!tc().renderPhoto()) {
 		tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();

@@ -19,7 +19,8 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
       _volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(15), _batteryRenderX(235),
     //   _photoRenderY(24), _photoRenderX(179), 
       _startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
-      _movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true) 
+      _movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true),
+      _renderPhoto(false)
       {
           // hack to reassign 3ds defaults
           if (_3dsDefaults) { 
@@ -30,6 +31,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
             _bubbleTipRenderY = 98;
             _bubbleTipSpriteH = 7;
             _bubbleTipSpriteW = 7;
+            _renderPhoto = false;
           }
       }
 
@@ -57,6 +59,7 @@ void ThemeConfig::loadConfig()
     _shoulderRRenderX = themeConfig.GetInt("THEME", "ShoulderRRenderX", _shoulderRRenderX);
     _batteryRenderY = themeConfig.GetInt("THEME", "BatteryRenderY", _batteryRenderY);
     _batteryRenderX = themeConfig.GetInt("THEME", "BatteryRenderX", _batteryRenderX);
+
     _startTextUserPalette = themeConfig.GetInt("THEME", "StartTextUserPalette", _startTextUserPalette);
     _startBorderUserPalette = themeConfig.GetInt("THEME", "StartBorderUserPalette", _startBorderUserPalette);
     _buttonArrowUserPalette = themeConfig.GetInt("THEME", "ButtonArrowUserPalette", _buttonArrowUserPalette);
@@ -64,4 +67,5 @@ void ThemeConfig::loadConfig()
     _launchDotsUserPalette = themeConfig.GetInt("THEME", "LaunchDotsUserPalette", _launchDotsUserPalette);
     _dialogBoxUserPalette = themeConfig.GetInt("THEME", "DialogBoxUserPalette", _dialogBoxUserPalette);
     _rotatingCubesRenderY = themeConfig.GetInt("THEME", "RotatingCubesRenderY", _rotatingCubesRenderY);
+    _renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
 }

@@ -313,12 +313,12 @@ void ThemeTextures::loadDSiTheme() {
 	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
 	// Apply the DSi palette shifts
-	_startTextTexture->applyEffect(effectDSiStartTextPalettes);
-	_startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
-	_buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
-	_movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
-	_launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
-	_dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().startTextUserPalette()) _startTextTexture->applyEffect(effectDSiStartTextPalettes);
+	if (tc().startBorderUserPalette()) _startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
+	if (tc().buttonArrowUserPalette()) _buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().movingArrowUserPalette()) _movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().launchDotsUserPalette()) _launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().dialogBoxUserPalette()) _dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
 
 	if (ms().colorMode == 1) {
 		applyGrayscaleToAllGrfTextures();

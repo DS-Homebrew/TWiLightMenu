@@ -43,6 +43,8 @@ class ThemeConfig {
         bool _launchDotsUserPalette;
         bool _dialogBoxUserPalette;
 
+        bool _renderPhoto;
+
     public:
         ThemeConfig();
         ThemeConfig(bool _3dsDefaults);
@@ -84,6 +86,8 @@ class ThemeConfig {
         bool movingArrowUserPalette() const { return _movingArrowUserPalette; }
         bool launchDotsUserPalette() const { return _launchDotsUserPalette; }
         bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
+
+        bool renderPhoto() const { return _renderPhoto; }
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;
