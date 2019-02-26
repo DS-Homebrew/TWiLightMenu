@@ -17,7 +17,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
       _bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
       _rotatingCubesRenderY(78),  _shoulderLRenderY(172), _shoulderLRenderX(0),  _shoulderRRenderY(178), _shoulderRRenderX(172),
       _volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(15), _batteryRenderX(235),
-      _photoRenderY(24), _photoRenderX(179), 
+    //   _photoRenderY(24), _photoRenderX(179), 
       _startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
       _movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true) 
       {
@@ -49,8 +49,8 @@ void ThemeConfig::loadConfig()
     _titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
     _volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
     _volumeRenderY = themeConfig.GetInt("THEME", "VolumeRenderY", _volumeRenderY);
-    _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);
-    _photoRenderY = themeConfig.GetInt("THEME", "PhotoRenderY", _photoRenderY);
+    // _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);
+    // _photoRenderY = themeConfig.GetInt("THEME", "PhotoRenderY", _photoRenderY);
     _shoulderLRenderY = themeConfig.GetInt("THEME", "ShoulderLRenderY", _shoulderLRenderY);
     _shoulderLRenderX = themeConfig.GetInt("THEME", "ShoulderLRenderX", _shoulderLRenderX);
     _shoulderRRenderY = themeConfig.GetInt("THEME", "ShoulderRRenderY", _shoulderRRenderY);

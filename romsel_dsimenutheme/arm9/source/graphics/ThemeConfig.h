@@ -33,8 +33,8 @@ class ThemeConfig {
         int _batteryRenderY;
         int _batteryRenderX;
 
-        int _photoRenderY;
-        int _photoRenderX;
+        // int _photoRenderY;
+        // int _photoRenderX;
 
         bool _startTextUserPalette;
         bool _startBorderUserPalette;
@@ -75,8 +75,8 @@ class ThemeConfig {
         int batteryRenderY() const { return _batteryRenderY; }
         int batteryRenderX() const { return _batteryRenderX; }
 
-        int photoRenderY() const { return _photoRenderY; }
-        int photoRenderX() const { return _photoRenderX; }
+        // int photoRenderY() const { return _photoRenderY; }
+        // int photoRenderX() const { return _photoRenderX; }
 
         bool startTextUserPalette() const { return _startTextUserPalette; }
         bool startBorderUserPalette() const { return _startBorderUserPalette; }
