@@ -1635,30 +1635,24 @@ void graphicsInit() {
 
 	if (ms().theme == 1) {
 		tex().load3DSTheme();
-		tex().drawTopBg();
-		tex().drawProfileName();
 		rocketVideo_videoYpos = tc().rotatingCubesRenderY();
-		drawCurrentDate();
-		drawCurrentTime();
-		drawClockColon();
-		bottomBgLoad(false, true);
 		loadRotatingCubes();
 	} else {
 		tex().loadDSiTheme();
-		tex().drawTopBg();
-		tex().drawProfileName();
+	}
 
-		drawCurrentDate();
-		drawCurrentTime();
-		drawClockColon();
+	tex().drawTopBg();
+	tex().drawProfileName();
 
-		if (ms().theme < 1) {
-			srand(time(NULL));
-			loadPhotoList();
-			loadPhoto();
-		}
+	drawCurrentDate();
+	drawCurrentTime();
+	drawClockColon();
 
-		bottomBgLoad(false, true);
+	bottomBgLoad(false, true);
+	if (tc().renderPhoto()) {
+		srand(time(NULL));
+		loadPhotoList();
+		loadPhoto();
 	}
 
 	tex().drawVolumeImageCached();
