@@ -53,11 +53,16 @@
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 #include "common/systemdetails.h"
 
+#define DSI_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/dsimenu/themes/"
+#define _3DS_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/3dsmenu/themes/"
+
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
 std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
+std::vector<std::string> dsiThemeList;
+std::vector<std::string> _3dsThemeList;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
@@ -197,6 +202,51 @@ void loadROMselect()
 	}
 }
 
+
+void loadDSiThemeList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(DSI_SYSTEM_UI_DIRECTORY)) != NULL)
+	{
+		// print all the files and directories within directory
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			dsiThemeList.emplace_back(themeDir);
+		}
+		closedir(dir);
+	}
+}
+
+
+void load3DSThemeList()
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string themeDir;
+	if ((dir = opendir(_3DS_SYSTEM_UI_DIRECTORY)) != NULL)
+	{
+		// print all the files and directories within directory
+		while ((ent = readdir(dir)) != NULL)
+		{
+			// Reallocation here, but prevents our vector from being filled with
+
+			themeDir = ent->d_name;
+			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
+
+			_3dsThemeList.emplace_back(themeDir);
+		}
+		closedir(dir);
+	}
+}
+
+
 void loadAkThemeList()
 {
 	DIR *dir;
@@ -244,15 +294,13 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	switch (optVal.get())
 	{
 	case 0:
-		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME,
-					  Option::Int(&ms().subtheme),
-					  {STR_DSI_DARKMENU, STR_DSI_NORMALMENU, STR_DSI_RED, STR_DSI_BLUE, STR_DSI_GREEN, STR_DSI_YELLOW, STR_DSI_PINK, STR_DSI_PURPLE},
-					  {0, 1, 2, 3, 4, 5, 6, 7});
+		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case 2:
 		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETRETURN, Option::Str(&ms().r4_theme), r4ThemeList);
 	case 3:
 		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
+		return Option(STR_SUBTHEMESEL_3DS, STR_AB_SETSUBTHEME, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
 		return nullopt;
 	}
@@ -358,7 +406,8 @@ int main(int argc, char **argv)
 	bs().loadSettings();
 	loadAkThemeList();
 	loadR4ThemeList();
-
+	load3DSThemeList();
+	loadDSiThemeList();
 	swiWaitForVBlank();
 
 	fifoSendValue32(FIFO_USER_07, 0);

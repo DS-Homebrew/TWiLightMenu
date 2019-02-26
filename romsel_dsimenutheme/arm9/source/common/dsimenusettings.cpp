@@ -248,6 +248,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetString("SRLOADER", "R4_THEME", r4_theme);
     settingsini.SetString("SRLOADER", "DSI_THEME", dsi_theme);
+    settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 

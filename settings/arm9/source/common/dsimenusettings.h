@@ -182,6 +182,7 @@ class DSiMenuPlusPlusSettings
 
     std::string r4_theme;
     std::string dsi_theme;
+    std::string _3ds_theme;
 
 };
 

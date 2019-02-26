@@ -63,6 +63,10 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
+    
+    dsi_theme = "dark";
+    _3ds_theme = "light";
+    
     soundfreq = EFreq32KHz;
 	dsiSplash = isDSiMode();
 	hsMsg = false;
@@ -146,6 +150,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     r4_theme = settingsini.GetString("SRLOADER", "R4_THEME", r4_theme);
     dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
+    _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
     snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
@@ -216,6 +221,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetString("SRLOADER", "R4_THEME", r4_theme);
     settingsini.SetString("SRLOADER", "DSI_THEME", dsi_theme);
+    settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
