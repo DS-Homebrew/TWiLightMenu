@@ -330,11 +330,20 @@ void initSubSprites(void) {
 
 void bottomBgLoad(int drawBubble, bool init = false) {
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == 1)) {
-		tex().drawBottomBg();
+		if (bottomBgState != 1) {
+			tex().drawBottomBg();
+			bottomBgState = 1;
+		}
 	} else if (drawBubble == 1) {
-		tex().drawBottomBubbleBg();
-	} else if (drawBubble == 2 && ms().theme == 0) {
-		tex().drawBottomMovingBg();
+		if (bottomBgState != 2) {
+			tex().drawBottomBubbleBg();
+			bottomBgState = 2;
+		}
+	} else if (drawBubble == 2 && theme == 0) {
+		if (bottomBgState != 3) {
+			tex().drawBottomMovingBg();
+			bottomBgState = 3;
+		}
 	}
 }
 
