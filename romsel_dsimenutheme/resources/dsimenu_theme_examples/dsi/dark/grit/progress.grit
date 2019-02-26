@@ -10,6 +10,7 @@
 # Set the bit depth to 4 (16 colors)
 -gB4
 
+# Set to 9 color palette
 -pn9
 
 #The Transperant colour of 0xFF00FF
