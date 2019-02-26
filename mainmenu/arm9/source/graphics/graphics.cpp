@@ -41,6 +41,7 @@
 #include "graphics.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
+#include "../errorScreen.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -92,7 +93,7 @@ glImage gbaIconImage[(32 / 32) * (32 / 32)];
 glImage cornerIcons[(32 / 32) * (128 / 32)];
 glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
-static u16 bmpImageBuffer[256*192];
+u16 bmpImageBuffer[256*192];
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {
@@ -485,6 +486,10 @@ void graphicsInit()
 	REG_BG3PB_SUB = 0;
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
+
+	if (isDSiMode()) {
+		loadSdRemovedImage();
+	}
 
 	swiWaitForVBlank();
 
