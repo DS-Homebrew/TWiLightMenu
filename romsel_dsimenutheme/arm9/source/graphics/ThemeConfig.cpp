@@ -20,7 +20,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
     //   _photoRenderY(24), _photoRenderX(179), 
       _startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
       _movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true),
-      _renderPhoto(false)
+      _renderPhoto(true)
       {
           // hack to reassign 3ds defaults
           if (_3dsDefaults) { 
