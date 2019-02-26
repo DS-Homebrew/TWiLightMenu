@@ -72,8 +72,7 @@ private:
   void loadMovingarrowImage(const GritTexture& tex);
   void loadLaunchdotImage(const GritTexture& tex);
   void loadStartImage(const GritTexture& tex);
-  void loadStartbrdImage(const GritTexture& tex, int arraysize,
-                         int sprH);
+  void loadStartbrdImage(const GritTexture& tex, int sprH);
   void loadBraceImage(const GritTexture& tex);
   void loadSettingsImage(const GritTexture& tex);
   void loadBoxfullImage(const GritTexture& tex);

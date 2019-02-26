@@ -1,6 +1,7 @@
-#include "ThemeTextures.h"
-
 #include <nds.h>
+
+#include "ThemeTextures.h"
+#include "ThemeConfig.h"
 
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
@@ -66,8 +67,9 @@ void ThemeTextures::loadStartImage(const GritTexture &tex) {
 	_startImage = std::move(loadTexture(&startTexID, tex, (64 / 16) * (128 / 16), 64, 16));
 }
 
-void ThemeTextures::loadStartbrdImage(const GritTexture &tex, int arraysize, int sprH) {
-	_startbrdImage = std::move(loadTexture(&startbrdTexID, tex, arraysize, 32, sprH));
+void ThemeTextures::loadStartbrdImage(const GritTexture &tex, int sprH) {
+	int arraysize = (tex.header().texWidth / tc().startBorderSpriteW()) * (tex.header().texHeight / sprH);
+	_startbrdImage = std::move(loadTexture(&startbrdTexID, tex, arraysize, tc().startBorderSpriteW(), sprH));
 }
 void ThemeTextures::loadBraceImage(const GritTexture &tex) {
 	// todo: confirm 4 palette
@@ -161,7 +163,7 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const GritTextu
 
 void ThemeTextures::reloadPalDialogBox() {
 	glBindTexture(0, dialogboxTexID);
-	glColorSubTableEXT(0, 0, 12, 0, 0, _dialogBoxTexture->palette());
+	glColorSubTableEXT(0, 0, _dialogBoxTexture->paletteLength(), 0, 0, _dialogBoxTexture->palette());
 	if (ms().theme != 1) {
 		glBindTexture(0, cornerButtonTexID);
 		glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
@@ -264,7 +266,7 @@ void ThemeTextures::load3DSTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadBubbleImage(*_bubbleTexture, 7, 7);
+	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(),  tc().bubbleTipSpriteH());
 	loadSettingsImage(*_settingsIconTexture);
 
 	loadBoxfullImage(*_boxFullTexture);
@@ -272,7 +274,7 @@ void ThemeTextures::load3DSTheme() {
 	loadFolderImage(*_folderTexture);
 
 	loadSmallCartImage(*_smallCartTexture);
-	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (192 / 64), 64);
+	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
 	loadDialogboxImage(*_dialogBoxTexture);
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
@@ -324,14 +326,14 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadBipsImage(*_bipsTexture);
 
-	loadBubbleImage(*_bubbleTexture, 11, 8);
+	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
 	loadBraceImage(*_braceTexture);
 
 	loadStartImage(*_startTextTexture);
-	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (256 / 80), 80);
+	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
 
 	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
@@ -691,11 +693,11 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 	beginSubModify();
 	const auto tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
-	u32 x = 235;
-	u32 y = 5 + 10;
+	u32 x = tc().batteryRenderX();
+	u32 y = tc().batteryRenderY();
 	for (u32 i = 0; i < tex->pixelCount(); i++) {
-		if (x >= 235 + tex->texWidth()) {
-			x = 235;
+		if (x >= tc().batteryRenderX() + tex->texWidth()) {
+			x = tc().batteryRenderX();
 			y--;
 		}
 		u16 val = *(src++);
@@ -728,7 +730,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 			y--;
 		}
 		u16 val = *(src++);
-		if (y >= 32 && y <= 167 && val != 0xFC1F) {
+		if (y >= 32 && y <= (tc().shoulderLRenderY() - 5) && val != 0xFC1F) {
 			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
 		}
 		x++;
@@ -752,7 +754,7 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < rightTex->texWidth(); i++) {
 			u16 val = *(rightSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
+				_bgSubBuffer[(y + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] = convertToDsBmp(val);
 			}
 		}
 	}
@@ -762,7 +764,7 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < leftTex->texWidth(); i++) {
 			u16 val = *(leftSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + 172) * 256 + i] = convertToDsBmp(val);
+				_bgSubBuffer[(y + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] = convertToDsBmp(val);
 			}
 		}
 	}

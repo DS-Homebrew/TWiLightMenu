@@ -11,6 +11,7 @@ class ThemeConfig {
         int _startBorderRenderY;
         int _startBorderSpriteW;
         int _startBorderSpriteH;
+        int _startTextRenderY;
         int _titleboxRenderY;
         
         int _bubbleTipRenderY;
@@ -48,10 +49,11 @@ class ThemeConfig {
         virtual ~ThemeConfig() = default;
 
         void loadConfig();
-        
+
         int startBorderRenderY() const { return _startBorderRenderY; }
         int startBorderSpriteW() const { return _startBorderSpriteW; }
         int startBorderSpriteH() const { return _startBorderSpriteH; }
+        int startTextRenderY() const { return _startTextRenderY; }
         int titleboxRenderY() const { return _titleboxRenderY; }
         
         int bubbleTipRenderY() const { return _bubbleTipRenderY; }

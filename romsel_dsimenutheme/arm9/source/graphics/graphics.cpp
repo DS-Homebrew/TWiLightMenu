@@ -32,6 +32,7 @@
 #include "tool/colortool.h"
 
 #include "queueControl.h"
+#include "ThemeConfig.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 
@@ -1077,29 +1078,29 @@ void vBlankHandler() {
 			}
 			titleboxYmovepos += 5;
 		}
-		if (showSTARTborder) {
-			if (ms().theme == 1) {
-				glSprite(96, 92, GL_FLIP_NONE,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
-				glSprite(96 + 32, 92, GL_FLIP_H,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 63]);
+		if (showSTARTborder && (!isScrolling || ms().theme == 1)) {
+				glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
+					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
+				glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
+					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
 				if (bnrWirelessIcon[CURPOS] > 0)
-					glSprite(96, 92, GL_FLIP_NONE,
+					glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 						 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
-			} else if (!isScrolling) {
+			
+			 if (ms().theme == 0) {
 				if (currentBg == 1 && ms().theme == 0 && needToPlayStopSound &&
 				    waitForNeedToPlayStopSound == 0) {
 					mmEffectEx(&snd_stop);
 					waitForNeedToPlayStopSound = 1;
 					needToPlayStopSound = false;
 				}
-				glSprite(96, 81, GL_FLIP_NONE,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-				glSprite(96 + 32, 81, GL_FLIP_H,
-					 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & 79]);
-				if (bnrWirelessIcon[CURPOS] > 0)
-					glSprite(96, 81, GL_FLIP_NONE,
-						 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
+				// glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
+				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
+				// glSprite(96 + tc().startBorderSpriteW(), tc().startBorderRenderY(), GL_FLIP_H,
+				// 	 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] & (tc().startBorderSpriteH() - 1)]);
+				// if (bnrWirelessIcon[CURPOS] > 0)
+				// 	glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
+				// 		 &tex().wirelessIcons()[(bnrWirelessIcon[CURPOS] - 1) & 31]);
 			}
 		}
 
@@ -1107,7 +1108,7 @@ void vBlankHandler() {
 		if (currentBg == 1)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && ms().theme == 0 && !isScrolling) {
-			glSprite(96, 144, GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
@@ -1624,14 +1625,15 @@ void graphicsInit() {
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 
 	swiWaitForVBlank();
+	titleboxYpos = tc().titleboxRenderY();
+	bubbleYpos = tc().bubbleTipRenderY();
+	bubbleXpos = tc().bubbleTipRenderX();
 
 	if (ms().theme == 1) {
 		tex().load3DSTheme();
-		titleboxYpos = 96;
-		bubbleYpos += 18;
-		bubbleXpos += 3;
 		tex().drawTopBg();
 		tex().drawProfileName();
+		rocketVideo_videoYpos = tc().rotatingCubesRenderY();
 		drawCurrentDate();
 		drawCurrentTime();
 		drawClockColon();

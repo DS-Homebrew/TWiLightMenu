@@ -13,7 +13,7 @@ ThemeConfig::ThemeConfig()
 
 // Magic numbers derived from default dark theme
 ThemeConfig::ThemeConfig(bool _3dsDefaults)
-    : _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _titleboxRenderY(85),
+    : _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(144), _titleboxRenderY(85),
       _bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
       _rotatingCubesRenderY(78),  _shoulderLRenderY(172), _shoulderLRenderX(0),  _shoulderRRenderY(178), _shoulderRRenderX(172),
       _volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(15), _batteryRenderX(235),
@@ -24,7 +24,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
           // hack to reassign 3ds defaults
           if (_3dsDefaults) { 
             _startBorderRenderY = 92;
-            _startBorderSpriteH = 80;
+            _startBorderSpriteH = 64;
             _titleboxRenderY = 96;
             _bubbleTipRenderX = 125;
             _bubbleTipRenderY = 98;
@@ -40,6 +40,8 @@ void ThemeConfig::loadConfig()
     _startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
     _startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
     _startBorderSpriteH = themeConfig.GetInt("THEME", "StartBorderSpriteH", _startBorderSpriteH);
+    _startTextRenderY = themeConfig.GetInt("THEME", "StartTextRenderY", _startTextRenderY);
+
     _bubbleTipRenderY = themeConfig.GetInt("THEME", "BubbleTipRenderY", _bubbleTipRenderY);
     _bubbleTipRenderX = themeConfig.GetInt("THEME", "BubbleTipRenderX", _bubbleTipRenderX);
     _bubbleTipSpriteW = themeConfig.GetInt("THEME", "BubbleTipSpriteW", _bubbleTipSpriteW);
