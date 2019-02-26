@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "string.h"
 #include <cstdbool>
+#include <algorithm>
 
 bool verify_grif(FILE *file) {
 
@@ -35,7 +36,7 @@ int GritTexture::loadUnchecked(FILE *file) {
 	u32 textureLengthInBytes = 0;
 	fread(&textureLengthInBytes, sizeof(u32), 1, file);
 
-	_textureLength = (textureLengthInBytes >> 8) / sizeof(unsigned int);
+	_textureLength = (textureLengthInBytes >> 10);
     
 	_texture = std::make_unique<unsigned int[]>(_textureLength);
 	fread(_texture.get(), sizeof(unsigned int), _textureLength, file);
@@ -47,7 +48,7 @@ int GritTexture::loadUnchecked(FILE *file) {
 
 	u32 paletteLength = 0;
 	fread(&paletteLength, sizeof(u32), 1, file);
-	_paletteLength = (paletteLength >> 8) / sizeof(unsigned short);
+	_paletteLength = std::min((paletteLength >> 9), 16UL);
 
 	_palette = std::make_unique<unsigned short[]>(_paletteLength);
 	fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);
