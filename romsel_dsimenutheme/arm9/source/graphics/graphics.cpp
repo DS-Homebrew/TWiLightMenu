@@ -309,24 +309,24 @@ void moveIconClose(int num) {
 // this holds the image when rendering to the top screen
 //-------------------------------------------------------
 
-void initSubSprites(void) {
+// void initSubSprites(void) {
 
-	oamInit(&oamSub, SpriteMapping_Bmp_2D_256, false);
-	int id = 0;
+// 	oamInit(&oamSub, SpriteMapping_Bmp_2D_256, false);
+// 	int id = 0;
 
-	// set up a 4x3 grid of 64x64 sprites to cover the screen
-	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 4; x++) {
-			oamSub.oamMemory[id].attribute[0] = ATTR0_BMP | ATTR0_SQUARE | (64 * y);
-			oamSub.oamMemory[id].attribute[1] = ATTR1_SIZE_64 | (64 * x);
-			oamSub.oamMemory[id].attribute[2] = ATTR2_ALPHA(1) | (8 * 32 * y) | (8 * x);
-			++id;
-		}
+// 	// set up a 4x3 grid of 64x64 sprites to cover the screen
+// 	for (int y = 0; y < 3; y++)
+// 		for (int x = 0; x < 4; x++) {
+// 			oamSub.oamMemory[id].attribute[0] = ATTR0_BMP | ATTR0_SQUARE | (64 * y);
+// 			oamSub.oamMemory[id].attribute[1] = ATTR1_SIZE_64 | (64 * x);
+// 			oamSub.oamMemory[id].attribute[2] = ATTR2_ALPHA(1) | (8 * 32 * y) | (8 * x);
+// 			++id;
+// 		}
 
-	swiWaitForVBlank();
+// 	swiWaitForVBlank();
 
-	oamUpdate(&oamSub);
-}
+// 	oamUpdate(&oamSub);
+// }
 
 void bottomBgLoad(int drawBubble, bool init = false) {
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == 1)) {
@@ -339,7 +339,7 @@ void bottomBgLoad(int drawBubble, bool init = false) {
 			tex().drawBottomBubbleBg();
 			bottomBgState = 2;
 		}
-	} else if (drawBubble == 2 && theme == 0) {
+	} else if (drawBubble == 2 && ms().theme == 0) {
 		if (bottomBgState != 3) {
 			tex().drawBottomMovingBg();
 			bottomBgState = 3;

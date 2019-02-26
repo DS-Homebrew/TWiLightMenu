@@ -23,7 +23,6 @@
 bool screenFadedIn(void);
 bool screenFadedOut(void);
 void SetBrightness(u8 screen, s8 bright);
-void initSubSprites(void);
 
 void drawCurrentDate();
 void drawCurrentTime();
@@ -31,8 +30,6 @@ void drawClockColon();
 
 void clearBoxArt();
 void graphicsInit();
-void startRendering(bool top);
-bool isRenderingTop();
 
 template<typename T> inline const T abs(T const & x)
 {
