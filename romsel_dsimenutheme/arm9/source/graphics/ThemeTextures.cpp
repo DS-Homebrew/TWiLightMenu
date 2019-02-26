@@ -428,7 +428,7 @@ void ThemeTextures::drawTopBg() {
 	const u16 *src = _topBackgroundTexture->texture();
 	int x = 0;
 	int y = 191;
-	for (int i = 0; i < 256 * 192; i++) {
+	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		if (x >= 256) {
 			x = 0;
 			y--;
@@ -461,7 +461,7 @@ void ThemeTextures::drawBottomMovingBg() {
 void ThemeTextures::clearTopScreen() {
 	beginSubModify();
 	u16 val = 0xFFFF;
-	for (int i = 0; i < 256 * 192; i++) {
+	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
 				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
 	}
@@ -533,6 +533,8 @@ void ThemeTextures::drawProfileName() {
 }
 
 unsigned short ThemeTextures::convertToDsBmp(unsigned short val) {
+
+	int blfLevel = ms().blfLevel;
 	if (ms().colorMode == 1) {
 		u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
 
@@ -551,14 +553,14 @@ unsigned short ThemeTextures::convertToDsBmp(unsigned short val) {
 
 		newVal = 32768 | (max << 10) | (max << 5) | (max);
 
-		b = ((newVal) >> 10) & (31 - 6 * ms().blfLevel);
-		g = ((newVal) >> 5) & (31 - 3 * ms().blfLevel);
+		b = ((newVal) >> 10) & (31 - 6 * blfLevel);
+		g = ((newVal) >> 5) & (31 - 3 * blfLevel);
 		r = (newVal)&31;
 
 		return 32768 | (b << 10) | (g << 5) | (r);
 	} else {
-		return ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
-		       (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
+		return ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) |
+		       (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	}
 }
 
@@ -618,11 +620,12 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	beginSubModify();
-
-	const u16 *src = volumeTexture(volumeLevel)->texture();
+	
+	const auto tex = volumeTexture(volumeLevel);
+	const u16 *src = tex->texture();
 	int x = 4;
 	int y = 5 + 11;
-	for (int i = 0; i < 18 * 12; i++) {
+	for (u32 i = 0; i < tex->pixelCount(); i++) {
 		if (x >= 4 + 18) {
 			x = 4;
 			y--;
@@ -687,11 +690,12 @@ int ThemeTextures::getBatteryLevel(void) {
 void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
 	// Start loading
 	beginSubModify();
-	const u16 *src = batteryTexture(batteryLevel, drawDSiMode, isRegularDS)->texture();
-	int x = 235;
-	int y = 5 + 10;
-	for (int i = 0; i < 18 * 11; i++) {
-		if (x >= 235 + 18) {
+	const auto tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
+	const u16 *src = tex->texture();
+	u32 x = 235;
+	u32 y = 5 + 10;
+	for (u32 i = 0; i < tex->pixelCount(); i++) {
+		if (x >= 235 + tex->texWidth()) {
 			x = 235;
 			y--;
 		}
@@ -719,7 +723,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	const u16 *src = _topBackgroundTexture->texture();
 	int x = 0;
 	int y = 191;
-	for (int i = 0; i < 256 * 192; i++) {
+	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		if (x >= 256) {
 			x = 0;
 			y--;
@@ -736,12 +740,17 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 
 	beginSubModify();
-	const u16 *rightSrc = showRshoulder ? _rightShoulderTexture->texture() : _rightShoulderGreyedTexture->texture();
 
-	const u16 *leftSrc = showLshoulder ? _leftShoulderTexture->texture() : _leftShoulderGreyedTexture->texture();
-	for (int y = 19; y >= 0; y--) {
+	const auto rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
+	const u16 *rightSrc = rightTex->texture();
+
+	const auto leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
+
+	const u16 *leftSrc = leftTex->texture();
+
+	for (u32 y = rightTex->texHeight(); y > 0; y--) {
 		// Draw R Shoulders
-		for (int i = 0; i < 78; i++) {
+		for (u32 i = 0; i < rightTex->texWidth(); i++) {
 			u16 val = *(rightSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
 				_bgSubBuffer[(y + 172) * 256 + (i + 178)] = convertToDsBmp(val);
@@ -749,9 +758,9 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		}
 	}
 
-	for (int y = 19; y >= 0; y--) {
+	for (u32 y = leftTex->texHeight(); y > 0; y--) {
 		// Draw L Shoulders
-		for (int i = 0; i < 78; i++) {
+		for (u32 i = 0; i < leftTex->texWidth(); i++) {
 			u16 val = *(leftSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
 				_bgSubBuffer[(y + 172) * 256 + i] = convertToDsBmp(val);
