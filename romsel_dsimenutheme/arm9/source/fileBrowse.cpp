@@ -1144,7 +1144,8 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 
 	while (1) {
 		getFileInfo(scrn, dirContents, true);
-
+		reloadIconPalettes();
+		reloadFontPalettes();
 		while (!screenFadedOut())
 			;
 		nowLoadingDisplaying = false;
@@ -1152,8 +1153,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 		fadeType = true; // Fade in from white
 		for (int i = 0; i < 5; i++)
 			swiWaitForVBlank();
-		reloadIconPalettes();
-		reloadFontPalettes();
+		
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;

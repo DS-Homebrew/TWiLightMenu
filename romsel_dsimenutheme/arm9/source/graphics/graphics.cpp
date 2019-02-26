@@ -1009,9 +1009,11 @@ void vBlankHandler() {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]); // GBA Mode
 				}
 			}
-			glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
-			if (!sys().isRegularDS())
-				glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
+
+			// Replace by baked-in backgrounds
+			// glSprite(0, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[0]);
+			// if (!sys().isRegularDS())
+			// 	glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 		}
 
 		if (applaunchprep && ms().theme == 0) {
@@ -1162,10 +1164,7 @@ void vBlankHandler() {
 				// Reload the dialog box palettes here...
 				reloadDboxPalette();
 			} else if (!showdialogbox) {
-				if (ms().theme == 1) {
-					// on other themes, reloadDboxPalettes also reloads cornerbutton palettes
-					tex().reloadPal3dsCornerButton();
-				}
+			
 				reloadIconPalettes();
 				reloadFontPalettes();
 			}

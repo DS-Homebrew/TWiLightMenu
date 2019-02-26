@@ -25,7 +25,6 @@ public:
   void load3DSTheme();
 
   void reloadPalDialogBox();
-  void reloadPal3dsCornerButton();
 
   static unsigned short convertToDsBmp(unsigned short val);
 

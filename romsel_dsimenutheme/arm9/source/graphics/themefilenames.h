@@ -42,6 +42,8 @@
 #define TFN_UI_TOPBG                TFN_UI_DIRECTORY"/ui/top.bmp"
 #define TFN_UI_BOTTOMBG             TFN_UI_DIRECTORY"/ui/bottom.bmp"
 #define TFN_UI_BOTTOMBUBBLEBG       TFN_UI_DIRECTORY"/ui/bottom_bubble.bmp"
+#define TFN_UI_BOTTOMBG_DS          TFN_UI_DIRECTORY"/ui/bottom_ds.bmp"
+#define TFN_UI_BOTTOMBUBBLEBG_DS    TFN_UI_DIRECTORY"/ui/bottom_bubble_ds.bmp"
 #define TFN_UI_BOTTOMMOVINGBG       TFN_UI_DIRECTORY"/ui/bottom_moving.bmp"
 
 #define TFN_UI_DATE_TIME_FONT       TFN_UI_DIRECTORY"/ui/date_time_font.bmp"
@@ -109,6 +111,8 @@
 #define TFN_FALLBACK_UI_BOTTOMBG             TFN_FALLBACK_UI_DIRECTORY"/ui/bottom.bmp"
 #define TFN_FALLBACK_UI_BOTTOMBUBBLEBG       TFN_FALLBACK_UI_DIRECTORY"/ui/bottom_bubble.bmp"
 #define TFN_FALLBACK_UI_BOTTOMMOVINGBG       TFN_FALLBACK_UI_DIRECTORY"/ui/bottom_moving.bmp"
+#define TFN_FALLBACK_UI_BOTTOMBG_DS          TFN_FALLBACK_UI_DIRECTORY"/ui/bottom_ds.bmp"
+#define TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS    TFN_FALLBACK_UI_DIRECTORY"/ui/bottom_bubble_ds.bmp"
 
 #define TFN_FALLBACK_UI_DATE_TIME_FONT       TFN_FALLBACK_UI_DIRECTORY"/ui/date_time_font.bmp"
 #define TFN_FALLBACK_UI_LSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Lshoulder.bmp"

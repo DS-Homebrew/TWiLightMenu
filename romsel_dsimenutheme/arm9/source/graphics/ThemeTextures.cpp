@@ -172,11 +172,6 @@ void ThemeTextures::reloadPalDialogBox() {
 	}
 }
 
-void ThemeTextures::reloadPal3dsCornerButton() {
-	glBindTexture(0, cornerButtonTexID);
-	glColorSubTableEXT(0, 0, 16, 0, 0, _cornerButtonTexture->palette());
-}
-
 void ThemeTextures::loadBottomImage() {
 
 	if (_bottomBackgroundTexture) {
@@ -228,6 +223,7 @@ void ThemeTextures::loadBottomImage() {
 void ThemeTextures::load3DSTheme() {
 
 	loadUiTextures();
+	
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
@@ -243,11 +239,8 @@ void ThemeTextures::load3DSTheme() {
 	_folderTexture = std::make_unique<GritTexture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
 	_progressTexture = std::make_unique<GritTexture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 
-	_cornerButtonTexture = std::make_unique<GritTexture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
 	_smallCartTexture = std::make_unique<GritTexture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
-
 	_startBorderTexture = std::make_unique<GritTexture>(TFN_GRF_CURSOR, TFN_FALLBACK_GRF_CURSOR);
-
 	_dialogBoxTexture = std::make_unique<GritTexture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
 
 	if (ms().colorMode == 1) {
@@ -261,7 +254,7 @@ void ThemeTextures::load3DSTheme() {
 	loadBoxemptyImage(*_boxEmptyTexture);
 	loadFolderImage(*_folderTexture);
 
-	loadCornerButtonImage(*_cornerButtonTexture, (64 / 16) * (64 / 32), 64, 32);
+	// loadCornerButtonImage(*_cornerButtonTexture, (64 / 16) * (64 / 32), 64, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (192 / 64), 64);
 	loadDialogboxImage(*_dialogBoxTexture);
@@ -272,10 +265,6 @@ void ThemeTextures::load3DSTheme() {
 void ThemeTextures::loadDSiTheme() {
 
 	loadUiTextures();
-
-	// only ds theme has moving texture
-	_bottomBackgroundMovingTexture =
-	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
 
 	loadVolumeTextures();
 	loadBatteryTextures();
@@ -366,9 +355,23 @@ void ThemeTextures::loadBatteryTextures() {
 void ThemeTextures::loadUiTextures() {
 
 	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
-	_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-	_bottomBackgroundBubbleTexture =
-	    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+	
+	if (!sys().isRegularDS() || ms().theme == 0) {
+		_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
+		_bottomBackgroundBubbleTexture =
+	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+
+		if (ms().theme == 0) {
+			// only ds theme has moving texture
+			_bottomBackgroundMovingTexture =
+				std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+		}
+	} else {
+		// sys().isRegularDS() == true && ms().theme != 0 => ms().theme == 1 (in this theme)
+		_bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
+		_bottomBackgroundBubbleTexture =
+	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
+	}
 
 	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
 
