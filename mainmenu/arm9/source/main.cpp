@@ -43,6 +43,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 #include "perGameSettings.h"
+#include "errorScreen.h"
 
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
@@ -82,8 +83,9 @@ std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
 std::string homebrewArg;
 
-static const char *unlaunchAutoLoadID = "AutoLoadInfo";
+const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+char unlaunchDevicePath[256];
 
 static char pictochatPath[256];
 static char dlplayPath[256];
@@ -763,7 +765,49 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
+	/*switch (flashcard) {
+		case 0:
+		case 1:
+		default: {
+			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
+			path = ReplaceAll(ndsPath, "fat:/", slashchar);
+			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
+			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
+			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
+			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
+			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
 
+		case 2:
+		case 4:
+		case 5: {
+			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+			path = ReplaceAll(ndsPath, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", path);
+			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+
+		case 3: {
+			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+			path = ReplaceAll(ndsPath, "fat:/", woodfat);
+			fcrompathini.SetString("Save Info", "lastLoaded", path);
+			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+
+		case 6: {
+			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+			path = ReplaceAll(ndsPath, "fat:/", dstwofat);
+			fcrompathini.SetString("Dir Info", "fullName", path);
+			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+			break;
+		}
+	}*/
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
@@ -779,17 +823,17 @@ void loadROMselect()
 	if (sdFound()) {
 		chdir("sd:/");
 	}
-
-	switch (theme) {
-		case 3:
-			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
-			break;
-		case 2:
-			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
-			break;
-		default:
-			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
-			break;
+	if (theme == 3)
+	{
+		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
+	}
+	else if (theme == 2)
+	{
+		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
+	}
+	else
+	{
+		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
 	}
 }
 
@@ -977,6 +1021,47 @@ int main(int argc, char **argv) {
 			dlplayFound = true;
 			dlplayReboot = true;
 		}
+	}
+
+	if (isDSiMode() && sdFound() && consoleModel < 2 && launcherApp != -1) {
+		u8 setRegion = 0;
+		if (sysRegion == -1) {
+			// Determine SysNAND region by searching region of System Settings on SDNAND
+			char tmdpath[256];
+			for (u8 i = 0x41; i <= 0x5A; i++)
+			{
+				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
+				if (access(tmdpath, F_OK) == 0)
+				{
+					setRegion = i;
+					break;
+				}
+			}
+		} else {
+			switch(sysRegion) {
+				case 0:
+				default:
+					setRegion = 0x4A;	// JAP
+					break;
+				case 1:
+					setRegion = 0x45;	// USA
+					break;
+				case 2:
+					setRegion = 0x50;	// EUR
+					break;
+				case 3:
+					setRegion = 0x55;	// AUS
+					break;
+				case 4:
+					setRegion = 0x43;	// CHN
+					break;
+				case 5:
+					setRegion = 0x4B;	// KOR
+					break;
+			}
+		}
+
+		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
 	}
 
 	graphicsInit();
@@ -1181,6 +1266,7 @@ int main(int argc, char **argv) {
 				scanKeys();
 				pressed = keysDownRepeat();
 				touchRead(&touch);
+				checkSdEject();
 				swiWaitForVBlank();
 			} while (!pressed);
 
@@ -1502,46 +1588,6 @@ int main(int argc, char **argv) {
 					*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 					unlaunchSetHiyaBoot();
 				} else {
-					u8 setRegion;
-					if (sysRegion == -1) {
-						// Determine SysNAND region by searching region of System Settings on SDNAND
-						char tmdpath[256];
-						for (u8 i = 0x41; i <= 0x5A; i++)
-						{
-							snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
-							if (access(tmdpath, F_OK) == 0)
-							{
-								setRegion = i;
-								break;
-							}
-						}
-					} else {
-						switch(sysRegion) {
-							case 0:
-							default:
-								setRegion = 0x4A;	// JAP
-								break;
-							case 1:
-								setRegion = 0x45;	// USA
-								break;
-							case 2:
-								setRegion = 0x50;	// EUR
-								break;
-							case 3:
-								setRegion = 0x55;	// AUS
-								break;
-							case 4:
-								setRegion = 0x43;	// CHN
-								break;
-							case 5:
-								setRegion = 0x4B;	// KOR
-								break;
-						}
-					}
-
-					char unlaunchDevicePath[256];
-					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
-
 					memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 					*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 					*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
