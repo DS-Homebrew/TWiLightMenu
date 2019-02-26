@@ -374,11 +374,20 @@ u16 convertVramColorToGrayscale(u16 val) {
 
 void bottomBgLoad(int drawBubble, bool init = false) {
 	if (init || drawBubble == 0 || (drawBubble == 2 && theme == 1)) {
-		tex().drawBg();
-	} else if (drawBubble == 1){
-		tex().drawBubbleBg();
-	} else if (drawBubble == 2 && theme == 0){
-		tex().drawMovingBg();
+		if (bottomBgState != 1) {
+			tex().drawBg();
+			bottomBgState = 1;
+		}
+	} else if (drawBubble == 1) {
+		if (bottomBgState != 2) {
+			tex().drawBubbleBg();
+			bottomBgState = 2;
+		}
+	} else if (drawBubble == 2 && theme == 0) {
+		if (bottomBgState != 3) {
+			tex().drawMovingBg();
+			bottomBgState = 3;
+		}
 	}
 }
 
