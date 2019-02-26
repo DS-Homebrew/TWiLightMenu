@@ -271,7 +271,6 @@ void ThemeTextures::load3DSTheme() {
 	loadBoxemptyImage(*_boxEmptyTexture);
 	loadFolderImage(*_folderTexture);
 
-	// loadCornerButtonImage(*_cornerButtonTexture, (64 / 16) * (64 / 32), 64, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadStartbrdImage(*_startBorderTexture, (32 / 32) * (192 / 64), 64);
 	loadDialogboxImage(*_dialogBoxTexture);
