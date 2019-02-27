@@ -659,7 +659,7 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	if (!isDSiMode()) return;
 	beginSubModify();
 
-	const auto tex = volumeTexture(volumeLevel);
+	const BmpTexture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
 	int x = 4;
 	int y = 5 + 11;
@@ -728,7 +728,7 @@ int ThemeTextures::getBatteryLevel(void) {
 void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
 	// Start loading
 	beginSubModify();
-	const auto tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
+	const BmpTexture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
 	u32 x = tc().batteryRenderX();
 	u32 y = tc().batteryRenderY();
@@ -779,10 +779,10 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 
 	beginSubModify();
 
-	const auto rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
+	const BmpTexture *rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
 	const u16 *rightSrc = rightTex->texture();
 
-	const auto leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
+	const BmpTexture *leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
 
 	const u16 *leftSrc = leftTex->texture();
 
