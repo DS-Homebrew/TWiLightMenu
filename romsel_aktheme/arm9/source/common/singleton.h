@@ -1,6 +1,6 @@
 /*
     common/singleton.h
-    Copyright (c) 2018 RonnChyran
+    Copyright (c) 2018 chyyran
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,10 @@ class singleton
     }
 
   private:
-    static inline T *_instance = NULL;
+    static T *_instance;
 };
+
+template<typename T,  typename...Args>
+T * singleton<T, Args...>::_instance = NULL;
 
 #endif //_SINGLETON_H_
