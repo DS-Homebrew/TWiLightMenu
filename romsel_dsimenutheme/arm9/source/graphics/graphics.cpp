@@ -1576,6 +1576,7 @@ void graphicsInit() {
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
+	// Moved to ThemeTextures::videoSetup()
 	// ////////////////////////////////////////////////////////////
 	// videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	// videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -1636,9 +1637,7 @@ void graphicsInit() {
 		//tex().load3DSTheme();
 		rocketVideo_videoYpos = tc().rotatingCubesRenderY();
 		loadRotatingCubes();
-	} else {
-		//tex().loadDSiTheme();
-	}
+	} 
 
 	tex().drawTopBg();
 	tex().drawProfileName();
