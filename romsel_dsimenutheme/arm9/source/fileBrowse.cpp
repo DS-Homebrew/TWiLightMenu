@@ -1516,7 +1516,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 					gameOrder.insert(gameOrder.begin() + CURPOS + (PAGENUM * 40), gameBeingMoved);
 
 					for (int i = 0; i < (int)gameOrder.size(); i++) {
-						char str[9];
+						char str[12];
 						sprintf(str, "%d", i);
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 					}
