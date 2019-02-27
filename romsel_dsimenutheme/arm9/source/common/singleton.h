@@ -1,6 +1,6 @@
 /*
     common/singleton.h
-    Copyright (c) 2018 RonnChyran
+    Copyright (c) 2018 chyyran
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
