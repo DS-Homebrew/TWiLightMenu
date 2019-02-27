@@ -29,14 +29,15 @@ class DSiMenuPlusPlusSettings
         EViewInternal = 2
     };
 
-    /*0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
+    /*
+        0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+        1: R4DS (Original Non-SDHC version)/ M3 Simply
+        2: R4iDSN/R4i Gold RTS/R4 Ultra
+        3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+        4: Acekard RPG
+        5: Ace 3DS+/Gateway Blue Card/R4iTT
+        6: SuperCard DSTWO
+    */
 
     enum TFlashCard
     {
@@ -178,7 +179,11 @@ class DSiMenuPlusPlusSettings
 	bool dsiSplash;
 	bool hsMsg;
     bool showlogo;
+
     std::string r4_theme;
+    std::string dsi_theme;
+    std::string _3ds_theme;
+
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;

@@ -160,6 +160,7 @@ extern std::string STR_AB_SETRETURN;
 
 // Sub-theme select
 extern std::string STR_SUBTHEMESEL_DSI;
+extern std::string STR_SUBTHEMESEL_3DS;
 
 extern std::string STR_SUBTHEMESEL_R4;
 extern std::string STR_SUBTHEMESEL_AK;

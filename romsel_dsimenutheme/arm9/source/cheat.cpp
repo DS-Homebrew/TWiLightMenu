@@ -19,16 +19,19 @@
 */
 
 #include "cheat.h"
-#include "flashcard.h"
+#include "common/flashcard.h"
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
+
 #include <algorithm>
 
 #include "ndsheaderbanner.h"
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
+#include "graphics/ThemeTextures.h"
 #include "errorScreen.h"
+
 
 extern bool dbox_showIcon;
 int cheatWnd_cursorPosition = 0;
@@ -256,11 +259,11 @@ void CheatCodelist::selectCheats(std::string filename)
         scanKeys();
         pressed = keysDownRepeat();
 		checkSdEject();
-		loadVolumeImage();
-		loadBatteryImage();
-		loadTime();
-		loadDate();
-		loadClockColon();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;
@@ -317,11 +320,11 @@ void CheatCodelist::selectCheats(std::string filename)
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
-		loadVolumeImage();
-		loadBatteryImage();
-		loadTime();
-		loadDate();
-		loadClockColon();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
 		swiWaitForVBlank();
 	} while (!pressed);
     if(pressed & KEY_UP) {
@@ -438,11 +441,11 @@ void CheatCodelist::selectCheats(std::string filename)
           scanKeys();
           pressed = keysDown();
 		  checkSdEject();
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
             break;

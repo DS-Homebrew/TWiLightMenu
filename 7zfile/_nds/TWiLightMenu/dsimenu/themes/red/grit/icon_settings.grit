@@ -1,0 +1,24 @@
+# Set the warning/log level to 3
+-W3
+
+#bitmap mode
+-gb
+
+# Set the bit depth to 4 (16 colors)
+-gB4
+
+#The Transperant colour of 0xFF00FF
+-gT FF00FF
+
+##################
+# Old Parameters
+#-W3
+# disable alpha and set opaque bit for all pixels
+#-gT!
+
+# use lz77 compression
+#-gzl
+
+# 16 bit bitmap
+#-gB16
+##################

@@ -37,7 +37,6 @@
 #include "TextPane.h"
 
 extern int theme;
-extern int subtheme;
 extern int fontTextureID[2];
 
 using namespace std;

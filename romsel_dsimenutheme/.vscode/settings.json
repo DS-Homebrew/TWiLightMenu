@@ -38,7 +38,8 @@
         "system_error": "cpp",
         "type_traits": "cpp",
         "memory": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "string": "cpp"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

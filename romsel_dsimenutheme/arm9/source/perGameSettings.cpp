@@ -41,6 +41,8 @@
 #include "graphics/graphics.h"
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
+#include "graphics/ThemeTextures.h"
+
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
@@ -48,9 +50,9 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
-#include "flashcard.h"
-
+#include "common/inifile.h"
+#include "common/flashcard.h"
+#include "common/dsimenusettings.h"
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
@@ -59,7 +61,6 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
-extern bool useBootstrap;
 
 const char* SDKnumbertext;
 
@@ -79,8 +80,6 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_bootstrapFile = -1;
 
-extern int cursorPosition[2];
-extern int pagenum[2];
 extern int file_count;
 
 char pergamefilepath[256];
@@ -101,9 +100,9 @@ char fileCounter[8];
 char gameTIDText[16];
 
 void loadPerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", ms().secondaryDevice);	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
@@ -114,35 +113,35 @@ void loadPerGameSettings (std::string filename) {
 }
 
 void savePerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
+	if (isHomebrew[CURPOS] == 1) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
+		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", perGameSettings_ramDiskNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 	} else {
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
 bool checkIfShowAPMsg (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
 		return true;	// Show AP message
@@ -151,7 +150,7 @@ bool checkIfShowAPMsg (std::string filename) {
 }
 
 void dontShowAPMsgAgain (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
 	pergameini.SaveIniFile( pergamefilepath );
@@ -164,7 +163,7 @@ void perGameSettings (std::string filename) {
 	dbox_showIcon = true;
 	showdialogbox = true;
 	
-	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (cursorPosition[secondaryDevice]+1)+pagenum[secondaryDevice]*40, file_count);
+	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS+1)+PAGENUM*40, file_count);
 	
 	perGameSettings_cursorPosition = 0;
 	perGameSettings_cursorSide = false;
@@ -210,20 +209,20 @@ void perGameSettings (std::string filename) {
 	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
-	} else if(isHomebrew[cursorPosition[secondaryDevice]] == 0) {
+	} else if(isHomebrew[CURPOS] == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
-		if (!useBootstrap) {
+		if (!ms().useBootstrap) {
 			perGameSettings_cursorPosition = 2;
 		}
 	}
 	
 	bool showPerGameSettings =
-		(!isDSiWare[cursorPosition[secondaryDevice]]
-		&& isHomebrew[cursorPosition[secondaryDevice]] != 2
+		(!isDSiWare[CURPOS]
+		&& isHomebrew[CURPOS] != 2
 		&& strcmp(game_TID, "HND") != 0
 		&& strcmp(game_TID, "HNE") != 0
-		&& (useBootstrap && REG_SCFG_EXT != 0));
+		&& (ms().useBootstrap && REG_SCFG_EXT != 0));
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -251,7 +250,7 @@ void perGameSettings (std::string filename) {
 
 	while (1) {
 		clearText();
-		titleUpdate(isDirectory[cursorPosition[secondaryDevice]], filename.c_str(), cursorPosition[secondaryDevice]);
+		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 		// About 38 characters fit in the box.
 		if (strlen(filename.c_str()) > 38) {
 			// Truncate to 35, 35 + 3 = 38 (because we append "...").
@@ -265,7 +264,7 @@ void perGameSettings (std::string filename) {
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);
-		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {		// Per-game settings for homebrew (no DSi-Extended header)
+		if (isHomebrew[CURPOS] == 1) {		// Per-game settings for homebrew (no DSi-Extended header)
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
 					printSmall(false, 154, 98, ">");
@@ -277,7 +276,7 @@ void perGameSettings (std::string filename) {
 				} else {
 					printSmall(false, 24, 98, "Direct boot: No");
 				}
-				if (!secondaryDevice) {
+				if (!ms().secondaryDevice) {
 					if (perGameSettings_ramDiskNo == -1) {
 						printSmall(false, 162, 98, "RAM disk: No");
 					} else {
@@ -341,7 +340,7 @@ void perGameSettings (std::string filename) {
 				} else {
 					printSmall(false, 16, 98+(perGameSettings_cursorPosition*14), ">");
 				}
-				if (useBootstrap) {
+				if (ms().useBootstrap) {
 					printSmall(false, 24, 98, "Language:");
 					if (perGameSettings_language == -2) {
 						printSmall(false, 88, 98, "Default");
@@ -415,16 +414,16 @@ void perGameSettings (std::string filename) {
 			scanKeys();
 			pressed = keysDown();
 			checkSdEject();
-			loadVolumeImage();
-			loadBatteryImage();
-			loadTime();
-			loadDate();
-			loadClockColon();
+			tex().drawVolumeImageCached();
+			tex().drawBatteryImageCached();
+			drawCurrentTime();
+			drawCurrentDate();
+			drawClockColon();
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isHomebrew[cursorPosition[secondaryDevice]] == 1) {
-			if (useBootstrap) {
+		if (isHomebrew[CURPOS] == 1) {
+			if (ms().useBootstrap) {
 				if (pressed & KEY_UP) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
@@ -434,8 +433,8 @@ void perGameSettings (std::string filename) {
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT == 0 && perGameSettings_cursorPosition == 3) perGameSettings_cursorPosition = 0;
 				}
-				if ((!secondaryDevice && (pressed & KEY_LEFT))
-				|| (!secondaryDevice && (pressed & KEY_RIGHT))) {
+				if ((!ms().secondaryDevice && (pressed & KEY_LEFT))
+				|| (!ms().secondaryDevice && (pressed & KEY_RIGHT))) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = !perGameSettings_cursorSide;
 					}
@@ -507,7 +506,7 @@ void perGameSettings (std::string filename) {
 				break;
 			}
 		} else {
-			if (useBootstrap) {
+			if (ms().useBootstrap) {
 				if (pressed & KEY_UP) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;

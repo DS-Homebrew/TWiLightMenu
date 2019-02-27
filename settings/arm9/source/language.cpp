@@ -167,6 +167,7 @@ std::string STR_AB_SETRETURN = "STR_AB_SETRETURN";
 
 // Sub-theme select
 std::string STR_SUBTHEMESEL_DSI = "STR_SUBTHEMESEL_DSI";
+std::string STR_SUBTHEMESEL_3DS = "STR_SUBTHEMESEL_3DS";
 
 std::string STR_SUBTHEMESEL_R4 = "STR_SUBTHEMESEL_R4";
 std::string STR_SUBTHEMESEL_AK = "STR_SUBTHEMESEL_AK";
@@ -431,6 +432,7 @@ void langInit(void)
 
 	// Sub-theme select
 	STR_SUBTHEMESEL_DSI = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SUBTHEMESEL_DSI", "Sub-theme select: DSi Menu"));
+	STR_SUBTHEMESEL_3DS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SUBTHEMESEL_3DS", "Sub-theme select: DSi Menu"));
 
 	STR_SUBTHEMESEL_R4 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SUBTHEMESEL_R4", "Sub-theme select: R4"));
 	STR_SUBTHEMESEL_AK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SUBTHEMESEL_AK", "Sub-theme select: Acekard Menu"));
