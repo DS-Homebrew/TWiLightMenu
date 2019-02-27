@@ -35,9 +35,9 @@ private:
   void loadIconTextures();
 
 public:
-  unsigned short *beginSubModify();
-  void commitSubModify();  
-  void commitSubModifyAsync();
+  static unsigned short *beginSubModify();
+  static void commitSubModify();  
+  static void commitSubModifyAsync();
 
   void drawTopBg();
   void drawTopBgAvoidingShoulders();
@@ -145,6 +145,8 @@ public:
   const BmpTexture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
   const BmpTexture *leftShoulderGreyedTexture() { return _leftShoulderGreyedTexture.get(); }
   const BmpTexture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
+
+  static u16* bmpImageBuffer();
 
   const BmpTexture *volumeTexture(int texture) { 
     switch(texture) {
@@ -265,10 +267,6 @@ private:
   unique_ptr<BmpTexture> _leftShoulderGreyedTexture;
   unique_ptr<BmpTexture> _rightShoulderGreyedTexture;
 
-  unique_ptr<u16[]> _bgSubBuffer;
-
-  unique_ptr<u16[]> _bottomBgImage;
-  unique_ptr<u16[]> _bottomBubbleBgImage;
   unique_ptr<u16[]> _bottomMovingBgImage;
 
   unique_ptr<u16[]> _dateFontImage;

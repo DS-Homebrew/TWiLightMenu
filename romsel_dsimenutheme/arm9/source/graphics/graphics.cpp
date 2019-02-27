@@ -48,7 +48,6 @@
 #include "graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "themefilenames.h"
-
 #include "date.h"
 #include "iconHandler.h"
 #define CONSOLE_SCREEN_WIDTH 32
@@ -154,8 +153,6 @@ int bottomScreenBrightness = 255;
 int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.
 
 int vblankRefreshCounter = 0;
-
-u16 bmpImageBuffer[256 * 192] = {0};
 
 static bool rotatingCubesLoaded = false;
 
@@ -1309,8 +1306,8 @@ void loadPhoto() {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x10000, file);
-		u16 *src = bmpImageBuffer;
+		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
+		u16 *src = tex().bmpImageBuffer();
 		int x = 24;
 		int y = 24 + 155;
 		for (int i = 0; i < 208 * 156; i++) {
@@ -1340,8 +1337,8 @@ void loadPhotoPart() {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x10000, file);
-		u16 *src = bmpImageBuffer;
+		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
+		u16 *src = tex().bmpImageBuffer();
 		int x = 24;
 		int y = 24 + 155;
 		for (int i = 0; i < 208 * 156; i++) {
