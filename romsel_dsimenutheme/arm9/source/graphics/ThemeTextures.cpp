@@ -224,7 +224,7 @@ void ThemeTextures::loadBackgrounds() {
 				x++;
 			}
 		}
-	} else {
+	} else { // !(ms().theme == 0 || !sys().isRegularDS()) => (ms().theme == 1 && sys().isRegularDS())
 		_topBackgroundTexture =
 		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
 		if (_topBackgroundTexture) {
@@ -272,7 +272,7 @@ void ThemeTextures::load3DSTheme() {
 
 	loadVolumeTextures();
 	loadBatteryTextures();
-	
+
 	loadIconTextures();
 	loadDateFont(_dateTimeFontTexture->texture());
 
@@ -388,23 +388,27 @@ void ThemeTextures::loadDSiTheme() {
 	loadWirelessIcons(*_wirelessIconsTexture);
 }
 void ThemeTextures::loadVolumeTextures() {
-	_volume0Texture = std::make_unique<BmpTexture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
-	_volume1Texture = std::make_unique<BmpTexture>(TFN_VOLUME1, TFN_FALLBACK_VOLUME1);
-	_volume2Texture = std::make_unique<BmpTexture>(TFN_VOLUME2, TFN_FALLBACK_VOLUME2);
-	_volume3Texture = std::make_unique<BmpTexture>(TFN_VOLUME3, TFN_FALLBACK_VOLUME3);
-	_volume4Texture = std::make_unique<BmpTexture>(TFN_VOLUME4, TFN_FALLBACK_VOLUME4);
+	if (!sys().isRegularDS() && isDSiMode()) {
+		_volume0Texture = std::make_unique<BmpTexture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
+		_volume1Texture = std::make_unique<BmpTexture>(TFN_VOLUME1, TFN_FALLBACK_VOLUME1);
+		_volume2Texture = std::make_unique<BmpTexture>(TFN_VOLUME2, TFN_FALLBACK_VOLUME2);
+		_volume3Texture = std::make_unique<BmpTexture>(TFN_VOLUME3, TFN_FALLBACK_VOLUME3);
+		_volume4Texture = std::make_unique<BmpTexture>(TFN_VOLUME4, TFN_FALLBACK_VOLUME4);
+	}
 }
 
 void ThemeTextures::loadBatteryTextures() {
-	_battery1Texture = std::make_unique<BmpTexture>(TFN_BATTERY1, TFN_FALLBACK_BATTERY1);
-	_battery2Texture = std::make_unique<BmpTexture>(TFN_BATTERY2, TFN_FALLBACK_BATTERY2);
-	_battery3Texture = std::make_unique<BmpTexture>(TFN_BATTERY3, TFN_FALLBACK_BATTERY3);
-	_battery4Texture = std::make_unique<BmpTexture>(TFN_BATTERY4, TFN_FALLBACK_BATTERY4);
-
-	_batterychargeTexture = std::make_unique<BmpTexture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
-	_batteryfullTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULL, TFN_FALLBACK_BATTERY_FULL);
-	_batteryfullDSTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULLDS, TFN_FALLBACK_BATTERY_FULLDS);
-	_batterylowTexture = std::make_unique<BmpTexture>(TFN_BATTERY_LOW, TFN_FALLBACK_BATTERY_LOW);
+	if (!sys().isRegularDS() && isDSiMode()) {
+		_battery1Texture = std::make_unique<BmpTexture>(TFN_BATTERY1, TFN_FALLBACK_BATTERY1);
+		_battery2Texture = std::make_unique<BmpTexture>(TFN_BATTERY2, TFN_FALLBACK_BATTERY2);
+		_battery3Texture = std::make_unique<BmpTexture>(TFN_BATTERY3, TFN_FALLBACK_BATTERY3);
+		_battery4Texture = std::make_unique<BmpTexture>(TFN_BATTERY4, TFN_FALLBACK_BATTERY4);
+		_batteryfullTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULL, TFN_FALLBACK_BATTERY_FULL);
+	} else {
+		_batterychargeTexture = std::make_unique<BmpTexture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
+		_batteryfullDSTexture = std::make_unique<BmpTexture>(TFN_BATTERY_FULLDS, TFN_FALLBACK_BATTERY_FULLDS);
+		_batterylowTexture = std::make_unique<BmpTexture>(TFN_BATTERY_LOW, TFN_FALLBACK_BATTERY_LOW);
+	}
 }
 
 void ThemeTextures::loadUITextures() {
@@ -523,9 +527,8 @@ void ThemeTextures::drawProfileName() {
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
 			for (int y = 15; y >= 0; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
-				u16 *src = buffer + (top_font_texcoords[0 + (4 * charIndex)]);
+				fread(bmpImageBuffer, 2, 0x200, file);
+				u16 *src = bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
@@ -653,9 +656,10 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 }
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
+	if (!isDSiMode()) return;
 	beginSubModify();
 
-	const auto tex = volumeTexture(volumeLevel);
+	const BmpTexture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
 	int x = 4;
 	int y = 5 + 11;
@@ -724,7 +728,7 @@ int ThemeTextures::getBatteryLevel(void) {
 void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
 	// Start loading
 	beginSubModify();
-	const auto tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
+	const BmpTexture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
 	u32 x = tc().batteryRenderX();
 	u32 y = tc().batteryRenderY();
@@ -775,10 +779,10 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 
 	beginSubModify();
 
-	const auto rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
+	const BmpTexture *rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
 	const u16 *rightSrc = rightTex->texture();
 
-	const auto leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
+	const BmpTexture *leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
 
 	const u16 *leftSrc = leftTex->texture();
 

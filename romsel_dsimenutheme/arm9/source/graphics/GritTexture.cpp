@@ -30,7 +30,7 @@ GritTexture::GritTexture(const std::string& filePath, const std::string& fallbac
 	}
 
 	if (!file || !isValidGrif) {
-		if (!isValidGrif) {
+		if (!isValidGrif && file) {
 			fclose(file);
 		}
 

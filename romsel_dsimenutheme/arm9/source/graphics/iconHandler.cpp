@@ -10,8 +10,8 @@
 
 bool initialized;
 
-int _iconTexID[NDS_ICON_BANK_COUNT];
-u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
+static int _iconTexID[NDS_ICON_BANK_COUNT];
+static u16 _paletteCache[NDS_ICON_BANK_COUNT][16];
 
 int _gbaTexID;
 int _gbcTexID;
