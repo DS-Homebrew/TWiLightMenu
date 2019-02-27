@@ -1,7 +1,7 @@
 #include <nds.h>
 
-#include "ThemeTextures.h"
 #include "ThemeConfig.h"
+#include "ThemeTextures.h"
 
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
@@ -16,6 +16,7 @@
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 
+extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
 
 ThemeTextures::ThemeTextures()
@@ -23,11 +24,6 @@ ThemeTextures::ThemeTextures()
       startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
       wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
-	_bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bmpImageBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::loadBubbleImage(const GritTexture &tex, int sprW, int sprH) {
@@ -170,86 +166,116 @@ void ThemeTextures::reloadPalDialogBox() {
 	}
 }
 
-void ThemeTextures::loadBottomBackgrounds() {
+void ThemeTextures::loadBackgrounds() {
 
-	// unique_ptrs are freed after this function returns.
-	unique_ptr<BmpTexture> bottomBackgroundTexture;
-	unique_ptr<BmpTexture> bottomBackgroundBubbleTexture;
-	unique_ptr<BmpTexture> bottomBackgroundMovingTexture;
+	// We reuse the _topBackgroundTexture as a buffer.
 
-	if (!sys().isRegularDS() || ms().theme == 0) {
-		bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-		bottomBackgroundBubbleTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+	if (ms().theme == 0) {
+		// Load background buffer.
+		_topBackgroundTexture =
+		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+		if (_topBackgroundTexture) {
+			const u16 *src = _topBackgroundTexture->texture();
+			int x = 0;
+			int y = 191;
+			for (int i = 0; i < 256 * 192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				_bottomMovingBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+	}
 
-		if (ms().theme == 0) {
-			// only ds theme has moving texture
-			bottomBackgroundMovingTexture =
-				std::make_unique<BmpTexture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+	if (ms().theme == 0 || !sys().isRegularDS()) {
+		_topBackgroundTexture =
+		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
+		if (_topBackgroundTexture) {
+			const u16 *src = _topBackgroundTexture->texture();
+			int x = 0;
+			int y = 191;
+			for (int i = 0; i < 256 * 192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				_bottomBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+
+		_topBackgroundTexture =
+		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+		if (_topBackgroundTexture) {
+			const u16 *src = _topBackgroundTexture->texture();
+			int x = 0;
+			int y = 191;
+			for (int i = 0; i < 256 * 192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				_bottomBubbleBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				x++;
+			}
 		}
 	} else {
-		// sys().isRegularDS() == true && ms().theme != 0 => ms().theme == 1 (in this theme)
-		bottomBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
-		bottomBackgroundBubbleTexture =
-	  		  std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
-	}
-
-	if (bottomBackgroundTexture) {
-		const u16 *src = bottomBackgroundTexture->texture();
-		int x = 0;
-		int y = 191;
-		for (int i = 0; i < 256 * 192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
+		_topBackgroundTexture =
+		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
+		if (_topBackgroundTexture) {
+			const u16 *src = _topBackgroundTexture->texture();
+			int x = 0;
+			int y = 191;
+			for (int i = 0; i < 256 * 192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				_bottomBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				x++;
 			}
-			u16 val = *(src++);
-			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
-			x++;
+		}
+		_topBackgroundTexture =
+		    std::make_unique<BmpTexture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
+		if (_topBackgroundTexture) {
+			const u16 *src = _topBackgroundTexture->texture();
+			int x = 0;
+			int y = 191;
+			for (int i = 0; i < 256 * 192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				_bottomBubbleBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				x++;
+			}
 		}
 	}
-
-	if (bottomBackgroundBubbleTexture) {
-		const u16 *src = bottomBackgroundBubbleTexture->texture();
-		int x = 0;
-		int y = 191;
-		for (int i = 0; i < 256 * 192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-
-	if (bottomBackgroundMovingTexture) {
-		const u16 *src = bottomBackgroundMovingTexture->texture();
-		int x = 0;
-		int y = 191;
-		for (int i = 0; i < 256 * 192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
-			x++;
-		}
-	}
+	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
 }
 
 void ThemeTextures::load3DSTheme() {
 
+	_bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	_bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	_bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	
 	loadUITextures();
-	loadBottomBackgrounds();
+	loadBackgrounds();
 
 	loadVolumeTextures();
 	loadBatteryTextures();
+	
 	loadIconTextures();
 	loadDateFont(_dateTimeFontTexture->texture());
 
-	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_bubbleTexture = std::make_unique<GritTexture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
@@ -266,7 +292,7 @@ void ThemeTextures::load3DSTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(),  tc().bubbleTipSpriteH());
+	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadSettingsImage(*_settingsIconTexture);
 
 	loadBoxfullImage(*_boxFullTexture);
@@ -282,8 +308,13 @@ void ThemeTextures::load3DSTheme() {
 
 void ThemeTextures::loadDSiTheme() {
 
+	_bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	_bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	_bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+	_bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
+
 	loadUITextures();
-	loadBottomBackgrounds();
+	loadBackgrounds();
 
 	loadVolumeTextures();
 	loadBatteryTextures();
@@ -313,12 +344,18 @@ void ThemeTextures::loadDSiTheme() {
 	_settingsIconTexture = std::make_unique<GritTexture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 
 	// Apply the DSi palette shifts
-	if (tc().startTextUserPalette()) _startTextTexture->applyEffect(effectDSiStartTextPalettes);
-	if (tc().startBorderUserPalette()) _startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
-	if (tc().buttonArrowUserPalette()) _buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
-	if (tc().movingArrowUserPalette()) _movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
-	if (tc().launchDotsUserPalette()) _launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
-	if (tc().dialogBoxUserPalette()) _dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().startTextUserPalette())
+		_startTextTexture->applyEffect(effectDSiStartTextPalettes);
+	if (tc().startBorderUserPalette())
+		_startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
+	if (tc().buttonArrowUserPalette())
+		_buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().movingArrowUserPalette())
+		_movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().launchDotsUserPalette())
+		_launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
+	if (tc().dialogBoxUserPalette())
+		_dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
 
 	if (ms().colorMode == 1) {
 		applyGrayscaleToAllGrfTextures();
@@ -372,11 +409,7 @@ void ThemeTextures::loadBatteryTextures() {
 
 void ThemeTextures::loadUITextures() {
 
-	_topBackgroundTexture = std::make_unique<BmpTexture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
-	
-
 	_dateTimeFontTexture = std::make_unique<BmpTexture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
-
 	_leftShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
 	_rightShoulderTexture = std::make_unique<BmpTexture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
 	_leftShoulderGreyedTexture =
@@ -560,8 +593,8 @@ unsigned short ThemeTextures::convertToDsBmp(unsigned short val) {
 
 		return 32768 | (b << 10) | (g << 5) | (r);
 	} else {
-		return ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) |
-		       (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		return ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) | (val & (31 - 6 * blfLevel)) << 10 |
+		       BIT(15);
 	}
 }
 
@@ -601,8 +634,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(_bmpImageBuffer.get(), 2, 0x7800, file);
-		u16 *src = _bmpImageBuffer.get();
+		fread(bmpImageBuffer, 2, 0x7800, file);
+		u16 *src = bmpImageBuffer;
 		int x = 64;
 		int y = 40 + 114;
 		for (int i = 0; i < 128 * 115; i++) {
@@ -621,7 +654,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	beginSubModify();
-	
+
 	const auto tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
 	int x = 4;
@@ -754,7 +787,8 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < rightTex->texWidth(); i++) {
 			u16 val = *(rightSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] = convertToDsBmp(val);
+				_bgSubBuffer[(y + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] =
+				    convertToDsBmp(val);
 			}
 		}
 	}
@@ -764,7 +798,8 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < leftTex->texWidth(); i++) {
 			u16 val = *(leftSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] = convertToDsBmp(val);
+				_bgSubBuffer[(y + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] =
+				    convertToDsBmp(val);
 			}
 		}
 	}

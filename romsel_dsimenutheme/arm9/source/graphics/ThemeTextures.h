@@ -83,7 +83,7 @@ private:
   void loadSmallCartImage(const GritTexture& tex);
   void loadWirelessIcons(const GritTexture& tex);
 
-  void loadBottomBackgrounds();
+  void loadBackgrounds();
 
   void loadDateFont(const unsigned short *bitmap);
 
@@ -266,7 +266,6 @@ private:
   unique_ptr<BmpTexture> _rightShoulderGreyedTexture;
 
   unique_ptr<u16[]> _bgSubBuffer;
-  unique_ptr<u16[]> _bmpImageBuffer;
 
   unique_ptr<u16[]> _bottomBgImage;
   unique_ptr<u16[]> _bottomBubbleBgImage;

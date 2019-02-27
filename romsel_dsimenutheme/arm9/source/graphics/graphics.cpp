@@ -366,35 +366,35 @@ void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 static void *rotatingCubesLocation = (void *)0x02700000;
 
 void playRotatingCubesVideo(void) {
-	if (rocketVideo_playVideo) {
-		if (!rocketVideo_loadFrame) {
-			rocketVideo_frameDelay++;
-			rocketVideo_loadFrame = (rocketVideo_frameDelay == 2 + rocketVideo_frameDelayEven);
+	if (!rocketVideo_playVideo)
+		return;
+	if (!rocketVideo_loadFrame) {
+		rocketVideo_frameDelay++;
+		rocketVideo_loadFrame = (rocketVideo_frameDelay == 2 + rocketVideo_frameDelayEven);
+	}
+
+	if (rocketVideo_loadFrame) {
+		rocketVideo_currentFrame++;
+
+		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+			rocketVideo_currentFrame = 0;
 		}
 
-		if (rocketVideo_loadFrame) {
-			rocketVideo_currentFrame++;
+		DC_FlushRange(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000), 0x7000);
+		dmaCopyWordsAsynch(1, rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000),
+				   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
 
-			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-				rocketVideo_currentFrame = 0;
+		if (ms().colorMode == 1) {
+			u16 *bgSubBuffer = tex().beginSubModify();
+			for (u16 i = 0; i < 256 * 56; i++) {
+				bgSubBuffer[(rocketVideo_videoYpos * 256) + i] =
+				    convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos * 256) + i]);
 			}
-
-			DC_FlushRange(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000), 0x7000);
-			dmaCopyWordsAsynch(1, rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000),
-					   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
-
-			if (ms().colorMode == 1) {
-				u16 *bgSubBuffer = tex().beginSubModify();
-				for (u16 i = 0; i < 256 * 56; i++) {
-					bgSubBuffer[(rocketVideo_videoYpos * 256) + i] =
-					    convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos * 256) + i]);
-				}
-				tex().commitSubModifyAsync();
-			}
-			rocketVideo_frameDelay = 0;
-			rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
-			rocketVideo_loadFrame = false;
+			tex().commitSubModifyAsync();
 		}
+		rocketVideo_frameDelay = 0;
+		rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+		rocketVideo_loadFrame = false;
 	}
 }
 
@@ -1438,8 +1438,9 @@ void clearBoxArt() {
 // static char videoFrameFilename[256];
 
 void loadRotatingCubes() {
-	FILE *videoFrameFile = fopen(std::string(TFN_RVID_CUBES).c_str(), "rb");
-	
+	std::string cubes(TFN_RVID_CUBES);
+	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
+
 	// if (!videoFrameFile) {
 	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
 	// }
@@ -1491,6 +1492,7 @@ void loadRotatingCubes() {
 				doRead = true;
 			}
 		}
+
 		if (doRead) {
 			fread(rotatingCubesLocation, 1, 0x690000, videoFrameFile);
 			rotatingCubesLoaded = true;
