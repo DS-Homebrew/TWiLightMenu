@@ -132,7 +132,11 @@ void deferLoadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
  */
 void execDeferredIconUpdates() {
 	for (auto arg : queuedIconUpdateCache) {
-		auto &[tilesSrc, palSrc, num, twl] = arg;
+		u8 *tilesSrc;
+		u16 *palSrc;
+		int num;
+		bool twl;
+		std::tie(tilesSrc, palSrc, num, twl) = arg;
 		convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 		glLoadIcon(num, (u16 *)palSrc, (u8 *)tilesModified, twl ? TWL_TEX_HEIGHT : 32);
 	}
