@@ -56,7 +56,10 @@ class singleton
     }
 
   private:
-    static inline T *_instance = NULL;
+    static T *_instance;
 };
+
+template<typename T,  typename...Args>
+T * singleton<T, Args...>::_instance = NULL;
 
 #endif //_SINGLETON_H_
