@@ -559,8 +559,15 @@ int main(int argc, char **argv) {
 	ms().loadSettings();
 	tfn(); //
 	tc().loadConfig();
-	tex(); // allocate texture pointers
+	tex().videoSetup(); // allocate texture pointers
 
+	fontInit();
+
+	if (ms().theme == 1) {
+		tex().load3DSTheme();
+	} else {
+		tex().loadDSiTheme();
+	}
 
 	// if (ms().theme == 1) {
 	// 	tex().load3DSTheme();
@@ -694,7 +701,6 @@ int main(int argc, char **argv) {
 	}
 
 	graphicsInit();
-	fontInit();
 	iconManagerInit();
 
 	keysSetRepeat(10, 2);

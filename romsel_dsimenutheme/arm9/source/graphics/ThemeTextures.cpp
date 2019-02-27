@@ -15,6 +15,7 @@
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
+#include "errorScreen.h"
 
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
@@ -972,4 +973,53 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 
 u16 *ThemeTextures::bmpImageBuffer() {
 	return _bmpImageBuffer;
+}
+
+void ThemeTextures::videoSetup() {
+//////////////////////////////////////////////////////////
+	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+
+	// Initialize gl2d
+	glScreen2D();
+	// Make gl2d render on transparent stage.
+	glClearColor(31, 31, 31, 0);
+	glDisable(GL_CLEAR_BMP);
+
+	// Clear the GL texture state
+	glResetTextures();
+
+	// Set up enough texture memory for our textures
+	// Bank A is just 128kb and we are using 194 kb of
+	// sprites
+	vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankB(VRAM_B_TEXTURE);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+	//	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything...
+	lcdMainOnBottom();
+
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1 << 8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1 << 8;
+
+	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X_SUB = 0;
+	REG_BG3Y_SUB = 0;
+	REG_BG3PA_SUB = 1 << 8;
+	REG_BG3PB_SUB = 0;
+	REG_BG3PC_SUB = 0;
+	REG_BG3PD_SUB = 1 << 8;
+
+	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 }
