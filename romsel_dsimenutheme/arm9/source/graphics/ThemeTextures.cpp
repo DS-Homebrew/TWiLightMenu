@@ -527,9 +527,8 @@ void ThemeTextures::drawProfileName() {
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
 			for (int y = 15; y >= 0; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
-				u16 *src = buffer + (top_font_texcoords[0 + (4 * charIndex)]);
+				fread(bmpImageBuffer, 2, 0x200, file);
+				u16 *src = bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
