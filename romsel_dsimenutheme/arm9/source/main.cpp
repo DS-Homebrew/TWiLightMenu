@@ -724,13 +724,16 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	if (!music) {
+	/*if (!music) {
 		if (ms().theme == 1) {
 			mmEffectEx(&mus_startup);
 		} else {
 			mmEffectEx(&mus_menu);
 		}
 		music = true;
+	}*/
+	if (ms().theme == 1) {
+		mmEffectEx(&mus_startup);
 	}
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
