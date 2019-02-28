@@ -298,7 +298,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 	} else {
 		CIniFile hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
-		char str[11];
+		char str[12] = {0};
 
 		for (int i = 0; true; i++) {
 			sprintf(str, "%d", i);
@@ -1471,7 +1471,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 
 					CIniFile gameOrderIni(gameOrderIniPath);
 					vector<std::string> gameOrder;
-					char str[11];
+					char str[12] = {0};
 
 					for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
 						sprintf(str, "%d", i);
@@ -1516,7 +1516,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 					gameOrder.insert(gameOrder.begin() + CURPOS + (PAGENUM * 40), gameBeingMoved);
 
 					for (int i = 0; i < (int)gameOrder.size(); i++) {
-						char str[12];
+						char str[12] = {0};
 						sprintf(str, "%d", i);
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 					}
@@ -2306,7 +2306,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 			if ((pressed & KEY_X) && !startMenu && (currentBg == 1) && showSTARTborder) {
 				CIniFile hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
-				char str[11];
+				char str[12] = {0};
 
 				for (int i = 0; true; i++) {
 					sprintf(str, "%d", i);
@@ -2442,7 +2442,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 						}
 
 						for (int i = 0; i < (int)hiddenGames.size(); i++) {
-							char str[9];
+							char str[12] = {0};
 							sprintf(str, "%d", i);
 							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str,
 										 hiddenGames[i]);
