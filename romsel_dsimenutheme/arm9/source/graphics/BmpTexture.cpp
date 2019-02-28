@@ -1,6 +1,6 @@
 #include "BmpTexture.h"
 
-BmpTexture::BmpTexture(const std::string& filePath, const std::string& fallback)
+BmpTexture::BmpTexture(const std::string& filePath, const std::string& fallback) noexcept
     : _texHeight(0), _texWidth(0), _texLength(0)
 {
     FILE *file = fopen(filePath.c_str(), "rb");

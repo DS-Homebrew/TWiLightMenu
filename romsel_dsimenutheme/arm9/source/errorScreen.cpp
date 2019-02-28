@@ -18,7 +18,6 @@ extern bool showdialogbox;
 extern int dbox_Ypos;
 
 
-extern u16 bmpImageBuffer[256*192];
 u16* sdRemovedImage = (u16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
@@ -30,8 +29,8 @@ void loadSdRemovedImage(void) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
+		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
+		u16* src = tex().bmpImageBuffer();
 		int x = 0;
 		int y = 191;
 		for (int i=0; i<256*192; i++) {

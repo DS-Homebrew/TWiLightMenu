@@ -21,6 +21,8 @@ SystemDetails::SystemDetails()
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
     
+    // force is regular ds
+    //_isRegularDS = true;
     // Restore value.
     fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
 }

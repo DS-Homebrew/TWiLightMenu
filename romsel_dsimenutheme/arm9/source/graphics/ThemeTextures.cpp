@@ -15,9 +15,15 @@
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
+#include "errorScreen.h"
 
-extern u16 bmpImageBuffer[256*192];
+// extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
+
+static u16 _bmpImageBuffer[256 * 192] = {0};
+static u16 _bottomBgImage[256 * 192] = {0};
+static u16 _bottomBubbleBgImage[256 * 192] = {0};
+static u16 _bgSubBuffer[256 * 192] = {0};
 
 ThemeTextures::ThemeTextures()
     : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0), movingarrowTexID(0), launchdotTexID(0),
@@ -184,7 +190,7 @@ void ThemeTextures::loadBackgrounds() {
 					y--;
 				}
 				u16 val = *(src++);
-				_bottomMovingBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -203,7 +209,7 @@ void ThemeTextures::loadBackgrounds() {
 					y--;
 				}
 				u16 val = *(src++);
-				_bottomBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -220,7 +226,7 @@ void ThemeTextures::loadBackgrounds() {
 					y--;
 				}
 				u16 val = *(src++);
-				_bottomBubbleBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -237,7 +243,7 @@ void ThemeTextures::loadBackgrounds() {
 					y--;
 				}
 				u16 val = *(src++);
-				_bottomBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -253,7 +259,7 @@ void ThemeTextures::loadBackgrounds() {
 					y--;
 				}
 				u16 val = *(src++);
-				_bottomBubbleBgImage.get()[y * 256 + x] = convertToDsBmp(val);
+				_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
 				x++;
 			}
 		}
@@ -263,10 +269,6 @@ void ThemeTextures::loadBackgrounds() {
 
 void ThemeTextures::load3DSTheme() {
 
-	_bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	
 	loadUITextures();
 	loadBackgrounds();
 
@@ -308,9 +310,6 @@ void ThemeTextures::load3DSTheme() {
 
 void ThemeTextures::loadDSiTheme() {
 
-	_bgSubBuffer = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-	_bottomBubbleBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
 	_bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
 
 	loadUITextures();
@@ -447,18 +446,18 @@ void ThemeTextures::loadIconTextures() {
 	// }
 }
 u16 *ThemeTextures::beginSubModify() {
-	dmaCopyWords(0, BG_GFX_SUB, _bgSubBuffer.get(), sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	return _bgSubBuffer.get();
+	dmaCopyWords(0, BG_GFX_SUB, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	return _bgSubBuffer;
 }
 
 void ThemeTextures::commitSubModify() {
-	DC_FlushRange(_bgSubBuffer.get(), sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWords(2, _bgSubBuffer.get(), BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::commitSubModifyAsync() {
-	DC_FlushRange(_bgSubBuffer.get(), sizeof(u16) * BG_BUFFER_PIXELCOUNT);
-	dmaCopyWordsAsynch(2, _bgSubBuffer.get(), BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWordsAsynch(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
 void ThemeTextures::drawTopBg() {
@@ -482,13 +481,13 @@ void ThemeTextures::drawTopBg() {
 }
 
 void ThemeTextures::drawBottomBg() {
-	DC_FlushRange(_bottomBgImage.get(), 0x18000);
-	dmaCopyWords(0, _bottomBgImage.get(), BG_GFX, 0x18000);
+	DC_FlushRange(_bottomBgImage, 0x18000);
+	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBottomBubbleBg() {
-	DC_FlushRange(_bottomBubbleBgImage.get(), 0x18000);
-	dmaCopyWords(0, _bottomBubbleBgImage.get(), BG_GFX, 0x18000);
+	DC_FlushRange(_bottomBubbleBgImage, 0x18000);
+	dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBottomMovingBg() {
@@ -527,8 +526,8 @@ void ThemeTextures::drawProfileName() {
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
 			for (int y = 15; y >= 0; y--) {
-				fread(bmpImageBuffer, 2, 0x200, file);
-				u16 *src = bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
+				fread(_bmpImageBuffer, 2, 0x200, file);
+				u16 *src = _bmpImageBuffer + (top_font_texcoords[0 + (4 * charIndex)]);
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
@@ -637,8 +636,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x7800, file);
-		u16 *src = bmpImageBuffer;
+		fread(_bmpImageBuffer, 2, 0x7800, file);
+		u16 *src = _bmpImageBuffer;
 		int x = 64;
 		int y = 40 + 114;
 		for (int i = 0; i < 128 * 115; i++) {
@@ -970,4 +969,57 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	if (_iconUnknownTexture) {
 		_iconUnknownTexture->applyEffect(effectGrayscalePalette);
 	}
+}
+
+u16 *ThemeTextures::bmpImageBuffer() {
+	return _bmpImageBuffer;
+}
+
+void ThemeTextures::videoSetup() {
+//////////////////////////////////////////////////////////
+	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
+
+	// Initialize gl2d
+	glScreen2D();
+	// Make gl2d render on transparent stage.
+	glClearColor(31, 31, 31, 0);
+	glDisable(GL_CLEAR_BMP);
+
+	// Clear the GL texture state
+	glResetTextures();
+
+	// Set up enough texture memory for our textures
+	// Bank A is just 128kb and we are using 194 kb of
+	// sprites
+	vramSetBankA(VRAM_A_TEXTURE);
+	vramSetBankB(VRAM_B_TEXTURE);
+	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+	vramSetBankD(VRAM_D_MAIN_BG_0x06000000);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankF(VRAM_F_TEX_PALETTE_SLOT4);
+	vramSetBankG(VRAM_G_TEX_PALETTE_SLOT5); // 16Kb of palette ram, and font textures take up 8*16 bytes.
+	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+	vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+	//	vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE); // Not sure this does anything...
+	lcdMainOnBottom();
+
+	REG_BG3CNT = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X = 0;
+	REG_BG3Y = 0;
+	REG_BG3PA = 1 << 8;
+	REG_BG3PB = 0;
+	REG_BG3PC = 0;
+	REG_BG3PD = 1 << 8;
+
+	REG_BG3CNT_SUB = BG_MAP_BASE(0) | BG_BMP16_256x256 | BG_PRIORITY(0);
+	REG_BG3X_SUB = 0;
+	REG_BG3Y_SUB = 0;
+	REG_BG3PA_SUB = 1 << 8;
+	REG_BG3PB_SUB = 0;
+	REG_BG3PC_SUB = 0;
+	REG_BG3PD_SUB = 1 << 8;
+
+	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 }
