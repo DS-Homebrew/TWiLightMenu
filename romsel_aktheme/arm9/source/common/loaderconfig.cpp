@@ -31,7 +31,10 @@ LoaderConfig& LoaderConfig::option(const std::string& section, const std::string
 int LoaderConfig::launch(int argc, const char** argv, bool clearBrightness, bool dsModeSwitch, bool boostCpu, bool boostVram) 
 {
     CIniFile file(_configPath);
-    for (auto& [section, item, value] : _iniOptions) {
+    std::string section, item, value;
+    
+    for (auto &p  : _iniOptions) {
+        std::tie(section, item, value) = std::move(p);
         file.SetString(section, item, value);
     }
     file.SaveIniFile(_configPath);
