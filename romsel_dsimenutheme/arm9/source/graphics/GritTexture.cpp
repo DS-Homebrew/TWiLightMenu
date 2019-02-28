@@ -21,7 +21,7 @@ bool verify_grif(FILE *file) {
 	return true;
 }
 
-GritTexture::GritTexture(const std::string& filePath, const std::string& fallback) {
+GritTexture::GritTexture(const std::string& filePath, const std::string& fallback) noexcept {
 	FILE *file = fopen(filePath.c_str(), "rb");
 	bool isValidGrif = false;
 

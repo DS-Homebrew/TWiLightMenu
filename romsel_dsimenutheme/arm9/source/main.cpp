@@ -557,8 +557,23 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	ms().loadSettings();
+	tfn(); //
 	tc().loadConfig();
-	tfn();
+	tex().videoSetup(); // allocate texture pointers
+
+	fontInit();
+
+	if (ms().theme == 1) {
+		tex().load3DSTheme();
+	} else {
+		tex().loadDSiTheme();
+	}
+
+	// if (ms().theme == 1) {
+	// 	tex().load3DSTheme();
+	// } else {
+	// 	tex().loadDSiTheme();
+	// // }
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
@@ -686,7 +701,6 @@ int main(int argc, char **argv) {
 	}
 
 	graphicsInit();
-	fontInit();
 	iconManagerInit();
 
 	keysSetRepeat(10, 2);
@@ -724,16 +738,13 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	/*if (!music) {
+	if (!music) {
 		if (ms().theme == 1) {
 			mmEffectEx(&mus_startup);
 		} else {
 			mmEffectEx(&mus_menu);
 		}
 		music = true;
-	}*/
-	if (ms().theme == 1) {
-		mmEffectEx(&mus_startup);
 	}
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
