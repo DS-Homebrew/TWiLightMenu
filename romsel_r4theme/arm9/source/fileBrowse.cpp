@@ -289,6 +289,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "plg")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "PLG"))
+			{
+				bnrRomType = 1;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
