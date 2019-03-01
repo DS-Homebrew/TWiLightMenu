@@ -531,7 +531,10 @@ void ThemeTextures::drawProfileName() {
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
-					u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
+					// Blend with pixel
+					const u16 bg = _topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)];
+
+					// const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
 					// Magic numbers were found by dumping val to stdout
@@ -540,23 +543,25 @@ void ThemeTextures::drawProfileName() {
 					// #ff00ff
 					case 0xFC1F:
 						break;
-					// #414141
+					// #404040
 					case 0xA108:
-						val = bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)];
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U);
 						break;
+					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
-						val = alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)],
-								 bg, 48);
+						// Fills in the 
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U);
 						break;
+					// #b8b8b8
 					case 0xDEF7:
-						val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
-								 bg, 64);
+						 val = alphablend(bmpPal_topSmallFont[6 + ((PersonalData->theme) * 16)], bg, 24U);
+							
 					default:
 						break;
 					}
 					if (val != 0xFC1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(val);
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = alphablend(convertToDsBmp(val), bg, 127U); // blend twice
 					}
 				}
 			}
