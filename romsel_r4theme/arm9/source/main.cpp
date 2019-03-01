@@ -1530,22 +1530,20 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
 
-						if (isHomebrew == 0)
-						{
-						if(codelist.romData(path,gameCode,crc32))
-						{
-                            long cheatOffset; size_t cheatSize;
-                            FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-                            if(dat)
-                            {
-                            if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
-                            {
-                                codelist.parse(path);
-                                bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
-                            }
-                            fclose(dat);
-                            }
-						}
+						if (isHomebrew == 0) {
+							if(codelist.romData(path,gameCode,crc32)) {
+								long cheatOffset; size_t cheatSize;
+								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+								if(dat) {
+									if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize)) {
+										codelist.parse(path);
+										bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
+									} else {
+										bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
+									}
+									fclose(dat);
+								}
+							}
 						}
 
 						bootstrapini.SaveIniFile( bootstrapinipath );

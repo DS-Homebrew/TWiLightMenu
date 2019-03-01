@@ -1259,6 +1259,10 @@ int main(int argc, char **argv) {
 										bootstrapini.SetString(
 										    "NDS-BOOTSTRAP", "CHEAT_DATA",
 										    codelist.getCheats());
+									} else {
+										bootstrapini.SetString(
+											"NDS-BOOTSTRAP", "CHEAT_DATA",
+											"");
 									}
 									fclose(dat);
 								}
@@ -1271,7 +1275,7 @@ int main(int argc, char **argv) {
 						}
 						ms().launchType = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
-						// SaveSettings();
+						ms().saveSettings();
 						if (ms().secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (ms().homebrewBootstrap) {
@@ -1375,7 +1379,7 @@ int main(int argc, char **argv) {
 					}
 					ms().launchType = Launch::ESDFlashcardLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
-					// SaveSettings();
+					ms().saveSettings();
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {
@@ -1432,7 +1436,7 @@ int main(int argc, char **argv) {
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;
-				// SaveSettings();
+				ms().saveSettings();
 				argarray.push_back(ROMpath);
 				int err = 0;
 
