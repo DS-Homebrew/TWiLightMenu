@@ -7,11 +7,13 @@
 #include "BmpTexture.h"
 #include <memory>
 #include <string>
+#include <algorithm>
 
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
 using std::unique_ptr;
+using std::min;
 
 class ThemeTextures
 {
@@ -298,12 +300,7 @@ private:
 };
 
 
-//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
-#define MASK_RB 0b0111110000011111
-#define MASK_G 0b0000001111100000
-#define MASK_MUL_RB 0b0111110000011111000000
-#define MASK_MUL_G 0b0000001111100000000000
-#define MAX_ALPHA 64 // 6bits+1 with rounding
+//   xbbbbbgggggrrrrr according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
 
 /**
  * Adapted from https://stackoverflow.com/questions/18937701/
@@ -333,11 +330,38 @@ inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
     out_r = (out_r + 1 + (out_r >> 8)) >> 8;
     out_g = (out_g + 1 + (out_g >> 8)) >> 8;
     out_b = (out_b + 1 + (out_b >> 8)) >> 8;
-
-  
     return (u16) ((out_b << 10) | (out_g << 5) | out_r | BIT(15));
 }
 
+
+
+/**
+ * Adapted from https://stackoverflow.com/questions/18937701/
+ * applies alphablending with the given
+ * RGB555 foreground, RGB555 background, and alpha from
+ * 0 to 128 (0, 1.0).
+ * The lower the alpha the more transparent, but
+ * this function does not produce good results at the extremes
+ * (near 0 or 128).
+ */
+inline u16 blend(const u16 fg, const u16 bg) {
+
+	  u8 fg_b, fg_g, fg_r, bg_b, bg_g, bg_r;
+		fg_b = ((fg) >> 10) & 31;
+		fg_g = ((fg) >> 5) & 31;
+		fg_r = (fg)&31;
+    
+		bg_b = ((fg) >> 10) & 31;
+		bg_g = ((fg) >> 5) & 31;
+		bg_r = (fg)&31;
+
+
+ // Alpha blend components
+    unsigned out_r = min((fg_r + bg_r) >> 1, 255);
+    unsigned out_g = min((fg_g + bg_g) >> 1, 255);
+    unsigned out_b = min((fg_b + bg_b) >> 1, 255);
+    return (u16) ((out_b << 10) | (out_g << 5) | out_r | BIT(15));
+}
 
 typedef singleton<ThemeTextures> themeTextures_s;
 inline ThemeTextures &tex() { return themeTextures_s::instance(); }

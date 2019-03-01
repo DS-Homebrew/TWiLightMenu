@@ -545,23 +545,26 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U);
+						val = blend(alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)], bg, 64U), bg);
 						break;
 					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
 						// Fills in the 
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U);
+						// 1 for light
+						val = blend(alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)], bg, 64U), bg);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
-						 val = alphablend(bmpPal_topSmallFont[6 + ((PersonalData->theme) * 16)], bg, 24U);
+						// 6 looks good 
+						// do an average blend twice
+						 val = blend(blend(bmpPal_topSmallFont[6 + ((PersonalData->theme) * 16)], bg), bg);
 							
 					default:
 						break;
 					}
 					if (val != 0xFC1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = alphablend(convertToDsBmp(val), bg, 127U); // blend twice
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(blend(val, bg)); // blend twice
 					}
 				}
 			}
