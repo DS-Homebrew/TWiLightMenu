@@ -532,9 +532,9 @@ void ThemeTextures::drawProfileName() {
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
 					// Blend with pixel
-					const u16 bg = _topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)];
+					const u16 bg = convertToDsBmp(_topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)]);
 
-					const u8 shadeIndex = grayscale(val) >= 0x1777 ? 6 : 3; // rgb(112,112,112)
+					const u8 shadeIndex = grayscale(bg) >= 0x1777 ? 6 : 3; // rgb(112,112,112)
 					// const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
