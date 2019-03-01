@@ -545,14 +545,14 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = blend(alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)], bg, 64U), bg);
+						val = blend(alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U), bg);
 						break;
 					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
 						// Fills in the 
 						// 1 for light
-						val = blend(alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)], bg, 64U), bg);
+						val = blend(alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U), bg);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
