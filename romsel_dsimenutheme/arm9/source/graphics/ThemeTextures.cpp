@@ -16,7 +16,7 @@
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 #include "errorScreen.h"
-
+#include "color.h"
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
 
@@ -534,6 +534,7 @@ void ThemeTextures::drawProfileName() {
 					// Blend with pixel
 					const u16 bg = _topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)];
 
+					const u8 shadeIndex = grayscale(val) >= 0x1777 ? 6 : 3; // rgb(112,112,112)
 					// const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
@@ -557,8 +558,8 @@ void ThemeTextures::drawProfileName() {
 					// #b8b8b8
 					case 0xDEF7:
 						// 6 looks good 
-						// do an average blend twice
-						 val = blend(blend(bmpPal_topSmallFont[6 + ((PersonalData->theme) * 16)], bg), bg);
+						// 3 do an average blend twice
+						 val = blend(blend(bmpPal_topSmallFont[shadeIndex + ((PersonalData->theme) * 16)], bg), bg);
 							
 					default:
 						break;
