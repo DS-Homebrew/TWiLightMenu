@@ -534,7 +534,7 @@ void ThemeTextures::drawProfileName() {
 					// Blend with pixel
 					const u16 bg = convertToDsBmp(_topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)]);
 
-					const u8 shadeIndex = grayscale(bg) >= 0x1777 ? 6 : 3; // rgb(112,112,112)
+					const u8 shadeIndex = grayscale(bg) >= 0xC210 ? 6 : 3; // rgb(112,112,112)
 					// const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
