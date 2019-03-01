@@ -1259,6 +1259,10 @@ int main(int argc, char **argv) {
 										bootstrapini.SetString(
 										    "NDS-BOOTSTRAP", "CHEAT_DATA",
 										    codelist.getCheats());
+									} else {
+										bootstrapini.SetString(
+											"NDS-BOOTSTRAP", "CHEAT_DATA",
+											"");
 									}
 									fclose(dat);
 								}
