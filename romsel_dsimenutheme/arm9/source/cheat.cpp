@@ -19,6 +19,7 @@
 */
 
 #include "cheat.h"
+#include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
@@ -63,7 +64,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(aFileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
+    FILE* dat=fopen((sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
