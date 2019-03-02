@@ -5,6 +5,7 @@
 #include <nds.h>
 #include <algorithm>
 using std::min;
+using std::max;
 
 inline u16 grayscale(u16 val) {
     	u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
@@ -43,24 +44,24 @@ inline u16 grayscale(u16 val) {
  */
 inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
 
-	  u8 fg_b, fg_g, fg_r, bg_b, bg_g, bg_r;
+	  u16 fg_b, fg_g, fg_r, bg_b, bg_g, bg_r;
 		fg_b = ((fg) >> 10) & 31;
 		fg_g = ((fg) >> 5) & 31;
 		fg_r = (fg)&31;
     
-		bg_b = ((fg) >> 10) & 31;
-		bg_g = ((fg) >> 5) & 31;
-		bg_r = (fg)&31;
+		bg_b = ((bg) >> 10) & 31;
+		bg_g = ((bg) >> 5) & 31;
+		bg_r = (bg)&31;
 
-
- // Alpha blend components
-    unsigned out_r = fg_r * alpha + bg_r * (255 - alpha);
-    unsigned out_g = fg_g * alpha + bg_g * (255 - alpha);
-    unsigned out_b = fg_b * alpha + bg_b * (255 - alpha);
-    out_r = (out_r + 1 + (out_r >> 8)) >> 8;
-    out_g = (out_g + 1 + (out_g >> 8)) >> 8;
-    out_b = (out_b + 1 + (out_b >> 8)) >> 8;
-    return (u16) ((out_b << 10) | (out_g << 5) | out_r | BIT(15));
+  //  Alpha blend components
+    u16 out_r = fg_r * alpha + bg_r * (255 - alpha);
+    u16 out_g = fg_g * alpha + bg_g * (255 - alpha);
+    u16 out_b = fg_b * alpha + bg_b * (255 - alpha);
+    out_r = min((out_r + 1 + (out_r >> 8)) >> 8, 255);
+    out_g = min((out_g + 1 + (out_g >> 8)) >> 8, 255);
+    out_b = min((out_b + 1 + (out_b >> 8)) >> 8, 255);
+		
+    return (u16) (BIT(15) | (out_b << 10) | (out_g << 5) | out_r);
 }
 
 
@@ -69,10 +70,7 @@ inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
  * Adapted from https://stackoverflow.com/questions/18937701/
  * applies alphablending with the given
  * RGB555 foreground, RGB555 background, and alpha from
- * 0 to 128 (0, 1.0).
- * The lower the alpha the more transparent, but
- * this function does not produce good results at the extremes
- * (near 0 or 128).
+ * 0 to 255 (0, 1.0).
  */
 inline u16 blend(const u16 fg, const u16 bg) {
 
@@ -81,9 +79,9 @@ inline u16 blend(const u16 fg, const u16 bg) {
 		fg_g = ((fg) >> 5) & 31;
 		fg_r = (fg)&31;
     
-		bg_b = ((fg) >> 10) & 31;
-		bg_g = ((fg) >> 5) & 31;
-		bg_r = (fg)&31;
+		bg_b = ((bg) >> 10) & 31;
+		bg_g = ((bg) >> 5) & 31;
+		bg_r = (bg)&31;
 
 
  // Alpha blend components

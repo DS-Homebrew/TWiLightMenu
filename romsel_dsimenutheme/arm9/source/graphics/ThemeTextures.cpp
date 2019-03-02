@@ -532,10 +532,8 @@ void ThemeTextures::drawProfileName() {
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
 					// Blend with pixel
-					const u16 bg = convertToDsBmp(_topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)]);
-
-					const u8 shadeIndex = grayscale(bg) >= 0xC210 ? 6 : 3; // rgb(112,112,112)
-					// const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
+					// const u16 bg = _topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)];
+					const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
 					// Magic numbers were found by dumping val to stdout
@@ -546,26 +544,27 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = blend(alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U), bg);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 236U);
 						break;
 					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
 						// Fills in the 
 						// 1 for light
-						val = blend(alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 64U), bg);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 236U);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
-						// 6 looks good 
+						// 6 looks good on lighter themes
 						// 3 do an average blend twice
-						 val = blend(blend(bmpPal_topSmallFont[shadeIndex + ((PersonalData->theme) * 16)], bg), bg);
-							
+						 val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)], bg, 64U);
+						break;
 					default:
 						break;
 					}
-					if (val != 0xFC1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(blend(val, bg)); // blend twice
+					val = convertToDsBmp(val);
+					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = val; 
 					}
 				}
 			}
