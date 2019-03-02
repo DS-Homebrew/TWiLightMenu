@@ -292,7 +292,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "plg")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "PLG"))
 			{
-				bnrRomType = 1;
+				bnrRomType = 8;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;

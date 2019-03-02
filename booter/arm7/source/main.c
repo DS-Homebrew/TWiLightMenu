@@ -62,9 +62,14 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    nocashMessage("ARM7 main.c main");
-
-	//*(u16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+	if (isDSiMode()) {
+		REG_SCFG_ROM = 0x101;
+		REG_SCFG_CLK = (BIT(0) | BIT(1) | BIT(2) | BIT(7) | BIT(8));
+		REG_SCFG_EXT = 0x93FFFB06;
+		*(vu16*)(0x04004012) = 0x1988;
+		*(vu16*)(0x04004014) = 0x264C;
+		*(vu16*)(0x04004C02) = 0x4000;	// enable powerbutton irq (Fix for Unlaunch 1.3)
+	}
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);

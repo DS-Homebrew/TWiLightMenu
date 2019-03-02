@@ -976,6 +976,14 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
 				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "plg") ||
+					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "PLG")) {
+					bnrRomType[i] = 1;
+					bnrWirelessIcon[i] = 0;
+					isDSiWare[i] = false;
+					isHomebrew[i] = 0;
+				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "gbc") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GBC")) {

@@ -7,11 +7,13 @@
 #include "BmpTexture.h"
 #include <memory>
 #include <string>
+#include <algorithm>
 
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
 using std::unique_ptr;
+using std::min;
 
 class ThemeTextures
 {
@@ -298,37 +300,7 @@ private:
 };
 
 
-//   xrrrrrgggggbbbbb according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
-#define MASK_RB 0b0111110000011111
-#define MASK_G 0b0000001111100000
-#define MASK_MUL_RB 0b0111110000011111000000
-#define MASK_MUL_G 0b0000001111100000000000
-#define MAX_ALPHA 64 // 6bits+1 with rounding
-
-/**
- * Adapted from https://stackoverflow.com/questions/18937701/
- * applies alphablending with the given
- * RGB555 foreground, RGB555 background, and alpha from
- * 0 to 128 (0, 1.0).
- * The lower the alpha the more transparent, but
- * this function does not produce good results at the extremes
- * (near 0 or 128).
- */
-inline u16 alphablend(u16 fg, u16 bg, u8 alpha) {
-
-	// alpha for foreground multiplication
-	// convert from 8bit to (6bit+1) with rounding
-	// will be in [0..64] inclusive
-	alpha = (alpha + 2) >> 2;
-	// "beta" for background multiplication; (6bit+1);
-	// will be in [0..64] inclusive
-	u8 beta = MAX_ALPHA - alpha;
-	// so (0..64)*alpha + (0..64)*beta always in 0..64
-
-	return (u16)((((alpha * (u32)(fg & MASK_RB) + beta * (u32)(bg & MASK_RB)) & MASK_MUL_RB) |
-		      ((alpha * (fg & MASK_G) + beta * (bg & MASK_G)) & MASK_MUL_G)) >>
-		     5);
-}
+//   xbbbbbgggggrrrrr according to http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol
 
 
 typedef singleton<ThemeTextures> themeTextures_s;

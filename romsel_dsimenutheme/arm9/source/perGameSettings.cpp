@@ -252,15 +252,18 @@ void perGameSettings (std::string filename) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 		// About 38 characters fit in the box.
-		if (strlen(filename.c_str()) > 38) {
+		std::string displayFilename = filename;
+		if (strlen(displayFilename.c_str()) > 35) {
 			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			filename.resize(35, ' ');
-			size_t first = filename.find_first_not_of(' ');
-			size_t last = filename.find_last_not_of(' ');
-			filename = filename.substr(first, (last - first + 1));
-			filename.append("...");
+			displayFilename.resize(32, ' ');
+			size_t first = displayFilename.find_first_not_of(' ');
+			size_t last = displayFilename.find_last_not_of(' ');
+			displayFilename = displayFilename.substr(first, (last - first + 1));
+			displayFilename.append("...");
 		}
-		printSmall(false, 16, 66, filename.c_str());
+
+
+		printSmall(false, 16, 66, displayFilename.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);

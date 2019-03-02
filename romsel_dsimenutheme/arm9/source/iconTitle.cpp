@@ -667,7 +667,8 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		} else {
 			writeBannerText(0, name, "", "");
 		}
-	} else if (strcasecmp(name + strlen(name) - 3, ".gb") == 0 || strcasecmp(name + strlen(name) - 4, ".GB") == 0 ||
+	} else if (strcasecmp(name + strlen(name) - 4, ".plg") == 0 || strcasecmp(name + strlen(name) - 4, ".PLG") == 0 ||
+		   strcasecmp(name + strlen(name) - 3, ".gb") == 0 || strcasecmp(name + strlen(name) - 4, ".GB") == 0 ||
 		   strcasecmp(name + strlen(name) - 4, ".sgb") == 0 ||
 		   strcasecmp(name + strlen(name) - 4, ".SGB") == 0 ||
 		   strcasecmp(name + strlen(name) - 4, ".gbc") == 0 ||
