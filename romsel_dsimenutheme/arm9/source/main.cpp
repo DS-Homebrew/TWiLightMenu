@@ -712,6 +712,9 @@ int main(int argc, char **argv) {
 		extensionList.push_back(".ids");
 		extensionList.push_back(".argv");
 	}
+	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+		extensionList.push_back(".plg");
+	}
 	if (ms().showGb) {
 		extensionList.push_back(".gb");
 		extensionList.push_back(".sgb");
@@ -841,6 +844,7 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
+			bool dstwoPlg = false;
 			bool SNES = false;
 			bool GENESIS = false;
 			bool gameboy = false;
@@ -1403,6 +1407,8 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
+			} else if (extention(filename, ".plg", 4)) {
+				dstwoPlg = true;
 			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) ||
 				   extention(filename, ".gbc", 4)) {
 				gameboy = true;
@@ -1419,7 +1425,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (gameboy || nes || gamegear) {
+			if (dstwoPlg || gameboy || nes || gamegear) {
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -1440,7 +1446,20 @@ int main(int argc, char **argv) {
 				argarray.push_back(ROMpath);
 				int err = 0;
 
-				if (gameboy) {
+				if (dstwoPlg) {
+					argarray.at(0) = (char*)("/_nds/TWiLightMenu/bootplg.srldr");
+
+					// Print .plg path without "fat:" at the beginning
+					char ROMpathDS2[256];
+					for (int i = 0; i < 252; i++) {
+						ROMpathDS2[i] = ROMpath[4+i];
+						if (ROMpath[4+i] == '\x00') break;
+					}
+
+					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
+					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (gameboy) {
 					argarray.at(0) = (char *)(ms().secondaryDevice
 								      ? "/_nds/TWiLightMenu/emulators/gameyob.nds"
 								      : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
