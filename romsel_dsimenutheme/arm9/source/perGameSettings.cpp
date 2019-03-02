@@ -253,9 +253,9 @@ void perGameSettings (std::string filename) {
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 		// About 38 characters fit in the box.
 		std::string displayFilename = filename;
-		if (strlen(displayFilename.c_str()) > 38) {
+		if (strlen(displayFilename.c_str()) > 35) {
 			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			displayFilename.resize(35, ' ');
+			displayFilename.resize(32, ' ');
 			size_t first = displayFilename.find_first_not_of(' ');
 			size_t last = displayFilename.find_last_not_of(' ');
 			displayFilename = displayFilename.substr(first, (last - first + 1));
