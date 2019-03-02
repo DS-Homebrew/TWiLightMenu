@@ -154,7 +154,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, int num, bool twl) {
 	}
 }
 
-void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->texture()); }
+void loadUnkIcon(int num) { glLoadIcon(num, tex().iconUnknownTexture()->palette(), tex().iconUnknownTexture()->bytes()); }
 
 static void clearIcon(int num) { glClearIcon(num); }
 

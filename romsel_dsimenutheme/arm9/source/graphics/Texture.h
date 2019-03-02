@@ -51,7 +51,8 @@ class Texture
         void applyBitmapEffect(BitmapEffect effect);
 
         const u16 *palette() const { return _type == TextureType::PalettedGrf ? (u16*)_palette.get() : NULL; }
-        const u8 *texture() const { return (u8*)_texture.get(); }
+        const u16 *texture() const { return _texture.get(); }
+        const u8 *bytes() const { return (u8*)_texture.get(); }
 
         u32 texHeight() const { return _texHeight; };
         u32 texWidth() const { return _texWidth; };
