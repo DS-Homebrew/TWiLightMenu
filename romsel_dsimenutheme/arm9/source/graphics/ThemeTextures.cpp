@@ -532,7 +532,6 @@ void ThemeTextures::drawProfileName() {
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
 					// Blend with pixel
-					// const u16 bg = _topBackgroundTexture->texture()[(y + 2) * 256 + (i + x)];
 					const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
@@ -544,14 +543,14 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 236U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 184U);
 						break;
 					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
 						// Fills in the 
 						// 1 for light
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 236U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 184U);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
