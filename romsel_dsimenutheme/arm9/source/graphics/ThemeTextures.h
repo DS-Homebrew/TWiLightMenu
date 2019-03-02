@@ -7,12 +7,13 @@
 #include <memory>
 #include <string>
 #include <algorithm>
-
+#include <vector>
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
 using std::unique_ptr;
 using std::min;
+using std::vector;
 
 class ThemeTextures
 {
@@ -196,6 +197,9 @@ public:
   }
 
 private:
+
+  vector<Texture> _backgroundTextures;
+
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
   unique_ptr<glImage[]> _bipsImage;
@@ -262,6 +266,7 @@ private:
   unique_ptr<Texture> _batterylowTexture;
 
   unique_ptr<Texture> _topBackgroundTexture;
+
   unique_ptr<Texture> _dateTimeFontTexture;
   unique_ptr<Texture> _leftShoulderTexture;
   unique_ptr<Texture> _rightShoulderTexture;

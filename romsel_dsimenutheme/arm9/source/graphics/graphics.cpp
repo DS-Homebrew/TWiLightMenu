@@ -1426,7 +1426,8 @@ void drawClockColon() {
 
 void clearBoxArt() {
 	if (!tc().renderPhoto()) {
-		tex().drawTopBgAvoidingShoulders();
+		 tex().drawTopBg();
+		// tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();
 	}

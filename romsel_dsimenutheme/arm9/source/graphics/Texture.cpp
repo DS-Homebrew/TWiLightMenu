@@ -21,6 +21,9 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 	case TextureType::RawBitmap:
 		loadBitmap(file);
 		break;
+    case TextureType::CompressedGrf:
+        loadCompressed(file);
+        break;
 	default:
 		break;
 	}
@@ -127,16 +130,17 @@ void Texture::loadCompressed(FILE *file) noexcept {
 	// Skip 'G' 'F' 'X'[datasize]
 	// todo: verify
 
-	fseek(file,  sizeof(u32), SEEK_CUR);
+	fseek(file, sizeof(u32), SEEK_CUR);
     // read chunk length
-    fread(&_texCmpLength, sizeof(u32), 1, file); // this includes the header word
+    fread(&_texCmpLength, sizeof(u32), 1, file); // this includes size of the header word
 	u32 textureLengthInBytes = 0;
-	fread(&textureLengthInBytes, sizeof(u32), 1, file);
+	fread(&textureLengthInBytes, sizeof(u32), 1, file); // read the header word
     
 	_texLength = (textureLengthInBytes >> 9); // palette length in ints sizeof(unsigned int);
-
+    fseek(file, -1 * sizeof(u32), SEEK_CUR); // We need to read the header word in.
 	_texture = std::make_unique<unsigned short[]>(_texCmpLength);
 	fread(_texture.get(), sizeof(unsigned short), _texCmpLength, file);
+    
 }
 
 void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {

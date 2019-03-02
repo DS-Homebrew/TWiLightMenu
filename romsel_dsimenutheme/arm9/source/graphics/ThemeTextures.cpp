@@ -17,6 +17,7 @@
 #include "uvcoord_top_font.h"
 #include "errorScreen.h"
 #include "color.h"
+#include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
 
@@ -30,6 +31,7 @@ ThemeTextures::ThemeTextures()
       startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
       wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
+		  _backgroundTextures.reserve(6);
 }
 
 void ThemeTextures::loadBubbleImage(const Texture &tex, int sprW, int sprH) {
@@ -175,6 +177,8 @@ void ThemeTextures::reloadPalDialogBox() {
 void ThemeTextures::loadBackgrounds() {
 
 	// We reuse the _topBackgroundTexture as a buffer.
+	_backgroundTextures
+		.emplace_back("nitro:/themes/dsi/dark/background/top.grf", "nitro:/themes/dsi/dark/background/top.grf");
 
 	if (ms().theme == 0) {
 		// Load background buffer.
@@ -461,22 +465,33 @@ void ThemeTextures::commitSubModifyAsync() {
 }
 
 void ThemeTextures::drawTopBg() {
-	beginSubModify();
-	const u16 *src = _topBackgroundTexture->texture();
-	int x = 0;
-	int y = 191;
-	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-		if (x >= 256) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(src++);
-		if (val != 0xFC1F) { // Do not render magneta pixel
 
-			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
+	// consoleDemoInit();
+	// printf("Type: %d, Width: %d, Height: %d", _backgroundTextures[0].type(), 
+	// 	_backgroundTextures[0].texWidth(), _backgroundTextures[0].texHeight(),
+	// 	_backgroundTextures[0])
+	// while(1) {
+	// 	swiWaitForVBlank();
+
+	// }
+
+	beginSubModify();
+	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+	// const u16 *src = _topBackgroundTexture->texture();
+	// int x = 0;
+	// int y = 191;
+	// for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+	// 	if (x >= 256) {
+	// 		x = 0;
+	// 		y--;
+	// 	}
+	// 	u16 val = *(src++);
+	// 	if (val != 0xFC1F) { // Do not render magneta pixel
+
+	// 		_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
+	// 	}
+	// 	x++;
+	// }
 	commitSubModify();
 }
 

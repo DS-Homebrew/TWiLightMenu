@@ -46,7 +46,11 @@ class Texture
     
     public:
         Texture(const std::string& filePath, const std::string& fallback) noexcept;
+        Texture(const Texture &) = delete;
+        Texture(Texture&&) = default;
+
         virtual ~Texture() = default;
+
         void applyPaletteEffect(PaletteEffect effect);
         void applyBitmapEffect(BitmapEffect effect);
 
@@ -58,6 +62,9 @@ class Texture
         u32 texWidth() const { return _texWidth; };
         u32 pixelCount() const { return _texHeight * _texWidth; };
         u8 paletteLength() const { return _type == TextureType::PalettedGrf ? _paletteLength : 0;};
+        u32 texLength() const { return _texLength; };
+        u32 texCmpLength() const { return _texCmpLength; };
+
         TextureType type() const { return _type; }
 
     private:
