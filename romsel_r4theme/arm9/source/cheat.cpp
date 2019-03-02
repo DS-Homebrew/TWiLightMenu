@@ -254,6 +254,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if(_data.size() == 0) {
       printSmallCentered(false, 100, "No cheats found");
       printSmallCentered(false, 167, "B: Back");
+	  for (int i = 0; i < 20; i++) swiWaitForVBlank();
 
       while(1) {
         scanKeys();

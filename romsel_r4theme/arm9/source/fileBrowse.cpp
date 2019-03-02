@@ -634,6 +634,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		{
 			cursorPosition[secondaryDevice] = fileOffset;
 			perGameSettings(dirContents.at(fileOffset).name);
+			for (int i = 0; i < 25; i++) swiWaitForVBlank();
 		}
 
 	}
