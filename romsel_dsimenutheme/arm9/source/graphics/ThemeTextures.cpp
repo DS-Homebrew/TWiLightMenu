@@ -16,7 +16,7 @@
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 #include "errorScreen.h"
-
+#include "color.h"
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
 
@@ -531,7 +531,8 @@ void ThemeTextures::drawProfileName() {
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
-					u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
+					// Blend with pixel
+					const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
 					// Magic numbers were found by dumping val to stdout
@@ -540,23 +541,30 @@ void ThemeTextures::drawProfileName() {
 					// #ff00ff
 					case 0xFC1F:
 						break;
-					// #414141
+					// #404040
 					case 0xA108:
-						val = bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)];
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
 						break;
+					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
-						val = alphablend(bmpPal_topSmallFont[2 + ((PersonalData->theme) * 16)],
-								 bg, 48);
+						// Fills in the 
+						// 1 for light
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
 						break;
+					// #b8b8b8
 					case 0xDEF7:
-						val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
-								 bg, 64);
+						// 6 looks good on lighter themes
+						// 3 do an average blend twice
+						// 
+						 val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)], bg, 128U);
+						break;
 					default:
 						break;
 					}
-					if (val != 0xFC1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(val);
+					val = convertToDsBmp(val);
+					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = val; 
 					}
 				}
 			}
