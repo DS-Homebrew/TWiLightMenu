@@ -344,17 +344,17 @@ void ThemeTextures::loadDSiTheme() {
 
 	// Apply the DSi palette shifts
 	if (tc().startTextUserPalette())
-		_startTextTexture->applyEffect(effectDSiStartTextPalettes);
+		_startTextTexture->applyPaletteEffect(effectDSiStartTextPalettes);
 	if (tc().startBorderUserPalette())
-		_startBorderTexture->applyEffect(effectDSiStartBorderPalettes);
+		_startBorderTexture->applyPaletteEffect(effectDSiStartBorderPalettes);
 	if (tc().buttonArrowUserPalette())
-		_buttonArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+		_buttonArrowTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
 	if (tc().movingArrowUserPalette())
-		_movingArrowTexture->applyEffect(effectDSiArrowButtonPalettes);
+		_movingArrowTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
 	if (tc().launchDotsUserPalette())
-		_launchDotTexture->applyEffect(effectDSiArrowButtonPalettes);
+		_launchDotTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
 	if (tc().dialogBoxUserPalette())
-		_dialogBoxTexture->applyEffect(effectDSiArrowButtonPalettes);
+		_dialogBoxTexture->applyPaletteEffect(effectDSiArrowButtonPalettes);
 
 	if (ms().colorMode == 1) {
 		applyGrayscaleToAllGrfTextures();
@@ -434,15 +434,15 @@ void ThemeTextures::loadIconTextures() {
 
 	// if (ms().colorMode == 1)
 	// {
-	// 	_iconGBTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconGBATexture->applyEffect(effectGrayscalePalette);
-	// 	_iconGBAModeTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconGGTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconMDTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconNESTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconSMSTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconSNESTexture->applyEffect(effectGrayscalePalette);
-	// 	_iconUnknownTexture->applyEffect(effectGrayscalePalette);
+	// 	_iconGBTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconGBATexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconGBAModeTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconGGTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconMDTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconNESTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconSMSTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconSNESTexture->applyPaletteEffect(effectGrayscalePalette);
+	// 	_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);
 	// }
 }
 u16 *ThemeTextures::beginSubModify() {
@@ -892,90 +892,90 @@ void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY
 void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 
 	if (_bipsTexture) {
-		_bipsTexture->applyEffect(effectGrayscalePalette);
+		_bipsTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_boxTexture) {
-		_boxTexture->applyEffect(effectGrayscalePalette);
+		_boxTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_braceTexture) {
-		_braceTexture->applyEffect(effectGrayscalePalette);
+		_braceTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_bubbleTexture) {
-		_bubbleTexture->applyEffect(effectGrayscalePalette);
+		_bubbleTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_buttonArrowTexture) {
-		_buttonArrowTexture->applyEffect(effectGrayscalePalette);
+		_buttonArrowTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_cornerButtonTexture) {
-		_cornerButtonTexture->applyEffect(effectGrayscalePalette);
+		_cornerButtonTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_dialogBoxTexture) {
-		_dialogBoxTexture->applyEffect(effectGrayscalePalette);
+		_dialogBoxTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_folderTexture) {
-		_folderTexture->applyEffect(effectGrayscalePalette);
+		_folderTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_launchDotTexture) {
-		_launchDotTexture->applyEffect(effectGrayscalePalette);
+		_launchDotTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_movingArrowTexture) {
-		_movingArrowTexture->applyEffect(effectGrayscalePalette);
+		_movingArrowTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_progressTexture) {
-		_progressTexture->applyEffect(effectGrayscalePalette);
+		_progressTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_scrollWindowTexture) {
-		_scrollWindowTexture->applyEffect(effectGrayscalePalette);
+		_scrollWindowTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_smallCartTexture) {
-		_smallCartTexture->applyEffect(effectGrayscalePalette);
+		_smallCartTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_startBorderTexture) {
-		_startBorderTexture->applyEffect(effectGrayscalePalette);
+		_startBorderTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_startTextTexture) {
-		_startTextTexture->applyEffect(effectGrayscalePalette);
+		_startTextTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_wirelessIconsTexture) {
-		_wirelessIconsTexture->applyEffect(effectGrayscalePalette);
+		_wirelessIconsTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_settingsIconTexture) {
-		_settingsIconTexture->applyEffect(effectGrayscalePalette);
+		_settingsIconTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 
 	if (_boxFullTexture) {
-		_boxFullTexture->applyEffect(effectGrayscalePalette);
+		_boxFullTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_boxEmptyTexture) {
-		_boxEmptyTexture->applyEffect(effectGrayscalePalette);
+		_boxEmptyTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 
 	if (_iconGBTexture) {
-		_iconGBTexture->applyEffect(effectGrayscalePalette);
+		_iconGBTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconGBATexture) {
-		_iconGBATexture->applyEffect(effectGrayscalePalette);
+		_iconGBATexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconGBAModeTexture) {
-		_iconGBAModeTexture->applyEffect(effectGrayscalePalette);
+		_iconGBAModeTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconGGTexture) {
-		_iconGGTexture->applyEffect(effectGrayscalePalette);
+		_iconGGTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconMDTexture) {
-		_iconMDTexture->applyEffect(effectGrayscalePalette);
+		_iconMDTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconNESTexture) {
-		_iconNESTexture->applyEffect(effectGrayscalePalette);
+		_iconNESTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconSMSTexture) {
-		_iconSMSTexture->applyEffect(effectGrayscalePalette);
+		_iconSMSTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconSNESTexture) {
-		_iconSNESTexture->applyEffect(effectGrayscalePalette);
+		_iconSNESTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 	if (_iconUnknownTexture) {
-		_iconUnknownTexture->applyEffect(effectGrayscalePalette);
+		_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 }
 

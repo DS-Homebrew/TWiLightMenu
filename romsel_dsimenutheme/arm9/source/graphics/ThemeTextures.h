@@ -4,7 +4,6 @@
 #include "common/gl2d.h"
 #include "common/singleton.h"
 #include "Texture.h"
-#include "Texture.h"
 #include <memory>
 #include <string>
 #include <algorithm>
