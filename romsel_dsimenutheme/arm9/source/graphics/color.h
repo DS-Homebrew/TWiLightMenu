@@ -37,10 +37,10 @@ inline u16 grayscale(u16 val) {
  * Adapted from https://stackoverflow.com/questions/18937701/
  * applies alphablending with the given
  * RGB555 foreground, RGB555 background, and alpha from
- * 0 to 128 (0, 1.0).
+ * 0 to 255 (0, 1.0).
  * The lower the alpha the more transparent, but
- * this function does not produce good results at the extremes
- * (near 0 or 128).
+ * this function does not produce good results when blending 
+ * less than 128 (50%) alpha due to overflow.
  */
 inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
 

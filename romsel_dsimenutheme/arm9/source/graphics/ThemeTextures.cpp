@@ -543,20 +543,21 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 184U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
 						break;
 					// #808080 
 					case 0xC210:
 						// blend the colors with the background to make it look better.
 						// Fills in the 
 						// 1 for light
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 184U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
 						// 6 looks good on lighter themes
 						// 3 do an average blend twice
-						 val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)], bg, 64U);
+						// 
+						 val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)], bg, 128U);
 						break;
 					default:
 						break;
