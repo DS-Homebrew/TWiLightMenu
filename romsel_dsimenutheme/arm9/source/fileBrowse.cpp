@@ -2259,6 +2259,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 						titlewindowXpos[ms().secondaryDevice] = 0;
 					} else {
 						CURPOS = (file_count - 1) - PAGENUM * 40;
+						if (CURPOS < 0) CURPOS = 0;
 						titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 						titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
 					}
