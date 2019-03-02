@@ -114,6 +114,31 @@ void Texture::loadPaletted(FILE *file) noexcept {
 	fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);
 }
 
+
+void Texture::loadCompressed(FILE *file) noexcept {
+
+	GrfHeader header;
+	fseek(file, 5 * sizeof(u32), SEEK_SET);
+	fread(&header, sizeof(GrfHeader), 1, file);
+
+	_texHeight = header.texHeight;
+	_texWidth = header.texWidth;
+
+	// Skip 'G' 'F' 'X'[datasize]
+	// todo: verify
+
+	fseek(file,  sizeof(u32), SEEK_CUR);
+    // read chunk length
+    fread(&_texCmpLength, sizeof(u32), 1, file); // this includes the header word
+	u32 textureLengthInBytes = 0;
+	fread(&textureLengthInBytes, sizeof(u32), 1, file);
+    
+	_texLength = (textureLengthInBytes >> 9); // palette length in ints sizeof(unsigned int);
+
+	_texture = std::make_unique<unsigned short[]>(_texCmpLength);
+	fread(_texture.get(), sizeof(unsigned short), _texCmpLength, file);
+}
+
 void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {
 	if (_type == TextureType::PalettedGrf) {
 		effect(_palette.get(), _paletteLength);
