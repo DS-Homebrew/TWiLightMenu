@@ -798,7 +798,7 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < rightTex->texWidth(); i++) {
 			u16 val = *(rightSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] =
+				_bgSubBuffer[((y-1) + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] =
 				    convertToDsBmp(val);
 			}
 		}
@@ -809,7 +809,7 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < leftTex->texWidth(); i++) {
 			u16 val = *(leftSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[(y + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] =
+				_bgSubBuffer[((y-1) + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] =
 				    convertToDsBmp(val);
 			}
 		}
