@@ -12,11 +12,11 @@
 // Graphic files
 #include "../include/startborderpal.h"
 
+#include "color.h"
+#include "errorScreen.h"
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
-#include "errorScreen.h"
-#include "color.h"
 #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
@@ -30,11 +30,9 @@ ThemeTextures::ThemeTextures()
       startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
       wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
-		  // Overallocation, but thats fine,
-		  // 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
-		  _backgroundTextures.reserve(6);
-
-
+	// Overallocation, but thats fine,
+	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
+	_backgroundTextures.reserve(6);
 }
 
 void ThemeTextures::loadBubbleImage(const Texture &tex, int sprW, int sprH) {
@@ -178,137 +176,26 @@ void ThemeTextures::reloadPalDialogBox() {
 }
 
 void ThemeTextures::loadBackgrounds() {
-
-	// We reuse the _topBackgroundTexture as a buffer.
-	_backgroundTextures
-		.emplace_back("nitro:/themes/3ds/light/background/top.grf", "nitro:/themes/3ds/light/background/top.grf");
-			_backgroundTextures
-		.emplace_back("nitro:/themes/3ds/light/background/bottom.grf", "nitro:/themes/3ds/light/background/bottom.grf");
-	// _backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/top.grf", "nitro:/themes/dsi/dark/background/bottom.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_bubble.grf", "nitro:/themes/dsi/dark/background/bottom_bubble.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_moving.grf", "nitro:/themes/dsi/dark/background/bottom_moving.grf");
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 
-	// if (ms().theme == 1 && sys().isRegularDS()) {
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_ds.grf", "nitro:/themes/3ds/light/background/bottom_ds.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_bubble_ds.grf", "nitro:/themes/3ds/light/background/bottom_bubble_ds.grf");
-	// 	return;
-	// }
+	// We reuse the _topBackgroundTexture as a buffer.
+	_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
 
-	// if (ms().theme == 1 && !sys().isRegularDS()) {
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom.grf", "nitro:/themes/3ds/light/background/bottom.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_bubble.grf", "nitro:/themes/3ds/light/background/bottom_bubble.grf");
-	// 	return;
-	// }
+	if (ms().theme == 1 && !sys().isRegularDS()) {
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
+		return;
+	}
 
-	// if (ms().theme == 0) 
-	// {
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom.grf", "nitro:/themes/dsi/dark/background/bottom.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_bubble.grf", "nitro:/themes/dsi/dark/background/bottom_bubble.grf");
-	// 	_backgroundTextures
-	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_moving.grf", "nitro:/themes/dsi/dark/background/bottom_moving.grf");
-	// }
-
-
-
-	// if (ms().theme == 0) {
-	// 	// Load background buffer.
-	// 	_topBackgroundTexture =
-	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
-	// 	if (_topBackgroundTexture) {
-	// 		const u16 *src = _topBackgroundTexture->texture();
-	// 		int x = 0;
-	// 		int y = 191;
-	// 		for (int i = 0; i < 256 * 192; i++) {
-	// 			if (x >= 256) {
-	// 				x = 0;
-	// 				y--;
-	// 			}
-	// 			u16 val = *(src++);
-	// 			_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
-	// 			x++;
-	// 		}
-	// 	}
-	// // }
-
-	// if (ms().theme == 0 || !sys().isRegularDS()) {
-	// 	_topBackgroundTexture =
-	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-	// 	if (_topBackgroundTexture) {
-	// 		const u16 *src = _topBackgroundTexture->texture();
-	// 		int x = 0;
-	// 		int y = 191;
-	// 		for (int i = 0; i < 256 * 192; i++) {
-	// 			if (x >= 256) {
-	// 				x = 0;
-	// 				y--;
-	// 			}
-	// 			u16 val = *(src++);
-	// 			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
-	// 			x++;
-	// 		}
-	// 	}
-
-	// 	_topBackgroundTexture =
-	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
-	// 	if (_topBackgroundTexture) {
-	// 		const u16 *src = _topBackgroundTexture->texture();
-	// 		int x = 0;
-	// 		int y = 191;
-	// 		for (int i = 0; i < 256 * 192; i++) {
-	// 			if (x >= 256) {
-	// 				x = 0;
-	// 				y--;
-	// 			}
-	// 			u16 val = *(src++);
-	// 			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
-	// 			x++;
-	// 		}
-	// 	}
-	// } else { // !(ms().theme == 0 || !sys().isRegularDS()) => (ms().theme == 1 && sys().isRegularDS())
-	// 	_topBackgroundTexture =
-	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
-	// 	if (_topBackgroundTexture) {
-	// 		const u16 *src = _topBackgroundTexture->texture();
-	// 		int x = 0;
-	// 		int y = 191;
-	// 		for (int i = 0; i < 256 * 192; i++) {
-	// 			if (x >= 256) {
-	// 				x = 0;
-	// 				y--;
-	// 			}
-	// 			u16 val = *(src++);
-	// 			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
-	// 			x++;
-	// 		}
-	// 	}
-	// 	_topBackgroundTexture =
-	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
-	// 	if (_topBackgroundTexture) {
-	// 		const u16 *src = _topBackgroundTexture->texture();
-	// 		int x = 0;
-	// 		int y = 191;
-	// 		for (int i = 0; i < 256 * 192; i++) {
-	// 			if (x >= 256) {
-	// 				x = 0;
-	// 				y--;
-	// 			}
-	// 			u16 val = *(src++);
-	// 			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
-	// 			x++;
-	// 		}
-	// 	}
-	// }
-	// _topBackgroundTexture = std::make_unique<Texture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
+	if (ms().theme == 1 && sys().isRegularDS()) {
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG_DS, TFN_FALLBACK_BG_BOTTOMBG_DS);
+		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_BG_BOTTOMBUBBLEBG_DS);
+		return;
+	}
+	// DSi Theme
+	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
+	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
+	_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -498,12 +385,11 @@ void ThemeTextures::commitBgSubModify() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWords(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
- 
+
 void ThemeTextures::commitBgSubModifyAsync() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWordsAsynch(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
-
 
 u16 *ThemeTextures::beginBgMainModify() {
 	dmaCopyWords(0, BG_GFX, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
@@ -520,7 +406,6 @@ void ThemeTextures::commitBgMainModifyAsync() {
 	dmaCopyWordsAsynch(2, _bgMainBuffer, BG_GFX, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
-
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
 	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
@@ -528,26 +413,24 @@ void ThemeTextures::drawTopBg() {
 }
 
 void ThemeTextures::drawBottomBg() {
-//	DC_FlushRange(_bottomBgImage, 0x18000);
+	//	DC_FlushRange(_bottomBgImage, 0x18000);
 	beginBgMainModify();
 	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
-//	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
+	//	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBottomBubbleBg() {
 	// DC_FlushRange(_bottomBubbleBgImage, 0x18000);
 	// dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
 	beginBgMainModify();
-	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
+	decompress(_backgroundTextures[2].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
 }
 
 void ThemeTextures::drawBottomMovingBg() {
-	// DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
-	// dmaCopyWords(0, _bottomMovingBgImage.get(), BG_GFX, 0x18000);
 	beginBgMainModify();
-	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
+	decompress(_backgroundTextures[3].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
 }
 
@@ -588,7 +471,8 @@ void ThemeTextures::drawProfileName() {
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
 					// Blend with pixel
-					const u16 bg = _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
+					const u16 bg =
+					    _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
 					// Apply palette here.
 
 					// Magic numbers were found by dumping val to stdout
@@ -599,28 +483,31 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
+								 bg, 224U);
 						break;
-					// #808080 
+					// #808080
 					case 0xC210:
 						// blend the colors with the background to make it look better.
-						// Fills in the 
+						// Fills in the
 						// 1 for light
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)], bg, 224U);
+						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
+								 bg, 224U);
 						break;
 					// #b8b8b8
 					case 0xDEF7:
 						// 6 looks good on lighter themes
 						// 3 do an average blend twice
-						// 
-						 val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)], bg, 128U);
+						//
+						val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
+								 bg, 128U);
 						break;
 					default:
 						break;
 					}
 					val = convertToDsBmp(val);
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = val; 
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = val;
 					}
 				}
 			}
@@ -719,7 +606,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 }
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
-	if (!isDSiMode()) return;
+	if (!isDSiMode())
+		return;
 	beginBgSubModify();
 
 	const Texture *tex = volumeTexture(volumeLevel);
@@ -855,8 +743,8 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < rightTex->texWidth(); i++) {
 			u16 val = *(rightSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[((y-1) + tc().shoulderRRenderY()) * 256 + (i + tc().shoulderRRenderX())] =
-				    convertToDsBmp(val);
+				_bgSubBuffer[((y - 1) + tc().shoulderRRenderY()) * 256 +
+					     (i + tc().shoulderRRenderX())] = convertToDsBmp(val);
 			}
 		}
 	}
@@ -866,8 +754,8 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 		for (u32 i = 0; i < leftTex->texWidth(); i++) {
 			u16 val = *(leftSrc++);
 			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[((y-1) + tc().shoulderLRenderY()) * 256 + (i + tc().shoulderLRenderX())] =
-				    convertToDsBmp(val);
+				_bgSubBuffer[((y - 1) + tc().shoulderLRenderY()) * 256 +
+					     (i + tc().shoulderLRenderX())] = convertToDsBmp(val);
 			}
 		}
 	}
@@ -1036,12 +924,10 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	}
 }
 
-u16 *ThemeTextures::bmpImageBuffer() {
-	return _bmpImageBuffer;
-}
+u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
 
 void ThemeTextures::videoSetup() {
-//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
