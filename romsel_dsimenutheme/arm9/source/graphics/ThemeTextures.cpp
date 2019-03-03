@@ -1,7 +1,8 @@
-#include <nds.h>
 
-#include "ThemeConfig.h"
 #include "ThemeTextures.h"
+#include "ThemeConfig.h"
+
+#include <nds.h>
 
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
@@ -17,9 +18,11 @@
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
-#include <nds/arm9/decompress.h>
+#include "lzss.h"
+
+// #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
-extern u16 usernameRendered[10];
+extern s16 usernameRendered[11];
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
@@ -180,7 +183,8 @@ void ThemeTextures::loadBackgrounds() {
 
 	// We reuse the _topBackgroundTexture as a buffer.
 	_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
-
+		
+	
 	if (ms().theme == 1 && !sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
@@ -196,6 +200,7 @@ void ThemeTextures::loadBackgrounds() {
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
+	
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -239,15 +244,15 @@ void ThemeTextures::load3DSTheme() {
 	loadWirelessIcons(*_wirelessIconsTexture);
 }
 
-void ThemeTextures::loadDSiTheme() {
+void ThemeTextures::loadDSiTheme() {	
 
 	loadBackgrounds();
 	loadUITextures();
-
+		
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-
+	
 	loadDateFont(_dateTimeFontTexture->texture());
 
 	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
@@ -291,6 +296,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadBipsImage(*_bipsTexture);
 
+	
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
@@ -299,7 +305,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadStartImage(*_startTextTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
-
+	
 	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
 	loadLaunchdotImage(*_launchDotTexture);
@@ -311,9 +317,10 @@ void ThemeTextures::loadDSiTheme() {
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-
+	
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
+	
 }
 void ThemeTextures::loadVolumeTextures() {
 	if (isDSiMode()) {
@@ -406,7 +413,7 @@ void ThemeTextures::commitBgMainModifyAsync() {
 
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
-	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
 	commitBgSubModify();
 }
 
@@ -422,12 +429,12 @@ void ThemeTextures::drawBottomBg(int index) {
 	beginBgMainModify();
 
 	if (previouslyDrawnBottomBg != index) {
-		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		LZ77_Decompress((u8*)_backgroundTextures[index].texture(), (u8*)_bgMainBuffer);
 		previouslyDrawnBottomBg = index;
 	} else {
 		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
 		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
-		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		LZ77_Decompress((u8*)_backgroundTextures[index].texture(), (u8*)_bgMainBuffer);
 	}
 
 	if(ms().colorMode == 1) {
@@ -452,7 +459,7 @@ void ThemeTextures::clearTopScreen() {
 
 void ThemeTextures::drawProfileName() {
 	// Load username
-	char fontPath[64];
+	char fontPath[64] = {0};
 	FILE *file;
 	int x = (isDSiMode() ? 28 : 4);
 
@@ -721,7 +728,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 
 	// Throw the entire top background into the sub buffer.
-	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
 
  	// Copy top 32 lines from the buffer into the sub.
 	memcpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
