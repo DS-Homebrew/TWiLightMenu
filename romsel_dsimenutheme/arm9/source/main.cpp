@@ -767,7 +767,7 @@ int main(int argc, char **argv) {
 		chdir(path);
 
 		// Navigates to the file to launch
-		filename = browseForFile(extensionList, (char*)usernameRendered);
+		filename = browseForFile(extensionList);
 
 		////////////////////////////////////
 		// Launch the item

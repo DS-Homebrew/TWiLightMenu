@@ -490,7 +490,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 	}
 }
 
-void updateBoxArt(vector<DirEntry> dirContents[], SwitchState scrn) {
+void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 	if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 		showSTARTborder = true;
 		if (!ms().showBoxArt) {
@@ -939,7 +939,7 @@ bool selectMenu(void) {
 	return false;
 }
 
-void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnBoxes) {
+void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
 	if (reSpawnBoxes)
 		spawnedtitleboxes = 0;
 	for (int i = 0; i < 40; i++) {
@@ -1133,7 +1133,7 @@ void getFileInfo(SwitchState scrn, vector<DirEntry> dirContents[], bool reSpawnB
 	}
 }
 
-string browseForFile(const vector<string> extensionList, const char *username) {
+string browseForFile(const vector<string> extensionList) {
 	displayNowLoading();
 
 	gameOrderIniPath =
@@ -1146,7 +1146,7 @@ string browseForFile(const vector<string> extensionList, const char *username) {
 	int pressed = 0;
 	int held = 0;
 	SwitchState scrn(3);
-	vector<DirEntry> dirContents[scrn.SIZE];
+	vector<vector<DirEntry>> dirContents(scrn.SIZE);
 
 	getDirectoryContents(dirContents[scrn], extensionList);
 

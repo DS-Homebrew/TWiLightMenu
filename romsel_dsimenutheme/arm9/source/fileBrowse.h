@@ -28,7 +28,7 @@
 //#define EMULATE_FILES
 
 void InitSound();
-std::string browseForFile(const std::vector<std::string> extensionList, const char* username);
+std::string browseForFile(const std::vector<std::string> extensionList);
 
 
 
