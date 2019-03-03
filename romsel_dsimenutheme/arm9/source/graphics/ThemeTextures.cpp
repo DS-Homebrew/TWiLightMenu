@@ -22,7 +22,7 @@
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
-extern u16 usernameRendered[10];
+extern s16 usernameRendered[11];
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
