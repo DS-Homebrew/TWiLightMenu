@@ -1612,7 +1612,7 @@ void graphicsInit() {
 	drawClockColon();
 
 
-	// bottomBgLoad(false, true);
+	bottomBgLoad(false, true);
 	// consoleDemoInit();
 
 	// printf("drawn bgload");
