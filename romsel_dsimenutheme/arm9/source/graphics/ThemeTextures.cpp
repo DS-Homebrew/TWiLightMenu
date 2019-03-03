@@ -711,7 +711,7 @@ void ThemeTextures::drawBatteryImageCached() {
 	}
 }
 
-#define TOPLINES 16 * 256
+#define TOPLINES 32 * 256
 #define BOTTOMOFFSET ((tc().shoulderLRenderY() - 5) * 256)
 #define BOTTOMLINES ((192 - (tc().shoulderLRenderY() - 5)) * 256)
 // Load .bmp file without overwriting shoulder button images or username
