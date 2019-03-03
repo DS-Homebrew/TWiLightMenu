@@ -555,6 +555,7 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+	
 	sys().initFilesystem();
 	ms().loadSettings();
 	tfn(); //
@@ -568,12 +569,6 @@ int main(int argc, char **argv) {
 	} else {
 		tex().loadDSiTheme();
 	}
-
-	// if (ms().theme == 1) {
-	// 	tex().load3DSTheme();
-	// } else {
-	// 	tex().loadDSiTheme();
-	// // }
 
 	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));

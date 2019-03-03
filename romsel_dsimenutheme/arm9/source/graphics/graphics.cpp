@@ -329,17 +329,17 @@ void moveIconClose(int num) {
 void bottomBgLoad(int drawBubble, bool init = false) {
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == 1)) {
 		if (bottomBgState != 1) {
-			tex().drawBottomBg();
+			tex().drawBottomBg(1);
 			bottomBgState = 1;
 		}
 	} else if (drawBubble == 1) {
 		if (bottomBgState != 2) {
-			tex().drawBottomBubbleBg();
+			tex().drawBottomBg(2);
 			bottomBgState = 2;
 		}
 	} else if (drawBubble == 2 && ms().theme == 0) {
 		if (bottomBgState != 3) {
-			tex().drawBottomMovingBg();
+			tex().drawBottomBg(3);
 			bottomBgState = 3;
 		}
 	}
@@ -382,12 +382,12 @@ void playRotatingCubesVideo(void) {
 				   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
 
 		if (ms().colorMode == 1) {
-			u16 *bgSubBuffer = tex().beginSubModify();
+			u16 *bgSubBuffer = tex().beginBgSubModify();
 			for (u16 i = 0; i < 256 * 56; i++) {
 				bgSubBuffer[(rocketVideo_videoYpos * 256) + i] =
 				    convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos * 256) + i]);
 			}
-			tex().commitSubModifyAsync();
+			tex().commitBgSubModifyAsync();
 		}
 		rocketVideo_frameDelay = 0;
 		rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
@@ -1301,7 +1301,7 @@ void loadPhoto() {
 		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
 
 	if (file) {
-		u16 *bgSubBuffer = tex().beginSubModify();
+		u16 *bgSubBuffer = tex().beginBgSubModify();
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -1319,7 +1319,7 @@ void loadPhoto() {
 			bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
 			x++;
 		}
-		tex().commitSubModify();
+		tex().commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1333,7 +1333,7 @@ void loadPhotoPart() {
 
 	if (file) {
 		// Start loading
-		u16 *bgSubBuffer = tex().beginSubModify();
+		u16 *bgSubBuffer = tex().beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -1352,7 +1352,7 @@ void loadPhotoPart() {
 			}
 			x++;
 		}
-		tex().commitSubModify();
+		tex().commitBgSubModify();
 	}
 
 	fclose(file);
@@ -1426,6 +1426,14 @@ void drawClockColon() {
 
 void clearBoxArt() {
 	if (!tc().renderPhoto()) {
+		// tex().drawTopBg();
+		// tex().drawProfileName();
+		// tex().drawBatteryImageCached();
+		// tex().drawVolumeImageCached();
+		// tex().drawShoulders(showLshoulder, showR);
+		// drawCurrentDate();
+		// drawCurrentTime();
+		// drawClockColon();
 		tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();

@@ -3,17 +3,17 @@
 #define __DSIMENUPP_THEME_TEXTURES__
 #include "common/gl2d.h"
 #include "common/singleton.h"
-#include "GritTexture.h"
-#include "BmpTexture.h"
+#include "Texture.h"
 #include <memory>
 #include <string>
 #include <algorithm>
-
+#include <vector>
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
 using std::unique_ptr;
 using std::min;
+using std::vector;
 
 class ThemeTextures
 {
@@ -37,17 +37,19 @@ private:
   void loadIconTextures();
 
 public:
-  static unsigned short *beginSubModify();
-  static void commitSubModify();  
-  static void commitSubModifyAsync();
+  static unsigned short *beginBgSubModify();
+  static void commitBgSubModify();  
+  static void commitBgSubModifyAsync();
+
+  static unsigned short *beginBgMainModify();
+  static void commitBgMainModify();  
+  static void commitBgMainModifyAsync();
 
   void drawTopBg();
   void drawTopBgAvoidingShoulders();
 
   void drawProfileName();
-  void drawBottomBubbleBg();
-  void drawBottomMovingBg();
-  void drawBottomBg();
+  void drawBottomBg(int bg);
 
   void drawBoxArt(const char* filename);
 
@@ -65,25 +67,25 @@ public:
 private:
   void applyGrayscaleToAllGrfTextures();
 
-  void loadBubbleImage(const GritTexture& tex, int sprW, int sprH);
-  void loadProgressImage(const GritTexture& tex);
-  void loadDialogboxImage(const GritTexture& tex);
-  void loadBipsImage(const GritTexture& tex);
-  void loadScrollwindowImage(const GritTexture& tex);
-  void loadButtonarrowImage(const GritTexture& tex);
-  void loadMovingarrowImage(const GritTexture& tex);
-  void loadLaunchdotImage(const GritTexture& tex);
-  void loadStartImage(const GritTexture& tex);
-  void loadStartbrdImage(const GritTexture& tex, int sprH);
-  void loadBraceImage(const GritTexture& tex);
-  void loadSettingsImage(const GritTexture& tex);
-  void loadBoxfullImage(const GritTexture& tex);
-  void loadBoxemptyImage(const GritTexture& tex);
-  void loadFolderImage(const GritTexture& tex);
-  void loadCornerButtonImage(const GritTexture& tex, int arraysize,
+  void loadBubbleImage(const Texture& tex, int sprW, int sprH);
+  void loadProgressImage(const Texture& tex);
+  void loadDialogboxImage(const Texture& tex);
+  void loadBipsImage(const Texture& tex);
+  void loadScrollwindowImage(const Texture& tex);
+  void loadButtonarrowImage(const Texture& tex);
+  void loadMovingarrowImage(const Texture& tex);
+  void loadLaunchdotImage(const Texture& tex);
+  void loadStartImage(const Texture& tex);
+  void loadStartbrdImage(const Texture& tex, int sprH);
+  void loadBraceImage(const Texture& tex);
+  void loadSettingsImage(const Texture& tex);
+  void loadBoxfullImage(const Texture& tex);
+  void loadBoxemptyImage(const Texture& tex);
+  void loadFolderImage(const Texture& tex);
+  void loadCornerButtonImage(const Texture& tex, int arraysize,
 											int sprW, int sprH);
-  void loadSmallCartImage(const GritTexture& tex);
-  void loadWirelessIcons(const GritTexture& tex);
+  void loadSmallCartImage(const Texture& tex);
+  void loadWirelessIcons(const Texture& tex);
 
   void loadBackgrounds();
 
@@ -105,7 +107,7 @@ private:
    * arraySize is the size of the glImage array.
    */
   unique_ptr<glImage[]> loadTexture(
-            int *textureId, const GritTexture& texture,
+            int *textureId, const Texture& texture,
 						unsigned int arraySize,
 						int sprW, int sprH);
 
@@ -130,27 +132,25 @@ public:
   const glImage *wirelessIcons() { return _wirelessIcons.get(); }
 
 
-  const GritTexture *iconGBTexture() { return _iconGBTexture.get(); }
-  const GritTexture *iconGBATexture() { return _iconGBATexture.get(); }
-  const GritTexture *iconGBAModeTexture() { return _iconGBAModeTexture.get(); }
-  const GritTexture *iconGGTexture() { return _iconGGTexture.get(); }
-  const GritTexture *iconMDTexture() { return _iconMDTexture.get(); }
-  const GritTexture *iconNESTexture() { return _iconNESTexture.get(); }
-  const GritTexture *iconSMSTexture() { return _iconSMSTexture.get(); }
-  const GritTexture *iconSNESTexture() { return _iconSNESTexture.get(); }
-  const GritTexture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
+  const Texture *iconGBTexture() { return _iconGBTexture.get(); }
+  const Texture *iconGBATexture() { return _iconGBATexture.get(); }
+  const Texture *iconGBAModeTexture() { return _iconGBAModeTexture.get(); }
+  const Texture *iconGGTexture() { return _iconGGTexture.get(); }
+  const Texture *iconMDTexture() { return _iconMDTexture.get(); }
+  const Texture *iconNESTexture() { return _iconNESTexture.get(); }
+  const Texture *iconSMSTexture() { return _iconSMSTexture.get(); }
+  const Texture *iconSNESTexture() { return _iconSNESTexture.get(); }
+  const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
   
-  const BmpTexture *topBackgroundTexture() { return _topBackgroundTexture.get(); }
-
-  const BmpTexture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
-  const BmpTexture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
-  const BmpTexture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
-  const BmpTexture *leftShoulderGreyedTexture() { return _leftShoulderGreyedTexture.get(); }
-  const BmpTexture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
+  const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
+  const Texture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
+  const Texture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
+  const Texture *leftShoulderGreyedTexture() { return _leftShoulderGreyedTexture.get(); }
+  const Texture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
 
   static u16* bmpImageBuffer();
 
-  const BmpTexture *volumeTexture(int texture) { 
+  const Texture *volumeTexture(int texture) { 
     switch(texture) {
       case 4:
         return _volume4Texture.get();
@@ -167,7 +167,7 @@ public:
   }
 
   
-  const BmpTexture *batteryTexture(int texture, bool dsiMode, bool regularDS) { 
+  const Texture *batteryTexture(int texture, bool dsiMode, bool regularDS) { 
     if (dsiMode) {
       switch(texture) {
         case 7:
@@ -197,6 +197,10 @@ public:
   }
 
 private:
+  int previouslyDrawnBottomBg;
+
+  vector<Texture> _backgroundTextures;
+
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
   unique_ptr<glImage[]> _bipsImage;
@@ -216,60 +220,58 @@ private:
   unique_ptr<glImage[]> _wirelessIcons;
   unique_ptr<glImage[]> _bubbleImage;
 
-  unique_ptr<GritTexture> _bipsTexture;
-  unique_ptr<GritTexture> _boxTexture;
-  unique_ptr<GritTexture> _braceTexture;
-  unique_ptr<GritTexture> _bubbleTexture;
-  unique_ptr<GritTexture> _buttonArrowTexture;
-  unique_ptr<GritTexture> _cornerButtonTexture;
-  unique_ptr<GritTexture> _dialogBoxTexture;
-  unique_ptr<GritTexture> _folderTexture;
-  unique_ptr<GritTexture> _launchDotTexture;
-  unique_ptr<GritTexture> _movingArrowTexture;
-  unique_ptr<GritTexture> _progressTexture;
-  unique_ptr<GritTexture> _scrollWindowTexture;
-  unique_ptr<GritTexture> _smallCartTexture;
-  unique_ptr<GritTexture> _startBorderTexture;
-  unique_ptr<GritTexture> _startTextTexture;
-  unique_ptr<GritTexture> _wirelessIconsTexture;
-  unique_ptr<GritTexture> _settingsIconTexture;
+  unique_ptr<Texture> _bipsTexture;
+  unique_ptr<Texture> _boxTexture;
+  unique_ptr<Texture> _braceTexture;
+  unique_ptr<Texture> _bubbleTexture;
+  unique_ptr<Texture> _buttonArrowTexture;
+  unique_ptr<Texture> _cornerButtonTexture;
+  unique_ptr<Texture> _dialogBoxTexture;
+  unique_ptr<Texture> _folderTexture;
+  unique_ptr<Texture> _launchDotTexture;
+  unique_ptr<Texture> _movingArrowTexture;
+  unique_ptr<Texture> _progressTexture;
+  unique_ptr<Texture> _scrollWindowTexture;
+  unique_ptr<Texture> _smallCartTexture;
+  unique_ptr<Texture> _startBorderTexture;
+  unique_ptr<Texture> _startTextTexture;
+  unique_ptr<Texture> _wirelessIconsTexture;
+  unique_ptr<Texture> _settingsIconTexture;
 
-  unique_ptr<GritTexture> _boxFullTexture;
-  unique_ptr<GritTexture> _boxEmptyTexture;
+  unique_ptr<Texture> _boxFullTexture;
+  unique_ptr<Texture> _boxEmptyTexture;
 
-  unique_ptr<GritTexture> _iconGBTexture;
-  unique_ptr<GritTexture> _iconGBATexture;
-  unique_ptr<GritTexture> _iconGBAModeTexture;
-  unique_ptr<GritTexture> _iconGGTexture;
-  unique_ptr<GritTexture> _iconMDTexture;
-  unique_ptr<GritTexture> _iconNESTexture;
-  unique_ptr<GritTexture> _iconSMSTexture;
-  unique_ptr<GritTexture> _iconSNESTexture;
-  unique_ptr<GritTexture> _iconUnknownTexture;
+  unique_ptr<Texture> _iconGBTexture;
+  unique_ptr<Texture> _iconGBATexture;
+  unique_ptr<Texture> _iconGBAModeTexture;
+  unique_ptr<Texture> _iconGGTexture;
+  unique_ptr<Texture> _iconMDTexture;
+  unique_ptr<Texture> _iconNESTexture;
+  unique_ptr<Texture> _iconSMSTexture;
+  unique_ptr<Texture> _iconSNESTexture;
+  unique_ptr<Texture> _iconUnknownTexture;
 
-  unique_ptr<BmpTexture> _volume0Texture;
-  unique_ptr<BmpTexture> _volume1Texture;
-  unique_ptr<BmpTexture> _volume2Texture;
-  unique_ptr<BmpTexture> _volume3Texture;
-  unique_ptr<BmpTexture> _volume4Texture;
+  unique_ptr<Texture> _volume0Texture;
+  unique_ptr<Texture> _volume1Texture;
+  unique_ptr<Texture> _volume2Texture;
+  unique_ptr<Texture> _volume3Texture;
+  unique_ptr<Texture> _volume4Texture;
 
-  unique_ptr<BmpTexture> _battery1Texture;
-  unique_ptr<BmpTexture> _battery2Texture;
-  unique_ptr<BmpTexture> _battery3Texture;
-  unique_ptr<BmpTexture> _battery4Texture;
-  unique_ptr<BmpTexture> _batterychargeTexture;
-  unique_ptr<BmpTexture> _batteryfullTexture;
-  unique_ptr<BmpTexture> _batteryfullDSTexture;
-  unique_ptr<BmpTexture> _batterylowTexture;
+  unique_ptr<Texture> _battery1Texture;
+  unique_ptr<Texture> _battery2Texture;
+  unique_ptr<Texture> _battery3Texture;
+  unique_ptr<Texture> _battery4Texture;
+  unique_ptr<Texture> _batterychargeTexture;
+  unique_ptr<Texture> _batteryfullTexture;
+  unique_ptr<Texture> _batteryfullDSTexture;
+  unique_ptr<Texture> _batterylowTexture;
 
-  unique_ptr<BmpTexture> _topBackgroundTexture;
-  unique_ptr<BmpTexture> _dateTimeFontTexture;
-  unique_ptr<BmpTexture> _leftShoulderTexture;
-  unique_ptr<BmpTexture> _rightShoulderTexture;
-  unique_ptr<BmpTexture> _leftShoulderGreyedTexture;
-  unique_ptr<BmpTexture> _rightShoulderGreyedTexture;
+  unique_ptr<Texture> _dateTimeFontTexture;
+  unique_ptr<Texture> _leftShoulderTexture;
+  unique_ptr<Texture> _rightShoulderTexture;
+  unique_ptr<Texture> _leftShoulderGreyedTexture;
+  unique_ptr<Texture> _rightShoulderGreyedTexture;
 
-  unique_ptr<u16[]> _bottomMovingBgImage;
 
   unique_ptr<u16[]> _dateFontImage;
 
