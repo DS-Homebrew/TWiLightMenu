@@ -19,7 +19,6 @@
 ------------------------------------------------------------------*/
 
 #include "FontGraphic.h"
-#include "bios_decompress_callback.h"
 #include "common/gl2d.h"
 #include <ctime>
 #include <dirent.h>

@@ -452,7 +452,7 @@ void ThemeTextures::clearTopScreen() {
 
 void ThemeTextures::drawProfileName() {
 	// Load username
-	char fontPath[64];
+	char fontPath[64] = {0};
 	FILE *file;
 	int x = (isDSiMode() ? 28 : 4);
 

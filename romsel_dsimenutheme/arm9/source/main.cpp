@@ -147,7 +147,7 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-u16 usernameRendered[10];
+s16 usernameRendered[10] = {0};
 bool usernameRenderedDone = false;
 
 touchPosition touch;
@@ -267,7 +267,7 @@ void SetDonorSDK(const char *filename) {
 void SetGameSoftReset(const char *filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
-	char game_TID[5];
+	char game_TID[5] = {0};
 	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
 	game_TID[4] = 0;
@@ -554,6 +554,9 @@ int main(int argc, char **argv) {
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
+	// SetBrightness(0, 0);
+	// SetBrightness(1, 0);
+
 	defaultExceptionHandler();
 	
 	sys().initFilesystem();
@@ -563,27 +566,16 @@ int main(int argc, char **argv) {
 	tex().videoSetup(); // allocate texture pointers
 
 	fontInit();
+	
 
 	if (ms().theme == 1) {
 		tex().load3DSTheme();
 	} else {
 		tex().loadDSiTheme();
+	
 	}
 
-	// TODO: turn this into swiCopy
 	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
-	// swiCopy(PersonalData->name, usernameRendered, )
-
-	// Read user name
-	char *username = (char *)PersonalData->name;
-
-	// text
-	for (int i = 0; i < 10; i++) {
-		if (username[i * 2] == 0x00)
-			username[i * 2 / 2] = 0;
-		else
-			username[i * 2 / 2] = username[i * 2];
-	}
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();
@@ -659,7 +651,7 @@ int main(int argc, char **argv) {
 
 		if (ms().sysRegion == -1) {
 			// Determine SysNAND region by searching region of System Settings on SDNAND
-			char tmdpath[256];
+			char tmdpath[256] = {0};
 			for (u8 i = 0x41; i <= 0x5A; i++) {
 				snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);
 				if (access(tmdpath, F_OK) == 0) {
@@ -702,37 +694,37 @@ int main(int argc, char **argv) {
 
 	vector<string> extensionList;
 	if (ms().showNds) {
-		extensionList.push_back(".nds");
-		extensionList.push_back(".dsi");
-		extensionList.push_back(".ids");
-		extensionList.push_back(".argv");
+		extensionList.emplace_back(".nds");
+		extensionList.emplace_back(".dsi");
+		extensionList.emplace_back(".ids");
+		extensionList.emplace_back(".argv");
 	}
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extensionList.push_back(".plg");
+		extensionList.emplace_back(".plg");
 	}
 	if (ms().showGb) {
-		extensionList.push_back(".gb");
-		extensionList.push_back(".sgb");
-		extensionList.push_back(".gbc");
+		extensionList.emplace_back(".gb");
+		extensionList.emplace_back(".sgb");
+		extensionList.emplace_back(".gbc");
 	}
 	if (ms().showNes) {
-		extensionList.push_back(".nes");
-		extensionList.push_back(".fds");
+		extensionList.emplace_back(".nes");
+		extensionList.emplace_back(".fds");
 	}
 	if (ms().showSmsGg) {
-		extensionList.push_back(".sms");
-		extensionList.push_back(".gg");
+		extensionList.emplace_back(".sms");
+		extensionList.emplace_back(".gg");
 	}
 	if (ms().showMd) {
-		extensionList.push_back(".gen");
+		extensionList.emplace_back(".gen");
 	}
 	if (ms().showSnes) {
-		extensionList.push_back(".smc");
-		extensionList.push_back(".sfc");
+		extensionList.emplace_back(".smc");
+		extensionList.emplace_back(".sfc");
 	}
 	srand(time(NULL));
 
-	char path[256];
+	char path[256] = {0};
 
 	InitSound();
 
@@ -779,7 +771,7 @@ int main(int argc, char **argv) {
 		chdir(path);
 
 		// Navigates to the file to launch
-		filename = browseForFile(extensionList, username);
+		filename = browseForFile(extensionList, (char*)usernameRendered);
 
 		////////////////////////////////////
 		// Launch the item
