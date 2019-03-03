@@ -1,7 +1,8 @@
-#include <nds.h>
 
-#include "ThemeConfig.h"
 #include "ThemeTextures.h"
+#include "ThemeConfig.h"
+
+#include <nds.h>
 
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
@@ -17,7 +18,7 @@
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
-#include <nds/arm9/decompress.h>
+// #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern u16 usernameRendered[10];
 
@@ -410,7 +411,7 @@ void ThemeTextures::commitBgMainModifyAsync() {
 
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
-	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+	swiDecompressLZSSWram((void*)_backgroundTextures[0].texture(), (void*)_bgSubBuffer);
 	commitBgSubModify();
 }
 
@@ -426,12 +427,12 @@ void ThemeTextures::drawBottomBg(int index) {
 	beginBgMainModify();
 
 	if (previouslyDrawnBottomBg != index) {
-		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		swiDecompressLZSSWram((void*)_backgroundTextures[index].texture(), (void*)_bgMainBuffer);
 		previouslyDrawnBottomBg = index;
 	} else {
 		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
 		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
-		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		swiDecompressLZSSWram((void*)_backgroundTextures[index].texture(), (void*)_bgMainBuffer);
 	}
 
 	if(ms().colorMode == 1) {
@@ -725,7 +726,7 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 
 	// Throw the entire top background into the sub buffer.
-	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+	swiDecompressLZSSWram((void*)_backgroundTextures[0].texture(), (void*)_bgSubBuffer);
 
  	// Copy top 32 lines from the buffer into the sub.
 	memcpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
