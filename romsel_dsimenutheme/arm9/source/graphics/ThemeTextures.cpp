@@ -26,11 +26,10 @@ static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 
 ThemeTextures::ThemeTextures()
-    : previouslyDrawnBottomBg(-1),
-	  bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0), movingarrowTexID(0), launchdotTexID(0),
-      startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
-      folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
-      wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
+    : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
+      movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0),
+      boxfullTexID(0), boxemptyTexID(0), folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0),
+      dialogboxTexID(0), wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
 	// Overallocation, but thats fine,
 	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 	_backgroundTextures.reserve(6);
@@ -413,9 +412,13 @@ void ThemeTextures::drawTopBg() {
 
 void ThemeTextures::drawBottomBg(int index) {
 
-	if (index < 1) index = 1;
-	if (index > 3) index = 3;
-	if (index > 2 && ms().theme == 1) index = 2;
+	// clamp index
+	if (index < 1)
+		index = 1;
+	if (index > 3)
+		index = 3;
+	if (index > 2 && ms().theme == 1)
+		index = 2;
 
 	if (previouslyDrawnBottomBg != index) {
 		beginBgMainModify();
@@ -467,6 +470,7 @@ void ThemeTextures::drawProfileName() {
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
+
 					// Blend with pixel
 					const u16 bg =
 					    _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
@@ -502,9 +506,8 @@ void ThemeTextures::drawProfileName() {
 					default:
 						break;
 					}
-					val = convertToDsBmp(val);
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = val;
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(val);
 					}
 				}
 			}
@@ -702,27 +705,27 @@ void ThemeTextures::drawBatteryImageCached() {
 	}
 }
 
-// Unused.
-// // Load .bmp file without overwriting shoulder button images or username
-// void ThemeTextures::drawTopBgAvoidingShoulders() {
-// 	beginBgSubModify();
+#define TOPLINES 16 * 256
+#define BOTTOMOFFSET ((tc().shoulderLRenderY() - 5) * 256)
+#define BOTTOMLINES ((192 - (tc().shoulderLRenderY() - 5)) * 256)
+// Load .bmp file without overwriting shoulder button images or username
+void ThemeTextures::drawTopBgAvoidingShoulders() {
 
-// 	const u16 *src = _topBackgroundTexture->texture();
-// 	int x = 0;
-// 	int y = 191;
-// 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-// 		if (x >= 256) {
-// 			x = 0;
-// 			y--;
-// 		}
-// 		u16 val = *(src++);
-// 		if (y >= 32 && y <= (tc().shoulderLRenderY() - 5) && val != 0xFC1F) {
-// 			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-// 		}
-// 		x++;
-// 	}
-// 	commitBgSubModify();
-// }
+	// Copy current to _bmpImageBuffer
+	dmaCopyWords(0, BG_GFX_SUB, _bmpImageBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+
+	// Throw the entire top background into the sub buffer.
+	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
+
+ 	// Copy top 32 lines from the buffer into the sub.
+	memcpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
+	
+	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
+	// ((192 - 32) * 256)
+	memcpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
+
+	commitBgSubModify();
+}
 
 void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 

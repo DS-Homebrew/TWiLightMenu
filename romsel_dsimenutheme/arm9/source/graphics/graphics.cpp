@@ -1426,8 +1426,15 @@ void drawClockColon() {
 
 void clearBoxArt() {
 	if (!tc().renderPhoto()) {
-		 tex().drawTopBg();
-		// tex().drawTopBgAvoidingShoulders();
+		// tex().drawTopBg();
+		// tex().drawProfileName();
+		// tex().drawBatteryImageCached();
+		// tex().drawVolumeImageCached();
+		// tex().drawShoulders(showLshoulder, showR);
+		// drawCurrentDate();
+		// drawCurrentTime();
+		// drawClockColon();
+		tex().drawTopBgAvoidingShoulders();
 	} else {
 		loadPhotoPart();
 	}

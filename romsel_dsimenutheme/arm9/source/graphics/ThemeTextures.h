@@ -46,7 +46,7 @@ public:
   static void commitBgMainModifyAsync();
 
   void drawTopBg();
-  // void drawTopBgAvoidingShoulders();
+  void drawTopBgAvoidingShoulders();
 
   void drawProfileName();
   void drawBottomBg(int bg);
