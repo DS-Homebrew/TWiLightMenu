@@ -419,19 +419,25 @@ void ThemeTextures::drawBottomBg(int index) {
 		index = 3;
 	if (index > 2 && ms().theme == 1)
 		index = 2;
+	beginBgMainModify();
 
 	if (previouslyDrawnBottomBg != index) {
-		beginBgMainModify();
 		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
-		commitBgMainModify();
 		previouslyDrawnBottomBg = index;
 	} else {
-		beginBgMainModify();
 		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
 		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
 		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
-		commitBgMainModify();
 	}
+
+	if(ms().colorMode == 1) {
+		for (u16 i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+			_bgMainBuffer[i] =
+			    convertVramColorToGrayscale(_bgMainBuffer[i]);
+		}
+	}
+
+	commitBgMainModify();
 }
 
 void ThemeTextures::clearTopScreen() {
