@@ -7,7 +7,7 @@
 using std::min;
 using std::max;
 
-inline u16 grayscale(u16 val) {
+u16 grayscale(u16 val) {
     	u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
 
 		u8 b, g, r, max, min;
@@ -42,7 +42,7 @@ inline u16 grayscale(u16 val) {
  * this function does not produce good results when blending 
  * less than 128 (50%) alpha due to overflow.
  */
-inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
+u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
 
 	  u16 fg_b, fg_g, fg_r, bg_b, bg_g, bg_r;
 		fg_b = ((fg) >> 10) & 31;
@@ -72,7 +72,7 @@ inline u16 alphablend(const u16 fg, const u16 bg, const u8 alpha) {
  * RGB555 foreground, RGB555 background, and alpha from
  * 0 to 255 (0, 1.0).
  */
-inline u16 blend(const u16 fg, const u16 bg) {
+u16 blend(const u16 fg, const u16 bg) {
 
 	  u8 fg_b, fg_g, fg_r, bg_b, bg_g, bg_r;
 		fg_b = ((fg) >> 10) & 31;

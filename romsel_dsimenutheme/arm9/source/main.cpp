@@ -147,7 +147,7 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-s16 usernameRendered[10] = {0};
+s16 usernameRendered[11] = {0};
 bool usernameRenderedDone = false;
 
 touchPosition touch;
@@ -554,8 +554,6 @@ int main(int argc, char **argv) {
 	extern u64 *fake_heap_end;
 	*fake_heap_end = 0;
 
-	// SetBrightness(0, 0);
-	// SetBrightness(1, 0);
 
 	defaultExceptionHandler();
 	
@@ -566,16 +564,14 @@ int main(int argc, char **argv) {
 	tex().videoSetup(); // allocate texture pointers
 
 	fontInit();
-	
 
 	if (ms().theme == 1) {
 		tex().load3DSTheme();
 	} else {
 		tex().loadDSiTheme();
-	
 	}
 
-	memcpy(usernameRendered, PersonalData->name, sizeof(usernameRendered));
+	memcpy(usernameRendered, PersonalData->name, sizeof(s16) * 10);
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();

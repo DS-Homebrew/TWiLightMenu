@@ -180,7 +180,8 @@ void ThemeTextures::loadBackgrounds() {
 
 	// We reuse the _topBackgroundTexture as a buffer.
 	_backgroundTextures.emplace_back(TFN_BG_TOPBG, TFN_FALLBACK_BG_TOPBG);
-
+		
+	
 	if (ms().theme == 1 && !sys().isRegularDS()) {
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 		_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
@@ -196,6 +197,7 @@ void ThemeTextures::loadBackgrounds() {
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
+	
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -239,15 +241,15 @@ void ThemeTextures::load3DSTheme() {
 	loadWirelessIcons(*_wirelessIconsTexture);
 }
 
-void ThemeTextures::loadDSiTheme() {
+void ThemeTextures::loadDSiTheme() {	
 
 	loadBackgrounds();
 	loadUITextures();
-
+		
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-
+	
 	loadDateFont(_dateTimeFontTexture->texture());
 
 	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
@@ -291,6 +293,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadBipsImage(*_bipsTexture);
 
+	
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
@@ -299,7 +302,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadStartImage(*_startTextTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
-
+	
 	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
 	loadLaunchdotImage(*_launchDotTexture);
@@ -311,9 +314,10 @@ void ThemeTextures::loadDSiTheme() {
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-
+	
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
+	
 }
 void ThemeTextures::loadVolumeTextures() {
 	if (isDSiMode()) {
