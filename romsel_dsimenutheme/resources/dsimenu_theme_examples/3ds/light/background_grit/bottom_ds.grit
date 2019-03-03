@@ -10,4 +10,6 @@
 # Set the bit depth to 16 (true color)
 -gB16
 
+-gT!
+
 -gzl

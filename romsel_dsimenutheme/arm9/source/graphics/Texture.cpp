@@ -141,6 +141,8 @@ void Texture::loadCompressed(FILE *file) noexcept {
 
 	_texture = std::make_unique<unsigned short[]>(_texCmpLength >> 1);
 	fread(_texture.get(), sizeof(unsigned short), _texCmpLength >> 1, file);
+
+    
 }
 
 void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {

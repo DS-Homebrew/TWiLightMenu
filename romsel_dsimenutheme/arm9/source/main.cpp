@@ -556,9 +556,6 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 	
-	SetBrightness(0, 0);
-	SetBrightness(1, 0);
-	
 	sys().initFilesystem();
 	ms().loadSettings();
 	tfn(); //

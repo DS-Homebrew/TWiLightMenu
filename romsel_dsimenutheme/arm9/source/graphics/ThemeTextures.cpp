@@ -180,15 +180,10 @@ void ThemeTextures::reloadPalDialogBox() {
 void ThemeTextures::loadBackgrounds() {
 
 	// We reuse the _topBackgroundTexture as a buffer.
-	// _backgroundTextures
-	// 	.emplace_back("nitro:/themes/3ds/light/background/top.grf", "nitro:/themes/3ds/light/background/top.grf");
 	_backgroundTextures
-		.emplace_back(std::move(std::make_unique<Texture>("nitro:/themes/3ds/light/background/bottom.grf",
-			 "nitro:/themes/3ds/light/background/bottom.grf")));
-	_backgroundTextures
-		.emplace_back(std::move(std::make_unique<Texture>("nitro:/themes/3ds/light/background/top.grf",
-			 "nitro:/themes/3ds/light/background/top.grf")));
-
+		.emplace_back("nitro:/themes/3ds/light/background/top.grf", "nitro:/themes/3ds/light/background/top.grf");
+			_backgroundTextures
+		.emplace_back("nitro:/themes/3ds/light/background/bottom.grf", "nitro:/themes/3ds/light/background/bottom.grf");
 	// _backgroundTextures
 	// 		.emplace_back("nitro:/themes/dsi/dark/background/top.grf", "nitro:/themes/dsi/dark/background/bottom.grf");
 	// 	_backgroundTextures
@@ -528,21 +523,14 @@ void ThemeTextures::commitBgMainModifyAsync() {
 
 void ThemeTextures::drawTopBg() {
 	beginBgSubModify();
-	// auto& tex = _backgroundTextures[0];
-	// consoleDemoInit();
-	// printf("header: %zu, \ncmplen: %zu, texlen: %zu", ((u32*)tex.bytes())[0], tex.texCmpLength(), tex.texLength());
-	// // while(1) {
-	// // 	swiWaitForVBlank();
-	// // }
-	
-	decompress(_backgroundTextures[0]->texture(), _bgSubBuffer, LZ77);
+	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
 	commitBgSubModify();
 }
 
 void ThemeTextures::drawBottomBg() {
 //	DC_FlushRange(_bottomBgImage, 0x18000);
 	beginBgMainModify();
-	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
 //	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
 }
@@ -551,7 +539,7 @@ void ThemeTextures::drawBottomBubbleBg() {
 	// DC_FlushRange(_bottomBubbleBgImage, 0x18000);
 	// dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
 	beginBgMainModify();
-	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
 }
 
@@ -559,7 +547,7 @@ void ThemeTextures::drawBottomMovingBg() {
 	// DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
 	// dmaCopyWords(0, _bottomMovingBgImage.get(), BG_GFX, 0x18000);
 	beginBgMainModify();
-	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
 	commitBgMainModify();
 }
 

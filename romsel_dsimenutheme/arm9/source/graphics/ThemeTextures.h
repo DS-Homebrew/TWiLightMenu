@@ -202,7 +202,7 @@ public:
 
 private:
 
-  vector<unique_ptr<Texture>> _backgroundTextures;
+  vector<Texture> _backgroundTextures;
 
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
