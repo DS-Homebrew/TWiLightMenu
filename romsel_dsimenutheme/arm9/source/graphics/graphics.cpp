@@ -329,17 +329,17 @@ void moveIconClose(int num) {
 void bottomBgLoad(int drawBubble, bool init = false) {
 	if (init || drawBubble == 0 || (drawBubble == 2 && ms().theme == 1)) {
 		if (bottomBgState != 1) {
-			tex().drawBottomBg();
+			tex().drawBottomBg(1);
 			bottomBgState = 1;
 		}
 	} else if (drawBubble == 1) {
 		if (bottomBgState != 2) {
-			tex().drawBottomBubbleBg();
+			tex().drawBottomBg(2);
 			bottomBgState = 2;
 		}
 	} else if (drawBubble == 2 && ms().theme == 0) {
 		if (bottomBgState != 3) {
-			tex().drawBottomMovingBg();
+			tex().drawBottomBg(3);
 			bottomBgState = 3;
 		}
 	}

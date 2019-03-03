@@ -26,7 +26,8 @@ static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 
 ThemeTextures::ThemeTextures()
-    : bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0), movingarrowTexID(0), launchdotTexID(0),
+    : previouslyDrawnBottomBg(-1),
+	  bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0), movingarrowTexID(0), launchdotTexID(0),
       startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
       wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
@@ -200,8 +201,8 @@ void ThemeTextures::loadBackgrounds() {
 
 void ThemeTextures::load3DSTheme() {
 
-	loadUITextures();
 	loadBackgrounds();
+	loadUITextures();
 
 	loadVolumeTextures();
 	loadBatteryTextures();
@@ -241,10 +242,8 @@ void ThemeTextures::load3DSTheme() {
 
 void ThemeTextures::loadDSiTheme() {
 
-	_bottomMovingBgImage = std::make_unique<u16[]>(BG_BUFFER_PIXELCOUNT);
-
-	loadUITextures();
 	loadBackgrounds();
+	loadUITextures();
 
 	loadVolumeTextures();
 	loadBatteryTextures();
@@ -412,26 +411,24 @@ void ThemeTextures::drawTopBg() {
 	commitBgSubModify();
 }
 
-void ThemeTextures::drawBottomBg() {
-	//	DC_FlushRange(_bottomBgImage, 0x18000);
-	beginBgMainModify();
-	decompress(_backgroundTextures[1].texture(), _bgMainBuffer, LZ77);
-	commitBgMainModify();
-	//	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
-}
+void ThemeTextures::drawBottomBg(int index) {
 
-void ThemeTextures::drawBottomBubbleBg() {
-	// DC_FlushRange(_bottomBubbleBgImage, 0x18000);
-	// dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
-	beginBgMainModify();
-	decompress(_backgroundTextures[2].texture(), _bgMainBuffer, LZ77);
-	commitBgMainModify();
-}
+	if (index < 1) index = 1;
+	if (index > 3) index = 3;
+	if (index > 2 && ms().theme == 1) index = 2;
 
-void ThemeTextures::drawBottomMovingBg() {
-	beginBgMainModify();
-	decompress(_backgroundTextures[3].texture(), _bgMainBuffer, LZ77);
-	commitBgMainModify();
+	if (previouslyDrawnBottomBg != index) {
+		beginBgMainModify();
+		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		commitBgMainModify();
+		previouslyDrawnBottomBg = index;
+	} else {
+		beginBgMainModify();
+		DC_FlushRange(_backgroundTextures[index].texture(), 0x18000);
+		dmaCopyWords(0, _backgroundTextures[index].texture(), BG_GFX, 0x18000);
+		decompress(_backgroundTextures[index].texture(), _bgMainBuffer, LZ77);
+		commitBgMainModify();
+	}
 }
 
 void ThemeTextures::clearTopScreen() {

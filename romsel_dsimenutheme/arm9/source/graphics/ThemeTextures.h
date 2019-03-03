@@ -49,9 +49,7 @@ public:
   // void drawTopBgAvoidingShoulders();
 
   void drawProfileName();
-  void drawBottomBubbleBg();
-  void drawBottomMovingBg();
-  void drawBottomBg();
+  void drawBottomBg(int bg);
 
   void drawBoxArt(const char* filename);
 
@@ -144,8 +142,6 @@ public:
   const Texture *iconSNESTexture() { return _iconSNESTexture.get(); }
   const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
   
-  const Texture *topBackgroundTexture() { return _topBackgroundTexture.get(); }
-
   const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
   const Texture *leftShoulderTexture() { return _leftShoulderTexture.get(); }
   const Texture *rightShoulderTexture() { return _rightShoulderTexture.get(); }
@@ -201,6 +197,7 @@ public:
   }
 
 private:
+  int previouslyDrawnBottomBg;
 
   vector<Texture> _backgroundTextures;
 
@@ -269,15 +266,12 @@ private:
   unique_ptr<Texture> _batteryfullDSTexture;
   unique_ptr<Texture> _batterylowTexture;
 
-  unique_ptr<Texture> _topBackgroundTexture;
-
   unique_ptr<Texture> _dateTimeFontTexture;
   unique_ptr<Texture> _leftShoulderTexture;
   unique_ptr<Texture> _rightShoulderTexture;
   unique_ptr<Texture> _leftShoulderGreyedTexture;
   unique_ptr<Texture> _rightShoulderGreyedTexture;
 
-  unique_ptr<u16[]> _bottomMovingBgImage;
 
   unique_ptr<u16[]> _dateFontImage;
 
