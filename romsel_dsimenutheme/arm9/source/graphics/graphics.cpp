@@ -1611,12 +1611,8 @@ void graphicsInit() {
 	drawCurrentTime();
 	drawClockColon();
 
-
 	bottomBgLoad(false, true);
-	// consoleDemoInit();
 
-	// printf("drawn bgload");
-	// while(1) {}
 	if (tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
