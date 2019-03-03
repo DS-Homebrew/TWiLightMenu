@@ -38,8 +38,8 @@ class Texture
         unique_ptr<unsigned short []> _palette;
         unique_ptr<unsigned short []> _texture;
         u8 _paletteLength;
-        unsigned int _texLength; // in words
-        unsigned int _texCmpLength;
+        u32 _texLength; // in words
+        u32 _texCmpLength;
         u32 _texHeight;
         u32 _texWidth;
         TextureType _type;

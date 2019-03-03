@@ -22,8 +22,7 @@
 extern u16 usernameRendered[10];
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
-static u16 _bottomBgImage[256 * 192] = {0};
-static u16 _bottomBubbleBgImage[256 * 192] = {0};
+static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 
 ThemeTextures::ThemeTextures()
@@ -31,7 +30,11 @@ ThemeTextures::ThemeTextures()
       startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0), boxfullTexID(0), boxemptyTexID(0),
       folderTexID(0), cornerButtonTexID(0), smallCartTexID(0), progressTexID(0), dialogboxTexID(0),
       wirelessiconTexID(0), _cachedVolumeLevel(-1), _cachedBatteryLevel(-1) {
+		  // Overallocation, but thats fine,
+		  // 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 		  _backgroundTextures.reserve(6);
+
+
 }
 
 void ThemeTextures::loadBubbleImage(const Texture &tex, int sprW, int sprH) {
@@ -177,98 +180,140 @@ void ThemeTextures::reloadPalDialogBox() {
 void ThemeTextures::loadBackgrounds() {
 
 	// We reuse the _topBackgroundTexture as a buffer.
+	// _backgroundTextures
+	// 	.emplace_back("nitro:/themes/3ds/light/background/top.grf", "nitro:/themes/3ds/light/background/top.grf");
 	_backgroundTextures
-		.emplace_back("nitro:/themes/dsi/dark/background/top.grf", "nitro:/themes/dsi/dark/background/top.grf");
+		.emplace_back(std::move(std::make_unique<Texture>("nitro:/themes/3ds/light/background/bottom.grf",
+			 "nitro:/themes/3ds/light/background/bottom.grf")));
+	_backgroundTextures
+		.emplace_back(std::move(std::make_unique<Texture>("nitro:/themes/3ds/light/background/top.grf",
+			 "nitro:/themes/3ds/light/background/top.grf")));
 
-	if (ms().theme == 0) {
-		// Load background buffer.
-		_topBackgroundTexture =
-		    std::make_unique<Texture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
-		if (_topBackgroundTexture) {
-			const u16 *src = _topBackgroundTexture->texture();
-			int x = 0;
-			int y = 191;
-			for (int i = 0; i < 256 * 192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-	}
+	// _backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/top.grf", "nitro:/themes/dsi/dark/background/bottom.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_bubble.grf", "nitro:/themes/dsi/dark/background/bottom_bubble.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_moving.grf", "nitro:/themes/dsi/dark/background/bottom_moving.grf");
+	// 0: Top, 1: Bottom, 2: Bottom Bubble, 3: Moving, 4: MovingLeft, 5: MovingRight
 
-	if (ms().theme == 0 || !sys().isRegularDS()) {
-		_topBackgroundTexture =
-		    std::make_unique<Texture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
-		if (_topBackgroundTexture) {
-			const u16 *src = _topBackgroundTexture->texture();
-			int x = 0;
-			int y = 191;
-			for (int i = 0; i < 256 * 192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
-				x++;
-			}
-		}
+	// if (ms().theme == 1 && sys().isRegularDS()) {
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_ds.grf", "nitro:/themes/3ds/light/background/bottom_ds.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_bubble_ds.grf", "nitro:/themes/3ds/light/background/bottom_bubble_ds.grf");
+	// 	return;
+	// }
 
-		_topBackgroundTexture =
-		    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
-		if (_topBackgroundTexture) {
-			const u16 *src = _topBackgroundTexture->texture();
-			int x = 0;
-			int y = 191;
-			for (int i = 0; i < 256 * 192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-	} else { // !(ms().theme == 0 || !sys().isRegularDS()) => (ms().theme == 1 && sys().isRegularDS())
-		_topBackgroundTexture =
-		    std::make_unique<Texture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
-		if (_topBackgroundTexture) {
-			const u16 *src = _topBackgroundTexture->texture();
-			int x = 0;
-			int y = 191;
-			for (int i = 0; i < 256 * 192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-		_topBackgroundTexture =
-		    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
-		if (_topBackgroundTexture) {
-			const u16 *src = _topBackgroundTexture->texture();
-			int x = 0;
-			int y = 191;
-			for (int i = 0; i < 256 * 192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-	}
-	_topBackgroundTexture = std::make_unique<Texture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
+	// if (ms().theme == 1 && !sys().isRegularDS()) {
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom.grf", "nitro:/themes/3ds/light/background/bottom.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/3ds/light/background/bottom_bubble.grf", "nitro:/themes/3ds/light/background/bottom_bubble.grf");
+	// 	return;
+	// }
+
+	// if (ms().theme == 0) 
+	// {
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom.grf", "nitro:/themes/dsi/dark/background/bottom.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_bubble.grf", "nitro:/themes/dsi/dark/background/bottom_bubble.grf");
+	// 	_backgroundTextures
+	// 		.emplace_back("nitro:/themes/dsi/dark/background/bottom_moving.grf", "nitro:/themes/dsi/dark/background/bottom_moving.grf");
+	// }
+
+
+
+	// if (ms().theme == 0) {
+	// 	// Load background buffer.
+	// 	_topBackgroundTexture =
+	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMMOVINGBG, TFN_FALLBACK_UI_BOTTOMMOVINGBG);
+	// 	if (_topBackgroundTexture) {
+	// 		const u16 *src = _topBackgroundTexture->texture();
+	// 		int x = 0;
+	// 		int y = 191;
+	// 		for (int i = 0; i < 256 * 192; i++) {
+	// 			if (x >= 256) {
+	// 				x = 0;
+	// 				y--;
+	// 			}
+	// 			u16 val = *(src++);
+	// 			_bottomMovingBgImage[y * 256 + x] = convertToDsBmp(val);
+	// 			x++;
+	// 		}
+	// 	}
+	// // }
+
+	// if (ms().theme == 0 || !sys().isRegularDS()) {
+	// 	_topBackgroundTexture =
+	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBG, TFN_FALLBACK_UI_BOTTOMBG);
+	// 	if (_topBackgroundTexture) {
+	// 		const u16 *src = _topBackgroundTexture->texture();
+	// 		int x = 0;
+	// 		int y = 191;
+	// 		for (int i = 0; i < 256 * 192; i++) {
+	// 			if (x >= 256) {
+	// 				x = 0;
+	// 				y--;
+	// 			}
+	// 			u16 val = *(src++);
+	// 			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
+	// 			x++;
+	// 		}
+	// 	}
+
+	// 	_topBackgroundTexture =
+	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG, TFN_FALLBACK_UI_BOTTOMBUBBLEBG);
+	// 	if (_topBackgroundTexture) {
+	// 		const u16 *src = _topBackgroundTexture->texture();
+	// 		int x = 0;
+	// 		int y = 191;
+	// 		for (int i = 0; i < 256 * 192; i++) {
+	// 			if (x >= 256) {
+	// 				x = 0;
+	// 				y--;
+	// 			}
+	// 			u16 val = *(src++);
+	// 			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
+	// 			x++;
+	// 		}
+	// 	}
+	// } else { // !(ms().theme == 0 || !sys().isRegularDS()) => (ms().theme == 1 && sys().isRegularDS())
+	// 	_topBackgroundTexture =
+	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBG_DS, TFN_FALLBACK_UI_BOTTOMBG_DS);
+	// 	if (_topBackgroundTexture) {
+	// 		const u16 *src = _topBackgroundTexture->texture();
+	// 		int x = 0;
+	// 		int y = 191;
+	// 		for (int i = 0; i < 256 * 192; i++) {
+	// 			if (x >= 256) {
+	// 				x = 0;
+	// 				y--;
+	// 			}
+	// 			u16 val = *(src++);
+	// 			_bottomBgImage[y * 256 + x] = convertToDsBmp(val);
+	// 			x++;
+	// 		}
+	// 	}
+	// 	_topBackgroundTexture =
+	// 	    std::make_unique<Texture>(TFN_UI_BOTTOMBUBBLEBG_DS, TFN_FALLBACK_UI_BOTTOMBUBBLEBG_DS);
+	// 	if (_topBackgroundTexture) {
+	// 		const u16 *src = _topBackgroundTexture->texture();
+	// 		int x = 0;
+	// 		int y = 191;
+	// 		for (int i = 0; i < 256 * 192; i++) {
+	// 			if (x >= 256) {
+	// 				x = 0;
+	// 				y--;
+	// 			}
+	// 			u16 val = *(src++);
+	// 			_bottomBubbleBgImage[y * 256 + x] = convertToDsBmp(val);
+	// 			x++;
+	// 		}
+	// 	}
+	// }
+	// _topBackgroundTexture = std::make_unique<Texture>(TFN_UI_TOPBG, TFN_FALLBACK_UI_TOPBG);
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -449,75 +494,83 @@ void ThemeTextures::loadIconTextures() {
 	// 	_iconUnknownTexture->applyPaletteEffect(effectGrayscalePalette);
 	// }
 }
-u16 *ThemeTextures::beginSubModify() {
+u16 *ThemeTextures::beginBgSubModify() {
 	dmaCopyWords(0, BG_GFX_SUB, _bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	return _bgSubBuffer;
 }
 
-void ThemeTextures::commitSubModify() {
+void ThemeTextures::commitBgSubModify() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWords(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
-
-void ThemeTextures::commitSubModifyAsync() {
+ 
+void ThemeTextures::commitBgSubModifyAsync() {
 	DC_FlushRange(_bgSubBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 	dmaCopyWordsAsynch(2, _bgSubBuffer, BG_GFX_SUB, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
 }
 
+
+u16 *ThemeTextures::beginBgMainModify() {
+	dmaCopyWords(0, BG_GFX, _bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	return _bgMainBuffer;
+}
+
+void ThemeTextures::commitBgMainModify() {
+	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWords(2, _bgMainBuffer, BG_GFX, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+}
+
+void ThemeTextures::commitBgMainModifyAsync() {
+	DC_FlushRange(_bgMainBuffer, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+	dmaCopyWordsAsynch(2, _bgMainBuffer, BG_GFX, sizeof(u16) * BG_BUFFER_PIXELCOUNT);
+}
+
+
 void ThemeTextures::drawTopBg() {
-
+	beginBgSubModify();
+	// auto& tex = _backgroundTextures[0];
 	// consoleDemoInit();
-	// printf("Type: %d, Width: %d, Height: %d", _backgroundTextures[0].type(), 
-	// 	_backgroundTextures[0].texWidth(), _backgroundTextures[0].texHeight(),
-	// 	_backgroundTextures[0])
-	// while(1) {
-	// 	swiWaitForVBlank();
-
-	// }
-
-	beginSubModify();
-	decompress(_backgroundTextures[0].texture(), _bgSubBuffer, LZ77);
-	// const u16 *src = _topBackgroundTexture->texture();
-	// int x = 0;
-	// int y = 191;
-	// for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-	// 	if (x >= 256) {
-	// 		x = 0;
-	// 		y--;
-	// 	}
-	// 	u16 val = *(src++);
-	// 	if (val != 0xFC1F) { // Do not render magneta pixel
-
-	// 		_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-	// 	}
-	// 	x++;
-	// }
-	commitSubModify();
+	// printf("header: %zu, \ncmplen: %zu, texlen: %zu", ((u32*)tex.bytes())[0], tex.texCmpLength(), tex.texLength());
+	// // while(1) {
+	// // 	swiWaitForVBlank();
+	// // }
+	
+	decompress(_backgroundTextures[0]->texture(), _bgSubBuffer, LZ77);
+	commitBgSubModify();
 }
 
 void ThemeTextures::drawBottomBg() {
-	DC_FlushRange(_bottomBgImage, 0x18000);
-	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
+//	DC_FlushRange(_bottomBgImage, 0x18000);
+	beginBgMainModify();
+	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	commitBgMainModify();
+//	dmaCopyWords(0, _bottomBgImage, BG_GFX, 0x18000);
 }
 
 void ThemeTextures::drawBottomBubbleBg() {
-	DC_FlushRange(_bottomBubbleBgImage, 0x18000);
-	dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
+	// DC_FlushRange(_bottomBubbleBgImage, 0x18000);
+	// dmaCopyWords(0, _bottomBubbleBgImage, BG_GFX, 0x18000);
+	beginBgMainModify();
+	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	commitBgMainModify();
 }
 
 void ThemeTextures::drawBottomMovingBg() {
-	DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
-	dmaCopyWords(0, _bottomMovingBgImage.get(), BG_GFX, 0x18000);
+	// DC_FlushRange(_bottomMovingBgImage.get(), 0x18000);
+	// dmaCopyWords(0, _bottomMovingBgImage.get(), BG_GFX, 0x18000);
+	beginBgMainModify();
+	decompress(_backgroundTextures[1]->texture(), _bgMainBuffer, LZ77);
+	commitBgMainModify();
 }
 
 void ThemeTextures::clearTopScreen() {
-	beginSubModify();
+	beginBgSubModify();
 	u16 val = 0xFFFF;
 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
 		_bgSubBuffer[i] = ((val >> 10) & 31) | (val & (31 - 3 * ms().blfLevel) << 5) |
 				  (val & (31 - 6 * ms().blfLevel)) << 10 | BIT(15);
 	}
-	commitSubModify();
+	commitBgSubModify();
 }
 
 void ThemeTextures::drawProfileName() {
@@ -535,7 +588,7 @@ void ThemeTextures::drawProfileName() {
 		file = fopen(fontPath, "rb");
 
 		if (file) {
-			beginSubModify();
+			beginBgSubModify();
 			// Start loading
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
@@ -584,7 +637,7 @@ void ThemeTextures::drawProfileName() {
 				}
 			}
 			x += top_font_texcoords[2 + (4 * charIndex)];
-			commitSubModify();
+			commitBgSubModify();
 		}
 
 		fclose(file);
@@ -655,7 +708,7 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 
 	if (file) {
 		// Start loading
-		beginSubModify();
+		beginBgSubModify();
 		fseek(file, 0xe, SEEK_SET);
 		u8 pixelStart = (u8)fgetc(file) + 0xe;
 		fseek(file, pixelStart, SEEK_SET);
@@ -672,14 +725,14 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
 			x++;
 		}
-		commitSubModify();
+		commitBgSubModify();
 	}
 	fclose(file);
 }
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {
 	if (!isDSiMode()) return;
-	beginSubModify();
+	beginBgSubModify();
 
 	const Texture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
@@ -696,7 +749,7 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 		}
 		x++;
 	}
-	commitSubModify();
+	commitBgSubModify();
 }
 
 void ThemeTextures::drawVolumeImageCached() {
@@ -749,7 +802,7 @@ int ThemeTextures::getBatteryLevel(void) {
 
 void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool isRegularDS) {
 	// Start loading
-	beginSubModify();
+	beginBgSubModify();
 	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
 	u32 x = tc().batteryRenderX();
@@ -765,7 +818,7 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 		}
 		x++;
 	}
-	commitSubModify();
+	commitBgSubModify();
 }
 
 void ThemeTextures::drawBatteryImageCached() {
@@ -776,30 +829,31 @@ void ThemeTextures::drawBatteryImageCached() {
 	}
 }
 
-// Load .bmp file without overwriting shoulder button images or username
-void ThemeTextures::drawTopBgAvoidingShoulders() {
-	beginSubModify();
+// Unused.
+// // Load .bmp file without overwriting shoulder button images or username
+// void ThemeTextures::drawTopBgAvoidingShoulders() {
+// 	beginBgSubModify();
 
-	const u16 *src = _topBackgroundTexture->texture();
-	int x = 0;
-	int y = 191;
-	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
-		if (x >= 256) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(src++);
-		if (y >= 32 && y <= (tc().shoulderLRenderY() - 5) && val != 0xFC1F) {
-			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
-	}
-	commitSubModify();
-}
+// 	const u16 *src = _topBackgroundTexture->texture();
+// 	int x = 0;
+// 	int y = 191;
+// 	for (int i = 0; i < BG_BUFFER_PIXELCOUNT; i++) {
+// 		if (x >= 256) {
+// 			x = 0;
+// 			y--;
+// 		}
+// 		u16 val = *(src++);
+// 		if (y >= 32 && y <= (tc().shoulderLRenderY() - 5) && val != 0xFC1F) {
+// 			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
+// 		}
+// 		x++;
+// 	}
+// 	commitBgSubModify();
+// }
 
 void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 
-	beginSubModify();
+	beginBgSubModify();
 
 	const Texture *rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
 	const u16 *rightSrc = rightTex->texture();
@@ -829,7 +883,7 @@ void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
 			}
 		}
 	}
-	commitSubModify();
+	commitBgSubModify();
 }
 
 void ThemeTextures::loadDateFont(const unsigned short *bitmap) {
@@ -878,7 +932,7 @@ void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY
 				 int *hourWidthPointer) {
 	int x = posX;
 
-	beginSubModify();
+	beginBgSubModify();
 	for (int c = 0; c < drawCount; c++) {
 		int imgY = posY;
 
@@ -901,7 +955,7 @@ void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY
 				*hourWidthPointer = x;
 		}
 	}
-	commitSubModify();
+	commitBgSubModify();
 }
 
 void ThemeTextures::applyGrayscaleToAllGrfTextures() {

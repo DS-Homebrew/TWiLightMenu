@@ -3,9 +3,9 @@
 Texture::Texture(const std::string &filePath, const std::string &fallback)
     : _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	FILE *file = fopen(filePath.c_str(), "rb");
-	if (!file)
+	if (!file) {
 		file = fopen(fallback.c_str(), "rb");
-
+	}
 	_type = findType(file);
 
 	if (_type == TextureType::Unknown) {
@@ -135,12 +135,12 @@ void Texture::loadCompressed(FILE *file) noexcept {
     fread(&_texCmpLength, sizeof(u32), 1, file); // this includes size of the header word
 	u32 textureLengthInBytes = 0;
 	fread(&textureLengthInBytes, sizeof(u32), 1, file); // read the header word
-    
+
 	_texLength = (textureLengthInBytes >> 9); // palette length in ints sizeof(unsigned int);
     fseek(file, -1 * sizeof(u32), SEEK_CUR); // We need to read the header word in.
-	_texture = std::make_unique<unsigned short[]>(_texCmpLength);
-	fread(_texture.get(), sizeof(unsigned short), _texCmpLength, file);
-    
+
+	_texture = std::make_unique<unsigned short[]>(_texCmpLength >> 1);
+	fread(_texture.get(), sizeof(unsigned short), _texCmpLength >> 1, file);
 }
 
 void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {

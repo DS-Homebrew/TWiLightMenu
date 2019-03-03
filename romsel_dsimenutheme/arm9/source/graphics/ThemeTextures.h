@@ -37,12 +37,16 @@ private:
   void loadIconTextures();
 
 public:
-  static unsigned short *beginSubModify();
-  static void commitSubModify();  
-  static void commitSubModifyAsync();
+  static unsigned short *beginBgSubModify();
+  static void commitBgSubModify();  
+  static void commitBgSubModifyAsync();
+
+  static unsigned short *beginBgMainModify();
+  static void commitBgMainModify();  
+  static void commitBgMainModifyAsync();
 
   void drawTopBg();
-  void drawTopBgAvoidingShoulders();
+  // void drawTopBgAvoidingShoulders();
 
   void drawProfileName();
   void drawBottomBubbleBg();
@@ -198,7 +202,7 @@ public:
 
 private:
 
-  vector<Texture> _backgroundTextures;
+  vector<unique_ptr<Texture>> _backgroundTextures;
 
   unique_ptr<glImage[]> _progressImage;
   unique_ptr<glImage[]> _dialogboxImage;
