@@ -138,7 +138,7 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 BootstrapConfig &BootstrapConfig::speedBumpExclude()
 {
 	static const char list[][4] = {
-		"ACV",	// Castlevania: Dawn of Sorrow
+		//"ACV",	// Castlevania: Dawn of Sorrow
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 	};
