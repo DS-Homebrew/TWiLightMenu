@@ -1582,9 +1582,6 @@ void graphicsInit() {
 	*(u16 *)(0x0400006C) &= BIT(15);
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
-	
-	irqSet(IRQ_VBLANK, vBlankHandler);
-	irqEnable(IRQ_VBLANK);
 
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
@@ -1611,8 +1608,12 @@ void graphicsInit() {
 	drawCurrentTime();
 	drawClockColon();
 
-	bottomBgLoad(false, true);
 
+	bottomBgLoad(false, true);
+	// consoleDemoInit();
+
+	// printf("drawn bgload");
+	// while(1) {}
 	if (tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
@@ -1621,6 +1622,7 @@ void graphicsInit() {
 
 	tex().drawVolumeImageCached();
 	tex().drawBatteryImageCached();
-	
+	irqSet(IRQ_VBLANK, vBlankHandler);
+	irqEnable(IRQ_VBLANK);
 	// consoleDemoInit();
 }
