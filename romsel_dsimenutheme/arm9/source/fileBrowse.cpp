@@ -508,9 +508,11 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					clearBoxArt(); // Clear box art, if it's a directory
 				}
 			} else {
-				rocketVideo_playVideo = false;
-				if (ms().theme == 1)
-					clearBoxArt();		      // Clear top screen cubes or box art
+				if (ms().theme == 1 && rocketVideo_playVideo) {
+					clearBoxArt();		
+					rocketVideo_playVideo = false;
+				}
+			      // Clear top screen cubes or box art
 				tex().drawBoxArt(boxArtPath[CURPOS]); // Load box art
 			}
 			boxArtLoaded = true;
