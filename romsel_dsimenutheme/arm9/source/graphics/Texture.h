@@ -35,8 +35,8 @@ class Texture
     typedef void (*BitmapEffect)(u16* texture, u32 texLength);
 
     private:
-        unique_ptr<unsigned short []> _palette;
-        unique_ptr<unsigned short []> _texture;
+        unique_ptr<u16[]> _palette;
+        unique_ptr<u16[]> _texture;
         u8 _paletteLength;
         u32 _texLength; // in words
         u32 _texCmpLength;
