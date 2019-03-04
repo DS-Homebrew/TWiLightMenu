@@ -74,7 +74,8 @@ extern bool dropDown;
 extern bool redoDropDown;
 int dropTime[5] = {0};
 int dropSeq[5] = {0};
-int dropSpeed[5] = {6};
+#define dropSpeedDefine 6
+int dropSpeed[5] = {dropSpeedDefine};
 int dropSpeedChange[5] = {0};
 int titleboxYposDropDown[5] = {-85 - 80};
 int allowedTitleboxForDropDown = 0;
@@ -564,7 +565,7 @@ void vBlankHandler() {
 			for (int i = 0; i < 5; i++) {
 				dropTime[i] = 0;
 				dropSeq[i] = 0;
-				dropSpeed[i] = 6;
+				dropSpeed[i] = dropSpeedDefine;
 				dropSpeedChange[i] = 0;
 				titleboxYposDropDown[i] = -85 - 80;
 			}
@@ -1513,7 +1514,7 @@ void graphicsInit() {
 	for (int i = 0; i < 5; i++) {
 		dropTime[i] = 0;
 		dropSeq[i] = 0;
-		dropSpeed[i] = 5;
+		dropSpeed[i] = dropSpeedDefine;
 		dropSpeedChange[i] = 0;
 		if (ms().theme == 1)
 			titleboxYposDropDown[i] = 0;
