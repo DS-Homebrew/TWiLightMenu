@@ -1,4 +1,4 @@
-[# Creating Custom Themes (instructions for end users)
+# Creating Custom Themes (instructions for end users)
 
 The easiest way of customizing a theme is by editing the BMP textures in a theme's *ui*, *battery*, or *volume* folder. These BMP textures must be in RGB565 format, and use `#FF00FF` as a transparent key color. BMP textures are allowed to vary in size, but may require tweaking of the theme configuration to render correctly (see below).
 

@@ -26,6 +26,7 @@
 #define _SINGLETON_H_
 #include <cstdlib>
 #include <utility>
+#include <new>          // std::nothrow
 
 template <typename T, typename... Args>
 class singleton
@@ -43,7 +44,7 @@ class singleton
     static inline void make(Args... args)
     {
         if (!_instance)
-            _instance = new T(std::forward<Args>(args)...);
+            _instance = new (std::nothrow) T(std::forward<Args>(args)...);
     }
 
     static inline void reset()

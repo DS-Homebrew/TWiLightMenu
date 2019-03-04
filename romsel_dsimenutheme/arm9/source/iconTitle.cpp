@@ -61,7 +61,7 @@ static bool infoFound[41] = {false};
 static u16 cachedTitle[41][TITLE_CACHE_SIZE];
 static char titleToDisplay[3][384];
 
-u8 *tilesModified = new u8[(32 * 256) / 2];
+u8 tilesModified[(32 * 256) / 2] = {0};
 
 std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
 

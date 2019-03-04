@@ -1,13 +1,16 @@
 #include "Texture.h"
 
+
 Texture::Texture(const std::string &filePath, const std::string &fallback)
     : _paletteLength(0), _texLength(0), _texCmpLength(0), _texHeight(0), _texWidth(0), _type(TextureType::Unknown) {
 	FILE *file = fopen(filePath.c_str(), "rb");
+
 	if (!file) {
 		file = fopen(fallback.c_str(), "rb");
 	}
-	_type = findType(file);
 
+	_type = findType(file);
+	
 	if (_type == TextureType::Unknown) {
 		fclose(file);
 		file = fopen(fallback.c_str(), "rb");
@@ -16,12 +19,15 @@ Texture::Texture(const std::string &filePath, const std::string &fallback)
 
 	switch (_type) {
 	case TextureType::PalettedGrf:
+		nocashMessage("loading paletted");
 		loadPaletted(file);
 		break;
 	case TextureType::RawBitmap:
+		nocashMessage("loading raw");
 		loadBitmap(file);
 		break;
     case TextureType::CompressedGrf:
+		nocashMessage("loading compressed");
         loadCompressed(file);
         break;
 	default:
@@ -103,8 +109,8 @@ void Texture::loadPaletted(FILE *file) noexcept {
 
 	_texLength = (textureLengthInBytes >> 9); // palette length in ints sizeof(unsigned int);
 
-	_texture = std::make_unique<unsigned short[]>(_texLength);
-	fread(_texture.get(), sizeof(unsigned short), _texLength, file);
+	_texture = std::make_unique<u16[]>(_texLength);
+	fread(_texture.get(), sizeof(u16), _texLength, file);
 
 	// Skip 'P' 'A' 'L'[datasize]
 	// todo: verify
@@ -113,8 +119,8 @@ void Texture::loadPaletted(FILE *file) noexcept {
 	fread(&paletteLength, sizeof(u32), 1, file);
 	_paletteLength = (paletteLength >> 9); // palette length in shorts. / sizoef(unsighed shor)
 
-	_palette = std::make_unique<unsigned short[]>(_paletteLength);
-	fread(_palette.get(), sizeof(unsigned short), _paletteLength, file);
+	_palette = std::make_unique<u16[]>(_paletteLength);
+	fread(_palette.get(), sizeof(u16), _paletteLength, file);
 }
 
 
@@ -133,16 +139,11 @@ void Texture::loadCompressed(FILE *file) noexcept {
 	fseek(file, sizeof(u32), SEEK_CUR);
     // read chunk length
     fread(&_texCmpLength, sizeof(u32), 1, file); // this includes size of the header word
-	u32 textureLengthInBytes = 0;
-	fread(&textureLengthInBytes, sizeof(u32), 1, file); // read the header word
 
-	_texLength = (textureLengthInBytes >> 9); // palette length in ints sizeof(unsigned int);
-    fseek(file, -1 * sizeof(u32), SEEK_CUR); // We need to read the header word in.
-
-	_texture = std::make_unique<unsigned short[]>(_texCmpLength >> 1);
-	fread(_texture.get(), sizeof(unsigned short), _texCmpLength >> 1, file);
-
-    
+	_texture = std::make_unique<u16[]>(_texCmpLength >> 1);
+	fread(_texture.get(), sizeof(u8), _texCmpLength, file);
+	
+	_texLength = (*((u32*)_texture.get()) >> 9); // palette length in ints sizeof(unsigned int);  
 }
 
 void Texture::applyPaletteEffect(Texture::PaletteEffect effect) {
