@@ -34,8 +34,8 @@ glImage _snesIcon[1];
 // glImage _msxIcon[1];
 // glImage _colIcon[1];
 
-u8 *clearTiles;
-u16 *blackPalette;
+static u8 clearTiles[(32 * 256) / 2] = {0};
+static u16 blackPalette[16 * 8] = {0};
 
 /**
  * Gets the current icon stored at the specified index.
@@ -295,8 +295,6 @@ void glClearIcon(int num) { glLoadIcon(num, blackPalette, clearTiles, 256, true)
  * icons. Must be called before the icon manager is used.
  */
 void iconManagerInit() {
-	clearTiles = new u8[(32 * 256) / 2]();
-	blackPalette = new u16[16 * 8]();
 
 	// Allocate texture memory for 6 textures.
 	glGenTextures(NDS_ICON_BANK_COUNT, _iconTexID);

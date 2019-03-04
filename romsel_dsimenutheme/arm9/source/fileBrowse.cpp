@@ -235,7 +235,7 @@ struct DirEntry {
 };
 
 TextEntry *pathText = nullptr;
-char *path = new char[PATH_MAX];
+char path[PATH_MAX] = {0};
 
 #ifdef EMULATE_FILES
 #define chdir(a) chdirFake(a)
