@@ -1607,8 +1607,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS <= 1) {
 						for (int i = 0; i < 5; i++) {
-							if (i % 2)
-								swiWaitForVBlank();
+							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
 								iconUpdate(
 								    dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
@@ -1618,8 +1617,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS >= 2 && CURPOS <= 36) {
 						for (int i = 0; i < 6; i++) {
-							if (i % 2)
-								swiWaitForVBlank();
+							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
 							    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
@@ -1633,8 +1631,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS >= 37 && CURPOS <= 39) {
 						for (int i = 0; i < 5; i++) {
-							if (i % 2)
-								swiWaitForVBlank();
+							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
 							    (35 + i) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
