@@ -293,7 +293,6 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 	DIR *pdir = opendir(".");
 
 	if (pdir == NULL) {
-		// iprintf("Unable to open the directory.\n");
 		printSmall(false, 4, 4, "Unable to open the directory.");
 	} else {
 		CIniFile hiddenGamesIni(hiddenGamesIniPath);

@@ -90,6 +90,7 @@ extern bool startMenu;
 extern int theme;
 
 extern bool showDirectories;
+// extern bool showHidden;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
@@ -98,6 +99,9 @@ extern int pagenum[2];
 bool settingsChanged = false;
 
 extern void SaveSettings();
+
+// const char *hiddenGamesIniPath;
+// char *path = new char[PATH_MAX];
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
@@ -133,8 +137,7 @@ bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs)
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
 
-void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> extensionList)
-{
+void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> extensionList) {
 	struct stat st;
 
 	dirContents.clear();
@@ -142,8 +145,20 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	DIR *pdir = opendir ("."); 
 	
 	if (pdir == NULL) {
-		iprintf ("Unable to open the directory.\n");
+		printSmall(false, 4, 4, "Unable to open the directory.");
 	} else {
+		/* CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		vector<std::string> hiddenGames;
+		char str[12] = {0};
+
+		for (int i = 0; true; i++) {
+			sprintf(str, "%d", i);
+			if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+			} else {
+				break;
+			}
+		} */
 
 		while(true) {
 			DirEntry dirEntry;
@@ -156,12 +171,30 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
 			if (showDirectories) {
-				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") != 0 && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back (dirEntry);
+				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") != 0 && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+					/* bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) { */
+						dirContents.push_back(dirEntry);
+					// }
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					dirContents.push_back (dirEntry);
+					/* bool isHidden = false;
+					for(int i=0;i<(int)hiddenGames.size();i++) {
+						if(dirEntry.name == hiddenGames[i]) {
+							isHidden = true;
+							break;
+						}
+					}
+					if(!isHidden || showHidden) { */
+						dirContents.push_back(dirEntry);
+					// }
 				}
 			}
 
@@ -224,10 +257,10 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This Mega Drive or Genesis");
+	printSmallCentered(false, 104, "This SEGA Genesis/Mega Drive");
 	printSmallCentered(false, 112, "ROM cannot be launched,");
-	printSmallCentered(false, 120, "due to the size of it");
-	printSmallCentered(false, 128, "being above 3MB.");
+	printSmallCentered(false, 120, "due to it's size being");
+	printSmallCentered(false, 128, "above the 3 MB limit.");
 	printSmallCentered(false, 142, "A: OK");
 	int pressed = 0;
 	do {
@@ -238,6 +271,13 @@ void mdRomTooBig(void) {
 	} while (!(pressed & KEY_A));
 	showdialogbox = false;
 	dialogboxHeight = 0;
+}
+
+bool chkExt(std::string filename, char* extension) {
+    if(filename.substr(filename.find_last_of(".") + 1) == extension)
+        return true;
+    else
+        return false;
 }
 
 string browseForFile(const vector<string> extensionList, const char* username)
@@ -252,6 +292,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 	
 	whiteScreen = false;
 	fadeType = true;	// Fade in from white
+
+	// hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	fileOffset = cursorPosition[secondaryDevice];
 	if (pagenum[secondaryDevice] > 0) {
@@ -276,77 +318,69 @@ string browseForFile(const vector<string> extensionList, const char* username)
 		} else {
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
-			if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv")
-			|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV"))
+
+			if (chkExt(std_romsel_filename, "nds")
+			 || chkExt(std_romsel_filename, "dsi")
+			 || chkExt(std_romsel_filename, "ids")
+			 || chkExt(std_romsel_filename, "app")
+			 || chkExt(std_romsel_filename, "argv"))
 			{
+				// DS ROMs
+
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "plg")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "PLG"))
-			{
+			} else if (chkExt(std_romsel_filename, "plg")) {
+				// DSTWO Plugins
+
 				bnrRomType = 8;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SGB"))
-			{
+			} else if (chkExt(std_romsel_filename, "gb") || chkExt(std_romsel_filename, "sgb")) {
+				// (Super) Gameboy ROMs
+
 				bnrRomType = 1;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gbc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GBC"))
-			{
+			} else if (chkExt(std_romsel_filename, "gbc")) {
+				// Gameboy Color ROMs
+
 				bnrRomType = 2;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nes")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NES")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "fds")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "FDS"))
-			{
+			} else if (chkExt(std_romsel_filename, "nes") || chkExt(std_romsel_filename, "fds")) {
+				// NES ROMs
+
 				bnrRomType = 3;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sms")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMS"))
-			{
+			} else if(chkExt(std_romsel_filename, "sms")) {
+				// SEGA Master System ROMs
+
 				bnrRomType = 4;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gg")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GG"))
-			{
+			} else if(chkExt(std_romsel_filename, "gg")) {
+				// SEGA Game Gear ROMs
+
 				bnrRomType = 5;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gen")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GEN"))
-			{
+			} else if(chkExt(std_romsel_filename, "gen") {
+				// SEGA Genesis/Mega Drive ROMs
+
 				bnrRomType = 6;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "smc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SMC")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sfc")
-					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "SFC"))
-			{
+			} else if(chkExt(std_romsel_filename, "smc") || chkExt(std_romsel_filename, "sfc")) {
+				// SNES ROMs
+
 				bnrRomType = 7;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
@@ -354,7 +388,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			}
 		}
 
-		if (bnrRomType==0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+		if (bnrRomType == 0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
 		if (!isRegularDS) {
@@ -454,15 +488,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					}
 				}
 				if (hasAP) {
-				dialogboxHeight = 5;
+				dialogboxHeight = 3;
 				showdialogbox = true;
-				printLargeCentered(false, 84, "Warning");
-				printSmallCentered(false, 104, "This game may not work right,");
-				printSmallCentered(false, 112, "if it's not AP-patched.");
-				printSmallCentered(false, 128, "If the game freezes, does not");
-				printSmallCentered(false, 136, "start, or doesn't seem normal,");
-				printSmallCentered(false, 144, "it needs to be AP-patched.");
-				printSmallCentered(false, 158, "B/A: OK, X: Don't show again");
+				printLargeCentered(false, 84, "Anti-Piracy Warning");
+				printSmallCentered(false, 104, "If this ROM does not have");
+				printSmallCentered(false, 112, "its Anti-Piracy patched,");
+				printSmallCentered(false, 120, "it may not work correctly!");
+				printSmallCentered(false, 142, "B: Return   A: Launch   X: Don't show again");
 				pressed = 0;
 				while (1) {
 					scanKeys();
@@ -557,18 +589,63 @@ string browseForFile(const vector<string> extensionList, const char* username)
 			return "null";
 		}
 
-		if ((pressed & KEY_X)
-		&& strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0 && !isDirectory)
-		{
+		if ((pressed & KEY_X) && strcmp(dirContents.at(fileOffset).name.c_str(), "..") != 0 && !isDirectory) {
+			/* CIniFile hiddenGamesIni(hiddenGamesIniPath);
+			vector<std::string> hiddenGames;
+			char str[11];
+
+			for(int i = 0; true; i++) {
+				sprintf(str, "%d", i);
+				if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+					hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+				} else {
+					break;
+				}
+			}
+
+			for(int i = 0; i < (int)hiddenGames.size(); i++) {
+				for(int j = 0; j < (int)hiddenGames.size(); j++) {
+					if(i != j && hiddenGames[i] == hiddenGames[j]) {
+						hiddenGames.erase(hiddenGames.begin()+j);
+					}
+				}
+			}
+
+			std::string gameBeingHidden = dirContents.at(fileOffset).name;
+			bool unHide = false;
+			int whichToUnhide;
+
+			for(int i = 0; i < (int)hiddenGames.size(); i++) {
+				if(hiddenGames[i] == gameBeingHidden) {
+					whichToUnhide = i;
+					unHide = true;
+				}
+			} */
+
+			dialogboxHeight = 3;
 			showdialogbox = true;
-			printLargeCentered(false, 84, "Warning!");
-			//if (isDirectory) {
-			//	printSmallCentered(false, 104, "Delete this folder?");
-			//} else {
-				printSmallCentered(false, 104, "Delete this game?");
-			//}
+
+			/* if (isDirectory) {
+				printLargeCentered(false, 84, "Folder Management options");
+				printSmallCentered(false, 104, "What would you like");
+				printSmallCentered(false, 112, "to do with this folder?");
+			} else { */
+				printLargeCentered(false, 84, "ROM Management options");
+				printSmallCentered(false, 104, "What would you like");
+				printSmallCentered(false, 112, "to do with this ROM?");
+			// }
+
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
-			printSmallCentered(false, 118, "A: Yes  B: No");
+
+			/* if (isDirectory) {
+				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  B: Nothing");
+				else		printSmallCentered(false, 142, "Y: Hide    B: Nothing");
+			} else {
+				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  A: Delete  B: Nothing");
+				else		printSmallCentered(false, 142, "Y: Hide   A: Delete   B: Nothing");
+			} */
+			printSmallCentered(false, 142, "A: Delete   B: Nothing");
+
 			while (1) {
 				do {
 					scanKeys();
@@ -577,12 +654,31 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					swiWaitForVBlank();
 				} while (!pressed);
 				
-				if (pressed & KEY_A) {
+				//if ((pressed & KEY_A && !isDirectory) || (pressed & KEY_Y)) {
+				if (pressed & KEY_A && !isDirectory) {
 					clearText();
 					showdialogbox = false;
 					consoleClear();
 					printf("Please wait...\n");
-					remove(dirContents.at(fileOffset).name.c_str()); // Remove game/folder
+
+					// if (pressed & KEY_A && !isDirectory) {
+						remove(dirContents.at(fileOffset).name.c_str());
+					/* } else if (pressed & KEY_Y) {
+						if(unHide) {
+							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
+							hiddenGames.push_back("");
+						} else {
+							hiddenGames.push_back(gameBeingHidden);
+						}
+
+						for(int i=0;i<(int)hiddenGames.size();i++) {
+							char str[9];
+							sprintf(str, "%d", i);
+							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+						}
+						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+					} */
+
 					if (settingsChanged) {
 						cursorPosition[secondaryDevice] = fileOffset;
 						pagenum[secondaryDevice] = 0;

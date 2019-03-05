@@ -148,6 +148,7 @@ bool showSmsGg = true;
 bool showMd = true;
 bool showSnes = true;
 bool showDirectories = true;
+bool showHidden = false;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -169,7 +170,6 @@ void LoadSettings(void) {
 	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", 0);
 	cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", 0);
 	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", 0);
-	//startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", 1);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
@@ -188,9 +188,11 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 	}
 
 	r4_theme = "sd:/";
@@ -239,7 +241,6 @@ void SaveSettings(void) {
 	settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
 	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
 	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
-	//settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
 
 	// UI settings.
 	if (bothSDandFlashcard()) {
@@ -255,8 +256,6 @@ void SaveSettings(void) {
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
-	//settingsini.SetInt("SRLOADER", "THEME", theme);
-	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
 	settingsini.SaveIniFile(settingsinipath);
 }
 
@@ -683,31 +682,31 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 			runNds_boostVram = perGameSettings_boostVram;
 		}
 	}
+
 	std::string path;
 	int err = 0;
-	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-	{
+
+	// Flashcards that will not be supported due to a lack of autoboot:
+	// DSTT DLDI(boyakkey ver.)
+
+	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	}
-	else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
-	{
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	}
-	else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
-	{
+		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 	char text[32];
 	snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1493,38 +1492,27 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
-						if (perGameSettings_language == -2) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-						}
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
+
 						if (isDSiMode()) {
-							if (perGameSettings_dsiMode == -1) {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-							} else {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-							}
-							if (perGameSettings_boostCpu == -1) {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-							} else {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-							}
-							if (perGameSettings_boostVram == -1) {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-							} else {
-								bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-							}
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
-						bootstrapini.SetInt( "NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
 						if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS) {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
-							bootstrapini.SetInt( "NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
 
 						CheatCodelist codelist;
