@@ -32,6 +32,7 @@
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "errorScreen.h"
+#include "common/tonccpy.h"
 
 
 extern bool dbox_showIcon;
@@ -42,7 +43,7 @@ CheatCodelist::~CheatCodelist(void) {}
 inline u32 gamecode(const char *aGameCode)
 {
     u32 gameCode;
-    memcpy(&gameCode, aGameCode, sizeof(gameCode));
+    tonccpy(&gameCode, aGameCode, sizeof(gameCode));
     return gameCode;
 }
 
@@ -95,7 +96,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   while(!done)
   {
-    memcpy(&idx,&nidx,sizeof(idx));
+    tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
     if(gamecode==idx._gameCode&&crc32==idx._crc32)
     {

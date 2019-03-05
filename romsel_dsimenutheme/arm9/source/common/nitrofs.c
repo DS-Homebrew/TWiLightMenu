@@ -54,6 +54,7 @@
 #include <errno.h>
 #include <nds.h>
 #include "nitrofs.h"
+#include "common/tonccpy.h"
 
 //This seems to be a typo! memory.h has REG_EXEMEMCNT
 #ifndef REG_EXMEMCNT
@@ -110,7 +111,7 @@ inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len)
     }
     else
     {                                             //reading from gbarom
-        memcpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
+        tonccpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
     }
     if (len > 0)
         *npos += len;

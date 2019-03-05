@@ -3,7 +3,6 @@
 #include "ThemeConfig.h"
 
 #include <nds.h>
-
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 
@@ -18,7 +17,9 @@
 #include "tool/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
-#include "lzss.h"
+#include "common/lzss.h"
+#include "common/tonccpy.h"
+
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
@@ -731,11 +732,11 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	LZ77_Decompress((u8*)_backgroundTextures[0].texture(), (u8*)_bgSubBuffer);
 
  	// Copy top 32 lines from the buffer into the sub.
-	memcpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
+	tonccpy(_bgSubBuffer, _bmpImageBuffer, sizeof(u16) * TOPLINES);
 	
 	// Copy bottom tc().shoulderLRenderY() + 5 lines into the sub
 	// ((192 - 32) * 256)
-	memcpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
+	tonccpy(_bgSubBuffer + BOTTOMOFFSET, _bmpImageBuffer + BOTTOMOFFSET, sizeof(u16) * BOTTOMLINES);
 
 	commitBgSubModify();
 }

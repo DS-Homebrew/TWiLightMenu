@@ -39,7 +39,8 @@
         "type_traits": "cpp",
         "memory": "cpp",
         "numeric": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "tonccpy.h": "c"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

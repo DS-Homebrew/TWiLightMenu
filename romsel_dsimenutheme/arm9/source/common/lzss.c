@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <string.h>
-#include "lzss.h"
+#include "common/lzss.h"
+#include "common/tonccpy.h"
 
 void LZ77_Decompress(const unsigned char *src, unsigned char *dst){
 
@@ -34,7 +35,7 @@ void LZ77_Decompress(const unsigned char *src, unsigned char *dst){
 
 			// for len, copy data from the displacement
 			// to the current buffer position
-			memcpy(dst, dst - disp - 1, len);
+			tonccpy(dst, dst - disp - 1, len);
 			dst += len;
 		} else { // uncompressed block
 			// copy a raw byte from the input to the output
