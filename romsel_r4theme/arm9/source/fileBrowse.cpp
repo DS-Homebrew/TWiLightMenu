@@ -259,7 +259,7 @@ void mdRomTooBig(void) {
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "This SEGA Genesis/Mega Drive");
 	printSmallCentered(false, 112, "ROM cannot be launched,");
-	printSmallCentered(false, 120, "due to it's size being");
+	printSmallCentered(false, 120, "due to its size being");
 	printSmallCentered(false, 128, "above the 3 MB limit.");
 	printSmallCentered(false, 142, "A: OK");
 	int pressed = 0;
