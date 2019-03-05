@@ -18,7 +18,7 @@ extern bool showdialogbox;
 extern int dbox_Ypos;
 
 
-u16* sdRemovedImage = (u16*)0x026E0000;
+vu16* sdRemovedImage = (vu16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -63,7 +63,7 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, sdRemovedImage, BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(0, (void*)sdRemovedImage, BG_GFX, 0x18000);
 	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 
 	while(1) {
