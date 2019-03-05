@@ -714,17 +714,17 @@ void vBlankHandler() {
 
 		for (int i = 0; i < 40; i++) {
 			int movingAppXFix = 0;
-			if (CURPOS <= movingApp) {
+			if (CURPOS <= (movingApp - (PAGENUM * 40))) {
 				if (i == CURPOS - 2)
 					movingAppXFix = -20;
 				else if (i == CURPOS - 1)
 					movingAppXFix = -5;
 				else if (i == CURPOS)
 					movingAppXFix = 5;
-				else if (CURPOS < movingApp - 1) {
+				else if (CURPOS < (movingApp - (PAGENUM * 40)) - 1) {
 					if (i == CURPOS + 1)
 						movingAppXFix = 20;
-				} else if (CURPOS == movingApp - 1) {
+				} else if (CURPOS == (movingApp - (PAGENUM * 40)) - 1) {
 					if (i == CURPOS + 1)
 						movingAppXFix = 20;
 					else if (i == CURPOS + 2)
@@ -736,7 +736,7 @@ void vBlankHandler() {
 						movingAppXFix = 20;
 				}
 			} else {
-				if (CURPOS == movingApp + 1) {
+				if (CURPOS == (movingApp - (PAGENUM * 40)) + 1) {
 					if (i == CURPOS - 2)
 						movingAppXFix = -20;
 					else if (i == CURPOS - 1)
