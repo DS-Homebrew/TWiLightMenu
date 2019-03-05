@@ -30,6 +30,7 @@
 #include "graphics/ThemeTextures.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
+#include "common/tonccpy.h"
 #include <ctype.h>
 #include <nds.h>
 #include <stdio.h>
@@ -427,7 +428,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
+			tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 			for (int i = 0; i < 128; i++) {
 				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -456,7 +457,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
+				tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -473,7 +474,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		DC_FlushAll();
 
-		memcpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
+		tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
 			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
@@ -587,7 +588,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".app") == 0) ||
 		   (strlen(name) >= 4 && strcasecmp(name + strlen(name) - 4, ".APP") == 0)) {
 		// this is an nds/app file!
-		memcpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
+		tonccpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
 
 		// icon
 		DC_FlushAll();

@@ -54,6 +54,7 @@
 #include "graphics/iconHandler.h"
 
 #include "common/inifile.h"
+#include "common/tonccpy.h"
 
 #include "language.h"
 
@@ -571,7 +572,7 @@ int main(int argc, char **argv) {
 		tex().loadDSiTheme();
 	}
 
-	memcpy(usernameRendered, PersonalData->name, sizeof(s16) * 10);
+	tonccpy(usernameRendered, PersonalData->name, sizeof(s16) * 10);
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();
@@ -881,7 +882,7 @@ int main(int argc, char **argv) {
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
+					toncset(buffer, 0, sizeof(buffer));
 					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
@@ -896,7 +897,7 @@ int main(int argc, char **argv) {
 						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
 							if (!bufferCleared) {
-								memset(buffer, 0, sizeof(buffer));
+								toncset(buffer, 0, sizeof(buffer));
 								bufferCleared = true;
 							}
 						}
@@ -920,7 +921,7 @@ int main(int argc, char **argv) {
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
+					toncset(buffer, 0, sizeof(buffer));
 					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
@@ -935,7 +936,7 @@ int main(int argc, char **argv) {
 						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
 							fwrite(buffer, 1, sizeof(buffer), pFile);
 							if (!bufferCleared) {
-								memset(buffer, 0, sizeof(buffer));
+								toncset(buffer, 0, sizeof(buffer));
 								bufferCleared = true;
 							}
 						}
@@ -1082,7 +1083,7 @@ int main(int argc, char **argv) {
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
-							memset(buffer, 0, sizeof(buffer));
+							toncset(buffer, 0, sizeof(buffer));
 
 							u32 fileSize = 0x40000; // 256KB
 							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
@@ -1117,7 +1118,7 @@ int main(int argc, char **argv) {
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
-							memset(buffer, 0, sizeof(buffer));
+							toncset(buffer, 0, sizeof(buffer));
 
 							int savesize = 524288; // 512KB (default size for most games)
 

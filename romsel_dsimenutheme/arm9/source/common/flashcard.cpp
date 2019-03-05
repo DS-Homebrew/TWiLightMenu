@@ -7,6 +7,7 @@
 #include "graphics/graphics.h"
 #include "common/inifile.h"
 #include "common/systemdetails.h"
+#include "common/tonccpy.h"
 
 static sNDSHeader nds;
 
@@ -62,9 +63,9 @@ bool bothSDandFlashcard(void) {
 
 TWL_CODE bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
 	cardReadHeader((uint8*)nds);
-	memcpy(gameid, nds->gameCode, 4);
+	tonccpy(gameid, nds->gameCode, 4);
 	gameid[4] = 0x00;
-	memcpy(gamename, nds->gameTitle, 12);
+	tonccpy(gamename, nds->gameTitle, 12);
 	gamename[12] = 0x00;
 	return true;
 }
@@ -97,7 +98,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		for (int i = 0; i < 10; i++) {
 			swiWaitForVBlank();
 		}
-		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
+		tonccpy(&nds, (void*)0x02000000, sizeof(nds));*/
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
 
 		/*SetBrightness(0, 0);

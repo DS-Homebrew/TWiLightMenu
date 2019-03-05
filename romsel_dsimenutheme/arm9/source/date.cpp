@@ -7,6 +7,8 @@
 #include <malloc.h>
 
 #include <string>
+#include "common/tonccpy.h"
+
 using std::string;
 char date_str[24] = {'\0'};
 
@@ -79,7 +81,7 @@ string RetTime()
  */
 char* DrawDateF(DateFormat format)
 {
-	memset(date_str, 0, sizeof(date_str));
+	toncset(date_str, 0, sizeof(date_str));
 	GetDate(format, date_str, sizeof(date_str));
 	return date_str;
 }

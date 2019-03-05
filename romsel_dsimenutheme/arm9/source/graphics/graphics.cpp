@@ -52,7 +52,7 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
-extern u16 usernameRendered[10];
+extern u16 usernameRendered[11];
 
 extern bool whiteScreen;
 extern bool fadeType;
@@ -360,7 +360,7 @@ void drawDbox() {
 
 void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 
-static void *rotatingCubesLocation = (void *)0x02700000;
+static vu8 *rotatingCubesLocation = (vu8 *)0x02700000;
 
 void playRotatingCubesVideo(void) {
 	if (!rocketVideo_playVideo)
@@ -377,8 +377,8 @@ void playRotatingCubesVideo(void) {
 			rocketVideo_currentFrame = 0;
 		}
 
-		DC_FlushRange(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000), 0x7000);
-		dmaCopyWordsAsynch(1, rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000),
+		DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
+		dmaCopyWordsAsynch(1, (void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)),
 				   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
 
 		if (ms().colorMode == 1) {
@@ -1493,13 +1493,13 @@ void loadRotatingCubes() {
 			*(vu32 *)(0x08240000) = 1;
 			if (*(vu32 *)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
-				rotatingCubesLocation = (void *)0x09000000;
+				rotatingCubesLocation = (vu8 *)0x09000000;
 				doRead = true;
 			}
 		}
 
 		if (doRead) {
-			fread(rotatingCubesLocation, 1, 0x690000, videoFrameFile);
+			fread((void*)rotatingCubesLocation, 1, 0x690000, videoFrameFile);
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
 		}
