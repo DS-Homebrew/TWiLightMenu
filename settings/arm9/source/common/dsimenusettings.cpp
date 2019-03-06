@@ -113,6 +113,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
+    dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
@@ -184,6 +185,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
+    settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
 	settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
 	settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);

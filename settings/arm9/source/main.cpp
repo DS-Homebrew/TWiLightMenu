@@ -458,6 +458,11 @@ int main(int argc, char **argv)
 				{"DSi", "3DS", "R4", "Acekard"},
 				{0, 1, 2, 3})
 
+		.option(STR_DSIMUSIC,
+				STR_DESCRIPTION_DSIMUSIC,
+				Option::Int(&ms().dsiMusic),
+				{STR_OFF, "Regular", "DSi Shop"},
+				{0, 1, 2})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false})

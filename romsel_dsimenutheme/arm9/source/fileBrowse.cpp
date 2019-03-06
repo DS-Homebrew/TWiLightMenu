@@ -160,7 +160,7 @@ mm_sound_effect mus_startup;
 mm_sound_effect mus_menu;
 
 void InitSound() {
-	FILE* soundBankFile = fopen("nitro:/soundbank.bin", "rb");
+	FILE* soundBankFile = fopen((ms().dsiMusic==2 ? "nitro:/soundbank_shop.bin" : "nitro:/soundbank.bin"), "rb");
 	if (!soundBankFile) {
 		fclose(soundBankFile);
 		return;

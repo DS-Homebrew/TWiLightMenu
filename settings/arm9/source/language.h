@@ -18,6 +18,7 @@ extern std::string STR_BLF;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
 extern std::string STR_THEME;
+extern std::string STR_DSIMUSIC;
 extern std::string STR_LASTPLAYEDROM;
 extern std::string STR_DSISPLASH;
 extern std::string STR_HSMSG;
@@ -44,6 +45,8 @@ extern std::string STR_DESCRIPTION_S1SDACCESS_1;
 extern std::string STR_DESCRIPTION_MAINMENU;
 
 extern std::string STR_DESCRIPTION_THEME_1;
+
+extern std::string STR_DESCRIPTION_DSIMUSIC;
 
 extern std::string STR_DESCRIPTION_LASTPLAYEDROM_1;
 

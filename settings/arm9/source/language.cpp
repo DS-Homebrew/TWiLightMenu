@@ -25,6 +25,7 @@ std::string STR_BLF = "STR_BLF";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_MAINMENU = "STR_MAINMENU";
 std::string STR_THEME = "STR_THEME";
+std::string STR_DSIMUSIC = "STR_DSIMUSIC";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSISPLASH = "STR_DSISPLASH";
 std::string STR_HSMSG = "STR_HSMSG";
@@ -51,6 +52,8 @@ std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
 std::string STR_DESCRIPTION_MAINMENU = "STR_DESCRIPTION_MAINMENU";
 
 std::string STR_DESCRIPTION_THEME_1 = "STR_DESCRIPTION_THEME_1";
+
+std::string STR_DESCRIPTION_DSIMUSIC = "STR_DESCRIPTION_DSIMUSIC";
 
 std::string STR_DESCRIPTION_LASTPLAYEDROM_1 = "STR_DESCRIPTION_LASTPLAYEDROM_1";
 
@@ -289,6 +292,7 @@ void langInit(void)
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
 	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
+	STR_DSIMUSIC = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMUSIC", "DSi/3DS Theme Music"));
 	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup."));
 	STR_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSISPLASH", "Nintendo DSi Splash Screen"));
 	STR_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HSMSG", "Health & Safety message"));
@@ -315,6 +319,8 @@ void langInit(void)
 	STR_DESCRIPTION_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_MAINMENU", "The menu that is shown before the ROM select menu. Has the look of the original DS UI."));
 
 	STR_DESCRIPTION_THEME_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes."));
+
+	STR_DESCRIPTION_DSIMUSIC = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMUSIC", "Music to use in the DSi and 3DS themes."));
 
 	STR_DESCRIPTION_LASTPLAYEDROM_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LASTPLAYEDROM_1", "If turned on, hold B on startup to skip to the ROM select menu."));
 

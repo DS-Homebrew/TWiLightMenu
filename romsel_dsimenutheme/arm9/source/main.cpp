@@ -718,8 +718,8 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	if (!music) {
-		if (ms().theme == 1) {
+	if (ms().dsiMusic != 0) {
+		if (ms().theme == 1 || ms().dsiMusic == 2) {
 			mmEffectEx(&mus_startup);
 		} else {
 			mmEffectEx(&mus_menu);

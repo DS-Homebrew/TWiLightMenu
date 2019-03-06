@@ -24,6 +24,7 @@ INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
+MUSIC2       :=  ../musicShop
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -63,6 +64,7 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 export AUDIOFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.*)),$(CURDIR)/$(MUSIC)/$(dir))
+export AUDIOFILES2	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC2)/*.*)),$(CURDIR)/$(MUSIC2)/$(dir))
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
@@ -75,7 +77,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin soundbank_shop.bin
  
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -136,6 +138,11 @@ $(OUTPUT).elf	:	$(OFILES)
 soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
 	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin"
+
+#---------------------------------------------------------------------------------
+soundbank_shop.bin : $(AUDIOFILES2)
+#---------------------------------------------------------------------------------
+	@mmutil $^ -d -o"../../nitrofiles/soundbank_shop.bin"
 
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
