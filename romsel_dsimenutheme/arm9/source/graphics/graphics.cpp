@@ -103,6 +103,7 @@ extern bool applaunchprep;
 int screenBrightness = 31;
 
 static int colonTimer = 0;
+//static int loadingSoundTimer = 30;
 
 int movetimer = 0;
 
@@ -177,6 +178,7 @@ void vramcpy_ui(void *dest, const void *src, int size) {
 }
 
 extern mm_sound_effect snd_stop;
+//extern mm_sound_effect snd_loading;
 extern mm_sound_effect mus_menu;
 
 void ClearBrightness(void) {
@@ -1190,6 +1192,13 @@ void vBlankHandler() {
 	colonTimer++;
 
 	if (showProgressIcon) {
+		/*loadingSoundTimer++;
+
+		if (loadingSoundTimer >= 60) {
+			loadingSoundTimer = 0;
+			mmEffectEx(&snd_loading);
+		}*/
+
 		progressAnimDelay++;
 		if (progressAnimDelay == 3) {
 			progressAnimNum++;

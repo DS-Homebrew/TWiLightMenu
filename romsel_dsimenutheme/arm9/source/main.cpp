@@ -61,9 +61,6 @@
 #include "cheat.h"
 #include "crc.h"
 
-#include "soundbank.h"
-#include "soundbank_bin.h"
-
 #include "sr_data_srllastran.h"		 // For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
 
@@ -578,11 +575,6 @@ int main(int argc, char **argv) {
 	if (!sys().fatInitOk()) {
 		graphicsInit();
 		fontInit();
-		InitSound();
-		if (!music) {
-			mmEffectEx(&mus_menu);
-			music = true;
-		}
 		whiteScreen = false;
 		fadeType = true;
 		for (int i = 0; i < 5; i++)
