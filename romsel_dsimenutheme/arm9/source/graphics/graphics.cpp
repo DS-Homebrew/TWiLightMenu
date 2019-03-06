@@ -537,7 +537,6 @@ void vBlankHandler() {
 					titlewindowXpos[ms().secondaryDevice] -= 1;
 				movetimer++;
 			} else {
-				buttonArrowTouched[0] = false;
 				titleboxXmoveleft = false;
 				movetimer = 0;
 			}
@@ -555,7 +554,6 @@ void vBlankHandler() {
 					titlewindowXpos[ms().secondaryDevice] += 1;
 				movetimer++;
 			} else {
-				buttonArrowTouched[1] = false;
 				titleboxXmoveright = false;
 				movetimer = 0;
 			}

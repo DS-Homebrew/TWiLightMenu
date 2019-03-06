@@ -470,11 +470,13 @@ void displayNowLoading(void) {
 
 void updateScrollingState(u32 held, u32 pressed) {
 
-	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT);
-	bool isPressed = (pressed & KEY_LEFT) || (pressed & KEY_RIGHT);
+	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT) ||
+			((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
+	bool isPressed = (pressed & KEY_LEFT) || (pressed & KEY_RIGHT) ||
+			((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19) || ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 
 	// If we were scrolling before, but now let go of all keys, stop scrolling.
-	if (isHeld && !isPressed && ((CURPOS != 0 && CURPOS != 39))) {
+	if (isHeld && !isPressed && (CURPOS != 0 && CURPOS != 39)) {
 		isScrolling = true;
 		if (edgeBumpSoundPlayed) {
 			edgeBumpSoundPlayed = false;
@@ -1239,6 +1241,8 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = 0;
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
+				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
+				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 				checkSdEject();
 				tex().drawVolumeImageCached();
 				tex().drawBatteryImageCached();
@@ -1251,15 +1255,18 @@ string browseForFile(const vector<string> extensionList) {
 				}*/
 			} while (!pressed && !held);
 
+			buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
+			buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
+
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 			    ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 			    ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
-			     !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow (DSi theme)
+			     !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
+			    ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
+			     !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
 			{
 				CURPOS -= 1;
 				if (CURPOS >= 0) {
-					if (pressed & KEY_TOUCH)
-						buttonArrowTouched[0] = true;
 					titleboxXmoveleft = true;
 					waitForNeedToPlayStopSound = 1;
 					mmEffectEx(&snd_select);
@@ -1281,12 +1288,12 @@ string browseForFile(const vector<string> extensionList) {
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 				   ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 				   ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
-				    !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow (DSi theme)
+				    !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
+				   ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
+				    !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
 			{
 				CURPOS += 1;
 				if (CURPOS <= 39) {
-					if (pressed & KEY_TOUCH)
-						buttonArrowTouched[1] = true;
 					titleboxXmoveright = true;
 					waitForNeedToPlayStopSound = 1;
 					mmEffectEx(&snd_select);
