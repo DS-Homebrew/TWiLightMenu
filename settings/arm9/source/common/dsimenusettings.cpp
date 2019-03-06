@@ -20,6 +20,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showMainMenu = true;
     theme = 0;
     subtheme = 0;
+    dsiMusic = 1;
 
 	showNds = true;
 	showNes = true;
