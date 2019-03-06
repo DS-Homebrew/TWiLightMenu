@@ -58,9 +58,6 @@
 
 #include "fileCopy.h"
 
-#include "soundbank.h"
-#include "soundbank_bin.h"
-
 #include "graphics/queueControl.h"
 
 #define SCREEN_COLS 32
@@ -138,17 +135,41 @@ extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool 
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
+char soundBank[0x200000];
+
+#define SFX_WRONG	0
+#define SFX_MENU	1
+#define SFX_LAUNCH	2
+#define SFX_STOP	3
+#define SFX_SWITCH	4
+#define SFX_STARTUP	5
+#define SFX_SELECT	6
+#define SFX_BACK	7
+//#define MSL_NSONGS	0
+//#define MSL_NSAMPS	8
+//#define MSL_BANKSIZE	8
+
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
+//mm_sound_effect snd_loading;
 mm_sound_effect mus_startup;
 mm_sound_effect mus_menu;
 
 void InitSound() {
-	mmInitDefaultMem((mm_addr)soundbank_bin);
+	FILE* soundBankFile = fopen("nitro:/soundbank.bin", "rb");
+	if (!soundBankFile) {
+		fclose(soundBankFile);
+		return;
+	}
+
+	fread(soundBank, 1, sizeof(soundBank), soundBankFile);
+	fclose(soundBankFile);
+
+	mmInitDefaultMem((mm_addr)soundBank);
 
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
@@ -156,6 +177,7 @@ void InitSound() {
 	mmLoadEffect(SFX_WRONG);
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_SWITCH);
+	//mmLoadEffect(SFX_LOADING);
 	mmLoadEffect(SFX_STARTUP);
 	mmLoadEffect(SFX_MENU);
 
@@ -201,6 +223,13 @@ void InitSound() {
 	    255,		     // volume
 	    128,		     // panning
 	};
+	/*snd_loading = {
+	    {SFX_LOADING},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};*/
 	mus_startup = {
 	    {SFX_STARTUP},	   // id
 	    (int)(1.0f * (1 << 10)), // rate

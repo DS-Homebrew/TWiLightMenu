@@ -53,8 +53,6 @@
 #include "common/inifile.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
-#include "soundbank.h"
-#include "soundbank_bin.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
