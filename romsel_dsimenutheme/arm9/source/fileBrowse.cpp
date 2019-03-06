@@ -58,6 +58,9 @@
 
 #include "fileCopy.h"
 
+#include "soundbank.h"
+#include "soundbank_shop.h"
+
 #include "graphics/queueControl.h"
 
 #define SCREEN_COLS 32
@@ -137,18 +140,6 @@ extern void unlaunchSetHiyaBoot();
 
 char soundBank[0x200000];
 
-#define SFX_WRONG	0
-#define SFX_MENU	1
-#define SFX_LAUNCH	2
-#define SFX_STOP	3
-#define SFX_SWITCH	4
-#define SFX_STARTUP	5
-#define SFX_SELECT	6
-#define SFX_BACK	7
-//#define MSL_NSONGS	0
-//#define MSL_NSAMPS	8
-//#define MSL_BANKSIZE	8
-
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
@@ -171,79 +162,155 @@ void InitSound() {
 
 	mmInitDefaultMem((mm_addr)soundBank);
 
-	mmLoadEffect(SFX_LAUNCH);
-	mmLoadEffect(SFX_SELECT);
-	mmLoadEffect(SFX_STOP);
-	mmLoadEffect(SFX_WRONG);
-	mmLoadEffect(SFX_BACK);
-	mmLoadEffect(SFX_SWITCH);
-	//mmLoadEffect(SFX_LOADING);
-	mmLoadEffect(SFX_STARTUP);
-	mmLoadEffect(SFX_MENU);
+	if (ms().dsiMusic == 2) {
+		mmLoadEffect(SFX_SHOPLAUNCH);
+		mmLoadEffect(SFX_SHOPSELECT);
+		mmLoadEffect(SFX_SHOPSTOP);
+		mmLoadEffect(SFX_SHOPWRONG);
+		mmLoadEffect(SFX_SHOPBACK);
+		mmLoadEffect(SFX_SHOPSWITCH);
+		//mmLoadEffect(SFX_SHOPLOADING);
+		mmLoadEffect(SFX_SHOPSTARTUP);
+		mmLoadEffect(SFX_SHOPMENU);
 
-	snd_launch = {
-	    {SFX_LAUNCH},	    // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	snd_select = {
-	    {SFX_SELECT},	    // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	snd_stop = {
-	    {SFX_STOP},		     // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	snd_wrong = {
-	    {SFX_WRONG},	     // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	snd_back = {
-	    {SFX_BACK},		     // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	snd_switch = {
-	    {SFX_SWITCH},	    // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	/*snd_loading = {
-	    {SFX_LOADING},	    // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};*/
-	mus_startup = {
-	    {SFX_STARTUP},	   // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
-	mus_menu = {
-	    {SFX_MENU},		     // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
+		snd_launch = {
+			{SFX_SHOPLAUNCH},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_select = {
+			{SFX_SHOPSELECT},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_stop = {
+			{SFX_SHOPSTOP},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_wrong = {
+			{SFX_SHOPWRONG},	     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_back = {
+			{SFX_SHOPBACK},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_switch = {
+			{SFX_SHOPSWITCH},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		/*snd_loading = {
+			{SFX_SHOPLOADING},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};*/
+		mus_startup = {
+			{SFX_SHOPSTARTUP},	   // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		mus_menu = {
+			{SFX_SHOPMENU},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+	} else {
+		mmLoadEffect(SFX_LAUNCH);
+		mmLoadEffect(SFX_SELECT);
+		mmLoadEffect(SFX_STOP);
+		mmLoadEffect(SFX_WRONG);
+		mmLoadEffect(SFX_BACK);
+		mmLoadEffect(SFX_SWITCH);
+		//mmLoadEffect(SFX_LOADING);
+		mmLoadEffect(SFX_STARTUP);
+		mmLoadEffect(SFX_MENU);
+
+		snd_launch = {
+			{SFX_LAUNCH},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_select = {
+			{SFX_SELECT},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_stop = {
+			{SFX_STOP},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_wrong = {
+			{SFX_WRONG},	     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_back = {
+			{SFX_BACK},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		snd_switch = {
+			{SFX_SWITCH},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		/*snd_loading = {
+			{SFX_LOADING},	    // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};*/
+		mus_startup = {
+			{SFX_STARTUP},	   // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+		mus_menu = {
+			{SFX_MENU},		     // id
+			(int)(1.0f * (1 << 10)), // rate
+			0,			     // handle
+			255,		     // volume
+			128,		     // panning
+		};
+	}
 }
 
 extern bool music;

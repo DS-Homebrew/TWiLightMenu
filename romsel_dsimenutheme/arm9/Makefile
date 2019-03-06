@@ -24,7 +24,7 @@ INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
-MUSIC2       :=  ../musicShop
+MUSIC2      :=  ../musicShop
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -137,12 +137,12 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin"
+	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin" -h"soundbank.h"
 
 #---------------------------------------------------------------------------------
 soundbank_shop.bin : $(AUDIOFILES2)
 #---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank_shop.bin"
+	@mmutil $^ -d -o"../../nitrofiles/soundbank_shop.bin" -h"soundbank_shop.h"
 
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin
