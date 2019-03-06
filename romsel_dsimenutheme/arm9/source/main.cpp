@@ -400,6 +400,7 @@ void SetSpeedBumpExclude(const char *filename) {
 	static const char list[][4] = {
 	    //"ACV", // Castlevania: Dawn of Sorrow
 	    "ARM", // Mario & Luigi: Partners in Time
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 	    "CLJ", // Mario & Luigi: Bowser's Inside Story
 	};
 
