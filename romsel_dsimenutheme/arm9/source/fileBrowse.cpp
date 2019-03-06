@@ -135,6 +135,8 @@ extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool 
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
+char soundBank[0x200000];
+
 #define SFX_WRONG	0
 #define SFX_MENU	1
 #define SFX_LAUNCH	2
@@ -158,7 +160,16 @@ mm_sound_effect mus_startup;
 mm_sound_effect mus_menu;
 
 void InitSound() {
-	mmInitDefault((char*)"nitro:/soundbank.bin");
+	FILE* soundBankFile = fopen("nitro:/soundbank.bin", "rb");
+	if (!soundBankFile) {
+		fclose(soundBankFile);
+		return;
+	}
+
+	fread(soundBank, 1, sizeof(soundBank), soundBankFile);
+	fclose(soundBankFile);
+
+	mmInitDefaultMem((mm_addr)soundBank);
 
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
