@@ -94,6 +94,7 @@ void LoadSettings(void) {
 using namespace std;
 
 int pageYpos = 0;
+int pageYsize = 1036;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -358,7 +359,7 @@ int main(int argc, char **argv) {
 			pageScroll();
 		} else if (held & KEY_DOWN) {
 			pageYpos++;
-			if (pageYpos > 1036-192) pageYpos = 1036-192;
+			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
 			pageScroll();
 		}
 		checkSdEject();
