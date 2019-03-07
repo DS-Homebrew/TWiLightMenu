@@ -179,11 +179,6 @@ void vBlankHandler()
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
-		// Test
-		glBoxFilled(15, 79, 241, 129+(1*8), RGB15(0, 0, 0));
-		glBoxFilledGradient(16, 80, 240, 94, RGB15(0, 0, 31), RGB15(0, 0, 15), RGB15(0, 0, 15), RGB15(0, 0, 31));
-		glBoxFilled(16, 96, 240, 128+(1*8), RGB15(31, 31, 31));
-
 		updateText(false);
 	}
 	glEnd2D();
@@ -211,8 +206,8 @@ void pageLoad(void) {
 			pageImage[y*256+x] = convertToDsBmp(val);
 			x++;
 		}
-		dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB[16*256], 0x16000);
-		dmaCopyWordsAsynch(1, (u16*)pageImage[172*256], (u16*)BG_GFX, 0x18000);
+		dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
+		dmaCopyWordsAsynch(1, (u16*)pageImage+(170*256), (u16*)BG_GFX, 0x18000);
 	}
 
 	fclose(file);
