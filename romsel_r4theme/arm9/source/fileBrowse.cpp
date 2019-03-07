@@ -455,8 +455,8 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				return "null";
 			}
 			else if ((isDSiWare && !isDSiMode())
-					|| (isDSiWare && !sdFound())
-					|| (isDSiWare && consoleModel > 1))
+				  || (isDSiWare && !sdFound())
+				  || (isDSiWare && consoleModel > 1))
 			{
 				showdialogbox = true;
 				printLargeCentered(false, 84, "Error!");
@@ -494,7 +494,7 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				printSmallCentered(false, 104, "If this ROM does not have");
 				printSmallCentered(false, 112, "its Anti-Piracy patched,");
 				printSmallCentered(false, 120, "it may not work correctly!");
-				printSmallCentered(false, 142, "B: Return   A: Launch   X: Don't show again");
+				printSmallCentered(false, 142, "B: Return   A: Launch");
 				pressed = 0;
 				while (1) {
 					scanKeys();
