@@ -22,7 +22,7 @@
 void SetBrightness(u8 screen, s8 bright);
 void initSubSprites(void);
 void graphicsInit();
-void pageLoad(void);
+void pageLoad(const char *filename);
 void topBarLoad(void);
 void startRendering(bool top);
 bool isRenderingTop();

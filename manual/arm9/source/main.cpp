@@ -93,6 +93,8 @@ void LoadSettings(void) {
 
 using namespace std;
 
+int pageYpos = 0;
+
 //---------------------------------------------------------------------------------
 void stop (void) {
 //---------------------------------------------------------------------------------
@@ -252,6 +254,13 @@ void unlaunchSetHiyaBoot(void) {
 	}
 }
 
+void pageScroll(void) {
+	extern u16 pageImage[256*1036];
+	dmaCopyWordsAsynch(0, (u16*)pageImage+(pageYpos*256), (u16*)BG_GFX_SUB+(18*256), 0x15C00);
+	dmaCopyWordsAsynch(1, (u16*)pageImage+((174+pageYpos)*256), (u16*)BG_GFX, 0x18000);
+	while (dmaBusy(0) || dmaBusy(1));
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -332,14 +341,26 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	pageLoad();
+	pageLoad("nitro:/graphics/howtouse.bmp");
 	topBarLoad();
 	//bottomBgLoad();
 	
+	int held = 0;
 
 	fadeType = true;	// Fade in from white
 
 	while(1) {
+		scanKeys();
+		held = keysHeld();
+		if (held & KEY_UP) {
+			pageYpos--;
+			if (pageYpos < 0) pageYpos = 0;
+			pageScroll();
+		} else if (held & KEY_DOWN) {
+			pageYpos++;
+			if (pageYpos > 1036-192) pageYpos = 1036-192;
+			pageScroll();
+		}
 		checkSdEject();
 		swiWaitForVBlank();
 	}

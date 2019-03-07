@@ -185,8 +185,8 @@ void vBlankHandler()
 	GFX_FLUSH = 0;
 }
 
-void pageLoad(void) {
-	FILE* file = fopen("nitro:/graphics/howtouse.bmp", "rb");
+void pageLoad(const char *filename) {
+	FILE* file = fopen(filename, "rb");
 
 	if (file) {
 		// Start loading
@@ -207,7 +207,7 @@ void pageLoad(void) {
 			x++;
 		}
 		dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
-		dmaCopyWordsAsynch(1, (u16*)pageImage+(170*256), (u16*)BG_GFX, 0x18000);
+		dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
 	}
 
 	fclose(file);
