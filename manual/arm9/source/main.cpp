@@ -354,11 +354,11 @@ int main(int argc, char **argv) {
 		scanKeys();
 		held = keysHeld();
 		if (held & KEY_UP) {
-			pageYpos--;
+			pageYpos -= 2;
 			if (pageYpos < 0) pageYpos = 0;
 			pageScroll();
 		} else if (held & KEY_DOWN) {
-			pageYpos++;
+			pageYpos += 2;
 			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
 			pageScroll();
 		}
