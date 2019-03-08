@@ -4,6 +4,8 @@
 # output grf
 -ftr
 
+-pn16
+
 #bitmap mode
 -gb
 
