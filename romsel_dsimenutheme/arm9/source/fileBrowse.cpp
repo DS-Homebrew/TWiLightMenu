@@ -641,6 +641,29 @@ void launchSettings(void) {
 	iprintf("Start failed. Error %i\n", err);
 }
 
+void launchManual(void) {
+	mmEffectEx(&snd_launch);
+	controlTopBright = true;
+	ms().gotosettings = true;
+
+	fadeType = false;		  // Fade to white
+	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	for (int i = 0; i < 60; i++) {
+		swiWaitForVBlank();
+	}
+	music = false;
+	mmEffectCancelAll();
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+
+	ms().saveSettings();
+	// Launch settings
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, false, false, true, true);
+	iprintf("Start failed. Error %i\n", err);
+}
+
 void exitToSystemMenu(void) {
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
@@ -922,30 +945,33 @@ bool selectMenu(void) {
 	rocketVideo_playVideo = true;
 	int maxCursors = 0;
 	int selCursorPosition = 0;
-	int assignedOp[4] = {-1};
+	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
 	if (isDSiMode() && sdFound()) {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			selIconYpos -= 14;
 		}
 		assignedOp[0] = 0;
 		assignedOp[1] = 1;
 		assignedOp[2] = 2;
 		assignedOp[3] = 3;
-		maxCursors = 3;
+		assignedOp[4] = 4;
+		maxCursors = 4;
 	} else {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 			selIconYpos -= 14;
 		}
 		if (!sys().isRegularDS()) {
 			assignedOp[0] = 0;
 			assignedOp[1] = 1;
 			assignedOp[2] = 3;
-			maxCursors = 2;
+			assignedOp[3] = 4;
+			maxCursors = 3;
 		} else {
 			assignedOp[0] = 1;
 			assignedOp[1] = 3;
-			maxCursors = 1;
+			assignedOp[2] = 4;
+			maxCursors = 2;
 		}
 	}
 	for (int i = 0; i < 30; i++)
@@ -980,6 +1006,8 @@ bool selectMenu(void) {
 			} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos,
 					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
+			} else if (assignedOp[i] == 4) {
+				printSmall(false, 64, textYpos, "Open Manual");
 			}
 			textYpos += 28;
 		}
@@ -1023,6 +1051,9 @@ bool selectMenu(void) {
 				break;
 			case 3:
 				launchGba();
+				break;
+			case 4:
+				launchManual();
 				break;
 			}
 		}

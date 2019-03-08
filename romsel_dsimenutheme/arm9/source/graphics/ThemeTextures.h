@@ -79,6 +79,7 @@ private:
   void loadStartbrdImage(const Texture& tex, int sprH);
   void loadBraceImage(const Texture& tex);
   void loadSettingsImage(const Texture& tex);
+  void loadManualImage(const Texture& tex);
   void loadBoxfullImage(const Texture& tex);
   void loadBoxemptyImage(const Texture& tex);
   void loadFolderImage(const Texture& tex);
@@ -124,6 +125,7 @@ public:
   const glImage *startbrdImage() { return _startbrdImage.get(); }
   const glImage *braceImage() { return _braceImage.get(); }
   const glImage *settingsImage() { return _settingsImage.get(); }
+  const glImage *manualImage() { return _manualImage.get(); }
   const glImage *boxfullImage() { return _boxfullImage.get(); }
   const glImage *boxemptyImage() { return _boxemptyImage.get(); }
   const glImage *folderImage() { return _folderImage.get(); }
@@ -212,6 +214,7 @@ private:
   unique_ptr<glImage[]> _startbrdImage;
   unique_ptr<glImage[]> _braceImage;
   unique_ptr<glImage[]> _settingsImage;
+  unique_ptr<glImage[]> _manualImage;
   unique_ptr<glImage[]> _boxfullImage;
   unique_ptr<glImage[]> _boxemptyImage;
   unique_ptr<glImage[]> _folderImage;
@@ -237,6 +240,7 @@ private:
   unique_ptr<Texture> _startTextTexture;
   unique_ptr<Texture> _wirelessIconsTexture;
   unique_ptr<Texture> _settingsIconTexture;
+  unique_ptr<Texture> _manualIconTexture;
 
   unique_ptr<Texture> _boxFullTexture;
   unique_ptr<Texture> _boxEmptyTexture;
@@ -285,6 +289,7 @@ private:
   int startTexID;
   int startbrdTexID;
   int settingsTexID;
+  int manualTexID;
   int braceTexID;
   int boxfullTexID;
   int boxemptyTexID;

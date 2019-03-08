@@ -1122,11 +1122,11 @@ void vBlankHandler() {
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
 				if (isDSiMode() && sdFound()) {
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < 5; i++) {
 						selIconYpos -= 14;
 					}
 				} else {
-					for (int i = 0; i < 3; i++) {
+					for (int i = 0; i < 4; i++) {
 						selIconYpos -= 14;
 					}
 				}
@@ -1156,6 +1156,9 @@ void vBlankHandler() {
 					glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
 						 &tex().smallCartImage()[3]); // GBA Mode
 				}
+				selIconYpos += 28;
+				glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+					 tex().manualImage()); // Manual
 			}
 		}
 		// Show button_arrowPals (debug feature)

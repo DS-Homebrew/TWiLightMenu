@@ -89,6 +89,10 @@ void ThemeTextures::loadSettingsImage(const Texture &tex) {
 	_settingsImage = std::move(loadTexture(&settingsTexID, tex, (64 / 16) * (128 / 64), 64, 64));
 }
 
+void ThemeTextures::loadManualImage(const Texture &tex) {
+	_manualImage = std::move(loadTexture(&manualTexID, tex, (32 / 32) * (32 / 32), 32, 32));
+}
+
 void ThemeTextures::loadBoxfullImage(const Texture &tex) {
 	_boxfullImage = std::move(loadTexture(&boxfullTexID, tex, (64 / 16) * (128 / 64), 64, 64));
 }
@@ -276,6 +280,7 @@ void ThemeTextures::loadDSiTheme() {
 	_startTextTexture = std::make_unique<Texture>(TFN_GRF_START_TEXT, TFN_FALLBACK_GRF_START_TEXT);
 	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
+	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	// Apply the DSi palette shifts
 	if (tc().startTextUserPalette())
@@ -302,6 +307,7 @@ void ThemeTextures::loadDSiTheme() {
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
+	loadManualImage(*_manualIconTexture);
 	loadBraceImage(*_braceTexture);
 
 	loadStartImage(*_startTextTexture);
@@ -900,6 +906,9 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 	}
 	if (_settingsIconTexture) {
 		_settingsIconTexture->applyPaletteEffect(effectGrayscalePalette);
+	}
+	if (_manualIconTexture) {
+		_manualIconTexture->applyPaletteEffect(effectGrayscalePalette);
 	}
 
 	if (_boxFullTexture) {
