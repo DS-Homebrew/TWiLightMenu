@@ -6,9 +6,9 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc mainmenu romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc mainmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	booter booter_fc mainmenu romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc mainmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package: all
 	@mkdir -p "$(PACKAGE)"
@@ -23,6 +23,7 @@ package: all
 
 	@mkdir -p "$(PACKAGE)/_nds/TWiLightMenu"
 	@cp "mainmenu/mainmenu.nds" "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
+	@cp "manual/manual.nds" "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
 	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@cp "romsel_r4theme/romsel_r4theme.nds" "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
@@ -38,6 +39,9 @@ booter_fc:
 
 mainmenu:
 	@$(MAKE) -C mainmenu
+
+manual:
+	@$(MAKE) -C manual
 
 romsel_aktheme:
 	@$(MAKE) -C romsel_aktheme
@@ -65,6 +69,7 @@ clean:
 	@$(MAKE) -C booter clean
 	@$(MAKE) -C booter_fc clean
 	@$(MAKE) -C mainmenu clean
+	@$(MAKE) -C manual clean
 	@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
@@ -82,6 +87,7 @@ clean:
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
+	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
