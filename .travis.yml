@@ -25,18 +25,6 @@ cache:
 #   - sudo dpkg -i pacman.deb
 #   - sudo dkp-pacman -Sy
 #   - sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
-#   - git clone https://github.com/RocketRobz/libnds.git
-#   - cd libnds/
-#   - sudo make install
-#   - cd ..
-#   - sudo rm -r libnds/
-#   - 
-#   - git clone https://github.com/RocketRobz/libnds.git
-#   - cd libnds/
-#   - sudo make install
-#   - cd ..
-#   - sudo rm -r libnds/
-#   - 
 #   - export DEVKITPRO=/opt/devkitpro
 #   - export DEVKITARM=${DEVKITPRO}/devkitARM
 

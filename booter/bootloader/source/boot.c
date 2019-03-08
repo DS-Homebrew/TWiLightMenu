@@ -46,7 +46,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
-#include <nds/arm7/sdmmc.h>
+#include "sdmmc.h"
 #include "fat.h"
 #include "dldi_patcher.h"
 #include "card.h"
