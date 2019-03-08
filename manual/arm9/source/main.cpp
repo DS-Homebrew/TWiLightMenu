@@ -126,7 +126,6 @@ mm_sound_effect snd_stop;
 mm_sound_effect snd_wrong;
 mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
-mm_sound_effect snd_backlight;
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -137,7 +136,6 @@ void InitSound() {
 	mmLoadEffect( SFX_WRONG );
 	mmLoadEffect( SFX_BACK );
 	mmLoadEffect( SFX_SWITCH );
-	mmLoadEffect( SFX_BACKLIGHT );
 
 	snd_launch = {
 		{ SFX_LAUNCH } ,			// id
@@ -181,17 +179,15 @@ void InitSound() {
 		255,	// volume
 		128,	// panning
 	};
-	snd_backlight = {
-		{ SFX_BACKLIGHT } ,			// id
-		(int)(1.0f * (1<<10)),	// rate
-		0,		// handle
-		255,	// volume
-		128,	// panning
-	};
 }
 
 void loadROMselect()
 {
+	mmEffectEx(&snd_back);
+	fadeType = false;	// Fade out to white
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
 	if (theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
@@ -204,6 +200,7 @@ void loadROMselect()
 	{
 		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
 	}
+	fadeType = true;	// Fade in from white
 }
 
 void unalunchRomBoot(const char* rom) {
@@ -346,12 +343,14 @@ int main(int argc, char **argv) {
 	topBarLoad();
 	//bottomBgLoad();
 	
+	int pressed = 0;
 	int held = 0;
 
 	fadeType = true;	// Fade in from white
 
 	while(1) {
 		scanKeys();
+		pressed = keysDown();
 		held = keysHeld();
 		if (held & KEY_UP) {
 			pageYpos -= 4;
@@ -361,6 +360,9 @@ int main(int argc, char **argv) {
 			pageYpos += 4;
 			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
 			pageScroll();
+		}
+		if (pressed & KEY_START) {
+			loadROMselect();
 		}
 		checkSdEject();
 		swiWaitForVBlank();
