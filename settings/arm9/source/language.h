@@ -95,6 +95,7 @@ extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
 extern std::string STR_RUNIN;
+extern std::string STR_FORCESLEEPPATCH;
 extern std::string STR_SLOT1SCFGUNLOCK;
 extern std::string STR_SNDFREQ;
 extern std::string STR_SLOT1LAUNCHMETHOD;
@@ -129,6 +130,8 @@ extern std::string STR_DESCRIPTION_RUNIN_1;
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
 
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
+
+extern std::string STR_DESCRIPTION_FORCESLEEPPATCH;
 
 extern std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK;
 

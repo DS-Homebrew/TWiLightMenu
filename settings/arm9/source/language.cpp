@@ -102,6 +102,7 @@ std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
 std::string STR_RUNIN = "STR_RUNIN";
+std::string STR_FORCESLEEPPATCH = "STR_FORCESLEEPPATCH";
 std::string STR_SLOT1SCFGUNLOCK = "STR_SLOT1SCFGUNLOCK";
 std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
@@ -136,6 +137,8 @@ std::string STR_DESCRIPTION_RUNIN_1 = "STR_DESCRIPTION_RUNIN_1";
 std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
 
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
+
+std::string STR_DESCRIPTION_FORCESLEEPPATCH = "STR_DESCRIPTION_FORCESLEEPPATCH";
 
 std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK = "STR_DESCRIPTION_SLOT1SCFGUNLOCK";
 
@@ -369,6 +372,7 @@ void langInit(void)
 	STR_LOGGING = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOGGING", "Logging"));
 	STR_ROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED"));
 	STR_RUNIN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RUNIN", "Run in"));
+	STR_FORCESLEEPPATCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FORCESLEEPPATCH", "Force sleep mode patch"));
 	STR_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1SCFGUNLOCK", "SCFG access in Slot-1"));
 	STR_SNDFREQ = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SNDFREQ", "Sound/Mic frequency"));
 	STR_SLOT1LAUNCHMETHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method"));
@@ -403,6 +407,8 @@ void langInit(void)
 	STR_DESCRIPTION_CPUSPEED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags in some games."));
 
 	STR_DESCRIPTION_VRAMBOOST_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit."));
+
+	STR_DESCRIPTION_FORCESLEEPPATCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FORCESLEEPMODE", "If a certain Slot-1 card is preventing sleep mode from working, please turn this on. Remember to turn this off if you have a retail game card inserted."));
 
 	STR_DESCRIPTION_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode and/or clock speed in flashcard homebrew."));
 

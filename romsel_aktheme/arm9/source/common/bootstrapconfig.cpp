@@ -20,7 +20,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_mpuSize = 0;
 	_mpuRegion = 0;
 	_ceCached = false;
-	_forceSleepPatch = (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()) ? true : false;
+	_forceSleepPatch = (ms().forceSleepPatch || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS())) ? true : false;
 	_isHomebrew = _gametid.empty() || _sdkVersion == 0;
 	_saveSize = 0x80000;
 	_dsiMode = 0;
