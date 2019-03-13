@@ -2284,7 +2284,7 @@ string browseForFile(const vector<string> extensionList) {
 						timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
 						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
 
-						if(ms().sortMethod == 2) {
+						if(ms().sortMethod == 1) {
 							ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
 							ms().saveSettings();
 						}
