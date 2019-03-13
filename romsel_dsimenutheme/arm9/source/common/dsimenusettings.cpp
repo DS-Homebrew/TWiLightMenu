@@ -208,6 +208,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 	
+    settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }

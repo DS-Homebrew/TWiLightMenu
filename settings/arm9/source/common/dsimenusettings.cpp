@@ -117,6 +117,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
+    sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
