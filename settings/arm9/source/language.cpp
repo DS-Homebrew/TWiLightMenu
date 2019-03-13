@@ -29,6 +29,7 @@ std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSISPLASH = "STR_DSISPLASH";
 std::string STR_HSMSG = "STR_HSMSG";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
+std::string STR_SORT_METHOD = "STR_SORT_METHOD";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
 std::string STR_SHOW_HIDDEN = "STR_SHOW_HIDDEN";
 std::string STR_BOXART = "STR_BOXART";
@@ -41,6 +42,11 @@ std::string STR_RESTOREDSIMENU = "STR_RESTOREDSIMENU";
 
 std::string STR_SHOW = "STR_SHOW";
 std::string STR_HIDE = "STR_HIDE";
+
+std::string STR_ALPHABETICAL = "STR_ALPHABETICAL";
+std::string STR_RECENT = "STR_RECENT";
+std::string STR_MOST_PLAYED = "STR_MOST_PLAYED";
+std::string STR_CUSTOM = "STR_CUSTOM";
 
 std::string STR_DESCRIPTION_COLORMODE = "STR_DESCRIPTION_COLORMODE";
 
@@ -59,6 +65,8 @@ std::string STR_DESCRIPTION_DSISPLASH = "STR_DESCRIPTION_DSISPLASH";
 std::string STR_DESCRIPTION_HSMSG = "STR_DESCRIPTION_HSMSG";
 
 std::string STR_DESCRIPTION_DSIMENUPPLOGO_1 = "STR_DESCRIPTION_DSIMENUPPLOGO_1";
+
+std::string STR_DESCRIPTION_SORT_METHOD = "STR_DESCRIPTION_SORT_METHOD";
 
 std::string STR_DESCRIPTION_DIRECTORIES_1 = "STR_DESCRIPTION_DIRECTORIES_1";
 
@@ -293,6 +301,7 @@ void langInit(void)
 	STR_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSISPLASH", "Nintendo DSi Splash Screen"));
 	STR_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HSMSG", "Health & Safety message"));
 	STR_DSIMENUPPLOGO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen"));
+	STR_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SORT_METHOD", "Sort Method"));
 	STR_DIRECTORIES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders"));
 	STR_SHOW_HIDDEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW_HIDDEN", "Show hidden files"));
 	STR_BOXART = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers"));
@@ -305,6 +314,11 @@ void langInit(void)
 
 	STR_SHOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW", "Show"));
 	STR_HIDE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HIDE", "Hide"));
+
+	STR_ALPHABETICAL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ALPHABETICAL", "Alphabetical"));
+	STR_RECENT = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RECENT", "Recent"));
+	STR_MOST_PLAYED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MOST_PLAYED", "Most Played"));
+	STR_CUSTOM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "CUSTOM", "Custom"));
 
 	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect."));
 
@@ -323,6 +337,8 @@ void langInit(void)
 	STR_DESCRIPTION_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_HSMSG", "Show the H&S message on the bottom screen of the DSi splash."));
 
 	STR_DESCRIPTION_DSIMENUPPLOGO_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++."));
+
+	STR_DESCRIPTION_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SORT_METHOD", "Changes whether to sort alphabetically, by recently played, by most played, or custom."));
 
 	STR_DESCRIPTION_DIRECTORIES_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders."));
 

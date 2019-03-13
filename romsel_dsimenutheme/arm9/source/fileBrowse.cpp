@@ -386,66 +386,65 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			drawClockColon();
 		}
 
-		if(ms().sortMethod == 0) { // Custom
-				CIniFile gameOrderIni(gameOrderIniPath);
-				vector<std::string> gameOrder;
+		if(ms().sortMethod == 0) { // Alphabetical
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		} else if(ms().sortMethod == 1) { // Recent
+			CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+			vector<std::string> recentlyPlayed;
 
-				for (int i = 0; i < (int)dirContents.size(); i++) {
-					sprintf(str, "%d", i);
-					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-				}
-
-				for (int i = 0; i < (int)gameOrder.size(); i++) {
-					for (int j = 0; j <= (int)dirContents.size(); j++) {
-						if (gameOrder[i] == dirContents[j].name) {
-							dirContents[j].position = i;
-							dirContents[j].customPos = true;
-						}
-					}
-				}
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-			} else if(ms().sortMethod == 1) { // Alphabetical
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-			} else if(ms().sortMethod == 2) { // Recent
-				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
-				vector<std::string> recentlyPlayed;
-
-				for (int i = 0; i < (int)dirContents.size(); i++) {
-					sprintf(str, "%d", i);
-					recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-				}
-
-				for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-					for (int j = 0; j <= (int)dirContents.size(); j++) {
-						if (recentlyPlayed[i] == dirContents[j].name) {
-							dirContents[j].position = i;
-							dirContents[j].customPos = true;
-						}
-					}
-				}
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-			} else if(ms().sortMethod == 3) { // Most Played
-				CIniFile timesPlayedIni(timesPlayedIniPath);
-				vector<TimesPlayed> timesPlayed;
-
-				for (int i = 0; i < (int)dirContents.size(); i++) {
-					TimesPlayed timesPlayedTemp;
-					timesPlayedTemp.name = dirContents[i].name;
-					timesPlayedTemp.amount = timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0);
-					// if(timesPlayedTemp.amount)
-						timesPlayed.push_back(timesPlayedTemp);
-				}
-
-				for (int i = 0; i < (int)timesPlayed.size(); i++) {
-					for (int j = 0; j <= (int)dirContents.size(); j++) {
-						if (timesPlayed[i].name == dirContents[j].name) {
-							dirContents[j].position = timesPlayed[i].amount;
-						}
-					}
-				}
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
+			for (int i = 0; i < (int)dirContents.size(); i++) {
+				sprintf(str, "%d", i);
+				recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 			}
 
+			for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+				for (int j = 0; j <= (int)dirContents.size(); j++) {
+					if (recentlyPlayed[i] == dirContents[j].name) {
+						dirContents[j].position = i;
+						dirContents[j].customPos = true;
+					}
+				}
+			}
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		} else if(ms().sortMethod == 2) { // Most Played
+			CIniFile timesPlayedIni(timesPlayedIniPath);
+			vector<TimesPlayed> timesPlayed;
+
+			for (int i = 0; i < (int)dirContents.size(); i++) {
+				TimesPlayed timesPlayedTemp;
+				timesPlayedTemp.name = dirContents[i].name;
+				timesPlayedTemp.amount = timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0);
+				// if(timesPlayedTemp.amount)
+					timesPlayed.push_back(timesPlayedTemp);
+			}
+
+			for (int i = 0; i < (int)timesPlayed.size(); i++) {
+				for (int j = 0; j <= (int)dirContents.size(); j++) {
+					if (timesPlayed[i].name == dirContents[j].name) {
+						dirContents[j].position = timesPlayed[i].amount;
+					}
+				}
+			}
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
+		} else if(ms().sortMethod == 3) { // Custom
+			CIniFile gameOrderIni(gameOrderIniPath);
+			vector<std::string> gameOrder;
+
+			for (int i = 0; i < (int)dirContents.size(); i++) {
+				sprintf(str, "%d", i);
+				gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+			}
+
+			for (int i = 0; i < (int)gameOrder.size(); i++) {
+				for (int j = 0; j <= (int)dirContents.size(); j++) {
+					if (gameOrder[i] == dirContents[j].name) {
+						dirContents[j].position = i;
+						dirContents[j].customPos = true;
+					}
+				}
+			}
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+		}
 		closedir(pdir);
 	}
 }
@@ -1558,7 +1557,7 @@ string browseForFile(const vector<string> extensionList) {
 						sprintf(str, "%d", i);
 						gameOrder.push_back(
 						    gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-						if (gameOrder[i] == "NULL")
+						if (gameOrder[i] == "NULL" || ms().sortMethod != 3)
 							gameOrder[i] = dirContents[scrn][i].name;
 					}
 
@@ -1602,6 +1601,9 @@ string browseForFile(const vector<string> extensionList) {
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 					}
 					gameOrderIni.SaveIniFile(gameOrderIniPath);
+
+					ms().sortMethod = 3;
+					ms().saveSettings();
 
 					// getDirectoryContents(dirContents[scrn], extensionList);
 
