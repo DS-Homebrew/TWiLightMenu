@@ -225,6 +225,8 @@ extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
 const char *gameOrderIniPath;
+const char *recentlyPlayedIniPath;
+const char *timesPlayedIniPath;
 const char *hiddenGamesIniPath;
 
 static bool inSelectMenu = false;
@@ -232,6 +234,13 @@ static bool inSelectMenu = false;
 struct DirEntry {
 	string name;
 	bool isDirectory;
+	int position;
+	bool customPos;
+};
+
+struct TimesPlayed {
+	string name;
+	int amount;
 };
 
 TextEntry *pathText = nullptr;
@@ -274,6 +283,10 @@ bool nameEndsWith(const string &name, const vector<string> extensionList) {
 
 bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
+	if (lhs.customPos) {
+		if(lhs.position < rhs.position)	return true;
+		else return false;
+	}
 	if (!lhs.isDirectory && rhs.isDirectory) {
 		return false;
 	}
@@ -281,6 +294,17 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		return true;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+}
+
+bool dirEntryPredicateMostPlayed(const DirEntry &lhs, const DirEntry &rhs) {
+	if (!lhs.isDirectory && rhs.isDirectory)	return false;
+	else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+
+	if(lhs.position > rhs.position)	return true;
+	else if(lhs.position < rhs.position)	return false;
+	else {
+		return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+	}
 }
 
 void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> extensionList) {
@@ -308,7 +332,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				break;
 			}
 		}
-
+		int currentPos = 0;
 		while (true) {
 			DirEntry dirEntry;
 
@@ -319,6 +343,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
+			dirEntry.position = currentPos;
+			dirEntry.customPos = false;
 
 			if (ms().showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") &&
@@ -351,6 +377,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 					}
 				}
 			}
+			currentPos++;
 
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
@@ -358,27 +385,67 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			drawCurrentDate();
 			drawClockColon();
 		}
-		sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 
-		CIniFile gameOrderIni(gameOrderIniPath);
-		vector<std::string> gameOrder;
+		if(ms().sortMethod == 0) { // Custom
+				CIniFile gameOrderIni(gameOrderIniPath);
+				vector<std::string> gameOrder;
 
-		for (int i = 0; i < (int)dirContents.size(); i++) {
-			sprintf(str, "%d", i);
-			gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-		}
-
-		for (int i = 0; i < (int)gameOrder.size(); i++) {
-			for (int j = 0; j <= (int)dirContents.size(); j++) {
-				if (gameOrder[i] == dirContents[j].name) {
-					vector<DirEntry> dirContentsCopy;
-					dirContentsCopy.push_back(dirContents[j]);
-					dirContents.erase(dirContents.begin() + j);
-					dirContents.insert(dirContents.begin() + i, dirContentsCopy[0]);
-					break;
+				for (int i = 0; i < (int)dirContents.size(); i++) {
+					sprintf(str, "%d", i);
+					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 				}
+
+				for (int i = 0; i < (int)gameOrder.size(); i++) {
+					for (int j = 0; j <= (int)dirContents.size(); j++) {
+						if (gameOrder[i] == dirContents[j].name) {
+							dirContents[j].position = i;
+							dirContents[j].customPos = true;
+						}
+					}
+				}
+				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			} else if(ms().sortMethod == 1) { // Alphabetical
+				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			} else if(ms().sortMethod == 2) { // Recent
+				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+				vector<std::string> recentlyPlayed;
+
+				for (int i = 0; i < (int)dirContents.size(); i++) {
+					sprintf(str, "%d", i);
+					recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+				}
+
+				for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+					for (int j = 0; j <= (int)dirContents.size(); j++) {
+						if (recentlyPlayed[i] == dirContents[j].name) {
+							dirContents[j].position = i;
+							dirContents[j].customPos = true;
+						}
+					}
+				}
+				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
+			} else if(ms().sortMethod == 3) { // Most Played
+				CIniFile timesPlayedIni(timesPlayedIniPath);
+				vector<TimesPlayed> timesPlayed;
+
+				for (int i = 0; i < (int)dirContents.size(); i++) {
+					TimesPlayed timesPlayedTemp;
+					timesPlayedTemp.name = dirContents[i].name;
+					timesPlayedTemp.amount = timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0);
+					// if(timesPlayedTemp.amount)
+						timesPlayed.push_back(timesPlayedTemp);
+				}
+
+				for (int i = 0; i < (int)timesPlayed.size(); i++) {
+					for (int j = 0; j <= (int)dirContents.size(); j++) {
+						if (timesPlayed[i].name == dirContents[j].name) {
+							dirContents[j].position = timesPlayed[i].amount;
+						}
+					}
+				}
+				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
 			}
-		}
+
 		closedir(pdir);
 	}
 }
@@ -1140,6 +1207,10 @@ string browseForFile(const vector<string> extensionList) {
 
 	gameOrderIniPath =
 	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+	recentlyPlayedIniPath =
+	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+	timesPlayedIniPath =
+	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini"
 				       : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
@@ -2150,6 +2221,72 @@ string browseForFile(const vector<string> extensionList) {
 
 						clearText(true);
 
+						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
+				      0777);
+
+						CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+						vector<std::string> recentlyPlayed;
+						char str[12] = {0};
+
+						for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
+							sprintf(str, "%d", i);
+							recentlyPlayed.push_back(
+									recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+							if (recentlyPlayed[i] == "NULL")
+								recentlyPlayed[i] = dirContents[scrn][i].name;
+						}
+						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+							for (int j = 0; j < (int)recentlyPlayed.size(); j++) {
+								if (i != j) {
+									if (recentlyPlayed[i] == recentlyPlayed[j]) {
+										recentlyPlayed.erase(recentlyPlayed.begin() + j);
+									}
+								}
+							}
+						}
+						for (int i = recentlyPlayed.size(); true; i++) {
+							sprintf(str, "%d", i);
+							if (recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, "");
+							} else {
+								break;
+							}
+						}
+						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+							bool stillExists = false;
+							for (int j = 0; j < (int)dirContents[scrn].size(); j++) {
+								if (recentlyPlayed[i] == dirContents[scrn][j].name) {
+									stillExists = true;
+									break;
+								}
+							}
+							if (!stillExists)
+								recentlyPlayed.erase(recentlyPlayed.begin() + i);
+						}
+
+						recentlyPlayed.erase(recentlyPlayed.begin() + CURPOS);
+						int firstNonDir;
+						while(dirContents[scrn].at(firstNonDir).isDirectory) {
+							firstNonDir++;
+						}
+						recentlyPlayed.insert(recentlyPlayed.begin()+firstNonDir, dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name);
+
+						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+							char str[12] = {0};
+							sprintf(str, "%d", i);
+							recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
+						}
+						recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+
+						CIniFile timesPlayedIni(timesPlayedIniPath);
+						timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
+						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+
+						if(ms().sortMethod == 2) {
+							ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
+							ms().saveSettings();
+						}
+
 						// Return the chosen file
 						return entry->name;
 					}
@@ -2455,6 +2592,8 @@ string browseForFile(const vector<string> extensionList) {
 							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str,
 										 hiddenGames[i]);
 						}
+						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
+				      0777);
 						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
 
 						if (ms().showBoxArt)

@@ -46,6 +46,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     secondaryAccess = false;
     previousUsedDevice = false;
     secondaryDevice = false;
+    sortMethod = 0;
 
     flashcard = EDSTTClone;
 
@@ -106,6 +107,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
+
+    sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
     // Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
@@ -225,6 +228,8 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+
+    settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
 	if (consoleModel < 2) {
 		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);

@@ -155,6 +155,7 @@ class DSiMenuPlusPlusSettings
     bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
+    int sortMethod;
 
     int flashcard;
     bool slot1LaunchMethod;
