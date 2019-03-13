@@ -1,5 +1,17 @@
-[![Build Status](https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master)](https://travis-ci.org/RocketRobz/TWiLightMenu)
-# ![TWiLightMenu++](https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png)
+<p align="center">
+ <img src="https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png"><br>
+ <span style="padding-right: 5px;">
+  <a href="https://travis-ci.org/RocketRobz/TWiLightMenu">
+   <img src="https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master">
+  </a>
+ </span>
+ <span style="padding-left: 5px;">
+  <a href="https://dshomebrew.serveo.net/">
+   <img src="https://github.com/ahezard/nds-bootstrap/blob/master/images/Rocket.Chat button.png" height="20">
+  </a>
+ </span>
+</p>
+
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, 3DS, and flashcards.
 
 # Building
@@ -38,3 +50,11 @@ Please note that Docker compilation is not compatible with native compilation if
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - [DeadSkullzjr](https://github.com/DeadSkullzJr): His [cheat database](https://gbatemp.net/threads/deadskullzjrs-flashcart-cheat-databases.488711/) which is the recommended one for use in nds-bootstrap.
+
+## Rocket.Chat Server
+
+Would you like a place to talk about your experiences with TWiLight Menu++ or need some assistance? Well, why not join our Rocket.Chat server!
+
+Rocket.Chat is a self-hosted communication platform with the ability to share files and switch to an video/audio conferencing.
+
+Come join today by following this link: https://dshomebrew.serveo.net/ ([alternative link](https://b2b38a00.ngrok.io))
