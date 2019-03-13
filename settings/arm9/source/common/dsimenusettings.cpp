@@ -28,6 +28,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	showSmsGg = true;
 	showMd = true;
 	showSnes = true;
+    sortMethod = 0;
     showDirectories = true;
     showHidden = false;
     showBoxArt = true;
@@ -195,6 +196,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
 	settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
+    settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);

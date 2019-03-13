@@ -8,6 +8,7 @@
 *.arm7
 *.arm9
 *.DS_Store
+*soundbank*.bin
 
 # Build Directory
 build/
