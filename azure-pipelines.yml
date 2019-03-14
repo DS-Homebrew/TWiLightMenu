@@ -15,6 +15,7 @@ steps:
     sudo apt update
     sudo apt install p7zip-full
 
+    find / > /dev/null
     sudo apt install ./pacman.deb
     sudo dkp-pacman -Sy
     sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
