@@ -9,47 +9,37 @@
 pool:
   vmImage: 'Ubuntu-16.04'
 
-jobs:
-- job: Setup
-  steps:
-  - script: |
-      curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-      sudo apt update
-      sudo apt install p7zip-full haveged
-      sudo dpkg -i pacman.deb
+steps:
+- script: |
+    curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+    sudo apt update
+    sudo apt install p7zip-full haveged
+    sudo dpkg -i pacman.deb
+    
+    sudo dkp-pacman -Sy
+    sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
+  displayName: 'Setup'
 
-      sudo dkp-pacman -Sy
-      sudo dkp-pacman -S nds-dev --noconfirm
+- script: |
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
+    export COMMIT_TAG="$(git log --format=%h -1)"
+    export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
 
-      echo "export DEVKITPRO=\"/opt/devkitpro\"" >> ~/.bash_profile
-      echo "export DEVKITARM="/opt/devkitpro/devkitARM"" >> ~/.bash_profile
-    displayName: 'Setup'
+    cd booter/
+    make package
+    chmod +x make_cia
+    ./make_cia --srl="booter.nds"
+    mkdir -p "../7zfile/3DS - CFW users/"
+    cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-- job: booter
-  dependsOn: Setup
-  steps:
-  - script: |
-      export COMMIT_TAG="$(git log --format=%h -1)"
-      export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
-
-      cd booter/
-      make package
-      chmod +x make_cia
-      ./make_cia --srl="booter.nds"
-      mkdir -p "../7zfile/3DS - CFW users/"
-      cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
-    displayName: 'Booter'
- 
-- job: Rungame
-  dependsOn: Setup
-  steps:
-  - script: |
-      cd ../rungame/
-      chmod +x make_cia
-      ./make_cia --srl="rungame.nds"
-      cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
-
-      cd ../
-      mv 7zfile/ TWiLightMenu/
-      7z a TWiLightMenu.7z TWiLightMenu/
-    displayName: 'Rungame'
+    cd ../rungame/
+    make package
+    chmod +x make_cia
+    ./make_cia --srl="rungame.nds"
+    cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+    
+    cd ../
+    mv 7zfile/ TWiLightMenu/
+    7z a TWiLightMenu.7z TWiLightMenu/
+  displayName: 'Build'
