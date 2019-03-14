@@ -12,14 +12,7 @@ pool:
 steps:
 - script: |
     curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-    sudo apt update
-    sudo apt install p7zip-full
-    
     sudo dpkg -i pacman.deb
-    sudo dkp-pacman -Sy
-    sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
-    export DEVKITPRO=/opt/devkitpro
-    export DEVKITARM=${DEVKITPRO}/devkitARM
   displayName: 'Install'
 
 - script: |
