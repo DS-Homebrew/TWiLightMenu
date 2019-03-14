@@ -18,17 +18,17 @@ steps:
     
     sudo dkp-pacman -Sy
     sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
-
-    export DEVKITPRO="/opt/devkitpro"
-    export DEVKITARM="/opt/devkitpro/devkitARM"
   displayName: 'Install'
 
 - script: |
-    echo $DEVKITARM
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
     export COMMIT_TAG="$(git log --format=%h -1)"
     export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
+
     7z x libnds.7z
     sudo cp -r libnds/* /opt/devkitpro/libnds/
+
     make package
     docker run --rm -t -i -v "$TRAVIS_BUILD_DIR:/data" twilightmenu make package
     cd booter/
