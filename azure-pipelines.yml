@@ -20,7 +20,7 @@ steps:
     sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
 
     export DEVKITPRO="/opt/devkitpro"
-    export devkitARM="/opt/devkitpro/devkitARM"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
   displayName: 'Install'
 
 - script: |
