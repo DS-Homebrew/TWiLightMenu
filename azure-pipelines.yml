@@ -27,17 +27,20 @@ steps:
     export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
 
     cd booter/
-    make package
+    make
     chmod +x make_cia
     ./make_cia --srl="booter.nds"
     mkdir -p "../7zfile/3DS - CFW users/"
     cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+    cp "booter.nds" "../7zfile/BOOT.NDS"
+    cp "booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/00000000.app"
 
     cd ../rungame/
-    make package
+    make
     chmod +x make_cia
     ./make_cia --srl="rungame.nds"
     cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+    cp "rungame.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030015/534c524e/00000000.app"
     
     cd ../
     mv 7zfile/ TWiLightMenu/
