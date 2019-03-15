@@ -14,6 +14,7 @@ pool:
 variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
+  COMMIT_TAG: $[git log --format=%h -1]
 
 steps:
 - script: |
@@ -50,6 +51,7 @@ steps:
 - script: |
     # mv 7zfile/ TWiLightMenu/
     # 7z a TWiLightMenu.7z TWiLightMenu/
+    cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)
   displayName: 'Pack 7z'
 
 - script: |
@@ -78,3 +80,23 @@ steps:
     ./send.sh failure $WEBHOOK_URL
   condition: failed()
   displayName: "Send failure webhook"
+
+# GitHub Release
+# Create, edit, or delete a GitHub release.
+- task: GitHubRelease@0
+  inputs:
+    gitHubConnection: TWLBot
+    repositoryName: Builds
+    action: create
+    target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
+    tagSource: 'manual'
+    tag: v$CURRENT_DATE
+    title: TWiLightMenu | $COMMIT_TAG
+    #releaseNotesSource: 'file' # Optional. Options: file, input
+    #releaseNotesFile: # Optional
+    #releaseNotes: # Optional
+    assets: '$(Build.ArtifactStagingDirectory)/*' # Optional
+    #assetUploadMode: 'delete' # Optional. Options: delete, replace
+    #isDraft: false # Optional
+    isPreRelease: true
+    #addChangeLog: true # Optional
