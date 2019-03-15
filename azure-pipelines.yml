@@ -50,8 +50,8 @@ steps:
   displayName: 'Build TWiLight Menu++'
 
 - script: |
-    mv 7zfile/ TWiLightMenu/
-    7z a TWiLightMenu.7z TWiLightMenu/
+    # mv 7zfile/ TWiLightMenu/
+    # 7z a TWiLightMenu.7z TWiLightMenu/
     # cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
   displayName: 'Pack 7z'
 
@@ -62,7 +62,7 @@ steps:
     git config --global user.name "TWLBot"
     git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
     cd Builds/
-    cp ../TWiLightMenu.7z TWiLightMenu.7z
+    # cp ../TWiLightMenu.7z TWiLightMenu.7z
     git stage .
     git commit -m "TWiLightMenu | $COMMIT_TAG"
     git push origin master
