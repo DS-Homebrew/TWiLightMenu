@@ -87,17 +87,12 @@ steps:
     gitHubConnection: TWLBot
     repositoryName: TWLBot/Builds
     action: create
-    # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
     target: $(TRAVIS_COMMIT)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
-    #releaseNotesSource: 'file' # Optional. Options: file, input
-    #releaseNotesFile: # Optional
     #releaseNotes: # Optional
     assets: '$(Build.ArtifactStagingDirectory)/*' # Optional
-    #assetUploadMode: 'delete' # Optional. Options: delete, replace
-    #isDraft: false # Optional
     isPreRelease: true
     addChangeLog: false
 
