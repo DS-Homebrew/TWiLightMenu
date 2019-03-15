@@ -17,7 +17,7 @@ steps:
     sudo dpkg -i pacman.deb
     
     sudo dkp-pacman -Sy
-    sudo dkp-pacman -S devkitARM general-tools dstools ndstool libnds libfat-nds grit mmutil --noconfirm
+    sudo dkp-pacman -S nds-dev --noconfirm
   displayName: 'Setup'
 
 - script: |
