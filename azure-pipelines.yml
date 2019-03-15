@@ -92,7 +92,7 @@ steps:
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
     target: 887324b06d488cf1c9a7e11b6adb7bc0fee87006
     tagSource: 'manual'
-    tag: v$CURRENT_DATE
+    tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $COMMIT_TAG
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
