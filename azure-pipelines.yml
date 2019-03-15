@@ -11,7 +11,7 @@ pool:
 
 variables:
   COMMIT_TAG: $(Build.SourceVersion)
-  CURRENT_DATE: $(Date:yyyymmdd-hhmmss)
+  CURRENT_DATE: $(date +'%Y%m%d-%H%M%S')
   COMMIT_MESSAGE: $(git log --pretty=format:"%an - %s" -1)
 
 steps:
