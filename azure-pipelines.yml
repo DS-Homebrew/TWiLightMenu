@@ -67,7 +67,7 @@ steps:
     git push origin master
     git tag v$CURRENT_DATE
     
-    $(TWLBOT_COMMIT)=$(git log -1 --format="%H")
+    export TWLBOT_COMMIT=$(git log -1 --format="%H")
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
