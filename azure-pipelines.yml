@@ -10,7 +10,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  CURRENT_DATE: $[date +'%Y%m%d-%H%M%S']
+  CURRENT_DATE: $[pipeline.startTime]
 
 steps:
 - script: |
