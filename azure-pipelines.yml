@@ -54,36 +54,28 @@ steps:
   displayName: 'Pack 7z'
 
 - script: |
-    export COMMIT_TAG="$(git log --format=%h -1)"
+    # export COMMIT_TAG="$(git log --format=%h -1)"
 
-    git config --global user.email "flamekat54@aol.com"
-    git config --global user.name "TWLBot"
-    git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
-    cd Builds/
-    # cp ../TWiLightMenu.7z TWiLightMenu.7z
-    git stage .
-    git commit -m "TWiLightMenu | $COMMIT_TAG"
-    git push origin master
-    git tag v$CURRENT_DATE
+    # git config --global user.email "flamekat54@aol.com"
+    # git config --global user.name "TWLBot"
+    # git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+    # cd Builds/
+    # # cp ../TWiLightMenu.7z TWiLightMenu.7z
+    # git stage .
+    # git commit -m "TWiLightMenu | $COMMIT_TAG"
+    # git push origin master
+    # git tag v$CURRENT_DATE
 
-    pwd
-    
-    git log -1 --format="%H" >> travisCommit.txt
+    # git log -1 --format="%H" >> travisCommit.txt
+
+    mkdir Builds
+    cd Builds
+    echo "testing... 1, 2, 3" >> travisCommit.txt
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
-    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
-    chmod +x send.sh
-    ./send.sh success $WEBHOOK_URL
-  condition: succeeded()
-  displayName: "Send success webhook"
-
-- script: |
-    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
-    chmod +x send.sh
-    ./send.sh failure $WEBHOOK_URL
-  condition: failed()
-  displayName: "Send failure webhook"
+    echo $(cat Builds/travisCommit.txt)
+  displayName: Test
 
 # GitHub Release
 # Create, edit, or delete a GitHub release.
@@ -106,3 +98,17 @@ steps:
     #isDraft: false # Optional
     isPreRelease: true
     addChangeLog: false
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    ./send.sh success $WEBHOOK_URL
+  condition: succeeded()
+  displayName: "Send success webhook"
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    ./send.sh failure $WEBHOOK_URL
+  condition: failed()
+  displayName: "Send failure webhook"
