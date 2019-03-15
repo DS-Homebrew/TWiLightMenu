@@ -84,9 +84,10 @@ steps:
 # GitHub Release
 # Create, edit, or delete a GitHub release.
 - task: GitHubRelease@0
+  displayName: "Release to TWLBot/Builds"
   inputs:
     gitHubConnection: TWLBot
-    repositoryName: Builds
+    repositoryName: TWLBot/Builds
     action: create
     target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
     tagSource: 'manual'
