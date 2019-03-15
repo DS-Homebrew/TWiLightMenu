@@ -15,6 +15,7 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
+  TWLBOT_COMMIT: ''
 
 steps:
 - script: |
@@ -55,17 +56,19 @@ steps:
   displayName: 'Pack 7z'
 
 - script: |
-    # export COMMIT_TAG="$(git log --format=%h -1)"
+    export COMMIT_TAG="$(git log --format=%h -1)"
 
-    # git config --global user.email "flamekat54@aol.com"
-    # git config --global user.name "TWLBot"
-    # git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
-    # cd Builds/
-    # cp ../TWiLightMenu.7z TWiLightMenu.7z
-    # git stage .
-    # git commit -m "TWiLightMenu | $COMMIT_TAG"
-    # git push origin master
-    # git tag v$CURRENT_DATE
+    git config --global user.email "flamekat54@aol.com"
+    git config --global user.name "TWLBot"
+    git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+    cd Builds/
+    cp ../TWiLightMenu.7z TWiLightMenu.7z
+    git stage .
+    git commit -m "TWiLightMenu | $COMMIT_TAG"
+    git push origin master
+    git tag v$CURRENT_DATE
+
+    export $(TWLBOT_COMMIT)=$(git log -1 --format="%H")
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
@@ -90,7 +93,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: e928dd4
+    target: $(TWLBOT_COMMIT)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
