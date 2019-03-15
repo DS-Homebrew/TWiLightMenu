@@ -67,7 +67,7 @@ steps:
     git push origin master
     git tag v$CURRENT_DATE
     
-    export TWLBOT_COMMIT=$(git log -1 --format="%H")
+    git log -1 --format="%H" >> travisCommit.txt
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
@@ -93,7 +93,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: $(cd Builds && git log -1 --format="%H")
+    target: $(cat Builds/travisCommit.txt)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
