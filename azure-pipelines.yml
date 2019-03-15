@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 # trigger:
-# - master 
+# - master
 
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
