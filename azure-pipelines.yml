@@ -65,14 +65,12 @@ steps:
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
-    cd ..
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
     chmod +x send.sh
     ./send.sh success $WEBHOOK_URL
   condition: succeeded()
   displayName: "Send success webhook"
 - script: |
-    cd ..
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
     chmod +x send.sh
     ./send.sh failure $WEBHOOK_URL
