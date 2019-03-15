@@ -60,3 +60,14 @@ steps:
     export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
     git tag v$CURRENT_DATE
   displayName: "Commit to TWLBot/Builds"
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send-azure.sh
+    chmod +x send-azure.sh
+    ./send-azure.sh success $WEBHOOK_URL
+  condition: succeeded()
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send-azure.sh
+    chmod +x send-azure.sh
+    ./send-azure.sh failure $WEBHOOK_URL
+  condition: failed()
