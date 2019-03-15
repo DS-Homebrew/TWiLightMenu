@@ -10,7 +10,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  CURRENT_DATE: $[format('{0:yyyyMMdd-HHmmss}', pipeline.startTime)]
+  CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 steps:
 - script: |
