@@ -15,7 +15,6 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
-  TRAVIS_COMMIT: "test"
 
 steps:
 - script: |
@@ -71,8 +70,8 @@ steps:
 
     mkdir Builds
     cd Builds
-    echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
-    echo ##vso[task.setvariable variable=TRAVIS_COMMIT]$(cat travisCommit.txt)
+    # echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
+    echo ##vso[task.setvariable variable=TRAVIS_COMMIT]$(echo "2428412f374d13bf3f378dd36bd9c69c207964a6")
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
