@@ -98,5 +98,5 @@ steps:
     assets: '$(Build.ArtifactStagingDirectory)/*' # Optional
     #assetUploadMode: 'delete' # Optional. Options: delete, replace
     #isDraft: false # Optional
-    isPreRelease: true
-    #addChangeLog: true # Optional
+    # isPreRelease: true
+    addChangeLog: false
