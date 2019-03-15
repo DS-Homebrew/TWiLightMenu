@@ -52,7 +52,7 @@ steps:
 - script: |
     mv 7zfile/ TWiLightMenu/
     7z a TWiLightMenu.7z TWiLightMenu/
-    cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
+    # cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
   displayName: 'Pack 7z'
 
 - script: |
@@ -77,7 +77,7 @@ steps:
     ./send.sh success $WEBHOOK_URL
   condition: succeeded()
   displayName: "Send success webhook"
-  
+
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
     chmod +x send.sh
