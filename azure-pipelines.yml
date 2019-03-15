@@ -71,7 +71,7 @@ steps:
     mkdir Builds
     cd Builds
     # echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
-    echo '##vso[task.setvariable variable=TRAVIS_COMMIT]crushed tomatoes'
+    echo '##vso[task.setvariable variable=TRAVIS_COMMIT]$(git log -1 --format="%H")'
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
