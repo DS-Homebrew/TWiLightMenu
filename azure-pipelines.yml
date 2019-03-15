@@ -10,7 +10,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  CURRENT_DATE: $(Date:yyyymmdd-hhmmss)
+  CURRENT_DATE: $(Date:YYYYMMDD-HHMMSS)
 
 steps:
 - script: |
