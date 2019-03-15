@@ -23,8 +23,6 @@ steps:
 - script: |
     export DEVKITPRO="/opt/devkitpro"
     export DEVKITARM="/opt/devkitpro/devkitARM"
-    export COMMIT_TAG="$(git log --format=%h -1)"
-    export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
 
     sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
@@ -46,3 +44,18 @@ steps:
     mv 7zfile/ TWiLightMenu/
     7z a TWiLightMenu.7z TWiLightMenu/
   displayName: 'Pack 7z'
+
+- script: |
+    export COMMIT_TAG="$(git log --format=%h -1)"
+    export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
+
+    git config --local user.name "TWLBot"
+    git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+    cd Builds/
+    cp ../TWiLightMenu.7z TWiLightMenu.7z
+    git stage .
+    git commit -m "TWiLightMenu | $COMMIT_TAG"
+    git push origin master
+    export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+    git tag v$CURRENT_DATE
+  displayName: "Commit to TWLBot/Builds"
