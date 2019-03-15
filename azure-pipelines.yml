@@ -10,9 +10,7 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  COMMIT_TAG: $(Build.SourceVersion)
-  CURRENT_DATE: Date:yyyymmdd-hhmmss
-  COMMIT_MESSAGE: $(git log --pretty=format:"%an - %s" -1)
+  CURRENT_DATE: $(Date:yyyymmdd-hhmmss)
 
 steps:
 - script: |
@@ -20,7 +18,7 @@ steps:
     # sudo apt update
     # sudo apt install p7zip-full haveged
     # sudo dpkg -i pacman.deb
-    
+
     # sudo dkp-pacman -Sy
     # sudo dkp-pacman -S nds-dev --noconfirm
   displayName: 'Setup environment'
@@ -46,20 +44,22 @@ steps:
   displayName: 'Build TWiLight Menu++'
 
 - script: |
-    mv 7zfile/ TWiLightMenu/
-    7z a TWiLightMenu.7z TWiLightMenu/
+    # mv 7zfile/ TWiLightMenu/
+    # 7z a TWiLightMenu.7z TWiLightMenu/
   displayName: 'Pack 7z'
 
 - script: |
-    git config --global user.email "flamekat54@aol.com"
-    git config --global user.name "TWLBot"
-    git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
-    cd Builds/
-    cp ../TWiLightMenu.7z TWiLightMenu.7z
-    git stage .
-    git commit -m "TWiLightMenu | $COMMIT_TAG"
-    git push origin master
-    git tag v$CURRENT_DATE
+    # export COMMIT_TAG="$(git log --format=%h -1)"
+
+    # git config --global user.email "flamekat54@aol.com"
+    # git config --global user.name "TWLBot"
+    # git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+    # cd Builds/
+    # cp ../TWiLightMenu.7z TWiLightMenu.7z
+    # git stage .
+    # git commit -m "TWiLightMenu | $COMMIT_TAG"
+    # git push origin master
+    # git tag v$CURRENT_DATE
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
