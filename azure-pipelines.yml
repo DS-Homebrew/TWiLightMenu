@@ -70,7 +70,7 @@ steps:
 
     mkdir Builds
     cd Builds
-    echo "testing... 1, 2, 3" >> travisCommit.txt
+    echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
@@ -86,7 +86,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: $(cat /home/vsts/work/1/s/Builds/travisCommit.txt)
+    target: $(cat Builds/travisCommit.txt)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
