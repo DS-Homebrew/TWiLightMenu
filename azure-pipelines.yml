@@ -51,7 +51,7 @@ steps:
 - script: |
     # mv 7zfile/ TWiLightMenu/
     # 7z a TWiLightMenu.7z TWiLightMenu/
-    cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)
+    # cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)
   displayName: 'Pack 7z'
 
 - script: |
