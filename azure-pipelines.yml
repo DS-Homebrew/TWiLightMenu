@@ -19,40 +19,39 @@ variables:
 
 steps:
 - script: |
-    echo $REPOSITORY_NAME
-    # curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-    # sudo apt update
-    # sudo apt install p7zip-full haveged
-    # sudo dpkg -i pacman.deb
+    curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+    sudo apt update
+    sudo apt install p7zip-full haveged
+    sudo dpkg -i pacman.deb
 
-    # sudo dkp-pacman -Sy
-    # sudo dkp-pacman -S nds-dev --noconfirm
+    sudo dkp-pacman -Sy
+    sudo dkp-pacman -S nds-dev --noconfirm
   displayName: 'Setup environment'
 
 - script: |
-    # export DEVKITPRO="/opt/devkitpro"
-    # export DEVKITARM="/opt/devkitpro/devkitARM"
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
 
-    # sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
+    sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
-    # make package
+    make package
 
-    # cd booter/
-    # chmod +x make_cia
-    # ./make_cia --srl="booter.nds"
-    # mkdir -p "../7zfile/3DS - CFW users/"
-    # cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+    cd booter/
+    chmod +x make_cia
+    ./make_cia --srl="booter.nds"
+    mkdir -p "../7zfile/3DS - CFW users/"
+    cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-    # cd ../rungame/
-    # chmod +x make_cia
-    # ./make_cia --srl="rungame.nds"
-    # cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+    cd ../rungame/
+    chmod +x make_cia
+    ./make_cia --srl="rungame.nds"
+    cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
   displayName: 'Build TWiLight Menu++'
 
 - script: |
-    # mv 7zfile/ TWiLightMenu/
-    # 7z a TWiLightMenu.7z TWiLightMenu/
-    # cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
+    mv 7zfile/ TWiLightMenu/
+    7z a TWiLightMenu.7z TWiLightMenu/
+    cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
   displayName: 'Pack 7z'
 
 - script: |
@@ -62,7 +61,7 @@ steps:
     git config --global user.name "TWLBot"
     git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
     cd Builds/
-    # cp ../TWiLightMenu.7z TWiLightMenu.7z
+    cp ../TWiLightMenu.7z TWiLightMenu.7z
     git stage .
     git commit -m "TWiLightMenu | $COMMIT_TAG"
     git push origin master
