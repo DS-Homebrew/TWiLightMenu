@@ -13,11 +13,11 @@ pool:
 
 variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
+  REPOSITORY_NAME: $(Build.Repository.Name)
 
 steps:
 - script: |
-    echo $BUILD_REPOSITORYNAME
-    echo $(Build.SourceBranch)
+    echo $REPOSITORY_NAME
     # curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
     # sudo apt update
     # sudo apt install p7zip-full haveged
