@@ -6,6 +6,8 @@
 # trigger:
 # - master
 
+name:  $[format('{0:yyyyMMddHmmss}', pipeline.startTime)]
+
 pool:
   vmImage: 'Ubuntu-16.04'
 
