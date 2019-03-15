@@ -66,8 +66,8 @@ steps:
     git commit -m "TWiLightMenu | $COMMIT_TAG"
     git push origin master
     git tag v$CURRENT_DATE
-
-    export $(TWLBOT_COMMIT)=$(git log -1 --format="%H")
+    
+    $(TWLBOT_COMMIT)=$(git log -1 --format="%H")
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
