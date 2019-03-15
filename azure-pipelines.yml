@@ -63,13 +63,13 @@ steps:
 
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
-    chmod +x send-azure.sh
-    ./send-azure.sh success $WEBHOOK_URL
+    chmod +x send.sh
+    ./send.sh success $WEBHOOK_URL
   condition: succeeded()
   displayName: "Send success webhook"
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
-    chmod +x send-azure.sh
-    ./send-azure.sh failure $WEBHOOK_URL
+    chmod +x send.sh
+    ./send.sh failure $WEBHOOK_URL
   condition: failed()
   displayName: "Send failure webhook"
