@@ -15,37 +15,36 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
-  TWLBOT_COMMIT: ''
 
 steps:
 - script: |
-    curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-    sudo apt update
-    sudo apt install p7zip-full haveged
-    sudo dpkg -i pacman.deb
+    # curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+    # sudo apt update
+    # sudo apt install p7zip-full haveged
+    # sudo dpkg -i pacman.deb
 
-    sudo dkp-pacman -Sy
-    sudo dkp-pacman -S nds-dev --noconfirm
+    # sudo dkp-pacman -Sy
+    # sudo dkp-pacman -S nds-dev --noconfirm
   displayName: 'Setup environment'
 
 - script: |
-    export DEVKITPRO="/opt/devkitpro"
-    export DEVKITARM="/opt/devkitpro/devkitARM"
+    # export DEVKITPRO="/opt/devkitpro"
+    # export DEVKITARM="/opt/devkitpro/devkitARM"
 
-    sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
+    # sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
-    make package
+    # make package
 
-    cd booter/
-    chmod +x make_cia
-    ./make_cia --srl="booter.nds"
-    mkdir -p "../7zfile/3DS - CFW users/"
-    cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+    # cd booter/
+    # chmod +x make_cia
+    # ./make_cia --srl="booter.nds"
+    # mkdir -p "../7zfile/3DS - CFW users/"
+    # cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-    cd ../rungame/
-    chmod +x make_cia
-    ./make_cia --srl="rungame.nds"
-    cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+    # cd ../rungame/
+    # chmod +x make_cia
+    # ./make_cia --srl="rungame.nds"
+    # cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
   displayName: 'Build TWiLight Menu++'
 
 - script: |
@@ -66,6 +65,8 @@ steps:
     git commit -m "TWiLightMenu | $COMMIT_TAG"
     git push origin master
     git tag v$CURRENT_DATE
+
+    pwd
     
     git log -1 --format="%H" >> travisCommit.txt
   displayName: "Commit to TWLBot/Builds"
@@ -93,7 +94,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: $[cat Builds/travisCommit.txt]
+    target: $(cat Builds/travisCommit.txt)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
