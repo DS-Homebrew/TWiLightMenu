@@ -86,7 +86,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: $(cat Builds/travisCommit.txt)
+    target: $(echo 2428412f374d13bf3f378dd36bd9c69c207964a6)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
