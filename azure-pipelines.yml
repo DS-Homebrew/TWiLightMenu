@@ -40,12 +40,9 @@ steps:
     chmod +x make_cia
     ./make_cia --srl="rungame.nds"
     cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
-    
-    cd ../
-    7z x libnds.7z
-    sudo cp -r libnds/* /opt/devkitpro/libnds/
+  displayName: 'Build'
 
-
+- script: |
     mv 7zfile/ TWiLightMenu/
     7z a TWiLightMenu.7z TWiLightMenu/
-  displayName: 'Build'
+  displayName: 'Pack 7z'
