@@ -3,8 +3,8 @@
  <span style="padding-right: 5px;">
   <a href="https://travis-ci.org/RocketRobz/TWiLightMenu">
    <img src="https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master">
-    <a href="https://dev.azure.com/evan102112/sap-on-a-tree/_apis/build/status/RocketRobz.TWiLightMenu?branchName=master">
-   <img src="https://dev.azure.com/evan102112/sap-on-a-tree/_apis/build/status/RocketRobz.TWiLightMenu?branchName=master">
+    <a href="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/RocketRobz.TWiLightMenu?branchName=master">
+   <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/RocketRobz.TWiLightMenu?branchName=master">
   </a>
  </span>
  <span style="padding-left: 5px;">
