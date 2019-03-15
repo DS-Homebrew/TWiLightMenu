@@ -15,6 +15,7 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $[bash(git log --format=%h -1)]
+  TRAVIS_COMMIT: "test"
 
 steps:
 - script: |
@@ -70,11 +71,12 @@ steps:
 
     mkdir Builds
     cd Builds
-    echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
+    # echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
+    echo ##vso[task.setvariable variable=TRAVIS_COMMIT]$(cat Builds/travisCommit.txt)
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
-    echo $(cat Builds/travisCommit.txt)
+    echo $(TRAVIS_COMMIT)
   displayName: Test
 
 # GitHub Release
@@ -86,7 +88,7 @@ steps:
     repositoryName: TWLBot/Builds
     action: create
     # target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
-    target: 2428412f374d13bf3f378dd36bd9c69c207964a6
+    target: $(TRAVIS_COMMIT)
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
