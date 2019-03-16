@@ -79,6 +79,12 @@ steps:
     isPreRelease: true
     addChangeLog: false
 
+- task: PublishBuildArtifacts@1
+  displayName: Publishing build artifacts
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: '7zfile'
+
 - script: |
     curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
     chmod +x send.sh
