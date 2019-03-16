@@ -50,7 +50,7 @@ steps:
   displayName: 'Pack 7z'
 
 - script: |
-    echo '##vso[task.setvariable variable=COMMIT_TAG]$(git log --format=%h -1)'
+    echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
 
     git config --global user.email "flamekat54@aol.com"
     git config --global user.name "TWLBot"
