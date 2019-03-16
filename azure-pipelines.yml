@@ -26,7 +26,7 @@ steps:
     export DEVKITPRO="/opt/devkitpro"
     export DEVKITARM="/opt/devkitpro/devkitARM"
 
-    rm -r /7zfile/_nds/TWiLightMenu/*
+    rm -r 7zfile/_nds/TWiLightMenu/*
     sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
     make package
