@@ -78,6 +78,7 @@ steps:
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
+    releaseNotesSource: input
     releaseNotes: $(COMMIT_MESSAGE)
     assets: '$(Build.ArtifactStagingDirectory)/*'
     isPreRelease: true
