@@ -51,6 +51,7 @@ steps:
 
 - script: |
     echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
+    echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
 
     git config --global user.email "flamekat54@aol.com"
     git config --global user.name "TWLBot"
@@ -65,10 +66,6 @@ steps:
     echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to TWLBot/Builds"
 
-- script: |
-    echo $(TWLBOT_COMMIT)
-  displayName: Test
-
 # GitHub Release
 # Create, edit, or delete a GitHub release.
 - task: GitHubRelease@0
@@ -81,7 +78,7 @@ steps:
     tagSource: 'manual'
     tag: v$(CURRENT_DATE)
     title: TWiLightMenu | $(COMMIT_TAG)
-    #releaseNotes:
+    releaseNotes: $(COMMIT_MESSAGE)
     assets: '$(Build.ArtifactStagingDirectory)/*'
     isPreRelease: true
     addChangeLog: false
