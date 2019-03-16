@@ -63,7 +63,7 @@ steps:
     git tag v$CURRENT_DATE
 
     export LATEST_COMMIT="$(git log -1 --format="%H")"
-    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]$LATEST_COMMIT'
+    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$LATEST_COMMIT
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
