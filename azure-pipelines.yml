@@ -63,8 +63,9 @@ steps:
 
     git log -1 --format="%H" >> travisCommit.txt
 
-    echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
-    echo '##vso[task.setvariable variable=TRAVIS_COMMIT]$(git log -1 --format="%H")'
+    # echo "2428412f374d13bf3f378dd36bd9c69c207964a6" >> travisCommit.txt
+    # echo '##vso[task.setvariable variable=TRAVIS_COMMIT]$(git log -1 --format="%H")'
+    echo '##vso[task.setvariable variable=TRAVIS_COMMIT]2428412f374d13bf3f378dd36bd9c69c207964a6'
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
