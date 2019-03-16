@@ -1,6 +1,3 @@
-# trigger:
-# - master
-
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 pool:
@@ -66,8 +63,6 @@ steps:
     echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
   displayName: "Commit to TWLBot/Builds"
 
-# GitHub Release
-# Create, edit, or delete a GitHub release.
 - task: GitHubRelease@0
   displayName: "Release to TWLBot/Builds"
   inputs:
