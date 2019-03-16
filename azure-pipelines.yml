@@ -62,7 +62,8 @@ steps:
     git push origin master
     git tag v$CURRENT_DATE
 
-    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]git log -1 --format="%H'
+    export LATEST_COMMIT="$(git log -1 --format="%H")"
+    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]$LATEST_COMMIT'
   displayName: "Commit to TWLBot/Builds"
 
 - script: |
