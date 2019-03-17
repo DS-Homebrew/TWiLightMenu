@@ -1,0 +1,100 @@
+name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
+  REPOSITORY_NAME: $(Build.Repository.Name)
+  COMMIT_TAG: $(git log --format=%h -1)
+
+steps:
+- script: |
+    curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+    sudo apt update
+    sudo apt install p7zip-full haveged
+    sudo dpkg -i pacman.deb
+
+    sudo dkp-pacman -Sy
+    sudo dkp-pacman -S nds-dev --noconfirm
+  displayName: 'Setup environment'
+
+- script: |
+    export DEVKITPRO="/opt/devkitpro"
+    export DEVKITARM="/opt/devkitpro/devkitARM"
+
+    rm -r 7zfile/_nds/TWiLightMenu/*
+    sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
+
+    make package
+
+    cd booter/
+    chmod +x make_cia
+    ./make_cia --srl="booter.nds"
+    mkdir -p "../7zfile/3DS - CFW users/"
+    cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+
+    cd ../rungame/
+    chmod +x make_cia
+    ./make_cia --srl="rungame.nds"
+    cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+  displayName: 'Build TWiLight Menu++'
+
+- script: |
+    mv 7zfile/ TWiLightMenu/
+    7z a TWiLightMenu.7z TWiLightMenu/
+    cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
+  displayName: 'Pack 7z'
+
+- script: |
+    echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
+    echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
+
+    git config --global user.email "flamekat54@aol.com"
+    git config --global user.name "TWLBot"
+    git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+    cd Builds/
+    cp ../TWiLightMenu.7z TWiLightMenu.7z
+    git stage .
+    git commit -m "TWiLightMenu | $(COMMIT_TAG)"
+    git push origin master
+    git tag v$CURRENT_DATE
+
+    echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
+  displayName: "Commit to TWLBot/Builds"
+
+- task: GitHubRelease@0
+  displayName: "Release to TWLBot/Builds"
+  inputs:
+    gitHubConnection: TWLBot
+    repositoryName: TWLBot/Builds
+    action: create
+    target: $(TWLBOT_COMMIT)
+    tagSource: 'manual'
+    tag: v$(CURRENT_DATE)
+    title: TWiLightMenu | $(COMMIT_TAG)
+    releaseNotesSource: input
+    releaseNotes: $(COMMIT_MESSAGE)
+    assets: '$(Build.ArtifactStagingDirectory)/*'
+    isPreRelease: true
+    addChangeLog: false
+
+- task: PublishBuildArtifacts@1
+  displayName: Publishing build artifacts
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: '7zfile'
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    ./send.sh success $WEBHOOK_URL
+  condition: succeeded()
+  displayName: "Send success webhook"
+
+- script: |
+    curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+    chmod +x send.sh
+    ./send.sh failure $WEBHOOK_URL
+  condition: failed()
+  displayName: "Send failure webhook"

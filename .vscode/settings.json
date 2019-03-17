@@ -2,6 +2,20 @@
     "files.associations": {
         "*.partial": "nunjucks",
         "*.html": "html",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "__bit_reference": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "iterator": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "vector": "cpp",
+        "typeinfo": "cpp",
+        "stdexcept": "cpp"
     }
 }

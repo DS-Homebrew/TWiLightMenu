@@ -156,6 +156,7 @@ class DSiMenuPlusPlusSettings
     bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
+    int sortMethod;
 
     int flashcard;
     bool slot1LaunchMethod;
@@ -166,6 +167,7 @@ class DSiMenuPlusPlusSettings
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
+    bool forceSleepPatch;
     bool slot1SCFGUnlock;
     bool autorun;
     bool show12hrClock;

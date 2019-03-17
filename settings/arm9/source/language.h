@@ -23,6 +23,7 @@ extern std::string STR_LASTPLAYEDROM;
 extern std::string STR_DSISPLASH;
 extern std::string STR_HSMSG;
 extern std::string STR_DSIMENUPPLOGO;
+extern std::string STR_SORT_METHOD;
 extern std::string STR_DIRECTORIES;
 extern std::string STR_SHOW_HIDDEN;
 extern std::string STR_BOXART;
@@ -35,6 +36,11 @@ extern std::string STR_RESTOREDSIMENU;
 
 extern std::string STR_SHOW;
 extern std::string STR_HIDE;
+
+extern std::string STR_ALPHABETICAL;
+extern std::string STR_RECENT;
+extern std::string STR_MOST_PLAYED;
+extern std::string STR_CUSTOM;
 
 extern std::string STR_DESCRIPTION_COLORMODE;
 
@@ -55,6 +61,8 @@ extern std::string STR_DESCRIPTION_DSISPLASH;
 extern std::string STR_DESCRIPTION_HSMSG;
 
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
+
+extern std::string STR_DESCRIPTION_SORT_METHOD;
 
 extern std::string STR_DESCRIPTION_DIRECTORIES_1;
 
@@ -95,6 +103,7 @@ extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
 extern std::string STR_RUNIN;
+extern std::string STR_FORCESLEEPPATCH;
 extern std::string STR_SLOT1SCFGUNLOCK;
 extern std::string STR_SNDFREQ;
 extern std::string STR_SLOT1LAUNCHMETHOD;
@@ -129,6 +138,8 @@ extern std::string STR_DESCRIPTION_RUNIN_1;
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
 
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
+
+extern std::string STR_DESCRIPTION_FORCESLEEPPATCH;
 
 extern std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK;
 

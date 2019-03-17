@@ -140,6 +140,7 @@ class DSiMenuPlusPlusSettings
 	bool showSmsGg;
 	bool showMd;
 	bool showSnes;
+    int sortMethod;
     bool showDirectories;
     bool showHidden;
     bool showBoxArt;
@@ -159,6 +160,7 @@ class DSiMenuPlusPlusSettings
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
+    bool forceSleepPatch;
     bool slot1SCFGUnlock;
     bool autorun;
     bool show12hrClock;
