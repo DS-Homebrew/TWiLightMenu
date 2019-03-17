@@ -19,32 +19,28 @@
 */
 
 #include "fontfactory.h"
-#include "font_pcf.h"
-#include "systemfilenames.h"
-#include "language.h"
 #include "common/systemdetails.h"
+#include "font_pcf.h"
+#include "language.h"
+#include "systemfilenames.h"
 #include <nds.h>
 
-FontFactory::FontFactory() : _font(NULL)
-{
+FontFactory::FontFactory() : _font(NULL) {}
+
+FontFactory::~FontFactory() {
+	if (NULL != _font)
+		delete _font;
 }
 
-FontFactory::~FontFactory()
-{
-    if (NULL != _font)
-        delete _font;
-}
-
-void FontFactory::makeFont(void)
-{
-    _font = new FontPcf();
-    std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
-    if (access(filename.c_str(), F_OK) == 0)
-    {
-        _font->Load(filename.c_str());
-    }
-    else if (sys().useNitroFS())
-    {   
-        _font->Load(SFN_FALLBACK_FONT);
-    }
+void FontFactory::makeFont(void) {
+	_font = new FontPcf();
+	std::string filename(SFN_FONTS_DIRECTORY + lang().GetString("font", "main", SFN_DEFAULT_FONT));
+    std::string ui_font_file(SFN_UI_FONT);
+	if (access(ui_font_file.c_str(), F_OK) == 0) {
+		_font->Load(ui_font_file.c_str());
+	} else if (access(filename.c_str(), F_OK) == 0) {
+		_font->Load(filename.c_str());
+	} else if (sys().useNitroFS()) {
+		_font->Load(SFN_FALLBACK_FONT);
+	}
 }
