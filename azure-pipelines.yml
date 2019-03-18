@@ -5,57 +5,222 @@ variables:
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
 
-jobs:
-  - job: latest_build
-    displayName: "Build with latest devkitARM"
+  - job: build_dsi_3ds
     pool:
       vmImage: 'Ubuntu-16.04'
+    displayName: "Build DSi & 3DS themes"
     steps:
     - script: |
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
         sudo apt update
         # Install haveged to ensure enough entropy
-        sudo apt install p7zip-full haveged 
         sudo dpkg -i pacman.deb
-
         sudo dkp-pacman -Sy
         sudo dkp-pacman -S nds-dev --noconfirm
-      displayName: 'Installing devkitPro and 7zip'
-
+      displayName: 'Install devkitPro'
     - script: |
-        rm -r 7zfile/_nds/TWiLightMenu/*
-      displayName: "Cleaning themes from build directory"
-
+          cd romsel_dsimenutheme/
+          make
+        displayName: "Make DSi & 3DS themes"
     - script: |
-        export DEVKITPRO="/opt/devkitpro"
-        export DEVKITARM="/opt/devkitpro/devkitARM"
+          mv romsel_dsimenutheme.nds dsimenu.srldr
+          cp dsimenu.srldr $(Build.ArtifactStagingDirectory)/dsimenu.srldr
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'dsimenu.srldr'
 
-        sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
+  - job: build_ak
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build Acekard theme"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd romsel_aktheme/
+          make
+        displayName: "Make Acekard theme"
+    - script: |
+          mv romsel_aktheme.nds akmenu.srldr
+          cp akmenu.srldr $(Build.ArtifactStagingDirectory)/akmenu
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'akmenu'
+          
+ 
+  - job: build_r4
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build R4 theme"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd romsel_r4theme/
+          make
+        displayName: "Make R4 theme"
+    - script: |
+          mv romsel_r4theme.nds r4menu.srldr
+          cp r4menu.srldr $(Build.ArtifactStagingDirectory)/r4menu
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'r4menu'
 
-        make package
+  - job: build_settings
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build Settings"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd settings/
+          make
+        displayName: "Make Settings"
+    - script: |
+          mv settings.nds settings.srldr
+          cp settings.srldr $(Build.ArtifactStagingDirectory)/settings.srldr
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'settings'
 
+  - job: build_title
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build Title (main.srldr)"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd settings/
+          make
+        displayName: "Make main.srldr"
+    - script: |
+          mv title.nds main.srldr
+          cp main.srldr $(Build.ArtifactStagingDirectory)/main.srldr
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'title'
+          
+  - job: build_mn
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build Manual Mainmenu & Slot-1-Launch"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd manual/
+          make
+          cd ../mainmenu/
+          make
+          cd ../slot1launch/
+          make
+        displayName: "Make Manual, Main Menu & Slot1Launch"
+    - script: |
+          mv manual.nds manual.srldr
+          mv mainmenu.nds mainmenu.srldr
+          mv slot1launch.nds slot1launch.srldr
+          cp manual.srldr $(Build.ArtifactStagingDirectory)/manual.srldr
+          cp mainmenu.srldr $(Build.ArtifactStagingDirectory)/mainmenu.srldr
+          cp slot1launch.srldr $(Build.ArtifactStagingDirectory)/slot1launch.srldr
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'manual-mainmenu-slot1launch'
+
+  - job: build_booters
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    displayName: "Build Booter, Booter_FC & Rungame"
+    steps:
+    - script: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
+      displayName: 'Install devkitPro'
+    - script: |
+          cd booter/
+          make
+          cd ../booter_fc/
+          make
+          cd ../rungame/
+        displayName: "Make Booter, Booter_FC & Rungame"
+    - script: |
         cd booter/
         chmod +x make_cia
         ./make_cia --srl="booter.nds"
         mkdir -p "../7zfile/3DS - CFW users/"
-        cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
-
         cd ../rungame/
         chmod +x make_cia
         ./make_cia --srl="rungame.nds"
-        cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
-      displayName: 'Build TWiLight Menu++ with latest devkitARM'
+      displayName: 'Make Booter & Rungame cias'
     - script: |
-        mv 7zfile/ TWiLightMenu/
-        7z a TWiLightMenu.7z TWiLightMenu/
-        cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
-      displayName: 'Pack 7z Package'
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish build to Azure"
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-        artifactName: 'build-devkitARM-latest'
-
+          mv booter.nds boot.nds
+          mv booter_fc.nds boot_fc.nds
+          mv "booter.cia" "TWiLight Menu.cia"
+          mv "rungame.cia" "TWiLight Menu - Game booter.cia"
+          cp boot.nds $(Build.ArtifactStagingDirectory)/boot.nds
+          cp boot_fc.nds $(Build.ArtifactStagingDirectory)/boot_fc.nds
+          cp "TWiLight Menu.cia" $(Build.ArtifactStagingDirectory)/"TWiLight Menu.cia"
+          cp "TWiLight Menu - Game booter.cia" $(Build.ArtifactStagingDirectory)/"TWiLight Menu - Game booter.cia"
+        displayName: 'Add the build to Azure'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'boot-boot_fc-rungame'
+        
   - job: docker_build
     pool:
       vmImage: 'Ubuntu-16.04'
@@ -86,6 +251,53 @@ jobs:
           pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
           artifactName: 'build-devkitARM-Docker'
 
+  - job: make_final_package
+    displayName: "Put everything together"
+    steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'dsimenu'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'r4menu'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'akmenu'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'settings'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'title'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'boot-boot_fc-rungame'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          downloadPath: $(Build.ArtifactStagingDirectory)
+          artifactName: 'manual-mainmenu-slot1launch'
+        displayName: "Retrieving all build artifacts"
+      - script: |
+          rm -r 7zfile/_nds/TWiLightMenu/*
+          mv mainmenu.srldr manual.srldr akmenu.srldr r4menu.srldr dsimenu.srldr slot1launch.srldr 7zfile/_nds/TWiLightMenu/
+          sudo apt update
+          sudo apt install p7zip-full
+          mv 7zfile/ TWiLightMenu/
+          7z a TWiLightMenu.7z TWiLightMenu/
+          cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
+        displayName: 'Install 7zip & Pack 7z Package'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish package to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          artifactName: 'build-mega-package'
+
     # Only run this for non-PR jobs.
   - job: publish_build_twlbot
     displayName: "Publish build to TWLBot"
@@ -98,7 +310,7 @@ jobs:
       - task: DownloadBuildArtifacts@0
         inputs:
           downloadPath: $(Build.ArtifactStagingDirectory)
-          artifactName: 'build-devkitARM-latest'
+          artifactName: 'build-mega-package'
         displayName: "Retrieving artifacts from devkitARM Build"
       - task: DownloadBuildArtifacts@0
         inputs:
