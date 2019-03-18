@@ -82,24 +82,24 @@ after_failure:
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 
-before_deploy:
-  - git config --local user.name "TWLBot"
-  - git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
-  - cd Builds/
-  - cp ../TWiLightMenu.7z TWiLightMenu.7z
-  - git stage .
-  - git commit -m "TWiLightMenu | $COMMIT_TAG"
-  - git push origin master
-  - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
-  - git tag v$CURRENT_DATE
+# before_deploy:
+#   - git config --local user.name "TWLBot"
+#   - git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+#   - cd Builds/
+#   - cp ../TWiLightMenu.7z TWiLightMenu.7z
+#   - git stage .
+#   - git commit -m "TWiLightMenu | $COMMIT_TAG"
+#   - git push origin master
+#   - export CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+#   - git tag v$CURRENT_DATE
 
-deploy:
-  provider: releases
-  overwrite: true
-  api_key: $GITHUB_TOKEN
-  file: TWiLightMenu.7z
-  skip_cleanup: true
-  repo: TWLBot/Builds
-  prerelease: true
-  name: TWiLightMenu | $COMMIT_TAG
-  body: $COMMIT_MESSAGE
+# deploy:
+#   provider: releases
+#   overwrite: true
+#   api_key: $GITHUB_TOKEN
+#   file: TWiLightMenu.7z
+#   skip_cleanup: true
+#   repo: TWLBot/Builds
+#   prerelease: true
+#   name: TWiLightMenu | $COMMIT_TAG
+#   body: $COMMIT_MESSAGE
