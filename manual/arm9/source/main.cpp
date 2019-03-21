@@ -45,6 +45,11 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+struct DirEntry {
+	std::string name;
+	bool isDirectory;
+};
+
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
@@ -73,6 +78,35 @@ int launcherApp = -1;
 int sysRegion = -1;
 
 int guiLanguage = -1;
+
+std::vector<DirEntry> manPagesList;
+
+void loadPageList() {
+	struct stat st;
+
+	DIR *pdir = opendir("."); 
+	
+	if (pdir == NULL) {
+		printSmallCentered(false, 64, "Unable to open the directory.\n");
+	} else {
+
+		while(true) {
+			DirEntry dirEntry;
+
+			struct dirent* pent = readdir(pdir);
+			if(pent == NULL) break;
+
+			dirEntry.name = pent->d_name;
+			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
+
+			stat(pent->d_name, &st);
+			if ((strcmp(pent->d_name, "..") != 0) && (dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp")) {
+				manPagesList.push_back(dirEntry);
+			}
+		}
+		closedir(pdir);
+	}
+}
 
 void LoadSettings(void) {
 	// GUI
@@ -286,7 +320,7 @@ int main(int argc, char **argv) {
 	}
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -339,7 +373,10 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	pageLoad("nitro:/graphics/howtouse.bmp");
+	chdir("nitro:/pages/");
+	loadPageList();
+
+	pageLoad(manPagesList[0].name.c_str());
 	topBarLoad();
 	//bottomBgLoad();
 	
