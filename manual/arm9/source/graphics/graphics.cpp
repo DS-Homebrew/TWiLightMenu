@@ -58,6 +58,9 @@ glImage settingsIconImage[(32 / 32) * (32 / 32)];
 u16 bmpImageBuffer[256*1036] = {0};
 u16 pageImage[256*1036] = {0};
 
+extern int pageYpos;
+extern int pageYsize;
+
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
@@ -178,6 +181,11 @@ void vBlankHandler()
 		}
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright) SetBrightness(1, screenBrightness);
+
+		for (int i = 0; i < 192; i += 2) {
+			glLine(0, ((pageYsize-pageYpos)-174)+i, 256, ((pageYsize-pageYpos)-174)+i, 0x6F7B);
+			glLine(0, ((pageYsize-pageYpos)-174)+i+1, 256, ((pageYsize-pageYpos)-174)+i+1, 0x77BD);
+		}
 
 		updateText(false);
 	}
