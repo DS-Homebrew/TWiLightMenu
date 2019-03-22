@@ -35,7 +35,7 @@ Would you like a place to talk about your experiences with TWiLight Menu++ or ne
 
 Rocket.Chat is a self-hosted communication platform with the ability to share files and switch to an video/audio conferencing.
 
-Come join today by following this link: https://dshomebrew.serveo.net/ ([alternative link](https://b2b38a00.ngrok.io))
+Come join today by following this link: https://dshomebrew.serveo.net/ ([alternative link](https://5a31a0c4.ngrok.io/))
 
 # Credits
 ## Main Developers
