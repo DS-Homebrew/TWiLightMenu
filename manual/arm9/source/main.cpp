@@ -96,12 +96,19 @@ void loadPageList() {
 			struct dirent* pent = readdir(pdir);
 			if(pent == NULL) break;
 
+			stat(pent->d_name, &st);
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			stat(pent->d_name, &st);
-			if ((strcmp(pent->d_name, "..") != 0) && (dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp")) {
+			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp") {
+				char path[PATH_MAX] = {0};
+				getcwd(path, PATH_MAX);
+				dirEntry.name = path + dirEntry.name;
 				manPagesList.push_back(dirEntry);
+			} else if((dirEntry.isDirectory) && (dirEntry.name.compare(".") != 0) && (dirEntry.name.compare("..") != 0)) {
+				chdir(dirEntry.name.c_str());
+				loadPageList();
+				chdir("..");
 			}
 		}
 		closedir(pdir);
@@ -382,6 +389,7 @@ int main(int argc, char **argv) {
 	
 	int pressed = 0;
 	int held = 0;
+	uint currentPage = 0;
 
 	fadeType = true;	// Fade in from white
 
@@ -397,6 +405,18 @@ int main(int argc, char **argv) {
 			pageYpos += 4;
 			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
 			pageScroll();
+		} else if (pressed & KEY_LEFT) {
+			if(currentPage > 0) {
+				pageYpos = 0;
+				currentPage--;
+				pageLoad(manPagesList[currentPage].name.c_str());
+			}
+		} else if (pressed & KEY_RIGHT) {
+			if(currentPage < manPagesList.size()) {
+				pageYpos = 0;
+				currentPage++;
+				pageLoad(manPagesList[currentPage].name.c_str());
+			}
 		}
 		if (pressed & KEY_START) {
 			loadROMselect();
