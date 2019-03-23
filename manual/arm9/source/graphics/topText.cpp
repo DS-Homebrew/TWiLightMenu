@@ -1,31 +1,6 @@
+#include "topText.h"
 #include <nds.h>
-#include <nds/arm9/dldi.h>
-#include <maxmod9.h>
-
 #include <stdio.h>
-#include <fat.h>
-#include <sys/stat.h>
-#include <limits.h>
-
-#include <string.h>
-#include <unistd.h>
-#include "common/gl2d.h"
-
-#include "graphics/graphics.h"
-
-#include "common/nitrofs.h"
-#include "nds_loader_arm9.h"
-#include "errorScreen.h"
-
-#include "graphics/fontHandler.h"
-
-#include "inifile.h"
-
-#include "soundbank.h"
-#include "soundbank_bin.h"
-
-////////////
-
 #include "uvcoord_top_font.h"
 
 /**
@@ -52,7 +27,10 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
 	}
 	return spriteIndex;
 }
-
+/**
+ * Prints texts to the top screen
+ * topText is the text that will be printed 
+ */
 void printTopText(char topText[64]) {
 	// Load username
 	char fontPath[64] = {0};
