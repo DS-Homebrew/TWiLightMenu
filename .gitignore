@@ -17,3 +17,4 @@ data/
 # Project Files
 .idea/
 .vscode/
+ipch/

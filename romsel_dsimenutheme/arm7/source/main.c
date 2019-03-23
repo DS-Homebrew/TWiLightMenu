@@ -87,7 +87,7 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    nocashMessage("ARM7 main.c main");
+    // nocashMessage("ARM7 main.c main");
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
@@ -103,13 +103,16 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
-	
 	fifoInit();
-	
-	mmInstall(FIFO_MAXMOD);
-	
+	touchInit();
+		
 	SetYtrigger(80);
+
+	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_08, *(u16*)(0x4004700)); //SNDEX_CNT
+	fifoSendValue32(FIFO_USER_06, 1);
+
+	mmInstall(FIFO_MAXMOD);
 	
 	installSoundFIFO();
 	installSystemFIFO();
@@ -121,9 +124,6 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
-	fifoSendValue32(FIFO_USER_06, 1);
 	
 	int timeTilVolumeLevelRefresh = 0;
 

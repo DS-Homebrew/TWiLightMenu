@@ -15,7 +15,7 @@ SystemDetails::SystemDetails()
     if (fifoGetValue32(FIFO_USER_03) == 0)
         _arm7SCFGLocked = true; // If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
     
-    u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
+    u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_08);
     if (arm7_SNDEXCNT != 0)
     {
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
@@ -24,7 +24,7 @@ SystemDetails::SystemDetails()
     // force is regular ds
     //_isRegularDS = true;
     // Restore value.
-    fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
+    // fifoSendValue32(FIFO_USER_08, arm7_SNDEXCNT);
 }
 
 void SystemDetails::initFilesystem(const char *runningPath)

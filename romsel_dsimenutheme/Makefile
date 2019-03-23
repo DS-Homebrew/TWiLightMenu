@@ -36,7 +36,7 @@ GRAPHICS	:=  gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2 -flto \
+CFLAGS	:=	-g -Wall -O2 -fno-builtin-memcpy \
 		-ffunction-sections -fdata-sections \
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
@@ -46,7 +46,7 @@ CFLAGS	+=	$(INCLUDE) -DARM9
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++14
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g -Wl,--gc-sections $(ARCH) -Wl,-Map,$(notdir $*.map) -flto
+LDFLAGS	=	-specs=ds_arm9.specs -g -Wl,--gc-sections $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)

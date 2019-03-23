@@ -2401,7 +2401,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 
 						recentlyPlayed.erase(recentlyPlayed.begin() + CURPOS);
-						int firstNonDir;
+						int firstNonDir = 0;
 						while(dirContents[scrn].at(firstNonDir).isDirectory) {
 							firstNonDir++;
 						}
