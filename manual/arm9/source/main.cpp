@@ -435,12 +435,12 @@ int main(int argc, char **argv) {
 
 	while(1) {
 		scanKeys();
+		touchRead(&touch);
 		pressed = keysDown();
 		held = keysHeld();
-		touchRead(&touch);
 		checkSdEject();
 		swiWaitForVBlank();
-		
+
 		if (held & KEY_UP) {
 			pageYpos -= 4;
 			if (pageYpos < 0) pageYpos = 0;
