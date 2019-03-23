@@ -206,6 +206,7 @@ int lastRunROM()
 		{
 			CIniFile bootstrapini( BOOTSTRAP_INI );
 			std::string filename = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
+			if (access(filename.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 			const size_t last_slash_idx = filename.find_last_of("/");
 			if (std::string::npos != last_slash_idx)

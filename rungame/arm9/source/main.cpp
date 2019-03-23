@@ -145,6 +145,10 @@ TWL_CODE int lastRunROM() {
 		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, false);
 	} else if (launchType == 1) {
 		filename = ndsPath;
+		if (access(filename.c_str(), F_OK) != 0) {
+			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, false);	// Skip to running TWiLight Menu++
+		}
+
 		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx)
 		{
