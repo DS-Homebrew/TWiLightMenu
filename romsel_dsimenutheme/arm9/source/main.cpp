@@ -49,6 +49,7 @@
 #include "nds_loader_arm9.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
+#include "fifodata.h"
 
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
@@ -557,6 +558,7 @@ int main(int argc, char **argv) {
 	defaultExceptionHandler();
 	
 	sys().initFilesystem();
+	registerFifoHandlers();
 	ms().loadSettings();
 	tfn(); //
 	tc().loadConfig();

@@ -31,11 +31,14 @@
 #include <string.h>
 #include <maxmod7.h>
 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+#define SCFG_EXT7 (*(vu32*)0x4004008)
+#define SNDEXCNT (*(vu16*)0x4004700)
+#define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-static int soundVolume = 127;
-static int timeTilVolumeLevelRefresh = 0;
-
+volatile int soundVolume = 127;
+volatile int timeTilVolumeLevelRefresh = 0;
+volatile int volumeLevel = -1;
+volatile int batteryLevel = 0;
 //static bool gotCartHeader = false;
 
 //---------------------------------------------------------------------------------
@@ -88,7 +91,7 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    // nocashMessage("ARM7 main.c main");
+    nocashMessage("ARM7 main.c main");
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
@@ -106,17 +109,13 @@ int main() {
 
 	fifoInit();
 	touchInit();
-
+	
 	mmInstall(FIFO_MAXMOD);
-
+	
 	SetYtrigger(80);
-
+	
 	installSoundFIFO();
 	installSystemFIFO();
-	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_08, *(u16*)(0x4004700)); //SNDEX_CNT
-	fifoSendValue32(FIFO_USER_06, 1);
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -125,6 +124,16 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	// 01: Fade Out
+	// 02: Return
+	// 03: SCFG_EXT7
+	
+	// 05: BATTERY
+	// 06: VOLUME
+	// 07: SNDEXCNT
+	// 08:
+	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
+	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
 	
 
 	// Keep the ARM7 mostly idle
@@ -140,18 +149,26 @@ int main() {
 		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode()) {
-				*(u8*)(0x023FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+			if (isDSiMode()) { //vol
+				volumeLevel = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				batteryLevel = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+			} else {
+				batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
-			*(u8*)(0x023FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
 			timeTilVolumeLevelRefresh = 0;
+			fifoSendValue32(FIFO_USER_05, batteryLevel);
+			fifoSendValue32(FIFO_USER_06, volumeLevel);
 		}
-		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
-			*(u8*)(0x023FF002) = 2;
-		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
-			*(u8*)(0x023FF002) = 1;
+
+
+		
+
+		if (isDSiMode() && SD_IRQ_STATUS & BIT(4)) {
+			*(vu8*)(0x023FF002) = 2;
+		} else if (isDSiMode() && SD_IRQ_STATUS & BIT(3)) {
+			*(vu8*)(0x023FF002) = 1;
 		} else {
-			*(u8*)(0x023FF002) = 0;
+			*(vu8*)(0x023FF002) = 0;
 		}
 		if(fifoCheckValue32(FIFO_USER_01)) {
 			soundFadeOut();
@@ -162,7 +179,7 @@ int main() {
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
-		swiIntrWait(0, 1);
+		swiWaitForVBlank();
 	}
 	return 0;
 }

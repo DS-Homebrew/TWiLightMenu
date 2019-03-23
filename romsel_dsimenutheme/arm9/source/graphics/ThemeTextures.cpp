@@ -19,7 +19,7 @@
 #include "uvcoord_top_font.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
-
+#include "fifodata.h"
 
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
@@ -659,7 +659,8 @@ void ThemeTextures::drawVolumeImageCached() {
 int ThemeTextures::getVolumeLevel(void) {
 	if (!isDSiMode())
 		return -1;
-	u8 volumeLevel = *(u8 *)(0x023FF000);
+	
+	u8 volumeLevel = getVolumeLevelFromArm7();
 	if (volumeLevel == 0)
 		return 0;
 	if (volumeLevel > 0x00 && volumeLevel < 0x07)
@@ -674,8 +675,7 @@ int ThemeTextures::getVolumeLevel(void) {
 }
 
 int ThemeTextures::getBatteryLevel(void) {
-	u8 batteryLevel = *(u8 *)(0x023FF001);
-
+	u8 batteryLevel =  getBatteryLevelFromArm7();
 	if (!isDSiMode()) {
 		if (batteryLevel & BIT(0))
 			return 1;
