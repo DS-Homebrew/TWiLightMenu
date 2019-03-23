@@ -15,7 +15,7 @@ extern void unlaunchSetHiyaBoot();
 extern bool rocketVideo_playVideo;
 extern bool music;
 extern bool showdialogbox;
-extern int dbox_Ypos;
+extern float dbox_Ypos;
 
 
 vu16* sdRemovedImage = (vu16*)0x026E0000;

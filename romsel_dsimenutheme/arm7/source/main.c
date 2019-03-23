@@ -34,6 +34,7 @@
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
 static int soundVolume = 127;
+static int timeTilVolumeLevelRefresh = 0;
 
 //static bool gotCartHeader = false;
 
@@ -105,17 +106,17 @@ int main() {
 
 	fifoInit();
 	touchInit();
-		
+
+	mmInstall(FIFO_MAXMOD);
+
 	SetYtrigger(80);
 
+	installSoundFIFO();
+	installSystemFIFO();
+	
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_08, *(u16*)(0x4004700)); //SNDEX_CNT
 	fifoSendValue32(FIFO_USER_06, 1);
-
-	mmInstall(FIFO_MAXMOD);
-	
-	installSoundFIFO();
-	installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
@@ -125,7 +126,6 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	
-	int timeTilVolumeLevelRefresh = 0;
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -162,7 +162,7 @@ int main() {
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
-		swiWaitForVBlank();
+		swiIntrWait(0, 1);
 	}
 	return 0;
 }

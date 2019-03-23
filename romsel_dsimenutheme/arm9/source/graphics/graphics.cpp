@@ -147,8 +147,8 @@ bool launchDotDoFrameChange = false;
 bool showdialogbox = false;
 bool dbox_showIcon = false;
 bool dbox_selectMenu = false;
-int dbox_movespeed = 22;
-int dbox_Ypos = -192;
+float dbox_movespeed = 22;
+float dbox_Ypos = -192;
 int bottomScreenBrightness = 255;
 
 int bottomBgState = 0; // 0 = Uninitialized 1 = No Bubble 2 = bubble 3 = moving.

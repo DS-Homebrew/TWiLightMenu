@@ -12,6 +12,9 @@ SystemDetails::SystemDetails()
 
 
 	fifoWaitValue32(FIFO_USER_06);
+    fifoWaitValue32(FIFO_USER_03);
+	fifoWaitValue32(FIFO_USER_08);
+
     if (fifoGetValue32(FIFO_USER_03) == 0)
         _arm7SCFGLocked = true; // If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
     

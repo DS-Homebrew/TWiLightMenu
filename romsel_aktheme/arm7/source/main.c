@@ -105,7 +105,7 @@ int main() {
 	setPowerButtonCB(powerButtonCB);
 	
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
+	fifoSendValue32(FIFO_USER_08, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 
 	int timeTilVolumeLevelRefresh = 0;
