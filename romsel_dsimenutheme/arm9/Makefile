@@ -31,16 +31,16 @@ MUSIC2      :=  ../musicShop
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	-g -Wall -O2 -flto -fno-builtin-memcpy \
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
 
 CFLAGS		+=	$(INCLUDE) -DARM9
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++14 
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fno-builtin-memcpy -std=gnu++14 -flto
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) -flto
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
