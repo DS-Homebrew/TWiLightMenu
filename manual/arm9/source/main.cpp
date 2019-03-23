@@ -90,7 +90,7 @@ int guiLanguage = -1;
 
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
-char manPageTitle[64] = {'t','w','l'};
+char manPageTitle[64] = {0};
 
 void loadPageList() {
 	struct stat st;
@@ -134,8 +134,8 @@ void loadPageInfo(std::string pagePath) {
 	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
 
-	for(int i=1;i<5;i++) {
-		char link[6] = "LINK1";
+	for(int i=1;i<99;i++) {
+		char link[7] = {0};
 		snprintf(link, sizeof(link), "LINK%i", i);
 
 		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
@@ -427,6 +427,7 @@ int main(int argc, char **argv) {
 	int pressed = 0;
 	int held = 0;
 	uint currentPage = 0;
+	touchPosition touch;
 
 	fadeType = true;	// Fade in from white
 
@@ -436,6 +437,7 @@ int main(int argc, char **argv) {
 		scanKeys();
 		pressed = keysDown();
 		held = keysHeld();
+		touchRead(&touch);
 		if (held & KEY_UP) {
 			pageYpos -= 4;
 			if (pageYpos < 0) pageYpos = 0;
@@ -454,13 +456,30 @@ int main(int argc, char **argv) {
 				printTopText(manPageTitle);
 			}
 		} else if (pressed & KEY_RIGHT) {
-			if(currentPage < manPagesList.size()) {
+			if(currentPage < manPagesList.size()-1) {
 				pageYpos = 0;
 				currentPage++;
 				pageLoad(manPagesList[currentPage].name.c_str());
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
 				topBarLoad();
 				printTopText(manPageTitle);
+			}
+		} else if (pressed & KEY_TOUCH) {
+			for(uint i=0;i<manPageLinks.size();i++) {
+				if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
+				   (((touch.py + pageYpos) >= manPageLinks[i].y) && ((touch.py + pageYpos) <= (manPageLinks[i].y + manPageLinks[i].h)))) {
+					pageYpos = 0;
+					for(uint j=0;j<manPagesList.size();j++) {
+						if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
+							currentPage = j;
+							break;
+						}
+					}
+					pageLoad((manPageLinks[i].dest + ".bmp").c_str());
+					loadPageInfo(manPageLinks[i].dest + ".ini");
+					topBarLoad();
+					printTopText(manPageTitle);
+				}
 			}
 		}
 		if (pressed & KEY_START) {
