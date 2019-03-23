@@ -467,7 +467,7 @@ int main(int argc, char **argv) {
 		} else if (pressed & KEY_TOUCH) {
 			for(uint i=0;i<manPageLinks.size();i++) {
 				if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-				   (((touch.py + pageYpos) >= manPageLinks[i].y) && ((touch.py + pageYpos) <= (manPageLinks[i].y + manPageLinks[i].h)))) {
+				   (((touch.py + pageYpos) >= manPageLinks[i].y - 174) && ((touch.py + pageYpos - 174) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
 					pageYpos = 0;
 					for(uint j=0;j<manPagesList.size();j++) {
 						if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
