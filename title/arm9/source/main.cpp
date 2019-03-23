@@ -175,7 +175,7 @@ void loadROMselect(int number)
 	stop();
 }
 
-int lastRunROM()
+void lastRunROM()
 {
 	fifoSendValue32(FIFO_USER_07, 0);
 	if (ms().soundfreq)
@@ -344,8 +344,6 @@ int lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to S8DS as argument
 	}
-
-	return err;
 }
 
 void defaultExitHandler()
