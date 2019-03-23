@@ -438,6 +438,9 @@ int main(int argc, char **argv) {
 		pressed = keysDown();
 		held = keysHeld();
 		touchRead(&touch);
+		checkSdEject();
+		swiWaitForVBlank();
+		
 		if (held & KEY_UP) {
 			pageYpos -= 4;
 			if (pageYpos < 0) pageYpos = 0;
@@ -485,8 +488,6 @@ int main(int argc, char **argv) {
 		if (pressed & KEY_START) {
 			loadROMselect();
 		}
-		checkSdEject();
-		swiWaitForVBlank();
 	}
 
 	return 0;
