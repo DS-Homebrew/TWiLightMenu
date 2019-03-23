@@ -33,6 +33,7 @@
 #include "common/gl2d.h"
 
 #include "graphics/graphics.h"
+#include "graphics/topText.h"
 
 #include "common/nitrofs.h"
 #include "nds_loader_arm9.h"
@@ -44,6 +45,19 @@
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
+
+struct DirEntry {
+	std::string name;
+	bool isDirectory;
+};
+
+struct PageLink {
+	std::string dest;
+	int x;
+	int y;
+	int w;
+	int h;
+};
 
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
@@ -73,6 +87,69 @@ int launcherApp = -1;
 int sysRegion = -1;
 
 int guiLanguage = -1;
+
+std::vector<DirEntry> manPagesList;
+std::vector<PageLink> manPageLinks;
+char manPageTitle[64] = {0};
+
+void loadPageList() {
+	struct stat st;
+
+	DIR *pdir = opendir("."); 
+	
+	if (pdir == NULL) {
+		printSmallCentered(false, 64, "Unable to open the directory.\n");
+	} else {
+
+		while(true) {
+			DirEntry dirEntry;
+
+			struct dirent* pent = readdir(pdir);
+			if(pent == NULL) break;
+
+			stat(pent->d_name, &st);
+			dirEntry.name = pent->d_name;
+			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
+
+			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp") {
+				char path[PATH_MAX] = {0};
+				getcwd(path, PATH_MAX);
+				dirEntry.name = path + dirEntry.name;
+				manPagesList.push_back(dirEntry);
+			} else if((dirEntry.isDirectory) && (dirEntry.name.compare(".") != 0) && (dirEntry.name.compare("..") != 0)) {
+				chdir(dirEntry.name.c_str());
+				loadPageList();
+				chdir("..");
+			}
+		}
+		closedir(pdir);
+	}
+}
+
+void loadPageInfo(std::string pagePath) {
+	manPageLinks.clear();
+
+	CIniFile pageIni(pagePath);
+	
+	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
+	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
+
+	for(int i=1;i<99;i++) {
+		char link[7] = {0};
+		snprintf(link, sizeof(link), "LINK%i", i);
+
+		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
+
+		PageLink pageLink;
+		pageLink.x = pageIni.GetInt(link,"X",0);
+		pageLink.y = pageIni.GetInt(link,"Y",0);
+		pageLink.w = pageIni.GetInt(link,"W",0);
+		pageLink.h = pageIni.GetInt(link,"H",0);
+		pageLink.dest = pageIni.GetString(link,"DEST","NONE");
+
+		manPageLinks.push_back(pageLink);
+	}
+}
 
 void LoadSettings(void) {
 	// GUI
@@ -286,7 +363,7 @@ int main(int argc, char **argv) {
 	}
 
 	fifoWaitValue32(FIFO_USER_06);
-	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
 	fifoSendValue32(FIFO_USER_07, 0);
@@ -339,17 +416,26 @@ int main(int argc, char **argv) {
 
 	InitSound();
 
-	pageLoad("nitro:/graphics/howtouse.bmp");
+	chdir("nitro:/pages/");
+	loadPageList();
+	pageLoad(manPagesList[0].name.c_str());
+	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
 	topBarLoad();
+	printTopText(manPageTitle);
 	//bottomBgLoad();
 	
 	int pressed = 0;
 	int held = 0;
+	uint currentPage = 0;
+	touchPosition touch;
 
 	fadeType = true;	// Fade in from white
 
+	// printSmallCentered(true, 0, "TWiLight Menu++ Manual");
+
 	while(1) {
 		scanKeys();
+		touchRead(&touch);
 		pressed = keysDown();
 		held = keysHeld();
 		checkSdEject();
@@ -363,6 +449,41 @@ int main(int argc, char **argv) {
 			pageYpos += 4;
 			if (pageYpos > pageYsize-174) pageYpos = pageYsize-174;
 			pageScroll();
+		} else if (pressed & KEY_LEFT) {
+			if(currentPage > 0) {
+				pageYpos = 0;
+				currentPage--;
+				pageLoad(manPagesList[currentPage].name.c_str());
+				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				topBarLoad();
+				printTopText(manPageTitle);
+			}
+		} else if (pressed & KEY_RIGHT) {
+			if(currentPage < manPagesList.size()-1) {
+				pageYpos = 0;
+				currentPage++;
+				pageLoad(manPagesList[currentPage].name.c_str());
+				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				topBarLoad();
+				printTopText(manPageTitle);
+			}
+		} else if (pressed & KEY_TOUCH) {
+			for(uint i=0;i<manPageLinks.size();i++) {
+				if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
+				   (((touch.py + pageYpos) >= manPageLinks[i].y - 174) && ((touch.py + pageYpos - 174) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
+					pageYpos = 0;
+					for(uint j=0;j<manPagesList.size();j++) {
+						if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
+							currentPage = j;
+							break;
+						}
+					}
+					pageLoad((manPageLinks[i].dest + ".bmp").c_str());
+					loadPageInfo(manPageLinks[i].dest + ".ini");
+					topBarLoad();
+					printTopText(manPageTitle);
+				}
+			}
 		}
 		if (pressed & KEY_START) {
 			loadROMselect();

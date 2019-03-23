@@ -16,6 +16,7 @@
         "string_view": "cpp",
         "vector": "cpp",
         "typeinfo": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "iosfwd": "cpp"
     }
 }
