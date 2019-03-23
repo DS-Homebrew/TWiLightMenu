@@ -33,6 +33,7 @@
 #include "common/gl2d.h"
 
 #include "graphics/graphics.h"
+#include "graphics/topText.h"
 
 #include "common/nitrofs.h"
 #include "nds_loader_arm9.h"
@@ -48,6 +49,14 @@
 struct DirEntry {
 	std::string name;
 	bool isDirectory;
+};
+
+struct PageLink {
+	std::string dest;
+	int x;
+	int y;
+	int w;
+	int h;
 };
 
 bool fadeType = false;		// false = out, true = in
@@ -80,6 +89,8 @@ int sysRegion = -1;
 int guiLanguage = -1;
 
 std::vector<DirEntry> manPagesList;
+std::vector<PageLink> manPageLinks;
+char manPageTitle[64] = {'t','w','l'};
 
 void loadPageList() {
 	struct stat st;
@@ -112,6 +123,31 @@ void loadPageList() {
 			}
 		}
 		closedir(pdir);
+	}
+}
+
+void loadPageInfo(std::string pagePath) {
+	manPageLinks.clear();
+
+	CIniFile pageIni(pagePath);
+	
+	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
+	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
+
+	for(int i=1;i<5;i++) {
+		char link[6] = "LINK1";
+		snprintf(link, sizeof(link), "LINK%i", i);
+
+		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
+
+		PageLink pageLink;
+		pageLink.x = pageIni.GetInt(link,"X",0);
+		pageLink.y = pageIni.GetInt(link,"Y",0);
+		pageLink.w = pageIni.GetInt(link,"W",0);
+		pageLink.h = pageIni.GetInt(link,"H",0);
+		pageLink.dest = pageIni.GetString(link,"DEST","NONE");
+
+		manPageLinks.push_back(pageLink);
 	}
 }
 
@@ -382,9 +418,10 @@ int main(int argc, char **argv) {
 
 	chdir("nitro:/pages/");
 	loadPageList();
-
 	pageLoad(manPagesList[0].name.c_str());
+	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
 	topBarLoad();
+	printTopText(manPageTitle);
 	//bottomBgLoad();
 	
 	int pressed = 0;
@@ -392,6 +429,8 @@ int main(int argc, char **argv) {
 	uint currentPage = 0;
 
 	fadeType = true;	// Fade in from white
+
+	// printSmallCentered(true, 0, "TWiLight Menu++ Manual");
 
 	while(1) {
 		scanKeys();
@@ -410,12 +449,18 @@ int main(int argc, char **argv) {
 				pageYpos = 0;
 				currentPage--;
 				pageLoad(manPagesList[currentPage].name.c_str());
+				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				topBarLoad();
+				printTopText(manPageTitle);
 			}
 		} else if (pressed & KEY_RIGHT) {
 			if(currentPage < manPagesList.size()) {
 				pageYpos = 0;
 				currentPage++;
 				pageLoad(manPagesList[currentPage].name.c_str());
+				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				topBarLoad();
+				printTopText(manPageTitle);
 			}
 		}
 		if (pressed & KEY_START) {
