@@ -134,7 +134,7 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
-  -b icon.bmp "TWiLight Menu++;Acekard theme;RocketRobz & RonnChyran"
+  -b icon.bmp "TWiLight Menu++;Acekard theme;RocketRobz & chyyran"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf

@@ -106,9 +106,9 @@ int main() {
 	irqInit();
 	// Start the RTC tracking IRQ
 	initClockIRQ();
+	touchInit();
 
 	fifoInit();
-	touchInit();
 	
 	mmInstall(FIFO_MAXMOD);
 	
@@ -146,6 +146,8 @@ int main() {
 			fifoSendValue32(FIFO_USER_04, 0);
 			gotCartHeader = true;
 		}*/
+
+
 		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {

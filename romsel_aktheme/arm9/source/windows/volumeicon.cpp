@@ -24,6 +24,7 @@
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
+#include "common/systemdetails.h"
 
 using namespace akui;
 
@@ -54,7 +55,7 @@ void VolumeIcon::draw()
     CIniFile ini(SFN_UI_SETTINGS);
     if(ini.GetInt("volume icon", "show", false))
     {
-        u8 volumeLevel = *(u8*)(0x027FF000);
+        u8 volumeLevel = sys().volumeStatus();
         
         if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
             loadAppearance(SFN_VOLUME4);

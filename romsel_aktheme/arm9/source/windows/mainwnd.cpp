@@ -146,7 +146,7 @@ void MainWnd::init()
                 _batteryIcon = new Button(x, y, w, h, this, "");
                 _batteryIcon->setRelativePosition(Point(x,y));
 
-                u8 batteryLevel = *(u8*)(0x027FF001);
+                u8 batteryLevel = sys().batteryStatus();
 
 				if (isDSiMode()) {
 					if (batteryLevel & BIT(7)) {

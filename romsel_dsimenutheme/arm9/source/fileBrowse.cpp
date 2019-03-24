@@ -138,7 +138,7 @@ extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool 
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
-char soundBank[0x200000];
+volatile char soundBank[0x200000] = {0};
 
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
@@ -157,7 +157,7 @@ void InitSound() {
 		return;
 	}
 
-	fread(soundBank, 1, sizeof(soundBank), soundBankFile);
+	fread((void*)soundBank, 1, sizeof(soundBank), soundBankFile);
 	fclose(soundBankFile);
 
 	mmInitDefaultMem((mm_addr)soundBank);

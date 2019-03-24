@@ -117,6 +117,7 @@ int main(int argc, char **argv)
 
 	defaultExceptionHandler();
 	sys().initFilesystem();
+	sys().initArm7RegStatuses();
 	ms().loadSettings();
 
 	// init basic system

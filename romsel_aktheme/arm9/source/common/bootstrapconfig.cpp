@@ -9,6 +9,8 @@
 #include "windows/cheatwnd.h"
 #include "windows/mainlist.h"
 #include <stdio.h>
+#include <nds.h>
+#include <nds/arm9/dldi.h>
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
