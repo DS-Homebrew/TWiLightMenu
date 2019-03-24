@@ -36,13 +36,13 @@ GRAPHICS	:=  gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2 \
+CFLAGS	:=	-g -Wall -O2 -fno-builtin-memcpy \
 		-ffunction-sections -fdata-sections \
  		-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9
+CFLAGS	+=	$(INCLUDE) -DARM9 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++14
 
 ASFLAGS	:=	-g $(ARCH)

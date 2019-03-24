@@ -45,7 +45,7 @@
            	  read from GBA SLOT instead of SLOT 1. Fixed this by making it check that filename is not NULL
  		  and then to try FAT/SLOT1 first. The NULL option allows forcing nitroFS to use gba.
     
-    2018-09-05 v0.9 - modernize devoptab (by RonnChyran)
+    2018-09-05 v0.9 - modernize devoptab (by chyyran)
         * Updated for libsysbase change in devkitARM r46 and above. 
 
 */

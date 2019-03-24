@@ -24,6 +24,7 @@
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
+#include "common/systemdetails.h"
 
 using namespace akui;
 
@@ -53,7 +54,7 @@ void BatteryIcon::draw()
 {
     CIniFile ini(SFN_UI_SETTINGS);
     if(ini.GetInt("battery icon", "show", false)) {
-        u8 batteryLevel = *(u8*)(0x027FF001);
+        u8 batteryLevel = sys().batteryStatus();
 
 		if (isDSiMode()) {
 			if (batteryLevel & BIT(7)) {

@@ -31,10 +31,14 @@
 #include <string.h>
 #include <maxmod7.h>
 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+#define SCFG_EXT7 (*(vu32*)0x4004008)
+#define SNDEXCNT (*(vu16*)0x4004700)
+#define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-static int soundVolume = 127;
-
+volatile int soundVolume = 127;
+volatile int timeTilVolumeLevelRefresh = 0;
+volatile int volumeLevel = -1;
+volatile int batteryLevel = 0;
 //static bool gotCartHeader = false;
 
 //---------------------------------------------------------------------------------
@@ -102,9 +106,8 @@ int main() {
 	irqInit();
 	// Start the RTC tracking IRQ
 	initClockIRQ();
-
 	touchInit();
-	
+
 	fifoInit();
 	
 	mmInstall(FIFO_MAXMOD);
@@ -121,11 +124,17 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
-	fifoSendValue32(FIFO_USER_06, 1);
+	// 01: Fade Out
+	// 02: Return
+	// 03: SCFG_EXT7
 	
-	int timeTilVolumeLevelRefresh = 0;
+	// 05: BATTERY
+	// 06: VOLUME
+	// 07: SNDEXCNT
+	// 08: SD
+	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
+	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
+	
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -137,22 +146,30 @@ int main() {
 			fifoSendValue32(FIFO_USER_04, 0);
 			gotCartHeader = true;
 		}*/
+
+
 		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode()) {
-				*(u8*)(0x023FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+			if (isDSiMode()) { //vol
+				volumeLevel = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				batteryLevel = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+			} else {
+				batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
-			*(u8*)(0x023FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
 			timeTilVolumeLevelRefresh = 0;
+			fifoSendValue32(FIFO_USER_05, batteryLevel);
+			fifoSendValue32(FIFO_USER_06, volumeLevel);
 		}
-		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
-			*(u8*)(0x023FF002) = 2;
-		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {
-			*(u8*)(0x023FF002) = 1;
-		} else {
-			*(u8*)(0x023FF002) = 0;
+
+		if (isDSiMode()) {
+			if (SD_IRQ_STATUS & BIT(4)) {
+				fifoSendValue32(FIFO_USER_08, 2);
+			} else if (SD_IRQ_STATUS & BIT(3)) {
+				fifoSendValue32(FIFO_USER_08, 1);
+			}
 		}
+
 		if(fifoCheckValue32(FIFO_USER_01)) {
 			soundFadeOut();
 		} else {

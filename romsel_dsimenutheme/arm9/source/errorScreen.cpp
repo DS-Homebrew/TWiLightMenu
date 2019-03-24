@@ -15,7 +15,7 @@ extern void unlaunchSetHiyaBoot();
 extern bool rocketVideo_playVideo;
 extern bool music;
 extern bool showdialogbox;
-extern int dbox_Ypos;
+extern float dbox_Ypos;
 
 
 vu16* sdRemovedImage = (vu16*)0x026E0000;
@@ -47,7 +47,7 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) return;
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) return;
 	
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
@@ -90,7 +90,7 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x023FF002) == 2 && !sys().arm7SCFGLocked()) {
+		if (sys().sdStatus() == SystemDetails::ESDStatus::SDInserted && !sys().arm7SCFGLocked()) {
 			if (ms().consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}

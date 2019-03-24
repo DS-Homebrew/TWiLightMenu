@@ -12,7 +12,12 @@ class SystemDetails
   public:
     SystemDetails();
     ~SystemDetails() {}
-
+    
+    enum ESDStatus {
+      SDOk = 0,
+      SDEjected = 1,
+      SDInserted = 2 
+    };
   public:
     bool arm7SCFGLocked() { return _arm7SCFGLocked; }
     bool flashcardUsed()
@@ -30,12 +35,17 @@ class SystemDetails
     bool fatInitOk() { return _fatInitOk; }
     bool useNitroFS() { return _nitroFsInitOk; }
     void initFilesystem(const char *runningPath = NULL);
+    void initArm7RegStatuses();
+    int batteryStatus();
+    int volumeStatus();
+    ESDStatus sdStatus();
 
   private:
     bool _arm7SCFGLocked;
     bool _flashcardUsed;
     bool _isRegularDS;
     bool _fatInitOk;
+    bool _fifoOk;
     bool _nitroFsInitOk;
 };
 

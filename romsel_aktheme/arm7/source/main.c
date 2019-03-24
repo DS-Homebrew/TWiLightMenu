@@ -28,9 +28,27 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include <string.h>
 #include <maxmod7.h>
 
-unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
+#define SCFG_EXT7 (*(vu32*)0x4004008)
+#define SNDEXCNT (*(vu16*)0x4004700)
+#define SD_IRQ_STATUS (*(vu32*)0x400481C)
+
+volatile int soundVolume = 127;
+volatile int timeTilVolumeLevelRefresh = 0;
+volatile int volumeLevel = -1;
+volatile int batteryLevel = 0;
+//static bool gotCartHeader = false;
+
+//---------------------------------------------------------------------------------
+void soundFadeOut() {
+//---------------------------------------------------------------------------------
+	soundVolume -= 3;
+	if (soundVolume < 0) {
+		soundVolume = 0;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -46,11 +64,14 @@ void ReturntoDSiMenu() {
 }
 
 //---------------------------------------------------------------------------------
+//void UpdateCardInfo(void) {
+//---------------------------------------------------------------------------------
+	//cardReadHeader((u8*)0x02000000);
+//}
+
+//---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_02)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -86,12 +107,9 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	touchInit();
-
 	fifoInit();
-	
-	mmInstall(FIFO_MAXMOD);
-	
+	touchInit();
+		
 	SetYtrigger(80);
 	
 	installSoundFIFO();
@@ -104,25 +122,60 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
-	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
-	fifoSendValue32(FIFO_USER_06, 1);
-
-	int timeTilVolumeLevelRefresh = 0;
+	// 01: Fade Out
+	// 02: Return
+	// 03: SCFG_EXT7
+	
+	// 05: BATTERY
+	// 06: VOLUME
+	// 07: SNDEXCNT
+	// 08: SD
+	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
+	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
+	
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
+		/*if (!gotCartHeader && fifoCheckValue32(FIFO_USER_04)) {
+			UpdateCardInfo();
+			fifoSendValue32(FIFO_USER_04, 0);
+			gotCartHeader = true;
+		}*/
+
+
 		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
-			if (isDSiMode()) {
-				*(u8*)(0x027FF000) = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+			if (isDSiMode()) { //vol
+				volumeLevel = i2cReadRegister(I2C_PM, I2CREGPM_VOL);
+				batteryLevel = i2cReadRegister(I2C_PM, I2CREGPM_BATTERY);
+			} else {
+				batteryLevel = readPowerManagement(PM_BATTERY_REG);
 			}
-			*(u8*)(0x027FF001) = (isDSiMode() ? i2cReadRegister(I2C_PM, I2CREGPM_BATTERY) : readPowerManagement(PM_BATTERY_REG));
 			timeTilVolumeLevelRefresh = 0;
+			fifoSendValue32(FIFO_USER_05, batteryLevel);
+			fifoSendValue32(FIFO_USER_06, volumeLevel);
+		}
+
+		if (isDSiMode()) {
+			if (SD_IRQ_STATUS & BIT(4)) {
+				fifoSendValue32(FIFO_USER_08, 2);
+			} else if (SD_IRQ_STATUS & BIT(3)) {
+				fifoSendValue32(FIFO_USER_08, 1);
+			}
+		}
+
+		if(fifoCheckValue32(FIFO_USER_01)) {
+			soundFadeOut();
+		} else {
+			soundVolume = 127;
+		}
+		REG_MASTER_VOLUME = soundVolume;
+		if(fifoCheckValue32(FIFO_USER_02)) {
+			ReturntoDSiMenu();
 		}
 		swiWaitForVBlank();
 	}
