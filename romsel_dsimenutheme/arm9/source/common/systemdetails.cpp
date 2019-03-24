@@ -1,6 +1,33 @@
 #include "systemdetails.h"
 #include "common/flashcard.h"
 
+// Make this link C-like for volatility
+extern "C" {
+    static volatile int _batteryLevel = 0;
+    static volatile int _volumeLevel = -1;
+    static volatile int _sdStatus = 0;
+
+    void batteryCallback(u32 newBatteryLevel, void *userdata) {
+        _batteryLevel = newBatteryLevel;
+    }
+
+
+    void volumeCallback(u32 newVolumeLevel, void *userdata) {
+        _volumeLevel = newVolumeLevel;
+    }
+
+
+    void sdStatusCallback(u32 newSdStatus, void *userdata) {
+        _sdStatus = newSdStatus;
+    }
+
+    void registerFifoHandlers() {
+        fifoSetValue32Handler(FIFO_USER_06, volumeCallback, NULL);
+        fifoSetValue32Handler(FIFO_USER_05, batteryCallback, NULL);
+        fifoSetValue32Handler(FIFO_USER_08, sdStatusCallback, NULL);
+    }
+}
+
 SystemDetails::SystemDetails()
 {
 
@@ -9,6 +36,7 @@ SystemDetails::SystemDetails()
     _isRegularDS = true;
     _nitroFsInitOk = false;
     _fatInitOk = false;
+    _fifoOk = false;
 
     fifoWaitValue32(FIFO_USER_03);
 	fifoWaitValue32(FIFO_USER_07);
@@ -25,6 +53,25 @@ SystemDetails::SystemDetails()
     // force is regular ds
     //_isRegularDS = true;
     // Restore value.
+}
+
+void SystemDetails::initArm7RegStatuses() {
+    if (!_fifoOk) {
+        registerFifoHandlers();
+    }
+    _fifoOk = true;
+}
+
+int SystemDetails::batteryStatus() {
+    return _batteryLevel;
+}
+
+int SystemDetails::volumeStatus() {
+    return _volumeLevel;
+}
+
+SystemDetails::ESDStatus SystemDetails::sdStatus() {
+    return (SystemDetails::ESDStatus)_sdStatus;
 }
 
 void SystemDetails::initFilesystem(const char *runningPath)

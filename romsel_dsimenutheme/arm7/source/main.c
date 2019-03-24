@@ -131,7 +131,7 @@ int main() {
 	// 05: BATTERY
 	// 06: VOLUME
 	// 07: SNDEXCNT
-	// 08:
+	// 08: SD
 	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
 	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
 	
@@ -160,16 +160,14 @@ int main() {
 			fifoSendValue32(FIFO_USER_06, volumeLevel);
 		}
 
-
-		
-
-		if (isDSiMode() && SD_IRQ_STATUS & BIT(4)) {
-			*(vu8*)(0x023FF002) = 2;
-		} else if (isDSiMode() && SD_IRQ_STATUS & BIT(3)) {
-			*(vu8*)(0x023FF002) = 1;
-		} else {
-			*(vu8*)(0x023FF002) = 0;
+		if (isDSiMode()) {
+			if (SD_IRQ_STATUS & BIT(4)) {
+				fifoSendValue32(FIFO_USER_08, 2);
+			} else if (SD_IRQ_STATUS & BIT(3)) {
+				fifoSendValue32(FIFO_USER_08, 1);
+			}
 		}
+
 		if(fifoCheckValue32(FIFO_USER_01)) {
 			soundFadeOut();
 		} else {
