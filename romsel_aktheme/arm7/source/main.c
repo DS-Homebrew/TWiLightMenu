@@ -39,7 +39,6 @@ volatile int soundVolume = 127;
 volatile int timeTilVolumeLevelRefresh = 0;
 volatile int volumeLevel = -1;
 volatile int batteryLevel = 0;
-volatile bool 
 //static bool gotCartHeader = false;
 
 //---------------------------------------------------------------------------------
