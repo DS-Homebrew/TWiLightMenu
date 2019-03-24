@@ -265,6 +265,7 @@ void loadROMselect()
 	for (int i = 0; i < 25; i++) {
 		swiWaitForVBlank();
 	}
+	chdir((access("sd:/", F_OK) == 0) ? "sd:/" : "fat:/");
 	if (theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
