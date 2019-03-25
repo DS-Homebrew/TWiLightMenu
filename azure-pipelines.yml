@@ -4,7 +4,6 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
-  TICKET_ID: $(git rev-parse --short master)
 
 jobs:
   - job: latest_build
@@ -30,6 +29,7 @@ jobs:
     - script: |
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
+        export TICKET_ID=$(git rev-parse --short master)
 
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
@@ -37,13 +37,13 @@ jobs:
 
         cd booter/
         chmod +x make_cia
-        ./make_cia --srl="booter.nds"
+        ./make_cia --srl="booter.nds" --id_0 $TICKET_ID --tikID $TICKET_ID
         mkdir -p "../7zfile/3DS - CFW users/"
         cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
         cd ../rungame/
         chmod +x make_cia
-        ./make_cia --srl="rungame.nds" --id_0 $(TICKET_ID) -- tikID $(TICKET_ID)
+        ./make_cia --srl="rungame.nds" --id_0 $TICKET_ID --tikID $TICKET_ID
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
       displayName: 'Build TWiLight Menu++ with latest devkitARM'
     - script: |
