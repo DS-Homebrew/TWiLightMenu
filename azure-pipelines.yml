@@ -31,9 +31,10 @@ jobs:
         export DEVKITARM="/opt/devkitpro/devkitARM"
 
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
-
         make package
-
+      displayName: 'Build TWiLight Menu++ with latest devkitARM'
+  
+    - script: |
         cd booter/
         chmod +x make_cia
         ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
@@ -44,12 +45,14 @@ jobs:
         chmod +x make_cia
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
-      displayName: 'Build TWiLight Menu++ with latest devkitARM'
+      displayName: 'Make booter and TWiLightMenu CIAs'
+      
     - script: |
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
       displayName: 'Pack 7z Package'
+      
     - task: PublishBuildArtifacts@1
       displayName: "Publish build to Azure"
       inputs:
@@ -75,6 +78,19 @@ jobs:
       - script: |
           docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
         displayName: "Build TWiLightMenu++ with Docker using forked libnds and devkitARM r50"
+        
+      - script: |
+          cd booter/
+          chmod +x make_cia
+          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          mkdir -p "../7zfile/3DS - CFW users/"
+          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+          cd ../rungame/
+          chmod +x make_cia
+          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+        displayName: 'Make booter and TWiLightMenu CIAs'
+        
       - script: |
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
