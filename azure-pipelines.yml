@@ -29,7 +29,6 @@ jobs:
     - script: |
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
-        export TICKET_ID=$(git rev-parse --short master)
 
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
 
@@ -37,13 +36,13 @@ jobs:
 
         cd booter/
         chmod +x make_cia
-        ./make_cia --srl="booter.nds" --id_0 $TICKET_ID --tikID $TICKET_ID
+        ./make_cia --srl="booter.nds" --id_0 $(Build.SourceVersion) --tikID $(Build.SourceVersion)
         mkdir -p "../7zfile/3DS - CFW users/"
         cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
         cd ../rungame/
         chmod +x make_cia
-        ./make_cia --srl="rungame.nds" --id_0 $TICKET_ID --tikID $TICKET_ID
+        ./make_cia --srl="rungame.nds" --id_0 $(Build.SourceVersion) --tikID $(Build.SourceVersion)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
       displayName: 'Build TWiLight Menu++ with latest devkitARM'
     - script: |
