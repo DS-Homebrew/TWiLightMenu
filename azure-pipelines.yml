@@ -4,6 +4,7 @@ variables:
   CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
   COMMIT_TAG: $(git log --format=%h -1)
+  TICKET_ID: $(git rev-parse --short master)
 
 jobs:
   - job: latest_build
@@ -42,7 +43,7 @@ jobs:
 
         cd ../rungame/
         chmod +x make_cia
-        ./make_cia --srl="rungame.nds"
+        ./make_cia --srl="rungame.nds" --id_0 $(TICKET_ID) -- tikID $(TICKET_ID)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
       displayName: 'Build TWiLight Menu++ with latest devkitARM'
     - script: |
