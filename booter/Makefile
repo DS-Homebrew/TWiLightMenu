@@ -131,8 +131,7 @@ dist:	all
 	
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
-			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004
-			# -b icon.bmp "TWiLight Menu++;RocketRobz"
+			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -b icon.bmp "TWiLight Menu++;RocketRobz"
 			
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
 		python2 patch_ndsheader_dsiware.py $(TARGET).nds
