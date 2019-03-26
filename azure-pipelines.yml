@@ -37,13 +37,13 @@ jobs:
     - script: |
         cd booter/
         chmod +x make_cia
-        ./make_cia --srl=booter.nds
+        ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         mkdir -p "../7zfile/3DS - CFW users/"
         cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
         cd ../rungame/
         chmod +x make_cia
-        ./make_cia --srl=rungame.nds
+        ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
       displayName: 'Make booter and TWiLightMenu CIAs'
       
@@ -82,12 +82,12 @@ jobs:
       - script: |
           cd booter/
           chmod +x make_cia
-          ./make_cia --srl=booter.nds
+          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           mkdir -p "../7zfile/3DS - CFW users/"
           cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
           cd ../rungame/
           chmod +x make_cia
-          ./make_cia --srl=rungame.nds
+          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
         displayName: 'Make booter and TWiLightMenu CIAs'
         
