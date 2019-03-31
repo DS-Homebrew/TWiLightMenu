@@ -204,8 +204,8 @@ void pageLoad(const char *filename) {
 		fread(bmpImageBuffer, 1, 0x81800, file);
 		u16* src = bmpImageBuffer;
 		int x = 0;
-		int y = 1035;
-		for (int i=0; i<256*1036; i++) {
+		int y = pageYsize-1;
+		for (int i=0; i<256*pageYsize; i++) {
 			if (x >= 256) {
 				x = 0;
 				y--;
