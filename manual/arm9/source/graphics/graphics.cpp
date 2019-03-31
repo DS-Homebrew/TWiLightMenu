@@ -40,6 +40,9 @@ extern int colorMode;
 extern int blfLevel;
 int fadeDelay = 0;
 
+int bgColor1 = 0x6F7B;
+int bgColor2 = 0x77BD;
+
 int screenBrightness = 31;
 
 extern int consoleModel;
@@ -183,8 +186,8 @@ void vBlankHandler()
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
 		for (int i = 0; i < 192; i += 2) {
-			glLine(0, ((pageYsize-pageYpos)-174)+i, 256, ((pageYsize-pageYpos)-174)+i, 0x6F7B);
-			glLine(0, ((pageYsize-pageYpos)-174)+i+1, 256, ((pageYsize-pageYpos)-174)+i+1, 0x77BD);
+			glLine(0, ((pageYsize-pageYpos)-174)+i, 256, ((pageYsize-pageYpos)-174)+i, bgColor1);
+			glLine(0, ((pageYsize-pageYpos)-174)+i+1, 256, ((pageYsize-pageYpos)-174)+i+1, bgColor2);
 		}
 
 		updateText(false);

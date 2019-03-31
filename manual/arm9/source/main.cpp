@@ -66,6 +66,9 @@ bool controlBottomBright = true;
 int colorMode = 0;
 int blfLevel = 0;
 
+extern int bgColor1;
+extern int bgColor2;
+
 extern void ClearBrightness();
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
@@ -136,6 +139,8 @@ void loadPageInfo(std::string pagePath) {
 	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
 	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);
+	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
+	bgColor2 = pageIni.GetInt("INFO","BG_COLOR_2",0x77BD);
 
 	for(int i=1;i<99;i++) {
 		char link[7] = {0};

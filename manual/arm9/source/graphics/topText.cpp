@@ -57,42 +57,6 @@ void printTopText(char topText[64]) {
 
 				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
 					u16 val = *(src++);
-
-					// Blend with pixel
-					// const u16 bg =
-					//     _bgSubBuffer[(y + 2) * 256 + (i + x)]; // grab the background pixel
-					// // Apply palette here.
-
-					// // Magic numbers were found by dumping val to stdout
-					// // on case default.
-					// switch (val) {
-					// // #ff00ff
-					// case 0xFC1F:
-					// 	break;
-					// // #404040
-					// case 0xA108:
-					// 	val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
-					// 			 bg, 224U);
-					// 	break;
-					// // #808080
-					// case 0xC210:
-					// 	// blend the colors with the background to make it look better.
-					// 	// Fills in the
-					// 	// 1 for light
-					// 	val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
-					// 			 bg, 224U);
-					// 	break;
-					// // #b8b8b8
-					// case 0xDEF7:
-					// 	// 6 looks good on lighter themes
-					// 	// 3 do an average blend twice
-					// 	//
-					// 	val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
-					// 			 bg, 128U);
-					// 	break;
-					// default:
-					// 	break;
-					// }
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
 						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
 					}
