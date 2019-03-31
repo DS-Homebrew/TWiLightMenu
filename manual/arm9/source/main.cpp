@@ -66,6 +66,9 @@ bool controlBottomBright = true;
 int colorMode = 0;
 int blfLevel = 0;
 
+extern int bgColor1;
+extern int bgColor2;
+
 extern void ClearBrightness();
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
@@ -91,6 +94,8 @@ int guiLanguage = -1;
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
 char manPageTitle[64] = {0};
+int pageYpos = 0;
+int pageYsize = 1036;
 
 void loadPageList() {
 	struct stat st;
@@ -133,10 +138,13 @@ void loadPageInfo(std::string pagePath) {
 	
 	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
+	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);
+	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
+	bgColor2 = pageIni.GetInt("INFO","BG_COLOR_2",0x77BD);
 
 	for(int i=1;i<99;i++) {
 		char link[7] = {0};
-		snprintf(link, sizeof(link), "LINK%i", i);
+		snprintf(link, sizeof(link),"LINK%i",i);
 
 		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
 
@@ -169,9 +177,6 @@ void LoadSettings(void) {
 }
 
 using namespace std;
-
-int pageYpos = 0;
-int pageYsize = 1036;
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -419,8 +424,8 @@ int main(int argc, char **argv) {
 
 	chdir("nitro:/pages/");
 	loadPageList();
-	pageLoad(manPagesList[0].name.c_str());
 	loadPageInfo(manPagesList[0].name.substr(0,manPagesList[0].name.length()-3) + "ini");
+	pageLoad(manPagesList[0].name.c_str());
 	topBarLoad();
 	printTopText(manPageTitle);
 	//bottomBgLoad();
@@ -454,8 +459,8 @@ int main(int argc, char **argv) {
 			if(currentPage > 0) {
 				pageYpos = 0;
 				currentPage--;
-				pageLoad(manPagesList[currentPage].name.c_str());
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				pageLoad(manPagesList[currentPage].name.c_str());
 				topBarLoad();
 				printTopText(manPageTitle);
 			}
@@ -463,26 +468,75 @@ int main(int argc, char **argv) {
 			if(currentPage < manPagesList.size()-1) {
 				pageYpos = 0;
 				currentPage++;
-				pageLoad(manPagesList[currentPage].name.c_str());
 				loadPageInfo(manPagesList[currentPage].name.substr(0,manPagesList[currentPage].name.length()-3) + "ini");
+				pageLoad(manPagesList[currentPage].name.c_str());
 				topBarLoad();
 				printTopText(manPageTitle);
 			}
 		} else if (pressed & KEY_TOUCH) {
-			for(uint i=0;i<manPageLinks.size();i++) {
-				if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-				   (((touch.py + pageYpos) >= manPageLinks[i].y - 174) && ((touch.py + pageYpos - 174) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
-					pageYpos = 0;
-					for(uint j=0;j<manPagesList.size();j++) {
-						if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
-							currentPage = j;
-							break;
+			touchPosition touchStart = touch;
+			while((touch.px < touchStart.px+10) && (touch.px > touchStart.px-10) && (touch.py < touchStart.py+10) && (touch.py > touchStart.py-10)) {
+				touchRead(&touch);
+			}
+			scanKeys();
+			if(keysHeld() & KEY_TOUCH) {
+				touchStart = touch;
+				touchPosition prevTouch2 = touch;
+				while(1) {
+					touchRead(&touch);
+					scanKeys();
+					if(!(keysHeld() & KEY_TOUCH)) {
+						bool tapped = false;
+						int dY = (-(touchStart.py - prevTouch2.py));
+						while(!(dY < 0.25 && dY > -0.25)) {
+							pageYpos += dY;
+							if (pageYpos < 0) {
+								pageYpos = 0;
+								pageScroll();
+								break;
+							} else if (pageYpos > (pageYsize-174)) {
+								pageYpos = pageYsize-174;
+								pageScroll();
+								break;
+							}
+							scanKeys();
+							if (keysHeld() & KEY_TOUCH) {
+								tapped = true;
+								break;
+							}
+
+							pageScroll();
+							dY = dY / 1.125;
+							swiWaitForVBlank();
 						}
+						if(tapped) continue;
+						else break;
 					}
-					pageLoad((manPageLinks[i].dest + ".bmp").c_str());
-					loadPageInfo(manPageLinks[i].dest + ".ini");
-					topBarLoad();
-					printTopText(manPageTitle);
+
+					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 174)))
+						pageYpos += touchStart.py - touch.py;
+					pageScroll();
+					
+					prevTouch2 = touchStart;
+					touchStart = touch;
+					swiWaitForVBlank();
+				}
+			} else {
+				for(uint i=0;i<manPageLinks.size();i++) {
+					if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
+						(((touch.py + pageYpos) >= manPageLinks[i].y - 174) && ((touch.py + pageYpos - 174) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
+						pageYpos = 0;
+						for(uint j=0;j<manPagesList.size();j++) {
+							if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
+								currentPage = j;
+								break;
+							}
+						}
+						loadPageInfo(manPageLinks[i].dest + ".ini");
+						pageLoad((manPageLinks[i].dest + ".bmp").c_str());
+						topBarLoad();
+						printTopText(manPageTitle);
+					}
 				}
 			}
 		}
