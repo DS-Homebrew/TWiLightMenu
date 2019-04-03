@@ -59,7 +59,7 @@ glImage cornerIcons[(32 / 32) * (128 / 32)];
 glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
 u16 bmpImageBuffer[256*1036] = {0};
-u16 pageImage[256*1036] = {0};
+u16 pageImage[256*1228] = {0};
 
 extern int pageYpos;
 extern int pageYsize;
@@ -185,10 +185,7 @@ void vBlankHandler()
 		if (controlBottomBright) SetBrightness(0, screenBrightness);
 		if (controlTopBright) SetBrightness(1, screenBrightness);
 
-		for (int i = 0; i < 192; i += 2) {
-			glLine(0, ((pageYsize-pageYpos)-174)+i, 256, ((pageYsize-pageYpos)-174)+i, bgColor1);
-			glLine(0, ((pageYsize-pageYpos)-174)+i+1, 256, ((pageYsize-pageYpos)-174)+i+1, bgColor2);
-		}
+		glLine(0, -1, 256, -1, 0);	// Fix for "SD removed" message not showing
 
 		updateText(false);
 	}
@@ -216,6 +213,13 @@ void pageLoad(const char *filename) {
 			u16 val = *(src++);
 			pageImage[y*256+x] = convertToDsBmp(val);
 			x++;
+		}
+		bool lightColor = false;
+		for (y=pageYsize; y<pageYsize+192; y++) {
+			for (x=0; x<256; x++) {
+				pageImage[y*256+x] = convertVramColorToGrayscale(lightColor ? bgColor2 : bgColor1);
+			}
+			lightColor = !lightColor;
 		}
 		dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
 		dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
