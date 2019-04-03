@@ -11,7 +11,7 @@ SystemDetails::SystemDetails()
 
 	fifoWaitValue32(FIFO_USER_06);
     if (fifoGetValue32(FIFO_USER_03) == 0)
-        _arm7SCFGLocked = true; // If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
+        _arm7SCFGLocked = true; // If TWiLight Menu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
     
     u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
     if (arm7_SNDEXCNT != 0)
@@ -19,8 +19,10 @@ SystemDetails::SystemDetails()
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
     
-    // Restore value.
-    fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
+	if ((isDSiMode() && !_arm7SCFGLocked) || !isDSiMode()) {
+		// Restore value.
+		fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
+	}
 }
 
 void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
