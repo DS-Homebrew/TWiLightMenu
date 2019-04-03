@@ -272,7 +272,8 @@ void vBlankHandler()
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
-				if (bnrRomType == 7) drawIconSNES(40, iconYpos[0]+6);
+				if (bnrRomType == 8) drawIconPlg(40, iconYpos[0]+6);
+				else if (bnrRomType == 7) drawIconSNES(40, iconYpos[0]+6);
 				else if (bnrRomType == 6) drawIconMD(40, iconYpos[0]+6);
 				else if (bnrRomType == 5) drawIconGG(40, iconYpos[0]+6);
 				else if (bnrRomType == 4) drawIconSMS(40, iconYpos[0]+6);

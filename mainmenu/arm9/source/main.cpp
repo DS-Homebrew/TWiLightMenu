@@ -933,6 +933,14 @@ void printGbaBannerText() {
 	}
 }
 
+bool extention(std::string filename, const char* ext, int number) {
+	if(strcasecmp(filename.c_str() + filename.size() - number, ext)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -1139,6 +1147,13 @@ int main(int argc, char **argv) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "plg")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "PLG"))
+		{
+			bnrRomType = 8;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gb")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GB")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "sgb")
@@ -1640,8 +1655,7 @@ int main(int argc, char **argv) {
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
-			if ((strcasecmp (filename.c_str() + filename.size() - 5, ".argv") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 5, ".ARGV") == 0))
+			if (extention(filename, ".argv", 5))
 			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
@@ -1666,12 +1680,19 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
+			bool dstwoPlg = false;
+			bool SNES = false;
+			bool GENESIS = false;
+			bool gameboy = false;
+			bool nes = false;
+			bool gamegear = false;
+
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
 				const char *typeToReplace = ".nds";
-				if (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0) {
+				if (extention(filename, ".dsi", 4)) {
 					typeToReplace = ".dsi";
-				} else if (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0) {
+				} else if (extention(filename, ".ids", 4)) {
 					typeToReplace = ".ids";
 				}
 
@@ -1833,12 +1854,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nds") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".dsi") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".DSI") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".ids") == 0)
-			|| (strcasecmp (filename.c_str() + filename.size() - 4, ".IDS") == 0)) {
+			if (extention(filename, ".nds", 4) || extention(filename, ".dsi", 4) || extention(filename, ".ids", 4)) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -2105,116 +2121,104 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, text);
 					stop();
 				}
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 3, ".gb") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GB") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sgb") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SGB") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".gbc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GBC") == 0))
-			{
-				std::string romfolderNoSlash = romfolder;
-				RemoveTrailingSlashes(romfolderNoSlash);
-				char gbROMpath[256];
-				snprintf (gbROMpath, sizeof(gbROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				homebrewArg = gbROMpath;
-				launchType = 4;
-				previousUsedDevice = secondaryDevice;
-				SaveSettings();
-				argarray.push_back(gbROMpath);
-				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				} else {
-					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
-				}
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				clearText();
-				ClearBrightness();
-				printSmall(false, 4, 4, text);
-				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".nes") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".NDS") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".fds") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".FDS") == 0))
-			{
-				std::string romfolderNoSlash = romfolder;
-				RemoveTrailingSlashes(romfolderNoSlash);
-				char nesROMpath[256];
-				snprintf (nesROMpath, sizeof(nesROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				homebrewArg = nesROMpath;
-				launchType = 3;
-				previousUsedDevice = secondaryDevice;
-				SaveSettings();
-				argarray.push_back(nesROMpath);
-				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
-				} else {
-					argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to nesDS as argument
-				}
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				clearText();
-				ClearBrightness();
-				printSmall(false, 4, 4, text);
-				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".sms") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMS") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".gg") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 3, ".GG") == 0))
-			{
+			} else if (extention(filename, ".plg", 4)) {
+				dstwoPlg = true;
+			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) || extention(filename, ".gbc", 4)) {
+				gameboy = true;
+			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
+				nes = true;
+			} else if (extention(filename, ".sms", 4) || extention(filename, ".gg", 3)) {
 				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+
+				gamegear = true;
+			} else if (extention(filename, ".gen", 4)) {
+				GENESIS = true;
+			} else if (extention(filename, ".smc", 4) || extention(filename, ".sfc", 4)) {
+				SNES = true;
+			}
+
+			if (dstwoPlg || gameboy || nes || gamegear) {
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
-				char smsROMpath[256];
-				snprintf (smsROMpath, sizeof(smsROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				romPath = smsROMpath;
-				homebrewArg = smsROMpath;
-				launchType = 5;
+				char ROMpath[256];
+				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
+				romPath = ROMpath;
+				homebrewArg = ROMpath;
+
+				if (gameboy) {
+					launchType = 4;
+				} else if (nes) {
+					launchType = 3;
+				} else {
+					launchType = 5;
+				}
+
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-				argarray.push_back(smsROMpath);
+				argarray.push_back(ROMpath);
 				int err = 0;
-				if(secondaryDevice) {
-					argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/S8DS.nds";
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+
+				if (dstwoPlg) {
+					argarray.at(0) = (char*)("/_nds/TWiLightMenu/bootplg.srldr");
+
+					// Print .plg path without "fat:" at the beginning
+					char ROMpathDS2[256];
+					for (int i = 0; i < 252; i++) {
+						ROMpathDS2[i] = ROMpath[4+i];
+						if (ROMpath[4+i] == '\x00') break;
+					}
+
+					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
+					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (gameboy) {
+					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
+				} else if (nes) {
+					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 				} else {
-					argarray.at(0) = (char*)(!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
-					err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to GameYob as argument
+					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
 				}
+
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to emulator as argument
+
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printSmall(false, 4, 4, text);
 				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".gen") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".GEN") == 0))
-			{
+			} else if (SNES || GENESIS) {
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
-				char genROMpath[256];
-				snprintf (genROMpath, sizeof(genROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
+				char ROMpath[256];
+				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				homebrewBootstrap = true;
-				romPath = genROMpath;
+				romPath = ROMpath;
 				launchType = 1;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				if (secondaryDevice) {
-					argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+					if (SNES) {
+						argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+					} else {
+						argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+					}
 				} else {
 					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-					bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
-					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", genROMpath);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+
+					if (SNES) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					} else {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+					}
+
+					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
@@ -2222,39 +2226,7 @@ int main(int argc, char **argv) {
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
-				stop();
-			} else if ((strcasecmp (filename.c_str() + filename.size() - 4, ".smc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SMC") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".sfc") == 0)
-					|| (strcasecmp (filename.c_str() + filename.size() - 4, ".SFC") == 0))
-			{
-				std::string romfolderNoSlash = romfolder;
-				RemoveTrailingSlashes(romfolderNoSlash);
-				char snesROMpath[256];
-				snprintf (snesROMpath, sizeof(snesROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				homebrewBootstrap = true;
-				romPath = snesROMpath;
-				launchType = 1;
-				previousUsedDevice = secondaryDevice;
-				SaveSettings();
-				if (secondaryDevice) {
-					argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-				} else {
-					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-					bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
-					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", snesROMpath);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-				}
-				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				clearText();
-				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printSmall(false, 4, 4, text);
 				stop();
 			}
 
