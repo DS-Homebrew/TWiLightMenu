@@ -301,7 +301,7 @@ void langInit(void)
 	STR_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "COLORMODE", "Color mode"));
 	STR_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BLUELIGHTFILTER", "Blue light filter"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
-	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MAINMENU", "Main Menu"));
+	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "QUICKMENU", "Quick Menu"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
 	STR_DSIMUSIC = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMUSIC", "DSi/3DS Theme Music"));
 	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup."));
@@ -333,7 +333,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_S1SDACCESS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes."));
 
-	STR_DESCRIPTION_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_MAINMENU", "The menu that is shown before the ROM select menu. Has the look of the original DS UI."));
+	STR_DESCRIPTION_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_QUICKMENU", "The menu that is shown before the ROM select menu. Has the look of the original DS UI."));
 
 	STR_DESCRIPTION_THEME_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes."));
 
