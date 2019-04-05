@@ -137,9 +137,9 @@ int startBorderZoomAnimNum = 0;
 int startBorderZoomAnimDelay = 0;
 
 
-int launchDotFrame[12];
-int launchDotCurrentChangingFrame = 0;
-bool launchDotDoFrameChange = false;
+// int launchDotFrame[12];
+// int launchDotCurrentChangingFrame = 0;
+// bool launchDotDoFrameChange = false;
 
 bool showdialogbox = false;
 bool dbox_showIcon = false;
@@ -1241,40 +1241,41 @@ void vBlankHandler() {
 	} else {
 		startBorderZoomAnimNum = 0;
 	}
-	if (applaunchprep && ms().theme == 0 && launchDotDoFrameChange) {
-		launchDotFrame[0]--;
-		if (launchDotCurrentChangingFrame >= 1)
-			launchDotFrame[1]--;
-		if (launchDotCurrentChangingFrame >= 2)
-			launchDotFrame[2]--;
-		if (launchDotCurrentChangingFrame >= 3)
-			launchDotFrame[3]--;
-		if (launchDotCurrentChangingFrame >= 4)
-			launchDotFrame[4]--;
-		if (launchDotCurrentChangingFrame >= 5)
-			launchDotFrame[5]--;
-		if (launchDotCurrentChangingFrame >= 6)
-			launchDotFrame[6]--;
-		if (launchDotCurrentChangingFrame >= 7)
-			launchDotFrame[7]--;
-		if (launchDotCurrentChangingFrame >= 8)
-			launchDotFrame[8]--;
-		if (launchDotCurrentChangingFrame >= 9)
-			launchDotFrame[9]--;
-		if (launchDotCurrentChangingFrame >= 10)
-			launchDotFrame[10]--;
-		if (launchDotCurrentChangingFrame >= 11)
-			launchDotFrame[11]--;
-		for (int i = 0; i < 12; i++) {
-			if (launchDotFrame[i] < 0)
-				launchDotFrame[i] = 0;
-		}
-		launchDotCurrentChangingFrame++;
-		if (launchDotCurrentChangingFrame > 11)
-			launchDotCurrentChangingFrame = 11;
-	}
-	if (applaunchprep && ms().theme == 0)
-		launchDotDoFrameChange = !launchDotDoFrameChange;
+
+	// if (applaunchprep && ms().theme == 0 && launchDotDoFrameChange) {
+	// 	launchDotFrame[0]--;
+	// 	if (launchDotCurrentChangingFrame >= 1)
+	// 		launchDotFrame[1]--;
+	// 	if (launchDotCurrentChangingFrame >= 2)
+	// 		launchDotFrame[2]--;
+	// 	if (launchDotCurrentChangingFrame >= 3)
+	// 		launchDotFrame[3]--;
+	// 	if (launchDotCurrentChangingFrame >= 4)
+	// 		launchDotFrame[4]--;
+	// 	if (launchDotCurrentChangingFrame >= 5)
+	// 		launchDotFrame[5]--;
+	// 	if (launchDotCurrentChangingFrame >= 6)
+	// 		launchDotFrame[6]--;
+	// 	if (launchDotCurrentChangingFrame >= 7)
+	// 		launchDotFrame[7]--;
+	// 	if (launchDotCurrentChangingFrame >= 8)
+	// 		launchDotFrame[8]--;
+	// 	if (launchDotCurrentChangingFrame >= 9)
+	// 		launchDotFrame[9]--;
+	// 	if (launchDotCurrentChangingFrame >= 10)
+	// 		launchDotFrame[10]--;
+	// 	if (launchDotCurrentChangingFrame >= 11)
+	// 		launchDotFrame[11]--;
+	// 	for (int i = 0; i < 12; i++) {
+	// 		if (launchDotFrame[i] < 0)
+	// 			launchDotFrame[i] = 0;
+	// 	}
+	// 	launchDotCurrentChangingFrame++;
+	// 	if (launchDotCurrentChangingFrame > 11)
+	// 		launchDotCurrentChangingFrame = 11;
+	// }
+	// if (applaunchprep && ms().theme == 0)
+	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
@@ -1521,9 +1522,9 @@ void loadRotatingCubes() {
 }
 void graphicsInit() {
 
-	for (int i = 0; i < 12; i++) {
-		launchDotFrame[i] = 5;
-	}
+	// for (int i = 0; i < 12; i++) {
+	// 	launchDotFrame[i] = 5;
+	// }
 
 	for (int i = 0; i < 5; i++) {
 		dropTime[i] = 0;
