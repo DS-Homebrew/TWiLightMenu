@@ -26,21 +26,21 @@
 
 // Gets the radius for the given frame
 inline int getRadius(int frame) {
-     return DOT_INIT_RADIUS + std::min((int)(2 * frame * log(frame)), 16);
+     return DOT_INIT_RADIUS + std::min((int)(4 * frame * log(frame)), 10);
 }
 
 // Gets the angular velocity of the radius in brads for the given frame
 inline int getVelocity(int frame) {
-	if (frame < 16)
+	if (frame < 8)
 		return 182 >> 2; //rotate slowly 
-	return 91 + (3 * frame); // 182 - 2 degrees of rotation at frame.
+	return 91 + (4 * frame); // 91 - 1 degrees of rotation at frame.
 }
 
 // This curve could be improved...
 // Gets the weight/ frame of the dot from 0 (empty) to 5 (largest) for the given index and frame
 inline int getDotRadiusFrame(int dotIndex, int frame) {
-    if (frame - dotIndex < 8) return 5;
-    if (frame - dotIndex > 24) return 0;
+    if (frame - dotIndex < 2) return 5;
+    if (frame - dotIndex > 8) return 0;
     // Sin between [-1. 1] => [0, 2]
     float SIN = fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12) + 1; 
 
