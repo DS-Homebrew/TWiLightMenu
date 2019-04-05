@@ -2,7 +2,7 @@
 #ifndef __TWILIGHTMENU_PALETTE_EFFECTS__
 #define __TWILIGHTMENU_PALETTE_EFFECTS__
 
-#include "nds.h"
+#include <nds.h>
 
 // Weirdly starts with 2nd, 3rd, and 1st colors
 static constexpr unsigned short startBorderPalettes[16*16]

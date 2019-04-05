@@ -724,7 +724,7 @@ int main(int argc, char **argv) {
 		if (ms().theme == 1 || ms().dsiMusic == 2) {
 			mmEffectEx(&mus_startup);
 		} else {
-			mmEffectEx(&mus_menu);
+			// todo: restore mmEffectEx(&mus_menu);
 		}
 		music = true;
 	}

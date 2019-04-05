@@ -49,6 +49,8 @@
 #include "themefilenames.h"
 #include "date.h"
 #include "iconHandler.h"
+
+#include "launchDots.h"
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
@@ -72,11 +74,11 @@ extern int colorBvalue;
 
 extern bool dropDown;
 extern bool redoDropDown;
-int dropTime[5] = {0};
-int dropSeq[5] = {0};
+int dropTime[5];
+int dropSeq[5];
 #define dropSpeedDefine 6
 int dropSpeed[5] = {dropSpeedDefine};
-int dropSpeedChange[5] = {0};
+int dropSpeedChange[5];
 int titleboxYposDropDown[5] = {-85 - 80};
 int allowedTitleboxForDropDown = 0;
 int delayForTitleboxToDropDown = 0;
@@ -115,9 +117,9 @@ std::vector<std::string> photoList;
 static std::string photoPath;
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 #define titleboxXscrollspeed 8
-int titleboxXpos[2] = {0};
+int titleboxXpos[2];
 int titleboxYpos = 85; // 85, when dropped down
-int titlewindowXpos[2] = {0};
+int titlewindowXpos[2];
 
 bool showLshoulder = false;
 bool showRshoulder = false;
@@ -134,13 +136,8 @@ int startBorderZoomAnimSeq[5] = {0, 1, 2, 1, 0};
 int startBorderZoomAnimNum = 0;
 int startBorderZoomAnimDelay = 0;
 
-int launchDotX[12] = {0};
-int launchDotY[12] = {0};
 
-bool launchDotXMove[12] = {false}; // false = left, true = right
-bool launchDotYMove[12] = {false}; // false = up, true = down
-
-int launchDotFrame[12] = {0};
+int launchDotFrame[12];
 int launchDotCurrentChangingFrame = 0;
 bool launchDotDoFrameChange = false;
 
@@ -659,6 +656,31 @@ void vBlankHandler() {
 		int spawnedboxXpos = 96;
 		int iconXpos = 112;
 
+		// for (int i = 0; i < 11; i++) {
+		// 		glSprite(76 + launchDotX[i], 69 + launchDotY[i], GL_FLIP_NONE,
+		// 			&tex().launchdotImage()[5 & 15]);
+
+		// 			//  &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
+		// 		if (launchDotX[i] == 0)
+		// 			launchDotXMove[i] = true;
+		// 		if (launchDotX[i] == 88)
+		// 			launchDotXMove[i] = false;
+		// 		if (launchDotY[i] == 0)
+		// 			launchDotYMove[i] = true;
+		// 		if (launchDotY[i] == 88)
+		// 			launchDotYMove[i] = false;
+		// 		if (launchDotXMove[i] == false) {
+		// 			launchDotX[i]--;
+		// 		} else if (launchDotXMove[i] == true) {
+		// 			launchDotX[i]++;
+		// 		}
+		// 		if (launchDotYMove[i] == false) {
+		// 			launchDotY[i]--;
+		// 		} else if (launchDotYMove[i] == true) {
+		// 			launchDotY[i]++;
+		// 		}
+		// }
+		
 		if (movingApp != -1) {
 			if (movingAppIsDir) {
 				if (ms().theme == 1)
@@ -978,7 +1000,7 @@ void vBlankHandler() {
 			glSprite(spawnedboxXpos + 10 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_H,
 				 tex().braceImage());
 		}
-
+ 
 		if (movingApp != -1 && !ms().theme && showMovingArrow) {
 			if (movingArrowYdirection) {
 				movingArrowYpos += 0.33;
@@ -1052,28 +1074,7 @@ void vBlankHandler() {
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
 			// Draw dots after selecting a game/app
-			for (int i = 0; i < 11; i++) {
-				glSprite(76 + launchDotX[i], 69 + launchDotY[i], GL_FLIP_NONE,
-					 &tex().launchdotImage()[(launchDotFrame[i]) & 15]);
-				if (launchDotX[i] == 0)
-					launchDotXMove[i] = true;
-				if (launchDotX[i] == 88)
-					launchDotXMove[i] = false;
-				if (launchDotY[i] == 0)
-					launchDotYMove[i] = true;
-				if (launchDotY[i] == 88)
-					launchDotYMove[i] = false;
-				if (launchDotXMove[i] == false) {
-					launchDotX[i]--;
-				} else if (launchDotXMove[i] == true) {
-					launchDotX[i]++;
-				}
-				if (launchDotYMove[i] == false) {
-					launchDotY[i]--;
-				} else if (launchDotYMove[i] == true) {
-					launchDotY[i]++;
-				}
-			}
+			// launch used to be here
 			titleboxYmovepos += 5;
 		}
 		if (showSTARTborder && (!isScrolling || ms().theme == 1)) {
@@ -1161,6 +1162,9 @@ void vBlankHandler() {
 					 tex().manualImage()); // Manual
 			}
 		}
+		
+		dots().draw(); 
+		
 		// Show button_arrowPals (debug feature)
 		/*for (int i = 0; i < 16; i++) {
 				for (int i2 = 0; i2 < 16; i2++) {
@@ -1537,52 +1541,6 @@ void graphicsInit() {
 	dropDown = false;
 	redoDropDown = false;
 
-	launchDotXMove[0] = false;
-	launchDotYMove[0] = true;
-	launchDotX[0] = 44;
-	launchDotY[0] = 0;
-	launchDotXMove[1] = false;
-	launchDotYMove[1] = true;
-	launchDotX[1] = 28;
-	launchDotY[1] = 16;
-	launchDotXMove[2] = false;
-	launchDotYMove[2] = true;
-	launchDotX[2] = 12;
-	launchDotY[2] = 32;
-	launchDotXMove[3] = true;
-	launchDotYMove[3] = true;
-	launchDotX[3] = 4;
-	launchDotY[3] = 48;
-	launchDotXMove[4] = true;
-	launchDotYMove[4] = true;
-	launchDotX[4] = 20;
-	launchDotY[4] = 64;
-	launchDotXMove[5] = true;
-	launchDotYMove[5] = true;
-	launchDotX[5] = 36;
-	launchDotY[5] = 80;
-	launchDotXMove[6] = true;
-	launchDotYMove[6] = false;
-	launchDotX[6] = 52;
-	launchDotY[6] = 80;
-	launchDotXMove[7] = true;
-	launchDotYMove[7] = false;
-	launchDotX[7] = 68;
-	launchDotY[7] = 64;
-	launchDotXMove[8] = true;
-	launchDotYMove[8] = false;
-	launchDotX[8] = 84;
-	launchDotY[8] = 48;
-	launchDotXMove[9] = false;
-	launchDotYMove[9] = false;
-	launchDotX[9] = 76;
-	launchDotY[9] = 36;
-	launchDotXMove[10] = false;
-	launchDotYMove[10] = false;
-	launchDotX[10] = 60;
-	launchDotY[10] = 20;
-	launchDotX[11] = 44;
-	launchDotY[11] = 0;
 
 	titleboxXpos[0] = ms().cursorPosition[0] * 64;
 	titlewindowXpos[0] = ms().cursorPosition[0] * 5;
