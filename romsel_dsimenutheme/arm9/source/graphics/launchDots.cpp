@@ -17,7 +17,7 @@
 #define BRAD_90_DEG 8192
 
 // number of timesteps to animate
-#define DOTS_NUM_TIMESTEPS 64
+#define DOTS_NUM_TIMESTEPS 32
 
 /*
  * getRadius, getVelocity, and getDotRadiusFrame are the curves that 
@@ -26,7 +26,7 @@
 
 // Gets the radius for the given frame
 inline int getRadius(int frame) {
-     return DOT_INIT_RADIUS + std::min((int)(frame * log(frame)), 16);
+     return DOT_INIT_RADIUS + std::min((int)(2 * frame * log(frame)), 16);
 }
 
 // Gets the angular velocity of the radius in brads for the given frame
@@ -39,8 +39,8 @@ inline int getVelocity(int frame) {
 // This curve could be improved...
 // Gets the weight/ frame of the dot from 0 (empty) to 5 (largest) for the given index and frame
 inline int getDotRadiusFrame(int dotIndex, int frame) {
-    if (frame - dotIndex < 16) return 5;
-    if (frame - dotIndex > 36) return 0;
+    if (frame - dotIndex < 8) return 5;
+    if (frame - dotIndex > 24) return 0;
     // Sin between [-1. 1] => [0, 2]
     float SIN = fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12) + 1; 
 
