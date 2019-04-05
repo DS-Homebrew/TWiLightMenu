@@ -1163,7 +1163,7 @@ void vBlankHandler() {
 			}
 		}
 		
-		dots().draw(); 
+		dots().drawAuto(); 
 		
 		// Show button_arrowPals (debug feature)
 		/*for (int i = 0; i < 16; i++) {

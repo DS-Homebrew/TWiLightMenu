@@ -9,8 +9,8 @@
 class LaunchDots
 {
     public: 
-        LaunchDots();
-        void draw();
+        void drawAuto();
+        void drawFrame(int frame);
 };
 
 typedef singleton<LaunchDots> launchDots_s;
