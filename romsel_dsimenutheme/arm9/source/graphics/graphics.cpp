@@ -1074,7 +1074,9 @@ void vBlankHandler() {
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}
 			// Draw dots after selecting a game/app
-			// launch used to be here
+			
+			dots().drawAuto(); 
+		
 			titleboxYmovepos += 5;
 		}
 		if (showSTARTborder && (!isScrolling || ms().theme == 1)) {
@@ -1162,8 +1164,6 @@ void vBlankHandler() {
 					 tex().manualImage()); // Manual
 			}
 		}
-		
-		dots().drawAuto(); 
 		
 		// Show button_arrowPals (debug feature)
 		/*for (int i = 0; i < 16; i++) {

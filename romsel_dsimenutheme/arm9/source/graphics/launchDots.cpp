@@ -2,6 +2,7 @@
 #include "ThemeTextures.h"
 #include "common/gl2d.h"
 #include <algorithm>
+#include <cmath>
 
 // F(p, t) = (R(t), p*pi/6 + Vt)
 // 32 degrees = 3276 brads
@@ -18,20 +19,36 @@
 // number of timesteps to animate
 #define DOTS_NUM_TIMESTEPS 64
 
+/*
+ * getRadius, getVelocity, and getDotRadiusFrame are the curves that 
+ * define the behaviour of the circle
+ */
+
+// Gets the radius for the given frame
 inline int getRadius(int frame) {
-     return DOT_INIT_RADIUS + std::min(2 * frame, 16); 
+     return DOT_INIT_RADIUS + std::min((int)(frame * log(frame)), 16);
 }
 
+// Gets the angular velocity of the radius in brads for the given frame
 inline int getVelocity(int frame) {
 	if (frame < 16)
-		return 0;
-	return 182 * frame; // 182 - 2 degrees of rotation at frame.
+		return 182 >> 2; //rotate slowly 
+	return 91 + (3 * frame); // 182 - 2 degrees of rotation at frame.
 }
 
+// This curve could be improved...
+// Gets the weight/ frame of the dot from 0 (empty) to 5 (largest) for the given index and frame
 inline int getDotRadiusFrame(int dotIndex, int frame) {
-	return 5;
+    if (frame - dotIndex < 16) return 5;
+    if (frame - dotIndex > 36) return 0;
+    // Sin between [-1. 1] => [0, 2]
+    float SIN = fixedToFloat(sinLerp((dotIndex * DOT_INTERVAL) - BRAD_90_DEG - (frame * getVelocity(frame))), 12) + 1; 
+
+    return std::min((SIN * 10 / 4), (float)5);
+    
 	// return ((frame % 4) + dotIndex) % 5; return 5
 }
+
 
 inline int getDotX(int dotIndex, int frame) {
 	return getRadius(frame) *
@@ -52,7 +69,7 @@ void LaunchDots::drawFrame(int frame) {
 		int dotFrame = getDotRadiusFrame(i, frame);
 		if (dotFrame == -1)
 			continue;
-		glSprite((128 - (getRadius(0) >> 2)) + X, (96 + (getRadius(0) >> 2) + (getRadius(0) >> 3)) + Y,
+		glSprite((128 - (DOT_INIT_RADIUS >> 2)) + X, (96 + (DOT_INIT_RADIUS  >> 2) + (DOT_INIT_RADIUS >> 3)) + Y,
 			 GL_FLIP_NONE, &tex().launchdotImage()[dotFrame & 15]);
 	}
 }
@@ -61,6 +78,6 @@ void LaunchDots::drawAuto() {
 	if (radFrame < DOTS_NUM_TIMESTEPS) {
 		radFrame++;
 	} else {
-		radFrame = 0;
+		radFrame = DOTS_NUM_TIMESTEPS;
 	}
 }
