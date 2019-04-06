@@ -58,8 +58,8 @@
 
 #include "fileCopy.h"
 
+#include "soundbank_bin.h"
 #include "soundbank.h"
-#include "soundbank_shop.h"
 
 #include "graphics/queueControl.h"
 
@@ -138,8 +138,6 @@ extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool 
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
-volatile char soundBank[0x200000] = {0};
-
 mm_sound_effect snd_launch;
 mm_sound_effect snd_select;
 mm_sound_effect snd_stop;
@@ -151,168 +149,74 @@ mm_sound_effect mus_startup;
 mm_sound_effect mus_menu;
 
 void InitSound() {
-	FILE* soundBankFile = fopen((ms().dsiMusic==2 ? "nitro:/soundbank_shop.bin" : "nitro:/soundbank.bin"), "rb");
-	if (!soundBankFile) {
-		fclose(soundBankFile);
-		return;
-	}
+	mmInitDefaultMem((mm_addr)soundbank_bin);
 
-	fread((void*)soundBank, 1, sizeof(soundBank), soundBankFile);
-	fclose(soundBankFile);
+	mmLoadEffect(SFX_LAUNCH);
+	mmLoadEffect(SFX_SELECT);
+	mmLoadEffect(SFX_STOP);
+	mmLoadEffect(SFX_WRONG);
+	mmLoadEffect(SFX_BACK);
+	mmLoadEffect(SFX_SWITCH);
+	mmLoadEffect(SFX_STARTUP);
+	mmLoadEffect(SFX_MENU);
 
-	mmInitDefaultMem((mm_addr)soundBank);
-
-	if (ms().dsiMusic == 2) {
-		mmLoadEffect(SFX_SHOPLAUNCH);
-		mmLoadEffect(SFX_SHOPSELECT);
-		mmLoadEffect(SFX_SHOPSTOP);
-		mmLoadEffect(SFX_SHOPWRONG);
-		mmLoadEffect(SFX_SHOPBACK);
-		mmLoadEffect(SFX_SHOPSWITCH);
-		//mmLoadEffect(SFX_SHOPLOADING);
-		mmLoadEffect(SFX_SHOPSTARTUP);
-		mmLoadEffect(SFX_SHOPMENU);
-
-		snd_launch = {
-			{SFX_SHOPLAUNCH},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_select = {
-			{SFX_SHOPSELECT},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_stop = {
-			{SFX_SHOPSTOP},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_wrong = {
-			{SFX_SHOPWRONG},	     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_back = {
-			{SFX_SHOPBACK},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_switch = {
-			{SFX_SHOPSWITCH},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		/*snd_loading = {
-			{SFX_SHOPLOADING},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};*/
-		mus_startup = {
-			{SFX_SHOPSTARTUP},	   // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		mus_menu = {
-			{SFX_SHOPMENU},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-	} else {
-		mmLoadEffect(SFX_LAUNCH);
-		mmLoadEffect(SFX_SELECT);
-		mmLoadEffect(SFX_STOP);
-		mmLoadEffect(SFX_WRONG);
-		mmLoadEffect(SFX_BACK);
-		mmLoadEffect(SFX_SWITCH);
-		//mmLoadEffect(SFX_LOADING);
-		mmLoadEffect(SFX_STARTUP);
-		mmLoadEffect(SFX_MENU);
-
-		snd_launch = {
-			{SFX_LAUNCH},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_select = {
-			{SFX_SELECT},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_stop = {
-			{SFX_STOP},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_wrong = {
-			{SFX_WRONG},	     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_back = {
-			{SFX_BACK},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		snd_switch = {
-			{SFX_SWITCH},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		/*snd_loading = {
-			{SFX_LOADING},	    // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};*/
-		mus_startup = {
-			{SFX_STARTUP},	   // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-		mus_menu = {
-			{SFX_MENU},		     // id
-			(int)(1.0f * (1 << 10)), // rate
-			0,			     // handle
-			255,		     // volume
-			128,		     // panning
-		};
-	}
+	snd_launch = {
+	    {SFX_LAUNCH},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_select = {
+	    {SFX_SELECT},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_stop = {
+	    {SFX_STOP},		     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_wrong = {
+	    {SFX_WRONG},	     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_back = {
+	    {SFX_BACK},		     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	snd_switch = {
+	    {SFX_SWITCH},	    // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	mus_startup = {
+	    {SFX_STARTUP},	   // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
+	mus_menu = {
+	    {SFX_MENU},		     // id
+	    (int)(1.0f * (1 << 10)), // rate
+	    0,			     // handle
+	    255,		     // volume
+	    128,		     // panning
+	};
 }
-
 extern bool music;
 
 extern bool rocketVideo_playVideo;
