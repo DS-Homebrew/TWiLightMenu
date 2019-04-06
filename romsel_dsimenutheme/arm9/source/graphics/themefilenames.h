@@ -105,8 +105,8 @@
 #define TFN_GRF_WIRELESSICONS       TFN_UI_DIRECTORY"/grf/wirelessicons.grf"
 #define TFN_RVID_CUBES              TFN_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 
-#define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/soundbank.bin"
-#define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bg.pcm.raw"
+#define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
+#define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
 
 #define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
 #define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.pcm.raw"

@@ -1,13 +1,24 @@
 #include "sound.h"
 
-#include "soundbank.h"
-#include "soundbank_bin.h"
-
 #include "graphics/themefilenames.h"
 #include "common/dsimenusettings.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
+
+#define SFX_WRONG	0
+#define SFX_LAUNCH	1
+#define SFX_STOP	2
+#define SFX_SWITCH	3
+#define SFX_STARTUP	4
+#define SFX_SELECT	5
+#define SFX_BACK	6
+
+#define MSL_NSONGS	0
+#define MSL_NSAMPS	7
+#define MSL_BANKSIZE	7
+
+
 // mm_sound_effect mus_menu;
 
 extern s16 streaming_buf[STREAMING_BUF_LENGTH + 1];
@@ -17,7 +28,9 @@ extern bool fill_requested;
 extern u32 used_samples;
 extern u32 filled_samples;
 extern char debug_buf[256];
+
 mm_word SOUNDBANK[MSL_BANKSIZE];
+volatile char SFX_DATA[0x7D000];
 
 extern "C" {
 
@@ -36,15 +49,33 @@ extern "C" {
 }
 SoundControl::SoundControl() {
 
-	mm_ds_system sys;
 	sys.mod_count = MSL_NSONGS;
 	sys.samp_count = MSL_NSAMPS;
 	sys.mem_bank = SOUNDBANK;
 	sys.fifo_channel = FIFO_MAXMOD;
-	mmInit(&sys);
 	
+	FILE* soundbank_file;
+	
+	switch(ms().dsiMusic) {
+		case 2:
+			soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
+			break;
+		case 3:
+			soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
+			if (stream_source) break; // fallthrough if stream_source fails.
+		case 1:
+		default:
+			soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
+			break;
+	}
+	
+	fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
 
-	mmSoundBankInMemory((mm_addr)soundbank_bin);
+	fclose(soundbank_file);
+
+	mmInit(&sys);
+
+	mmSoundBankInMemory((mm_addr)SFX_DATA);
 	// mmSetEventHandler(handle_event);
 
 	// mmInitDefaultMem((mm_addr);
