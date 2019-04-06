@@ -3,10 +3,24 @@
 #include "soundbank.h"
 #include "soundbank_bin.h"
 
+#include "streamingaudio.h"
+
 // mm_sound_effect mus_menu;
 
+mm_word SOUNDBANK[MSL_BANKSIZE];
+
 SoundControl::SoundControl() {
-	mmInitDefaultMem((mm_addr)soundbank_bin);
+
+	mm_ds_system sys;
+	sys.mod_count = MSL_NSONGS;
+	sys.samp_count = MSL_NSAMPS;
+	sys.mem_bank = SOUNDBANK;
+	sys.fifo_channel = FIFO_MAXMOD;
+	mmInit(&sys);
+
+	mmSoundBankInMemory((mm_addr)soundbank_bin);
+
+	// mmInitDefaultMem((mm_addr);
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
 	mmLoadEffect(SFX_STOP);
@@ -65,6 +79,19 @@ SoundControl::SoundControl() {
 	    255,		     // volume
 	    128,		     // panning
 	};
+
+	mm_stream stream;
+    stream.sampling_rate = 44100;         // 44.1HZ
+    stream.buffer_length = 1200;           // should be adequate
+    stream.callback = on_stream_request;   // give stereo filling routine
+    stream.format = MM_STREAM_16BIT_STEREO; // select format 
+    stream.timer = MM_TIMER0;             // use timer0
+    stream.manual = 0;                    // auto filling
+    
+    // open the stream
+    mmStreamOpen( &stream );
+	SetYtrigger( 0 );
+
 	// mus_menu = {
 	//     {SFX_MENU},		     // id
 	//     (int)(1.0f * (1 << 10)), // rate
