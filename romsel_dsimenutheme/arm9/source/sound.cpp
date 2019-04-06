@@ -19,6 +19,21 @@ extern u32 filled_samples;
 extern char debug_buf[256];
 mm_word SOUNDBANK[MSL_BANKSIZE];
 
+extern "C" {
+
+	// mm_word handle_event(mm_word msg, mm_word param){
+	// 	switch( msg )
+	// 	{
+	// 		case MMCB_SONGMESSAGE:
+	// 			// Process song message
+	// 			break;
+	// 		case MMCB_SONGFINISHED:
+	// 			// A song has finished playing
+	// 			break; 
+	// 	}
+	// 	return 0;
+	// }
+}
 SoundControl::SoundControl() {
 
 	mm_ds_system sys;
@@ -27,8 +42,10 @@ SoundControl::SoundControl() {
 	sys.mem_bank = SOUNDBANK;
 	sys.fifo_channel = FIFO_MAXMOD;
 	mmInit(&sys);
+	
 
 	mmSoundBankInMemory((mm_addr)soundbank_bin);
+	// mmSetEventHandler(handle_event);
 
 	// mmInitDefaultMem((mm_addr);
 	mmLoadEffect(SFX_LAUNCH);
@@ -90,24 +107,24 @@ SoundControl::SoundControl() {
 	    128,		     // panning
 	};
 
-	stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
-	if (!stream_source) {
-		nocashMessage("Opening soundbg from nitrofs");
 
-		if (ms().dsiMusic == 2) {
-			nocashMessage("Opening soundbg from nitrofs");
+	switch(ms().dsiMusic) {
+		case 2:
 			stream_source = fopen(std::string(TFN_SHOP_SOUND_BG).c_str(), "rb");
-		} else {
-			nocashMessage("Opening default from nitrofs");
-			nocashMessage(std::string(TFN_DEFAULT_SOUND_BG).c_str());
+			break;
+		case 3:
+			stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
+			if (stream_source) break; // fallthrough if stream_source fails.
+		case 1:
+		default:
 			stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
-		}
+			break;
 	}
+	
 
 	fseek(stream_source, 0, SEEK_SET);
 	set_streaming_source(stream_source);
 
-	mm_stream stream;
 	stream.sampling_rate = 16000;	 // 11025HZ
 	stream.buffer_length = 1600;	  // should be adequate
 	stream.callback = on_stream_request;  // give stereo filling routine
@@ -117,10 +134,6 @@ SoundControl::SoundControl() {
 	
 	toncset16(streaming_buf, 0, STREAMING_BUF_LENGTH); // clear streaming buf
 	updateStream();
-	// open the stream
-	mmStreamOpen(&stream);
-	SetYtrigger(0);
-
 	// mus_menu = {
 	//     {SFX_MENU},		     // id
 	//     (int)(1.0f * (1 << 10)), // rate
@@ -138,6 +151,11 @@ mm_sfxhand SoundControl::playStartup() { return mmEffectEx(&mus_startup); }
 mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
 mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
+void SoundControl::beginStream() {
+	// open the stream
+	mmStreamOpen(&stream);
+	SetYtrigger(0);
+}
 
 // Updates the background music fill buffer
 void SoundControl::updateStream() {

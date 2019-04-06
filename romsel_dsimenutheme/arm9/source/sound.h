@@ -18,7 +18,7 @@ class SoundControl {
         mm_sfxhand playStop();
         mm_sfxhand playWrong();
         void updateStream();
-
+        void beginStream();
     private:
         mm_sound_effect snd_launch;
         mm_sound_effect snd_select;
@@ -26,6 +26,7 @@ class SoundControl {
         mm_sound_effect snd_wrong;
         mm_sound_effect snd_back;
         mm_sound_effect snd_switch;
+        mm_stream stream;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
         FILE* stream_source;

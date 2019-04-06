@@ -401,22 +401,22 @@ void vBlankHandler() {
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
 	if (ms().theme == 0 && ms().dsiMusic != 2) waitBeforeMusicPlay = false;
 
-	if (music && waitBeforeMusicPlay) {
-		if (waitBeforeMusicPlayTime == (ms().dsiMusic == 2 ? ((60 * 5)+10) : (60 * 3))) {
-			// mmEffectEx(&mus_menu);
-			waitBeforeMusicPlay = false;
-		} else {
-			waitBeforeMusicPlayTime++;
-		}
-	}
+	// if (music && waitBeforeMusicPlay) {
+	// 	if (waitBeforeMusicPlayTime == (ms().dsiMusic == 2 ? ((60 * 5)+10) : (60 * 3))) {
+	// 		// mmEffectEx(&mus_menu);
+	// 		waitBeforeMusicPlay = false;
+	// 	} else {
+	// 		waitBeforeMusicPlayTime++;
+	// 	}
+	// }
 
-	if (music && !waitBeforeMusicPlay) {
-		musicTime++;
-		if (musicTime == (ms().dsiMusic == 2 ? ((60 * 60)+37) : (60 * 49))) { // Length of music file in seconds (60*ss)
-			// mmEffectEx(&mus_menu);
-			musicTime = 0;
-		}
-	}
+	// if (music && !waitBeforeMusicPlay) {
+	// 	musicTime++;
+	// 	if (musicTime == (ms().dsiMusic == 2 ? ((60 * 60)+37) : (60 * 49))) { // Length of music file in seconds (60*ss)
+	// 		// mmEffectEx(&mus_menu);
+	// 		musicTime = 0;
+	// 	}
+	// }
 
 	if (waitForNeedToPlayStopSound > 0) {
 		waitForNeedToPlayStopSound++;

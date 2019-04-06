@@ -44,6 +44,7 @@ class ThemeConfig {
         bool _dialogBoxUserPalette;
 
         bool _renderPhoto;
+        bool _playStartupJingle;
 
     public:
         ThemeConfig();
@@ -88,6 +89,9 @@ class ThemeConfig {
         bool dialogBoxUserPalette() const { return _dialogBoxUserPalette; }
 
         bool renderPhoto() const { return _renderPhoto; }
+
+        bool playStartupJingle() const { return _playStartupJingle; }
+
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;

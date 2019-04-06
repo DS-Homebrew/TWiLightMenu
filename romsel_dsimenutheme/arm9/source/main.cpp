@@ -726,14 +726,21 @@ int main(int argc, char **argv) {
 	snd();
 
 	if (ms().dsiMusic != 0) {
-		if (ms().theme == 1 || ms().dsiMusic == 2) {
-			// mmEffectEx(&mus_startup);
+		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 			snd().playStartup();
-		} else {
-			// mmEffectEx(&mus_menu);
 		}
-		music = true;
+		snd().beginStream();
 	}
+
+	// if (ms().dsiMusic != 0) {
+	// 	if (ms().theme == 1 || ms().dsiMusic == 2) {
+	// 		// mmEffectEx(&mus_startup);
+			
+	// 	} else {
+	// 		snd().beginStream();
+	// 	}
+	// 	music = true;
+	// }
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0) ||
