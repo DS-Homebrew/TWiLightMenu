@@ -103,7 +103,7 @@ void RemoveTrailingSlashes(std::string &path) {
 
 bool music = false;
 extern mm_sound_effect mus_startup;
-extern mm_sound_effect mus_menu;
+// extern mm_sound_effect mus_menu;
 
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string slashchar = "/";
@@ -555,7 +555,6 @@ int main(int argc, char **argv) {
 
 
 	defaultExceptionHandler();
-	
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
 
@@ -724,7 +723,7 @@ int main(int argc, char **argv) {
 		if (ms().theme == 1 || ms().dsiMusic == 2) {
 			mmEffectEx(&mus_startup);
 		} else {
-			mmEffectEx(&mus_menu);
+			// mmEffectEx(&mus_menu);
 		}
 		music = true;
 	}

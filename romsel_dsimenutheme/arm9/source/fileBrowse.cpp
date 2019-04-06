@@ -146,7 +146,16 @@ mm_sound_effect snd_back;
 mm_sound_effect snd_switch;
 //mm_sound_effect snd_loading;
 mm_sound_effect mus_startup;
-mm_sound_effect mus_menu;
+// mm_sound_effect mus_menu;
+
+
+void SendFadeoutFIFO(u32 value) {
+	// if (value == 0) value = 2; // send 2 instead of 0 for fadeout.
+	// while (fifoGetValue32(FIFO_USER_01) != 0); // Clear USER_1 Channel
+
+	// fifoSendValue32(FIFO_USER_01, value); // Fade out sound
+
+}
 
 void InitSound() {
 	mmInitDefaultMem((mm_addr)soundbank_bin);
@@ -158,7 +167,7 @@ void InitSound() {
 	mmLoadEffect(SFX_BACK);
 	mmLoadEffect(SFX_SWITCH);
 	mmLoadEffect(SFX_STARTUP);
-	mmLoadEffect(SFX_MENU);
+	// mmLoadEffect(SFX_MENU);
 
 	snd_launch = {
 	    {SFX_LAUNCH},	    // id
@@ -209,13 +218,13 @@ void InitSound() {
 	    255,		     // volume
 	    128,		     // panning
 	};
-	mus_menu = {
-	    {SFX_MENU},		     // id
-	    (int)(1.0f * (1 << 10)), // rate
-	    0,			     // handle
-	    255,		     // volume
-	    128,		     // panning
-	};
+	// mus_menu = {
+	//     {SFX_MENU},		     // id
+	//     (int)(1.0f * (1 << 10)), // rate
+	//     0,			     // handle
+	//     255,		     // volume
+	//     128,		     // panning
+	// };
 }
 extern bool music;
 
@@ -601,19 +610,20 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 	}
 }
 
+
 void launchSettings(void) {
 	mmEffectEx(&snd_launch);
 	controlTopBright = true;
 	ms().gotosettings = true;
 
 	fadeType = false;		  // Fade to white
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+	SendFadeoutFIFO(0); // Cancel sound fade-out
 
 	ms().saveSettings();
 	// Launch settings
@@ -630,13 +640,13 @@ void launchManual(void) {
 	ms().gotosettings = true;
 
 	fadeType = false;		  // Fade to white
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+	SendFadeoutFIFO(0); // Cancel sound fade-out
 
 	ms().saveSettings();
 	// Launch settings
@@ -652,13 +662,13 @@ void exitToSystemMenu(void) {
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+	SendFadeoutFIFO(0); // Cancel sound fade-out
 
 	if (settingsChanged) {
 		ms().saveSettings();
@@ -718,13 +728,13 @@ void switchDevice(void) {
 		controlTopBright = true;
 
 		fadeType = false;		  // Fade to white
-		fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+		SendFadeoutFIFO(1); // Fade out sound
 		for (int i = 0; i < 60; i++) {
 			swiWaitForVBlank();
 		}
 		music = false;
 		mmEffectCancelAll();
-		fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+		SendFadeoutFIFO(0); // Cancel sound fade-out
 
 		ms().romPath = "";
 		ms().launchType = DSiMenuPlusPlusSettings::TLaunchType::ESlot1; // 0
@@ -786,13 +796,13 @@ void launchGba(void) {
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+	SendFadeoutFIFO(0); // Cancel sound fade-out
 
 	ms().saveSettings();
 
@@ -2264,13 +2274,13 @@ string browseForFile(const vector<string> extensionList) {
 							}
 						}
 						fadeType = false;		  // Fade to white
-						fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+						SendFadeoutFIFO(1); // Fade out sound
 						for (int i = 0; i < 60; i++) {
 							swiWaitForVBlank();
 						}
 						music = false;
 						mmEffectCancelAll();
-						fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade-out
+						SendFadeoutFIFO(0); // Cancel sound fade-out
 
 						clearText(true);
 

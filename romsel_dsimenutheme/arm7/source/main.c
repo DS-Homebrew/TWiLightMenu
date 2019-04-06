@@ -36,23 +36,26 @@
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
 volatile int soundVolume = 127;
+volatile bool fadeOut = false;
 volatile int timeTilVolumeLevelRefresh = 0;
 volatile int volumeLevel = -1;
 volatile int batteryLevel = 0;
 //static bool gotCartHeader = false;
 
 //---------------------------------------------------------------------------------
-void soundFadeOut() {
+void soundFadeOut(u32 fadeOutState) {
 //---------------------------------------------------------------------------------
-	soundVolume -= 3;
-	if (soundVolume < 0) {
-		soundVolume = 0;
-	}
+	if (fadeOutState == 0) return;
+	if (fadeOutState == 2) fadeOut = false;
+	if (fadeOutState == 1) fadeOut = true;
+	// soundVolume -= 3;
+	
 }
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
+	nocashMessage("ARM7 ReturnToDSiMenu");
 	if (isDSiMode()) {
 		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 		i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
@@ -91,7 +94,7 @@ void powerButtonCB() {
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
-    nocashMessage("ARM7 main.c main");
+    // nocashMessage("ARM7 main.c main");
 	
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
@@ -106,12 +109,11 @@ int main() {
 	irqInit();
 	// Start the RTC tracking IRQ
 	initClockIRQ();
-	touchInit();
 
+	touchInit();
 	fifoInit();
-	
+
 	mmInstall(FIFO_MAXMOD);
-	
 	SetYtrigger(80);
 	
 	installSoundFIFO();
@@ -134,7 +136,7 @@ int main() {
 	// 08: SD
 	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
 	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
-	
+
 
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
@@ -146,8 +148,6 @@ int main() {
 			fifoSendValue32(FIFO_USER_04, 0);
 			gotCartHeader = true;
 		}*/
-
-
 		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
@@ -170,13 +170,20 @@ int main() {
 			}
 		}
 
-		if(fifoCheckValue32(FIFO_USER_01)) {
-			soundFadeOut();
-		} else {
-			soundVolume = 127;
-		}
-		REG_MASTER_VOLUME = soundVolume;
-		if(fifoCheckValue32(FIFO_USER_02)) {
+		// soundFadeOut(fifoGetValue32(FIFO_USER_01));
+
+		// if (fadeOut) {
+		// 	soundVolume -= 3;
+		// 	if (soundVolume < 0) {
+		// 		soundVolume = 0;
+		// 	}
+		// } else {
+		// 	soundVolume = 127;
+		// }
+		
+		// REG_MASTER_VOLUME = soundVolume;
+
+		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
 		}
 		swiWaitForVBlank();
