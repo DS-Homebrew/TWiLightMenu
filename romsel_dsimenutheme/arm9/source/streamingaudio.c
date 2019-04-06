@@ -41,7 +41,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
     sprintf(debug_buf, "fill req %i, filled %i", length, len);
     nocashMessage(debug_buf);
 
-    // Since 
+    // Since we fill twice as often as we need, there should never be stutter.
     if (used_samples >= STREAMING_BUF_LENGTH >> 1) {
         fill_requested = true;
     }

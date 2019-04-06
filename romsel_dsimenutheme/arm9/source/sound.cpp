@@ -139,33 +139,34 @@ mm_sfxhand SoundControl::playStop() { return mmEffectEx(&snd_stop); }
 mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 
+// Updates the background music fill buffer
 void SoundControl::updateStream() {
 	
+	// buffer updates happen every time half the buffer has been consumed
 	if (fill_requested) {
 		
-		// move to temp
+		
+		// memmove the unconsumed bytes to the front of the temp buffer
 		u32 free_ptr = STREAMING_BUF_LENGTH - used_samples;
-
-		// clear and memmove
 		toncset16(streaming_buf_temp, 0, STREAMING_BUF_LENGTH + 1);
 		tonccpy(streaming_buf_temp, streaming_buf + used_samples, free_ptr << 1);
 
-		// toncset16(streaming_buf, 0, STREAMING_BUF_LENGTH);
-		// memmove(streaming_buf, streaming_buf + used_samples, STREAMING_BUF_LENGTH - used_samples);
-
+		// Try to fill up the space that was used previously
 		filled_samples = fread(streaming_buf_temp + free_ptr, 
 						sizeof(s16), used_samples, stream_source);
 
+		// If we couldn't fill completely (file has ended), loop.
 		if (filled_samples < used_samples) {
 			fseek(stream_source, 0, SEEK_SET);
+
+			// Fill up only the space that was previously unfilled
 			filled_samples += fread(streaming_buf_temp + free_ptr + filled_samples,
 				 sizeof(s16), (used_samples - filled_samples), stream_source);
 		}
 		
 		tonccpy(streaming_buf, streaming_buf_temp, sizeof(streaming_buf));
-		// streaming_buf[STREAMING_BUF_LENGTH] = NULL; // Null terminate
-		// sprintf(debug_buf, "filled %u samples with %u used samples total %u", filled_samples, used_samples, (STREAMING_BUF_LENGTH - used_samples) + filled_samples);
-   		// nocashMessage(debug_buf);
+		
+		// Reset fill state
 		fill_requested = false;
 		used_samples = 0;
 	}
