@@ -56,6 +56,7 @@
 #include "common/inifile.h"
 #include "common/tonccpy.h"
 
+#include "sound.h"
 #include "language.h"
 
 #include "cheat.h"
@@ -717,11 +718,12 @@ int main(int argc, char **argv) {
 
 	char path[256] = {0};
 
-	InitSound();
+	snd();
 
 	if (ms().dsiMusic != 0) {
 		if (ms().theme == 1 || ms().dsiMusic == 2) {
-			mmEffectEx(&mus_startup);
+			// mmEffectEx(&mus_startup);
+			snd().playStartup();
 		} else {
 			// mmEffectEx(&mus_menu);
 		}

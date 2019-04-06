@@ -35,22 +35,11 @@
 #define SNDEXCNT (*(vu16*)0x4004700)
 #define SD_IRQ_STATUS (*(vu32*)0x400481C)
 
-volatile int soundVolume = 127;
-volatile bool fadeOut = false;
 volatile int timeTilVolumeLevelRefresh = 0;
 volatile int volumeLevel = -1;
 volatile int batteryLevel = 0;
 //static bool gotCartHeader = false;
 
-//---------------------------------------------------------------------------------
-void soundFadeOut(u32 fadeOutState) {
-//---------------------------------------------------------------------------------
-	if (fadeOutState == 0) return;
-	if (fadeOutState == 2) fadeOut = false;
-	if (fadeOutState == 1) fadeOut = true;
-	// soundVolume -= 3;
-	
-}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -169,19 +158,6 @@ int main() {
 				fifoSendValue32(FIFO_USER_08, 1);
 			}
 		}
-
-		// soundFadeOut(fifoGetValue32(FIFO_USER_01));
-
-		// if (fadeOut) {
-		// 	soundVolume -= 3;
-		// 	if (soundVolume < 0) {
-		// 		soundVolume = 0;
-		// 	}
-		// } else {
-		// 	soundVolume = 127;
-		// }
-		
-		// REG_MASTER_VOLUME = soundVolume;
 
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();

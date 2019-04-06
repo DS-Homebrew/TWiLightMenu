@@ -49,7 +49,7 @@
 #include "themefilenames.h"
 #include "date.h"
 #include "iconHandler.h"
-
+#include "sound.h"
 #include "launchDots.h"
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -1093,7 +1093,8 @@ void vBlankHandler() {
 			if (ms().theme == 0) {
 				if (currentBg == 1 && ms().theme == 0 && needToPlayStopSound &&
 				    waitForNeedToPlayStopSound == 0) {
-					mmEffectEx(&snd_stop);
+					// mmEffectEx(&snd_stop);
+					snd().playStop();
 					waitForNeedToPlayStopSound = 1;
 					needToPlayStopSound = false;
 				}
