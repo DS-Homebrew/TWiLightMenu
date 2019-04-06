@@ -27,39 +27,24 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 	//----------------------------------------------------------------------------------
 
     if (fill_requested) {
-        // fill_requested = true;
         nocashMessage("missed fill");
-        return 0;
     }
 
 	const s16 *music = streaming_buf + used_samples;
 	s16 *target = dest;
-    // clear buffer
-    // if (last_length + length > 2800) {
-    //     length = length - ((last_length + length) % 2800);
-    // }
-    // fread(dest, sizeof(s16), length, stream_source);
- 
-    // int len = length;
-	// int len = length;
-    int len = length;
-    // tonccpy(target, music, len << 1);
-    
-	for (int i = 0 ; i < len; i++ )
-	{
-        if (*music == 0) break;
-		*target++ = *music++;
-        // *target++ = *music++;
-    }
    
-    used_samples += len;
-       sprintf(debug_buf, "fill req %i, filled %i", length, len);
-    nocashMessage(debug_buf);
+    int len = length;
+    tonccpy(target, music, len << 1);
     
+   
+    used_samples += length;
+    sprintf(debug_buf, "fill req %i, filled %i", length, len);
+    nocashMessage(debug_buf);
 
+    // Since 
     if (used_samples >= STREAMING_BUF_LENGTH >> 1) {
         fill_requested = true;
     }
     
-    return len;
+    return length;
 }
