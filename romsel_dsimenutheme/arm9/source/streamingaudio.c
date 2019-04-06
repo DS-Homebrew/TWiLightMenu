@@ -1,6 +1,5 @@
 #include "streamingaudio.h"
 #include "common/tonccpy.h"
-#include "menumusic_bin.h"
 
 
 s16 streaming_buf[STREAMING_BUF_LENGTH + 1] = {0}; // 3600B
