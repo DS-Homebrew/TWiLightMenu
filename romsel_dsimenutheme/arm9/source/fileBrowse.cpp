@@ -274,6 +274,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		}
 		int currentPos = 0;
 		while (true) {
+			snd().updateStream();
+
 			DirEntry dirEntry;
 
 			struct dirent *pent = readdir(pdir);
@@ -324,6 +326,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			
+			snd().updateStream();
 		}
 
 		if(ms().sortMethod == 0) { // Alphabetical
@@ -431,6 +435,7 @@ void waitForFadeOut(void) {
 	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 66; i++) {
+			snd().updateStream();
 			checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
@@ -442,6 +447,7 @@ void waitForFadeOut(void) {
 		}
 	} else {
 		for (int i = 0; i < 25; i++) {
+			snd().updateStream();
 			checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
@@ -450,6 +456,7 @@ void waitForFadeOut(void) {
 			drawClockColon();
 			snd().updateStream();
 			swiWaitForVBlank();
+			snd().updateStream();
 			swiWaitForVBlank();
 		}
 	}
@@ -477,6 +484,7 @@ void displayNowLoading(void) {
 	{
 		snd().updateStream();
 	}
+	snd().updateStream();
 	showProgressIcon = true;
 	controlTopBright = false;
 }
@@ -694,7 +702,7 @@ void launchGba(void) {
 		if (!showdialogbox) {
 			showdialogbox = true;
 			for (int i = 0; i < 30; i++) {
-						snd().updateStream();
+				snd().updateStream();
 				swiWaitForVBlank();
 			}
 		}
@@ -911,8 +919,10 @@ bool selectMenu(void) {
 			maxCursors = 2;
 		}
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 30; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 	int pressed = 0;
 	while (1) {
 		int textYpos = selIconYpos + 4;
@@ -1212,7 +1222,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 string browseForFile(const vector<string> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
-
+	snd().updateStream();
 	gameOrderIniPath =
 	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath =
@@ -1232,6 +1242,7 @@ string browseForFile(const vector<string> extensionList) {
 	getDirectoryContents(dirContents[scrn], extensionList);
 
 	while (1) {
+		snd().updateStream();
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		reloadFontPalettes();
@@ -1245,6 +1256,7 @@ string browseForFile(const vector<string> extensionList) {
 			swiWaitForVBlank();
 		}
 		clearText(false);
+		snd().updateStream();
 		waitForFadeOut();
 		bool gameTapped = false;
 		/* clearText(false);
@@ -1262,7 +1274,7 @@ string browseForFile(const vector<string> extensionList) {
 		while (1) {
 			// cursor->finalY = 4 + 10 * (CURPOS - screenOffset +
 			// ENTRIES_START_ROW); cursor->delay = TextEntry::ACTIVE;
-
+			snd().updateStream();
 			if (!stopSoundPlayed) {
 				if ((ms().theme == 0 && !startMenu &&
 				     CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) ||
@@ -1770,6 +1782,7 @@ string browseForFile(const vector<string> extensionList) {
 					drawCurrentTime();
 					drawCurrentDate();
 					drawClockColon();
+					snd().updateStream();
 				}
 				scrollWindowTouched = false;
 				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;

@@ -181,7 +181,9 @@ extern mm_sound_effect mus_menu;
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
+	snd().updateStream();
 	swiWaitForVBlank();
+	snd().updateStream();
 	swiWaitForVBlank();
 }
 
@@ -397,7 +399,6 @@ void playRotatingCubesVideo(void) {
 void vBlankHandler() {
 	execQueue();		   // Execute any actions queued during last vblank.
 	execDeferredIconUpdates(); // Update any icons queued during last vblank.
-
 	if (ms().theme == 0 && ms().dsiMusic != 2) waitBeforeMusicPlay = false;
 
 	if (music && waitBeforeMusicPlay) {

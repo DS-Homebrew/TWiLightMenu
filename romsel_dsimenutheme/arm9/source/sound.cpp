@@ -7,11 +7,16 @@
 #include "common/dsimenusettings.h"
 #include "streamingaudio.h"
 #include "string.h"
+#include "common/tonccpy.h"
 // mm_sound_effect mus_menu;
 
-extern s16 streaming_buf[2800];
-extern mm_word last_length;
+extern s16 streaming_buf[STREAMING_BUF_LENGTH + 1];
+extern s16 streaming_buf_temp[STREAMING_BUF_LENGTH + 1];
 
+extern bool fill_requested;
+extern u32 used_samples;
+extern u32 filled_samples;
+extern char debug_buf[256];
 mm_word SOUNDBANK[MSL_BANKSIZE];
 
 SoundControl::SoundControl() {
@@ -95,19 +100,23 @@ SoundControl::SoundControl() {
 		} else {
 			nocashMessage("Opening default from nitrofs");
 			nocashMessage(std::string(TFN_DEFAULT_SOUND_BG).c_str());
-			stream_source = fopen("nitro:/sound/defaultbg.pcm.raw", "rb");
+			stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 		}
 	}
-	// set_streaming_source(stream_source);
+
+	fseek(stream_source, 0, SEEK_SET);
+	set_streaming_source(stream_source);
 
 	mm_stream stream;
 	stream.sampling_rate = 16000;	 // 16kHZ
-	stream.buffer_length = 1200;	  // should be adequate
+	stream.buffer_length = 1600;	  // should be adequate
 	stream.callback = on_stream_request;  // give stereo filling routine
 	stream.format = MM_STREAM_16BIT_MONO; // select format
 	stream.timer = MM_TIMER0;	     // use timer0
-	stream.manual = true;	      // manual filling
-
+	stream.manual = false;	      // manual filling
+	
+	toncset16(streaming_buf, 0, STREAMING_BUF_LENGTH); // clear streaming buf
+	updateStream();
 	// open the stream
 	mmStreamOpen(&stream);
 	SetYtrigger(0);
@@ -132,11 +141,32 @@ mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 void SoundControl::updateStream() {
 	
-	// memmove(streaming_buf, streaming_buf + last_length, 1200 - last_length);
+	if (fill_requested) {
+		
+		// move to temp
+		u32 free_ptr = STREAMING_BUF_LENGTH - used_samples;
 
-	// if (last_length >= 2800) {
-	// 	fread(streaming_buf, sizeof(s16), 2800, stream_source);
-	// 	last_length = 0;
-	// }
-	mmStreamUpdate(); // Update sound.
+		// clear and memmove
+		toncset16(streaming_buf_temp, 0, STREAMING_BUF_LENGTH + 1);
+		tonccpy(streaming_buf_temp, streaming_buf + used_samples, free_ptr << 1);
+
+		// toncset16(streaming_buf, 0, STREAMING_BUF_LENGTH);
+		// memmove(streaming_buf, streaming_buf + used_samples, STREAMING_BUF_LENGTH - used_samples);
+
+		filled_samples = fread(streaming_buf_temp + free_ptr, 
+						sizeof(s16), used_samples, stream_source);
+
+		if (filled_samples < used_samples) {
+			fseek(stream_source, 0, SEEK_SET);
+			filled_samples += fread(streaming_buf_temp + free_ptr + filled_samples,
+				 sizeof(s16), (used_samples - filled_samples), stream_source);
+		}
+		
+		tonccpy(streaming_buf, streaming_buf_temp, sizeof(streaming_buf));
+		// streaming_buf[STREAMING_BUF_LENGTH] = NULL; // Null terminate
+		// sprintf(debug_buf, "filled %u samples with %u used samples total %u", filled_samples, used_samples, (STREAMING_BUF_LENGTH - used_samples) + filled_samples);
+   		// nocashMessage(debug_buf);
+		fill_requested = false;
+		used_samples = 0;
+	}
 }

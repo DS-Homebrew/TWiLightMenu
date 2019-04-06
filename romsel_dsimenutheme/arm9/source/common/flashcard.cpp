@@ -8,7 +8,7 @@
 #include "common/inifile.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
-
+#include "sound.h"
 static sNDSHeader nds;
 
 extern const char* settingsinipath;
@@ -85,9 +85,9 @@ TWL_CODE void twl_flashcardInit(void) {
 		// Reset Slot-1 to allow reading title name and ID
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); snd().updateStream(); }
 		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); snd().updateStream(); }
 
 		nds.gameCode[0] = 0;
 		nds.gameTitle[0] = 0;

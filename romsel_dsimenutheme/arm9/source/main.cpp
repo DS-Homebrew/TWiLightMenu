@@ -420,6 +420,7 @@ void SetSpeedBumpExclude(const char *filename) {
 void stop(void) {
 	//---------------------------------------------------------------------------------
 	while (1) {
+		
 		swiWaitForVBlank();
 	}
 }
@@ -435,6 +436,7 @@ void doPause() {
 		scanKeys();
 		if (keysDown() & KEY_START)
 			break;
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	scanKeys();
@@ -533,8 +535,10 @@ void dsCardLaunch() {
 	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 15; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 }
 
 bool extention(std::string filename, const char *ext, int number) {
@@ -601,6 +605,7 @@ int main(int argc, char **argv) {
 			do {
 				scanKeys();
 				pressed = keysDownRepeat();
+				snd().updateStream();
 				swiWaitForVBlank();
 			} while (!pressed);
 
@@ -737,11 +742,15 @@ int main(int argc, char **argv) {
 		fadeType = true; // Fade in from white
 		printLargeCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 104, "Do not turn off the power.");
-		for (int i = 0; i < 15; i++)
+		for (int i = 0; i < 15; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
+		}
 		reloadFontPalettes();
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 20; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
+		}
 		showProgressIcon = true;
 		controlTopBright = false;
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
@@ -752,8 +761,10 @@ int main(int argc, char **argv) {
 		}
 		showProgressIcon = false;
 		fadeType = false; // Fade to white
-		for (int i = 0; i < 30; i++)
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
+		}
 		clearText(false);
 	}
 
@@ -872,8 +883,10 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, savecreating);
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 35; i++)
+						for (int i = 0; i < 35; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 					}
 
 					static const int BUFFER_SIZE = 4096;
@@ -900,8 +913,10 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++)
+					for (int i = 0; i < 60; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 				}
 
 				if ((access(ms().dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
@@ -911,8 +926,10 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, savecreating);
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 35; i++)
+						for (int i = 0; i < 35; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 					}
 
 					static const int BUFFER_SIZE = 4096;
@@ -939,14 +956,18 @@ int main(int argc, char **argv) {
 						fclose(pFile);
 					}
 					printLarge(false, 4, 20, savecreated);
-					for (int i = 0; i < 60; i++)
+					for (int i = 0; i < 60; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 				}
 
 				if (fadeType) {
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 25; i++)
+					for (int i = 0; i < 25; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 				}
 
 				if (ms().secondaryDevice) {
@@ -954,8 +975,10 @@ int main(int argc, char **argv) {
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
 					fadeType = true; // Fade in from white
-					for (int i = 0; i < 35; i++)
+					for (int i = 0; i < 35; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
@@ -968,8 +991,10 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 25; i++)
+					for (int i = 0; i < 25; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 
 					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0 ||
 					    access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
@@ -978,11 +1003,15 @@ int main(int argc, char **argv) {
 						printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
 						printLarge(false, 4, 96, "save data back.");
 						fadeType = true; // Fade in from white
-						for (int i = 0; i < 60 * 3; i++)
+						for (int i = 0; i < 60 * 3; i++) {
+							snd().updateStream();
 							swiWaitForVBlank(); // Wait 3 seconds
+						}
 						fadeType = false;	   // Fade to white
-						for (int i = 0; i < 25; i++)
+						for (int i = 0; i < 25; i++){
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 					}
 				}
 
@@ -1021,8 +1050,10 @@ int main(int argc, char **argv) {
 				}
 
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Unlaunch
-				for (int i = 0; i < 15; i++)
+				for (int i = 0; i < 15; i++) {
+					snd().updateStream();
 					swiWaitForVBlank();
+				}
 			}
 
 			// Launch .nds directly or via nds-bootstrap
@@ -1090,8 +1121,10 @@ int main(int argc, char **argv) {
 								fclose(pFile);
 							}
 							printLarge(false, 4, 20, "Done!");
-							for (int i = 0; i < 30; i++)
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 							clearText();
 						}
 
@@ -1156,8 +1189,10 @@ int main(int argc, char **argv) {
 								fclose(pFile);
 							}
 							printLarge(false, 4, 20, savecreated);
-							for (int i = 0; i < 30; i++)
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 						}
 
 						SetDonorSDK(argarray[0]);

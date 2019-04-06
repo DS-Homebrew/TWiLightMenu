@@ -19,6 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include "common/gl2d.h"
+#include "sound.h"
 #include <list>
 #include <stdio.h>
 #include <nds/interrupts.h>
@@ -162,10 +163,12 @@ void clearText(bool top)
 		it = text.erase(it);
 		--it;
 	}
+	
 }
 
 void clearText()
 {
+	snd().updateStream();
 	clearText(true);
 	clearText(false);
 }
@@ -207,6 +210,8 @@ TextEntry *getPreviousTextEntry(bool top)
 
 void waitForPanesToClear()
 {
-	while (panes.size() > 0)
+	while (panes.size() > 0) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 }
