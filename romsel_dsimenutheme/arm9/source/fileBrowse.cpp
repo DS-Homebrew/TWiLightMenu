@@ -437,6 +437,7 @@ void waitForFadeOut(void) {
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			snd().updateStream();
 			swiWaitForVBlank();
 		}
 	} else {
@@ -447,6 +448,7 @@ void waitForFadeOut(void) {
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			snd().updateStream();
 			swiWaitForVBlank();
 			swiWaitForVBlank();
 		}
@@ -457,6 +459,7 @@ bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
+	snd().updateStream();
 	printLargeCentered(false, 88, "Now Loading...");
 	if (!sys().isRegularDS()) {
 		printSmall(false, 8, 152, "Location:");
@@ -470,13 +473,16 @@ void displayNowLoading(void) {
 	}
 	nowLoadingDisplaying = true;
 	reloadFontPalettes();
-	while (!screenFadedIn())
-		;
+	while (!screenFadedIn()) 
+	{
+		snd().updateStream();
+	}
 	showProgressIcon = true;
 	controlTopBright = false;
 }
 
 void updateScrollingState(u32 held, u32 pressed) {
+	snd().updateStream();
 
 	bool isHeld = (held & KEY_LEFT) || (held & KEY_RIGHT) ||
 			((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19) || ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
@@ -532,7 +538,7 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 
 
 void launchSettings(void) {
-snd().playLaunch();
+	snd().playLaunch();
 	controlTopBright = true;
 	ms().gotosettings = true;
 
@@ -1143,9 +1149,11 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			snd().updateStream();
 		}
 	}
 	if (nowLoadingDisplaying) {
+		snd().updateStream();
 		showProgressIcon = false;
 		fadeType = false; // Fade to white
 	}
@@ -1153,6 +1161,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	if (CURPOS <= 1) {
 		for (int i = 0; i < 5; i++) {
 			if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
+				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at(i + PAGENUM * 40).name.c_str(), i);
@@ -1161,6 +1170,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	} else if (CURPOS >= 2 && CURPOS <= 36) {
 		for (int i = 0; i < 6; i++) {
 			if (bnrRomType[i] == 0 && (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((CURPOS - 2 + i) + PAGENUM * 40).name.c_str(),
@@ -1179,6 +1189,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 }
 
 string browseForFile(const vector<string> extensionList) {
+	snd().updateStream();
 	displayNowLoading();
 
 	gameOrderIniPath =
@@ -1208,9 +1219,10 @@ string browseForFile(const vector<string> extensionList) {
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
-
+		}
 		clearText(false);
 		waitForFadeOut();
 		bool gameTapped = false;
@@ -1263,6 +1275,7 @@ string browseForFile(const vector<string> extensionList) {
 				held = keysDownRepeat();
 				touchRead(&touch);
 				updateScrollingState(held, pressed);
+				snd().updateStream();
 
 				if (isScrolling) {
 					if (boxArtLoaded) {
@@ -1294,6 +1307,7 @@ string browseForFile(const vector<string> extensionList) {
 				drawCurrentTime();
 				drawCurrentDate();
 				drawClockColon();
+				snd().updateStream();
 				swiWaitForVBlank();
 				/*if (REG_SCFG_MC != current_SCFG_MC) {
 					break;
@@ -1382,6 +1396,7 @@ string browseForFile(const vector<string> extensionList) {
 					} else {
 						movingAppYpos += 8;
 					}
+					snd().updateStream();
 					swiWaitForVBlank();
 				}
 				int orgCursorPosition = CURPOS;
@@ -1398,6 +1413,7 @@ string browseForFile(const vector<string> extensionList) {
 					drawCurrentTime();
 					drawCurrentDate();
 					drawClockColon();
+					snd().updateStream();
 					swiWaitForVBlank();
 
 					// RocketVideo video extraction
@@ -1462,6 +1478,7 @@ string browseForFile(const vector<string> extensionList) {
 							} else {
 								movingAppYpos -= 8;
 							}
+							snd().updateStream();
 							swiWaitForVBlank();
 						}
 						break;
@@ -1470,8 +1487,10 @@ string browseForFile(const vector<string> extensionList) {
 						    PAGENUM != 0) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
-							for (int i = 0; i < 30; i++)
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 							PAGENUM -= 1;
 							CURPOS = 0;
 							titleboxXpos[ms().secondaryDevice] = 0;
@@ -1482,13 +1501,16 @@ string browseForFile(const vector<string> extensionList) {
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents, true);
 
-							while (!screenFadedOut())
-								;
+							while (!screenFadedOut()) {
+								snd().updateStream();
+							}
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							fadeType = true; // Fade in from white
-							for (int i = 0; i < 5; i++)
+							for (int i = 0; i < 5; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 							reloadIconPalettes();
 							reloadFontPalettes();
 							clearText();
@@ -1500,8 +1522,10 @@ string browseForFile(const vector<string> extensionList) {
 						    file_count > 40 + PAGENUM * 40) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
-							for (int i = 0; i < 30; i++)
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 							PAGENUM += 1;
 							CURPOS = 0;
 							titleboxXpos[ms().secondaryDevice] = 0;
@@ -1517,8 +1541,10 @@ string browseForFile(const vector<string> extensionList) {
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							fadeType = true; // Fade in from white
-							for (int i = 0; i < 5; i++)
+							for (int i = 0; i < 5; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
+							}
 							reloadIconPalettes();
 							reloadFontPalettes();
 							clearText();
@@ -1664,7 +1690,9 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS <= 1) {
 						for (int i = 0; i < 5; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+					
 							if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
 								iconUpdate(
 								    dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
@@ -1674,6 +1702,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS >= 2 && CURPOS <= 36) {
 						for (int i = 0; i < 6; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
 							    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
@@ -1688,6 +1717,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (CURPOS >= 37 && CURPOS <= 39) {
 						for (int i = 0; i < 5; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
 							    (35 + i) + PAGENUM * 40 < file_count) {
@@ -1734,6 +1764,7 @@ string browseForFile(const vector<string> extensionList) {
 				// Draw icons 1 per vblank to prevent corruption
 				if (CURPOS <= 1) {
 					for (int i = 0; i < 5; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
 						if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
 							iconUpdate(dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
@@ -1743,6 +1774,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				} else if (CURPOS >= 2 && CURPOS <= 36) {
 					for (int i = 0; i < 6; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
 						if (bnrRomType[i] == 0 &&
 						    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
@@ -1757,6 +1789,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				} else if (CURPOS >= 37 && CURPOS <= 39) {
 					for (int i = 0; i < 5; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
 						if (bnrRomType[i] == 0 && (35 + i) + PAGENUM * 40 < file_count) {
 							iconUpdate(
@@ -1776,6 +1809,7 @@ string browseForFile(const vector<string> extensionList) {
 					while (1) {
 						scanKeys();
 						touchRead(&touch);
+						snd().updateStream();
 						if (!(keysHeld() & KEY_TOUCH)) {
 							gameTapped = true;
 							break;
@@ -1795,7 +1829,7 @@ string browseForFile(const vector<string> extensionList) {
 						break;
 					scanKeys();
 					touchRead(&touch);
-
+					snd().updateStream();
 					if (!(keysHeld() & KEY_TOUCH)) {
 						bool tapped = false;
 						int dX = (-(prevTouch1.px - prevTouch2.px));
@@ -1865,6 +1899,7 @@ string browseForFile(const vector<string> extensionList) {
 									titlewindowXpos[ms().secondaryDevice] = 0;
 
 								for (int i = 0; i < 2; i++) {
+									snd().updateStream();
 									swiWaitForVBlank();
 									if (titleboxXpos[ms().secondaryDevice] > 0)
 										titleboxXpos[ms().secondaryDevice] -=
@@ -1904,6 +1939,7 @@ string browseForFile(const vector<string> extensionList) {
 						// Load icons
 						if (CURPOS <= 1) {
 							for (int i = 0; i < 5; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
 								    i + PAGENUM * 40 < file_count) {
@@ -1918,6 +1954,7 @@ string browseForFile(const vector<string> extensionList) {
 							}
 						} else if (CURPOS >= 2 && CURPOS <= 36) {
 							for (int i = 0; i < 6; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
 								    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
@@ -1933,6 +1970,7 @@ string browseForFile(const vector<string> extensionList) {
 							}
 						} else if (CURPOS >= 37 && CURPOS <= 39) {
 							for (int i = 0; i < 5; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
 								    (35 + i) + PAGENUM * 40 < file_count) {
@@ -2049,8 +2087,10 @@ string browseForFile(const vector<string> extensionList) {
 					// Enter selected directory
 					snd().playSelect();
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++)
+					for (int i = 0; i < 30; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					ms().pagenum[ms().secondaryDevice] = 0;
 					ms().cursorPosition[ms().secondaryDevice] = 0;
 					titleboxXpos[ms().secondaryDevice] = 0;
@@ -2077,8 +2117,10 @@ string browseForFile(const vector<string> extensionList) {
 					clearText();
 					dbox_showIcon = true;
 					showdialogbox = true;
-					for (int i = 0; i < 30; i++)
+					for (int i = 0; i < 30; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 					printSmallCentered(false, 112, "This game cannot be launched");
@@ -2103,12 +2145,15 @@ string browseForFile(const vector<string> extensionList) {
 						drawCurrentTime();
 						drawCurrentDate();
 						drawClockColon();
+						snd().updateStream();
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
 					showdialogbox = false;
-					for (int i = 0; i < 15; i++)
+					for (int i = 0; i < 15; i++){
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					dbox_showIcon = false;
 				} else {
 					bool hasAP = false;
@@ -2154,6 +2199,7 @@ string browseForFile(const vector<string> extensionList) {
 							drawCurrentTime();
 							drawCurrentDate();
 							drawClockColon();
+							snd().updateStream();
 							swiWaitForVBlank();
 							if (pressed & KEY_A) {
 								pressed = 0;
@@ -2191,12 +2237,14 @@ string browseForFile(const vector<string> extensionList) {
 
 							fadeSpeed = false; // Slow fade speed
 							for (int i = 0; i < 5; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
 							}
 						}
 						fadeType = false;		  // Fade to white
 						SendFadeoutFIFO(1); // Fade out sound
 						for (int i = 0; i < 60; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
 						}
 						music = false;

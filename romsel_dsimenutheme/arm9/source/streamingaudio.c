@@ -1,29 +1,12 @@
 #include "streamingaudio.h"
+#include "common/tonccpy.h"
 #include "menumusic_bin.h"
-
-int sine; // sine position
-int lfo;  // LFO position
-
-//-----------------------------------------------------------------------------
-enum {
-	//-----------------------------------------------------------------------------
-	// waveform base frequency
-	sine_freq = 500,
-
-	// LFO frequency
-	lfo_freq = 3,
-
-	// LFO output shift amount
-	lfo_shift = 4,
-
-	// blue backdrop
-	bg_colour = 13 << 10,
-
-	// red cpu usage
-	cpu_colour = 31
-};
-
 u32 bin_pointer = 0;
+
+s16 streaming_buf[2800] = {0}; // 3600B
+volatile mm_word last_length = 2800;
+char debug_buf[256] = {0};
+
 /***********************************************************************************
  * on_stream_request
  *
@@ -31,28 +14,23 @@ u32 bin_pointer = 0;
  ***********************************************************************************/
 mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format) {
 	//----------------------------------------------------------------------------------
-    const s16 *music = (s16*)menumusic_bin;
-
+	const s16 *music =  menumusic_bin;
 	s16 *target = dest;
-	
-	//------------------------------------------------------------
-	// synthensize a sine wave with an LFO applied to the pitch
-	// the stereo data is interleaved
-	//------------------------------------------------------------
+    // clear buffer
+    // if (last_length + length > 2800) {
+    //     length = length - ((last_length + length) % 2800);
+    // }
+    
+    sprintf(debug_buf, "fill req %i", length);
+    nocashMessage(debug_buf);
+    // int len = length;
 	int len = length;
 	for( ; len; len-- )
 	{
-		// int sample = sinLerp(sine);
-		
-		// output sample for left
-		*target++ = music[bin_pointer % menumusic_bin_size];
-		bin_pointer++;
-		// // output inverted sample for right
-		// *target++ = -sample;
-		
-		// sine += sine_freq + (sinLerp(lfo) >> lfo_shift);
-		// lfo = (lfo + lfo_freq);
-	}
-	
-	return length;
+		*target++ = music[bin_pointer % (menumusic_bin_size >> 1)];
+        bin_pointer++;
+        // *target++ = *music++;
+    }
+    last_length += length;
+    return length;
 }

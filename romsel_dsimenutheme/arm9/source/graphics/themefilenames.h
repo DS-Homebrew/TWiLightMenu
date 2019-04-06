@@ -31,10 +31,11 @@
 #define TFN_FALLBACK_DSI_UI_DIRECTORY  "nitro:/themes/dsi/dark"
 #define TFN_FALLBACK_3DS_UI_DIRECTORY  "nitro:/themes/3ds/light"
 
-#define TFN_SYSTEM_UI_DIRECTORY    TFN_SYSTEM_DIR"themes/"
+#define TFN_SYSTEM_UI_DIRECTORY       TFN_SYSTEM_DIR"themes/"
+#define TFN_SYSTEM_SOUND_DIRECTORY    "nitro:/sound"
 
-#define TFN_UI_DIRECTORY           tfn().uiDirectory() + 
-#define TFN_FALLBACK_UI_DIRECTORY  tfn().fallbackDirectory() + 
+#define TFN_UI_DIRECTORY              tfn().uiDirectory() + 
+#define TFN_FALLBACK_UI_DIRECTORY     tfn().fallbackDirectory() + 
 
 #define TFN_UI_CURRENT_DIRECTORY    TFN_UI_DIRECTORY"/"
 #define TFN_THEME_SETTINGS          TFN_UI_DIRECTORY"/theme.ini"
@@ -104,6 +105,15 @@
 #define TFN_GRF_WIRELESSICONS       TFN_UI_DIRECTORY"/grf/wirelessicons.grf"
 #define TFN_RVID_CUBES              TFN_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
 
+#define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/soundbank.bin"
+#define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bg.pcm.raw"
+
+#define TFN_DEFAULT_SOUND_EFFECTBANK      TFN_SYSTEM_SOUND_DIRECTORY"/defaultfx.bin"
+#define TFN_DEFAULT_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/defaultbg.pcm.raw"
+
+#define TFN_SHOP_SOUND_EFFECTBANK         TFN_SYSTEM_SOUND_DIRECTORY"/shopfx.bin"
+#define TFN_SHOP_SOUND_BG                 TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.pcm.raw"
+
 // We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme
 // Leaving the user with no way to fix it well.
 
@@ -114,8 +124,8 @@
 #define TFN_FALLBACK_BG_BOTTOMBG             TFN_FALLBACK_UI_DIRECTORY"/background/bottom.grf"
 #define TFN_FALLBACK_BG_BOTTOMBUBBLEBG       TFN_FALLBACK_UI_DIRECTORY"/background/bottom_bubble.grf"
 #define TFN_FALLBACK_BG_BOTTOMMOVINGBG       TFN_FALLBACK_UI_DIRECTORY"/background/bottom_moving.grf"
-#define TFN_FALLBACK_BG_BOTTOMMOVING_LBG       TFN_FALLBACK_UI_DIRECTORY"/background/bottom_moving_l.grf"
-#define TFN_FALLBACK_BG_BOTTOMMOVING_RBG       TFN_FALLBACK_UI_DIRECTORY"/background/bottom_moving_r.grf"
+#define TFN_FALLBACK_BG_BOTTOMMOVING_LBG     TFN_FALLBACK_UI_DIRECTORY"/background/bottom_moving_l.grf"
+#define TFN_FALLBACK_BG_BOTTOMMOVING_RBG     TFN_FALLBACK_UI_DIRECTORY"/background/bottom_moving_r.grf"
 
 #define TFN_FALLBACK_BG_BOTTOMBG_DS          TFN_FALLBACK_UI_DIRECTORY"/background/bottom_ds.grf"
 #define TFN_FALLBACK_BG_BOTTOMBUBBLEBG_DS    TFN_FALLBACK_UI_DIRECTORY"/background/bottom_bubble_ds.grf"
@@ -174,6 +184,7 @@
 #define TFN_FALLBACK_GRF_BOX_FULL            TFN_FALLBACK_UI_DIRECTORY"/grf/box_full.grf"
 #define TFN_FALLBACK_GRF_BOX_EMPTY           TFN_FALLBACK_UI_DIRECTORY"/grf/box_empty.grf"
 #define TFN_FALLBACK_GRF_CURSOR              TFN_FALLBACK_UI_DIRECTORY"/grf/cursor.grf"
+
 
 class ThemeFilenames
 {

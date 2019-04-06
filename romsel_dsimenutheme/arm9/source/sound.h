@@ -5,6 +5,7 @@
 #include <mm_types.h>
 #include <maxmod9.h>
 #include "common/singleton.h"
+#include <cstdio>
 
 class SoundControl {
     public:
@@ -16,6 +17,7 @@ class SoundControl {
         mm_sfxhand playStartup();
         mm_sfxhand playStop();
         mm_sfxhand playWrong();
+        void updateStream();
 
     private:
         mm_sound_effect snd_launch;
@@ -26,6 +28,7 @@ class SoundControl {
         mm_sound_effect snd_switch;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
+        FILE* stream_source;
 };
 
 typedef singleton<SoundControl> soundCtl_s;

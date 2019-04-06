@@ -1,0 +1,1 @@
+sox menu.wav --bits 16 --encoding signed-integer --endian little menu.raw
