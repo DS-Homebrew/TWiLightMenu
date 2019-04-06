@@ -1,4 +1,5 @@
 #include "streamingaudio.h"
+#include "menumusic_bin.h"
 
 int sine; // sine position
 int lfo;  // LFO position
@@ -22,6 +23,7 @@ enum {
 	cpu_colour = 31
 };
 
+u32 bin_pointer = 0;
 /***********************************************************************************
  * on_stream_request
  *
@@ -29,6 +31,7 @@ enum {
  ***********************************************************************************/
 mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format) {
 	//----------------------------------------------------------------------------------
+    const s16 *music = (s16*)menumusic_bin;
 
 	s16 *target = dest;
 	
@@ -39,16 +42,16 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 	int len = length;
 	for( ; len; len-- )
 	{
-		int sample = sinLerp(sine);
+		// int sample = sinLerp(sine);
 		
 		// output sample for left
-		*target++ = sample;
+		*target++ = music[bin_pointer % menumusic_bin_size];
+		bin_pointer++;
+		// // output inverted sample for right
+		// *target++ = -sample;
 		
-		// output inverted sample for right
-		*target++ = -sample;
-		
-		sine += sine_freq + (sinLerp(lfo) >> lfo_shift);
-		lfo = (lfo + lfo_freq);
+		// sine += sine_freq + (sinLerp(lfo) >> lfo_shift);
+		// lfo = (lfo + lfo_freq);
 	}
 	
 	return length;

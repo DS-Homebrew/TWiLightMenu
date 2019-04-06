@@ -81,10 +81,10 @@ SoundControl::SoundControl() {
 	};
 
 	mm_stream stream;
-    stream.sampling_rate = 44100;         // 44.1HZ
+    stream.sampling_rate = 16000;         // 16kHZ
     stream.buffer_length = 1200;           // should be adequate
     stream.callback = on_stream_request;   // give stereo filling routine
-    stream.format = MM_STREAM_16BIT_STEREO; // select format 
+    stream.format = MM_STREAM_16BIT_MONO; // select format 
     stream.timer = MM_TIMER0;             // use timer0
     stream.manual = 0;                    // auto filling
     
