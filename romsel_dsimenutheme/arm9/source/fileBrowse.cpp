@@ -545,6 +545,7 @@ void launchSettings(void) {
 	fadeType = false;		  // Fade to white
 	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
@@ -569,6 +570,7 @@ void launchManual(void) {
 	fadeType = false;		  // Fade to white
 	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
@@ -591,6 +593,7 @@ snd().playLaunch();
 	fadeType = false;		  // Fade to white
 	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
@@ -634,8 +637,10 @@ void switchDevice(void) {
 	if (bothSDandFlashcard()) {
 		snd().playSwitch();
 		fadeType = false; // Fade to white
-		for (int i = 0; i < 30; i++)
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
+		}
 		ms().secondaryDevice = !ms().secondaryDevice;
 		if (!rocketVideo_playVideo || ms().showBoxArt)
 			clearBoxArt(); // Clear box art
@@ -657,6 +662,7 @@ void switchDevice(void) {
 		fadeType = false;		  // Fade to white
 		SendFadeoutFIFO(1); // Fade out sound
 		for (int i = 0; i < 60; i++) {
+			snd().updateStream();
 			swiWaitForVBlank();
 		}
 		music = false;
@@ -687,8 +693,10 @@ void launchGba(void) {
 		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
-			for (int i = 0; i < 30; i++)
+			for (int i = 0; i < 30; i++) {
+						snd().updateStream();
 				swiWaitForVBlank();
+			}
 		}
 		printLarge(false, 16, 12, "Error code: BINF");
 		printSmallCentered(false, 64, "The GBA BIOS is required");
@@ -706,13 +714,16 @@ void launchGba(void) {
 			drawCurrentDate();
 			drawCurrentTime();
 			drawClockColon();
+			snd().updateStream();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
 		clearText();
 		if (!inSelectMenu) {
 			showdialogbox = false;
-			for (int i = 0; i < 15; i++)
+			for (int i = 0; i < 15; i++) {
+				snd().updateStream();
 				swiWaitForVBlank();
+			}
 		} else {
 			dbox_selectMenu = true;
 		}
@@ -725,6 +736,7 @@ snd().playLaunch();
 	fadeType = false;		  // Fade to white
 	SendFadeoutFIFO(1); // Fade out sound
 	for (int i = 0; i < 60; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
@@ -763,8 +775,10 @@ void mdRomTooBig(void) {
 	clearText();
 	dbox_showIcon = false;
 	showdialogbox = true;
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 30; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 	printSmallCentered(false, 64, "This Mega Drive or Genesis");
 	printSmallCentered(false, 78, "ROM cannot be launched,");
 	printSmallCentered(false, 92, "due to the size of it");
@@ -780,6 +794,7 @@ void mdRomTooBig(void) {
 		drawCurrentTime();
 		drawCurrentDate();
 		drawClockColon();
+		snd().updateStream();
 		swiWaitForVBlank();
 
 		// Debug code for changing brightness of BG layer
@@ -849,8 +864,10 @@ void mdRomTooBig(void) {
 	} while (!(pressed & KEY_A));
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 15; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 }
 
 bool selectMenu(void) {
@@ -940,6 +957,7 @@ bool selectMenu(void) {
 		drawCurrentTime();
 		drawCurrentDate();
 		drawClockColon();
+		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_UP) {
 			selCursorPosition--;
@@ -985,8 +1003,10 @@ bool selectMenu(void) {
 	showdialogbox = false;
 	dbox_selectMenu = false;
 	inSelectMenu = false;
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 15; i++) {
+		snd().updateStream();
 		swiWaitForVBlank();
+	}
 	return false;
 }
 
@@ -1180,6 +1200,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	} else if (CURPOS >= 37 && CURPOS <= 39) {
 		for (int i = 0; i < 5; i++) {
 			if (bnrRomType[i] == 0 && (35 + i) + PAGENUM * 40 < file_count) {
+				snd().updateStream();
 				swiWaitForVBlank();
 				iconUpdate(dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
 					   dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(), 35 + i);
@@ -1853,6 +1874,7 @@ string browseForFile(const vector<string> extensionList) {
 									titlewindowXpos[ms().secondaryDevice] = 192.075;
 
 								for (int i = 0; i < 2; i++) {
+									snd().updateStream();
 									swiWaitForVBlank();
 									if (titleboxXpos[ms().secondaryDevice] < 2496)
 										titleboxXpos[ms().secondaryDevice] +=
@@ -2056,7 +2078,9 @@ string browseForFile(const vector<string> extensionList) {
 					drawCurrentTime();
 					drawCurrentDate();
 					drawClockColon();
+					snd().updateStream();
 					swiWaitForVBlank();
+					snd().updateStream();
 					swiWaitForVBlank();
 				}
 				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
@@ -2177,8 +2201,10 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 						dbox_showIcon = true;
 						showdialogbox = true;
-						for (int i = 0; i < 30; i++)
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
 							    CURPOS);
@@ -2219,8 +2245,10 @@ string browseForFile(const vector<string> extensionList) {
 						}
 						clearText();
 						showdialogbox = false;
-						for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++)
+						for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 						dbox_showIcon = false;
 					}
 
@@ -2388,8 +2416,10 @@ string browseForFile(const vector<string> extensionList) {
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++)
+					for (int i = 0; i < 30; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					if (showLshoulder)
 						PAGENUM -= 1;
 					CURPOS = 0;
@@ -2418,8 +2448,10 @@ string browseForFile(const vector<string> extensionList) {
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++)
+					for (int i = 0; i < 30; i++) {
+						snd().updateStream();
 						swiWaitForVBlank();
+					}
 					if (showRshoulder) {
 						PAGENUM += 1;
 						CURPOS = 0;
@@ -2454,8 +2486,10 @@ string browseForFile(const vector<string> extensionList) {
 				// Go up a directory
 				snd().playSelect();
 				fadeType = false; // Fade to white
-				for (int i = 0; i < 30; i++)
+				for (int i = 0; i < 30; i++) {
+					snd().updateStream();
 					swiWaitForVBlank();
+				}
 				PAGENUM = 0;
 				CURPOS = 0;
 				titleboxXpos[ms().secondaryDevice] = 0;
@@ -2519,8 +2553,10 @@ string browseForFile(const vector<string> extensionList) {
 				clearText();
 				dbox_showIcon = true;
 				showdialogbox = true;
-				for (int i = 0; i < 30; i++)
+				for (int i = 0; i < 30; i++) {
+					snd().updateStream();
 					swiWaitForVBlank();
+				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
@@ -2549,8 +2585,10 @@ string browseForFile(const vector<string> extensionList) {
 					else
 						printSmallCentered(false, 128, "delete/hide this game?");
 				}
-				for (int i = 0; i < 90; i++)
+				for (int i = 0; i < 90; i++) {
+					snd().updateStream();
 					swiWaitForVBlank();
+				}
 				if (isDirectory[CURPOS]) {
 					if (unHide)
 						printSmall(false, 141, 160, "Y: Unhide");
@@ -2575,13 +2613,16 @@ string browseForFile(const vector<string> extensionList) {
 						drawCurrentTime();
 						drawCurrentDate();
 						drawClockColon();
+						snd().updateStream();
 						swiWaitForVBlank();
 					} while (!pressed);
 
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++)
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 						whiteScreen = true;
 						remove(dirContents[scrn]
 							   .at(CURPOS + PAGENUM * 40)
@@ -2607,8 +2648,10 @@ string browseForFile(const vector<string> extensionList) {
 
 					if (pressed & KEY_Y) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++)
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
 							swiWaitForVBlank();
+						}
 						whiteScreen = true;
 
 						if (unHide) {
@@ -2644,8 +2687,10 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				clearText();
 				showdialogbox = false;
-				for (int i = 0; i < 15; i++)
+				for (int i = 0; i < 15; i++) {
+					snd().updateStream();
 					swiWaitForVBlank();
+				}
 				dbox_showIcon = false;
 			}
 
