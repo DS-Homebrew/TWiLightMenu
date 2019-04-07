@@ -29,7 +29,7 @@ sfx.bin : $(NAMES)
 	@mmutil $^ -d -osfx.bin
 
 bgm.pcm.raw   : menu.wav
-	sox menu.wav --bits 16 --rate 16000 --encoding signed-integer --endian little bgm.pcm.raw
+	sox menu.wav --bits 16 --rate 11025 --encoding signed-integer --endian little bgm.pcm.raw
 
 	
 clean:

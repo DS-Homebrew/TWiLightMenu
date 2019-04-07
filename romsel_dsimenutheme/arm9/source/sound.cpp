@@ -161,8 +161,8 @@ SoundControl::SoundControl() {
 
 	fseek(stream_source, 0, SEEK_SET);
 
-	stream.sampling_rate = 16000;	 // 11025HZ
-	stream.buffer_length = 1600;	  // should be adequate
+	stream.sampling_rate = 11025;	 // 11025HZ
+	stream.buffer_length = 3200;	  // should be adequate
 	stream.callback = on_stream_request;  // give stereo filling routine
 	stream.format = MM_STREAM_16BIT_MONO; // select format
 	stream.timer = MM_TIMER0;	     // use timer0
