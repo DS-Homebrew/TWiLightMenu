@@ -40,6 +40,7 @@ extern std::string STR_HIDE;
 extern std::string STR_ALPHABETICAL;
 extern std::string STR_RECENT;
 extern std::string STR_MOST_PLAYED;
+extern std::string STR_FILE_TYPE;
 extern std::string STR_CUSTOM;
 
 extern std::string STR_DESCRIPTION_COLORMODE;

@@ -1,0 +1,26 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Make",
+			"type": "shell",
+			"command": "make",
+			"args": [
+				"${input:makeVariable}"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		}
+	],
+	"inputs": [
+		{
+				"id": "makeVariable",
+				"description": "What do you want to make?",
+				"type": "pickString",
+				"options": ["all","clean","package","booter","booter_fc","mainmenu","manual","romsel_aktheme","romsel_dsimenutheme","romsel_r4theme","rungame","settings","slot1launch","title"],
+				"default": "all"
+		}
+	]
+}
