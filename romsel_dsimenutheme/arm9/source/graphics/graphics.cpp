@@ -1279,6 +1279,7 @@ void vBlankHandler() {
 	// if (applaunchprep && ms().theme == 0)
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 	
+	snd().updateStream();
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 

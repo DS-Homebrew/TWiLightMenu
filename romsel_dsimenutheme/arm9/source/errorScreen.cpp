@@ -23,7 +23,6 @@ vu16* sdRemovedImage = (vu16*)0x026E0000;
 extern u16 convertToDsBmp(u16 val);
 
 void loadSdRemovedImage(void) {
-	snd().stopStream();
 	FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
 	if (file) {
 		// Start loading
@@ -57,6 +56,7 @@ void checkSdEject(void) {
 		showdialogbox = false;
 		dbox_Ypos = 192;
 	}
+	snd().stopStream();
 	mmEffectCancelAll();
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);

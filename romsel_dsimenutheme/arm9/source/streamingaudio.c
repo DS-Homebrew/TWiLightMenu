@@ -31,7 +31,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 
     if (fill_requested) {
         nocashMessage("missed fill");
-        return 0;
+        // return 0;
     }
     // if (samples_left <= 0) {
     //     nocashMessage("no samples left");
