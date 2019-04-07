@@ -6,10 +6,9 @@
 #include <nds.h>
 #include <stdio.h>
 
-#define STREAMING_BUF_LENGTH 96000
+#define STREAMING_BUF_LENGTH 128000
 #define SAMPLES_PER_FILL (STREAMING_BUF_LENGTH >> 5)
 #define TOTAL_FILLS (1 << 5)
-#define STREAMING_BUF_TAIL_LENGTH (STREAMING_BUF_LENGTH >> 1)
 
 #ifdef __cplusplus
 extern "C" {

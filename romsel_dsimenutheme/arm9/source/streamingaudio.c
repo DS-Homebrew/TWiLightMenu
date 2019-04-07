@@ -38,7 +38,6 @@ void swap_stream_buffers() {
     streaming_buf_ptr = 0;
     fill_count = 0;
     filled_samples = 0;
-    toncset32((void*)next_stream_buf, 0, sizeof(streaming_buf_main) << 2);
     nocashMessage("buffers swapped");
 }
 
@@ -52,7 +51,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 
     if (fill_requested) {
         nocashMessage("missed fill");
-        // return 0;
+        return 0;
     }
     // if (samples_left <= 0) {
     //     nocashMessage("no samples left");
@@ -70,6 +69,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         }
         // if (*music == 0) break;
 		*target++ = *(curr_stream_buf + streaming_buf_ptr);
+        *(curr_stream_buf + streaming_buf_ptr) = 0;
         streaming_buf_ptr++;
         
         if (samples_left_until_next_fill > 0) {
@@ -81,7 +81,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 	sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
     nocashMessage(debug_buf);
     
-    if (!fill_requested && samples_left_until_next_fill <= 0) {
+    if (samples_left_until_next_fill <= 0) {
         nocashMessage("Fill requested!");
         fill_requested = true;
     }
