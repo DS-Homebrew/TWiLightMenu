@@ -61,7 +61,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 	sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
     nocashMessage(debug_buf);
     
-    if (samples_left_until_next_fill <= 0) {
+    if (!fill_requested && samples_left_until_next_fill <= 0) {
         nocashMessage("Fill requested!");
         fill_requested = true;
     }
