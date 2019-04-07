@@ -21,15 +21,11 @@
 
 
 // mm_sound_effect mus_menu;
-
-extern volatile s16* curr_stream_buf;
-extern volatile s16* next_stream_buf;
+extern volatile s16* play_stream_buf;
+extern volatile s16* fill_stream_buf;
 extern volatile u16 fill_count;
 extern volatile u32 filled_samples;
-
 extern bool fill_requested;
-extern bool pop_fill_queue;
-
 extern u32 samples_left_until_next_fill;
 
 #define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
@@ -164,7 +160,6 @@ SoundControl::SoundControl() {
 	
 
 	fseek(stream_source, 0, SEEK_SET);
-	set_streaming_source(stream_source);
 
 	stream.sampling_rate = 16000;	 // 11025HZ
 	stream.buffer_length = 1600;	  // should be adequate
@@ -174,8 +169,9 @@ SoundControl::SoundControl() {
 	stream.manual = false;	      // manual filling
 	
 	
-	// Prep the first
-	fread((void*)curr_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	// Prep the first section of the stream
+	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+
 	// Fill 2 sections for parallel fill
 	fill_requested = true;
 	updateStream();
@@ -215,10 +211,10 @@ void SoundControl::updateStream() {
 	if (fill_requested && fill_count < TOTAL_FILLS) {
 		nocashMessage("Filling...");
 		long int instance_filled = 0;
-		instance_filled = fread((s16*)next_stream_buf + filled_samples, sizeof(s16),  SAMPLES_PER_FILL, stream_source);
+		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), SAMPLES_PER_FILL, stream_source);
 		if (instance_filled <  SAMPLES_PER_FILL) {
 			fseek(stream_source, 0, SEEK_SET);
-			instance_filled += fread((s16*)next_stream_buf + filled_samples + instance_filled,
+			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
 				 sizeof(s16), (SAMPLES_PER_FILL - instance_filled), stream_source);
 		}
 		filled_samples += instance_filled;
@@ -232,34 +228,4 @@ void SoundControl::updateStream() {
 		fill_count = 0;
 	}
 
-	// buffer updates happen every time half the buffer has been consumed
-	// if (fill_requested) {
-		
-	// 	// memmove the unconsumed bytes to the front of the temp buffer
-	// 	toncset16(streaming_buf_temp, 0, STREAMING_BUF_LENGTH + 1);
-	// 	tonccpy(streaming_buf_temp, streaming_buf + SAMPLES_USED, samples_left);
-
-	// 	// Try to fill up the space that was used previously
-	// 	filled_samples = fread(streaming_buf_temp + samples_left, 
-	// 					sizeof(s16), SAMPLES_USED, stream_source);
-
-	// 	// If we couldn't fill completely (file has ended), loop.
-	// 	if (filled_samples < SAMPLES_USED) {
-	// 		fseek(stream_source, 0, SEEK_SET);
-
-	// 		// Fill up only the space that was previously unfilled
-	// 		filled_samples += fread(streaming_buf_temp + samples_left + filled_samples,
-	// 			 sizeof(s16), (SAMPLES_USED - filled_samples), stream_source);
-	// 	}
-		
-	// 	tonccpy(streaming_buf, streaming_buf_temp, sizeof(streaming_buf));
-		
-	// 	sprintf(debug_buf, "Cached new %li, remaining %li, used %li, in cache %li", filled_samples, samples_left, SAMPLES_USED, samples_left + filled_samples);
-    // 	nocashMessage(debug_buf);
-
-	// 	// Reset fill state
-	// 	fill_requested = false;
-	// 	samples_left = STREAMING_BUF_LENGTH;
-	// }
-	// mmStreamUpdate();
 }

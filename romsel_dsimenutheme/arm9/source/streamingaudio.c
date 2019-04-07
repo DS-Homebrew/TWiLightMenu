@@ -1,45 +1,25 @@
 #include "streamingaudio.h"
 #include "common/tonccpy.h"
 
+// Private members
+static volatile s16 streaming_buf_main[STREAMING_BUF_LENGTH] = {0}; 
+static volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0}; 
+static volatile u32 streaming_buf_ptr = 0;
 
-volatile s16 streaming_buf_main[STREAMING_BUF_LENGTH] = {0}; // 3600B
-volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0}; // 3600B
-
-volatile s16* curr_stream_buf = streaming_buf_main;
-volatile s16* next_stream_buf = streaming_buf_swap;
+// Pointer buffers
+volatile s16* play_stream_buf = streaming_buf_main;
+volatile s16* fill_stream_buf = streaming_buf_swap;
 
 
-volatile u32 streaming_buf_ptr = 0;
-volatile s32 samples_left_until_next_fill = SAMPLES_PER_FILL;
+/// Fill members
+volatile bool fill_requested = false;
 volatile u32 filled_samples = 0;
-// s16 streaming_buf_temp[STREAMING_BUF_LENGTH + 1] = {0}; // 3600B
-
-bool fill_requested = false;
-bool pop_fill_queue = false;
-
 volatile u16 fill_count = 0;
+volatile s32 samples_left_until_next_fill = SAMPLES_PER_FILL;
 
-#define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
-#define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
-static FILE* stream_source;
+
 char debug_buf[256] = {0};
 
-void set_streaming_source(FILE* source) {
-    stream_source = source;
-}
-void swap_stream_buffers() {
-    if (curr_stream_buf == streaming_buf_main) {
-        curr_stream_buf = streaming_buf_swap;
-        next_stream_buf = streaming_buf_main;
-    } else {
-        curr_stream_buf = streaming_buf_main;
-        next_stream_buf = streaming_buf_swap;
-    }
-    streaming_buf_ptr = 0;
-    fill_count = 0;
-    filled_samples = 0;
-    nocashMessage("buffers swapped");
-}
 
 /***********************************************************************************
  * on_stream_request
@@ -62,14 +42,14 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
 	s16 *target = dest;
    
     int len = length;
-     for (int i = 0 ; i < len; i++ )
+    for (int i = 0 ; i < len; i++ )
 	{
         if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
             streaming_buf_ptr = 0;
         }
         // if (*music == 0) break;
-		*target++ = *(curr_stream_buf + streaming_buf_ptr);
-        *(curr_stream_buf + streaming_buf_ptr) = *(next_stream_buf + streaming_buf_ptr);
+		*target++ = *(play_stream_buf + streaming_buf_ptr);
+        *(play_stream_buf + streaming_buf_ptr) = *(fill_stream_buf + streaming_buf_ptr);
         streaming_buf_ptr++;
         
         if (samples_left_until_next_fill > 0) {
