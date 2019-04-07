@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 #define STREAMING_BUF_LENGTH 128000
-#define SAMPLES_PER_FILL (STREAMING_BUF_LENGTH >> 5)
-#define TOTAL_FILLS (1 << 5)
+#define SAMPLES_PER_FILL (STREAMING_BUF_LENGTH >> 4)
+#define TOTAL_FILLS (1 << 4)
 
 #ifdef __cplusplus
 extern "C" {
