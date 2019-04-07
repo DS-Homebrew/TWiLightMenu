@@ -176,6 +176,11 @@ SoundControl::SoundControl() {
 	
 	// Prep the first
 	fread((void*)curr_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	// Fill 2 sections for parallel fill
+	fill_requested = true;
+	updateStream();
+	fill_requested = true;
+	updateStream();
 	// mus_menu = {
 	//     {SFX_MENU},		     // id
 	//     (int)(1.0f * (1 << 10)), // rate
@@ -222,6 +227,9 @@ void SoundControl::updateStream() {
 		fill_requested = false;
 		samples_left_until_next_fill = SAMPLES_PER_FILL;
 		fill_count++;
+	} else if (fill_count >= TOTAL_FILLS) {
+		filled_samples = 0;
+		fill_count = 0;
 	}
 
 	// buffer updates happen every time half the buffer has been consumed

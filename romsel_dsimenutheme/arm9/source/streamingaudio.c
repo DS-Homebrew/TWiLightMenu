@@ -65,11 +65,11 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
      for (int i = 0 ; i < len; i++ )
 	{
         if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
-            swap_stream_buffers();
+            streaming_buf_ptr = 0;
         }
         // if (*music == 0) break;
 		*target++ = *(curr_stream_buf + streaming_buf_ptr);
-        *(curr_stream_buf + streaming_buf_ptr) = 0;
+        *(curr_stream_buf + streaming_buf_ptr) = *(next_stream_buf + streaming_buf_ptr);
         streaming_buf_ptr++;
         
         if (samples_left_until_next_fill > 0) {
