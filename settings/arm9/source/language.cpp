@@ -47,6 +47,7 @@ std::string STR_HIDE = "STR_HIDE";
 std::string STR_ALPHABETICAL = "STR_ALPHABETICAL";
 std::string STR_RECENT = "STR_RECENT";
 std::string STR_MOST_PLAYED = "STR_MOST_PLAYED";
+std::string STR_FILE_TYPE = "STR_FILE_TYPE";
 std::string STR_CUSTOM = "STR_CUSTOM";
 
 std::string STR_DESCRIPTION_COLORMODE = "STR_DESCRIPTION_COLORMODE";
@@ -325,6 +326,7 @@ void langInit(void)
 	STR_ALPHABETICAL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ALPHABETICAL", "Alphabetical"));
 	STR_RECENT = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RECENT", "Recent"));
 	STR_MOST_PLAYED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MOST_PLAYED", "Most Played"));
+	STR_FILE_TYPE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILE_TYPE", "File Type"));
 	STR_CUSTOM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "CUSTOM", "Custom"));
 
 	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect."));
@@ -347,7 +349,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_DSIMENUPPLOGO_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++."));
 
-	STR_DESCRIPTION_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SORT_METHOD", "Changes whether to sort alphabetically, by recently played, by most played, or custom."));
+	STR_DESCRIPTION_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SORT_METHOD", "Changes whether to sort alphabetically, by recently played, by most played, by file type, or custom."));
 
 	STR_DESCRIPTION_DIRECTORIES_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DIRECTORIES_1", "If you're in a folder where most of your games are, it is safe to hide directories/folders."));
 

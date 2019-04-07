@@ -403,6 +403,17 @@ bool dirEntryPredicateMostPlayed(const DirEntry &lhs, const DirEntry &rhs) {
 	}
 }
 
+bool dirEntryPredicateFileType(const DirEntry &lhs, const DirEntry &rhs) {
+	if (!lhs.isDirectory && rhs.isDirectory)	return false;
+	else if (lhs.isDirectory && !rhs.isDirectory)	return true;
+
+	if(strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) == 0) {
+		return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+	} else {
+		return strcasecmp(lhs.name.substr(lhs.name.find_last_of(".") + 1).c_str(), rhs.name.substr(rhs.name.find_last_of(".") + 1).c_str()) < 0;
+	}
+}
+
 void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> extensionList) {
 
 	dirContents.clear();
@@ -522,7 +533,9 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				}
 			}
 			sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
-		} else if(ms().sortMethod == 3) { // Custom
+		} else if(ms().sortMethod == 3) { // File type
+			sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
+		} else if(ms().sortMethod == 4) { // Custom
 			CIniFile gameOrderIni(gameOrderIniPath);
 			vector<std::string> gameOrder;
 
@@ -1736,7 +1749,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 					gameOrderIni.SaveIniFile(gameOrderIniPath);
 
-					ms().sortMethod = 3;
+					ms().sortMethod = 4;
 					ms().saveSettings();
 
 					// getDirectoryContents(dirContents[scrn], extensionList);
