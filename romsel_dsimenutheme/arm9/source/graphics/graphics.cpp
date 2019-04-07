@@ -1279,7 +1279,6 @@ void vBlankHandler() {
 	// if (applaunchprep && ms().theme == 0)
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 	
-	snd().updateStream();
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
@@ -1597,6 +1596,6 @@ void graphicsInit() {
 	tex().drawVolumeImageCached();
 	tex().drawBatteryImageCached();
 	irqSet(IRQ_VBLANK, vBlankHandler);
-	irqEnable(IRQ_VBLANK);
+	irqEnable(IRQ_VBLANK | IRQ_TIMER3);
 	// consoleDemoInit();
 }

@@ -38,7 +38,9 @@ mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 extern "C" {
 
-
+	void auto_fill() {
+		snd().updateStream();
+	}
 	// mm_word handle_event(mm_word msg, mm_word param){
 	// 	switch( msg )
 	// 	{
@@ -171,7 +173,7 @@ SoundControl::SoundControl() {
 	
 	// Prep the first section of the stream
 	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
-
+	irqSet(IRQ_TIMER3, auto_fill);
 	
 	// Update stream partially
 	for (int i = 0; i < (TOTAL_FILLS >> 1); i++) {
@@ -198,20 +200,22 @@ mm_sfxhand SoundControl::playWrong() { return mmEffectEx(&snd_wrong); }
 
 void SoundControl::beginStream() {
 	// open the stream
+	stream_is_playing = true;
 	mmStreamOpen(&stream);
 	SetYtrigger(0);
 }
 
 void SoundControl::stopStream() {
+	stream_is_playing = false;
 	mmStreamClose();
 }
 
 // Updates the background music fill buffer
 void SoundControl::updateStream() {
 	
-	//
+	if (!stream_is_playing) return;
 	if (fill_requested && fill_count < TOTAL_FILLS) {
-		nocashMessage("Filling...");
+		// nocashMessage("Filling...");
 		long int instance_filled = 0;
 		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), SAMPLES_PER_FILL, stream_source);
 		if (instance_filled <  SAMPLES_PER_FILL) {
@@ -220,8 +224,8 @@ void SoundControl::updateStream() {
 				 sizeof(s16), (SAMPLES_PER_FILL - instance_filled), stream_source);
 		}
 		filled_samples += instance_filled;
-		sprintf(debug_buf, "Loaded  %li samples, currently %li filled, fill number %i", instance_filled, filled_samples, fill_count);
-    	nocashMessage(debug_buf);
+		// sprintf(debug_buf, "Loaded  %li samples, currently %li filled, fill number %i", instance_filled, filled_samples, fill_count);
+    	// nocashMessage(debug_buf);
 		fill_requested = false;
 		samples_left_until_next_fill = SAMPLES_PER_FILL;
 		fill_count++;
