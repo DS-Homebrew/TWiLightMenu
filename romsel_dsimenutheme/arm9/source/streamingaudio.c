@@ -50,6 +50,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         // if (*music == 0) break;
 		*target++ = *(play_stream_buf + streaming_buf_ptr);
         *(play_stream_buf + streaming_buf_ptr) = *(fill_stream_buf + streaming_buf_ptr);
+        *(fill_stream_buf + streaming_buf_ptr) = 0;
         streaming_buf_ptr++;
         
         if (samples_left_until_next_fill > 0) {
