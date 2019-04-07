@@ -6,7 +6,7 @@
 #include <nds.h>
 #include <stdio.h>
 
-#define STREAMING_BUF_LENGTH 12800 
+#define STREAMING_BUF_LENGTH 25600 
 #ifdef __cplusplus
 extern "C" {
 #endif

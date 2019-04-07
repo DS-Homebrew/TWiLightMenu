@@ -469,6 +469,7 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	}
 	std::string path;
 	int err = 0;
+	snd().stopStream();
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
@@ -500,6 +501,7 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 }
 
 void unlaunchSetHiyaBoot(void) {
+	snd().stopStream();
 	memcpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16 *)(0x0200080C) = 0x3F0;			   // Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16 *)(0x0200080E) = 0;			   // Unlaunch CRC16 (empty)
@@ -520,6 +522,7 @@ void unlaunchSetHiyaBoot(void) {
 }
 
 void dsCardLaunch() {
+	snd().stopStream();
 	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 	*(u16 *)(0x02000304) = 0x1801;
 	*(u32 *)(0x02000308) = 0x43415254; // "CART"
@@ -536,7 +539,6 @@ void dsCardLaunch() {
 
 	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 	for (int i = 0; i < 15; i++) {
-		snd().updateStream();
 		swiWaitForVBlank();
 	}
 }
@@ -1379,6 +1381,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
+						snd().stopStream();
 						int err =
 						    runNdsFile(argarray[0], argarray.size(),
 							       (const char **)&argarray[0], true, false, true, true);
@@ -1421,6 +1424,7 @@ int main(int argc, char **argv) {
 							runNds_boostVram = perGameSettings_boostVram;
 						}
 					}
+					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0],
 							     true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
@@ -1497,7 +1501,7 @@ int main(int argc, char **argv) {
 								? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds"
 								: "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
 				}
-
+				snd().stopStream();
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, false,
 						 true,
 						 true); // Pass ROM to emulator as argument
@@ -1548,6 +1552,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 					bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 				}
+				snd().stopStream();
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true,
 						     false, true, true);
 				char text[32];

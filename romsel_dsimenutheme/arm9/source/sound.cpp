@@ -2,6 +2,7 @@
 
 #include "graphics/themefilenames.h"
 #include "common/dsimenusettings.h"
+#include "soundbank_bin.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
@@ -29,10 +30,11 @@ extern u32 used_samples;
 extern u32 filled_samples;
 extern char debug_buf[256];
 
-mm_word SOUNDBANK[MSL_BANKSIZE];
-volatile char SFX_DATA[0x7D000];
+	volatile char SFX_DATA[0x7D000] = {0};
+	mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 extern "C" {
+
 
 	// mm_word handle_event(mm_word msg, mm_word param){
 	// 	switch( msg )
@@ -54,29 +56,30 @@ SoundControl::SoundControl() {
 	sys.mem_bank = SOUNDBANK;
 	sys.fifo_channel = FIFO_MAXMOD;
 	
-	FILE* soundbank_file;
+	// FILE* soundbank_file;
 	
-	switch(ms().dsiMusic) {
-		case 2:
-			soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
-			break;
-		case 3:
-			soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
-			if (stream_source) break; // fallthrough if stream_source fails.
-		case 1:
-		default:
-			soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
-			break;
-	}
+	// switch(ms().dsiMusic) {
+	// 	case 2:
+	// 		soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
+	// 		break;
+	// 	case 3:
+	// 		soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
+	// 		if (stream_source) break; // fallthrough if stream_source fails.
+	// 	case 1:
+	// 	default:
+	// 		soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
+	// 		break;
+	// }
 	
-	fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
+	// fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
 
-	fclose(soundbank_file);
+	// fclose(soundbank_file);
 
 	mmInit(&sys);
 
-	mmSoundBankInMemory((mm_addr)SFX_DATA);
-	// mmSetEventHandler(handle_event);
+	mmSoundBankInMemory((mm_addr)soundbank_bin);
+
+ 	// mmSetEventHandler(handle_event);
 
 	// mmInitDefaultMem((mm_addr);
 	mmLoadEffect(SFX_LAUNCH);
@@ -188,6 +191,10 @@ void SoundControl::beginStream() {
 	SetYtrigger(0);
 }
 
+void SoundControl::stopStream() {
+	mmStreamClose();
+}
+
 // Updates the background music fill buffer
 void SoundControl::updateStream() {
 	
@@ -197,7 +204,7 @@ void SoundControl::updateStream() {
 		
 		// memmove the unconsumed bytes to the front of the temp buffer
 		u32 free_ptr = STREAMING_BUF_LENGTH - used_samples;
-		toncset16(streaming_buf_temp, 0, STREAMING_BUF_LENGTH + 1);
+		toncset(streaming_buf_temp, 0, sizeof(streaming_buf_temp));
 		tonccpy(streaming_buf_temp, streaming_buf + used_samples, free_ptr << 1);
 
 		// Try to fill up the space that was used previously
@@ -219,4 +226,5 @@ void SoundControl::updateStream() {
 		fill_requested = false;
 		used_samples = 0;
 	}
+	// mmStreamUpdate();
 }
