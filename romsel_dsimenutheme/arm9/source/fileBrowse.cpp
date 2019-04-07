@@ -738,7 +738,7 @@ void launchGba(void) {
 		return;
 	}
 
-snd().playLaunch();
+	snd().playLaunch();
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white

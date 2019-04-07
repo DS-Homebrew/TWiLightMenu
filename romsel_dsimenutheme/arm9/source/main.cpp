@@ -1199,7 +1199,6 @@ int main(int argc, char **argv) {
 							}
 							printLarge(false, 4, 20, savecreated);
 							for (int i = 0; i < 30; i++) {
-								snd().updateStream();
 								swiWaitForVBlank();
 							}
 						}

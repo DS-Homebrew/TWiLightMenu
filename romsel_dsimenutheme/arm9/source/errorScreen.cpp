@@ -6,7 +6,7 @@
 #include "common/dsimenusettings.h"
 #include "graphics/ThemeTextures.h"
 #include "autoboot.h"
-
+#include "sound.h"
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
@@ -23,6 +23,7 @@ vu16* sdRemovedImage = (vu16*)0x026E0000;
 extern u16 convertToDsBmp(u16 val);
 
 void loadSdRemovedImage(void) {
+	snd().stopStream();
 	FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
 	if (file) {
 		// Start loading

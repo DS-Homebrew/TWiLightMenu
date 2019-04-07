@@ -2,7 +2,7 @@
 
 #include "graphics/themefilenames.h"
 #include "common/dsimenusettings.h"
-#include "soundbank_bin.h"
+// #include "soundbank_bin.h"
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
@@ -22,16 +22,23 @@
 
 // mm_sound_effect mus_menu;
 
-extern s16 streaming_buf[STREAMING_BUF_LENGTH + 1];
-extern s16 streaming_buf_temp[STREAMING_BUF_LENGTH + 1];
+extern volatile s16* curr_stream_buf;
+extern volatile s16* next_stream_buf;
+extern volatile u16 fill_count;
+extern volatile u32 filled_samples;
 
 extern bool fill_requested;
-extern u32 used_samples;
-extern u32 filled_samples;
+extern bool pop_fill_queue;
+
+extern u32 samples_left_until_next_fill;
+
+#define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
+#define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
+
 extern char debug_buf[256];
 
-	volatile char SFX_DATA[0x7D000] = {0};
-	mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
+volatile char SFX_DATA[0x7D000] = {0};
+mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
 extern "C" {
 
@@ -56,28 +63,28 @@ SoundControl::SoundControl() {
 	sys.mem_bank = SOUNDBANK;
 	sys.fifo_channel = FIFO_MAXMOD;
 	
-	// FILE* soundbank_file;
+	FILE* soundbank_file;
 	
-	// switch(ms().dsiMusic) {
-	// 	case 2:
-	// 		soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
-	// 		break;
-	// 	case 3:
-	// 		soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
-	// 		if (stream_source) break; // fallthrough if stream_source fails.
-	// 	case 1:
-	// 	default:
-	// 		soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
-	// 		break;
-	// }
+	switch(ms().dsiMusic) {
+		case 2:
+			soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
+			break;
+		case 3:
+			soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
+			if (stream_source) break; // fallthrough if stream_source fails.
+		case 1:
+		default:
+			soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
+			break;
+	}
 	
-	// fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
+	fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
 
-	// fclose(soundbank_file);
+	fclose(soundbank_file);
 
 	mmInit(&sys);
 
-	mmSoundBankInMemory((mm_addr)soundbank_bin);
+	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
  	// mmSetEventHandler(handle_event);
 
@@ -166,8 +173,9 @@ SoundControl::SoundControl() {
 	stream.timer = MM_TIMER0;	     // use timer0
 	stream.manual = false;	      // manual filling
 	
-	toncset16(streaming_buf, 0, STREAMING_BUF_LENGTH); // clear streaming buf
-	updateStream();
+	
+	// Prep the first
+	fread((void*)curr_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 	// mus_menu = {
 	//     {SFX_MENU},		     // id
 	//     (int)(1.0f * (1 << 10)), // rate
@@ -198,33 +206,52 @@ void SoundControl::stopStream() {
 // Updates the background music fill buffer
 void SoundControl::updateStream() {
 	
-	// buffer updates happen every time half the buffer has been consumed
-	if (fill_requested) {
-		
-		
-		// memmove the unconsumed bytes to the front of the temp buffer
-		u32 free_ptr = STREAMING_BUF_LENGTH - used_samples;
-		toncset(streaming_buf_temp, 0, sizeof(streaming_buf_temp));
-		tonccpy(streaming_buf_temp, streaming_buf + used_samples, free_ptr << 1);
-
-		// Try to fill up the space that was used previously
-		filled_samples = fread(streaming_buf_temp + free_ptr, 
-						sizeof(s16), used_samples, stream_source);
-
-		// If we couldn't fill completely (file has ended), loop.
-		if (filled_samples < used_samples) {
+	//
+	if (fill_requested && fill_count < TOTAL_FILLS) {
+		nocashMessage("Filling...");
+		long int instance_filled = 0;
+		instance_filled = fread((s16*)next_stream_buf + filled_samples, sizeof(s16),  SAMPLES_PER_FILL, stream_source);
+		if (instance_filled <  SAMPLES_PER_FILL) {
 			fseek(stream_source, 0, SEEK_SET);
-
-			// Fill up only the space that was previously unfilled
-			filled_samples += fread(streaming_buf_temp + free_ptr + filled_samples,
-				 sizeof(s16), (used_samples - filled_samples), stream_source);
+			instance_filled += fread((s16*)next_stream_buf + filled_samples + instance_filled,
+				 sizeof(s16), (SAMPLES_PER_FILL - instance_filled), stream_source);
 		}
-		
-		tonccpy(streaming_buf, streaming_buf_temp, sizeof(streaming_buf));
-		
-		// Reset fill state
+		filled_samples += instance_filled;
+		sprintf(debug_buf, "Loaded  %li samples, currently %li filled, fill number %i", instance_filled, filled_samples, fill_count);
+    	nocashMessage(debug_buf);
 		fill_requested = false;
-		used_samples = 0;
+		samples_left_until_next_fill = SAMPLES_PER_FILL;
+		fill_count++;
 	}
+
+	// buffer updates happen every time half the buffer has been consumed
+	// if (fill_requested) {
+		
+	// 	// memmove the unconsumed bytes to the front of the temp buffer
+	// 	toncset16(streaming_buf_temp, 0, STREAMING_BUF_LENGTH + 1);
+	// 	tonccpy(streaming_buf_temp, streaming_buf + SAMPLES_USED, samples_left);
+
+	// 	// Try to fill up the space that was used previously
+	// 	filled_samples = fread(streaming_buf_temp + samples_left, 
+	// 					sizeof(s16), SAMPLES_USED, stream_source);
+
+	// 	// If we couldn't fill completely (file has ended), loop.
+	// 	if (filled_samples < SAMPLES_USED) {
+	// 		fseek(stream_source, 0, SEEK_SET);
+
+	// 		// Fill up only the space that was previously unfilled
+	// 		filled_samples += fread(streaming_buf_temp + samples_left + filled_samples,
+	// 			 sizeof(s16), (SAMPLES_USED - filled_samples), stream_source);
+	// 	}
+		
+	// 	tonccpy(streaming_buf, streaming_buf_temp, sizeof(streaming_buf));
+		
+	// 	sprintf(debug_buf, "Cached new %li, remaining %li, used %li, in cache %li", filled_samples, samples_left, SAMPLES_USED, samples_left + filled_samples);
+    // 	nocashMessage(debug_buf);
+
+	// 	// Reset fill state
+	// 	fill_requested = false;
+	// 	samples_left = STREAMING_BUF_LENGTH;
+	// }
 	// mmStreamUpdate();
 }
