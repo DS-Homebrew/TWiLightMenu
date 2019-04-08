@@ -6,14 +6,13 @@
 #include "common/dsimenusettings.h"
 #include "graphics/ThemeTextures.h"
 #include "autoboot.h"
-
+#include "sound.h"
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
 
 extern bool rocketVideo_playVideo;
-extern bool music;
 extern bool showdialogbox;
 extern float dbox_Ypos;
 
@@ -51,11 +50,12 @@ void checkSdEject(void) {
 	
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
-	music = false;
+	
 	if (showdialogbox) {
 		showdialogbox = false;
 		dbox_Ypos = 192;
 	}
+	snd().stopStream();
 	mmEffectCancelAll();
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);

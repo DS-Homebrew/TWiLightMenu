@@ -42,7 +42,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "graphics/ThemeTextures.h"
-
+#include "sound.h"
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
@@ -244,7 +244,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 
 	while (1) {
 		clearText();
@@ -420,6 +420,7 @@ void perGameSettings (std::string filename) {
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			snd().updateStream();
 			swiWaitForVBlank();
 		} while (!pressed);
 
@@ -593,7 +594,7 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	dbox_showIcon = false;
 }
 

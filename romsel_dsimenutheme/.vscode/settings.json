@@ -40,7 +40,8 @@
         "memory": "cpp",
         "numeric": "cpp",
         "string": "cpp",
-        "tonccpy.h": "c"
+        "tonccpy.h": "c",
+        "menumusic_bin.h": "c"
     },
     "C_Cpp.intelliSenseEngineFallback": "Disabled"
 }

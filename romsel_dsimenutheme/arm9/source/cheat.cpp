@@ -23,7 +23,7 @@
 #include "common/flashcard.h"
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
-
+#include "sound.h"
 #include <algorithm>
 
 #include "ndsheaderbanner.h"
@@ -260,12 +260,13 @@ void CheatCodelist::selectCheats(std::string filename)
       while(1) {
         scanKeys();
         pressed = keysDownRepeat();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
+        checkSdEject();
+        tex().drawVolumeImageCached();
+        tex().drawBatteryImageCached();
+        drawCurrentTime();
+        drawCurrentDate();
+        drawClockColon();
+        snd().updateStream();
         swiWaitForVBlank();
         if(pressed & KEY_B) {
           break;
@@ -327,6 +328,7 @@ void CheatCodelist::selectCheats(std::string filename)
 		drawCurrentTime();
 		drawCurrentDate();
 		drawClockColon();
+    snd().updateStream();
 		swiWaitForVBlank();
 	} while (!pressed);
     if(pressed & KEY_UP) {
@@ -442,12 +444,13 @@ void CheatCodelist::selectCheats(std::string filename)
         while(1) {
           scanKeys();
           pressed = keysDown();
-		  checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			drawClockColon();
+          checkSdEject();
+          tex().drawVolumeImageCached();
+          tex().drawBatteryImageCached();
+          drawCurrentTime();
+          drawCurrentDate();
+          drawClockColon();
+          snd().updateStream();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
             break;

@@ -107,7 +107,6 @@ Additionally, paletted textures must have dimensions that are a multiple of 2. P
 Paletted textures are not checked for validity. An invalid texture should be rare if created with the provided makefile, but in certain cases a corrupted texture will cause the menu to not load at all.
 
 The 3DS theme loads its rotating cubes animation from the file located at `/video/3dsRotatingCubes.rvid` in RocketVideo format. If you wish for this not to draw for theme purposes, the file can simply be deleted.
-](# Creating Custom Themes (instructions for end users)
 
 The easiest way of customizing a theme is by editing the BMP textures in a theme's *ui*, *battery*, or *volume* folder. These BMP textures must be in RGB565 format, and use `#FF00FF` as a transparent key color. BMP textures are allowed to vary in size, but may require tweaking of the theme configuration to render correctly (see below).
 
@@ -223,3 +222,7 @@ Additionally, paletted textures must have dimensions that are a multiple of 2. P
 Paletted textures are not checked for validity. An invalid texture should be rare if created with the provided makefile, but in certain cases a corrupted texture will cause the menu to not load at all.
 
 The 3DS theme loads its rotating cubes animation from the file located at `/video/3dsRotatingCubes.rvid` in RocketVideo format. If you wish for this not to draw for theme purposes, the file can simply be deleted.)
+
+#### Custom Background Music and Sound fonts.
+
+The DSi Menu and 3DS themes also support custom music. See [sound.md](https://github.com/RocketRobz/TWiLightMenu/tree/master/romsel_dsimenutheme/resources/sound/sound.md) for more details.

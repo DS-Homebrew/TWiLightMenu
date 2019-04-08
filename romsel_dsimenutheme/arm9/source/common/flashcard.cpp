@@ -8,7 +8,7 @@
 #include "common/inifile.h"
 #include "common/systemdetails.h"
 #include "common/tonccpy.h"
-
+#include "sound.h"
 static sNDSHeader nds;
 
 extern const char* settingsinipath;
