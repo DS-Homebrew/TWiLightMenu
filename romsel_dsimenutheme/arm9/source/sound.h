@@ -21,11 +21,21 @@ class SoundControl {
         mm_sfxhand playStartup();
         mm_sfxhand playStop();
         mm_sfxhand playWrong();
+        
+        // Refill the stream buffers
         volatile void updateStream();
+
         void beginStream();
         void stopStream();
         void fadeOutStream();
         void cancelFadeOutStream();
+
+        // Sets the number of samples of silence to
+        // stream before continuing.
+        void setStreamDelay(u32 stream_delay);
+        
+        u32 getStartupSoundLength() { return startup_sample_length; }
+      
     private:
         mm_sound_effect snd_launch;
         mm_sound_effect snd_select;
@@ -39,6 +49,7 @@ class SoundControl {
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
         FILE* stream_source;
+        u32 startup_sample_length;
 };
 
 typedef singleton<SoundControl> soundCtl_s;

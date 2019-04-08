@@ -8,13 +8,14 @@
 #include "common/tonccpy.h"
 #include <algorithm>
 
-#define SFX_WRONG	0
-#define SFX_LAUNCH	1
-#define SFX_STOP	2
-#define SFX_SWITCH	3
-#define SFX_STARTUP	4
+#define SFX_STARTUP	0
+#define SFX_WRONG	1
+#define SFX_LAUNCH	2
+#define SFX_STOP	3
+#define SFX_SWITCH	4
 #define SFX_SELECT	5
 #define SFX_BACK	6
+
 #define MSL_NSONGS	0
 #define MSL_NSAMPS	7
 #define MSL_BANKSIZE	7
@@ -37,6 +38,8 @@ extern volatile u32 streaming_buf_ptr;
 #define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
 
 extern char debug_buf[256];
+
+extern volatile u32 sample_delay_count;
 
 volatile char SFX_DATA[0x7D000] = {0};
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
@@ -76,8 +79,15 @@ SoundControl::SoundControl() {
 
 	fclose(soundbank_file);
 
-	mmInit(&sys);
+	// Since SFX_STARTUP is the first sample, it begins at 0x10 after the
+	// *maxmod* header. Subtract the size of the sample header,
+	// and divide by two to get length in samples.
+	// https://github.com/devkitPro/mmutil/blob/master/source/msl.c#L80
+	startup_sample_length = (((*(u32*)(SFX_DATA + 0x10)) - 20) >> 1);
+	sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
+    nocashMessage(debug_buf);
 
+	mmInit(&sys);
 	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
  	// mmSetEventHandler(handle_event);
@@ -210,6 +220,10 @@ void SoundControl::fadeOutStream() {
 void SoundControl::cancelFadeOutStream() {
 	fade_out = false;
 	fade_counter = FADE_STEPS;
+}
+
+void SoundControl::setStreamDelay(u32 delay) {
+	sample_delay_count = delay;
 }
 
 // Samples remaining in the fill buffer.

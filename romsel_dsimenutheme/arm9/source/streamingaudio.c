@@ -30,6 +30,7 @@ volatile s32 samples_left_until_next_fill = 0;
 volatile u16 fade_counter = FADE_STEPS;
 volatile bool fade_out = false;
 
+volatile u32 sample_delay_count = 0;
 char debug_buf[256] = {0};
 
 
@@ -80,9 +81,14 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
     //     nocashMessage("missed fill");
     // }
 
+    int len = length;
 	s16 *target = dest;
    
-    for (int i = 0 ; i < length; i++ )
+    for (; sample_delay_count && len; len--, sample_delay_count--) {
+        *target++ = 0;
+    }
+
+    for (; len; len--)
 	{
         // Loop the streaming_buf_ptr
         if (streaming_buf_ptr >= STREAMING_BUF_LENGTH) {
@@ -110,11 +116,11 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         }
     }
 
-     if (fade_out && (fade_counter > 0)) {
-	        sprintf(debug_buf, "Fade i: %i", fade_counter);
-            nocashMessage(debug_buf);
-            fade_counter--;
-        }
+    if (!sample_delay_count && fade_out && (fade_counter > 0)) {
+	    sprintf(debug_buf, "Fade i: %i", fade_counter);
+        nocashMessage(debug_buf);
+        fade_counter--;
+    }
 
 	sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
     nocashMessage(debug_buf);

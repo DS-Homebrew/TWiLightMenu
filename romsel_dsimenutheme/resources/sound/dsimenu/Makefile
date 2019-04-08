@@ -16,7 +16,7 @@ include $(DEVKITARM)/ds_rules
 # define SFX_SELECT	5
 # define SFX_BACK	6
 
-NAMES			:= wrong.wav launch.wav stop.wav switch.wav startup.wav select.wav back.wav
+NAMES			:= startup.wav wrong.wav launch.wav stop.wav switch.wav select.wav back.wav
 
 TARGETS			:= sfx.bin bgm.pcm.raw
 
@@ -26,7 +26,7 @@ TARGETS			:= sfx.bin bgm.pcm.raw
 all: $(TARGETS)
 
 sfx.bin : $(NAMES)
-	@mmutil $^ -d -osfx.bin
+	@mmutil $^ -d -v -osfx.bin -hsfx.h
 
 bgm.pcm.raw   : menu.wav
 	sox menu.wav --bits 16 --rate 11025 --encoding signed-integer --endian little bgm.pcm.raw
