@@ -14,7 +14,6 @@ volatile s16* fill_stream_buf = streaming_buf_swap;
 /// Fill members
 volatile bool fill_requested = false;
 volatile u32 filled_samples = 0;
-volatile u16 fill_count = 0;
 volatile s32 samples_left_until_next_fill = 0;
 
 
