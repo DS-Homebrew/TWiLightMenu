@@ -19,6 +19,7 @@
 */
 
 #include "cheat.h"
+#include "buttontext.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "tool/dbgtool.h"
@@ -255,7 +256,7 @@ void CheatCodelist::selectCheats(std::string filename)
     // If no cheats are found
     if(_data.size() == 0) {
       printSmallCentered(false, 100, "No cheats found");
-      printSmallCentered(false, 160, "B: Back");
+      printSmallCentered(false, 160, BUTTON_B" Back");
 
       while(1) {
         scanKeys();
@@ -278,19 +279,19 @@ void CheatCodelist::selectCheats(std::string filename)
     // Print bottom text
     if(_data[cheatWnd_cursorPosition]._comment != "") {
       if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 160, "Y: Info  X: Save  B: Cancel");
+        printSmallCentered(false, 160, BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancel");
       } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-        printSmallCentered(false, 160, "A: Deslct  Y: Info  X: Save  B: Cancl");
+        printSmallCentered(false, 160, BUTTON_A " Deslct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
-        printSmallCentered(false, 160, "A: Slct  Y: Info  X: Save  B: Cancl");
+        printSmallCentered(false, 160, BUTTON_A " Slct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl");
       }
     } else {
       if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 160, "X: Save  B: Cancel");
+        printSmallCentered(false, 160, BUTTON_X " Save  " BUTTON_B " Cancel");
       } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-        printSmallCentered(false, 160, "A: Deselect  X: Save  B: Cancel");
+        printSmallCentered(false, 160, BUTTON_A " Deselect  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
-        printSmallCentered(false, 160, "A: Select  X: Save  B: Cancel");
+        printSmallCentered(false, 160,  BUTTON_A " Select  " BUTTON_X " Save  " BUTTON_B " Cancl");
       }
     }
 
@@ -439,7 +440,7 @@ void CheatCodelist::selectCheats(std::string filename)
         }
 
         // Print 'Back' text
-        printSmallCentered(false, 167, "B: Back");
+        printSmallCentered(false, 167, BUTTON_B" Back");
 
         while(1) {
           scanKeys();

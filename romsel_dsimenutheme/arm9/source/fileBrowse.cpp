@@ -21,6 +21,7 @@
 ------------------------------------------------------------------*/
 
 #include "fileBrowse.h"
+#include "buttontext.h"
 #include <algorithm>
 #include <dirent.h>
 #include <math.h>
@@ -696,7 +697,7 @@ void launchGba(void) {
 		printSmallCentered(false, 78, "to run GBA games.");
 		printSmallCentered(false, 112, "Place the BIOS on the root");
 		printSmallCentered(false, 126, "as \"bios.bin\".");
-		printSmall(false, 208, 160, "A: OK");
+		printSmall(false, 208, 160, BUTTON_A " OK");
 		int pressed = 0;
 		do {
 			scanKeys();
@@ -776,7 +777,7 @@ void mdRomTooBig(void) {
 	printSmallCentered(false, 78, "ROM cannot be launched,");
 	printSmallCentered(false, 92, "due to the size of it");
 	printSmallCentered(false, 106, "being above 3MB.");
-	printSmall(false, 208, 160, "A: OK");
+	printSmall(false, 208, 160, BUTTON_A " OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -943,7 +944,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, 160, "SELECT/B: Back, A: Select");
+		printSmallCentered(false, 160, "SELECT/BUTTON_B Back, A: Select");
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -2155,7 +2156,7 @@ string browseForFile(const vector<string> extensionList) {
 					} else {
 						printSmallCentered(false, 128, "in DS mode.");
 					}
-					printSmall(false, 208, 160, "A: OK");
+					printSmall(false, 208, 160, BUTTON_A " OK");
 					pressed = 0;
 					do {
 						scanKeys();
@@ -2211,7 +2212,7 @@ string browseForFile(const vector<string> extensionList) {
 						printSmallCentered(false, 112, "If the game freezes, does not");
 						printSmallCentered(false, 126, "start, or doesn't seem normal,");
 						printSmallCentered(false, 140, "it needs to be AP-patched.");
-						printSmallCentered(false, 160, "B/A: OK, X: Don't show again");
+						printSmallCentered(false, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again");
 						pressed = 0;
 						while (1) {
 							scanKeys();
@@ -2589,17 +2590,17 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if (isDirectory[CURPOS]) {
 					if (unHide)
-						printSmall(false, 141, 160, "Y: Unhide");
+						printSmall(false, 141, 160, BUTTON_Y " Unhide");
 					else
-						printSmall(false, 155, 160, "Y: Hide");
-					printSmall(false, 208, 160, "B: No");
+						printSmall(false, 155, 160, BUTTON_Y " Hide");
+					printSmall(false, 208, 160, BUTTON_B " No");
 				} else {
 					if (unHide)
-						printSmall(false, 93, 160, "Y: Unhide");
+						printSmall(false, 93, 160, BUTTON_Y" Unhide");
 					else
-						printSmall(false, 107, 160, "Y: Hide");
-					printSmall(false, 160, 160, "A: Yes");
-					printSmall(false, 208, 160, "B: No");
+						printSmall(false, 107, 160, BUTTON_Y" Hide");
+					printSmall(false, 160, 160, BUTTON_A " Yes");
+					printSmall(false, 208, 160, BUTTON_B " No");
 				}
 				while (1) {
 					do {
