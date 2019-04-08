@@ -172,7 +172,6 @@ SoundControl::SoundControl() {
 	// Fill the next section premptively
 	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
-	
 
 	
 	// mus_menu = {
