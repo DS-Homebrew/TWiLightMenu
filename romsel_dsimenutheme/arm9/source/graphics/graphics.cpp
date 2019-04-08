@@ -1596,6 +1596,6 @@ void graphicsInit() {
 	tex().drawVolumeImageCached();
 	tex().drawBatteryImageCached();
 	irqSet(IRQ_VBLANK, vBlankHandler);
-	irqEnable(IRQ_VBLANK | IRQ_TIMER3);
+	irqEnable(IRQ_VBLANK);
 	// consoleDemoInit();
 }

@@ -17,7 +17,7 @@ class SoundControl {
         mm_sfxhand playStartup();
         mm_sfxhand playStop();
         mm_sfxhand playWrong();
-        void updateStream();
+        volatile void updateStream();
         void beginStream();
         void stopStream();
     private:
