@@ -730,7 +730,7 @@ int main(int argc, char **argv) {
 	if (ms().dsiMusic != 0) {
 		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 			snd().playStartup();
-			snd().setStreamDelay(snd().getStartupSoundLength());
+			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
 		}
 		snd().beginStream();
 	}

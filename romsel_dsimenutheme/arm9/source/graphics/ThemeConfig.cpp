@@ -20,7 +20,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
     //   _photoRenderY(24), _photoRenderX(179), 
       _startTextUserPalette(true), _startBorderUserPalette(true), _buttonArrowUserPalette(true),
       _movingArrowUserPalette(true), _launchDotsUserPalette(true), _dialogBoxUserPalette(true),
-      _renderPhoto(true), _playStartupJingle(false)
+      _renderPhoto(true), _playStartupJingle(false), _startupJingleDelayAdjust(0)
       {
           // hack to reassign 3ds defaults
           if (_3dsDefaults) { 
@@ -70,5 +70,6 @@ void ThemeConfig::loadConfig()
     _renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
 
     _playStartupJingle = themeConfig.GetInt("THEME", "PlayStartupJingle", _playStartupJingle);
+    _startupJingleDelayAdjust = themeConfig.GetInt("THEME", "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
 
 }

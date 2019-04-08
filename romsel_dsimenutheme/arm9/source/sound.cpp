@@ -83,7 +83,9 @@ SoundControl::SoundControl() {
 	// *maxmod* header. Subtract the size of the sample header,
 	// and divide by two to get length in samples.
 	// https://github.com/devkitPro/mmutil/blob/master/source/msl.c#L80
+	
 	startup_sample_length = (((*(u32*)(SFX_DATA + 0x10)) - 20) >> 1);
+
 	sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
     nocashMessage(debug_buf);
 

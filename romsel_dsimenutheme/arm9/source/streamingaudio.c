@@ -84,6 +84,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
     int len = length;
 	s16 *target = dest;
    
+    // fill delay with silence
     for (; sample_delay_count && len; len--, sample_delay_count--) {
         *target++ = 0;
     }

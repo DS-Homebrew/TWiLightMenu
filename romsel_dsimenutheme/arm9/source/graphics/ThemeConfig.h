@@ -45,6 +45,7 @@ class ThemeConfig {
 
         bool _renderPhoto;
         bool _playStartupJingle;
+        int _startupJingleDelayAdjust;
 
     public:
         ThemeConfig();
@@ -91,7 +92,7 @@ class ThemeConfig {
         bool renderPhoto() const { return _renderPhoto; }
 
         bool playStartupJingle() const { return _playStartupJingle; }
-
+        int startupJingleDelayAdjust() const { return _startupJingleDelayAdjust; }
 };
 
 typedef singleton<ThemeConfig> themeConfig_s;

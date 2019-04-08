@@ -26,7 +26,7 @@ TARGETS			:= sfx.bin bgm.pcm.raw
 all: $(TARGETS)
 
 sfx.bin : $(NAMES)
-	@mmutil $^ -d -v -osfx.bin -hsfx.h
+	@mmutil $^ -d -v -osfx.bin
 
 bgm.pcm.raw   : menu.wav
 	sox menu.wav --bits 16 --rate 11025 --encoding signed-integer --endian little bgm.pcm.raw
