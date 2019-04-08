@@ -15,7 +15,6 @@
 #define SFX_STARTUP	4
 #define SFX_SELECT	5
 #define SFX_BACK	6
-
 #define MSL_NSONGS	0
 #define MSL_NSAMPS	7
 #define MSL_BANKSIZE	7
