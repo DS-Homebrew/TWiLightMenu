@@ -6,6 +6,7 @@
 #include "streamingaudio.h"
 #include "string.h"
 #include "common/tonccpy.h"
+#include <algorithm>
 
 #define SFX_WRONG	0
 #define SFX_LAUNCH	1
@@ -28,6 +29,7 @@ extern volatile u16 fill_count;
 extern volatile u32 filled_samples;
 extern volatile bool fill_requested;
 extern volatile u32 samples_left_until_next_fill;
+extern volatile u32 streaming_buf_ptr;
 
 #define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
 #define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
@@ -162,16 +164,15 @@ SoundControl::SoundControl() {
 	stream.timer = MM_TIMER0;	     // use timer0
 	stream.manual = false;	      // manual filling
 	
+
 	
 	// Prep the first section of the stream
 	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
-	// Update stream partially
-	for (int i = 0; i < (TOTAL_FILLS >> 1); i++) {
-		fill_requested = true;
-		updateStream();
-	}
+	// Fill the next section premptively
+	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
+	
 
 	
 	// mus_menu = {
@@ -205,32 +206,38 @@ void SoundControl::stopStream() {
 	mmStreamClose();
 }
 
+#define SAMPLES_LEFT_TO_FILL (STREAMING_BUF_LENGTH - filled_samples)
+#define SAMPLES_TO_FILL (streaming_buf_ptr - filled_samples)
+
 // Updates the background music fill buffer
 volatile void SoundControl::updateStream() {
 	
 	if (!stream_is_playing) return;
 	if (fill_lock) return;
-	if (fill_requested && fill_count < TOTAL_FILLS) {
+	if (fill_requested && filled_samples < STREAMING_BUF_LENGTH) {
 		fill_lock = true;
 		// timerPause(1);
 		nocashMessage("Filling...");
 		fill_requested = false;
-		samples_left_until_next_fill = SAMPLES_PER_FILL;
 		fill_count++;
-		long int instance_filled = 0;
-		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), SAMPLES_PER_FILL, stream_source);
-		if (instance_filled <  SAMPLES_PER_FILL) {
+		long unsigned int instance_filled = 0;
+		
+		long unsigned int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
+
+		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, stream_source);
+		if (instance_filled <  instance_to_fill) {
 			fseek(stream_source, 0, SEEK_SET);
 			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
-				 sizeof(s16), (SAMPLES_PER_FILL - instance_filled), stream_source);
+				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
 		}
 		filled_samples += instance_filled;
+		samples_left_until_next_fill = SAMPLES_PER_FILL;
 		sprintf(debug_buf, "Loaded  %li samples, currently %li filled, fill number %i", instance_filled, filled_samples, fill_count);
     	nocashMessage(debug_buf);
 		fill_lock = false;
 		// timerUnpause(1);
 	
-	} else if (fill_count >= TOTAL_FILLS) {
+	} else if (filled_samples >= STREAMING_BUF_LENGTH) {
 		filled_samples = 0;
 		fill_count = 0;
 	}

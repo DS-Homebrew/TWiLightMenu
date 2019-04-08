@@ -4,7 +4,7 @@
 // Private members
 static volatile s16 streaming_buf_main[STREAMING_BUF_LENGTH] = {0}; 
 static volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0}; 
-static volatile u32 streaming_buf_ptr = 0;
+volatile u32 streaming_buf_ptr = 0;
 
 // Pointer buffers
 volatile s16* play_stream_buf = streaming_buf_main;
@@ -15,7 +15,7 @@ volatile s16* fill_stream_buf = streaming_buf_swap;
 volatile bool fill_requested = false;
 volatile u32 filled_samples = 0;
 volatile u16 fill_count = 0;
-volatile s32 samples_left_until_next_fill = SAMPLES_PER_FILL;
+volatile s32 samples_left_until_next_fill = 0;
 
 
 char debug_buf[256] = {0};
