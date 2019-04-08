@@ -8,16 +8,16 @@
 #include "common/tonccpy.h"
 #include <algorithm>
 
-#define SFX_STARTUP	0
-#define SFX_WRONG	1
-#define SFX_LAUNCH	2
-#define SFX_STOP	3
-#define SFX_SWITCH	4
-#define SFX_SELECT	5
-#define SFX_BACK	6
+#define SFX_STARTUP		0
+#define SFX_WRONG		1
+#define SFX_LAUNCH		2
+#define SFX_STOP		3
+#define SFX_SWITCH		4
+#define SFX_SELECT		5
+#define SFX_BACK		6
 
-#define MSL_NSONGS	0
-#define MSL_NSAMPS	7
+#define MSL_NSONGS		0
+#define MSL_NSAMPS		7
 #define MSL_BANKSIZE	7
 
 
