@@ -7,6 +7,10 @@
 #include "common/singleton.h"
 #include <cstdio>
 
+/*
+ * Handles playing sound effects and the streaming background music control.
+ * See streamingaudio.c for a technical overview of how streaming works.
+ */
 class SoundControl {
     public:
         SoundControl();
