@@ -31,7 +31,7 @@ volatile u16 fade_counter = FADE_STEPS;
 volatile bool fade_out = false;
 
 volatile u32 sample_delay_count = 0;
-char debug_buf[256] = {0};
+// char debug_buf[256] = {0};
 
 
 /*
@@ -118,17 +118,17 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
     }
 
     if (!sample_delay_count && fade_out && (fade_counter > 0)) {
-	    sprintf(debug_buf, "Fade i: %i", fade_counter);
-        nocashMessage(debug_buf);
+	    // sprintf(debug_buf, "Fade i: %i", fade_counter);
+        // nocashMessage(debug_buf);
         fade_counter--;
     }
 
-	sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
-    nocashMessage(debug_buf);
+	// sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
+    // nocashMessage(debug_buf);
     
     // Request a new fill from sound.cpp, refreshing the fill buffer.
     if (!fill_requested && samples_left_until_next_fill <= 0) {
-        nocashMessage("Fill requested!");
+        // nocashMessage("Fill requested!");
         fill_requested = true;
     } 
     return length;

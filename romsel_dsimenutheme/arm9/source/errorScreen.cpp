@@ -13,7 +13,6 @@ extern void unlaunchSetHiyaBoot();
 
 
 extern bool rocketVideo_playVideo;
-extern bool music;
 extern bool showdialogbox;
 extern float dbox_Ypos;
 
@@ -51,7 +50,7 @@ void checkSdEject(void) {
 	
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
-	music = false;
+	
 	if (showdialogbox) {
 		showdialogbox = false;
 		dbox_Ypos = 192;

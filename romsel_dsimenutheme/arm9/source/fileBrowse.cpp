@@ -136,9 +136,6 @@ extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool 
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
-
-extern bool music;
-
 extern bool rocketVideo_playVideo;
 
 extern char usernameRendered[11];
@@ -547,7 +544,6 @@ void launchSettings(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
-	music = false;
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
@@ -571,7 +567,7 @@ void launchManual(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
-	music = false;
+	
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
@@ -593,7 +589,7 @@ snd().playLaunch();
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
-	music = false;
+	
 	mmEffectCancelAll();
 	snd().stopStream();
 
@@ -662,7 +658,7 @@ void switchDevice(void) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
-		music = false;
+		
 		mmEffectCancelAll();
 		snd().stopStream();
 
@@ -736,7 +732,7 @@ void launchGba(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
-	music = false;
+	
 	mmEffectCancelAll();
 	snd().stopStream();
 
@@ -2277,7 +2273,7 @@ string browseForFile(const vector<string> extensionList) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
-						music = false;
+						
 						mmEffectCancelAll();
 						snd().stopStream();
 

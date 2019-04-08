@@ -102,10 +102,6 @@ void RemoveTrailingSlashes(std::string &path) {
 	}
 }*/
 
-bool music = false;
-extern mm_sound_effect mus_startup;
-// extern mm_sound_effect mus_menu;
-
 // These are used by flashcard functions and must retain their trailing slash.
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
@@ -734,16 +730,6 @@ int main(int argc, char **argv) {
 		}
 		snd().beginStream();
 	}
-
-	// if (ms().dsiMusic != 0) {
-	// 	if (ms().theme == 1 || ms().dsiMusic == 2) {
-	// 		// mmEffectEx(&mus_startup);
-			
-	// 	} else {
-	// 		snd().beginStream();
-	// 	}
-	// 	music = true;
-	// }
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0) ||

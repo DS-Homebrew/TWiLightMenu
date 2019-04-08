@@ -37,21 +37,12 @@ extern volatile u32 streaming_buf_ptr;
 #define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
 #define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
 
-extern char debug_buf[256];
+// extern char debug_buf[256];
 
 extern volatile u32 sample_delay_count;
 
 volatile char SFX_DATA[0x7D000] = {0};
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
-
-extern "C" {
-	void fillAudio() {
-		if (fill_requested) {
-			snd().updateStream();
-		}
-	}	
-}
-
 
 SoundControl::SoundControl() {
 
@@ -86,15 +77,12 @@ SoundControl::SoundControl() {
 	
 	startup_sample_length = (((*(u32*)(SFX_DATA + 0x10)) - 20) >> 1);
 
-	sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
-    nocashMessage(debug_buf);
+	// sprintf(debug_buf, "Read sample length %li for startup", startup_sample_length);
+    // nocashMessage(debug_buf);
 
 	mmInit(&sys);
 	mmSoundBankInMemory((mm_addr)SFX_DATA);
 
- 	// mmSetEventHandler(handle_event);
-
-	// mmInitDefaultMem((mm_addr);
 	mmLoadEffect(SFX_LAUNCH);
 	mmLoadEffect(SFX_SELECT);
 	mmLoadEffect(SFX_STOP);
@@ -184,15 +172,6 @@ SoundControl::SoundControl() {
 	// Fill the next section premptively
 	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
 
-
-	
-	// mus_menu = {
-	//     {SFX_MENU},		     // id
-	//     (int)(1.0f * (1 << 10)), // rate
-	//     0,			     // handle
-	//     255,		     // volume
-	//     128,		     // panning
-	// };
 }
 
 mm_sfxhand SoundControl::playLaunch() { return mmEffectEx(&snd_launch); }
@@ -241,9 +220,7 @@ volatile void SoundControl::updateStream() {
 	
 	if (!stream_is_playing) return;
 	if (fill_requested && filled_samples < STREAMING_BUF_LENGTH) {
-	
-		nocashMessage("Filling...");
-		
+			
 		// Reset the fill request
 		fill_requested = false;
 		long unsigned int instance_filled = 0;
