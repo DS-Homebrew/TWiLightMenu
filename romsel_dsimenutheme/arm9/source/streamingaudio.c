@@ -40,7 +40,7 @@ volatile u32 sample_delay_count = 0;
  * This method is called automatically by maxmod at random times.
  * 
  * While streaming from RAM is a trivial matter, streaming from
- * a file is a bit more involved because SD access much slower.
+ * a file is a bit more involved because SD access is much slower.
  * 
  * We can't fread in the stream request handler, or it will take
  * too long and the DS will crash. We can load it after as soon as
