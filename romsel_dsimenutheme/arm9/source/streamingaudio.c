@@ -27,6 +27,8 @@ volatile bool fill_requested = false;
 // Number of samples that must be streamed until the next filll
 volatile s32 samples_left_until_next_fill = 0;
 
+volatile u16 fade_counter = FADE_STEPS;
+volatile bool fade_out = false;
 
 char debug_buf[256] = {0};
 
@@ -88,7 +90,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         }
 
         // Stream the next sample
-		*target++ = *(play_stream_buf + streaming_buf_ptr);
+		*target++ = (*(play_stream_buf + streaming_buf_ptr) >> (FADE_STEPS - fade_counter));
 
         // Copy the next sample that will be played the next time
         // the streaming_buf_ptr is at this location from
@@ -107,6 +109,12 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
             samples_left_until_next_fill--;
         }
     }
+
+     if (fade_out && (fade_counter > 0)) {
+	        sprintf(debug_buf, "Fade i: %i", fade_counter);
+            nocashMessage(debug_buf);
+            fade_counter--;
+        }
 
 	sprintf(debug_buf, "Stream filled, %li until next fill", samples_left_until_next_fill);
     nocashMessage(debug_buf);

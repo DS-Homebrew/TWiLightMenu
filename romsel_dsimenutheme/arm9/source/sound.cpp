@@ -20,7 +20,9 @@
 #define MSL_BANKSIZE	7
 
 
-// mm_sound_effect mus_menu;
+extern volatile s16 fade_counter;
+extern volatile bool fade_out;
+
 extern volatile s16* play_stream_buf;
 extern volatile s16* fill_stream_buf;
 
@@ -199,6 +201,15 @@ void SoundControl::beginStream() {
 void SoundControl::stopStream() {
 	stream_is_playing = false;
 	mmStreamClose();
+}
+
+void SoundControl::fadeOutStream() {
+	fade_out = true;
+}
+
+void SoundControl::cancelFadeOutStream() {
+	fade_out = false;
+	fade_counter = FADE_STEPS;
 }
 
 // Samples remaining in the fill buffer.

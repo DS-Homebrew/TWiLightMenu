@@ -24,6 +24,8 @@ class SoundControl {
         volatile void updateStream();
         void beginStream();
         void stopStream();
+        void fadeOutStream();
+        void cancelFadeOutStream();
     private:
         mm_sound_effect snd_launch;
         mm_sound_effect snd_select;

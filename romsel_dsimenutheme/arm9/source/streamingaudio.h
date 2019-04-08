@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-
+#define FADE_STEPS 7                                           // Number of fill requests to fade out across when fade out is requested.
 #define STREAMING_BUF_LENGTH 96000                             // Size in samples (16 bits) => 256000B = 256KB * 2 = 512KB. // samples to keep cached
 #define FILL_FACTOR 4                                          // The higher the fill factor the more frequent the fills will be requested.
 #define SAMPLES_PER_FILL (STREAMING_BUF_LENGTH >> FILL_FACTOR) // Samples to load into the fill buffer per fill.

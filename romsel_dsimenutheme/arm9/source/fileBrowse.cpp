@@ -137,15 +137,6 @@ extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 
 
-
-void SendFadeoutFIFO(u32 value) {
-	// if (value == 0) value = 2; // send 2 instead of 0 for fadeout.
-	// while (fifoGetValue32(FIFO_USER_01) != 0); // Clear USER_1 Channel
-
-	// fifoSendValue32(FIFO_USER_01, value); // Fade out sound
-
-}
-
 extern bool music;
 
 extern bool rocketVideo_playVideo;
@@ -551,15 +542,14 @@ void launchSettings(void) {
 	ms().gotosettings = true;
 
 	fadeType = false;		  // Fade to white
-	SendFadeoutFIFO(1); // Fade out sound
+	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	SendFadeoutFIFO(0); // Cancel sound fade-out
-
+	snd().stopStream();
 	ms().saveSettings();
 	// Launch settings
 	if (sdFound()) {
@@ -576,15 +566,14 @@ void launchManual(void) {
 	ms().gotosettings = true;
 
 	fadeType = false;		  // Fade to white
-	SendFadeoutFIFO(1); // Fade out sound
+	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	SendFadeoutFIFO(0); // Cancel sound fade-out
-
+	snd().stopStream();
 	ms().saveSettings();
 	// Launch settings
 	if (sdFound()) {
@@ -599,14 +588,14 @@ snd().playLaunch();
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
-	SendFadeoutFIFO(1); // Fade out sound
+	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	SendFadeoutFIFO(0); // Cancel sound fade-out
+	snd().stopStream();
 
 	if (settingsChanged) {
 		ms().saveSettings();
@@ -668,14 +657,14 @@ void switchDevice(void) {
 		controlTopBright = true;
 
 		fadeType = false;		  // Fade to white
-		SendFadeoutFIFO(1); // Fade out sound
+		snd().fadeOutStream();
 		for (int i = 0; i < 60; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
 		music = false;
 		mmEffectCancelAll();
-		SendFadeoutFIFO(0); // Cancel sound fade-out
+		snd().stopStream();
 
 		ms().romPath = "";
 		ms().launchType = DSiMenuPlusPlusSettings::TLaunchType::ESlot1; // 0
@@ -742,14 +731,14 @@ void launchGba(void) {
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
-	SendFadeoutFIFO(1); // Fade out sound
+	snd().fadeOutStream();
 	for (int i = 0; i < 60; i++) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	}
 	music = false;
 	mmEffectCancelAll();
-	SendFadeoutFIFO(0); // Cancel sound fade-out
+	snd().stopStream();
 
 	ms().saveSettings();
 
@@ -2283,14 +2272,14 @@ string browseForFile(const vector<string> extensionList) {
 							}
 						}
 						fadeType = false;		  // Fade to white
-						SendFadeoutFIFO(1); // Fade out sound
+						snd().fadeOutStream();
 						for (int i = 0; i < 60; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
 						music = false;
 						mmEffectCancelAll();
-						SendFadeoutFIFO(0); // Cancel sound fade-out
+						snd().stopStream();
 
 						clearText(true);
 
