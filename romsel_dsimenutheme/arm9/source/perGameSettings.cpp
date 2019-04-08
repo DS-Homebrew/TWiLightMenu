@@ -21,6 +21,7 @@
 ------------------------------------------------------------------*/
 
 #include "perGameSettings.h"
+#include "buttontext.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -331,9 +332,9 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 200, 160, "B: Back");
+			printSmall(false, 200, 160, BUTTON_B" Back");
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, 160, "A: OK");
+			printSmall(false, 208, 160, BUTTON_A" OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
@@ -409,7 +410,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 128, 160, "X: Cheats  B: Back");
+			printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
 		}
 		do {
 			scanKeys();
