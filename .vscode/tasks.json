@@ -12,6 +12,35 @@
 			"problemMatcher": [
 				"$gcc"
 			]
+		},
+		{
+			"label": "Copy to SD (macOS)",
+			"type": "shell",
+			"command": ".vscode/copy.sh",
+			"args": [
+				"${input:copyVariable}",
+				"${input:copyDrive}",
+				"${workspaceFolder}"
+			],
+			"presentation": {
+				"reveal": "silent",
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
+		},
+		{
+			"label": "Eject SD (macOS)",
+			"type": "shell",
+			"command": "diskutil eject disk3",
+			"presentation": {
+				"reveal": "never",
+			},
+			"group": "build",
+			"problemMatcher": [
+				"$gcc"
+			]
 		}
 	],
 	"inputs": [
@@ -21,6 +50,19 @@
 				"type": "pickString",
 				"options": ["all","clean","package","booter","booter_fc","mainmenu","manual","romsel_aktheme","romsel_dsimenutheme","romsel_r4theme","rungame","settings","slot1launch","title"],
 				"default": "all"
-		}
-	]
+		},
+		{
+				"id": "copyVariable",
+				"description": "What do you want to copy?",
+				"type": "pickString",
+				"options": ["All (SD)","All (FC)","Booter (SD)","Booter (DSiWare)","Booter (FC)","Main Menu","Manual","Acekard Theme","DSi/3DS Theme","R4 Theme","Last Ran Rom","Settings","Slot 1 Launch","Title"],
+				"default": "All (SD)"
+		},
+		{
+			"id": "copyDrive",
+			"description": "What is the name of the drive you want to copy to? ",
+			"type": "promptString",
+				"default": "DSI"
+	}
+]
 }
