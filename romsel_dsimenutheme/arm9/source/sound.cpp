@@ -44,7 +44,9 @@ extern volatile u32 sample_delay_count;
 volatile char SFX_DATA[0x7D000] = {0};
 mm_word SOUNDBANK[MSL_BANKSIZE] = {0};
 
-SoundControl::SoundControl() {
+SoundControl::SoundControl()
+	: stream_is_playing(false), stream_source(NULL), startup_sample_length(0)
+ {
 
 	sys.mod_count = MSL_NSONGS;
 	sys.samp_count = MSL_NSAMPS;
@@ -59,7 +61,7 @@ SoundControl::SoundControl() {
 			break;
 		case 3:
 			soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
-			if (stream_source) break; // fallthrough if stream_source fails.
+			if (soundbank_file) break; // fallthrough if soundbank_file fails.
 		case 1:
 		default:
 			soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
@@ -161,7 +163,7 @@ SoundControl::SoundControl() {
 
 	stream.sampling_rate = 16000;	 // 16000HZ
 	stream.buffer_length = 1600;	  // should be adequate
-	stream.callback = on_stream_request;  // give stereo filling routine
+	stream.callback = on_stream_request; 
 	stream.format = MM_STREAM_16BIT_MONO; // select format
 	stream.timer = MM_TIMER0;	     // use timer0
 	stream.manual = false;	      // manual filling
@@ -208,10 +210,10 @@ void SoundControl::setStreamDelay(u32 delay) {
 }
 
 // Samples remaining in the fill buffer.
-#define SAMPLES_LEFT_TO_FILL (STREAMING_BUF_LENGTH - filled_samples)
+#define SAMPLES_LEFT_TO_FILL ((STREAMING_BUF_LENGTH - filled_samples) % STREAMING_BUF_LENGTH + 1)
 
 // Samples that were already streamed and need to be refilled into the buffer.
-#define SAMPLES_TO_FILL (streaming_buf_ptr - filled_samples)
+#define SAMPLES_TO_FILL ((streaming_buf_ptr - filled_samples) % STREAMING_BUF_LENGTH + 1)
 
 // Updates the background music fill buffer
 // Fill the amount of samples that were used up between the
