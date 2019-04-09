@@ -523,8 +523,8 @@ int main(int argc, char **argv) {
 				}
 			} else {
 				for(uint i=0;i<manPageLinks.size();i++) {
-					if(((touch.px >= manPageLinks[i].x) && (touch.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
-						(((touch.py + pageYpos) >= manPageLinks[i].y - 174) && ((touch.py + pageYpos - 174) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
+					if(((touchStart.px >= manPageLinks[i].x) && (touchStart.px <= (manPageLinks[i].x + manPageLinks[i].w))) &&
+						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 174) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						for(uint j=0;j<manPagesList.size();j++) {
 							if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
@@ -533,7 +533,7 @@ int main(int argc, char **argv) {
 							}
 						}
 						loadPageInfo(manPageLinks[i].dest + ".ini");
-						pageLoad((manPageLinks[i].dest + ".bmp").c_str());
+						pageLoad((manPagesList[currentPage].name).c_str());
 						topBarLoad();
 						printTopText(manPageTitle);
 					}
