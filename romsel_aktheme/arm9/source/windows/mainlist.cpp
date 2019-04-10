@@ -427,6 +427,10 @@ void MainList::backParentDir()
         return;
     }
 
+    if (!strncmp(_currentDir.c_str(), "^*::", 4)) {
+        return;
+    }
+
     if (!ms().showDirectories)
     {
         // Allow going back into the root, but don't allow going

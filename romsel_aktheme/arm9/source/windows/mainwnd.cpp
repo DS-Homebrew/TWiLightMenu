@@ -477,7 +477,6 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
     std::string fullPath = _mainList->getSelectedFullPath();
     std::string launchPath = fullPath;
     std::vector<const char *> cargv{};
-
     if (rominfo.isArgv())
     {
         ArgvFile argv(fullPath);
@@ -1001,8 +1000,6 @@ void MainWnd::onFolderChanged()
     resetInputIdle();
     std::string dirShowName = _mainList->getCurrentDir();
 
-    if (dirShowName.substr(0, 1) == SD_ROOT)
-        dirShowName.replace(0, 1, "SD:/");
 
     if (!strncmp(dirShowName.c_str(), "^*::", 2))
     {
