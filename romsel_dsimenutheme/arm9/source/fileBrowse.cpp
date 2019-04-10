@@ -1908,6 +1908,7 @@ string browseForFile(const vector<string> extensionList) {
 									break;
 								scanKeys();
 								if (keysHeld() & KEY_TOUCH) {
+									touchRead(&touch);
 									tapped = true;
 									break;
 								}
@@ -1949,8 +1950,11 @@ string browseForFile(const vector<string> extensionList) {
 								}
 							}
 						}
-						if (tapped)
+						if (tapped) {
+							prevTouch1 = touch;
+							prevTouch2 = touch;
 							continue;
+						}
 
 						if (CURPOS < 0)
 							ms().cursorPosition[ms().secondaryDevice] = 0;

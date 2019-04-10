@@ -501,6 +501,7 @@ int main(int argc, char **argv) {
 							}
 							scanKeys();
 							if (keysHeld() & KEY_TOUCH) {
+								touchRead(&touch);
 								tapped = true;
 								break;
 							}
@@ -509,8 +510,13 @@ int main(int argc, char **argv) {
 							dY = dY / 1.125;
 							swiWaitForVBlank();
 						}
-						if(tapped) continue;
-						else break;
+						if(tapped) {
+							touchStart = touch;
+							prevTouch2 = touch;
+							continue;
+						} else {
+							break;
+						}	
 					}
 
 					if(((pageYpos + touchStart.py - touch.py) > 0) && ((pageYpos + touchStart.py - touch.py) < (pageYsize - 174)))
