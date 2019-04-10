@@ -101,6 +101,7 @@ extern bool applaunchprep;
 int screenBrightness = 31;
 
 static int colonTimer = 0;
+extern bool showColon;
 //static int loadingSoundTimer = 30;
 
 int movetimer = 0;
@@ -1401,8 +1402,6 @@ void drawCurrentTime() {
 		tex().drawDateTime(time, x, 15, howManyToDraw, &hourWidth);
 	}
 }
-
-static bool showColon = true;
 
 void drawClockColon() {
 	// Load time

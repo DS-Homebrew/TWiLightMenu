@@ -172,6 +172,8 @@ public:
   const Texture *batteryTexture(int texture, bool dsiMode, bool regularDS) { 
     if (dsiMode) {
       switch(texture) {
+        case 8:
+          return _batterychargeblinkTexture.get();
         case 7:
           return _batterychargeTexture.get();
         case 4:
@@ -182,6 +184,8 @@ public:
           return _battery2Texture.get();
         case 1:
           return _battery1Texture.get();
+        case -1:
+          return _battery0Texture.get();
         case 0:
         default:
           return _battery1Texture.get();
@@ -261,11 +265,13 @@ private:
   unique_ptr<Texture> _volume3Texture;
   unique_ptr<Texture> _volume4Texture;
 
+  unique_ptr<Texture> _battery0Texture;
   unique_ptr<Texture> _battery1Texture;
   unique_ptr<Texture> _battery2Texture;
   unique_ptr<Texture> _battery3Texture;
   unique_ptr<Texture> _battery4Texture;
   unique_ptr<Texture> _batterychargeTexture;
+  unique_ptr<Texture> _batterychargeblinkTexture;
   unique_ptr<Texture> _batteryfullTexture;
   unique_ptr<Texture> _batteryfullDSTexture;
   unique_ptr<Texture> _batterylowTexture;
