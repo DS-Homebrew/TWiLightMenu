@@ -21,6 +21,7 @@
 ------------------------------------------------------------------*/
 
 #include "perGameSettings.h"
+#include "buttontext.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -42,7 +43,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "graphics/ThemeTextures.h"
-
+#include "sound.h"
 #include "SwitchState.h"
 #include "cheat.h"
 #include "errorScreen.h"
@@ -244,7 +245,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
+	for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 
 	while (1) {
 		clearText();
@@ -331,9 +332,9 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 200, 160, "B: Back");
+			printSmall(false, 200, 160, BUTTON_B" Back");
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, 160, "A: OK");
+			printSmall(false, 208, 160, BUTTON_A" OK");
 		} else {	// Per-game settings for retail/commercial games
 			if (perGameSettings_cursorPosition < 4) {
 				if (perGameSettings_cursorSide) {
@@ -409,7 +410,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 128, 160, "X: Cheats  B: Back");
+			printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
 		}
 		do {
 			scanKeys();
@@ -420,6 +421,7 @@ void perGameSettings (std::string filename) {
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
+			snd().updateStream();
 			swiWaitForVBlank();
 		} while (!pressed);
 
@@ -593,7 +595,7 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	dbox_showIcon = false;
 }
 

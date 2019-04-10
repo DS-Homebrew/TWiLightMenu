@@ -90,11 +90,8 @@ void FontGraphic::print(int x, int y, const char *text)
 		} else {
 			lowBits = *(unsigned char*) text++; // LSB
 			highBits = *(unsigned char*) text++; // HSB
-			u16 assembled = (u16)(lowBits | highBits << 8);
-			
-			fontChar = getSpriteIndex(assembled);
+			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
 		}
-		
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}

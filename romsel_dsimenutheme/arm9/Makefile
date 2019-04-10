@@ -31,7 +31,7 @@ MUSIC2      :=  ../musicShop
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork
 
-CFLAGS	:=	-g -Wall -O2 -fno-builtin-memcpy \
+CFLAGS	:=	-g -Wall -O2 \
  			-march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
@@ -77,7 +77,7 @@ CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
 PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*))) soundbank.bin soundbank_shop.bin
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
  
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -132,17 +132,17 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 $(OUTPUT).elf	:	$(OFILES)
  
-#---------------------------------------------------------------------------------
-# rule to build soundbank from music files
-#---------------------------------------------------------------------------------
-soundbank.bin : $(AUDIOFILES)
-#---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank.bin" -h"soundbank.h"
+# #---------------------------------------------------------------------------------
+# # rule to build soundbank from music files
+# #---------------------------------------------------------------------------------
+# soundbank.bin : $(AUDIOFILES)
+# #---------------------------------------------------------------------------------
+# @mmutil $^ -d -osoundbank.bin -hsoundbank.h
 
-#---------------------------------------------------------------------------------
-soundbank_shop.bin : $(AUDIOFILES2)
-#---------------------------------------------------------------------------------
-	@mmutil $^ -d -o"../../nitrofiles/soundbank_shop.bin" -h"soundbank_shop.h"
+# #---------------------------------------------------------------------------------
+# soundbank_shop.bin : $(AUDIOFILES2)
+# #---------------------------------------------------------------------------------
+# 	@mmutil $^ -d -o"../../nitrofiles/soundbank_shop.bin" -h"soundbank_shop.h"
 
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin

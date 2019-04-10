@@ -24,6 +24,7 @@
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern s16 usernameRendered[11];
+extern bool showColon;
 
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
@@ -342,6 +343,8 @@ void ThemeTextures::loadVolumeTextures() {
 void ThemeTextures::loadBatteryTextures() {
 	if (isDSiMode()) {
 		_batterychargeTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE, TFN_FALLBACK_BATTERY_CHARGE);
+		_batterychargeblinkTexture = std::make_unique<Texture>(TFN_BATTERY_CHARGE_BLINK, TFN_FALLBACK_BATTERY_CHARGE_BLINK);
+		_battery0Texture = std::make_unique<Texture>(TFN_BATTERY0, TFN_FALLBACK_BATTERY0);
 		_battery1Texture = std::make_unique<Texture>(TFN_BATTERY1, TFN_FALLBACK_BATTERY1);
 		_battery2Texture = std::make_unique<Texture>(TFN_BATTERY2, TFN_FALLBACK_BATTERY2);
 		_battery3Texture = std::make_unique<Texture>(TFN_BATTERY3, TFN_FALLBACK_BATTERY3);
@@ -719,6 +722,8 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 
 void ThemeTextures::drawBatteryImageCached() {
 	int batteryLevel = getBatteryLevel();
+	if(batteryLevel == 0 && showColon)	batteryLevel--;
+	else if(batteryLevel == 7 && showColon)	batteryLevel++;
 	if (_cachedBatteryLevel != batteryLevel) {
 		_cachedBatteryLevel = batteryLevel;
 		drawBatteryImage(batteryLevel, isDSiMode(), sys().isRegularDS());

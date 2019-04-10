@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: bug
+assignees: ''
+
+---
+
 <!---
 ##### THIS IS THE ISSUE TRACKER FOR TWiLight Menu++. For support please go to:
 ###### TWiLight Menu++ GBATemp thread: https://gbatemp.net/threads/ds-i-3ds-dsimenu-ds-i-menu-replacement.472200/
