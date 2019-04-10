@@ -145,6 +145,8 @@ int spawnedtitleboxes = 0;
 s16 usernameRendered[11] = {0};
 bool usernameRenderedDone = false;
 
+bool showColon = true;
+
 touchPosition touch;
 
 /**

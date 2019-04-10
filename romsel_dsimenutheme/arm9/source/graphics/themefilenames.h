@@ -56,11 +56,13 @@
 #define TFN_UI_RSHOULDER_GREYED     TFN_UI_DIRECTORY"/ui/Rshoulder_greyed.bmp"
 
 
+#define TFN_BATTERY0                TFN_UI_DIRECTORY"/battery/battery0.bmp"
 #define TFN_BATTERY1                TFN_UI_DIRECTORY"/battery/battery1.bmp"
 #define TFN_BATTERY2                TFN_UI_DIRECTORY"/battery/battery2.bmp"
 #define TFN_BATTERY3                TFN_UI_DIRECTORY"/battery/battery3.bmp"
 #define TFN_BATTERY4                TFN_UI_DIRECTORY"/battery/battery4.bmp"
 #define TFN_BATTERY_CHARGE          TFN_UI_DIRECTORY"/battery/batterycharge.bmp"
+#define TFN_BATTERY_CHARGE_BLINK    TFN_UI_DIRECTORY"/battery/batterychargeblink.bmp"
 #define TFN_BATTERY_FULL            TFN_UI_DIRECTORY"/battery/batteryfull.bmp"
 #define TFN_BATTERY_FULLDS          TFN_UI_DIRECTORY"/battery/batteryfullDS.bmp"
 #define TFN_BATTERY_LOW             TFN_UI_DIRECTORY"/battery/batterylow.bmp"
@@ -136,11 +138,13 @@
 #define TFN_FALLBACK_UI_RSHOULDER            TFN_FALLBACK_UI_DIRECTORY"/ui/Rshoulder.bmp"
 #define TFN_FALLBACK_UI_RSHOULDER_GREYED     TFN_FALLBACK_UI_DIRECTORY"/ui/Rshoulder_greyed.bmp"
 
+#define TFN_FALLBACK_BATTERY0                TFN_FALLBACK_UI_DIRECTORY"/battery/battery0.bmp"
 #define TFN_FALLBACK_BATTERY1                TFN_FALLBACK_UI_DIRECTORY"/battery/battery1.bmp"
 #define TFN_FALLBACK_BATTERY2                TFN_FALLBACK_UI_DIRECTORY"/battery/battery2.bmp"
 #define TFN_FALLBACK_BATTERY3                TFN_FALLBACK_UI_DIRECTORY"/battery/battery3.bmp"
 #define TFN_FALLBACK_BATTERY4                TFN_FALLBACK_UI_DIRECTORY"/battery/battery4.bmp"
 #define TFN_FALLBACK_BATTERY_CHARGE          TFN_FALLBACK_UI_DIRECTORY"/battery/batterycharge.bmp"
+#define TFN_FALLBACK_BATTERY_CHARGE_BLINK    TFN_FALLBACK_UI_DIRECTORY"/battery/batterychargeblink.bmp"
 #define TFN_FALLBACK_BATTERY_FULL            TFN_FALLBACK_UI_DIRECTORY"/battery/batteryfull.bmp"
 #define TFN_FALLBACK_BATTERY_FULLDS          TFN_FALLBACK_UI_DIRECTORY"/battery/batteryfullDS.bmp"
 #define TFN_FALLBACK_BATTERY_LOW             TFN_FALLBACK_UI_DIRECTORY"/battery/batterylow.bmp"
