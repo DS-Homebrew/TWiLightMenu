@@ -1232,7 +1232,8 @@ string browseForFile(const vector<string> extensionList) {
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		reloadFontPalettes();
-		while (!screenFadedOut()) { snd().updateStream(); }
+		while (!screenFadedOut())
+			;
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
 		fadeType = true; // Fade in from white
@@ -1554,8 +1555,8 @@ string browseForFile(const vector<string> extensionList) {
 							getDirectoryContents(dirContents[scrn], extensionList);
 							getFileInfo(scrn, dirContents, true);
 
-							while (!screenFadedOut()) { snd().updateStream(); }
-								
+							while (!screenFadedOut())
+								;
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
 							fadeType = true; // Fade in from white
@@ -1583,7 +1584,6 @@ string browseForFile(const vector<string> extensionList) {
 						sprintf(str, "%d", i);
 						gameOrder.push_back(
 						    gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-						snd().updateStream();
 						if (gameOrder[i] == "NULL" || ms().sortMethod != 3)
 							gameOrder[i] = dirContents[scrn][i].name;
 					}
@@ -1602,7 +1602,6 @@ string browseForFile(const vector<string> extensionList) {
 						sprintf(str, "%d", i);
 						if (gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
 							gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
-							snd().updateStream();
 						} else {
 							break;
 						}
@@ -1627,14 +1626,11 @@ string browseForFile(const vector<string> extensionList) {
 						char str[12] = {0};
 						sprintf(str, "%d", i);
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
-						snd().updateStream();
 					}
-					snd().updateStream();
 					gameOrderIni.SaveIniFile(gameOrderIniPath);
 
 					ms().sortMethod = 4;
 					ms().saveSettings();
-					snd().updateStream();
 
 					// getDirectoryContents(dirContents[scrn], extensionList);
 
