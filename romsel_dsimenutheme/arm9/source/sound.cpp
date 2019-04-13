@@ -161,12 +161,12 @@ SoundControl::SoundControl()
 
 	fseek(stream_source, 0, SEEK_SET);
 
-	stream.sampling_rate = 16000;	 // 16000HZ
-	stream.buffer_length = 1600;	  // should be adequate
-	stream.callback = on_stream_request; 
-	stream.format = MM_STREAM_16BIT_MONO; // select format
-	stream.timer = MM_TIMER0;	     // use timer0
-	stream.manual = false;	      // manual filling
+	stream.sampling_rate = 16000;	 		// 16000Hz
+	stream.buffer_length = 800;	  			// should be adequate
+	stream.callback = on_stream_request;    
+	stream.format = MM_STREAM_16BIT_MONO;  // select format
+	stream.timer = MM_TIMER0;	    	   // use timer0
+	stream.manual = false;	      		   // auto filling
 	
 	// Prep the first section of the stream
 	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
