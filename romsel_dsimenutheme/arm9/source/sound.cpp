@@ -28,16 +28,18 @@ extern volatile s16* play_stream_buf;
 extern volatile s16* fill_stream_buf;
 
 // Number of samples filled into the fill buffer so far.
-volatile u32 filled_samples = 0;
+extern volatile s32 filled_samples;
 
 extern volatile bool fill_requested;
-extern volatile u32 samples_left_until_next_fill;
-extern volatile u32 streaming_buf_ptr;
+extern volatile s32 samples_left_until_next_fill;
+extern volatile s32 streaming_buf_ptr;
 
 #define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
 #define REFILL_THRESHOLD STREAMING_BUF_LENGTH >> 2
 
-// extern char debug_buf[256];
+#ifdef SOUND_DEBUG
+extern char debug_buf[256];
+#endif
 
 extern volatile u32 sample_delay_count;
 
@@ -161,12 +163,12 @@ SoundControl::SoundControl()
 
 	fseek(stream_source, 0, SEEK_SET);
 
-	stream.sampling_rate = 16000;	 // 16000HZ
-	stream.buffer_length = 1600;	  // should be adequate
-	stream.callback = on_stream_request; 
-	stream.format = MM_STREAM_16BIT_MONO; // select format
-	stream.timer = MM_TIMER0;	     // use timer0
-	stream.manual = false;	      // manual filling
+	stream.sampling_rate = 16000;	 		// 16000Hz
+	stream.buffer_length = 800;	  			// should be adequate
+	stream.callback = on_stream_request;    
+	stream.format = MM_STREAM_16BIT_MONO;  // select format
+	stream.timer = MM_TIMER0;	    	   // use timer0
+	stream.manual = false;	      		   // auto filling
 	
 	// Prep the first section of the stream
 	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
@@ -209,15 +211,25 @@ void SoundControl::setStreamDelay(u32 delay) {
 	sample_delay_count = delay;
 }
 
+
 // Samples remaining in the fill buffer.
-#define SAMPLES_LEFT_TO_FILL ((STREAMING_BUF_LENGTH - filled_samples) % STREAMING_BUF_LENGTH + 1)
+#define SAMPLES_LEFT_TO_FILL (abs(STREAMING_BUF_LENGTH - filled_samples))
 
 // Samples that were already streamed and need to be refilled into the buffer.
-#define SAMPLES_TO_FILL ((streaming_buf_ptr - filled_samples) % STREAMING_BUF_LENGTH + 1)
+#define SAMPLES_TO_FILL (abs(streaming_buf_ptr - filled_samples))
 
 // Updates the background music fill buffer
 // Fill the amount of samples that were used up between the
 // last fill request and this.
+
+// Precondition Invariants:
+// filled_samples <= STREAMING_BUF_LENGTH
+// filled_samples <= streaming_buf_ptr
+
+// Postcondition Invariants:
+// filled_samples <= STREAMING_BUF_LENGTH
+// filled_samples <= streaming_buf_ptr
+// fill_requested == false
 volatile void SoundControl::updateStream() {
 	
 	if (!stream_is_playing) return;
@@ -225,36 +237,31 @@ volatile void SoundControl::updateStream() {
 			
 		// Reset the fill request
 		fill_requested = false;
-		long unsigned int instance_filled = 0;
+		int instance_filled = 0;
 
 		// Either fill the max amount, or fill up the buffer as much as possible.
-		long unsigned int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
+		int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
 
 		// If we don't read enough samples, loop from the beginning of the file.
 		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, stream_source);		
-		if (instance_filled <  instance_to_fill) {
+		if (instance_filled < instance_to_fill) {
 			fseek(stream_source, 0, SEEK_SET);
 			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
 				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
 		}
 
-		filled_samples += instance_filled;
+		#ifdef SOUND_DEBUG
+		sprintf(debug_buf, "FC: SAMPLES_LEFT_TO_FILL: %li, SAMPLES_TO_FILL: %li, instance_filled: %i, filled_samples %li, to_fill: %i", SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL, instance_filled, filled_samples, instance_to_fill);
+    	nocashMessage(debug_buf);
+		#endif
 
-		/* This part is a bit iffy. 
-		 * SAMPLES_PER_FILL is a bit of a misnomer, as it doesn't actually fill this many samples. 
-		 * Rather, this is how many samples elapse until the next fill request.
-		 * 
-		 * Setting this to SAMPLES_PER_FILL is a good approximation for when the next
-		 * chunk is needed, so we just do that.
-		 */ 
-		samples_left_until_next_fill = SAMPLES_PER_FILL;
-		
-		// Debug stuff.
-		// fill_count++;
-		// sprintf(debug_buf, "Loaded  %li samples, currently %li filled, fill number %i", instance_filled, filled_samples, fill_count);
-    	// nocashMessage(debug_buf);
+		// maintain invariant 0 < filled_samples <= STREAMING_BUF_LENGTH
+		filled_samples = std::min<s32>(filled_samples + instance_filled, STREAMING_BUF_LENGTH);
+
 	
-	} else if (filled_samples >= STREAMING_BUF_LENGTH) {
+	} else if (fill_requested && filled_samples >= STREAMING_BUF_LENGTH) {
+		// filled_samples == STREAMING_BUF_LENGTH is the only possible case
+		// but we'll keep it at gte to be safe.
 		filled_samples = 0;
 		// fill_count = 0;
 	}

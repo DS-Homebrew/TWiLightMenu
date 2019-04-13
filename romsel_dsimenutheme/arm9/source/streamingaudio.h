@@ -6,6 +6,7 @@
 #include <nds.h>
 #include <stdio.h>
 
+// #define SOUND_DEBUG
 
 #define FADE_STEPS 7                                           // Number of fill requests to fade out across when fade out is requested.
 #define STREAMING_BUF_LENGTH 96000                             // Size in samples (16 bits) => 96000 samples = 192KB * 2 buffers = 384KB RAM total.
