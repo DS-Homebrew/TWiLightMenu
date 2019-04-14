@@ -2575,7 +2575,7 @@ string browseForFile(const vector<string> extensionList) {
 					dirContName.append("...");
 				}
 				printSmall(false, 16, 64, dirContName.c_str());
-				printSmall(false, 16, 166, fileCounter);
+				printSmall(false, 16, 160, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
 				if (isDirectory[CURPOS]) {
 					if (unHide)
