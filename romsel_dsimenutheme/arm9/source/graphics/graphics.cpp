@@ -997,9 +997,9 @@ void vBlankHandler() {
 		if (ms().theme == 1) {
 			int topIconXpos = 116;
 			if (isDSiMode() && sdFound()) {
-				// for (int i = 0; i < 4; i++) {
-				topIconXpos -= 14;
-				//}
+				for (int i = 0; i < 2; i++) {
+					topIconXpos -= 14;
+				}
 				if (ms().secondaryDevice) {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[2]); // SD card
 				} else {
@@ -1009,8 +1009,8 @@ void vBlankHandler() {
 				topIconXpos += 28;
 				drawSmallIconGBA(topIconXpos, 1); // GBARunner2
 			} else {
-				// for (int i = 0; i < 3; i++) {
-				//	topIconXpos -= 14;
+				// for (int i = 0; i < 2; i++) {
+					topIconXpos -= 14;
 				//}
 				if (ms().useGbarunner) {
 					drawSmallIconGBA(topIconXpos, 1); // GBARunner2
@@ -1018,6 +1018,8 @@ void vBlankHandler() {
 					glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[3]); // GBA Mode
 				}
 			}
+			topIconXpos += 28;
+			glSprite(topIconXpos, 1, GL_FLIP_NONE, &tex().smallCartImage()[4]); // Manual
 
 			// Replace by baked-in backgrounds on 3DS.
 

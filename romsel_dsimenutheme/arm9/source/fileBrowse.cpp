@@ -581,7 +581,7 @@ void launchManual(void) {
 }
 
 void exitToSystemMenu(void) {
-snd().playLaunch();
+	snd().playLaunch();
 	controlTopBright = true;
 
 	fadeType = false;		  // Fade to white
@@ -2371,20 +2371,20 @@ string browseForFile(const vector<string> extensionList) {
 				}
 
 				int topIconXpos = 116;
-				int savedTopIconXpos[2] = {0};
+				int savedTopIconXpos[3] = {0};
 				if (isDSiMode() && sdFound()) {
-					// for (int i = 0; i < 4; i++) {
-					topIconXpos -= 14;
-					//}
 					for (int i = 0; i < 2; i++) {
+						topIconXpos -= 14;
+					}
+					for (int i = 0; i < 3; i++) {
 						savedTopIconXpos[i] = topIconXpos;
 						topIconXpos += 28;
 					}
 				} else {
-					// for (int i = 0; i < 3; i++) {
-					topIconXpos -= 14;
+					// for (int i = 0; i < 2; i++) {
+						topIconXpos -= 14;
 					//}
-					for (int i = 1; i < 2; i++) {
+					for (int i = 1; i < 3; i++) {
 						savedTopIconXpos[i] = topIconXpos;
 						topIconXpos += 28;
 					}
@@ -2408,6 +2408,12 @@ string browseForFile(const vector<string> extensionList) {
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] &&
 				    touch.px < savedTopIconXpos[1] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
 					launchGba();
+				}
+
+				// Open the manual
+				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] &&
+				    touch.px < savedTopIconXpos[2] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					launchManual();
 				}
 			}
 
