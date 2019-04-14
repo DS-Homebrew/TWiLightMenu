@@ -1001,6 +1001,19 @@ int main(int argc, char **argv) {
 				}
 			}
 
+			if ((pressed & KEY_TOUCH) && touch.px >= 236 && touch.px <= 251 && touch.py >= 3 && touch.py <= 23) {
+				// Open the manual
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+				if (sdFound()) {
+					chdir("sd:/");
+				}
+				int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, true, true);
+				iprintf ("Start failed. Error %i\n", err);
+			}
+
 			if (pressed & KEY_A) {
 				menuButtonPressed = true;
 			}
