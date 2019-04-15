@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 ##############################################################
-#####  DON'T REPORT ISSUES IN GAMES ON TWILIGHT MENU++'S  REPO  #####
+#####  DON'T REPORT ISSUES IN GAMES ON TWILIGHT MENU++'S REPO  #####
 ##############################################################
 Please report this issue here: https://github.com/ahezard/nds-bootstrap/issues/new
 ##############################################################
