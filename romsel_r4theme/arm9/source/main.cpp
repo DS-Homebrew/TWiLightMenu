@@ -623,6 +623,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"ARM",	// Mario & Luigi: Partners in Time
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
+	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
