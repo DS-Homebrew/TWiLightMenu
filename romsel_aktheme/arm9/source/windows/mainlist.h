@@ -38,6 +38,7 @@
 #define SPATH_GBARUNNER "^*::gbarunner:/"
 #define SPATH_SYSMENU "^*::sysmenu:/"
 #define SPATH_TITLEANDSETTINGS "^*::titleandsettings:/"
+#define SPATH_MANUAL "^*::manual:/"
 #define SPATH_SLOT1 "^*::slot1:/"
 #define SPATH_SYSTEMSETTINGS "^*::syssettings:/"
 

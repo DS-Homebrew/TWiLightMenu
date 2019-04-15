@@ -42,6 +42,7 @@
 #include "gbarom_banner_bin.h"
 #include "sysmenu_banner_bin.h"
 #include "settings_banner_bin.h"
+#include "manual_banner_bin.h"
 #include "folder_banner_bin.h"
 #include "nesrom_banner_bin.h"
 #include "gbcrom_banner_bin.h"
@@ -186,6 +187,8 @@ bool MainList::enterDir(const std::string &dirName)
             //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
         }
         addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+        listNum++;
+        addDirEntry(listNum, "Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
         //listNum++;
         _currentDir = SPATH_ROOT;
         directoryChanged();

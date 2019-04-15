@@ -905,6 +905,21 @@ void MainWnd::showSettings(void)
     }
 }
 
+void MainWnd::showManual(void)
+{
+    dbg_printf("Launch manual...");
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+    LoaderConfig manualLoader(TWLMENUPP_MANUAL_SRL, DSIMENUPP_INI);
+
+    if (int err = manualLoader.launch())
+    {
+        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+    }
+}
+
 void MainWnd::bootSlot1(void)
 {
     dbg_printf("Launch Slot1..\n");
@@ -1007,6 +1022,11 @@ void MainWnd::onFolderChanged()
         if (dirShowName == SPATH_TITLEANDSETTINGS)
         {
             showSettings();
+        }
+
+        if (dirShowName == SPATH_MANUAL)
+        {
+            showManual();
         }
 
         if (dirShowName == SPATH_SLOT1)

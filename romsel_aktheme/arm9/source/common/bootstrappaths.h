@@ -22,6 +22,7 @@
 #define DSIMENUPP_INI "sd:/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_INI_FC "fat:/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/settings.srldr"
+#define TWLMENUPP_MANUAL_SRL "/_nds/TWiLightMenu/manual.srldr"
 
 #define PERGAMESETTINGS_PATH "%s/_nds/TWiLightMenu/gamesettings/%s.ini"
 

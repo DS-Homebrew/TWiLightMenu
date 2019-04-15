@@ -80,6 +80,8 @@ class MainWnd : public akui::Form
 
     void showSettings(void);
 
+    void showManual(void);
+
     void bootSlot1(void);
 
     void bootGbaRunner(void);
