@@ -944,7 +944,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, 160, "SELECT/BUTTON_B Back, A: Select");
+		printSmallCentered(false, 160, "SELECT/" BUTTON_B " Back, " BUTTON_A " Select");
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
