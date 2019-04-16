@@ -623,6 +623,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"ARM",	// Mario & Luigi: Partners in Time
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
+	    "B6X", // Rockman EXE: Operate Shooting Star
 	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	};
 
