@@ -129,7 +129,7 @@ jobs:
 
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
-          git clone https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
+          git clone --depth 1 https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
           cd Builds/
           cp $(Build.ArtifactStagingDirectory)/build-devkitARM-latest/TWiLightMenu.7z TWiLightMenu.7z
           cp $(Build.ArtifactStagingDirectory)/build-devkitARM-Docker/TWiLightMenu_docker.7z TWiLightMenu_docker.7z
