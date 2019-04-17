@@ -397,6 +397,8 @@ void SetSpeedBumpExclude(const char *filename) {
 	    //"ACV", // Castlevania: Dawn of Sorrow
 	    "ARM", // Mario & Luigi: Partners in Time
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
+		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
 	    "CLJ", // Mario & Luigi: Bowser's Inside Story
 	    "B6X", // Rockman EXE: Operate Shooting Star
 	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
