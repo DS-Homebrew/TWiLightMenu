@@ -11,6 +11,7 @@
 #define SNES_ICON 0xE2
 #define MSX_ICON 0xEE
 #define COL_ICON 0xC0
+#define PLG_ICON 0xD2
 #define NDS_ICON_BANK_COUNT 7
 #define TWL_ICON_FRAMES 8
 #define TWL_TEX_HEIGHT 256

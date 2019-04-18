@@ -142,6 +142,7 @@ public:
   const Texture *iconNESTexture() { return _iconNESTexture.get(); }
   const Texture *iconSMSTexture() { return _iconSMSTexture.get(); }
   const Texture *iconSNESTexture() { return _iconSNESTexture.get(); }
+  const Texture *iconPLGTexture() { return _iconPLGTexture.get(); }
   const Texture *iconUnknownTexture() { return _iconUnknownTexture.get(); }
   
   const Texture *dateTimeFontTexture() { return _dateTimeFontTexture.get(); }
@@ -257,6 +258,7 @@ private:
   unique_ptr<Texture> _iconNESTexture;
   unique_ptr<Texture> _iconSMSTexture;
   unique_ptr<Texture> _iconSNESTexture;
+  unique_ptr<Texture> _iconPLGTexture;
   unique_ptr<Texture> _iconUnknownTexture;
 
   unique_ptr<Texture> _volume0Texture;

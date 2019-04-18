@@ -1046,7 +1046,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "plg") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "PLG")) {
-					bnrRomType[i] = 1;
+					bnrRomType[i] = 8;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;

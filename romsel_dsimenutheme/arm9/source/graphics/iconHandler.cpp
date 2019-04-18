@@ -20,8 +20,9 @@ int _smsTexID;
 int _ggTexID;
 int _mdTexID;
 int _snesTexID;
-int _msxTexID;
-int _colTexID;
+//int _msxTexID;
+//int _colTexID;
+int _plgTexID;
 
 glImage _ndsIcon[NDS_ICON_BANK_COUNT][TWL_ICON_FRAMES];
 glImage _gbaIcon[(32 / 32) * (64 / 32)];
@@ -33,6 +34,7 @@ glImage _mdIcon[1];
 glImage _snesIcon[1];
 // glImage _msxIcon[1];
 // glImage _colIcon[1];
+glImage _plgIcon[1];
 
 static u8 clearTiles[(32 * 256) / 2] = {0};
 static u16 blackPalette[16 * 8] = {0};
@@ -61,6 +63,8 @@ const glImage *getIcon(int num) {
 	    return _msxIcon;
 	if (num == COL_ICON)
 	    return _colIcon;*/
+	if (num == PLG_ICON)
+		return _plgIcon;
 	if (BAD_ICON_IDX(num) || !initialized)
 		return NULL;
 	return _ndsIcon[num];
@@ -109,6 +113,10 @@ void glLoadTileSetIntoSlot(int num, int tile_wid, int tile_hei, int bmp_wid, int
 	case SNES_ICON:
 		textureID = _snesTexID;
 		sprite = _snesIcon;
+		break;
+	case PLG_ICON:
+		textureID = _plgTexID;
+		sprite = _plgIcon;
 		break;
 	default:
 		if (BAD_ICON_IDX(num))
@@ -239,6 +247,10 @@ void glReloadIconPalette(int num) {
 		textureID = _snesTexID;
 		cachedPalette = tex().iconSNESTexture()->palette();
 		break;
+	case PLG_ICON:
+		textureID = _plgTexID;
+		cachedPalette = tex().iconPLGTexture()->palette();
+		break;
 	default:
 		if (BAD_ICON_IDX(num))
 			return;
@@ -263,6 +275,7 @@ void reloadIconPalettes() {
 	glReloadIconPalette(GG_ICON);
 	glReloadIconPalette(MD_ICON);
 	glReloadIconPalette(SNES_ICON);
+	glReloadIconPalette(PLG_ICON);
 
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
 		glReloadIconPalette(i);
@@ -307,6 +320,7 @@ void iconManagerInit() {
 	glGenTextures(1, &_ggTexID);
 	glGenTextures(1, &_mdTexID);
 	glGenTextures(1, &_snesTexID);
+	glGenTextures(1, &_plgTexID);
 
 	// Initialize empty data for the 6 textures.
 	for (int i = 0; i < NDS_ICON_BANK_COUNT; i++) {
@@ -327,6 +341,8 @@ void iconManagerInit() {
 	glLoadIcon(MD_ICON, tex().iconMDTexture()->palette(), tex().iconMDTexture()->bytes(), 32, true);
 
 	glLoadIcon(SNES_ICON, tex().iconSNESTexture()->palette(), tex().iconSNESTexture()->bytes(), 32, true);
+	
+	glLoadIcon(PLG_ICON, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes(), 32, true);
 
 	if (ms().useGbarunner) {
 		glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes(), 64,

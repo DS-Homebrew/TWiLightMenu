@@ -685,6 +685,9 @@ void vBlankHandler() {
 						 (titleboxYpos - 1) - movingAppYpos +
 						     titleboxYposDropDown[movingApp % 5],
 						 GL_FLIP_NONE, &tex().settingsImage()[1]);
+				else if (bnrRomType[movingApp] == 8)
+					drawIconPLG(112, (titleboxYpos + 12) - movingAppYpos +
+							      titleboxYposDropDown[movingApp % 5]);
 				else if (bnrRomType[movingApp] == 7)
 					drawIconSNES(112, (titleboxYpos + 12) - movingAppYpos +
 							      titleboxYposDropDown[movingApp % 5]);
@@ -830,6 +833,12 @@ void vBlankHandler() {
 									 (titleboxYpos - 1) +
 									     titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
+							else if (bnrRomType[i] == 8)
+								drawIconPLG((j * 2496 / 39) + 144 -
+										 titleboxXpos[ms().secondaryDevice] +
+										 movingAppXFix,
+									     (titleboxYpos + 12) +
+										 titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 7)
 								drawIconSNES((j * 2496 / 39) + 144 -
 										 titleboxXpos[ms().secondaryDevice] +
@@ -902,6 +911,11 @@ void vBlankHandler() {
 									 (titleboxYpos - 1) +
 									     titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
+							else if (bnrRomType[i] == 8)
+								drawIconPLG(
+								    iconXpos - titleboxXpos[ms().secondaryDevice] +
+									movecloseXpos,
+								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
 							else if (bnrRomType[i] == 7)
 								drawIconSNES(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
@@ -1038,6 +1052,8 @@ void vBlankHandler() {
 				}
 				if (bnrSysSettings[CURPOS])
 					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
+				else if (bnrRomType[CURPOS] == 8)
+					drawIconPLG(112, 96 - titleboxYmovepos);
 				else if (bnrRomType[CURPOS] == 7)
 					drawIconSNES(112, 96 - titleboxYmovepos);
 				else if (bnrRomType[CURPOS] == 6)

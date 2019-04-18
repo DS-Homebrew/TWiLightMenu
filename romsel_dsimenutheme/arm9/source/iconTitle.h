@@ -34,4 +34,5 @@ void drawIconSMS(int Xpos, int Ypos);
 void drawIconGG(int Xpos, int Ypos);
 void drawIconMD(int Xpos, int Ypos);
 void drawIconSNES(int Xpos, int Ypos);
+void drawIconPLG(int Xpos, int Ypos);
 void execDeferredIconUpdates();

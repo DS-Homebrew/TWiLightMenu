@@ -17,7 +17,7 @@ GRFOUT	:=	$(CURDIR)/$(GRF)
 BGOUT	:=	$(CURDIR)/$(BG)
 
 NAMES			:= box_empty box_full bubble cornerbutton dialogbox folder cursor
-NAMES 			+= icon_gb icon_gba icon_gbamode icon_gg icon_md icon_nes icon_settings 
+NAMES 			+= icon_gb icon_gba icon_gbamode icon_gg icon_md icon_nes icon_plg icon_settings 
 NAMES 			+= icon_sms icon_snes icon_unk progress small_cart wirelessicons
 
 BG_NAMES 		:= bottom bottom_bubble bottom_ds bottom_bubble_ds top
