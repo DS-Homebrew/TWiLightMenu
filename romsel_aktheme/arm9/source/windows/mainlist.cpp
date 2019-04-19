@@ -20,6 +20,7 @@
 
 //�
 
+#include <nds/arm9/dldi.h>
 #include <sys/dirent.h>
 #define ATTRIB_HID 0x02
 #include "mainlist.h"
@@ -44,6 +45,7 @@
 #include "settings_banner_bin.h"
 #include "manual_banner_bin.h"
 #include "folder_banner_bin.h"
+#include "ds2plg_banner_bin.h"
 #include "nesrom_banner_bin.h"
 #include "gbcrom_banner_bin.h"
 #include "gbrom_banner_bin.h"
@@ -240,6 +242,9 @@ bool MainList::enterDir(const std::string &dirName)
         extNames.push_back(".dsi");
         extNames.push_back(".argv");
     }
+	if (_showAllFiles || memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+		extNames.push_back(".plg");
+	}
     extNames.push_back(".gba");
     if (_showAllFiles || ms().showGb)
     {
@@ -348,6 +353,10 @@ bool MainList::enterDir(const std::string &dirName)
                     memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
+                }
+                else if (".plg" == extName)
+                {
+                    rominfo.setBanner("plg", ds2plg_banner_bin);
                 }
                 else if (".gb" == extName)
                 {

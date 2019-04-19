@@ -27,6 +27,7 @@
 #define PERGAMESETTINGS_PATH "%s/_nds/TWiLightMenu/gamesettings/%s.ini"
 
 #define SLOT1_SRL "/_nds/TWiLightMenu/slot1launch.srldr"
+#define BOOTPLG_SRL "/_nds/TWiLightMenu/bootplg.srldr"
 
 #define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"

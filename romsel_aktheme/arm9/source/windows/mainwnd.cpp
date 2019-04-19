@@ -49,6 +49,7 @@
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
 
+#include <nds/arm9/dldi.h>
 #include <sys/iosupport.h>
 
 using namespace akui;
@@ -776,6 +777,26 @@ void MainWnd::launchSelected()
     size_t lastDotPos = fullPath.find_last_of('.');
     if (fullPath.npos != lastDotPos)
         extension = fullPath.substr(lastDotPos);
+
+    // DSTWO Plugin Launch
+    if (extension == ".plg" && ms().secondaryDevice && memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
+    {
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
+
+		// Print .plg path without "fat:" at the beginning
+		char ROMpathDS2[256];
+		for (int i = 0; i < 252; i++) {
+			ROMpathDS2[i] = fullPath[4+i];
+			if (fullPath[4+i] == '\x00') break;
+		}
+
+		CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+		dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
+		dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+
+        bootFile(BOOTPLG_SRL, fullPath);
+	}
 
     // NES Launch
     if (extension == ".nes" || extension == ".fds")
