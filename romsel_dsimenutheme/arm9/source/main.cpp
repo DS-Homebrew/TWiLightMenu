@@ -1010,7 +1010,7 @@ int main(int argc, char **argv) {
 							swiWaitForVBlank(); // Wait 3 seconds
 						}
 						fadeType = false;	   // Fade to white
-						for (int i = 0; i < 25; i++){
+						for (int i = 0; i < 25; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -1107,8 +1107,14 @@ int main(int argc, char **argv) {
 					if (ms().useBootstrap || isDSiMode()) {
 						if (ms().secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
-							ClearBrightness();
 							printLarge(false, 4, 4, "Creating \"BTSTRP.TMP\"...");
+
+							fadeSpeed = true; // Fast fading
+							fadeType = true; // Fade in from white
+							for (int i = 0; i < 35; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1124,7 +1130,10 @@ int main(int argc, char **argv) {
 							}
 							printLarge(false, 4, 20, "Done!");
 							for (int i = 0; i < 30; i++) {
-								snd().updateStream();
+								swiWaitForVBlank();
+							}
+							fadeType = false;	   // Fade to white
+							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
 							}
 							clearText();
@@ -1141,11 +1150,18 @@ int main(int argc, char **argv) {
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
 						if (access(savepath.c_str(), F_OK) != 0 &&
-						    isHomebrew[CURPOS] == 0) { // Create save if game isn't homebrew
-							ClearBrightness();
+						    isHomebrew[CURPOS] == 0)
+						{ // Create save if game isn't homebrew
 							const char *savecreating = "Creating save file...";
 							const char *savecreated = "Save file created!";
 							printLarge(false, 4, 4, savecreating);
+
+							fadeSpeed = true; // Fast fading
+							fadeType = true; // Fade in from white
+							for (int i = 0; i < 35; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1192,6 +1208,10 @@ int main(int argc, char **argv) {
 							}
 							printLarge(false, 4, 20, savecreated);
 							for (int i = 0; i < 30; i++) {
+								swiWaitForVBlank();
+							}
+							fadeType = false;	   // Fade to white
+							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
 							}
 						}
