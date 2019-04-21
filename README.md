@@ -51,7 +51,7 @@ Come join today by following this link: https://dshomebrew.serveo.net/ ([alterna
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu.
-- [Daniel](https://github.com/XD-Daniel-XD): Loading screen for 3DS theme.
+- [Javier107](https://github.com/Javier107): Loading screen for 3DS theme.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
