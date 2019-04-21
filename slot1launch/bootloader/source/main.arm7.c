@@ -208,12 +208,20 @@ int arm7_loadBinary (void) {
 		return errorCode;
 	}
 
-	// Set memory values expected by loaded NDS	
-	*((u32*)0x027ff800) = chipID;					// CurrentCardID
-	*((u32*)0x027ff804) = chipID;					// Command10CardID
-	*((u16*)0x027ff808) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
-	*((u16*)0x027ff80a) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
-	*((u16*)0x027ffc40) = 0x1;						// Booted from card -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
+    // Set memory values expected by loaded NDS
+    // from NitroHax, thanks to Chism
+	*(u32*)(0x027ff800) = chipID;					// CurrentCardID
+	*(u32*)(0x027ff804) = chipID;					// Command10CardID
+	*(u16*)(0x027ff808) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
+	*(u16*)(0x027ff80a) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
+
+	// Copies of above
+	*(u32*)(0x027ffc00) = chipID;					// CurrentCardID
+	*(u32*)(0x027ffc04) = chipID;					// Command10CardID
+	*(u16*)(0x027ffc08) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
+	*(u16*)(0x027ffc0a) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
+
+	*(u16*)(0x027ffc40) = 0x1;						// Boot Indicator -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
 	
 	cardRead(ndsHeader->arm9romOffset, (u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize);	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
 	return ERR_NONE;
@@ -271,25 +279,6 @@ void initMBK() {
 	REG_MBK8=0x07403700; // same as dsiware
 }
 
-
-static void setMemoryAddress(const tNDSHeader* ndsHeader) {
-	u32 chipID = cardReadID(0);
-
-    // Set memory values expected by loaded NDS
-    // from NitroHax, thanks to Chism
-	*(u32*)(0x027ff800) = chipID;					// CurrentCardID
-	*(u32*)(0x027ff804) = chipID;					// Command10CardID
-	*(u16*)(0x027ff808) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
-	*(u16*)(0x027ff80a) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
-
-	// Copies of above
-	*(u32*)(0x027ffc00) = chipID;					// CurrentCardID
-	*(u32*)(0x027ffc04) = chipID;					// Command10CardID
-	*(u16*)(0x027ffc08) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]
-	*(u16*)(0x027ffc0a) = ndsHeader->secureCRC16;	// Secure Area Checksum, CRC-16 of [ [20h]..7FFFh]
-
-	*(u16*)(0x027ffc40) = 0x1;						// Boot Indicator -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
-}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Main function
@@ -362,7 +351,6 @@ void arm7_main (void) {
 		REG_SCFG_EXT &= ~(1UL << 31);
 	}
 
-    setMemoryAddress(NDS_HEAD);
 	arm7_startBinary();
 	
 	return;
