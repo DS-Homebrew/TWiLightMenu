@@ -112,16 +112,34 @@ int main() {
 		fifoWaitValue32(FIFO_USER_03);
 
 		// Wait for card to stablize before continuing
-		for (int i = 0; i < 30; i++) {  swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 	}
 
 	sysSetCardOwner (BUS_OWNER_ARM9);
 
+	/*consoleDemoInit();
+	printf ("Loaded codes\nYou can remove your flash card\nRemove DS Card\n");
+	do {
+		swiWaitForVBlank();
+		getHeader (ndsHeader);
+	} while (ndsHeader[0] != 0xffffffff);
+
+	printf ("Insert Game\n");
+	do {
+		swiWaitForVBlank();
+		getHeader (ndsHeader);
+	} while (ndsHeader[0] == 0xffffffff);
+
+	// Delay half a second for the DS card to stabilise
+	for (int i = 0; i < 30; i++) {
+		swiWaitForVBlank();
+	}
+
 	getHeader (ndsHeader);
 
-	for (int i = 0; i < 30; i++) swiWaitForVBlank();
-	
-	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
+	printf ("Finding game\n");
+
+	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);*/
 
 	while(1) {
 		if(REG_SCFG_MC == 0x11) {

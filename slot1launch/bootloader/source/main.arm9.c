@@ -281,6 +281,7 @@ void arm9_main (void) {
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
-	((void (*)())(*(u32*)(0x27FFE24)))();
+	VoidFn arm9code = *(VoidFn*)(0x27FFE24);
+	arm9code();
 }
 

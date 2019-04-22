@@ -250,7 +250,8 @@ void arm7_startBinary (void)
 	while(REG_VCOUNT==191);
 
 	// Start ARM7
-	((void (*)())(*(u32*)(0x27FFE34)))();
+	VoidFn arm7code = *(VoidFn*)(0x27FFE34);
+	arm7code();
 }
 
 
@@ -355,7 +356,7 @@ void arm7_main (void) {
 	}
 
 	arm7_startBinary();
-	
-	return;
+
+	while (1);
 }
 
