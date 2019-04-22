@@ -58,6 +58,8 @@ extern u32 twlMode;
 extern u32 twlClock;
 extern u32 runCardEngine;
 
+extern bool arm9_runCardEngine;
+
 bool gameSoftReset = false;
 
 void arm7_clearmem (void* loc, size_t len);
@@ -286,7 +288,8 @@ void initMBK() {
 void arm7_main (void) {
 	
 	if (runCardEngine) {
-		initMBK(); 
+		arm9_runCardEngine = runCardEngine;
+		initMBK();
 	}
 
 	int errorCode;

@@ -51,63 +51,69 @@ int main() {
 	int language = -1;
 
 	// If slot is powered off, tell Arm7 slot power on is required.
-	if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
-	if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
+	if (isDSiMode()) {
+		if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
+		if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
+	}
 
 	u32 ndsHeader[0x80];
 	char gameid[4];
 	
-	if (fatInitDefault()) {
-		CIniFile settingsini( settingsinipath );
+	if (isDSiMode()) {
+		if (fatInitDefault()) {
+			if (access(settingsinipath, F_OK) != 0) settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
 
-		TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
-		TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
-		runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
+			CIniFile settingsini( settingsinipath );
 
-		//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
-		//	consoleOn = true;
-		//	consoleDemoInit();
-		//}
+			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
+			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
+			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 
-		if( TWLCLK == false ) {
-			//if(settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
-			//	printf("TWL_CLOCK ON\n");		
-			//}
-			fifoSendValue32(FIFO_USER_04, 1);
-			// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
-			// setCpuClock(false);
-			REG_SCFG_CLK = 0x80;
-			swiWaitForVBlank();
-		}
-
-		if(settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0) == 1) {
 			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
-			//	printf("SD access ON\n");		
+			//	consoleOn = true;
+			//	consoleDemoInit();
 			//}
-			EnableSD = true;
-		}
-		
-		TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
 
-		if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
+			if( TWLCLK == false ) {
+				//if(settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
+				//	printf("TWL_CLOCK ON\n");		
+				//}
+				fifoSendValue32(FIFO_USER_04, 1);
+				// Disabled for now. Doesn't result in correct SCFG_CLK configuration during testing. Will go back to old method.
+				// setCpuClock(false);
+				REG_SCFG_CLK = 0x80;
+				swiWaitForVBlank();
+			}
+
+			if(settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0) == 1) {
+				//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
+				//	printf("SD access ON\n");		
+				//}
+				EnableSD = true;
+			}
+			
+			TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
+
+			if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
+				fifoSendValue32(FIFO_USER_02, 1);
+				fifoSendValue32(FIFO_USER_07, 1);
+			}
+
+			language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+
+		} else {
 			fifoSendValue32(FIFO_USER_02, 1);
 			fifoSendValue32(FIFO_USER_07, 1);
 		}
 
-		language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+		// Tell Arm7 it's ready for card reset (if card reset is nessecery)
+		fifoSendValue32(FIFO_USER_01, 1);
+		// Waits for Arm7 to finish card reset (if nessecery)
+		fifoWaitValue32(FIFO_USER_03);
 
-	} else {
-		fifoSendValue32(FIFO_USER_02, 1);
-		fifoSendValue32(FIFO_USER_07, 1);
+		// Wait for card to stablize before continuing
+		for (int i = 0; i < 30; i++) {  swiWaitForVBlank(); }
 	}
-
-	// Tell Arm7 it's ready for card reset (if card reset is nessecery)
-	fifoSendValue32(FIFO_USER_01, 1);
-	// Waits for Arm7 to finish card reset (if nessecery)
-	fifoWaitValue32(FIFO_USER_03);
-
-	// Wait for card to stablize before continuing
-	for (int i = 0; i < 30; i++) {  swiWaitForVBlank(); }
 
 	sysSetCardOwner (BUS_OWNER_ARM9);
 

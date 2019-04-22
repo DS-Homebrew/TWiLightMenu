@@ -83,17 +83,19 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
 	
-	if (TWLMODE) {
-		if (TWLVRAM) {
-			REG_SCFG_EXT=0x83002000;
+	if (isDSiMode()) {
+		if (TWLMODE) {
+			if (TWLVRAM) {
+				REG_SCFG_EXT=0x83002000;
+			} else {
+				REG_SCFG_EXT=0x83000000;
+			}
 		} else {
-			REG_SCFG_EXT=0x83000000;
-		}
-	} else {
-		if (TWLVRAM) {
-			REG_SCFG_EXT=0x03002000;
-		} else {
-			REG_SCFG_EXT=0x03000000;
+			if (TWLVRAM) {
+				REG_SCFG_EXT=0x03002000;
+			} else {
+				REG_SCFG_EXT=0x03000000;
+			}
 		}
 	}
 	
