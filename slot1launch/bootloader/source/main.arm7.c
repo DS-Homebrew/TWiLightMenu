@@ -59,6 +59,7 @@ extern u32 twlClock;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
+extern bool arm7ready;
 
 bool gameSoftReset = false;
 
@@ -291,11 +292,13 @@ void arm7_main (void) {
 		arm9_runCardEngine = runCardEngine;
 		initMBK();
 	}
+	
+	arm7ready = true;
 
 	int errorCode;
 	
 	// Wait for ARM9 to at least start
-	while (arm9_stateFlag < ARM9_START);
+	//while (arm9_stateFlag < ARM9_START);
 
 	debugOutput (ERR_STS_CLR_MEM);
 	
