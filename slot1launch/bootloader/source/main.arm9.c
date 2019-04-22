@@ -43,7 +43,6 @@
 #include "common.h"
 
 bool arm9_runCardEngine = false;
-bool arm7ready = false;
 
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
@@ -75,13 +74,26 @@ void initMBKARM9() {
 	REG_MBK8=0x07403700; // same as dsiware
 }
 
+void SetBrightness(u8 screen, s8 bright) {
+	u16 mode = 1 << 14;
+
+	if (bright < 0) {
+		mode = 2 << 14;
+		bright = -bright;
+	}
+	if (bright > 31) {
+		bright = 31;
+	}
+	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
 /*-------------------------------------------------------------------------
 arm9_errorOutput
 Displays an error code on screen.
 Written by Chishm
 --------------------------------------------------------------------------*/
-/* Re-enable for debugging
 static void arm9_errorOutput (u32 code, bool clearBG) {
+/* Re-enable for debugging
 	int i, j, k;
 	u16 colour;
 	
@@ -173,8 +185,6 @@ void arm9_main (void) {
 	WRAM_CR = 0x03;
 	REG_EXMEMCNT = 0xE880;
 
-	while (!arm7ready);
-
 	if (arm9_runCardEngine) {
 		initMBKARM9();
 	}
@@ -248,12 +258,17 @@ void arm9_main (void) {
 	VRAM_I_CR = 0;
 	REG_POWERCNT  = 0x820F;
 
+	*(u16*)0x0400006C |= BIT(14);
+	*(u16*)0x0400006C &= BIT(15);
+	SetBrightness(0, 0);
+	SetBrightness(1, 0);
+
 	// set ARM9 state to ready and wait for it to change again
 	arm9_stateFlag = ARM9_READY;
 	while ( arm9_stateFlag != ARM9_BOOTBIN ) {
 		if (arm9_stateFlag == ARM9_DISPERR) {
 			// Re-enable for debugging
-			//arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
+			arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
 			if ( arm9_stateFlag == ARM9_DISPERR) {
 				arm9_stateFlag = ARM9_READY;
 			}

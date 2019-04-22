@@ -21,7 +21,7 @@ export VERSTRING	:=	$(VERSION_MAJOR).$(VERSION_MINOR)
 #---------------------------------------------------------------------------------
 export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 
-.PHONY: cardengine_arm7 bootloader $(TARGET).arm7 $(TARGET).arm9 clean
+.PHONY: cardengine_arm7 bootloader clean arm7/$(TARGET).elf arm9/$(TARGET).elf
 
 #---------------------------------------------------------------------------------
 # main targets
