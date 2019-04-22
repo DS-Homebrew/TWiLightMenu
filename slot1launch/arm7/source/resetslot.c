@@ -21,7 +21,7 @@ int PowerOffSlot() {
 
 int TWL_ResetSlot1() {
 	PowerOffSlot();
-	for (int i = 0; i < 30; i++) {  swiWaitForVBlank(); }
+	for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 	PowerOnSlot();
 	return 0;
 }

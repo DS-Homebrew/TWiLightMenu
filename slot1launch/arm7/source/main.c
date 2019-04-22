@@ -34,12 +34,6 @@ int main(void) {
 	irqInit();
 	fifoInit();
 
-	// read User Settings from firmware
-	readUserSettings();
-
-	// Start the RTC tracking IRQ
-	initClockIRQ();
-	
 	SetYtrigger(80);
 
 	installSystemFIFO();
@@ -49,16 +43,18 @@ int main(void) {
 
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT);
 	
-	i2cWriteRegister(0x4A, 0x12, 0x00);		// Press power-button for auto-reset
-	i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
+	if (isDSiMode()) {
+		i2cWriteRegister(0x4A, 0x12, 0x00);		// Press power-button for auto-reset
+		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
 
-	// Make sure Arm9 had a chance to check slot status
-	fifoWaitValue32(FIFO_USER_01);
-	// If Arm9 reported slot is powered off, have Arm7 wait for Arm9 to be ready before card reset. This makes sure arm7 doesn't try card reset too early.
-	if(fifoCheckValue32(FIFO_USER_02)) { 
-		if(fifoCheckValue32(FIFO_USER_07)) { TWL_ResetSlot1(); } else { PowerOnSlot(); }
+		// Make sure Arm9 had a chance to check slot status
+		fifoWaitValue32(FIFO_USER_01);
+		// If Arm9 reported slot is powered off, have Arm7 wait for Arm9 to be ready before card reset. This makes sure arm7 doesn't try card reset too early.
+		if(fifoCheckValue32(FIFO_USER_02)) { 
+			if(fifoCheckValue32(FIFO_USER_07)) { TWL_ResetSlot1(); } else { PowerOnSlot(); }
+		}
+		fifoSendValue32(FIFO_USER_03, 1);
 	}
-	fifoSendValue32(FIFO_USER_03, 1);
 	
 	while (1) {
 		swiWaitForVBlank();
