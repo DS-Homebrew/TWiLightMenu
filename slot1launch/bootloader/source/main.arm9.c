@@ -92,8 +92,8 @@ arm9_errorOutput
 Displays an error code on screen.
 Written by Chishm
 --------------------------------------------------------------------------*/
-static void arm9_errorOutput (u32 code, bool clearBG) {
-/* Re-enable for debugging
+/*static void arm9_errorOutput (u32 code, bool clearBG) {
+// Re-enable for debugging
 	int i, j, k;
 	u16 colour;
 	
