@@ -394,14 +394,30 @@ void SetSpeedBumpExclude(const char *filename) {
 	ceCached = true;
 
 	static const char list[][4] = {
-	    //"ACV", // Castlevania: Dawn of Sorrow
-	    "ARM", // Mario & Luigi: Partners in Time
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"AEK",	// Age of Empires: The Age of Kings
+		"ALC",	// Animaniacs: Lights, Camera, Action!
+		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
+		"AR2",	// Kirarin * Revolution: Naasan to Issho
+		"ARM",	// Mario & Luigi: Partners in Time
+		"CLJ",	// Mario & Luigi: Bowser's Inside Story
+		"COL",	// Mario & Sonic at the Olympic Winter Games
+		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
+		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-	    "CLJ", // Mario & Luigi: Bowser's Inside Story
+		"B3R",	// Pokemon Ranger: Guardian Signs
+		"APU",	// Puyo Puyo!! 15th Anniversary
+		"BYO",	// Puyo Puyo 7
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 	    "B6X", // Rockman EXE: Operate Shooting Star
 	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
+		"ARF", // Rune Factory: A Fantasy Harvest Moon
+		"AN6", // Rune Factory 2: A Fantasy Harvest Moon
+		"AS2", // Spider-Man 2
+		"AQ3", // Spider-Man 3
+		"CS7", // Summon Night X: Tears Crown
+		"AYT", // Tales of Innocence
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
