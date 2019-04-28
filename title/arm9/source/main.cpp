@@ -27,7 +27,6 @@
 #include <variant>
 #include <string.h>
 #include <unistd.h>
-#include <maxmod9.h>
 #include "common/gl2d.h"
 
 #include "autoboot.h"
@@ -430,6 +429,22 @@ int main(int argc, char **argv)
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
+	}
+
+	if (access("sd:/", F_OK) == 0) {
+		mkdir("sd:/_nds/nds-bootstrap", 0777);
+	}
+
+	static const int BUFFER_SIZE = 4096;
+	char buffer[BUFFER_SIZE];
+	memset(buffer, 0, sizeof(buffer));
+
+	FILE *pFile = fopen("sd:/_nds/nds-bootstrap/fatTable.bin", "wb");
+	if (pFile) {
+		for (int i = 0x80200; i > 0; i -= BUFFER_SIZE) {
+			fwrite(buffer, 1, sizeof(buffer), pFile);
+		}
+		fclose(pFile);
 	}
 
 	scanKeys();
