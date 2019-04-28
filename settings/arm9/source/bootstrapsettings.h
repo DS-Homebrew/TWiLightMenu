@@ -44,6 +44,7 @@ class BootstrapSettings
     bool bstrap_debug;
 	bool bstrap_logging;
 	int bstrap_romreadled;
+	bool preciseVolumeControl;
 	int bstrap_loadingScreen;
 	bool bstrap_loadingScreenTheme;
 	bool bstrap_loadingScreenLocation;
