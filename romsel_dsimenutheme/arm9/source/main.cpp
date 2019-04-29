@@ -506,6 +506,13 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
+		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		// Does not support autoboot; so only nds-bootstrap launching works.
+		err = runNdsFile(path.c_str(), 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
 	char text[32];
