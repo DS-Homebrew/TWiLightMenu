@@ -91,6 +91,8 @@ int sysRegion = -1;
 
 int guiLanguage = -1;
 
+bool sdRemoveDetect = true;
+
 std::vector<DirEntry> manPagesList;
 std::vector<PageLink> manPageLinks;
 char manPageTitle[64] = {0};
@@ -171,6 +173,7 @@ void LoadSettings(void) {
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
+	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
 	}

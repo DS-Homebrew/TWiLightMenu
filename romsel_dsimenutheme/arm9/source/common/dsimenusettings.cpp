@@ -26,6 +26,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     guiLanguage = ELangDefault;
     colorMode = 0;
     blfLevel = 0;
+    sdRemoveDetect = true;
     useGbarunner = false;
     showMainMenu = true;
     theme = 0;
@@ -116,6 +117,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;

@@ -7,6 +7,7 @@
 #include "graphics/ThemeTextures.h"
 #include "autoboot.h"
 #include "sound.h"
+
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
@@ -73,6 +74,8 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
+	if (!ms().sdRemoveDetect) return;
+
 	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;
 		if (timeTillChangeToNonExtendedImage > 10) {

@@ -4,6 +4,8 @@
 
 #include "autoboot.h"
 
+extern bool sdRemoveDetect;
+
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
@@ -70,6 +72,8 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
+	if (!sdRemoveDetect) return;
+
 	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;
 		if (timeTillChangeToNonExtendedImage > 10) {

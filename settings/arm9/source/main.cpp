@@ -613,6 +613,14 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 				 4,
 				 5,});*/
 
+	if (isDSiMode() && sdAccessible) {
+		miscPage.option(STR_SDREMOVALDETECTION,
+				STR_DESCRIPTION_SDREMOVALDETECTION,
+				Option::Bool(&ms().sdRemoveDetect),
+				{STR_ON, STR_OFF},
+				{true, false});
+	}
+
 	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
 		miscPage.option(STR_S1SDACCESS,
 				STR_DESCRIPTION_S1SDACCESS_1,

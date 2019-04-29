@@ -135,6 +135,7 @@ bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 bool snesEmulator = true;
 
+bool sdRemoveDetect = true;
 bool useGbarunner = false;
 int theme = 0;
 int subtheme = 0;
@@ -184,6 +185,7 @@ void LoadSettings(void) {
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
+	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);

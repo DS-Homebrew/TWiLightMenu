@@ -22,6 +22,7 @@ std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 // GUI settings
 std::string STR_COLORMODE = "STR_COLORMODE";
 std::string STR_BLF = "STR_BLF";
+std::string STR_SDREMOVALDETECTION = "STR_SDREMOVALDETECTION";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_MAINMENU = "STR_MAINMENU";
 std::string STR_THEME = "STR_THEME";
@@ -53,6 +54,8 @@ std::string STR_CUSTOM = "STR_CUSTOM";
 std::string STR_DESCRIPTION_COLORMODE = "STR_DESCRIPTION_COLORMODE";
 
 std::string STR_DESCRIPTION_BLF = "STR_DESCRIPTION_BLF";
+
+std::string STR_DESCRIPTION_SDREMOVALDETECTION = "STR_DESCRIPTION_SDREMOVALDETECTION";
 
 std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
 
@@ -304,6 +307,7 @@ void langInit(void)
 	// GUI settings
 	STR_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "COLORMODE", "Color mode"));
 	STR_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BLUELIGHTFILTER", "Blue light filter"));
+	STR_SDREMOVALDETECTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SDREMOVALDETECTION", "SD removal detection"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
 	STR_MAINMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "QUICKMENU", "Quick Menu"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
@@ -335,6 +339,8 @@ void langInit(void)
 	STR_DESCRIPTION_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_COLORMODE", "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect."));
 
 	STR_DESCRIPTION_BLF = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BLF", "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect issues."));
+
+	STR_DESCRIPTION_SDREMOVALDETECTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SDREMOVALDETECTION", "Enables/Disables SD removal detection. Disable it, if an error message is shown, instead of the ROM menu."));
 
 	STR_DESCRIPTION_S1SDACCESS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes."));
 

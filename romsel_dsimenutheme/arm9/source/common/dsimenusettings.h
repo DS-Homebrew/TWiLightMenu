@@ -136,6 +136,7 @@ class DSiMenuPlusPlusSettings
     int guiLanguage;
     int colorMode;
     int blfLevel;
+    bool sdRemoveDetect;
     bool useGbarunner;
     bool showMainMenu;
     int theme;
