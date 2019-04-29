@@ -394,6 +394,7 @@ void SetSpeedBumpExclude(const char *filename) {
 	ceCached = true;
 
 	static const char list[][4] = {
+		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
@@ -418,6 +419,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"AQ3", // Spider-Man 3
 		"CS7", // Summon Night X: Tears Crown
 		"AYT", // Tales of Innocence
+		"YYK", // Trauma Center: Under the Knife 2
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().

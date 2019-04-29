@@ -140,6 +140,7 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 BootstrapConfig &BootstrapConfig::speedBumpExclude()
 {
 	static const char list[][4] = {
+		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
@@ -164,6 +165,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"AQ3", // Spider-Man 3
 		"CS7", // Summon Night X: Tears Crown
 		"AYT", // Tales of Innocence
+		"YYK", // Trauma Center: Under the Knife 2
 	};
 	for (const char *speedtid : list)
 	{
