@@ -396,7 +396,7 @@ void SetSpeedBumpExclude(const char *filename) {
 	static const char list[][4] = {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"YAH",	// Assassin's Creed: Altaï¿½r's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
@@ -514,6 +514,8 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	printLarge(false, 4, 4, text);
 	if (err == 0) {
 		printLarge(false, 4, 20, "Flashcard may be unsupported.");
+		printLarge(false, 4, 52, "Flashcard name:");
+		printLarge(false, 4, 68, io_dldi_data->friendlyName);
 	}
 	stop();
 }
