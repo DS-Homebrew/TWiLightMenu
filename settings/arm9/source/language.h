@@ -15,6 +15,7 @@ extern std::string STR_GAMESAPPS_SETTINGS;
 // GUI settings
 extern std::string STR_COLORMODE;
 extern std::string STR_BLF;
+extern std::string STR_SDREMOVALDETECTION;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
 extern std::string STR_THEME;
@@ -46,6 +47,8 @@ extern std::string STR_CUSTOM;
 extern std::string STR_DESCRIPTION_COLORMODE;
 
 extern std::string STR_DESCRIPTION_BLF;
+
+extern std::string STR_DESCRIPTION_SDREMOVALDETECTION;
 
 extern std::string STR_DESCRIPTION_S1SDACCESS_1;
 
