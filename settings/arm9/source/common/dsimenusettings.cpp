@@ -182,7 +182,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect)
+	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
