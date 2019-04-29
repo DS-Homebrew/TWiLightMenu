@@ -17,12 +17,39 @@ extern bool showdialogbox;
 extern float dbox_Ypos;
 
 
+vu16* sdRemovedExtendedImage = (vu16*)0x026C8000;
 vu16* sdRemovedImage = (vu16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 
+static int timeTillChangeToNonExtendedImage = 0;
+static bool showNonExtendedImage = false;
+
 void loadSdRemovedImage(void) {
-	FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	//FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	FILE* file = fopen("nitro:/graphics/sdRemovedError.bmp", "rb");
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
+		u16* src = tex().bmpImageBuffer();
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			sdRemovedExtendedImage[y*256+x] = tex().convertToDsBmp(val);
+			x++;
+		}
+	}
+	fclose(file);
+
+	file = fopen("nitro:/graphics/sdRemoved.bmp", "rb");
 	if (file) {
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
@@ -46,7 +73,14 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) return;
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
+		timeTillChangeToNonExtendedImage++;
+		if (timeTillChangeToNonExtendedImage > 10) {
+			showNonExtendedImage = true;
+			timeTillChangeToNonExtendedImage = 10;
+		}
+		return;
+	}
 	
 	// Show "SD removed" screen
 	rocketVideo_playVideo = false;
@@ -63,11 +97,12 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (void*)sdRemovedImage, BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
 	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 
 	while(1) {
-		scanKeys();
+		// Currently not working
+		/*scanKeys();
 		if (keysDown() & KEY_B) {
 			if (ms().consoleModel < 2 && ms().launcherApp != -1) {
 				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
@@ -97,7 +132,7 @@ void checkSdEject(void) {
 			memcpy((u32*)0x02000300, autoboot_bin, 0x020);
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
-		}
+		}*/
 		swiWaitForVBlank();
 	}
 }

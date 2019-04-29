@@ -14,12 +14,39 @@ extern int consoleModel;
 extern int launcherApp;
 
 extern u16 bmpImageBuffer[256*192];
+u16* sdRemovedExtendedImage = (u16*)0x026C8000;
 u16* sdRemovedImage = (u16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 
+static int timeTillChangeToNonExtendedImage = 0;
+static bool showNonExtendedImage = false;
+
 void loadSdRemovedImage(void) {
-	FILE* file = fopen((arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	//FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	FILE* file = fopen("nitro:/graphics/sdRemovedError.bmp", "rb");
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			sdRemovedExtendedImage[y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+	fclose(file);
+
+	file = fopen("nitro:/graphics/sdRemoved.bmp", "rb");
 	if (file) {
 		// Start loading
 		fseek(file, 0xe, SEEK_SET);
@@ -43,7 +70,14 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) return;
+	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
+		timeTillChangeToNonExtendedImage++;
+		if (timeTillChangeToNonExtendedImage > 10) {
+			showNonExtendedImage = true;
+			timeTillChangeToNonExtendedImage = 10;
+		}
+		return;
+	}
 	
 	// Show "SD removed" screen
 	mmEffectCancelAll();
@@ -53,11 +87,12 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, sdRemovedImage, BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
 	dmaFillWords(0, (u16*)BG_GFX_SUB+(256*32), 0x18000);
 
 	while(1) {
-		scanKeys();
+		// Works here, but disabled for consistency with the other themes
+		/*scanKeys();
 		if (keysDown() & KEY_B) {
 			if (consoleModel < 2 && launcherApp != -1) {
 				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
@@ -87,7 +122,7 @@ void checkSdEject(void) {
 			memcpy((u32*)0x02000300, autoboot_bin, 0x020);
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
-		}
+		}*/
 		swiWaitForVBlank();
 	}
 }
