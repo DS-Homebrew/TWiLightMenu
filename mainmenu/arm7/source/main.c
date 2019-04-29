@@ -61,10 +61,6 @@ void changeBacklightLevel() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_04) == 1) {
-		changeBacklightLevel();
-		fifoSendValue32(FIFO_USER_04, 0);
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -137,6 +133,10 @@ int main() {
 		}
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+		if(fifoGetValue32(FIFO_USER_04) == 1) {
+			changeBacklightLevel();
+			fifoSendValue32(FIFO_USER_04, 0);
 		}
 		swiWaitForVBlank();
 	}
