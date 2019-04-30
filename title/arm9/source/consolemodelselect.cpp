@@ -13,6 +13,8 @@ extern bool controlTopBright;
 
 void LoadConsoleBMP(int consoleModel) {
 	FILE* file;
+	int language = (ms().getGuiLanguage());
+
 	switch (consoleModel) {
 		case 0:
 		default:
@@ -50,21 +52,41 @@ void LoadConsoleBMP(int consoleModel) {
 	}
 
 	fclose(file);
-	
-	switch (consoleModel) {
-		case 0:
-		default:
-			file = fopen("nitro:/graphics/consoleseltext_dsi.bmp", "rb");
-			break;
-		case 1:
-			file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
-			break;
-		case 2:
-			file = fopen("nitro:/graphics/consoleseltext_o3ds.bmp", "rb");
-			break;
-		case 3:
-			file = fopen("nitro:/graphics/consoleseltext_n3ds.bmp", "rb");
-			break;
+
+	//if french
+	if (language == 2){
+		switch (consoleModel) {
+			case 0:
+			default:
+				file = fopen("nitro:/graphics/consoleseltext_dsi-fr.bmp", "rb");
+				break;
+			case 1:
+				file = fopen("nitro:/graphics/consoleseltext_devdsi-fr.bmp", "rb");
+				break;
+			case 2:
+				file = fopen("nitro:/graphics/consoleseltext_o3ds-fr.bmp", "rb");
+				break;
+			case 3:
+				file = fopen("nitro:/graphics/consoleseltext_n3ds-fr.bmp", "rb");
+				break;
+		}
+	}
+	else {
+		switch (consoleModel) {
+			case 0:
+			default:
+				file = fopen("nitro:/graphics/consoleseltext_dsi.bmp", "rb");
+				break;
+			case 1:
+				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
+				break;
+			case 2:
+				file = fopen("nitro:/graphics/consoleseltext_o3ds.bmp", "rb");
+				break;
+			case 3:
+				file = fopen("nitro:/graphics/consoleseltext_n3ds.bmp", "rb");
+				break;
+		}
 	}
 
 	if (file) {
@@ -88,7 +110,7 @@ void LoadConsoleBMP(int consoleModel) {
 	}
 
 	fclose(file);
-	
+
 }
 
 bool consoleModel_isSure(void) {
@@ -100,7 +122,17 @@ bool consoleModel_isSure(void) {
 		swiWaitForVBlank();
 	}
 
-	FILE* file = fopen("nitro:/graphics/consoleseltext_areyousure.bmp", "rb");
+	//Get the language for the splash screen
+	int language = (ms().getGuiLanguage());
+	FILE* file;
+
+	//If not french, then fallback to english
+	if(language == 2){
+		file = fopen("nitro:/graphics/consoleseltext_areyousure-fr.bmp", "rb");
+	}
+	else {
+		file = fopen("nitro:/graphics/consoleseltext_areyousure.bmp", "rb");
+	}
 
 	if (file) {
 		// Start loading
