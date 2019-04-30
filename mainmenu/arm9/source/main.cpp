@@ -608,7 +608,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"YAH",	// Assassin's Creed: Altaï¿½r's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
@@ -768,79 +768,41 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	}
 	std::string path;
 	int err = 0;
-	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)
-	{
+	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	}
-	else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0)
-	{
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	}
-	else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
-	{
+		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
+		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		// Does not support autoboot; so only nds-bootstrap launching works.
+		err = runNdsFile(path.c_str(), 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
-	/*switch (flashcard) {
-		case 0:
-		case 1:
-		default: {
-			CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-			path = ReplaceAll(ndsPath, "fat:/", slashchar);
-			fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
-			fcrompathini.SetString("YSMENU", "DEFAULT_DMA", "true");
-			fcrompathini.SetString("YSMENU", "DEFAULT_RESET", "false");
-			fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
-			err = runNdsFile ("fat:/YSMenu.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
 
-		case 2:
-		case 4:
-		case 5: {
-			CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-			err = runNdsFile ("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 3: {
-			CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-			path = ReplaceAll(ndsPath, "fat:/", woodfat);
-			fcrompathini.SetString("Save Info", "lastLoaded", path);
-			fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-			err = runNdsFile ("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-
-		case 6: {
-			CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-			path = ReplaceAll(ndsPath, "fat:/", dstwofat);
-			fcrompathini.SetString("Dir Info", "fullName", path);
-			fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-			err = runNdsFile ("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-			break;
-		}
-	}*/
 	char text[32];
-	snprintf (text, sizeof(text), "Start failed. Error %i", err);
+	snprintf(text, sizeof(text), "Start failed. Error %i", err);
 	ClearBrightness();
-	printSmall(false, 4, 80, text);
+	printLarge(false, 4, 4, text);
 	if (err == 0) {
-		printSmall(false, 4, 88, "Flashcard may be unsupported.");
+		printLarge(false, 4, 20, "Flashcard may be unsupported.");
+		printLarge(false, 4, 52, "Flashcard name:");
+		printLarge(false, 4, 68, io_dldi_data->friendlyName);
 	}
 	stop();
 }

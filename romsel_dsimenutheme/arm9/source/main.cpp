@@ -397,7 +397,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"YAH",	// Assassin's Creed: Altaï¿½r's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
@@ -508,6 +508,13 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
+		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		fcrompathini.SetString("Save Info", "lastLoaded", path);
+		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		// Does not support autoboot; so only nds-bootstrap launching works.
+		err = runNdsFile(path.c_str(), 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
 	char text[32];
@@ -516,6 +523,8 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	printLarge(false, 4, 4, text);
 	if (err == 0) {
 		printLarge(false, 4, 20, "Flashcard may be unsupported.");
+		printLarge(false, 4, 52, "Flashcard name:");
+		printLarge(false, 4, 68, io_dldi_data->friendlyName);
 	}
 	stop();
 }
