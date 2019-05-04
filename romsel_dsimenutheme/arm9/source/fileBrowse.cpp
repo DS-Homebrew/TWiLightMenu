@@ -2278,11 +2278,23 @@ string browseForFile(const vector<string> extensionList) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
-						
+
 						mmEffectCancelAll();
 						snd().stopStream();
 
-						clearText(true);
+						// Clear screen with white
+						rocketVideo_playVideo = false;
+						whiteScreen = true;
+						clearText();
+						tex().clearTopScreen();
+
+						printLargeCentered(false, 88, "Now Saving...");
+						fadeSpeed = true; // Fast fading
+						fadeType = true; // Fade in from white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
+						showProgressIcon = true;
 
 						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 				      0777);
@@ -2347,8 +2359,14 @@ string browseForFile(const vector<string> extensionList) {
 
 						if(ms().sortMethod == 1) {
 							ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
-							ms().saveSettings();
 						}
+
+						showProgressIcon = false;
+						fadeType = false;	   // Fade to white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
+						clearText();
 
 						// Return the chosen file
 						return entry->name;

@@ -810,13 +810,6 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			// Clear screen with white
-			extern bool rocketVideo_playVideo;
-			rocketVideo_playVideo = false;
-			whiteScreen = true;
-			clearText();
-			tex().clearTopScreen();
-
 			// Delete previously used DSiWare of flashcard from SD
 			if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice &&
 			    bothSDandFlashcard()) {
@@ -894,7 +887,6 @@ int main(int argc, char **argv) {
 				ms().launchType = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
-				// SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
 
@@ -906,17 +898,15 @@ int main(int argc, char **argv) {
 				fadeSpeed = true; // Fast fading
 
 				if ((access(ms().dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
-					const char *savecreating = "Creating public save file...";
-					const char *savecreated = "Public save file created!";
 					clearText();
-					printLarge(false, 4, 4, savecreating);
+					printLargeCentered(false, 88, "Creating public save file...");
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
-							snd().updateStream();
 							swiWaitForVBlank();
 						}
 					}
+					showProgressIcon = true;
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -941,25 +931,24 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printLarge(false, 4, 20, savecreated);
+					showProgressIcon = false;
+					clearText();
+					printLargeCentered(false, 88, "Public save file created!");
 					for (int i = 0; i < 60; i++) {
-						snd().updateStream();
 						swiWaitForVBlank();
 					}
 				}
 
 				if ((access(ms().dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
-					const char *savecreating = "Creating private save file...";
-					const char *savecreated = "Private save file created!";
 					clearText();
-					printLarge(false, 4, 4, savecreating);
+					printLargeCentered(false, 88, "Creating private save file...");
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
-							snd().updateStream();
 							swiWaitForVBlank();
 						}
 					}
+					showProgressIcon = true;
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -984,9 +973,10 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printLarge(false, 4, 20, savecreated);
+					showProgressIcon = false;
+					clearText();
+					printLargeCentered(false, 88, "Private save file created!");
 					for (int i = 0; i < 60; i++) {
-						snd().updateStream();
 						swiWaitForVBlank();
 					}
 				}
@@ -994,7 +984,6 @@ int main(int argc, char **argv) {
 				if (fadeType) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 25; i++) {
-						snd().updateStream();
 						swiWaitForVBlank();
 					}
 				}
@@ -1005,7 +994,6 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 104, "Do not turn off the power.");
 					fadeType = true; // Fade in from white
 					for (int i = 0; i < 35; i++) {
-						snd().updateStream();
 						swiWaitForVBlank();
 					}
 					showProgressIcon = true;
@@ -1021,24 +1009,21 @@ int main(int argc, char **argv) {
 					showProgressIcon = false;
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 25; i++) {
-						snd().updateStream();
 						swiWaitForVBlank();
 					}
 
 					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0 ||
 					    access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
 						clearText();
-						printLarge(false, 4, 64, "After saving, please re-start");
-						printLarge(false, 4, 80, "TWiLight Menu++ to transfer your");
-						printLarge(false, 4, 96, "save data back.");
+						printLargeCentered(false, 64, "After saving, please re-start");
+						printLargeCentered(false, 80, "TWiLight Menu++ to transfer your");
+						printLargeCentered(false, 96, "save data back.");
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 60 * 3; i++) {
-							snd().updateStream();
 							swiWaitForVBlank(); // Wait 3 seconds
 						}
 						fadeType = false;	   // Fade to white
 						for (int i = 0; i < 25; i++) {
-							snd().updateStream();
 							swiWaitForVBlank();
 						}
 					}
@@ -1139,9 +1124,9 @@ int main(int argc, char **argv) {
 							fadeSpeed = true; // Fast fading
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 35; i++) {
-								snd().updateStream();
 								swiWaitForVBlank();
 							}
+							showProgressIcon = true;
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1155,6 +1140,7 @@ int main(int argc, char **argv) {
 								}
 								fclose(pFile);
 							}
+							showProgressIcon = false;
 							printLarge(false, 4, 20, "Done!");
 							for (int i = 0; i < 30; i++) {
 								swiWaitForVBlank();
@@ -1179,16 +1165,14 @@ int main(int argc, char **argv) {
 						if (access(savepath.c_str(), F_OK) != 0 &&
 						    isHomebrew[CURPOS] == 0)
 						{ // Create save if game isn't homebrew
-							const char *savecreating = "Creating save file...";
-							const char *savecreated = "Save file created!";
-							printLarge(false, 4, 4, savecreating);
+							printLargeCentered(false, 88, "Creating save file...");
 
 							fadeSpeed = true; // Fast fading
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 35; i++) {
-								snd().updateStream();
 								swiWaitForVBlank();
 							}
+							showProgressIcon = true;
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1233,7 +1217,9 @@ int main(int argc, char **argv) {
 								}
 								fclose(pFile);
 							}
-							printLarge(false, 4, 20, savecreated);
+							showProgressIcon = false;
+							clearText();
+							printLargeCentered(false, 88, "Save file created!");
 							for (int i = 0; i < 30; i++) {
 								swiWaitForVBlank();
 							}
@@ -1241,6 +1227,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
 							}
+							clearText();
 						}
 
 						SetDonorSDK(argarray[0]);
@@ -1337,12 +1324,7 @@ int main(int argc, char **argv) {
 						}
 
 						bootstrapini.SaveIniFile(bootstrapinipath);
-						if (!isArgv) {
-							ms().romPath = argarray[0];
-						}
-						ms().launchType = Launch::ESDFlashcardLaunch; // 1
-						ms().previousUsedDevice = ms().secondaryDevice;
-						ms().saveSettings();
+
 						if (ms().secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (ms().homebrewBootstrap) {
@@ -1438,7 +1420,6 @@ int main(int argc, char **argv) {
 						ms().launchType = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
-						// SaveSettings();
 						loadGameOnFlashcard(argarray[0], filename, true);
 					}
 				} else {
