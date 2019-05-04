@@ -1325,6 +1325,13 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
+						if (!isArgv) {
+							ms().romPath = argarray[0];
+						}
+						ms().launchType = Launch::ESDFlashcardLaunch; // 1
+						ms().previousUsedDevice = ms().secondaryDevice;
+						ms().saveSettings();
+
 						if (ms().secondaryDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (ms().homebrewBootstrap) {
