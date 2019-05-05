@@ -385,7 +385,6 @@ void SetSpeedBumpExclude(const char *filename) {
 	char game_TID[5];
 	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
-	game_TID[4] = 0;
 	fclose(f_nds_file);
 
 	scanKeys();
@@ -393,8 +392,20 @@ void SetSpeedBumpExclude(const char *filename) {
 
 	ceCached = true;
 
-	static const char list[][4] = {
-		"AWR",	// Advance Wars: Dual Strike
+	static const char list[][5] = {
+		"AWRP",	// Advance Wars: Dual Strike (EUR)
+	};
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
+		if (memcmp(game_TID, list[i], 4) == 0) {
+			// Found a match.
+			ceCached = false;
+			break;
+		}
+	}
+
+	static const char list2[][4] = {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Alta�r's Chronicles
@@ -424,8 +435,8 @@ void SetSpeedBumpExclude(const char *filename) {
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		if (memcmp(game_TID, list[i], 3) == 0) {
+	for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
+		if (memcmp(game_TID, list2[i], 3) == 0) {
 			// Found a match.
 			ceCached = false;
 			break;

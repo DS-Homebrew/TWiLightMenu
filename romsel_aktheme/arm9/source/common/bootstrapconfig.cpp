@@ -139,8 +139,18 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude()
 {
-	static const char list[][4] = {
-		"AWR",	// Advance Wars: Dual Strike
+	static const char list[][5] = {
+		"AWRP",	// Advance Wars: Dual Strike (EUR)
+	};
+	for (const char *speedtid : list)
+	{
+		if (strncmp(speedtid, _gametid.c_str(), 4) == 0)
+		{
+			return ceCached(false);
+		}
+	}
+
+	static const char list2[][4] = {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
@@ -168,7 +178,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"AYT", // Tales of Innocence
 		"YYK", // Trauma Center: Under the Knife 2
 	};
-	for (const char *speedtid : list)
+	for (const char *speedtid : list2)
 	{
 		if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
 		{
