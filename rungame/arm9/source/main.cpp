@@ -33,6 +33,7 @@
 #include "inifile.h"
 
 #include "perGameSettings.h"
+#include "fileCopy.h"
 
 const char* settingsinipath = "/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -184,7 +185,7 @@ TWL_CODE int lastRunROM() {
 			mkdir ("saves", 0777);
 			std::string savepath = romFolderNoSlash+"/saves/"+savename;
 
-			if ((access(savepath.c_str(), F_OK) != 0) && (strcmp(game_TID, "###") != 0)) {
+			if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
 				consoleDemoInit();
 				printf("Creating save file...\n");
 

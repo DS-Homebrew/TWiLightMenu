@@ -1293,7 +1293,7 @@ int main(int argc, char **argv) {
 
 				whiteScreen = true;
 
-				if ((access(dsiWarePubPath.c_str(), F_OK) != 0) && (NDSHeader.pubSavSize > 0)) {
+				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating public save file...";
@@ -1325,7 +1325,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
-				if ((access(dsiWarePrvPath.c_str(), F_OK) != 0) && (NDSHeader.prvSavSize > 0)) {
+				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
 					ClearBrightness();
 					const char* savecreate = "Creating private save file...";
@@ -1489,7 +1489,7 @@ int main(int argc, char **argv) {
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (access(savepath.c_str(), F_OK) && isHomebrew == 0) {	// Create save if game isn't homebrew
+						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
 							const char* savecreate = "Creating save file...";
