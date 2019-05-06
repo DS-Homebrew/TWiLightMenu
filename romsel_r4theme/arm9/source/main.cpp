@@ -607,6 +607,14 @@ void SetMPUSettings(const char* filename) {
  * Exclude moving nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
+	scanKeys();
+	if(keysHeld() & KEY_L){
+		ceCached = false;
+		return;
+	}
+
+	ceCached = true;
+
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
@@ -614,13 +622,9 @@ void SetSpeedBumpExclude(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
-	scanKeys();
-	int pressed = keysHeld();
-	
-	ceCached = true;
-
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
+		"AVCP",	// Magical Starsign (EUR)
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -668,10 +672,6 @@ void SetSpeedBumpExclude(const char* filename) {
 			ceCached = false;
 			break;
 		}
-	}
-
-	if(pressed & KEY_L){
-		ceCached = false;
 	}
 }
 

@@ -139,8 +139,14 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude()
 {
+	scanKeys();
+	if(keysHeld() & KEY_L){
+		return ceCached(false);
+	}
+
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
+		"AVCP",	// Magical Starsign (EUR)
 	};
 	for (const char *speedtid : list)
 	{
