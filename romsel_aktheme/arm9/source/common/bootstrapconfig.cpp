@@ -147,6 +147,8 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"AVCP",	// Magical Starsign (EUR)
+		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
+		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 	};
 	for (const char *speedtid : list)
 	{

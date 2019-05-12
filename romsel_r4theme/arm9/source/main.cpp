@@ -489,45 +489,44 @@ void SetDonorSDK(const char* filename) {
  * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
  */
 void SetGameSoftReset(const char* filename) {
+	scanKeys();
+	if(keysHeld() & KEY_R){
+		gameSoftReset = true;
+		return;
+	}
+
 	FILE *f_nds_file = fopen(filename, "rb");
 
-	char game_TID[5];
+	char game_TID[5] = {0};
 	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
 
-	scanKeys();
-	int pressed = keysHeld();
-	
 	gameSoftReset = false;
 
 	// Check for games that have it's own reset function (OS_Reset not used).
 	static const char list[][4] = {
-		"NTR",	// Download Play ROMs
-		"ASM",	// Super Mario 64 DS
-		"SMS",	// Super Mario Star World, and Mario's Holiday
-		"AMC",	// Mario Kart DS
-		"EKD",	// Ermii Kart DS
-		"A2D",	// New Super Mario Bros.
-		"ARZ",	// Rockman ZX/MegaMan ZX
-		"AKW",	// Kirby Squeak Squad/Mouse Attack
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+	    "NTR", // Download Play ROMs
+	    "ASM", // Super Mario 64 DS
+	    "SMS", // Super Mario Star World, and Mario's Holiday
+	    "AMC", // Mario Kart DS
+	    "EKD", // Ermii Kart DS
+	    "A2D", // New Super Mario Bros.
+	    "ARZ", // Rockman ZX/MegaMan ZX
+	    "AKW", // Kirby Squeak Squad/Mouse Attack
+	    "YZX", // Rockman ZX Advent/MegaMan ZX Advent
+	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
-		if (!memcmp(game_TID, list[i], 3)) {
+	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
+		if (memcmp(game_TID, list[i], 3) == 0) {
 			// Found a match.
 			gameSoftReset = true;
 			break;
 		}
-	}
-
-	if(pressed & KEY_R){
-		gameSoftReset = true;
 	}
 }
 
@@ -625,6 +624,8 @@ void SetSpeedBumpExclude(const char* filename) {
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"AVCP",	// Magical Starsign (EUR)
+		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
+		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().

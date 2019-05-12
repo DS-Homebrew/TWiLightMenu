@@ -262,6 +262,12 @@ void SetDonorSDK(const char *filename) {
  * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
  */
 void SetGameSoftReset(const char *filename) {
+	scanKeys();
+	if(keysHeld() & KEY_R){
+		gameSoftReset = true;
+		return;
+	}
+
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5] = {0};
@@ -270,9 +276,6 @@ void SetGameSoftReset(const char *filename) {
 	game_TID[4] = 0;
 	game_TID[3] = 0;
 	fclose(f_nds_file);
-
-	scanKeys();
-	int pressed = keysHeld();
 
 	gameSoftReset = false;
 
@@ -292,15 +295,11 @@ void SetGameSoftReset(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		if (!memcmp(game_TID, list[i], 3)) {
+		if (memcmp(game_TID, list[i], 3) == 0) {
 			// Found a match.
 			gameSoftReset = true;
 			break;
 		}
-	}
-
-	if (pressed & KEY_R) {
-		gameSoftReset = true;
 	}
 }
 
@@ -398,6 +397,8 @@ void SetSpeedBumpExclude(const char *filename) {
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"AVCP",	// Magical Starsign (EUR)
+		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
+		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
