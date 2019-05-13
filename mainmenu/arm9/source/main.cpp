@@ -2045,7 +2045,7 @@ int main(int argc, char **argv) {
 										fputs(codelist.getCheats().c_str(), cheatData);
 									}
 									fclose(cheatData);
-									truncate("test.bin",0x8000);
+									truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
 									fclose(dat);
 								}
 							}

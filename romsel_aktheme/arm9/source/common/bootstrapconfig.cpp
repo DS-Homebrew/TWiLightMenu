@@ -161,7 +161,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 	static const char list2[][4] = {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Alta�r's Chronicles
+		"YAH",	// Assassin's Creed: Altaïr's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
@@ -443,27 +443,23 @@ void BootstrapConfig::loadCheats()
         FILE* dat=fopen(SFN_CHEATS,"rb");
         if(dat)
         {
+					FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					memset(buffer, 0, sizeof(buffer));
+					for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
+						fwrite(buffer, 1, sizeof(buffer), cheatData);
+					}
           if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
           {
+						fseek(cheatData, 0, SEEK_SET);
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
 
-						FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
-						static const int BUFFER_SIZE = 4096;
-						char buffer[BUFFER_SIZE];
-						memset(buffer, 0, sizeof(buffer));
-						for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), cheatData);
-						}
-						fseek(cheatData, 0, SEEK_SET);
-						if (chtwnd.searchCheatData(dat, gameCode,
-												crc32, cheatOffset,
-												cheatSize)) {
-							chtwnd.parse(_fullPath);
-							fputs(chtwnd.getCheats().c_str(), cheatData);
-						}
-						fclose(cheatData);
-						truncate("test.bin",0x8000);
+						chtwnd.parse(_fullPath);
+						fputs(chtwnd.getCheats().c_str(), cheatData);
           }
+					fclose(cheatData);
+					truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
           fclose(dat);
         }
       }
