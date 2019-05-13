@@ -1320,15 +1320,21 @@ int main(int argc, char **argv) {
 								    "rb");
 								if (dat) {
 									FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
+									static const int BUFFER_SIZE = 4096;
+									char buffer[4096];
+									toncset(buffer, 0, sizeof(buffer));
+									for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
+										fwrite(buffer, 1, sizeof(buffer), cheatData);
+									}
+									fseek(cheatData, 0, SEEK_SET);
 									if (codelist.searchCheatData(dat, gameCode,
 												     crc32, cheatOffset,
 												     cheatSize)) {
 										codelist.parse(path);
 										fputs(codelist.getCheats().c_str(), cheatData);
-									} else {
-										fputs("", cheatData);
 									}
 									fclose(cheatData);
+									truncate("test.bin",0x8000);
 									fclose(dat);
 								}
 							}
