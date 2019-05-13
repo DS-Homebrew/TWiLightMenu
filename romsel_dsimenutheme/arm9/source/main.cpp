@@ -1319,18 +1319,16 @@ int main(int argc, char **argv) {
 									: "fat:/_nds/TWiLightMenu/extras/usrcheat.dat",
 								    "rb");
 								if (dat) {
+									FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
 									if (codelist.searchCheatData(dat, gameCode,
 												     crc32, cheatOffset,
 												     cheatSize)) {
 										codelist.parse(path);
-										bootstrapini.SetString(
-										    "NDS-BOOTSTRAP", "CHEAT_DATA",
-										    codelist.getCheats());
+										fputs(codelist.getCheats().c_str(), cheatData);
 									} else {
-										bootstrapini.SetString(
-											"NDS-BOOTSTRAP", "CHEAT_DATA",
-											"");
+										fputs("", cheatData);
 									}
+									fclose(cheatData);
 									fclose(dat);
 								}
 							}
