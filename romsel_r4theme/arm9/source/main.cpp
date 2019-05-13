@@ -1593,13 +1593,23 @@ int main(int argc, char **argv) {
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
-								if(dat) {
-									if(codelist.searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize)) {
-										codelist.parse(path);
-										bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", codelist.getCheats());
-									} else {
-										bootstrapini.SetString("NDS-BOOTSTRAP", "CHEAT_DATA", "");
+								if (dat) {
+									FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
+									static const int BUFFER_SIZE = 4096;
+									char buffer[BUFFER_SIZE];
+									memset(buffer, 0, sizeof(buffer));
+									for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
+										fwrite(buffer, 1, sizeof(buffer), cheatData);
 									}
+									fseek(cheatData, 0, SEEK_SET);
+									if (codelist.searchCheatData(dat, gameCode,
+												     crc32, cheatOffset,
+												     cheatSize)) {
+										codelist.parse(path);
+										fputs(codelist.getCheats().c_str(), cheatData);
+									}
+									fclose(cheatData);
+									truncate("test.bin",0x8000);
 									fclose(dat);
 								}
 							}

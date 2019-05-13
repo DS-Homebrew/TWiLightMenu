@@ -161,7 +161,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 	static const char list2[][4] = {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"YAH",	// Assassin's Creed: Altaï¿½r's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
@@ -446,8 +446,23 @@ void BootstrapConfig::loadCheats()
           if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
           {
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
-						chtwnd.parse(_fullPath);
-						_cheatData = chtwnd.getCheats();
+
+						FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
+						static const int BUFFER_SIZE = 4096;
+						char buffer[BUFFER_SIZE];
+						memset(buffer, 0, sizeof(buffer));
+						for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
+							fwrite(buffer, 1, sizeof(buffer), cheatData);
+						}
+						fseek(cheatData, 0, SEEK_SET);
+						if (chtwnd.searchCheatData(dat, gameCode,
+												crc32, cheatOffset,
+												cheatSize)) {
+							chtwnd.parse(_fullPath);
+							fputs(chtwnd.getCheats().c_str(), cheatData);
+						}
+						fclose(cheatData);
+						truncate("test.bin",0x8000);
           }
           fclose(dat);
         }
@@ -528,8 +543,7 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_REGION", _mpuRegion)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", _mpuSize)
 		.option("NDS-BOOTSTRAP", "CARDENGINE_CACHED", _ceCached)
-		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch)
-		.option("NDS-BOOTSTRAP", "CHEAT_DATA", _cheatData);
+		.option("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", _forceSleepPatch);
 
 	if (_configSavedHandler)
 		_configSavedHandler();

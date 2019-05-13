@@ -1321,7 +1321,7 @@ int main(int argc, char **argv) {
 								if (dat) {
 									FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
 									static const int BUFFER_SIZE = 4096;
-									char buffer[4096];
+									char buffer[BUFFER_SIZE];
 									toncset(buffer, 0, sizeof(buffer));
 									for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
 										fwrite(buffer, 1, sizeof(buffer), cheatData);
