@@ -443,23 +443,16 @@ void BootstrapConfig::loadCheats()
         FILE* dat=fopen(SFN_CHEATS,"rb");
         if(dat)
         {
-					FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
-					static const int BUFFER_SIZE = 4096;
-					char buffer[BUFFER_SIZE];
-					memset(buffer, 0, sizeof(buffer));
-					for (int i = 0x8000; i > 0; i -= BUFFER_SIZE) {
-						fwrite(buffer, 1, sizeof(buffer), cheatData);
-					}
           if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
           {
-						fseek(cheatData, 0, SEEK_SET);
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
 
 						chtwnd.parse(_fullPath);
+						FILE *cheatData = fopen(SFN_CHEAT_DATA, "wb");
 						fputs(chtwnd.getCheats().c_str(), cheatData);
+						fclose(cheatData);
           }
-					fclose(cheatData);
-					truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
+					truncate(SFN_CHEAT_DATA, 0x8000);
           fclose(dat);
         }
       }
