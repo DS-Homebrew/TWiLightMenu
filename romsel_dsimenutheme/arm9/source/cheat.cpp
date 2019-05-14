@@ -239,6 +239,7 @@ std::string CheatCodelist::getCheats()
 void CheatCodelist::selectCheats(std::string filename)
 {
 	int pressed = 0;
+	int held = 0;
 
 	clearText();
 
@@ -326,6 +327,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	do {
 		scanKeys();
 		pressed = keysDown();
+		held = keysDownRepeat();
 		checkSdEject();
 		tex().drawVolumeImageCached();
 		tex().drawBatteryImageCached();
@@ -334,13 +336,13 @@ void CheatCodelist::selectCheats(std::string filename)
 		drawClockColon();
     snd().updateStream();
 		swiWaitForVBlank();
-	} while (!pressed);
-    if(pressed & KEY_UP) {
+	} while (!pressed && !held);
+    if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
       }
     }
-    if(pressed & KEY_DOWN) {
+    if(held & KEY_DOWN) {
       if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
         cheatWnd_cursorPosition++;
       }
