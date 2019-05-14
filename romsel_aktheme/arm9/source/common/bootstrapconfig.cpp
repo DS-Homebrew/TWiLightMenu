@@ -437,6 +437,7 @@ void BootstrapConfig::loadCheats()
 {
 	u32 gameCode,crc32;
 	
+	mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 	if(CheatWnd::romData(_fullPath,gameCode,crc32))
       {
 				long cheatOffset; size_t cheatSize;
@@ -453,7 +454,9 @@ void BootstrapConfig::loadCheats()
 					truncate(SFN_CHEAT_DATA, 0x8000);
           fclose(dat);
         }
-      }
+      } else {
+	    remove(SFN_CHEATS);
+	  }
 }
 
 int BootstrapConfig::launch()
