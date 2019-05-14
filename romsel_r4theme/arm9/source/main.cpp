@@ -957,7 +957,6 @@ int main(int argc, char **argv) {
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
 	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
 	{
-		SetBrightness(1, 31);
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
