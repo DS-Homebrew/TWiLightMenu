@@ -543,6 +543,6 @@ void CheatWnd::writeCheatsToFile(std::string data, const char* path) {
     data = data.substr(data.find(" ")+1);
     if((int)data.find(" ") == -1) break;
   }
-  fs.write("\0\0\0Ï", 4);
+  fs.write("\0\0\0\xCF", 4);
   fs.close();
 }
