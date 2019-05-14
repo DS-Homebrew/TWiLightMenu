@@ -2027,6 +2027,8 @@ int main(int argc, char **argv) {
 						u32 gameCode,crc32;
 
 						if (isHomebrew == 0) {
+							bool cheatsEnabled = true;
+							const char* cheatDataBin = (sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
 							mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
@@ -2036,13 +2038,30 @@ int main(int argc, char **argv) {
 												     crc32, cheatOffset,
 												     cheatSize)) {
 										codelist.parse(path);
-										writeCheatsToFile(codelist.getCheats(), sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
+										writeCheatsToFile(codelist.getCheats(), cheatDataBin);
+										FILE* cheatData=fopen(cheatDataBin,"rb");
+										if (cheatData) {
+											u8 check[8];
+											fread(check, 1, 8, cheatData);
+											fclose(cheatData);
+											if (check[7] == 0xCF) {
+												cheatsEnabled = false;
+											} else {
+												truncate(cheatDataBin, 0x8000);
+											}
+										}
+									} else {
+										cheatsEnabled = false;
 									}
-									truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
 									fclose(dat);
+								} else {
+									cheatsEnabled = false;
 								}
 							} else {
-								remove(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
+								cheatsEnabled = false;
+							}
+							if (!cheatsEnabled) {
+								remove(cheatDataBin);
 							}
 						}
 

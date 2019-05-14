@@ -437,6 +437,7 @@ void BootstrapConfig::loadCheats()
 {
 	u32 gameCode,crc32;
 	
+	bool cheatsEnabled = true;
 	mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 	if(CheatWnd::romData(_fullPath,gameCode,crc32))
       {
@@ -450,11 +451,28 @@ void BootstrapConfig::loadCheats()
 
 						chtwnd.parse(_fullPath);
 						chtwnd.writeCheatsToFile(chtwnd.getCheats(), SFN_CHEAT_DATA);
+						FILE* cheatData=fopen(SFN_CHEAT_DATA,"rb");
+						if (cheatData) {
+							u8 check[8];
+							fread(check, 1, 8, cheatData);
+							fclose(cheatData);
+							if (check[7] == 0xCF) {
+								cheatsEnabled = false;
+							} else {
+								truncate(SFN_CHEAT_DATA, 0x8000);
+							}
+						}
+          } else {
+		    cheatsEnabled = false;
           }
-					truncate(SFN_CHEAT_DATA, 0x8000);
           fclose(dat);
+        } else {
+		  cheatsEnabled = false;
         }
       } else {
+	    cheatsEnabled = false;
+      }
+	  if (!cheatsEnabled) {
 	    remove(SFN_CHEATS);
 	  }
 }
