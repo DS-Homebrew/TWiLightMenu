@@ -54,7 +54,7 @@ extern int colorRvalue;
 extern int colorGvalue;
 extern int colorBvalue;
 
-int screenBrightness = 31;
+int screenBrightness = 0;
 
 extern int spawnedtitleboxes;
 

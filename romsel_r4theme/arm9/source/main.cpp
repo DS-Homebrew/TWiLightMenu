@@ -63,7 +63,7 @@
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
 
 bool whiteScreen = true;
-bool fadeType = false;		// false = out, true = in
+bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
@@ -71,6 +71,7 @@ int colorMode = 0;
 int blfLevel = 0;
 
 extern void ClearBrightness();
+extern void SetBrightness(u8 screen, s8 bright);
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -819,6 +820,10 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
+	
+	// Make screen black
+	SetBrightness(0, -30);
+	SetBrightness(1, -30);
 
 	bool fatInited = fatInitDefault();
 
@@ -906,11 +911,6 @@ int main(int argc, char **argv) {
 		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, launcherApp);
 	}
 
-	graphicsInit();
-	fontInit();
-
-	iconTitleInit();
-
 	keysSetRepeat(10, 2);
 
 	vector<string> extensionList;
@@ -945,6 +945,11 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
+	graphicsInit();
+	fontInit();
+
+	iconTitleInit();
+
 	bool menuButtonPressed = false;
 	
 	char path[256];
@@ -952,6 +957,7 @@ int main(int argc, char **argv) {
 	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
 	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
 	{
+		SetBrightness(1, 31);
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
