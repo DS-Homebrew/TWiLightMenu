@@ -448,9 +448,7 @@ void BootstrapConfig::loadCheats()
 						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
 
 						chtwnd.parse(_fullPath);
-						FILE *cheatData = fopen(SFN_CHEAT_DATA, "wb");
-						fputs(chtwnd.getCheats().c_str(), cheatData);
-						fclose(cheatData);
+						chtwnd.writeCheatsToFile(chtwnd.getCheats(), SFN_CHEAT_DATA);
           }
 					truncate(SFN_CHEAT_DATA, 0x8000);
           fclose(dat);

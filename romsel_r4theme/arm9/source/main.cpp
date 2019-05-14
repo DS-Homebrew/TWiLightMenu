@@ -1597,10 +1597,8 @@ int main(int argc, char **argv) {
 									if (codelist.searchCheatData(dat, gameCode,
 												     crc32, cheatOffset,
 												     cheatSize)) {
-										FILE *cheatData = fopen(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", "wb");
 										codelist.parse(path);
-										fputs(codelist.getCheats().c_str(), cheatData);
-										fclose(cheatData);
+										writeCheatsToFile(codelist.getCheats(), sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
 									}
 									truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
 									fclose(dat);

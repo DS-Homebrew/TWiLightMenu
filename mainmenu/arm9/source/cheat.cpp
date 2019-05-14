@@ -22,6 +22,9 @@
 #include "tool/dbgtool.h"
 #include "tool/stringtool.h"
 #include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 CheatCodelist::~CheatCodelist(void) {}
 
@@ -215,4 +218,21 @@ std::string CheatCodelist::getCheats()
   }
 	std::replace( cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
+}
+
+void writeCheatsToFile(std::string data, const char* path) {
+  std::fstream fs;
+  fs.open(path, std::ios::binary | std::fstream::out);
+  std::stringstream str;
+  u32 value;
+  while(1) {
+    str.clear();
+    str << data.substr(0, data.find(" "));
+    str >> std::hex >> value;
+    fs.write(reinterpret_cast<char*>(&value),sizeof(value));
+    data = data.substr(data.find(" ")+1);
+    if((int)data.find(" ") == -1) break;
+  }
+  fs.write("\0\0\0Ï", 4);
+  fs.close();
 }
