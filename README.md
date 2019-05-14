@@ -1,8 +1,5 @@
 <p align="center">
  <img src="https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png"><br>
- <span style="padding-right: 5px;">
-  <a href="https://travis-ci.org/RocketRobz/TWiLightMenu">
-   <img src="https://travis-ci.org/RocketRobz/TWiLightMenu.svg?branch=master">
   <span style="padding-right: 5px;">
     <a href="https://dev.azure.com/DS-Homebrew/Builds/_build?definitionId=6">
    <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/RocketRobz.TWiLightMenu?branchName=master" height="20">

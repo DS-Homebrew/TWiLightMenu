@@ -6,6 +6,8 @@
 #include <vector>
 #include <nds.h>
 
+void writeCheatsToFile(std::string data, const char* path);
+
 class CheatCodelist
 {
 public:
