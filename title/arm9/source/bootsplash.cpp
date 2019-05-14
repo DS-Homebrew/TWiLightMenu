@@ -45,7 +45,7 @@ mm_sound_effect dsiboot;
 mm_sound_effect proceed;
 
 void splashSoundInit() {
-	
+
 	mmInitDefaultMem((mm_addr)soundbank_bin);
 
 	mmLoadEffect( SFX_DSIBOOT );
@@ -58,14 +58,14 @@ void splashSoundInit() {
 		255,	// volume
 		128,	// panning
 	};
-	
+
 	proceed = {
 		{ SFX_SELECT } ,			// id
 		(int)(1.0f * (1<<10)),	// rate
 		0,		// handle
 		255,	// volume
 		128,	// panning
-	};	
+	};
 }
 
 void drawNintendoLogoToVram(void) {
@@ -96,7 +96,17 @@ void BootSplashDSi(void) {
 
 	if (ms().hsMsg) {
 		// Load H&S image
-		FILE* file = fopen("nitro:/graphics/hsmsg.bmp", "rb");
+		//Get the language for the splash screen
+		int language = (ms().getGuiLanguage());
+		FILE* file;
+
+		//If french, then use the french hsmsh, else, use the english one
+		if (language != 2){
+			file = fopen("nitro:/graphics/hsmsg.bmp", "rb");
+		}
+		else {
+			file = fopen("nitro:/graphics/hsmsg-fr.bmp", "rb");
+		}
 
 		if (file) {
 			// Start loading
@@ -127,7 +137,7 @@ void BootSplashDSi(void) {
 
 	controlBottomBright = false;
 	fadeType = true;
-	
+
 	if (cartInserted) {
 		videoFrameFile = fopen("nitro:/video/dsisplash/nintendo.bmp", "rb");
 
@@ -355,11 +365,19 @@ void BootSplashDSi(void) {
 	rocketVideo_videoFrames = 29;
 	rocketVideo_videoFps = 60;
 
+	//Get the language for the splash screen
+	int language = (ms().getGuiLanguage());
+
+	//If not french, then fallback to english (since there is still no other language than french or english)
+	if (language != 2){
+		language = 1;
+	}
+
 	for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 		if (selectedFrame < 0x10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_1/0x0%x.bmp", (int)selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x0%x.bmp", (int)language, (int)selectedFrame);
 		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_1/0x%x.bmp", (int)selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x%x.bmp", (int)language, (int)selectedFrame);
 		}
 		videoFrameFile = fopen(videoFrameFilename, "rb");
 
@@ -456,4 +474,3 @@ void BootSplashInit(void) {
 	splashSoundInit();
 	BootSplashDSi();
 }
-
