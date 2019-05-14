@@ -1325,10 +1325,10 @@ int main(int argc, char **argv) {
 										writeCheatsToFile(codelist.getCheats(), cheatDataBin);
 										FILE* cheatData=fopen(cheatDataBin,"rb");
 										if (cheatData) {
-											u8 check[8];
+											u32 check[2];
 											fread(check, 1, 8, cheatData);
 											fclose(cheatData);
-											if (check[7] == 0xCF) {
+											if (check[1] == 0xCF000000) {
 												cheatsEnabled = false;
 											} else {
 												truncate(cheatDataBin, 0x8000);
