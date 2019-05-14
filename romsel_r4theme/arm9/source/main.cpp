@@ -1585,11 +1585,13 @@ int main(int argc, char **argv) {
 						} else {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 						}
+						bootstrapini.SaveIniFile( bootstrapinipath );
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
 
 						if (isHomebrew == 0) {
+							mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
@@ -1603,10 +1605,11 @@ int main(int argc, char **argv) {
 									truncate(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin", 0x8000);
 									fclose(dat);
 								}
+							} else {
+								remove(sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
 							}
 						}
 
-						bootstrapini.SaveIniFile( bootstrapinipath );
 						if (!isArgv) {
 							romPath = argarray[0];
 						}
