@@ -474,7 +474,7 @@ void BootstrapConfig::loadCheats()
 	    cheatsEnabled = false;
       }
 	  if (!cheatsEnabled) {
-	    remove(SFN_CHEATS);
+	    remove(SFN_CHEAT_DATA);
 	  }
 }
 
