@@ -458,8 +458,8 @@ void BootstrapConfig::loadCheats()
 							u32 check[2];
 							fread(check, 1, 8, cheatData);
 							fclose(cheatData);
-							if (check[1] == 0xCF000000
-							|| getFileSize(SFN_CHEAT_DATA) > 0x8000) {
+							// TODO: Delete file, if above 0x8000 bytes
+							if (check[1] == 0xCF000000) {
 								cheatsEnabled = false;
 							}
 						}
