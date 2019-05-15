@@ -458,10 +458,9 @@ void BootstrapConfig::loadCheats()
 							u32 check[2];
 							fread(check, 1, 8, cheatData);
 							fclose(cheatData);
-							if (check[1] == 0xCF000000) {
+							if (check[1] == 0xCF000000
+							|| getFileSize(SFN_CHEAT_DATA) > 0x8000) {
 								cheatsEnabled = false;
-							} else {
-								truncate(SFN_CHEAT_DATA, 0x8000);
 							}
 						}
           } else {
