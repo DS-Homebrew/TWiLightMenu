@@ -626,6 +626,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AVCP",	// Magical Starsign (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
 		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
+		"AH9P",	// Tony Hawk's American Sk8land (EUR)
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -661,6 +662,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AN6", // Rune Factory 2: A Fantasy Harvest Moon
 		"AS2", // Spider-Man 2
 		"AQ3", // Spider-Man 3
+		"AST", // Star Wars Episode III: Revenge of the Sith
 		"CS7", // Summon Night X: Tears Crown
 		"AYT", // Tales of Innocence
 		"YYK", // Trauma Center: Under the Knife 2
