@@ -125,7 +125,7 @@ int main() {
 
 		consoleDemoInit();
 		if (*(u32*)((u8*)io_dldi_data+0x64) & FEATURE_SLOT_NDS) {
-			printf ("Please remove your flash card.\n");
+			printf ("Please remove your flashcard.\n");
 			do {
 				swiWaitForVBlank();
 				getHeader (ndsHeader);
