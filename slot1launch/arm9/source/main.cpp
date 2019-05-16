@@ -44,6 +44,7 @@ bool consoleOn = false;
 
 int main() {
 
+	bool consoleInited = false;
 	bool TWLMODE = false;
 	bool TWLCLK = false;	// false == NTR, true == TWL
 	bool TWLVRAM = false;
@@ -123,8 +124,9 @@ int main() {
 	} else {
 		sysSetCardOwner (BUS_OWNER_ARM9);
 
-		consoleDemoInit();
 		if (*(u32*)((u8*)io_dldi_data+0x64) & FEATURE_SLOT_NDS) {
+			consoleDemoInit();
+			consoleInited = true;
 			printf ("Please remove your flashcard.\n");
 			do {
 				swiWaitForVBlank();
@@ -135,11 +137,21 @@ int main() {
 			}
 		}
 
-		printf ("Insert a DS game.\n");
-		do {
-			swiWaitForVBlank();
-			getHeader (ndsHeader);
-		} while (ndsHeader[0] == 0xffffffff);
+		getHeader (ndsHeader);
+
+		if (ndsHeader[0] == 0xffffffff) {
+			if (!consoleInited) {
+				consoleDemoInit();
+				consoleInited = true;
+			} else {
+				consoleClear();
+			}
+			printf ("Insert a DS game.\n");
+			do {
+				swiWaitForVBlank();
+				getHeader (ndsHeader);
+			} while (ndsHeader[0] == 0xffffffff);
+		}
 
 		// Delay half a second for the DS card to stabilise
 		for (int i = 0; i < 30; i++) {
