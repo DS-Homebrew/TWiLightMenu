@@ -643,7 +643,7 @@ void SetSpeedBumpExclude(const char* filename) {
 	    "B6X", // Rockman EXE: Operate Shooting Star
 	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 		"ARF", // Rune Factory: A Fantasy Harvest Moon
-		"AN6", // Rune Factory 2: A Fantasy Harvest Moon
+		"A6N", // Rune Factory 2: A Fantasy Harvest Moon
 		"AS2", // Spider-Man 2
 		"AQ3", // Spider-Man 3
 		"AST", // Star Wars Episode III: Revenge of the Sith
