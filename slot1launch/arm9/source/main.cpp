@@ -19,6 +19,7 @@
 #include <nds.h>
 #include <fat.h>
 #include <nds/fifocommon.h>
+#include <nds/arm9/dldi.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -123,11 +124,16 @@ int main() {
 		sysSetCardOwner (BUS_OWNER_ARM9);
 
 		consoleDemoInit();
-		printf ("Please remove your flash card.\n");
-		do {
-			swiWaitForVBlank();
-			getHeader (ndsHeader);
-		} while (ndsHeader[0] != 0xffffffff);
+		if (*(u32*)((u8*)io_dldi_data+0x64) & FEATURE_SLOT_NDS) {
+			printf ("Please remove your flash card.\n");
+			do {
+				swiWaitForVBlank();
+				getHeader (ndsHeader);
+			} while (ndsHeader[0] != 0xffffffff);
+			for (int i = 0; i < 60; i++) {
+				swiWaitForVBlank();
+			}
+		}
 
 		printf ("Insert a DS game.\n");
 		do {
