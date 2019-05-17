@@ -164,6 +164,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
+		"AE4",	// Eyeshield 21 Max Devil Power
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
