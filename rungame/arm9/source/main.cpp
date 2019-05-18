@@ -215,7 +215,8 @@ TWL_CODE int lastRunROM() {
 				}
 
 				// Set save size to 32MB for the following games
-				if (strcmp(game_TID, "UOR") == 0 )	// WarioWare - D.I.Y. (Do It Yourself)
+				if ( strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
+					|| strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
 				{
 					savesize = 1048576*32;
 				}
