@@ -63,7 +63,7 @@ BootstrapConfig &BootstrapConfig::saveSize()
 		return saveSize(0x100000);
 	}
 
-	if (strncmp("UOR", _gametid.c_str(), 3) == 0 || strncmp("BKI", _gametid.c_str(), 3) == 0)
+	if (strncmp("UOR", _gametid.c_str(), 3) == 0 || strncmp("UXB", _gametid.c_str(), 3) == 0)
 	{
 		return saveSize(0x2000000);
 	}
