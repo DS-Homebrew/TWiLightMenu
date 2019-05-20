@@ -650,6 +650,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
+		"AMH",	// Metroid Prime Hunters
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
