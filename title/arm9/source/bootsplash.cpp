@@ -197,6 +197,7 @@ void BootSplashDSi(void) {
 
 		if (videoFrameFile) {
 			bool doRead = false;
+			fseek(videoFrameFile, 0x200, SEEK_SET);
 
 			if (isDSiMode()) {
 				doRead = true;
@@ -217,6 +218,7 @@ void BootSplashDSi(void) {
 		} else {
 			sixtyFps = false;
 		}
+		fclose(videoFrameFile);
 	}
 	if (!sixtyFps) {
 		rocketVideo_videoFrames = 42;
