@@ -2,6 +2,9 @@
 #include <nds.h>
 #include <stdio.h>
 #include "uvcoord_top_font.h"
+#include "graphics/fontHandler.h"
+
+extern u16 smallFontCache[512*160];
 
 /**
  * Get the index in the UV coordinate array where the letter appears
@@ -31,40 +34,21 @@ unsigned int getTopFontSpriteIndex(const u16 letter) {
  * Prints texts to the top screen
  * topText is the text that will be printed 
  */
-void printTopText(char topText[64]) {
-	// Load username
-	char fontPath[64] = {0};
-	FILE *file;
+void printTopText(char topText[48]) {
 	int x = 4;
 
-	for (int c = 0; c < 64; c++) {
+	for (int c = 0; c < 48; c++) {
 		unsigned int charIndex = getTopFontSpriteIndex(topText[c]);
-		// 42 characters per line.
-		unsigned int texIndex = charIndex / 42;
-		sprintf(fontPath, "nitro:/graphics/top_font/small_font_%u.bmp", texIndex);
 
-		file = fopen(fontPath, "rb");
+		for (int y = 0; y < 16; y++) {
+			int currentCharIndex = ((512*((charIndex/42)*16+y))+top_font_texcoords[0+(4*charIndex)]);
 
-		if (file) {
-			// Start loading
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			for (int y = 13; y >= 0; y--) {
-				u16 buffer[512];
-				fread(buffer, 2, 0x200, file);
-				u16 *src = buffer + (top_font_texcoords[0 + (4 * charIndex)]);
-
-				for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
-					u16 val = *(src++);
-					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						BG_GFX_SUB[(y+2)*256+(i+x)] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-					}
+			for (u16 i = 0; i < top_font_texcoords[2 + (4 * charIndex)]; i++) {
+				if (smallFontCache[currentCharIndex+i] != 0xFC1F && smallFontCache[currentCharIndex] != 0x7C1F) { // Do not render magneta pixel
+					BG_GFX_SUB[(y)*256+(i+x)] = smallFontCache[currentCharIndex+i];
 				}
 			}
-			x += top_font_texcoords[2 + (4 * charIndex)];
 		}
-
-		fclose(file);
+		x += top_font_texcoords[2 + (4 * charIndex)];
 	}
 }

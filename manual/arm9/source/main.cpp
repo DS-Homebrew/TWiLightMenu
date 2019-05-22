@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <limits.h>
 
+#include <algorithm>
 #include <string.h>
 #include <unistd.h>
 #include "common/gl2d.h"
@@ -99,6 +100,10 @@ char manPageTitle[64] = {0};
 int pageYpos = 0;
 int pageYsize = 1036;
 
+bool sortPagesPredicate(const DirEntry &lhs, const DirEntry &rhs) {
+	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
+}
+
 void loadPageList() {
 	struct stat st;
 
@@ -118,7 +123,7 @@ void loadPageList() {
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "bmp") {
+			if(dirEntry.name.substr(dirEntry.name.find_last_of(".") + 1) == "png") {
 				char path[PATH_MAX] = {0};
 				getcwd(path, PATH_MAX);
 				dirEntry.name = path + dirEntry.name;
@@ -536,7 +541,7 @@ int main(int argc, char **argv) {
 						(((touchStart.py + pageYpos) >= manPageLinks[i].y - 174) && ((touchStart.py + pageYpos) <= (manPageLinks[i].y - 174 + manPageLinks[i].h)))) {
 						pageYpos = 0;
 						for(uint j=0;j<manPagesList.size();j++) {
-							if(manPagesList[j].name == (manPageLinks[i].dest + ".bmp")) {
+							if(manPagesList[j].name == (manPageLinks[i].dest + ".png")) {
 								currentPage = j;
 								break;
 							}
