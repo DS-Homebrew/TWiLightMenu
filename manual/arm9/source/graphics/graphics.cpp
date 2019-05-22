@@ -25,9 +25,12 @@
 #include "FontGraphic.h"
 
 // Graphic files
-#include "graphics.h"
-#include "fontHandler.h"
 #include "../errorScreen.h"
+#include "fontHandler.h"
+#include "graphics.h"
+#include "graphics/lodepng.h"
+
+#include <fstream>
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -58,8 +61,8 @@ glImage gbaIconImage[(32 / 32) * (32 / 32)];
 glImage cornerIcons[(32 / 32) * (128 / 32)];
 glImage settingsIconImage[(32 / 32) * (32 / 32)];
 
-u16 bmpImageBuffer[256*1036] = {0};
 u16 pageImage[256*1228] = {0};
+u16 smallFontCache[512*160] = {0};
 
 extern int pageYpos;
 extern int pageYsize;
@@ -194,64 +197,29 @@ void vBlankHandler()
 }
 
 void pageLoad(const char *filename) {
-	FILE* file = fopen(filename, "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 1, 0x81800, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = pageYsize-1;
-		for (int i=0; i<256*pageYsize; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			pageImage[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
-		bool lightColor = false;
-		for (y=pageYsize; y<pageYsize+192; y++) {
-			for (x=0; x<256; x++) {
-				pageImage[y*256+x] = convertVramColorToGrayscale(lightColor ? bgColor2 : bgColor1);
-			}
-			lightColor = !lightColor;
-		}
-		dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
-		dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, filename);
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
-	fclose(file);
+	dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
+	dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
+	for(int i=0;i<192;i++) {
+		if(i%2)	dmaFillHalfWords(((bgColor1>>10)&0x1f) | ((bgColor1)&(0x1f<<5)) | (bgColor1&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
+		else	dmaFillHalfWords(((bgColor2>>10)&0x1f) | ((bgColor2)&(0x1f<<5)) | (bgColor2&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
+	}
 }
 
 void topBarLoad(void) {
-	FILE* file = fopen("nitro:/graphics/topbar.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 1, 0x2000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 15;
-		for (int i=0; i<256*16; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, "nitro:/graphics/topbar.png");
+	printSmallCentered(true, 0, "str");
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		BG_GFX_SUB[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
-
-	fclose(file);
 }
 
 void graphicsInit()
@@ -488,6 +456,14 @@ void graphicsInit()
 							);
 
 	loadConsoleIcons();*/
+
+	// Load top bar font into ram
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, "nitro:/graphics/small_font.png");
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		smallFontCache[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	}
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
