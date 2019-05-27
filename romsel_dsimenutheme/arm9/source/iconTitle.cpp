@@ -515,7 +515,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 		clearIcon(num2);
 	} else if ((strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".argv") == 0) ||
 		   (strlen(name) >= 5 && strcasecmp(name + strlen(name) - 5, ".ARGV") == 0)) {
-		// look through the argv file for the corresponding nds/app file
+		// look through the argv file for the corresponding nds file
 		FILE *fp;
 		char *line = NULL, *p = NULL;
 		size_t size = 0;

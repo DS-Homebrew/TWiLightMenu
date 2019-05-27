@@ -163,6 +163,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"AB2",	// Battles of Prince of Persia
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"A5P",	// Harry Potter and the Order of the Phoenix
