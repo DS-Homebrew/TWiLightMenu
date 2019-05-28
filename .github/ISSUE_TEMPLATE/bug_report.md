@@ -49,6 +49,15 @@ Tell us which versions you are using:
 - [ ]  Release _[please specify version]_
 - [ ]  Nightly _[insert here commit hash]_
 
+### TWiLight Menu++ theme
+
+Tell us which theme you are using:
+
+- [ ]  DSi Menu
+- [ ]  3DS HOME Menu
+- [ ]  R4
+- [ ]  Acekard/akMenu
+
 ### Expected behaviour
 
 Tell us what should happen
