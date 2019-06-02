@@ -642,17 +642,20 @@ void SetSpeedBumpExclude(const char* filename) {
 		"B3R",	// Pokemon Ranger: Guardian Signs
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
+		"CY8",  //Yu-Gi-Oh! World Championship 2009
+		"BYX",  //Yu-Gi-Oh! World Championship 2010
+		"BYY",  //Yu-Gi-Oh! World Championship 2011
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-	    "B6X", // Rockman EXE: Operate Shooting Star
-	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-		"ARF", // Rune Factory: A Fantasy Harvest Moon
-		"A6N", // Rune Factory 2: A Fantasy Harvest Moon
-		"AS2", // Spider-Man 2
-		"AQ3", // Spider-Man 3
-		"AST", // Star Wars Episode III: Revenge of the Sith
-		"CS7", // Summon Night X: Tears Crown
-		"AYT", // Tales of Innocence
-		"YYK", // Trauma Center: Under the Knife 2
+	    	"B6X",  // Rockman EXE: Operate Shooting Star
+	    	"B6Z",  // Rockman Zero Collection/MegaMan Zero Collection
+		"ARF",  // Rune Factory: A Fantasy Harvest Moon
+		"A6N",  // Rune Factory 2: A Fantasy Harvest Moon
+		"AS2",  // Spider-Man 2
+		"AQ3",  // Spider-Man 3
+		"AST",  // Star Wars Episode III: Revenge of the Sith
+		"CS7",  // Summon Night X: Tears Crown
+		"AYT",  // Tales of Innocence
+		"YYK",  // Trauma Center: Under the Knife 2
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
