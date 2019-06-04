@@ -251,7 +251,23 @@ void CheatCodelist::selectCheats(std::string filename)
 	cheatWnd_cursorPosition = 0;
 	parse(filename);
 
-  int textX;
+  // Get cheat folders
+  std::vector<CheatCodelist::cParsedItem> cheatFolders;
+  for(uint i=0;i<_data.size();i++) {
+    if(_data[i]._flags&cParsedItem::EFolder) {
+      cheatFolders.push_back(_data[i]);
+    }
+  }
+
+  // Make list of all cheats not in folders and folders
+  std::vector<CheatCodelist::cParsedItem> currentList;
+  for(uint i=0;i<_data.size();i++) {
+    if(!(_data[i]._flags&cParsedItem::EInFolder)) {
+      currentList.push_back(_data[i]);
+    }
+  }
+
+  int mainListCurPos = -1;
 
   while (1) {
  		clearText();
@@ -281,18 +297,18 @@ void CheatCodelist::selectCheats(std::string filename)
     }
 
     // Print bottom text
-    if(_data[cheatWnd_cursorPosition]._comment != "") {
-      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+    if(currentList[cheatWnd_cursorPosition]._comment != "") {
+      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
         printSmallCentered(false, 160, BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancel");
-      } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+      } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
         printSmallCentered(false, 160, BUTTON_A " Deslct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
         printSmallCentered(false, 160, BUTTON_A " Slct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl");
       }
     } else {
-      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
         printSmallCentered(false, 160, BUTTON_X " Save  " BUTTON_B " Cancel");
-      } else if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+      } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
         printSmallCentered(false, 160, BUTTON_A " Deselect  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
         printSmallCentered(false, 160,  BUTTON_A " Select  " BUTTON_X " Save  " BUTTON_B " Cancl");
@@ -301,25 +317,20 @@ void CheatCodelist::selectCheats(std::string filename)
 
     // Print cheat list
     for(int i=0;i<8;i++) {
-      if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmall(false, 15, 60+(i*12), "v");
-        printSmall(false, 25, 60+(i*12), _data[i+cheatWnd_cursorPosition]._title.c_str());
-      } else {
-        if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::EInFolder) {
-          textX = 30;
+      if(i+cheatWnd_cursorPosition<(int)currentList.size()) {
+        if(currentList[i+cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+          printSmall(false, 15, 60+(i*12), ">");
+          printSmall(false, 25, 60+(i*12), currentList[i+cheatWnd_cursorPosition]._title.c_str());
         } else {
-          textX = 25;
-        }
-        if(i+cheatWnd_cursorPosition<(int)_data.size()) {
-          if(_data[i+cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-            printSmall(false, textX-15, 60+(i*12), "x");
+          if(currentList[i+cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
+            printSmall(false, 13, 60+(i*12), "x");
           }
           if(i==0) {
-            printSmall(false, textX-8, 60, "=");
+            printSmall(false, 20, 60, "=");
           } else {
-            printSmall(false, textX-7, 60+(i*12), "-");
+            printSmall(false, 21, 60+(i*12), "-");
           }
-          printSmall(false, textX, 60+(i*12), _data[i+cheatWnd_cursorPosition]._title.c_str());
+          printSmall(false, 28, 60+(i*12), currentList[i+cheatWnd_cursorPosition]._title.c_str());
         }
       }
     }
@@ -341,61 +352,54 @@ void CheatCodelist::selectCheats(std::string filename)
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
       }
-    }
-    if(held & KEY_DOWN) {
-      if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
+    } else if(held & KEY_DOWN) {
+      if(cheatWnd_cursorPosition<((int)currentList.size()-1)) {
         cheatWnd_cursorPosition++;
       }
-    }
-    if(pressed & KEY_LEFT) {
-      if(cheatWnd_cursorPosition>0) {
-        cheatWnd_cursorPosition--;
-      }
-      while(1) {
-        if(!(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder)) {
-          if(cheatWnd_cursorPosition>0) {
-            cheatWnd_cursorPosition--;
-          } else {
+    } else if(held & KEY_LEFT) {
+      cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
+    } else if(held & KEY_RIGHT) {
+      cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
+    } else if(pressed & KEY_A) {
+      if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
+        for(uint i=0;i<_data.size();i++) {
+          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
+            currentList.clear();
+            for(uint j=i+1;!(_data[j]._flags&cParsedItem::EFolder) && j<_data.size();j++) {
+              currentList.push_back(_data[j]);
+            }
+            mainListCurPos = cheatWnd_cursorPosition;
+            cheatWnd_cursorPosition = 0;
             break;
           }
-        } else {
-          break;
-        }
-      }
-    }
-    if(pressed & KEY_RIGHT) {
-      if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
-        cheatWnd_cursorPosition++;
-      }
-      while(1) {
-        if(!(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder)) {
-          if(cheatWnd_cursorPosition<((int)_data.size()-1)) {
-            cheatWnd_cursorPosition++;
-          } else {
-            break;
-          }
-        } else {
-          break;
-        }
-      }
-    }
-    if(pressed & KEY_A) {
-      if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::EOpen) {
-          _data[cheatWnd_cursorPosition]._flags&=~cParsedItem::EOpen;
-        } else {
-          _data[cheatWnd_cursorPosition]._flags^=cParsedItem::EOpen;
         }
       } else {
-        if(_data[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-          _data[cheatWnd_cursorPosition]._flags&=~cParsedItem::ESelected;
-        } else {
-          _data[cheatWnd_cursorPosition]._flags^=cParsedItem::ESelected;
+        for(uint i=0;i<_data.size();i++) {
+          if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
+            if(_data[i]._flags&cParsedItem::ESelected) {
+              _data[i]._flags&=~cParsedItem::ESelected;
+              currentList[cheatWnd_cursorPosition]._flags&=~cParsedItem::ESelected;
+            } else {
+              _data[i]._flags^=cParsedItem::ESelected;
+              currentList[cheatWnd_cursorPosition]._flags^=cParsedItem::ESelected;
+            }
+          }
         }
       }
     }
     if(pressed & KEY_B) {
-      break;
+      if(mainListCurPos != -1) {
+        currentList.clear();
+        for(uint i=0;i<_data.size();i++) {
+          if(!(_data[i]._flags&cParsedItem::EInFolder)) {
+            currentList.push_back(_data[i]);
+          }
+        }
+        cheatWnd_cursorPosition = mainListCurPos;
+        mainListCurPos = -1;
+      } else {
+        break;
+      }
     }
     if(pressed & KEY_X) {
       clearText();
@@ -405,12 +409,12 @@ void CheatCodelist::selectCheats(std::string filename)
       break;
     }
     if(pressed & KEY_Y) {
-      if(_data[cheatWnd_cursorPosition]._comment != "") {
+      if(currentList[cheatWnd_cursorPosition]._comment != "") {
         clearText();
         printLargeCentered(false, 30, "Cheats");
 
         std::vector<std::string> _topText;
-        std::string _topTextStr(_data[cheatWnd_cursorPosition]._comment);
+        std::string _topTextStr(currentList[cheatWnd_cursorPosition]._comment);
         std::vector<std::string> words;
         std::size_t pos;
 
@@ -445,7 +449,7 @@ void CheatCodelist::selectCheats(std::string filename)
         }
 
         // Print 'Back' text
-        printSmallCentered(false, 167, BUTTON_B" Back");
+        printSmallCentered(false, 160, BUTTON_B" Back");
 
         while(1) {
           scanKeys();
