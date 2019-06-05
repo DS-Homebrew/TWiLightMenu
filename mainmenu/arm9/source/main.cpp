@@ -2159,6 +2159,8 @@ int main(int argc, char **argv) {
 				}
 			} else if (extention(filename, ".plg", 4)) {
 				dstwoPlg = true;
+			} else if (extention(filename, ".rvid", 5)) {
+				rvid = true;
 			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) || extention(filename, ".gbc", 4)) {
 				gameboy = true;
 			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
