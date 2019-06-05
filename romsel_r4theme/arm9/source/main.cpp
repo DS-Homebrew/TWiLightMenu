@@ -143,6 +143,7 @@ int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
 bool showNds = true;
+bool showRvid = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -175,6 +176,7 @@ void LoadSettings(void) {
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
+	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -929,6 +931,9 @@ int main(int argc, char **argv) {
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extensionList.push_back(".plg");
 	}
+	if (showRvid) {
+		extensionList.push_back(".rvid");
+	}
 	if (showGb) {
 		extensionList.push_back(".gb");
 		extensionList.push_back(".sgb");
@@ -1266,6 +1271,7 @@ int main(int argc, char **argv) {
 			}
 
 			bool dstwoPlg = false;
+			bool rvid = false;
 			bool SNES = false;
 			bool GENESIS = false;
 			bool gameboy = false;
@@ -1739,7 +1745,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -1773,6 +1779,10 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (rvid) {
+					argarray.at(0) = (char *)(secondaryDevice
+								      ? "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
+								      : "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds");
 				} else if (gameboy) {
 					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
 				} else if (nes) {

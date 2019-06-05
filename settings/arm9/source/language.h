@@ -74,6 +74,8 @@ extern std::string STR_DESCRIPTION_SHOW_HIDDEN_1;
 
 extern std::string STR_DESCRIPTION_SHOW_NDS;
 
+extern std::string STR_DESCRIPTION_SHOW_RVID;
+
 extern std::string STR_DESCRIPTION_SHOW_NES;
 
 extern std::string STR_DESCRIPTION_SHOW_GB;

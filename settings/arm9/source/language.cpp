@@ -81,6 +81,8 @@ std::string STR_DESCRIPTION_SHOW_HIDDEN_1 = "STR_DESCRIPTION_SHOW_HIDDEN_1";
 
 std::string STR_DESCRIPTION_SHOW_NDS = "STR_DESCRIPTION_SHOW_NDS";
 
+std::string STR_DESCRIPTION_SHOW_RVID = "STR_DESCRIPTION_SHOW_RVID";
+
 std::string STR_DESCRIPTION_SHOW_NES = "STR_DESCRIPTION_SHOW_NES";
 
 std::string STR_DESCRIPTION_SHOW_GB = "STR_DESCRIPTION_SHOW_GB";
@@ -365,6 +367,8 @@ void langInit(void)
 	STR_DESCRIPTION_SHOW_HIDDEN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_HIDDEN_1", "If turned on, whether an app is set to hidden or not will be ignored and it will be displayed anyways."));
 
 	STR_DESCRIPTION_SHOW_NDS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_NDS", "Display Nintendo DS/DSi ROMs in the ROM list."));
+
+	STR_DESCRIPTION_SHOW_RVID = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_RVID", "Display Rocket Video files in the ROM list."));
 
 	STR_DESCRIPTION_SHOW_NES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_NES", "Display NES and Famicom Disk System ROMs in the ROM list."));
 

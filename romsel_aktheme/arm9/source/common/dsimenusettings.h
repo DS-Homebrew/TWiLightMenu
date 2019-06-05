@@ -131,6 +131,7 @@ class DSiMenuPlusPlusSettings
     int theme;
     int subtheme;
 	bool showNds;
+	bool showRvid;
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;

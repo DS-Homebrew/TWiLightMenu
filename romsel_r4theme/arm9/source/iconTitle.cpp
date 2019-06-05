@@ -970,6 +970,7 @@ void titleUpdate(bool isDir, const char* name)
 	}
 	else if (strcasecmp(name + strlen(name) - 4, ".plg") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".PLG") == 0 ||
+				strcasecmp (name + strlen(name) - 5, ".rvid") == 0 || strcasecmp (name + strlen(name) - 5, ".RVID") == 0 ||
 				strcasecmp (name + strlen(name) - 3, ".gb") == 0 ||
 				strcasecmp (name + strlen(name) - 3, ".GB") == 0 ||
 				strcasecmp (name + strlen(name) - 4, ".sgb") == 0 ||

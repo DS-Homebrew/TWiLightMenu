@@ -296,6 +296,13 @@ string browseForFile(const vector<string> extensionList, const char* username)
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
+			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "rvid")
+					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "RVID"))
+			{
+				bnrRomType = 8;
+				bnrWirelessIcon = 0;
+				isDSiWare = false;
+				isHomebrew = 0;
 			} else if((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "gb")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "GB")
 					|| (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "sgb")

@@ -478,6 +478,7 @@ int main(int argc, char **argv)
 
 	filetypePage
 		.option("NDS ROMs", STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
+		.option("Rocket Video (.RVID)", STR_DESCRIPTION_SHOW_RVID, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
 		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {STR_SHOW, STR_HIDE}, {true, false})
 		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {STR_SHOW, STR_HIDE}, {true, false})
 		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {STR_SHOW, STR_HIDE}, {true, false})

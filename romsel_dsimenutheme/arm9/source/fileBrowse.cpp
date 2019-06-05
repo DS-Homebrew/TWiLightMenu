@@ -1051,6 +1051,14 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
 				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "rvid") ||
+					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "RVID")) {
+					bnrRomType[i] = 8;
+					bnrWirelessIcon[i] = 0;
+					isDSiWare[i] = false;
+					isHomebrew[i] = 0;
+				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "gbc") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GBC")) {

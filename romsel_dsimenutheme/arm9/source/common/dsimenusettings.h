@@ -143,6 +143,7 @@ class DSiMenuPlusPlusSettings
     int subtheme;
     int dsiMusic;
 	bool showNds;
+	bool showRvid;
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;

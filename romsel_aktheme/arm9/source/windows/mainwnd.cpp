@@ -798,6 +798,21 @@ void MainWnd::launchSelected()
         bootFile(BOOTPLG_SRL, fullPath);
 	}
 
+    // RVID Launch
+    if (extension == ".rvid")
+    {
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
+        if (ms().secondaryDevice)
+        {
+            bootFile(RVIDPLAYER_FC, fullPath);
+        }
+        else
+        {
+            bootFile(RVIDPLAYER_SD, fullPath);
+        }
+    }
+
     // NES Launch
     if (extension == ".nes" || extension == ".fds")
     {

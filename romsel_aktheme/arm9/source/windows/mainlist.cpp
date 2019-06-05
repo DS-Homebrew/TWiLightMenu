@@ -245,6 +245,10 @@ bool MainList::enterDir(const std::string &dirName)
 	if (_showAllFiles || memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		extNames.push_back(".plg");
 	}
+    if (_showAllFiles || ms().showRvid)
+    {
+		extNames.push_back(".rvid");
+	}
     extNames.push_back(".gba");
     if (_showAllFiles || ms().showGb)
     {

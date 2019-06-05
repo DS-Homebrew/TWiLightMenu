@@ -32,6 +32,9 @@
 #define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
 
+#define RVIDPLAYER_SD "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
+#define RVIDPLAYER_FC "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
+
 #define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define LOLSNES_ROM "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds"

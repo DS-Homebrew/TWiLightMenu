@@ -1159,6 +1159,13 @@ int main(int argc, char **argv) {
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
+		} else if((filename.substr(filename.find_last_of(".") + 1) == "rvid")
+				|| (filename.substr(filename.find_last_of(".") + 1) == "RVID"))
+		{
+			bnrRomType = 8;
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
 		} else if((filename.substr(filename.find_last_of(".") + 1) == "gb")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "GB")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "sgb")
@@ -1686,6 +1693,7 @@ int main(int argc, char **argv) {
 			}
 
 			bool dstwoPlg = false;
+			bool rvid = false;
 			bool SNES = false;
 			bool GENESIS = false;
 			bool gameboy = false;
@@ -2166,7 +2174,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -2200,6 +2208,10 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+				} else if (rvid) {
+					argarray.at(0) = (char *)(secondaryDevice
+								      ? "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
+								      : "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds");
 				} else if (gameboy) {
 					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
 				} else if (nes) {

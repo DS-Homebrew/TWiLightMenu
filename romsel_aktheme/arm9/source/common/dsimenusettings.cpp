@@ -24,6 +24,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     subtheme = 0;
 
 	showNds = true;
+	showRvid = true;
 	showNes = true;
 	showGb = true;
 	showSmsGg = true;
@@ -85,6 +86,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
