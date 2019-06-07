@@ -749,14 +749,19 @@ void launchGba(void) {
 				loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
 			}
 		} else {
+			std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
+								: "sd:/_nds/nds-bootstrap-hb-release.nds");
+
+			std::vector<char*> argarray;
+			argarray.push_back(strdup(bootstrapPath.c_str()));
+			argarray.at(0) = (char*)bootstrapPath.c_str();
+
 			CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
-			int err = runNdsFile(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-								: "sd:/_nds/nds-bootstrap-hb-release.nds",
-					     0, NULL, true, false, true, true);
+			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 			iprintf("Start failed. Error %i\n", err);
 		}
 	} else {
