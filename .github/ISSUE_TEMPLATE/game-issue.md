@@ -1,6 +1,6 @@
 ---
 name: Game Issue
-about: Report an issue that happens in a game
+about: Report an issue that happens in a game. Please report here: https://github.com/ahezard/nds-bootstrap/issues/new
 title: "[This is an nds-bootstrap issue]"
 labels: ''
 assignees: ''
