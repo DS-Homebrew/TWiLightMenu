@@ -751,9 +751,11 @@ void launchGba(void) {
 		} else {
 			CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
-			int err = runNdsFile(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-gbar2-nightly.nds"
-								: "sd:/_nds/nds-bootstrap-gbar2-release.nds",
+			int err = runNdsFile(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
+								: "sd:/_nds/nds-bootstrap-hb-release.nds",
 					     0, NULL, true, false, true, true);
 			iprintf("Start failed. Error %i\n", err);
 		}

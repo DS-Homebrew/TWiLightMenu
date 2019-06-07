@@ -1002,7 +1002,7 @@ void MainWnd::bootGbaRunner(void)
         return;
     }
 
-	std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_GBAR : BOOTSTRAP_RELEASE_GBAR);
+	std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 
 	std::vector<char*> argarray;
 	argarray.push_back(strdup(bootstrapPath.c_str()));
@@ -1010,7 +1010,8 @@ void MainWnd::bootGbaRunner(void)
 
     LoaderConfig gbaRunner(bootstrapPath, ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI);
 	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", GBARUNNER_BOOTSTRAP)
-			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
+			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
     if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
