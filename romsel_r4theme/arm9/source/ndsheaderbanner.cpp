@@ -94,6 +94,7 @@ bool checkRomAP(FILE *ndsFile)
 			"IPG",	// Pokemon SoulSilver Version
 			"YBU",	// Blue Dragon: Awakened Shadow
 			"YBN",	// 100 Classic Books
+			"YVI",	// Dragon Quest VI: Realms of Revelation
 			"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
 			"C3J",	// Professor Layton and the Unwound Future
 			"IRA",	// Pokemon Black Version
