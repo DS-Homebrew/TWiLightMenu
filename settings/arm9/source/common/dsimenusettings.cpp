@@ -45,7 +45,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     slot1LaunchMethod = EDirect;
 
-    useBootstrap = true;
+    useBootstrap = isDSiMode();
     bootstrapFile = EReleaseBootstrap;
 
     bstrap_language = ELangDefault;

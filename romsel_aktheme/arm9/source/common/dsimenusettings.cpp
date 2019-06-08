@@ -41,7 +41,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     slot1LaunchMethod = EReboot;
 
-    useBootstrap = true;
+    useBootstrap = isDSiMode();
     bootstrapFile = EReleaseBootstrap;
 
     bstrap_language = ELangDefault;

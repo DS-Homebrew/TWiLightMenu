@@ -175,6 +175,8 @@ int bstrap_dsiMode = 0;
 bool forceSleepPatch = false;
 
 void LoadSettings(void) {
+	useBootstrap = isDSiMode();
+
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
