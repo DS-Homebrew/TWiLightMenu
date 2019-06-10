@@ -2180,6 +2180,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
+				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -2200,7 +2201,7 @@ int main(int argc, char **argv) {
 				int err = 0;
 
 				if (dstwoPlg) {
-					argarray.at(0) = (char*)("/_nds/TWiLightMenu/bootplg.srldr");
+					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
 					char ROMpathDS2[256];
@@ -2213,16 +2214,29 @@ int main(int argc, char **argv) {
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
 				} else if (rvid) {
-					argarray.at(0) = (char *)(previousUsedDevice
-								      ? "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
-								      : "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds");
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					}
 				} else if (gameboy) {
-					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+					}
 				} else if (nes) {
-					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
+					}
 				} else {
-					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
+					ndsToBoot = (!arm7SCFGLocked
+								? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds"
+								: "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					}
 				}
+				argarray.at(0) = (char *)ndsToBoot;
 
 				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to emulator as argument
 
@@ -2233,6 +2247,7 @@ int main(int argc, char **argv) {
 				printSmall(false, 4, 4, text);
 				stop();
 			} else if (SNES || GENESIS) {
+				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -2243,12 +2258,20 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				if (previousUsedDevice) {
 					if (SNES) {
-						argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						}
 					} else {
-						argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						}
 					}
 				} else {
-					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					ndsToBoot =
+					    (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
+									: "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 
 					if (SNES) {
@@ -2264,6 +2287,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
+				argarray.at(0) = (char *)ndsToBoot;
 				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);

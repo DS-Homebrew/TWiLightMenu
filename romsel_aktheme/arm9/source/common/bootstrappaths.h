@@ -54,5 +54,6 @@
 #define GAMEYOB_FC "/_nds/TWiLightMenu/emulators/gameyob.nds"
 
 #define NESDS_FC  "/_nds/TWiLightMenu/emulators/nesds.nds"
-#define NESDS_SD "sd:/_nds/TWiLightMenu/emulators/nestwl.nds"
+#define NESDS_SD "sd:/_nds/TWiLightMenu/emulators/nesds.nds"
+#define NESTWL_SD "sd:/_nds/TWiLightMenu/emulators/nestwl.nds"
 #endif

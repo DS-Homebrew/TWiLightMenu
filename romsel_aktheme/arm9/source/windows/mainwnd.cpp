@@ -799,19 +799,20 @@ void MainWnd::launchSelected()
         bootFile(BOOTPLG_SRL, fullPath);
 	}
 
+	const char *ndsToBoot;
+
     // RVID Launch
     if (extension == ".rvid")
     {
         ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
-        if (ms().secondaryDevice)
-        {
-            bootFile(RVIDPLAYER_FC, fullPath);
-        }
-        else
-        {
-            bootFile(RVIDPLAYER_SD, fullPath);
-        }
+
+		ndsToBoot = RVIDPLAYER_SD;
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = RVIDPLAYER_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
     }
 
     // NES Launch
@@ -819,14 +820,13 @@ void MainWnd::launchSelected()
     {
         ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
         ms().saveSettings();
-        if (ms().secondaryDevice)
-        {
-            bootFile(NESDS_FC, fullPath);
-        }
-        else
-        {
-            bootFile(NESDS_SD, fullPath);
-        }
+
+		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = NESDS_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
     }
 
     // GB Launch
@@ -834,14 +834,13 @@ void MainWnd::launchSelected()
     {
         ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
         ms().saveSettings();
-        if (ms().secondaryDevice)
-        {
-            bootFile(GAMEYOB_FC, fullPath);
-        }
-        else
-        {
-            bootFile(GAMEYOB_SD, fullPath);
-        }
+
+		ndsToBoot = GAMEYOB_SD;
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = GAMEYOB_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
     }
 
     // SMS/GG Launch
@@ -851,14 +850,13 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
-        if (ms().secondaryDevice)
-        {
-            bootFile(S8DS_FC, fullPath);
-        }
-        else
-        {
-            bootFile(!sys().arm7SCFGLocked() ? S8DS_NOTOUCH_ROM : S8DS_ROM, fullPath);
-        }
+
+		ndsToBoot = (!sys().arm7SCFGLocked() ? S8DS_NOTOUCH_ROM : S8DS_ROM);
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = S8DS_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
     }
 	
     // GEN Launch
@@ -868,7 +866,12 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
-            bootFile(JENESISDS_FC, fullPath);
+			ndsToBoot = JENESISDS_ROM;
+			if(access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = JENESISDS_FC;
+			}
+
+            bootFile(ndsToBoot, fullPath);
 		}
 		else
 		{
@@ -898,7 +901,12 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
-            bootFile(SNEMULDS_FC, fullPath);
+			ndsToBoot = SNEMULDS_ROM;
+			if(access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = SNEMULDS_FC;
+			}
+
+            bootFile(ndsToBoot, fullPath);
 		}
 		else
 		{
