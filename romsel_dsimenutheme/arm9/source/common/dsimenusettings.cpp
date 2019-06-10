@@ -6,6 +6,8 @@
 #include "flashcard.h"
 #include <string.h>
 
+extern const char *settingsinipath;
+
 DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 {
     
@@ -90,7 +92,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     // UI settings.
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
@@ -184,7 +186,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 void DSiMenuPlusPlusSettings::saveSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    CIniFile settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
@@ -214,7 +216,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
-    settingsini.SaveIniFile(DSIMENUPP_INI);
+    settingsini.SaveIniFile(settingsinipath);
 }
 
 DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
