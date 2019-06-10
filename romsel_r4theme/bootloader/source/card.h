@@ -25,21 +25,28 @@
 
 #include "disc_io.h"
 #include "io_dldi.h"
+#include "sdmmc.h"
+
+extern bool sdRead;
 
 static inline bool CARD_StartUp (void) {
+	if (sdRead) {
+		sdmmc_controller_init(true);
+		return sdmmc_sdcard_init() == 0;
+	}
 	return _io_dldi.fn_startup();
 }
 
 static inline bool CARD_IsInserted (void) {
-	return _io_dldi.fn_isInserted();
+	return sdRead ? true : _io_dldi.fn_isInserted();
 }
 
 static inline bool CARD_ReadSector (u32 sector, void *buffer) {
-	return _io_dldi.fn_readSectors(sector, 1, buffer);
+	return sdRead ? (sdmmc_sdcard_readsectors(sector, 1, buffer) == 0) : _io_dldi.fn_readSectors(sector, 1, buffer);
 }
 
 static inline bool CARD_ReadSectors (u32 sector, int count, void *buffer) {
-	return _io_dldi.fn_readSectors(sector, count, buffer);
+	return sdRead ? (sdmmc_sdcard_readsectors(sector, count, buffer) == 0) : _io_dldi.fn_readSectors(sector, count, buffer);
 }
 
 #endif // CARD_H
