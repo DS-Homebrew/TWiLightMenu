@@ -123,16 +123,16 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 	} else {
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (useBootstrap) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -202,12 +202,18 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+	if (isHomebrew == 0 && !useBootstrap && secondaryDevice) {
+		perGameSettings_cursorPosition = 2;
+	}
 
 	bool showPerGameSettings =
 		(!isDSiWare && isHomebrew != 2
 		&& strcmp(game_TID, "HND") != 0
 		&& strcmp(game_TID, "HNE") != 0
-		&& (useBootstrap && REG_SCFG_EXT != 0));
+		&& REG_SCFG_EXT != 0);
+	if (!useBootstrap && REG_SCFG_EXT == 0) {
+		showPerGameSettings = false;
+	}
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -330,7 +336,7 @@ void perGameSettings (std::string filename) {
 			} else {
 				printSmall(false, 24, 112+(perGameSettings_cursorPosition*8), ">");
 			}
-			if (useBootstrap) {
+			if (useBootstrap || !secondaryDevice) {
 				printSmall(false, 32, 112, "Language:");
 				if (perGameSettings_language == -2) {
 					printSmall(false, 104, 112, "Def");
@@ -387,7 +393,7 @@ void perGameSettings (std::string filename) {
 					}
 				}
 			}
-			if (useBootstrap) {
+			if (useBootstrap || !secondaryDevice) {
 				printSmall(false, 32, 144, "Bootstrap:");
 				if (perGameSettings_bootstrapFile == -1) {
 					printSmall(false, 180, 144, "Default");
@@ -490,7 +496,7 @@ void perGameSettings (std::string filename) {
 				break;
 			}
 		} else {
-			if (useBootstrap) {
+			if (useBootstrap || !secondaryDevice) {
 				if (pressed & KEY_UP) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;

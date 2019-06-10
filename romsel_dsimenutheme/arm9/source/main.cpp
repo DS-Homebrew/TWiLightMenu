@@ -1142,7 +1142,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if (useBackend) {
-					if (ms().useBootstrap || isDSiMode()) {
+					if (ms().useBootstrap || !ms().secondaryDevice) {
 						if (ms().secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
 							printLarge(false, 4, 4, "Creating \"BTSTRP.TMP\"...");

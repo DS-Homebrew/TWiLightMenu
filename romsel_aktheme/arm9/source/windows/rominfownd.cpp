@@ -194,7 +194,7 @@ void RomInfoWnd::pressGameSettings(void)
 
     if (!_romInfo.isHomebrew())
     {
-		if (ms().useBootstrap) {
+		if (ms().useBootstrap || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -2 => 0
 			_values.push_back(LANG("game settings", "System")); // -1 => 1
 			_values.push_back(LANG("game settings", "Japanese"));
@@ -248,7 +248,7 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.clear();
 		}
 
-		if (ms().useBootstrap) {
+		if (ms().useBootstrap || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "Release")); // 0 => 1
 			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
@@ -267,7 +267,7 @@ void RomInfoWnd::pressGameSettings(void)
         settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
         _values.clear();
 
-		if (!ms().secondaryDevice && ms().useBootstrap) {
+		if (!ms().secondaryDevice) {
 			_values.push_back("None");
 			_values.push_back("0");
 			_values.push_back("1");

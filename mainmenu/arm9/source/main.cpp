@@ -1922,7 +1922,7 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if(useBootstrap || isDSiMode()) {
+					if(useBootstrap || !secondaryDevice) {
 						if (secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
 							clearText();

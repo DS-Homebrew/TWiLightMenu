@@ -511,6 +511,9 @@ int main(int argc, char **argv)
 				{"133 MHz (TWL)", "67 MHz (NTR)"},
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
+		if (!sys().arm7SCFGLocked()) {
+			gamesPage.option("Flashcard: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+		}
 		if (sdAccessible) {
 			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPPATCH, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});

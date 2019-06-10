@@ -761,7 +761,7 @@ void MainWnd::launchSelected()
             return;
         }
 
-        else if (ms().useBootstrap || isDSiMode())
+        else if (ms().useBootstrap || !ms().secondaryDevice)
         {
             bootBootstrap(gameConfig, rominfo);
             return;

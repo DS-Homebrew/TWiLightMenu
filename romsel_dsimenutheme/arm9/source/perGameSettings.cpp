@@ -125,16 +125,16 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 	} else {
-		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
-		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (ms().useBootstrap) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 	}
 	pergameini.SaveIniFile( pergamefilepath );
 }
@@ -211,7 +211,7 @@ void perGameSettings (std::string filename) {
 	} else if(isHomebrew[CURPOS] == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
-		if (!ms().useBootstrap) {
+		if (!ms().useBootstrap && ms().secondaryDevice) {
 			perGameSettings_cursorPosition = 2;
 		}
 	}
@@ -221,7 +221,10 @@ void perGameSettings (std::string filename) {
 		&& isHomebrew[CURPOS] != 2
 		&& strcmp(game_TID, "HND") != 0
 		&& strcmp(game_TID, "HNE") != 0
-		&& (ms().useBootstrap && REG_SCFG_EXT != 0));
+		&& REG_SCFG_EXT != 0);
+	if (!ms().useBootstrap && REG_SCFG_EXT == 0) {
+		showPerGameSettings = false;
+	}
 
 	char gameTIDDisplay[5];
 	grabTID(f_nds_file, gameTIDDisplay);
@@ -342,7 +345,7 @@ void perGameSettings (std::string filename) {
 				} else {
 					printSmall(false, 16, 98+(perGameSettings_cursorPosition*14), ">");
 				}
-				if (ms().useBootstrap) {
+				if (ms().useBootstrap || !ms().secondaryDevice) {
 					printSmall(false, 24, 98, "Language:");
 					if (perGameSettings_language == -2) {
 						printSmall(false, 88, 98, "Default");
@@ -509,7 +512,7 @@ void perGameSettings (std::string filename) {
 				break;
 			}
 		} else {
-			if (ms().useBootstrap) {
+			if (ms().useBootstrap || !ms().secondaryDevice) {
 				if (pressed & KEY_UP) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
