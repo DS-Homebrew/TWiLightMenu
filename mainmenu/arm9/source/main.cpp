@@ -233,11 +233,7 @@ void SaveSettings(void) {
 	CIniFile settingsini( settingsinipath );
 
 	// UI settings.
-	if (bothSDandFlashcard()) {
-		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	}
 	if (!gotosettings) {
-		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
@@ -1729,7 +1725,6 @@ int main(int argc, char **argv) {
 				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				launchType = 2;
-				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -1816,7 +1811,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 
-				if (secondaryDevice) {
+				if (previousUsedDevice) {
 					clearText();
 					printSmallCentered(false, 86, "Now copying data...");
 					printSmallCentered(false, 98, "Do not turn off the power.");
@@ -1845,7 +1840,7 @@ int main(int argc, char **argv) {
 				}
 
 				char unlaunchDevicePath[256];
-				if (secondaryDevice) {
+				if (previousUsedDevice) {
 					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				} else {
 					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", dsiWareSrlPath.c_str());
@@ -1902,7 +1897,7 @@ int main(int argc, char **argv) {
 					homebrewBootstrap = true;
 				} else if (isHomebrew == 1) {
 					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot || (useBootstrap && secondaryDevice)) {
+					if (perGameSettings_directBoot || (useBootstrap && previousUsedDevice)) {
 						useBackend = false;	// Bypass nds-bootstrap
 					} else {
 						useBackend = true;
@@ -1922,8 +1917,8 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 				if(useBackend) {
-					if(useBootstrap || !secondaryDevice) {
-						if (secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
+					if(useBootstrap || !previousUsedDevice) {
+						if (previousUsedDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
 							clearText();
 							ClearBrightness();
@@ -2009,14 +2004,14 @@ int main(int argc, char **argv) {
 						SetMPUSettings(argarray[0]);
 						SetSpeedBumpExclude(argarray[0]);
 
-						if (sdFound() && secondaryDevice) {
+						if (sdFound() && previousUsedDevice) {
 							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
 						}
-						bootstrapinipath = (secondaryDevice ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = (previousUsedDevice ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !previousUsedDevice) ? ramdiskpath : "sd:/null.img");
 						if (perGameSettings_language == -2) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 						} else {
@@ -2093,9 +2088,8 @@ int main(int argc, char **argv) {
 						}
 
 						launchType = 1;
-						previousUsedDevice = secondaryDevice;
 						SaveSettings();
-						if (secondaryDevice) {
+						if (previousUsedDevice) {
 							if (perGameSettings_bootstrapFile == -1) {
 								if (homebrewBootstrap) {
 									argarray.at(0) = (char*)(bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
@@ -2136,13 +2130,11 @@ int main(int argc, char **argv) {
 						stop();
 					} else {
 						launchType = 1;
-						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						loadGameOnFlashcard(argarray[0], filename, true);
 					}
 				} else {
 					launchType = 1;
-					previousUsedDevice = secondaryDevice;
 					SaveSettings();
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
@@ -2177,8 +2169,8 @@ int main(int argc, char **argv) {
 			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
 				nes = true;
 			} else if (extention(filename, ".sms", 4) || extention(filename, ".gg", 3)) {
-				mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
-				mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+				mkdir(previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
+				mkdir(previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 				gamegear = true;
 			} else if (extention(filename, ".gen", 4)) {
@@ -2203,7 +2195,6 @@ int main(int argc, char **argv) {
 					launchType = 5;
 				}
 
-				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				argarray.push_back(ROMpath);
 				int err = 0;
@@ -2222,15 +2213,15 @@ int main(int argc, char **argv) {
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
 				} else if (rvid) {
-					argarray.at(0) = (char *)(secondaryDevice
+					argarray.at(0) = (char *)(previousUsedDevice
 								      ? "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
 								      : "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds");
 				} else if (gameboy) {
-					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
+					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/gameyob.nds" : "sd:/_nds/TWiLightMenu/emulators/gameyob.nds");
 				} else if (nes) {
-					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 				} else {
-					argarray.at(0) = (char*)(secondaryDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
+					argarray.at(0) = (char*)(previousUsedDevice ? "/_nds/TWiLightMenu/emulators/S8DS.nds" : (!arm7SCFGLocked ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds"));
 				}
 
 				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to emulator as argument
@@ -2249,9 +2240,8 @@ int main(int argc, char **argv) {
 				homebrewBootstrap = true;
 				romPath = ROMpath;
 				launchType = 1;
-				previousUsedDevice = secondaryDevice;
 				SaveSettings();
-				if (secondaryDevice) {
+				if (previousUsedDevice) {
 					if (SNES) {
 						argarray.at(0) = (char*)("fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 					} else {
