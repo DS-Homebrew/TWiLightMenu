@@ -1020,8 +1020,8 @@ void MainWnd::bootGbaRunner(void)
     LoaderConfig gbaRunner(bootstrapPath, BOOTSTRAP_INI);
 	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_SD : GBARUNNER_SD)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
-			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
+			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
     if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
     {
