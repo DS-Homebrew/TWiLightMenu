@@ -20,6 +20,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     gotosettings = false;
     guiLanguage = ELangDefault;
     useGbarunner = false;
+    gbar2WramICache = true;
     theme = 0;
     subtheme = 0;
 
@@ -96,6 +97,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     // Customizable UI settings.
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+    gbar2WramICache = settingsini.GetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }

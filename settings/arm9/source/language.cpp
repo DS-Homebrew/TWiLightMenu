@@ -183,6 +183,8 @@ std::string STR_DESCRIPTION_FLASHCARD_1 = "STR_DESCRIPTION_FLASHCARD_1";
 
 std::string STR_DESCRIPTION_GBARUNNER2_1 = "STR_DESCRIPTION_GBARUNNER2_1";
 
+std::string STR_DESCRIPTION_GBAR2_WRAMICACHE = "STR_DESCRIPTION_GBAR2_WRAMICACHE";
+
 // Flashcard settings
 std::string STR_FLASHCARD_SELECT = "STR_FLASHCARD_SELECT";
 std::string STR_LEFTRIGHT_FLASHCARD = "STR_LEFTRIGHT_FLASHCARD";
@@ -470,6 +472,8 @@ void langInit(void)
 	STR_DESCRIPTION_FLASHCARD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", ""));
 
 	STR_DESCRIPTION_GBARUNNER2_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_1", ""));
+
+	STR_DESCRIPTION_GBAR2_WRAMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_WRAMICACHE", "Improves performance for GBA games, but may break some of them."));
 
 	// Flashcard settings
 	STR_FLASHCARD_SELECT = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "Select Flashcard"));

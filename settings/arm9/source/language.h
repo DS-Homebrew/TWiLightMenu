@@ -176,6 +176,8 @@ extern std::string STR_DESCRIPTION_FLASHCARD_1;
 
 extern std::string STR_DESCRIPTION_GBARUNNER2_1;
 
+extern std::string STR_DESCRIPTION_GBAR2_WRAMICACHE;
+
 // Flashcard settings
 extern std::string STR_FLASHCARD_SELECT;
 extern std::string STR_LEFTRIGHT_FLASHCARD;

@@ -137,6 +137,7 @@ bool snesEmulator = true;
 
 bool sdRemoveDetect = true;
 bool useGbarunner = false;
+bool gbar2WramICache = true;
 int theme = 0;
 int subtheme = 0;
 int cursorPosition[2] = {0};
@@ -191,6 +192,7 @@ void LoadSettings(void) {
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
+	gbar2WramICache = settingsini.GetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
 	if (!isRegularDS) useGbarunner = true;
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
@@ -1144,10 +1146,11 @@ int main(int argc, char **argv) {
 							if (useGbarunner) {
 								if (secondaryDevice) {
 									if (useBootstrap) {
-										int err = runNdsFile ("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+										int err = runNdsFile (gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
 										iprintf ("Start failed. Error %i\n", err);
 									} else {
-										loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+										loadGameOnFlashcard((gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds"),
+															(gbar2WramICache ? "GBARunner2_fc_wramicache.nds" : "GBARunner2_fc.nds"), false);
 									}
 								} else {
 									std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
@@ -1157,9 +1160,11 @@ int main(int argc, char **argv) {
 									argarray.at(0) = (char*)bootstrapPath.c_str();
 
 									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
-									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2WramICache ? "sd:/_nds/GBARunner2_wramicache.nds" : "sd:/_nds/GBARunner2.nds");
 									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 									iprintf ("Start failed. Error %i\n", err);

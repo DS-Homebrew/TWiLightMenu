@@ -743,10 +743,11 @@ void launchGba(void) {
 	if (ms().useGbarunner) {
 		if (ms().secondaryDevice) {
 			if (ms().useBootstrap) {
-				int err = runNdsFile("fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+				int err = runNdsFile(ms().gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
-				loadGameOnFlashcard("fat:/_nds/GBARunner2_fc.nds", "GBARunner2_fc.nds", false);
+				loadGameOnFlashcard((ms().gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds"),
+									(ms().gbar2WramICache ? "GBARunner2_fc_wramicache.nds" : "GBARunner2_fc.nds"), false);
 			}
 		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
@@ -757,9 +758,11 @@ void launchGba(void) {
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
 			CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/GBARunner2.nds");
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().gbar2WramICache ? "sd:/_nds/GBARunner2_wramicache.nds" : "sd:/_nds/GBARunner2.nds");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 			iprintf("Start failed. Error %i\n", err);

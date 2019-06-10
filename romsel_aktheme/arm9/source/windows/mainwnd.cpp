@@ -996,11 +996,11 @@ void MainWnd::bootGbaRunner(void)
     {
 		if (ms().useBootstrap)
 		{
-            bootFile(GBARUNNER_FC, "");
+            bootFile(ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_FC : GBARUNNER_FC, "");
 		}
 		else
 		{
-			bootFlashcard(GBARUNNER_FC, "", false);
+			bootFlashcard(ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_FC : GBARUNNER_FC, "", false);
 		}
         return;
     }
@@ -1017,10 +1017,12 @@ void MainWnd::bootGbaRunner(void)
 	argarray.push_back(strdup(bootstrapPath.c_str()));
 	argarray.at(0) = (char*)bootstrapPath.c_str();
 
-    LoaderConfig gbaRunner(bootstrapPath, ms().secondaryDevice ? BOOTSTRAP_INI_FC : BOOTSTRAP_INI);
-	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", GBARUNNER_BOOTSTRAP)
+    LoaderConfig gbaRunner(bootstrapPath, BOOTSTRAP_INI);
+	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_SD : GBARUNNER_SD)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
     if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);

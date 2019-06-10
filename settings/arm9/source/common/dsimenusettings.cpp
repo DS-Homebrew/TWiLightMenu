@@ -18,6 +18,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     blfLevel = 0;
     sdRemoveDetect = true;
     useGbarunner = false;
+    gbar2WramICache = true;
     showMainMenu = true;
     theme = 0;
     subtheme = 0;
@@ -105,6 +106,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+    gbar2WramICache = settingsini.GetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }
@@ -184,6 +186,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+    settingsini.SetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
 	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 
 	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);

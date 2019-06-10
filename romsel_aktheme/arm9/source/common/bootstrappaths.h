@@ -29,8 +29,10 @@
 #define SLOT1_SRL "/_nds/TWiLightMenu/slot1launch.srldr"
 #define BOOTPLG_SRL "/_nds/TWiLightMenu/bootplg.srldr"
 
-#define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
+#define GBARUNNER_SD "sd:/_nds/GBARunner2.nds"
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
+#define GBARUNNER_IWRAMCACHE_SD "sd:/_nds/GBARunner2_iwramcache.nds"
+#define GBARUNNER_IWRAMCACHE_FC "fat:/_nds/GBARunner2_fc_iwramcache.nds"
 
 #define RVIDPLAYER_SD "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
 #define RVIDPLAYER_FC "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"

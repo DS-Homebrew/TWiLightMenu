@@ -123,6 +123,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+    gbar2WramICache = settingsini.GetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }

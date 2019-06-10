@@ -492,6 +492,8 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
+	gamesPage.option("GBARunner2: WRAM iCache", STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&ms().gbar2WramICache), {STR_ON, STR_OFF}, {true, false});
+
 	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
