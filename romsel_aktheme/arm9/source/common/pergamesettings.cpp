@@ -45,7 +45,7 @@ void PerGameSettings::saveSettings()
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", saveNo);
 	}
 	if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", ramDiskNo);
-	if (isDSiMode()) {
+	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 	}
 	if (REG_SCFG_EXT != 0) {

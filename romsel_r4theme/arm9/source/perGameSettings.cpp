@@ -100,7 +100,11 @@ void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
-	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+	if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+	} else {
+		perGameSettings_dsiMode = -1;
+	}
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
@@ -124,7 +128,7 @@ void savePerGameSettings (std::string filename) {
 		}
 	} else {
 		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if (isDSiMode()) {
+		if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
 		}
 		if (useBootstrap || !secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
@@ -274,7 +278,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 164, 112, saveNoDisplay);
 				}
 			}
-			if(isDSiMode()) {
+			if((isDSiMode() && useBootstrap) || !secondaryDevice) {
 				printSmall(false, 32, 120, "Run in:");
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, 180, 120, "Default");
@@ -289,7 +293,7 @@ void perGameSettings (std::string filename) {
 			if (REG_SCFG_EXT != 0) {
 				printSmall(false, 32, 128, "ARM9 CPU Speed:");
 				printSmall(false, 32, 136, "VRAM boost:");
-				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
+				if (perGameSettings_dsiMode > 0) {
 					printSmall(false, 153, 128, "133mhz (TWL)");
 					printSmall(false, 180, 136, "On");
 				} else {
@@ -358,7 +362,7 @@ void perGameSettings (std::string filename) {
 				snprintf (saveNoDisplay, sizeof(saveNoDisplay), "Save no: %i", perGameSettings_saveNo);
 				printSmall(false, 164, 112, saveNoDisplay);
 			}
-			if (isDSiMode()) {
+			if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 				printSmall(false, 32, 120, "Run in:");
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, 180, 120, "Default");

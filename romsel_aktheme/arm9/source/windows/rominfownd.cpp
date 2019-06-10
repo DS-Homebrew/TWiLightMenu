@@ -222,7 +222,7 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.clear();
 		}
 
-		if (isDSiMode()) {
+		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "DS mode")); // 0 => 1
 			_values.push_back(LANG("game settings", "DSi mode")); // 1 => 2
