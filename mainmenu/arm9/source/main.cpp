@@ -1918,7 +1918,7 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 				if(useBackend) {
 					if(useBootstrap || !previousUsedDevice) {
-						if (previousUsedDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
+						if (!sdFound() && previousUsedDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
 							// Create temporary file for nds-bootstrap
 							clearText();
 							ClearBrightness();
@@ -1947,6 +1947,9 @@ int main(int argc, char **argv) {
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
+						if (sdFound() && previousUsedDevice) {
+							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
+						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
 						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
@@ -2004,10 +2007,9 @@ int main(int argc, char **argv) {
 						SetMPUSettings(argarray[0]);
 						SetSpeedBumpExclude(argarray[0]);
 
-						if (sdFound() && previousUsedDevice) {
-							fcopy("sd:/_nds/nds-bootstrap.ini", "fat:/_nds/nds-bootstrap.ini");		// Sync nds-bootstrap SD settings to flashcard
-						}
-						bootstrapinipath = (previousUsedDevice ? "fat:/_nds/nds-bootstrap.ini" : "sd:/_nds/nds-bootstrap.ini");
+						bootstrapinipath =
+						    (sdFound() ? "sd:/_nds/nds-bootstrap.ini"
+									  : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -2089,35 +2091,73 @@ int main(int argc, char **argv) {
 
 						launchType = 1;
 						SaveSettings();
-						if (previousUsedDevice) {
-							if (perGameSettings_bootstrapFile == -1) {
-								if (homebrewBootstrap) {
-									argarray.at(0) = (char*)(bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
-								} else {
-									argarray.at(0) = (char*)(bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+						const char *ndsToBoot;
+						if (perGameSettings_bootstrapFile == -1) {
+							if (homebrewBootstrap) {
+								ndsToBoot = (bootstrapFile
+										? "sd:/_nds/"
+										  "nds-bootstrap-hb-nightly.nds"
+										: "sd:/_nds/"
+										  "nds-bootstrap-hb-release."
+										  "nds");
+								if(access(ndsToBoot, F_OK) != 0) {
+									ndsToBoot = (bootstrapFile
+										? "fat:/_nds/"
+										  "nds-bootstrap-hb-nightly.nds"
+										: "fat:/_nds/"
+										  "nds-bootstrap-hb-release."
+										  "nds");
 								}
 							} else {
-								if (homebrewBootstrap) {
-									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
-								} else {
-									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
+								ndsToBoot = (bootstrapFile
+										? "sd:/_nds/"
+										  "nds-bootstrap-nightly.nds"
+										: "sd:/_nds/"
+										  "nds-bootstrap-release."
+										  "nds");
+								if(access(ndsToBoot, F_OK) != 0) {
+									ndsToBoot = (bootstrapFile
+										? "fat:/_nds/"
+										  "nds-bootstrap-nightly.nds"
+										: "fat:/_nds/"
+										  "nds-bootstrap-release."
+										  "nds");
 								}
 							}
 						} else {
-							if (perGameSettings_bootstrapFile == -1) {
-								if (homebrewBootstrap) {
-									argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-								} else {
-									argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+							if (homebrewBootstrap) {
+								ndsToBoot = (perGameSettings_bootstrapFile
+										? "sd:/_nds/"
+										  "nds-bootstrap-hb-nightly.nds"
+										: "sd:/_nds/"
+										  "nds-bootstrap-hb-release."
+										  "nds");
+								if(access(ndsToBoot, F_OK) != 0) {
+									ndsToBoot = (perGameSettings_bootstrapFile
+										? "fat:/_nds/"
+										  "nds-bootstrap-hb-nightly.nds"
+										: "fat:/_nds/"
+										  "nds-bootstrap-hb-release."
+										  "nds");
 								}
 							} else {
-								if (homebrewBootstrap) {
-									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-								} else {
-									argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+								ndsToBoot = (perGameSettings_bootstrapFile
+										? "sd:/_nds/"
+										  "nds-bootstrap-nightly.nds"
+										: "sd:/_nds/"
+										  "nds-bootstrap-release."
+										  "nds");
+								if(access(ndsToBoot, F_OK) != 0) {
+									ndsToBoot = (perGameSettings_bootstrapFile
+										? "fat:/_nds/"
+										  "nds-bootstrap-nightly.nds"
+										: "fat:/_nds/"
+										  "nds-bootstrap-release."
+										  "nds");
 								}
 							}
 						}
+						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
