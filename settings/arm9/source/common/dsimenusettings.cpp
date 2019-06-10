@@ -217,7 +217,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
-    if (!isDSiMode()) settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
+    settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
     settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", guiLanguage);
