@@ -291,7 +291,6 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	if(argv[0][0]=='s' && argv[0][1]=='d') {
-		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
 
@@ -395,7 +394,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*

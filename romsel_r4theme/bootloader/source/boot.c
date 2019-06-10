@@ -53,6 +53,8 @@ Helpful information:
 #include "card.h"
 #include "boot.h"
 
+char dldiBak[0x4000];
+
 void arm7clearRAM();
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -318,6 +320,10 @@ int main (void) {
 #ifdef NO_DLDI
 	dsiSD = true;
 	dsiMode = true;
+#else
+	if (dsiSD && wantToPatchDLDI) {
+		copyLoop(dldiBak, _dldi_start, sizeof(dldiBak));	// Back up DLDI driver for later restoration
+	}
 #endif
 #ifndef NO_SDMMC
 	if (dsiSD && dsiMode) {
@@ -389,18 +395,22 @@ int main (void) {
 		}
 	}
 
-#ifndef NO_DLDI
-	// Patch with DLDI if desired
-	if (wantToPatchDLDI) {
-		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
-	}
-#endif
-
 #ifndef NO_SDMMC
 	if (dsiSD && !dsMode && dsiMode) {
 		sdmmc_controller_init(true);
 	}
 #endif
+
+#ifndef NO_DLDI
+	// Patch with DLDI if desired
+	if (wantToPatchDLDI) {
+		if (dsiSD) {
+			copyLoop(_dldi_start, dldiBak, sizeof(dldiBak));	// Restore DLDI driver backup, replacing the SD-redirected DLDI driver
+		}
+		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
+	}
+#endif
+
 	// Pass command line arguments to loaded program
 	passArgs_ARM7();
 
