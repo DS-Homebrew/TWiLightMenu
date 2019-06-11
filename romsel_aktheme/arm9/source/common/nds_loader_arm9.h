@@ -22,18 +22,18 @@
 #ifndef NDS_LOADER_ARM9_H
 #define NDS_LOADER_ARM9_H
 
+
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #define LOAD_DEFAULT_NDS 0
 
-	int runNds(const void *loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char **argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram);
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram);
 
-	int runNdsFile(const char *filename, int argc, const char **argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram);
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram);
 
-	bool installBootStub(bool havedsiSD);
+bool installBootStub(bool havedsiSD);
 
 #ifdef __cplusplus
 }

@@ -552,7 +552,7 @@ void launchSettings(void) {
 	if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 	iprintf("Start failed. Error %i\n", err);
 }
 
@@ -576,7 +576,7 @@ void launchManual(void) {
 	if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);
 	iprintf("Start failed. Error %i\n", err);
 }
 
@@ -673,7 +673,7 @@ void switchDevice(void) {
 			if (sdFound()) {
 				chdir("sd:/");
 			}
-			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 			iprintf("Start failed. Error %i\n", err);
 		}
 	}
@@ -743,7 +743,7 @@ void launchGba(void) {
 	if (ms().useGbarunner) {
 		if (ms().secondaryDevice) {
 			if (ms().useBootstrap) {
-				int err = runNdsFile(ms().gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+				int err = runNdsFile(ms().gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, true, false, false);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
 				loadGameOnFlashcard((ms().gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds"),
@@ -764,7 +764,7 @@ void launchGba(void) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
-			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 			iprintf("Start failed. Error %i\n", err);
 		}
 	} else {

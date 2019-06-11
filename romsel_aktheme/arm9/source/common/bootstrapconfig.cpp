@@ -567,5 +567,5 @@ int BootstrapConfig::launch()
 
 	if (_configSavedHandler)
 		_configSavedHandler();
-	return loader.launch(argarray.size(), (const char **)&argarray[0]);
+	return loader.launch(argarray.size(), (const char **)&argarray[0], (_isHomebrew ? false : true));
 }

@@ -28,7 +28,7 @@ LoaderConfig& LoaderConfig::option(const std::string& section, const std::string
     return *this;
 }
 
-int LoaderConfig::launch(int argc, const char** argv, bool clearBrightness, bool dsModeSwitch, bool boostCpu, bool boostVram) 
+int LoaderConfig::launch(int argc, const char** argv, bool dldiPatchNds, bool clearBrightness, bool dsModeSwitch, bool boostCpu, bool boostVram) 
 {
     CIniFile file(_configPath);
     std::string section, item, value;
@@ -38,5 +38,5 @@ int LoaderConfig::launch(int argc, const char** argv, bool clearBrightness, bool
         file.SetString(section, item, value);
     }
     file.SaveIniFile(_configPath);
-    return runNdsFile(_loaderPath.c_str(), argc, argv, clearBrightness, dsModeSwitch, boostCpu, boostVram);
+    return runNdsFile(_loaderPath.c_str(), argc, argv, dldiPatchNds, clearBrightness, dsModeSwitch, boostCpu, boostVram);
 }

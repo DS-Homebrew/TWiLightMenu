@@ -886,7 +886,7 @@ void MainWnd::launchSelected()
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0]))
+			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0], false))
 			{
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
@@ -921,7 +921,7 @@ void MainWnd::launchSelected()
 				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC")
 				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0]))
+			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0], false))
 			{
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
@@ -1023,7 +1023,7 @@ void MainWnd::bootGbaRunner(void)
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
 			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-    if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0]))
+    if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0], false))
     {
         std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
         messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);

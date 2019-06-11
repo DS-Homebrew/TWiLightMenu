@@ -517,26 +517,26 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
 		// Does not support autoboot; so only nds-bootstrap launching works.
-		err = runNdsFile(path.c_str(), 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
 	char text[32];
@@ -1435,8 +1435,8 @@ int main(int argc, char **argv) {
 						argarray.at(0) = (char *)ndsToBoot;
 						snd().stopStream();
 						int err =
-						    runNdsFile(argarray[0], argarray.size(),
-							       (const char **)&argarray[0], true, false, true, true);
+						    runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0],
+										(ms().homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
 						snprintf(text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -1477,7 +1477,7 @@ int main(int argc, char **argv) {
 					}
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0],
-							     true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
+							     true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf(text, sizeof(text), "Start failed. Error %i", err);
 					ClearBrightness();
@@ -1564,7 +1564,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
-				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, false,
+				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false,
 						 true,
 						 true); // Pass ROM to emulator as argument
 
@@ -1621,7 +1621,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
-				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true,
+				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true,
 						     false, true, true);
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);

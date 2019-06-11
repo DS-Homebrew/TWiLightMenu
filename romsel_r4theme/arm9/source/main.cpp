@@ -745,26 +745,26 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
-		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
-		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
-		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
 		// Does not support autoboot; so only nds-bootstrap launching works.
-		err = runNdsFile(path.c_str(), 0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
+		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
 	char text[32];
@@ -1073,7 +1073,7 @@ int main(int argc, char **argv) {
 				if (sdFound()) {
 					chdir("sd:/");
 				}
-				int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, true, true);
+				int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, true, false, true, true);
 				iprintf ("Start failed. Error %i\n", err);
 			}
 
@@ -1110,7 +1110,7 @@ int main(int argc, char **argv) {
 								if (sdFound()) {
 									chdir("sd:/");
 								}
-								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, true, true);
+								int err = runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 								iprintf ("Start failed. Error %i\n", err);
 							}
 						}
@@ -1146,7 +1146,7 @@ int main(int argc, char **argv) {
 							if (useGbarunner) {
 								if (secondaryDevice) {
 									if (useBootstrap) {
-										int err = runNdsFile (gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, false, false);
+										int err = runNdsFile (gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, true, false, false);
 										iprintf ("Start failed. Error %i\n", err);
 									} else {
 										loadGameOnFlashcard((gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds"),
@@ -1166,7 +1166,7 @@ int main(int argc, char **argv) {
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 									iprintf ("Start failed. Error %i\n", err);
 								}
 							} else {
@@ -1220,7 +1220,7 @@ int main(int argc, char **argv) {
 				if (sdFound()) {
 					chdir("sd:/");
 				}
-				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false, false, true, true);
+				int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 				iprintf ("Start failed. Error %i\n", err);
 			}
 		} else {
@@ -1737,7 +1737,7 @@ int main(int argc, char **argv) {
 							}
 						}
 						argarray.at(0) = (char *)ndsToBoot;
-						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -1776,7 +1776,7 @@ int main(int argc, char **argv) {
 							runNds_boostVram = perGameSettings_boostVram;
 						}
 					}
-					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
+					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					clearText();
@@ -1863,7 +1863,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);	// Pass ROM to emulator as argument
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1913,7 +1913,7 @@ int main(int argc, char **argv) {
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
 				argarray.at(0) = (char *)ndsToBoot;
-				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, false, true, true);
+				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
