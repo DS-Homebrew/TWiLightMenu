@@ -540,7 +540,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)   // Inazuma Eleven (J)
 		 || (memcmp(rominfo.saveInfo().gameCode, "VSO",  3) == 0)   // Sonic Classic Collection
 		 || (memcmp(rominfo.saveInfo().gameCode, "B2D",  3) == 0)   // Doctor Who: Evacuation Earth
-		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0))  // Rune Factory 3 - A Fantasy Harvest Moon
+		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3 - A Fantasy Harvest Moon
+		 || (memcmp(rominfo.saveInfo().gameCode, "B88",  3) == 0))  // DS WiFi Settings
 		{
 			hasAP = false;
 		}

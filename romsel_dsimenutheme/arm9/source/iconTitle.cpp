@@ -404,11 +404,13 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		if ((ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0
 		 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0))
+		 && ndsHeader.makercode[1] != 0)
+		 || ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
+		 && ndsHeader.gameCode[2] == 0x38)
 		{
-			isDSiWare[num] = true; // Is a DSi-Exclusive/DSiWare game
-		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000 &&
-			   ndsHeader.arm7binarySize < 0x20000) {
+			isDSiWare[num] = true; // Is a DSiWare game
+		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000
+		&& ndsHeader.arm7binarySize < 0x20000) {
 			isHomebrew[num] = 2; // Homebrew is recent (may have DSi-extended header)
 		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) ||
 			   (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {

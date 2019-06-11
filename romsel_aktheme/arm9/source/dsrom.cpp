@@ -88,7 +88,9 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		if ((header.unitCode == 0x03 && header.gameCode[0] == 0x48 && header.makercode[0] != 0
 		 && header.makercode[1] != 0)
 		 || (header.unitCode == 0x03 && header.gameCode[0] == 0x4B && header.makercode[0] != 0
-		 && header.makercode[1] != 0))
+		 && header.makercode[1] != 0)
+		 || header.unitCode == 0x03 && header.gameCode[0] == 0x42 && header.gameCode[1] == 0x38
+		 && header.gameCode[2] == 0x38)
 		{
             dbg_printf("DSIWAREFOUND Is DSiWare!\n");
             _isDSiWare = ETrue;
@@ -98,7 +100,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
             _saveInfo.dsiTid[0] = header.dsi_tid;
             _saveInfo.dsiTid[1] = header.dsi_tid2;
         }
-        else if (header.unitCode >= 0x02 && header.arm9romOffset == 0x4000 && header.arm7binarySize < 0x20000)
+        else if (header.unitCode >= 0x02 && header.arm9romOffset == 0x4000
+		 && header.arm7binarySize < 0x20000)
         {
             // Homebrew with DSiWare Extended header
             _isDSiWare = ETrue;

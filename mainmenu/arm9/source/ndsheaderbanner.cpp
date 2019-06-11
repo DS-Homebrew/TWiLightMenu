@@ -63,7 +63,8 @@ bool checkRomAP(FILE *ndsFile)
 	 || (memcmp(game_TID, "YEEJ", 4) == 0)  // Inazuma Eleven (J)
 	 || (memcmp(game_TID, "VSO",  3) == 0)  // Sonic Classic Collection
 	 || (memcmp(game_TID, "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
-	 || (memcmp(game_TID, "BRFP", 4) == 0)) // Rune Factory 3 - A Fantasy Harvest Moon
+	 || (memcmp(game_TID, "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
+	 || (memcmp(game_TID, "B88",  3) == 0)) // DS WiFi Settings
 	{
 		return false;
 	}
