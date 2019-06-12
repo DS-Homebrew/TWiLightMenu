@@ -418,6 +418,8 @@ void SetSpeedBumpExclude(const char *filename) {
 		"AB2",	// Battles of Prince of Persia
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AE4",	// Eyeshield 21 Max Devil Power
+		"APR",	// Feel the Magic - XY XX
+		"A26",	// Feel the Magic - XY XX (Demo)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
@@ -434,6 +436,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 	    "B6X",	// Rockman EXE: Operate Shooting Star
 	    "B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
 		"AIR",	// Space Invaders DS
