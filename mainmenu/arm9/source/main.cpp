@@ -1568,6 +1568,7 @@ int main(int argc, char **argv) {
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2WramICache ? "sd:/_nds/GBARunner2_wramicache.nds" : "sd:/_nds/GBARunner2.nds");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
@@ -2317,15 +2318,17 @@ int main(int argc, char **argv) {
 									: "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 					if (SNES) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 					} else {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					}
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
 					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
