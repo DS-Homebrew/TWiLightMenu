@@ -87,5 +87,4 @@ void SystemDetails::initFilesystem(const char *runningPath)
     {
         _nitroFsInitOk = nitroFSInit(runningPath) == 1;
     }
-    flashcardInit();
 }

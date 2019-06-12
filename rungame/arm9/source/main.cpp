@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
@@ -73,7 +74,12 @@ void RemoveTrailingSlashes(std::string& path)
 	}
 }
 
+static const std::string slashchar = "/";
+static const std::string woodfat = "fat0:/";
+static const std::string dstwofat = "fat1:/";
+
 static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+static bool useBootstrap = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 
@@ -91,6 +97,7 @@ TWL_CODE void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Default nds-bootstrap settings
@@ -146,136 +153,190 @@ TWL_CODE int lastRunROM() {
 	if (launchType == 0) {
 		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
 	} else if (launchType == 1) {
-		romfolder = romPath;
-		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-			romfolder.resize(romfolder.size()-1);
-		}
-		chdir(romfolder.c_str());
-
-		filename = romPath;
-		if (access(filename.c_str(), F_OK) != 0) {
+		if (access(romPath.c_str(), F_OK) != 0) {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 
-		const size_t last_slash_idx = filename.find_last_of("/");
-		if (std::string::npos != last_slash_idx)
+		if (useBootstrap || !previousUsedDevice)
 		{
-			filename.erase(0, last_slash_idx + 1);
-		}
+			romfolder = romPath;
+			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+				romfolder.resize(romfolder.size()-1);
+			}
+			chdir(romfolder.c_str());
 
-		argarray.push_back(strdup(filename.c_str()));
+			filename = romPath;
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx)
+			{
+				filename.erase(0, last_slash_idx + 1);
+			}
 
-		loadPerGameSettings(filename);
-		if (homebrewBootstrap) {
-			if (perGameSettings_bootstrapFile == -1) {
-				argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+			argarray.push_back(strdup(filename.c_str()));
+
+			loadPerGameSettings(filename);
+			if (homebrewBootstrap) {
+				if (perGameSettings_bootstrapFile == -1) {
+					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				} else {
+					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+				}
 			} else {
-				argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-			}
-		} else {
-			char game_TID[5];
+				char game_TID[5];
 
-			FILE *f_nds_file = fopen(filename.c_str(), "rb");
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
 
-			fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
-			fread(game_TID, 1, 4, f_nds_file);
-			game_TID[4] = 0;
-			game_TID[3] = 0;
+				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				fread(game_TID, 1, 4, f_nds_file);
+				game_TID[4] = 0;
+				game_TID[3] = 0;
 
-			fclose(f_nds_file);
+				fclose(f_nds_file);
 
-			std::string savename = ReplaceAll(filename, ".nds", ".sav");
-			std::string romFolderNoSlash = romfolder;
-			RemoveTrailingSlashes(romFolderNoSlash);
-			mkdir ("saves", 0777);
-			std::string savepath = romFolderNoSlash+"/saves/"+savename;
-			if (previousUsedDevice) {
-				savepath = ReplaceAll(savepath, "fat:/", "sd:/");
-			}
-
-			if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
-				consoleDemoInit();
-				printf("Creating save file...\n");
-
-				static const int BUFFER_SIZE = 4096;
-				char buffer[BUFFER_SIZE];
-				memset(buffer, 0, sizeof(buffer));
-
-				int savesize = 524288;	// 512KB (default size for most games)
-
-				// Set save size to 8KB for the following games
-				if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
-				{
-					savesize = 8192;
+				std::string savename = ReplaceAll(filename, ".nds", ".sav");
+				std::string romFolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romFolderNoSlash);
+				mkdir ("saves", 0777);
+				std::string savepath = romFolderNoSlash+"/saves/"+savename;
+				if (previousUsedDevice) {
+					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 				}
 
-				// Set save size to 256KB for the following games
-				if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
-				{
-					savesize = 262144;
-				}
+				if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
+					consoleDemoInit();
+					printf("Creating save file...\n");
 
-				// Set save size to 1MB for the following games
-				if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-					|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
-				{
-					savesize = 1048576;
-				}
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					memset(buffer, 0, sizeof(buffer));
 
-				// Set save size to 32MB for the following games
-				if ( strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
-					|| strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
-				{
-					savesize = 1048576*32;
-				}
+					int savesize = 524288;	// 512KB (default size for most games)
 
-				FILE *pFile = fopen(savepath.c_str(), "wb");
-				if (pFile) {
-					for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-						fwrite(buffer, 1, sizeof(buffer), pFile);
+					// Set save size to 8KB for the following games
+					if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+					{
+						savesize = 8192;
 					}
-					fclose(pFile);
-				}
-				printf("Save file created!\n");
-				
-				for (int i = 0; i < 30; i++) {
-					swiWaitForVBlank();
-				}
 
+					// Set save size to 256KB for the following games
+					if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+					{
+						savesize = 262144;
+					}
+
+					// Set save size to 1MB for the following games
+					if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+						|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+					{
+						savesize = 1048576;
+					}
+
+					// Set save size to 32MB for the following games
+					if ( strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
+						|| strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
+					{
+						savesize = 1048576*32;
+					}
+
+					FILE *pFile = fopen(savepath.c_str(), "wb");
+					if (pFile) {
+						for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+							fwrite(buffer, 1, sizeof(buffer), pFile);
+						}
+						fclose(pFile);
+					}
+					printf("Save file created!\n");
+					
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+
+				}
+			}
+
+			CIniFile bootstrapini( bootstrapinipath );
+			if (perGameSettings_language == -2) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
+			}
+			if (perGameSettings_dsiMode == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+			}
+			if (perGameSettings_boostCpu == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+			}
+			if (perGameSettings_boostVram == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+			}
+			bootstrapini.SaveIniFile( bootstrapinipath );
+			if (perGameSettings_bootstrapFile == -1) {
+				argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+			} else {
+				argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+			}
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
+		}
+		else
+		{
+			bool runNds_boostCpu = false;
+			bool runNds_boostVram = false;
+
+			std::string filename = romPath;
+			const size_t last_slash_idx = filename.find_last_of("/");
+			if (std::string::npos != last_slash_idx)
+			{
+				filename.erase(0, last_slash_idx + 1);
+			}
+
+			loadPerGameSettings(filename);
+			if (perGameSettings_boostCpu == -1) {
+				runNds_boostCpu = boostCpu;
+			} else {
+				runNds_boostCpu = perGameSettings_boostCpu;
+			}
+			if (perGameSettings_boostVram == -1) {
+				runNds_boostVram = boostVram;
+			} else {
+				runNds_boostVram = perGameSettings_boostVram;
+			}
+
+			std::string path;
+			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
+				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+				path = ReplaceAll(romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+				return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
+				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+				path = ReplaceAll(romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+				return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+				path = ReplaceAll(romPath, "fat:/", dstwofat);
+				fcrompathini.SetString("Dir Info", "fullName", path);
+				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+				return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
+				CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+				path = ReplaceAll(romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+				// Does not support autoboot; so only nds-bootstrap launching works.
+				return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			}
 		}
-
-		CIniFile bootstrapini( bootstrapinipath );
-		if (perGameSettings_language == -2) {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-		} else {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-		}
-		if (perGameSettings_dsiMode == -1) {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-		} else {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-		}
-		if (perGameSettings_boostCpu == -1) {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-		} else {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-		}
-		if (perGameSettings_boostVram == -1) {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-		} else {
-			bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-		}
-		bootstrapini.SaveIniFile( bootstrapinipath );
-		if (perGameSettings_bootstrapFile == -1) {
-			argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-		} else {
-			argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-		}
-		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 	} else if (launchType == 2) {
-		filename = romPath;
-		if (access(filename.c_str(), F_OK) != 0) {
+		if (access(romPath.c_str(), F_OK) != 0) {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 
@@ -308,26 +369,23 @@ TWL_CODE int lastRunROM() {
 		}
 
 		fifoSendValue32(FIFO_USER_08, 1);	// Reboot
-		for (int i = 0; i < 15; i++) swiIntrWait(0, 1);
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	} else if (launchType == 3) {
-		filename = romPath;
-		if (access(filename.c_str(), F_OK) != 0) {
+		if (access(romPath.c_str(), F_OK) != 0) {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to nesDS as argument
 	} else if (launchType == 4) {
-		filename = romPath;
-		if (access(filename.c_str(), F_OK) != 0) {
+		if (access(romPath.c_str(), F_OK) != 0) {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 
 		argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to GameYob as argument
 	} else if (launchType == 5) {
-		filename = romPath;
-		if (access(filename.c_str(), F_OK) != 0) {
+		if (access(romPath.c_str(), F_OK) != 0) {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 

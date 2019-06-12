@@ -21,6 +21,7 @@
 ------------------------------------------------------------------*/
 
 #include "perGameSettings.h"
+#include "flashcard.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -43,7 +44,7 @@ int perGameSettings_bootstrapFile = -1;
 char pergamefilepath[256];
 
 void loadPerGameSettings (std::string filename) {
-	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", "sd:", filename.c_str());
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (previousUsedDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);

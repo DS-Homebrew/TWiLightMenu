@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <cstdio>
 #include <fat.h>
 #include <sys/stat.h>
@@ -40,6 +41,7 @@
 #include "common/dsimenusettings.h"
 #include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
+#include "common/flashcard.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
 #include "twlmenuppvideo.h"
@@ -71,6 +73,10 @@ std::string homebrewArg;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+
+static const std::string slashchar = "/";
+static const std::string woodfat = "fat0:/";
+static const std::string dstwofat = "fat1:/";
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -142,8 +148,7 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
-	stop();
+	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
 void loadROMselect(int number)
@@ -162,13 +167,13 @@ void loadROMselect(int number)
 
 	switch (number) {
 		case 3:
-			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
+			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 			break;
 		case 2:
-			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
+			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 			break;
 		default:
-			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
+			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
 			break;
 	}
 	stop();
@@ -197,16 +202,15 @@ void lastRunROM()
 	int err = 0;
 	if (ms().launchType == 0)
 	{
-		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true);
+		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 	}
 	else if (ms().launchType == 1)
 	{
-		if (ms().useBootstrap || isDSiMode())
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (ms().useBootstrap || !ms().previousUsedDevice)
 		{
-			CIniFile bootstrapini( BOOTSTRAP_INI );
-			std::string filename = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
-			if (access(filename.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
+			std::string filename = ms().romPath;
 			const size_t last_slash_idx = filename.find_last_of("/");
 			if (std::string::npos != last_slash_idx)
 			{
@@ -245,33 +249,65 @@ void lastRunROM()
 					}
 				}
 			}
-			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true);
+			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
 		}
 		else
 		{
-			switch (ms().flashcard)
-			{
-			case 0:
-			case 1:
-			default:
-				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true);
-				break;
-			case 2:
-			case 4:
-			case 5:
-				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true);
-				break;
-			case 3:
-				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true);
-				break;
-			case 6:
-				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true);
-				break;
+			bool runNds_boostCpu = false;
+			bool runNds_boostVram = false;
+			if (isDSiMode()) {
+				std::string filename = ms().romPath;
+				const size_t last_slash_idx = filename.find_last_of("/");
+				if (std::string::npos != last_slash_idx)
+				{
+					filename.erase(0, last_slash_idx + 1);
+				}
+
+				loadPerGameSettings(filename);
+				if (perGameSettings_boostCpu == -1) {
+					runNds_boostCpu = ms().boostCpu;
+				} else {
+					runNds_boostCpu = perGameSettings_boostCpu;
+				}
+				if (perGameSettings_boostVram == -1) {
+					runNds_boostVram = ms().boostVram;
+				} else {
+					runNds_boostVram = perGameSettings_boostVram;
+				}
+			}
+			std::string path;
+			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
+				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
+				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+				path = ReplaceAll(ms().romPath, "fat:/", dstwofat);
+				fcrompathini.SetString("Dir Info", "fullName", path);
+				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
+			} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
+				CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				fcrompathini.SetString("Save Info", "lastLoaded", path);
+				fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+				// Does not support autoboot; so only nds-bootstrap launching works.
+				err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			}
 		}
 	}
 	else if (ms().launchType == 2)
 	{
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
 		char unlaunchDevicePath[256];
 		if (ms().previousUsedDevice) {
 			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -302,9 +338,12 @@ void lastRunROM()
 		}
 
 		fifoSendValue32(FIFO_USER_08, 1); // Reboot
+		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	}
 	else if (ms().launchType == 3)
 	{
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
 		if (sys().flashcardUsed())
 		{
 			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/nesds.nds";
@@ -313,10 +352,12 @@ void lastRunROM()
 		{
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to nesDS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
 	}
 	else if (ms().launchType == 4)
 	{
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
 		if (sys().flashcardUsed())
 		{
 			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/gameyob.nds";
@@ -325,10 +366,12 @@ void lastRunROM()
 		{
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to GameYob as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to GameYob as argument
 	}
 	else if (ms().launchType == 5)
 	{
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
 		if (sys().flashcardUsed())
 		{
 			mkdir("fat:/data", 0777);
@@ -341,7 +384,7 @@ void lastRunROM()
 			mkdir("sd:/data/s8ds", 0777);
 			argarray.at(0) = (char*)(!sys().arm7SCFGLocked() ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
 		}
-		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true); // Pass ROM to S8DS as argument
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
 }
 
@@ -435,6 +478,7 @@ int main(int argc, char **argv)
 
 	if (ms().autorun && !(keysHeld() & KEY_B))
 	{
+		flashcardInit();
 		lastRunROM();
 	}
 
@@ -468,13 +512,13 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
-			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, false);
+			runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 		} else {
+			flashcardInit();
 			if (ms().showMainMenu) {
 				loadMainMenu();
-			} else {
-				loadROMselect(ms().theme);
 			}
+			loadROMselect(ms().theme);
 		}
 	}
 

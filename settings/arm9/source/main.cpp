@@ -42,6 +42,7 @@
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
+#include "common/flashcard.h"
 #include "settingspage.h"
 #include "settingsgui.h"
 #include "language.h"
@@ -170,8 +171,7 @@ void loadMainMenu()
 	else
 		fifoSendValue32(FIFO_USER_07, 1);
 
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, false);
-	stop();
+	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
 void loadROMselect()
@@ -190,15 +190,15 @@ void loadROMselect()
 		fifoSendValue32(FIFO_USER_07, 1);
 	if (ms().theme == 3)
 	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	else if (ms().theme == 2)
 	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	else
 	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false);
+		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
 	}
 }
 
@@ -308,15 +308,12 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-
+	flashcardInit();
 	if (ms().showMainMenu)
 	{
 		loadMainMenu();
 	}
-	else
-	{
-		loadROMselect();
-	}
+	loadROMselect();
 }
 void opt_reset_subtheme(int prev, int next)
 {

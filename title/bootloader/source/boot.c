@@ -47,6 +47,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include "sdmmc.h"
+#include "i2c.h"
 #include "fat.h"
 #include "dldi_patcher.h"
 #include "card.h"
@@ -73,6 +74,9 @@ extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
+extern unsigned long dsMode;
+
+bool sdRead = false;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
@@ -220,6 +224,8 @@ void resetMemory_ARM7 (void)
 }
 
 
+u32 ROM_TID;
+
 void loadBinary_ARM7 (u32 fileCluster)
 {
 	u32 ndsHeader[0x170>>2];
@@ -235,6 +241,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 	char* ARM7_DST = (char*)ndsHeader[0x038>>2];
 	u32 ARM7_LEN = ndsHeader[0x03C>>2];
 
+	ROM_TID = ndsHeader[0x00C>>2];
+
 	// Load binaries into memory
 	fileRead(ARM9_DST, fileCluster, ARM9_SRC, ARM9_LEN);
 	fileRead(ARM7_DST, fileCluster, ARM7_SRC, ARM7_LEN);
@@ -245,7 +253,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 	ndsHeader[0x024>>2] = 0;
 	dmaCopyWords(3, (void*)ndsHeader, (void*)NDS_HEAD, 0x170);
 
-	if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
+	if (!dsMode && dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
 	{
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
@@ -288,23 +296,7 @@ void startBinary_ARM7 (void) {
 	VoidFn arm7code = *(VoidFn*)(0x2FFFE34);
 	arm7code();
 }
-#ifndef NO_SDMMC
-int sdmmc_sd_readsectors(u32 sector_no, u32 numsectors, void *out);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Main function
-bool sdmmc_inserted() {
-	return true;
-}
 
-bool sdmmc_startup() {
-	sdmmc_controller_init(true);
-	return sdmmc_sdcard_init() == 0;
-}
-
-bool sdmmc_readsectors(u32 sector_no, u32 numsectors, void *out) {
-	return sdmmc_sdcard_readsectors(sector_no, numsectors, out) == 0;
-}
-#endif
 void mpu_reset();
 void mpu_reset_end();
 
@@ -314,11 +306,7 @@ int main (void) {
 	dsiMode = true;
 #endif
 #ifndef NO_SDMMC
-	if (dsiSD && dsiMode) {
-		_io_dldi.fn_readSectors = sdmmc_readsectors;
-		_io_dldi.fn_isInserted = sdmmc_inserted;
-		_io_dldi.fn_startup = sdmmc_startup;
-	}
+	sdRead = (dsiSD && dsiMode);
 #endif
 	u32 fileCluster = storedFileCluster;
 	// Init card
@@ -369,6 +357,22 @@ int main (void) {
 	// Load the NDS file
 	loadBinary_ARM7(fileCluster);
 
+	sdRead = false;
+
+	// Fix for Pictochat and DLP
+	if (ROM_TID == 0x41444E48 || ROM_TID == 0x41454E48) {
+		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
+	}
+
+	if (dsMode) {
+		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
+		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
+		if (REG_SCFG_EXT != 0) {
+			REG_SCFG_ROM = 0x703;								// NTR BIOS
+			REG_SCFG_EXT = 0x12A03000;
+		}
+	}
+
 #ifndef NO_DLDI
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
@@ -377,10 +381,11 @@ int main (void) {
 #endif
 
 #ifndef NO_SDMMC
-	if (dsiSD && dsiMode) {
+	if (dsiSD && !dsMode && dsiMode) {
 		sdmmc_controller_init(true);
 	}
 #endif
+
 	// Pass command line arguments to loaded program
 	passArgs_ARM7();
 

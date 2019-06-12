@@ -281,15 +281,15 @@ void loadROMselect()
 	chdir((access("sd:/", F_OK) == 0) ? "sd:/" : "fat:/");
 	if (theme == 3)
 	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	else if (theme == 2)
 	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	else
 	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, false, false, true, true);
+		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	fadeType = true;	// Fade in from white
 }

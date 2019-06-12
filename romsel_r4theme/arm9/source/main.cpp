@@ -214,7 +214,6 @@ void LoadSettings(void) {
 	if (bothSDandFlashcard()) {
 		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	} else if (flashcardFound()) {
-		flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", 0);
 		secondaryDevice = true;
 	} else {
 		secondaryDevice = false;
@@ -864,8 +863,6 @@ int main(int argc, char **argv) {
 	}
 
 	nitroFSInit("/_nds/TWiLightMenu/r4menu.srldr");
-
-	flashcardInit();
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled

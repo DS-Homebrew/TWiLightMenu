@@ -155,6 +155,8 @@ class DSiMenuPlusPlusSettings
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
 
+    std::string romPath;
+
     int launchType;
     std::string homebrewArg;
     bool homebrewBootstrap;

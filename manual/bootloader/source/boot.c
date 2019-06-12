@@ -76,6 +76,8 @@ extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
 extern unsigned long dsMode;
 
+bool sdRead = false;
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
 
@@ -294,23 +296,7 @@ void startBinary_ARM7 (void) {
 	VoidFn arm7code = *(VoidFn*)(0x2FFFE34);
 	arm7code();
 }
-#ifndef NO_SDMMC
-int sdmmc_sd_readsectors(u32 sector_no, u32 numsectors, void *out);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Main function
-bool sdmmc_inserted() {
-	return true;
-}
 
-bool sdmmc_startup() {
-	sdmmc_controller_init(true);
-	return sdmmc_sdcard_init() == 0;
-}
-
-bool sdmmc_readsectors(u32 sector_no, u32 numsectors, void *out) {
-	return sdmmc_sdcard_readsectors(sector_no, numsectors, out) == 0;
-}
-#endif
 void mpu_reset();
 void mpu_reset_end();
 
@@ -320,11 +306,7 @@ int main (void) {
 	dsiMode = true;
 #endif
 #ifndef NO_SDMMC
-	if (dsiSD && dsiMode) {
-		_io_dldi.fn_readSectors = sdmmc_readsectors;
-		_io_dldi.fn_isInserted = sdmmc_inserted;
-		_io_dldi.fn_startup = sdmmc_startup;
-	}
+	sdRead = (dsiSD && dsiMode);
 #endif
 	u32 fileCluster = storedFileCluster;
 	// Init card
@@ -375,6 +357,8 @@ int main (void) {
 	// Load the NDS file
 	loadBinary_ARM7(fileCluster);
 
+	sdRead = false;
+
 	// Fix for Pictochat and DLP
 	if (ROM_TID == 0x41444E48 || ROM_TID == 0x41454E48) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
@@ -401,6 +385,7 @@ int main (void) {
 		sdmmc_controller_init(true);
 	}
 #endif
+
 	// Pass command line arguments to loaded program
 	passArgs_ARM7();
 
