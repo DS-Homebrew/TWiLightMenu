@@ -9,7 +9,9 @@
 #define BOOTSTRAP_RELEASE_HB "/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE "/_nds/nds-bootstrap-release.nds"
 
-#define BOOTSTRAP_INI "/_nds/nds-bootstrap.ini"
+#define BOOTSTRAP_INI    "/_nds/nds-bootstrap.ini"
+#define BOOTSTRAP_INI_SD "sd:/_nds/nds-bootstrap.ini"
+#define BOOTSTRAP_INI_FC "fat:/_nds/nds-bootstrap.ini"
 
 #define DSIMENUPP_INI "/_nds/TWiLightMenu/settings.ini"
 #define DSIMENUPP_SETTINGS_SRL "/_nds/TWiLightMenu/main.srldr"

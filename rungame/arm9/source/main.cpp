@@ -157,8 +157,10 @@ TWL_CODE int lastRunROM() {
 			return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 		}
 
-		if (useBootstrap || !previousUsedDevice)
+		if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice)
 		{
+			std::string savepath;
+
 			romfolder = romPath;
 			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 				romfolder.resize(romfolder.size()-1);
@@ -197,7 +199,7 @@ TWL_CODE int lastRunROM() {
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
-				std::string savepath = romFolderNoSlash+"/saves/"+savename;
+				savepath = romFolderNoSlash+"/saves/"+savename;
 				if (previousUsedDevice) {
 					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 				}
@@ -252,9 +254,16 @@ TWL_CODE int lastRunROM() {
 					}
 
 				}
+				if (perGameSettings_bootstrapFile == -1) {
+					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				} else {
+					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+				}
 			}
 
 			CIniFile bootstrapini( bootstrapinipath );
+			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", romPath);
+			bootstrapini.SetString( "NDS-BOOTSTRAP", "SAV_PATH", savepath);
 			if (perGameSettings_language == -2) {
 				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 			} else {
@@ -276,11 +285,7 @@ TWL_CODE int lastRunROM() {
 				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
 			}
 			bootstrapini.SaveIniFile( bootstrapinipath );
-			if (perGameSettings_bootstrapFile == -1) {
-				argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-			} else {
-				argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-			}
+
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 		}
 		else

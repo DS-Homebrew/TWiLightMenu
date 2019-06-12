@@ -42,6 +42,7 @@
 #include "common/pergamesettings.h"
 #include "common/cardlaunch.h"
 #include "common/flashcard.h"
+#include "common/fileCopy.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
 #include "twlmenuppvideo.h"
@@ -73,6 +74,22 @@ std::string homebrewArg;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+
+typedef struct {
+	char gameTitle[12];			//!< 12 characters for the game title.
+	char gameCode[4];			//!< 4 characters for the game code.
+} sNDSHeadertitlecodeonly;
+
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+void RemoveTrailingSlashes(std::string& path)
+{
+	while (!path.empty() && path[path.size()-1] == '/') {
+		path.resize(path.size()-1);
+	}
+}
 
 static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
@@ -207,8 +224,15 @@ void lastRunROM()
 	else if (ms().launchType == 1)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-		if (ms().useBootstrap || !ms().previousUsedDevice)
+		if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice)
 		{
+			std::string savepath;
+
+			std::string romfolder = ms().romPath;
+			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+				romfolder.resize(romfolder.size()-1);
+			}
+			chdir(romfolder.c_str());
 
 			std::string filename = ms().romPath;
 			const size_t last_slash_idx = filename.find_last_of("/");
@@ -220,35 +244,114 @@ void lastRunROM()
 			argarray.push_back(strdup(filename.c_str()));
 
 			loadPerGameSettings(filename);
-			if (access("fat:/", F_OK) == 0) {
+			if (ms().homebrewBootstrap) {
 				if (perGameSettings_bootstrapFile == -1) {
-					if (ms().homebrewBootstrap) {
-						argarray.at(0) = (char*)(ms().bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
-					} else {
-						argarray.at(0) = (char*)(ms().bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
-					}
+					argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 				} else {
-					if (ms().homebrewBootstrap) {
-						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-hb-nightly.nds" : "fat:/_nds/nds-bootstrap-hb-release.nds");
-					} else {
-						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "fat:/_nds/nds-bootstrap-nightly.nds" : "fat:/_nds/nds-bootstrap-release.nds");
-					}
+					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 				}
 			} else {
+				char game_TID[5];
+
+				FILE *f_nds_file = fopen(filename.c_str(), "rb");
+
+				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				fread(game_TID, 1, 4, f_nds_file);
+				game_TID[4] = 0;
+				game_TID[3] = 0;
+
+				fclose(f_nds_file);
+
+				std::string savename = ReplaceAll(filename, ".nds", ".sav");
+				std::string romFolderNoSlash = romfolder;
+				RemoveTrailingSlashes(romFolderNoSlash);
+				mkdir ("saves", 0777);
+				savepath = romFolderNoSlash+"/saves/"+savename;
+				if (ms().previousUsedDevice) {
+					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
+				}
+
+				if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
+					consoleDemoInit();
+					printf("Creating save file...\n");
+
+					static const int BUFFER_SIZE = 4096;
+					char buffer[BUFFER_SIZE];
+					memset(buffer, 0, sizeof(buffer));
+
+					int savesize = 524288;	// 512KB (default size for most games)
+
+					// Set save size to 8KB for the following games
+					if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+					{
+						savesize = 8192;
+					}
+
+					// Set save size to 256KB for the following games
+					if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+					{
+						savesize = 262144;
+					}
+
+					// Set save size to 1MB for the following games
+					if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+						|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+					{
+						savesize = 1048576;
+					}
+
+					// Set save size to 32MB for the following games
+					if ( strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
+						|| strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
+					{
+						savesize = 1048576*32;
+					}
+
+					FILE *pFile = fopen(savepath.c_str(), "wb");
+					if (pFile) {
+						for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+							fwrite(buffer, 1, sizeof(buffer), pFile);
+						}
+						fclose(pFile);
+					}
+					printf("Save file created!\n");
+					
+					for (int i = 0; i < 30; i++) {
+						swiWaitForVBlank();
+					}
+
+				}
 				if (perGameSettings_bootstrapFile == -1) {
-					if (ms().homebrewBootstrap) {
-						argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-					} else {
-						argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-					}
+					argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 				} else {
-					if (ms().homebrewBootstrap) {
-						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-					} else {
-						argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-					}
+					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 				}
 			}
+			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);
+			bootstrapini.SetString( "NDS-BOOTSTRAP", "SAV_PATH", savepath);
+			if (perGameSettings_language == -2) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
+			}
+			if (perGameSettings_dsiMode == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", ms().bstrap_dsiMode);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
+			}
+			if (perGameSettings_boostCpu == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", ms().boostCpu);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
+			}
+			if (perGameSettings_boostVram == -1) {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", ms().boostVram);
+			} else {
+				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
+			}
+			bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
 		}
 		else
