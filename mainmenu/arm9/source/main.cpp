@@ -1548,9 +1548,6 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_wrong);
 						}
 
-						useBackend = true;
-						homebrewBootstrap = true;
-						SaveSettings();
 						if (useGbarunner && gbaBiosFound) {
 							if (secondaryDevice) {
 								if (useBootstrap) {
