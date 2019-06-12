@@ -30,6 +30,8 @@
 	.global argSize
 	.global dsiSD
 	.global dsiMode
+	.global clearMasterBright
+	.global dsMode
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -54,6 +56,10 @@ dldiOffset:
 dsiSD:
 	.word	0
 dsiMode:
+	.word	0
+clearMasterBright:
+	.word	0
+dsMode:
 	.word	0
 
 startUp:

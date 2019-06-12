@@ -71,6 +71,24 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 	while(1);
 }
 
+void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) clearMasterBright_ARM9 (void) 
+{
+	u16 mode = 1 << 14;
+
+	*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
+	*(u16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
+
+	// Return to passme loop
+	*((vu32*)0x02FFFE04) = (u32)0xE59FF018;		// ldr pc, 0x02FFFE24
+	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;		// Set ARM9 Loop address
+
+	asm volatile(
+		"\tbx %0\n"
+		: : "r" (0x02FFFE04)
+	);
+	while(1);
+}
+
 /*-------------------------------------------------------------------------
 startBinary_ARM9
 Jumps to the ARM9 NDS binary in sync with the display and ARM7

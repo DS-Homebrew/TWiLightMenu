@@ -69,6 +69,8 @@ dsiMode:
 #define ARG_SIZE_OFFSET 20
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
+#define CLEAR_MASTER_BRIGHT_OFFSET 36
+#define DSMODE_SWITCH_OFFSET 40
 
 
 typedef signed int addr_t;
@@ -266,7 +268,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -289,8 +291,12 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 
 	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	if(argv[0][0]=='s' && argv[0][1]=='d') {
-		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
+	}
+
+	writeAddr ((data_t*) LCDC_BANK_C, CLEAR_MASTER_BRIGHT_OFFSET, clearMasterBright);
+	if (isDSiMode()) {
+		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
 	}
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
@@ -338,6 +344,13 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	}
 
 	irqDisable(IRQ_ALL);
+	
+	if (REG_SCFG_EXT != 0 && dsModeSwitch) {
+		if (!boostCpu) {
+			REG_SCFG_CLK = 0x80;
+		}
+		REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+	}
 
 	// Give the VRAM to the ARM7
 	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;	
@@ -348,19 +361,12 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;
 
 	resetARM7(0x06000000);
-  
-  if(clearMasterBright) {
-		u16 mode = 1 << 14;
-
-		*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
-		*(u16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
-	}
 
 	swiSoftReset(); 
 	return true;
 }
 
-int runNdsFile (const char* filename, int argc, const char** argv, bool clearMasterBright)  {
+int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
 	int pathLen;
@@ -384,11 +390,11 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool clearMas
 
 	bool havedsiSD = false;
 
-	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
+	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv, clearMasterBright);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*
@@ -413,7 +419,7 @@ dsiSD:
 
 bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
-	extern char *fake_heap_end;
+	extern u64 *fake_heap_end;
 	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
 	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
 
