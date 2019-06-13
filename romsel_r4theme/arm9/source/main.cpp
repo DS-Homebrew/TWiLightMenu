@@ -974,6 +974,8 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
+		printSmallCentered(false, 16, "If this takes a while, close");
+		printSmallCentered(false, 24, "and open the console's lid.");
 		printSmallCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 96, "Do not turn off the power.");
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -1327,9 +1329,7 @@ int main(int argc, char **argv) {
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
 					ClearBrightness();
-					const char* savecreate = "Creating public save file...";
-					const char* savecreated = "Public save file created!";
-					printSmall(false, 2, 80, savecreate);
+					printSmall(false, 2, 80, "Creating public save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1352,16 +1352,14 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, savecreated);
+					printSmall(false, 2, 88, "Public save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
 					ClearBrightness();
-					const char* savecreate = "Creating private save file...";
-					const char* savecreated = "Private save file created!";
-					printSmall(false, 2, 80, savecreate);
+					printSmall(false, 2, 80, "Creating private save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1384,7 +1382,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, savecreated);
+					printSmall(false, 2, 88, "Private save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -1394,15 +1392,16 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 96, "Do not turn off the power.");
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
-					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
 						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 					}
-					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
 						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 
 					clearText();
-					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
+					 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						printSmall(false, 2, 112, "After saving, please re-start");
 						printSmall(false, 2, 120, "TWiLight Menu++ to transfer your");
 						printSmall(false, 2, 128, "save data back.");
@@ -1526,9 +1525,7 @@ int main(int argc, char **argv) {
 						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
-							const char* savecreate = "Creating save file...";
-							const char* savecreated = "Save file created!";
-							printSmall(false, 2, 80, savecreate);
+							printSmall(false, 2, 80, "Creating save file...");
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -1569,7 +1566,7 @@ int main(int argc, char **argv) {
 								}
 								fclose(pFile);
 							}
-							printSmall(false, 2, 88, savecreated);
+							printSmall(false, 2, 88, "Save file created!");
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						}
 

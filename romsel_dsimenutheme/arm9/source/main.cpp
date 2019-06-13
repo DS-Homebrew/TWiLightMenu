@@ -797,6 +797,8 @@ int main(int argc, char **argv) {
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
 	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)) {
 		fadeType = true; // Fade in from white
+		printSmallCentered(false, 20, "If this takes a while, close and open");
+		printSmallCentered(false, 34, "the console's lid.");
 		printLargeCentered(false, 88, "Now copying data...");
 		printSmallCentered(false, 104, "Do not turn off the power.");
 		for (int i = 0; i < 15; i++) {
@@ -928,6 +930,8 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Creating public save file...");
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
@@ -970,6 +974,8 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Creating private save file...");
 					if (!fadeType) {
 						fadeType = true; // Fade in from white
@@ -1019,6 +1025,8 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice) {
 					clearText();
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
 					fadeType = true; // Fade in from white
@@ -1027,11 +1035,11 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
-					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
+					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
 						fcopy(ms().dsiWarePubPath.c_str(),
 						      "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 					}
-					if (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
 						fcopy(ms().dsiWarePrvPath.c_str(),
 						      "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
@@ -1041,12 +1049,12 @@ int main(int argc, char **argv) {
 						swiWaitForVBlank();
 					}
 
-					if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0 ||
-					    access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
+					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						clearText();
-						printLargeCentered(false, 64, "After saving, please re-start");
-						printLargeCentered(false, 80, "TWiLight Menu++ to transfer your");
-						printLargeCentered(false, 96, "save data back.");
+						printLargeCentered(false, 72, "After saving, please re-start");
+						printLargeCentered(false, 88, "TWiLight Menu++ to transfer your");
+						printLargeCentered(false, 104, "save data back.");
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 60 * 3; i++) {
 							swiWaitForVBlank(); // Wait 3 seconds
@@ -1196,6 +1204,8 @@ int main(int argc, char **argv) {
 						if (getFileSize(savepath.c_str()) == 0 &&
 						    isHomebrew[CURPOS] == 0)
 						{ // Create save if game isn't homebrew
+							printSmallCentered(false, 20, "If this takes a while, close and open");
+							printSmallCentered(false, 34, "the console's lid.");
 							printLargeCentered(false, 88, "Creating save file...");
 
 							fadeSpeed = true; // Fast fading

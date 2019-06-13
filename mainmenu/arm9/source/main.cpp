@@ -1103,8 +1103,10 @@ int main(int argc, char **argv) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
+		printSmallCentered(false, 24, "If this takes a while, close and open");
+		printSmallCentered(false, 38, "the console's lid.");
 		printSmallCentered(false, 86, "Now copying data...");
-		printSmallCentered(false, 98, "Do not turn off the power.");
+		printSmallCentered(false, 100, "Do not turn off the power.");
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", dsiWarePubPath.c_str());
@@ -1745,10 +1747,10 @@ int main(int argc, char **argv) {
 				whiteScreen = true;
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
-					const char* savecreate = "Creating public save file...";
-					const char* savecreated = "Public save file created!";
 					clearText();
-					printSmall(false, 2, 80, savecreate);
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
+					printSmall(false, 2, 80, "Creating public save file...");
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -1775,15 +1777,15 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, savecreated);
+					printSmall(false, 2, 88, "Public save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
-					const char* savecreate = "Creating private save file...";
-					const char* savecreated = "Private save file created!";
 					clearText();
-					printSmall(false, 2, 80, savecreate);
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
+					printSmall(false, 2, 80, "Creating private save file...");
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 35; i++) swiWaitForVBlank();
@@ -1810,7 +1812,7 @@ int main(int argc, char **argv) {
 						}
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, savecreated);
+					printSmall(false, 2, 88, "Private save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -1821,25 +1823,28 @@ int main(int argc, char **argv) {
 
 				if (previousUsedDevice) {
 					clearText();
+					printSmallCentered(false, 20, "If this takes a while, close and open");
+					printSmallCentered(false, 34, "the console's lid.");
 					printSmallCentered(false, 86, "Now copying data...");
-					printSmallCentered(false, 98, "Do not turn off the power.");
+					printSmallCentered(false, 100, "Do not turn off the power.");
 					fadeType = true;	// Fade in from white
 					for (int i = 0; i < 35; i++) swiWaitForVBlank();
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
-					if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
 						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
 					}
-					if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
 						fcopy(dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 
-					if (access(dsiWarePubPath.c_str(), F_OK) == 0 || access(dsiWarePrvPath.c_str(), F_OK) == 0) {
+					if ((access(dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
+					 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
 						clearText();
-						printSmall(false, 2, 8, "After saving, please re-start");
-						printSmall(false, 2, 20, "TWiLight Menu++ to transfer your");
-						printSmall(false, 2, 32, "save data back.");
+						printSmallCentered(false, 8, "After saving, please re-start");
+						printSmallCentered(false, 20, "TWiLight Menu++ to transfer your");
+						printSmallCentered(false, 32, "save data back.");
 						fadeType = true;	// Fade in from white
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 						fadeType = false;	// Fade to white
@@ -1963,9 +1968,9 @@ int main(int argc, char **argv) {
 						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
-							const char* savecreate = "Creating save file...";
-							const char* savecreated = "Save file created!";
-							printSmall(false, 2, 80, savecreate);
+							printSmallCentered(false, 20, "If this takes a while, close and open");
+							printSmallCentered(false, 34, "the console's lid.");
+							printSmallCentered(false, 88, "Creating save file...");
 
 							static const int BUFFER_SIZE = 4096;
 							char buffer[BUFFER_SIZE];
@@ -2006,7 +2011,8 @@ int main(int argc, char **argv) {
 								}
 								fclose(pFile);
 							}
-							printSmall(false, 2, 88, savecreated);
+							clearText();
+							printSmallCentered(false, 88, "Save file created!");
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						}
 
