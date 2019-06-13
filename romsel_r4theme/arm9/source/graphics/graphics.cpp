@@ -42,6 +42,7 @@
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool whiteScreen;
+extern bool blackScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 extern bool controlTopBright;
@@ -270,6 +271,8 @@ void vBlankHandler()
 		}
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));
+		} else if (blackScreen) {
+			glBoxFilled(0, 0, 256, 192, RGB15(0, 0, 0));
 		}
 		updateText(false);
 	}

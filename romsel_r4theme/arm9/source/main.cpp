@@ -62,7 +62,8 @@
 #include "sr_data_srllastran.h"	// For rebooting into the game (NTR-mode touch screen)
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
 
-bool whiteScreen = true;
+bool whiteScreen = false;
+bool blackScreen = true;
 bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
@@ -843,7 +844,6 @@ int main(int argc, char **argv) {
 
 	if (!fatInited) {
 		fontInit();
-		whiteScreen = false;
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
 		for (int i = 0; i < 30; i++) swiWaitForVBlank();
@@ -968,36 +968,29 @@ int main(int argc, char **argv) {
 	
 	char path[256];
 
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0)
-	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0))
+	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
+	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)))
 	{
-		controlTopBright = false;
-		whiteScreen = true;
-		fadeType = true;	// Fade in from white
-		printSmallCentered(false, 16, "If this takes a while, close");
-		printSmallCentered(false, 24, "and open the console's lid.");
-		printSmallCentered(false, 88, "Now copying data...");
-		printSmallCentered(false, 96, "Do not turn off the power.");
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		printLargeCentered(false, 16, "If this takes a while, close");
+		printLargeCentered(false, 24, "and open the console's lid.");
+		printLargeCentered(false, 88, "Now copying data...");
+		printLargeCentered(false, 96, "Do not turn off the power.");
 		if (access(dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", dsiWarePubPath.c_str());
 		}
 		if (access(dsiWarePrvPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", dsiWarePrvPath.c_str());
 		}
-		fadeType = false;	// Fade to white
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		clearText(false);
-		whiteScreen = false;
-		controlTopBright = true;
 	}
-	
+
+	blackScreen = false;
+
 	bool menuGraphicsLoaded = false;
 
 	while(1) {
 
 		if (startMenu) {
-			whiteScreen = false;
 			if (!menuGraphicsLoaded) {
 				topBgLoad(true);
 				bottomBgLoad(true);

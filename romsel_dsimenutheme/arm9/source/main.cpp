@@ -793,9 +793,9 @@ int main(int argc, char **argv) {
 	}
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
-	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0) ||
+	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub", 4)) ||
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
-	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0)) {
+	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv", 4))) {
 		fadeType = true; // Fade in from white
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");
