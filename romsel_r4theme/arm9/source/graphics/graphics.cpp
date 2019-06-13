@@ -345,6 +345,15 @@ void graphicsInit()
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
+	// Make screens black
+	dmaFillWords(0, BG_GFX, 0x18000);
+	dmaFillWords(0, (u16*)BG_GFX_SUB+(256*32), 0x18000);
+	SetBrightness(0, 0);
+	SetBrightness(1, 0);
+}
+
+void graphicsLoad()
+{	
 	if (isDSiMode()) {
 		loadSdRemovedImage();
 	}

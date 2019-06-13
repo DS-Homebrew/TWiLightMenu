@@ -836,11 +836,19 @@ int main(int argc, char **argv) {
 	*fake_heap_end = 0;
 
 	defaultExceptionHandler();
-	
-	// Make screen black
-	ClearBrightness();
+
+	graphicsInit();
 
 	bool fatInited = fatInitDefault();
+
+	if (!fatInited) {
+		fontInit();
+		whiteScreen = false;
+		printSmall(false, 64, 32, "fatinitDefault failed!");
+		fadeType = true;
+		for (int i = 0; i < 30; i++) swiWaitForVBlank();
+		stop();
+	}
 
 	// Read user name
 	char *username = (char*)PersonalData->name;
@@ -854,16 +862,6 @@ int main(int argc, char **argv) {
 	}
 	
 	LoadColor();
-
-	if (!fatInited) {
-		graphicsInit();
-		fontInit();
-		whiteScreen = false;
-		printSmall(false, 64, 32, "fatinitDefault failed!");
-		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
-		stop();
-	}
 
 	nitroFSInit("/_nds/TWiLightMenu/r4menu.srldr");
 
@@ -961,7 +959,7 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
-	graphicsInit();
+	graphicsLoad();
 	fontInit();
 
 	iconTitleInit();
