@@ -761,6 +761,7 @@ void launchGba(void) {
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().gbar2WramICache ? "sd:/_nds/GBARunner2_wramicache.nds" : "sd:/_nds/GBARunner2.nds");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);

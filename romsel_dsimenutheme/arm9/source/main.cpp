@@ -1605,6 +1605,7 @@ int main(int argc, char **argv) {
 									: "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 					if (SNES) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH",
