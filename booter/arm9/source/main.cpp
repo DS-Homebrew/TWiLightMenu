@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 		stop();
 	}
 	
-	bool srldrFound = (access("sd:/_nds/TWiLightMenu/main.srldr") == 0);
+	bool srldrFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
 
 	int err = 0;
 	if (srldrFound) {
