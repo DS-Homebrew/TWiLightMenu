@@ -83,8 +83,13 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
+	
+	bool srldrFound = (access("sd:/_nds/TWiLightMenu/main.srldr") == 0);
 
-	int err = runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL);
+	int err = 0;
+	if (srldrFound) {
+		err = runNdsFile ("sd:/_nds/TWiLightMenu/main.srldr", 0, NULL);
+	}
 
 	if(!graphicsInited) {
 		graphicsInit();
@@ -94,7 +99,7 @@ int main(int argc, char **argv) {
 	}
 
 	clearText();
-	if (err == 1) {
+	if (!srldrFound) {
 		printSmall(false, 4, 4, "sd:/_nds/TWiLightMenu/");
 		printSmall(false, 4, 12, "main.srldr not found.");
 	} else {

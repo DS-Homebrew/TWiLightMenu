@@ -134,7 +134,7 @@ void graphicsInit()
 	irqEnable(IRQ_VBLANK);
 	////////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 
 
 	// Initialize gl2d
@@ -152,13 +152,8 @@ void graphicsInit()
 	lcdMainOnBottom();
 	
 	vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2) | BG_PRIORITY(2);
-	REG_BG1CNT_SUB = BG_MAP_BASE(2) | BG_COLOR_256 | BG_TILE_BASE(4) | BG_PRIORITY(1);
+	REG_BG0CNT_SUB = BG_MAP_BASE(0) | BG_COLOR_256 | BG_TILE_BASE(2);
 	u16* bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(0);
-	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
-		bgMapSub[i] = (u16)i;
-	}
-	bgMapSub = (u16*)SCREEN_BASE_BLOCK_SUB(2);
 	for (int i = 0; i < CONSOLE_SCREEN_WIDTH*CONSOLE_SCREEN_HEIGHT; i++) {
 		bgMapSub[i] = (u16)i;
 	}
@@ -168,9 +163,7 @@ void graphicsInit()
 	SetBrightness(0, 31);
 	SetBrightness(1, 31);
 
-	consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
-
-	swiDecompressLZSSVram ((void*)dsimenupp_bannerTiles, (void*)CHAR_BASE_BLOCK_SUB(4), 0, &decompressBiosCallback);
+	swiDecompressLZSSVram ((void*)dsimenupp_bannerTiles, (void*)CHAR_BASE_BLOCK_SUB(2), 0, &decompressBiosCallback);
 	vramcpy_ui (&BG_PALETTE_SUB[0], dsimenupp_bannerPal, dsimenupp_bannerPalLen);
 	
 	subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
