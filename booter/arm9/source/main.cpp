@@ -83,7 +83,13 @@ int main(int argc, char **argv) {
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
-	
+
+	// Test code to extract device list
+	// Only works, if booted via HiyaCFW or launched from 3DS HOME Menu
+	/*FILE* deviceList = fopen("sd:/_nds/TWiLightMenu/deviceList.bin", "wb");
+	fwrite((void*)0x02480000, 1, 0x400, deviceList);
+	fclose(deviceList);*/
+
 	bool srldrFound = (access("sd:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
 
 	int err = 0;
