@@ -293,13 +293,11 @@ bool installBootStub(bool havedsiSD) {
 	bool ret = false;
 
 	bootloader[8] = isDSiMode();
-	if( havedsiSD) {
-		ret = true;
-		bootloader[3] = 0; // don't dldi patch
-		bootloader[7] = 1; // use internal dsi SD code
-	} else {
-		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size,false);
-	}
+
+	ret = true;
+	bootloader[3] = 0; // don't dldi patch
+	bootloader[7] = 1; // use internal dsi SD code
+
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
 	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);
 	bootstub->bootsize = load_bin_size;
