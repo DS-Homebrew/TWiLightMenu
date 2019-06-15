@@ -107,6 +107,7 @@
 #define TFN_GRF_START_TEXT          TFN_UI_DIRECTORY"/grf/start_text.grf"
 #define TFN_GRF_WIRELESSICONS       TFN_UI_DIRECTORY"/grf/wirelessicons.grf"
 #define TFN_RVID_CUBES              TFN_UI_DIRECTORY"/video/3dsRotatingCubes.rvid"
+#define TFN_RVID_CUBES_BW           TFN_UI_DIRECTORY"/video/3dsRotatingCubes_bw.rvid"
 
 #define TFN_SOUND_EFFECTBANK        TFN_UI_DIRECTORY"/sound/sfx.bin"
 #define TFN_SOUND_BG                TFN_UI_DIRECTORY"/sound/bgm.pcm.raw"

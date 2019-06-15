@@ -153,10 +153,12 @@ static bool rotatingCubesLoaded = false;
 
 bool rocketVideo_playVideo = false;
 int rocketVideo_videoYpos = 78;
-int rocketVideo_videoFrames = 0xEE;
+int frameOf60fps = 60;
+int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
 int rocketVideo_frameDelay = 0;
 bool rocketVideo_frameDelayEven = true; // For 24FPS
+bool bottomField = false;
 bool rocketVideo_loadFrame = true;
 
 int bubbleYpos = 80;
@@ -358,35 +360,47 @@ void drawDbox() {
 
 void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 
-static vu8 *rotatingCubesLocation = (vu8 *)0x02700000;
+static u8 *rotatingCubesLocation = (u8 *)0x02700000;
 
 void playRotatingCubesVideo(void) {
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
+		frameOf60fps++;
+		if (frameOf60fps > 60) frameOf60fps = 1;
+
 		rocketVideo_frameDelay++;
-		rocketVideo_loadFrame = (rocketVideo_frameDelay == 2 + rocketVideo_frameDelayEven);
+		// 50FPS
+		rocketVideo_loadFrame =   (frameOf60fps != 3
+								&& frameOf60fps != 9
+								&& frameOf60fps != 16
+								&& frameOf60fps != 22
+								&& frameOf60fps != 28
+								&& frameOf60fps != 34
+								&& frameOf60fps != 40
+								&& frameOf60fps != 46
+								&& frameOf60fps != 51
+								&& frameOf60fps != 58);
 	}
 
 	if (rocketVideo_loadFrame) {
-		rocketVideo_currentFrame++;
-
-		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-			rocketVideo_currentFrame = 0;
-		}
-
 		DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-		dmaCopyWordsAsynch(1, (void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)),
-				   (u16 *)BG_GFX_SUB + (256 * rocketVideo_videoYpos), 0x7000);
-
-		if (ms().colorMode == 1) {
-			u16 *bgSubBuffer = tex().beginBgSubModify();
-			for (u16 i = 0; i < 256 * 56; i++) {
-				bgSubBuffer[(rocketVideo_videoYpos * 256) + i] =
-				    convertVramColorToGrayscale(bgSubBuffer[(rocketVideo_videoYpos * 256) + i]);
+		for (int v = 0; v < 56; v += 2) {
+			dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
+			if (v == 54) {
+				dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+			} else {
+				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
 			}
-			tex().commitBgSubModifyAsync();
 		}
+
+		if (bottomField) {
+			rocketVideo_currentFrame++;
+			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+				rocketVideo_currentFrame = 0;
+			}
+		}
+		bottomField = !bottomField;
 		rocketVideo_frameDelay = 0;
 		rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 		rocketVideo_loadFrame = false;
@@ -1456,7 +1470,10 @@ void clearBoxArt() {
 // static char videoFrameFilename[256];
 
 void loadRotatingCubes() {
-	std::string cubes(TFN_RVID_CUBES);
+	std::string cubes = TFN_RVID_CUBES;
+	if (ms().colorMode == 1) {
+		cubes = TFN_RVID_CUBES_BW;
+	}
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
 
 	// if (!videoFrameFile) {
@@ -1497,22 +1514,23 @@ void loadRotatingCubes() {
 
 	if (videoFrameFile) {
 		bool doRead = false;
+		fseek(videoFrameFile, 0x200, SEEK_SET);
 
 		if (isDSiMode()) {
 			doRead = true;
-		} else if (sys().isRegularDS() && ms().colorMode == 0) {
+		} else if (sys().isRegularDS()) {
 			sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
 							 // Expansion Pak)
 			*(vu32 *)(0x08240000) = 1;
 			if (*(vu32 *)(0x08240000) == 1) {
 				// Set to load video into DS Memory Expansion Pak
-				rotatingCubesLocation = (vu8 *)0x09000000;
+				rotatingCubesLocation = (u8 *)0x09000000;
 				doRead = true;
 			}
 		}
 
 		if (doRead) {
-			fread((void*)rotatingCubesLocation, 1, 0x690000, videoFrameFile);
+			fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
 		}
