@@ -619,6 +619,12 @@ int main(int argc, char **argv) {
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
 
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
+		settingsinipath =
+		    "fat:/_nds/TWiLightMenu/settings.ini"; // Fallback to .ini path on flashcard, if not found on
+							   // SD card, or if SD access is disabled
+	}
+
 	ms().loadSettings();
 	tfn(); //
 	tc().loadConfig();
@@ -680,12 +686,6 @@ int main(int argc, char **argv) {
 				CURPOS = 39;
 			}
 		}
-	}
-
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath =
-		    "fat:/_nds/TWiLightMenu/settings.ini"; // Fallback to .ini path on flashcard, if not found on
-							   // SD card, or if SD access is disabled
 	}
 
 	langInit();
