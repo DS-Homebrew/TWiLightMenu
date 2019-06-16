@@ -46,6 +46,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
+#include <nds/arm7/codec.h>
 #include "sdmmc.h"
 #include "i2c.h"
 #include "fat.h"
@@ -272,6 +273,174 @@ void loadBinary_ARM7 (u32 fileCluster)
 	}
 }
 
+static void NDSTouchscreenMode(void) {
+	//unsigned char * *(unsigned char*)0x40001C0=		(unsigned char*)0x40001C0;
+	//unsigned char * *(unsigned char*)0x40001C0byte2=(unsigned char*)0x40001C1;
+	//unsigned char * *(unsigned char*)0x40001C2=	(unsigned char*)0x40001C2;
+	//unsigned char * I2C_DATA=	(unsigned char*)0x4004500;
+	//unsigned char * I2C_CNT=	(unsigned char*)0x4004501;
+
+	u8 volLevel;
+	
+	//if (fifoCheckValue32(FIFO_MAXMOD)) {
+	//	// special setting (when found special gamecode)
+	//	volLevel = 0xAC;
+	//} else {
+		// normal setting (for any other gamecodes)
+		volLevel = 0xA7;
+	//}
+
+	// Touchscreen
+	cdcReadReg (0x63, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x3A, 0x00);
+	cdcReadReg (CDC_CONTROL, 0x51);
+	cdcReadReg (CDC_TOUCHCNT, 0x02);
+	cdcReadReg (CDC_CONTROL, 0x3F);
+	cdcReadReg (CDC_SOUND, 0x28);
+	cdcReadReg (CDC_SOUND, 0x2A);
+	cdcReadReg (CDC_SOUND, 0x2E);
+	cdcWriteReg(CDC_CONTROL, 0x52, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x40, 0x0C);
+	cdcWriteReg(CDC_SOUND, 0x24, 0xFF);
+	cdcWriteReg(CDC_SOUND, 0x25, 0xFF);
+	cdcWriteReg(CDC_SOUND, 0x26, 0x7F);
+	cdcWriteReg(CDC_SOUND, 0x27, 0x7F);
+	cdcWriteReg(CDC_SOUND, 0x28, 0x4A);
+	cdcWriteReg(CDC_SOUND, 0x29, 0x4A);
+	cdcWriteReg(CDC_SOUND, 0x2A, 0x10);
+	cdcWriteReg(CDC_SOUND, 0x2B, 0x10);
+	cdcWriteReg(CDC_CONTROL, 0x51, 0x00);
+	cdcReadReg (CDC_TOUCHCNT, 0x02);
+	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x98);
+	cdcWriteReg(CDC_SOUND, 0x23, 0x00);
+	cdcWriteReg(CDC_SOUND, 0x1F, 0x14);
+	cdcWriteReg(CDC_SOUND, 0x20, 0x14);
+	cdcWriteReg(CDC_CONTROL, 0x3F, 0x00);
+	cdcReadReg (CDC_CONTROL, 0x0B);
+	cdcWriteReg(CDC_CONTROL, 0x05, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x0B, 0x01);
+	cdcWriteReg(CDC_CONTROL, 0x0C, 0x02);
+	cdcWriteReg(CDC_CONTROL, 0x12, 0x01);
+	cdcWriteReg(CDC_CONTROL, 0x13, 0x02);
+	cdcWriteReg(CDC_SOUND, 0x2E, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x3A, 0x60);
+	cdcWriteReg(CDC_CONTROL, 0x01, 0x01);
+	cdcWriteReg(CDC_CONTROL, 0x39, 0x66);
+	cdcReadReg (CDC_SOUND, 0x20);
+	cdcWriteReg(CDC_SOUND, 0x20, 0x10);
+	cdcWriteReg(CDC_CONTROL, 0x04, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x12, 0x81);
+	cdcWriteReg(CDC_CONTROL, 0x13, 0x82);
+	cdcWriteReg(CDC_CONTROL, 0x51, 0x82);
+	cdcWriteReg(CDC_CONTROL, 0x51, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x04, 0x03);
+	cdcWriteReg(CDC_CONTROL, 0x05, 0xA1);
+	cdcWriteReg(CDC_CONTROL, 0x06, 0x15);
+	cdcWriteReg(CDC_CONTROL, 0x0B, 0x87);
+	cdcWriteReg(CDC_CONTROL, 0x0C, 0x83);
+	cdcWriteReg(CDC_CONTROL, 0x12, 0x87);
+	cdcWriteReg(CDC_CONTROL, 0x13, 0x83);
+	cdcReadReg (CDC_TOUCHCNT, 0x10);
+	cdcWriteReg(CDC_TOUCHCNT, 0x10, 0x08);
+	cdcWriteReg(0x04, 0x08, 0x7F);
+	cdcWriteReg(0x04, 0x09, 0xE1);
+	cdcWriteReg(0x04, 0x0A, 0x80);
+	cdcWriteReg(0x04, 0x0B, 0x1F);
+	cdcWriteReg(0x04, 0x0C, 0x7F);
+	cdcWriteReg(0x04, 0x0D, 0xC1);
+	cdcWriteReg(CDC_CONTROL, 0x41, 0x08);
+	cdcWriteReg(CDC_CONTROL, 0x42, 0x08);
+	cdcWriteReg(CDC_CONTROL, 0x3A, 0x00);
+	cdcWriteReg(0x04, 0x08, 0x7F);
+	cdcWriteReg(0x04, 0x09, 0xE1);
+	cdcWriteReg(0x04, 0x0A, 0x80);
+	cdcWriteReg(0x04, 0x0B, 0x1F);
+	cdcWriteReg(0x04, 0x0C, 0x7F);
+	cdcWriteReg(0x04, 0x0D, 0xC1);
+	cdcWriteReg(CDC_SOUND, 0x2F, 0x2B);
+	cdcWriteReg(CDC_SOUND, 0x30, 0x40);
+	cdcWriteReg(CDC_SOUND, 0x31, 0x40);
+	cdcWriteReg(CDC_SOUND, 0x32, 0x60);
+	cdcReadReg (CDC_CONTROL, 0x74);
+	cdcWriteReg(CDC_CONTROL, 0x74, 0x02);
+	cdcReadReg (CDC_CONTROL, 0x74);
+	cdcWriteReg(CDC_CONTROL, 0x74, 0x10);
+	cdcReadReg (CDC_CONTROL, 0x74);
+	cdcWriteReg(CDC_CONTROL, 0x74, 0x40);
+	cdcWriteReg(CDC_SOUND, 0x21, 0x20);
+	cdcWriteReg(CDC_SOUND, 0x22, 0xF0);
+	cdcReadReg (CDC_CONTROL, 0x51);
+	cdcReadReg (CDC_CONTROL, 0x3F);
+	cdcWriteReg(CDC_CONTROL, 0x3F, 0xD4);
+	cdcWriteReg(CDC_SOUND, 0x23, 0x44);
+	cdcWriteReg(CDC_SOUND, 0x1F, 0xD4);
+	cdcWriteReg(CDC_SOUND, 0x28, 0x4E);
+	cdcWriteReg(CDC_SOUND, 0x29, 0x4E);
+	cdcWriteReg(CDC_SOUND, 0x24, 0x9E);
+	cdcWriteReg(CDC_SOUND, 0x25, 0x9E);
+	cdcWriteReg(CDC_SOUND, 0x20, 0xD4);
+	cdcWriteReg(CDC_SOUND, 0x2A, 0x14);
+	cdcWriteReg(CDC_SOUND, 0x2B, 0x14);
+	cdcWriteReg(CDC_SOUND, 0x26, 0xA7);
+	cdcWriteReg(CDC_SOUND, 0x27, 0xA7);
+	cdcWriteReg(CDC_CONTROL, 0x40, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x3A, 0x60);
+	cdcWriteReg(CDC_SOUND, 0x26, volLevel);
+	cdcWriteReg(CDC_SOUND, 0x27, volLevel);
+	cdcWriteReg(CDC_SOUND, 0x2E, 0x03);
+	cdcWriteReg(CDC_TOUCHCNT, 0x03, 0x00);
+	cdcWriteReg(CDC_SOUND, 0x21, 0x20);
+	cdcWriteReg(CDC_SOUND, 0x22, 0xF0);
+	cdcReadReg (CDC_SOUND, 0x22);
+	cdcWriteReg(CDC_SOUND, 0x22, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x52, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x51, 0x00);
+	
+	// Set remaining values
+	cdcWriteReg(CDC_CONTROL, 0x03, 0x44);
+	cdcWriteReg(CDC_CONTROL, 0x0D, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x0E, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x0F, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x10, 0x08);
+	cdcWriteReg(CDC_CONTROL, 0x14, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x15, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x16, 0x04);
+	cdcWriteReg(CDC_CONTROL, 0x1A, 0x01);
+	cdcWriteReg(CDC_CONTROL, 0x1E, 0x01);
+	cdcWriteReg(CDC_CONTROL, 0x24, 0x80);
+	cdcWriteReg(CDC_CONTROL, 0x33, 0x34);
+	cdcWriteReg(CDC_CONTROL, 0x34, 0x32);
+	cdcWriteReg(CDC_CONTROL, 0x35, 0x12);
+	cdcWriteReg(CDC_CONTROL, 0x36, 0x03);
+	cdcWriteReg(CDC_CONTROL, 0x37, 0x02);
+	cdcWriteReg(CDC_CONTROL, 0x38, 0x03);
+	cdcWriteReg(CDC_CONTROL, 0x3C, 0x19);
+	cdcWriteReg(CDC_CONTROL, 0x3D, 0x05);
+	cdcWriteReg(CDC_CONTROL, 0x44, 0x0F);
+	cdcWriteReg(CDC_CONTROL, 0x45, 0x38);
+	cdcWriteReg(CDC_CONTROL, 0x49, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x4A, 0x00);
+	cdcWriteReg(CDC_CONTROL, 0x4B, 0xEE);
+	cdcWriteReg(CDC_CONTROL, 0x4C, 0x10);
+	cdcWriteReg(CDC_CONTROL, 0x4D, 0xD8);
+	cdcWriteReg(CDC_CONTROL, 0x4E, 0x7E);
+	cdcWriteReg(CDC_CONTROL, 0x4F, 0xE3);
+	cdcWriteReg(CDC_CONTROL, 0x58, 0x7F);
+	cdcWriteReg(CDC_CONTROL, 0x74, 0xD2);
+	cdcWriteReg(CDC_CONTROL, 0x75, 0x2C);
+	cdcWriteReg(CDC_SOUND, 0x22, 0x70);
+	cdcWriteReg(CDC_SOUND, 0x2C, 0x20);
+
+	// Finish up!
+	cdcReadReg (CDC_TOUCHCNT, 0x02);
+	cdcWriteReg(CDC_TOUCHCNT, 0x02, 0x98);
+	cdcWriteReg(0xFF, 0x05, 0x00); //writeTSC(0x00, 0xFF);
+
+	// Power management
+	writePowerManagement(PM_READ_REGISTER, 0x00); //*(unsigned char*)0x40001C2 = 0x80, 0x00; // read PWR[0]   ;<-- also part of TSC !
+	writePowerManagement(PM_CONTROL_REG, 0x0D); //*(unsigned char*)0x40001C2 = 0x00, 0x0D; // PWR[0]=0Dh    ;<-- also part of TSC !
+}
+
 /*-------------------------------------------------------------------------
 startBinary_ARM7
 Jumps to the ARM7 NDS binary in sync with the display and ARM9
@@ -359,6 +528,8 @@ int main (void) {
 	}
 
 	if (dsMode) {
+		NDSTouchscreenMode();
+		*(u16*)0x4000500 = 0x807F;
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
 		if (REG_SCFG_EXT != 0) {

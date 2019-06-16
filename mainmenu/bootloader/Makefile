@@ -33,7 +33,7 @@ CFLAGS	+=	$(INCLUDE) $(EXTRA_CFLAGS) -DARM7
 ASFLAGS	:=	-g $(ARCH) $(EXTRA_CFLAGS) $(INCLUDE)
 LDFLAGS	=	-nostartfiles -T $(TOPDIR)/load.ld -g $(ARCH) -Wl,-Map,$(TARGET).map
 
-LIBS	:=
+LIBS	:=	-lnds7
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
