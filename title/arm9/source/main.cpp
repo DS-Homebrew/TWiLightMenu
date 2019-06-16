@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 
 	scanKeys();
 
-	if (ms().autorun && !(keysHeld() & KEY_B))
+	if ((ms().autorun && !(keysHeld() & KEY_B)) || (!ms().autorun && (keysHeld() & KEY_B)))
 	{
 		flashcardInit();
 		lastRunROM();
