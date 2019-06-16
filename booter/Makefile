@@ -134,7 +134,7 @@ $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 			-g SRLA 01 "TWLMENUPP" -z 80040000 -u 00030004 -a 00000138 -b icon.bmp "TWiLight Menu++;RocketRobz"
 			
 ifneq ($(strip $(TWLNOPATCHSRLHEADER)), 1)
-		python2 patch_ndsheader_dsiware.py $(TARGET).nds
+		python2 patch_ndsheader_dsiware_twltouch.py $(TARGET).nds
 endif
 
 $(TARGET).arm7: arm7/$(TARGET).elf

@@ -24,11 +24,12 @@
 
 #define LCDC_BANK_C (u16*)0x06840000
 
-#define LANGUAGE_OFFSET 4
-#define SDACCESS_OFFSET 8
-#define TWLMODE_OFFSET 12
-#define TWLCLOCK_OFFSET 16
-#define RUNCARDENGINE_OFFSET 20
+#define DSIMODE_OFFSET 4
+#define LANGUAGE_OFFSET 8
+#define SDACCESS_OFFSET 12
+#define TWLMODE_OFFSET 16
+#define TWLCLOCK_OFFSET 20
+#define RUNCARDENGINE_OFFSET 24
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -69,6 +70,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 	vramcpy (LCDC_BANK_C, load_bin, load_bin_size);
 
 	// Set the parameters for the loader
+	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
 	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
 	writeAddr ((data_t*) LCDC_BANK_C, SDACCESS_OFFSET, EnableSD);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLMODE_OFFSET, TWLMODE);

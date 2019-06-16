@@ -2283,9 +2283,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
 					}
 				} else {
-					ndsToBoot = (!arm7SCFGLocked
-								? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds"
-								: "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
 					}

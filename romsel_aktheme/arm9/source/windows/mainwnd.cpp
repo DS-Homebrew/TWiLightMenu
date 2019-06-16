@@ -852,7 +852,7 @@ void MainWnd::launchSelected()
 		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-		ndsToBoot = (!sys().arm7SCFGLocked() ? S8DS_NOTOUCH_ROM : S8DS_ROM);
+		ndsToBoot = S8DS_ROM;
 		if(access(ndsToBoot, F_OK) != 0) {
 			ndsToBoot = S8DS_FC;
 		}

@@ -1,6 +1,7 @@
 @---------------------------------------------------------------------------------
 	.section ".init"
 	.global _start
+	.global dsiMode
 	.global language
 	.global sdAccess
 	.global twlMode
@@ -14,6 +15,8 @@ _start:
 @---------------------------------------------------------------------------------
 	b	startUp
 
+dsiMode:
+	.word	0x00000000
 language:
 	.word	0x00000000
 sdAccess:

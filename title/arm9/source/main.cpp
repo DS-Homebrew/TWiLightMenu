@@ -485,7 +485,7 @@ void lastRunROM()
 		{
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/s8ds", 0777);
-			argarray.at(0) = (char*)(!sys().arm7SCFGLocked() ? "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds" : "sd:/_nds/TWiLightMenu/emulators/S8DS.nds");
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
