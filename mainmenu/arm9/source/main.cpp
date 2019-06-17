@@ -657,6 +657,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AST",	// Star Wars Episode III: Revenge of the Sith
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence
+		"YT9",	// Tony Hawk's Proving Ground
 		"YYK",	// Trauma Center: Under the Knife 2
 		"CY8",	// Yu-Gi-Oh! World Championship 2009
 		"BYX",	// Yu-Gi-Oh! World Championship 2010
