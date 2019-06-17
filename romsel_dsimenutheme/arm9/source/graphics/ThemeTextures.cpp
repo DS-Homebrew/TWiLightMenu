@@ -19,6 +19,7 @@
 #include "uvcoord_top_font.h"
 #include "common/lzss.h"
 #include "common/tonccpy.h"
+#include "graphics/lodepng.h"
 
 
 // #include <nds/arm9/decompress.h>
@@ -603,27 +604,55 @@ unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
 
 void ThemeTextures::drawBoxArt(const char *filename) {
 	FILE *file = fopen(filename, "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
+	if (!file) {
+		filename = "nitro:/graphics/boxart_unknown.bmp";
+		file = fopen(filename, "rb");
+	}
 
 	if (file) {
+		extern bool extention(std::string filename, const char *ext, int number);
+
 		// Start loading
 		beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(_bmpImageBuffer, 2, 0x7800, file);
-		u16 *src = _bmpImageBuffer;
-		int x = 64;
-		int y = 40 + 114;
-		for (int i = 0; i < 128 * 115; i++) {
-			if (x >= 64 + 128) {
-				x = 64;
-				y--;
+		if (extention(filename, ".png", 4)) {
+			std::vector<unsigned char> image;
+			unsigned width, height;
+			lodepng::decode(image, width, height, filename);
+			for(unsigned i=0;i<image.size()/4;i++) {
+				_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				if (ms().colorMode == 1) {
+					_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
+				}
 			}
-			u16 val = *(src++);
-			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-			x++;
+			u16 *src = _bmpImageBuffer;
+			int x = 64;
+			int y = 40;
+			for (int i = 0; i < 128 * 115; i++) {
+				if (x >= 64 + 128) {
+					x = 64;
+					y++;
+				}
+				u16 val = *(src++);
+				_bgSubBuffer[y * 256 + x] = val;
+				x++;
+			}
+		} else {
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			fread(_bmpImageBuffer, 2, 0x7800, file);
+			u16 *src = _bmpImageBuffer;
+			int x = 64;
+			int y = 40 + 114;
+			for (int i = 0; i < 128 * 115; i++) {
+				if (x >= 64 + 128) {
+					x = 64;
+					y--;
+				}
+				u16 val = *(src++);
+				_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
+				x++;
+			}
 		}
 		commitBgSubModify();
 	}

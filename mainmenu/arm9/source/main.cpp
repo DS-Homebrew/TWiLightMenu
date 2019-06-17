@@ -1233,6 +1233,9 @@ int main(int argc, char **argv) {
 			std::string temp_filename = filename;
 			char boxArtPath[256];
 			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), filename.c_str());
+			if (access(boxArtPath, F_OK) != 0) {
+				snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename.c_str());
+			}
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
 				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
 				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV"))
@@ -1267,6 +1270,9 @@ int main(int argc, char **argv) {
 				fclose(f_nds_file);
 
 				snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp" : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"), game_TID);
+				if (access(boxArtPath, F_OK) != 0) {
+					snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+				}
 			}
 			loadBoxArt(boxArtPath);	// Load box art
 		}

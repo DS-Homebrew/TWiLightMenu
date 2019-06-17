@@ -39,6 +39,7 @@
 
 #include "../iconTitle.h"
 #include "graphics.h"
+#include "graphics/lodepng.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
@@ -362,25 +363,54 @@ void vBlankHandler()
 
 void loadBoxArt(const char* filename) {
 	FILE* file = fopen(filename, "rb");
-	if (!file) file = fopen("nitro:/graphics/boxart_unknown.bmp", "rb");
+	if (!file) {
+		filename = "nitro:/graphics/boxart_unknown.bmp";
+		file = fopen(filename, "rb");
+	}
 
 	if (file) {
+		extern bool extention(std::string filename, const char *ext, int number);
+
 		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x7800, file);
-		u16* src = bmpImageBuffer;
-		int x = 64;
-		int y = 40+114;
-		for (int i=0; i<128*115; i++) {
-			if (x >= 192) {
-				x = 64;
-				y--;
+		if (extention(filename, ".png", 4)) {
+			std::vector<unsigned char> image;
+			unsigned width, height;
+			lodepng::decode(image, width, height, filename);
+			for(unsigned i=0;i<image.size()/4;i++) {
+				bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+				if (colorMode == 1) {
+					bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+				}
 			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
+			u16* src = bmpImageBuffer;
+			int x = 64;
+			int y = 40;
+			for (int i = 0; i < 128 * 115; i++) {
+				if (x >= 64 + 128) {
+					x = 64;
+					y++;
+				}
+				u16 val = *(src++);
+				BG_GFX_SUB[y*256+x] = val;
+				x++;
+			}
+		} else {
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x7800, file);
+			u16* src = bmpImageBuffer;
+			int x = 64;
+			int y = 40+114;
+			for (int i = 0; i < 128 * 115; i++) {
+				if (x >= 64 + 128) {
+					x = 64;
+					y--;
+				}
+				u16 val = *(src++);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				x++;
+			}
 		}
 	}
 
