@@ -62,6 +62,8 @@ static bool infoFound[41] = {false};
 static u16 cachedTitle[41][TITLE_CACHE_SIZE];
 static char titleToDisplay[3][384];
 
+static u32 arm9StartSig[4];
+
 u8 tilesModified[(32 * 256) / 2] = {0};
 
 std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
@@ -411,13 +413,23 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 && ndsHeader.gameCode[2] == 0x38))
 		{
 			isDSiWare[num] = true; // Is a DSiWare game
-		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000
-		&& ndsHeader.arm7binarySize < 0x20000) {
-			isHomebrew[num] = 2; // Homebrew is recent (may have DSi-extended header)
-		} else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) ||
-			   (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
+		/*} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000
+		&& ndsHeader.arm7binarySize < 0x20000) {*/
+		} else if (ndsHeader.arm7binarySize < 0x20000) {
+			fseek(fp, ndsHeader.arm9romOffset, SEEK_SET);
+			fread(arm9StartSig, sizeof(u32), 4, fp);
+			if (arm9StartSig[0] == 0xE3A00301
+			 && arm9StartSig[1] == 0xE5800208
+			 && arm9StartSig[2] == 0xE3A00013
+			 && arm9StartSig[3] == 0xE129F000) {
+				isHomebrew[num] = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
+			} else {
+				isHomebrew[num] = 1; // Homebrew is old (requires a DLDI driver to read from SD)
+			}
+		} /*else if ((ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)
+			|| (ndsHeader.arm9romOffset == 0x200 && ndsHeader.arm7destination == 0x02380000)) {
 			isHomebrew[num] = 1; // Homebrew has no DSi-extended header
-		}
+		}*/
 
 		bnrSysSettings[num] =
 		    (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
