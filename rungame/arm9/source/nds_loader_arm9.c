@@ -419,7 +419,7 @@ dsiSD:
 
 bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
-	extern u64 *fake_heap_end;
+	extern char *fake_heap_end;
 	struct __bootstub *bootstub = (struct __bootstub *)fake_heap_end;
 	u32 *bootloader = (u32*)(fake_heap_end+bootstub_bin_size);
 
