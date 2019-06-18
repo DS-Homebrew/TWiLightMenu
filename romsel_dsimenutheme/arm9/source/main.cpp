@@ -1100,6 +1100,11 @@ int main(int argc, char **argv) {
 					*(u16 *)(0x0200080E) =
 					    swiCRC16(0xFFFF, (void *)0x02000810, 0x3F0); // Unlaunch CRC16
 				}
+				// Stabilization code to make DSiWare always boot successfully(?)
+				clearText();
+				for (int i = 0; i < 15; i++) {
+					swiWaitForVBlank();
+				}
 
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Unlaunch
 				for (int i = 0; i < 15; i++) {

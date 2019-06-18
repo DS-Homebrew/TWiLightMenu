@@ -1431,6 +1431,9 @@ int main(int argc, char **argv) {
 				while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
 					*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 				}
+				// Stabilization code to make DSiWare always boot successfully(?)
+				clearText();
+				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
