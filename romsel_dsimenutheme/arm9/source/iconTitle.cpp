@@ -405,8 +405,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0
 		 && ndsHeader.makercode[1] != 0)
-		 || ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
-		 && ndsHeader.gameCode[2] == 0x38)
+		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0
+		 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
+		 && ndsHeader.gameCode[2] == 0x38))
 		{
 			isDSiWare[num] = true; // Is a DSiWare game
 		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000
@@ -420,9 +422,9 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		bnrSysSettings[num] =
 		    (ndsHeader.gameCode[0] == 0x48 && ndsHeader.gameCode[1] == 0x4E && ndsHeader.gameCode[2] == 0x42);
 
-		if (ndsHeader.dsi_flags == 0x10)
+		if (ndsHeader.dsi_flags & BIT(4))
 			bnrWirelessIcon[num] = 1;
-		else if (ndsHeader.dsi_flags == 0x0B)
+		else if (ndsHeader.dsi_flags & BIT(3))
 			bnrWirelessIcon[num] = 2;
 
 		if (ndsHeader.bannerOffset == 0) {

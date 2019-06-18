@@ -733,8 +733,10 @@ void getGameInfo(bool isDir, const char* name)
 		 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0
 		 && ndsHeader.makercode[1] != 0)
-		 || ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
-		 && ndsHeader.gameCode[2] == 0x38)
+		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0
+		 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
+		 && ndsHeader.gameCode[2] == 0x38))
 		{
 			isDSiWare = true;	// Is a DSiWare game
 		} else if (ndsHeader.unitCode >= 0x02 && ndsHeader.arm9romOffset == 0x4000
@@ -745,8 +747,10 @@ void getGameInfo(bool isDir, const char* name)
 			isHomebrew = 1;		// Homebrew has no DSi-extended header
 		}
 
-		if (ndsHeader.dsi_flags == 0x10) bnrWirelessIcon = 1;
-		else if (ndsHeader.dsi_flags == 0x0B) bnrWirelessIcon = 2;
+		if (ndsHeader.dsi_flags & BIT(4))
+			bnrWirelessIcon = 1;
+		else if (ndsHeader.dsi_flags & BIT(3))
+			bnrWirelessIcon = 2;
 
 		if (ndsHeader.bannerOffset == 0)
 		{
