@@ -82,6 +82,7 @@ static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NE
 static bool useBootstrap = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
+static bool fcSaveOnSd = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
@@ -97,6 +98,7 @@ TWL_CODE void LoadSettings(void) {
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
@@ -200,7 +202,7 @@ TWL_CODE int lastRunROM() {
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 				savepath = romFolderNoSlash+"/saves/"+savename;
-				if (previousUsedDevice) {
+				if (previousUsedDevice && fcSaveOnSd) {
 					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 				}
 

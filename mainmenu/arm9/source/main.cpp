@@ -149,6 +149,7 @@ bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 bool snesEmulator = true;
+bool fcSaveOnSd = false;
 
 bool pictochatFound = false;
 bool dlplayFound = false;
@@ -210,6 +211,7 @@ void LoadSettings(void) {
 	} else {
 		secondaryDevice = false;
 	}
+	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
@@ -1971,7 +1973,7 @@ int main(int argc, char **argv) {
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
-						if (sdFound() && previousUsedDevice) {
+						if (sdFound() && previousUsedDevice && fcSaveOnSd) {
 							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;

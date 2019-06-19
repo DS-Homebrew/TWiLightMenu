@@ -111,7 +111,8 @@ std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1
 std::string STR_LANGUAGE = "STR_LANGUAGE";
 std::string STR_CPUSPEED = "STR_CPUSPEED";
 std::string STR_VRAMBOOST = "STR_VRAMBOOST";
-std::string STR_USEBOOTSTRAP = "STR_BOOTSTRAP";
+std::string STR_USEBOOTSTRAP = "STR_USEBOOTSTRAP";
+std::string STR_FCSAVELOCATION = "STR_FCSAVELOCATION";
 std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
@@ -158,6 +159,8 @@ std::string STR_DESCRIPTION_FORCESLEEPPATCH = "STR_DESCRIPTION_FORCESLEEPPATCH";
 std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK = "STR_DESCRIPTION_SLOT1SCFGUNLOCK";
 
 std::string STR_DESCRIPTION_USEBOOTSTRAP = "STR_DESCRIPTION_USEBOOTSTRAP";
+
+std::string STR_DESCRIPTION_FCSAVELOCATION = "STR_DESCRIPTION_FCSAVELOCATION";
 
 std::string STR_DESCRIPTION_DEBUG_1 = "STR_DESCRIPTION_DEBUG_1";
 
@@ -401,6 +404,7 @@ void langInit(void)
 	STR_CPUSPEED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "CPUSPEED", "ARM9 CPU Speed"));
 	STR_VRAMBOOST = ConvertFromUTF8(languageini.GetString("LANGUAGE", "VRAMBOOST", "VRAM boost"));
 	STR_USEBOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "USEBOOTSTRAP", "Use nds-bootstrap"));
+	STR_FCSAVELOCATION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FCSAVELOCATION", "Slot-1 SD save location"));
 	STR_DEBUG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DEBUG", "Debug"));
 	STR_LOGGING = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOGGING", "Logging"));
 	STR_ROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED"));
@@ -447,6 +451,8 @@ void langInit(void)
 	STR_DESCRIPTION_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode and/or clock speed in flashcard homebrew."));
 
 	STR_DESCRIPTION_USEBOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOOTSTRAP", "nds-bootstrap is used instead of the flashcard kernel or firmware."));
+
+	STR_DESCRIPTION_FCSAVELOCATION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FCSAVELOCATION", "Pick the location of Slot-1 SD (or flashcard) saves."));
 
 	STR_DESCRIPTION_DEBUG_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before launched game."));
 

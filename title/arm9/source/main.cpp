@@ -267,7 +267,7 @@ void lastRunROM()
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
 				savepath = romFolderNoSlash+"/saves/"+savename;
-				if (ms().previousUsedDevice) {
+				if (ms().previousUsedDevice && ms().fcSaveOnSd) {
 					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 				}
 

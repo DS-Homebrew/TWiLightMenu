@@ -51,6 +51,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     secondaryAccess = false;
     previousUsedDevice = false;
     secondaryDevice = false;
+	fcSaveOnSd = false;
     sortMethod = 0;
 
     flashcard = EDSTTClone;
@@ -144,6 +145,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	} else {
 		secondaryDevice = false;
 	}
+	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
     
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);

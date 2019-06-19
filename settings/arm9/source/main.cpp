@@ -511,7 +511,8 @@ int main(int argc, char **argv)
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
 		if (!sys().arm7SCFGLocked()) {
-			gamesPage.option("Flashcard: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			gamesPage.option("Slot-1 SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {"Console's SD", "Slot-1 SD"}, {true, false});
 		}
 		if (sdAccessible) {
 			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPPATCH, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})

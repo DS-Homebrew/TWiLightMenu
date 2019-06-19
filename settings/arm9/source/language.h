@@ -105,6 +105,7 @@ extern std::string STR_LANGUAGE;
 extern std::string STR_CPUSPEED;
 extern std::string STR_VRAMBOOST;
 extern std::string STR_USEBOOTSTRAP;
+extern std::string STR_FCSAVELOCATION;
 extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
@@ -151,6 +152,8 @@ extern std::string STR_DESCRIPTION_FORCESLEEPPATCH;
 extern std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK;
 
 extern std::string STR_DESCRIPTION_USEBOOTSTRAP;
+
+extern std::string STR_DESCRIPTION_FCSAVELOCATION;
 
 extern std::string STR_DESCRIPTION_DEBUG_1;
 

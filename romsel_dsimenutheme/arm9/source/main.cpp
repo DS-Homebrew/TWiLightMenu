@@ -1202,7 +1202,7 @@ int main(int argc, char **argv) {
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir((isHomebrew[CURPOS] == 1) ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
-						if (sdFound() && ms().secondaryDevice) {
+						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;

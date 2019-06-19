@@ -146,6 +146,7 @@ class DSiMenuPlusPlusSettings
     bool gotosettings;
     bool previousUsedDevice;
     bool secondaryDevice;
+	bool fcSaveOnSd;
 
     int flashcard;
     bool slot1LaunchMethod;

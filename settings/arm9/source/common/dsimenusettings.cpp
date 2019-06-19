@@ -41,6 +41,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     secondaryAccess = false;
     previousUsedDevice = false;
     secondaryDevice = false;
+	fcSaveOnSd = false;
 
     flashcard = EDSTTClone;
 
@@ -119,6 +120,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
     secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -221,6 +224,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
     settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
+	settingsini.SetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     // Default nds-bootstrap settings
     settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", guiLanguage);

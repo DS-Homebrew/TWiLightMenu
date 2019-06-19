@@ -408,7 +408,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
 	}
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
-	if (sdFound() && ms().secondaryDevice) {
+	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
 	}
 	if (access(savepath.c_str(), F_OK) == 0)
@@ -511,7 +511,7 @@ int BootstrapConfig::launch()
 	}
 	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
-	if (sdFound() && ms().secondaryDevice) {
+	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
 	}
 	std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;

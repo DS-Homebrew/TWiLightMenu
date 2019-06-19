@@ -37,6 +37,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     launcherApp = -1;
     previousUsedDevice = false;
     secondaryDevice = false;
+	fcSaveOnSd = false;
 
     flashcard = EDSTTClone;
 
@@ -114,6 +115,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	} else {
 		secondaryDevice = false;
 	}
+	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
