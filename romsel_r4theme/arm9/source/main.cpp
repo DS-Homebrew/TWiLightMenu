@@ -651,6 +651,8 @@ void SetSpeedBumpExclude(const char* filename) {
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Alta�r's Chronicles
 		"AB2",	// Battles of Prince of Persia
+		"CBK",	// Bolt
+		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic - XY XX
