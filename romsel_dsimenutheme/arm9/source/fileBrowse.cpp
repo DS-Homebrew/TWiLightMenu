@@ -1131,15 +1131,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				if (ms().showBoxArt) {
 					// Store box art path
 					snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp"
-							    : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"),
+						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
 						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
-					if (access(boxArtPath[i], F_OK) != 0) {
-						snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
-					}
 					if ((access(boxArtPath[i], F_OK) != 0) && (bnrRomType[i] == 0)) {
 						if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") +
 										1) == "argv") ||
@@ -1175,15 +1169,9 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 						fclose(f_nds_file);
 
 						snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.bmp"
-								    : "fat:/_nds/TWiLightMenu/boxart/%s.bmp"),
+							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+								    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
 							 game_TID);
-						if (access(boxArtPath[i], F_OK) != 0) {
-							snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-								 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-										: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-								 game_TID);
-						}
 					}
 				}
 			}
