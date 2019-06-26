@@ -220,6 +220,26 @@ void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 	}
 }
 
+void smsWarning(void) {
+	dialogboxHeight = 3;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Warning");
+	printSmallCentered(false, 104, "When the game starts, please");
+	printSmallCentered(false, 112, "touch the screen to go into");
+	printSmallCentered(false, 120, "the menu, and exit out of it");
+	printSmallCentered(false, 128, "for the sound to work.");
+	printSmallCentered(false, 142, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
 void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
@@ -452,6 +472,10 @@ string browseForFile(const vector<string> extensionList, const char* username)
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					hasAP = checkRomAP(f_nds_file);
 					fclose(f_nds_file);
+				}
+				else if (bnrRomType == 4 || bnrRomType == 5)
+				{
+					smsWarning();
 				}
 				else if (bnrRomType == 6)
 				{

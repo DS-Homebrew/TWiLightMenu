@@ -774,6 +774,40 @@ void launchGba(void) {
 	}
 }
 
+void smsWarning(void) {
+	clearText();
+	dbox_showIcon = false;
+	showdialogbox = true;
+	for (int i = 0; i < 30; i++) {
+		snd().updateStream();
+		swiWaitForVBlank();
+	}
+	printSmallCentered(false, 64, "When the game starts, please");
+	printSmallCentered(false, 78, "touch the screen to go into");
+	printSmallCentered(false, 92, "the menu, and exit out of it");
+	printSmallCentered(false, 106, "for the sound to work.");
+	printSmall(false, 208, 160, BUTTON_A " OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	showdialogbox = false;
+	for (int i = 0; i < 15; i++) {
+		snd().updateStream();
+		swiWaitForVBlank();
+	}
+}
+
 void mdRomTooBig(void) {
 	// int bottomBright = 0;
 
@@ -2211,6 +2245,8 @@ string browseForFile(const vector<string> extensionList) {
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
+					} else if (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 5) {
+						smsWarning();
 					} else if (bnrRomType[CURPOS] == 6) {
 						if (getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >

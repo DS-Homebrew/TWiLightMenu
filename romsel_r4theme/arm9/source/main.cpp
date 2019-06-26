@@ -63,7 +63,7 @@
 #include "sr_data_srllastran_twltouch.h"	// For rebooting into the game (TWL-mode touch screen)
 
 bool whiteScreen = false;
-bool blackScreen = true;
+bool blackScreen = false;
 bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
@@ -965,6 +965,13 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
+	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
+							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)));
+	
+	if (copyDSiWareSavBack) {
+		blackScreen = true;
+	}
+
 	graphicsLoad();
 	fontInit();
 
@@ -974,8 +981,7 @@ int main(int argc, char **argv) {
 	
 	char path[256];
 
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
-	 || (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)))
+	if (copyDSiWareSavBack)
 	{
 		printLargeCentered(false, 16, "If this takes a while, close");
 		printLargeCentered(false, 24, "and open the console's lid.");
@@ -988,9 +994,8 @@ int main(int argc, char **argv) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", dsiWarePrvPath.c_str());
 		}
 		clearText(false);
+		blackScreen = false;
 	}
-
-	blackScreen = false;
 
 	bool menuGraphicsLoaded = false;
 
