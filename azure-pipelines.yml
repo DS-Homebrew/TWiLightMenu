@@ -45,6 +45,9 @@ jobs:
         chmod +x make_cia
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+
+        echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
+        echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
       displayName: 'Make booter and TWiLightMenu CIAs'
       
     - script: |
@@ -124,9 +127,6 @@ jobs:
       - script: 
           ls -a $(Build.ArtifactStagingDirectory)
       - script: |
-          echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
-          echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
-
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
           git clone --depth 1 https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
