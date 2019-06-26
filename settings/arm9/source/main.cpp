@@ -366,10 +366,6 @@ int main(int argc, char **argv)
 	powerOn(PM_BACKLIGHT_BOTTOM);
 #pragma region init
 
-	// overwrite reboot stub identifier
-	extern u64 *fake_heap_end;
-	*fake_heap_end = 0;
-
 	sys().initFilesystem();
 	sys().flashcardUsed();
 	ms();

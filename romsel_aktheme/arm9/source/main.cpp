@@ -105,9 +105,6 @@ void SetBrightness(u8 screen, s8 bright)
 
 int main(int argc, char **argv)
 {
-	extern u64 *fake_heap_end;
-	*fake_heap_end = 0;
-	
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
