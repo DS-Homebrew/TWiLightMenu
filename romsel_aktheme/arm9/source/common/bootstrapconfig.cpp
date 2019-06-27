@@ -164,6 +164,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
 		"AB2",	// Battles of Prince of Persia
+		"YB4",	// Bee Movie
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
