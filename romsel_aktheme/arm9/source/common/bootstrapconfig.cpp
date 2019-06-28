@@ -168,6 +168,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
+		"YIV",	// Dragon Quest IV: Chapters of the Chosen
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic - XY XX
 		"A26",	// Feel the Magic - XY XX (Demo)
