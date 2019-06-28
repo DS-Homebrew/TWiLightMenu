@@ -488,7 +488,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-  FILE* db=fopen("sd:/_nds/TWiLightMenu/extras/usrcheat.dat","r+b");
+  FILE* db=fopen((sdFound() || !ms().secondaryDevice) ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","r+b");
   if(db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
