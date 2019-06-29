@@ -1486,6 +1486,9 @@ int main(int argc, char **argv) {
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
+								if (sdFound()) {
+									chdir("sd:/");
+								}
 								int err = runNdsFile (pictochatPath, 0, NULL, false, true, true, false, false);
 								char text[32];
 								snprintf (text, sizeof(text), "Start failed. Error %i", err);
@@ -1536,6 +1539,9 @@ int main(int argc, char **argv) {
 								fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
+								if (sdFound()) {
+									chdir("sd:/");
+								}
 								int err = runNdsFile (dlplayPath, 0, NULL, false, true, true, false, false);
 								char text[32];
 								snprintf (text, sizeof(text), "Start failed. Error %i", err);
