@@ -446,6 +446,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"A3S",	// Shrek the Third
 		"AIR",	// Space Invaders DS
 		"AIS",	// Space Invaders Revolution
+		"YV4",  // Spectrobes: Beyond the Portals
 		"AS2",  // Spider-Man 2
 		"AQ3",	// Spider-Man 3
 		"AST",	// Star Wars Episode III: Revenge of the Sith
