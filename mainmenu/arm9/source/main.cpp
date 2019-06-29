@@ -1487,7 +1487,12 @@ int main(int argc, char **argv) {
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
 								int err = runNdsFile (pictochatPath, 0, NULL, false, true, true, false, false);
-								iprintf ("Start failed. Error %i\n", err);
+								char text[32];
+								snprintf (text, sizeof(text), "Start failed. Error %i", err);
+								clearText();
+								ClearBrightness();
+								printSmall(false, 4, 80, text);
+								stop();
 							}
 						} else {
 							mmEffectEx(&snd_wrong);
@@ -1532,7 +1537,12 @@ int main(int argc, char **argv) {
 								for (int i = 0; i < 15; i++) swiWaitForVBlank();
 							} else {
 								int err = runNdsFile (dlplayPath, 0, NULL, false, true, true, false, false);
-								iprintf ("Start failed. Error %i\n", err);
+								char text[32];
+								snprintf (text, sizeof(text), "Start failed. Error %i", err);
+								clearText();
+								ClearBrightness();
+								printSmall(false, 4, 80, text);
+								stop();
 							}
 						} else {
 							mmEffectEx(&snd_wrong);
