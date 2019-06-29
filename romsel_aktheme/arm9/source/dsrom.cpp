@@ -87,7 +87,21 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
 
-		if ((header.unitCode == 0x03 && header.gameCode[0] == 0x48 && header.makercode[0] != 0
+		fseek(f, (header.arm9romOffset == 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
+		fread(arm9StartSig, sizeof(u32), 4, f);
+		if (arm9StartSig[0] == 0xE3A00301
+		 && arm9StartSig[1] == 0xE5800208
+		 && arm9StartSig[2] == 0xE3A00013
+		 && arm9StartSig[3] == 0xE129F000)
+		{
+			_isDSiWare = ETrue;
+            _isHomebrew = ETrue;
+		}
+        else if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
+        {
+            _isHomebrew = ETrue;
+		}
+		else if ((header.unitCode == 0x03 && header.gameCode[0] == 0x48 && header.makercode[0] != 0
 		 && header.makercode[1] != 0)
 		 || (header.unitCode == 0x03 && header.gameCode[0] == 0x4B && header.makercode[0] != 0
 		 && header.makercode[1] != 0)
@@ -104,26 +118,6 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
             _saveInfo.dsiTid[0] = header.dsi_tid;
             _saveInfo.dsiTid[1] = header.dsi_tid2;
         }
-        /*else if (header.unitCode >= 0x02 && header.arm9romOffset == 0x4000
-		 && header.arm7binarySize < 0x20000)*/
-        else if (header.arm7binarySize < 0x20000)
-        {
-			fseek(f, header.arm9romOffset, SEEK_SET);
-			fread(arm9StartSig, sizeof(u32), 4, f);
-			if (arm9StartSig[0] == 0xE3A00301
-			 && arm9StartSig[1] == 0xE5800208
-			 && arm9StartSig[2] == 0xE3A00013
-			 && arm9StartSig[3] == 0xE129F000) {
-				// Homebrew with DSiWare Extended header
-				_isDSiWare = ETrue;
-			}
-            _isHomebrew = ETrue;
-        }
-        /*else if (((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000) || (header.arm9romOffset == 0x200 && (u32)header.arm7destination == 0x02380000))
-        {
-            _isDSiWare = EFalse;
-            _isHomebrew = ETrue;
-        }*/
     }
 
     ///////// saveInfo /////////
