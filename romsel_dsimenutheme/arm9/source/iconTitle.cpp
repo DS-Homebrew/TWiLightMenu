@@ -412,16 +412,13 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isHomebrew[num] = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
 		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew[num] = 1; // Homebrew is old (requires a DLDI driver to read from SD)
-		} else if ((ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
-		 && ndsHeader.gameCode[2] == 0x38))
+		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{
-			isDSiWare[num] = true; // Is a DSiWare game
+			if ((ms().consoleModel == 0 && ndsHeader.unitCode == 0x02) || ndsHeader.unitCode == 0x03)
+				isDSiWare[num] = true; // Is a DSiWare game
 		}
 
 		bnrSysSettings[num] =

@@ -56,6 +56,7 @@ extern int theme;
 extern int colorMode;
 extern bool useGbarunner;
 extern bool animateDsiIcons;
+extern int consoleModel;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
@@ -716,16 +717,13 @@ void getGameInfo(bool isDir, const char* name)
 			isHomebrew = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
 		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew = 1; // Homebrew is old (requires a DLDI driver to read from SD)
-		} else if ((ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0
-		 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.unitCode == 0x03 && ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38
-		 && ndsHeader.gameCode[2] == 0x38))
+		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{
-			isDSiWare = true; // Is a DSiWare game
+			if ((consoleModel == 0 && ndsHeader.unitCode == 0x02) || ndsHeader.unitCode == 0x03)
+				isDSiWare = true; // Is a DSiWare game
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))

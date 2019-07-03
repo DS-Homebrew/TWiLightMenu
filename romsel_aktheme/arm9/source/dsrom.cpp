@@ -22,6 +22,7 @@
 #include "tool/dbgtool.h"
 #include "fileicons.h"
 #include "icons.h"
+#include "common/dsimenusettings.h"
 #include "common/module_params.h"
 #include "common/ndsheader.h"
 #include "common/dsargv.h"
@@ -101,22 +102,20 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         {
             _isHomebrew = ETrue;
 		}
-		else if ((header.unitCode == 0x03 && header.gameCode[0] == 0x48 && header.makercode[0] != 0
-		 && header.makercode[1] != 0)
-		 || (header.unitCode == 0x03 && header.gameCode[0] == 0x4B && header.makercode[0] != 0
-		 && header.makercode[1] != 0)
-		 || (header.unitCode == 0x03 && header.gameCode[0] == 0x5A && header.makercode[0] != 0
-		 && header.makercode[1] != 0)
-		 || (header.unitCode == 0x03 && header.gameCode[0] == 0x42 && header.gameCode[1] == 0x38
-		 && header.gameCode[2] == 0x38))
+		else if ((header.gameCode[0] == 0x48 && header.makercode[0] != 0 && header.makercode[1] != 0)
+		 || (header.gameCode[0] == 0x4B && header.makercode[0] != 0 && header.makercode[1] != 0)
+		 || (header.gameCode[0] == 0x5A && header.makercode[0] != 0 && header.makercode[1] != 0)
+		 || (header.gameCode[0] == 0x42 && header.gameCode[1] == 0x38 && header.gameCode[2] == 0x38))
 		{
             dbg_printf("DSIWAREFOUND Is DSiWare!\n");
-            _isDSiWare = ETrue;
+			if ((ms().consoleModel == 0 && header.unitCode == 0x02) || header.unitCode == 0x03) {
+				_isDSiWare = ETrue;
 
-            _saveInfo.dsiPrvSavSize = header.prvSavSize;
-            _saveInfo.dsiPubSavSize = header.pubSavSize;
-            _saveInfo.dsiTid[0] = header.dsi_tid;
-            _saveInfo.dsiTid[1] = header.dsi_tid2;
+				_saveInfo.dsiPrvSavSize = header.prvSavSize;
+				_saveInfo.dsiPubSavSize = header.pubSavSize;
+				_saveInfo.dsiTid[0] = header.dsi_tid;
+				_saveInfo.dsiTid[1] = header.dsi_tid2;
+			}
         }
     }
 
