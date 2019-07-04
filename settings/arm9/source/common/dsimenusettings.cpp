@@ -79,6 +79,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	hsMsg = false;
     showlogo = true;
     autorun = false;
+
+    screenScaleSize = 0;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -171,6 +173,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 
+    screenScaleSize = settingsini.GetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()
@@ -246,6 +249,8 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+
+    settingsini.SetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }

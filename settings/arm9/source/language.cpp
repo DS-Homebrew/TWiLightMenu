@@ -15,9 +15,15 @@ std::string STR_SETTINGS_SAVED = "STR_SETTINGS_SAVED";
 
 std::string STR_LR_SWITCH = "STR_LR_SWITCH";
 std::string STR_MISC_SETTINGS = "STR_MISC_SETTINGS";
+std::string STR_TWLFIRM_SETTINGS = "STR_TWLFIRM_SETTINGS";
 std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
 std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
+
+// TWL_FIRM settings
+std::string STR_SCREENSCALESIZE = "STR_SCREENSCALESIZE";
+
+std::string STR_DESCRIPTION_SCREENSCALESIZE = "STR_DESCRIPTION_SCREENSCALESIZE";
 
 // GUI settings
 std::string STR_COLORMODE = "STR_COLORMODE";
@@ -310,6 +316,11 @@ void langInit(void)
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));
 	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype Settings"));
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings"));
+
+	// GUI settings
+	STR_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SCREENSCALESIZE", "Screen scale size"));
+
+	STR_DESCRIPTION_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SCREENSCALESIZE", "Changes screen scaling size."));
 
 	// GUI settings
 	STR_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "COLORMODE", "Color mode"));

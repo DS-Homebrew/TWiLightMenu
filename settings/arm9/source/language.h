@@ -8,9 +8,15 @@ extern std::string STR_SETTINGS_SAVED;
 
 extern std::string STR_LR_SWITCH;
 extern std::string STR_MISC_SETTINGS;
+extern std::string STR_TWLFIRM_SETTINGS;
 extern std::string STR_GUI_SETTINGS;
 extern std::string STR_FILETYPE_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
+
+// TWL_FIRM settings
+extern std::string STR_SCREENSCALESIZE;
+
+extern std::string STR_DESCRIPTION_SCREENSCALESIZE;
 
 // GUI settings
 extern std::string STR_COLORMODE;

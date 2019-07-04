@@ -38,6 +38,7 @@
 
 #include "common/nds_loader_arm9.h"
 #include "common/inifile.h"
+#include "common/fileCopy.h"
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
@@ -145,14 +146,23 @@ void launchSystemSettings()
 		swiWaitForVBlank();
 }
 
-void rebootDSiMenuPP()
+void applyTwlFirmSettings() {
+	remove("sd:/luma/sysmodules/twlBg.cxi");
+	if (ms().screenScaleSize == 1) {
+		fcopy("sd:/_nds/TWiLightMenu/twlBg/screenScale_1.5.cxi", "sd:/luma/sysmodules/twlBg.cxi");
+	}
+}
+
+void rebootTWLMenuPP()
 {
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
 	snd().stopBgMusic();
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLightMenu++ to avoid potential crashing
+	for (int i = 0; i < 15; i++)
+		swiWaitForVBlank();
+	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLight Menu++ for TWL_FIRM changes to take effect
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
 }
@@ -306,8 +316,14 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	}
 }
 
+bool twlFirmChanged = false;
+
 void defaultExitHandler()
 {
+	if (twlFirmChanged) {
+		applyTwlFirmSettings();
+		rebootTWLMenuPP();
+	}
 	flashcardInit();
 	if (ms().showMainMenu)
 	{
@@ -349,6 +365,11 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 		hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
 		hiyacfwini.SaveIniFile(hiyacfwinipath);
 	}
+}
+
+void opt_twlFirm_changed(int prev, int next)
+{
+	twlFirmChanged = true;
 }
 
 inline bool between_incl(int x, int a, int b)
@@ -565,7 +586,7 @@ int main(int argc, char **argv)
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
 
-SettingsPage miscPage(STR_MISC_SETTINGS);
+	SettingsPage miscPage(STR_MISC_SETTINGS);
 
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
@@ -670,11 +691,22 @@ SettingsPage miscPage(STR_MISC_SETTINGS);
 			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", "System Menu"}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
+	
+	SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
+	if (isDSiMode() && ms().consoleModel >= 2) {
+		twlfirmPage
+			.option(STR_SCREENSCALESIZE, STR_DESCRIPTION_SCREENSCALESIZE, Option::Int(&ms().screenScaleSize, opt_twlFirm_changed), {"1x/1.25x", "1.5x"}, {0, 1});
+	}
+	
 	gui()
 		.addPage(guiPage)
 		.addPage(filetypePage)
 		.addPage(gamesPage)
-		.addPage(miscPage)
+		.addPage(miscPage);
+	if (isDSiMode() && ms().consoleModel >= 2) {
+		gui().addPage(twlfirmPage);
+	}
+	gui()
 		.onExit(defaultExitHandler)
 		// Prep and show the first page.
 		.show();

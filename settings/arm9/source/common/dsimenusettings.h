@@ -191,6 +191,7 @@ class DSiMenuPlusPlusSettings
     std::string dsi_theme;
     std::string _3ds_theme;
 
+    int screenScaleSize;
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;
