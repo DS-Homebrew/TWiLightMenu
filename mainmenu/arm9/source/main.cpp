@@ -638,6 +638,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"APR",	// Feel the Magic - XY XX
 		"A26",	// Feel the Magic - XY XX (Demo)
 		"A5P",	// Harry Potter and the Order of the Phoenix
+		"CQ7",	// Henry Hatsworth
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
