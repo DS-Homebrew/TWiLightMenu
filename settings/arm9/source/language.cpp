@@ -318,7 +318,7 @@ void langInit(void)
 	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype settings"));
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps settings"));
 
-	// GUI settings
+	// TWL_FIRM settings
 	STR_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SCREENSCALESIZE", "Screen scale size"));
 
 	STR_DESCRIPTION_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SCREENSCALESIZE", "Changes screen scaling size."));
