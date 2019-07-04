@@ -312,10 +312,11 @@ void langInit(void)
 	STR_SETTINGS_SAVED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SETTINGS_SAVED", "Settings saved."));
 
 	STR_LR_SWITCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LR_SWITCH", "L/R/Y/X Switch Pages"));
-	STR_MISC_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. Settings"));
+	STR_MISC_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. settings"));
+	STR_TWLFIRM_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TWLFIRM_SETTINGS", "TWL_FIRM settings"));
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));
-	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype Settings"));
-	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps Settings"));
+	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype settings"));
+	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps settings"));
 
 	// GUI settings
 	STR_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SCREENSCALESIZE", "Screen scale size"));
