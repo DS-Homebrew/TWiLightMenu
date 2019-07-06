@@ -147,6 +147,7 @@ void launchSystemSettings()
 }
 
 void applyTwlFirmSettings() {
+	mkdir("sd:/luma/sysmodules", 0777);
 	remove("sd:/luma/sysmodules/twlBg.cxi");
 	if (ms().screenScaleSize == 1) {
 		fcopy("sd:/_nds/TWiLightMenu/twlBg/screenScale_1.5.cxi", "sd:/luma/sysmodules/twlBg.cxi");
@@ -160,7 +161,7 @@ void rebootTWLMenuPP()
 		swiWaitForVBlank();
 	snd().stopBgMusic();
 	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 10; i++)
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLight Menu++ for TWL_FIRM changes to take effect
 	for (int i = 0; i < 15; i++)
