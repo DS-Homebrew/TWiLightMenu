@@ -11,21 +11,21 @@ void writeCheatsToFile(std::string data, const char* path);
 class CheatCodelist
 {
 public:
-	CheatCodelist (void)
-	{
-	}
-	
-	~CheatCodelist ();
+  CheatCodelist (void)
+  {
+  }
+  
+  ~CheatCodelist ();
 
-	bool parse(const std::string& aFileName);
+  bool parse(const std::string& aFileName);
 
-	bool searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
+  bool searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
 
-	bool parseInternal(FILE* aDat,u32 gamecode,u32 crc32);
+  bool parseInternal(FILE* aDat,u32 gamecode,u32 crc32);
 
-	void generateList(void);
+  void generateList(void);
 
-	bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
+  bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
 
   void selectCheats(std::string filename);
 
@@ -33,7 +33,7 @@ public:
 
   void onGenerate(void);
 
-	private:
+  private:
     struct sDatIndex
     {
       u32 _gameCode;
@@ -63,12 +63,13 @@ public:
     std::vector<size_t> _indexes;
   public:
     std::string getCheats();
-	
+  
 private:
-	enum TOKEN_TYPE {TOKEN_DATA, TOKEN_TAG_START, TOKEN_TAG_END, TOKEN_TAG_SINGLE};
+  enum TOKEN_TYPE {TOKEN_DATA, TOKEN_TAG_START, TOKEN_TAG_END, TOKEN_TAG_SINGLE};
 
-	std::string nextToken (FILE* fp, TOKEN_TYPE& tokenType);
+  std::string nextToken (FILE* fp, TOKEN_TYPE& tokenType);
 
+  void drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos);
 } ;
 
 #endif // CHEAT_H

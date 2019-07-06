@@ -40,7 +40,6 @@
 
 
 extern bool dbox_showIcon;
-int cheatWnd_cursorPosition = 0;
 
 CheatCodelist::~CheatCodelist(void) {}
 
@@ -232,24 +231,74 @@ std::string CheatCodelist::getCheats()
       cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size());
     }
   }
-	std::replace( cheats.begin(), cheats.end(), '\n', ' ');
+  std::replace( cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
+}
+
+void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos) {
+  for(uint i=0;i<8 && i<list.size();i++) {
+    if(list[screenPos+i]._flags&cParsedItem::EFolder) {
+      if(screenPos+i == curPos) {
+        printSmall(false, 20, 60+(i*12), ">");
+        printSmall(false, 32, 60+(i*12), list[screenPos+i]._title.c_str());
+      } else {
+        printSmall(false, 15, 60+(i*12), ">");
+        printSmall(false, 28, 60+(i*12), list[screenPos+i]._title.c_str());
+      }
+    } else {
+      if(list[screenPos+i]._flags&cParsedItem::ESelected) {
+        printSmall(false, 13, 60+(i*12), "x");
+      }
+      if(screenPos+i == curPos) {
+        printSmall(false, 25, 60+(i*12), "-");
+        printSmall(false, 32, 60+(i*12), list[screenPos+i]._title.c_str());
+      } else {
+        printSmall(false, 21, 60+(i*12), "-");
+        printSmall(false, 28, 60+(i*12), list[screenPos+i]._title.c_str());
+      }
+    }
+  }
 }
 
 void CheatCodelist::selectCheats(std::string filename)
 {
-	int pressed = 0;
-	int held = 0;
+  int pressed = 0;
+  int held = 0;
 
-	clearText();
+  clearText();
 
   dbox_showIcon = true;
 
   printLargeCentered(false, 30, "Cheats");
   printSmallCentered(false, 100, "Loading...");
-	
-	cheatWnd_cursorPosition = 0;
-	parse(filename);
+  
+  parse(filename);
+
+  bool cheatsFound = true;
+  // If no cheats are found
+  if(_data.size() == 0) {
+    cheatsFound = false;
+    clearText();
+    printLargeCentered(false, 30, "Cheats");
+    printSmallCentered(false, 100, "No cheats found");
+    printSmallCentered(false, 160, BUTTON_B" Back");
+
+    while(1) {
+      scanKeys();
+      pressed = keysDownRepeat();
+      checkSdEject();
+      tex().drawVolumeImageCached();
+      tex().drawBatteryImageCached();
+      drawCurrentTime();
+      drawCurrentDate();
+      drawClockColon();
+      snd().updateStream();
+      swiWaitForVBlank();
+      if(pressed & KEY_B) {
+        break;
+      }
+    }
+  }
 
   // Get cheat folders
   std::vector<CheatCodelist::cParsedItem> cheatFolders;
@@ -267,39 +316,17 @@ void CheatCodelist::selectCheats(std::string filename)
     }
   }
 
-  int mainListCurPos = -1;
+  int mainListCurPos = -1, mainListScreenPos = -1,
+      cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
 
-  while (1) {
- 		clearText();
+  while(cheatsFound) {
+    clearText();
     printLargeCentered(false, 30, "Cheats");
-
-    // If no cheats are found
-    if(_data.size() == 0) {
-      printSmallCentered(false, 100, "No cheats found");
-      printSmallCentered(false, 160, BUTTON_B" Back");
-
-      while(1) {
-        scanKeys();
-        pressed = keysDownRepeat();
-        checkSdEject();
-        tex().drawVolumeImageCached();
-        tex().drawBatteryImageCached();
-        drawCurrentTime();
-        drawCurrentDate();
-        drawClockColon();
-        snd().updateStream();
-        swiWaitForVBlank();
-        if(pressed & KEY_B) {
-          break;
-        }
-      }
-      break;
-    }
 
     // Print bottom text
     if(currentList[cheatWnd_cursorPosition]._comment != "") {
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 160, BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancel");
+        printSmallCentered(false, 160, BUTTON_A " Open  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancel");
       } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
         printSmallCentered(false, 160, BUTTON_A " Deslct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
@@ -307,7 +334,7 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     } else {
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 160, BUTTON_X " Save  " BUTTON_B " Cancel");
+        printSmallCentered(false, 160, BUTTON_A " Open  " BUTTON_X " Save  " BUTTON_B " Cancel");
       } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
         printSmallCentered(false, 160, BUTTON_A " Deselect  " BUTTON_X " Save  " BUTTON_B " Cancl");
       } else {
@@ -315,39 +342,29 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
 
-    // Print cheat list
-    for(int i=0;i<8;i++) {
-      if(i+cheatWnd_cursorPosition<(int)currentList.size()) {
-        if(currentList[i+cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-          printSmall(false, 15, 60+(i*12), ">");
-          printSmall(false, 25, 60+(i*12), currentList[i+cheatWnd_cursorPosition]._title.c_str());
-        } else {
-          if(currentList[i+cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-            printSmall(false, 13, 60+(i*12), "x");
-          }
-          if(i==0) {
-            printSmall(false, 20, 60, "=");
-          } else {
-            printSmall(false, 21, 60+(i*12), "-");
-          }
-          printSmall(false, 28, 60+(i*12), currentList[i+cheatWnd_cursorPosition]._title.c_str());
-        }
-      }
+    // Scroll screen if needed
+    if(cheatWnd_cursorPosition < cheatWnd_screenPosition) {
+      cheatWnd_screenPosition = cheatWnd_cursorPosition;
+    }
+    if(cheatWnd_cursorPosition > cheatWnd_screenPosition + 8 - 1) {
+      cheatWnd_screenPosition = cheatWnd_cursorPosition - 8 + 1;
     }
 
-	do {
-		scanKeys();
-		pressed = keysDown();
-		held = keysDownRepeat();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
+    drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
+
+  do {
+    scanKeys();
+    pressed = keysDown();
+    held = keysDownRepeat();
+    checkSdEject();
+    tex().drawVolumeImageCached();
+    tex().drawBatteryImageCached();
+    drawCurrentTime();
+    drawCurrentDate();
+    drawClockColon();
     snd().updateStream();
-		swiWaitForVBlank();
-	} while (!pressed && !held);
+    swiWaitForVBlank();
+  } while(!pressed && !held);
     if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
@@ -369,6 +386,7 @@ void CheatCodelist::selectCheats(std::string filename)
               currentList.push_back(_data[j]);
             }
             mainListCurPos = cheatWnd_cursorPosition;
+            mainListScreenPos = cheatWnd_screenPosition;
             cheatWnd_cursorPosition = 0;
             break;
           }
@@ -396,6 +414,7 @@ void CheatCodelist::selectCheats(std::string filename)
           }
         }
         cheatWnd_cursorPosition = mainListCurPos;
+        cheatWnd_screenPosition = mainListScreenPos;
         mainListCurPos = -1;
       } else {
         break;
@@ -427,15 +446,12 @@ void CheatCodelist::selectCheats(std::string filename)
           words.push_back(_topTextStr);
         std::string temp;
         _topText.clear();
-        for(auto word : words)
-        {
+        for(auto word : words) {
           int width = calcLargeFontWidth((temp + " " + word).c_str());
           if(width > 240) {
             _topText.push_back(temp);
             temp = word;
-          }
-          else
-          {
+          } else {
             temp += " " + word;
           }
         }
@@ -443,8 +459,7 @@ void CheatCodelist::selectCheats(std::string filename)
           _topText.push_back(temp);
         
         // Print comment
-        for (int i = 0; i < (int)_topText.size() || i < 2; i++)
-        {
+        for(int i = 0; i < (int)_topText.size() || i < 2; i++) {
           printSmallCentered(false, 60 + (i*12), _topText[i].c_str());
         }
 
@@ -469,7 +484,6 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
   }
-	clearText();
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
