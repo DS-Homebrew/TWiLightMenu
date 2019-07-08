@@ -715,6 +715,12 @@ void getGameInfo(bool isDir, const char* name)
 		 && arm9StartSig[2] == 0xE3A00013
 		 && arm9StartSig[3] == 0xE129F000) {
 			isHomebrew = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
+			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
+				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)) {	// NitroGrafx v0.7
+					isHomebrew = 1; // Have nds-bootstrap load it (in case if it doesn't)
+				}
+			}
 		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew = 1; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)

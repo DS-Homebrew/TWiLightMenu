@@ -97,6 +97,14 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		{
 			_isDSiWare = ETrue;
             _isHomebrew = ETrue;
+			if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
+			{
+				if ((header.arm9binarySize == 0xC9F68 && header.arm7binarySize == 0x12814)	// Colors! v1.1
+				|| (header.arm9binarySize == 0x2C9A8 && header.arm7binarySize == 0xFB98))	// NitroGrafx v0.7
+				{
+					_isDSiWare = EFalse; // Have nds-bootstrap load it
+				}
+			}
 		}
         else if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
         {
