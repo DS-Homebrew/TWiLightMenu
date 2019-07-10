@@ -1641,8 +1641,8 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
-				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true,
-						     false, true, true);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true,
+						     ms().secondaryDevice, true, true);
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();

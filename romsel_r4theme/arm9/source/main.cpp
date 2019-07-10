@@ -1915,7 +1915,8 @@ int main(int argc, char **argv) {
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
 				argarray.at(0) = (char *)ndsToBoot;
-				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], secondaryDevice, true,
+						     secondaryDevice, true, true);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
