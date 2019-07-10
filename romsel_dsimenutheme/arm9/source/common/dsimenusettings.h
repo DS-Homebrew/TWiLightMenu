@@ -160,6 +160,7 @@ class DSiMenuPlusPlusSettings
     bool previousUsedDevice;
     bool secondaryDevice;
 	bool fcSaveOnSd;
+	bool updateRecentlyPlayedList;
     int sortMethod;
 
     int flashcard;

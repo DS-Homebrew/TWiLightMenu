@@ -30,6 +30,7 @@ extern std::string STR_LASTPLAYEDROM;
 extern std::string STR_DSISPLASH;
 extern std::string STR_HSMSG;
 extern std::string STR_DSIMENUPPLOGO;
+extern std::string STR_UPDATE_RECENTLY_PLAYED_LIST;
 extern std::string STR_SORT_METHOD;
 extern std::string STR_DIRECTORIES;
 extern std::string STR_SHOW_HIDDEN;
@@ -71,6 +72,8 @@ extern std::string STR_DESCRIPTION_DSISPLASH;
 extern std::string STR_DESCRIPTION_HSMSG;
 
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
+
+extern std::string STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST;
 
 extern std::string STR_DESCRIPTION_SORT_METHOD;
 

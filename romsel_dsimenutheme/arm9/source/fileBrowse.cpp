@@ -2343,85 +2343,87 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 						tex().clearTopScreen();
 
-						printLargeCentered(false, 88, "Now Saving...");
-						fadeSpeed = true; // Fast fading
-						fadeType = true; // Fade in from white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
-						}
-						showProgressIcon = true;
+						if(ms().updateRecentlyPlayedList) {
+							printLargeCentered(false, 88, "Now Saving...");
+							fadeSpeed = true; // Fast fading
+							fadeType = true; // Fade in from white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							showProgressIcon = true;
 
-						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
-				      0777);
+							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
+						  0777);
 
-						CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
-						vector<std::string> recentlyPlayed;
-						char str[12] = {0};
+							CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+							vector<std::string> recentlyPlayed;
+							char str[12] = {0};
 
-						for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
-							sprintf(str, "%d", i);
-							recentlyPlayed.push_back(
-									recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-							if (recentlyPlayed[i] == "NULL")
-								recentlyPlayed[i] = dirContents[scrn][i].name;
-						}
-						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-							for (int j = 0; j < (int)recentlyPlayed.size(); j++) {
-								if (i != j) {
-									if (recentlyPlayed[i] == recentlyPlayed[j]) {
-										recentlyPlayed.erase(recentlyPlayed.begin() + j);
+							for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
+								sprintf(str, "%d", i);
+								recentlyPlayed.push_back(
+										recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+								if (recentlyPlayed[i] == "NULL")
+									recentlyPlayed[i] = dirContents[scrn][i].name;
+							}
+							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+								for (int j = 0; j < (int)recentlyPlayed.size(); j++) {
+									if (i != j) {
+										if (recentlyPlayed[i] == recentlyPlayed[j]) {
+											recentlyPlayed.erase(recentlyPlayed.begin() + j);
+										}
 									}
 								}
 							}
-						}
-						for (int i = recentlyPlayed.size(); true; i++) {
-							sprintf(str, "%d", i);
-							if (recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, "");
-							} else {
-								break;
-							}
-						}
-						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-							bool stillExists = false;
-							for (int j = 0; j < (int)dirContents[scrn].size(); j++) {
-								if (recentlyPlayed[i] == dirContents[scrn][j].name) {
-									stillExists = true;
+							for (int i = recentlyPlayed.size(); true; i++) {
+								sprintf(str, "%d", i);
+								if (recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
+									recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, "");
+								} else {
 									break;
 								}
 							}
-							if (!stillExists)
-								recentlyPlayed.erase(recentlyPlayed.begin() + i);
-						}
+							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+								bool stillExists = false;
+								for (int j = 0; j < (int)dirContents[scrn].size(); j++) {
+									if (recentlyPlayed[i] == dirContents[scrn][j].name) {
+										stillExists = true;
+										break;
+									}
+								}
+								if (!stillExists)
+									recentlyPlayed.erase(recentlyPlayed.begin() + i);
+							}
 
-						recentlyPlayed.erase(recentlyPlayed.begin() + CURPOS);
-						int firstNonDir = 0;
-						while(dirContents[scrn].at(firstNonDir).isDirectory) {
-							firstNonDir++;
-						}
-						recentlyPlayed.insert(recentlyPlayed.begin()+firstNonDir, dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name);
+							recentlyPlayed.erase(recentlyPlayed.begin() + CURPOS);
+							int firstNonDir = 0;
+							while(dirContents[scrn].at(firstNonDir).isDirectory) {
+								firstNonDir++;
+							}
+							recentlyPlayed.insert(recentlyPlayed.begin()+firstNonDir, dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name);
 
-						for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-							char str[12] = {0};
-							sprintf(str, "%d", i);
-							recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
-						}
-						recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
+								char str[12] = {0};
+								sprintf(str, "%d", i);
+								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
+							}
+							recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
 
-						CIniFile timesPlayedIni(timesPlayedIniPath);
-						timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
-						timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+							CIniFile timesPlayedIni(timesPlayedIniPath);
+							timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
+							timesPlayedIni.SaveIniFile(timesPlayedIniPath);
 
-						if(ms().sortMethod == 1) {
-							ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
-						}
+							if(ms().sortMethod == 1) {
+								ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
+							}
 
-						showProgressIcon = false;
-						fadeType = false;	   // Fade to white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
+							showProgressIcon = false;
+							fadeType = false;	   // Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							clearText();
 						}
-						clearText();
 
 						// Return the chosen file
 						return entry->name;

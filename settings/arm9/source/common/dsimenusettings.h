@@ -143,6 +143,7 @@ class DSiMenuPlusPlusSettings
 	bool showSmsGg;
 	bool showMd;
 	bool showSnes;
+	bool updateRecentlyPlayedList;
     int sortMethod;
     bool showDirectories;
     bool showHidden;

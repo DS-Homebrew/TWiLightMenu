@@ -52,6 +52,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     previousUsedDevice = false;
     secondaryDevice = false;
 	fcSaveOnSd = false;
+	updateRecentlyPlayedList = true;
     sortMethod = 0;
 
     flashcard = EDSTTClone;
@@ -116,6 +117,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
+    updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
     // Customizable UI settings.

@@ -37,6 +37,7 @@ std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
 std::string STR_DSISPLASH = "STR_DSISPLASH";
 std::string STR_HSMSG = "STR_HSMSG";
 std::string STR_DSIMENUPPLOGO = "STR_DSIMENUPPLOGO";
+std::string STR_UPDATE_RECENTLY_PLAYED_LIST = "STR_UPDATE_RECENTLY_PLAYED_LIST";
 std::string STR_SORT_METHOD = "STR_SORT_METHOD";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
 std::string STR_SHOW_HIDDEN = "STR_SHOW_HIDDEN";
@@ -78,6 +79,8 @@ std::string STR_DESCRIPTION_DSISPLASH = "STR_DESCRIPTION_DSISPLASH";
 std::string STR_DESCRIPTION_HSMSG = "STR_DESCRIPTION_HSMSG";
 
 std::string STR_DESCRIPTION_DSIMENUPPLOGO_1 = "STR_DESCRIPTION_DSIMENUPPLOGO_1";
+
+std::string STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST = "STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST";
 
 std::string STR_DESCRIPTION_SORT_METHOD = "STR_DESCRIPTION_SORT_METHOD";
 
@@ -335,6 +338,7 @@ void langInit(void)
 	STR_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSISPLASH", "Nintendo DSi Splash Screen"));
 	STR_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HSMSG", "Health & Safety message"));
 	STR_DSIMENUPPLOGO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen"));
+	STR_UPDATE_RECENTLY_PLAYED_LIST = ConvertFromUTF8(languageini.GetString("LANGUAGE", "UPDATE_RECENTLY_PLAYED_LIST", "Update Recently Played list"));
 	STR_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SORT_METHOD", "Sort Method"));
 	STR_DIRECTORIES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders"));
 	STR_SHOW_HIDDEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW_HIDDEN", "Show hidden files"));
@@ -376,6 +380,8 @@ void langInit(void)
 	STR_DESCRIPTION_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_HSMSG", "Show the H&S message on the bottom screen of the DSi splash."));
 
 	STR_DESCRIPTION_DSIMENUPPLOGO_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIMENUPPLOGO_1", "The logo will be shown when you start TWiLight Menu++."));
+
+	STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST", "Updates the list based on what game you recently played. Disable this, if launching a game or app causes a Guru Meditation Error."));
 
 	STR_DESCRIPTION_SORT_METHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SORT_METHOD", "Changes whether to sort alphabetically, by recently played, by most played, by file type, or custom."));
 
