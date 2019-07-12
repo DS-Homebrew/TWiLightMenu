@@ -146,7 +146,7 @@ void launchSystemSettings()
 		swiWaitForVBlank();
 }
 
-void applyTwlFirmSettings() {
+/*void applyTwlFirmSettings() {
 	mkdir("sd:/luma/sysmodules", 0777);
 	remove("sd:/luma/sysmodules/twlBg.cxi");
 	if (ms().screenScaleSize == 1) {
@@ -166,7 +166,7 @@ void rebootTWLMenuPP()
 	fifoSendValue32(FIFO_USER_08, 1); // Reboot TWiLight Menu++ for TWL_FIRM changes to take effect
 	for (int i = 0; i < 15; i++)
 		swiWaitForVBlank();
-}
+}*/
 
 void loadMainMenu()
 {
@@ -317,14 +317,14 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	}
 }
 
-bool twlFirmChanged = false;
+//bool twlFirmChanged = false;
 
 void defaultExitHandler()
 {
-	if (twlFirmChanged) {
+	/*if (twlFirmChanged) {
 		applyTwlFirmSettings();
 		rebootTWLMenuPP();
-	}
+	}*/
 	flashcardInit();
 	if (ms().showMainMenu)
 	{
@@ -368,10 +368,10 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 	}
 }
 
-void opt_twlFirm_changed(int prev, int next)
+/*void opt_twlFirm_changed(int prev, int next)
 {
 	twlFirmChanged = true;
-}
+}*/
 
 inline bool between_incl(int x, int a, int b)
 {
@@ -694,20 +694,20 @@ int main(int argc, char **argv)
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	
-	SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
+	/*SettingsPage twlfirmPage(STR_TWLFIRM_SETTINGS);
 	if (isDSiMode() && ms().consoleModel >= 2) {
 		twlfirmPage
 			.option(STR_SCREENSCALESIZE, STR_DESCRIPTION_SCREENSCALESIZE, Option::Int(&ms().screenScaleSize, opt_twlFirm_changed), {"1x/1.25x", "1.5x"}, {0, 1});
-	}
+	}*/
 	
 	gui()
 		.addPage(guiPage)
 		.addPage(filetypePage)
 		.addPage(gamesPage)
 		.addPage(miscPage);
-	if (isDSiMode() && ms().consoleModel >= 2) {
+	/*if (isDSiMode() && ms().consoleModel >= 2) {
 		gui().addPage(twlfirmPage);
-	}
+	}*/
 	gui()
 		.onExit(defaultExitHandler)
 		// Prep and show the first page.
