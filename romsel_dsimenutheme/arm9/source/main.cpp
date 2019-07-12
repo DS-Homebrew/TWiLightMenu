@@ -396,7 +396,6 @@ void SetSpeedBumpExclude(const char *filename) {
 
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
-		"AVCP",	// Magical Starsign (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
 		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 		"AH9P",	// Tony Hawk's American Sk8land (EUR)
@@ -427,6 +426,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
+		"AVC",	// Magical Starsign
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
