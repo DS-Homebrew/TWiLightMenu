@@ -62,8 +62,7 @@
 #include "cheat.h"
 #include "crc.h"
 
-#include "sr_data_srllastran.h"		 // For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
+#include "sr_data_srllastran.h"		 // For rebooting into the game
 
 bool whiteScreen = true;
 bool fadeType = false; // false = out, true = in
@@ -148,6 +147,15 @@ bool usernameRenderedDone = false;
 bool showColon = true;
 
 touchPosition touch;
+
+//---------------------------------------------------------------------------------
+void stop(void) {
+	//---------------------------------------------------------------------------------
+	while (1) {
+		
+		swiWaitForVBlank();
+	}
+}
 
 /**
  * Set donor SDK version for a specific game.
@@ -271,7 +279,7 @@ void SetGameSoftReset(const char *filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5] = {0};
-	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
@@ -310,7 +318,7 @@ void SetMPUSettings(const char *filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
 	game_TID[4] = 0;
 	game_TID[3] = 0;
@@ -390,7 +398,7 @@ void SetSpeedBumpExclude(const char *filename) {
 	FILE *f_nds_file = fopen(filename, "rb");
 
 	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
@@ -469,12 +477,36 @@ void SetSpeedBumpExclude(const char *filename) {
 	}
 }
 
-//---------------------------------------------------------------------------------
-void stop(void) {
-	//---------------------------------------------------------------------------------
-	while (1) {
-		
-		swiWaitForVBlank();
+/**
+ * Enable widescreen for some games.
+ */
+TWL_CODE void SetWidescreen(const char *filename) {
+	remove("sd:/_nds/nds-bootstrap/wideCheatData.bin");
+
+	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen) {
+		return;
+	}
+
+	FILE *f_nds_file = fopen(filename, "rb");
+
+	char game_TID[5];
+	u16 headerCRC16 = 0;
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, f_nds_file);
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+	fclose(f_nds_file);
+	game_TID[4] = 0;
+	
+	char wideBinPath[256];
+	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+
+	if (access(wideBinPath, F_OK) == 0) {
+		fcopy(wideBinPath, "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+		stop();
 	}
 }
 
@@ -1123,7 +1155,7 @@ int main(int argc, char **argv) {
 
 				FILE *f_nds_file = fopen(argarray[0], "rb");
 
-				fseek(f_nds_file, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 				fread(game_TID, 1, 4, f_nds_file);
 				game_TID[4] = 0;
 				game_TID[3] = 0;
@@ -1384,6 +1416,10 @@ int main(int argc, char **argv) {
 						ms().launchType = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						if (isDSiMode()) {
+							SetWidescreen(argarray[0]);
+						}
 
 						const char *ndsToBoot;
 						if (perGameSettings_bootstrapFile == -1) {

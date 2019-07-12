@@ -81,7 +81,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showlogo = true;
     autorun = false;
 
-    screenScaleSize = 0;
+    //screenScaleSize = 0;
+	wideScreen = false;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -175,7 +176,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 
-    screenScaleSize = settingsini.GetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
+    //screenScaleSize = settingsini.GetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
+    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()
@@ -253,7 +255,8 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
-    settingsini.SetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
+    //settingsini.SetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
+    settingsini.SetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }

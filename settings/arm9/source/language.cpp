@@ -15,15 +15,15 @@ std::string STR_SETTINGS_SAVED = "STR_SETTINGS_SAVED";
 
 std::string STR_LR_SWITCH = "STR_LR_SWITCH";
 std::string STR_MISC_SETTINGS = "STR_MISC_SETTINGS";
-std::string STR_TWLFIRM_SETTINGS = "STR_TWLFIRM_SETTINGS";
+//std::string STR_TWLFIRM_SETTINGS = "STR_TWLFIRM_SETTINGS";
 std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
 std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // TWL_FIRM settings
-std::string STR_SCREENSCALESIZE = "STR_SCREENSCALESIZE";
+/*std::string STR_SCREENSCALESIZE = "STR_SCREENSCALESIZE";
 
-std::string STR_DESCRIPTION_SCREENSCALESIZE = "STR_DESCRIPTION_SCREENSCALESIZE";
+std::string STR_DESCRIPTION_SCREENSCALESIZE = "STR_DESCRIPTION_SCREENSCALESIZE";*/
 
 // GUI settings
 std::string STR_COLORMODE = "STR_COLORMODE";
@@ -117,6 +117,7 @@ std::string STR_DESCRIPTION_REPLACEDSIMENU_1 = "STR_DESCRIPTION_REPLACEDSIMENU_1
 std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1";
 
 // Games/Apps settings
+std::string STR_ASPECTRATIO = "STR_ASPECTRATIO";
 std::string STR_LANGUAGE = "STR_LANGUAGE";
 std::string STR_CPUSPEED = "STR_CPUSPEED";
 std::string STR_VRAMBOOST = "STR_VRAMBOOST";
@@ -154,6 +155,8 @@ std::string STR_BOTTOM = "STR_BOTTOM";
 std::string STR_TOP = "STR_TOP";
 std::string STR_RELEASE = "STR_RELEASE";
 std::string STR_NIGHTLY = "STR_NIGHTLY";
+
+std::string STR_DESCRIPTION_ASPECTRATIO = "STR_DESCRIPTION_ASPECTRATIO";
 
 std::string STR_DESCRIPTION_LANGUAGE_1 = "STR_DESCRIPTION_LANGUAGE_1";
 
@@ -316,15 +319,15 @@ void langInit(void)
 
 	STR_LR_SWITCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LR_SWITCH", "L/R/Y/X Switch Pages"));
 	STR_MISC_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. settings"));
-	STR_TWLFIRM_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TWLFIRM_SETTINGS", "TWL_FIRM settings"));
+	//STR_TWLFIRM_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TWLFIRM_SETTINGS", "TWL_FIRM settings"));
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));
 	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype settings"));
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps settings"));
 
 	// TWL_FIRM settings
-	STR_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SCREENSCALESIZE", "Screen scale size"));
+	/*STR_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SCREENSCALESIZE", "Screen scale size"));
 
-	STR_DESCRIPTION_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SCREENSCALESIZE", "Changes screen scaling size."));
+	STR_DESCRIPTION_SCREENSCALESIZE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SCREENSCALESIZE", "Changes screen scaling size."));*/
 
 	// GUI settings
 	STR_COLORMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "COLORMODE", "Color mode"));
@@ -418,6 +421,7 @@ void langInit(void)
 	STR_DESCRIPTION_RESTOREDSIMENU_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "Show DSi Menu on boot again."));
 
 	// Games/Apps settings
+	STR_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ASPECTRATIO", "Screen Aspect Ratio"));
 	STR_LANGUAGE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LANGUAGE", "Language"));
 	STR_CPUSPEED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "CPUSPEED", "ARM9 CPU Speed"));
 	STR_VRAMBOOST = ConvertFromUTF8(languageini.GetString("LANGUAGE", "VRAMBOOST", "VRAM boost"));
@@ -455,6 +459,8 @@ void langInit(void)
 	STR_TOP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TOP", "Top"));
 	STR_RELEASE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RELEASE", "Release"));
 	STR_NIGHTLY = ConvertFromUTF8(languageini.GetString("LANGUAGE", "NIGHTLY", "Nightly"));
+
+	STR_DESCRIPTION_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ASPECTRATIO", "Adjusts the top screen to be the original size, or wider, for DS games. Some games may not use this. Requires Sono's patcher to be used, as well as external sysmodules enabled in Luma."));
 
 	STR_DESCRIPTION_LANGUAGE_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections of your console language by setting this option."));
 

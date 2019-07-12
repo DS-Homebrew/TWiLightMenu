@@ -470,7 +470,7 @@ int main(int argc, char **argv)
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard"},
+				{"DSi", "3DS", "R4", "Acekard (Buggy!)"},
 				{0, 1, 2, 3})
 
 		.option(STR_DSIMUSIC,
@@ -503,6 +503,11 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
+	if (isDSiMode() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked())
+	{
+		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {"16:10 (Widescreen)", "4:3 (Full Screen)"}, {true, false});
+	}
+
 	if (!isDSiMode() && sys().isRegularDS())
 	{
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
@@ -512,7 +517,6 @@ int main(int argc, char **argv)
 
 	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
-	using TLoadingScreen = BootstrapSettings::TLoadingScreen;
 
 	if (isDSiMode()) {
 		gamesPage.option(STR_RUNIN,
@@ -560,26 +564,6 @@ int main(int argc, char **argv)
 	}
 
 	gamesPage
-		.option(STR_LOADINGSCREEN, STR_DESCRIPTION_LOADINGSCREEN_1,
-				Option::Int(&bs().bstrap_loadingScreen),
-				{STR_NONE, STR_REGULAR, "Pong", "Tic-Tac-Toe", "Simple", "TWLMenu++ theme"},
-				{TLoadingScreen::ELoadingNone,
-				 TLoadingScreen::ELoadingRegular,
-				 TLoadingScreen::ELoadingPong,
-				 TLoadingScreen::ELoadingTicTacToe,
-				 TLoadingScreen::ELoadingSimple,
-				 TLoadingScreen::ELoadingR4Like})
-
-			.option(STR_LOADINGSCREENTHEME, STR_DESCRIPTION_LOADINGSCREENTHEME,
-				Option::Bool(&bs().bstrap_loadingScreenTheme),
-				{STR_DARK, STR_LIGHT},
-				{true, false})
-
-			.option(STR_LOADINGSCREENLOCATION, STR_DESCRIPTION_LOADINGSCREENLOCATION,
-				Option::Bool(&bs().bstrap_loadingScreenLocation),
-				{STR_BOTTOM, STR_TOP},
-				{true, false})
-
 		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
 				Option::Bool(&ms().bootstrapFile),
 				{STR_NIGHTLY, STR_RELEASE},

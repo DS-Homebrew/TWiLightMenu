@@ -90,6 +90,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	hsMsg = false;
     showlogo = true;
     autorun = false;
+
+	wideScreen = false;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -186,7 +188,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
     snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
-
+	
+    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()

@@ -157,12 +157,6 @@ typedef struct {
 	u8 dsi2[0x174];
 } sNDSHeaderExt;
 
-typedef struct {
-	char gameTitle[12];			//!< 12 characters for the game title.
-	char gameCode[4];			//!< 4 characters for the game code.
-} sNDSHeadertitlecodeonly;
-
-
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
 // Make sure the banner size is correct.

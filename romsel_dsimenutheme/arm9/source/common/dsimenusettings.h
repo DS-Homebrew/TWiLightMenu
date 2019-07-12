@@ -200,7 +200,8 @@ class DSiMenuPlusPlusSettings
     std::string r4_theme;
     std::string dsi_theme;
     std::string _3ds_theme;
-
+	
+	bool wideScreen;
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;

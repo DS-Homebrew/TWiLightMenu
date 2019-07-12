@@ -5,7 +5,7 @@
 #include "common/systemdetails.h"
 #include "common/dsimenusettings.h"
 #include "graphics/ThemeTextures.h"
-#include "autoboot.h"
+//#include "autoboot.h"
 #include "sound.h"
 
 extern const char *unlaunchAutoLoadID;

@@ -25,7 +25,7 @@ typedef enum
  */
 int grabTID(FILE *ndsFile, char *buf)
 {
-	fseek(ndsFile, offsetof(sNDSHeadertitlecodeonly, gameCode), SEEK_SET);
+	fseek(ndsFile, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 	size_t read = fread(buf, 1, 4, ndsFile);
 	return !(read == 4);
 }
