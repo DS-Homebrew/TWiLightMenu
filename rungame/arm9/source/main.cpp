@@ -78,11 +78,12 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
 static bool useBootstrap = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
 static bool fcSaveOnSd = false;
+static bool wideScreen = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
@@ -115,6 +116,8 @@ TWL_CODE void LoadSettings(void) {
 	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
 	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
+
+	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
 	// nds-bootstrap
 	CIniFile bootstrapini( bootstrapinipath );
@@ -419,6 +422,12 @@ int main(int argc, char **argv) {
 		consoleDemoInit();
 		printf("fatInitDefault failed!");
 		stop();
+	}
+	
+	if (consoleModel >= 2 && wideScreen && access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0) {
+		// Revert back to 4:3 for when returning to TWLMenu++
+		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi");
+		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 	}
 
 	flashcardInit();

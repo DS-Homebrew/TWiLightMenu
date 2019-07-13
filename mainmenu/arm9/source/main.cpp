@@ -698,7 +698,7 @@ void SetSpeedBumpExclude(const char* filename) {
 TWL_CODE void SetWidescreen(const char *filename) {
 	remove(secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (arm7SCFGLocked || consoleModel < 2 || wideScreen) {
+	if (arm7SCFGLocked || consoleModel < 2 || !wideScreen) {
 		return;
 	}
 
@@ -716,8 +716,13 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	char wideBinPath[256];
 	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
 
-	if (access(wideBinPath, F_OK) == 0) {
+	if (access(wideBinPath, F_OK) == 0 && access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) {
 		fcopy(wideBinPath, secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+
+		// Prepare for reboot into 16:10 TWL_FIRM
+		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
+		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+
 		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
