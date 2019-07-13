@@ -149,6 +149,12 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
 TWL_CODE int lastRunROM() {
 	LoadSettings();
 
+	if (consoleModel >= 2 && wideScreen && access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0) {
+		// Revert back to 4:3 for when returning to TWLMenu++
+		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi");
+		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+	}
+
 	vector<char*> argarray;
 	if (launchType > 2) {
 		argarray.push_back(strdup("null"));
@@ -422,12 +428,6 @@ int main(int argc, char **argv) {
 		consoleDemoInit();
 		printf("fatInitDefault failed!");
 		stop();
-	}
-	
-	if (consoleModel >= 2 && wideScreen && access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0) {
-		// Revert back to 4:3 for when returning to TWLMenu++
-		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi");
-		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 	}
 
 	flashcardInit();
