@@ -21,13 +21,14 @@
 ------------------------------------------------------------------*/
 
 #include "fileBrowse.h"
-#include <vector>
 #include <algorithm>
-#include <unistd.h>
-#include <string>
+#include <dirent.h>
+#include <math.h>
 #include <sstream>
 #include <stdio.h>
-#include <dirent.h>
+#include <string>
+#include <unistd.h>
+#include <vector>
 
 #include <nds.h>
 #include <maxmod9.h>
@@ -104,7 +105,7 @@ extern std::string ReplaceAll(std::string str, const std::string& from, const st
 struct DirEntry {
 	string name;
 	bool isDirectory;
-} ;
+};
 
 bool nameEndsWith (const string& name, const vector<string> extensionList) {
 
@@ -135,8 +136,6 @@ bool dirEntryPredicate(const DirEntry& lhs, const DirEntry& rhs)
 
 void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> extensionList)
 {
-	struct stat st;
-
 	dirContents.clear();
 
 	DIR *pdir = opendir ("."); 
@@ -144,6 +143,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	if (pdir == NULL) {
 		iprintf ("Unable to open the directory.\n");
 	} else {
+		struct stat st;
 
 		while(true) {
 			DirEntry dirEntry;
@@ -260,7 +260,7 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 0;
 }
 
-string browseForFile(const vector<string> extensionList, const char* username)
+string browseForFile(const vector<string> extensionList)
 {
 	int pressed = 0;
 	int screenOffset = 0;

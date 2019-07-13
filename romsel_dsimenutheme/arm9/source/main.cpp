@@ -481,7 +481,7 @@ void SetSpeedBumpExclude(const char *filename) {
  * Enable widescreen for some games.
  */
 TWL_CODE void SetWidescreen(const char *filename) {
-	remove("sd:/_nds/nds-bootstrap/wideCheatData.bin");
+	remove(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 
 	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen) {
 		return;
@@ -502,7 +502,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
 
 	if (access(wideBinPath, F_OK) == 0) {
-		fcopy(wideBinPath, "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+		fcopy(wideBinPath, ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -1374,8 +1374,9 @@ int main(int argc, char **argv) {
 
 						if (isHomebrew[CURPOS] == 0) {
 							bool cheatsEnabled = true;
-							const char* cheatDataBin = (sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
-							mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
+							const char* cheatDataBin = (ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/cheatData.bin" : "sd:/_nds/nds-bootstrap/cheatData.bin");
+							mkdir(ms().secondaryDevice ? "fat:/_nds" : "sd:/_nds", 0777);
+							mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");

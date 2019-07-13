@@ -719,7 +719,7 @@ void SetSpeedBumpExclude(const char* filename) {
  * Enable widescreen for some games.
  */
 TWL_CODE void SetWidescreen(const char *filename) {
-	remove("sd:/_nds/nds-bootstrap/wideCheatData.bin");
+	remove(secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 
 	if (arm7SCFGLocked || consoleModel < 2 || wideScreen) {
 		return;
@@ -740,7 +740,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
 
 	if (access(wideBinPath, F_OK) == 0) {
-		fcopy(wideBinPath, "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+		fcopy(wideBinPath, secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -1268,7 +1268,7 @@ int main(int argc, char **argv) {
 			chdir (path);
 
 			//Navigates to the file to launch
-			filename = browseForFile(extensionList, username);
+			filename = browseForFile(extensionList);
 		}
 
 		////////////////////////////////////
@@ -1665,8 +1665,9 @@ int main(int argc, char **argv) {
 
 						if (isHomebrew == 0) {
 							bool cheatsEnabled = true;
-							const char* cheatDataBin = (sdFound() ? "sd:/_nds/nds-bootstrap/cheatData.bin" : "fat:/_nds/nds-bootstrap/cheatData.bin");
-							mkdir(sdFound() ? "sd:/_nds/nds-bootstrap" : "fat:/_nds/nds-bootstrap", 0777);
+							const char* cheatDataBin = (secondaryDevice ? "fat:/_nds/nds-bootstrap/cheatData.bin" : "sd:/_nds/nds-bootstrap/cheatData.bin");
+							mkdir(secondaryDevice ? "fat:/_nds" : "sd:/_nds", 0777);
+							mkdir(secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
