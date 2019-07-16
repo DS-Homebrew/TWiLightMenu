@@ -704,8 +704,11 @@ void MainWnd::launchSelected()
     ms().saveSettings();
 
     DSRomInfo rominfo;
-    if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
+    if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo)) {
         return;
+	}
+
+	chdir(_mainList->getCurrentDir().c_str());
 
     // Launch DSiWare
     if (rominfo.isDSiWare() && rominfo.isArgv())
