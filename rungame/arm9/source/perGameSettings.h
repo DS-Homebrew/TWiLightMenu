@@ -13,6 +13,7 @@ extern int perGameSettings_boostVram;
 extern int perGameSettings_bootstrapFile;
 
 void loadPerGameSettings(std::string filename);
+std::string getSavExtension(void);
 
 
 
