@@ -262,7 +262,7 @@ void lastRunROM()
 
 				fclose(f_nds_file);
 
-				std::string savename = ReplaceAll(filename, ".nds", ".sav");
+				std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
 				std::string romFolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romFolderNoSlash);
 				mkdir ("saves", 0777);
