@@ -721,25 +721,33 @@ void SetSpeedBumpExclude(const char* filename) {
 TWL_CODE void SetWidescreen(const char *filename) {
 	remove(secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (arm7SCFGLocked || consoleModel < 2 || !wideScreen) {
+	if (arm7SCFGLocked || consoleModel < 2 || !wideScreen
+	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
 
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	u16 headerCRC16 = 0;
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-	fclose(f_nds_file);
-	game_TID[4] = 0;
-	
+	bool wideCheatFound = false;
 	char wideBinPath[256];
-	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+	snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+	wideCheatFound = (access(wideBinPath, F_OK) == 0);
 
-	if (access(wideBinPath, F_OK) == 0 && access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) {
+	if (!wideCheatFound) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		u16 headerCRC16 = 0;
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (wideCheatFound) {
 		fcopy(wideBinPath, secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
 
 		// Prepare for reboot into 16:10 TWL_FIRM
