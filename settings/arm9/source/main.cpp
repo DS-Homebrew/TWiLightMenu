@@ -61,6 +61,8 @@
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
+static int currentTheme = 0;
+
 std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
@@ -455,6 +457,8 @@ int main(int argc, char **argv)
 			hiyaAutobootFound = false;
 	}
 
+	currentTheme = ms().theme;
+
 	int pressed = 0;
 #pragma endregion
 
@@ -699,7 +703,7 @@ int main(int argc, char **argv)
 	//	stop();
 	while (1)
 	{
-		if (!gui().isExited())
+		if (!gui().isExited() && currentTheme != 4)
 		{
 			snd().playBgMusic();
 		}
