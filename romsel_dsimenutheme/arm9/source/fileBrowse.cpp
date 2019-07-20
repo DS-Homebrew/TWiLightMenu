@@ -1366,7 +1366,7 @@ string browseForFile(const vector<string> extensionList) {
 					updateBoxArt(dirContents, scrn);
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-					currentBg = 1, displayBoxArt = ms().showBoxArt;
+					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
 					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 				} else {
