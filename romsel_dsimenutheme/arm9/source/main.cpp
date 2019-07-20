@@ -679,7 +679,7 @@ int main(int argc, char **argv) {
 
 	fontInit();
 
-	if (ms().theme == 6) {
+	if (ms().theme == 4) {
 		tex().loadSaturnTheme();
 	} else if (ms().theme == 1) {
 		tex().load3DSTheme();

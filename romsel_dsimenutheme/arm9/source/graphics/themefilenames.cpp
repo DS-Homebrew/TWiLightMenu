@@ -11,6 +11,7 @@ ThemeFilenames::ThemeFilenames() {
 	switch (ms().theme) {
 		case 0:
 		case 1:
+		default:
 			systemDirectory =
 				formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
 					ms().theme == 1 ? "3ds" : "dsi",  ms().theme == 1 ? ms()._3ds_theme.c_str() : ms().dsi_theme.c_str());
