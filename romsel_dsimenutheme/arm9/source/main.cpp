@@ -679,7 +679,9 @@ int main(int argc, char **argv) {
 
 	fontInit();
 
-	if (ms().theme == 1) {
+	if (ms().theme == 6) {
+		tex().loadSaturnTheme();
+	} else if (ms().theme == 1) {
 		tex().load3DSTheme();
 	} else {
 		tex().loadDSiTheme();
@@ -733,6 +735,10 @@ int main(int argc, char **argv) {
 				CURPOS = 39;
 			}
 		}
+	}
+	
+	if (ms().theme == 4) {
+		whiteScreen = false;
 	}
 
 	langInit();
@@ -831,7 +837,7 @@ int main(int argc, char **argv) {
 
 	snd();
 
-	if (ms().dsiMusic != 0) {
+	if (ms().theme != 4 && ms().dsiMusic != 0) {
 		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 			snd().playStartup();
 			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
@@ -866,12 +872,14 @@ int main(int argc, char **argv) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
 		}
 		showProgressIcon = false;
-		fadeType = false; // Fade to white
-		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+		if (ms().theme == 4) {
+			fadeType = false; // Fade to white
+			for (int i = 0; i < 30; i++) {
+				snd().updateStream();
+				swiWaitForVBlank();
+			}
+			clearText(false);
 		}
-		clearText(false);
 	}
 
 	while (1) {

@@ -23,6 +23,7 @@ public:
   virtual ~ThemeTextures() = default;
 
 public:
+  void loadSaturnTheme();
   void loadDSiTheme();
   void load3DSTheme();
 

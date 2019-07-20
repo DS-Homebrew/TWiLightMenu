@@ -518,7 +518,10 @@ void vBlankHandler() {
 		}
 
 		if (titleboxXmoveleft) {
-			if (movetimer == 8) {
+			if (ms().theme == 4) {
+				titlewindowXpos[ms().secondaryDevice] -= 8;
+				titleboxXmoveleft = false;
+			} else if (movetimer == 8) {
 				//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
@@ -535,7 +538,10 @@ void vBlankHandler() {
 				movetimer = 0;
 			}
 		} else if (titleboxXmoveright) {
-			if (movetimer == 8) {
+			if (ms().theme == 4) {
+				titlewindowXpos[ms().secondaryDevice] += 8;
+				titleboxXmoveleft = false;
+			} else if (movetimer == 8) {
 				//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
 				startBorderZoomOut = true;
@@ -1551,7 +1557,7 @@ void graphicsInit() {
 		dropSeq[i] = 0;
 		dropSpeed[i] = dropSpeedDefine;
 		dropSpeedChange[i] = 0;
-		if (ms().theme == 1)
+		if (ms().theme == 1 || ms().theme == 4)
 			titleboxYposDropDown[i] = 0;
 		else
 			titleboxYposDropDown[i] = -85 - 80;

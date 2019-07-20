@@ -422,6 +422,8 @@ bool isTopLevel(const char *path) {
 }
 
 void waitForFadeOut(void) {
+	if (ms().theme == 4) return;
+
 	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 66; i++) {
@@ -456,7 +458,7 @@ bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
 	displayGameIcons = false;
-	fadeType = true; // Fade in from white
+	if (ms().theme != 4) fadeType = true; // Fade in from white
 	snd().updateStream();
 	printLargeCentered(false, 88, "Now Loading...");
 	if (!sys().isRegularDS()) {
@@ -471,9 +473,11 @@ void displayNowLoading(void) {
 	}
 	nowLoadingDisplaying = true;
 	reloadFontPalettes();
-	while (!screenFadedIn()) 
-	{
-		snd().updateStream();
+	if (ms().theme != 4) {
+		while (!screenFadedIn()) 
+		{
+			snd().updateStream();
+		}
 	}
 	snd().updateStream();
 	showProgressIcon = true;

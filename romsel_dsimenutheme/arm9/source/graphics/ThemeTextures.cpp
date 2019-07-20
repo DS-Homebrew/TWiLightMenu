@@ -210,6 +210,73 @@ void ThemeTextures::loadBackgrounds() {
 	
 }
 
+void ThemeTextures::loadSaturnTheme() {	
+
+	loadBackgrounds();
+	loadUITextures();
+		
+	loadVolumeTextures();
+	loadBatteryTextures();
+	loadIconTextures();
+	
+	loadDateFont(_dateTimeFontTexture->texture());
+
+	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
+	_boxTexture = std::make_unique<Texture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
+	_braceTexture = std::make_unique<Texture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
+	_bubbleTexture = std::make_unique<Texture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
+	_buttonArrowTexture = std::make_unique<Texture>(TFN_GRF_BUTTON_ARROW, TFN_FALLBACK_GRF_BUTTON_ARROW);
+	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
+
+	_dialogBoxTexture = std::make_unique<Texture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
+
+	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+	_launchDotTexture = std::make_unique<Texture>(TFN_GRF_LAUNCH_DOT, TFN_FALLBACK_GRF_LAUNCH_DOT);
+	_movingArrowTexture = std::make_unique<Texture>(TFN_GRF_MOVING_ARROW, TFN_FALLBACK_GRF_MOVING_ARROW);
+
+	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
+	_scrollWindowTexture = std::make_unique<Texture>(TFN_GRF_SCROLL_WINDOW, TFN_FALLBACK_GRF_SCROLL_WINDOW);
+	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_startBorderTexture = std::make_unique<Texture>(TFN_GRF_START_BORDER, TFN_FALLBACK_GRF_START_BORDER);
+	_startTextTexture = std::make_unique<Texture>(TFN_GRF_START_TEXT, TFN_FALLBACK_GRF_START_TEXT);
+	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
+	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
+	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
+
+	if (ms().colorMode == 1) {
+		applyGrayscaleToAllGrfTextures();
+	}
+
+	loadBipsImage(*_bipsTexture);
+
+	
+	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
+	loadScrollwindowImage(*_scrollWindowTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
+	loadSettingsImage(*_settingsIconTexture);
+	loadManualImage(*_manualIconTexture);
+	loadBraceImage(*_braceTexture);
+
+	loadStartImage(*_startTextTexture);
+	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
+	
+	loadButtonarrowImage(*_buttonArrowTexture);
+	loadMovingarrowImage(*_movingArrowTexture);
+	loadLaunchdotImage(*_launchDotTexture);
+	loadDialogboxImage(*_dialogBoxTexture);
+
+	// careful here, it's boxTexture, not boxFulltexture.
+	loadBoxfullImage(*_boxTexture);
+
+	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
+	loadSmallCartImage(*_smallCartTexture);
+	loadFolderImage(*_folderTexture);
+	
+	loadProgressImage(*_progressTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
+	
+}
+
 void ThemeTextures::load3DSTheme() {
 
 	loadBackgrounds();
