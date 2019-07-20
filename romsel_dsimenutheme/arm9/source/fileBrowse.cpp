@@ -113,6 +113,7 @@ int movingAppYpos = 0;
 bool movingAppIsDir = false;
 extern bool showMovingArrow;
 extern double movingArrowYpos;
+extern bool displayGameIcons;
 
 extern bool showLshoulder;
 extern bool showRshoulder;
@@ -454,6 +455,7 @@ void waitForFadeOut(void) {
 bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
+	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	printLargeCentered(false, 88, "Now Loading...");
@@ -1289,6 +1291,7 @@ string browseForFile(const vector<string> extensionList) {
 			;
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
+		displayGameIcons = true;
 		fadeType = true; // Fade in from white
 		for (int i = 0; i < 5; i++) {
 			snd().updateStream();
@@ -1578,6 +1581,7 @@ string browseForFile(const vector<string> extensionList) {
 							}
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
+							displayGameIcons = true;
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 5; i++) {
 								snd().updateStream();
@@ -1612,6 +1616,7 @@ string browseForFile(const vector<string> extensionList) {
 								;
 							nowLoadingDisplaying = false;
 							whiteScreen = false;
+							displayGameIcons = true;
 							fadeType = true; // Fade in from white
 							for (int i = 0; i < 5; i++) {
 								snd().updateStream();

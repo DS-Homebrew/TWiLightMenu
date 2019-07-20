@@ -89,6 +89,7 @@ extern bool movingAppIsDir;
 double movingArrowYpos = 59;
 bool movingArrowYdirection = true;
 bool showMovingArrow = false;
+bool displayGameIcons = false;
 
 extern bool buttonArrowTouched[2];
 extern bool scrollWindowTouched;
@@ -647,6 +648,8 @@ void vBlankHandler() {
 			glSprite(224, 171, GL_FLIP_H, &tex().buttonarrowImage()[0 + buttonArrowTouched[1]]);
 			glSprite(72 - titleboxXpos[ms().secondaryDevice], 81, GL_FLIP_NONE, tex().braceImage());
 		}
+
+	if (displayGameIcons) {
 		int spawnedboxXpos = 96;
 		int iconXpos = 112;
 
@@ -1021,6 +1024,7 @@ void vBlankHandler() {
 			}
 			glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
 		}
+	}
 		// Top icons for 3DS theme
 		if (ms().theme == 1) {
 			int topIconXpos = 116;
@@ -1227,7 +1231,7 @@ void vBlankHandler() {
 			progressAnimDelay = 0;
 		}
 	}
-	if (!whiteScreen) {
+	if (displayGameIcons) {
 		// Playback animated icons
 		for (int i = 0; i < 41; i++) {
 			if (bnriconisDSi[i] == true) {
