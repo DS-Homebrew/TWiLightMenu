@@ -1132,7 +1132,7 @@ void vBlankHandler() {
 		}
 
 		// Refresh the background layer.
-		if (currentBg == 1)
+		if (currentBg == 1 && ms().theme != 4)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && ms().theme == 0 && !isScrolling) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);

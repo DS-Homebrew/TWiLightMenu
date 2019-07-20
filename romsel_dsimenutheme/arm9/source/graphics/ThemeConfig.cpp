@@ -33,6 +33,10 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
             _bubbleTipSpriteW = 7;
             _renderPhoto = false;
           }
+		  
+		  if (ms().theme == 4) {
+            _renderPhoto = false;
+		  }
       }
 
 

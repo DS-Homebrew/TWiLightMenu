@@ -458,7 +458,7 @@ bool nowLoadingDisplaying = false;
 
 void displayNowLoading(void) {
 	displayGameIcons = false;
-	if (ms().theme != 4) fadeType = true; // Fade in from white
+	fadeType = true; // Fade in from white
 	snd().updateStream();
 	printLargeCentered(false, 88, "Now Loading...");
 	if (!sys().isRegularDS()) {
@@ -656,7 +656,7 @@ void switchDevice(void) {
 		ms().saveSettings();
 		settingsChanged = false;
 	} else {
-	snd().playLaunch();
+		snd().playLaunch();
 		controlTopBright = true;
 
 		fadeType = false;		  // Fade to white
@@ -1230,7 +1230,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	if (nowLoadingDisplaying) {
 		snd().updateStream();
 		showProgressIcon = false;
-		fadeType = false; // Fade to white
+		if (ms().theme != 4) fadeType = false; // Fade to white
 	}
 	// Load correct icons depending on cursor position
 	if (CURPOS <= 1) {
@@ -1291,8 +1291,10 @@ string browseForFile(const vector<string> extensionList) {
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		reloadFontPalettes();
-		while (!screenFadedOut())
-			;
+		if (ms().theme != 4) {
+			while (!screenFadedOut())
+				;
+		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
 		displayGameIcons = true;
