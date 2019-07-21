@@ -931,6 +931,7 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY, const int drawCount,
 				 int *hourWidthPointer) {
 	int x = posX;
+	int screenPosY = (ms().theme == 4 ? 19 : 14);
 
 	beginBgSubModify();
 	for (int c = 0; c < drawCount; c++) {
@@ -938,7 +939,7 @@ void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY
 
 		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
 		// Start date
-		for (int y = 14; y >= 6; y--) {
+		for (int y = screenPosY; y >= screenPosY-8; y--) {
 			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
 				if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] +
 								   i)] != 0x7C1F) { // Do not render magneta pixel
