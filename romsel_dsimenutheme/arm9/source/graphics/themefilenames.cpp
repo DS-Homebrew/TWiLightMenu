@@ -10,11 +10,15 @@ ThemeFilenames::ThemeFilenames() {
 	std::string systemDirectory;
 	switch (ms().theme) {
 		case 0:
-		case 1:
 		default:
 			systemDirectory =
 				formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
-					ms().theme == 1 ? "3ds" : "dsi",  ms().theme == 1 ? ms()._3ds_theme.c_str() : ms().dsi_theme.c_str());
+					"dsi", ms().dsi_theme.c_str());
+			break;
+		case 1:
+			systemDirectory =
+				formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
+					"3ds", ms()._3ds_theme.c_str());
 			break;
 		case 4:
 			systemDirectory =
@@ -33,17 +37,31 @@ ThemeFilenames::ThemeFilenames() {
 			// nocashMessage(systemDirectory.c_str());
 			_uiDirectory = systemDirectory;
 		} else {
-			if (ms().theme == 4) {
-				_uiDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
-			} else {
-				_uiDirectory = ms().theme == 1 ? TFN_FALLBACK_3DS_UI_DIRECTORY : TFN_FALLBACK_DSI_UI_DIRECTORY;
+			switch (ms().theme) {
+				case 0:
+				default:
+					_uiDirectory = TFN_FALLBACK_DSI_UI_DIRECTORY;
+					break;
+				case 1:
+					_uiDirectory = TFN_FALLBACK_3DS_UI_DIRECTORY;
+					break;
+				case 4:
+					_uiDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
+					break;
 			}
 		}
 
-		if (ms().theme == 4) {
-			_fallbackDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
-		} else {
-			_fallbackDirectory = ms().theme == 1 ? TFN_FALLBACK_3DS_UI_DIRECTORY : TFN_FALLBACK_DSI_UI_DIRECTORY;
+		switch (ms().theme) {
+			case 0:
+			default:
+				_fallbackDirectory = TFN_FALLBACK_DSI_UI_DIRECTORY;
+				break;
+			case 1:
+				_fallbackDirectory = TFN_FALLBACK_3DS_UI_DIRECTORY;
+				break;
+			case 4:
+				_fallbackDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
+				break;
 		}
 	}
 }
