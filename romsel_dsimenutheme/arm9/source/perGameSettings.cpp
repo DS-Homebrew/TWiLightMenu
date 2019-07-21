@@ -61,6 +61,9 @@
 #define ENTRY_PAGE_LENGTH 10
 
 
+extern int currentBg;
+extern bool displayGameIcons;
+
 const char* SDKnumbertext;
 
 extern bool showdialogbox;
@@ -164,7 +167,12 @@ void perGameSettings (std::string filename) {
 
 	clearText();
 	dbox_showIcon = true;
-	showdialogbox = true;
+	if (ms().theme == 4) {
+		currentBg = 1;
+		displayGameIcons = false;
+	} else {
+		showdialogbox = true;
+	}
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS+1)+PAGENUM*40, file_count);
 	
@@ -602,7 +610,12 @@ void perGameSettings (std::string filename) {
 	}
 	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	if (ms().theme == 4) {
+		currentBg = 0;
+		displayGameIcons = true;
+	} else {
+		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	}
 	dbox_showIcon = false;
 }
 

@@ -519,6 +519,7 @@ void vBlankHandler() {
 
 		if (titleboxXmoveleft) {
 			if (ms().theme == 4) {
+				titleboxXpos[ms().secondaryDevice] -= 64;
 				titlewindowXpos[ms().secondaryDevice] -= 8;
 				titleboxXmoveleft = false;
 			} else if (movetimer == 8) {
@@ -539,8 +540,9 @@ void vBlankHandler() {
 			}
 		} else if (titleboxXmoveright) {
 			if (ms().theme == 4) {
+				titleboxXpos[ms().secondaryDevice] += 64;
 				titlewindowXpos[ms().secondaryDevice] += 8;
-				titleboxXmoveleft = false;
+				titleboxXmoveright = false;
 			} else if (movetimer == 8) {
 				//	if (currentBg && theme == 0) mmEffectEx(&snd_stop);
 				needToPlayStopSound = true;
@@ -1101,7 +1103,7 @@ void vBlankHandler() {
 		
 			titleboxYmovepos += 5;
 		}
-		if (showSTARTborder && (!isScrolling || ms().theme == 1)) {
+		if (showSTARTborder && displayGameIcons && (!isScrolling || ms().theme == 1)) {
 			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);
@@ -1134,7 +1136,7 @@ void vBlankHandler() {
 		// Refresh the background layer.
 		if (currentBg == 1 && ms().theme != 4)
 			drawBubble(tex().bubbleImage());
-		if (showSTARTborder && ms().theme == 0 && !isScrolling) {
+		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 		}
 

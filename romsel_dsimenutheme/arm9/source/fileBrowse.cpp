@@ -132,6 +132,8 @@ bool needToPlayStopSound = false;
 bool stopSoundPlayed = false;
 int waitForNeedToPlayStopSound = 0;
 
+bool bannerTextShown = false;
+
 extern std::string ReplaceAll(std::string str, const std::string &from, const std::string &to);
 
 extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings);
@@ -473,11 +475,9 @@ void displayNowLoading(void) {
 	}
 	nowLoadingDisplaying = true;
 	reloadFontPalettes();
-	if (ms().theme != 4) {
-		while (!screenFadedIn()) 
-		{
-			snd().updateStream();
-		}
+	while (!screenFadedIn()) 
+	{
+		snd().updateStream();
 	}
 	snd().updateStream();
 	showProgressIcon = true;
@@ -1371,11 +1371,13 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
 					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+					bannerTextShown = true;
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
 						displayBoxArt = false;
 					}
+					bannerTextShown = false;
 					clearText(false);
 					currentBg = 0;
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
@@ -1884,9 +1886,9 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 
-				// Dragging icons
-			} else if (((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft &&
-				    !titleboxXmoveright)) {
+				// Dragging icons (DSi & 3DS themes)
+			} else if ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft &&
+				    !titleboxXmoveright) {
 				touchPosition startTouch = touch;
 
 				if (touch.px > 96 && touch.px < 160) {
@@ -1903,6 +1905,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 
+				if (ms().theme != 4) {
 				touchPosition prevTouch1 = touch;
 				touchPosition prevTouch2 = touch;
 				int prevPos = CURPOS;
@@ -2150,14 +2153,16 @@ string browseForFile(const vector<string> extensionList) {
 					snd().updateStream();
 					swiWaitForVBlank();
 				}
+				}	// End of DSi/3DS theme check
 				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
 				;
 				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 				boxArtLoaded = false;
 				settingsChanged = true;
 				touch = startTouch;
-				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))
+				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					showSTARTborder = (ms().theme == 1 ? true : false);
+				}
 			}
 
 			if (CURPOS < 0)
@@ -2166,27 +2171,29 @@ string browseForFile(const vector<string> extensionList) {
 				ms().cursorPosition[ms().secondaryDevice] = 39;
 
 			// Startup...
-			if (((pressed & KEY_A) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft &&
+			if (((pressed & KEY_A) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
 			     !titleboxXmoveright) ||
-			    ((pressed & KEY_START) && (currentBg == 1) && showSTARTborder && !titleboxXmoveleft &&
+			    ((pressed & KEY_START) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
 			     !titleboxXmoveright) ||
-			    (gameTapped && (currentBg == 1)
+			    (gameTapped && bannerTextShown && showSTARTborder
 				// && showSTARTborder && !titleboxXmoveleft &&!titleboxXmoveright
 			     )) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
 					snd().playSelect();
-					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
+					if (ms().theme != 4) {
+						fadeType = false; // Fade to white
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
 					}
 					ms().pagenum[ms().secondaryDevice] = 0;
 					ms().cursorPosition[ms().secondaryDevice] = 0;
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
-					whiteScreen = true;
+					if (ms().theme != 4) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
@@ -2510,17 +2517,19 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playWrong();
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
-					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
+					if (ms().theme != 4) {
+						fadeType = false; // Fade to white
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
 					}
 					if (showLshoulder)
 						PAGENUM -= 1;
 					CURPOS = 0;
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
-					whiteScreen = true;
+					if (ms().theme != 4) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
@@ -2542,10 +2551,12 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playWrong();
 				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
-					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
+					if (ms().theme != 4) {
+						fadeType = false; // Fade to white
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
 					}
 					if (showRshoulder) {
 						PAGENUM += 1;
@@ -2558,7 +2569,7 @@ string browseForFile(const vector<string> extensionList) {
 						titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 						titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
 					}
-					whiteScreen = true;
+					if (ms().theme != 4) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
@@ -2580,16 +2591,18 @@ string browseForFile(const vector<string> extensionList) {
 			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
 				snd().playSelect();
-				fadeType = false; // Fade to white
-				for (int i = 0; i < 30; i++) {
-					snd().updateStream();
-					swiWaitForVBlank();
+				if (ms().theme != 4) {
+					fadeType = false; // Fade to white
+					for (int i = 0; i < 30; i++) {
+						snd().updateStream();
+						swiWaitForVBlank();
+					}
 				}
 				PAGENUM = 0;
 				CURPOS = 0;
 				titleboxXpos[ms().secondaryDevice] = 0;
 				titlewindowXpos[ms().secondaryDevice] = 0;
-				whiteScreen = true;
+				if (ms().theme != 4) whiteScreen = true;
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
@@ -2609,7 +2622,7 @@ string browseForFile(const vector<string> extensionList) {
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && (currentBg == 1) && showSTARTborder) {
+			if ((pressed & KEY_X) && !startMenu && bannerTextShown && showSTARTborder) {
 				CIniFile hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
 				char str[12] = {0};
@@ -2791,16 +2804,19 @@ string browseForFile(const vector<string> extensionList) {
 
 			if ((pressed & KEY_Y) && !startMenu && (isDirectory[CURPOS] == false) &&
 			    (bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
-			    (currentBg == 1) && showSTARTborder) {
+			    bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 			}
 
-			if ((pressed & KEY_SELECT) && ms().theme == 0) {
-				if (selectMenu()) {
-					clearText();
-					showdialogbox = false;
-					dbox_selectMenu = false;
-					return "null";
+			if (pressed & KEY_SELECT) {
+				if (ms().theme == 0 || ms().theme == 4) {
+					if (selectMenu()) {
+						clearText();
+						showdialogbox = false;
+						dbox_selectMenu = false;
+						if (ms().theme == 4) currentBg = 0;
+						return "null";
+					}
 				}
 			}
 		}
