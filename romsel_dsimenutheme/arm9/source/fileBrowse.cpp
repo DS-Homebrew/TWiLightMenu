@@ -1008,11 +1008,13 @@ bool selectMenu(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 		if (pressed & KEY_UP) {
+			snd().playSelect();
 			selCursorPosition--;
 			if (selCursorPosition < 0)
 				selCursorPosition = maxCursors;
 		}
 		if (pressed & KEY_DOWN) {
+			snd().playSelect();
 			selCursorPosition++;
 			if (selCursorPosition > maxCursors)
 				selCursorPosition = 0;
@@ -1044,6 +1046,7 @@ bool selectMenu(void) {
 			}
 		}
 		if ((pressed & KEY_B) || (pressed & KEY_SELECT)) {
+			snd().playBack();
 			break;
 		}
 	};

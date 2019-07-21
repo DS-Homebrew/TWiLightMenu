@@ -54,22 +54,26 @@ SoundControl::SoundControl()
 	sys.samp_count = MSL_NSAMPS;
 	sys.mem_bank = SOUNDBANK;
 	sys.fifo_channel = FIFO_MAXMOD;
-	
+
 	FILE* soundbank_file;
-	
-	switch(ms().dsiMusic) {
-		case 2:
-			soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
-			break;
-		case 3:
-			soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
-			if (soundbank_file) break; // fallthrough if soundbank_file fails.
-		case 1:
-		default:
-			soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
-			break;
+
+	if (ms().theme == 4) {
+		soundbank_file = fopen(std::string(TFN_SATURN_SOUND_EFFECTBANK).c_str(), "rb");
+	} else {
+		switch(ms().dsiMusic) {
+			case 2:
+				soundbank_file = fopen(std::string(TFN_SHOP_SOUND_EFFECTBANK).c_str(), "rb");
+				break;
+			case 3:
+				soundbank_file = fopen(std::string(TFN_SOUND_EFFECTBANK).c_str(), "rb");
+				if (soundbank_file) break; // fallthrough if soundbank_file fails.
+			case 1:
+			default:
+				soundbank_file = fopen(std::string(TFN_DEFAULT_SOUND_EFFECTBANK).c_str(), "rb");
+				break;
+		}
 	}
-	
+
 	fread((void*)SFX_DATA, 1, sizeof(SFX_DATA), soundbank_file);
 
 	fclose(soundbank_file);
@@ -147,17 +151,21 @@ SoundControl::SoundControl()
 	};
 
 
-	switch(ms().dsiMusic) {
-		case 2:
-			stream_source = fopen(std::string(TFN_SHOP_SOUND_BG).c_str(), "rb");
-			break;
-		case 3:
-			stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
-			if (stream_source) break; // fallthrough if stream_source fails.
-		case 1:
-		default:
-			stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
-			break;
+	if (ms().theme == 4) {
+		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
+	} else {
+		switch(ms().dsiMusic) {
+			case 2:
+				stream_source = fopen(std::string(TFN_SHOP_SOUND_BG).c_str(), "rb");
+				break;
+			case 3:
+				stream_source = fopen(std::string(TFN_SOUND_BG).c_str(), "rb");
+				if (stream_source) break; // fallthrough if stream_source fails.
+			case 1:
+			default:
+				stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
+				break;
+		}
 	}
 	
 

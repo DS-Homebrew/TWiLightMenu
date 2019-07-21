@@ -838,7 +838,9 @@ int main(int argc, char **argv) {
 
 	snd();
 
-	if (ms().theme != 4 && ms().dsiMusic != 0) {
+	if (ms().theme == 4) {
+		snd().playStartup();
+	} else if (ms().dsiMusic != 0) {
 		if ((ms().theme == 1 && ms().dsiMusic == 1) || ms().dsiMusic == 2 || (ms().dsiMusic == 3 && tc().playStartupJingle())) {
 			snd().playStartup();
 			snd().setStreamDelay(snd().getStartupSoundLength() - tc().startupJingleDelayAdjust());
