@@ -733,11 +733,12 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 
 	const Texture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
-	int x = 4;
-	int y = 5 + 11;
+	int staticX = (ms().theme == 4 ? 40 : 4);
+	int x = staticX;
+	int y = (ms().theme == 4 ? 10 : 5) + 11;
 	for (u32 i = 0; i < tex->pixelCount(); i++) {
-		if (x >= 4 + 18) {
-			x = 4;
+		if (x >= staticX + 18) {
+			x = staticX;
 			y--;
 		}
 		u16 val = *(src++);

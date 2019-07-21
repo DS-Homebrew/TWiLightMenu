@@ -1600,7 +1600,9 @@ void graphicsInit() {
 	} 
 	
 	tex().drawTopBg();
-	tex().drawProfileName();
+	if (ms().theme != 4) {
+		tex().drawProfileName();
+	}
 
 	drawCurrentDate();
 	drawCurrentTime();
