@@ -743,6 +743,7 @@ void vBlankHandler() {
 			}
 		}
 
+		int maxIconNumber = (ms().theme == 4 ? 0 : 3);
 		for (int i = 0; i < 40; i++) {
 			int movingAppXFix = 0;
 			if (CURPOS <= (movingApp - (PAGENUM * 40))) {
@@ -791,7 +792,7 @@ void vBlankHandler() {
 			} else {
 				movecloseXpos = 0;
 			}
-			if (i >= CURPOS - 3 && i <= CURPOS + 3) {
+			if (i >= CURPOS - maxIconNumber && i <= CURPOS + maxIconNumber) {
 				if (i < spawnedtitleboxes) {
 					if (isDirectory[i]) {
 						if (movingApp != -1) {

@@ -1459,7 +1459,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 				// Move apps
-			} else if ((pressed & KEY_UP) && !titleboxXmoveleft && !titleboxXmoveright &&
+			} else if ((pressed & KEY_UP) && (ms().theme != 4) && !titleboxXmoveleft && !titleboxXmoveright &&
 				   CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 				showSTARTborder = false;
 				currentBg = 2;

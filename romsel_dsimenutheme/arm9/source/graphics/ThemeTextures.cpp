@@ -221,17 +221,14 @@ void ThemeTextures::loadSaturnTheme() {
 	
 	loadDateFont(_dateTimeFontTexture->texture());
 
-	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
 	_boxTexture = std::make_unique<Texture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
 	_braceTexture = std::make_unique<Texture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
 	_bubbleTexture = std::make_unique<Texture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
-	_buttonArrowTexture = std::make_unique<Texture>(TFN_GRF_BUTTON_ARROW, TFN_FALLBACK_GRF_BUTTON_ARROW);
 	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
 
 	_dialogBoxTexture = std::make_unique<Texture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
 
 	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
-	_launchDotTexture = std::make_unique<Texture>(TFN_GRF_LAUNCH_DOT, TFN_FALLBACK_GRF_LAUNCH_DOT);
 	_movingArrowTexture = std::make_unique<Texture>(TFN_GRF_MOVING_ARROW, TFN_FALLBACK_GRF_MOVING_ARROW);
 
 	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
@@ -247,8 +244,6 @@ void ThemeTextures::loadSaturnTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	loadBipsImage(*_bipsTexture);
-
 	
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
@@ -260,9 +255,7 @@ void ThemeTextures::loadSaturnTheme() {
 	loadStartImage(*_startTextTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
 	
-	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
-	loadLaunchdotImage(*_launchDotTexture);
 	loadDialogboxImage(*_dialogBoxTexture);
 
 	// careful here, it's boxTexture, not boxFulltexture.
