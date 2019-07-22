@@ -166,7 +166,6 @@ void dontShowAPMsgAgain (std::string filename) {
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
-	dbox_showIcon = true;
 	if (ms().theme == 4) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
@@ -177,6 +176,7 @@ void perGameSettings (std::string filename) {
 		displayGameIcons = false;
 		fadeType = true;
 	} else {
+		dbox_showIcon = true;
 		showdialogbox = true;
 	}
 	clearText();
@@ -269,6 +269,7 @@ void perGameSettings (std::string filename) {
 	}
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		dbox_showIcon = true;
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}

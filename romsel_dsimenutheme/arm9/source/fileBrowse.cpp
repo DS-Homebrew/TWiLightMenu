@@ -2300,12 +2300,25 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					}
 					if (hasAP) {
+						if (ms().theme == 4) {
+							snd().playStartup();
+							fadeType = false;	   // Fade to black
+							for (int i = 0; i < 25; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
+							currentBg = 1;
+							displayGameIcons = false;
+							fadeType = true;
+						} else {
+							dbox_showIcon = true;
+							showdialogbox = true;
+						}
 						clearText();
-						dbox_showIcon = true;
-						showdialogbox = true;
-						for (int i = 0; i < 30; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
+						if (ms().theme == 4) {
+							while (!screenFadedIn()) { swiWaitForVBlank(); }
+							dbox_showIcon = true;
+							snd().playWrong();
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
@@ -2334,6 +2347,7 @@ string browseForFile(const vector<string> extensionList) {
 								break;
 							}
 							if (pressed & KEY_B) {
+								snd().playBack();
 								proceedToLaunch = false;
 								pressed = 0;
 								break;
@@ -2345,11 +2359,25 @@ string browseForFile(const vector<string> extensionList) {
 								break;
 							}
 						}
-						clearText();
 						showdialogbox = false;
-						for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
+						if (ms().theme == 4) {
+							fadeType = false;	   // Fade to black
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
+							clearText();
+							currentBg = 0;
+							displayGameIcons = true;
+							fadeType = true;
+							snd().playStartup();
+							if (proceedToLaunch) {
+								while (!screenFadedIn()) { swiWaitForVBlank(); }
+							}
+						} else {
+							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
 						}
 						dbox_showIcon = false;
 					}
