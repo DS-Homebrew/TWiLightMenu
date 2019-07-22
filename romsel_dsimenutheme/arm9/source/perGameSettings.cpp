@@ -168,6 +168,7 @@ void perGameSettings (std::string filename) {
 	clearText();
 	dbox_showIcon = true;
 	if (ms().theme == 4) {
+		snd().playStartup();
 		currentBg = 1;
 		displayGameIcons = false;
 	} else {
@@ -446,6 +447,7 @@ void perGameSettings (std::string filename) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
 					}
+					snd().playSelect();
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 0;
@@ -454,6 +456,7 @@ void perGameSettings (std::string filename) {
 				if ((!ms().secondaryDevice && (pressed & KEY_LEFT))
 				|| (!ms().secondaryDevice && (pressed & KEY_RIGHT))) {
 					if (perGameSettings_cursorPosition == 0) {
+						snd().playSelect();
 						perGameSettings_cursorSide = !perGameSettings_cursorSide;
 					}
 				}
@@ -461,6 +464,7 @@ void perGameSettings (std::string filename) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
 					}
+					snd().playSelect();
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 2;
@@ -468,10 +472,12 @@ void perGameSettings (std::string filename) {
 				}
 			} else {
 				if (pressed & KEY_UP) {
+					snd().playSelect();
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
 				}
 				if (pressed & KEY_DOWN) {
+					snd().playSelect();
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
 				}
@@ -509,11 +515,13 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
 						break;
 				}
+				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
 			}
 
 			if (pressed & KEY_B) {
 				if (perGameSettingsChanged) {
+					snd().playBack();
 					savePerGameSettings(filename);
 					perGameSettingsChanged = false;
 				}
@@ -521,6 +529,7 @@ void perGameSettings (std::string filename) {
 			}
 		} else if (!showPerGameSettings) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
+				snd().playBack();
 				break;
 			}
 		} else {
@@ -529,6 +538,7 @@ void perGameSettings (std::string filename) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
 					}
+					snd().playSelect();
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 0) perGameSettings_cursorPosition = 4;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 0;
@@ -538,6 +548,7 @@ void perGameSettings (std::string filename) {
 					if (perGameSettings_cursorPosition == 0) {
 						perGameSettings_cursorSide = false;
 					}
+					snd().playSelect();
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 4) perGameSettings_cursorPosition = 0;
 					if (!isDSiMode() && REG_SCFG_EXT != 0 && perGameSettings_cursorPosition == 1) perGameSettings_cursorPosition = 2;
@@ -545,15 +556,18 @@ void perGameSettings (std::string filename) {
 				}
 				if ((pressed & KEY_LEFT) || (pressed & KEY_RIGHT)) {
 					if (perGameSettings_cursorPosition == 0) {
+						snd().playSelect();
 						perGameSettings_cursorSide = !perGameSettings_cursorSide;
 					}
 				}
 			} else {
 				if (pressed & KEY_UP) {
+					snd().playSelect();
 					perGameSettings_cursorPosition--;
 					if (perGameSettings_cursorPosition < 2) perGameSettings_cursorPosition = 3;
 				}
 				if (pressed & KEY_DOWN) {
+					snd().playSelect();
 					perGameSettings_cursorPosition++;
 					if (perGameSettings_cursorPosition > 3) perGameSettings_cursorPosition = 2;
 				}
@@ -592,17 +606,20 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
 						break;
 				}
+				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
 			}
 
 			if (pressed & KEY_B) {
 				if (perGameSettingsChanged) {
+					snd().playBack();
 					savePerGameSettings(filename);
 					perGameSettingsChanged = false;
 				}
 				break;
 			}
-			if ((pressed & KEY_X)) {
+			if (pressed & KEY_X) {
+				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
 			}

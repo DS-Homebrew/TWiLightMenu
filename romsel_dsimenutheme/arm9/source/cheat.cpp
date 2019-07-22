@@ -277,6 +277,7 @@ void CheatCodelist::selectCheats(std::string filename)
   bool cheatsFound = true;
   // If no cheats are found
   if(_data.size() == 0) {
+    snd().playWrong();
     cheatsFound = false;
     clearText();
     printLargeCentered(false, 30, "Cheats");
@@ -295,6 +296,7 @@ void CheatCodelist::selectCheats(std::string filename)
       snd().updateStream();
       swiWaitForVBlank();
       if(pressed & KEY_B) {
+		snd().playBack();
         break;
       }
     }
@@ -367,17 +369,22 @@ void CheatCodelist::selectCheats(std::string filename)
   } while(!pressed && !held);
     if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
+	    snd().playSelect();
         cheatWnd_cursorPosition--;
       }
     } else if(held & KEY_DOWN) {
       if(cheatWnd_cursorPosition<((int)currentList.size()-1)) {
+	    snd().playSelect();
         cheatWnd_cursorPosition++;
       }
     } else if(held & KEY_LEFT) {
+	  snd().playSelect();
       cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
     } else if(held & KEY_RIGHT) {
+	  snd().playSelect();
       cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
     } else if(pressed & KEY_A) {
+	  (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
         for(uint i=0;i<_data.size();i++) {
           if(_data[i]._title == currentList[cheatWnd_cursorPosition]._title) {
@@ -406,6 +413,7 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
     if(pressed & KEY_B) {
+	  snd().playBack();
       if(mainListCurPos != -1) {
         currentList.clear();
         for(uint i=0;i<_data.size();i++) {
@@ -421,6 +429,7 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
     if(pressed & KEY_X) {
+	  snd().playLaunch();
       clearText();
       printLargeCentered(false, 30, "Cheats");
       printSmallCentered(false, 100, "Saving...");
@@ -429,6 +438,7 @@ void CheatCodelist::selectCheats(std::string filename)
     }
     if(pressed & KEY_Y) {
       if(currentList[cheatWnd_cursorPosition]._comment != "") {
+		(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
         clearText();
         printLargeCentered(false, 30, "Cheats");
 
@@ -478,6 +488,7 @@ void CheatCodelist::selectCheats(std::string filename)
           snd().updateStream();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
+		    snd().playBack();
             break;
           }
         }
