@@ -66,6 +66,7 @@ extern bool displayGameIcons;
 
 const char* SDKnumbertext;
 
+extern bool fadeType;
 extern bool showdialogbox;
 extern bool dbox_showIcon;
 
@@ -169,8 +170,13 @@ void perGameSettings (std::string filename) {
 	dbox_showIcon = true;
 	if (ms().theme == 4) {
 		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
 		currentBg = 1;
 		displayGameIcons = false;
+		fadeType = true;
 	} else {
 		showdialogbox = true;
 	}
@@ -261,7 +267,11 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	}
 
 	while (1) {
 		clearText();
@@ -625,12 +635,19 @@ void perGameSettings (std::string filename) {
 			}
 		}
 	}
-	clearText();
 	showdialogbox = false;
 	if (ms().theme == 4) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
 		currentBg = 0;
 		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
 	} else {
+		clearText();
 		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	dbox_showIcon = false;

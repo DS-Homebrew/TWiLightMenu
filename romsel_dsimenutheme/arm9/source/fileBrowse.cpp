@@ -2332,12 +2332,12 @@ string browseForFile(const vector<string> extensionList) {
 					}
 
 					if (proceedToLaunch) {
-					snd().playLaunch();
+						snd().playLaunch();
 						controlTopBright = true;
 						applaunch = true;
-						applaunchprep = true;
 
 						if (ms().theme == 0) {
+							applaunchprep = true;
 							currentBg = 0;
 							showSTARTborder = false;
 							clearText(false); // Clear title
@@ -2348,30 +2348,34 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 						}
-						fadeType = false;		  // Fade to white
-						snd().fadeOutStream();
-						for (int i = 0; i < 60; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-
-						mmEffectCancelAll();
-						snd().stopStream();
-
-						// Clear screen with white
-						rocketVideo_playVideo = false;
-						whiteScreen = true;
-						clearText();
-						tex().clearTopScreen();
-
-						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, 88, "Now Saving...");
-							fadeSpeed = true; // Fast fading
-							fadeType = true; // Fade in from white
-							for (int i = 0; i < 25; i++) {
+						if (ms().theme != 4) {
+							fadeType = false;		  // Fade to white
+							snd().fadeOutStream();
+							for (int i = 0; i < 60; i++) {
+								snd().updateStream();
 								swiWaitForVBlank();
 							}
-							showProgressIcon = true;
+
+							mmEffectCancelAll();
+							snd().stopStream();
+
+							// Clear screen with white
+							rocketVideo_playVideo = false;
+							whiteScreen = true;
+							tex().clearTopScreen();
+						}
+						clearText();
+
+						if(ms().updateRecentlyPlayedList) {
+							printLargeCentered(false, (ms().theme == 4 ? 40 : 88), "Now Saving...");
+							if (ms().theme != 4) {
+								fadeSpeed = true; // Fast fading
+								fadeType = true; // Fade in from white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
+								showProgressIcon = true;
+							}
 
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
@@ -2438,10 +2442,12 @@ string browseForFile(const vector<string> extensionList) {
 								ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
 							}
 
-							showProgressIcon = false;
-							fadeType = false;	   // Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
+							if (ms().theme != 4) {
+								showProgressIcon = false;
+								fadeType = false;	   // Fade to white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							clearText();
 						}

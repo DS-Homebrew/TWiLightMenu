@@ -59,6 +59,7 @@ extern u16 usernameRendered[11];
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
+extern bool fadeColor;
 extern bool controlTopBright;
 extern bool controlBottomBright;
 int fadeDelay = 0;
@@ -454,9 +455,9 @@ void vBlankHandler() {
 			}
 		}
 		if (controlBottomBright)
-			SetBrightness(0, screenBrightness);
+			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
 		if (controlTopBright)
-			SetBrightness(1, screenBrightness);
+			SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 
 		if (showdialogbox) {
 			// Dialogbox moving into view...
@@ -1068,7 +1069,7 @@ void vBlankHandler() {
 			// 	glSprite(256 - 44, 0, GL_FLIP_NONE, &tex().cornerButtonImage()[1]);
 		}
 
-		if (applaunchprep && ms().theme == 0) {
+		if (applaunchprep) {
 
 			if (isDirectory[CURPOS]) {
 				glSprite(96, 87 - titleboxYmovepos, GL_FLIP_NONE, tex().folderImage());

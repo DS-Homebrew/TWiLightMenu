@@ -67,6 +67,7 @@
 bool whiteScreen = true;
 bool fadeType = false; // false = out, true = in
 bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
+bool fadeColor = true; // false = black, true = white
 bool controlTopBright = true;
 bool controlBottomBright = true;
 
@@ -737,9 +738,10 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
-	
+
 	if (ms().theme == 4) {
 		whiteScreen = false;
+		fadeColor = false;
 	}
 
 	langInit();
