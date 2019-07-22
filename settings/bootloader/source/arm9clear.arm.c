@@ -35,14 +35,6 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 	
-	u16 *mainregs = (u16*)0x04000000;
-	u16 *subregs = (u16*)0x04001000;
-	
-	for (i=0; i<43; i++) {
-		mainregs[i] = 0;
-		subregs[i] = 0;
-	}
-	
 	REG_DISPSTAT = 0;
 
 	VRAM_A_CR = 0;
@@ -73,6 +65,14 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 
 void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)) clearMasterBright_ARM9 (void) 
 {
+	u16 *mainregs = (u16*)0x04000000;
+	u16 *subregs = (u16*)0x04001000;
+	
+	for (register int i=0; i<43; i++) {
+		mainregs[i] = 0;
+		subregs[i] = 0;
+	}
+	
 	u16 mode = 1 << 14;
 
 	*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
