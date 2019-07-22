@@ -520,8 +520,8 @@ void perGameSettings (std::string filename) {
 			}
 
 			if (pressed & KEY_B) {
+				snd().playBack();
 				if (perGameSettingsChanged) {
-					snd().playBack();
 					savePerGameSettings(filename);
 					perGameSettingsChanged = false;
 				}
@@ -611,8 +611,8 @@ void perGameSettings (std::string filename) {
 			}
 
 			if (pressed & KEY_B) {
+				snd().playBack();
 				if (perGameSettingsChanged) {
-					snd().playBack();
 					savePerGameSettings(filename);
 					perGameSettingsChanged = false;
 				}
