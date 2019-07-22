@@ -166,7 +166,6 @@ void dontShowAPMsgAgain (std::string filename) {
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
-	clearText();
 	dbox_showIcon = true;
 	if (ms().theme == 4) {
 		snd().playStartup();
@@ -180,6 +179,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		showdialogbox = true;
 	}
+	clearText();
 	
 	snprintf (fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS+1)+PAGENUM*40, file_count);
 	

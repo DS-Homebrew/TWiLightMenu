@@ -918,7 +918,6 @@ void mdRomTooBig(void) {
 
 bool selectMenu(void) {
 	inSelectMenu = true;
-	clearText();
 	dbox_showIcon = false;
 	dbox_selectMenu = true;
 	if (ms().theme == 4) {
@@ -933,6 +932,7 @@ bool selectMenu(void) {
 	} else {
 		showdialogbox = true;
 	}
+	clearText();
 	if (!rocketVideo_playVideo || ms().showBoxArt)
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
