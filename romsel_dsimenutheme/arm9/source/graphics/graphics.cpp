@@ -1578,10 +1578,8 @@ void graphicsInit() {
 	titleboxXpos[1] = ms().cursorPosition[1] * 64;
 	titlewindowXpos[1] = ms().cursorPosition[1] * 5;
 
-	*(u16 *)(0x0400006C) |= BIT(14);
-	*(u16 *)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
+	SetBrightness(0, ms().theme == 4 ? -31 : 31);
+	SetBrightness(1, ms().theme == 4 ? -31 : 31);
 
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;

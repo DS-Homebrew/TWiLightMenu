@@ -158,8 +158,8 @@ void vBlankHandler()
 		screenBrightness++;
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
-	SetBrightness(0, screenBrightness);
-	SetBrightness(1, screenBrightness);
+	SetBrightness(0, currentTheme==4 ? -screenBrightness : screenBrightness);
+	SetBrightness(1, currentTheme==4 ? -screenBrightness : screenBrightness);
 
 	if (currentTheme != 4) {
 		snd().tickBgMusic();
@@ -189,12 +189,10 @@ void vBlankHandler()
 
 void graphicsInit()
 {
-	*(u16*)(0x0400006C) |= BIT(14);
-	*(u16*)(0x0400006C) &= BIT(15);
-	SetBrightness(0, 31);
-	SetBrightness(1, 31);
-
 	currentTheme = ms().theme;
+
+	SetBrightness(0, currentTheme==4 ? -31 : 31);
+	SetBrightness(1, currentTheme==4 ? -31 : 31);
 
 	renderScreens = true;
 
