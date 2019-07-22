@@ -1,9 +1,7 @@
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 variables:
-  CURRENT_DATE: $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
   REPOSITORY_NAME: $(Build.Repository.Name)
-  COMMIT_TAG: $(git log --format=%h -1)
 
 jobs:
   - job: latest_build
@@ -15,7 +13,7 @@ jobs:
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
         sudo apt update
         # Install haveged to ensure enough entropy
-        sudo apt install p7zip-full haveged 
+        sudo apt install p7zip-full haveged
         sudo dpkg -i pacman.deb
 
         sudo dkp-pacman -Sy
@@ -33,7 +31,7 @@ jobs:
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
         make package
       displayName: 'Build TWiLight Menu++ with latest devkitARM'
-  
+
     - script: |
         cd booter/
         chmod +x make_cia
@@ -48,18 +46,19 @@ jobs:
 
         echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
         echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
+      name: makeCias
       displayName: 'Make booter and TWiLightMenu CIAs'
-      
+
     - script: |
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
       displayName: 'Pack 7z Package'
-      
+
     - task: PublishBuildArtifacts@1
       displayName: "Publish build to Azure"
       inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)'
         artifactName: 'build-devkitARM-latest'
 
   - job: docker_build
@@ -81,7 +80,7 @@ jobs:
       - script: |
           docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
         displayName: "Build TWiLightMenu++ with Docker using forked libnds and devkitARM r50"
-        
+
       - script: |
           cd booter/
           chmod +x make_cia
@@ -93,7 +92,7 @@ jobs:
           ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
           cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
         displayName: 'Make booter and TWiLightMenu CIAs'
-        
+
       - script: |
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
@@ -102,17 +101,20 @@ jobs:
       - task: PublishBuildArtifacts@1
         displayName: "Publish build to Azure"
         inputs:
-          pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
           artifactName: 'build-devkitARM-Docker'
 
     # Only run this for non-PR jobs.
   - job: publish_build_twlbot
     displayName: "Publish build to TWLBot"
-    dependsOn: 
+    dependsOn:
       - latest_build
       - docker_build
+    variables:
+      COMMIT_TAG: $[ dependencies.latest_build.outputs['makeCias.COMMIT_TAG'] ]
+      COMMIT_MESSAGE: $[ dependencies.latest_build.outputs['makeCias.COMMIT_MESSAGE'] ]
     condition: and(succeeded('latest_build'), succeeded('docker_build'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull')))
-    
+
     steps:
       - task: DownloadBuildArtifacts@0
         inputs:
@@ -124,9 +126,11 @@ jobs:
           downloadPath: $(Build.ArtifactStagingDirectory)
           artifactName: 'build-devkitARM-Docker'
         displayName: "Retrieving artifacts from Docker build"
-      - script: 
+      - script:
           ls -a $(Build.ArtifactStagingDirectory)
       - script: |
+          echo '##vso[task.setvariable variable=CURRENT_DATE]'echo $(date +"%Y%m%d-%H%M%S")
+
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
           git clone --depth 1 https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
@@ -139,6 +143,7 @@ jobs:
           git tag v$CURRENT_DATE
 
           echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
+        name: commit
         displayName: "Commit and push to TWLBot/Builds"
 
       - task: GitHubRelease@0
@@ -161,7 +166,9 @@ jobs:
     dependsOn: publish_build_twlbot
     displayName: Send Discord Success Webhook
     condition: and(succeeded('publish_build_twlbot'), not(startsWith(variables['Build.SourceBranch'], 'refs/pull')))
-    steps: 
+    variables:
+      CURRENT_DATE: $[ dependencies.publish_build_twlbot.outputs['commit.CURRENT_DATE'] ]
+    steps:
       - script: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
           chmod +x send.sh
@@ -171,7 +178,9 @@ jobs:
     dependsOn: publish_build_twlbot
     displayName: Send Discord Failure Webhook
     condition: and(or(failed('publish_build_twlbot'), failed('latest_build'), failed('docker_build')), not(startsWith(variables['Build.SourceBranch'], 'refs/pull')))
-    steps: 
+    variables:
+      CURRENT_DATE: $[ dependencies.publish_build_twlbot.outputs['commit.CURRENT_DATE'] ]
+    steps:
       - script: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
           chmod +x send.sh
