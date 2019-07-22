@@ -44,8 +44,8 @@ jobs:
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
-        echo '##vso[task.setvariable variable=COMMIT_TAG]'$(git log --format=%h -1)
-        echo '##vso[task.setvariable variable=COMMIT_MESSAGE]'$(git log --pretty=format:"%an - %s" -1)
+        echo '##vso[task.setvariable variable=COMMIT_TAG;isOutput=true]'$(git log --format=%h -1)
+        echo '##vso[task.setvariable variable=COMMIT_MESSAGE;isOutput=true]'$(git log --pretty=format:"%an - %s" -1)
       name: makeCias
       displayName: 'Make booter and TWiLightMenu CIAs'
 
@@ -126,10 +126,8 @@ jobs:
           downloadPath: $(Build.ArtifactStagingDirectory)
           artifactName: 'build-devkitARM-Docker'
         displayName: "Retrieving artifacts from Docker build"
-      - script:
-          ls -a $(Build.ArtifactStagingDirectory)
       - script: |
-          echo '##vso[task.setvariable variable=CURRENT_DATE]'echo $(date +"%Y%m%d-%H%M%S")
+          echo '##vso[task.setvariable variable=CURRENT_DATE;isOutput=true]'$(date +"%Y%m%d-%H%M%S")
 
           git config --global user.email "flamekat54@aol.com"
           git config --global user.name "TWLBot"
