@@ -462,15 +462,25 @@ void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
-	printLargeCentered(false, 88, "Now Loading...");
+	printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Loading...");
 	if (!sys().isRegularDS()) {
-		printSmall(false, 8, 152, "Location:");
-		if (ms().secondaryDevice) {
-			printSmall(false, 8, 168, "Slot-1 microSD Card");
-		} else if (ms().consoleModel < 3) {
-			printSmall(false, 8, 168, "SD Card");
+		if (ms().theme == 4) {
+			if (ms().secondaryDevice) {
+				printSmallCentered(false, 48, "Location: Slot-1 microSD");
+			} else if (ms().consoleModel < 3) {
+				printSmallCentered(false, 48, "Location: SD Card");
+			} else {
+				printSmallCentered(false, 48, "Location: microSD Card");
+			}
 		} else {
-			printSmall(false, 8, 168, "microSD Card");
+			printSmall(false, 8, 152, "Location:");
+			if (ms().secondaryDevice) {
+				printSmall(false, 8, 168, "Slot-1 microSD Card");
+			} else if (ms().consoleModel < 3) {
+				printSmall(false, 8, 168, "SD Card");
+			} else {
+				printSmall(false, 8, 168, "microSD Card");
+			}
 		}
 	}
 	nowLoadingDisplaying = true;
@@ -2207,7 +2217,7 @@ string browseForFile(const vector<string> extensionList) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
-					snd().playSelect();
+					(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 30; i++) {
@@ -2418,7 +2428,7 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 
 						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, (ms().theme == 4 ? 40 : 88), "Now Saving...");
+							printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Saving...");
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
@@ -2650,7 +2660,7 @@ string browseForFile(const vector<string> extensionList) {
 
 			if ((pressed & KEY_B) && ms().showDirectories) {
 				// Go up a directory
-				snd().playSelect();
+				snd().playBack();
 				if (ms().theme != 4) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 30; i++) {
