@@ -921,7 +921,18 @@ bool selectMenu(void) {
 	clearText();
 	dbox_showIcon = false;
 	dbox_selectMenu = true;
-	showdialogbox = true;
+	if (ms().theme == 4) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		showdialogbox = true;
+	}
 	if (!rocketVideo_playVideo || ms().showBoxArt)
 		clearBoxArt(); // Clear box art
 	boxArtLoaded = false;
@@ -957,15 +968,16 @@ bool selectMenu(void) {
 			maxCursors = 2;
 		}
 	}
-	for (int i = 0; i < 30; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	int pressed = 0;
 	while (1) {
 		int textYpos = selIconYpos + 4;
 		clearText();
-		printSmallCentered(false, 16, "SELECT menu");
+		printSmallCentered(false, (ms().theme == 4 ? 8 : 16), "SELECT menu");
 		printSmall(false, 24, -2 + textYpos + (28 * selCursorPosition), ">");
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
@@ -996,7 +1008,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, 160, "SELECT/" BUTTON_B " Back, " BUTTON_A " Select");
+		printSmallCentered(false, (ms().theme == 4 ? 164 : 160), "SELECT/" BUTTON_B " Back, " BUTTON_A " Select");
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1050,13 +1062,24 @@ bool selectMenu(void) {
 			break;
 		}
 	};
-	clearText();
 	showdialogbox = false;
-	dbox_selectMenu = false;
-	inSelectMenu = false;
-	for (int i = 0; i < 15; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
+		dbox_selectMenu = false;
+		inSelectMenu = false;
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+	} else {
+		clearText();
+		dbox_selectMenu = false;
+		inSelectMenu = false;
+		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	return false;
 }

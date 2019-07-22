@@ -1143,11 +1143,11 @@ void vBlankHandler() {
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
-		if (dbox_Ypos != -192) {
+		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1)) {
 			// Draw the dialog box.
-			drawDbox();
+			if (ms().theme != 4) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
-				drawIcon(24, dbox_Ypos + 24, CURPOS);
+				drawIcon(24, (ms().theme == 4 ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
@@ -1161,33 +1161,33 @@ void vBlankHandler() {
 					}
 				}
 				if (!sys().isRegularDS()) {
-					glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().cornerButtonImage()[1]); // System Menu
 					selIconYpos += 28;
 				}
-				glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
 				if (isDSiMode() && sdFound()) {
 					if (ms().secondaryDevice) {
-						glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+						glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							 &tex().smallCartImage()[2]); // SD card
 					} else {
 						glSprite(
-						    32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+						    32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						    &tex().smallCartImage()[(REG_SCFG_MC == 0x11) ? 1
 												  : 0]); // Slot-1 card
 					}
 					selIconYpos += 28;
 				}
 				if (ms().useGbarunner) {
-					drawSmallIconGBA(32, dbox_Ypos + selIconYpos); // GBARunner2
+					drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
 				} else {
-					glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().smallCartImage()[3]); // GBA Mode
 				}
 				selIconYpos += 28;
-				glSprite(32, dbox_Ypos + selIconYpos, GL_FLIP_NONE,
+				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 tex().manualImage()); // Manual
 			}
 		}
@@ -1241,7 +1241,7 @@ void vBlankHandler() {
 			progressAnimDelay = 0;
 		}
 	}
-	if (displayGameIcons) {
+	if (displayGameIcons || dbox_showIcon) {
 		// Playback animated icons
 		for (int i = 0; i < 41; i++) {
 			if (bnriconisDSi[i] == true) {

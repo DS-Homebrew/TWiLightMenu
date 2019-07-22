@@ -635,7 +635,7 @@ static inline void writeDialogTitle(int textlines, const char *text1, const char
 
 void titleUpdate(bool isDir, const char *name, int num) {
 	clearText(false);
-	if (showdialogbox) {
+	if (showdialogbox || (ms().theme == 4 && currentBg == 1)) {
 		BOX_PY = 14;
 		BOX_PY_spacing1 = 17;
 		BOX_PY_spacing2 = 7;
@@ -736,11 +736,11 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		}
 
 		// text
-		if (showdialogbox || infoFound[num]) {
-			if (!showdialogbox) {
-				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-			} else {
+		if (showdialogbox || (ms().theme == 4 && currentBg == 1) || infoFound[num]) {
+			if (showdialogbox || (ms().theme == 4 && currentBg == 1)) {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			} else {
+				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
 		} else if (ms().theme == 1) {
 			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, name);
