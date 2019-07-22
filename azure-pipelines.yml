@@ -128,6 +128,7 @@ jobs:
         displayName: "Retrieving artifacts from Docker build"
       - script: |
           export CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo '##vso[task.setvariable variable=CURRENT_DATE]'$CURRENT_DATE
           echo '##vso[task.setvariable variable=CURRENT_DATE;isOutput=true]'$CURRENT_DATE
 
           git config --global user.email "flamekat54@aol.com"
