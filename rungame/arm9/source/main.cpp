@@ -262,7 +262,7 @@ TWL_CODE int lastRunROM() {
 				}
 			}
 			
-			char *ndsToBoot;
+			char ndsToBoot[256];
 			sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 			if(access(ndsToBoot, F_OK) != 0) {
 				sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");

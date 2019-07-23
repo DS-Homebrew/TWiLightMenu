@@ -1708,7 +1708,7 @@ int main(int argc, char **argv) {
 
 						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
-						char *ndsToBoot;
+						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						if(access(ndsToBoot, F_OK) != 0) {
 							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
