@@ -153,7 +153,6 @@ touchPosition touch;
 void stop(void) {
 	//---------------------------------------------------------------------------------
 	while (1) {
-		
 		swiWaitForVBlank();
 	}
 }
@@ -441,7 +440,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
-	    "A2D",	// New Super Mario Bros.
+		"A2D",	// New Super Mario Bros.
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
@@ -449,8 +448,8 @@ void SetSpeedBumpExclude(const char *filename) {
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-	    "B6X",	// Rockman EXE: Operate Shooting Star
-	    "B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"B6X",	// Rockman EXE: Operate Shooting Star
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
@@ -472,7 +471,7 @@ void SetSpeedBumpExclude(const char *filename) {
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
 		if (memcmp(game_TID, list2[i], 3) == 0) {
-			// Found a match.
+			// Found match
 			ceCached = false;
 			break;
 		}
@@ -527,11 +526,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 
 char filePath[PATH_MAX];
 
-//---------------------------------------------------------------------------------
 void doPause() {
-	//---------------------------------------------------------------------------------
-	// iprintf("Press start...\n");
-	// printSmall(false, x, y, "Press start...");
 	while (1) {
 		scanKeys();
 		if (keysDown() & KEY_START)
@@ -556,20 +551,14 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
-		if (perGameSettings_boostCpu == -1) {
-			runNds_boostCpu = ms().boostCpu;
-		} else {
-			runNds_boostCpu = perGameSettings_boostCpu;
-		}
-		if (perGameSettings_boostVram == -1) {
-			runNds_boostVram = ms().boostVram;
-		} else {
-			runNds_boostVram = perGameSettings_boostVram;
-		}
+
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 	}
 	std::string path;
 	int err = 0;
 	snd().stopStream();
+
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
@@ -660,10 +649,7 @@ bool extention(std::string filename, const char *ext, int number) {
 	}
 }
 
-//---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
-	//---------------------------------------------------------------------------------
-
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
@@ -1255,8 +1241,7 @@ int main(int argc, char **argv) {
 
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
-						std::string ramdiskname = ReplaceAll(
-						    filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
+						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir((isHomebrew[CURPOS] == 1) ? "ramdisks" : "saves", 0777);
@@ -1310,8 +1295,8 @@ int main(int argc, char **argv) {
 							}
 
 							// Set save size to 32MB for the following games
-							if ( memcmp(game_TID, "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
-								|| memcmp(game_TID, "UXB", 3) == 0 )	// Jam with the Band
+							if (memcmp(game_TID, "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
+							 || memcmp(game_TID, "UXB", 3) == 0)	// Jam with the Band
 							{
 								savesize = 1048576 * 32;
 							}
@@ -1341,54 +1326,23 @@ int main(int argc, char **argv) {
 						SetMPUSettings(argarray[0]);
 						SetSpeedBumpExclude(argarray[0]);
 
-						bootstrapinipath =
-						    (sdFound() ? "sd:/_nds/nds-bootstrap.ini"
-									  : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString(
-						    "NDS-BOOTSTRAP", "RAM_DRIVE_PATH",
-						    (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice)
-							? ramdiskpath
-							: "sd:/null.img");
-						if (perGameSettings_language == -2) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
-									    ms().bstrap_language);
-						} else {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
-									    perGameSettings_language);
-						}
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {
-							if (perGameSettings_dsiMode == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
-										    ms().bstrap_dsiMode);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
-										    perGameSettings_dsiMode);
-							}
-							if (perGameSettings_boostCpu == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
-										    ms().boostCpu);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
-										    perGameSettings_boostCpu);
-							}
-							if (perGameSettings_boostVram == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
-										    ms().boostVram);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
-										    perGameSettings_boostVram);
-							}
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
-						if (ms().forceSleepPatch || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 &&
-						    !sys().isRegularDS())) {
+						if (ms().forceSleepPatch || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS())) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
 						} else {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
@@ -1407,9 +1361,7 @@ int main(int argc, char **argv) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
 								if (dat) {
-									if (codelist.searchCheatData(dat, gameCode,
-												     crc32, cheatOffset,
-												     cheatSize)) {
+									if (codelist.searchCheatData(dat, gameCode, crc32, cheatOffset, cheatSize)) {
 										codelist.parse(path);
 										writeCheatsToFile(codelist.getCheats(), cheatDataBin);
 										FILE* cheatData=fopen(cheatDataBin,"rb");
@@ -1417,8 +1369,7 @@ int main(int argc, char **argv) {
 											u32 check[2];
 											fread(check, 1, 8, cheatData);
 											fclose(cheatData);
-											if (check[1] == 0xCF000000
-											|| getFileSize(cheatDataBin) > 0x8000) {
+											if (check[1] == 0xCF000000 || getFileSize(cheatDataBin) > 0x8000) {
 												cheatsEnabled = false;
 											}
 										}
@@ -1448,77 +1399,17 @@ int main(int argc, char **argv) {
 							SetWidescreen(filename.c_str());
 						}
 
+						bool useNightly = (perGameSettings_bootstrapFile != -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
 						const char *ndsToBoot;
-						if (perGameSettings_bootstrapFile == -1) {
-							if (ms().homebrewBootstrap) {
-								ndsToBoot = (ms().bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (ms().bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (ms().bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (ms().bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
-						} else {
-							if (ms().homebrewBootstrap) {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
+						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+						if(access(ndsToBoot, F_OK) != 0) {
+							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
+
 						argarray.at(0) = (char *)ndsToBoot;
 						snd().stopStream();
-						int err =
-						    runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0],
-										(ms().homebrewBootstrap ? false : true), true, false, true, true);
+						int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
 						snprintf(text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
@@ -1546,20 +1437,12 @@ int main(int argc, char **argv) {
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
-						if (perGameSettings_boostCpu == -1) {
-							runNds_boostCpu = ms().boostCpu;
-						} else {
-							runNds_boostCpu = perGameSettings_boostCpu;
-						}
-						if (perGameSettings_boostVram == -1) {
-							runNds_boostVram = ms().boostVram;
-						} else {
-							runNds_boostVram = perGameSettings_boostVram;
-						}
+
+						runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+						runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 					}
 					snd().stopStream();
-					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0],
-							     true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf(text, sizeof(text), "Start failed. Error %i", err);
 					ClearBrightness();
