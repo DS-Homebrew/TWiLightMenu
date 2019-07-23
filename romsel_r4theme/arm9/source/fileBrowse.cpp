@@ -284,7 +284,7 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 0;
 }
 
-bool chkExt(std::string filename, char* extension) {
+bool chkExt(std::string filename, std::string extension) {
     if(filename.substr(filename.find_last_of(".") + 1) == extension)
         return true;
     else
@@ -371,7 +371,7 @@ string browseForFile(const vector<string> extensionList)
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
 				isHomebrew = 0;
-			} else if(chkExt(std_romsel_filename, "gen") {
+			} else if(chkExt(std_romsel_filename, "gen")) {
 				bnrRomType = 6;
 				bnrWirelessIcon = 0;
 				isDSiWare = false;
