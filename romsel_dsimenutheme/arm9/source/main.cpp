@@ -1401,7 +1401,7 @@ int main(int argc, char **argv) {
 
 						bool useNightly = (perGameSettings_bootstrapFile != -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-						const char *ndsToBoot;
+						char *ndsToBoot;
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						if(access(ndsToBoot, F_OK) != 0) {
 							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
@@ -1527,9 +1527,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
-				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false,
-						 true,
-						 true); // Pass ROM to emulator as argument
+				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
@@ -1587,8 +1585,7 @@ int main(int argc, char **argv) {
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
-				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true,
-						     ms().secondaryDevice, true, true);
+				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, ms().secondaryDevice, true, true);
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
