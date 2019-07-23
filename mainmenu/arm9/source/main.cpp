@@ -225,13 +225,13 @@ void LoadSettings(void) {
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 
-    dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
-    dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
-    dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
 	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
 
-    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void SaveSettings(void) {
@@ -542,18 +542,19 @@ void SetMPUSettings(const char* filename) {
 	scanKeys();
 	int pressed = keysHeld();
 	
-	if(pressed & KEY_B){
+	if (pressed & KEY_B) {
 		mpuregion = 1;
-	} else if(pressed & KEY_X){
+	} else if (pressed & KEY_X) {
 		mpuregion = 2;
-	} else if(pressed & KEY_Y){
+	} else if (pressed & KEY_Y) {
 		mpuregion = 3;
 	} else {
 		mpuregion = 0;
 	}
-	if(pressed & KEY_RIGHT){
+
+	if(pressed & KEY_RIGHT) {
 		mpusize = 3145728;
-	} else if(pressed & KEY_LEFT){
+	} else if(pressed & KEY_LEFT) {
 		mpusize = 1;
 	} else {
 		mpusize = 0;
@@ -655,7 +656,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
-	    "A2D",	// New Super Mario Bros.
+		"A2D",	// New Super Mario Bros.
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
@@ -663,8 +664,8 @@ void SetSpeedBumpExclude(const char* filename) {
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-	    "B6X",	// Rockman EXE: Operate Shooting Star
-	    "B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"B6X",	// Rockman EXE: Operate Shooting Star
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
@@ -839,16 +840,9 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
-		if (perGameSettings_boostCpu == -1) {
-			runNds_boostCpu = boostCpu;
-		} else {
-			runNds_boostCpu = perGameSettings_boostCpu;
-		}
-		if (perGameSettings_boostVram == -1) {
-			runNds_boostVram = boostVram;
-		} else {
-			runNds_boostVram = perGameSettings_boostVram;
-		}
+		
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
 	std::string path;
 	int err = 0;
@@ -1003,12 +997,19 @@ void printGbaBannerText() {
 	}
 }
 
-bool extention(std::string filename, const char* ext, int number) {
-	if(strcasecmp(filename.c_str() + filename.size() - number, ext)) {
+bool extention(std::string filename, const char* ext) {
+	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
 		return true;
 	}
+}
+
+bool chkExt(std::string filename, std::string extension) {
+    if(filename.substr(filename.find_last_of(".") + 1) == extension)
+        return true;
+    else
+        return false;
 }
 
 //---------------------------------------------------------------------------------
@@ -1152,8 +1153,8 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
-	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)))
+	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")))
 	{
 		controlTopBright = false;
 		whiteScreen = true;
@@ -1197,85 +1198,51 @@ int main(int argc, char **argv) {
 			filename.erase(0, last_slash_idx + 1);
 		}
 
-		if((filename.substr(filename.find_last_of(".") + 1) == "nds")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "NDS")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "dsi")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "DSI")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "ids")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "IDS")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "app")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "APP")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "argv")
-		|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV"))
-		{
+		if (chkExt(filename, "nds") || chkExt(filename, "dsi") || chkExt(filename, "ids") || chkExt(filename, "app") || chkExt(filename, "argv")) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "plg")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "PLG"))
-		{
+		} else if (chkExt(filename, "plg")) {
 			bnrRomType = 8;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "rvid")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "RVID"))
-		{
+		} else if (chkExt(filename, "rvid")) {
 			bnrRomType = 8;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "gb")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "GB")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "sgb")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "SGB"))
-		{
+		} else if (chkExt(filename, "gb") || chkExt(filename, "sgb")) {
 			bnrRomType = 1;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "gbc")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "GBC"))
-		{
+		} else if (chkExt(filename, "gbc")) {
 			bnrRomType = 2;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "nes")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "NES")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "fds")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "FDS"))
-		{
+		} else if (chkExt(filename, "nes") || chkExt(filename, "fds")) {
 			bnrRomType = 3;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "sms")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "SMS"))
-		{
+		} else if(chkExt(filename, "sms")) {
 			bnrRomType = 4;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "gg")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "GG"))
-		{
+		} else if(chkExt(filename, "gg")) {
 			bnrRomType = 5;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "gen")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "GEN"))
-		{
+		} else if(chkExt(filename, "gen")) {
 			bnrRomType = 6;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
-		} else if((filename.substr(filename.find_last_of(".") + 1) == "smc")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "SMC")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "sfc")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "SFC"))
-		{
+		} else if(chkExt(filename, "smc") || chkExt(filename, "sfc")) {
 			bnrRomType = 7;
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
@@ -1288,9 +1255,7 @@ int main(int argc, char **argv) {
 			char boxArtPath[256];
 			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename.c_str());
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
-				if((filename.substr(filename.find_last_of(".") + 1) == "argv")
-				|| (filename.substr(filename.find_last_of(".") + 1) == "ARGV"))
-				{
+				if(chkExt(filename, "argv")) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename.c_str(),"rb");
@@ -1756,7 +1721,7 @@ int main(int argc, char **argv) {
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
-			if (extention(filename, ".argv", 5))
+			if (extention(filename, ".argv"))
 			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
@@ -1792,9 +1757,9 @@ int main(int argc, char **argv) {
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
 				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi", 4)) {
+				if (extention(filename, ".dsi")) {
 					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids", 4)) {
+				} else if (extention(filename, ".ids")) {
 					typeToReplace = ".ids";
 				}
 
@@ -1961,7 +1926,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds", 4) || extention(filename, ".dsi", 4) || extention(filename, ".ids", 4)) {
+			if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids")) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -2066,15 +2031,15 @@ int main(int argc, char **argv) {
 							}
 
 							// Set save size to 1MB for the following games
-							if ( strcmp(game_TID, "AZL") == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-								|| strcmp(game_TID, "BKI") == 0 )	// The Legend of Zelda: Spirit Tracks
+							if (strcmp(game_TID, "AZL") == 0	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+							 || strcmp(game_TID, "BKI") == 0)	// The Legend of Zelda: Spirit Tracks
 							{
 								savesize = 1048576;
 							}
 
 							// Set save size to 32MB for the following games
-							if ( strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
-								|| strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
+							if (strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
+							 || strcmp(game_TID, "UXB") == 0)	// Jam with the Band
 							{
 								savesize = 1048576*32;
 							}
@@ -2103,27 +2068,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !previousUsedDevice) ? ramdiskpath : "sd:/null.img");
-						if (perGameSettings_language == -2) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-						} else {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-						}
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {
-							if (perGameSettings_dsiMode == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-							}
-							if (perGameSettings_boostCpu == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-							}
-							if (perGameSettings_boostVram == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-							}
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
@@ -2137,7 +2086,7 @@ int main(int argc, char **argv) {
 						}
 						bootstrapini.SaveIniFile( bootstrapinipath );
 
-                        CheatCodelist codelist;
+                        			CheatCodelist codelist;
 						u32 gameCode,crc32;
 
 						if (isHomebrew == 0) {
@@ -2186,72 +2135,14 @@ int main(int argc, char **argv) {
 							SetWidescreen(filename.c_str());
 						}
 
-						const char *ndsToBoot;
-						if (perGameSettings_bootstrapFile == -1) {
-							if (homebrewBootstrap) {
-								ndsToBoot = (bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
-						} else {
-							if (homebrewBootstrap) {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
+						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
+						char ndsToBoot[256];
+						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+						if(access(ndsToBoot, F_OK) != 0) {
+							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
+
 						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
@@ -2275,16 +2166,9 @@ int main(int argc, char **argv) {
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
-						if (perGameSettings_boostCpu == -1) {
-							runNds_boostCpu = boostCpu;
-						} else {
-							runNds_boostCpu = perGameSettings_boostCpu;
-						}
-						if (perGameSettings_boostVram == -1) {
-							runNds_boostVram = boostVram;
-						} else {
-							runNds_boostVram = perGameSettings_boostVram;
-						}
+
+						runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+						runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 					}
 					//iprintf ("Running %s with %d parameters\n", argarray[0], argarray.size());
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
@@ -2295,22 +2179,22 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, text);
 					stop();
 				}
-			} else if (extention(filename, ".plg", 4)) {
+			} else if (extention(filename, ".plg")) {
 				dstwoPlg = true;
-			} else if (extention(filename, ".rvid", 5)) {
+			} else if (extention(filename, ".rvid")) {
 				rvid = true;
-			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) || extention(filename, ".gbc", 4)) {
+			} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
 				gameboy = true;
-			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
+			} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
 				nes = true;
-			} else if (extention(filename, ".sms", 4) || extention(filename, ".gg", 3)) {
+			} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
 				mkdir(previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 				gamegear = true;
-			} else if (extention(filename, ".gen", 4)) {
+			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
-			} else if (extention(filename, ".smc", 4) || extention(filename, ".sfc", 4)) {
+			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			}
 

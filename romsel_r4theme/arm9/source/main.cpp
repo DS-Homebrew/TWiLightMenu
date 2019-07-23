@@ -154,6 +154,7 @@ bool showSmsGg = true;
 bool showMd = true;
 bool showSnes = true;
 bool showDirectories = true;
+bool showHidden = false;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -200,6 +201,7 @@ void LoadSettings(void) {
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
+	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
@@ -237,11 +239,11 @@ void LoadSettings(void) {
 
 	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
-    dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
-    dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
 
-    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
+	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void SaveSettings(void) {
@@ -678,7 +680,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
-	    "A2D",	// New Super Mario Bros.
+		"A2D",	// New Super Mario Bros.
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
@@ -686,8 +688,8 @@ void SetSpeedBumpExclude(const char* filename) {
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-	    "B6X",	// Rockman EXE: Operate Shooting Star
-	    "B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"B6X",	// Rockman EXE: Operate Shooting Star
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
@@ -790,16 +792,9 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
-		if (perGameSettings_boostCpu == -1) {
-			runNds_boostCpu = boostCpu;
-		} else {
-			runNds_boostCpu = perGameSettings_boostCpu;
-		}
-		if (perGameSettings_boostVram == -1) {
-			runNds_boostVram = boostVram;
-		} else {
-			runNds_boostVram = perGameSettings_boostVram;
-		}
+		
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
 	std::string path;
 	int err = 0;
@@ -1640,27 +1635,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
-						if (perGameSettings_language == -2) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-						} else {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-						}
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {
-							if (perGameSettings_dsiMode == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-							}
-							if (perGameSettings_boostCpu == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-							}
-							if (perGameSettings_boostVram == -1) {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-							} else {
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-							}
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
@@ -1727,72 +1706,14 @@ int main(int argc, char **argv) {
 							SetWidescreen(argarray[0]);
 						}
 
-						const char *ndsToBoot;
-						if (perGameSettings_bootstrapFile == -1) {
-							if (homebrewBootstrap) {
-								ndsToBoot = (bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
-						} else {
-							if (homebrewBootstrap) {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-hb-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-hb-release."
-										  "nds");
-								}
-							} else {
-								ndsToBoot = (perGameSettings_bootstrapFile
-										? "sd:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "sd:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								if(access(ndsToBoot, F_OK) != 0) {
-									ndsToBoot = (perGameSettings_bootstrapFile
-										? "fat:/_nds/"
-										  "nds-bootstrap-nightly.nds"
-										: "fat:/_nds/"
-										  "nds-bootstrap-release."
-										  "nds");
-								}
-							}
+						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
+						char *ndsToBoot;
+						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+						if(access(ndsToBoot, F_OK) != 0) {
+							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
+
 						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
@@ -1822,16 +1743,9 @@ int main(int argc, char **argv) {
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {
 						loadPerGameSettings(filename);
-						if (perGameSettings_boostCpu == -1) {
-							runNds_boostCpu = boostCpu;
-						} else {
-							runNds_boostCpu = perGameSettings_boostCpu;
-						}
-						if (perGameSettings_boostVram == -1) {
-							runNds_boostVram = boostVram;
-						} else {
-							runNds_boostVram = perGameSettings_boostVram;
-						}
+
+						runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+						runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 					}
 					int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];

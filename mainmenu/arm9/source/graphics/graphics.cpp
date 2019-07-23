@@ -369,10 +369,10 @@ void loadBoxArt(const char* filename) {
 	}
 
 	if (file) {
-		extern bool extention(std::string filename, const char *ext, int number);
+		extern bool extention(std::string filename, const char *ext);
 
 		// Start loading
-		if (extention(filename, ".png", 4)) {
+		if (extention(filename, ".png")) {
 			std::vector<unsigned char> image;
 			unsigned width, height;
 			lodepng::decode(image, width, height, filename);
