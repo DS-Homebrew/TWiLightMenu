@@ -206,7 +206,7 @@ void ThemeTextures::loadBackgrounds() {
 	// DSi Theme
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBG, TFN_FALLBACK_BG_BOTTOMBG);
 	_backgroundTextures.emplace_back(TFN_BG_BOTTOMBUBBLEBG, TFN_FALLBACK_BG_BOTTOMBUBBLEBG);
-	_backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
+	if (ms().theme == 0) _backgroundTextures.emplace_back(TFN_BG_BOTTOMMOVINGBG, TFN_FALLBACK_BG_BOTTOMMOVINGBG);
 	
 }
 
@@ -214,7 +214,7 @@ void ThemeTextures::loadSaturnTheme() {
 
 	loadBackgrounds();
 	loadUITextures();
-		
+
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
