@@ -1153,8 +1153,8 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
-	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)))
+	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")))
 	{
 		controlTopBright = false;
 		whiteScreen = true;
@@ -1721,7 +1721,7 @@ int main(int argc, char **argv) {
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
-			if (extention(filename, ".argv", 5))
+			if (extention(filename, ".argv"))
 			{
 				FILE *argfile = fopen(filename.c_str(),"rb");
 					char str[PATH_MAX], *pstr;
@@ -1757,9 +1757,9 @@ int main(int argc, char **argv) {
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
 				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi", 4)) {
+				if (extention(filename, ".dsi")) {
 					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids", 4)) {
+				} else if (extention(filename, ".ids")) {
 					typeToReplace = ".ids";
 				}
 
@@ -1926,7 +1926,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds", 4) || extention(filename, ".dsi", 4) || extention(filename, ".ids", 4)) {
+			if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids")) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -2137,7 +2137,7 @@ int main(int argc, char **argv) {
 
 						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
-						char *ndsToBoot;
+						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						if(access(ndsToBoot, F_OK) != 0) {
 							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
