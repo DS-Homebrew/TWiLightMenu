@@ -58,20 +58,12 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_07) == 2) {
-		*(u16*)(0x4004700) = 0xC00F;
-	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
-		*(u16*)(0x4004700) = 0x800F;
-	}
 	if(fifoCheckValue32(FIFO_USER_01)) {
 		soundFadeOut();
 	} else {
 		soundVolume = 127;
 	}
 	REG_MASTER_VOLUME = soundVolume;
-	if(fifoCheckValue32(FIFO_USER_08)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -135,6 +127,9 @@ int main() {
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
+		if(fifoCheckValue32(FIFO_USER_08)) {
+			ReturntoDSiMenu();
+		}
 		resyncClock();
 		swiWaitForVBlank();
 	}

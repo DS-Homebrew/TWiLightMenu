@@ -178,12 +178,6 @@ void loadMainMenu()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
-
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
@@ -196,11 +190,6 @@ void loadROMselect()
 	snd().stopBgMusic();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
 	if (ms().theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
@@ -427,13 +416,6 @@ int main(int argc, char **argv)
 	loadDSiThemeList();
 	swiWaitForVBlank();
 
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
-
-	//	InitSound();
 	snd().init();
 	keysSetRepeat(25, 5);
 	
@@ -556,12 +538,12 @@ int main(int argc, char **argv)
 
 	if (!sys().isRegularDS())
 	{
-		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundfreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
+		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&bs().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2)
 	{
-		gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().bstrap_romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+		gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 						 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
 		.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
 				{true, false});
@@ -573,8 +555,8 @@ int main(int argc, char **argv)
 				{STR_NIGHTLY, STR_RELEASE},
 				{true, false})
 
-		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().bstrap_debug), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().bstrap_logging), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
+		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
 

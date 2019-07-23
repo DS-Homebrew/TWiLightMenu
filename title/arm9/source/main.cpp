@@ -114,7 +114,7 @@ void stop(void)
 
 char filePath[PATH_MAX];
 
-//---------------------------------------------------------------------------------
+/*//---------------------------------------------------------------------------------
 void doPause(void)
 {
 	//---------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void doPause(void)
 			break;
 	}
 	scanKeys();
-}
+}*/
 
 std::string ReplaceAll(std::string str, const std::string &from, const std::string &to)
 {
@@ -153,12 +153,6 @@ void rebootDSiMenuPP()
 
 void loadMainMenu()
 {
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
-
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
@@ -170,12 +164,6 @@ void loadMainMenu()
 
 void loadROMselect(int number)
 {
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
-
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
@@ -198,12 +186,6 @@ void loadROMselect(int number)
 
 void lastRunROM()
 {
-	fifoSendValue32(FIFO_USER_07, 0);
-	if (ms().soundfreq)
-		fifoSendValue32(FIFO_USER_07, 2);
-	else
-		fifoSendValue32(FIFO_USER_07, 1);
-
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
@@ -506,7 +488,7 @@ int main(int argc, char **argv)
 //---------------------------------------------------------------------------------
 
 	// overwrite reboot stub identifier
-	/*extern u64 *fake_heap_end;
+	/*extern char *fake_heap_end;
 	*fake_heap_end = 0;*/
 
 	sys().initFilesystem("/_nds/TWiLightMenu/main.srldr");

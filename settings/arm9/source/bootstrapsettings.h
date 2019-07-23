@@ -22,14 +22,10 @@ class BootstrapSettings
         ELEDPower = 2,
         ELEDCamera = 3
     };
-    enum TLoadingScreen
+    enum TSoundFreq
     {
-        ELoadingNone = 0,
-        ELoadingRegular = 1,
-        ELoadingPong = 2,
-        ELoadingTicTacToe = 3,
-	ELoadingSimple = 4,
-	ELoadingR4Like = 5
+        EFreq32KHz = 0,
+        EFreq47KHz = 1
     };
 
   public:
@@ -41,17 +37,11 @@ class BootstrapSettings
     void saveSettings();
 
   public:
-    bool bstrap_debug;
-	bool bstrap_logging;
-	int bstrap_romreadled;
+    bool debug;
+	bool logging;
+	int romreadled;
 	bool preciseVolumeControl;
-	int bstrap_loadingScreen;
-	bool bstrap_loadingScreenTheme;
-	bool bstrap_loadingScreenLocation;
-	int loadingFrames;
-	int loadingFps;
-	bool loadingBar;
-	int loadingBarYpos;
+	bool soundFreq;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

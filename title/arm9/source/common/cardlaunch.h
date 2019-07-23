@@ -76,7 +76,7 @@ void dsiLaunch(u32 *tid)
 void dsiLaunchSystemSettings()
 {
     char tmdpath[256];
-    u8 titleID[4];
+    u8 titleID[4] = {0};
     for (u8 i = 0x41; i <= 0x5A; i++)
     {
         snprintf(tmdpath, sizeof(tmdpath), "sd:/title/00030015/484e42%x/content/title.tmd", i);

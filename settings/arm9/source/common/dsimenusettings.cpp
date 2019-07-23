@@ -75,7 +75,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     dsi_theme = "dark";
     _3ds_theme = "light";
     
-    soundfreq = EFreq32KHz;
 	dsiSplash = isDSiMode();
 	hsMsg = false;
     showlogo = true;
@@ -116,7 +115,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
         useGbarunner = true;
     }
 
-	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
     hsMsg = settingsini.GetInt("SRLOADER", "HS_MSG", hsMsg);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
@@ -199,7 +197,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "GBAR2_WRAMICACHE", gbar2WramICache);
 	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 
-	settingsini.SetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
     settingsini.SetInt("SRLOADER", "HS_MSG", hsMsg);
     settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);

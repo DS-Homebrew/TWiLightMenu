@@ -40,11 +40,6 @@ unsigned int * CPUID2=(unsigned int*)0x4004D04;
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoGetValue32(FIFO_USER_07) == 2) {
-		*(u16*)(0x4004700) = 0xC00F;
-	} else if(fifoGetValue32(FIFO_USER_07) == 1) {
-		*(u16*)(0x4004700) = 0x800F;
-	}
 	if(fifoGetValue32(FIFO_USER_01) == 10) {
 		i2cWriteRegister(0x4A, 0x71, 0x01);
 		fifoSendValue32(FIFO_USER_01, 0);

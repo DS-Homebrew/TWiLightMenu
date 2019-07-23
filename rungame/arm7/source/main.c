@@ -48,9 +48,6 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
-	if(fifoCheckValue32(FIFO_USER_08)) {
-		ReturntoDSiMenu();
-	}
 }
 
 //---------------------------------------------------------------------------------
@@ -72,6 +69,15 @@ int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
 	
+	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency
+
+	// clear sound registers
+	dmaFillWords(0, (void*)0x04000400, 0x100);
+
+	REG_SOUNDCNT |= SOUND_ENABLE;
+	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );
+	powerOn(POWER_SOUND);
+
 	readUserSettings();
 	ledBlink(0);
 
@@ -97,6 +103,9 @@ int main() {
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
+		if(fifoCheckValue32(FIFO_USER_08)) {
+			ReturntoDSiMenu();
+		}
 		// fifocheck();
 		swiWaitForVBlank();
 	}

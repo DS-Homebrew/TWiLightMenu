@@ -96,12 +96,6 @@ class DSiMenuPlusPlusSettings
         E3DSNew = 3
     };
 
-    enum TSoundFreq
-    {
-        EFreq32KHz = 0,
-        EFreq47KHz = 1
-    };
-
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();
