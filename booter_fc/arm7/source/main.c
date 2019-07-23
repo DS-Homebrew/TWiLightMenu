@@ -53,6 +53,8 @@ int main() {
 //---------------------------------------------------------------------------------
     nocashMessage("ARM7 main.c main");
 	
+	*(vu16*)(0x04004700) |= BIT(13);	// Set 48khz sound/mic frequency (DSi/3DS only)
+
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);
 
