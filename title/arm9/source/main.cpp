@@ -484,7 +484,7 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to GameYob as argument
 	}
-	else if (ms().launchType == Launch::EJenesisLaunch)
+	else if (ms().launchType == Launch::ES8DSLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

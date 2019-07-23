@@ -1481,7 +1481,7 @@ int main(int argc, char **argv) {
 				} else if (nes) {
 					ms().launchType = Launch::ENESDSLaunch;
 				} else {
-					ms().launchType = Launch::EJenesisLaunch;
+					ms().launchType = Launch::ES8DSLaunch;
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;
