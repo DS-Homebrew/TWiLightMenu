@@ -79,9 +79,21 @@ int main(int argc, char **argv) {
 		stop();
 	}
 
-	int err = runNdsFile ("fat:/_nds/TWiLightMenu/main.srldr", 0, NULL);
+	bool srldrFound = (access("fat:/_nds/TWiLightMenu/main.srldr", F_OK) == 0);
+
+	int err = 0;
+	if (srldrFound) {
+		err = runNdsFile ("fat:/_nds/TWiLightMenu/main.srldr", 0, NULL);
+	}
+
 	consoleDemoInit();
-	iprintf ("Start failed. Error %i\n", err);
+
+	if (!srldrFound) {
+		iprintf ("fat:/_nds/TWiLightMenu/\nmain.srldr not found.");
+	} else {
+		iprintf ("Start failed. Error %i\n", err);
+	}
+
 	stop();
 
 	return 0;
