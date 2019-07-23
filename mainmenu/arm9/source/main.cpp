@@ -142,7 +142,7 @@ bool showCursor = true;
 bool startMenu = false;
 bool gotosettings = false;
 
-int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
+int launchType = -1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
@@ -1153,8 +1153,8 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
-	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")))
+	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")))
 	{
 		controlTopBright = false;
 		whiteScreen = true;
@@ -1771,7 +1771,7 @@ int main(int argc, char **argv) {
 				dsiWareSrlPath = argarray[0];
 				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
-				launchType = 2;
+				launchType = 3;
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -2160,7 +2160,7 @@ int main(int argc, char **argv) {
 						loadGameOnFlashcard(argarray[0], filename, true);
 					}
 				} else {
-					launchType = 1;
+					launchType = 2;
 					SaveSettings();
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
@@ -2208,11 +2208,11 @@ int main(int argc, char **argv) {
 				homebrewArg = ROMpath;
 
 				if (gameboy) {
-					launchType = 4;
-				} else if (nes) {
-					launchType = 3;
-				} else {
 					launchType = 5;
+				} else if (nes) {
+					launchType = 4;
+				} else {
+					launchType = 6;
 				}
 
 				SaveSettings();

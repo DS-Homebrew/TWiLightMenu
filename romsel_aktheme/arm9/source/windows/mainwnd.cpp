@@ -757,23 +757,27 @@ void MainWnd::launchSelected()
 
     if (rominfo.isDSRom())
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
         PerGameSettings gameConfig(_mainList->getSelectedShowName());
         // Direct Boot for homebrew.
         if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
         {
+			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
+			ms().saveSettings();
             bootArgv(rominfo);
             return;
         }
 
         else if (ms().useBootstrap || !ms().secondaryDevice)
         {
+			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().saveSettings();
             bootBootstrap(gameConfig, rominfo);
             return;
         }
         else
         {
+			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().saveSettings();
             dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
             bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
             return;

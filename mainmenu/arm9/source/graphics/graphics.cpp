@@ -68,7 +68,7 @@ extern bool showCursor;
 extern bool startMenu;
 extern int startMenu_cursorPosition;
 
-extern int launchType;			// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C)
+extern int launchType;
 extern bool pictochatFound;
 extern bool dlplayFound;
 extern bool gbaBiosFound;

@@ -120,8 +120,6 @@ bool ceCached = true;
 bool applaunch = false;
 bool startMenu = false;
 
-// int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
-
 bool gbaBiosFound[2] = {false};
 
 bool useBackend = false;
@@ -836,9 +834,9 @@ int main(int argc, char **argv) {
 		snd().beginStream();
 	}
 
-	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
+	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub", 4)) ||
-	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 &&
+	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
 	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv", 4))) {
 		fadeType = true; // Fade in from white
 		printSmallCentered(false, 20, "If this takes a while, close and open");
@@ -1430,7 +1428,7 @@ int main(int argc, char **argv) {
 					if (!isArgv) {
 						ms().romPath = argarray[0];
 					}
-					ms().launchType = Launch::ESDFlashcardLaunch;
+					ms().launchType = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
 					bool runNds_boostCpu = false;

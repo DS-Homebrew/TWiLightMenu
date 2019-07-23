@@ -95,6 +95,8 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
+typedef DSiMenuPlusPlusSettings::TLaunchType Launch;
+
 int screenmode = 0;
 int subscreenmode = 0;
 
@@ -192,18 +194,18 @@ void lastRunROM()
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	vector<char *> argarray;
-	if (ms().launchType > 2)
+	if (ms().launchType > Launch::EDSiWareLaunch)
 	{
 		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
 	int err = 0;
-	if (ms().launchType == 0)
+	if (ms().launchType == Launch::ESlot1)
 	{
 		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 	}
-	else if (ms().launchType == 1)
+	else if (ms().launchType == Launch::ESDFlashcardLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 		if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice)
@@ -389,7 +391,35 @@ void lastRunROM()
 			}
 		}
 	}
-	else if (ms().launchType == 2)
+	else if (ms().launchType == Launch::ESDFlashcardDirectLaunch) {
+		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		std::string romfolder = ms().romPath;
+		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+			romfolder.resize(romfolder.size()-1);
+		}
+		chdir(romfolder.c_str());
+
+		std::string filename = ms().romPath;
+		const size_t last_slash_idx = filename.find_last_of("/");
+		if (std::string::npos != last_slash_idx)
+		{
+			filename.erase(0, last_slash_idx + 1);
+		}
+
+		argarray.push_back(strdup(filename.c_str()));
+
+		bool runNds_boostCpu = false;
+		bool runNds_boostVram = false;
+
+		loadPerGameSettings(filename);
+
+		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+		runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
+
+		err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
+	}
+	else if (ms().launchType == Launch::EDSiWareLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
@@ -425,7 +455,7 @@ void lastRunROM()
 		fifoSendValue32(FIFO_USER_08, 1); // Reboot
 		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	}
-	else if (ms().launchType == 3)
+	else if (ms().launchType == Launch::ENESDSLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
@@ -439,7 +469,7 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
 	}
-	else if (ms().launchType == 4)
+	else if (ms().launchType == Launch::EGameYobLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
@@ -453,7 +483,7 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to GameYob as argument
 	}
-	else if (ms().launchType == 5)
+	else if (ms().launchType == Launch::EJenesisLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 

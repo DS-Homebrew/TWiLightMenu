@@ -129,7 +129,7 @@ bool applaunch = false;
 bool startMenu = true;
 bool gotosettings = false;
 
-int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
+int launchType = 1;		// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
@@ -1010,8 +1010,8 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
-	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
-							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 2 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)));
+	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub", 4))
+							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv", 4)));
 	
 	if (copyDSiWareSavBack) {
 		blackScreen = true;
@@ -1362,7 +1362,7 @@ int main(int argc, char **argv) {
 				if (!isArgv) {
 					romPath = argarray[0];
 				}
-				launchType = 2;
+				launchType = 3;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
@@ -1736,7 +1736,7 @@ int main(int argc, char **argv) {
 					if (!isArgv) {
 						romPath = argarray[0];
 					}
-					launchType = 1;
+					launchType = 2;
 					previousUsedDevice = secondaryDevice;
 					SaveSettings();
 					bool runNds_boostCpu = false;
@@ -1784,11 +1784,11 @@ int main(int argc, char **argv) {
 				homebrewArg = ROMpath;
 
 				if (gameboy) {
-					launchType = 4;
-				} else if (nes) {
-					launchType = 3;
-				} else {
 					launchType = 5;
+				} else if (nes) {
+					launchType = 4;
+				} else {
+					launchType = 6;
 				}
 
 				previousUsedDevice = secondaryDevice;

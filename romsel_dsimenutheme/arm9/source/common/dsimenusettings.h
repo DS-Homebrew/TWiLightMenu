@@ -85,16 +85,17 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
-// 0 = Slot-1, 1 = SD/Flash card, 2 = DSiWare, 3 = NES, 4 = (S)GB(C), 5 = SMS/GG
+	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = -1,
         ESlot1 = 0,
         ESDFlashcardLaunch = 1,
-        EDSiWareLaunch = 2,
-        ENESDSLaunch = 3,
-        EGameYobLaunch = 4,
-        EJenesisLaunch = 5,
+        ESDFlashcardDirectLaunch = 2,
+        EDSiWareLaunch = 3,
+        ENESDSLaunch = 4,
+        EGameYobLaunch = 5,
+        EJenesisLaunch = 6,
     };
 
     /*	0 = Nintendo DSi (Retail)
