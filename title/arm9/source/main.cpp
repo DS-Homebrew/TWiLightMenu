@@ -391,7 +391,8 @@ void lastRunROM()
 			}
 		}
 	}
-	else if (ms().launchType == Launch::ESDFlashcardDirectLaunch) {
+	else if (ms().launchType == Launch::ESDFlashcardDirectLaunch)
+	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		std::string romfolder = ms().romPath;
@@ -407,7 +408,7 @@ void lastRunROM()
 			filename.erase(0, last_slash_idx + 1);
 		}
 
-		argarray.push_back(strdup(filename.c_str()));
+		argarray.push_back((char*)ms().romPath.c_str());
 
 		bool runNds_boostCpu = false;
 		bool runNds_boostVram = false;

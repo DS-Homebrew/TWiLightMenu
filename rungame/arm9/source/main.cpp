@@ -337,7 +337,7 @@ TWL_CODE int lastRunROM() {
 			filename.erase(0, last_slash_idx + 1);
 		}
 
-		argarray.push_back(strdup(filename.c_str()));
+		argarray.push_back((char*)romPath.c_str());
 
 		bool runNds_boostCpu = false;
 		bool runNds_boostVram = false;
