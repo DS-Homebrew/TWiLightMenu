@@ -188,13 +188,9 @@ TWL_CODE int lastRunROM() {
 			argarray.push_back(strdup(filename.c_str()));
 
 			loadPerGameSettings(filename);
-			if (homebrewBootstrap) {
-				if (perGameSettings_bootstrapFile == -1) {
-					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-				} else {
-					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-				}
-			} else {
+			bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
+			if (!homebrewBootstrap) {
 				char game_TID[5];
 
 				FILE *f_nds_file = fopen(filename.c_str(), "rb");
@@ -263,47 +259,27 @@ TWL_CODE int lastRunROM() {
 					for (int i = 0; i < 30; i++) {
 						swiWaitForVBlank();
 					}
-
-				}
-				if (perGameSettings_bootstrapFile == -1) {
-					argarray.at(0) = (char*)(bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-				} else {
-					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
 				}
 			}
+			
+			char *ndsToBoot;
+			sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+			if(access(ndsToBoot, F_OK) != 0) {
+				sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+			}
 
-			CIniFile bootstrapini( bootstrapinipath );
-			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", romPath);
-			bootstrapini.SetString( "NDS-BOOTSTRAP", "SAV_PATH", savepath);
-			if (perGameSettings_language == -2) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-			}
-			if (perGameSettings_dsiMode == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-			}
-			if (perGameSettings_boostCpu == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-			}
-			if (perGameSettings_boostVram == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-			}
-			bootstrapini.SaveIniFile( bootstrapinipath );
+			argarray.at(0) = (char *)ndsToBoot;
+			CIniFile bootstrapini(bootstrapinipath);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
+			bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+			bootstrapini.SaveIniFile(bootstrapinipath);
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
-		}
-		else
-		{
-			bool runNds_boostCpu = false;
-			bool runNds_boostVram = false;
-
+		} else {
 			std::string filename = romPath;
 			const size_t last_slash_idx = filename.find_last_of("/");
 			if (std::string::npos != last_slash_idx)
@@ -312,16 +288,8 @@ TWL_CODE int lastRunROM() {
 			}
 
 			loadPerGameSettings(filename);
-			if (perGameSettings_boostCpu == -1) {
-				runNds_boostCpu = boostCpu;
-			} else {
-				runNds_boostCpu = perGameSettings_boostCpu;
-			}
-			if (perGameSettings_boostVram == -1) {
-				runNds_boostVram = boostVram;
-			} else {
-				runNds_boostVram = perGameSettings_boostVram;
-			}
+			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+			bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 			std::string path;
 			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
