@@ -2247,27 +2247,31 @@ string browseForFile(const vector<string> extensionList) {
 					return "null";
 				} else if ((isDSiWare[CURPOS] && !isDSiMode()) || (isDSiWare[CURPOS] && !sdFound()) ||
 					   (isDSiWare[CURPOS] && ms().consoleModel > 1)) {
-					snd().playWrong();
 					clearText();
-					dbox_showIcon = true;
-					showdialogbox = true;
-					for (int i = 0; i < 30; i++) {
-						snd().updateStream();
-						swiWaitForVBlank();
+					snd().playWrong();
+					if (ms().theme != 4) {
+						dbox_showIcon = true;
+						showdialogbox = true;
+						for (int i = 0; i < 30; i++) {
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
+						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 					}
-					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-					printSmallCentered(false, 112, "This game cannot be launched");
+					int yPos1 = (ms().theme == 4 ? 24 : 112);
+					int yPos2 = (ms().theme == 4 ? 40 : 128);
+					printSmallCentered(false, yPos1, "This game cannot be launched");
 					if (isDSiMode()) {
 						if (sdFound()) {
-							printSmallCentered(false, 128, "as a .nds file on 3DS/2DS.");
+							printSmallCentered(false, yPos2, "as a .nds file on 3DS/2DS.");
 						} else {
-							printSmallCentered(false, 128, "without an SD card.");
+							printSmallCentered(false, yPos2, "without an SD card.");
 						}
 					} else {
-						printSmallCentered(false, 128, "in DS mode.");
+						printSmallCentered(false, yPos2, "in DS mode.");
 					}
-					printSmall(false, 208, 160, BUTTON_A " OK");
+					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 					pressed = 0;
 					do {
 						scanKeys();
@@ -2283,12 +2287,16 @@ string browseForFile(const vector<string> extensionList) {
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
-					showdialogbox = false;
-					for (int i = 0; i < 15; i++){
-						snd().updateStream();
-						swiWaitForVBlank();
+					if (ms().theme == 4) {
+						snd().playLaunch();
+					} else {
+						showdialogbox = false;
+						for (int i = 0; i < 15; i++){
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
+						dbox_showIcon = false;
 					}
-					dbox_showIcon = false;
 				} else {
 					bool hasAP = false;
 					bool proceedToLaunch = true;
