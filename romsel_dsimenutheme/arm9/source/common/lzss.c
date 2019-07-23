@@ -3,7 +3,10 @@
 #include "common/lzss.h"
 #include "common/tonccpy.h"
 
-void LZ77_Decompress(const unsigned char *src, unsigned char *dst){
+#define __itcm __attribute__((section(".itcm")))
+
+void __itcm
+LZ77_Decompress(const unsigned char *src, unsigned char *dst){
 
 	unsigned char flags = 0;
 	unsigned char mask = 0;
