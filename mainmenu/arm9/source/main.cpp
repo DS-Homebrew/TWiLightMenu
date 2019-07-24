@@ -997,7 +997,7 @@ void printGbaBannerText() {
 	}
 }
 
-bool extention(std::string filename, const char* ext) {
+bool extention(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
@@ -1005,7 +1005,7 @@ bool extention(std::string filename, const char* ext) {
 	}
 }
 
-bool chkExt(std::string filename, std::string extension) {
+bool chkExt(const std::string& filename, const std::string& extension) {
     if(filename.substr(filename.find_last_of(".") + 1) == extension)
         return true;
     else
@@ -1153,9 +1153,15 @@ int main(int argc, char **argv) {
 	
 	bool menuButtonPressed = false;
 	
-	if ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
-	|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")))
-	{
+	if (consoleModel < 2
+	 && previousUsedDevice
+	 && bothSDandFlashcard()
+	 && launchType == 3
+	 && (
+		(access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+	     || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv"))
+	    )
+	) {
 		controlTopBright = false;
 		whiteScreen = true;
 		fadeType = true;	// Fade in from white
@@ -1202,48 +1208,25 @@ int main(int argc, char **argv) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
-		} else if (chkExt(filename, "plg")) {
+		} else if (chkExt(filename, "plg") || chkExt(filename, "rvid")) {
 			bnrRomType = 8;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
-		} else if (chkExt(filename, "rvid")) {
-			bnrRomType = 8;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if (chkExt(filename, "gb") || chkExt(filename, "sgb")) {
 			bnrRomType = 1;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if (chkExt(filename, "gbc")) {
 			bnrRomType = 2;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if (chkExt(filename, "nes") || chkExt(filename, "fds")) {
 			bnrRomType = 3;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if(chkExt(filename, "sms")) {
 			bnrRomType = 4;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if(chkExt(filename, "gg")) {
 			bnrRomType = 5;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if(chkExt(filename, "gen")) {
 			bnrRomType = 6;
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
 		} else if(chkExt(filename, "smc") || chkExt(filename, "sfc")) {
 			bnrRomType = 7;
+		}
+
+		if (bnrRomType > 0 && bnrRomType < 9) {
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -1605,7 +1588,7 @@ int main(int argc, char **argv) {
 								argarray.push_back(strdup(bootstrapPath.c_str()));
 								argarray.at(0) = (char*)bootstrapPath.c_str();
 
-								CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+								CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", gbar2WramICache ? "sd:/_nds/GBARunner2_wramicache.nds" : "sd:/_nds/GBARunner2.nds");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
@@ -1745,14 +1728,6 @@ int main(int argc, char **argv) {
 			} else {
 				argarray.push_back(strdup(filename.c_str()));
 			}
-
-			bool dstwoPlg = false;
-			bool rvid = false;
-			bool SNES = false;
-			bool GENESIS = false;
-			bool gameboy = false;
-			bool nes = false;
-			bool gamegear = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
@@ -2061,9 +2036,7 @@ int main(int argc, char **argv) {
 						SetMPUSettings(argarray[0]);
 						SetSpeedBumpExclude(argarray[0]);
 
-						bootstrapinipath =
-						    (sdFound() ? "sd:/_nds/nds-bootstrap.ini"
-									  : "fat:/_nds/nds-bootstrap.ini");
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
@@ -2179,47 +2152,19 @@ int main(int argc, char **argv) {
 					printSmall(false, 4, 4, text);
 					stop();
 				}
-			} else if (extention(filename, ".plg")) {
-				dstwoPlg = true;
-			} else if (extention(filename, ".rvid")) {
-				rvid = true;
-			} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
-				gameboy = true;
-			} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
-				nes = true;
-			} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
-				mkdir(previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
-				mkdir(previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+			} else {
+				bool useNDSB = false;
 
-				gamegear = true;
-			} else if (extention(filename, ".gen")) {
-				GENESIS = true;
-			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
-				SNES = true;
-			}
-
-			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
-				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				romPath = ROMpath;
+
 				homebrewArg = ROMpath;
 
-				if (gameboy) {
-					launchType = 5;
-				} else if (nes) {
-					launchType = 4;
-				} else {
-					launchType = 6;
-				}
-
-				SaveSettings();
-				argarray.push_back(ROMpath);
-				int err = 0;
-
-				if (dstwoPlg) {
+				const char *ndsToBoot;
+				if (extention(filename, ".plg")) {
 					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
@@ -2232,102 +2177,104 @@ int main(int argc, char **argv) {
 					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
-				} else if (rvid) {
+				} else if (extention(filename, ".rvid")) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					}
-				} else if (gameboy) {
+				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
+					launchType = 5;
+					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
 					}
-				} else if (nes) {
+				} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
+					launchType = 4;
+
 					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
 					}
-				} else {
+				} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
+					mkdir(previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+
+					launchType = 6;
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
 					}
-				}
-				argarray.at(0) = (char *)ndsToBoot;
+				} else if (extention(filename, ".gen")) {
+					launchType = 1;
 
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to emulator as argument
+					if (previousUsedDevice) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						}
+					} else {
+						useNDSB = true;
 
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				clearText();
-				ClearBrightness();
-				printSmall(false, 4, 4, text);
-				stop();
-			} else if (SNES || GENESIS) {
-				const char *ndsToBoot;
-				std::string romfolderNoSlash = romfolder;
-				RemoveTrailingSlashes(romfolderNoSlash);
-				char ROMpath[256];
-				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				homebrewBootstrap = true;
-				romPath = ROMpath;
-				launchType = 1;
-				SaveSettings();
-				if (previousUsedDevice) {
-					if (SNES) {
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
+				} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+					launchType = 1;
+
+					if (previousUsedDevice) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
 					} else {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						}
-					}
-				} else {
-					ndsToBoot =
-					    (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-									: "sd:/_nds/nds-bootstrap-hb-release.nds");
-					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+						useNDSB = true;
 
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-					if (SNES) {
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-					} else {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-					}
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
-					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
 				}
+
+				SaveSettings();
+				argarray.push_back(ROMpath);
+				int err = 0;
+				
 				argarray.at(0) = (char *)ndsToBoot;
-				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], previousUsedDevice, true,
-						     previousUsedDevice, true, true);
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, !useNDSB, true, true);	// Pass ROM to emulator as argument
+
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
 				printSmall(false, 4, 4, text);
 				stop();
-			}
 
-			while(argarray.size() !=0 ) {
-				free(argarray.at(0));
-				argarray.erase(argarray.begin());
+				while(argarray.size() !=0 ) {
+					free(argarray.at(0));
+					argarray.erase(argarray.begin());
+				}
 			}
-
-			// while (1) {
-			// 	swiWaitForVBlank();
-			// 	scanKeys();
-			// 	if (!(keysHeld() & KEY_A)) break;
-			// }
 		}
 	}
 
