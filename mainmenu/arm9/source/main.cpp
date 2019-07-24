@@ -997,7 +997,7 @@ void printGbaBannerText() {
 	}
 }
 
-bool extention(std::string filename, const char* ext) {
+bool extention(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
@@ -1005,7 +1005,7 @@ bool extention(std::string filename, const char* ext) {
 	}
 }
 
-bool chkExt(std::string filename, std::string extension) {
+bool chkExt(const std::string& filename, const std::string& extension) {
     if(filename.substr(filename.find_last_of(".") + 1) == extension)
         return true;
     else
