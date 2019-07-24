@@ -1,15 +1,14 @@
 <p align="center">
  <img src="https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png"><br>
-  <span style="padding-right: 5px;">
-    <a href="https://dev.azure.com/DS-Homebrew/Builds/_build?definitionId=17">
+  <a href="https://gbatemp.net/threads/ds-i-3ds-twilight-menu-gui-for-ds-i-games-and-ds-i-menu-replacement.472200/">
+   <img src="https://img.shields.io/badge/GBATemp-Thread-blue.svg">
+  </a>
+  <a href="https://dev.azure.com/DS-Homebrew/Builds/_build?definitionId=17">
    <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/DS-Homebrew.TWiLightMenu?branchName=master" height="20">
   </a>
- </span>
- <span style="padding-left: 5px;">
-  <a href="https://dshomebrew.serveo.net/">
-   <img src="https://github.com/ahezard/nds-bootstrap/blob/master/images/Rocket.Chat button.png" height="20">
+  <a href="https://discord.gg/yqSut8c">
+   <img src="https://img.shields.io/badge/Discord%20Server-%23nds--bootstrap-green.svg">
   </a>
- </span>
 </p>
 
 TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, 3DS, and flashcards.
@@ -25,14 +24,6 @@ Using the included [Docker](https://docker.com) image, you can easily compile TW
 The script accepts `make` arguments as well. For example, `.\compile_docker.ps1 clean` will clean the directories of all the compiled code. If you would like to build all artifacts, run `.\compile_docker.ps1 package`.
 
 Please note that Docker compilation is not compatible with native compilation on Windows. You should run `.\compile_docker.ps1 clean` to clean the artifacts before attempting to build with Docker. If a notification appears asking you to share your drive, you must choose to enable drive sharing for Docker to work on Windows.
-
-## Rocket.Chat Server
-
-Would you like a place to talk about your experiences with TWiLight Menu++ or need some assistance? Well, why not join our Rocket.Chat server!
-
-Rocket.Chat is a self-hosted communication platform with the ability to share files and switch to an video/audio conferencing.
-
-Come join today by following this link: https://dshomebrew.serveo.net/ ([alternative link](https://5a31a0c4.ngrok.io/))
 
 # Credits
 ## Main Developers
