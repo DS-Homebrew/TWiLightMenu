@@ -1119,6 +1119,14 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 						    i);
 					bnrRomType[i] = 0;
 				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "gba") ||
+					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
+					    "GBA")) {
+					bnrRomType[i] = 1;
+					bnrWirelessIcon[i] = 0;
+					isDSiWare[i] = false;
+					isHomebrew[i] = 0;
+				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "gb") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GB") ||
@@ -1126,7 +1134,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "sgb") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "SGB")) {
-					bnrRomType[i] = 1;
+					bnrRomType[i] = 2;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1134,7 +1142,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "plg") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "PLG")) {
-					bnrRomType[i] = 8;
+					bnrRomType[i] = 9;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1142,7 +1150,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "rvid") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "RVID")) {
-					bnrRomType[i] = 8;
+					bnrRomType[i] = 9;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1150,7 +1158,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "gbc") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GBC")) {
-					bnrRomType[i] = 2;
+					bnrRomType[i] = 3;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1162,7 +1170,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "fds") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "FDS")) {
-					bnrRomType[i] = 3;
+					bnrRomType[i] = 4;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1170,7 +1178,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "sms") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "SMS")) {
-					bnrRomType[i] = 4;
+					bnrRomType[i] = 5;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1178,7 +1186,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "gg") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GG")) {
-					bnrRomType[i] = 5;
+					bnrRomType[i] = 6;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1186,7 +1194,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "gen") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "GEN")) {
-					bnrRomType[i] = 6;
+					bnrRomType[i] = 7;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
@@ -1198,7 +1206,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					    "sfc") ||
 					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
 					    "SFC")) {
-					bnrRomType[i] = 7;
+					bnrRomType[i] = 8;
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;

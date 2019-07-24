@@ -652,7 +652,7 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		BOX_PY_spacing3 = 28;
 	}
 
-	if (startMenu) {
+	/*if (startMenu) {
 		if (ms().startMenu_cursorPosition == 0) {
 			writeBannerText(0, "Settings", "", "");
 		} else if (ms().startMenu_cursorPosition == 1) {
@@ -673,7 +673,7 @@ void titleUpdate(bool isDir, const char *name, int num) {
 			writeBannerText(0, "Start GBARunner2", "", "");
 		}
 		return;
-	}
+	}*/
 
 	if (isDir) {
 		// text
@@ -684,24 +684,18 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		}
 	} else if (strcasecmp(name + strlen(name) - 4, ".plg") == 0 || strcasecmp(name + strlen(name) - 4, ".PLG") == 0 ||
 		   strcasecmp(name + strlen(name) - 5, ".rvid") == 0 || strcasecmp(name + strlen(name) - 5, ".RVID") == 0 ||
-		   strcasecmp(name + strlen(name) - 3, ".gb") == 0 || strcasecmp(name + strlen(name) - 4, ".GB") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".sgb") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".SGB") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".gbc") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".GBC") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".nes") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".NES") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".fds") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".FDS") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".sms") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".SMS") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".gba") == 0 || strcasecmp(name + strlen(name) - 4, ".GBA") == 0 ||
+		   strcasecmp(name + strlen(name) - 3, ".gb") == 0 || strcasecmp(name + strlen(name) - 3, ".GB") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sgb") == 0 || strcasecmp(name + strlen(name) - 4, ".SGB") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".gbc") == 0 || strcasecmp(name + strlen(name) - 4, ".GBC") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".nes") == 0 || strcasecmp(name + strlen(name) - 4, ".NES") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".fds") == 0 || strcasecmp(name + strlen(name) - 4, ".FDS") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sms") == 0 || strcasecmp(name + strlen(name) - 4, ".SMS") == 0 ||
 		   strcasecmp(name + strlen(name) - 3, ".gg") == 0 || strcasecmp(name + strlen(name) - 3, ".GG") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".gen") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".GEN") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".smc") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".SMC") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".sfc") == 0 ||
-		   strcasecmp(name + strlen(name) - 4, ".SFC") == 0) {
+		   strcasecmp(name + strlen(name) - 4, ".gen") == 0 || strcasecmp(name + strlen(name) - 4, ".GEN") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".smc") == 0 || strcasecmp(name + strlen(name) - 4, ".SMC") == 0 ||
+		   strcasecmp(name + strlen(name) - 4, ".sfc") == 0 || strcasecmp(name + strlen(name) - 4, ".SFC") == 0)
+	{
 		writeBannerText(0, name, "", "");
 	} else {
 		// this is an nds/app file!

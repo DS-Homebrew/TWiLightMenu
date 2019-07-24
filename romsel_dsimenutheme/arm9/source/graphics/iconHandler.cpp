@@ -220,8 +220,7 @@ void glReloadIconPalette(int num) {
 	switch (num) {
 	case GBA_ICON:
 		textureID = _gbaTexID;
-		cachedPalette =
-		    ms().useGbarunner ? tex().iconGBATexture()->palette() : tex().iconGBAModeTexture()->palette();
+		cachedPalette = tex().iconGBATexture()->palette();
 		break;
 	case GBC_ICON:
 		textureID = _gbcTexID;
@@ -344,13 +343,7 @@ void iconManagerInit() {
 	
 	glLoadIcon(PLG_ICON, tex().iconPLGTexture()->palette(), tex().iconPLGTexture()->bytes(), 32, true);
 
-	if (ms().useGbarunner) {
-		glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes(), 64,
-			   true);
-	} else {
-		glLoadIcon(GBA_ICON, tex().iconGBAModeTexture()->palette(), tex().iconGBAModeTexture()->bytes(),
-			   32, true);
-	}
+	glLoadIcon(GBA_ICON, tex().iconGBATexture()->palette(), tex().iconGBATexture()->bytes(), 64, true);
 
 	// set initialized.
 	initialized = true;

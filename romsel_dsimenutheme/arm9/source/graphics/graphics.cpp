@@ -711,29 +711,32 @@ void vBlankHandler() {
 						 (titleboxYpos - 1) - movingAppYpos +
 						     titleboxYposDropDown[movingApp % 5],
 						 GL_FLIP_NONE, &tex().settingsImage()[1]);
-				else if (bnrRomType[movingApp] == 8)
+				else if (bnrRomType[movingApp] == 9)
 					drawIconPLG(112, (titleboxYpos + 12) - movingAppYpos +
 							      titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 7)
+				else if (bnrRomType[movingApp] == 8)
 					drawIconSNES(112, (titleboxYpos + 12) - movingAppYpos +
 							      titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 6)
+				else if (bnrRomType[movingApp] == 7)
 					drawIconMD(112, (titleboxYpos + 12) - movingAppYpos +
 							    titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 5)
+				else if (bnrRomType[movingApp] == 6)
 					drawIconGG(112, (titleboxYpos + 12) - movingAppYpos +
 							    titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 4)
+				else if (bnrRomType[movingApp] == 5)
 					drawIconSMS(112, (titleboxYpos + 12) - movingAppYpos +
 							     titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 3)
+				else if (bnrRomType[movingApp] == 4)
 					drawIconNES(112, (titleboxYpos + 12) - movingAppYpos +
 							     titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 2)
+				else if (bnrRomType[movingApp] == 3)
 					drawIconGBC(112, (titleboxYpos + 12) - movingAppYpos +
 							     titleboxYposDropDown[movingApp % 5]);
-				else if (bnrRomType[movingApp] == 1)
+				else if (bnrRomType[movingApp] == 2)
 					drawIconGB(112, (titleboxYpos + 12) - movingAppYpos +
+							    titleboxYposDropDown[movingApp % 5]);
+				else if (bnrRomType[movingApp] == 1)
+					drawIconGBA(112, (titleboxYpos + 12) - movingAppYpos +
 							    titleboxYposDropDown[movingApp % 5]);
 				else
 					drawIcon(112,
@@ -860,50 +863,56 @@ void vBlankHandler() {
 									 (titleboxYpos - 1) +
 									     titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
-							else if (bnrRomType[i] == 8)
+							else if (bnrRomType[i] == 9)
 								drawIconPLG((j * 2496 / 39) + 144 -
 										 titleboxXpos[ms().secondaryDevice] +
 										 movingAppXFix,
 									     (titleboxYpos + 12) +
 										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 7)
+							else if (bnrRomType[i] == 8)
 								drawIconSNES((j * 2496 / 39) + 144 -
 										 titleboxXpos[ms().secondaryDevice] +
 										 movingAppXFix,
 									     (titleboxYpos + 12) +
 										 titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 6)
+							else if (bnrRomType[i] == 7)
 								drawIconMD((j * 2496 / 39) + 144 -
 									       titleboxXpos[ms().secondaryDevice] +
 									       movingAppXFix,
 									   (titleboxYpos + 12) +
 									       titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 5)
+							else if (bnrRomType[i] == 6)
 								drawIconGG((j * 2496 / 39) + 144 -
 									       titleboxXpos[ms().secondaryDevice] +
 									       movingAppXFix,
 									   (titleboxYpos + 12) +
 									       titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 4)
+							else if (bnrRomType[i] == 5)
 								drawIconSMS((j * 2496 / 39) + 144 -
 										titleboxXpos[ms().secondaryDevice] +
 										movingAppXFix,
 									    (titleboxYpos + 12) +
 										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 3)
+							else if (bnrRomType[i] == 4)
 								drawIconNES((j * 2496 / 39) + 144 -
 										titleboxXpos[ms().secondaryDevice] +
 										movingAppXFix,
 									    (titleboxYpos + 12) +
 										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 2)
+							else if (bnrRomType[i] == 3)
 								drawIconGBC((j * 2496 / 39) + 144 -
 										titleboxXpos[ms().secondaryDevice] +
 										movingAppXFix,
 									    (titleboxYpos + 12) +
 										titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 1)
+							else if (bnrRomType[i] == 2)
 								drawIconGB((j * 2496 / 39) + 144 -
+									       titleboxXpos[ms().secondaryDevice] +
+									       movingAppXFix,
+									   (titleboxYpos + 12) +
+									       titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1)
+								drawIconGBA((j * 2496 / 39) + 144 -
 									       titleboxXpos[ms().secondaryDevice] +
 									       movingAppXFix,
 									   (titleboxYpos + 12) +
@@ -938,43 +947,48 @@ void vBlankHandler() {
 									 (titleboxYpos - 1) +
 									     titleboxYposDropDown[i % 5],
 									 GL_FLIP_NONE, &tex().settingsImage()[1]);
-							else if (bnrRomType[i] == 8)
+							else if (bnrRomType[i] == 9)
 								drawIconPLG(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 7)
+							else if (bnrRomType[i] == 8)
 								drawIconSNES(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 6)
+							else if (bnrRomType[i] == 7)
 								drawIconMD(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 5)
+							else if (bnrRomType[i] == 6)
 								drawIconGG(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 4)
+							else if (bnrRomType[i] == 5)
 								drawIconSMS(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 3)
+							else if (bnrRomType[i] == 4)
 								drawIconNES(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 2)
+							else if (bnrRomType[i] == 3)
 								drawIconGBC(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
-							else if (bnrRomType[i] == 1)
+							else if (bnrRomType[i] == 2)
 								drawIconGB(
+								    iconXpos - titleboxXpos[ms().secondaryDevice] +
+									movecloseXpos,
+								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
+							else if (bnrRomType[i] == 1)
+								drawIconGBA(
 								    iconXpos - titleboxXpos[ms().secondaryDevice] +
 									movecloseXpos,
 								    (titleboxYpos + 12) + titleboxYposDropDown[i % 5]);
@@ -1080,22 +1094,24 @@ void vBlankHandler() {
 				}
 				if (bnrSysSettings[CURPOS])
 					glSprite(84, 83 - titleboxYmovepos, GL_FLIP_NONE, &tex().settingsImage()[1]);
-				else if (bnrRomType[CURPOS] == 8)
+				else if (bnrRomType[CURPOS] == 9)
 					drawIconPLG(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 7)
+				else if (bnrRomType[CURPOS] == 8)
 					drawIconSNES(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 6)
+				else if (bnrRomType[CURPOS] == 7)
 					drawIconMD(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 5)
+				else if (bnrRomType[CURPOS] == 6)
 					drawIconGG(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 4)
+				else if (bnrRomType[CURPOS] == 5)
 					drawIconSMS(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 3)
+				else if (bnrRomType[CURPOS] == 4)
 					drawIconNES(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 2)
+				else if (bnrRomType[CURPOS] == 3)
 					drawIconGBC(112, 96 - titleboxYmovepos);
-				else if (bnrRomType[CURPOS] == 1)
+				else if (bnrRomType[CURPOS] == 2)
 					drawIconGB(112, 96 - titleboxYmovepos);
+				else if (bnrRomType[CURPOS] == 1)
+					drawIconGBA(112, 96 - titleboxYmovepos);
 				else
 					drawIcon(112, 96 - titleboxYmovepos, CURPOS);
 			}

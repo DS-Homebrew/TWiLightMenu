@@ -47,6 +47,7 @@
 
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
+#include "gbaswitch.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 
@@ -798,6 +799,9 @@ int main(int argc, char **argv) {
 	if (ms().showRvid) {
 		extensionList.emplace_back(".rvid");
 	}
+	if (!ms().useGbarunner) {
+		extensionList.emplace_back(".gba");
+	}
 	if (ms().showGb) {
 		extensionList.emplace_back(".gb");
 		extensionList.emplace_back(".sgb");
@@ -1451,6 +1455,16 @@ int main(int argc, char **argv) {
 				dstwoPlg = true;
 			} else if (extention(filename, ".rvid", 5)) {
 				rvid = true;
+			} else if (extention(filename, ".gba", 4)) {
+				//ms().launchType = Launch::ESDFlashcardLaunch;
+				//ms().previousUsedDevice = ms().secondaryDevice;
+				ms().saveSettings();
+
+				// Load GBA ROM into EZ Flash 3-in-1
+				FILE *gbaFile = fopen(filename.c_str(), "rb");
+				fread((void*)0x08000000, 1, 0x1000000, gbaFile);
+				fclose(gbaFile);
+				gbaSwitch();
 			} else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) ||
 				   extention(filename, ".gbc", 4)) {
 				gameboy = true;
