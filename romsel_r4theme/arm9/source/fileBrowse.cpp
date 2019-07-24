@@ -102,7 +102,7 @@ bool settingsChanged = false;
 extern void SaveSettings();
 
 const char *hiddenGamesIniPath;
-char *path = new char[PATH_MAX];
+char path[PATH_MAX] = {0};
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
@@ -142,13 +142,12 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 {
 	dirContents.clear();
 
+	struct stat st;
 	DIR *pdir = opendir ("."); 
 	
 	if (pdir == NULL) {
 		iprintf ("Unable to open the directory.\n");
 	} else {
-		struct stat st;
-		
 		CIniFile hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
 		char str[12] = {0};
@@ -293,6 +292,9 @@ bool chkExt(std::string filename, std::string extension) {
 
 string browseForFile(const vector<string> extensionList)
 {
+	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini"
+				       : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
+
 	int pressed = 0;
 	int screenOffset = 0;
 	int fileOffset = 0;
