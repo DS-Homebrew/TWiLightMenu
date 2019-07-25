@@ -177,6 +177,7 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &
 }
 
 void ThemeTextures::reloadPalDialogBox() {
+	if (ms().theme == 4) return;
 	glBindTexture(0, dialogboxTexID);
 	glColorSubTableEXT(0, 0, _dialogBoxTexture->paletteLength(), 0, 0, _dialogBoxTexture->palette());
 	if (ms().theme != 1) {
@@ -211,6 +212,7 @@ void ThemeTextures::loadBackgrounds() {
 }
 
 void ThemeTextures::loadSaturnTheme() {	
+	printf("tex().loadSaturnTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -257,6 +259,7 @@ void ThemeTextures::loadSaturnTheme() {
 }
 
 void ThemeTextures::load3DSTheme() {
+	printf("tex().load3DSTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -298,6 +301,7 @@ void ThemeTextures::load3DSTheme() {
 }
 
 void ThemeTextures::loadDSiTheme() {	
+	printf("tex().loadDSiTheme()\n");
 
 	loadBackgrounds();
 	loadUITextures();
@@ -1037,6 +1041,7 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
 
 void ThemeTextures::videoSetup() {
+	printf("tex().videoSetup()\n");
 	//////////////////////////////////////////////////////////
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);

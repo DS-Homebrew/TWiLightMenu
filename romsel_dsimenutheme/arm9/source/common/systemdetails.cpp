@@ -56,6 +56,7 @@ SystemDetails::SystemDetails()
 }
 
 void SystemDetails::initArm7RegStatuses() {
+	printf("sys().initArm7RegStatuses()\n");
     if (!_fifoOk) {
         registerFifoHandlers();
     }
@@ -76,6 +77,7 @@ SystemDetails::ESDStatus SystemDetails::sdStatus() {
 
 void SystemDetails::initFilesystem(const char *runningPath)
 {
+	printf("sys().initFilesystem()\n");
     if (_fatInitOk)
         return;
 

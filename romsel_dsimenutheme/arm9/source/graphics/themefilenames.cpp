@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 ThemeFilenames::ThemeFilenames() {
+	printf("tfn()\n");
 	std::string systemDirectory;
 	switch (ms().theme) {
 		case 0:

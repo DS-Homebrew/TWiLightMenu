@@ -96,6 +96,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
+	printf("ms().loadSettings()\n");
     CIniFile settingsini(settingsinipath);
 
     // UI settings.

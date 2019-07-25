@@ -19,6 +19,7 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
+	printf("langInit\n");
 	if (ms().guiLanguage == -1) {
 		setLanguage = PersonalData->language;
 	} else {

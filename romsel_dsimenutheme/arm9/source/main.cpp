@@ -649,6 +649,10 @@ bool extention(std::string filename, const char *ext, int number) {
 }
 
 int main(int argc, char **argv) {
+	/*SetBrightness(0, 0);
+	SetBrightness(1, 0);
+	consoleDemoInit();*/
+
 	defaultExceptionHandler();
 	sys().initFilesystem();
 	sys().initArm7RegStatuses();
@@ -674,6 +678,7 @@ int main(int argc, char **argv) {
 		tex().loadDSiTheme();
 	}
 
+	printf("Username copied\n");
 	tonccpy(usernameRendered, PersonalData->name, sizeof(s16) * 10);
 
 	if (!sys().fatInitOk()) {

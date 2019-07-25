@@ -182,9 +182,6 @@ extern mm_sound_effect mus_menu;
 void ClearBrightness(void) {
 	fadeType = true;
 	screenBrightness = 0;
-	snd().updateStream();
-	swiWaitForVBlank();
-	snd().updateStream();
 	swiWaitForVBlank();
 }
 
@@ -1567,6 +1564,7 @@ void loadRotatingCubes() {
 	}
 }
 void graphicsInit() {
+	printf("graphicsInit()\n");
 
 	// for (int i = 0; i < 12; i++) {
 	// 	launchDotFrame[i] = 5;

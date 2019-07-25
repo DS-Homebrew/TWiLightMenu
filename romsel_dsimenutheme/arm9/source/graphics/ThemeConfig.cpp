@@ -42,6 +42,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 
 void ThemeConfig::loadConfig()
 {
+	printf("tc().loadConfig()\n");
     CIniFile themeConfig(TFN_THEME_SETTINGS);
     _startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
     _startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
