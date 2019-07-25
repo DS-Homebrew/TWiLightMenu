@@ -1003,7 +1003,7 @@ void vBlankHandler() {
 				} else {
 					// Empty box
 					if (movingApp != -1) {
-						if (ms().theme == 1) {
+						if (ms().theme > 0) {
 							glSprite(((i - 1) * 2496 / 39) + 128 -
 								     titleboxXpos[ms().secondaryDevice] + movingAppXFix,
 								 titleboxYpos + titleboxYposDropDown[i % 5],
@@ -1012,10 +1012,10 @@ void vBlankHandler() {
 							glSprite(((i - 1) * 2496 / 39) + 128 -
 								     titleboxXpos[ms().secondaryDevice] + movingAppXFix,
 								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
+								 GL_FLIP_NONE, &tex().boxfullImage()[1]);
 						}
 					} else {
-						if (ms().theme == 1) {
+						if (ms().theme > 0) {
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice],
 								 titleboxYpos + titleboxYposDropDown[i % 5],
 								 GL_FLIP_NONE, tex().boxemptyImage());
@@ -1023,7 +1023,7 @@ void vBlankHandler() {
 							glSprite(spawnedboxXpos - titleboxXpos[ms().secondaryDevice] +
 								     movecloseXpos,
 								 titleboxYpos + titleboxYposDropDown[i % 5],
-								 GL_FLIP_NONE, &tex().boxfullImage()[1 & 63]);
+								 GL_FLIP_NONE, &tex().boxfullImage()[1]);
 						}
 					}
 				}
@@ -1121,7 +1121,7 @@ void vBlankHandler() {
 		
 			titleboxYmovepos += 5;
 		}
-		if (showSTARTborder && displayGameIcons && (!isScrolling || ms().theme == 1)) {
+		if (showSTARTborder && displayGameIcons && (ms().theme < 4) && (!isScrolling || ms().theme == 1)) {
 			glSprite(96, tc().startBorderRenderY(), GL_FLIP_NONE,
 				 &tex().startbrdImage()[startBorderZoomAnimSeq[startBorderZoomAnimNum] &
 							(tc().startBorderSpriteH() - 1)]);

@@ -42,81 +42,81 @@ ThemeTextures::ThemeTextures()
 }
 
 void ThemeTextures::loadBubbleImage(const Texture &tex, int sprW, int sprH) {
-	_bubbleImage = std::move(loadTexture(&bubbleTexID, tex, 1, sprW, sprH));
+	_bubbleImage = std::move(loadTexture(&bubbleTexID, tex, 1, sprW, sprH, GL_RGB16));
 }
 
 void ThemeTextures::loadProgressImage(const Texture &tex) {
 	// todo: 9 palette
-	_progressImage = std::move(loadTexture(&progressTexID, tex, (16 / 16) * (128 / 16), 16, 16));
+	_progressImage = std::move(loadTexture(&progressTexID, tex, (16 / 16) * (128 / 16), 16, 16, GL_RGB16));
 }
 
 void ThemeTextures::loadDialogboxImage(const Texture &tex) {
-	_dialogboxImage = std::move(loadTexture(&dialogboxTexID, tex, (256 / 16) * (256 / 16), 16, 16));
+	_dialogboxImage = std::move(loadTexture(&dialogboxTexID, tex, (256 / 16) * (256 / 16), 16, 16, GL_RGB16));
 }
 
 void ThemeTextures::loadBipsImage(const Texture &tex) {
-	_bipsImage = std::move(loadTexture(&bipsTexID, tex, (8 / 8) * (32 / 8), 8, 8));
+	_bipsImage = std::move(loadTexture(&bipsTexID, tex, (8 / 8) * (32 / 8), 8, 8, GL_RGB16));
 }
 
 void ThemeTextures::loadScrollwindowImage(const Texture &tex) {
-	_scrollwindowImage = std::move(loadTexture(&scrollwindowTexID, tex, (32 / 16) * (32 / 16), 32, 32));
+	_scrollwindowImage = std::move(loadTexture(&scrollwindowTexID, tex, (32 / 16) * (32 / 16), 32, 32, GL_RGB16));
 }
 
 void ThemeTextures::loadButtonarrowImage(const Texture &tex) {
-	_buttonarrowImage = std::move(loadTexture(&buttonarrowTexID, tex, (32 / 32) * (128 / 32), 32, 32));
+	_buttonarrowImage = std::move(loadTexture(&buttonarrowTexID, tex, (32 / 32) * (128 / 32), 32, 32, GL_RGB16));
 }
 
 void ThemeTextures::loadMovingarrowImage(const Texture &tex) {
-	_movingarrowImage = std::move(loadTexture(&movingarrowTexID, tex, (32 / 32) * (32 / 32), 32, 32));
+	_movingarrowImage = std::move(loadTexture(&movingarrowTexID, tex, (32 / 32) * (32 / 32), 32, 32, GL_RGB16));
 }
 
 void ThemeTextures::loadLaunchdotImage(const Texture &tex) {
-	_launchdotImage = std::move(loadTexture(&launchdotTexID, tex, (16 / 16) * (96 / 16), 16, 16));
+	_launchdotImage = std::move(loadTexture(&launchdotTexID, tex, (16 / 16) * (96 / 16), 16, 16, GL_RGB16));
 }
 
 void ThemeTextures::loadStartImage(const Texture &tex) {
-	_startImage = std::move(loadTexture(&startTexID, tex, (64 / 16) * (128 / 16), 64, 16));
+	_startImage = std::move(loadTexture(&startTexID, tex, (64 / 16) * (128 / 16), 64, 16, GL_RGB16));
 }
 
 void ThemeTextures::loadStartbrdImage(const Texture &tex, int sprH) {
 	int arraysize = (tex.texWidth() / tc().startBorderSpriteW()) * (tex.texHeight() / sprH);
-	_startbrdImage = std::move(loadTexture(&startbrdTexID, tex, arraysize, tc().startBorderSpriteW(), sprH));
+	_startbrdImage = std::move(loadTexture(&startbrdTexID, tex, arraysize, tc().startBorderSpriteW(), sprH, GL_RGB16));
 }
 void ThemeTextures::loadBraceImage(const Texture &tex) {
 	// todo: confirm 4 palette
-	_braceImage = std::move(loadTexture(&braceTexID, tex, (16 / 16) * (128 / 16), 16, 128));
+	_braceImage = std::move(loadTexture(&braceTexID, tex, (16 / 16) * (128 / 16), 16, 128, GL_RGB16));
 }
 
 void ThemeTextures::loadSettingsImage(const Texture &tex) {
-	_settingsImage = std::move(loadTexture(&settingsTexID, tex, (64 / 16) * (128 / 64), 64, 64));
+	_settingsImage = std::move(loadTexture(&settingsTexID, tex, (64 / 16) * (128 / 64), 64, 64, GL_RGB16));
 }
 
 void ThemeTextures::loadManualImage(const Texture &tex) {
-	_manualImage = std::move(loadTexture(&manualTexID, tex, (32 / 32) * (32 / 32), 32, 32));
+	_manualImage = std::move(loadTexture(&manualTexID, tex, (32 / 32) * (32 / 32), 32, 32, GL_RGB16));
 }
 
 void ThemeTextures::loadBoxfullImage(const Texture &tex) {
-	_boxfullImage = std::move(loadTexture(&boxfullTexID, tex, (64 / 16) * (128 / 64), 64, 64));
+	_boxfullImage = std::move(loadTexture(&boxfullTexID, tex, (64 / 16) * (128 / 64), 64, 64, (ms().theme==4 ? GL_RGB256 : GL_RGB16)));
 }
 
 void ThemeTextures::loadBoxemptyImage(const Texture &tex) {
-	_boxemptyImage = std::move(loadTexture(&boxemptyTexID, tex, (64 / 16) * (64 / 16), 64, 64));
+	_boxemptyImage = std::move(loadTexture(&boxemptyTexID, tex, (64 / 16) * (64 / 16), 64, 64, (ms().theme==4 ? GL_RGB256 : GL_RGB16)));
 }
 
 void ThemeTextures::loadFolderImage(const Texture &tex) {
-	_folderImage = std::move(loadTexture(&folderTexID, tex, (64 / 16) * (64 / 16), 64, 64));
+	_folderImage = std::move(loadTexture(&folderTexID, tex, (64 / 16) * (64 / 16), 64, 64, GL_RGB16));
 }
 
 void ThemeTextures::loadCornerButtonImage(const Texture &tex, int arraysize, int sprW, int sprH) {
-	_cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, tex, arraysize, sprW, sprH));
+	_cornerButtonImage = std::move(loadTexture(&cornerButtonTexID, tex, arraysize, sprW, sprH, GL_RGB16));
 }
 
 void ThemeTextures::loadSmallCartImage(const Texture &tex) {
-	_smallCartImage = std::move(loadTexture(&smallCartTexID, tex, (32 / 16) * (256 / 32), 32, 32));
+	_smallCartImage = std::move(loadTexture(&smallCartTexID, tex, (32 / 16) * (256 / 32), 32, 32, GL_RGB16));
 }
 
 void ThemeTextures::loadWirelessIcons(const Texture &tex) {
-	_wirelessIcons = std::move(loadTexture(&wirelessiconTexID, tex, (32 / 32) * (64 / 32), 32, 32));
+	_wirelessIcons = std::move(loadTexture(&wirelessiconTexID, tex, (32 / 32) * (64 / 32), 32, 32, GL_RGB16));
 }
 
 inline GL_TEXTURE_SIZE_ENUM get_tex_size(int texSize) {
@@ -142,7 +142,7 @@ inline const unsigned short *apply_personal_theme(const unsigned short *palette)
 }
 
 unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &texture, unsigned int arraySize,
-						 int sprW, int sprH) {
+						 int sprW, int sprH, GL_TEXTURE_TYPE_ENUM texType) {
 
 	// We need to delete the texture since the resource held by the unique pointer will be
 	// immediately dropped when we assign it to the pointer.
@@ -165,7 +165,7 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &
 				   sprH,	       // sprite height
 				   texW,	       // bitmap width
 				   texH,	       // bitmap height
-				   GL_RGB16,	   // texture type for glTexImage2D() in videoGL.h
+				   texType,	   // texture type for glTexImage2D() in videoGL.h
 				   get_tex_size(texW), // sizeX for glTexImage2D() in videoGL.h
 				   get_tex_size(texH), // sizeY for glTexImage2D() in videoGL.h
 				   TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
@@ -221,21 +221,15 @@ void ThemeTextures::loadSaturnTheme() {
 	
 	loadDateFont(_dateTimeFontTexture->texture());
 
-	_boxTexture = std::make_unique<Texture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
+	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
+	_boxEmptyTexture = std::make_unique<Texture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
 	_braceTexture = std::make_unique<Texture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
-	_bubbleTexture = std::make_unique<Texture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
 
-	_dialogBoxTexture = std::make_unique<Texture>(TFN_GRF_DIALOGBOX, TFN_FALLBACK_GRF_DIALOGBOX);
-
 	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
-	_movingArrowTexture = std::make_unique<Texture>(TFN_GRF_MOVING_ARROW, TFN_FALLBACK_GRF_MOVING_ARROW);
 
 	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
-	_scrollWindowTexture = std::make_unique<Texture>(TFN_GRF_SCROLL_WINDOW, TFN_FALLBACK_GRF_SCROLL_WINDOW);
 	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
-	_startBorderTexture = std::make_unique<Texture>(TFN_GRF_START_BORDER, TFN_FALLBACK_GRF_START_BORDER);
-	_startTextTexture = std::make_unique<Texture>(TFN_GRF_START_TEXT, TFN_FALLBACK_GRF_START_TEXT);
 	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
@@ -245,21 +239,13 @@ void ThemeTextures::loadSaturnTheme() {
 	}
 
 	
-	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
-	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
 	loadManualImage(*_manualIconTexture);
 	loadBraceImage(*_braceTexture);
 
-	loadStartImage(*_startTextTexture);
-	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
-	
-	loadMovingarrowImage(*_movingArrowTexture);
-	loadDialogboxImage(*_dialogBoxTexture);
-
-	// careful here, it's boxTexture, not boxFulltexture.
-	loadBoxfullImage(*_boxTexture);
+	loadBoxfullImage(*_boxFullTexture);
+	loadBoxemptyImage(*_boxEmptyTexture);
 
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);

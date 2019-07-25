@@ -111,7 +111,7 @@ private:
   unique_ptr<glImage[]> loadTexture(
             int *textureId, const Texture& texture,
 						unsigned int arraySize,
-						int sprW, int sprH);
+						int sprW, int sprH, GL_TEXTURE_TYPE_ENUM texType);
 
 public:
   const glImage *bubbleImage() { return _bubbleImage.get(); }
