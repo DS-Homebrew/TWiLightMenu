@@ -645,16 +645,16 @@ void exitToSystemMenu(void) {
 
 void switchDevice(void) {
 	if (bothSDandFlashcard()) {
-		snd().playSwitch();
+		(ms().theme == 4) ? snd().playLaunch() : snd().playSwitch();
 		fadeType = false; // Fade to white
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 25; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
 		ms().secondaryDevice = !ms().secondaryDevice;
 		if (!rocketVideo_playVideo || ms().showBoxArt)
 			clearBoxArt(); // Clear box art
-		whiteScreen = true;
+		if (ms().theme != 4) whiteScreen = true;
 		boxArtLoaded = false;
 		rocketVideo_playVideo = true;
 		redoDropDown = true;
@@ -665,6 +665,9 @@ void switchDevice(void) {
 		clearText();
 		ms().saveSettings();
 		settingsChanged = false;
+		if (ms().theme == 4) {
+			snd().playStartup();
+		}
 	} else {
 		snd().playLaunch();
 		controlTopBright = true;
@@ -675,7 +678,7 @@ void switchDevice(void) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
-		
+
 		mmEffectCancelAll();
 		snd().stopStream();
 
@@ -711,8 +714,8 @@ void launchGba(void) {
 		printLarge(false, 16, 12, "Error code: BINF");
 		printSmallCentered(false, 64, "The GBA BIOS is required");
 		printSmallCentered(false, 78, "to run GBA games.");
-		printSmallCentered(false, 112, "Place the BIOS on the root");
-		printSmallCentered(false, 126, "as \"bios.bin\".");
+		printSmallCentered(false, 112, "Please place the BIOS on the");
+		printSmallCentered(false, 126, "root as \"bios.bin\".");
 		printSmall(false, 208, 160, BUTTON_A " OK");
 		int pressed = 0;
 		do {
@@ -929,7 +932,6 @@ void mdRomTooBig(void) {
 bool selectMenu(void) {
 	inSelectMenu = true;
 	dbox_showIcon = false;
-	dbox_selectMenu = true;
 	if (ms().theme == 4) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
@@ -940,6 +942,7 @@ bool selectMenu(void) {
 		displayGameIcons = false;
 		fadeType = true;
 	} else {
+		dbox_selectMenu = true;
 		showdialogbox = true;
 	}
 	clearText();
@@ -980,6 +983,7 @@ bool selectMenu(void) {
 	}
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		dbox_selectMenu = true;
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
@@ -1087,10 +1091,10 @@ bool selectMenu(void) {
 		snd().playStartup();
 	} else {
 		clearText();
-		dbox_selectMenu = false;
 		inSelectMenu = false;
 		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
+	dbox_selectMenu = false;
 	return false;
 }
 
@@ -2345,6 +2349,8 @@ string browseForFile(const vector<string> extensionList) {
 							while (!screenFadedIn()) { swiWaitForVBlank(); }
 							dbox_showIcon = true;
 							snd().playWrong();
+						} else {
+							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
@@ -2744,12 +2750,25 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 
+				if (ms().theme == 4) {
+					snd().playStartup();
+					fadeType = false;	   // Fade to black
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+					currentBg = 1;
+					displayGameIcons = false;
+					fadeType = true;
+				} else {
+					dbox_showIcon = true;
+					showdialogbox = true;
+				}
 				clearText();
-				dbox_showIcon = true;
-				showdialogbox = true;
-				for (int i = 0; i < 30; i++) {
-					snd().updateStream();
-					swiWaitForVBlank();
+				if (ms().theme == 4) {
+					while (!screenFadedIn()) { swiWaitForVBlank(); }
+					dbox_showIcon = true;
+				} else {
+					for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
@@ -2812,6 +2831,7 @@ string browseForFile(const vector<string> extensionList) {
 					} while (!pressed);
 
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
+						snd().playLaunch();
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 30; i++) {
 							snd().updateStream();
@@ -2837,16 +2857,18 @@ string browseForFile(const vector<string> extensionList) {
 					}
 
 					if (pressed & KEY_B) {
+						snd().playBack();
 						break;
 					}
 
 					if (pressed & KEY_Y) {
+						snd().playLaunch();
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 30; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
-						whiteScreen = true;
+						if (ms().theme != 4) whiteScreen = true;
 
 						if (unHide) {
 							hiddenGames.erase(hiddenGames.begin() + whichToUnhide);
@@ -2879,11 +2901,20 @@ string browseForFile(const vector<string> extensionList) {
 						return "null";
 					}
 				}
-				clearText();
 				showdialogbox = false;
-				for (int i = 0; i < 15; i++) {
-					snd().updateStream();
-					swiWaitForVBlank();
+				if (ms().theme == 4) {
+					fadeType = false;	   // Fade to black
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+					clearText();
+					currentBg = 0;
+					displayGameIcons = true;
+					fadeType = true;
+					snd().playStartup();
+				} else {
+					clearText();
+					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				dbox_showIcon = false;
 			}
