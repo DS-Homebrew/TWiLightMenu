@@ -2406,6 +2406,7 @@ string browseForFile(const vector<string> extensionList) {
 								while (!screenFadedIn()) { swiWaitForVBlank(); }
 							}
 						} else {
+							clearText();
 							for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
 								snd().updateStream();
 								swiWaitForVBlank();
