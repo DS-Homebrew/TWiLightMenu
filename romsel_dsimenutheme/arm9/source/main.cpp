@@ -481,7 +481,7 @@ void SetSpeedBumpExclude(const char *filename) {
  * Enable widescreen for some games.
  */
 TWL_CODE void SetWidescreen(const char *filename) {
-	remove(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
 	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
@@ -530,7 +530,9 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (wideCheatFound) {
-		fcopy(wideBinPath, ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/wideCheatData.bin" : "sd:/_nds/nds-bootstrap/wideCheatData.bin");
+		mkdir("/_nds", 0777);
+		mkdir("/_nds/nds-bootstrap", 0777);
+		fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin");
 
 		// Prepare for reboot into 16:10 TWL_FIRM
 		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
@@ -1381,9 +1383,9 @@ int main(int argc, char **argv) {
 
 						if (isHomebrew[CURPOS] == 0) {
 							bool cheatsEnabled = true;
-							const char* cheatDataBin = (ms().secondaryDevice ? "fat:/_nds/nds-bootstrap/cheatData.bin" : "sd:/_nds/nds-bootstrap/cheatData.bin");
-							mkdir(ms().secondaryDevice ? "fat:/_nds" : "sd:/_nds", 0777);
-							mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
+							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
+							mkdir("/_nds", 0777);
+							mkdir("/_nds/nds-bootstrap", 0777);
 							if(codelist.romData(path,gameCode,crc32)) {
 								long cheatOffset; size_t cheatSize;
 								FILE* dat=fopen(sdFound() ? "sd:/_nds/TWiLightMenu/extras/usrcheat.dat" : "fat:/_nds/TWiLightMenu/extras/usrcheat.dat","rb");
