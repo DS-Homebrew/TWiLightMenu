@@ -31,11 +31,21 @@
 #include "launch_engine.h"
 #include "crc.h"
 
-// #define REG_ROMCTRL		(*(vu32*)0x40001A4)
-// #define REG_SCFG_ROM	(*(vu32*)0x4004000)
-// #define REG_SCFG_CLK	(*(vu32*)0x4004004)
-// #define REG_SCFG_EXT	(*(vu32*)0x4004008)
-// #define REG_SCFG_MC		(*(vu32*)0x4004010)
+u8 cheatData[0x8000] = {0};
+
+off_t getFileSize(const char *fileName)
+{
+    FILE* fp = fopen(fileName, "rb");
+    off_t fsize = 0;
+    if (fp) {
+        fseek(fp, 0, SEEK_END);
+        fsize = ftell(fp);			// Get source file's size
+		fseek(fp, 0, SEEK_SET);
+	}
+	fclose(fp);
+
+	return fsize;
+}
 
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
@@ -59,7 +69,6 @@ int main() {
 	}
 
 	u32 ndsHeader[0x80];
-	char gameid[4];
 	
 	if (isDSiMode()) {
 		if (fatInitDefault()) {
@@ -157,15 +166,20 @@ int main() {
 		for (int i = 0; i < 30; i++) {
 			swiWaitForVBlank();
 		}
-
-		getHeader (ndsHeader);
 	}
-
-	memcpy (gameid, ((const char*)ndsHeader) + 12, 4);
 
 	while(1) {
 		if(REG_SCFG_MC == 0x11) {
 		break; } else {
+			cheatData[3] = 0xCF;
+			off_t wideCheatSize = getFileSize("sd:/_nds/nds-bootstrap/wideCheatData.bin");
+			if (wideCheatSize > 0) {
+				FILE* wideCheatFile = fopen("sd:/_nds/nds-bootstrap/wideCheatData.bin", "rb");
+				fread(cheatData, 1, wideCheatSize, wideCheatFile);
+				fclose(wideCheatFile);
+				cheatData[wideCheatSize+3] = 0xCF;
+			}
+			memcpy((void*)0x023F0000, cheatData, 0x8000);
 			runLaunchEngine (EnableSD, language, TWLMODE, TWLCLK, TWLVRAM, runCardEngine);
 		}
 	}

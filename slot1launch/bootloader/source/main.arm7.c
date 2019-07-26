@@ -49,8 +49,10 @@
 
 #include "common.h"
 #include "read_card.h"
+#include "module_params.h"
 #include "cardengine_arm7_bin.h"
 #include "hook.h"
+#include "find.h"
 
 
 extern u32 dsiMode;
@@ -65,6 +67,22 @@ extern bool arm9_runCardEngine;
 bool gameSoftReset = false;
 
 void arm7_clearmem (void* loc, size_t len);
+extern void ensureBinaryDecompressed(const tNDSHeader* ndsHeader, module_params_t* moduleParams);
+
+static const u32 cheatDataEndSignature[2] = {0xCF000000, 0x00000000};
+
+// Module params
+static const u32 moduleParamsSignature[2] = {0xDEC00621, 0x2106C0DE};
+
+u32* findModuleParamsOffset(const tNDSHeader* ndsHeader) {
+	//dbg_printf("findModuleParamsOffset:\n");
+
+	u32* moduleParamsOffset = findOffset(
+			(u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize,
+			moduleParamsSignature, 2
+		);
+	return moduleParamsOffset;
+}
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Important things
@@ -169,8 +187,8 @@ void arm7_resetMemory (void)
 	// clear IWRAM - 037F:8000 to 0380:FFFF, total 96KiB
 	arm7_clearmem ((void*)0x037F8000, 96*1024);
 	
-	// clear most of EXRAM - except after 0x023FA800, which has the ARM9 code
-	arm7_clearmem ((void*)0x02000000, 0x003FA800);
+	// clear most of EXRAM - except after 0x023F0000, which has the cheat data and ARM9 code
+	arm7_clearmem ((void*)0x02000000, 0x003F0000);
 
 	// clear last part of EXRAM, skipping the ARM9's section
 	arm7_clearmem ((void*)0x023FF000, 0x1000);
@@ -395,7 +413,8 @@ int arm7_loadBinary (void) {
 
 	*(u16*)(0x027ffc40) = 0x1;						// Boot Indicator -- EXTREMELY IMPORTANT!!! Thanks to cReDiAr
 	
-	cardRead(ndsHeader->arm9romOffset, (u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize);	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
+	cardRead(ndsHeader->arm9romOffset, (u32*)ndsHeader->arm9destination, ndsHeader->arm9binarySize);
+	//ensureBinaryDecompressed(ndsHeader, (module_params_t*) findModuleParamsOffset(ndsHeader));	cardRead(ndsHeader->arm7romOffset, (u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
 	return ERR_NONE;
 }
 
@@ -513,15 +532,25 @@ void arm7_main (void) {
 	}
 
 	if (runCardEngine) {
-		copyLoop (ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
-		errorCode = hookNdsRetail(NDS_HEAD, (u32*)ENGINE_LOCATION_ARM7);
+		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
+		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
 		if(errorCode == ERR_NONE) {
 			nocashMessage("card hook Sucessfull");
 		} else {
 			nocashMessage("error during card hook");
 			debugOutput(errorCode);
 		}
+		if (*(u32*)(0x023F0000) != 0xCF000000) {
+			u32* cheatDataOffset = findOffset(
+				(u32*)ENGINE_LOCATION_ARM7, cardengine_arm7_bin_size,
+				cheatDataEndSignature, 2
+			);
+			if (cheatDataOffset) {
+				copyLoop (cheatDataOffset, (u32*)0x023F0000, 0x8000);	// Copy cheat data
+			}
+		}
 	}
+	arm7_clearmem ((void*)0x023F0000, 0x8000);		// Clear cheat data from main memory
 
 	debugOutput (ERR_STS_START);
 

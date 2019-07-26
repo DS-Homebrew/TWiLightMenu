@@ -139,6 +139,7 @@ extern std::string ReplaceAll(std::string str, const std::string &from, const st
 extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings);
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
+extern void SetWidescreen(const char *filename);
 
 extern bool rocketVideo_playVideo;
 
@@ -689,6 +690,7 @@ void switchDevice(void) {
 		if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
 		} else {
+			SetWidescreen(NULL);
 			if (sdFound()) {
 				chdir("sd:/");
 			}
