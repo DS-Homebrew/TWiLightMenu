@@ -87,6 +87,7 @@ char unlaunchDevicePath[256];
  * @param path Pathname to modify.
  */
 void RemoveTrailingSlashes(std::string &path) {
+	if (path.size() == 0) return;
 	while (!path.empty() && path[path.size() - 1] == '/') {
 		path.resize(path.size() - 1);
 	}
@@ -937,7 +938,7 @@ int main(int argc, char **argv) {
 
 			bool isArgv = false;
 			if (strcasecmp(filename.c_str() + filename.size() - 5, ".argv") == 0) {
-				ms().romPath = filePath + filename;
+				ms().romPath = std::string(filePath) + std::string(filename);
 
 				FILE *argfile = fopen(filename.c_str(), "rb");
 				char str[PATH_MAX], *pstr;
@@ -985,11 +986,11 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
-				ms().dsiWareSrlPath = argarray[0];
+				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				ms().dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				if (!isArgv) {
-					ms().romPath = argarray[0];
+					ms().romPath = std::string(argarray[0]);
 				}
 				ms().launchType = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
@@ -1409,7 +1410,7 @@ int main(int argc, char **argv) {
 						}
 
 						if (!isArgv) {
-							ms().romPath = argarray[0];
+							ms().romPath = std::string(argarray[0]);
 						}
 						ms().launchType = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
@@ -1440,7 +1441,7 @@ int main(int argc, char **argv) {
 						}
 						stop();
 					} else {
-						ms().romPath = argarray[0];
+						ms().romPath = std::string(argarray[0]);
 						ms().launchType = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
@@ -1448,7 +1449,7 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					if (!isArgv) {
-						ms().romPath = argarray[0];
+						ms().romPath = std::string(argarray[0]);
 					}
 					ms().launchType = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
@@ -1505,8 +1506,8 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				ms().romPath = ROMpath;
-				ms().homebrewArg = ROMpath;
+				ms().romPath = std::string(ROMpath);
+				ms().homebrewArg = std::string(ROMpath);
 
 				if (gameboy) {
 					ms().launchType = Launch::EGameYobLaunch;
@@ -1571,7 +1572,7 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				ms().homebrewBootstrap = true;
-				ms().romPath = ROMpath;
+				ms().romPath = std::string(ROMpath);
 				ms().launchType = Launch::ESDFlashcardLaunch; // 1
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
