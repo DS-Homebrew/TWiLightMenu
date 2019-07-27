@@ -496,7 +496,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (ms().launchType == Launch::ESlot1) {
-		sNDSHeader* nds = (sNDSHeader*)malloc(sizeof(sNDSHeader));
+		sNDSHeader nds;
 
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
@@ -505,13 +505,13 @@ TWL_CODE void SetWidescreen(const char *filename) {
 		enableSlot1();
 		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		cardReadHeader((uint8*)nds);
+		cardReadHeader((uint8*)&nds);
 
 		char game_TID[5];
-		tonccpy(game_TID, nds->gameCode, 4);
+		tonccpy(game_TID, nds.gameCode, 4);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, nds->headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, nds.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
