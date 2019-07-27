@@ -4,7 +4,7 @@ ENTRY(_start)
 
 MEMORY {
 
-	vram	: ORIGIN = 0x06000000, LENGTH = 128K
+	vram	: ORIGIN = 0x06020000, LENGTH = 128K
 	arm9ram	: ORIGIN = 0x023FA800, LENGTH = 10K		/* Used for the ARM9's functions */
 }
 

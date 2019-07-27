@@ -22,7 +22,7 @@
 #include "load_bin.h"
 #include "launch_engine.h"
 
-#define LCDC_BANK_C (u16*)0x06840000
+#define LCDC_BANK_D (u16*)0x06860000
 
 #define DSIMODE_OFFSET 4
 #define LANGUAGE_OFFSET 8
@@ -53,40 +53,33 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-// Basic engine with no cheat related code.
 void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
-
 	nocashMessage("runLaunchEngine");
 
 	irqDisable(IRQ_ALL);
 
-	// Direct CPU access to VRAM bank C
-	VRAM_C_CR = VRAM_ENABLE | VRAM_C_LCD;
+	// Direct CPU access to VRAM bank D
+	VRAM_D_CR = VRAM_ENABLE | VRAM_D_LCD;
 
 	// Clear VRAM
-	memset (LCDC_BANK_C, 0x00, 128 * 1024);
+	memset (LCDC_BANK_D, 0x00, 128 * 1024);
 
 	// Load the loader/patcher into the correct address
-	vramcpy (LCDC_BANK_C, load_bin, load_bin_size);
+	vramcpy (LCDC_BANK_D, load_bin, load_bin_size);
 
 	// Set the parameters for the loader
-	writeAddr ((data_t*) LCDC_BANK_C, DSIMODE_OFFSET, isDSiMode());
-	writeAddr ((data_t*) LCDC_BANK_C, LANGUAGE_OFFSET, language);
-	writeAddr ((data_t*) LCDC_BANK_C, SDACCESS_OFFSET, EnableSD);
-	writeAddr ((data_t*) LCDC_BANK_C, TWLMODE_OFFSET, TWLMODE);
-	writeAddr ((data_t*) LCDC_BANK_C, TWLCLOCK_OFFSET, TWLCLK);
-	writeAddr ((data_t*) LCDC_BANK_C, SOUNDFREQ_OFFSET, soundFreq);
-	writeAddr ((data_t*) LCDC_BANK_C, RUNCARDENGINE_OFFSET, runCardEngine);
+	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());
+	writeAddr ((data_t*) LCDC_BANK_D, LANGUAGE_OFFSET, language);
+	writeAddr ((data_t*) LCDC_BANK_D, SDACCESS_OFFSET, EnableSD);
+	writeAddr ((data_t*) LCDC_BANK_D, TWLMODE_OFFSET, TWLMODE);
+	writeAddr ((data_t*) LCDC_BANK_D, TWLCLOCK_OFFSET, TWLCLK);
+	writeAddr ((data_t*) LCDC_BANK_D, SOUNDFREQ_OFFSET, soundFreq);
+	writeAddr ((data_t*) LCDC_BANK_D, RUNCARDENGINE_OFFSET, runCardEngine);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
-
 	irqDisable(IRQ_ALL);
 
-	nocashMessage("Give the VRAM to the ARM7");
-	// Give the VRAM to the ARM7
-	VRAM_C_CR = VRAM_ENABLE | VRAM_C_ARM7_0x06000000;
-	
 	if (isDSiMode()) {
 		if (TWLMODE) {
 			if (TWLVRAM) {
@@ -103,20 +96,26 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 		}
 	}
 	
-	nocashMessage("Reset into a passme loop");
+	// Give the VRAM to the ARM7
+	nocashMessage("Give the VRAM to the ARM7");
+	VRAM_D_CR = VRAM_ENABLE | VRAM_D_ARM7_0x06020000;
+	
 	// Reset into a passme loop
+	nocashMessage("Reset into a passme loop");
 	REG_EXMEMCNT |= ARM7_OWNS_ROM | ARM7_OWNS_CARD;
+	
+	*(vu32*)0x02FFFFFC = 0;
 
-	*((vu32*)0x02FFFFFC) = 0;
-	*((vu32*)0x02FFFE04) = (u32)0xE59FF018;
-	*((vu32*)0x02FFFE24) = (u32)0x02FFFE04;
-
+	// Return to passme loop
+	*(vu32*)0x02FFFE04 = (u32)0xE59FF018; // ldr pc, 0x02FFFE24
+	*(vu32*)0x02FFFE24 = (u32)0x02FFFE04;  // Set ARM9 Loop address --> resetARM9(0x02FFFE04);
+	
+	// Reset ARM7
 	nocashMessage("resetARM7");
+	resetARM7(0x06020000);	
 
-	resetARM7(0x06000000);	
-
+	// swi soft reset
 	nocashMessage("swiSoftReset");
-
-	swiSoftReset(); 
+	swiSoftReset();
 }
 
