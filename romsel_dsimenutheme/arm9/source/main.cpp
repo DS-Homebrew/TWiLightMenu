@@ -558,13 +558,14 @@ void doPause() {
 	scanKeys();
 }
 
-std::string ReplaceAll(std::string str, const std::string &from, const std::string &to) {
+std::string ReplaceAll(const std::string str, const std::string &from, const std::string &to) {
 	size_t start_pos = 0;
+	std::string newStr = std::string(str);
 	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-		str.replace(start_pos, from.length(), to);
+		newStr.replace(start_pos, from.length(), to);
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
-	return str;
+	return newStr;
 }
 
 void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings) {
@@ -1244,18 +1245,13 @@ int main(int argc, char **argv) {
 							}
 							showProgressIcon = true;
 
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							toncset(buffer, 0, sizeof(buffer));
-
-							u32 fileSize = 0x40000; // 256KB
 							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
 							if (pFile) {
-								for (u32 i = fileSize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
+								fseek(pFile, 0x40000 - 1, SEEK_SET);
+								fputc('\0', pFile);
 								fclose(pFile);
 							}
+
 							showProgressIcon = false;
 							printLarge(false, 4, 20, "Done!");
 							for (int i = 0; i < 30; i++) {
@@ -1294,10 +1290,6 @@ int main(int argc, char **argv) {
 							}
 							showProgressIcon = true;
 
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							toncset(buffer, 0, sizeof(buffer));
-
 							int savesize = 524288; // 512KB (default size for most games)
 
 							// Set save size to 8KB for the following games
@@ -1332,9 +1324,8 @@ int main(int argc, char **argv) {
 
 							FILE *pFile = fopen(savepath.c_str(), "wb");
 							if (pFile) {
-								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
+								fseek(pFile, savesize - 1, SEEK_SET);
+								fputc('\0', pFile);
 								fclose(pFile);
 							}
 							showProgressIcon = false;
