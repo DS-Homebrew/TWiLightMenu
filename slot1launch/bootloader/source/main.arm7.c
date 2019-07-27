@@ -60,6 +60,7 @@ extern u32 language;
 extern u32 sdAccess;
 extern u32 twlMode;
 extern u32 twlClock;
+extern u32 soundFreq;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
@@ -493,6 +494,7 @@ void arm7_main (void) {
 	arm7_resetMemory();	
 
 	if (dsiMode) {
+		*(u16*)0x4004700 = (soundFreq ? 0xC00F : 0x800F);
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 	}

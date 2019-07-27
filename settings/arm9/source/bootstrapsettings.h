@@ -22,11 +22,6 @@ class BootstrapSettings
         ELEDPower = 2,
         ELEDCamera = 3
     };
-    enum TSoundFreq
-    {
-        EFreq32KHz = 0,
-        EFreq47KHz = 1
-    };
 
   public:
     BootstrapSettings();
@@ -41,6 +36,8 @@ class BootstrapSettings
 	bool logging;
 	int romreadled;
 	bool preciseVolumeControl;
+
+  private:
 	bool soundFreq;
 };
 

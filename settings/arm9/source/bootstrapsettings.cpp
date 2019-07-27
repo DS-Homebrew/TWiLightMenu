@@ -11,7 +11,7 @@ BootstrapSettings::BootstrapSettings()
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
 	preciseVolumeControl = false;
-    soundFreq = EFreq32KHz;
+    soundFreq = false;
 }
 
 void BootstrapSettings::loadSettings()
@@ -41,6 +41,6 @@ void BootstrapSettings::saveSettings()
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "PRECISE_VOLUME_CONTROL", preciseVolumeControl);
 	}
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);
-	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+	bootstrapini.SetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", ms().soundFreq);
     bootstrapini.SaveIniFile(BOOTSTRAP_INI);
 }

@@ -538,7 +538,7 @@ int main(int argc, char **argv)
 
 	if (!sys().isRegularDS())
 	{
-		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&bs().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
+		gamesPage.option(STR_SNDFREQ, STR_DESCRIPTION_SNDFREQ_1, Option::Bool(&ms().soundFreq), {"47.61 kHz", "32.73 kHz"}, {true, false});
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2)

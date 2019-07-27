@@ -75,6 +75,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     dsi_theme = "dark";
     _3ds_theme = "light";
     
+    soundFreq = EFreq32KHz;
 	dsiSplash = isDSiMode();
 	hsMsg = false;
     showlogo = true;
@@ -150,6 +151,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
+	soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
     slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
@@ -237,6 +239,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
+	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
     settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
 
     settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);

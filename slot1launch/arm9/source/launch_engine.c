@@ -29,7 +29,8 @@
 #define SDACCESS_OFFSET 12
 #define TWLMODE_OFFSET 16
 #define TWLCLOCK_OFFSET 20
-#define RUNCARDENGINE_OFFSET 24
+#define SOUNDFREQ_OFFSET 24
+#define RUNCARDENGINE_OFFSET 28
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -53,7 +54,7 @@ void vramcpy (void* dst, const void* src, int len)
 }	
 
 // Basic engine with no cheat related code.
-void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool runCardEngine)
+void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
 
 	nocashMessage("runLaunchEngine");
@@ -75,6 +76,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 	writeAddr ((data_t*) LCDC_BANK_C, SDACCESS_OFFSET, EnableSD);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_C, TWLCLOCK_OFFSET, TWLCLK);
+	writeAddr ((data_t*) LCDC_BANK_C, SOUNDFREQ_OFFSET, soundFreq);
 	writeAddr ((data_t*) LCDC_BANK_C, RUNCARDENGINE_OFFSET, runCardEngine);
 
 	nocashMessage("irqDisable(IRQ_ALL);");

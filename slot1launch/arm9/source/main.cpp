@@ -48,8 +48,6 @@ off_t getFileSize(const char *fileName)
 }
 
 
-const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
-
 bool consoleOn = false;
 
 int main() {
@@ -58,6 +56,7 @@ int main() {
 	bool TWLMODE = false;
 	bool TWLCLK = false;	// false == NTR, true == TWL
 	bool TWLVRAM = false;
+	bool soundFreq = false;
 	bool runCardEngine = false;
 	bool EnableSD = false;
 	int language = -1;
@@ -72,12 +71,11 @@ int main() {
 	
 	if (isDSiMode()) {
 		if (fatInitDefault()) {
-			if (access(settingsinipath, F_OK) != 0) settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";
-
-			CIniFile settingsini( settingsinipath );
+			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
 			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
 			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
+			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
 
 			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
@@ -180,7 +178,7 @@ int main() {
 				cheatData[wideCheatSize+3] = 0xCF;
 			}
 			memcpy((void*)0x023F0000, cheatData, 0x8000);
-			runLaunchEngine (EnableSD, language, TWLMODE, TWLCLK, TWLVRAM, runCardEngine);
+			runLaunchEngine (EnableSD, language, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
 		}
 	}
 	return 0;
