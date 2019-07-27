@@ -2255,7 +2255,7 @@ string browseForFile(const vector<string> extensionList) {
 					clearText();
 					chdir(entry->name.c_str());
 					char buf[256];
-					ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
+					ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
@@ -2711,7 +2711,7 @@ string browseForFile(const vector<string> extensionList) {
 				chdir("..");
 				char buf[256];
 
-				ms().romfolder[ms().secondaryDevice] = getcwd(buf, 256);
+				ms().romfolder[ms().secondaryDevice] = std::string(getcwd(buf, 256));
 				ms().saveSettings();
 				settingsChanged = false;
 				return "null";

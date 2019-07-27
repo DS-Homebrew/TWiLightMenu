@@ -87,6 +87,7 @@ char unlaunchDevicePath[256];
  * @param path Pathname to modify.
  */
 void RemoveTrailingSlashes(std::string &path) {
+	if (path.size() == 0) return;
 	while (!path.empty() && path[path.size() - 1] == '/') {
 		path.resize(path.size() - 1);
 	}
@@ -558,13 +559,14 @@ void doPause() {
 	scanKeys();
 }
 
-std::string ReplaceAll(std::string str, const std::string &from, const std::string &to) {
+std::string ReplaceAll(const std::string str, const std::string &from, const std::string &to) {
 	size_t start_pos = 0;
+	std::string newStr = std::string(str);
 	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-		str.replace(start_pos, from.length(), to);
+		newStr.replace(start_pos, from.length(), to);
 		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
 	}
-	return str;
+	return newStr;
 }
 
 void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings) {
@@ -936,7 +938,7 @@ int main(int argc, char **argv) {
 
 			bool isArgv = false;
 			if (strcasecmp(filename.c_str() + filename.size() - 5, ".argv") == 0) {
-				ms().romPath = filePath + filename;
+				ms().romPath = std::string(filePath) + std::string(filename);
 
 				FILE *argfile = fopen(filename.c_str(), "rb");
 				char str[PATH_MAX], *pstr;
@@ -984,11 +986,11 @@ int main(int argc, char **argv) {
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
 
-				ms().dsiWareSrlPath = argarray[0];
+				ms().dsiWareSrlPath = std::string(argarray[0]);
 				ms().dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				ms().dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
 				if (!isArgv) {
-					ms().romPath = argarray[0];
+					ms().romPath = std::string(argarray[0]);
 				}
 				ms().launchType = Launch::EDSiWareLaunch;
 				ms().previousUsedDevice = ms().secondaryDevice;
@@ -1244,18 +1246,13 @@ int main(int argc, char **argv) {
 							}
 							showProgressIcon = true;
 
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							toncset(buffer, 0, sizeof(buffer));
-
-							u32 fileSize = 0x40000; // 256KB
 							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
 							if (pFile) {
-								for (u32 i = fileSize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
+								fseek(pFile, 0x40000 - 1, SEEK_SET);
+								fputc('\0', pFile);
 								fclose(pFile);
 							}
+
 							showProgressIcon = false;
 							printLarge(false, 4, 20, "Done!");
 							for (int i = 0; i < 30; i++) {
@@ -1294,10 +1291,6 @@ int main(int argc, char **argv) {
 							}
 							showProgressIcon = true;
 
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							toncset(buffer, 0, sizeof(buffer));
-
 							int savesize = 524288; // 512KB (default size for most games)
 
 							// Set save size to 8KB for the following games
@@ -1332,9 +1325,8 @@ int main(int argc, char **argv) {
 
 							FILE *pFile = fopen(savepath.c_str(), "wb");
 							if (pFile) {
-								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
+								fseek(pFile, savesize - 1, SEEK_SET);
+								fputc('\0', pFile);
 								fclose(pFile);
 							}
 							showProgressIcon = false;
@@ -1418,7 +1410,7 @@ int main(int argc, char **argv) {
 						}
 
 						if (!isArgv) {
-							ms().romPath = argarray[0];
+							ms().romPath = std::string(argarray[0]);
 						}
 						ms().launchType = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
@@ -1449,7 +1441,7 @@ int main(int argc, char **argv) {
 						}
 						stop();
 					} else {
-						ms().romPath = argarray[0];
+						ms().romPath = std::string(argarray[0]);
 						ms().launchType = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
@@ -1457,7 +1449,7 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					if (!isArgv) {
-						ms().romPath = argarray[0];
+						ms().romPath = std::string(argarray[0]);
 					}
 					ms().launchType = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
@@ -1514,8 +1506,8 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				ms().romPath = ROMpath;
-				ms().homebrewArg = ROMpath;
+				ms().romPath = std::string(ROMpath);
+				ms().homebrewArg = std::string(ROMpath);
 
 				if (gameboy) {
 					ms().launchType = Launch::EGameYobLaunch;
@@ -1580,7 +1572,7 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				ms().homebrewBootstrap = true;
-				ms().romPath = ROMpath;
+				ms().romPath = std::string(ROMpath);
 				ms().launchType = Launch::ESDFlashcardLaunch; // 1
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();

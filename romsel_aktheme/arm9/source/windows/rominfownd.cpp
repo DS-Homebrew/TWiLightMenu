@@ -481,7 +481,8 @@ void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 {
     _romInfo = romInfo;
 
-    _romInfoText = unicode_to_local_string(_romInfo.banner().titles[ms().getGuiLanguage()], 128, NULL);
+    auto bannerTitle = _romInfo.banner().titles[ms().getGuiLanguage()];
+    _romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
 
     _buttonGameSettings.hide();
 

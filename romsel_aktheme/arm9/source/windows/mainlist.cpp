@@ -289,7 +289,8 @@ bool MainList::enterDir(const std::string &dirName)
     cwl();
     if (dir)
     {
-
+        _currentDir = dirName;
+        
         while ((direntry = readdir(dir)) != NULL)
         {
             memset(lfnBuf, 0, sizeof(lfnBuf));
@@ -403,7 +404,6 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.setExtIcon("unknown");
             }
         }
-        _currentDir = dirName;
     }
 
     directoryChanged();

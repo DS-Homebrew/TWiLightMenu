@@ -408,31 +408,41 @@ BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
 
 
 
+
+/**
+ * Remove trailing slashes from a pathname, if present.
+ * @param path Pathname to modify.
+ */
+void RemoveTrailingSlashes(std::string &path) {
+	if (path.size() == 0) return;
+
+	while (!path.empty() && path[path.size() - 1] == '/') {
+		path.resize(path.size() - 1);
+	}
+}
+
 void BootstrapConfig::createSaveFileIfNotExists()
 {
+
 	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
-	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
-		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
-	}
-	std::string savepath = romFolderNoSlash+"/saves/"+savename;
+
+	RemoveTrailingSlashes(romFolderNoSlash);
+
+	std::string savepath = romFolderNoSlash + "/saves/" + savename;
+
 	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
 	}
+
 	if (access(savepath.c_str(), F_OK) == 0)
 		return;
-
-	static const int BUFFER_SIZE = 0x1000;
-	char buffer[BUFFER_SIZE];
-	memset(buffer, 0, sizeof(buffer));
 
 	FILE *pFile = fopen(savepath.c_str(), "wb");
 	if (pFile)
 	{
-		for (int i = _saveSize; i > 0; i -= BUFFER_SIZE)
-		{
-			fwrite(buffer, 1, sizeof(buffer), pFile);
-		}
+		fseek(pFile, _saveSize - 1, SEEK_SET);
+		fputc('\0', pFile);
 		fclose(pFile);
 	}
 }
@@ -442,17 +452,11 @@ void BootstrapConfig::createTmpFileIfNotExists()
 	if (access("fat:/BTSTRP.TMP", F_OK) == 0)
 		return;
 
-	static const int BUFFER_SIZE = 0x1000;
-	char buffer[BUFFER_SIZE];
-	memset(buffer, 0, sizeof(buffer));
-
 	FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
 	if (pFile)
 	{
-		for (u32 i = 0x40000; i > 0; i -= BUFFER_SIZE)
-		{
-			fwrite(buffer, 1, sizeof(buffer), pFile);
-		}
+		fseek(pFile,  0x40000 - 1, SEEK_SET);
+		fputc('\0', pFile);
 		fclose(pFile);
 	}
 }
