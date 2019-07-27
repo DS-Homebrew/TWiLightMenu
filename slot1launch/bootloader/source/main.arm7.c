@@ -493,12 +493,6 @@ void arm7_main (void) {
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
 
-	if (dsiMode) {
-		*(u16*)0x4004700 = (soundFreq ? 0xC00F : 0x800F);
-		NDSTouchscreenMode();
-		*(u16*)0x4000500 = 0x807F;
-	}
-
 	debugOutput (ERR_STS_LOAD_BIN);
 
 	// Load the NDS file
@@ -507,6 +501,14 @@ void arm7_main (void) {
 		debugOutput(errorCode);
 	}
 	
+	if (dsiMode) {
+		if (!soundFreq) {
+			*(u16*)0x4004700 &= BIT(13);
+		}
+		NDSTouchscreenMode();
+		*(u16*)0x4000500 = 0x807F;
+	}
+
 	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 
 	if (!twlMode) {
