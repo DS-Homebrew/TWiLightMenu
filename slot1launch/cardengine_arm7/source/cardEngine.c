@@ -26,7 +26,7 @@
 #include "i2c.h"
 
 #include "sr_data_error.h"	// For showing an error screen
-#include "sr_data_srloader.h"	// For rebooting into DSiMenu++
+#include "sr_data_srloader.h"	// For rebooting into TWiLight Menu++
 #include "sr_data_srllastran.h"	// For rebooting the game
 
 static const char *unlaunchAutoLoadID = "AutoLoadInfo";
@@ -57,6 +57,14 @@ static void unlaunchSetHiyaBoot(void) {
 	}
 }
 
+// Alternative to swiWaitForVBlank()
+static void waitFrames(int count) {
+	for (int i = 0; i < count; i++) {
+		while (REG_VCOUNT != 191);
+		while (REG_VCOUNT == 191);
+	}
+}
+
 void myIrqHandlerVBlank(void) {
 	if (language >= 0 && language < 6) {
 		*(u8*)(0x027FFCE4) = language;	// Change language
@@ -66,8 +74,10 @@ void myIrqHandlerVBlank(void) {
 		softResetTimer = 0;
 	} else { 
 		if(softResetTimer == 60*2) {
+			REG_MASTER_VOLUME = 0;
 			unlaunchSetHiyaBoot();
 			memcpy((u32*)0x02000300,sr_data_srloader,0x020);
+			waitFrames(10);							// Stabilize
 			i2cWriteRegister(0x4a,0x70,0x01);
 			i2cWriteRegister(0x4a,0x11,0x01);	// Reboot into TWiLight Menu++
 		}
@@ -76,8 +86,10 @@ void myIrqHandlerVBlank(void) {
 
 	if(REG_KEYINPUT & (KEY_L | KEY_R | KEY_START | KEY_SELECT)) {
 	} else if (!gameSoftReset) {
+		REG_MASTER_VOLUME = 0;
 		unlaunchSetHiyaBoot();
     	memcpy((u32*)0x02000300,sr_data_srllastran,0x020);
+		waitFrames(10);							// Stabilize
     	i2cWriteRegister(0x4a,0x70,0x01);
     	i2cWriteRegister(0x4a,0x11,0x01);	// Reboot game
 	}
