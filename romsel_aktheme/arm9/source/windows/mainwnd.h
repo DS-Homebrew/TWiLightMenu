@@ -53,6 +53,8 @@ class MainWnd : public akui::Form
 
     MainList *_mainList;
 
+    //void bootWidescreen(const char *filename);
+
   protected:
     void onMainListSelItemClicked(u32 index);
 
@@ -117,5 +119,7 @@ class MainWnd : public akui::Form
     bool _processL;
     
 };
+
+void bootWidescreen(const char *filename);
 
 #endif //_MAINWND_H_

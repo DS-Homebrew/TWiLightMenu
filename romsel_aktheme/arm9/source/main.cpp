@@ -55,9 +55,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
-
 using namespace akui;
 
 //---------------------------------------------------------------------------------
@@ -101,6 +98,14 @@ void SetBrightness(u8 screen, s8 bright)
 	if (bright > 31)
 		bright = 31;
 	*(u16 *)(0x0400006C + (0x1000 * screen)) = bright + mode;
+}
+
+bool extention(std::string filename, const char *ext, int number) {
+	if (strcasecmp(filename.c_str() + filename.size() - number, ext)) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 int main(int argc, char **argv)
@@ -208,8 +213,10 @@ int main(int argc, char **argv)
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
-	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 && access(ms().dsiWarePubPath.c_str(), F_OK) == 0)
-	|| (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == 2 && access(ms().dsiWarePrvPath.c_str(), F_OK) == 0))
+	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
+	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub", 4)) ||
+	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
+	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv", 4)))
 	{
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());

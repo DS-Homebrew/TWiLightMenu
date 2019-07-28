@@ -68,6 +68,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     soundfreq = EFreq32KHz;
     showlogo = true;
     autorun = false;
+
+	wideScreen = false;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -156,7 +158,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     snesEmulator =  settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
-
+	
+    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()

@@ -42,12 +42,15 @@
 #include "common/gbaswitch.h"
 #include "common/unlaunchboot.h"
 #include "common/files.h"
+#include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
 
 #include "common/inifile.h"
 #include "language.h"
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
+
+#include "sr_data_srllastran.h"
 
 #include <nds/arm9/dldi.h>
 #include <sys/iosupport.h>
@@ -499,6 +502,73 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
         messageBox(this, LANG("game launch", "ROM Start Error"), errorString, MB_OK);
         progressWnd().hide();
     }
+}
+
+//void MainWnd::bootWidescreen(const char *filename)
+void bootWidescreen(const char *filename)
+{
+	remove("/_nds/nds-bootstrap/wideCheatData.bin");
+
+	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen
+	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
+		return;
+	}
+	
+	bool wideCheatFound = false;
+	char wideBinPath[256];
+	if (ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::ESDFlashcardLaunch) {
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
+		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::ESlot1) {
+		sNDSHeader nds;
+
+		// Reset Slot-1 to allow reading card header
+		sysSetCardOwner (BUS_OWNER_ARM9);
+		disableSlot1();
+		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+		enableSlot1();
+		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+
+		cardReadHeader((uint8*)&nds);
+
+		char game_TID[5];
+		memcpy(game_TID, nds.gameCode, 4);
+		game_TID[4] = 0;
+
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, nds.headerCRC16);
+		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	} else if (!wideCheatFound) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		u16 headerCRC16 = 0;
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (wideCheatFound) {
+		mkdir("/_nds", 0777);
+		mkdir("/_nds/nds-bootstrap", 0777);
+		fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin");
+
+		// Prepare for reboot into 16:10 TWL_FIRM
+		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
+		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+
+		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+		memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+		swiWaitForVBlank();
+	}
 }
 
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
@@ -990,6 +1060,7 @@ void MainWnd::bootSlot1(void)
         return;
     }
 
+	bootWidescreen(NULL);
 	if (sdFound()) {
 		chdir("sd:/");
 	}

@@ -450,16 +450,23 @@ int main(int argc, char **argv)
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
-		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false});
 
 		// Theme
-		.option(STR_THEME,
+		if (!isDSiMode() || ms().consoleModel > 0) {
+		guiPage.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard (Buggy!)", "SEGA Saturn"},
-				{0, 1, 2, 3, 4})
-
-		.option(STR_DSIMUSIC,
+				{"DSi", "3DS", "R4", "Acekard", "SEGA Saturn"},
+				{0, 1, 2, 3, 4});
+		} else {
+		guiPage.option(STR_THEME,
+				STR_DESCRIPTION_THEME_1,
+				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
+				{"DSi", "3DS", "R4", "Acekard"},
+				{0, 1, 2, 3});
+		}
+		guiPage.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
 				{STR_OFF, "Regular", "DSi Shop", "Theme"},

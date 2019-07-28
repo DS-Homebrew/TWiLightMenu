@@ -8,6 +8,7 @@
 #include "tool/stringtool.h"
 #include "windows/cheatwnd.h"
 #include "windows/mainlist.h"
+#include "windows/mainwnd.h"
 #include <stdio.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -515,12 +516,12 @@ int BootstrapConfig::launch()
 	if (_saveCreatedHandler)
 		_saveCreatedHandler();
 
+	bootWidescreen(_fileName.c_str());
+
 	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
 	std::string ramdiskname = replaceAll(_fileName, ".nds", getImgExtension(_ramDiskNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
-	while (!romFolderNoSlash.empty() && romFolderNoSlash[romFolderNoSlash.size()-1] == '/') {
-		romFolderNoSlash.resize(romFolderNoSlash.size()-1);
-	}
+	RemoveTrailingSlashes(romFolderNoSlash);
 	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
