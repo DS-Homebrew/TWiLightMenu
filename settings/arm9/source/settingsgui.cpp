@@ -22,7 +22,7 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch, int currentTh
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
-        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_select);
         exitSub();
         return;
     }

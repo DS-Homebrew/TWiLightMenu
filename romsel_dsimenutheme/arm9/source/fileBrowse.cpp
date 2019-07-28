@@ -673,15 +673,17 @@ void switchDevice(void) {
 		snd().playLaunch();
 		controlTopBright = true;
 
-		fadeType = false;		  // Fade to white
-		snd().fadeOutStream();
-		for (int i = 0; i < 60; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
+		if (ms().theme != 4) {
+			fadeType = false;		  // Fade to white
+			snd().fadeOutStream();
+			for (int i = 0; i < 60; i++) {
+				snd().updateStream();
+				swiWaitForVBlank();
+			}
+			mmEffectCancelAll();
 
-		mmEffectCancelAll();
-		snd().stopStream();
+			snd().stopStream();
+		}
 
 		ms().romPath = "";
 		ms().launchType = DSiMenuPlusPlusSettings::TLaunchType::ESlot1; // 0
