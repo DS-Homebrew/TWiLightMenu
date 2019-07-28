@@ -516,12 +516,12 @@ void bootWidescreen(const char *filename)
 	
 	bool wideCheatFound = false;
 	char wideBinPath[256];
-	if (ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::ESDFlashcardLaunch) {
+	if (ms().launchType == DSiMenuPlusPlusSettings::ESDFlashcardLaunch) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::ESlot1) {
+	if (ms().launchType == DSiMenuPlusPlusSettings::ESlot1) {
 		sNDSHeader nds;
 
 		// Reset Slot-1 to allow reading card header
@@ -1054,6 +1054,9 @@ void MainWnd::showManual(void)
 void MainWnd::bootSlot1(void)
 {
     dbg_printf("Launch Slot1..\n");
+    ms().launchType = DSiMenuPlusPlusSettings::ESlot1;
+    ms().saveSettings();
+
     if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
     {
         cardLaunch();
@@ -1168,14 +1171,7 @@ void MainWnd::onFolderChanged()
 
         if (dirShowName == SPATH_SLOT1)
         {
-            if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
-            {
-                cardLaunch();
-            }
-            else
-            {
-                bootSlot1();
-            }
+            bootSlot1();
         }
 
         if (dirShowName == SPATH_GBARUNNER)
