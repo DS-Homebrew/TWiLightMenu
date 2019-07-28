@@ -437,28 +437,20 @@ int main(int argc, char **argv)
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
-		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false});
+		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
 
 		// Theme
-		if (!isDSiMode() || ms().consoleModel > 0) {
-		guiPage.option(STR_THEME,
+		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
 				{"DSi", "3DS", "R4", "Acekard", "SEGA Saturn"},
-				{0, 1, 2, 3, 4});
-		} else {
-		guiPage.option(STR_THEME,
-				STR_DESCRIPTION_THEME_1,
-				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard"},
-				{0, 1, 2, 3});
-		}
-		guiPage.option(STR_DSIMUSIC,
+				{0, 1, 2, 3, 4})
+		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
 				{STR_OFF, "Regular", "DSi Shop", "Theme"},
 				{0, 1, 2, 3})
-				
+
 		.option(STR_UPDATE_RECENTLY_PLAYED_LIST, STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST, Option::Bool(&ms().updateRecentlyPlayedList), {STR_YES, STR_NO}, {true, false})
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int(&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {0, 1, 2, 3, 4})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
