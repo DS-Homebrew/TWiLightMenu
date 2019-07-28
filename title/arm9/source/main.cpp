@@ -48,8 +48,7 @@
 #include "twlmenuppvideo.h"
 #include "consolemodelselect.h"
 
-#include "sr_data_srllastran.h"			 // For rebooting into the game (NTR-mode touch screen)
-#include "sr_data_srllastran_twltouch.h" // For rebooting into the game (TWL-mode touch screen)
+#include "sr_data_srllastran.h"			 // For rebooting into the game
 #include "common/systemdetails.h"
 
 bool renderScreens = false;
@@ -188,10 +187,37 @@ void loadROMselect(int number)
 
 void lastRunROM()
 {
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
+	/*fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
 		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
+	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out*/
+
+	std::string romfolder = ms().romPath;
+	while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
+		romfolder.resize(romfolder.size()-1);
+	}
+	chdir(romfolder.c_str());
+
+	std::string filename = ms().romPath;
+	const size_t last_slash_idx = filename.find_last_of("/");
+	if (std::string::npos != last_slash_idx)
+	{
+		filename.erase(0, last_slash_idx + 1);
+	}
+
+	// Set Widescreen
+	if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
+	&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
+	&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
+		// Prepare for reboot into 16:10 TWL_FIRM
+		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
+		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+
+		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+		memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+		stop();
+	}
 
 	vector<char *> argarray;
 	if (ms().launchType > Launch::EDSiWareLaunch)
@@ -211,19 +237,6 @@ void lastRunROM()
 		if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice)
 		{
 			std::string savepath;
-
-			std::string romfolder = ms().romPath;
-			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-				romfolder.resize(romfolder.size()-1);
-			}
-			chdir(romfolder.c_str());
-
-			std::string filename = ms().romPath;
-			const size_t last_slash_idx = filename.find_last_of("/");
-			if (std::string::npos != last_slash_idx)
-			{
-				filename.erase(0, last_slash_idx + 1);
-			}
 
 			argarray.push_back(strdup(filename.c_str()));
 
@@ -394,19 +407,6 @@ void lastRunROM()
 	else if (ms().launchType == Launch::ESDFlashcardDirectLaunch)
 	{
 		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-
-		std::string romfolder = ms().romPath;
-		while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
-			romfolder.resize(romfolder.size()-1);
-		}
-		chdir(romfolder.c_str());
-
-		std::string filename = ms().romPath;
-		const size_t last_slash_idx = filename.find_last_of("/");
-		if (std::string::npos != last_slash_idx)
-		{
-			filename.erase(0, last_slash_idx + 1);
-		}
 
 		argarray.push_back((char*)ms().romPath.c_str());
 
@@ -617,7 +617,6 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	int pressed = 0;
 	while (1) {
 		if (screenmode == 1) {
 			fadeType = false;

@@ -164,6 +164,8 @@ class DSiMenuPlusPlusSettings
     bool showlogo;
     // unused...
     std::string r4_theme;
+
+	bool wideScreen;
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;

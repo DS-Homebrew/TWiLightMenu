@@ -59,6 +59,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	hsMsg = false;
     showlogo = true;
     autorun = false;
+
+	wideScreen = false;
 }
 
 void DSiMenuPlusPlusSettings::loadSettings()
@@ -129,6 +131,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 
+    wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
 void DSiMenuPlusPlusSettings::saveSettings()
