@@ -44,7 +44,7 @@ public:
   /**
    * Processes inputs and modifies the state of the GUI
    */
-  void processInputs(int inputs, touchPosition& touch);
+  void processInputs(int inputs, touchPosition& touch, int currentTheme);
 
   /**
    * Refreshes the text content of the GUI and re-draws
@@ -65,7 +65,7 @@ public:
    * reboot. To reboot, set the exit callback
    * using onExit.
    */
-  void saveAndExit();
+  void saveAndExit(int currentTheme);
 
 private:
   /**

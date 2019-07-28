@@ -172,24 +172,11 @@ void rebootTWLMenuPP()
 
 void loadMainMenu()
 {
-	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
 	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 }
 
 void loadROMselect()
 {
-	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	snd().stopBgMusic();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
 	if (ms().theme == 3)
 	{
 		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
@@ -333,7 +320,7 @@ void opt_reset_subtheme(int prev, int next)
 
 void opt_reboot_system_menu()
 {
-	gui().onExit(launchSystemSettings).saveAndExit();
+	gui().onExit(launchSystemSettings).saveAndExit(currentTheme);
 }
 
 void opt_hiya_autoboot_toggle(bool prev, bool next)
@@ -706,7 +693,7 @@ int main(int argc, char **argv)
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		gui().processInputs(pressed, touch);
+		gui().processInputs(pressed, touch, currentTheme);
 	}
 
 	return 0;

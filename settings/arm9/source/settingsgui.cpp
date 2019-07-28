@@ -18,52 +18,52 @@
 extern bool renderScreens;
 extern bool fadeType; // false = out, true = in
 
-void SettingsGUI::processInputs(int pressed, touchPosition &touch)
+void SettingsGUI::processInputs(int pressed, touchPosition &touch, int currentTheme)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
-        mmEffectEx(&snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
         exitSub();
         return;
     }
     else if ((pressed & KEY_B && !inSub()) || ((pressed & KEY_TOUCH && touch.py >= 170) && !inSub()))
     {
-        saveAndExit();
+        saveAndExit(currentTheme);
     }
 
     if (pressed & KEY_RIGHT)
     {
-        mmEffectEx(&snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
         setOptionNext();
     }
 
     if (pressed & KEY_LEFT)
     {
-        mmEffectEx(&snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
         setOptionPrev();
     }
 
     if (pressed & KEY_DOWN)
     {
-        mmEffectEx(&snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
         incrementOption();
     }
 
     if (pressed & KEY_UP)
     {
-        mmEffectEx(&snd().snd_select);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_select : &snd().snd_select);
         decrementOption();
     }
 
     if ((pressed & KEY_X || pressed & KEY_R) && !inSub())
     {
-        mmEffectEx(&snd().snd_switch);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_switch);
         rotatePage(1);
     }
 
     if ((pressed & KEY_Y || pressed & KEY_L) && !inSub())
     {
-        mmEffectEx(&snd().snd_switch);
+        mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_switch);
         rotatePage(-1);
     }
 
@@ -74,7 +74,7 @@ void SettingsGUI::processInputs(int pressed, touchPosition &touch)
         {
             if (opt.action_sub().sub())
             {
-                mmEffectEx(&snd().snd_select);
+                mmEffectEx(currentTheme==4 ? &snd().snd_saturn_launch : &snd().snd_select);
                 enterSub();
             }
             else
@@ -346,10 +346,10 @@ void SettingsGUI::rotateOption(int rotateAmount)
     clearText();
 }
 
-void SettingsGUI::saveAndExit()
+void SettingsGUI::saveAndExit(int currentTheme)
 {
     _isExited = true;
-    mmEffectEx(&snd().snd_back);
+    mmEffectEx(currentTheme==4 ? &snd().snd_saturn_back : &snd().snd_back);
     // Draw in between here.
     draw();
 
