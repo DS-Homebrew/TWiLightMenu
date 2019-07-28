@@ -571,6 +571,13 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (ms().dsiSplash || ms().showlogo) {
+		// Load sound bank into memory
+		FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
+		fread((void*)0x023A0000, 1, 0x58000, soundBank);
+		fclose(soundBank);
+	}
+
 	if (ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
 		BootSplashInit();
 		fifoSendValue32(FIFO_USER_01, 10);

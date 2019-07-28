@@ -4,7 +4,7 @@
 #include <maxmod9.h>
 
 #include "soundbank.h"
-#include "soundbank_bin.h"
+//#include "soundbank_bin.h"
 
 #include "common/dsimenusettings.h"
 #include "common/gl2d.h"
@@ -294,7 +294,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 void BootJingleTwlMenu() {
 	
-	mmInitDefaultMem((mm_addr)soundbank_bin);
+	mmInitDefaultMem((mm_addr)0x023A0000);
 
 	mmLoadEffect( SFX_TWLMENUVIDEO );
 

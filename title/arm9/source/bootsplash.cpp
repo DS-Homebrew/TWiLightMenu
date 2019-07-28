@@ -7,7 +7,7 @@
 #include "common/systemdetails.h"
 
 #include "soundbank.h"
-#include "soundbank_bin.h"
+//#include "soundbank_bin.h"
 
 extern u16 bmpImageBuffer[256*192];
 extern u16 videoImageBuffer[39][256*144];
@@ -46,7 +46,7 @@ mm_sound_effect proceed;
 
 void splashSoundInit() {
 
-	mmInitDefaultMem((mm_addr)soundbank_bin);
+	mmInitDefaultMem((mm_addr)0x023A0000);
 
 	mmLoadEffect( SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );
