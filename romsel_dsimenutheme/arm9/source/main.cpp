@@ -1479,6 +1479,8 @@ int main(int argc, char **argv) {
 				//ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
 
+				sysSetCartOwner(BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM in memory map
+
 				// Load GBA ROM into EZ Flash 3-in-1
 				FILE *gbaFile = fopen(filename.c_str(), "rb");
 				fread((void*)0x08000000, 1, 0x1000000, gbaFile);
