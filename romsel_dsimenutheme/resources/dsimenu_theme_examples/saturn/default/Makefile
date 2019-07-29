@@ -16,10 +16,10 @@ BG 				:= background
 GRFOUT	:=	$(CURDIR)/$(GRF)
 
 
-NAMES			:= box_full box_empty brace bubble button_arrow cornerbutton dialogbox folder 
+NAMES			:= box_full box_empty brace cornerbutton folder 
 NAMES 			+= icon_gb icon_gba icon_gbamode icon_gg icon_md icon_nes icon_plg icon_settings 
-NAMES 			+= icon_sms icon_snes icon_unk launch_dot moving_arrow progress icon_manual
-NAMES 			+= scroll_window small_cart start_border start_text wirelessicons
+NAMES 			+= icon_sms icon_snes icon_unk progress icon_manual
+NAMES 			+= small_cart wirelessicons
 
 BG_NAMES 		:= bottom bottom_bubble bottom_moving top
 TARGETS			:= $(NAMES:%=$(GRF)/%.grf) $(BG_NAMES:%=$(BG)/%.grf)
