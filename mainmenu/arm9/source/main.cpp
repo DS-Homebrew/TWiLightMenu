@@ -1027,13 +1027,6 @@ bool extention(const std::string& filename, const char* ext) {
 	}
 }
 
-bool chkExt(const std::string& filename, const std::string& extension) {
-    if(filename.substr(filename.find_last_of(".") + 1) == extension)
-        return true;
-    else
-        return false;
-}
-
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
@@ -1226,25 +1219,25 @@ int main(int argc, char **argv) {
 			filename.erase(0, last_slash_idx + 1);
 		}
 
-		if (chkExt(filename, "nds") || chkExt(filename, "dsi") || chkExt(filename, "ids") || chkExt(filename, "app") || chkExt(filename, "argv")) {
+		if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids") || extention(filename, ".app") || extention(filename, ".argv")) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
-		} else if (chkExt(filename, "plg") || chkExt(filename, "rvid")) {
+		} else if (extention(filename, ".plg") || extention(filename, ".rvid")) {
 			bnrRomType = 8;
-		} else if (chkExt(filename, "gb") || chkExt(filename, "sgb")) {
+		} else if (extention(filename, ".gb") || extention(filename, ".sgb")) {
 			bnrRomType = 1;
-		} else if (chkExt(filename, "gbc")) {
+		} else if (extention(filename, ".gbc")) {
 			bnrRomType = 2;
-		} else if (chkExt(filename, "nes") || chkExt(filename, "fds")) {
+		} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
 			bnrRomType = 3;
-		} else if(chkExt(filename, "sms")) {
+		} else if(extention(filename, ".sms")) {
 			bnrRomType = 4;
-		} else if(chkExt(filename, "gg")) {
+		} else if(extention(filename, ".gg")) {
 			bnrRomType = 5;
-		} else if(chkExt(filename, "gen")) {
+		} else if(extention(filename, ".gen")) {
 			bnrRomType = 6;
-		} else if(chkExt(filename, "smc") || chkExt(filename, "sfc")) {
+		} else if(extention(filename, ".smc") || extention(filename, ".sfc")) {
 			bnrRomType = 7;
 		}
 
@@ -1260,7 +1253,7 @@ int main(int argc, char **argv) {
 			char boxArtPath[256];
 			snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), filename.c_str());
 			if ((access(boxArtPath, F_OK) != 0) && (bnrRomType == 0)) {
-				if(chkExt(filename, "argv")) {
+				if(extention(filename, ".argv")) {
 					vector<char*> argarray;
 
 					FILE *argfile = fopen(filename.c_str(),"rb");
