@@ -1593,21 +1593,17 @@ int main(int argc, char **argv) {
 					}
 				} else {
 					ndsToBoot =
-					    (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-									: "sd:/_nds/nds-bootstrap-hb-release.nds");
+					    (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 					CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 					if (SNES) {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH",
-								       "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG",
-								       "fat:/snes/ROM.SMC");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 					} else {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH",
-								       "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					}
