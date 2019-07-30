@@ -161,7 +161,7 @@ TWL_CODE int lastRunROM() {
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
-	if (access(romPath.c_str(), F_OK) != 0 && launchType !== 0) {
+	if (access(romPath.c_str(), F_OK) != 0 && launchType != 0) {
 		return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 	}
 
@@ -320,7 +320,7 @@ TWL_CODE int lastRunROM() {
 					return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				}
 			}
-		case 2:
+		case 2: {
 			romfolder = romPath;
 			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 				romfolder.resize(romfolder.size()-1);
@@ -342,7 +342,7 @@ TWL_CODE int lastRunROM() {
 			bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
-		case 3:
+		} case 3: {
 			char unlaunchDevicePath[256];
 			if (previousUsedDevice) {
 				snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -374,7 +374,7 @@ TWL_CODE int lastRunROM() {
 			fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			break;
-		case 4:
+		} case 4:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to nesDS as argument
 		case 5:
