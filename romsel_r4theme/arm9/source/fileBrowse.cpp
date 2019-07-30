@@ -283,12 +283,7 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 0;
 }
 
-bool chkExt(std::string filename, std::string extension) {
-    if(filename.substr(filename.find_last_of(".") + 1) == extension)
-        return true;
-    else
-        return false;
-}
+extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList)
 {
@@ -330,60 +325,37 @@ string browseForFile(const vector<string> extensionList)
 			isDirectory = false;
 			std::string std_romsel_filename = dirContents.at(fileOffset).name.c_str();
 
-			if (chkExt(std_romsel_filename, "nds")
-			 || chkExt(std_romsel_filename, "dsi")
-			 || chkExt(std_romsel_filename, "ids")
-			 || chkExt(std_romsel_filename, "app")
-			 || chkExt(std_romsel_filename, "argv"))
+			if (extention(std_romsel_filename, ".nds")
+			 || extention(std_romsel_filename, ".dsi")
+			 || extention(std_romsel_filename, ".ids")
+			 || extention(std_romsel_filename, ".app")
+			 || extention(std_romsel_filename, ".argv"))
 			{
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
-			} else if (chkExt(std_romsel_filename, "plg")) {
+			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid")) {
 				bnrRomType = 8;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if (chkExt(std_romsel_filename, "rvid")) {
-				bnrRomType = 8;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if (chkExt(std_romsel_filename, "gb") || chkExt(std_romsel_filename, "sgb")) {
+			} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 				bnrRomType = 1;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if (chkExt(std_romsel_filename, "gbc")) {
+			} else if (extention(std_romsel_filename, ".gbc")) {
 				bnrRomType = 2;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if (chkExt(std_romsel_filename, "nes") || chkExt(std_romsel_filename, "fds")) {
+			} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
 				bnrRomType = 3;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if(chkExt(std_romsel_filename, "sms")) {
+			} else if(extention(std_romsel_filename, ".sms")) {
 				bnrRomType = 4;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if(chkExt(std_romsel_filename, "gg")) {
+			} else if(extention(std_romsel_filename, ".gg")) {
 				bnrRomType = 5;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if(chkExt(std_romsel_filename, "gen")) {
+			} else if(extention(std_romsel_filename, ".gen")) {
 				bnrRomType = 6;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
-			} else if(chkExt(std_romsel_filename, "smc") || chkExt(std_romsel_filename, "sfc")) {
+			} else if(extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
 				bnrRomType = 7;
-				bnrWirelessIcon = 0;
-				isDSiWare = false;
-				isHomebrew = 0;
 			}
+		}
+
+		if (bnrRomType > 0 && bnrRomType < 9) {
+			bnrWirelessIcon = 0;
+			isDSiWare = false;
+			isHomebrew = 0;
 		}
 
 		if (bnrRomType == 0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());

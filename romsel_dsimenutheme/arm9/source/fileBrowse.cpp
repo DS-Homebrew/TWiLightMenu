@@ -1103,6 +1103,8 @@ bool selectMenu(void) {
 }
 
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
+	extern bool extention(const std::string& filename, const char* ext);
+
 	if (reSpawnBoxes)
 		spawnedtitleboxes = 0;
 	for (int i = 0; i < 40; i++) {
@@ -1113,108 +1115,37 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 			} else {
 				isDirectory[i] = false;
 				std::string std_romsel_filename = dirContents[scrn].at(i + PAGENUM * 40).name.c_str();
-				if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "nds") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "NDS") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "dsi") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "DSI") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ids") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "IDS") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "app") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "APP") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "argv") ||
-				    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) == "ARGV")) {
+
+				if (extention(std_romsel_filename, ".nds")
+				 || extention(std_romsel_filename, ".dsi")
+				 || extention(std_romsel_filename, ".ids")
+				 || extention(std_romsel_filename, ".app")
+				 || extention(std_romsel_filename, ".argv"))
+				{
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
 						    i);
 					bnrRomType[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "gba") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "GBA")) {
+				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid")) {
+					bnrRomType[i] = 9;
+				} else if (extention(std_romsel_filename, ".gba")) {
 					bnrRomType[i] = 1;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "gb") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "GB") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "sgb") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "SGB")) {
+				} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 					bnrRomType[i] = 2;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "plg") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "PLG")) {
-					bnrRomType[i] = 9;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "rvid") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "RVID")) {
-					bnrRomType[i] = 9;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "gbc") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "GBC")) {
+				} else if (extention(std_romsel_filename, ".gbc")) {
 					bnrRomType[i] = 3;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "nes") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "NES") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "fds") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "FDS")) {
+				} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
 					bnrRomType[i] = 4;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "sms") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "SMS")) {
+				} else if (extention(std_romsel_filename, ".sms")) {
 					bnrRomType[i] = 5;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "gg") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "GG")) {
+				} else if (extention(std_romsel_filename, ".gg")) {
 					bnrRomType[i] = 6;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "gen") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "GEN")) {
+				} else if (extention(std_romsel_filename, ".gen")) {
 					bnrRomType[i] = 7;
-					bnrWirelessIcon[i] = 0;
-					isDSiWare[i] = false;
-					isHomebrew[i] = 0;
-				} else if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "smc") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "SMC") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "sfc") ||
-					   (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") + 1) ==
-					    "SFC")) {
+				} else if (extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
 					bnrRomType[i] = 8;
+				}
+
+				if (bnrRomType[i] > 0 && bnrRomType[i] < 10) {
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
