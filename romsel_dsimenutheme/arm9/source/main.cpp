@@ -664,8 +664,8 @@ void dsCardLaunch() {
 	}
 }
 
-bool extention(std::string filename, const char *ext, int number) {
-	if (strcasecmp(filename.c_str() + filename.size() - number, ext)) {
+bool extention(const std::string& filename, const char* ext) {
+	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
 		return false;
 	} else {
 		return true;
@@ -868,9 +868,9 @@ int main(int argc, char **argv) {
 	}
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
-	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub", 4)) ||
+	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
-	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv", 4))) {
+	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");
@@ -975,9 +975,9 @@ int main(int argc, char **argv) {
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare[CURPOS]) {
 				const char *typeToReplace = ".nds";
-				if (extention(filename, ".dsi", 4)) {
+				if (extention(filename, ".dsi")) {
 					typeToReplace = ".dsi";
-				} else if (extention(filename, ".ids", 4)) {
+				} else if (extention(filename, ".ids")) {
 					typeToReplace = ".ids";
 				}
 
@@ -1189,8 +1189,8 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds", 4) || extention(filename, ".dsi", 4) ||
-			    extention(filename, ".ids", 4)) {
+			if (extention(filename, ".nds") || extention(filename, ".dsi") ||
+			    extention(filename, ".ids")) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -1470,11 +1470,11 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if (extention(filename, ".plg", 4)) {
+			} else if (extention(filename, ".plg")) {
 				dstwoPlg = true;
-			} else if (extention(filename, ".rvid", 5)) {
+			} else if (extention(filename, ".rvid")) {
 				rvid = true;
-			} /*else if (extention(filename, ".gba", 4)) {
+			} /*else if (extention(filename, ".gba")) {
 				//ms().launchType = Launch::ESDFlashcardLaunch;
 				//ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
@@ -1486,19 +1486,19 @@ int main(int argc, char **argv) {
 				fread((void*)0x08000000, 1, 0x1000000, gbaFile);
 				fclose(gbaFile);
 				gbaSwitch();
-			}*/ else if (extention(filename, ".gb", 3) || extention(filename, ".sgb", 4) ||
-				   extention(filename, ".gbc", 4)) {
+			}*/ else if (extention(filename, ".gb") || extention(filename, ".sgb") ||
+				   extention(filename, ".gbc")) {
 				gameboy = true;
-			} else if (extention(filename, ".nes", 4) || extention(filename, ".fds", 4)) {
+			} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
 				nes = true;
-			} else if (extention(filename, ".sms", 4) || extention(filename, ".gg", 3)) {
+			} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
 				mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 				mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 				gamegear = true;
-			} else if (extention(filename, ".gen", 4)) {
+			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
-			} else if (extention(filename, ".smc", 4) || extention(filename, ".sfc", 4)) {
+			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			}
 
