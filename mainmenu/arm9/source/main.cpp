@@ -1670,14 +1670,14 @@ int main(int argc, char **argv) {
 					*(u32*)(0x02000310) = 0x4D454E55;	// "MENU"
 					unlaunchSetHiyaBoot();
 				} else {
-					memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+					tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 					*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 					*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 					*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
 					*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 					*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 					*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-					memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+					toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 					int i2 = 0;
 					for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 						*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
@@ -1891,7 +1891,7 @@ int main(int argc, char **argv) {
 					unlaunchDevicePath[3] = 'c';
 				}
 
-				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+				tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 				*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 				*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 				*(u32*)(0x02000810) = 0;			// Unlaunch Flags
@@ -1899,18 +1899,13 @@ int main(int argc, char **argv) {
 				*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 				*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 				*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-				memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+				toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 				int i2 = 0;
 				for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 					*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 					i2 += 2;
 				}
-				while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
-					*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
-				}
-				// Stabilization code to make DSiWare always boot successfully(?)
-				clearText();
-				for (int i = 0; i < 15; i++) swiWaitForVBlank();
+				*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
