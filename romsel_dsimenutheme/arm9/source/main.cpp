@@ -894,14 +894,14 @@ int main(int argc, char **argv) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.prv", ms().dsiWarePrvPath.c_str());
 		}
 		showProgressIcon = false;
-		if (ms().theme == 4) {
+		if (ms().theme != 4) {
 			fadeType = false; // Fade to white
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 25; i++) {
 				snd().updateStream();
 				swiWaitForVBlank();
 			}
-			clearText(false);
 		}
+		clearText();
 	}
 
 	while (1) {
@@ -1010,7 +1010,7 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 20, "If this takes a while, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Creating public save file...");
-					if (!fadeType) {
+					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
 							swiWaitForVBlank();
@@ -1054,7 +1054,7 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 20, "If this takes a while, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Creating private save file...");
-					if (!fadeType) {
+					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
 							swiWaitForVBlank();
@@ -1093,7 +1093,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (fadeType) {
+				if (ms().theme != 4 && fadeType) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
@@ -1106,9 +1106,11 @@ int main(int argc, char **argv) {
 					printSmallCentered(false, 34, "the console's lid.");
 					printLargeCentered(false, 88, "Now copying data...");
 					printSmallCentered(false, 104, "Do not turn off the power.");
-					fadeType = true; // Fade in from white
-					for (int i = 0; i < 35; i++) {
-						swiWaitForVBlank();
+					if (ms().theme != 4) {
+						fadeType = true; // Fade in from white
+						for (int i = 0; i < 35; i++) {
+							swiWaitForVBlank();
+						}
 					}
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -1121,24 +1123,40 @@ int main(int argc, char **argv) {
 						      "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					showProgressIcon = false;
-					fadeType = false; // Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
+					if (ms().theme != 4) {
+						fadeType = false; // Fade to white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
 					}
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
+						int afterSaveTextXpos[3] = {0};
+						if (ms().theme == 4) {
+							afterSaveTextXpos[0] = 16;
+							afterSaveTextXpos[1] = 32;
+							afterSaveTextXpos[2] = 48;
+						} else {
+							afterSaveTextXpos[0] = 72;
+							afterSaveTextXpos[1] = 88;
+							afterSaveTextXpos[2] = 104;
+						}
 						clearText();
-						printLargeCentered(false, 72, "After saving, please re-start");
-						printLargeCentered(false, 88, "TWiLight Menu++ to transfer your");
-						printLargeCentered(false, 104, "save data back.");
-						fadeType = true; // Fade in from white
+						printLargeCentered(false, afterSaveTextXpos[0], "After saving, please re-start");
+						printLargeCentered(false, afterSaveTextXpos[1], "TWiLight Menu++ to transfer your");
+						printLargeCentered(false, afterSaveTextXpos[2], "save data back.");
+						if (ms().theme != 4) {
+							fadeType = true; // Fade in from white
+						}
 						for (int i = 0; i < 60 * 3; i++) {
 							swiWaitForVBlank(); // Wait 3 seconds
 						}
-						fadeType = false;	   // Fade to white
-						for (int i = 0; i < 25; i++) {
-							swiWaitForVBlank();
+						if (ms().theme != 4) {
+							fadeType = false;	   // Fade to white
+							for (int i = 0; i < 25; i++) {
+								swiWaitForVBlank();
+							}
 						}
 					}
 				}
