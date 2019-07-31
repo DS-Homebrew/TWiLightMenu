@@ -132,9 +132,6 @@ std::string STR_FORCESLEEPPATCH = "STR_FORCESLEEPPATCH";
 std::string STR_SLOT1SCFGUNLOCK = "STR_SLOT1SCFGUNLOCK";
 std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
-std::string STR_LOADINGSCREEN = "STR_LOADINGSCREEN";
-std::string STR_LOADINGSCREENTHEME = "STR_LOADINGSCREENTHEME";
-std::string STR_LOADINGSCREENLOCATION = "STR_LOADINGSCREENLOCATION";
 std::string STR_BOOTSTRAP = "STR_BOOTSTRAP";
 std::string STR_USEGBARUNNER2 = "STR_USEGBARUNNER2";
 
@@ -186,12 +183,6 @@ std::string STR_DESCRIPTION_SNDFREQ_1 = "STR_DESCRIPTION_SNDFREQ_1";
 
 std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = "STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1";
 
-std::string STR_DESCRIPTION_LOADINGSCREEN_1 = "STR_DESCRIPTION_LOADINGSCREEN_1";
-
-std::string STR_DESCRIPTION_LOADINGSCREENTHEME = "STR_DESCRIPTION_LOADINGSCREENTHEME";
-
-std::string STR_DESCRIPTION_LOADINGSCREENLOCATION = "STR_DESCRIPTION_LOADINGSCREENLOCATION";
-
 std::string STR_DESCRIPTION_BOOTSTRAP_1 = "STR_DESCRIPTION_BOOTSTRAP_1";
 
 std::string STR_DESCRIPTION_FLASHCARD_1 = "STR_DESCRIPTION_FLASHCARD_1";
@@ -213,37 +204,12 @@ std::string STR_SUBTHEMESEL_R4 = "STR_SUBTHEMESEL_R4";
 std::string STR_SUBTHEMESEL_AK = "STR_SUBTHEMESEL_AK";
 
 std::string STR_AB_SETSUBTHEME = "STR_AB_SETSUBTHEME";
-std::string STR_DSI_DARKMENU = "STR_DSI_DARKMENU";
-std::string STR_DSI_NORMALMENU = "STR_DSI_NORMALMENU";
-std::string STR_DSI_RED = "STR_DSI_RED";
-std::string STR_DSI_BLUE = "STR_DSI_BLUE";
-std::string STR_DSI_GREEN = "STR_DSI_GREEN";
-std::string STR_DSI_YELLOW = "STR_DSI_YELLOW";
-std::string STR_DSI_PINK = "STR_DSI_PINK";
-std::string STR_DSI_PURPLE = "STR_DSI_PURPLE";
-std::string STR_R4_THEME01 = "STR_R4_THEME01";
-std::string STR_R4_THEME02 = "STR_R4_THEME02";
-std::string STR_R4_THEME03 = "STR_R4_THEME03";
-std::string STR_R4_THEME04 = "STR_R4_THEME04";
-std::string STR_R4_THEME05 = "STR_R4_THEME05";
-std::string STR_R4_THEME06 = "STR_R4_THEME06";
-std::string STR_R4_THEME07 = "STR_R4_THEME07";
-std::string STR_R4_THEME08 = "STR_R4_THEME08";
-std::string STR_R4_THEME09 = "STR_R4_THEME09";
-std::string STR_R4_THEME10 = "STR_R4_THEME10";
-std::string STR_R4_THEME11 = "STR_R4_THEME11";
-std::string STR_R4_THEME12 = "STR_R4_THEME12";
-std::string STR_R4_THEME13 = "STR_R4_THEME13";
-std::string STR_R4_THEME14 = "STR_R4_THEME14";
 
 std::string STR_DEFAULT_LAUNCHER = "STR_DEFAULT_LAUNCHER";
 std::string STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = "STR_DESCRIPTION_DEFAULT_LAUNCHER_1";
 
 std::string STR_12_HOUR_CLOCK ="STR_12_HOUR_CLOCK";
 std::string STR_DESCRIPTION_12_HOUR_CLOCK = "STR_DESCRIPTION_12_HOUR_CLOCK";
-
-std::string STR_SNES_EMULATOR ="STR_SNES_EMULATOR";
-std::string STR_DESCRIPTION_SNES_EMULATOR = "STR_DESCRIPTION_SNES_EMULATOR";
 
 std::string STR_AK_ZOOMING_ICON = "STR_AK_ZOOMING_ICON";
 std::string STR_DESCRIPTION_AK_ZOOMING_ICON = "STR_DESCRIPTION_AK_ZOOMING_ICON";
@@ -286,30 +252,27 @@ std::string ConvertFromUTF8(const std::string& input) {
  */
 void langInit(void)
 {
-	switch (ms().getGuiLanguage())
-	{
-	case 0:
-	default:
-		languageIniPath = "nitro:/languages/japanese.ini";
-		break;
-	case 1:
-		languageIniPath = "nitro:/languages/english.ini";
-		break;
-	case 2:
-		languageIniPath = "nitro:/languages/french.ini";
-		break;
-	case 3:
-		languageIniPath = "nitro:/languages/german.ini";
-		break;
-	case 4:
-		languageIniPath = "nitro:/languages/italian.ini";
-		break;
-	case 5:
-		languageIniPath = "nitro:/languages/spanish.ini";
-		break;
-	case 6:
-		languageIniPath = "nitro:/languages/english.ini";
-		break;
+	switch (ms().getGuiLanguage()) {
+		case 0:
+			languageIniPath = "nitro:/languages/japanese.ini";
+			break;
+		case 1:
+		case 6:
+		default:
+			languageIniPath = "nitro:/languages/english.ini";
+			break;
+		case 2:
+			languageIniPath = "nitro:/languages/french.ini";
+			break;
+		case 3:
+			languageIniPath = "nitro:/languages/german.ini";
+			break;
+		case 4:
+			languageIniPath = "nitro:/languages/italian.ini";
+			break;
+		case 5:
+			languageIniPath = "nitro:/languages/spanish.ini";
+			break;
 	}
 
 	CIniFile languageini(languageIniPath);
@@ -436,9 +399,6 @@ void langInit(void)
 	STR_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1SCFGUNLOCK", "SCFG access in Slot-1"));
 	STR_SNDFREQ = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SNDFREQ", "Sound/Mic frequency"));
 	STR_SLOT1LAUNCHMETHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method"));
-	STR_LOADINGSCREEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOADINGSCREEN", "Loading screen"));
-	STR_LOADINGSCREENTHEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOADINGSCREENTHEME", "Loading screen theme"));
-	STR_LOADINGSCREENLOCATION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOADINGSCREENLOCATION", "Loading screen location"));
 	STR_BOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOOTSTRAP", "Bootstrap"));
 	STR_USEGBARUNNER2 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "USEGBARUNNER2", "Use GBARunner2"));
 
@@ -488,14 +448,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_SNDFREQ_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz is original quality, 47.61kHz is high quality."));
 
-	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1",
-																"Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed."));
-
-	STR_DESCRIPTION_LOADINGSCREEN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREEN_1", "Shows a loading screen before ROM is started in nds-bootstrap"));
-
-	STR_DESCRIPTION_LOADINGSCREENTHEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREENTHEME", "Choose the loading screen to be light or dark."));
-
-	STR_DESCRIPTION_LOADINGSCREENLOCATION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LOADINGSCREENLOCATION", "Show the loading screen on either the top or botton screen."));
+	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1", "Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed."));
 
 	STR_DESCRIPTION_BOOTSTRAP_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly bootstrap"));
 
@@ -518,51 +471,25 @@ void langInit(void)
 	STR_SUBTHEMESEL_AK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SUBTHEMESEL_AK", "Sub-theme select: Acekard Menu"));
 
 	STR_AB_SETSUBTHEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AB_SETSUBTHEME", "A/B: Set sub-theme"));
-	STR_DSI_DARKMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_DARKMENU", "SD/Black"));
-	STR_DSI_NORMALMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_NORMALMENU", "Normal/White"));
-	STR_DSI_RED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_RED", "Red"));
-	STR_DSI_BLUE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_BLUE", "Blue"));
-	STR_DSI_GREEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_GREEN", "Green"));
-	STR_DSI_YELLOW = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_YELLOW", "Yellow"));
-	STR_DSI_PINK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_PINK", "Pink"));
-	STR_DSI_PURPLE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSI_PURPLE", "Purple"));
-	STR_R4_THEME01 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME01", "Snow hill"));
-	STR_R4_THEME02 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME02", "Snow land"));
-	STR_R4_THEME03 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME03", "Green leaf"));
-	STR_R4_THEME04 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME04", "Pink flower"));
-	STR_R4_THEME05 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME05", "Park"));
-	STR_R4_THEME06 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME06", "Cherry blossoms"));
-	STR_R4_THEME07 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME07", "Beach"));
-	STR_R4_THEME08 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME08", "Summer sky"));
-	STR_R4_THEME09 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME09", "River"));
-	STR_R4_THEME10 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME10", "Fall trees"));
-	STR_R4_THEME11 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME11", "Christmas tree"));
-	STR_R4_THEME12 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME12", "Drawn symbol"));
-	STR_R4_THEME13 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME13", "Blue moon"));
-	STR_R4_THEME14 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "R4_THEME14", "Mac-like"));
 
 	STR_DEFAULT_LAUNCHER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DEFAULT_LAUNCHER", "Default launcher"));
 
-    STR_12_HOUR_CLOCK =  ConvertFromUTF8(languageini.GetString("LANGUAGE", "12_HOUR_CLOCK", "Use a 12 hour clock"));
-    STR_DESCRIPTION_12_HOUR_CLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme."));
+	STR_12_HOUR_CLOCK =  ConvertFromUTF8(languageini.GetString("LANGUAGE", "12_HOUR_CLOCK", "Use a 12 hour clock"));
+	STR_DESCRIPTION_12_HOUR_CLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_12_HOUR_CLOCK", "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme."));
 
-		STR_SNES_EMULATOR =  ConvertFromUTF8(languageini.GetString("LANGUAGE", "SNES_EMULATOR", "Choose a SNES emulator"));
-    STR_DESCRIPTION_SNES_EMULATOR = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SNES_EMULATOR", "Choose whether you would rather use SNEmulDS or lolSNES."));
+	STR_AK_ZOOMING_ICON = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_ZOOMING_ICON", "Zooming icons"));
+	STR_DESCRIPTION_AK_ZOOMING_ICON = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for the selected icon in the Acekard theme."));
 
-    STR_AK_ZOOMING_ICON = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_ZOOMING_ICON", "Zooming icons"));
-    STR_DESCRIPTION_AK_ZOOMING_ICON = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ZOOMING_ICON", "Display a zoom effect for the selected icon in the Acekard theme."));
-
-    STR_AK_SCROLLSPEED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_SCROLLSPEED", "Scroll speed"));
-    STR_DESCRIPTION_AK_SCROLLSPEED =  ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_AK_SCROLLSPEED", "Sets the scroll speed in the Acekard theme."));
+	STR_AK_SCROLLSPEED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_SCROLLSPEED", "Scroll speed"));
+	STR_DESCRIPTION_AK_SCROLLSPEED =  ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_AK_SCROLLSPEED", "Sets the scroll speed in the Acekard theme."));
 
 	// The localestrign is here but the setting isn't displayed
 	// we can just keep the default viewmode
 	// which is icons with rom internal names.
 	// akmenu should save the view mode anyways when its changed with SELECT.
-	
-    STR_AK_VIEWMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_VIEWMODE", "Default viewmode"));
-    STR_DESCRIPTION_AK_VIEWMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode in the Acekard theme."));
+
+	STR_AK_VIEWMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "AK_VIEWMODE", "Default viewmode"));
+	STR_DESCRIPTION_AK_VIEWMODE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_AK_VIEWMODE", "Sets the default view mode in the Acekard theme."));
 
 	STR_DESCRIPTION_DEFAULT_LAUNCHER_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DEFAULT_LAUNCHER_1_DSIMENUPP", "Launch Nintendo DSi Menu or TWiLight Menu++ on boot."));
 }
-
