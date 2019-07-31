@@ -7,11 +7,12 @@
    <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/DS-Homebrew.TWiLightMenu?branchName=master" height="20">
   </a>
   <a href="https://discord.gg/yqSut8c">
-   <img src="https://img.shields.io/badge/Discord%20Server-%23nds--bootstrap-green.svg">
+   <img src="https://img.shields.io/badge/Discord%20Server-%23twilightmenu-green.svg">
   </a>
 </p>
 
-TWiLight Menu++ is an open-source DSi Menu upgrade/replacement, and frontend for nds-bootstrap for DSi, 3DS, and flashcards.
+TWiLight Menu++ is an open-source DSi Menu upgrade/replacement for the Nintendo DSi, the Nintendo 3DS, and Nintendo DS flashcards.
+It can launch Nintendo DS, SNES, NES, GameBoy (color), GameBoy Advance, Sega GameGear/Master System & Mega Drive/Genesis ROMs, as well as DSTWO plugins (if you use a DSTWO) and `.rvid` videos using RocketVideo Technology.
 
 # Compiling
 
@@ -28,20 +29,21 @@ Please note that Docker compilation is not compatible with native compilation on
 # Credits
 ## Main Developers
 - [RocketRobz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode.
-- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & custom themes to the DSi/3DS themes.
-- [Epicpkmn11](https://github.com/Epicpkmn11): Adding new features to the DSi/3DS and Acekard themes & custom themes on the R4 theme.
+- [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes.
+- [Epicpkmn11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme.
 ## App Launchers
-- [ahezard](https://github.com/ahezard): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap), and improved NDMA SD read code.
-- [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob)
-- [Coto](https://coto88.bitbucket.io/): Working on [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) (with acheid/Loopy) & [nesDS](https://github.com/RocketRobz/NesDS) ([TWL Edition](https://github.com/ApacheThunder/NesDS) by [Apache Thunder](https://github.com/ApacheThunder)).
-- Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS)
+- [ahezard](https://github.com/ahezard) & [shutterbug2000](https://github.com/shutterbug2000): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used to launch Nintendo DS ROMs off the SD card), and NDMA SD read code.
+- [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used to launch Gameboy ROMs)
+- [Coto](https://coto88.bitbucket.io/): Working on [SNEmulDS](https://www.gamebrew.org/wiki/SNEmulDS) with acheid/Loopy (used to launch SNES ROMs) & [nesDS](https://github.com/RocketRobz/NesDS) ([TWL Edition](https://github.com/ApacheThunder/NesDS) by [Apache Thunder](https://github.com/ApacheThunder)) (used to launch NES ROMs).
+- Lordus: [jEnesisDS](https://gamebrew.org/wiki/JEnesisDS) (used to launch Sega Mega Drive/Genesis ROMs)
+- [Gericom](https://github.com/Gericom): [GBARunner2](https://github.com/Gericom/GBARunner2) (used to load GameBoy Advance ROMs)
+- [FluBBa](https://gbatemp.net/members/flubba.19963/): [S8DS](https://gbatemp.net/threads/s8ds.392855/) (used to launch Sega Master System/Game Gear ROMs)
 ## Graphics & Themes
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu.
-- [Javier107](https://github.com/Javier107): Loading screen for 3DS theme.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
-- [devkitPro](https://github.com/devkitPro), [WinterMute](https://github.com/WinterMute): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
+- [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
 - Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
-- [shutterbug2000](https://github.com/shutterbug2000): NDMA SD read code, and the muted sound/touchscreen fix for nds-bootstrap.
+- [NightYoshi370](https://github.com/NightYoshi370): Code cleanup
