@@ -2254,9 +2254,9 @@ string browseForFile(const vector<string> extensionList) {
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file);
 						fclose(f_nds_file);
-					} else if (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 5) {
+					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						smsWarning();
-					} else if (bnrRomType[CURPOS] == 6) {
+					} else if (bnrRomType[CURPOS] == 7) {
 						if (getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
 						    0x300000) {
