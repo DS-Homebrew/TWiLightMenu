@@ -24,7 +24,7 @@ cd "settings"
 make
 copy "settings.nds" "../7zfile/_nds/TWiLightMenu/settings.srldr"
 cd ..
-cd "mainmenu"
+cd "quickmenu"
 make
 copy "mainmenu.nds" "../7zfile/_nds/TWiLightMenu/mainmenu.srldr"
 cd ..
