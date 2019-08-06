@@ -6,9 +6,9 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc mainmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	booter booter_fc mainmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package: all
 	@mkdir -p "$(PACKAGE)"
@@ -22,7 +22,7 @@ package: all
 	@cp "rungame/rungame.nds" "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 
 	@mkdir -p "$(PACKAGE)/_nds/TWiLightMenu"
-	@cp "mainmenu/mainmenu.nds" "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
+	@cp "quickmenu/mainmenu.nds" "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
 	@cp "manual/manual.nds" "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
 	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
@@ -37,8 +37,8 @@ booter:
 booter_fc:
 	@$(MAKE) -C booter_fc
 
-mainmenu:
-	@$(MAKE) -C mainmenu
+quickmenu:
+	@$(MAKE) -C quickmenu
 
 manual:
 	@$(MAKE) -C manual
@@ -68,7 +68,7 @@ clean:
 	@echo clean build directories
 	@$(MAKE) -C booter clean
 	@$(MAKE) -C booter_fc clean
-	@$(MAKE) -C mainmenu clean
+	@$(MAKE) -C quickmenu clean
 	@$(MAKE) -C manual clean
 	@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
