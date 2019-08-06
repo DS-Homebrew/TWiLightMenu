@@ -31,7 +31,12 @@ void VblankHandler(void) {
 
 int main(void) {
 
+	// read User Settings from firmware
+	readUserSettings();
 	irqInit();
+
+	// Start the RTC tracking IRQ
+	initClockIRQ();
 	fifoInit();
 
 	SetYtrigger(80);

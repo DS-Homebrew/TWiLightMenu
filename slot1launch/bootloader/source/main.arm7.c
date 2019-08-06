@@ -502,9 +502,6 @@ void arm7_main (void) {
 	}
 	
 	if (dsiMode) {
-		if (!soundFreq) {
-			*(u16*)0x4004700 &= BIT(13);
-		}
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 	}
