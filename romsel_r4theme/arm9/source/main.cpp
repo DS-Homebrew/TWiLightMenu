@@ -1189,7 +1189,9 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						if (useGbarunner && access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+						if (useGbarunner) {
+						if ((access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
+						&& (access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) != 0)) {
 							clearText();
 							dialogboxHeight = 1;
 							showdialogbox = true;
@@ -1207,7 +1209,7 @@ int main(int argc, char **argv) {
 							} while (!(pressed & KEY_A));
 							showdialogbox = false;
 							dialogboxHeight = 0;
-						} else {
+						}} else {
 							// Switch to GBA mode
 							fadeType = false;	// Fade to white
 							for (int i = 0; i < 25; i++) {

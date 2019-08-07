@@ -1077,9 +1077,12 @@ void MainWnd::bootSlot1(void)
 
 void MainWnd::bootGbaRunner(void)
 {
-	if (ms().useGbarunner && access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0) {
+	if (ms().useGbarunner) {
+	if ((access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
+	&& (access(ms().secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) != 0)) {
         messageBox(this, LANG("game launch", "GBARunner2 Error"), "BINF: bios.bin not found", MB_OK);
 		return;
+	}
 	}
 
     if (ms().secondaryDevice && ms().useGbarunner)

@@ -763,10 +763,10 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
-	if (access("sd:/bios.bin", F_OK) == 0) {
+	if ((access("sd:/bios.bin", F_OK) == 0) || (access("sd:/gba/bios.bin", F_OK) == 0)) {
 		gbaBiosFound[0] = true;
 	}
-	if (access("fat:/bios.bin", F_OK) == 0) {
+	if ((access("fat:/bios.bin", F_OK) == 0) || (access("fat:/gba/bios.bin", F_OK) == 0)) {
 		gbaBiosFound[1] = true;
 	}
 
