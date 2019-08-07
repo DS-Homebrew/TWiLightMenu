@@ -875,8 +875,8 @@ int main(int argc, char **argv) {
 		fadeType = true; // Fade in from white
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");
-		printLargeCentered(false, 88, "Now copying data...");
-		printSmallCentered(false, 104, "Do not turn off the power.");
+		printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Now copying data...");
+		printSmallCentered(false, (ms().theme == 4 ? 96 : 104), "Do not turn off the power.");
 		for (int i = 0; i < 15; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -1010,7 +1010,7 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmallCentered(false, 20, "If this takes a while, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
-					printLargeCentered(false, 88, "Creating public save file...");
+					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating public save file...");
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1044,7 +1044,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLargeCentered(false, 88, "Public save file created!");
+					printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Public save file created!");
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -1054,7 +1054,7 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmallCentered(false, 20, "If this takes a while, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
-					printLargeCentered(false, 88, "Creating private save file...");
+					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating private save file...");
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1088,7 +1088,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLargeCentered(false, 88, "Private save file created!");
+					printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Private save file created!");
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -1105,8 +1105,8 @@ int main(int argc, char **argv) {
 					clearText();
 					printSmallCentered(false, 20, "If this takes a while, close and open");
 					printSmallCentered(false, 34, "the console's lid.");
-					printLargeCentered(false, 88, "Now copying data...");
-					printSmallCentered(false, 104, "Do not turn off the power.");
+					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Now copying data...");
+					printSmallCentered(false, (ms().theme == 4 ? 96 : 104), "Do not turn off the power.");
 					if (ms().theme != 4) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1258,10 +1258,12 @@ int main(int argc, char **argv) {
 							// Create temporary file for nds-bootstrap
 							printLarge(false, 4, 4, "Creating \"BTSTRP.TMP\"...");
 
-							fadeSpeed = true; // Fast fading
-							fadeType = true; // Fade in from white
-							for (int i = 0; i < 35; i++) {
-								swiWaitForVBlank();
+							if (ms().theme != 4) {
+								fadeSpeed = true; // Fast fading
+								fadeType = true; // Fade in from white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							showProgressIcon = true;
 
@@ -1277,9 +1279,11 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 30; i++) {
 								swiWaitForVBlank();
 							}
-							fadeType = false;	   // Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
+							if (ms().theme != 4) {
+								fadeType = false;	   // Fade to white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							clearText();
 						}
@@ -1301,12 +1305,14 @@ int main(int argc, char **argv) {
 						{ // Create save if game isn't homebrew
 							printSmallCentered(false, 20, "If this takes a while, close and open");
 							printSmallCentered(false, 34, "the console's lid.");
-							printLargeCentered(false, 88, "Creating save file...");
+							printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating save file...");
 
-							fadeSpeed = true; // Fast fading
-							fadeType = true; // Fade in from white
-							for (int i = 0; i < 35; i++) {
-								swiWaitForVBlank();
+							if (ms().theme != 4) {
+								fadeSpeed = true; // Fast fading
+								fadeType = true; // Fade in from white
+								for (int i = 0; i < 35; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							showProgressIcon = true;
 
@@ -1350,13 +1356,15 @@ int main(int argc, char **argv) {
 							}
 							showProgressIcon = false;
 							clearText();
-							printLargeCentered(false, 88, "Save file created!");
+							printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Save file created!");
 							for (int i = 0; i < 30; i++) {
 								swiWaitForVBlank();
 							}
-							fadeType = false;	   // Fade to white
-							for (int i = 0; i < 25; i++) {
-								swiWaitForVBlank();
+							if (ms().theme != 4) {
+								fadeType = false;	   // Fade to white
+								for (int i = 0; i < 25; i++) {
+									swiWaitForVBlank();
+								}
 							}
 							clearText();
 						}
