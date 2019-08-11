@@ -561,6 +561,8 @@ void bootWidescreen(const char *filename)
 		fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin");
 
 		// Prepare for reboot into 16:10 TWL_FIRM
+		mkdir("sd:/luma", 0777);
+		mkdir("sd:/luma/sysmodules", 0777);
 		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
