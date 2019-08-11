@@ -185,6 +185,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
+		"CPU",	// Pokemon Platinum
 		"B3R",	// Pokemon Ranger: Guardian Signs
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
