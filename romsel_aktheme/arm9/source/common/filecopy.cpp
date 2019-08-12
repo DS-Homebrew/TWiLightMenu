@@ -13,17 +13,15 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		fseek(sourceFile, 0, SEEK_SET);
 	} else {
 		fclose(sourceFile);
-		return -1;
+		return 1;
 	}
 
     FILE* destinationFile = fopen(destinationPath, "wb");
-	//if (destinationFile) {
-		fseek(destinationFile, 0, SEEK_SET);
-	/*} else {
+	if (!destinationFile) {
 		fclose(sourceFile);
 		fclose(destinationFile);
-		return -1;
-	}*/
+		return 1;
+	}
 
 	off_t offset = 0;
 	int numr;
@@ -39,17 +37,17 @@ int fcopy(const char *sourcePath, const char *destinationPath)
 		} */
 
 		// Copy file to destination path
-		numr = fread(copyBuf, 2, 0x8000, sourceFile);
-		fwrite(copyBuf, 2, numr, destinationFile);
+		numr = fread(copyBuf, 1, 0x8000, sourceFile);
+		fwrite(copyBuf, 1, numr, destinationFile);
 		offset += 0x8000;
 
 		if (offset > fsize) {
 			fclose(sourceFile);
 			fclose(destinationFile);
-			return 1;
+			return 0;
 			break;
 		}
 	}
 
-	return -1;
+	return 1;
 }

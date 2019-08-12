@@ -556,20 +556,31 @@ void bootWidescreen(const char *filename)
 	}
 
 	if (wideCheatFound) {
+		//const char* resultText;
 		mkdir("/_nds", 0777);
 		mkdir("/_nds/nds-bootstrap", 0777);
-		fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin");
-
-		// Prepare for reboot into 16:10 TWL_FIRM
-		mkdir("sd:/luma", 0777);
-		mkdir("sd:/luma/sysmodules", 0777);
-		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-
-		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-		memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-		swiWaitForVBlank();
+		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
+			// Prepare for reboot into 16:10 TWL_FIRM
+			mkdir("sd:/luma", 0777);
+			mkdir("sd:/luma/sysmodules", 0777);
+			if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
+			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
+				//resultText = "Failed to backup custom TwlBg.";
+			} else {
+				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+					swiWaitForVBlank();
+				} else {
+					//resultText = "Failed to reboot TwlBg in widescreen.";
+				}
+			}
+			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		} else {
+			//resultText = "Failed to copy widescreen code for the game.";
+		}
+		//messageBox(this, LANG("game launch", "Widescreen Error"), resultText, MB_OK);	// Does not work
 	}
 }
 

@@ -749,20 +749,48 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (wideCheatFound) {
+		const char* resultText1;
+		const char* resultText2;
 		mkdir("/_nds", 0777);
 		mkdir("/_nds/nds-bootstrap", 0777);
-		fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin");
-
-		// Prepare for reboot into 16:10 TWL_FIRM
-		mkdir("sd:/luma", 0777);
-		mkdir("sd:/luma/sysmodules", 0777);
-		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-
-		irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-		tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-		stop();
+		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
+			// Prepare for reboot into 16:10 TWL_FIRM
+			mkdir("sd:/luma", 0777);
+			mkdir("sd:/luma/sysmodules", 0777);
+			if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
+			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
+				resultText1 = "Failed to backup custom";
+				resultText2 = "TwlBg.";
+			} else {
+				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+					stop();
+				} else {
+					resultText1 = "Failed to reboot TwlBg";
+					resultText2 = "in widescreen.";
+				}
+			}
+			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		} else {
+			resultText1 = "Failed to copy widescreen";
+			resultText2 = "code for the game.";
+		}
+		int textXpos[2] = {0};
+		textXpos[0] = 72;
+		textXpos[1] = 84;
+		clearText();
+		printSmallCentered(false, textXpos[0], resultText1);
+		printSmallCentered(false, textXpos[1], resultText2);
+		fadeType = true; // Fade in from white
+		for (int i = 0; i < 60 * 3; i++) {
+			swiWaitForVBlank(); // Wait 3 seconds
+		}
+		fadeType = false;	   // Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
 	}
 }
 
