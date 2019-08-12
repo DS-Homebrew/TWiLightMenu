@@ -580,6 +580,7 @@ void bootWidescreen(const char *filename)
 		} else {
 			//resultText = "Failed to copy widescreen code for the game.";
 		}
+		remove("/_nds/nds-bootstrap/wideCheatData.bin");
 		//messageBox(this, LANG("game launch", "Widescreen Error"), resultText, MB_OK);	// Does not work
 	}
 }

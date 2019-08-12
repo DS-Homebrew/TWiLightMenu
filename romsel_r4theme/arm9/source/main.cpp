@@ -801,6 +801,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			resultText1 = "Failed to copy widescreen";
 			resultText2 = "code for the game.";
 		}
+		remove("/_nds/nds-bootstrap/wideCheatData.bin");
 		int textXpos[2] = {0};
 		textXpos[0] = 72;
 		textXpos[1] = 84;
