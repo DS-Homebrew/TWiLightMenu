@@ -55,6 +55,7 @@ Tell us which theme you are using:
 
 - [ ]  DSi Menu
 - [ ]  3DS HOME Menu
+- [ ]  SEGA Saturn
 - [ ]  R4
 - [ ]  Acekard/akMenu
 
