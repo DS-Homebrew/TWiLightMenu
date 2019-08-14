@@ -21,7 +21,7 @@ public:
         _exitCallback(nullptr)
   {
 
-  snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 9, 0, 4);
+  snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 9, 1, 0);
 	// Read nds-bootstrap version
 	FILE* bsVerFile;
 	for (int i = 0; i < 2; i++) {
