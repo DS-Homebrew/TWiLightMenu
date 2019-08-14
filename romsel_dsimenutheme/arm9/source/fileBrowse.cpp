@@ -875,7 +875,6 @@ void smsWarning(void) {
 	} while (!(pressed & KEY_A));
 	showdialogbox = false;
 	if (ms().theme == 4) {
-		snd().playLaunch();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
 			swiWaitForVBlank();
@@ -885,6 +884,7 @@ void smsWarning(void) {
 		displayGameIcons = true;
 		fadeType = true;
 		snd().playStartup();
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
 	} else {
 		clearText();
 		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
