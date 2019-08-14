@@ -30,6 +30,10 @@ jobs:
       displayName: 'Installing devkitPro and 7zip'
 
     - script: |
+        rm -r 7zfile/_nds/TWiLightMenu/*menu
+      displayName: "Cleaning themes from build directory"
+
+    - script: |
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
         # export TWLNOPATCHSRLHEADER=1
@@ -63,11 +67,11 @@ jobs:
       displayName: 'Pack 7z Package for nightly'
 
     - script: |
-        mkdir 7zfile/_nds/TWiLightMenu/boxart/
-        mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
+        mkdir 7zfile/TWiLightMenu/boxart/
+        mkdir 7zfile/TWiLightMenu/gamesettings/
 
-        mv 7zfile/BOOT.NDS 7zfile/DSi\&3DS\ -\ SD\ card\ users/
-        mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard\ users/BOOT.NDS
+        mv 7zfile/BOOT.NDS 7zfile/DSi&3DS - SD card users/BOOT.NDS
+        mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard users/BOOT.NDS
         
         # nds-bootstrap
         mkdir nds-bootstrap
