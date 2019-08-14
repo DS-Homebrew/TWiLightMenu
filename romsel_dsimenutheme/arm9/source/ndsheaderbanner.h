@@ -224,14 +224,6 @@ typedef enum {
 } sNDSLanguage;
 
 /**
- * Get the title ID.
- * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.)
- * @return 0 on success; non-zero on error.
- */
-int grabTID(FILE* ndsFile, char *buf);
-
-/**
  * Get SDK version from an NDS file.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
@@ -245,7 +237,10 @@ u32 getSDKVersion(FILE* ndsFile);
  * @param filename NDS ROM filename.
  * @return true on success; false if no AP.
  */
-bool checkRomAP(FILE *ndsFile);
+bool checkRomAP(FILE *ndsFile, int num);
+
+extern char gameTid[40][5];
+extern u16 headerCRC[40];
 
 extern char bnriconTile[41][0x23C0];
 

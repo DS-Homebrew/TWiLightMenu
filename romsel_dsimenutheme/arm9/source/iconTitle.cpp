@@ -396,6 +396,11 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			return;
 		}
 
+		if (num < 40) {
+			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+			headerCRC[num] = ndsHeader.headerCRC16;
+		}
+
 		fseek(fp, (ndsHeader.arm9romOffset == 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if (arm9StartSig[0] == 0xE3A00301

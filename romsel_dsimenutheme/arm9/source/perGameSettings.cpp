@@ -217,14 +217,9 @@ void perGameSettings (std::string filename) {
 
 	FILE *f_nds_file = fopen(filenameForInfo.c_str(), "rb");
 
-	char game_TID[5];
-	grabTID(f_nds_file, game_TID);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
+	if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	} else if(isHomebrew[CURPOS] == 0) {
@@ -234,23 +229,19 @@ void perGameSettings (std::string filename) {
 			perGameSettings_cursorPosition = 2;
 		}
 	}
+	fclose(f_nds_file);
 	
 	bool showPerGameSettings =
 		(!isDSiWare[CURPOS]
 		&& isHomebrew[CURPOS] != 2
-		&& strcmp(game_TID, "HND") != 0
-		&& strcmp(game_TID, "HNE") != 0
+		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
+		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0
 		&& REG_SCFG_EXT != 0);
 	if (!ms().useBootstrap && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}
 
-	char gameTIDDisplay[5];
-	grabTID(f_nds_file, gameTIDDisplay);
-	gameTIDDisplay[4] = 0;
-	fclose(f_nds_file);
-	
-	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTIDDisplay);
+	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTid[CURPOS]);
 
 	char saveNoDisplay[16];
 

@@ -1158,43 +1158,10 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
 						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
 					if ((access(boxArtPath[i], F_OK) != 0) && (bnrRomType[i] == 0)) {
-						if ((std_romsel_filename.substr(std_romsel_filename.find_last_of(".") +
-										1) == "argv") ||
-						    (std_romsel_filename.substr(std_romsel_filename.find_last_of(".") +
-										1) == "ARGV")) {
-							vector<char *> argarray;
-
-							FILE *argfile = fopen(std_romsel_filename.c_str(), "rb");
-							char str[PATH_MAX], *pstr;
-							const char seps[] = "\n\r\t ";
-
-							while (fgets(str, PATH_MAX, argfile)) {
-								// Find comment and end string there
-								if ((pstr = strchr(str, '#')))
-									*pstr = '\0';
-
-								// Tokenize arguments
-								pstr = strtok(str, seps);
-
-								while (pstr != NULL) {
-									argarray.push_back(strdup(pstr));
-									pstr = strtok(NULL, seps);
-								}
-							}
-							fclose(argfile);
-							std_romsel_filename = argarray.at(0);
-						}
-						// Get game's TID
-						FILE *f_nds_file = fopen(std_romsel_filename.c_str(), "rb");
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						fclose(f_nds_file);
-
 						snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
 							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 								    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 game_TID);
+							 gameTid[i]);
 					}
 				}
 			}
@@ -2252,7 +2219,7 @@ string browseForFile(const vector<string> extensionList) {
 					    checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						FILE *f_nds_file = fopen(
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-						hasAP = checkRomAP(f_nds_file);
+						hasAP = checkRomAP(f_nds_file, CURPOS);
 						fclose(f_nds_file);
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						smsWarning();

@@ -161,20 +161,6 @@ void stop(void) {
  * Set donor SDK version for a specific game.
  */
 void SetDonorSDK(const char *filename) {
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	char game_TID_letter1[5];
-	grabTID(f_nds_file, game_TID);
-	grabTID(f_nds_file, game_TID_letter1);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	game_TID_letter1[4] = 0;
-	game_TID_letter1[3] = 0;
-	game_TID_letter1[2] = 0;
-	game_TID_letter1[1] = 0;
-	fclose(f_nds_file);
-
 	donorSdkVer = 0;
 
 	// Check for ROM hacks that need an SDK version.
@@ -227,7 +213,7 @@ void SetDonorSDK(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk2_list) / sizeof(sdk2_list[0]); i++) {
-		if (!memcmp(game_TID, sdk2_list[i], 3)) {
+		if (memcmp(gameTid[CURPOS], sdk2_list[i], 3) == 0) {
 			// Found a match.
 			donorSdkVer = 2;
 			break;
@@ -236,7 +222,7 @@ void SetDonorSDK(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk3_list) / sizeof(sdk3_list[0]); i++) {
-		if (!memcmp(game_TID, sdk3_list[i], 3)) {
+		if (memcmp(gameTid[CURPOS], sdk3_list[i], 3) == 0) {
 			// Found a match.
 			donorSdkVer = 3;
 			break;
@@ -245,19 +231,19 @@ void SetDonorSDK(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sdk4_list) / sizeof(sdk4_list[0]); i++) {
-		if (!memcmp(game_TID, sdk4_list[i], 3)) {
+		if (memcmp(gameTid[CURPOS], sdk4_list[i], 3) == 0) {
 			// Found a match.
 			donorSdkVer = 4;
 			break;
 		}
 	}
 
-	if (strcmp(game_TID_letter1, "V") == 0) {
+	if (strncmp(gameTid[CURPOS], "V", 1) == 0) {
 		donorSdkVer = 5;
 	} else {
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(sdk5_list) / sizeof(sdk5_list[0]); i++) {
-			if (!memcmp(game_TID, sdk5_list[i], 3)) {
+			if (memcmp(gameTid[CURPOS], sdk5_list[i], 3) == 0) {
 				// Found a match.
 				donorSdkVer = 5;
 				break;
@@ -275,15 +261,6 @@ void SetGameSoftReset(const char *filename) {
 		gameSoftReset = true;
 		return;
 	}
-
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5] = {0};
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	fclose(f_nds_file);
 
 	gameSoftReset = false;
 
@@ -303,7 +280,7 @@ void SetGameSoftReset(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		if (memcmp(game_TID, list[i], 3) == 0) {
+		if (memcmp(gameTid[CURPOS], list[i], 3) == 0) {
 			// Found a match.
 			gameSoftReset = true;
 			break;
@@ -315,15 +292,6 @@ void SetGameSoftReset(const char *filename) {
  * Set MPU settings for a specific game.
  */
 void SetMPUSettings(const char *filename) {
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	fclose(f_nds_file);
-
 	scanKeys();
 	int pressed = keysHeld();
 
@@ -374,7 +342,7 @@ void SetMPUSettings(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(mpu_3MB_list) / sizeof(mpu_3MB_list[0]); i++) {
-		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
+		if (memcmp(gameTid[CURPOS], mpu_3MB_list[i], 3) == 0) {
 			// Found a match.
 			mpuregion = 1;
 			mpusize = 3145728;
@@ -395,13 +363,6 @@ void SetSpeedBumpExclude(const char *filename) {
 
 	ceCached = true;
 
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5];
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	fclose(f_nds_file);
-
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
@@ -411,7 +372,7 @@ void SetSpeedBumpExclude(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
-		if (memcmp(game_TID, list[i], 4) == 0) {
+		if (memcmp(gameTid[CURPOS], list[i], 4) == 0) {
 			// Found a match.
 			ceCached = false;
 			break;
@@ -472,7 +433,7 @@ void SetSpeedBumpExclude(const char *filename) {
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
-		if (memcmp(game_TID, list2[i], 3) == 0) {
+		if (memcmp(gameTid[CURPOS], list2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
 			break;
@@ -510,25 +471,14 @@ TWL_CODE void SetWidescreen(const char *filename) {
 
 		cardReadHeader((uint8*)&nds);
 
-		char game_TID[5];
-		tonccpy(game_TID, nds.gameCode, 4);
-		game_TID[4] = 0;
+		char s1GameTid[5];
+		tonccpy(s1GameTid, nds.gameCode, 4);
+		s1GameTid[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, nds.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", s1GameTid, nds.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
-		FILE *f_nds_file = fopen(filename, "rb");
-
-		char game_TID[5];
-		u16 headerCRC16 = 0;
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-		fclose(f_nds_file);
-		game_TID[4] = 0;
-
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
@@ -1254,17 +1204,7 @@ int main(int argc, char **argv) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
-				char game_TID[5];
-
-				FILE *f_nds_file = fopen(argarray[0], "rb");
-
-				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-				fread(game_TID, 1, 4, f_nds_file);
-				game_TID[4] = 0;
-				game_TID[3] = 0;
-				fclose(f_nds_file);
-
-				if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
+				if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
@@ -1360,31 +1300,31 @@ int main(int argc, char **argv) {
 							int savesize = 524288; // 512KB (default size for most games)
 
 							// Set save size to 8KB for the following games
-							if (memcmp(game_TID, "ASC", 3) == 0) // Sonic Rush
+							if (memcmp(gameTid[CURPOS], "ASC", 3) == 0) // Sonic Rush
 							{
 								savesize = 8192;
 							}
 
 							// Set save size to 256KB for the following games
-							if (memcmp(game_TID, "AMH", 3) == 0) // Metroid Prime Hunters
+							if (memcmp(gameTid[CURPOS], "AMH", 3) == 0) // Metroid Prime Hunters
 							{
 								savesize = 262144;
 							}
 
 							// Set save size to 1MB for the following games
-							if (memcmp(game_TID, "AZL", 3) ==
+							if (memcmp(gameTid[CURPOS], "AZL", 3) ==
 								0 // Wagamama Fashion: Girls Mode/Style Savvy/Nintendo
 								  // presents: Style Boutique/Namanui Collection: Girls
 								  // Style
-							    || memcmp(game_TID, "BKI", 3) ==
+							    || memcmp(gameTid[CURPOS], "BKI", 3) ==
 								   0) // The Legend of Zelda: Spirit Tracks
 							{
 								savesize = 1048576;
 							}
 
 							// Set save size to 32MB for the following games
-							if (memcmp(game_TID, "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
-							 || memcmp(game_TID, "UXB", 3) == 0)	// Jam with the Band
+							if (memcmp(gameTid[CURPOS], "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
+							 || memcmp(gameTid[CURPOS], "UXB", 3) == 0)	// Jam with the Band
 							{
 								savesize = 1048576 * 32;
 							}

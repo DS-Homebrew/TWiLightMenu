@@ -9,26 +9,13 @@
 
 extern sNDSBannerExt ndsBanner;
 
-// Needed to test if homebrew
-char tidBuf[4];
+char gameTid[40][5] = {0};
+u16 headerCRC[40] = {0};
 
 typedef enum
 {
 	GL_FLIP_BOTH = (1 << 3)
 } GL_FLIP_MODE_XTRA;
-
-/**
- * Get the title ID.
- * @param ndsFile DS ROM image.
- * @param buf Output buffer for title ID. (Must be at least 4 characters.)
- * @return 0 on success; non-zero on error.
- */
-int grabTID(FILE *ndsFile, char *buf)
-{
-	fseek(ndsFile, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	size_t read = fread(buf, 1, 4, ndsFile);
-	return !(read == 4);
-}
 
 /**
  * Get SDK version from an NDS file.
@@ -41,7 +28,7 @@ u32 getSDKVersion(FILE *ndsFile)
 	sNDSHeaderExt NDSHeader;
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
-	if (NDSHeader.arm7destination >= 0x037F8000 || grabTID(ndsFile, tidBuf) != 0)
+	if (NDSHeader.arm7destination >= 0x037F8000)
 		return 0;
 	return getModuleParams(&NDSHeader, ndsFile)->sdk_version;
 }
@@ -52,29 +39,25 @@ u32 getSDKVersion(FILE *ndsFile)
  * @param filename NDS ROM filename.
  * @return true on success; false if no AP.
  */
-bool checkRomAP(FILE *ndsFile)
+bool checkRomAP(FILE *ndsFile, int num)
 {
-	char game_TID[5];
-	grabTID(ndsFile, game_TID);
-	game_TID[4] = 0;
-
 	// Check for SDK4-5 ROMs that don't have AP measures.
-	if ((memcmp(game_TID, "AZLJ", 4) == 0)  // Girls Mode (JAP version of Style Savvy)
-	 || (memcmp(game_TID, "YEEJ", 4) == 0)  // Inazuma Eleven (J)
-	 || (memcmp(game_TID, "VSO",  3) == 0)  // Sonic Classic Collection
-	 || (memcmp(game_TID, "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
-	 || (memcmp(game_TID, "BWB",  3) == 0)  // Plants vs Zombies
-	 || (memcmp(game_TID, "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
-	 || (memcmp(game_TID, "TFB",  3) == 0)  // Frozen: Olaf's Quest
-	 || (memcmp(game_TID, "B88",  3) == 0)) // DS WiFi Settings
+	if ((memcmp(gameTid[num], "AZLJ", 4) == 0)  // Girls Mode (JAP version of Style Savvy)
+	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)  // Inazuma Eleven (J)
+	 || (memcmp(gameTid[num], "VSO",  3) == 0)  // Sonic Classic Collection
+	 || (memcmp(gameTid[num], "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
+	 || (memcmp(gameTid[num], "BWB",  3) == 0)  // Plants vs Zombies
+	 || (memcmp(gameTid[num], "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
+	 || (memcmp(gameTid[num], "TFB",  3) == 0)  // Frozen: Olaf's Quest
+	 || (memcmp(gameTid[num], "B88",  3) == 0)) // DS WiFi Settings
 	{
 		return false;
 	}
 	else
 	// Check for ROMs that have AP measures.
-	if ((memcmp(game_TID, "B", 1) == 0)
-	 || (memcmp(game_TID, "T", 1) == 0)
-	 || (memcmp(game_TID, "V", 1) == 0)) {
+	if ((memcmp(gameTid[num], "B", 1) == 0)
+	 || (memcmp(gameTid[num], "T", 1) == 0)
+	 || (memcmp(gameTid[num], "V", 1) == 0)) {
 		return true;
 	} else {
 		static const char ap_list[][4] = {
@@ -111,7 +94,7 @@ bool checkRomAP(FILE *ndsFile)
 
 		// TODO: If the list gets large enough, switch to bsearch().
 		for (unsigned int i = 0; i < sizeof(ap_list)/sizeof(ap_list[0]); i++) {
-			if (memcmp(game_TID, ap_list[i], 3) == 0) {
+			if (memcmp(gameTid[num], ap_list[i], 3) == 0) {
 				// Found a match.
 				return true;
 				break;
