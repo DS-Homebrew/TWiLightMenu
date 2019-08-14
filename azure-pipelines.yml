@@ -27,7 +27,7 @@ jobs:
       displayName: 'Installing devkitPro and 7zip'
 
     - script: |
-        rm -r 7zfile/_nds/TWiLightMenu/*
+        rm -r 7zfile/_nds/TWiLightMenu/*menu
       displayName: "Cleaning themes from build directory"
 
     - script: |
