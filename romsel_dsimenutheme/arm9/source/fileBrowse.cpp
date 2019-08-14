@@ -120,7 +120,7 @@ extern bool showRshoulder;
 
 extern bool showProgressIcon;
 
-char boxArtPath[40][256];
+char boxArtPath[256];
 
 bool boxArtLoaded = false;
 bool shouldersRendered = false;
@@ -539,11 +539,28 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 				}
 			} else {
 				if (ms().theme == 1 && rocketVideo_playVideo) {
+					// Clear top screen cubes or box art
 					clearBoxArt();		
 					rocketVideo_playVideo = false;
 				}
-			      // Clear top screen cubes or box art
-				tex().drawBoxArt(boxArtPath[CURPOS]); // Load box art
+				if (bnrRomType[CURPOS] == 0) {
+					snprintf(boxArtPath, sizeof(boxArtPath),
+						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+						 gameTid[CURPOS]);
+					if (access(boxArtPath, F_OK) != 0) {
+						snprintf(boxArtPath, sizeof(boxArtPath),
+							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+							 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+					}
+				} else {
+					snprintf(boxArtPath, sizeof(boxArtPath),
+						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+						 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+				}
+				tex().drawBoxArt(boxArtPath); // Load box art
 			}
 			boxArtLoaded = true;
 		}
@@ -1149,20 +1166,6 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
-				}
-
-				if (ms().showBoxArt) {
-					// Store box art path
-					snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
-					if ((access(boxArtPath[i], F_OK) != 0) && (bnrRomType[i] == 0)) {
-						snprintf(boxArtPath[i], sizeof(boxArtPath[i]),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 gameTid[i]);
-					}
 				}
 			}
 			if (reSpawnBoxes)

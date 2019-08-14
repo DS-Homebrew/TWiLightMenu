@@ -101,6 +101,7 @@ extern bool usernameRenderedDone;
 
 char fileCounter[8];
 char gameTIDText[16];
+char saveNoDisplay[16];
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
@@ -242,8 +243,6 @@ void perGameSettings (std::string filename) {
 	}
 
 	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTid[CURPOS]);
-
-	char saveNoDisplay[16];
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
