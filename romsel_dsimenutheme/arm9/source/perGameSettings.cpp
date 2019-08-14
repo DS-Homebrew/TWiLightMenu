@@ -639,9 +639,7 @@ void perGameSettings (std::string filename) {
 		snd().playStartup();
 	} else {
 		clearText();
-		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	dbox_showIcon = false;
 }
 
 std::string getSavExtension(void) {

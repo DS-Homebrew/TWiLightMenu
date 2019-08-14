@@ -92,6 +92,7 @@ extern bool applaunchprep;
 extern touchPosition touch;
 
 extern bool showdialogbox;
+extern bool dboxInFrame;
 extern bool dbox_showIcon;
 extern bool dbox_selectMenu;
 
@@ -135,6 +136,8 @@ int waitForNeedToPlayStopSound = 0;
 bool bannerTextShown = false;
 
 extern std::string ReplaceAll(std::string str, const std::string &from, const std::string &to);
+
+extern void stop();
 
 extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings);
 extern void dsCardLaunch();
@@ -587,7 +590,11 @@ void launchSettings(void) {
 		chdir("sd:/");
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
-	iprintf("Start failed. Error %i\n", err);
+	char text[32];
+	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	fadeType = true;
+	printLarge(false, 4, 4, text);
+	stop();
 }
 
 void launchManual(void) {
@@ -611,7 +618,11 @@ void launchManual(void) {
 		chdir("sd:/");
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);
-	iprintf("Start failed. Error %i\n", err);
+	char text[32];
+	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	fadeType = true;
+	printLarge(false, 4, 4, text);
+	stop();
 }
 
 void exitToSystemMenu(void) {
@@ -714,7 +725,11 @@ void switchDevice(void) {
 				chdir("sd:/");
 			}
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
-			iprintf("Start failed. Error %i\n", err);
+			char text[32];
+			snprintf(text, sizeof(text), "Start failed. Error %i", err);
+			fadeType = true;
+			printLarge(false, 4, 4, text);
+			stop();
 		}
 	}
 }
@@ -723,7 +738,6 @@ void launchGba(void) {
 	if (!gbaBiosFound[ms().secondaryDevice] && ms().useGbarunner) {
 		snd().playWrong();
 		clearText();
-		dbox_showIcon = false;
 		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
@@ -751,6 +765,7 @@ void launchGba(void) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		} while (!(pressed & KEY_A));
+		snd().playBack();
 		clearText();
 		if (!inSelectMenu) {
 			showdialogbox = false;
@@ -807,7 +822,14 @@ void launchGba(void) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
-			iprintf("Start failed. Error %i\n", err);
+			char text[32];
+			snprintf(text, sizeof(text), "Start failed. Error %i", err);
+			fadeType = true;
+			printLarge(false, 4, 4, text);
+			if (err == 1) {
+				printLarge(false, 4, 20, "nds-bootstrap not found.");
+			}
+			stop();
 		}
 	} else {
 		gbaSwitch();
@@ -815,12 +837,23 @@ void launchGba(void) {
 }
 
 void smsWarning(void) {
+	if (ms().theme == 4) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		showdialogbox = true;
+	}
 	clearText();
-	dbox_showIcon = false;
-	showdialogbox = true;
-	for (int i = 0; i < 30; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "When the game starts, please");
 	printSmallCentered(false, 78, "touch the screen to go into");
@@ -840,24 +873,47 @@ void smsWarning(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
-	clearText();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		snd().playLaunch();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+	} else {
+		clearText();
+		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 }
 
 void mdRomTooBig(void) {
 	// int bottomBright = 0;
 
-	snd().playWrong();
+	if (ms().theme == 4) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		snd().playWrong();
+		dbox_showIcon = true;
+		showdialogbox = true;
+	}
 	clearText();
-	dbox_showIcon = false;
-	showdialogbox = true;
-	for (int i = 0; i < 30; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		snd().playWrong();
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "This Mega Drive or Genesis");
 	printSmallCentered(false, 78, "ROM cannot be launched,");
@@ -942,11 +998,20 @@ void mdRomTooBig(void) {
 				break;
 		}*/
 	} while (!(pressed & KEY_A));
-	clearText();
+	snd().playBack();
 	showdialogbox = false;
-	for (int i = 0; i < 15; i++) {
-		snd().updateStream();
-		swiWaitForVBlank();
+	if (ms().theme == 4) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+	} else {
+		clearText();
 	}
 }
 
@@ -1113,9 +1178,7 @@ bool selectMenu(void) {
 	} else {
 		clearText();
 		inSelectMenu = false;
-		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	dbox_selectMenu = false;
 	return false;
 }
 
@@ -1319,6 +1382,14 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				} else {
 					updateBoxArt(dirContents, scrn);
+					if (ms().theme < 4) {
+						while (dboxInFrame) {
+							snd().updateStream();
+							swiWaitForVBlank();
+						}
+					}
+					dbox_showIcon = false;
+					dbox_selectMenu = false;
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
@@ -2208,11 +2279,6 @@ string browseForFile(const vector<string> extensionList) {
 						snd().playLaunch();
 					} else {
 						showdialogbox = false;
-						for (int i = 0; i < 15; i++){
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-						dbox_showIcon = false;
 					}
 				} else {
 					bool hasAP = false;

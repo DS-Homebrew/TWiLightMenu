@@ -141,6 +141,7 @@ int startBorderZoomAnimDelay = 0;
 // bool launchDotDoFrameChange = false;
 
 bool showdialogbox = false;
+bool dboxInFrame = false;
 bool dbox_showIcon = false;
 bool dbox_selectMenu = false;
 float dbox_movespeed = 22;
@@ -458,6 +459,7 @@ void vBlankHandler() {
 
 		if (showdialogbox) {
 			// Dialogbox moving into view...
+			dboxInFrame = true;
 			if (dbox_movespeed <= 1) {
 				if (dbox_Ypos >= 0) {
 					// dbox stopped
@@ -491,6 +493,7 @@ void vBlankHandler() {
 		} else {
 			// Dialogbox moving down...
 			if (dbox_Ypos <= -192 || dbox_Ypos >= 192) {
+				dboxInFrame = false;
 				dbox_movespeed = 22;
 				dbox_Ypos = -192;
 				bottomScreenBrightness = 255;

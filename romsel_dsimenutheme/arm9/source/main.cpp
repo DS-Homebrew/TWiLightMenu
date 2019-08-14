@@ -1442,7 +1442,7 @@ int main(int argc, char **argv) {
 						char text[32];
 						snprintf(text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
-						ClearBrightness();
+						fadeType = true;
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
 							printLarge(false, 4, 20, "nds-bootstrap not found.");
@@ -1474,7 +1474,7 @@ int main(int argc, char **argv) {
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
 					snprintf(text, sizeof(text), "Start failed. Error %i", err);
-					ClearBrightness();
+					fadeType = true;
 					printLarge(false, 4, 4, text);
 					stop();
 				}
@@ -1572,7 +1572,7 @@ int main(int argc, char **argv) {
 
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
-				ClearBrightness();
+				fadeType = true;
 				printLarge(false, 4, 4, text);
 				stop();
 			} else if (SNES || GENESIS) {
@@ -1625,8 +1625,11 @@ int main(int argc, char **argv) {
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, ms().secondaryDevice, true, true);
 				char text[32];
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
-				ClearBrightness();
+				fadeType = true;
 				printLarge(false, 4, 4, text);
+				if (err == 1) {
+					printLarge(false, 4, 20, "nds-bootstrap not found.");
+				}
 				stop();
 			}
 
