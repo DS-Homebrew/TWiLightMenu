@@ -1,3 +1,9 @@
+trigger:
+  branches:
+    include: ['*']
+  tags:
+    include: ['*']
+
 name:  $[format('{0:yyyyMMdd\-HHmmss}', pipeline.startTime)]
 
 variables:
@@ -13,16 +19,12 @@ jobs:
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
         sudo apt update
         # Install haveged to ensure enough entropy
-        sudo apt install p7zip-full haveged
+        sudo apt install p7zip-full jq haveged
         sudo dpkg -i pacman.deb
 
         sudo dkp-pacman -Sy
         sudo dkp-pacman -S nds-dev --noconfirm
       displayName: 'Installing devkitPro and 7zip'
-
-    - script: |
-        rm -r 7zfile/_nds/TWiLightMenu/*
-      displayName: "Cleaning themes from build directory"
 
     - script: |
         export DEVKITPRO="/opt/devkitpro"
@@ -50,10 +52,42 @@ jobs:
       displayName: 'Make booter and TWiLightMenu CIAs'
 
     - script: |
+        rm -r 7zfile/_nds/TWiLightMenu/*menu/
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
-      displayName: 'Pack 7z Package'
+      condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
+      displayName: 'Pack 7z Package for nightly'
+
+    - script: |
+        mkdir 7zfile/_nds/TWiLightMenu/boxart/
+        mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
+
+        mv 7zfile/BOOT.NDS 7zfile/DSi\&3DS\ -\ SD\ card\ users/
+        mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard\ users/BOOT.NDS
+        
+        # nds-bootstrap
+        mkdir nds-bootstrap
+        cd nds-bootstrap
+        curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
+        curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
+        7z x nds-bootstrap.7z
+        mv nds-bootstrap.* ..
+        mkdir TWiLightMenu
+        mv release-bootstrap.ver TWiLightMenu
+        cd ..
+        curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
+        7z x nds-bootstrap.7z
+        mv nds-bootstrap/* 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
+
+        # version.txt
+        echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
+
+        mv 7zfile/ TWiLightMenu/
+        7z a TWiLightMenu.7z TWiLightMenu/
+        cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
+      condition: startsWith(variables['Build.SourceBranchName'], 'v')
+      displayName: 'Pack 7z Package for release'
 
     - task: PublishBuildArtifacts@1
       displayName: "Publish build to Azure"
@@ -74,9 +108,6 @@ jobs:
           docker build -t twilightmenu --label twilightmenu ./docker
           docker ps -a
         displayName: "Build Docker image"
-      - script: |
-          rm -r 7zfile/_nds/TWiLightMenu/*
-        displayName: "Cleaning themes from build directory"
       - script: |
           docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
         displayName: "Build TWiLightMenu++ with Docker using forked libnds and devkitARM r50"
@@ -161,6 +192,17 @@ jobs:
           assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
           isPreRelease: true
           addChangeLog: false
+
+      - task: GitHubRelease@0
+        displayName: "Release to DS-Homebrew/TWiLightMenu"
+        condition: startsWith(variables['Build.SourceBranchName'], 'v')
+        inputs:
+          gitHubConnection: TWLBot
+          repositoryName: DS-Homebrew/TWiLightMenu
+          action: edit
+          target: '$(Build.SourceVersion)'
+          tag: $(Build.SourceBranchName)
+          assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
 
   - job: send_webhook_success
     dependsOn: publish_build_twlbot
