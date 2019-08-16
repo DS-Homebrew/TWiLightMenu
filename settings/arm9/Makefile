@@ -7,8 +7,8 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 # If on a tagged commit, use the tag instead of the commit
-ifneq ($(shell echo $(shell git describe --contains) | head -c 1),)
-GIT_VER := $(shell git describe --contains)
+ifneq ($(shell echo $(shell git tag -l --points-at HEAD) | head -c 1),)
+GIT_VER := $(shell git tag -l --points-at HEAD)
 else
 GIT_VER := $(shell git rev-parse --short HEAD)
 endif
