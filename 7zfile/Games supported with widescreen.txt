@@ -226,4 +226,4 @@ NOTES:
 * If some regions are combined in one line, that means the ROMs use the same cheat as one region.
 * Only clean unhacked ROMs work with widescreen.
 
-Codes by fintogive, RadDude McCoolguy, KazoWAR, RocketRobz, Vague Rant, and CheatFreak47
+Codes by fintogive, RadDude McCoolguy, KazoWAR, RocketRobz, Vague Rant, CheatFreak47, and deisuke1234
