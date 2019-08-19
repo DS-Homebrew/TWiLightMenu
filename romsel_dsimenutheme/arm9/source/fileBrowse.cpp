@@ -121,6 +121,9 @@ extern bool showRshoulder;
 
 extern bool showProgressIcon;
 
+bool dirInfoIniFound = false;
+bool pageLoaded[100] = {false};
+
 char boxArtPath[256];
 
 bool boxArtLoaded = false;
@@ -243,11 +246,51 @@ bool dirEntryPredicateFileType(const DirEntry &lhs, const DirEntry &rhs) {
 	}
 }
 
+void updateDirectoryContents(vector<DirEntry> &dirContents) {
+	if (!dirInfoIniFound || pageLoaded[PAGENUM]) return;
+
+	char str[12] = {0};
+	CIniFile twlmDirInfo("dirInfo.twlm.ini");
+	int currentPos = PAGENUM*40;
+	for (int i = 0; i < 40; i++) {
+		sprintf(str, "%d", i+(PAGENUM*40));
+		DirEntry dirEntry;
+		std::string filename = twlmDirInfo.GetString("LIST", str, "");
+
+		if (filename != "") {
+			dirEntry.name = filename;
+			dirEntry.isDirectory = false;
+			dirEntry.position = currentPos;
+			dirEntry.customPos = false;
+
+			dirContents.insert(dirContents.begin() + i + (PAGENUM * 40), dirEntry);
+			currentPos++;
+		} else {
+			break;
+		}
+	}
+	pageLoaded[PAGENUM] = true;
+}
+
 void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> extensionList) {
 
 	dirContents.clear();
 
 	file_count = 0;
+
+	if (access("dirInfo.twlm.ini", F_OK) == 0) {
+		dirInfoIniFound = true;
+
+		for (int i = 0; i < (int)sizeof(pageLoaded); i++) {
+			pageLoaded[i] = false;
+		}
+
+		CIniFile twlmDirInfo("dirInfo.twlm.ini");
+		file_count = twlmDirInfo.GetInt("INFO", "GAMES", 0);
+		return;
+	} else {
+		dirInfoIniFound = false;
+	}
 
 	struct stat st;
 	DIR *pdir = opendir(".");
@@ -1304,6 +1347,7 @@ string browseForFile(const vector<string> extensionList) {
 
 	while (1) {
 		snd().updateStream();
+		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		reloadFontPalettes();
