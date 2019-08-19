@@ -124,6 +124,7 @@ extern bool showProgressIcon;
 bool dirInfoIniFound = false;
 bool pageLoaded[100] = {false};
 bool dirContentBlankFilled[100] = {false};
+bool lockOutDirContentBlankFilling = false;
 
 char boxArtPath[256];
 
@@ -250,7 +251,7 @@ bool dirEntryPredicateFileType(const DirEntry &lhs, const DirEntry &rhs) {
 void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	if (!dirInfoIniFound || pageLoaded[PAGENUM]) return;
 
-	if ((PAGENUM > 0) && !dirContentBlankFilled[0]) {
+	if ((PAGENUM > 0) && !lockOutDirContentBlankFilling) {
 		DirEntry dirEntry;
 		dirEntry.name = "";
 		dirEntry.isDirectory = false;
@@ -264,6 +265,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 			dirContentBlankFilled[p] = true;
 		}
 	}
+	lockOutDirContentBlankFilling = true;
 
 	char str[12] = {0};
 	CIniFile twlmDirInfo("dirInfo.twlm.ini");
@@ -302,7 +304,6 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 		for (int i = 0; i < (int)sizeof(pageLoaded); i++) {
 			pageLoaded[i] = false;
-			dirContentBlankFilled[i] = false;
 		}
 
 		CIniFile twlmDirInfo("dirInfo.twlm.ini");
