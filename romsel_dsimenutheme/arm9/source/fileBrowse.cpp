@@ -1545,8 +1545,8 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 				// Move apps
-			} else if ((pressed & KEY_UP) && (ms().theme != 4) && !titleboxXmoveleft && !titleboxXmoveright &&
-				   CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+			} else if ((pressed & KEY_UP) && (ms().theme != 4) && !dirInfoIniFound && (ms().sortMethod == 4)
+				   && !titleboxXmoveleft && !titleboxXmoveright &&CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 				showSTARTborder = false;
 				currentBg = 2;
 				clearText();
