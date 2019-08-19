@@ -1,4 +1,4 @@
-Total: 357
+Total: 358
 
 007 - Blood Stone (USA/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -133,6 +133,7 @@ Need for Speed - ProStreet (Europe)
 Need for Speed - ProStreet (Korea)
 Need for Speed - Nitro (USA/Europe)
 Need for Speed - Nitro (Japan)
+New Super Mario Bros. (Widescreen Hack) (USA)
 Nicktoons Unite! (USA)
 SpongeBob SquarePants and Friends Unite! (Europe)
 Okamiden (USA/Europe)
@@ -248,4 +249,4 @@ NOTES:
 * If some regions are combined in one line, that means the ROMs use the same cheat as one region.
 * Only clean unhacked ROMs work with widescreen.
 
-Codes by fintogive, RadDude McCoolguy, KazoWAR, RocketRobz, Vague Rant, CheatFreak47, and deisuke1234
+Codes by fintogive, RadDude McCoolguy, KazoWAR, RocketRobz, Vague Rant, CheatFreak47, deisuke1234, and gamemasterplc
