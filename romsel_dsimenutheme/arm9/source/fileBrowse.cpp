@@ -123,6 +123,7 @@ extern bool showProgressIcon;
 
 bool dirInfoIniFound = false;
 bool pageLoaded[100] = {false};
+bool dirContentBlankFilled[100] = {false};
 
 char boxArtPath[256];
 
@@ -249,6 +250,21 @@ bool dirEntryPredicateFileType(const DirEntry &lhs, const DirEntry &rhs) {
 void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	if (!dirInfoIniFound || pageLoaded[PAGENUM]) return;
 
+	if ((PAGENUM > 0) && !dirContentBlankFilled[0]) {
+		DirEntry dirEntry;
+		dirEntry.name = "";
+		dirEntry.isDirectory = false;
+		dirEntry.customPos = false;
+
+		for (int p = 0; p < PAGENUM; p++) {
+			for (int i = 0; i < 40; i++) {
+				dirEntry.position = i+(p*40);
+				dirContents.insert(dirContents.begin() + i + (p * 40), dirEntry);
+			}
+			dirContentBlankFilled[p] = true;
+		}
+	}
+
 	char str[12] = {0};
 	CIniFile twlmDirInfo("dirInfo.twlm.ini");
 	int currentPos = PAGENUM*40;
@@ -263,6 +279,9 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 			dirEntry.position = currentPos;
 			dirEntry.customPos = false;
 
+			if (dirContentBlankFilled[PAGENUM]) {
+				dirContents.erase(dirContents.begin() + i + (PAGENUM * 40));
+			}
 			dirContents.insert(dirContents.begin() + i + (PAGENUM * 40), dirEntry);
 			currentPos++;
 		} else {
@@ -283,6 +302,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 		for (int i = 0; i < (int)sizeof(pageLoaded); i++) {
 			pageLoaded[i] = false;
+			dirContentBlankFilled[i] = false;
 		}
 
 		CIniFile twlmDirInfo("dirInfo.twlm.ini");
