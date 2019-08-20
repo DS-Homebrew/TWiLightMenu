@@ -1,6 +1,10 @@
-Total: 21
+Total: 27
 
 FabStyle (Japan)
+Golden Sun: Dark Dawn (USA)
+Grand Theft Auto: Chinatown Wars (Japan)
+The Idolmaster: Dearly Stars (Japan)
+Inazuma Eleven (Europe)
 Kingdom Hearts: 358/2 Days (USA)
 Kingdom Hearts: Re-Coded (USA)
 MegaMan Zero Collection (USA)
@@ -17,12 +21,14 @@ Pokémon: White Version (USA/Europe)
 Pokémon: Black Version 2 (USA/Europe)
 Pokémon: White Version 2 (USA/Europe)
 Pokémon Conquest (USA)
+Puyo Puyo! 20th Anniversary (Japan)
 Solatorobo: Red the Hunter (USA)
 Sonic Colors (USA)
 Style Savvy (USA)
+Nintendo Presents: Style Boutique (Europe)
 Tomodachi Collection (Japan) (Rev 0)
 
 NOTE:
 * Only works with clean/dumped ROMs.
 
-AP patches by RetroGameFan
+AP patches by Rudolph, and RetroGameFan
