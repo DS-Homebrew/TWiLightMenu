@@ -504,6 +504,49 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
     }
 }
 
+//void MainWnd::apFix(const char *filename)
+std::string apFix(const char *filename, bool isHomebrew)
+{
+	remove("fat:/_nds/nds-bootstrap/apFix.ips");
+
+	if (isHomebrew) {
+		return "";
+	}
+
+	bool ipsFound = false;
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s.ips", filename);
+	ipsFound = (access(ipsPath, F_OK) == 0);
+
+	if (!ipsFound) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		u16 headerCRC16 = 0;
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", game_TID, headerCRC16);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+	}
+
+	if (ipsFound) {
+		if (ms().secondaryDevice) {
+			mkdir("fat:/_nds", 0777);
+			mkdir("fat:/_nds/nds-bootstrap", 0777);
+			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
+			return "fat:/_nds/nds-bootstrap/apFix.ips";
+		}
+		return ipsPath;
+	}
+
+	return "";
+}
+
 //void MainWnd::bootWidescreen(const char *filename)
 void bootWidescreen(const char *filename)
 {

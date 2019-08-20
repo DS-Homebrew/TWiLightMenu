@@ -442,6 +442,35 @@ void SetSpeedBumpExclude(const char *filename) {
 }
 
 /**
+ * Fix AP for some games.
+ */
+std::string setApFix(const char *filename) {
+	remove("fat:/_nds/nds-bootstrap/apFix.ips");
+
+	bool ipsFound = false;
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s.ips", filename);
+	ipsFound = (access(ipsPath, F_OK) == 0);
+
+	if (!ipsFound) {
+		snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", gameTid[CURPOS], headerCRC[CURPOS]);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+	}
+
+	if (ipsFound) {
+		if (ms().secondaryDevice) {
+			mkdir("fat:/_nds", 0777);
+			mkdir("fat:/_nds/nds-bootstrap", 0777);
+			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
+			return "fat:/_nds/nds-bootstrap/apFix.ips";
+		}
+		return ipsPath;
+	}
+
+	return "";
+}
+
+/**
  * Enable widescreen for some games.
  */
 TWL_CODE void SetWidescreen(const char *filename) {
@@ -1359,6 +1388,9 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						if (isHomebrew[CURPOS] == 0) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
+						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {

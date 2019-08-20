@@ -570,6 +570,7 @@ int BootstrapConfig::launch()
 
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savepath)
+		.option("NDS-BOOTSTRAP", "AP_FIX_PATH", apFix(_fileName.c_str(), _isHomebrew))
 		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 		.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img")
 		.option("NDS-BOOTSTRAP", "LANGUAGE", _language)
