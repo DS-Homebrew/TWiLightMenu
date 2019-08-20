@@ -41,6 +41,13 @@ u32 getSDKVersion(FILE *ndsFile)
  */
 bool checkRomAP(FILE *ndsFile, int num)
 {
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", gameTid[num], headerCRC[num]);
+
+	if (access(ipsPath, F_OK) == 0) {
+		return false;
+	}
+
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(gameTid[num], "AZLJ", 4) == 0)  // Girls Mode (JAP version of Style Savvy)
 	 || (memcmp(gameTid[num], "YEEJ", 4) == 0)  // Inazuma Eleven (J)

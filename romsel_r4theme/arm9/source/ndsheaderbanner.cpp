@@ -41,7 +41,7 @@ u32 getSDKVersion(FILE *ndsFile)
 	sNDSHeaderExt NDSHeader;
 	fseek(ndsFile, 0, SEEK_SET);
 	fread(&NDSHeader, 1, sizeof(NDSHeader), ndsFile);
-	if (NDSHeader.arm7destination >= 0x037F8000 || grabTID(ndsFile, tidBuf) != 0)
+	if (NDSHeader.arm7destination >= 0x037F8000)
 		return 0;
 	return getModuleParams(&NDSHeader, ndsFile)->sdk_version;
 }
@@ -55,8 +55,19 @@ u32 getSDKVersion(FILE *ndsFile)
 bool checkRomAP(FILE *ndsFile)
 {
 	char game_TID[5];
-	grabTID(ndsFile, game_TID);
+	u16 headerCRC16 = 0;
+	fseek(ndsFile, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+	fread(game_TID, 1, 4, ndsFile);
+	fseek(ndsFile, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+	fread(&headerCRC16, sizeof(u16), 1, ndsFile);
 	game_TID[4] = 0;
+
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", game_TID, headerCRC16);
+
+	if (access(ipsPath, F_OK) == 0) {
+		return false;
+	}
 
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((memcmp(game_TID, "AZLJ", 4) == 0)  // Girls Mode (JAP version of Style Savvy)

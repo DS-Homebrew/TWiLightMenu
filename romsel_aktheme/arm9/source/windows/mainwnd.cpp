@@ -661,7 +661,14 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 	bool hasAP = false;
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
-	if (settingsIni.checkIfShowAPMsg()) {
+
+	char gameTid[5] = {0};
+	snprintf(gameTid, 4, "%s", rominfo.saveInfo().gameCode);
+
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", gameTid, rominfo.saveInfo().gameCRC);
+
+	if (settingsIni.checkIfShowAPMsg() && (access(ipsPath, F_OK) != 0)) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)   // Girls Mode (JAP version of Style Savvy)
 		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)   // Inazuma Eleven (J)
