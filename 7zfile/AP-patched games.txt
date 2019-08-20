@@ -1,10 +1,13 @@
-Total: 12
+Total: 15
 
 FabStyle (Japan)
+Kingdom Hearts: 358/2 Days (USA)
 Kingdom Hearts: Re-Coded (USA)
 MegaMan Zero Collection (USA)
 Pokémon HeartGold (USA)
 Pokémon SoulSilver (USA)
+Pokémon: Black Version (USA/Europe)
+Pokémon: White Version (USA/Europe)
 Pokémon: Black Version 2 (USA/Europe)
 Pokémon: White Version 2 (USA/Europe)
 Pokémon Conquest (USA)
