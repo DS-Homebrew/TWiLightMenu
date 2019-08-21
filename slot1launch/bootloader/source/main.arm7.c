@@ -399,8 +399,24 @@ int arm7_loadBinary (void) {
 		return errorCode;
 	}
 
-    // Set memory values expected by loaded NDS
-    // from NitroHax, thanks to Chism
+	// Fix Pokemon games needing header data.
+	copyLoop((u32*)0x027FF000, (u32*)NDS_HEAD, 0x170);
+
+	char* romTid = (char*)0x027FF00C;
+	if (
+		memcmp(romTid, "ADA", 3) == 0    // Diamond
+		|| memcmp(romTid, "APA", 3) == 0 // Pearl
+		|| memcmp(romTid, "CPU", 3) == 0 // Platinum
+		|| memcmp(romTid, "IPK", 3) == 0 // HG
+		|| memcmp(romTid, "IPG", 3) == 0 // SS
+	) {
+		// Make the Pokemon game code ADAJ.
+		const char gameCodePokemon[] = { 'A', 'D', 'A', 'J' };
+		copyLoop((u32*)0x027FF00C, gameCodePokemon, 4);
+	}
+
+	// Set memory values expected by loaded NDS
+	// from NitroHax, thanks to Chism
 	*(u32*)(0x027ff800) = chipID;					// CurrentCardID
 	*(u32*)(0x027ff804) = chipID;					// Command10CardID
 	*(u16*)(0x027ff808) = ndsHeader->headerCRC16;	// Header Checksum, CRC-16 of [000h-15Dh]

@@ -35,9 +35,9 @@
 typedef signed int addr_t;
 typedef unsigned char data_t;
 
-static addr_t readAddr (data_t *mem, addr_t offset) {
+/*static addr_t readAddr (data_t *mem, addr_t offset) {
 	return ((addr_t*)mem)[offset/sizeof(addr_t)];
-}
+}*/
 
 static void writeAddr (data_t *mem, addr_t offset, addr_t value) {
 	((addr_t*)mem)[offset/sizeof(addr_t)] = value;
