@@ -1180,7 +1180,7 @@ void MainWnd::bootGbaRunner(void)
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
 			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
 			 .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
-			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
+			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
     if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0], false))
     {

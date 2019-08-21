@@ -1291,7 +1291,7 @@ int main(int argc, char **argv) {
 							if (useGbarunner) {
 								if (secondaryDevice) {
 									if (useBootstrap) {
-										int err = runNdsFile (gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, true, false, false);
+										int err = runNdsFile (gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds", 0, NULL, true, true, true, true, false);
 										iprintf ("Start failed. Error %i\n", err);
 									} else {
 										loadGameOnFlashcard((gbar2WramICache ? "fat:/_nds/GBARunner2_fc_wramicache.nds" : "fat:/_nds/GBARunner2_fc.nds"),
@@ -1310,7 +1310,7 @@ int main(int argc, char **argv) {
 									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
