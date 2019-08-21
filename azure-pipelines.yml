@@ -157,6 +157,7 @@ jobs:
         inputs:
           downloadPath: $(Build.ArtifactStagingDirectory)
           artifactName: 'build-devkitARM-Docker'
+        condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
         displayName: "Retrieving artifacts from Docker build"
       - script: |
           export CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
@@ -204,6 +205,7 @@ jobs:
           target: '$(Build.SourceVersion)'
           tag: $(Build.SourceBranchName)
           assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
+          assetUploadMode: replace
 
   - job: send_webhook_success
     dependsOn: publish_build_twlbot
