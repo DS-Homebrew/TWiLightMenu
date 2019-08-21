@@ -547,6 +547,8 @@ std::string apFix(const char *filename, bool isHomebrew)
 	return "";
 }
 
+sNDSHeader ndsCart;
+
 //void MainWnd::bootWidescreen(const char *filename)
 void bootWidescreen(const char *filename)
 {
@@ -565,8 +567,6 @@ void bootWidescreen(const char *filename)
 	}
 
 	if (ms().launchType == DSiMenuPlusPlusSettings::ESlot1) {
-		sNDSHeader nds;
-
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -574,13 +574,13 @@ void bootWidescreen(const char *filename)
 		enableSlot1();
 		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		cardReadHeader((uint8*)&nds);
+		cardReadHeader((uint8*)&ndsCart);
 
 		char game_TID[5];
-		memcpy(game_TID, nds.gameCode, 4);
+		memcpy(game_TID, ndsCart.gameCode, 4);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, nds.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");

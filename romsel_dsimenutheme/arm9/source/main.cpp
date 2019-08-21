@@ -471,6 +471,8 @@ std::string setApFix(const char *filename) {
 	return "";
 }
 
+sNDSHeader ndsCart;
+
 /**
  * Enable widescreen for some games.
  */
@@ -490,8 +492,6 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (ms().launchType == Launch::ESlot1) {
-		sNDSHeader nds;
-
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -499,13 +499,13 @@ TWL_CODE void SetWidescreen(const char *filename) {
 		enableSlot1();
 		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		cardReadHeader((uint8*)&nds);
+		cardReadHeader((uint8*)&ndsCart);
 
 		char s1GameTid[5];
-		tonccpy(s1GameTid, nds.gameCode, 4);
+		tonccpy(s1GameTid, ndsCart.gameCode, 4);
 		s1GameTid[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", s1GameTid, nds.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", s1GameTid, ndsCart.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
