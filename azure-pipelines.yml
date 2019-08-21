@@ -83,8 +83,8 @@ jobs:
         # version.txt
         echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
 
-        mv 7zfile/ TWiLightMenu/
-        7z a TWiLightMenu.7z TWiLightMenu/
+        cd 7zfile
+        7z a TWiLightMenu.7z .
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
       condition: startsWith(variables['Build.SourceBranchName'], 'v')
       displayName: 'Pack 7z Package for release'
@@ -128,6 +128,7 @@ jobs:
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
           cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu_docker.7z
+        condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
         displayName: 'Pack 7z Package'
       - task: PublishBuildArtifacts@1
         displayName: "Publish build to Azure"
