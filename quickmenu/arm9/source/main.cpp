@@ -638,6 +638,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Alta�r's Chronicles
+		"B6R",	// Bakugan - Battle Brawlers
 		"AB2",	// Battles of Prince of Persia
 		"YB4",	// Bee Movie
 		"CBK",	// Bolt
