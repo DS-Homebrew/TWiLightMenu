@@ -203,6 +203,7 @@ jobs:
           target: '$(Build.SourceVersion)'
           tag: $(Build.SourceBranchName)
           assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
+          assetUploadMode: replace
 
   - job: send_webhook_success
     dependsOn: publish_build_twlbot
