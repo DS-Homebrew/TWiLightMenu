@@ -31,11 +31,25 @@
 #include <maxmod7.h>
 
 //unsigned int * SCFG_ROM=(unsigned int*)0x4004000;
-unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
+//unsigned int * SCFG_CLK=(unsigned int*)0x4004004; 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
+
+//---------------------------------------------------------------------------------
+void ReturntoDSiMenu() {
+//---------------------------------------------------------------------------------
+	nocashMessage("ARM7 ReturnToDSiMenu");
+	if (isDSiMode()) {
+		i2cWriteRegister(0x4A, 0x70, 0x01);		// Bootflag = Warmboot/SkipHealthSafety
+		i2cWriteRegister(0x4A, 0x11, 0x01);		// Reset to DSi Menu
+	} else {
+		u8 readCommand = readPowerManagement(0x10);
+		readCommand |= BIT(0);
+		writePowerManagement(0x10, readCommand);
+	}
+}
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
@@ -101,7 +115,7 @@ int main() {
 	if (isDSiMode()) {
 		fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
 	}
-	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
+	//fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, *CPUID2);
 	fifoSendValue32(FIFO_USER_05, *CPUID);
@@ -110,6 +124,9 @@ int main() {
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
+		if (fifoCheckValue32(FIFO_USER_02)) {
+			ReturntoDSiMenu();
+		}
 		resyncClock();
 		swiWaitForVBlank();
 	}
