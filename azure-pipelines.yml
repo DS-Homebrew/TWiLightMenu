@@ -156,6 +156,7 @@ jobs:
         inputs:
           downloadPath: $(Build.ArtifactStagingDirectory)
           artifactName: 'build-devkitARM-Docker'
+        condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
         displayName: "Retrieving artifacts from Docker build"
       - script: |
           export CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
