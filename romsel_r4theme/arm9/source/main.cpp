@@ -1315,6 +1315,10 @@ int main(int argc, char **argv) {
 									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 									iprintf ("Start failed. Error %i\n", err);
+									if (err == 1) {
+										iprintf(bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+										iprintf("\nnot found.");
+									}
 								}
 							} else {
 								gbaSwitch();
@@ -1808,7 +1812,7 @@ int main(int argc, char **argv) {
 							SetWidescreen(argarray[0]);
 						}
 
-						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+						bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
@@ -1824,7 +1828,8 @@ int main(int argc, char **argv) {
 						ClearBrightness();
 						printSmall(false, 4, 80, text);
 						if (err == 1) {
-							printSmall(false, 4, 88, "nds-bootstrap not found.");
+							printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+							printSmall(false, 4, 96, "not found.");
 						}
 						stop();
 					} else {
@@ -1992,7 +1997,11 @@ int main(int argc, char **argv) {
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				ClearBrightness();
-				printLarge(false, 4, 4, text);
+				printLarge(false, 4, 80, text);
+				if (err == 1) {
+					printSmall(false, 4, 88, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+					printSmall(false, 4, 96, "not found.");
+				}
 				stop();
 			}
 

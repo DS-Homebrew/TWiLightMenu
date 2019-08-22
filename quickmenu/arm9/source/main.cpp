@@ -2154,7 +2154,7 @@ int main(int argc, char **argv) {
 							SetWidescreen(filename.c_str());
 						}
 
-						bool useNightly = (perGameSettings_bootstrapFile != -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+						bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
@@ -2170,7 +2170,8 @@ int main(int argc, char **argv) {
 						ClearBrightness();
 						printSmall(false, 4, 80, text);
 						if (err == 1) {
-							printSmall(false, 4, 88, "nds-bootstrap not found.");
+							printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+							printSmall(false, 4, 96, "not found.");
 						}
 						stop();
 					} else {
@@ -2313,7 +2314,11 @@ int main(int argc, char **argv) {
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
-				printSmall(false, 4, 4, text);
+				printLarge(false, 4, 80, text);
+				if (err == 1) {
+					printSmall(false, 4, 88, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+					printSmall(false, 4, 96, "not found.");
+				}
 				stop();
 
 				while(argarray.size() !=0 ) {

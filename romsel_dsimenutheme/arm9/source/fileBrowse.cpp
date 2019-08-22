@@ -891,7 +891,7 @@ void launchGba(void) {
 			fadeType = true;
 			printLarge(false, 4, 4, text);
 			if (err == 1) {
-				printLarge(false, 4, 20, "nds-bootstrap not found.");
+				printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
 			}
 			stop();
 		}
