@@ -610,22 +610,15 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					clearBoxArt();		
 					rocketVideo_playVideo = false;
 				}
-				if (bnrRomType[CURPOS] == 0) {
+				snprintf(boxArtPath, sizeof(boxArtPath),
+					 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+							: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+					 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+				if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
 						 gameTid[CURPOS]);
-					if (access(boxArtPath, F_OK) != 0) {
-						snprintf(boxArtPath, sizeof(boxArtPath),
-							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-							 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-					}
-				} else {
-					snprintf(boxArtPath, sizeof(boxArtPath),
-						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 				}
 				tex().drawBoxArt(boxArtPath); // Load box art
 			}
