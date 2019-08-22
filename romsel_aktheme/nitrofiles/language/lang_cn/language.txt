@@ -1,10 +1,10 @@
-// Translation By R-YaTian
+﻿// Translation By R-YaTian
 [font]
 main = wenquanyi_9pt.pcf
 language = 1
 
 [start menu]
-Start = 菜单
+START = 菜单
 Copy = 复制
 Cut = 剪切
 Paste = 粘贴
@@ -19,6 +19,9 @@ More = 更多 ->
 Cheats = 金手指
 Back = <- 返回
 
+[mainlist]
+SD Card = SD/TF 卡
+
 [message box]
 yes = 是
 no = 否 
@@ -28,6 +31,8 @@ cancel = 取消
 [cheats]
 button = 金手指
 title = 金手指
+info = 信息
+deselect = 清除所有
 error_title = 错误
 error_text = 没有找到金手指文件。
 selectrom = 请选择.NDS 文件
@@ -453,11 +458,19 @@ Language = 语言
 CPU Frequency = CPU频率
 Off = 关闭
 On = 开启
-Sound Fix = 音效修正
-Async Prefetch = 异步预取
-Use Bootstrap = 使用Bootstrap
+Bootstrap File = Bootstrap文件
+Run in = 运行于
+DS mode = DS模式
+DSi mode = DSi模式
+DSi mode (Forced) = 强制DSi模式强制
+Boost VRAM = 增强VRAM
+Save number = 存档位置
+67MHz (NTR) = 67MHz(NTR)
+133MHz (TWL) = 133MHz
+RAM disk = 内存盘
 Direct Boot = 直接启动
-Per Game Settings = 单个游戏设置
+No Direct Boot = 非直接启动
+Per Game Settings = 游戏设置
 
 [game launch]
 ROM Start Error = 游戏启动错误
