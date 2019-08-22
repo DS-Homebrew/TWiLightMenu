@@ -659,8 +659,16 @@ void MainList::updateInternalNames(void)
             {
                 if (_romInfoList[_firstVisibleRowId + ii].isDSRom())
                 {
-                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
-                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[ms().getGuiLanguage()], 128, NULL));
+					if (ms().getGuiLanguage() == 6)
+					{
+					    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
+					        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[1], 128, NULL));
+					}
+					else
+					{
+					    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
+					        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[ms().getGuiLanguage()], 128, NULL));
+					}
                 }
                 else
                 {

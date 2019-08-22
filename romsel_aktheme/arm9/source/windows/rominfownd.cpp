@@ -480,9 +480,17 @@ void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &sho
 void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 {
     _romInfo = romInfo;
-
-    auto bannerTitle = _romInfo.banner().titles[ms().getGuiLanguage()];
-    _romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
+    
+	if (ms().getGuiLanguage() == 6)
+	{
+	    auto bannerTitle = _romInfo.banner().titles[1];
+		_romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
+	}
+	else
+	{
+	    auto bannerTitle = _romInfo.banner().titles[ms().getGuiLanguage()];
+		_romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
+	}
 
     _buttonGameSettings.hide();
 
