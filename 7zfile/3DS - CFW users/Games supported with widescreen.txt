@@ -1,4 +1,4 @@
-Total: 358
+Total: 359
 
 007 - Blood Stone (USA/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -185,6 +185,7 @@ Pokémon - Weisse Edition 2 (Germany)
 Pokémon - Versione Nera 2 (Italy)
 Pokémon - Versione Bianca 2 (Italy)
 Pokémon - Edicion Negra 2 (Spain)
+Pokémon - Edicion Negra 2 (Spain) (Randomized)
 Pokémon - Edicion Blanca 2 (Spain)
 Pocket Monsters - Black 2 (Japan)
 Pocket Monsters - White 2 (Japan)

@@ -1,4 +1,4 @@
-Total: 100
+Total: 102
 
 1000 Cooking Recipes from Elle a Table (Europe)
 Cars 2 (USA)
@@ -68,6 +68,8 @@ Pokémon: Black Version (USA/Europe)
 Pokémon: White Version (USA/Europe)
 Pokémon: Black Version 2 (USA/Europe)
 Pokémon: White Version 2 (USA/Europe)
+Pokemon - Edicion Negra 2 (Spain)
+Pokemon - Edicion Negra 2 (Spain) (Randomized)
 Pocket Monsters: Black (Japan)
 Pocket Monsters: White (Japan)
 Pocket Monsters: Black (Korea)
