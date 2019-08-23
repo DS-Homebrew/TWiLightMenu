@@ -1292,7 +1292,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					isHomebrew[i] = 0;
 				}
 
-				if (ms().showBoxArt && isDSiMode()) {
+				if (ms().showBoxArt && !isDirectory[i] && isDSiMode()) {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
 								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
