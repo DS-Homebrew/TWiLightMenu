@@ -31,6 +31,9 @@ static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
 
+static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
+static bool boxArtFound[40] = {false};
+
 ThemeTextures::ThemeTextures()
     : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
       movingarrowTexID(0), launchdotTexID(0), startTexID(0), startbrdTexID(0), settingsTexID(0), braceTexID(0),
@@ -654,6 +657,25 @@ unsigned int ThemeTextures::getTopFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
+TWL_CODE void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
+	if (num < 0 || num > 39) {
+		return;
+	}
+
+	FILE *file = fopen(filename, "rb");
+	if (!file) {
+		boxArtFound[num] = false;
+		//filename = "nitro:/graphics/boxart_unknown.bmp";
+		//file = fopen(filename, "rb");
+		return;
+	}
+
+	boxArtFound[num] = true;
+
+	fread(boxArtCache+(num*0xB000), 1, 0xB000, file);
+	fclose(file);
+}
+
 void ThemeTextures::drawBoxArt(const char *filename) {
 	FILE *file = fopen(filename, "rb");
 	if (!file) {
@@ -709,6 +731,42 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 		commitBgSubModify();
 	}
 	fclose(file);
+}
+
+void ThemeTextures::drawBoxArtFromMem(int num) {
+	if (num < 0 || num > 39) {
+		return;
+	}
+
+	if (!boxArtFound[num]) {
+		drawBoxArt("nitro:/graphics/boxart_unknown.bmp");
+		return;
+	}
+
+	// Start loading
+	beginBgSubModify();
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	lodepng::decode(image, width, height, (unsigned char*)boxArtCache+(num*0xB000), 0xB000);
+	for(unsigned i=0;i<image.size()/4;i++) {
+		_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
+		}
+	}
+	u16 *src = _bmpImageBuffer;
+	int x = 64;
+	int y = 40;
+	for (int i = 0; i < 128 * 115; i++) {
+		if (x >= 64 + 128) {
+			x = 64;
+			y++;
+		}
+		u16 val = *(src++);
+		_bgSubBuffer[y * 256 + x] = val;
+		x++;
+	}
+	commitBgSubModify();
 }
 
 void ThemeTextures::drawVolumeImage(int volumeLevel) {

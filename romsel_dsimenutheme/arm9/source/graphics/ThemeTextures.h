@@ -52,7 +52,9 @@ public:
   void drawProfileName();
   void drawBottomBg(int bg);
 
+  void loadBoxArtToMem(const char *filename, int num);
   void drawBoxArt(const char* filename);
+  void drawBoxArtFromMem(int num);
 
   void drawVolumeImage(int volumeLevel);
   void drawVolumeImageCached();

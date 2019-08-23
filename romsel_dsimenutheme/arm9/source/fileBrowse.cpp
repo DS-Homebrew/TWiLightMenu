@@ -610,17 +610,21 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					clearBoxArt();		
 					rocketVideo_playVideo = false;
 				}
-				snprintf(boxArtPath, sizeof(boxArtPath),
-					 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-							: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-					 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-				if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
+				if (isDSiMode()) {
+					tex().drawBoxArtFromMem(CURPOS); // Load box art
+				} else {
 					snprintf(boxArtPath, sizeof(boxArtPath),
 						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
-							    : "fat:/_nds/TWiLightMenu/boxart/%s.png"),
-						 gameTid[CURPOS]);
+								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+						 dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+					if ((bnrRomType[CURPOS] == 0) && (access(boxArtPath, F_OK) != 0)) {
+						snprintf(boxArtPath, sizeof(boxArtPath),
+							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+							 gameTid[CURPOS]);
+					}
+					tex().drawBoxArt(boxArtPath); // Load box art
 				}
-				tex().drawBoxArt(boxArtPath); // Load box art
 			}
 			boxArtLoaded = true;
 		}
@@ -1286,6 +1290,20 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					bnrWirelessIcon[i] = 0;
 					isDSiWare[i] = false;
 					isHomebrew[i] = 0;
+				}
+
+				if (ms().showBoxArt && isDSiMode()) {
+					snprintf(boxArtPath, sizeof(boxArtPath),
+						 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+								: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+						 dirContents[scrn].at(i + PAGENUM * 40).name.c_str());
+					if ((bnrRomType[i] == 0) && (access(boxArtPath, F_OK) != 0)) {
+						snprintf(boxArtPath, sizeof(boxArtPath),
+							 (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png"
+									: "fat:/_nds/TWiLightMenu/boxart/%s.png"),
+							 gameTid[i]);
+					}
+					tex().loadBoxArtToMem(boxArtPath, i);
 				}
 			}
 			if (reSpawnBoxes)
