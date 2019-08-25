@@ -1111,7 +1111,7 @@ int main(int argc, char **argv) {
 	LoadSettings();
 	
 	if ((access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) == 0)
-	|| (access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) == 0)) {
+	|| (access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) == 0)
 	|| (access(secondaryDevice ? "fat:/_gba/bios.bin" : "sd:/_gba/bios.bin", F_OK) == 0)) {
 		gbaBiosFound = true;
 	}
