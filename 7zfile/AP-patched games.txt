@@ -1,4 +1,4 @@
-Total: 104
+Total: 105
 
 1000 Cooking Recipes from Elle a Table (Europe)
 Camp Rock: The Final Jam (USA)
@@ -37,6 +37,7 @@ Mario & Sonic at the Olympic Winter Games (Europe)
 Mario & Sonic at Vancouver Olympic (Japan)
 Mario & Sonic at the Olympic Winter Games (Korean)
 Mario vs. Donkey Kong: Mini-Land Mayhem (USA)
+Mario vs. Donkey Kong: Mini-Land Mayhem (USA) (Rev 2)
 Mario vs. Donkey Kong: Mini-Land Mayhem (Europe)
 Mario vs. Donkey Kong: Totsugeki Mini Land (Japan)
 MegaMan Zero Collection (USA)
