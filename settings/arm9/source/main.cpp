@@ -47,6 +47,7 @@
 #include "settingspage.h"
 #include "settingsgui.h"
 #include "language.h"
+#include "gbarunner2settings.h"
 #include "bootstrapsettings.h"
 
 #include "soundeffect.h"
@@ -396,6 +397,7 @@ int main(int argc, char **argv)
 	std::string filename;
 
 	ms().loadSettings();
+	gs().loadSettings();
 	bs().loadSettings();
 	loadAkThemeList();
 	loadR4ThemeList();
@@ -473,6 +475,13 @@ int main(int argc, char **argv)
 		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Bool(&ms().showMd), {STR_SHOW, STR_HIDE}, {true, false})
 		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {STR_SHOW, STR_HIDE}, {true, false});
 
+	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
+
+	gbar2Page.option("Use bottom screen", STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
+			.option("Center and mask", STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
+			.option("BIOS intro", STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false})
+			.option("WRAM iCache", STR_DESCRIPTION_WRAMICACHE, Option::Bool(&ms().gbar2WramICache), {STR_ON, STR_OFF}, {true, false});
+
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
 	if (isDSiMode() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked())
@@ -484,8 +493,6 @@ int main(int argc, char **argv)
 	{
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
-
-	gamesPage.option("GBARunner2: WRAM iCache", STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&ms().gbar2WramICache), {STR_ON, STR_OFF}, {true, false});
 
 	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
@@ -659,6 +666,7 @@ int main(int argc, char **argv)
 	gui()
 		.addPage(guiPage)
 		.addPage(filetypePage)
+		.addPage(gbar2Page)
 		.addPage(gamesPage)
 		.addPage(miscPage);
 	/*if (isDSiMode() && ms().consoleModel >= 2) {

@@ -18,8 +18,7 @@
 
 #define SLOT1_SRL "/_nds/TWiLightMenu/slot1launch.srldr"
 
-#define GBARUNNER_BOOTSTRAP "sd:/_nds/GBARunner2.nds"
-#define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
+#define GBARUNNER2_INI "/_gba/gbarunner2.ini"
 
 #define GAMEYOB_SD "sd:/_nds/TWiLightMenu/emulators/gameyob.nds"
 #define GAMEYOB_FC "/_nds/TWiLightMenu/emulators/gameyob.nds"

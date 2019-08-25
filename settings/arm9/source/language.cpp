@@ -18,6 +18,7 @@ std::string STR_MISC_SETTINGS = "STR_MISC_SETTINGS";
 //std::string STR_TWLFIRM_SETTINGS = "STR_TWLFIRM_SETTINGS";
 std::string STR_GUI_SETTINGS = "STR_GUI_SETTINGS";
 std::string STR_FILETYPE_SETTINGS = "STR_FILETYPE_SETTINGS";
+std::string STR_GBARUNNER2_SETTINGS = "STR_GBARUNNER2_SETTINGS";
 std::string STR_GAMESAPPS_SETTINGS = "STR_GAMESAPPS_SETTINGS";
 
 // TWL_FIRM settings
@@ -116,6 +117,12 @@ std::string STR_DESCRIPTION_REPLACEDSIMENU_1 = "STR_DESCRIPTION_REPLACEDSIMENU_1
 
 std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1";
 
+// GBARunner2 settings
+std::string STR_DESCRIPTION_USEBOTTOMSCREEN = "STR_DESCRIPTION_USEBOTTOMSCREEN";
+std::string STR_DESCRIPTION_CENTERANDMASK = "STR_DESCRIPTION_CENTERANDMASK";
+std::string STR_DESCRIPTION_BIOSINTRO = "STR_DESCRIPTION_BIOSINTRO";
+std::string STR_DESCRIPTION_WRAMICACHE = "STR_DESCRIPTION_WRAMICACHE";
+
 // Games/Apps settings
 std::string STR_ASPECTRATIO = "STR_ASPECTRATIO";
 std::string STR_LANGUAGE = "STR_LANGUAGE";
@@ -188,8 +195,6 @@ std::string STR_DESCRIPTION_BOOTSTRAP_1 = "STR_DESCRIPTION_BOOTSTRAP_1";
 std::string STR_DESCRIPTION_FLASHCARD_1 = "STR_DESCRIPTION_FLASHCARD_1";
 
 std::string STR_DESCRIPTION_GBARUNNER2_1 = "STR_DESCRIPTION_GBARUNNER2_1";
-
-std::string STR_DESCRIPTION_GBAR2_WRAMICACHE = "STR_DESCRIPTION_GBAR2_WRAMICACHE";
 
 // Flashcard settings
 std::string STR_FLASHCARD_SELECT = "STR_FLASHCARD_SELECT";
@@ -285,6 +290,7 @@ void langInit(void)
 	//STR_TWLFIRM_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TWLFIRM_SETTINGS", "TWL_FIRM settings"));
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));
 	STR_FILETYPE_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FILETYPE_SETTINGS", "Filetype settings"));
+	STR_GBARUNNER2_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GBARUNNER2_SETTINGS", "GBARunner2 Emulation settings"));
 	STR_GAMESAPPS_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GAMESAPPS_SETTINGS", "Games and Apps settings"));
 
 	// TWL_FIRM settings
@@ -383,6 +389,12 @@ void langInit(void)
 
 	STR_DESCRIPTION_RESTOREDSIMENU_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "Show DSi Menu on boot again."));
 
+	// GBARunner2 settings
+	STR_DESCRIPTION_USEBOTTOMSCREEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOTTOMSCREEN", "Play GBA games on the bottom screen."));
+	STR_DESCRIPTION_CENTERANDMASK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CENTERANDMASK", "Centers the game with a border. Adds 1 frame delay."));
+	STR_DESCRIPTION_BIOSINTRO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BIOSINTRO", "Plays the GBA logo before starting GBA game."));
+	STR_DESCRIPTION_WRAMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_WRAMICACHE", "Improves performance in some GBA games, but may break some of them."));
+
 	// Games/Apps settings
 	STR_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ASPECTRATIO", "Screen Aspect Ratio"));
 	STR_LANGUAGE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LANGUAGE", "Language"));
@@ -455,8 +467,6 @@ void langInit(void)
 	STR_DESCRIPTION_FLASHCARD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", ""));
 
 	STR_DESCRIPTION_GBARUNNER2_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_1", ""));
-
-	STR_DESCRIPTION_GBAR2_WRAMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_WRAMICACHE", "Improves performance in some GBA games, but may break some of them."));
 
 	// Flashcard settings
 	STR_FLASHCARD_SELECT = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "Select Flashcard"));

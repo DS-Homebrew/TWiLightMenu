@@ -11,6 +11,7 @@ extern std::string STR_MISC_SETTINGS;
 //extern std::string STR_TWLFIRM_SETTINGS;
 extern std::string STR_GUI_SETTINGS;
 extern std::string STR_FILETYPE_SETTINGS;
+extern std::string STR_GBARUNNER2_SETTINGS;
 extern std::string STR_GAMESAPPS_SETTINGS;
 
 // TWL_FIRM settings
@@ -109,6 +110,12 @@ extern std::string STR_DESCRIPTION_REPLACEDSIMENU_1;
 
 extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 
+// GBARunner2 settings
+extern std::string STR_DESCRIPTION_USEBOTTOMSCREEN;
+extern std::string STR_DESCRIPTION_CENTERANDMASK;
+extern std::string STR_DESCRIPTION_BIOSINTRO;
+extern std::string STR_DESCRIPTION_WRAMICACHE;
+
 // Games/Apps settings
 extern std::string STR_ASPECTRATIO;
 extern std::string STR_LANGUAGE;
@@ -190,8 +197,6 @@ extern std::string STR_DESCRIPTION_BOOTSTRAP_1;
 extern std::string STR_DESCRIPTION_FLASHCARD_1;
 
 extern std::string STR_DESCRIPTION_GBARUNNER2_1;
-
-extern std::string STR_DESCRIPTION_GBAR2_WRAMICACHE;
 
 // Flashcard settings
 extern std::string STR_FLASHCARD_SELECT;

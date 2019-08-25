@@ -8,6 +8,7 @@
 #include <maxmod9.h>
 #include "soundeffect.h"
 #include "language.h"
+#include "gbarunner2settings.h"
 #include "bootstrapsettings.h"
 
 // Screen offsets for scrollbar
@@ -359,6 +360,7 @@ void SettingsGUI::saveAndExit(int currentTheme)
     }
 	renderScreens = false;
     ms().saveSettings();
+    gs().saveSettings();
     bs().saveSettings();
     _isSaved = true;
     draw();
