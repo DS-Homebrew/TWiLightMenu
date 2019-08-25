@@ -1265,6 +1265,7 @@ int main(int argc, char **argv) {
 						if (useGbarunner) {
 						if ((access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
 						&& (access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) != 0)) {
+						&& (access(secondaryDevice ? "fat:/_gba/bios.bin" : "sd:/_gba/bios.bin", F_OK) != 0)) {
 							clearText();
 							dialogboxHeight = 1;
 							showdialogbox = true;
