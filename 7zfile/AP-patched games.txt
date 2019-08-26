@@ -1,4 +1,4 @@
-Total: 200
+Total: 204
 
 1000 Cooking Recipes from Elle a Table (Europe)
 AFL Mascot Minor (Australia)
@@ -31,6 +31,10 @@ Dragon Quest VI: Maboroshi no Daichi (Japan)
 Dragon Quest IX: Sentinels of the Starry Skies (USA)
 Dragon Quest IX: Sentinels of the Starry Skies (Europe)
 Dragon Quest IX: Hoshizora no Mamoribito (Japan)
+Dragon Quest Monsters: Joker 2 (USA)
+Dragon Quest Monsters: Joker 2 (Europe)
+Dragon Quest Monsters: Joker 2 (Japan)
+Dragon Quest Monsters: Joker 2: Professional (Japan)
 Element Hunters (Japan)
 FabStyle (Japan)
 Final Fantasy Crystal Chronicles: Echoes of Time (USA)
