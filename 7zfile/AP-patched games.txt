@@ -1,4 +1,4 @@
-Total: 118
+Total: 119
 
 1000 Cooking Recipes from Elle a Table (Europe)
 Battle of Giants: Dragons (USA)
@@ -90,7 +90,8 @@ Pocket Monsters: Black (Korea)
 Pocket Monsters: White (Korean)
 Pocket Monsters: Black 2 (Japan)
 Pocket Monsters: White 2 (Japan)
-Pokémon Conquest (USA)
+Pokémon Conquest (USA/Austrailia)
+Pokémon Conquest (USA/Austrailia) (Rev 1)
 Pokémon Conquest (Europe)
 Pokémon Plus - Nobunaga no Yabou (Japan)
 Prince of Persia: The Forgotten Sands (USA)
