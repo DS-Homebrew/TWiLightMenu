@@ -25,6 +25,8 @@
 #include <vector>
 #include <map>
 
+extern bool gbar2Fix;
+
 class CIniFile
 {
   public:

@@ -23,6 +23,8 @@
 #include "common/inifile.h"
 #include "tool/stringtool.h"
 
+bool gbar2Fix = false;
+
 static bool freadLine(FILE *f, std::string &str)
 {
   str.clear();
@@ -248,12 +250,12 @@ bool CIniFile::SaveIniFile(const std::string &FileName)
     if (strline.find('[') == 0 && ii > 0)
     {
       if (!m_FileContainer[ii - 1].empty() && m_FileContainer[ii - 1] != "")
-        fwrite("\r\n", 1, 2, f);
+        fwrite((gbar2Fix ? "\n" : "\r\n"), 1, 2-gbar2Fix, f);
     }
     if (!strline.empty() && strline != "")
     {
       fwrite(strline.c_str(), 1, strline.length(), f);
-      fwrite("\r\n", 1, 2, f);
+      fwrite((gbar2Fix ? "\n" : "\r\n"), 1, 2-gbar2Fix, f);
     }
   }
 
@@ -373,24 +375,24 @@ void CIniFile::SetFileString(const std::string &Section, const std::string &Item
 
             if (Item == strItem)
             {
-              ReplaceLine(ii - 1, Item + " = " + Value);
+              ReplaceLine(ii - 1, Item + (gbar2Fix ? "=" : " = ") + Value);
               return;
             }
           }
           else if ('[' == strline[0])
           {
-            InsertLine(ii - 1, Item + " = " + Value);
+            InsertLine(ii - 1, Item + (gbar2Fix ? "=" : " = ") + Value);
             return;
           }
         }
-        InsertLine(ii, Item + " = " + Value);
+        InsertLine(ii, Item + (gbar2Fix ? "=" : " = ") + Value);
         return;
       }
     }
   }
 
   InsertLine(ii, "[" + Section + "]");
-  InsertLine(ii + 1, Item + " = " + Value);
+  InsertLine(ii + 1, Item + (gbar2Fix ? "=" : " = ") + Value);
   return;
 }
 

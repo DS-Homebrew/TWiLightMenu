@@ -24,10 +24,12 @@ void GBAR2Settings::loadSettings()
 
 void GBAR2Settings::saveSettings()
 {
+	gbar2Fix = true;
     CIniFile gbarunner2ini(GBARUNNER2_INI);
 
    	gbarunner2ini.SetString("emulation", "useBottomScreen", useBottomScreen ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "centerMask", centerMask ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "skipIntro", skipIntro ? "true" : "false");
     gbarunner2ini.SaveIniFile(GBARUNNER2_INI);
+	gbar2Fix = false;
 }
