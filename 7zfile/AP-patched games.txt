@@ -1,4 +1,4 @@
-Total: 208
+Total: 211
 
 1000 Cooking Recipes from Elle a Table (Europe)
 AFL Mascot Minor (Australia)
@@ -166,6 +166,7 @@ Professor Layton and the Lost Future (Europe)
 Layton Kyouju to Saigo no Jikan Ryokou (Japan)
 Professor Layton and the Last Specter (USA)
 Professor Layton and the Spectre's Call (Europe)
+Profesor Layton y la Llamada del Espectro, El (Spain)
 Layton Kyouju to Majin no Fue (Japan)
 Puyo Puyo 7 (Japan)
 Puyo Puyo! 20th Anniversary (Japan)
@@ -196,6 +197,7 @@ Nintendo Presents: Style Boutique (Europe)
 My Fashion: Girls Style (Korean)
 Summon Night X: Tears Crown (Japan)
 Supa Robo Gakuen (Japan)
+Taiko no Tatsujin DS - Dororon Yokai Daikessen!! (Japan)
 Tago Akira no Atama no Taisou: Dai-1-shuu: Nazotoki Sekai Isshuu Ryokou (Japan)
 Tago Akira no Atama no Taisou: Dai-2-shuu: Ginga Oudan Nazotoki Adventure (Japan)
 Tago Akira no Atama no Taisou: Dai-3-shuu: Fushigi no Kuni no Nazotoki Otogibanashi (Japan)
@@ -207,6 +209,7 @@ Toy Story 3 (USA)
 Toy Story 3 (Europe)
 Umihara Kawase Shun: Second Edition Kanzen Ban (Japan)
 Wizardry: Inochi no Kusabi (Japan)
+WarioWare - D.I.Y. (U)
 Yu-Gi-Oh! 5Ds World Championship 2011: Over The Nexus (USA)
 
 NOTE:
