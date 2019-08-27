@@ -52,7 +52,7 @@ extern void twlMenuVideo_topGraphicRender(void);
 
 u16 bmpImageBuffer[256*192];
 u16 videoImageBuffer[39][256*144];
-void* dsiSplashLocation = (void*)0x02600000-0x200;
+void* dsiSplashLocation = (void*)0x02600000;
 
 void vramcpy_ui (void* dest, const void* src, int size) 
 {

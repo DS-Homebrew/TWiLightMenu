@@ -4,6 +4,7 @@
 #include <maxmod9.h>
 
 #include "common/lzss.h"
+#include "common/tonccpy.h"
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 
@@ -90,9 +91,10 @@ void drawNintendoLogoToVram(void) {
 void BootSplashDSi(void) {
 
 	u16 whiteCol = 0xFFFF;
+	whiteCol = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
 	for (int i = 0; i < 256*256; i++) {
-		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
-		BG_GFX_SUB[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
+		BG_GFX[i] = whiteCol;
+		BG_GFX_SUB[i] = whiteCol;
 	}
 
 	if (ms().hsMsg) {
@@ -206,7 +208,7 @@ void BootSplashDSi(void) {
 				*(vu32*)(0x08240000) = 1;
 				if (*(vu32*)(0x08240000) == 1) {
 					// Set to load video into DS Memory Expansion Pak
-					dsiSplashLocation = (void*)0x09000000-0x200;
+					dsiSplashLocation = (void*)0x09000000;
 					doRead = true;
 				}
 			}
@@ -362,7 +364,7 @@ void BootSplashDSi(void) {
 	if (!sixtyFps) swiWaitForVBlank();
 
 	for (int i = 0; i < 256*60; i++) {
-		BG_GFX[i] = ((whiteCol>>10)&0x1f) | ((whiteCol)&((31-3*ms().blfLevel)<<5)) | (whiteCol&(31-6*ms().blfLevel))<<10 | BIT(15);
+		BG_GFX[i] = whiteCol;
 	}
 
 	rocketVideo_videoFrames = 29;
