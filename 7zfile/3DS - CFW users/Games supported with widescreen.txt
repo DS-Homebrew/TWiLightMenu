@@ -1,4 +1,4 @@
-Total: 371
+Total: 373
 
 007 - Blood Stone (USA/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -122,6 +122,8 @@ Ryuusei no Rockman - Green Dragon/Fire Leo/Ice Pegasus (Japan)
 Mega Man Star Force 2 - Zerker x Ninja/Saurian (USA)
 Mega Man Star Force 2 - Zerker x Ninja/Saurian (Europe)
 Ryuusei no Rockman 2 - Berserk x Dinosaur/Shinobi (Japan)
+Metroid Prime - Hunters - First Hunt (USA)
+Metroid Prime - Hunters - First Hunt (Europe)
 Mini Ninjas (USA)
 Mini Ninjas (Europe)
 Moon (USA)
