@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
+#include "common/lzss.h"
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 
@@ -162,7 +163,7 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFrames = 108;
 		rocketVideo_videoFps = 60;
 
-		videoFrameFile = fopen("nitro:/video/dsisplash_60fps.rvid", "rb");
+		videoFrameFile = fopen("nitro:/video/dsisplash_60fps.lz77.rvid", "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -197,7 +198,6 @@ void BootSplashDSi(void) {
 
 		if (videoFrameFile) {
 			bool doRead = false;
-			fseek(videoFrameFile, 0x200, SEEK_SET);
 
 			if (isDSiMode()) {
 				doRead = true;
@@ -206,12 +206,13 @@ void BootSplashDSi(void) {
 				*(vu32*)(0x08240000) = 1;
 				if (*(vu32*)(0x08240000) == 1) {
 					// Set to load video into DS Memory Expansion Pak
-					dsiSplashLocation = (void*)0x09000000;
+					dsiSplashLocation = (void*)0x09000000-0x200;
 					doRead = true;
 				}
 			}
 			if (doRead) {
-				fread(dsiSplashLocation, 1, 0x7B0000, videoFrameFile);
+				fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
+				LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
 			} else {
 				sixtyFps = false;
 			}
