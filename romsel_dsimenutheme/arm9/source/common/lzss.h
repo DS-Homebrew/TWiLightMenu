@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void LZ77_Decompress(const unsigned char *src, unsigned char *dst);
+void LZ77_Decompress(u8* source, u8* destination);
 
 #ifdef __cplusplus
 }

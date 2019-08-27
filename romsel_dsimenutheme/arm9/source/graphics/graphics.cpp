@@ -43,6 +43,7 @@
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/systemdetails.h"
+#include "common/lzss.h"
 #include "fontHandler.h"
 #include "graphics.h"
 #include "graphics/ThemeTextures.h"
@@ -1500,11 +1501,30 @@ void clearBoxArt() {
 // static char videoFrameFilename[256];
 
 void loadRotatingCubes() {
+	bool rvidCompressed = false;
 	std::string cubes = TFN_RVID_CUBES;
-	if (ms().colorMode == 1) {
-		cubes = TFN_RVID_CUBES_BW;
+	if (isDSiMode()) {
+		rvidCompressed = true;
+		cubes = TFN_LZ77_RVID_CUBES;
+		if (ms().colorMode == 1) {
+			cubes = TFN_LZ77_RVID_CUBES_BW;
+		}
+	} else {
+		if (ms().colorMode == 1) {
+			cubes = TFN_RVID_CUBES_BW;
+		}
 	}
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
+
+	if (!videoFrameFile && isDSiMode()) {
+		// Fallback to uncompressed RVID
+		rvidCompressed = false;
+		cubes = TFN_RVID_CUBES;
+		if (ms().colorMode == 1) {
+			cubes = TFN_RVID_CUBES_BW;
+		}
+		videoFrameFile = fopen(cubes.c_str(), "rb");
+	}
 
 	// if (!videoFrameFile) {
 	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
@@ -1544,7 +1564,9 @@ void loadRotatingCubes() {
 
 	if (videoFrameFile) {
 		bool doRead = false;
-		fseek(videoFrameFile, 0x200, SEEK_SET);
+		if (!rvidCompressed) {
+			fseek(videoFrameFile, 0x200, SEEK_SET);
+		}
 
 		if (isDSiMode()) {
 			doRead = true;
@@ -1560,7 +1582,12 @@ void loadRotatingCubes() {
 		}
 
 		if (doRead) {
-			fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
+			if (rvidCompressed) {
+				fread((void*)0x02480000, 1, 0x200000, videoFrameFile);
+				LZ77_Decompress((u8*)0x02480000, (u8*)rotatingCubesLocation);
+			} else {
+				fread(rotatingCubesLocation, 1, 0x700000, videoFrameFile);
+			}
 			rotatingCubesLoaded = true;
 			rocketVideo_playVideo = true;
 		}
