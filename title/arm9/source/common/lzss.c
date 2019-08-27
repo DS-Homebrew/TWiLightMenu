@@ -1,7 +1,6 @@
 #include <nds.h>
 #include <string.h>
 #include "lzss.h"
-#include "tonccpy.h"
 
 #define __itcm __attribute__((section(".itcm")))
 

@@ -165,7 +165,7 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFrames = 108;
 		rocketVideo_videoFps = 60;
 
-		videoFrameFile = fopen("nitro:/video/dsisplash_60fps.lz77.rvid", "rb");
+		videoFrameFile = fopen(isDSiMode() ? "nitro:/video/dsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.rvid", "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -204,6 +204,7 @@ void BootSplashDSi(void) {
 			if (isDSiMode()) {
 				doRead = true;
 			} else if (sys().isRegularDS()) {
+				fseek(videoFrameFile, 0x200, SEEK_SET);
 				sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
 				*(vu32*)(0x08240000) = 1;
 				if (*(vu32*)(0x08240000) == 1) {
@@ -213,8 +214,12 @@ void BootSplashDSi(void) {
 				}
 			}
 			if (doRead) {
-				fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
-				LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
+				if (isDSiMode()) {
+					fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
+					LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
+				} else {
+					fread(dsiSplashLocation, 1, 0x7AA000, videoFrameFile);
+				}
 			} else {
 				sixtyFps = false;
 			}

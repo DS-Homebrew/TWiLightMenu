@@ -19,10 +19,10 @@ SystemDetails::SystemDetails()
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
     
-	if ((isDSiMode() && !_arm7SCFGLocked) || !isDSiMode()) {
+	/*if ((isDSiMode() && !_arm7SCFGLocked) || !isDSiMode()) {
 		// Restore value.
 		fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);
-	}
+	}*/
 }
 
 void SystemDetails::initFilesystem(const char *nitrofsPath, const char *runningPath)
