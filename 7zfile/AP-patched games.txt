@@ -1,4 +1,4 @@
-Total: 204
+Total: 208
 
 1000 Cooking Recipes from Elle a Table (Europe)
 AFL Mascot Minor (Australia)
@@ -45,6 +45,8 @@ Final Fantasy: The 4 Heroes of Light (Europe)
 Fire Emblem: Shin Monshou no Nazo Hikari to Kage no Eiyuu (Japan)
 Fossil Fighters: Champions (USA)
 Fresh PreCure!: Asobi Collection (Japan)
+Ghost Trick: Phantom Detective (USA)
+Ghost Trick: Phantom Detective (Europe)
 Gokujou!! Mecha Mote Iinchou: MM Town de Miracle Change! (Japan)
 Golden Sun: Dark Dawn (USA)
 Golden Sun: Dark Dawn (Europe)
@@ -75,6 +77,8 @@ Kingdom Hearts: 358/2 Days (Japan)
 Kingdom Hearts: Re-Coded (USA)
 Kingdom Hearts: Re-Coded (Europe)
 Kingdom Hearts: Re-Coded (Japan)
+Korg DS-10+ Synthesizer (USA)
+Korg M01 Music Workstation (Japan)
 KuruKuru Princess: Tokimeki Figure: Mezase! Vancouver (Japan)
 Kyokugen Dasshutsu: 9-jikan, 9-nin, 9 no Tobira (Japan)
 The Legend of Zelda: Spirit Tracks (USA)
