@@ -54,6 +54,8 @@ bool checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "VSO",  3) == 0)  // Sonic Classic Collection
 	 || (memcmp(gameTid[num], "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
 	 || (memcmp(gameTid[num], "BWB",  3) == 0)  // Plants vs Zombies
+	 || (memcmp(gameTid[num], "VDX",  3) == 0)	  // Daniel X: The Ultimate Power
+	 || (memcmp(gameTid[num], "BZX",  3) == 0)	  // Puzzle Quest 2
 	 || (memcmp(gameTid[num], "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
 	 || (memcmp(gameTid[num], "TFB",  3) == 0)  // Frozen: Olaf's Quest
 	 || (memcmp(gameTid[num], "B88",  3) == 0)) // DS WiFi Settings
