@@ -1,4 +1,4 @@
-Total: 288
+Total: 290
 
 1000 Cooking Recipes from Elle a Table (Europe)
 5-kyuu kara 1-kyuu Kanzen Taiou Saishin Kako Mondai: Nijishiken Taisaku: Eiken Kanzenban (Japan) (Rev 1) (BEKJ)
@@ -122,7 +122,9 @@ Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen (Japan) (B3
 KuruKuru Princess: Tokimeki Figure: Mezase! Vancouver (Japan)
 Kyokugen Dasshutsu: 9-jikan, 9-nin, 9 no Tobira (Japan)
 The Legend of Zelda: Spirit Tracks (USA)
+The Legend of Zelda: Spirit Tracks (D-Pad Patched) (USA)
 The Legend of Zelda: Spirit Tracks (Europe)
+The Legend of Zelda: Spirit Tracks (D-Pad Patched) (Europe)
 Zelda no Densetsu: Daichi no Kiteki (Japan)
 Lina no Atelier: Strahl no Renkinjutsushi (Japan)
 Lufia: Curse of the Sinistrals (USA)
