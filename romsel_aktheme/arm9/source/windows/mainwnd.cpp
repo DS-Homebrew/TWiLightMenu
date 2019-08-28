@@ -699,7 +699,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 				"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
 				"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
 				"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
-				"CCU",	// Tomodachi Life
+				"CCU",	// Tomodachi Collection
 				"CLJ",	// Mario & Luigi: Bowser's Inside Story
 				"YKG",	// Kindgom Hearts: 358/2 Days
 				"COL",	// Mario & Sonic at the Olympic Winter Games
