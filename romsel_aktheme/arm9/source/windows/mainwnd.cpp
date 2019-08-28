@@ -680,6 +680,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		 || (memcmp(rominfo.saveInfo().gameCode, "B3X",  3) == 0)	  // River City Soccer Hooligans
 		 || (memcmp(rominfo.saveInfo().gameCode, "BZX",  3) == 0)	  // Puzzle Quest 2
 		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3 - A Fantasy Harvest Moon
+		 || (memcmp(rominfo.saveInfo().gameCode, "BDX",  3) == 0)   // Minna de Taikan Dokusho DS: Choo Kowaai!: Gakkou no Kaidan
 		 || (memcmp(rominfo.saveInfo().gameCode, "TFB",  3) == 0)   // Frozen: Olaf's Quest
 		 || (memcmp(rominfo.saveInfo().gameCode, "B88",  3) == 0))  // DS WiFi Settings
 		{

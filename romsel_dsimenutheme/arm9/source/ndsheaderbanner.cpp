@@ -59,6 +59,7 @@ bool checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "B3X",  3) == 0)	  // River City Soccer Hooligans
 	 || (memcmp(gameTid[num], "BZX",  3) == 0)	  // Puzzle Quest 2
 	 || (memcmp(gameTid[num], "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
+	 || (memcmp(gameTid[num], "BDX",  3) == 0)   // Minna de Taikan Dokusho DS: Choo Kowaai!: Gakkou no Kaidan
 	 || (memcmp(gameTid[num], "TFB",  3) == 0)  // Frozen: Olaf's Quest
 	 || (memcmp(gameTid[num], "B88",  3) == 0)) // DS WiFi Settings
 	{
