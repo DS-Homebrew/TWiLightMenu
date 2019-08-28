@@ -676,6 +676,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		 || (memcmp(rominfo.saveInfo().gameCode, "B2D",  3) == 0)   // Doctor Who: Evacuation Earth
 		 || (memcmp(rominfo.saveInfo().gameCode, "BWB",  3) == 0)	  // Plants vs Zombies
 		 || (memcmp(rominfo.saveInfo().gameCode, "VDX",  3) == 0)	  // Daniel X: The Ultimate Power
+		 || (memcmp(rominfo.saveInfo().gameCode, "BUD",  3) == 0)	  // River City Super Sports Challenge
+		 || (memcmp(rominfo.saveInfo().gameCode, "B3X",  3) == 0)	  // River City Soccer Hooligans
 		 || (memcmp(rominfo.saveInfo().gameCode, "BZX",  3) == 0)	  // Puzzle Quest 2
 		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3 - A Fantasy Harvest Moon
 		 || (memcmp(rominfo.saveInfo().gameCode, "TFB",  3) == 0)   // Frozen: Olaf's Quest

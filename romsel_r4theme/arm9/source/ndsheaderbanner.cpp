@@ -76,6 +76,8 @@ bool checkRomAP(FILE *ndsFile)
 	 || (memcmp(game_TID, "B2D",  3) == 0)  // Doctor Who: Evacuation Earth
 	 || (memcmp(game_TID, "BWB",  3) == 0)  // Plants vs Zombies
 	 || (memcmp(game_TID, "VDX",  3) == 0)	  // Daniel X: The Ultimate Power
+	 || (memcmp(game_TID, "BUD",  3) == 0)	  // River City Super Sports Challenge
+	 || (memcmp(game_TID, "B3X",  3) == 0)	  // River City Soccer Hooligans
 	 || (memcmp(game_TID, "BZX",  3) == 0)	  // Puzzle Quest 2
 	 || (memcmp(game_TID, "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
 	 || (memcmp(game_TID, "TFB",  3) == 0)  // Frozen: Olaf's Quest
