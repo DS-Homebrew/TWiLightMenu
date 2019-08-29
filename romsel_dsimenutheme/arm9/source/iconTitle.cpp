@@ -390,10 +390,19 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			ret = 0; // if seek fails set to !=1
 
 		if (ret != 1) {
-			clearTitle(num);
-			clearBannerSequence(num);
-			fclose(fp);
-			return;
+			// try again, but using regular header size
+			ret = fseek(fp, 0, SEEK_SET);
+			if (ret == 0)
+				ret = fread(&ndsHeader, 0x160, 1, fp); // read if seek succeed
+			else
+				ret = 0; // if seek fails set to !=1
+
+			if (ret != 1) {
+				clearTitle(num);
+				clearBannerSequence(num);
+				fclose(fp);
+				return;
+			}
 		}
 
 		if (num < 40) {
@@ -401,7 +410,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			headerCRC[num] = ndsHeader.headerCRC16;
 		}
 
-		fseek(fp, (ndsHeader.arm9romOffset == 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
+		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if (arm9StartSig[0] == 0xE3A00301
 		 && arm9StartSig[1] == 0xE5800208
@@ -415,6 +424,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 					isHomebrew[num] = 1; // Have nds-bootstrap load it (in case if non-DLDI SD read doesn't work)
 				}
 			}
+		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
+			isHomebrew[num] = 2; // No need to use nds-bootstrap
 		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew[num] = 1; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)

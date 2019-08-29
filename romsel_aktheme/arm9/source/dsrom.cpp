@@ -68,10 +68,13 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     sNDSHeaderExt header;
     if (1 != fread(&header, sizeof(header), 1, f))
     {
-        dbg_printf("read rom header fail\n");
-        memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
-        fclose(f);
-        return false;
+		if (1 != fread(&header, 0x160, 1, f))
+		{
+			dbg_printf("read rom header fail\n");
+			memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
+			fclose(f);
+			return false;
+		}
     }
 
     ///////// ROM Header /////////
@@ -88,7 +91,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
 
-		fseek(f, (header.arm9romOffset == 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
+		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, f);
 		if (arm9StartSig[0] == 0xE3A00301
 		 && arm9StartSig[1] == 0xE5800208
@@ -106,6 +109,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 					_isDSiWare = EFalse; // Have nds-bootstrap load it
 				}
 			}
+		}
+		else if (memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
+		{
+			_isDSiWare = ETrue;
+            _isHomebrew = ETrue;
 		}
         else if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
         {

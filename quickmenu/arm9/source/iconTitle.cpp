@@ -677,25 +677,31 @@ void getGameInfo(bool isDir, const char* name)
 		if (fp == NULL)
 		{
 			// banner sequence
-			clearBannerSequence();
 			fclose(fp);
 			return;
 		}
 
-		
 		ret = fseek(fp, 0, SEEK_SET);
 		if (ret == 0)
-			ret = fread(&ndsHeader, sizeof (ndsHeader), 1, fp); // read if seek succeed
+			ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
 		else
 			ret = 0; // if seek fails set to !=1
 
-		if (ret != 1)
-		{
-			fclose(fp);
-			return;
+		if (ret != 1) {
+			// try again, but using regular header size
+			ret = fseek(fp, 0, SEEK_SET);
+			if (ret == 0)
+				ret = fread(&ndsHeader, 0x160, 1, fp); // read if seek succeed
+			else
+				ret = 0; // if seek fails set to !=1
+
+			if (ret != 1) {
+				fclose(fp);
+				return;
+			}
 		}
 
-		fseek(fp, (ndsHeader.arm9romOffset == 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
+		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if (arm9StartSig[0] == 0xE3A00301
 		 && arm9StartSig[1] == 0xE5800208
@@ -709,6 +715,8 @@ void getGameInfo(bool isDir, const char* name)
 					isHomebrew = 1; // Have nds-bootstrap load it (in case if it doesn't)
 				}
 			}
+		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
+			isHomebrew = 2; // No need to use nds-bootstrap
 		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 			isHomebrew = 1; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
