@@ -411,6 +411,7 @@ void SetSpeedBumpExclude(const char *filename) {
 		"B3R",	// Pokemon Ranger: Guardian Signs
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
+	    "B3X",	// River City: Soccer Hooligans
 	    "ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6X",	// Rockman EXE: Operate Shooting Star

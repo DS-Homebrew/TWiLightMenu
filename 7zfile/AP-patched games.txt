@@ -1,4 +1,4 @@
-Total: 387
+Total: 388
 
 100 Classic Books (USA) (YBNE)
 100 Livres Classiques (France) (YBNF)
@@ -296,12 +296,13 @@ Professor Layton en de Melodie van het Spook (Netherlands) (BLFH)
 Layton Kyouju to Majin no Fue (Japan) (BLFJ)
 Layton Kyouju to Majin no Fue (Japan) (Rev 1) (BLFJ)
 Puyo Puyo 7 (Japan)
-Puyo Puyo! 20th Anniversary (Japan)
+Puyo Puyo!! 20th Anniversary (Japan)
 Quiz Magic Academy DS: Futatsu no Jikuuseki (Japan) (BQ2J)
 Ragnarok DS (Korea)
 Rekishi Simulation Game: Sangokushi DS 3 (Japan) (B35J)
 Rhythm Sesang (Korea)
 Rilakkuma Rhythm: Mattari Kibun de Dararan Ran (Japan)
+River City: Soccer Hooligans (USA) (B3XE)
 Rockman EXE: Operate Shooting Star (Japan)
 Rooms: The Main Building (USA) (BRME)
 Rooms: Fushigi na Ugoku Heya (Japan) (BRMJ)
