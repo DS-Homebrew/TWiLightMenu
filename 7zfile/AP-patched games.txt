@@ -1,5 +1,6 @@
 Total: 515
 
+*unknown game*
 100 Classic Books (USA) (YBNE)
 100 Livres Classiques (France) (YBNF)
 1000 Cooking Recipes from Elle a Table (Europe)
@@ -116,8 +117,8 @@ Fushigi no Dungeon: Fuurai no Shiren 4: Kami no Hitomi to Akuma no Heso (Japan) 
 Fushigi no Dungeon: Fuurai no Shiren 5: Fortune Tower to Unmei no Dice (Japan) (B5FJ)
 Gendai Daisenryaku DS: Isshoku Sokuhatsu, Gunji Balance Houkai (Japan) (BRQJ)
 G.G Series Collection+ (Japan) (BG3J)
-Ghost Trick: Phantom Detective (USA)
-Ghost Trick: Phantom Detective (Europe)
+Ghost Trick: Phantom Detective (USA) (BGTE)
+Ghost Trick: Phantom Detective (Europe) (BGTP)
 Ghost Trick (Japan) (BGTJ)
 Gokujou!! Mecha Mote Iinchou: MM My Best Friend! (Japan) (VMMJ)
 Gokujou!! Mecha Mote Iinchou: MM Town de Miracle Change! (Japan)
