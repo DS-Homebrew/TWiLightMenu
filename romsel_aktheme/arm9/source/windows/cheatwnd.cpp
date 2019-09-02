@@ -150,7 +150,7 @@ bool CheatWnd::process(const akui::Message& msg)
 bool CheatWnd::processKeyMessage(const KeyMessage& msg)
 {
   bool ret=false;
-  if(msg.id()==Message::keyDown)
+  if(msg.id() == Message::keyDown)
   {
     switch(msg.keyCode())
     {
@@ -164,8 +164,8 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
         break;
       case KeyMessage::UI_KEY_LEFT:
         {
-          size_t ii=_List.selectedRowId();
-          while(--ii>0)
+          size_t ii = _List.selectedRowId();
+          while(ii-- > 0)
           {
             if(_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
@@ -176,7 +176,7 @@ bool CheatWnd::processKeyMessage(const KeyMessage& msg)
       case KeyMessage::UI_KEY_RIGHT:
         {
           size_t ii=_List.selectedRowId(),top=_List.getRowCount();
-          while(++ii<top)
+          while(++ii < top)
           {
             if(_data[_indexes[ii]]._flags&cParsedItem::EFolder) break;
           }
