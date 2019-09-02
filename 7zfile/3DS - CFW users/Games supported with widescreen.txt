@@ -1,4 +1,4 @@
-Total: 373
+Total: 374
 
 007 - Blood Stone (USA/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -233,6 +233,7 @@ Star Trek - Tactical Assault (Europe)
 Star Wars - Battlefront - Elite Squadron (USA)
 Star Wars - Battlefront - Elite Squadron (Europe {En,Fr}/Europe {Es,It})
 Star Wars - Battlefront - Elite Squadron (Germany)
+Submarine - Tech Demo
 Super Mario 64 DS (USA) (Rev 0)
 Super Mario 64 DS (USA) (Rev 1)
 Super Mario 64 DS (Europe)
