@@ -363,7 +363,7 @@ void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 
 static u8 *rotatingCubesLocation = (u8 *)0x02700000;
 
-void playRotatingCubesVideo(void) {
+void rvidFrameRateHandler(void) {
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
@@ -383,6 +383,11 @@ void playRotatingCubesVideo(void) {
 								&& frameOf60fps != 51
 								&& frameOf60fps != 58);
 	}
+}
+
+void playRotatingCubesVideo(void) {
+	if (!rocketVideo_playVideo)
+		return;
 
 	if (rocketVideo_loadFrame) {
 		DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
@@ -1668,5 +1673,7 @@ void graphicsInit() {
 	tex().drawBatteryImageCached();
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+	irqSet(IRQ_VCOUNT, rvidFrameRateHandler);
+	irqEnable(IRQ_VCOUNT);
 	// consoleDemoInit();
 }
