@@ -1705,6 +1705,7 @@ int main(int argc, char **argv) {
 
 							// Set save size to 1MB for the following games
 							if (memcmp(game_TID, "AZL", 3) == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+							 || memcmp(game_TID, "C6P", 3) == 0	// Picross 3D
 							 || memcmp(game_TID, "BKI", 3) == 0)	// The Legend of Zelda: Spirit Tracks
 							{
 								savesize = 1048576;

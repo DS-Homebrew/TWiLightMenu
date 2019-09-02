@@ -1348,6 +1348,8 @@ int main(int argc, char **argv) {
 								0 // Wagamama Fashion: Girls Mode/Style Savvy/Nintendo
 								  // presents: Style Boutique/Namanui Collection: Girls
 								  // Style
+							    || memcmp(gameTid[CURPOS], "C6P", 3) ==
+								   0 // Picross 3D
 							    || memcmp(gameTid[CURPOS], "BKI", 3) ==
 								   0) // The Legend of Zelda: Spirit Tracks
 							{

@@ -59,7 +59,7 @@ BootstrapConfig &BootstrapConfig::saveSize()
 		return saveSize(0x40000);
 	}
 
-	if (strncmp("AZL", _gametid.c_str(), 3) == 0 || strncmp("BKI", _gametid.c_str(), 3) == 0)
+	if (strncmp("AZL", _gametid.c_str(), 3) == 0 || strncmp("C6P", _gametid.c_str(), 3) == 0 || strncmp("BKI", _gametid.c_str(), 3) == 0)
 	{
 		return saveSize(0x100000);
 	}
