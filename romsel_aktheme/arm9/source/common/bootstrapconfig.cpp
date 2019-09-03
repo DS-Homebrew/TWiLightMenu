@@ -163,13 +163,14 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
-		"B6R",	// Bakugan - Battle Brawlers
+		"B6R",	// Bakugan: Battle Brawlers
 		"AB2",	// Battles of Prince of Persia
 		"YB4",	// Bee Movie
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"BIG",	// Combat/Battle of Giants: Mutant Insects
+		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic - XY XX
@@ -177,25 +178,28 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
+		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus - World Hyper Cup Hen
 		"AVC",	// Magical Starsign
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
-	    "A2D",	// New Super Mario Bros.
+		"A2D",	// New Super Mario Bros.
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
 		"CPU",	// Pokemon Platinum
 		"B3R",	// Pokemon Ranger: Guardian Signs
+		"BPP",	// PostPet DS - Yumemiru Momo to Fushigi no Pen
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
+		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
 	    "B3X",	// River City: Soccer Hooligans
 	    "ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-	    "B6X",	// Rockman EXE: Operate Shooting Star
-	    "B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		"B6X",	// Rockman EXE: Operate Shooting Star
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
