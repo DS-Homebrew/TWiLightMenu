@@ -35,6 +35,7 @@
 #include "gamecode.h"
 
 #include "common/tonccpy.h"
+#include <memory>
 
 static u32 arm9StartSig[4];
 
@@ -42,7 +43,10 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 {
     tonccpy(&_banner, &src._banner, sizeof(_banner));
     tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
-    tonccpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
+
+    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+
 
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;
@@ -67,8 +71,10 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
 {
     tonccpy(&_banner, &src._banner, sizeof(_banner));
     tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
-    tonccpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
 
+    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+    
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;
     _isGbaRom = src._isGbaRom;
