@@ -204,12 +204,18 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
                 tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
                 tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
             }
-            tonccpy(&_banner, &banner, sizeof(_banner));
+
+            _banner.crc = ((tNDSBanner*)&banner)->crc;
+            tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
+            tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
+            tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
         }
         else
         {
-            tonccpy(&_banner, nds_banner_bin, sizeof(_banner));
-        }
+            _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+            tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+            tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
+            tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));        }
     }
     else
     {
@@ -451,7 +457,11 @@ bool DSRomInfo::loadGbaRomInfo(const std::string &filename)
             _isGbaRom = ETrue;
             tonccpy(_saveInfo.gameCode, header.gamecode, 4);
             _romVersion = header.version;
-            tonccpy(&_banner, gbarom_banner_bin, sizeof(tNDSBanner));
+
+            _banner.crc = ((tNDSBanner*)gbarom_banner_bin)->crc;
+            tonccpy(_banner.icon,((tNDSBanner*)gbarom_banner_bin)->icon, sizeof(_banner.icon));
+            tonccpy(_banner.palette,((tNDSBanner*)gbarom_banner_bin)->palette, sizeof(_banner.palette));
+            tonccpy(_banner.title, ((tNDSBanner*)gbarom_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
             return true;
         }
     }
@@ -485,10 +495,10 @@ void DSRomInfo::load(void)
         loadGbaRomInfo(_fileName);
 }
 
-tNDSBanner &DSRomInfo::banner(void)
+const tNDSCompactedBanner &DSRomInfo::banner(void)
 {
     load();
-    return (tNDSBanner &)_banner;
+    return (tNDSCompactedBanner &)_banner;
 }
 
 const tDSiAnimatedIcon &DSRomInfo::animatedIcon(void)
@@ -553,5 +563,8 @@ void DSRomInfo::setExtIcon(const std::string &aValue)
 void DSRomInfo::setBanner(const std::string &anExtIcon, const u8 *aBanner)
 {
     setExtIcon(anExtIcon);
-    tonccpy(&banner(), aBanner, sizeof(tNDSBanner));
+    _banner.crc = ((tNDSBanner*)aBanner)->crc;
+    tonccpy(_banner.icon,((tNDSBanner*)aBanner)->icon, sizeof(_banner.icon));
+    tonccpy(_banner.palette,((tNDSBanner*)aBanner)->palette, sizeof(_banner.palette));
+    tonccpy(_banner.title, ((tNDSBanner*)aBanner)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
 }

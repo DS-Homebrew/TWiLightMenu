@@ -38,6 +38,13 @@ typedef struct {
 	u16 sequence[64];
 } tDSiAnimatedIcon;
 
+typedef struct {
+  u16 crc;
+  u8 icon[512];
+  u16 palette[16];
+  u16 title[128];
+} tNDSCompactedBanner;
+
 class DSRomInfo
 {
 private:
@@ -49,7 +56,7 @@ private:
   };
 
 private:
-  tNDSBanner _banner;
+  tNDSCompactedBanner _banner;
   SAVE_INFO_EX _saveInfo;
   TBool _isDSRom;
   TBool _isHomebrew;
@@ -95,7 +102,7 @@ public:
   void drawDSRomIconMem(void *mem);
   void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV);
 
-  tNDSBanner &banner(void);
+  const tNDSCompactedBanner &banner(void);
   const tDSiAnimatedIcon &animatedIcon(void);
   SAVE_INFO_EX &saveInfo(void);
   u8 version(void);

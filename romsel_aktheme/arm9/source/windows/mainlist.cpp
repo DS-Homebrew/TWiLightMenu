@@ -407,7 +407,7 @@ bool MainList::enterDir(const std::string &dirName)
                 }
                 else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
                 {
-                    tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    rominfo.setBanner("", unknown_banner_bin);
                     allowUnknown = true;
                 }
                 else
@@ -661,7 +661,7 @@ void MainList::updateInternalNames(void)
                 if (_romInfoList[_firstVisibleRowId + ii].isDSRom())
                 {
                     _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
-                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().titles[ms().getGuiLanguage()], 128, NULL));
+                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().title, 128, NULL));
                 }
                 else
                 {
