@@ -1,5 +1,6 @@
 #include "dsiiconsequence.h"
 #include <nds.h>
+#include "common/tonccpy.h"
 
 DSiIconSequence::DSiIconSequence()
 {
@@ -58,11 +59,11 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
 
     size_t index = _dsiIconSequence.size() - 1;
 
-    memset(seq()._dsiIconSequence[index].gameTid(), 0, SIZE_GAMETID);
-    memset(seq()._dsiIconSequence[index].sequence(), 0, SIZE_SEQUENCE);
+    toncset(seq()._dsiIconSequence[index].gameTid(), 0, SIZE_GAMETID);
+    toncset(seq()._dsiIconSequence[index].sequence(), 0, SIZE_SEQUENCE);
 
-    memcpy(seq()._dsiIconSequence[index].gameTid(), gameTid, SIZE_GAMETID);
-    memcpy(seq()._dsiIconSequence[index].sequence(), sequence, SIZE_SEQUENCE);
+    tonccpy(seq()._dsiIconSequence[index].gameTid(), gameTid, SIZE_GAMETID);
+    tonccpy(seq()._dsiIconSequence[index].sequence(), sequence, SIZE_SEQUENCE);
 
     seq()._dsiIconSequence[index].reset();
     seq()._dsiIconSequence[index].show();

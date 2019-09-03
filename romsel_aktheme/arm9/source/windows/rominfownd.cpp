@@ -31,6 +31,7 @@
 #include "language.h"
 #include "unicode.h"
 #include "ui/binaryfind.h"
+#include "common/tonccpy.h"
 
 using namespace akui;
 
@@ -521,7 +522,7 @@ void RomInfoWnd::onShow()
 void RomInfoWnd::addCode(void)
 {
     char gameCode[5];
-    memcpy(gameCode, _romInfo.saveInfo().gameCode, sizeof(_romInfo.saveInfo().gameCode));
+    tonccpy(gameCode, _romInfo.saveInfo().gameCode, sizeof(_romInfo.saveInfo().gameCode));
     gameCode[4] = 0;
     // if (_saveTypeText.length())
     //     _saveTypeText += ", ";

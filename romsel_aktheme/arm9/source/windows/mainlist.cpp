@@ -57,6 +57,8 @@
 #include "language.h"
 #include "unicode.h"
 
+#include "common/tonccpy.h"
+
 using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
@@ -371,7 +373,7 @@ bool MainList::enterDir(const std::string &dirName)
                 //else if (".launcharg" == extName || ".argv" == extName)
                 else if (".argv" == extName)
                 {
-                    memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
@@ -405,7 +407,7 @@ bool MainList::enterDir(const std::string &dirName)
                 }
                 else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
                 {
-                    memcpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     allowUnknown = true;
                 }
                 else
@@ -617,7 +619,7 @@ void MainList::updateActiveIcon(bool updateContent)
             zeroMemory(backBuffer, 32 * 32 * 2);
             
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
-            memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
+            tonccpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
             _activeIcon.setBufferChanged();
 
             s32 itemX = _position.x;
