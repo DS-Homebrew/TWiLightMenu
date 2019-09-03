@@ -445,7 +445,7 @@ int main(int argc, char **argv)
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard (Buggy!)", "SEGA Saturn"},
+				{"DSi", "3DS", "R4", "Acekard", "SEGA Saturn"},
 				{0, 1, 2, 3, 4})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
