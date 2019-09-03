@@ -1,8 +1,6 @@
 /*
-    zoomingicon.h
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
-    Copyright (C) 2009 yellow wood goblin
+    dsiiconsequence.h
+    Copyright (C) 2016-2019 chyyran 
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

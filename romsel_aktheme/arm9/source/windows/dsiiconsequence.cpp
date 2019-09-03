@@ -4,8 +4,8 @@
 
 DSiIconSequence::DSiIconSequence()
 {
-    memset(_gameTid, 0, sizeof(_gameTid));
-    memset(_sequence, 0, sizeof(_sequence));
+    toncset(_gameTid, 0, sizeof(_gameTid));
+    toncset(_sequence, 0, sizeof(_sequence));
     _flipH = false;
     _flipV = false;
     _currentSequenceIndex = 0;

@@ -20,7 +20,7 @@
 
 #include <string.h> //memset
 #include "datetime.h"
-
+#include "common/tonccpy.h"
 const char * DateTime::weekdayStrings[]= { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
 void DateTime::FillTimeParts(void)
@@ -28,7 +28,7 @@ void DateTime::FillTimeParts(void)
   time_t epochTime;
   if(time(&epochTime)==(time_t)-1)
   {
-    memset(&iTimeParts,0,sizeof(iTimeParts));
+    toncset(&iTimeParts,0,sizeof(iTimeParts));
   }
   else
   {

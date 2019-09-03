@@ -26,7 +26,8 @@
 #include "saveinfo.h"
 #include "drawing/gdi.h"
 #include "common/ndsheader.h"
-
+#include "common/tonccpy.h"
+#include "unknown_banner_bin.h"
 
 typedef struct {
   u8 icon_frames[8][512];
@@ -73,10 +74,10 @@ public:
   _extIcon(-1), 
   _romVersion(0)
   {
-    //memcpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
-    memset(&_banner, 0, sizeof(_banner));
-    memset(&_saveInfo, 0, sizeof(_saveInfo));
-    memset(&_dsiIcon, 0, sizeof(_dsiIcon));
+    tonccpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
+    // toncset(&_banner, 0, sizeof(_banner));
+    toncset(&_saveInfo, 0, sizeof(_saveInfo));
+    toncset(&_dsiIcon, 0, sizeof(_dsiIcon));
     // memset(&_dsiPalette, 0, sizeof(_dsiPalette));
     // memset(&_dsiIcon, 0, sizeof(_dsiIcon));
 
