@@ -41,8 +41,9 @@ class VolumeIcon : public akui::Window
 
     void drawBottom();
 
-    akui::Window &loadAppearance(const std::string &aFileName);
+    void drawIcon(const BMP15 &icon);
 
+    akui::Window& loadAppearance(const std::string &filename) { return *this; };
 
   protected:
     bool _draw;
@@ -51,6 +52,11 @@ class VolumeIcon : public akui::Window
 
     Sprite _icon;
 
+    BMP15 _volIcon0;
+    BMP15 _volIcon1;
+    BMP15 _volIcon2;
+    BMP15 _volIcon3;
+    BMP15 _volIcon4;
 };
 
 typedef singleton<VolumeIcon> volumeIcon_s;

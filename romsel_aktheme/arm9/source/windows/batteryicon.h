@@ -39,10 +39,17 @@ class BatteryIcon : public akui::Window
   public:
     void draw();
 
-    akui::Window &loadAppearance(const std::string &aFileName);
+    void drawIcon(BMP15 &icon);
 
+    akui::Window &loadAppearance(const std::string &aFileName) { return *this; }
 
   protected:
+    BMP15 _batteryCharge;
+    BMP15 _battery1;
+    BMP15 _battery2;
+    BMP15 _battery3;
+    BMP15 _battery4;
+
     bool _draw;
 
     float _lightTime;
