@@ -85,38 +85,29 @@ bool ListView::insertColumn(size_t index, const std::string &text, u8 width)
     return true;
 }
 
-bool ListView::insertRow(size_t index, const std::vector<std::string> &texts)
+bool ListView::appendRow(const std::vector<std::string>&& texts)
 {
+    nocashMessage("listview:90");
     size_t columnCount = _columns.size();
-    if (0 == columnCount || index > _rows.size())
+    if (0 == columnCount)
         return false;
     if (0 == texts.size())
         return false;
-
-    _rows.insert(_rows.begin() + index, itemVector());
-    for (size_t col = 0; col < columnCount; ++col)
+    nocashMessage("listview:96");
+    itemVector row;
+    nocashMessage("listview:99");
+    for (size_t col = 0; col < columnCount; col++)
     {
-        std::string itemText;
-        if (col >= texts.size())
-            itemText = "Empty"; // Ĭ���ַ���
-        else
-            itemText = texts[col];
-
+        nocashMessage(texts[col].c_str());
         ListItem aItem;
-        aItem.setText(itemText);
-
-        _rows[index].insert(_rows[index].begin() + col, aItem);
+        aItem.setText(col < texts.size() ? texts[col] : "Empty");
+        row.emplace_back(std::move(aItem));
     }
+    _rows.emplace_back(std::move(row));
+    nocashMessage("listview:106");
     //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();
 
     return true;
-}
-
-void ListView::removeRow(size_t index)
-{
-    if (index >= _rows.size())
-        return;
-    _rows.erase(_rows.begin() + index);
 }
 
 void ListView::removeAllRows()
@@ -333,8 +324,11 @@ bool ListView::processTouchMessage(const TouchMessage &msg)
             {
                 if (selectedRowId() == rbp)
                 {
+                    cwl();
                     onSelectedRowClicked(rbp);
+                    cwl();
                     selectedRowClicked(rbp);
+                    cwl();
                 }
             }
         }

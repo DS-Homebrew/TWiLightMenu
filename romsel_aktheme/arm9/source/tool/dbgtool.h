@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 static inline int dbg_printf( const char* format, ... )
@@ -39,8 +39,8 @@ static inline int dbg_printf( const char* format, ... )
 }
 #else
 #define dbg_printf(...)
+#define nocashMessage(...)
 #endif//DEBUG
-
 
 #ifdef DEBUG
 static inline void _cwl(const char *file,int line)

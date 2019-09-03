@@ -487,7 +487,7 @@ void CheatWnd::generateList(void)
     std::vector<std::string> row;
     row.push_back("");
     row.push_back((*itr)._title);
-    _List.insertRow(_List.getRowCount(),row);
+    _List.appendRow(std::move(row));
     _indexes.push_back(itr-_data.begin());
     u32 flags=(*itr)._flags;
     ++itr;

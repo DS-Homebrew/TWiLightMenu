@@ -73,11 +73,10 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
 
 int IconSequenceManager::is_cached(u8 *gameTid)
 {
-    for (size_t i = 0; i < _dsiIconSequence.size(); i++)
-    {
-        if (memcmp(gameTid, _dsiIconSequence[i].gameTid(), SIZE_GAMETID) == 0)
+    for (auto it =  _dsiIconSequence.begin(); it !=  _dsiIconSequence.end(); ++it) {
+        if (memcmp(gameTid, it->gameTid(), SIZE_GAMETID) == 0)
         {
-            return i;
+            return std::distance(_dsiIconSequence.begin(), it);
         }
     }
     return -1;

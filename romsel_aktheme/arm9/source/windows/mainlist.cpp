@@ -135,75 +135,82 @@ static bool extnameFilter(const std::vector<std::string> &extNames, std::string 
     return false;
 }
 
-void MainList::addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner)
+void MainList::addDirEntry(const std::string row1,
+    const std::string row2, 
+    const std::string path, const std::string &bannerKey, const u8 *banner)
 {
-    std::vector<std::string> a_row;
-    a_row.push_back(""); // make a space for icon
+    nocashMessage("mainlist:140");
     DSRomInfo rominfo;
 
+    std::vector<std::string> a_row;
+    a_row.reserve(4);
+
+    a_row.push_back("");
     a_row.push_back(row1);
     a_row.push_back(row2);
     a_row.push_back(path);
+
+    nocashMessage("mainlist:152");
+    nocashMessage(a_row[0].c_str());
+    nocashMessage(a_row[1].c_str());
+    nocashMessage(a_row[2].c_str());
+    nocashMessage(a_row[3].c_str());
+    nocashMessage("mainlist:158");
 
     if (!bannerKey.empty())
     {
         rominfo.setBanner(bannerKey, banner);
     }
 
-    insertRow(pos, a_row);
+    appendRow(std::move(a_row));
+    nocashMessage("mainlist:157");
     _romInfoList.push_back(rominfo);
 }
 
-static int listNum = 0;
-
 bool MainList::enterDir(const std::string &dirName)
 {
+    cwl();
     dbg_printf("Enter Dir: %s\n", dirName.c_str());
-    if (SPATH_ROOT == dirName) // select RPG or SD card
+    if (SPATH_ROOT == dirName)
     {
-        listNum = 0;
         removeAllRows();
         _romInfoList.clear();
+        cwl();
 
         if (sdFound())
         {
-            addDirEntry(listNum, LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
-            listNum++;
+            addDirEntry(LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
         }
         if (flashcardFound())
         {
-            addDirEntry(listNum, LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
-            listNum++;
+            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
         }
-        addDirEntry(listNum, "GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
-        listNum++;
+        addDirEntry("GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
         if (!sys().isRegularDS())
         {
             if (!flashcardFound() && sdFound())
             {
-                addDirEntry(listNum, "SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
-                listNum++;
+                addDirEntry("SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
             }
-            addDirEntry(listNum, "System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
-            listNum++;
-            //addDirEntry(5, "System Settings", "", SPATH_SYSTEMSETTINGS, "systemsettings", settings_banner_bin);
+            addDirEntry("System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
         }
-        addDirEntry(listNum, "Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-        listNum++;
-        addDirEntry(listNum, "Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
-        //listNum++;
+        addDirEntry("Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+        addDirEntry("Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
         _currentDir = SPATH_ROOT;
         directoryChanged();
+        cwl();
         return true;
     }
+    cwl();
 
-    if (!strncmp(dirName.c_str(), "^*::", 4))
+    if (dirName == "^*::")
     {
         dbg_printf("Special directory entered");
         _currentDir = dirName;
         directoryChanged();
         return true;
     }
+    cwl();
 
     DIR *dir = NULL;
 
@@ -221,7 +228,7 @@ bool MainList::enterDir(const std::string &dirName)
         return false;
     }
 
-    if (strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0)
+    if (dirName == S1SD_ROOT)
     {
         ms().secondaryDevice = true;
     }
@@ -229,7 +236,7 @@ bool MainList::enterDir(const std::string &dirName)
     {
         ms().secondaryDevice = false;
     }
-
+    cwl();
     removeAllRows();
     _romInfoList.clear();
 
@@ -237,100 +244,111 @@ bool MainList::enterDir(const std::string &dirName)
 
     if (_showAllFiles || ms().showNds)
     {
-        extNames.push_back(".nds");
-        extNames.push_back(".ids");
-        extNames.push_back(".dsi");
-        extNames.push_back(".argv");
+        extNames.emplace_back(std::string(".nds"));
+        extNames.emplace_back(std::string(".ids"));
+        extNames.emplace_back(std::string(".dsi"));
+        extNames.emplace_back(std::string(".argv"));
     }
 	if (_showAllFiles || memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extNames.push_back(".plg");
+		extNames.emplace_back(std::string(".plg"));
 	}
     if (_showAllFiles || ms().showRvid)
     {
-		extNames.push_back(".rvid");
+		extNames.emplace_back(std::string(".rvid"));
 	}
-    extNames.push_back(".gba");
+    extNames.emplace_back(std::string(".gba"));
     if (_showAllFiles || ms().showGb)
     {
-        extNames.push_back(".gb");
-        extNames.push_back(".gbc");
+        extNames.emplace_back(std::string(".gb"));
+        extNames.emplace_back(std::string(".gbc"));
     }
     if (_showAllFiles || ms().showNes)
     {
-        extNames.push_back(".nes");
-        extNames.push_back(".fds");
+        extNames.emplace_back(std::string(".nes"));
+        extNames.emplace_back(std::string(".fds"));
     }
     if (_showAllFiles || ms().showSmsGg)
     {
-        extNames.push_back(".sms");
-        extNames.push_back(".gg");
+        extNames.emplace_back(std::string(".sms"));
+        extNames.emplace_back(std::string(".gg"));
     }
     if (_showAllFiles || ms().showMd)
     {
-        extNames.push_back(".gen");
+        extNames.emplace_back(std::string(".gen"));
     }
     if (_showAllFiles || ms().showSnes)
     {
-        extNames.push_back(".smc");
-        extNames.push_back(".sfc");
+        extNames.emplace_back(std::string(".smc"));
+        extNames.emplace_back(std::string(".sfc"));
     }
 
     if (_showAllFiles)
         extNames.clear();
     std::vector<std::string> savNames;
-    savNames.push_back(".sav");
+    savNames.emplace_back(std::string(".sav"));
 
     struct stat st;
     dirent *direntry;
     std::string extName;
-    char lfnBuf[strlen(dirName.c_str()) + 256 + 2] = {'\0'};
+    char lfnBuf[dirName.length() + 256 + 2];
     // list dir
 
     cwl();
+    nocashMessage("mainlist:295");
     if (dir)
     {
-        _currentDir = dirName;
+        nocashMessage(dirName.c_str());
+        _currentDir = std::string(dirName);
         
         while ((direntry = readdir(dir)) != NULL)
         {
             memset(lfnBuf, 0, sizeof(lfnBuf));
-            snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", dirName.c_str(), direntry->d_name);
+            snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", _currentDir.c_str(), direntry->d_name);
             stat(lfnBuf, &st);
             std::string lfn(direntry->d_name);
+            nocashMessage("mainlist:307");
 
             // st.st_mode & S_IFDIR indicates a directory
             size_t lastDotPos = lfn.find_last_of('.');
-            if (lfn.npos != lastDotPos)
+            if (lfn.npos != lastDotPos) {
                 extName = lfn.substr(lastDotPos);
-            else
+            } else {
                 extName = "";
+            }
+            nocashMessage("mainlist:316");
+
 
             dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
-            bool showThis = (st.st_mode & S_IFDIR) ? ((strcmp(lfn.c_str(), ".") && strcmp(lfn.c_str(), "..") && strcmp(lfn.c_str(), "_nds") && strcmp(lfn.c_str(), "saves") && ms().showDirectories)) // directory filter
+            cwl();
+            bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories) // directory filter
                                                    : extnameFilter(extNames, extName);                                                                                                                // extension name filter
             showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));                                                                                                           // Hide dotfiles
+            cwl();
+            nocashMessage("mainlist:322");
 
             if (showThis)
             {
-                u32 row_count = getRowCount();
-                size_t insertPos(row_count);
-
+                nocashMessage("mainlist:324");
                 std::string real_name = dirName + lfn;
                 if (st.st_mode & S_IFDIR)
                 {
                     real_name += "/";
                 }
-
-                addDirEntry(insertPos, lfn, "", real_name, "", NULL);
+                nocashMessage("mainlist:337");
+                nocashMessage(lfn.c_str());
+                nocashMessage(real_name.c_str());
+                addDirEntry(lfn, "", real_name, "", unknown_banner_bin);
+                nocashMessage("mainlist:341");
             }
         }
+        nocashMessage("mainlist:341");
+
         closedir(dir);
 
         std::sort(_rows.begin(), _rows.end(), itemSortComp);
 
-        for (size_t ii = 0; ii < _rows.size(); ++ii)
+        for (size_t ii = 0; ii < _rows.size(); ii++)
         {
-
             DSRomInfo &rominfo = _romInfoList[ii];
             std::string filename = _rows[ii][REALNAME_COLUMN].text();
             size_t lastDotPos = filename.find_last_of('.');
@@ -338,7 +356,7 @@ bool MainList::enterDir(const std::string &dirName)
                 extName = filename.substr(lastDotPos);
             else
                 extName = "";
-            for (size_t jj = 0; jj < extName.size(); ++jj)
+            for (size_t jj = 0; jj < extName.size(); jj++)
                 extName[jj] = tolower(extName[jj]);
 
             if ('/' == filename[filename.size() - 1])
@@ -405,23 +423,16 @@ bool MainList::enterDir(const std::string &dirName)
             }
         }
     }
-
+    nocashMessage("mainlist:415");
     directoryChanged();
+    nocashMessage("mainlist:418");
 
     return true;
 }
 
 void MainList::onSelectChanged(u32 index)
 {
-    dbg_printf("%s\n", _rows[index][3].text().c_str());
-}
-
-void MainList::onSelectedRowClicked(u32 index)
-{
-    const INPUT &input = getInput();
-    //dbg_printf("%d %d", input.touchPt.px, _position.x );
-    if (input.touchPt.px > _position.x && input.touchPt.px < _position.x + 32)
-        selectedRowHeadClicked(index);
+    if (index >= 0) dbg_printf("%s\n", _rows[index][3].text().c_str());
 }
 
 void MainList::onScrolled(u32 index)
@@ -460,6 +471,7 @@ void MainList::backParentDir()
 
     std::string oldCurrentDir = _currentDir;
 
+    cwl();
     if (enterDir(parentDir))
     { // select last entered director
         for (size_t i = 0; i < _rows.size(); ++i)
@@ -605,20 +617,9 @@ void MainList::updateActiveIcon(bool updateContent)
         {
             u8 backBuffer[32 * 32 * 2];
             zeroMemory(backBuffer, 32 * 32 * 2);
-
-            // if (_romInfoList[_selectedRowId].isBannerAnimated()) {
-            //       int seqIdx = seq().allocate_sequence(
-            //         _romInfoList[_selectedRowId].saveInfo().gameCode,
-            //         _romInfoList[_selectedRowId].animatedIcon().sequence);
-
-            //     int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
-            //     int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
-
-            //     _romInfoList[_selectedRowId].drawDSiAnimatedRomIconMem(backBuffer, bmpIdx, palIdx);
-            // }
-
+            
             _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
-            memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * 2);
+            memcpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
             _activeIcon.setBufferChanged();
 
             s32 itemX = _position.x;

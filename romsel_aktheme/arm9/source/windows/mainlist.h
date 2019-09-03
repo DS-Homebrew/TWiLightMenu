@@ -71,7 +71,7 @@ public:
 public:
   int init();
 
-  void addDirEntry(int pos, const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner);
+  void addDirEntry(const std::string row1, const std::string row2, const std::string path, const std::string &bannerKey, const u8 *banner);
 
   bool enterDir(const std::string &dirName);
 
@@ -94,8 +94,6 @@ public:
   VIEW_MODE getViewMode() { return _viewMode; }
 
   void arrangeIcons();
-
-  akui::Signal1<u32> selectedRowHeadClicked;
 
   akui::Signal0 directoryChanged;
 
@@ -121,8 +119,6 @@ protected:
   void updateInternalNames(void);
 
 protected:
-  void onSelectedRowClicked(u32 index);
-
   void onSelectChanged(u32 index);
 
   void onScrolled(u32 index);
