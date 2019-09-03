@@ -107,9 +107,9 @@ int main() {
 	// Start the RTC tracking IRQ
 	initClockIRQ();
 
-	fifoInit();
 	touchInit();
-		
+	fifoInit();
+
 	SetYtrigger(80);
 	
 	installSoundFIFO();
