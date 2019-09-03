@@ -66,6 +66,7 @@ MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     _activeIconScale = 1;
     _activeIcon.hide();
     _activeIcon.update();
+    setupExtnames();
     animationManager().addAnimation(&_activeIcon);
     seq();
     dbg_printf("_activeIcon.init\n");
@@ -133,6 +134,49 @@ static bool extnameFilter(const std::vector<std::string> &extNames, std::string 
         }
     }
     return false;
+}
+
+void MainList::setupExtnames() 
+{
+    if (ms().showNds)
+    {
+        _extnameFilter.emplace_back(std::string(".nds"));
+        _extnameFilter.emplace_back(std::string(".ids"));
+        _extnameFilter.emplace_back(std::string(".dsi"));
+        _extnameFilter.emplace_back(std::string(".argv"));
+    }
+	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+		_extnameFilter.emplace_back(std::string(".plg"));
+	}
+    if (ms().showRvid)
+    {
+		_extnameFilter.emplace_back(std::string(".rvid"));
+	}
+    _extnameFilter.emplace_back(std::string(".gba"));
+    if (ms().showGb)
+    {
+        _extnameFilter.emplace_back(std::string(".gb"));
+        _extnameFilter.emplace_back(std::string(".gbc"));
+    }
+    if (ms().showNes)
+    {
+        _extnameFilter.emplace_back(std::string(".nes"));
+        _extnameFilter.emplace_back(std::string(".fds"));
+    }
+    if (ms().showSmsGg)
+    {
+        _extnameFilter.emplace_back(std::string(".sms"));
+        _extnameFilter.emplace_back(std::string(".gg"));
+    }
+    if (ms().showMd)
+    {
+        _extnameFilter.emplace_back(std::string(".gen"));
+    }
+    if (ms().showSnes)
+    {
+        _extnameFilter.emplace_back(std::string(".smc"));
+        _extnameFilter.emplace_back(std::string(".sfc"));
+    }
 }
 
 void MainList::addDirEntry(const std::string row1,
@@ -240,54 +284,7 @@ bool MainList::enterDir(const std::string &dirName)
     cwl();
     removeAllRows();
     _romInfoList.clear();
-
-    std::vector<std::string> extNames;
-
-    if (_showAllFiles || ms().showNds)
-    {
-        extNames.emplace_back(std::string(".nds"));
-        extNames.emplace_back(std::string(".ids"));
-        extNames.emplace_back(std::string(".dsi"));
-        extNames.emplace_back(std::string(".argv"));
-    }
-	if (_showAllFiles || memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		extNames.emplace_back(std::string(".plg"));
-	}
-    if (_showAllFiles || ms().showRvid)
-    {
-		extNames.emplace_back(std::string(".rvid"));
-	}
-    extNames.emplace_back(std::string(".gba"));
-    if (_showAllFiles || ms().showGb)
-    {
-        extNames.emplace_back(std::string(".gb"));
-        extNames.emplace_back(std::string(".gbc"));
-    }
-    if (_showAllFiles || ms().showNes)
-    {
-        extNames.emplace_back(std::string(".nes"));
-        extNames.emplace_back(std::string(".fds"));
-    }
-    if (_showAllFiles || ms().showSmsGg)
-    {
-        extNames.emplace_back(std::string(".sms"));
-        extNames.emplace_back(std::string(".gg"));
-    }
-    if (_showAllFiles || ms().showMd)
-    {
-        extNames.emplace_back(std::string(".gen"));
-    }
-    if (_showAllFiles || ms().showSnes)
-    {
-        extNames.emplace_back(std::string(".smc"));
-        extNames.emplace_back(std::string(".sfc"));
-    }
-
-    if (_showAllFiles)
-        extNames.clear();
-    std::vector<std::string> savNames;
-    savNames.emplace_back(std::string(".sav"));
-
+ 
     struct stat st;
     dirent *direntry;
     std::string extName;
@@ -322,7 +319,7 @@ bool MainList::enterDir(const std::string &dirName)
             dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
             cwl();
             bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories) // directory filter
-                                                   : extnameFilter(extNames, extName);                                                                                                                // extension name filter
+                                                   : extnameFilter(_showAllFiles ? std::vector<std::string>() : _extnameFilter, extName);                                                                                                                // extension name filter
             showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));                                                                                                           // Hide dotfiles
             cwl();
             nocashMessage("mainlist:322");

@@ -128,8 +128,6 @@ protected:
 
   std::string _currentDir;
 
-  std::vector<std::string> _extnameFilter;
-
   std::vector<DSRomInfo> _romInfoList;
 
   ZoomingIcon _activeIcon;
@@ -137,6 +135,11 @@ protected:
   float _activeIconScale;
 
   bool _showAllFiles;
+
+private:
+  void setupExtnames();
+  
+  std::vector<std::string> _extnameFilter;
 };
 
 #endif //_MAINLIST_H_
