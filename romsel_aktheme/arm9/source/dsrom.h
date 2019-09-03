@@ -39,10 +39,10 @@ typedef struct {
 } tDSiAnimatedIcon;
 
 typedef struct {
-  u16 crc;
   u8 icon[512];
-  u16 palette[16];
   u16 title[128];
+  u16 palette[16];
+  u16 crc;
 } tNDSCompactedBanner;
 
 class DSRomInfo
