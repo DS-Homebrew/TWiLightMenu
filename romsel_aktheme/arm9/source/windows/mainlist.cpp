@@ -203,7 +203,8 @@ bool MainList::enterDir(const std::string &dirName)
     }
     cwl();
 
-    if (dirName == "^*::")
+    // Only compare first 4 characters
+    if (!strncmp(dirName.c_str(), "^*::", 4))
     {
         dbg_printf("Special directory entered");
         _currentDir = dirName;
