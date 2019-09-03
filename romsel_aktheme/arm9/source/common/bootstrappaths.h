@@ -31,8 +31,8 @@
 
 #define GBARUNNER_SD "sd:/_nds/GBARunner2.nds"
 #define GBARUNNER_FC "fat:/_nds/GBARunner2_fc.nds"
-#define GBARUNNER_IWRAMCACHE_SD "sd:/_nds/GBARunner2_iwramcache.nds"
-#define GBARUNNER_IWRAMCACHE_FC "fat:/_nds/GBARunner2_fc_iwramcache.nds"
+#define GBARUNNER_IWRAMCACHE_SD "sd:/_nds/GBARunner2_wramicache.nds"
+#define GBARUNNER_IWRAMCACHE_FC "fat:/_nds/GBARunner2_fc_wramicache.nds"
 
 #define RVIDPLAYER_SD "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
 #define RVIDPLAYER_FC "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds"
