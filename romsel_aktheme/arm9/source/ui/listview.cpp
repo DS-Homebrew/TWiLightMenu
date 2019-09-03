@@ -126,6 +126,7 @@ void ListView::draw()
     drawText();
 }
 
+const BMP15 _barPic = createBMP15FromFile(SFN_LIST_BAR_BG);
 void ListView::drawSelectionBar()
 {
     //if( _touchMovedAfterTouchDown )
@@ -147,8 +148,6 @@ void ListView::drawSelectionBar()
 
     if(_showSelectionBarBg)
     {
-        BMP15 _barPic = createBMP15FromFile(SFN_LIST_BAR_BG);
-
         gdi().maskBlt(_barPic.buffer(), x, y, _barPic.width(), _barPic.height(), GE_MAIN);
     }
 }

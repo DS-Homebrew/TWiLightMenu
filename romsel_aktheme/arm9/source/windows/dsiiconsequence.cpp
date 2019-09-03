@@ -45,7 +45,7 @@ DSiIconSequence::~DSiIconSequence()
 {
 }
 
-int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
+int IconSequenceManager::allocate_sequence(const u8 *gameTid, const u16 *sequence)
 {
 
     int cached;
@@ -72,7 +72,7 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
     return index;
 }
 
-int IconSequenceManager::is_cached(u8 *gameTid)
+int IconSequenceManager::is_cached(const u8 *gameTid)
 {
     for (auto it =  _dsiIconSequence.begin(); it !=  _dsiIconSequence.end(); ++it) {
         if (memcmp(gameTid, it->gameTid(), SIZE_GAMETID) == 0)

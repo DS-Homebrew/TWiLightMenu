@@ -186,7 +186,6 @@ void MainList::addDirEntry(const std::string row1,
     const std::string path, const std::string &bannerKey, const u8 *banner)
 {
     nocashMessage("mainlist:140");
-    DSRomInfo rominfo;
 
     std::vector<std::string> a_row;
     a_row.reserve(4);
@@ -203,14 +202,15 @@ void MainList::addDirEntry(const std::string row1,
     nocashMessage(a_row[3].c_str());
     nocashMessage("mainlist:158");
 
-    if (!bannerKey.empty())
-    {
-        rominfo.setBanner(bannerKey, banner);
-    }
-
     appendRow(std::move(a_row));
     nocashMessage("mainlist:157");
-    _romInfoList.push_back(rominfo);
+
+    DSRomInfo romInfo;
+    if (!bannerKey.empty())
+    {
+        romInfo.setBanner(bannerKey, banner);
+    }
+    _romInfoList.emplace_back(std::move(romInfo));
 }
 
 bool MainList::enterDir(const std::string &dirName)
@@ -302,7 +302,7 @@ bool MainList::enterDir(const std::string &dirName)
         
         while ((direntry = readdir(dir)) != NULL)
         {
-            memset(lfnBuf, 0, sizeof(lfnBuf));
+            toncset(lfnBuf, 0, sizeof(lfnBuf));
             snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", _currentDir.c_str(), direntry->d_name);
             stat(lfnBuf, &st);
             std::string lfn(direntry->d_name);
@@ -373,7 +373,7 @@ bool MainList::enterDir(const std::string &dirName)
                 //else if (".launcharg" == extName || ".argv" == extName)
                 else if (".argv" == extName)
                 {
-                    tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
+                    // tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }

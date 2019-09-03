@@ -83,8 +83,8 @@ class IconSequenceManager
 
     }
 
-    int allocate_sequence(u8* gameTid, u16 *sequence);
-    int is_cached(u8* gameTid);
+    int allocate_sequence(const u8* gameTid, const u16 *sequence);
+    int is_cached(const u8* gameTid);
 
     ~IconSequenceManager(){}
 };

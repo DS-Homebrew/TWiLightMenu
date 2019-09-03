@@ -480,7 +480,7 @@ void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &sho
 
 void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
 {
-    _romInfo = romInfo;
+    _romInfo = DSRomInfo(romInfo);
 
     auto bannerTitle = _romInfo.banner().titles[ms().getGuiLanguage()];
     _romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
