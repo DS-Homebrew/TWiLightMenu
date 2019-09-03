@@ -85,9 +85,7 @@ class ListView : public Window
 
     bool insertColumn(size_t index, const std::string &text, u8 width);
 
-    bool insertRow(size_t index, const std::vector<std::string> &text);
-
-    void removeRow(size_t index); // return id of the item next to the removed item
+    bool appendRow(const std::vector<std::string> &&text);
 
     void removeAllRows();
 

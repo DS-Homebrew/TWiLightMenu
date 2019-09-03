@@ -26,7 +26,11 @@
 #include "saveinfo.h"
 #include "drawing/gdi.h"
 #include "common/ndsheader.h"
+#include "common/tonccpy.h"
+#include "unknown_banner_bin.h"
+#include <memory>
 
+using std::unique_ptr;
 
 typedef struct {
   u8 icon_frames[8][512];
@@ -56,7 +60,7 @@ private:
   std::string _fileName;
   s32 _extIcon;
   u8 _romVersion;
-  tDSiAnimatedIcon _dsiIcon;
+  unique_ptr<tDSiAnimatedIcon> _dsiIcon;
   
 
 private:
@@ -73,14 +77,16 @@ public:
   _extIcon(-1), 
   _romVersion(0)
   {
-    //memcpy(&_banner,unknown_banner_bin,unknown_banner_bin_size);
-    memset(&_banner, 0, sizeof(_banner));
-    memset(&_saveInfo, 0, sizeof(_saveInfo));
-    memset(&_dsiIcon, 0, sizeof(_dsiIcon));
+    toncset(&_banner, 0, sizeof(_banner));
+    toncset(&_saveInfo, 0, sizeof(_saveInfo));
+    // toncset(&_dsiIcon, 0, sizeof(_dsiIcon));
     // memset(&_dsiPalette, 0, sizeof(_dsiPalette));
     // memset(&_dsiIcon, 0, sizeof(_dsiIcon));
 
   }
+
+  DSRomInfo(const DSRomInfo&);
+  virtual ~DSRomInfo() { }
 
 public:
   void drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine);
@@ -90,7 +96,7 @@ public:
   void drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool flipH, bool flipV);
 
   tNDSBanner &banner(void);
-  tDSiAnimatedIcon &animatedIcon(void);
+  const tDSiAnimatedIcon &animatedIcon(void);
   SAVE_INFO_EX &saveInfo(void);
   u8 version(void);
   void setExtIcon(const std::string &aValue);

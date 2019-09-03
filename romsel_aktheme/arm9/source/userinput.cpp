@@ -36,7 +36,7 @@ void initInput()
 {
     lastInputTime = 0;
     idleMs = 0;
-    keysSetRepeat(30, 1);
+    keysSetRepeat(25, 2);
 }
 
 INPUT &updateInput()

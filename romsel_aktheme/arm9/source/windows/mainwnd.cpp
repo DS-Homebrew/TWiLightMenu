@@ -101,10 +101,6 @@ void MainWnd::init()
     _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
     _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
-
-    // This is commented out to prevent a double call of the list select handler when the head (file icon) is clicked.
-    // _mainList->selectedRowHeadClicked.connect(this, &MainWnd::onMainListSelItemHeadClicked);
- 
     addChildWindow(_mainList);
     dbg_printf("mainlist %08x\n", _mainList);
 
@@ -444,9 +440,7 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
 
 bool MainWnd::processTouchMessage(const TouchMessage &msg)
 {
-    bool ret = false;
-
-    return ret;
+    return false;
 }
 
 void MainWnd::onKeyYPressed()
@@ -461,6 +455,7 @@ void MainWnd::onMainListSelItemClicked(u32 index)
 
 void MainWnd::onKeyAPressed()
 {
+    cwl();
     launchSelected();
 }
 
@@ -816,11 +811,14 @@ void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
 
 void MainWnd::launchSelected()
 {
+    cwl();
     dbg_printf("Launch.");
     std::string fullPath = _mainList->getSelectedFullPath();
 
+    cwl();
     if (fullPath[fullPath.size() - 1] == '/')
     {
+        cwl();
         _mainList->enterDir(fullPath);
         return;
     }

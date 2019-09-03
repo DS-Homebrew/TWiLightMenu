@@ -1,10 +1,11 @@
 #include "dsiiconsequence.h"
 #include <nds.h>
+#include "common/tonccpy.h"
 
 DSiIconSequence::DSiIconSequence()
 {
-    memset(_gameTid, 0, sizeof(_gameTid));
-    memset(_sequence, 0, sizeof(_sequence));
+    toncset(_gameTid, 0, sizeof(_gameTid));
+    toncset(_sequence, 0, sizeof(_sequence));
     _flipH = false;
     _flipV = false;
     _currentSequenceIndex = 0;
@@ -44,7 +45,7 @@ DSiIconSequence::~DSiIconSequence()
 {
 }
 
-int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
+int IconSequenceManager::allocate_sequence(const u8 *gameTid, const u16 *sequence)
 {
 
     int cached;
@@ -58,11 +59,11 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
 
     size_t index = _dsiIconSequence.size() - 1;
 
-    memset(seq()._dsiIconSequence[index].gameTid(), 0, SIZE_GAMETID);
-    memset(seq()._dsiIconSequence[index].sequence(), 0, SIZE_SEQUENCE);
+    toncset(seq()._dsiIconSequence[index].gameTid(), 0, SIZE_GAMETID);
+    toncset(seq()._dsiIconSequence[index].sequence(), 0, SIZE_SEQUENCE);
 
-    memcpy(seq()._dsiIconSequence[index].gameTid(), gameTid, SIZE_GAMETID);
-    memcpy(seq()._dsiIconSequence[index].sequence(), sequence, SIZE_SEQUENCE);
+    tonccpy(seq()._dsiIconSequence[index].gameTid(), gameTid, SIZE_GAMETID);
+    tonccpy(seq()._dsiIconSequence[index].sequence(), sequence, SIZE_SEQUENCE);
 
     seq()._dsiIconSequence[index].reset();
     seq()._dsiIconSequence[index].show();
@@ -71,13 +72,12 @@ int IconSequenceManager::allocate_sequence(u8 *gameTid, u16 *sequence)
     return index;
 }
 
-int IconSequenceManager::is_cached(u8 *gameTid)
+int IconSequenceManager::is_cached(const u8 *gameTid)
 {
-    for (size_t i = 0; i < _dsiIconSequence.size(); i++)
-    {
-        if (memcmp(gameTid, _dsiIconSequence[i].gameTid(), SIZE_GAMETID) == 0)
+    for (auto it =  _dsiIconSequence.begin(); it !=  _dsiIconSequence.end(); ++it) {
+        if (memcmp(gameTid, it->gameTid(), SIZE_GAMETID) == 0)
         {
-            return i;
+            return std::distance(_dsiIconSequence.begin(), it);
         }
     }
     return -1;

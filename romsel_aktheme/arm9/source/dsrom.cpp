@@ -34,13 +34,15 @@
 #include "icon_bg_bin.h"
 #include "gamecode.h"
 
+#include "common/tonccpy.h"
+
 static u32 arm9StartSig[4];
 
 DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 {
-    memcpy(&_banner, &src._banner, sizeof(_banner));
-    memcpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
-    memcpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
+    tonccpy(&_banner, &src._banner, sizeof(_banner));
+    tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
+    tonccpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
 
     _isDSRom = src._isDSRom;
     _isHomebrew = src._isHomebrew;
@@ -53,6 +55,29 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _isArgv = src._isArgv;
     
     return *this;
+}
+
+DSRomInfo::DSRomInfo(const DSRomInfo &src)
+: _isDSRom(EFalse), _isHomebrew(EFalse), _isDSiWare(EFalse), 
+  _isGbaRom(EFalse), 
+  _isBannerAnimated(EFalse),
+  _isArgv(EFalse),
+  _extIcon(-1), 
+  _romVersion(0)
+{
+    tonccpy(&_banner, &src._banner, sizeof(_banner));
+    tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
+    tonccpy(&_dsiIcon, &src._dsiIcon, sizeof(_dsiIcon));
+
+    _isDSRom = src._isDSRom;
+    _isHomebrew = src._isHomebrew;
+    _isGbaRom = src._isGbaRom;
+    _fileName = src._fileName;
+    _romVersion = src._romVersion;
+    _extIcon = src._extIcon;
+    _isDSiWare = src._isDSiWare;
+    _isBannerAnimated = src._isBannerAnimated;
+    _isArgv = src._isArgv;
 }
 
 bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
@@ -71,7 +96,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		if (1 != fread(&header, 0x160, 1, f))
 		{
 			dbg_printf("read rom header fail\n");
-			memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
+			tonccpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
 			fclose(f);
 			return false;
 		}
@@ -82,7 +107,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     if (crc != header.headerCRC16)
     {
         dbg_printf("%s rom header crc error\n", filename.c_str());
-        memcpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
+        tonccpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
         fclose(f);
         return true;
     }
@@ -137,8 +162,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     }
 
     ///////// saveInfo /////////
-    memcpy(_saveInfo.gameTitle, header.gameTitle, 12);
-    memcpy(_saveInfo.gameCode, header.gameCode, 4);
+    tonccpy(_saveInfo.gameTitle, header.gameTitle, 12);
+    tonccpy(_saveInfo.gameCode, header.gameCode, 4);
     ///// SDK Version /////
 
     if (_isHomebrew == EFalse)
@@ -173,23 +198,23 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
                 dbg_printf("DSi Banner Found!");
                 _isBannerAnimated = ETrue;
                 fixBanner(&banner);
-                memcpy(_dsiIcon.icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
-                memcpy(_dsiIcon.palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
-                memcpy(_dsiIcon.sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
+                _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
 
-                
+                tonccpy(_dsiIcon->icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
+                tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
+                tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
             }
-            memcpy(&_banner, &banner, sizeof(_banner));
+            tonccpy(&_banner, &banner, sizeof(_banner));
         }
         else
         {
-            memcpy(&_banner, nds_banner_bin, sizeof(_banner));
+            tonccpy(&_banner, nds_banner_bin, sizeof(_banner));
         }
     }
     else
     {
         //dbg_printf( "%s has no banner\n", filename );
-        memcpy(&_banner, nds_banner_bin, sizeof(_banner));
+        tonccpy(&_banner, nds_banner_bin, sizeof(_banner));
     }
 
     fclose(f);
@@ -272,7 +297,7 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool fl
     {
         for (int pixel = 0; pixel < 32; ++pixel)
         {
-            u8 a_byte = _dsiIcon.icon_frames[frame][(tile << 5) + pixel];
+            u8 a_byte = _dsiIcon->icon_frames[frame][(tile << 5) + pixel];
 
             //int px = (tile & 3) * 8 + (2 * pixel & 7);
             //int py = (tile / 4) * 8 + (2 * pixel / 8);
@@ -285,7 +310,7 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool fl
             if (skiptransparent || 0 != idx1)
             {
                 
-                gdi().setPenColor(_dsiIcon.palette_frames[palette][idx1], engine);
+                gdi().setPenColor(_dsiIcon->palette_frames[palette][idx1], engine);
 
                 gdi().drawPixel(drawX, drawY, engine);
             }
@@ -293,7 +318,7 @@ void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool fl
             u8 idx2 = (a_byte & 0x0f);
             if (skiptransparent || 0 != idx2)
             {
-                gdi().setPenColor(_dsiIcon.palette_frames[palette][idx2], engine);
+                gdi().setPenColor(_dsiIcon->palette_frames[palette][idx2], engine);
                 gdi().drawPixel(drawX + (flipH ? 1 : - 1), drawY, engine);
             }
         }
@@ -382,7 +407,7 @@ void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool 
     {
         for (int pixel = 0; pixel < 32; ++pixel)
         {
-            u8 a_byte = _dsiIcon.icon_frames[frame][(tile << 5) + pixel];
+            u8 a_byte = _dsiIcon->icon_frames[frame][(tile << 5) + pixel];
 
             //int px = (tile & 3) * 8 + (2 * pixel & 7);
             //int py = (tile / 4) * 8 + (2 * pixel / 8);
@@ -395,7 +420,7 @@ void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool 
             u8 idx1 = (a_byte & 0xf0) >> 4;
             if (skiptransparent || 0 != idx1)
             {
-                pmem[drawY * 32 + drawX] = _dsiIcon.palette_frames[palette][idx1] | BIT(15);
+                pmem[drawY * 32 + drawX] = _dsiIcon->palette_frames[palette][idx1] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx1] );
                 //gdi().drawPixel( px+1+x, py+y, engine );
             }
@@ -404,7 +429,7 @@ void DSRomInfo::drawDSiAnimatedRomIconMem(void *mem, u8 frame, u8 palette, bool 
             if (skiptransparent || 0 != idx2)
             {
                  
-                pmem[drawY * 32 + drawX + (flipH ? 1 : - 1)] = _dsiIcon.palette_frames[palette][idx2] | BIT(15);
+                pmem[drawY * 32 + drawX + (flipH ? 1 : - 1)] = _dsiIcon->palette_frames[palette][idx2] | BIT(15);
                 //gdi().setPenColor( _banner.palette[idx2] );
                 //gdi().drawPixel( px+x, py+y, engine );
             }
@@ -424,9 +449,9 @@ bool DSRomInfo::loadGbaRomInfo(const std::string &filename)
         if (header.is96h == 0x96)
         {
             _isGbaRom = ETrue;
-            memcpy(_saveInfo.gameCode, header.gamecode, 4);
+            tonccpy(_saveInfo.gameCode, header.gamecode, 4);
             _romVersion = header.version;
-            memcpy(&_banner, gbarom_banner_bin, sizeof(tNDSBanner));
+            tonccpy(&_banner, gbarom_banner_bin, sizeof(tNDSBanner));
             return true;
         }
     }
@@ -466,10 +491,10 @@ tNDSBanner &DSRomInfo::banner(void)
     return (tNDSBanner &)_banner;
 }
 
-tDSiAnimatedIcon &DSRomInfo::animatedIcon(void)
+const tDSiAnimatedIcon &DSRomInfo::animatedIcon(void)
 {
     load();
-    return _dsiIcon;
+    return *_dsiIcon;
 }
 
 SAVE_INFO_EX &DSRomInfo::saveInfo(void)
@@ -528,5 +553,5 @@ void DSRomInfo::setExtIcon(const std::string &aValue)
 void DSRomInfo::setBanner(const std::string &anExtIcon, const u8 *aBanner)
 {
     setExtIcon(anExtIcon);
-    memcpy(&banner(), aBanner, sizeof(tNDSBanner));
+    tonccpy(&banner(), aBanner, sizeof(tNDSBanner));
 }
