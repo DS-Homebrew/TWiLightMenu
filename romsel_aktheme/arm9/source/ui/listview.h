@@ -161,6 +161,7 @@ class ListView : public Window
     void drawText();
 
   protected:
+    BMP15 _barPic;
     std::string _text;
     u16 _rowHeight;
     u16 _textColor;

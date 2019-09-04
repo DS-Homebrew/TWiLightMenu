@@ -38,6 +38,13 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
     } else {
         _engine = GE_MAIN;
     }
+
+    _volIcon0 =  createBMP15FromFile(SFN_VOLUME0);
+    _volIcon1 =  createBMP15FromFile(SFN_VOLUME1);
+    _volIcon2 =  createBMP15FromFile(SFN_VOLUME2);
+    _volIcon3 =  createBMP15FromFile(SFN_VOLUME3);
+    _volIcon4 =  createBMP15FromFile(SFN_VOLUME4);
+
     _icon.init(1);
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
@@ -58,20 +65,20 @@ void VolumeIcon::draw()
         u8 volumeLevel = sys().volumeStatus();
         
         if (volumeLevel >= 0x1C && volumeLevel < 0x20) {
-            loadAppearance(SFN_VOLUME4);
+            drawIcon(_volIcon4);
         } else if (volumeLevel >= 0x11 && volumeLevel < 0x1C) {
-            loadAppearance(SFN_VOLUME3);
+            drawIcon(_volIcon3);
         } else if (volumeLevel >= 0x07 && volumeLevel < 0x11) {
-            loadAppearance(SFN_VOLUME2);
+            drawIcon(_volIcon2);
         } else if (volumeLevel > 0x00 && volumeLevel < 0x07) {
-            loadAppearance(SFN_VOLUME1);
+            drawIcon(_volIcon1);
         } else {
-            loadAppearance(SFN_VOLUME0);
+            drawIcon(_volIcon0);
         }
     }
 }
 
-Window &VolumeIcon::loadAppearance(const std::string &aFileName)
+void VolumeIcon::drawIcon(const BMP15 &icon)
 {
 
     CIniFile ini(SFN_UI_SETTINGS);
@@ -79,8 +86,6 @@ Window &VolumeIcon::loadAppearance(const std::string &aFileName)
     u16 x = ini.GetInt("volume icon", "x", 238);
     u16 y = ini.GetInt("volume icon", "y", 172);
     _icon.setPosition(x, y);
-
-    BMP15 icon = createBMP15FromFile(aFileName);
 
     if(ini.GetInt("volume icon", "screen", true)) {
     gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
@@ -95,6 +100,5 @@ Window &VolumeIcon::loadAppearance(const std::string &aFileName)
 	    }
     }
 
-    dbg_printf("cVolumeIcon::loadAppearance ok %d\n", icon.valid());
-    return *this;
+    dbg_printf("cVolumeIcon::drawIcon ok %d\n", icon.valid());
 }

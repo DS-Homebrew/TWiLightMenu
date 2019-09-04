@@ -57,6 +57,7 @@ ListView::ListView(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string
     _engine = GE_MAIN;
     _scrollSpeed = scrollSpeed;
     _touchMovedAfterTouchDown = false;
+    _barPic = createBMP15FromFile(SFN_LIST_BAR_BG);
 }
 
 void ListView::arangeColumnsSize()
@@ -126,7 +127,6 @@ void ListView::draw()
     drawText();
 }
 
-const BMP15 _barPic = createBMP15FromFile(SFN_LIST_BAR_BG);
 void ListView::drawSelectionBar()
 {
     //if( _touchMovedAfterTouchDown )

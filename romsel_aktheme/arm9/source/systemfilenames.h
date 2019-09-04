@@ -98,9 +98,11 @@ class SystemFilenames
     private:
         std::string _uiDirectory;
     public:
-        SystemFilenames();
+        SystemFilenames() {}
         
         ~SystemFilenames(){}
+
+        void initFilenames();
     public: 
         inline const std::string& uiDirectory() { return _uiDirectory; }
   

@@ -38,6 +38,13 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
     } else {
         _engine = GE_MAIN;
     }
+    
+    _batteryCharge = createBMP15FromFile(SFN_BATTERY_CHARGE);
+    _battery1 = createBMP15FromFile(SFN_BATTERY1);
+    _battery2 = createBMP15FromFile(SFN_BATTERY2);
+    _battery3 = createBMP15FromFile(SFN_BATTERY3);
+    _battery4 = createBMP15FromFile(SFN_BATTERY4);
+
     _icon.init(1);
     _icon.setPosition(226, 174);
     _icon.setPriority(3);
@@ -58,29 +65,29 @@ void BatteryIcon::draw()
 
 		if (isDSiMode()) {
 			if (batteryLevel & BIT(7)) {
-				loadAppearance(SFN_BATTERY_CHARGE);
+				drawIcon(_batteryCharge);
 			} else if (batteryLevel == 0xF) {
-				loadAppearance(SFN_BATTERY4);
+				drawIcon(_battery4);
 			} else if (batteryLevel == 0xB) {
-				loadAppearance(SFN_BATTERY3);
+				drawIcon(_battery3);
 			} else if (batteryLevel == 0x7) {
-				loadAppearance(SFN_BATTERY2);
+				drawIcon(_battery2);
 			} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
-				loadAppearance(SFN_BATTERY1);
+				drawIcon(_battery1);
 			} else {
-				loadAppearance(SFN_BATTERY_CHARGE);
+				drawIcon(_batteryCharge);
 			}
 		} else {
 			if (batteryLevel & BIT(0)) {
-				loadAppearance(SFN_BATTERY1);
+				drawIcon(_battery1);
 			} else {
-				loadAppearance(SFN_BATTERY4);
+				drawIcon(_battery4);
 			}
 		}
     }
 }
 
-Window &BatteryIcon::loadAppearance(const std::string &aFileName)
+void BatteryIcon::drawIcon(BMP15 &icon)
 {
 
     CIniFile ini(SFN_UI_SETTINGS);
@@ -89,12 +96,9 @@ Window &BatteryIcon::loadAppearance(const std::string &aFileName)
     u16 y = ini.GetInt("battery icon", "y", 172);
     _icon.setPosition(x, y);
 
-    BMP15 icon = createBMP15FromFile(aFileName);
-
     if(ini.GetInt("battery icon", "screen", true)) {
         gdi().maskBlt(icon.buffer(), x, y, icon.width(), icon.height(), _engine);
     }
 
-    dbg_printf("cBatteryIcon::loadAppearance ok %d\n", icon.valid());
-    return *this;
+    dbg_printf("cBatteryIcon::drawIcon ok %d\n", icon.valid());
 }

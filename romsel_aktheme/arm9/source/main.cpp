@@ -116,17 +116,22 @@ int main(int argc, char **argv)
 	// consoleDemoInit();
 	// printf("Ok...");
 	// stop();
-
+	nocashMessage("begin");
 	defaultExceptionHandler();
+	nocashMessage("except init");
 	sys().initFilesystem();
+	nocashMessage("fs init");
 	sys().initArm7RegStatuses();
+	nocashMessage("arm7 init");
 	ms().loadSettings();
+	nocashMessage("settings init");
 
 	// init basic system
 	sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
 
 
-	sfn().uiDirectory();
+	sfn().initFilenames();
+	nocashMessage("sfn init");
 	irq().init();
 
 	gdi().init();
