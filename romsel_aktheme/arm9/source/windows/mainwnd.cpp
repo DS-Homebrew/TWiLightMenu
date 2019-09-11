@@ -666,17 +666,19 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	if (settingsIni.checkIfShowAPMsg() && (access(ipsPath, F_OK) != 0)) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "AZLJ", 4) == 0)   // Girls Mode (JAP version of Style Savvy)
-		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)   // Inazuma Eleven (J)
+		 || (memcmp(rominfo.saveInfo().gameCode, "YEEJ", 4) == 0)   // Inazuma Eleven (JAP)
 		 || (memcmp(rominfo.saveInfo().gameCode, "VSO",  3) == 0)   // Sonic Classic Collection
 		 || (memcmp(rominfo.saveInfo().gameCode, "B2D",  3) == 0)   // Doctor Who: Evacuation Earth
 		 || (memcmp(rominfo.saveInfo().gameCode, "BWB",  3) == 0)	  // Plants vs Zombies
 		 || (memcmp(rominfo.saveInfo().gameCode, "VDX",  3) == 0)	  // Daniel X: The Ultimate Power
 		 || (memcmp(rominfo.saveInfo().gameCode, "BUD",  3) == 0)	  // River City Super Sports Challenge
 		 || (memcmp(rominfo.saveInfo().gameCode, "B3X",  3) == 0)	  // River City Soccer Hooligans
+		 || (memcmp(rominfo.saveInfo().gameCode, "BJM",  3) == 0)	  // Disney Stitch Jam
 		 || (memcmp(rominfo.saveInfo().gameCode, "BZX",  3) == 0)	  // Puzzle Quest 2
-		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3 - A Fantasy Harvest Moon
+		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3: A Fantasy Harvest Moon
 		 || (memcmp(rominfo.saveInfo().gameCode, "BDX",  3) == 0)   // Minna de Taikan Dokusho DS: Choo Kowaai!: Gakkou no Kaidan
 		 || (memcmp(rominfo.saveInfo().gameCode, "TFB",  3) == 0)   // Frozen: Olaf's Quest
+		 || (memcmp(rominfo.saveInfo().gameCode, "TGP",  3) == 0)   // Winx Club Saving Alfea
 		 || (memcmp(rominfo.saveInfo().gameCode, "B88",  3) == 0))  // DS WiFi Settings
 		{
 			hasAP = false;
@@ -689,35 +691,39 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 			hasAP = true;
 		} else {
 			static const char ap_list[][4] = {
-				"ABT",	// Bust-A-Move DS
-				"YHG",	// Houkago Shounen
-				"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
-				"AS7",	// Summon Night: Twin Age
-				"YFQ",	// Nanashi no Geemu
-				"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
-				"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
-				"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
-				"CCU",	// Tomodachi Collection
-				"CLJ",	// Mario & Luigi: Bowser's Inside Story
-				"YKG",	// Kindgom Hearts: 358/2 Days
-				"COL",	// Mario & Sonic at the Olympic Winter Games
-				"C24",	// Phantasy Star 0
-				"AZL",	// Style Savvy
-				"CS3",	// Sonic and Sega All Stars Racing
-				"IPK",	// Pokemon HeartGold Version
-				"IPG",	// Pokemon SoulSilver Version
-				"YBU",	// Blue Dragon: Awakened Shadow
 				"YBN",	// 100 Classic Books
+				"YBU",	// Blue Dragon: Awakened Shadow
+				"ABT",	// Bust-A-Move DS
+				"YV5",	// Dragon Quest V: Hand of the Heavenly Bride
 				"YVI",	// Dragon Quest VI: Realms of Revelation
 				"YDQ",	// Dragon Quest IX: Sentinels of the Starry Skies
-				"C3J",	// Professor Layton and the Unwound Future
+				"CJR",	// Dragon Quest Monsters: Joker 2
+				"AFX",	// Final Fantasy Crystal Chronicles: Ring of Fates
+				"CFI",	// Final Fantasy Crystal Chronicles: Echoes of Time
+				"YHG",	// Houkago Shounen
+				"YEE",	// Inazuma Eleven (EUR)
+				"YKG",	// Kindgom Hearts: 358/2 Days
+				"YLU", 	// Last Window: The Secret of Cape West
+				"UZP",	// Learn with Pokemon: Typing Adventure
+				"CLJ",	// Mario & Luigi: Bowser's Inside Story
+				"COL",	// Mario & Sonic at the Olympic Winter Games
+				"YFQ",	// Nanashi no Geemu
+				"C24",	// Phantasy Star 0
+				"IPK",	// Pokemon HeartGold Version
+				"IPG",	// Pokemon SoulSilver Version
 				"IRA",	// Pokemon Black Version
 				"IRB",	// Pokemon White Version
-				"CJR",	// Dragon Quest Monsters: Joker 2
-				"YEE",	// Inazuma Eleven
-				"UZP",	// Learn with Pokemon: Typing Adventure
 				"IRE",	// Pokemon Black Version 2
 				"IRD",	// Pokemon White Version 2
+				"C3J",	// Professor Layton and the Unwound Future
+				"CQ2",	// Sengoku Spirits: Gunshi Den
+				"CQ3",	// Sengoku Spirits: Moushou Den
+				"YR4",	// Sengoku Spirits: Shukun Den
+				"CS3",	// Sonic and Sega All Stars Racing
+				"AZL",	// Style Savvy
+				"AS7",	// Summon Night: Twin Age
+				"YWV",	// Taiko no Tatsujin DS: Nanatsu no Shima no Daibouken!
+				"CCU",	// Tomodachi Collection
 			};
 
 			// TODO: If the list gets large enough, switch to bsearch().
