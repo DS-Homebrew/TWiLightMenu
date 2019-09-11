@@ -648,12 +648,13 @@ void SetSpeedBumpExclude(const char* filename) {
 		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
 		"AE4",	// Eyeshield 21 Max Devil Power
-		"APR",	// Feel the Magic - XY XX
-		"A26",	// Feel the Magic - XY XX (Demo)
+		"APR",	// Feel the Magic: XY XX
+		"A26",	// Feel the Magic: XY XX (Demo)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
-		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus - World Hyper Cup Hen
+		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
+		"YLU",	// Last Window: The Secret of Cape West
 		"AVC",	// Magical Starsign
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
@@ -664,9 +665,8 @@ void SetSpeedBumpExclude(const char* filename) {
 		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-		"CPU",	// Pokemon Platinum
 		"B3R",	// Pokemon Ranger: Guardian Signs
-		"BPP",	// PostPet DS - Yumemiru Momo to Fushigi no Pen
+		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
 		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
