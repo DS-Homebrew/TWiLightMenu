@@ -674,6 +674,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		 || (memcmp(rominfo.saveInfo().gameCode, "BUD",  3) == 0)	  // River City Super Sports Challenge
 		 || (memcmp(rominfo.saveInfo().gameCode, "B3X",  3) == 0)	  // River City Soccer Hooligans
 		 || (memcmp(rominfo.saveInfo().gameCode, "BJM",  3) == 0)	  // Disney Stitch Jam
+		 || (memcmp(rominfo.saveInfo().gameCode, "BH2J", 4) == 0)	  // Super Scribblenauts (Japan)
 		 || (memcmp(rominfo.saveInfo().gameCode, "BZX",  3) == 0)	  // Puzzle Quest 2
 		 || (memcmp(rominfo.saveInfo().gameCode, "BRFP", 4) == 0)	  // Rune Factory 3: A Fantasy Harvest Moon
 		 || (memcmp(rominfo.saveInfo().gameCode, "BDX",  3) == 0)   // Minna de Taikan Dokusho DS: Choo Kowaai!: Gakkou no Kaidan
@@ -687,7 +688,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		// Check for ROMs that have AP measures.
 		if ((memcmp(rominfo.saveInfo().gameCode, "B", 1) == 0)
 		 || (memcmp(rominfo.saveInfo().gameCode, "T", 1) == 0)
-		 || (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)) {
+		 || (memcmp(rominfo.saveInfo().gameCode, "V", 1) == 0)
+		 || (memcmp(rominfo.saveInfo().gameCode, "CLPD", 4) == 0))	// Club Penguin: Elite Penguin Force (Germany)
+		{
 			hasAP = true;
 		} else {
 			static const char ap_list[][4] = {

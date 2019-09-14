@@ -58,6 +58,7 @@ bool checkRomAP(FILE *ndsFile, int num)
 	 || (memcmp(gameTid[num], "BUD",  3) == 0)	  // River City Super Sports Challenge
 	 || (memcmp(gameTid[num], "B3X",  3) == 0)	  // River City Soccer Hooligans
 	 || (memcmp(gameTid[num], "BJM",  3) == 0)	  // Disney Stitch Jam
+	 || (memcmp(gameTid[num], "BH2J", 4) == 0)	  // Super Scribblenauts (Japan)
 	 || (memcmp(gameTid[num], "BZX",  3) == 0)	  // Puzzle Quest 2
 	 || (memcmp(gameTid[num], "BRFP", 4) == 0)	 // Rune Factory 3 - A Fantasy Harvest Moon
 	 || (memcmp(gameTid[num], "BDX",  3) == 0)   // Minna de Taikan Dokusho DS: Choo Kowaai!: Gakkou no Kaidan
@@ -71,7 +72,9 @@ bool checkRomAP(FILE *ndsFile, int num)
 	// Check for ROMs that have AP measures.
 	if ((memcmp(gameTid[num], "B", 1) == 0)
 	 || (memcmp(gameTid[num], "T", 1) == 0)
-	 || (memcmp(gameTid[num], "V", 1) == 0)) {
+	 || (memcmp(gameTid[num], "V", 1) == 0)
+	 || (memcmp(gameTid[num], "CLPD", 4) == 0))	// Club Penguin: Elite Penguin Force (Germany)
+	{
 		return true;
 	} else {
 		static const char ap_list[][4] = {
