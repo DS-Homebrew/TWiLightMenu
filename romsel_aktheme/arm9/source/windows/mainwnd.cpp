@@ -1163,11 +1163,11 @@ void MainWnd::bootGbaRunner(void)
     {
 		if (ms().useBootstrap)
 		{
-            bootFile(ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_FC : GBARUNNER_FC, "");
+            bootFile(GBARUNNER_FC, "");
 		}
 		else
 		{
-			bootFlashcard(ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_FC : GBARUNNER_FC, "", false);
+			bootFlashcard(GBARUNNER_FC, "", false);
 		}
         return;
     }
@@ -1185,7 +1185,7 @@ void MainWnd::bootGbaRunner(void)
 	argarray.at(0) = (char*)bootstrapPath.c_str();
 
     LoaderConfig gbaRunner(bootstrapPath, BOOTSTRAP_INI);
-	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().gbar2WramICache ? GBARUNNER_IWRAMCACHE_SD : GBARUNNER_SD)
+	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
 			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
