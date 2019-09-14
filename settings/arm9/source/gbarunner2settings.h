@@ -23,6 +23,8 @@ class GBAR2Settings
   public:
     bool useBottomScreen;
 	bool centerMask;
+    bool mainMemICache;
+    bool wramICache;
 	bool skipIntro;
 };
 

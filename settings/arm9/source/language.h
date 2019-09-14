@@ -113,8 +113,9 @@ extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 // GBARunner2 settings
 extern std::string STR_DESCRIPTION_USEBOTTOMSCREEN;
 extern std::string STR_DESCRIPTION_CENTERANDMASK;
-extern std::string STR_DESCRIPTION_BIOSINTRO;
+extern std::string STR_DESCRIPTION_MAINMEMICACHE;
 extern std::string STR_DESCRIPTION_WRAMICACHE;
+extern std::string STR_DESCRIPTION_BIOSINTRO;
 
 // Games/Apps settings
 extern std::string STR_ASPECTRATIO;

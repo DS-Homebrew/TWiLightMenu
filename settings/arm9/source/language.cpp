@@ -120,8 +120,9 @@ std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1
 // GBARunner2 settings
 std::string STR_DESCRIPTION_USEBOTTOMSCREEN = "STR_DESCRIPTION_USEBOTTOMSCREEN";
 std::string STR_DESCRIPTION_CENTERANDMASK = "STR_DESCRIPTION_CENTERANDMASK";
-std::string STR_DESCRIPTION_BIOSINTRO = "STR_DESCRIPTION_BIOSINTRO";
+std::string STR_DESCRIPTION_MAINMEMICACHE = "STR_DESCRIPTION_MAINMEMICACHE";
 std::string STR_DESCRIPTION_WRAMICACHE = "STR_DESCRIPTION_WRAMICACHE";
+std::string STR_DESCRIPTION_BIOSINTRO = "STR_DESCRIPTION_BIOSINTRO";
 
 // Games/Apps settings
 std::string STR_ASPECTRATIO = "STR_ASPECTRATIO";
@@ -392,8 +393,9 @@ void langInit(void)
 	// GBARunner2 settings
 	STR_DESCRIPTION_USEBOTTOMSCREEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOTTOMSCREEN", "Play GBA games on the bottom screen."));
 	STR_DESCRIPTION_CENTERANDMASK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CENTERANDMASK", "Centers the game with a border. Adds 1 frame delay."));
+	STR_DESCRIPTION_MAINMEMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_MAINMEMICACHE", "Boosts speed, but causes timing bugs in a few games."));
+	STR_DESCRIPTION_WRAMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_WRAMICACHE", "Boosts speed, but some games may crash."));
 	STR_DESCRIPTION_BIOSINTRO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BIOSINTRO", "Plays the GBA logo before starting GBA game."));
-	STR_DESCRIPTION_WRAMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_WRAMICACHE", "Improves performance in some GBA games, but may break some of them."));
 
 	// Games/Apps settings
 	STR_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ASPECTRATIO", "Screen Aspect Ratio"));

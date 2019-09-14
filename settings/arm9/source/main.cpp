@@ -479,8 +479,9 @@ int main(int argc, char **argv)
 
 	gbar2Page.option("Use bottom screen", STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
 			.option("Center and mask", STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
-			.option("BIOS intro", STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false})
-			.option("WRAM iCache", STR_DESCRIPTION_WRAMICACHE, Option::Bool(&ms().gbar2WramICache), {STR_ON, STR_OFF}, {true, false});
+			.option("DS main memory i-cache", STR_DESCRIPTION_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
+			.option("WRAM i-cache", STR_DESCRIPTION_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
+			.option("BIOS intro", STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
