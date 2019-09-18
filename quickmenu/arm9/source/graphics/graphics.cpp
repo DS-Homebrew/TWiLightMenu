@@ -362,14 +362,19 @@ void vBlankHandler()
 }
 
 void loadBoxArt(const char* filename) {
+	bool boxArtType = (bnrRomType == 4 || bnrRomType == 7);
+
 	FILE* file = fopen(filename, "rb");
 	if (!file) {
-		filename = "nitro:/graphics/boxart_unknown.bmp";
+		filename = (boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
 		file = fopen(filename, "rb");
 	}
 
 	if (file) {
 		extern bool extention(const std::string& filename, const char* ext);
+
+		int imageXpos = (boxArtType ? 86 : 64);
+		int imageWidth = (boxArtType ? 84 : 128);
 
 		// Start loading
 		if (extention(filename, ".png")) {
@@ -383,11 +388,11 @@ void loadBoxArt(const char* filename) {
 				}
 			}
 			u16* src = bmpImageBuffer;
-			int x = 64;
+			int x = imageXpos;
 			int y = 40;
-			for (int i = 0; i < 128 * 115; i++) {
-				if (x >= 64 + 128) {
-					x = 64;
+			for (int i = 0; i < imageWidth * 115; i++) {
+				if (x >= imageXpos + imageWidth) {
+					x = imageXpos;
 					y++;
 				}
 				u16 val = *(src++);
@@ -400,11 +405,11 @@ void loadBoxArt(const char* filename) {
 			fseek(file, pixelStart, SEEK_SET);
 			fread(bmpImageBuffer, 2, 0x7800, file);
 			u16* src = bmpImageBuffer;
-			int x = 64;
+			int x = imageXpos;
 			int y = 40+114;
-			for (int i = 0; i < 128 * 115; i++) {
-				if (x >= 64 + 128) {
-					x = 64;
+			for (int i = 0; i < imageWidth * 115; i++) {
+				if (x >= imageXpos + imageWidth) {
+					x = imageXpos;
 					y--;
 				}
 				u16 val = *(src++);

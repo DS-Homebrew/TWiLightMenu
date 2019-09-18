@@ -20,6 +20,7 @@
 #include "common/lzss.h"
 #include "common/tonccpy.h"
 #include "graphics/lodepng.h"
+#include "ndsheaderbanner.h"
 
 
 // #include <nds/arm9/decompress.h>
@@ -677,14 +678,19 @@ TWL_CODE void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 }
 
 void ThemeTextures::drawBoxArt(const char *filename) {
+	bool boxArtType = (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 7);
+
 	FILE *file = fopen(filename, "rb");
 	if (!file) {
-		filename = "nitro:/graphics/boxart_unknown.bmp";
+		filename = (boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
 		file = fopen(filename, "rb");
 	}
 
 	if (file) {
 		extern bool extention(const std::string& filename, const char* ext);
+
+		int imageXpos = (boxArtType ? 86 : 64);
+		int imageWidth = (boxArtType ? 84 : 128);
 
 		// Start loading
 		beginBgSubModify();
@@ -699,11 +705,11 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 				}
 			}
 			u16 *src = _bmpImageBuffer;
-			int x = 64;
+			int x = imageXpos;
 			int y = 40;
-			for (int i = 0; i < 128 * 115; i++) {
-				if (x >= 64 + 128) {
-					x = 64;
+			for (int i = 0; i < imageWidth * 115; i++) {
+				if (x >= imageXpos + imageWidth) {
+					x = imageXpos;
 					y++;
 				}
 				u16 val = *(src++);
@@ -716,11 +722,11 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 			fseek(file, pixelStart, SEEK_SET);
 			fread(_bmpImageBuffer, 2, 0x7800, file);
 			u16 *src = _bmpImageBuffer;
-			int x = 64;
+			int x = imageXpos;
 			int y = 40 + 114;
-			for (int i = 0; i < 128 * 115; i++) {
-				if (x >= 64 + 128) {
-					x = 64;
+			for (int i = 0; i < imageWidth * 115; i++) {
+				if (x >= imageXpos + imageWidth) {
+					x = imageXpos;
 					y--;
 				}
 				u16 val = *(src++);
@@ -738,10 +744,15 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 		return;
 	}
 
+	bool boxArtType = (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 7);
+
 	if (!boxArtFound[num]) {
-		drawBoxArt("nitro:/graphics/boxart_unknown.bmp");
+		drawBoxArt(boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
 		return;
 	}
+
+	int imageXpos = (boxArtType ? 86 : 64);
+	int imageWidth = (boxArtType ? 84 : 128);
 
 	// Start loading
 	beginBgSubModify();
@@ -755,11 +766,11 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 		}
 	}
 	u16 *src = _bmpImageBuffer;
-	int x = 64;
+	int x = imageXpos;
 	int y = 40;
-	for (int i = 0; i < 128 * 115; i++) {
-		if (x >= 64 + 128) {
-			x = 64;
+	for (int i = 0; i < imageWidth * 115; i++) {
+		if (x >= imageXpos + imageWidth) {
+			x = imageXpos;
 			y++;
 		}
 		u16 val = *(src++);
