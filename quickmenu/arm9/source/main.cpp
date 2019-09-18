@@ -1264,27 +1264,23 @@ int main(int argc, char **argv) {
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
 		} else if (extention(filename, ".plg") || extention(filename, ".rvid")) {
-			bnrRomType = 8;
-		} else if (extention(filename, ".gb") || extention(filename, ".sgb")) {
+			bnrRomType = 9;
+		} else if (extention(filename, ".gba")) {
 			bnrRomType = 1;
-		} else if (extention(filename, ".gbc")) {
+		} else if (extention(filename, ".gb") || extention(filename, ".sgb")) {
 			bnrRomType = 2;
-		} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
+		} else if (extention(filename, ".gbc")) {
 			bnrRomType = 3;
-		} else if(extention(filename, ".sms")) {
+		} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
 			bnrRomType = 4;
-		} else if(extention(filename, ".gg")) {
+		} else if(extention(filename, ".sms")) {
 			bnrRomType = 5;
-		} else if(extention(filename, ".gen")) {
+		} else if(extention(filename, ".gg")) {
 			bnrRomType = 6;
-		} else if(extention(filename, ".smc") || extention(filename, ".sfc")) {
+		} else if(extention(filename, ".gen")) {
 			bnrRomType = 7;
-		}
-
-		if (bnrRomType > 0 && bnrRomType < 9) {
-			bnrWirelessIcon = 0;
-			isDSiWare = false;
-			isHomebrew = 0;
+		} else if(extention(filename, ".smc") || extention(filename, ".sfc")) {
+			bnrRomType = 8;
 		}
 
 		if (showBoxArt) {
