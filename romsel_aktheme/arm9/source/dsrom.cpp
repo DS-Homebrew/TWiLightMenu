@@ -135,6 +135,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			{
 				if ((header.arm9binarySize == 0xC9F68 && header.arm7binarySize == 0x12814)	// Colors! v1.1
 				|| (header.arm9binarySize == 0x1B0864 && header.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
+				|| (header.arm9binarySize == 0xD45C0 && header.arm7binarySize == 0x2B7C)	// ikuReader v0.058
 				|| (header.arm9binarySize == 0x2C9A8 && header.arm7binarySize == 0xFB98))	// NitroGrafx v0.7
 				{
 					_isDSiWare = EFalse; // Have nds-bootstrap load it
