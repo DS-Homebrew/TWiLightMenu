@@ -596,18 +596,14 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 
 		if (!boxArtLoaded) {
 			if (isDirectory[CURPOS]) {
-				if (ms().theme == 1) {
-					if (!rocketVideo_playVideo) {
-						clearBoxArt(); // Clear box art, if it's a directory
-						rocketVideo_playVideo = true;
-					}
-				} else {
-					clearBoxArt(); // Clear box art, if it's a directory
+				clearBoxArt(); // Clear box art, if it's a directory
+				if (ms().theme == 1 && !rocketVideo_playVideo) {
+					rocketVideo_playVideo = true;
 				}
 			} else {
+				clearBoxArt();		
 				if (ms().theme == 1 && rocketVideo_playVideo) {
-					// Clear top screen cubes or box art
-					clearBoxArt();		
+					// Clear top screen cubes
 					rocketVideo_playVideo = false;
 				}
 				if (isDSiMode()) {
@@ -1265,24 +1261,40 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
 						    i);
 					bnrRomType[i] = 0;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid")) {
 					bnrRomType[i] = 9;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gba")) {
 					bnrRomType[i] = 1;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 					bnrRomType[i] = 2;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gbc")) {
 					bnrRomType[i] = 3;
-				} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
+					boxArtType[i] = 0;
+				} else if (extention(std_romsel_filename, ".nes")) {
 					bnrRomType[i] = 4;
+					boxArtType[i] = 2;
+				} else if (extention(std_romsel_filename, ".fds")) {
+					bnrRomType[i] = 4;
+					boxArtType[i] = 1;
 				} else if (extention(std_romsel_filename, ".sms")) {
 					bnrRomType[i] = 5;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gg")) {
 					bnrRomType[i] = 6;
+					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gen")) {
 					bnrRomType[i] = 7;
-				} else if (extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
+					boxArtType[i] = 2;
+				} else if (extention(std_romsel_filename, ".smc")) {
 					bnrRomType[i] = 8;
+					boxArtType[i] = 3;
+				} else if (extention(std_romsel_filename, ".sfc")) {
+					bnrRomType[i] = 8;
+					boxArtType[i] = 2;
 				}
 
 				if (bnrRomType[i] > 0 && bnrRomType[i] < 10) {

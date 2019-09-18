@@ -34,6 +34,7 @@ static u16 _bgSubBuffer[256 * 192] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
+int boxArtType[40] = {0};	// 0: NDS/GBA/GBC/GB, 1: FDS, 2: NES/GEN/MD/SFC, 3: SNES
 
 ThemeTextures::ThemeTextures()
     : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
@@ -678,19 +679,51 @@ TWL_CODE void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 }
 
 void ThemeTextures::drawBoxArt(const char *filename) {
-	bool boxArtType = (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 7);
-
 	FILE *file = fopen(filename, "rb");
 	if (!file) {
-		filename = (boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
+		switch (boxArtType[CURPOS]) {
+			case 0:
+			default:
+				filename = "nitro:/graphics/boxart_unknown.bmp";
+				break;
+			case 1:
+				filename = "nitro:/graphics/boxart_unknown1.bmp";
+				break;
+			case 2:
+				filename = "nitro:/graphics/boxart_unknown2.bmp";
+				break;
+			case 3:
+				filename = "nitro:/graphics/boxart_unknown3.bmp";
+				break;
+		}
 		file = fopen(filename, "rb");
 	}
 
 	if (file) {
 		extern bool extention(const std::string& filename, const char* ext);
 
-		int imageXpos = (boxArtType ? 86 : 64);
-		int imageWidth = (boxArtType ? 84 : 128);
+		int imageXpos = 0;
+		int imageWidth = 0;
+
+		switch (boxArtType[CURPOS]) {
+			case 0:
+			default:
+				imageXpos = 64;
+				imageWidth = 128;
+				break;
+			case 1:
+				imageXpos = 70;
+				imageWidth = 115;
+				break;
+			case 2:
+				imageXpos = 86;
+				imageWidth = 84;
+				break;
+			case 3:
+				imageXpos = 49;
+				imageWidth = 158;
+				break;
+		}
 
 		// Start loading
 		beginBgSubModify();
@@ -744,15 +777,33 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 		return;
 	}
 
-	bool boxArtType = (bnrRomType[CURPOS] == 4 || bnrRomType[CURPOS] == 7);
-
 	if (!boxArtFound[num]) {
-		drawBoxArt(boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
+		drawBoxArt("nitro:/null.bmp");
 		return;
 	}
 
-	int imageXpos = (boxArtType ? 86 : 64);
-	int imageWidth = (boxArtType ? 84 : 128);
+	int imageXpos = 0;
+	int imageWidth = 0;
+
+	switch (boxArtType[num]) {
+		case 0:
+		default:
+			imageXpos = 64;
+			imageWidth = 128;
+			break;
+		case 1:
+			imageXpos = 70;
+			imageWidth = 115;
+			break;
+		case 2:
+			imageXpos = 86;
+			imageWidth = 84;
+			break;
+		case 3:
+			imageXpos = 49;
+			imageWidth = 158;
+			break;
+	}
 
 	// Start loading
 	beginBgSubModify();

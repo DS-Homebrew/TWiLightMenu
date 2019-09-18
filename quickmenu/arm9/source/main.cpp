@@ -73,6 +73,7 @@ int colorMode = 0;
 int blfLevel = 0;
 
 extern void ClearBrightness();
+extern int boxArtType;
 
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
@@ -1263,24 +1264,40 @@ int main(int argc, char **argv) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
+			boxArtType = 0;
 		} else if (extention(filename, ".plg") || extention(filename, ".rvid")) {
 			bnrRomType = 9;
+			boxArtType = 0;
 		} else if (extention(filename, ".gba")) {
 			bnrRomType = 1;
+			boxArtType = 0;
 		} else if (extention(filename, ".gb") || extention(filename, ".sgb")) {
 			bnrRomType = 2;
+			boxArtType = 0;
 		} else if (extention(filename, ".gbc")) {
 			bnrRomType = 3;
-		} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
+			boxArtType = 0;
+		} else if (extention(filename, ".nes")) {
 			bnrRomType = 4;
-		} else if(extention(filename, ".sms")) {
+			boxArtType = 2;
+		} else if (extention(filename, ".fds")) {
+			bnrRomType = 4;
+			boxArtType = 1;
+		} else if (extention(filename, ".sms")) {
 			bnrRomType = 5;
-		} else if(extention(filename, ".gg")) {
+			boxArtType = 0;
+		} else if (extention(filename, ".gg")) {
 			bnrRomType = 6;
-		} else if(extention(filename, ".gen")) {
+			boxArtType = 0;
+		} else if (extention(filename, ".gen")) {
 			bnrRomType = 7;
-		} else if(extention(filename, ".smc") || extention(filename, ".sfc")) {
+			boxArtType = 2;
+		} else if (extention(filename, ".smc")) {
 			bnrRomType = 8;
+			boxArtType = 3;
+		} else if (extention(filename, ".sfc")) {
+			bnrRomType = 8;
+			boxArtType = 2;
 		}
 
 		if (showBoxArt) {

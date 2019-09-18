@@ -77,6 +77,8 @@ extern int theme;
 extern int subtheme;
 extern int consoleModel;
 
+int boxArtType = 0;
+
 //bool moveIconUp[7] = {false};
 int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
 
@@ -363,19 +365,51 @@ void vBlankHandler()
 }
 
 void loadBoxArt(const char* filename) {
-	bool boxArtType = (bnrRomType == 4 || bnrRomType == 7);
-
 	FILE* file = fopen(filename, "rb");
 	if (!file) {
-		filename = (boxArtType ? "nitro:/graphics/boxart_unknown2.bmp" : "nitro:/graphics/boxart_unknown.bmp");
+		switch (boxArtType) {
+			case 0:
+			default:
+				filename = "nitro:/graphics/boxart_unknown.bmp";
+				break;
+			case 1:
+				filename = "nitro:/graphics/boxart_unknown1.bmp";
+				break;
+			case 2:
+				filename = "nitro:/graphics/boxart_unknown2.bmp";
+				break;
+			case 3:
+				filename = "nitro:/graphics/boxart_unknown3.bmp";
+				break;
+		}
 		file = fopen(filename, "rb");
 	}
 
 	if (file) {
 		extern bool extention(const std::string& filename, const char* ext);
 
-		int imageXpos = (boxArtType ? 86 : 64);
-		int imageWidth = (boxArtType ? 84 : 128);
+		int imageXpos = 0;
+		int imageWidth = 0;
+
+		switch (boxArtType) {
+			case 0:
+			default:
+				imageXpos = 64;
+				imageWidth = 128;
+				break;
+			case 1:
+				imageXpos = 70;
+				imageWidth = 115;
+				break;
+			case 2:
+				imageXpos = 86;
+				imageWidth = 84;
+				break;
+			case 3:
+				imageXpos = 49;
+				imageWidth = 158;
+				break;
+		}
 
 		// Start loading
 		if (extention(filename, ".png")) {

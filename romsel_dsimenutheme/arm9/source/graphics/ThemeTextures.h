@@ -11,6 +11,8 @@
 
 #define BG_BUFFER_PIXELCOUNT 256 * 192
 
+extern int boxArtType[40];
+
 using std::unique_ptr;
 using std::min;
 using std::vector;
