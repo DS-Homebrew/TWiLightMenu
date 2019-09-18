@@ -1,4 +1,4 @@
-Total: 396
+Total: 399
 
 007 - Blood Stone (USA/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -64,6 +64,7 @@ Konchuu Wars (Japan)
 Eragon (USA)
 Eragon (Europe)
 FabStyle (Japan)
+FIFA Street 2 (USA)
 Final Fantasy - The 4 Heroes of Light (USA)
 Final Fantasy - The 4 Heroes of Light (Europe)
 Hikari no 4 Senshi - Final Fantasy Gaiden (Japan)
@@ -271,6 +272,8 @@ Tomb Raider - Underworld (Europe {En,Es,It})
 Tomb Raider - Underworld (Europe {En,Fr,De,Nl})
 TrackMania Turbo (USA)
 TrackMania Turbo (Europe)
+TRON Evolution (USA)
+TRON Evolution (Europe)
 Unknown Soldier - Mokuba no Houkou (Japan)
 Wheel of Fortune (USA)
 The Wizard of Oz - Beyond the Yellow Brick Road (USA)
@@ -283,4 +286,13 @@ NOTES:
 * If some regions are combined in one line, that means the ROMs use the same cheat as one region.
 * Only clean unhacked ROMs work with widescreen.
 
-Codes by fintogive, RadDude McCoolguy, KazoWAR, RocketRobz, Vague Rant, CheatFreak47, deisuke1234, and gamemasterplc
+Codes by:
+* fintogive
+* RadDude McCoolguy
+* KazoWAR
+* RocketRobz
+* Vague Rant
+* CheatFreak47
+* deisuke1234
+* gamemasterplc
+* ChampionLeake
