@@ -235,9 +235,9 @@ u32 getSDKVersion(FILE* ndsFile);
  * Check if NDS game has AP.
  * @param ndsFile NDS file.
  * @param filename NDS ROM filename.
- * @return true on success; false if no AP.
+ * @return 1 or 2 on success; 0 if no AP.
  */
-bool checkRomAP(FILE *ndsFile, int num);
+int checkRomAP(FILE *ndsFile, int num);
 
 extern char gameTid[40][5];
 extern u16 headerCRC[40];

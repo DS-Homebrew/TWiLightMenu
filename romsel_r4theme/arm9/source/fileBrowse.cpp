@@ -441,7 +441,7 @@ string browseForFile(const vector<string> extensionList)
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
 			} else {
-				bool hasAP = false;
+				int hasAP = 0;
 				bool proceedToLaunch = true;
 				if (useBootstrap && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
 				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
@@ -462,13 +462,19 @@ string browseForFile(const vector<string> extensionList)
 					}
 				}
 
-				if (hasAP) {
+				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
 					printLargeCentered(false, 84, "Anti-Piracy Warning");
-					printSmallCentered(false, 104, "If this ROM does not have");
-					printSmallCentered(false, 112, "its Anti-Piracy patched,");
-					printSmallCentered(false, 120, "it may not work correctly!");
+					if (hasAP == 2) {
+						printSmallCentered(false, 104, "This game has AP, and MUST");
+						printSmallCentered(false, 112, "be patched using the RGF");
+						printSmallCentered(false, 120, "TWiLight Menu AP patcher.");
+					} else {
+						printSmallCentered(false, 104, "This game has AP. Please");
+						printSmallCentered(false, 112, "make sure you're using the");
+						printSmallCentered(false, 120, "latest TWiLight Menu++.");
+					}
 					printSmallCentered(false, 142, "B: Return   A: Launch");
 
 					pressed = 0;

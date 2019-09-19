@@ -2368,7 +2368,7 @@ string browseForFile(const vector<string> extensionList) {
 						showdialogbox = false;
 					}
 				} else {
-					bool hasAP = false;
+					int hasAP = 0;
 					bool proceedToLaunch = true;
 					if (ms().useBootstrap && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
 					    isHomebrew[CURPOS] == 0 &&
@@ -2387,7 +2387,7 @@ string browseForFile(const vector<string> extensionList) {
 							mdRomTooBig();
 						}
 					}
-					if (hasAP) {
+					if (hasAP > 0) {
 						if (ms().theme == 4) {
 							snd().playStartup();
 							fadeType = false;	   // Fade to black
@@ -2413,11 +2413,16 @@ string browseForFile(const vector<string> extensionList) {
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
 							    CURPOS);
-						printSmallCentered(false, 64, "This game may not work correctly,");
-						printSmallCentered(false, 78, "if it's not AP-patched.");
-						printSmallCentered(false, 112, "If the game freezes, does not");
-						printSmallCentered(false, 126, "start, or doesn't seem normal,");
-						printSmallCentered(false, 140, "it needs to be AP-patched.");
+						if (hasAP == 2) {
+							printSmallCentered(false, 64, "This game has AP (Anti-Piracy)");
+							printSmallCentered(false, 78, "and MUST be patched using the");
+							printSmallCentered(false, 92, "RGF TWiLight Menu AP patcher.");
+						} else {
+							printSmallCentered(false, 64, "This game has AP (Anti-Piracy).");
+							printSmallCentered(false, 112, "Please make sure you're");
+							printSmallCentered(false, 126, "using the latest version of");
+							printSmallCentered(false, 140, "TWiLight Menu++.");
+						}
 						printSmallCentered(false, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again");
 						pressed = 0;
 						while (1) {
