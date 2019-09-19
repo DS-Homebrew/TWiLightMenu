@@ -2414,14 +2414,14 @@ string browseForFile(const vector<string> extensionList) {
 							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
 							    CURPOS);
 						if (hasAP == 2) {
-							printSmallCentered(false, 64, "This game has AP (Anti-Piracy)");
-							printSmallCentered(false, 78, "and MUST be patched using the");
-							printSmallCentered(false, 92, "RGF TWiLight Menu AP patcher.");
+							printSmallCentered(false, 80, "This game has AP (Anti-Piracy)");
+							printSmallCentered(false, 94, "and MUST be patched using the");
+							printSmallCentered(false, 108, "RGF TWiLight Menu AP patcher.");
 						} else {
-							printSmallCentered(false, 64, "This game has AP (Anti-Piracy).");
-							printSmallCentered(false, 112, "Please make sure you're");
-							printSmallCentered(false, 126, "using the latest version of");
-							printSmallCentered(false, 140, "TWiLight Menu++.");
+							printSmallCentered(false, 72, "This game has AP (Anti-Piracy).");
+							printSmallCentered(false, 104, "Please make sure you're");
+							printSmallCentered(false, 118, "using the latest version of");
+							printSmallCentered(false, 132, "TWiLight Menu++.");
 						}
 						printSmallCentered(false, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again");
 						pressed = 0;
