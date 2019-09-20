@@ -452,6 +452,7 @@ bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare[41] = {true};
 int isHomebrew[41] = {0}; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+bool requiresRamDisk[40] = {false};
 
 static u16 bannerDelayNum[41] = {0x0000};
 int currentbnriconframeseq[41] = {0};

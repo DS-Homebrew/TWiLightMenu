@@ -293,6 +293,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	bnrWirelessIcon[num] = 0;
 	isDSiWare[num] = false;
 	isHomebrew[num] = 0;
+	requiresRamDisk[num] = false;
 	infoFound[num] = false;
 
 	if (isDir) {
@@ -438,6 +439,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{
 			isDSiWare[num] = true; // Is a DSiWare game
+		}
+
+		if (isHomebrew[num] == 1) {
+			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
+			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
+			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
+			|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)) {		// XRoar 0.24fp3
+				requiresRamDisk[num] = true;
+			}
 		}
 
 		bnrSysSettings[num] =

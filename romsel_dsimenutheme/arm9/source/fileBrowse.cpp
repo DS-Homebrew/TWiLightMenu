@@ -1071,6 +1071,56 @@ void mdRomTooBig(void) {
 	}
 }
 
+void ramDiskMsg(const char *filename) {
+	clearText();
+	snd().playWrong();
+	if (ms().theme != 4) {
+		dbox_showIcon = true;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		titleUpdate(false, filename, CURPOS);
+	}
+	std::string dirContName = filename;
+	// About 38 characters fit in the box.
+	if (strlen(dirContName.c_str()) > 38) {
+		// Truncate to 35, 35 + 3 = 38 (because we append "...").
+		dirContName.resize(35, ' ');
+		size_t first = dirContName.find_first_not_of(' ');
+		size_t last = dirContName.find_last_not_of(' ');
+		dirContName = dirContName.substr(first, (last - first + 1));
+		dirContName.append("...");
+	}
+	printSmall(false, 16, 64, dirContName.c_str());
+	int yPos1 = (ms().theme == 4 ? 24 : 112);
+	int yPos2 = (ms().theme == 4 ? 40 : 128);
+	printSmallCentered(false, yPos1, "This app requires a");
+	printSmallCentered(false, yPos2, "RAM disk to work.");
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	if (ms().theme == 4) {
+		snd().playLaunch();
+	} else {
+		showdialogbox = false;
+	}
+}
+
 bool selectMenu(void) {
 	inSelectMenu = true;
 	dbox_showIcon = false;
@@ -2368,6 +2418,12 @@ string browseForFile(const vector<string> extensionList) {
 						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file, CURPOS);
 						fclose(f_nds_file);
+					} else if (isHomebrew[CURPOS] == 1) {
+						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+						if (requiresRamDisk[CURPOS] && perGameSettings_ramDiskNo == -1) {
+							proceedToLaunch = false;
+							ramDiskMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						}
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
