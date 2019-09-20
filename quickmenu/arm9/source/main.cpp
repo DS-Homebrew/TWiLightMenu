@@ -1260,7 +1260,7 @@ int main(int argc, char **argv) {
 			filename.erase(0, last_slash_idx + 1);
 		}
 
-		if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids") || extention(filename, ".app") || extention(filename, ".argv")) {
+		if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids") || extention(filename, ".app") || extention(filename, ".srl") || extention(filename, ".argv")) {
 			getGameInfo(false, filename.c_str());
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
@@ -1804,6 +1804,10 @@ int main(int argc, char **argv) {
 					typeToReplace = ".dsi";
 				} else if (extention(filename, ".ids")) {
 					typeToReplace = ".ids";
+				} else if (extention(filename, ".srl")) {
+					typeToReplace = ".srl";
+				} else if (extention(filename, ".app")) {
+					typeToReplace = ".app";
 				}
 
 				char *name = argarray.at(0);
@@ -2011,7 +2015,9 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids")) {
+			if (extention(filename, ".nds") || extention(filename, ".dsi")
+			 || extention(filename, ".ids") || extention(filename, ".srl")
+			 || extention(filename, ".app")) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 

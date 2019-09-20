@@ -661,6 +661,7 @@ void getGameInfo(bool isDir, const char* name)
 			if (extention(p, ".nds")
 			 || extention(p, ".dsi")
 			 || extention(p, ".ids")
+			 || extention(p, ".srl")
 			 || extention(p, ".app"))
 			{
 				// let's see if this is a file or directory
@@ -696,6 +697,7 @@ void getGameInfo(bool isDir, const char* name)
 	else if (extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
+			 || extention(name, ".srl")
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!
@@ -853,6 +855,7 @@ void iconUpdate(bool isDir, const char* name)
 			if (extention(p, ".nds")
 			 || extention(p, ".dsi")
 			 || extention(p, ".ids")
+			 || extention(p, ".srl")
 			 || extention(p, ".app"))
 			{
 				// let's see if this is a file or directory
@@ -888,6 +891,7 @@ void iconUpdate(bool isDir, const char* name)
 	else if (extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
+			 || extention(name, ".srl")
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!
@@ -1041,6 +1045,7 @@ void titleUpdate(bool isDir, const char* name)
 			if (extention(p, ".nds")
 			 || extention(p, ".dsi")
 			 || extention(p, ".ids")
+			 || extention(p, ".srl")
 			 || extention(p, ".app"))
 			{
 				// let's see if this is a file or directory
@@ -1075,6 +1080,7 @@ void titleUpdate(bool isDir, const char* name)
 	} else if (extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
+			 || extention(name, ".srl")
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!

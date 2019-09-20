@@ -145,6 +145,8 @@ void MainList::setupExtnames()
         _extnameFilter.emplace_back(std::string(".nds"));
         _extnameFilter.emplace_back(std::string(".ids"));
         _extnameFilter.emplace_back(std::string(".dsi"));
+        _extnameFilter.emplace_back(std::string(".srl"));
+        _extnameFilter.emplace_back(std::string(".app"));
         _extnameFilter.emplace_back(std::string(".argv"));
     }
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
@@ -405,7 +407,7 @@ bool MainList::enterDir(const std::string &dirName)
                 {
                     rominfo.setBanner("sms", snemulds_banner_bin);
                 }
-                else if (".nds" != extName && ".ids" != extName && ".dsi" != extName)
+                else if (".nds" != extName && ".ids" != extName && ".dsi" != extName && ".srl" != extName && ".app" != extName)
                 {
                     rominfo.setBanner("", unknown_banner_bin);
                     allowUnknown = true;

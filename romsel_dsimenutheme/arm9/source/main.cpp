@@ -848,6 +848,8 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".nds");
 		extensionList.emplace_back(".dsi");
 		extensionList.emplace_back(".ids");
+		extensionList.emplace_back(".srl");
+		extensionList.emplace_back(".app");
 		extensionList.emplace_back(".argv");
 	}
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
@@ -1007,6 +1009,10 @@ int main(int argc, char **argv) {
 					typeToReplace = ".dsi";
 				} else if (extention(filename, ".ids")) {
 					typeToReplace = ".ids";
+				} else if (extention(filename, ".srl")) {
+					typeToReplace = ".srl";
+				} else if (extention(filename, ".app")) {
+					typeToReplace = ".app";
 				}
 
 				char *name = argarray.at(0);
@@ -1282,8 +1288,9 @@ int main(int argc, char **argv) {
 			}
 
 			// Launch .nds directly or via nds-bootstrap
-			if (extention(filename, ".nds") || extention(filename, ".dsi") ||
-			    extention(filename, ".ids")) {
+			if (extention(filename, ".nds") || extention(filename, ".dsi")
+			 || extention(filename, ".ids") || extention(filename, ".srl")
+			 || extention(filename, ".app")) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 

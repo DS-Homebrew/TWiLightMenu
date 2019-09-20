@@ -341,6 +341,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			if (extention(p, ".nds")
 			 || extention(p, ".dsi")
 			 || extention(p, ".ids")
+			 || extention(p, ".srl")
 			 || extention(p, ".app")) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -369,6 +370,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	} else if (extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
+			 || extention(name, ".srl")
 			 || extention(name, ".app")) {
 		// this is an nds/app file!
 		FILE *fp;
@@ -577,6 +579,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 			if (extention(p, ".nds")
 			 || extention(p, ".dsi")
 			 || extention(p, ".ids")
+			 || extention(p, ".srl")
 			 || extention(p, ".app")) {
 				// let's see if this is a file or directory
 				rc = stat(p, &st);
@@ -601,6 +604,7 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	} else if (extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
+			 || extention(name, ".srl")
 			 || extention(name, ".app")) {
 		// this is an nds/app file!
 		tonccpy((char *)&ndsBanner, bnriconTile[num], 0x23C0);
