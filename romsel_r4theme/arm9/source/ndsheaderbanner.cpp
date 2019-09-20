@@ -470,6 +470,7 @@ bool bnriconisDSi = false;
 int bnrWirelessIcon = 0; // 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare = false;
 int isHomebrew = 0; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+bool requiresRamDisk = false;
 
 /**
  * Get banner sequence from banner file.

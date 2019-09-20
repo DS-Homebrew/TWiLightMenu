@@ -283,6 +283,24 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 0;
 }
 
+void ramDiskMsg(void) {
+	dialogboxHeight = 1;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Error!");
+	printSmallCentered(false, 104, "This app requires a");
+	printSmallCentered(false, 112, "RAM disk to work.");
+	printSmallCentered(false, 142, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
 extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList)
@@ -448,6 +466,14 @@ string browseForFile(const vector<string> extensionList)
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					hasAP = checkRomAP(f_nds_file);
 					fclose(f_nds_file);
+				}
+				else if (isHomebrew == 1)
+				{
+					loadPerGameSettings(dirContents.at(fileOffset).name);
+					if (requiresRamDisk && perGameSettings_ramDiskNo == -1) {
+						proceedToLaunch = false;
+						ramDiskMsg();
+					}
 				}
 				else if (bnrRomType == 4 || bnrRomType == 5)
 				{
