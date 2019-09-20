@@ -157,14 +157,12 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		 || (header.gameCode[0] == 0x42 && header.gameCode[1] == 0x38 && header.gameCode[2] == 0x38))
 		{
             dbg_printf("DSIWAREFOUND Is DSiWare!\n");
-			if ((ms().consoleModel == 0 && header.unitCode == 0x02) || header.unitCode == 0x03) {
-				_isDSiWare = ETrue;
+			_isDSiWare = ETrue;
 
-				_saveInfo.dsiPrvSavSize = header.prvSavSize;
-				_saveInfo.dsiPubSavSize = header.pubSavSize;
-				_saveInfo.dsiTid[0] = header.dsi_tid;
-				_saveInfo.dsiTid[1] = header.dsi_tid2;
-			}
+			_saveInfo.dsiPrvSavSize = header.prvSavSize;
+			_saveInfo.dsiPubSavSize = header.pubSavSize;
+			_saveInfo.dsiTid[0] = header.dsi_tid;
+			_saveInfo.dsiTid[1] = header.dsi_tid2;
         }
     }
 

@@ -758,8 +758,7 @@ void getGameInfo(bool isDir, const char* name)
 		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 		{
-			if ((consoleModel == 0 && ndsHeader.unitCode == 0x02) || ndsHeader.unitCode == 0x03)
-				isDSiWare = true; // Is a DSiWare game
+			isDSiWare = true; // Is a DSiWare game
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
