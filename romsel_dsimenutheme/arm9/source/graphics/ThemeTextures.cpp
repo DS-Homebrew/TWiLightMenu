@@ -34,7 +34,7 @@ static u16 _bgSubBuffer[256 * 192] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
-int boxArtType[40] = {0};	// 0: NDS/GBA/GBC/GB, 1: FDS, 2: NES/GEN/MD/SFC, 3: SNES
+int boxArtType[40] = {0};	// 0: NDS, 1: FDS/GBA/GBC/GB, 2: NES/GEN/MD/SFC, 3: SNES
 
 ThemeTextures::ThemeTextures()
     : previouslyDrawnBottomBg(-1), bubbleTexID(0), bipsTexID(0), scrollwindowTexID(0), buttonarrowTexID(0),
@@ -684,16 +684,16 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 		switch (boxArtType[CURPOS]) {
 			case 0:
 			default:
-				filename = "nitro:/graphics/boxart_unknown.bmp";
+				filename = "nitro:/graphics/boxart_unknown.png";
 				break;
 			case 1:
-				filename = "nitro:/graphics/boxart_unknown1.bmp";
+				filename = "nitro:/graphics/boxart_unknown1.png";
 				break;
 			case 2:
-				filename = "nitro:/graphics/boxart_unknown2.bmp";
+				filename = "nitro:/graphics/boxart_unknown2.png";
 				break;
 			case 3:
-				filename = "nitro:/graphics/boxart_unknown3.bmp";
+				filename = "nitro:/graphics/boxart_unknown3.png";
 				break;
 		}
 		file = fopen(filename, "rb");
@@ -778,7 +778,7 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	}
 
 	if (!boxArtFound[num]) {
-		drawBoxArt("nitro:/null.bmp");
+		drawBoxArt("nitro:/null.png");
 		return;
 	}
 

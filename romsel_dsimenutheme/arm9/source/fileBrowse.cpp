@@ -1267,13 +1267,13 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".gba")) {
 					bnrRomType[i] = 1;
-					boxArtType[i] = 0;
+					boxArtType[i] = 1;
 				} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 					bnrRomType[i] = 2;
-					boxArtType[i] = 0;
+					boxArtType[i] = 1;
 				} else if (extention(std_romsel_filename, ".gbc")) {
 					bnrRomType[i] = 3;
-					boxArtType[i] = 0;
+					boxArtType[i] = 1;
 				} else if (extention(std_romsel_filename, ".nes")) {
 					bnrRomType[i] = 4;
 					boxArtType[i] = 2;

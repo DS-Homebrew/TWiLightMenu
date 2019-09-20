@@ -1270,13 +1270,13 @@ int main(int argc, char **argv) {
 			boxArtType = 0;
 		} else if (extention(filename, ".gba")) {
 			bnrRomType = 1;
-			boxArtType = 0;
+			boxArtType = 1;
 		} else if (extention(filename, ".gb") || extention(filename, ".sgb")) {
 			bnrRomType = 2;
-			boxArtType = 0;
+			boxArtType = 1;
 		} else if (extention(filename, ".gbc")) {
 			bnrRomType = 3;
-			boxArtType = 0;
+			boxArtType = 1;
 		} else if (extention(filename, ".nes")) {
 			bnrRomType = 4;
 			boxArtType = 2;

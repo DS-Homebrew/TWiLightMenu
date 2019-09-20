@@ -370,16 +370,16 @@ void loadBoxArt(const char* filename) {
 		switch (boxArtType) {
 			case 0:
 			default:
-				filename = "nitro:/graphics/boxart_unknown.bmp";
+				filename = "nitro:/graphics/boxart_unknown.png";
 				break;
 			case 1:
-				filename = "nitro:/graphics/boxart_unknown1.bmp";
+				filename = "nitro:/graphics/boxart_unknown1.png";
 				break;
 			case 2:
-				filename = "nitro:/graphics/boxart_unknown2.bmp";
+				filename = "nitro:/graphics/boxart_unknown2.png";
 				break;
 			case 3:
-				filename = "nitro:/graphics/boxart_unknown3.bmp";
+				filename = "nitro:/graphics/boxart_unknown3.png";
 				break;
 		}
 		file = fopen(filename, "rb");
