@@ -1814,7 +1814,7 @@ int main(int argc, char **argv) {
 				dsiWareSrlPath = argarray[0];
 				dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
-				launchType = 3;
+				launchType = (consoleModel>0 ? 1 : 3);
 				SaveSettings();
 
 				sNDSHeaderExt NDSHeader;
@@ -1899,6 +1899,53 @@ int main(int argc, char **argv) {
 				if (fadeType) {
 					fadeType = false;	// Fade to white
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
+				}
+
+				if (consoleModel > 0) {
+					// Use nds-bootstrap
+					loadPerGameSettings(filename);
+
+					bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
+					CIniFile bootstrapini(bootstrapinipath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
+					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", true);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", 5);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", 1);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", 0);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", 0);
+					bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", 1);
+					if (forceSleepPatch || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS)) {
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
+					} else {
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
+					}
+					bootstrapini.SaveIniFile(bootstrapinipath);
+
+					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
+
+					char ndsToBoot[256];
+					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
+					if(access(ndsToBoot, F_OK) != 0) {
+						sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
+					}
+
+					argarray.at(0) = (char *)ndsToBoot;
+					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+					clearText();
+					ClearBrightness();
+					printSmall(false, 4, 80, text);
+					if (err == 1) {
+						printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+						printSmall(false, 4, 96, "not found.");
+					}
+					stop();
 				}
 
 				if (previousUsedDevice) {

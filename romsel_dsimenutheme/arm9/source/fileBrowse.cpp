@@ -2320,8 +2320,7 @@ string browseForFile(const vector<string> extensionList) {
 					ms().saveSettings();
 					settingsChanged = false;
 					return "null";
-				} else if ((isDSiWare[CURPOS] && !isDSiMode()) || (isDSiWare[CURPOS] && !sdFound()) ||
-					   (isDSiWare[CURPOS] && ms().consoleModel > 1)) {
+				} else if ((isDSiWare[CURPOS] && !isDSiMode()) || (isDSiWare[CURPOS] && !sdFound())) {
 					clearText();
 					snd().playWrong();
 					if (ms().theme != 4) {
@@ -2337,15 +2336,7 @@ string browseForFile(const vector<string> extensionList) {
 					int yPos1 = (ms().theme == 4 ? 24 : 112);
 					int yPos2 = (ms().theme == 4 ? 40 : 128);
 					printSmallCentered(false, yPos1, "This game cannot be launched");
-					if (isDSiMode()) {
-						if (sdFound()) {
-							printSmallCentered(false, yPos2, "as a .nds file on 3DS/2DS.");
-						} else {
-							printSmallCentered(false, yPos2, "without an SD card.");
-						}
-					} else {
-						printSmallCentered(false, yPos2, "in DS mode.");
-					}
+					printSmallCentered(false, yPos2, isDSiMode() ? "without an SD card." : "in DS mode.");
 					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 					pressed = 0;
 					do {

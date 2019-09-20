@@ -425,8 +425,7 @@ string browseForFile(const vector<string> extensionList)
 				return "null";
 			}
 			else if ((isDSiWare && !isDSiMode())
-			      || (isDSiWare && !sdFound())
-			      || (isDSiWare && consoleModel > 1))
+			      || (isDSiWare && !sdFound()))
 			{
 				showdialogbox = true;
 				printLargeCentered(false, 84, "Error!");
