@@ -59,7 +59,7 @@ jobs:
         rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
         7z a TWiLightMenu-Lite.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
-        cp TWiLigtMenu-Lite.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu-Lite.7z
+        cp TWiLightMenu-Lite.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu-Lite.7z
       condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
       displayName: 'Pack 7z Package for nightly'
 
