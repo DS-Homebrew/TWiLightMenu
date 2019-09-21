@@ -209,6 +209,7 @@ void lastRunROM()
 	if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
 	&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
 	&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
+	  if (ms().launchType == Launch::ESlot1 || ms().launchType == Launch::ESDFlashcardLaunch) {
 		// Prepare for reboot into 16:10 TWL_FIRM
 		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
@@ -217,6 +218,7 @@ void lastRunROM()
 		memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 		fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 		stop();
+	  }
 	}
 
 	vector<char *> argarray;

@@ -101,7 +101,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		/*if (!memcmp(gameid, "ASMA", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
+		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4) || ((u32)gameid == 0xB003C24)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
