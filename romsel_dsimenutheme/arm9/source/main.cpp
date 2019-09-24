@@ -117,7 +117,7 @@ bool gameSoftReset = false;
 
 int mpuregion = 0;
 int mpusize = 0;
-bool ceCached = true;
+bool ceCached = false;
 
 bool applaunch = false;
 bool startMenu = false;
@@ -352,99 +352,40 @@ void SetMPUSettings(const char *filename) {
 }
 
 /**
- * Exclude moving nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
+ * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
-void SetSpeedBumpExclude(const char *filename) {
-	scanKeys();
-	if(keysHeld() & KEY_L){
-		ceCached = false;
-		return;
-	}
-
-	ceCached = true;
-
-	static const char list[][5] = {
-		"AWRP",	// Advance Wars: Dual Strike (EUR)
-		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
-		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
-		"AH9P",	// Tony Hawk's American Sk8land (EUR)
+void SetSpeedBumpInclude(void) {
+	static const char list[][4] = {
+		"ADM",	// Animal Crossing: Wild World
+		"AFF",	// Final Fantasy III
+		"YF4",	// Final Fantasy IV
+		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"AZE",	// The Legend of Zelda: Phantom Hourglass
+		"BKI",	// The Legend of Zelda: Spirit Tracks
+		"A5T",	// MegaMan Battle Network 5: Double Team DS
+		"A6C",	// MegaMan Star Force: Dragon
+		"A6B",	// MegaMan Star Force: Leo
+		"A6A",	// MegaMan Star Force: Pegasus
+		"YRW",	// MegaMan Star Force 2: Zerker x Saurian
+		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
+		"CRR",	// MegaMan Star Force 3: Red Joker
+		"CRB",	// MegaMan Star Force 3: Black Ace
+		"ASC",	// Sonic Rush
+		"A3Y",	// Sonic Rush Adventure
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], list[i], 4) == 0) {
+		if (memcmp(gameTid[CURPOS], list[i], 3) == 0) {
 			// Found a match.
-			ceCached = false;
+			ceCached = true;
 			break;
 		}
 	}
 
-	static const char list2[][4] = {
-		"AEK",	// Age of Empires: The Age of Kings
-		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Alta�r's Chronicles
-		"B6R",	// Bakugan: Battle Brawlers
-		"AB2",	// Battles of Prince of Persia
-		"YB4",	// Bee Movie
-		"CBK",	// Bolt
-		"CBD",	// Bolt: Be-Awesome Edition
-		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
-		"BIG",	// Combat/Battle of Giants: Mutant Insects
-		"BDB",	// Dragon Ball: Origins 2
-		"YIV",	// Dragon Quest IV: Chapters of the Chosen
-		"AE4",	// Eyeshield 21 Max Devil Power
-		"APR",	// Feel the Magic: XY XX
-		"A26",	// Feel the Magic: XY XX (Demo)
-		"A5P",	// Harry Potter and the Order of the Phoenix
-		"CQ7",	// Henry Hatsworth
-		"AR2",	// Kirarin * Revolution: Naasan to Issho
-		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
-		"YLU",	// Last Window: The Secret of Cape West
-		"AVC",	// Magical Starsign
-		"ARM",	// Mario & Luigi: Partners in Time
-		"CLJ",	// Mario & Luigi: Bowser's Inside Story
-		"COL",	// Mario & Sonic at the Olympic Winter Games
-		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
-		"AMH",	// Metroid Prime Hunters
-		"A2D",	// New Super Mario Bros.
-		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
-		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
-		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-		"B3R",	// Pokemon Ranger: Guardian Signs
-		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
-		"APU",	// Puyo Puyo!! 15th Anniversary
-		"BYO",	// Puyo Puyo 7
-		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
-	    "B3X",	// River City: Soccer Hooligans
-	    "ARZ",	// Rockman ZX/MegaMan ZX
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6X",	// Rockman EXE: Operate Shooting Star
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
-		"AKA",	// The Rub Rabbits!
-		"ARF",	// Rune Factory: A Fantasy Harvest Moon
-		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
-		"A3S",	// Shrek the Third
-		"AIR",	// Space Invaders DS
-		"AIS",	// Space Invaders Revolution
-		"YV4",  // Spectrobes: Beyond the Portals
-		"AS2",  // Spider-Man 2
-		"AQ3",	// Spider-Man 3
-		"AST",	// Star Wars Episode III: Revenge of the Sith
-		"CS7",	// Summon Night X: Tears Crown
-		"AYT",	// Tales of Innocence
-		"YT9",	// Tony Hawk's Proving Ground
-		"YYK",	// Trauma Center: Under the Knife 2
-		"CY8",	// Yu-Gi-Oh! World Championship 2009
-		"BYX",	// Yu-Gi-Oh! World Championship 2010
-	};
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
-		if (memcmp(gameTid[CURPOS], list2[i], 3) == 0) {
-			// Found match
-			ceCached = false;
-			break;
-		}
+	scanKeys();
+	if(keysHeld() & KEY_L){
+		ceCached = !ceCached;
 	}
 }
 
@@ -1445,7 +1386,7 @@ int main(int argc, char **argv) {
 						SetDonorSDK(argarray[0]);
 						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						SetSpeedBumpExclude(argarray[0]);
+						SetSpeedBumpInclude();
 
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
