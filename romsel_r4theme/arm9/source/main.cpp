@@ -1514,6 +1514,10 @@ int main(int argc, char **argv) {
 					}
 					bootstrapini.SaveIniFile(bootstrapinipath);
 
+					if (isDSiMode()) {
+						SetWidescreen(filename.c_str());
+					}
+
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
 					char ndsToBoot[256];
@@ -1810,7 +1814,7 @@ int main(int argc, char **argv) {
 						SaveSettings();
 
 						if (isDSiMode()) {
-							SetWidescreen(argarray[0]);
+							SetWidescreen(filename.c_str());
 						}
 
 						bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
