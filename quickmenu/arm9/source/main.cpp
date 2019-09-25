@@ -2217,6 +2217,7 @@ int main(int argc, char **argv) {
 				}
 			} else {
 				bool useNDSB = false;
+				bool dsModeSwitch = false;
 
 				std::string romfolderNoSlash = romfolder;
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -2277,6 +2278,7 @@ int main(int argc, char **argv) {
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						}
+						dsModeSwitch = true;
 					} else {
 						useNDSB = true;
 
@@ -2301,6 +2303,7 @@ int main(int argc, char **argv) {
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
+						dsModeSwitch = true;
 					} else {
 						useNDSB = true;
 
@@ -2322,16 +2325,16 @@ int main(int argc, char **argv) {
 				SaveSettings();
 				argarray.push_back(ROMpath);
 				int err = 0;
-				
+
 				argarray.at(0) = (char *)ndsToBoot;
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, !useNDSB, true, true);	// Pass ROM to emulator as argument
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, true);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
 				printLarge(false, 4, 80, text);
-				if (err == 1) {
+				if (err == 1 && useNDSB) {
 					printSmall(false, 4, 88, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 					printSmall(false, 4, 96, "not found.");
 				}
