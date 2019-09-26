@@ -149,6 +149,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"AFF",	// Final Fantasy III
 		"YF4",	// Final Fantasy IV
 		"YGX",	// Grand Theft Auto: Chinatown Wars
+		"YKG",	// Kingdom Hearts: 358/2 Days
 		"AZE",	// The Legend of Zelda: Phantom Hourglass
 		"BKI",	// The Legend of Zelda: Spirit Tracks
 		"A5T",	// MegaMan Battle Network 5: Double Team DS
@@ -159,6 +160,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"CRR",	// MegaMan Star Force 3: Red Joker
 		"CRB",	// MegaMan Star Force 3: Black Ace
+		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
 	};
