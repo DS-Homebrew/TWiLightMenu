@@ -634,6 +634,8 @@ void SetSpeedBumpInclude(const char* filename) {
 
 	static const char list[][4] = {
 		"ADM",	// Animal Crossing: Wild World
+		"ACB",	// Castlevania: Portrait of Ruin
+		"YR9",	// Castlevania: Order of Ecclesia
 		"AFF",	// Final Fantasy III
 		"YF4",	// Final Fantasy IV
 		"YGX",	// Grand Theft Auto: Chinatown Wars
