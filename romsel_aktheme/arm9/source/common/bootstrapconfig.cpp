@@ -163,6 +163,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
+		"YUT",	// Ultimate Mortal Kombat
 	};
 	for (const char *speedtid : list)
 	{

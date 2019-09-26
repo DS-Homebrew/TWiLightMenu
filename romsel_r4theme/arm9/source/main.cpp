@@ -653,6 +653,7 @@ void SetSpeedBumpInclude(const char* filename) {
 		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
+		"YUT",	// Ultimate Mortal Kombat
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
