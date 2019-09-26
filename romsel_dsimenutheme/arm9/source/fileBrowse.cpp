@@ -1332,10 +1332,10 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 					boxArtType[i] = 1;
 				} else if (extention(std_romsel_filename, ".sms")) {
 					bnrRomType[i] = 5;
-					boxArtType[i] = 0;
+					boxArtType[i] = 2;
 				} else if (extention(std_romsel_filename, ".gg")) {
 					bnrRomType[i] = 6;
-					boxArtType[i] = 0;
+					boxArtType[i] = 2;
 				} else if (extention(std_romsel_filename, ".gen")) {
 					bnrRomType[i] = 7;
 					boxArtType[i] = 2;

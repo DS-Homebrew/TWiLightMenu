@@ -1230,10 +1230,10 @@ int main(int argc, char **argv) {
 			boxArtType = 1;
 		} else if (extention(filename, ".sms")) {
 			bnrRomType = 5;
-			boxArtType = 0;
+			boxArtType = 2;
 		} else if (extention(filename, ".gg")) {
 			bnrRomType = 6;
-			boxArtType = 0;
+			boxArtType = 2;
 		} else if (extention(filename, ".gen")) {
 			bnrRomType = 7;
 			boxArtType = 2;
