@@ -114,7 +114,6 @@ void SettingsGUI::draw()
     }*/
 
     clearText();
-    printSmall(true, 4, 174, STR_LR_SWITCH.c_str());
     drawTopText();
 
     printLarge(false, 6, 1, _pages[_selectedPage].title().c_str());
@@ -145,6 +144,8 @@ void SettingsGUI::draw()
     // printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
 
     printSmallCentered(false, 173, "TWiLight Menu++");
+    printSmall(false, 2, 173, "< L/Y");
+    printSmall(false, 224, 173, "R/X >");
 }
 
 void SettingsGUI::setTopText(const std::string &text)
