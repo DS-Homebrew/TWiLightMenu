@@ -1,6 +1,5 @@
 #include <nds.h>
 #include <stdio.h>
-#include <maxmod9.h>
 
 #include "autoboot.h"
 
@@ -84,8 +83,6 @@ void checkSdEject(void) {
 	}
 	
 	// Show "SD removed" screen
-	mmEffectCancelAll();
-
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 

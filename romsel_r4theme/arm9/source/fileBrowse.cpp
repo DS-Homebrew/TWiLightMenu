@@ -31,7 +31,6 @@
 #include <vector>
 
 #include <nds.h>
-#include <maxmod9.h>
 #include "common/gl2d.h"
 
 #include "date.h"
@@ -53,9 +52,6 @@
 #include "inifile.h"
 
 #include "fileCopy.h"
-
-#include "soundbank.h"
-#include "soundbank_bin.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 22

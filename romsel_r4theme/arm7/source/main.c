@@ -87,11 +87,8 @@ int main() {
 
 	fifoInit();
 	
-	mmInstall(FIFO_MAXMOD);
-	
 	SetYtrigger(80);
 	
-	installSoundFIFO();
 	installSystemFIFO();
 
 	irqSet(IRQ_VCOUNT, VcountHandler);

@@ -21,7 +21,6 @@
 ------------------------------------------------------------------*/
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include <maxmod9.h>
 
 #include <stdio.h>
 #include <fat.h>
@@ -56,9 +55,6 @@
 
 #include "cheat.h"
 #include "crc.h"
-
-#include "soundbank.h"
-#include "soundbank_bin.h"
 
 #include "sr_data_srllastran.h"	// For rebooting into the game
 

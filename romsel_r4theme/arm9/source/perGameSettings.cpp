@@ -30,7 +30,6 @@
 #include <dirent.h>
 
 #include <nds.h>
-#include <maxmod9.h>
 #include "common/gl2d.h"
 
 #include "date.h"
@@ -50,9 +49,6 @@
 
 #include "inifile.h"
 #include "flashcard.h"
-
-#include "soundbank.h"
-#include "soundbank_bin.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -82,13 +78,6 @@ int perGameSettings_bootstrapFile = -1;
 char pergamefilepath[256];
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
-extern mm_sound_effect snd_launch;
-extern mm_sound_effect snd_select;
-extern mm_sound_effect snd_stop;
-extern mm_sound_effect snd_wrong;
-extern mm_sound_effect snd_back;
-extern mm_sound_effect snd_switch;
 
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
