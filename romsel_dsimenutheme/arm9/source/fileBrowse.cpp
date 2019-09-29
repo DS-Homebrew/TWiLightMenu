@@ -1093,7 +1093,7 @@ void ramDiskMsg(const char *filename) {
 		dirContName = dirContName.substr(first, (last - first + 1));
 		dirContName.append("...");
 	}
-	printSmall(false, 16, 64, dirContName.c_str());
+	printSmall(false, 16, 66, dirContName.c_str());
 	int yPos1 = (ms().theme == 4 ? 24 : 112);
 	int yPos2 = (ms().theme == 4 ? 40 : 128);
 	printSmallCentered(false, yPos1, "This app requires a");
@@ -2895,7 +2895,7 @@ string browseForFile(const vector<string> extensionList) {
 					dirContName = dirContName.substr(first, (last - first + 1));
 					dirContName.append("...");
 				}
-				printSmall(false, 16, 64, dirContName.c_str());
+				printSmall(false, 16, 66, dirContName.c_str());
 				printSmall(false, 16, 160, fileCounter);
 				printSmallCentered(false, 112, "Are you sure you want to");
 				if (isDirectory[CURPOS]) {
