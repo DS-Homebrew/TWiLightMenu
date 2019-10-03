@@ -164,6 +164,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
 		"YUT",	// Ultimate Mortal Kombat
+		"AWL",	// The World Ends With You
 	};
 	for (const char *speedtid : list)
 	{

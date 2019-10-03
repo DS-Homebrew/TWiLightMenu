@@ -377,6 +377,7 @@ void SetSpeedBumpInclude(void) {
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
 		"YUT",	// Ultimate Mortal Kombat
+		"AWL",	// The World Ends With You
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().
