@@ -412,20 +412,6 @@ void BootstrapConfig::createSaveFileIfNotExists()
 	}
 }
 
-void BootstrapConfig::createTmpFileIfNotExists()
-{
-	if (access("fat:/BTSTRP.TMP", F_OK) == 0)
-		return;
-
-	FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
-	if (pFile)
-	{
-		fseek(pFile,  0x40000 - 1, SEEK_SET);
-		fputc('\0', pFile);
-		fclose(pFile);
-	}
-}
-
 void BootstrapConfig::loadCheats()
 {
 	u32 gameCode,crc32;
@@ -472,8 +458,6 @@ void BootstrapConfig::loadCheats()
 int BootstrapConfig::launch()
 {
 	loadCheats();
-	if (ms().secondaryDevice) 
-		createTmpFileIfNotExists();
 
 	createSaveFileIfNotExists();
 

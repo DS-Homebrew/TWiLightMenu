@@ -510,7 +510,7 @@ std::string apFix(const char *filename, bool isHomebrew)
 
 	bool ipsFound = false;
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s.ips", filename);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
 	ipsFound = (access(ipsPath, F_OK) == 0);
 
 	if (!ipsFound) {
@@ -525,12 +525,12 @@ std::string apFix(const char *filename, bool isHomebrew)
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", game_TID, headerCRC16);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
 	if (ipsFound) {
-		if (ms().secondaryDevice) {
+		if (ms().secondaryDevice && sdFound()) {
 			mkdir("fat:/_nds", 0777);
 			mkdir("fat:/_nds/nds-bootstrap", 0777);
 			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");

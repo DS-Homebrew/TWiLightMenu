@@ -675,7 +675,7 @@ std::string setApFix(const char *filename) {
 
 	bool ipsFound = false;
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s.ips", filename);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
 	ipsFound = (access(ipsPath, F_OK) == 0);
 
 	if (!ipsFound) {
@@ -690,12 +690,12 @@ std::string setApFix(const char *filename) {
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", game_TID, headerCRC16);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
 	if (ipsFound) {
-		if (secondaryDevice) {
+		if (secondaryDevice && sdFound()) {
 			mkdir("fat:/_nds", 0777);
 			mkdir("fat:/_nds/nds-bootstrap", 0777);
 			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
@@ -1648,28 +1648,6 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 				if(useBackend) {
 					if(useBootstrap || !secondaryDevice) {
-						if (!sdFound() && secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
-							// Create temporary file for nds-bootstrap
-							clearText();
-							ClearBrightness();
-							printSmall(false, 2, 80, "Creating \"BTSTRP.TMP\"...");
-
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							toncset(buffer, 0, sizeof(buffer));
-
-							u32 fileSize = 0x40000;	// 256KB
-							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
-							if (pFile) {
-								for (u32 i = fileSize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
-								fclose(pFile);
-							}
-							printSmall(false, 2, 88, "Done!");
-							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-						}
-
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));

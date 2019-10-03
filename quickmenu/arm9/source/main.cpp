@@ -2012,28 +2012,6 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 				if(useBackend) {
 					if(useBootstrap || !previousUsedDevice) {
-						if (!sdFound() && previousUsedDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
-							// Create temporary file for nds-bootstrap
-							clearText();
-							ClearBrightness();
-							printSmall(false, 4, 4, "Creating \"BTSTRP.TMP\"...");
-
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							memset(buffer, 0, sizeof(buffer));
-
-							u32 fileSize = 0x40000;	// 256KB
-							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
-							if (pFile) {
-								for (u32 i = fileSize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
-								}
-								fclose(pFile);
-							}
-							printSmall(false, 4, 18, "Done!");
-							for (int i = 0; i < 30; i++) swiWaitForVBlank();
-						}
-
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());

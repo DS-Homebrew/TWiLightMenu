@@ -402,16 +402,16 @@ std::string setApFix(const char *filename) {
 
 	bool ipsFound = false;
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s.ips", filename);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
 	ipsFound = (access(ipsPath, F_OK) == 0);
 
 	if (!ipsFound) {
-		snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", gameTid[CURPOS], headerCRC[CURPOS]);
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid[CURPOS], headerCRC[CURPOS]);
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
 	if (ipsFound) {
-		if (ms().secondaryDevice) {
+		if (ms().secondaryDevice && sdFound()) {
 			mkdir("fat:/_nds", 0777);
 			mkdir("fat:/_nds/nds-bootstrap", 0777);
 			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
@@ -1275,40 +1275,6 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 				if (useBackend) {
 					if (ms().useBootstrap || !ms().secondaryDevice) {
-						if (!sdFound() && ms().secondaryDevice && (access("fat:/BTSTRP.TMP", F_OK) != 0)) {
-							// Create temporary file for nds-bootstrap
-							printLarge(false, 4, 4, "Creating \"BTSTRP.TMP\"...");
-
-							if (ms().theme != 4) {
-								fadeSpeed = true; // Fast fading
-								fadeType = true; // Fade in from white
-								for (int i = 0; i < 25; i++) {
-									swiWaitForVBlank();
-								}
-							}
-							showProgressIcon = true;
-
-							FILE *pFile = fopen("fat:/BTSTRP.TMP", "wb");
-							if (pFile) {
-								fseek(pFile, 0x40000 - 1, SEEK_SET);
-								fputc('\0', pFile);
-								fclose(pFile);
-							}
-
-							showProgressIcon = false;
-							printLarge(false, 4, 20, "Done!");
-							for (int i = 0; i < 30; i++) {
-								swiWaitForVBlank();
-							}
-							if (ms().theme != 4) {
-								fadeType = false;	   // Fade to white
-								for (int i = 0; i < 25; i++) {
-									swiWaitForVBlank();
-								}
-							}
-							clearText();
-						}
-
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));

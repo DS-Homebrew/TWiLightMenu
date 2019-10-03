@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+#include "flashcard.h"
 #include "common/gl2d.h"
 
 #include "ndsheaderbanner.h"
@@ -63,7 +64,7 @@ int checkRomAP(FILE *ndsFile)
 	game_TID[4] = 0;
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", game_TID, headerCRC16);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
 
 	if (access(ipsPath, F_OK) == 0) {
 		return 0;
