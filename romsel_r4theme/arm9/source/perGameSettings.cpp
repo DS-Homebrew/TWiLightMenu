@@ -202,8 +202,7 @@ void perGameSettings (std::string filename) {
 	bool showPerGameSettings =
 		(!isDSiWare && isHomebrew != 2
 		&& strcmp(game_TID, "HND") != 0
-		&& strcmp(game_TID, "HNE") != 0
-		&& REG_SCFG_EXT != 0);
+		&& strcmp(game_TID, "HNE") != 0);
 	if (!useBootstrap && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}
@@ -396,7 +395,11 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 180, 144, "Release");
 				}
 			}
-			printSmallCentered(false, 150+(useBootstrap*8), "X: Cheats  B: Back");
+			if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+				printSmallCentered(false, 150+(useBootstrap*8), "X: Cheats  B: Back");
+			} else {
+				printSmallCentered(false, 150+(useBootstrap*8), "B: Back");
+			}
 		}
 		do {
 			scanKeys();
@@ -567,9 +570,11 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			}
-			if ((pressed & KEY_X)) {
+			if (pressed & KEY_X) {
+			  if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
+			  }
 			}
 		}
 	}

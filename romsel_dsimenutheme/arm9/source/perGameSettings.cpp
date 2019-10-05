@@ -236,8 +236,7 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& isHomebrew[CURPOS] != 2
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
-		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0
-		&& REG_SCFG_EXT != 0);
+		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
 	if (!ms().useBootstrap && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}
@@ -349,7 +348,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 200, 160, BUTTON_B" Back");
+			printSmall(false, 194, 160, BUTTON_B" Back");
 		} else if (!showPerGameSettings) {
 			printSmall(false, 208, 160, BUTTON_A" OK");
 		} else {	// Per-game settings for retail/commercial games
@@ -427,7 +426,11 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 188, 98, "Release");
 				}
 			}
-			printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
+			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+				printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
+			} else {
+				printSmall(false, 194, 160, BUTTON_B" Back");
+			}
 		}
 		do {
 			scanKeys();
@@ -620,9 +623,11 @@ void perGameSettings (std::string filename) {
 				break;
 			}
 			if (pressed & KEY_X) {
+			  if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				CheatCodelist codelist;
 				codelist.selectCheats(filename);
+			  }
 			}
 		}
 	}
