@@ -458,7 +458,8 @@ void BootstrapConfig::loadCheats()
 
 int BootstrapConfig::launch()
 {
-	loadCheats();
+	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
+		loadCheats();
 
 	createSaveFileIfNotExists();
 

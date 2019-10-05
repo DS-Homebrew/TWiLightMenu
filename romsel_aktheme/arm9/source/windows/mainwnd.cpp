@@ -662,7 +662,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	snprintf(gameTid, 4, "%s", rominfo.saveInfo().gameCode);
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "sd:/_nds/TWiLightMenu/apfix/%s-%X.ips", gameTid, rominfo.saveInfo().gameCRC);
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, rominfo.saveInfo().gameCRC);
 
 	if (settingsIni.checkIfShowAPMsg() && (access(ipsPath, F_OK) != 0)) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
