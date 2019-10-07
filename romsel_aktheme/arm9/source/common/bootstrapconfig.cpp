@@ -163,6 +163,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure
+		"AL3",	// SpongeBob's Atlantis SquarePantis
 		"YUT",	// Ultimate Mortal Kombat
 		"AWL",	// The World Ends With You
 	};
