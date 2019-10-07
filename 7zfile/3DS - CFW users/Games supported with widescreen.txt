@@ -1,4 +1,4 @@
-Total: 442
+Total: 443
 
 007 - Blood Stone (USA/Canada/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -287,7 +287,7 @@ Steal Princess (USA)
 Steal Princess - Touzoku Koujo (Japan)
 Submarine - Tech Demo
 Super Mario 64 DS (USA) (Rev 0)
-Super Mario 64 DS (USA) (Rev 1)
+Super Mario 64 DS (USA) (Rev 1) (Optional xdelta patch: https://www.dropbox.com/s/viu9iintn9ozirt/sm64ws.xdelta?dl=1)
 Super Mario 64 DS (Europe)
 Super Mario 64 DS (Japan) (Rev 0)
 Super Mario 64 DS (Japan) (Rev 1)
