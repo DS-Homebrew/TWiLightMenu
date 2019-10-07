@@ -160,6 +160,7 @@ BootstrapConfig &BootstrapConfig::speedBumpInclude()
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"CRR",	// MegaMan Star Force 3: Red Joker
 		"CRB",	// MegaMan Star Force 3: Black Ace
+		"YCX",	// Retro Game Challenge
 		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
 		"A3Y",	// Sonic Rush Adventure

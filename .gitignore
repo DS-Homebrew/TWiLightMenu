@@ -13,6 +13,8 @@
 !GBARunner2_arm7dldi_ds.nds
 !GBARunner2_arm7dldi_dsi.nds
 !GBARunner2_arm7dldi_3ds.nds
+!/7zfile/Flashcard users/Autoboot/*/*.NDS
+!/7zfile/Flashcard users/Autoboot/*/*/*.NDS
 
 # Build Directory
 build/
