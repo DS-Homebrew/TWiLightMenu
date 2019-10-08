@@ -111,6 +111,7 @@ extern std::string STR_DESCRIPTION_REPLACEDSIMENU_1;
 extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 
 // GBARunner2 settings
+extern std::string STR_DESCRIPTION_DLDIACCESS;
 extern std::string STR_DESCRIPTION_USEBOTTOMSCREEN;
 extern std::string STR_DESCRIPTION_CENTERANDMASK;
 extern std::string STR_DESCRIPTION_MAINMEMICACHE;

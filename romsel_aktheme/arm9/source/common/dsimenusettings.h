@@ -131,6 +131,7 @@ class DSiMenuPlusPlusSettings
     int consoleModel;
     int guiLanguage;
     bool useGbarunner;
+    bool gbar2DldiAccess;
     int theme;
     int subtheme;
 	bool showNds;

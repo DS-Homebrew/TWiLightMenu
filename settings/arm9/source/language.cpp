@@ -118,6 +118,7 @@ std::string STR_DESCRIPTION_REPLACEDSIMENU_1 = "STR_DESCRIPTION_REPLACEDSIMENU_1
 std::string STR_DESCRIPTION_RESTOREDSIMENU_1 = "STR_DESCRIPTION_RESTOREDSIMENU_1";
 
 // GBARunner2 settings
+std::string STR_DESCRIPTION_DLDIACCESS = "STR_DESCRIPTION_DLDIACCESS";
 std::string STR_DESCRIPTION_USEBOTTOMSCREEN = "STR_DESCRIPTION_USEBOTTOMSCREEN";
 std::string STR_DESCRIPTION_CENTERANDMASK = "STR_DESCRIPTION_CENTERANDMASK";
 std::string STR_DESCRIPTION_MAINMEMICACHE = "STR_DESCRIPTION_MAINMEMICACHE";
@@ -391,6 +392,7 @@ void langInit(void)
 	STR_DESCRIPTION_RESTOREDSIMENU_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RESTOREDSIMENU_1", "Show DSi Menu on boot again."));
 
 	// GBARunner2 settings
+	STR_DESCRIPTION_DLDIACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_DLDIACCESS", "Select which CPU to access the flashcard's DLDI driver. Select ARM7, if ARM9 causes a white screen crash."));
 	STR_DESCRIPTION_USEBOTTOMSCREEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOTTOMSCREEN", "Play GBA games on the bottom screen."));
 	STR_DESCRIPTION_CENTERANDMASK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CENTERANDMASK", "Centers the game with a border. Adds 1 frame delay."));
 	STR_DESCRIPTION_MAINMEMICACHE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBAR2_MAINMEMICACHE", "Boosts speed, but causes timing bugs in a few games."));

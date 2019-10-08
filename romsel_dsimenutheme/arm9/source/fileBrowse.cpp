@@ -854,11 +854,12 @@ void launchGba(void) {
 	// Switch to GBA mode
 	if (ms().useGbarunner) {
 		if (ms().secondaryDevice) {
+			const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 			if (ms().useBootstrap) {
-				int err = runNdsFile("fat:/_nds/GBARunner2_arm9dldi_ds.nds", 0, NULL, true, true, true, true, false);
+				int err = runNdsFile(gbaRunner2Path, 0, NULL, true, true, true, true, false);
 				iprintf("Start failed. Error %i\n", err);
 			} else {
-				loadGameOnFlashcard("fat:/_nds/GBARunner2_arm9dldi_ds.nds", "GBARunner2_arm9dldi_ds.nds", false);
+				loadGameOnFlashcard(gbaRunner2Path, (ms().gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
 			}
 		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"

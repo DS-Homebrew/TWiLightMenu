@@ -20,6 +20,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     gotosettings = false;
     guiLanguage = ELangDefault;
     useGbarunner = false;
+	gbar2DldiAccess = false;
     theme = 0;
     subtheme = 0;
 
@@ -102,6 +103,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }
+	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);

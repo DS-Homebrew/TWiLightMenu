@@ -30,6 +30,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     blfLevel = 0;
     sdRemoveDetect = true;
     useGbarunner = false;
+	gbar2DldiAccess = false;
     showMainMenu = true;
     theme = 0;
     subtheme = 0;
@@ -132,6 +133,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }
+	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
 

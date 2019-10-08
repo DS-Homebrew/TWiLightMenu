@@ -205,7 +205,7 @@ void SettingsGUI::drawTopText()
 {
 	printSmall(true, 4, 0, "nds-bootstrap Ver:");
 	printSmall(true, 114, 0, bsVerText[ms().bootstrapFile]);
-    printSmall(true, 194, 174, VERTEXT);
+    printSmall(true, 194, 174, vertext);
     for (unsigned int i = 0; i < _topText.size(); i++)
     {
         printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());

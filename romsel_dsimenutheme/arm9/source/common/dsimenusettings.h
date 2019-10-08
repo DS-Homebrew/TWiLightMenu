@@ -139,6 +139,7 @@ class DSiMenuPlusPlusSettings
     int blfLevel;
     bool sdRemoveDetect;
     bool useGbarunner;
+    bool gbar2DldiAccess;
     bool showMainMenu;
     int theme;
     int subtheme;

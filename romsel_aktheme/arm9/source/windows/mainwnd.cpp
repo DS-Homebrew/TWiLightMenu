@@ -1480,11 +1480,11 @@ void MainWnd::bootGbaRunner(void)
     {
 		if (ms().useBootstrap)
 		{
-            bootFile(GBARUNNER_FC, "");
+            bootFile(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "");
 		}
 		else
 		{
-			bootFlashcard(GBARUNNER_FC, "", false);
+			bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "", false);
 		}
         return;
     }

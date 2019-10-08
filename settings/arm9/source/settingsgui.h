@@ -21,6 +21,7 @@ public:
         _exitCallback(nullptr)
   {
 
+  snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d", 9, 2, 0);
 	// Read nds-bootstrap version
 	FILE* bsVerFile;
 	for (int i = 0; i < 2; i++) {
@@ -228,7 +229,8 @@ private:
   std::vector<std::string> _topText;
 
   std::function<void(void)> _exitCallback;
-
+  
+  char vertext[13];
   char bsVerText[2][25];
 };
 
