@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://github.com/RocketRobz/TWiLightMenu/blob/master/logo.png"><br>
+ <img src="https://github.com/DS-Homebrew/TWiLightMenu/blob/master/logo.png"><br>
   <a href="https://gbatemp.net/threads/ds-i-3ds-twilight-menu-gui-for-ds-i-games-and-ds-i-menu-replacement.472200/">
    <img src="https://img.shields.io/badge/GBATemp-Thread-blue.svg">
   </a>
