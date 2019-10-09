@@ -375,7 +375,6 @@ bool MainList::enterDir(const std::string &dirName)
                 //else if (".launcharg" == extName || ".argv" == extName)
                 else if (".argv" == extName)
                 {
-                    // tonccpy(&rominfo.banner(), unknown_banner_bin, sizeof(tNDSBanner));
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
