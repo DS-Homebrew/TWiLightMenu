@@ -82,7 +82,8 @@ jobs:
         cd ..
         curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
         7z x nds-bootstrap.7z
-        mv nds-bootstrap/TWiLightMenu 7zfile/_nds/
+        mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
+        mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
         mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
@@ -101,6 +102,7 @@ jobs:
         curl -L https://github.com/TWLBot/Builds/blob/master/extras/B4DS.7z?raw=true -o B4DS.7z
         7z x B4DS.7z
         mv B4DS/* 7zfile/Flashcard\ users/_nds/
+        rm -r 7zfile/Flashcard\ users/_nds/nds-bootstrap.json
 
         # version.txt
         echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
