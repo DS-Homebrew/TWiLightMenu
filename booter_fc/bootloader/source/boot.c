@@ -244,7 +244,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 	ndsHeader[0x024>>2] = 0;
 	dmaCopyWords(3, (void*)ndsHeader, (void*)NDS_HEAD, 0x170);
 
-	/*if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
+	if (dsiMode && (ndsHeader[0x10>>2]&BIT(16+1)))
 	{
 		// Read full TWL header
 		fileRead((char*)TWL_HEAD, fileCluster, 0, 0x1000);
@@ -260,7 +260,7 @@ void loadBinary_ARM7 (u32 fileCluster)
 			fileRead(ARM9i_DST, fileCluster, ARM9i_SRC, ARM9i_LEN);
 		if (ARM7i_LEN)
 			fileRead(ARM7i_DST, fileCluster, ARM7i_SRC, ARM7i_LEN);
-	}*/
+	}
 }
 
 /*-------------------------------------------------------------------------

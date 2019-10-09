@@ -44,16 +44,16 @@ void stop (void) {
 char filePath[PATH_MAX];
 
 //---------------------------------------------------------------------------------
-void doPause(int x, int y) {
+//void doPause(int x, int y) {
 //---------------------------------------------------------------------------------
-	printf("Press start...\n");
+/*	printf("Press start...\n");
 	while(1) {
 		scanKeys();
 		if(keysDown() & KEY_START)
 			break;
 	}
 	scanKeys();
-}
+}*/
 
 //---------------------------------------------------------------------------------
 int main(int argc, char **argv) {
@@ -69,9 +69,10 @@ int main(int argc, char **argv) {
 
 	//defaultExceptionHandler();
 	
-	// Go back into DSi mode, if possible
 	REG_SCFG_CLK = 0x85;					// TWL clock speed
-	//REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
+	if (isDSiMode()) {
+		REG_SCFG_EXT = 0x8307F100;				// Extended memory, extended VRAM, etc.
+	}
 
 	if (!fatMountSimple("fat", dldiGetInternal())) {
 		consoleDemoInit();
