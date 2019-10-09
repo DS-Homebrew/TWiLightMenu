@@ -1508,7 +1508,7 @@ int main(int argc, char **argv) {
 								if (sdFound()) {
 									chdir("sd:/");
 								}
-								int err = runNdsFile (pictochatPath, 0, NULL, false, true, true, false, false);
+								int err = runNdsFile (pictochatPath, 0, NULL, true, true, true, false, false);
 								char text[32];
 								snprintf (text, sizeof(text), "Start failed. Error %i", err);
 								clearText();
@@ -1561,7 +1561,7 @@ int main(int argc, char **argv) {
 								if (sdFound()) {
 									chdir("sd:/");
 								}
-								int err = runNdsFile (dlplayPath, 0, NULL, false, true, true, false, false);
+								int err = runNdsFile (dlplayPath, 0, NULL, true, true, true, false, false);
 								char text[32];
 								snprintf (text, sizeof(text), "Start failed. Error %i", err);
 								clearText();
