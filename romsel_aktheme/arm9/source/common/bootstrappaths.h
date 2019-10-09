@@ -7,11 +7,13 @@
 #define BOOTSTRAP_NIGHTLY "sd:/_nds/nds-bootstrap-nightly.nds"
 #define BOOTSTRAP_NIGHTLY_HB_FC "fat:/_nds/nds-bootstrap-hb-nightly.nds"
 #define BOOTSTRAP_NIGHTLY_FC "fat:/_nds/nds-bootstrap-nightly.nds"
+#define BOOTSTRAP_NIGHTLY_DS "fat:/_nds/b4ds-nightly.nds"
 
 #define BOOTSTRAP_RELEASE_HB "sd:/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE "sd:/_nds/nds-bootstrap-release.nds"
 #define BOOTSTRAP_RELEASE_HB_FC "fat:/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE_FC "fat:/_nds/nds-bootstrap-release.nds"
+#define BOOTSTRAP_RELEASE_DS "fat:/_nds/b4ds-release.nds"
 
 #define BOOTSTRAP_NIGHTLY_GBAR "sd:/_nds/nds-bootstrap-gbar2-nightly.nds"
 #define BOOTSTRAP_RELEASE_GBAR "sd:/_nds/nds-bootstrap-gbar2-release.nds"

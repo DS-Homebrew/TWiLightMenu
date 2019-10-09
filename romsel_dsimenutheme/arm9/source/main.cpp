@@ -1362,9 +1362,11 @@ int main(int argc, char **argv) {
 						}
 
 						SetDonorSDK(argarray[0]);
-						SetGameSoftReset(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						SetSpeedBumpInclude();
+						if (isDSiMode()) {
+							SetGameSoftReset(argarray[0]);
+							SetSpeedBumpInclude();
+						}
 
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
@@ -1395,7 +1397,7 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode, crc32;
 
-						if (isHomebrew[CURPOS] == 0) {
+						if (isDSiMode() && isHomebrew[CURPOS] == 0) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);
@@ -1447,7 +1449,7 @@ int main(int argc, char **argv) {
 						char ndsToBoot[256];
 						sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						if(access(ndsToBoot, F_OK) != 0) {
-							sprintf(ndsToBoot, "fat:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+							sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 						}
 
 						argarray.at(0) = (char *)ndsToBoot;

@@ -503,12 +503,12 @@ int BootstrapConfig::launch()
 			if (_useNightlyBootstrap && _isHomebrew)
 				bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
 			if (_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = BOOTSTRAP_NIGHTLY_FC;
+				bootstrapPath = (isDSiMode() ? BOOTSTRAP_NIGHTLY_FC : BOOTSTRAP_NIGHTLY_DS);
 
 			if (!_useNightlyBootstrap && _isHomebrew)
 				bootstrapPath = BOOTSTRAP_RELEASE_HB_FC;
 			if (!_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = BOOTSTRAP_RELEASE_FC;
+				bootstrapPath = (isDSiMode() ? BOOTSTRAP_RELEASE_FC : BOOTSTRAP_RELEASE_DS);
 		}
 	}
 
