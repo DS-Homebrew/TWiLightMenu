@@ -320,11 +320,16 @@ void lastRunROM()
 					}
 
 				}
-				if (perGameSettings_bootstrapFile == -1) {
-					argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
-				} else {
-					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds");
+
+				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+
+				char ndsToBoot[256];
+				sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+				if(access(ndsToBoot, F_OK) != 0) {
+					sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 				}
+
+				argarray.at(0) = (char*)ndsToBoot;
 			}
 			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
 			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);

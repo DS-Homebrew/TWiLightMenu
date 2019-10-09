@@ -515,7 +515,11 @@ int main(int argc, char **argv)
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
 		if (!sys().arm7SCFGLocked()) {
-			gamesPage.option("Slot-1 SD: "+STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			if (isDSiMode()) {
+				gamesPage.option(sdAccessible ? "Slot-1 SD: "+STR_USEBOOTSTRAP : STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			} else {
+				gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			}
 			gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {"Console's SD", "Slot-1 SD"}, {true, false});
 		}
 		if (sdAccessible) {
@@ -523,7 +527,7 @@ int main(int argc, char **argv)
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
 		}
 	} else {
-		gamesPage.option(STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+		gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 	}
 
 	if (isDSiMode() && !sys().arm7SCFGLocked()) {
