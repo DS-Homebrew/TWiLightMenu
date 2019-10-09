@@ -438,7 +438,7 @@ void CheatCodelist::selectCheats(std::string filename)
     }
     if(pressed & KEY_Y) {
       if(currentList[cheatWnd_cursorPosition]._comment != "") {
-		(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
+        (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
         clearText();
         printLargeCentered(false, 30, "Cheats");
 
@@ -469,13 +469,12 @@ void CheatCodelist::selectCheats(std::string filename)
           _topText.push_back(temp);
         
         // Print comment
-        for(int i = 0; i < (int)_topText.size() || i < 2; i++) {
+        for(int i = 0; i < (int)_topText.size(); i++) {
           printSmallCentered(false, 60 + (i*12), _topText[i].c_str());
         }
 
         // Print 'Back' text
         printSmallCentered(false, 160, BUTTON_B" Back");
-
         while(1) {
           scanKeys();
           pressed = keysDown();
@@ -488,7 +487,7 @@ void CheatCodelist::selectCheats(std::string filename)
           snd().updateStream();
           swiWaitForVBlank();
           if(pressed & KEY_B) {
-		    snd().playBack();
+            snd().playBack();
             break;
           }
         }
