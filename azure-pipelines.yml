@@ -69,7 +69,7 @@ jobs:
 
         mv 7zfile/BOOT.NDS 7zfile/DSi\&3DS\ -\ SD\ card\ users/
         mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard\ users/BOOT.NDS
-        
+
         # nds-bootstrap
         mkdir nds-bootstrap
         cd nds-bootstrap
@@ -82,7 +82,7 @@ jobs:
         cd ..
         curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
         7z x nds-bootstrap.7z
-        mv nds-bootstrap/TWiLightMenu/* 7zfile/_nds/TWiLightMenu
+        mv nds-bootstrap/TWiLightMenu 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
 		mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
