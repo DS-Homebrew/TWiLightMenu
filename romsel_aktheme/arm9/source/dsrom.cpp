@@ -102,7 +102,10 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		if (1 != fread(&header, 0x160, 1, f))
 		{
 			dbg_printf("read rom header fail\n");
-			tonccpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
+            _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
+            tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
+            tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
+            tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
 			fclose(f);
 			return false;
 		}
@@ -113,8 +116,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     if (crc != header.headerCRC16)
     {
         dbg_printf("%s rom header crc error\n", filename.c_str());
-        tonccpy(&_banner, unknown_nds_banner_bin, sizeof(_banner));
-        fclose(f);
+        
+        _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
+        tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
+        tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
+        tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));        fclose(f);
         return true;
     }
     else
@@ -221,12 +227,16 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
             _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
             tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
             tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));        }
+            tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+        }
     }
     else
     {
         //dbg_printf( "%s has no banner\n", filename );
-        tonccpy(&_banner, nds_banner_bin, sizeof(_banner));
+        _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+        tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+        tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
+        tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
     }
 
     fclose(f);
