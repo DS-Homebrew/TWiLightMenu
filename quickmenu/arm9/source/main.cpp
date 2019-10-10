@@ -98,6 +98,7 @@ int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
+bool isDSLite = false;
 
 extern bool showdialogbox;
 
@@ -253,97 +254,8 @@ void SaveSettings(void) {
 	settingsini.SaveIniFile(settingsinipath);
 }
 
-int colorRvalue;
-int colorGvalue;
-int colorBvalue;
-
-/**
- * Load the console's color.
- */
-void LoadColor(void) {
-	switch (PersonalData->theme) {
-		case 0:
-		default:
-			colorRvalue = 99;
-			colorGvalue = 127;
-			colorBvalue = 127;
-			break;
-		case 1:
-			colorRvalue = 139;
-			colorGvalue = 99;
-			colorBvalue = 0;
-			break;
-		case 2:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 0;
-			break;
-		case 3:
-			colorRvalue = 255;
-			colorGvalue = 127;
-			colorBvalue = 127;
-			break;
-		case 4:
-			colorRvalue = 223;
-			colorGvalue = 63;
-			colorBvalue = 0;
-			break;
-		case 5:
-			colorRvalue = 215;
-			colorGvalue = 215;
-			colorBvalue = 0;
-			break;
-		case 6:
-			colorRvalue = 215;
-			colorGvalue = 255;
-			colorBvalue = 0;
-			break;
-		case 7:
-			colorRvalue = 0;
-			colorGvalue = 255;
-			colorBvalue = 0;
-			break;
-		case 8:
-			colorRvalue = 63;
-			colorGvalue = 255;
-			colorBvalue = 63;
-			break;
-		case 9:
-			colorRvalue = 31;
-			colorGvalue = 231;
-			colorBvalue = 31;
-			break;
-		case 10:
-			colorRvalue = 0;
-			colorGvalue = 63;
-			colorBvalue = 255;
-			break;
-		case 11:
-			colorRvalue = 63;
-			colorGvalue = 63;
-			colorBvalue = 255;
-			break;
-		case 12:
-			colorRvalue = 0;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 13:
-			colorRvalue = 127;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 14:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 255;
-			break;
-		case 15:
-			colorRvalue = 255;
-			colorGvalue = 0;
-			colorBvalue = 127;
-			break;
-	}
+bool isDSPhat(void) {
+	return (isRegularDS && !isDSLite);
 }
 
 bool useBackend = false;
@@ -1036,8 +948,6 @@ int main(int argc, char **argv) {
 			username[i*2/2] = username[i*2];
 	}
 	
-	LoadColor();
-
 	if (!fatInited) {
 		graphicsInit();
 		fontInit();
@@ -1062,6 +972,7 @@ int main(int argc, char **argv) {
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
 	if (arm7_SNDEXCNT != 0) isRegularDS = false;	// If sound frequency setting is found, then the console is not a DS Phat/Lite
+	isDSLite = fifoGetValue32(FIFO_USER_04);
 	fifoSendValue32(FIFO_USER_07, 0);
 
 	LoadSettings();

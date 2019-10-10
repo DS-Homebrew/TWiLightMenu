@@ -33,6 +33,7 @@
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
 static u8 backlightLevel = 0;
+static bool isDSLite = false;
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -113,8 +114,12 @@ int main() {
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
 
 	setPowerButtonCB(powerButtonCB);
-	
+
+	u8 readCommand = readPowerManagement(4);
+	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
+
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
+	fifoSendValue32(FIFO_USER_04, isDSLite);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 
