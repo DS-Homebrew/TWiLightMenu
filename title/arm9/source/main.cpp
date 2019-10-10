@@ -240,14 +240,12 @@ void lastRunROM()
 		{
 			std::string savepath;
 
-			argarray.push_back(strdup(filename.c_str()));
-
 			loadPerGameSettings(filename);
 			if (ms().homebrewBootstrap) {
 				if (perGameSettings_bootstrapFile == -1) {
-					argarray.at(0) = (char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					argarray.push_back((char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 				} else {
-					argarray.at(0) = (char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+					argarray.push_back((char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 				}
 			} else {
 				char game_TID[5];
@@ -329,7 +327,7 @@ void lastRunROM()
 					sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 				}
 
-				argarray.at(0) = (char*)ndsToBoot;
+				argarray.push_back((char*)ndsToBoot);
 			}
 			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
 			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);
@@ -565,8 +563,7 @@ int main(int argc, char **argv)
 			}
 		}
 		else
-		if (ms().consoleModel < 0 || ms().consoleModel > 0
-		|| bs().consoleModel < 0 || bs().consoleModel > 0)
+		if (ms().consoleModel != 0 || bs().consoleModel != 0)
 		{
 			ms().consoleModel = 0;
 			bs().consoleModel = 0;
@@ -587,7 +584,9 @@ int main(int argc, char **argv)
 
 	if (ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
 		BootSplashInit();
-		fifoSendValue32(FIFO_USER_01, 10);
+		if (isDSiMode()) {
+			fifoSendValue32(FIFO_USER_01, 10);
+		}
 	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
