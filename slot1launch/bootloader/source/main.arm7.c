@@ -493,6 +493,7 @@ void fixFlashcardForDSiMode(void) {
 	if ((memcmp(ndsHeader->gameTitle, "PASS", 4) == 0)
 	&& (memcmp(ndsHeader->gameCode, "ASME", 4) == 0))		// CycloDS Evolution
 	{
+		*(u16*)(0x0200197A) = 0xDF02;	// LZ77UnCompReadByCallbackWrite16bit
 		*(u16*)(0x020409FA) = 0xDF02;	// LZ77UnCompReadByCallbackWrite16bit
 	}
 }
