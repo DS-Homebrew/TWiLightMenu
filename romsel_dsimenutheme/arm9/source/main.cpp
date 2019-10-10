@@ -1389,11 +1389,13 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);
-						if (ms().forceSleepPatch || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS())) {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 1);
-						} else {
-							bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
-						}
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 
+							(ms().forceSleepPatch
+						|| (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
+						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
+						);
 						bootstrapini.SaveIniFile(bootstrapinipath);
 
 						CheatCodelist codelist;
