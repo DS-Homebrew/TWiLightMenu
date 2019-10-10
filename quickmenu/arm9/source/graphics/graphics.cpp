@@ -460,7 +460,9 @@ void loadBoxArt(const char* filename) {
 }
 
 void topBgLoad(void) {
-	FILE* file = fopen("nitro:/graphics/topbg.bmp", "rb");
+	char filePath[256];
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s.bmp", isDSPhat() ? "phat_topbg" : "topbg");
+	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
 		// Start loading
@@ -487,22 +489,31 @@ void topBgLoad(void) {
 
 void topBarLoad(void) {
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/topbar/%i.bmp", PersonalData->theme);
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", isDSPhat() ? "phat_topbar" : "topbar", PersonalData->theme);
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
 		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		for (int y=15; y>=0; y--) {
-			u16 buffer[256];
-			fread(buffer, 2, 0x100, file);
-			u16* src = buffer;
-			for (int i=0; i<256; i++) {
-				u16 val = *(src++);
-				BG_GFX_SUB[y*256+i] = convertToDsBmp(val);
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		lodepng::decode(image, width, height, filePath);
+		for(unsigned i=0;i<image.size()/4;i++) {
+			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+			if (colorMode == 1) {
+				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 			}
+		}
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 0;
+		for (int i = 0; i < 256 * 16; i++) {
+			if (x >= 256) {
+				x = 0;
+				y++;
+			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = val;
+			x++;
 		}
 	}
 
