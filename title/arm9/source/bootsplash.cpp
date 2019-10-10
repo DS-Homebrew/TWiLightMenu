@@ -165,7 +165,12 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFrames = 108;
 		rocketVideo_videoFps = 60;
 
-		videoFrameFile = fopen(isDSiMode() ? "nitro:/video/dsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.rvid", "rb");
+		if (!isDSiMode()) {
+			REG_SCFG_EXT = 0x8300C000;
+		}
+		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT == 0x8300C000);
+
+		videoFrameFile = fopen(dsiSixtyFpsRead ? "nitro:/video/dsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.rvid", "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -201,7 +206,7 @@ void BootSplashDSi(void) {
 		if (videoFrameFile) {
 			bool doRead = false;
 
-			if (isDSiMode()) {
+			if (dsiSixtyFpsRead) {
 				doRead = true;
 			} else if (sys().isRegularDS()) {
 				fseek(videoFrameFile, 0x200, SEEK_SET);
@@ -214,7 +219,7 @@ void BootSplashDSi(void) {
 				}
 			}
 			if (doRead) {
-				if (isDSiMode()) {
+				if (dsiSixtyFpsRead) {
 					fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
 					LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
 				} else {
@@ -370,6 +375,10 @@ void BootSplashDSi(void) {
 
 	for (int i = 0; i < 256*60; i++) {
 		BG_GFX[i] = whiteCol;
+	}
+
+	if (!isDSiMode()) {
+		REG_SCFG_EXT = 0x83000000;
 	}
 
 	rocketVideo_videoFrames = 29;
