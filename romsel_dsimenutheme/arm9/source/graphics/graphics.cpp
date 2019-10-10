@@ -71,7 +71,6 @@ extern int colorGvalue;
 extern int colorBvalue;
 
 extern bool dropDown;
-extern bool redoDropDown;
 int dropTime[5];
 int dropSeq[5];
 #define dropSpeedDefine 6
@@ -432,31 +431,13 @@ void vBlankHandler() {
 	glBegin2D();
 	{
 		if (fadeType == true) {
-			if (!fadeDelay) {
-				screenBrightness--;
-				if (screenBrightness < 0)
-					screenBrightness = 0;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3)
-					fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+			screenBrightness -= 2;
+			if (screenBrightness < 0)
+				screenBrightness = 0;
 		} else {
-			if (!fadeDelay) {
-				screenBrightness++;
-				if (screenBrightness > 31)
-					screenBrightness = 31;
-			}
-			if (!fadeSpeed) {
-				fadeDelay++;
-				if (fadeDelay == 3)
-					fadeDelay = 0;
-			} else {
-				fadeDelay = 0;
-			}
+			screenBrightness += 2;
+			if (screenBrightness > 31)
+				screenBrightness = 31;
 		}
 		if (controlBottomBright)
 			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
@@ -566,20 +547,6 @@ void vBlankHandler() {
 				titleboxXmoveright = false;
 				movetimer = 0;
 			}
-		}
-
-		if (redoDropDown && ms().theme == 0) {
-			for (int i = 0; i < 5; i++) {
-				dropTime[i] = 0;
-				dropSeq[i] = 0;
-				dropSpeed[i] = dropSpeedDefine;
-				dropSpeedChange[i] = 0;
-				titleboxYposDropDown[i] = -85 - 80;
-			}
-			allowedTitleboxForDropDown = 0;
-			delayForTitleboxToDropDown = 0;
-			dropDown = false;
-			redoDropDown = false;
 		}
 
 		if (!whiteScreen && dropDown && ms().theme == 0) {
@@ -1619,7 +1586,6 @@ void graphicsInit() {
 	allowedTitleboxForDropDown = 0;
 	delayForTitleboxToDropDown = 0;
 	dropDown = false;
-	redoDropDown = false;
 
 
 	titleboxXpos[0] = ms().cursorPosition[0] * 64;

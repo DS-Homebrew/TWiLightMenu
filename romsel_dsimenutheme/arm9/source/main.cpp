@@ -129,7 +129,6 @@ bool useBackend = false;
 using namespace std;
 
 bool dropDown = false;
-bool redoDropDown = false;
 int currentBg = 0;
 bool showSTARTborder = false;
 bool buttonArrowTouched[2] = {false};

@@ -78,7 +78,6 @@ extern bool gbaBiosFound[2];
 extern const char *unlaunchAutoLoadID;
 
 extern bool dropDown;
-extern bool redoDropDown;
 extern int currentBg;
 extern bool showSTARTborder;
 extern bool buttonArrowTouched[2];
@@ -350,8 +349,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 			if (ms().showDirectories) {
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") &&
-				    dirEntry.name.compare("saves") != 0 &&
-				    (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
+					dirEntry.name.compare("saves") != 0 &&
+					(dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 					bool isHidden = false;
 					for (int i = 0; i < (int)hiddenGames.size(); i++) {
 						if (dirEntry.name == hiddenGames[i]) {
@@ -492,8 +491,6 @@ bool isTopLevel(const char *path) {
 }
 
 void waitForFadeOut(void) {
-	if (ms().theme == 4) return;
-
 	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
 		for (int i = 0; i < 66; i++) {
@@ -507,20 +504,6 @@ void waitForFadeOut(void) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
-	} else {
-		for (int i = 0; i < 25; i++) {
-			snd().updateStream();
-			checkSdEject();
-			tex().drawVolumeImageCached();
-			tex().drawBatteryImageCached();
-			drawCurrentTime();
-			drawCurrentDate();
-			drawClockColon();
-			snd().updateStream();
-			swiWaitForVBlank();
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
 	}
 }
 
@@ -530,27 +513,6 @@ void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
-	printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Loading...");
-	if (!sys().isRegularDS()) {
-		if (ms().theme == 4) {
-			if (ms().secondaryDevice) {
-				printSmallCentered(false, 48, "Location: Slot-1 microSD");
-			} else if (ms().consoleModel < 3) {
-				printSmallCentered(false, 48, "Location: SD Card");
-			} else {
-				printSmallCentered(false, 48, "Location: microSD Card");
-			}
-		} else {
-			printSmall(false, 8, 152, "Location:");
-			if (ms().secondaryDevice) {
-				printSmall(false, 8, 168, "Slot-1 microSD Card");
-			} else if (ms().consoleModel < 3) {
-				printSmall(false, 8, 168, "SD Card");
-			} else {
-				printSmall(false, 8, 168, "microSD Card");
-			}
-		}
-	}
 	nowLoadingDisplaying = true;
 	reloadFontPalettes();
 	while (!screenFadedIn()) 
@@ -719,7 +681,7 @@ void exitToSystemMenu(void) {
 		int i2 = 0;
 		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 			*(u8 *)(0x02000838 + i2) =
-			    unlaunchDevicePath[i]; // Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+				unlaunchDevicePath[i]; // Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 			i2 += 2;
 		}
 		while (*(u16 *)(0x0200080E) == 0) { // Keep running, so that CRC16 isn't 0
@@ -743,7 +705,6 @@ void switchDevice(void) {
 		if (ms().theme != 4) whiteScreen = true;
 		boxArtLoaded = false;
 		rocketVideo_playVideo = true;
-		redoDropDown = true;
 		shouldersRendered = false;
 		currentBg = 0;
 		showSTARTborder = false;
@@ -798,7 +759,7 @@ void launchGba(void) {
 		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 6; i++) {
 				snd().updateStream();
 				swiWaitForVBlank();
 			}
@@ -910,7 +871,7 @@ void smsWarning(void) {
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "When the game starts, please");
 	printSmallCentered(false, 78, "touch the screen to go into");
@@ -970,7 +931,7 @@ void mdRomTooBig(void) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "This Mega Drive or Genesis");
 	printSmallCentered(false, 78, "ROM cannot be launched,");
@@ -1078,7 +1039,7 @@ void ramDiskMsg(const char *filename) {
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 6; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
@@ -1310,7 +1271,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 				 || extention(std_romsel_filename, ".argv"))
 				{
 					getGameInfo(isDirectory[i], dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
-						    i);
+							i);
 					bnrRomType[i] = 0;
 					boxArtType[i] = 0;
 				} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid")) {
@@ -1422,13 +1383,13 @@ string browseForFile(const vector<string> extensionList) {
 	displayNowLoading();
 	snd().updateStream();
 	gameOrderIniPath =
-	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+		sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
 	recentlyPlayedIniPath =
-	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+		sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
 	timesPlayedIniPath =
-	    sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
+		sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
 	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini"
-				       : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
+					   : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	bool displayBoxArt = ms().showBoxArt;
 
@@ -1446,8 +1407,7 @@ string browseForFile(const vector<string> extensionList) {
 		reloadIconPalettes();
 		reloadFontPalettes();
 		if (ms().theme != 4) {
-			while (!screenFadedOut())
-				;
+			while (!screenFadedOut());
 		}
 		nowLoadingDisplaying = false;
 		whiteScreen = false;
@@ -1479,9 +1439,9 @@ string browseForFile(const vector<string> extensionList) {
 			snd().updateStream();
 			if (!stopSoundPlayed) {
 				if ((ms().theme == 0 && !startMenu &&
-				     CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) ||
-				    (ms().theme == 0 && startMenu &&
-				     ms().startMenu_cursorPosition < (3 - flashcardFound()))) {
+					 CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) ||
+					(ms().theme == 0 && startMenu &&
+					 ms().startMenu_cursorPosition < (3 - flashcardFound()))) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;
@@ -1532,7 +1492,7 @@ string browseForFile(const vector<string> extensionList) {
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
 					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 					bannerTextShown = true;
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
@@ -1563,11 +1523,11 @@ string browseForFile(const vector<string> extensionList) {
 			buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
 
 			if (((pressed & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-			    ((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
-			    ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
-			     !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
-			    ((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
-			     !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
+				((held & KEY_LEFT) && !titleboxXmoveleft && !titleboxXmoveright) ||
+				((pressed & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
+				 !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
+				((held & KEY_TOUCH) && touch.py > 171 && touch.px < 19 && ms().theme == 0 &&
+				 !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
 			{
 				CURPOS -= 1;
 				if (CURPOS >= 0) {
@@ -1583,18 +1543,18 @@ string browseForFile(const vector<string> extensionList) {
 				if (CURPOS >= 2 && CURPOS <= 36) {
 					if (bnrRomType[CURPOS - 2] == 0 && (CURPOS - 2) + PAGENUM * 40 < file_count) {
 						iconUpdate(
-						    dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).isDirectory,
-						    dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).name.c_str(),
-						    CURPOS - 2);
+							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).isDirectory,
+							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).name.c_str(),
+							CURPOS - 2);
 						defer(reloadFontTextures);
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 				   ((held & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
 				   ((pressed & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
-				    !titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
+					!titleboxXmoveleft && !titleboxXmoveright) || // Button arrow (DSi theme)
 				   ((held & KEY_TOUCH) && touch.py > 171 && touch.px > 236 && ms().theme == 0 &&
-				    !titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
+					!titleboxXmoveleft && !titleboxXmoveright)) // Button arrow held (DSi theme)
 			{
 				CURPOS += 1;
 				if (CURPOS <= 39) {
@@ -1611,9 +1571,9 @@ string browseForFile(const vector<string> extensionList) {
 				if (CURPOS >= 3 && CURPOS <= 37) {
 					if (bnrRomType[CURPOS + 2] == 0 && (CURPOS + 2) + PAGENUM * 40 < file_count) {
 						iconUpdate(
-						    dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).isDirectory,
-						    dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).name.c_str(),
-						    CURPOS + 2);
+							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).isDirectory,
+							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).name.c_str(),
+							CURPOS + 2);
 						defer(reloadFontTextures);
 					}
 				}
@@ -1624,7 +1584,7 @@ string browseForFile(const vector<string> extensionList) {
 				currentBg = 2;
 				clearText();
 				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
-				      0777);
+					  0777);
 				std::string gameBeingMoved = dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name;
 				movingApp = (PAGENUM * 40) + (CURPOS);
 				if (dirContents[scrn][movingApp].isDirectory)
@@ -1632,7 +1592,7 @@ string browseForFile(const vector<string> extensionList) {
 				else
 					movingAppIsDir = false;
 				getGameInfo(dirContents[scrn].at(movingApp).isDirectory,
-					    dirContents[scrn].at(movingApp).name.c_str(), -1);
+						dirContents[scrn].at(movingApp).name.c_str(), -1);
 				iconUpdate(dirContents[scrn].at(movingApp).isDirectory,
 					   dirContents[scrn].at(movingApp).name.c_str(), -1);
 				for (int i = 0; i < 10; i++) {
@@ -1670,20 +1630,20 @@ string browseForFile(const vector<string> extensionList) {
 					}*/
 
 					if ((pressed & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright) ||
-					    (held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)) {
+						(held & KEY_LEFT && !titleboxXmoveleft && !titleboxXmoveright)) {
 						if (CURPOS > 0) {
 							snd().playSelect();
 							titleboxXmoveleft = true;
 							CURPOS--;
 							if (bnrRomType[CURPOS + 2] == 0 &&
-							    (CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 2 &&
-							    CURPOS <= 36) {
+								(CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 2 &&
+								CURPOS <= 36) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS - 2);
 								defer(reloadFontTextures);
 							}
@@ -1694,19 +1654,19 @@ string browseForFile(const vector<string> extensionList) {
 					} else if ((pressed & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright) ||
 						   (held & KEY_RIGHT && !titleboxXmoveleft && !titleboxXmoveright)) {
 						if (CURPOS + (PAGENUM * 40) < (int)dirContents[scrn].size() - 1 &&
-						    CURPOS < 39) {
+							CURPOS < 39) {
 							snd().playSelect();
 							titleboxXmoveright = true;
 							CURPOS++;
 							if (bnrRomType[CURPOS + 2] == 0 &&
-							    (CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 3 &&
-							    CURPOS <= 37) {
+								(CURPOS + 2) + PAGENUM * 40 < file_count && CURPOS >= 3 &&
+								CURPOS <= 37) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS + 2);
 								defer(reloadFontTextures);
 							}
@@ -1729,10 +1689,10 @@ string browseForFile(const vector<string> extensionList) {
 						break;
 					} else if (pressed & KEY_L) {
 						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright &&
-						    PAGENUM != 0) {
+							PAGENUM != 0) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
-							for (int i = 0; i < 30; i++) {
+							for (int i = 0; i < 6; i++) {
 								snd().updateStream();
 								swiWaitForVBlank();
 							}
@@ -1765,10 +1725,10 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					} else if (pressed & KEY_R) {
 						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright &&
-						    file_count > 40 + PAGENUM * 40) {
+							file_count > 40 + PAGENUM * 40) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
-							for (int i = 0; i < 30; i++) {
+							for (int i = 0; i < 6; i++) {
 								snd().updateStream();
 								swiWaitForVBlank();
 							}
@@ -1811,7 +1771,7 @@ string browseForFile(const vector<string> extensionList) {
 					for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
 						sprintf(str, "%d", i);
 						gameOrder.push_back(
-						    gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+							gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 						if (gameOrder[i] == "NULL" || ms().sortMethod != 3)
 							gameOrder[i] = dirContents[scrn][i].name;
 					}
@@ -1880,8 +1840,8 @@ string browseForFile(const vector<string> extensionList) {
 
 				// Scrollbar
 			} else if (((pressed & KEY_TOUCH) && touch.py > 171 && touch.px >= 30 && touch.px <= 227 &&
-				    ms().theme == 0 && !titleboxXmoveleft &&
-				    !titleboxXmoveright)) // Scroll bar (DSi theme))
+					ms().theme == 0 && !titleboxXmoveleft &&
+					!titleboxXmoveright)) // Scroll bar (DSi theme))
 			{
 				touchPosition startTouch = touch;
 				int prevPos = CURPOS;
@@ -1912,26 +1872,26 @@ string browseForFile(const vector<string> extensionList) {
 					if (prevPos == CURPOS + 1) {
 						if (CURPOS >= 2) {
 							if (bnrRomType[0] == 0 &&
-							    (CURPOS - 2) + PAGENUM * 40 < file_count) {
+								(CURPOS - 2) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS - 2);
 							}
 						}
 					} else if (prevPos == CURPOS - 1) {
 						if (CURPOS <= 37) {
 							if (bnrRomType[0] == 0 &&
-							    (CURPOS + 2) + PAGENUM * 40 < file_count) {
+								(CURPOS + 2) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS + 2);
 							}
 						}
@@ -1942,9 +1902,9 @@ string browseForFile(const vector<string> extensionList) {
 					
 							if (bnrRomType[i] == 0 && i + PAGENUM * 40 < file_count) {
 								iconUpdate(
-								    dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
-								    dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
-								    i);
+									dirContents[scrn].at(i + PAGENUM * 40).isDirectory,
+									dirContents[scrn].at(i + PAGENUM * 40).name.c_str(),
+									i);
 							}
 						}
 					} else if (CURPOS >= 2 && CURPOS <= 36) {
@@ -1952,13 +1912,13 @@ string browseForFile(const vector<string> extensionList) {
 							snd().updateStream();
 							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
-							    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+								(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS - 2 + i) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS - 2 + i) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS - 2 + i) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS - 2 + i) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS - 2 + i);
 							}
 						}
@@ -1967,13 +1927,13 @@ string browseForFile(const vector<string> extensionList) {
 							snd().updateStream();
 							swiWaitForVBlank();
 							if (bnrRomType[i] == 0 &&
-							    (35 + i) + PAGENUM * 40 < file_count) {
+								(35 + i) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((35 + i) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((35 + i) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((35 + i) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((35 + i) + PAGENUM * 40)
+										   .name.c_str(),
 									   35 + i);
 							}
 						}
@@ -1983,8 +1943,8 @@ string browseForFile(const vector<string> extensionList) {
 					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 						currentBg = 1;
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
-							    CURPOS);
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								CURPOS);
 					} else {
 						currentBg = 0;
 					}
@@ -2025,13 +1985,13 @@ string browseForFile(const vector<string> extensionList) {
 						snd().updateStream();
 						swiWaitForVBlank();
 						if (bnrRomType[i] == 0 &&
-						    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+							(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 							iconUpdate(dirContents[scrn]
-								       .at((CURPOS - 2 + i) + PAGENUM * 40)
-								       .isDirectory,
+									   .at((CURPOS - 2 + i) + PAGENUM * 40)
+									   .isDirectory,
 								   dirContents[scrn]
-								       .at((CURPOS - 2 + i) + PAGENUM * 40)
-								       .name.c_str(),
+									   .at((CURPOS - 2 + i) + PAGENUM * 40)
+									   .name.c_str(),
 								   CURPOS - 2 + i);
 						}
 					}
@@ -2041,16 +2001,16 @@ string browseForFile(const vector<string> extensionList) {
 						swiWaitForVBlank();
 						if (bnrRomType[i] == 0 && (35 + i) + PAGENUM * 40 < file_count) {
 							iconUpdate(
-							    dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
-							    dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(),
-							    35 + i);
+								dirContents[scrn].at((35 + i) + PAGENUM * 40).isDirectory,
+								dirContents[scrn].at((35 + i) + PAGENUM * 40).name.c_str(),
+								35 + i);
 						}
 					}
 				}
 
 				// Dragging icons (DSi & 3DS themes)
 			} else if ((pressed & KEY_TOUCH) && touch.py > 88 && touch.py < 144 && !titleboxXmoveleft &&
-				    !titleboxXmoveright) {
+					!titleboxXmoveright) {
 				touchPosition startTouch = touch;
 
 				if (touch.px > 96 && touch.px < 160) {
@@ -2061,8 +2021,8 @@ string browseForFile(const vector<string> extensionList) {
 						if (!(keysHeld() & KEY_TOUCH)) {
 							gameTapped = true;
 							break;
-						} else if (touch.px < startTouch.px - 10 ||
-							   touch.px > startTouch.px + 10)
+						} else if (touch.px < startTouch.px - 20 ||
+								   touch.px > startTouch.px + 20)
 							break;
 					}
 				}
@@ -2086,7 +2046,7 @@ string browseForFile(const vector<string> extensionList) {
 						if (dX > 0) {
 							while (decAmount > .25) {
 								if (ms().theme &&
-								    titleboxXpos[ms().secondaryDevice] > 2496)
+									titleboxXpos[ms().secondaryDevice] > 2496)
 									break;
 								scanKeys();
 								if (keysHeld() & KEY_TOUCH) {
@@ -2095,8 +2055,8 @@ string browseForFile(const vector<string> extensionList) {
 								}
 
 								titlewindowXpos[ms().secondaryDevice] =
-								    (titleboxXpos[ms().secondaryDevice] + 32) *
-								    0.078125;
+									(titleboxXpos[ms().secondaryDevice] + 32) *
+									0.078125;
 								;
 								if (titlewindowXpos[ms().secondaryDevice] > 192.075)
 									titlewindowXpos[ms().secondaryDevice] = 192.075;
@@ -2106,34 +2066,34 @@ string browseForFile(const vector<string> extensionList) {
 									swiWaitForVBlank();
 									if (titleboxXpos[ms().secondaryDevice] < 2496)
 										titleboxXpos[ms().secondaryDevice] +=
-										    decAmount / 2;
+											decAmount / 2;
 									else
 										titleboxXpos[ms().secondaryDevice] +=
-										    decAmount / 4;
+											decAmount / 4;
 								}
 								decAmount = decAmount / 1.25;
 
 								ms().cursorPosition[ms().secondaryDevice] = round(
-								    (titleboxXpos[ms().secondaryDevice] + 32) / 64);
+									(titleboxXpos[ms().secondaryDevice] + 32) / 64);
 
 								if (CURPOS <= 37) {
 									if (bnrRomType[0] == 0 &&
-									    (CURPOS + 2) + PAGENUM * 40 < file_count) {
+										(CURPOS + 2) + PAGENUM * 40 < file_count) {
 										iconUpdate(
-										    dirContents[scrn]
+											dirContents[scrn]
 											.at((CURPOS + 2) + PAGENUM * 40)
 											.isDirectory,
-										    dirContents[scrn]
+											dirContents[scrn]
 											.at((CURPOS + 2) + PAGENUM * 40)
 											.name.c_str(),
-										    CURPOS + 2);
+											CURPOS + 2);
 									}
 								}
 							}
 						} else if (dX < 0) {
 							while (decAmount > .25) {
 								if (ms().theme &&
-								    titleboxXpos[ms().secondaryDevice] < 0)
+									titleboxXpos[ms().secondaryDevice] < 0)
 									break;
 								scanKeys();
 								if (keysHeld() & KEY_TOUCH) {
@@ -2143,8 +2103,8 @@ string browseForFile(const vector<string> extensionList) {
 								}
 
 								titlewindowXpos[ms().secondaryDevice] =
-								    (titleboxXpos[ms().secondaryDevice] + 32) *
-								    0.078125;
+									(titleboxXpos[ms().secondaryDevice] + 32) *
+									0.078125;
 								;
 								if (titlewindowXpos[ms().secondaryDevice] < 0)
 									titlewindowXpos[ms().secondaryDevice] = 0;
@@ -2154,27 +2114,27 @@ string browseForFile(const vector<string> extensionList) {
 									swiWaitForVBlank();
 									if (titleboxXpos[ms().secondaryDevice] > 0)
 										titleboxXpos[ms().secondaryDevice] -=
-										    decAmount / 2;
+											decAmount / 2;
 									else
 										titleboxXpos[ms().secondaryDevice] -=
-										    decAmount / 4;
+											decAmount / 4;
 								}
 								decAmount = decAmount / 1.25;
 
 								ms().cursorPosition[ms().secondaryDevice] = round(
-								    (titleboxXpos[ms().secondaryDevice] + 32) / 64);
+									(titleboxXpos[ms().secondaryDevice] + 32) / 64);
 
 								if (CURPOS >= 2) {
 									if (bnrRomType[0] == 0 &&
-									    (CURPOS - 2) + PAGENUM * 40 < file_count) {
+										(CURPOS - 2) + PAGENUM * 40 < file_count) {
 										iconUpdate(
-										    dirContents[scrn]
+											dirContents[scrn]
 											.at((CURPOS - 2) + PAGENUM * 40)
 											.isDirectory,
-										    dirContents[scrn]
+											dirContents[scrn]
 											.at((CURPOS - 2) + PAGENUM * 40)
 											.name.c_str(),
-										    CURPOS - 2);
+											CURPOS - 2);
 									}
 								}
 							}
@@ -2196,13 +2156,13 @@ string browseForFile(const vector<string> extensionList) {
 								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
-								    i + PAGENUM * 40 < file_count) {
+									i + PAGENUM * 40 < file_count) {
 									iconUpdate(dirContents[scrn]
-										       .at(i + PAGENUM * 40)
-										       .isDirectory,
+											   .at(i + PAGENUM * 40)
+											   .isDirectory,
 										   dirContents[scrn]
-										       .at(i + PAGENUM * 40)
-										       .name.c_str(),
+											   .at(i + PAGENUM * 40)
+											   .name.c_str(),
 										   i);
 								}
 							}
@@ -2211,15 +2171,15 @@ string browseForFile(const vector<string> extensionList) {
 								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
-								    (CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
+									(CURPOS - 2 + i) + PAGENUM * 40 < file_count) {
 									iconUpdate(
-									    dirContents[scrn]
+										dirContents[scrn]
 										.at((CURPOS - 2 + i) + PAGENUM * 40)
 										.isDirectory,
-									    dirContents[scrn]
+										dirContents[scrn]
 										.at((CURPOS - 2 + i) + PAGENUM * 40)
 										.name.c_str(),
-									    CURPOS - 2 + i);
+										CURPOS - 2 + i);
 								}
 							}
 						} else if (CURPOS >= 37 && CURPOS <= 39) {
@@ -2227,13 +2187,13 @@ string browseForFile(const vector<string> extensionList) {
 								snd().updateStream();
 								swiWaitForVBlank();
 								if (bnrRomType[i] == 0 &&
-								    (35 + i) + PAGENUM * 40 < file_count) {
+									(35 + i) + PAGENUM * 40 < file_count) {
 									iconUpdate(dirContents[scrn]
-										       .at((35 + i) + PAGENUM * 40)
-										       .isDirectory,
+											   .at((35 + i) + PAGENUM * 40)
+											   .isDirectory,
 										   dirContents[scrn]
-										       .at((35 + i) + PAGENUM * 40)
-										       .name.c_str(),
+											   .at((35 + i) + PAGENUM * 40)
+											   .name.c_str(),
 										   35 + i);
 								}
 							}
@@ -2243,9 +2203,9 @@ string browseForFile(const vector<string> extensionList) {
 
 					titleboxXpos[ms().secondaryDevice] += (-(touch.px - prevTouch1.px));
 					ms().cursorPosition[ms().secondaryDevice] =
-					    round((titleboxXpos[ms().secondaryDevice] + 32) / 64);
+						round((titleboxXpos[ms().secondaryDevice] + 32) / 64);
 					titlewindowXpos[ms().secondaryDevice] =
-					    (titleboxXpos[ms().secondaryDevice] + 32) * 0.078125;
+						(titleboxXpos[ms().secondaryDevice] + 32) * 0.078125;
 					if (titleboxXpos[ms().secondaryDevice] > 2496) {
 						if (ms().theme)
 							titleboxXpos[ms().secondaryDevice] = 2496;
@@ -2262,26 +2222,26 @@ string browseForFile(const vector<string> extensionList) {
 					if (prevPos == CURPOS + 1) {
 						if (CURPOS > 2) {
 							if (bnrRomType[0] == 0 &&
-							    (CURPOS - 2) + PAGENUM * 40 < file_count) {
+								(CURPOS - 2) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS - 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS - 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS - 2);
 							}
 						}
 					} else if (prevPos == CURPOS - 1) {
 						if (CURPOS < 37) {
 							if (bnrRomType[0] == 0 &&
-							    (CURPOS + 2) + PAGENUM * 40 < file_count) {
+								(CURPOS + 2) + PAGENUM * 40 < file_count) {
 								iconUpdate(dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .isDirectory,
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .isDirectory,
 									   dirContents[scrn]
-									       .at((CURPOS + 2) + PAGENUM * 40)
-									       .name.c_str(),
+										   .at((CURPOS + 2) + PAGENUM * 40)
+										   .name.c_str(),
 									   CURPOS + 2);
 							}
 						}
@@ -2292,9 +2252,9 @@ string browseForFile(const vector<string> extensionList) {
 						if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 							currentBg = 1;
 							titleUpdate(
-							    dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
-							    CURPOS);
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								CURPOS);
 						} else {
 							currentBg = 0;
 						}
@@ -2334,19 +2294,17 @@ string browseForFile(const vector<string> extensionList) {
 
 			// Startup...
 			if (((pressed & KEY_A) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
-			     !titleboxXmoveright) ||
-			    ((pressed & KEY_START) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
-			     !titleboxXmoveright) ||
-			    (gameTapped && bannerTextShown && showSTARTborder
-				// && showSTARTborder && !titleboxXmoveleft &&!titleboxXmoveright
-			     )) {
+				 !titleboxXmoveright) ||
+				((pressed & KEY_START) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
+				 !titleboxXmoveright) ||
+				(gameTapped)) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
 					(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2359,7 +2317,6 @@ string browseForFile(const vector<string> extensionList) {
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
-					redoDropDown = true;
 					shouldersRendered = false;
 					currentBg = 0;
 					showSTARTborder = false;
@@ -2377,7 +2334,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (ms().theme != 4) {
 						dbox_showIcon = true;
 						showdialogbox = true;
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2413,10 +2370,10 @@ string browseForFile(const vector<string> extensionList) {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
 					if (ms().useBootstrap && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
-					    isHomebrew[CURPOS] == 0 &&
-					    checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+						isHomebrew[CURPOS] == 0 &&
+						checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						FILE *f_nds_file = fopen(
-						    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
+							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
 						hasAP = checkRomAP(f_nds_file, CURPOS);
 						fclose(f_nds_file);
 					} else if (isHomebrew[CURPOS] == 1) {
@@ -2430,7 +2387,7 @@ string browseForFile(const vector<string> extensionList) {
 					} else if (bnrRomType[CURPOS] == 7) {
 						if (getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
-						    0x300000) {
+							0x300000) {
 							proceedToLaunch = false;
 							mdRomTooBig();
 						}
@@ -2456,11 +2413,11 @@ string browseForFile(const vector<string> extensionList) {
 							dbox_showIcon = true;
 							snd().playWrong();
 						} else {
-							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+							for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
-							    CURPOS);
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								CURPOS);
 						if (hasAP == 2) {
 							printSmallCentered(false, 80, "This game has AP (Anti-Piracy)");
 							printSmallCentered(false, 94, "and MUST be patched using the");
@@ -2497,7 +2454,7 @@ string browseForFile(const vector<string> extensionList) {
 							}
 							if (pressed & KEY_X) {
 								dontShowAPMsgAgain(
-								    dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+									dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 								pressed = 0;
 								break;
 							}
@@ -2657,13 +2614,13 @@ string browseForFile(const vector<string> extensionList) {
 			if (ms().theme == 1) {
 				// Launch settings by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft &&
-				    !titleboxXmoveright) {
+					!titleboxXmoveright) {
 					launchSettings();
 				}
 
 				// Exit to system menu by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= 212 &&
-				    !sys().isRegularDS() && !titleboxXmoveleft && !titleboxXmoveright) {
+					!sys().isRegularDS() && !titleboxXmoveleft && !titleboxXmoveright) {
 					exitToSystemMenu();
 				}
 
@@ -2690,8 +2647,8 @@ string browseForFile(const vector<string> extensionList) {
 				if (isDSiMode() && sdFound()) {
 					// Switch devices or launch Slot-1 by touching button
 					if ((pressed & KEY_TOUCH) && touch.py <= 26 &&
-					    touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24 &&
-					    !titleboxXmoveleft && !titleboxXmoveright) {
+						touch.px >= savedTopIconXpos[0] && touch.px < savedTopIconXpos[0] + 24 &&
+						!titleboxXmoveleft && !titleboxXmoveright) {
 						if (ms().secondaryDevice || REG_SCFG_MC != 0x11) {
 							switchDevice();
 							return "null";
@@ -2703,13 +2660,13 @@ string browseForFile(const vector<string> extensionList) {
 
 				// Launch GBA by touching button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[1] &&
-				    touch.px < savedTopIconXpos[1] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					touch.px < savedTopIconXpos[1] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
 					launchGba();
 				}
 
 				// Open the manual
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px >= savedTopIconXpos[2] &&
-				    touch.px < savedTopIconXpos[2] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
+					touch.px < savedTopIconXpos[2] + 24 && !titleboxXmoveleft && !titleboxXmoveright) {
 					launchManual();
 				}
 			}
@@ -2723,7 +2680,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSwitch();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2738,8 +2695,6 @@ string browseForFile(const vector<string> extensionList) {
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
-					if (showLshoulder)
-						redoDropDown = true;
 					shouldersRendered = false;
 					currentBg = 0;
 					showSTARTborder = false;
@@ -2757,7 +2712,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSwitch();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2778,8 +2733,6 @@ string browseForFile(const vector<string> extensionList) {
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
 					rocketVideo_playVideo = true;
-					if (showRshoulder)
-						redoDropDown = true;
 					shouldersRendered = false;
 					currentBg = 0;
 					showSTARTborder = false;
@@ -2797,7 +2750,7 @@ string browseForFile(const vector<string> extensionList) {
 				snd().playBack();
 				if (ms().theme != 4) {
 					fadeType = false; // Fade to white
-					for (int i = 0; i < 30; i++) {
+					for (int i = 0; i < 6; i++) {
 						snd().updateStream();
 						swiWaitForVBlank();
 					}
@@ -2811,7 +2764,6 @@ string browseForFile(const vector<string> extensionList) {
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
 				rocketVideo_playVideo = true;
-				redoDropDown = true;
 				shouldersRendered = false;
 				currentBg = 0;
 				showSTARTborder = false;
@@ -2835,7 +2787,7 @@ string browseForFile(const vector<string> extensionList) {
 					sprintf(str, "%d", i);
 					if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
 						hiddenGames.push_back(
-						    hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
+							hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
 					} else {
 						break;
 					}
@@ -2880,12 +2832,12 @@ string browseForFile(const vector<string> extensionList) {
 					while (!screenFadedIn()) { swiWaitForVBlank(); }
 					dbox_showIcon = true;
 				} else {
-					for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+					for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-					    dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+						dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
 				std::string dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
 				// About 38 characters fit in the box.
 				if (strlen(dirContName.c_str()) > 38) {
@@ -2945,7 +2897,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
 						snd().playLaunch();
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2976,7 +2928,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (pressed & KEY_Y) {
 						snd().playLaunch();
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
+						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2996,7 +2948,7 @@ string browseForFile(const vector<string> extensionList) {
 										 hiddenGames[i]);
 						}
 						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
-				      0777);
+					  0777);
 						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
 
 						if (ms().showBoxArt)
@@ -3032,8 +2984,8 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if ((pressed & KEY_Y) && !startMenu && (isDirectory[CURPOS] == false) &&
-			    (bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
-			    bannerTextShown && showSTARTborder) {
+				(bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
+				bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 			}
 
