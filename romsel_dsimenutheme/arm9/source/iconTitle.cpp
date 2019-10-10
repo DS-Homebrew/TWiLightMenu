@@ -431,7 +431,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
 			isHomebrew[num] = 2; // No need to use nds-bootstrap
-		} else if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
+		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
 			isHomebrew[num] = 1; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)

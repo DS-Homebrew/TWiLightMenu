@@ -154,7 +154,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			_isDSiWare = ETrue;
             _isHomebrew = ETrue;
 		}
-        else if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
+        else if ((memcmp(header.gameTitle, "NMP4BOOT", 8) == 0)
+		 || ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000))
         {
             _isHomebrew = ETrue;
 		}
