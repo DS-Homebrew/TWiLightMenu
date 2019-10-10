@@ -53,7 +53,7 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -81,7 +81,7 @@ void runLaunchEngine (bool EnableSD, int language, bool TWLMODE, bool TWLCLK, bo
 	irqDisable(IRQ_ALL);
 
 	if (isDSiMode()) {
-		if (TWLMODE) {
+		if (scfgUnlock || TWLMODE) {
 			if (TWLVRAM) {
 				REG_SCFG_EXT=0x83002000;
 			} else {

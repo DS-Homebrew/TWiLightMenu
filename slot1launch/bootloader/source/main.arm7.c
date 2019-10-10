@@ -489,6 +489,15 @@ void initMBK() {
 }
 
 
+void fixFlashcardForDSiMode(void) {
+	if ((memcmp(ndsHeader->gameTitle, "PASS", 4) == 0)
+	&& (memcmp(ndsHeader->gameCode, "ASME", 4) == 0))		// CycloDS Evolution
+	{
+		*(u16*)(0x020409FA) = 0xDF02;	// LZ77UnCompReadByCallbackWrite16bit
+	}
+}
+
+
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Main function
 
@@ -522,20 +531,20 @@ void arm7_main (void) {
 		*(u16*)0x4000500 = 0x807F;
 	}
 
-	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
-
-	if (!twlMode) {
+	if (twlMode) {
+		fixFlashcardForDSiMode();
+	} else {
+		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 		if (twlClock) {
 			REG_SCFG_CLK = 0x0181;
 		} else {
 			REG_SCFG_CLK = 0x0180;
 		}
+		if (!sdAccess) {
+			REG_SCFG_EXT = 0x93FBFB06;
+		}
 	}
-	
-	if (!sdAccess) {
-		REG_SCFG_EXT = 0x93FBFB06;
-	}
-	
+
 	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs
 	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x4D5341	// Super Mario 64 DS
 	|| (*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x434D41	// Mario Kart DS

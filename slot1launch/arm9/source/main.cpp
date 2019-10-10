@@ -53,6 +53,7 @@ bool consoleOn = false;
 int main() {
 
 	bool consoleInited = false;
+	bool scfgUnlock = false;
 	bool TWLMODE = false;
 	bool TWLCLK = false;	// false == NTR, true == TWL
 	bool TWLVRAM = false;
@@ -100,8 +101,9 @@ int main() {
 				//}
 				EnableSD = true;
 			}
-			
-			TWLMODE = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
+
+			scfgUnlock = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
+			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
 
 			if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 				fifoSendValue32(FIFO_USER_02, 1);
@@ -178,7 +180,7 @@ int main() {
 				cheatData[wideCheatSize+3] = 0xCF;
 			}
 			memcpy((void*)0x023F0000, cheatData, 0x8000);
-			runLaunchEngine (EnableSD, language, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
+			runLaunchEngine (EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
 		}
 	}
 	return 0;
