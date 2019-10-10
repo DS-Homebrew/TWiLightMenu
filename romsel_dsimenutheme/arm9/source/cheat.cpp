@@ -238,24 +238,14 @@ std::string CheatCodelist::getCheats()
 void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos) {
   for(uint i=0;i<8 && i<list.size();i++) {
     if(list[screenPos+i]._flags&cParsedItem::EFolder) {
-      if(screenPos+i == curPos) {
-        printSmall(false, 20, 60+(i*12), ">");
-        printSmall(false, 32, 60+(i*12), list[screenPos+i]._title.c_str());
-      } else {
-        printSmall(false, 15, 60+(i*12), ">");
-        printSmall(false, 28, 60+(i*12), list[screenPos+i]._title.c_str());
-      }
+      printSmall(false, 15+((screenPos+i == curPos) ? 5 : 0), 60+(i*12), ">");
+      printSmall(false, 28+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), list[screenPos+i]._title.c_str());
     } else {
       if(list[screenPos+i]._flags&cParsedItem::ESelected) {
         printSmall(false, 13, 60+(i*12), "x");
       }
-      if(screenPos+i == curPos) {
-        printSmall(false, 25, 60+(i*12), "-");
-        printSmall(false, 32, 60+(i*12), list[screenPos+i]._title.c_str());
-      } else {
-        printSmall(false, 21, 60+(i*12), "-");
-        printSmall(false, 28, 60+(i*12), list[screenPos+i]._title.c_str());
-      }
+      printSmall(false, 21+((screenPos+i == curPos) ? 4 : 0), 60+(i*12), "-");
+      printSmall(false, 28+((screenPos+i == curPos) ? 7 : 0), 60+(i*12), list[screenPos+i]._title.c_str());
     }
   }
 }
