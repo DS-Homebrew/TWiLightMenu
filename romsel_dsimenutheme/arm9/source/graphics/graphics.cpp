@@ -431,13 +431,31 @@ void vBlankHandler() {
 	glBegin2D();
 	{
 		if (fadeType == true) {
-			screenBrightness -= 2;
-			if (screenBrightness < 0)
-				screenBrightness = 0;
+			if (!fadeDelay) {
+				screenBrightness -= 1+fadeSpeed;
+				if (screenBrightness < 0)
+					screenBrightness = 0;
+			}
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3)
+					fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		} else {
-			screenBrightness += 2;
-			if (screenBrightness > 31)
-				screenBrightness = 31;
+			if (!fadeDelay) {
+				screenBrightness += 1+fadeSpeed;
+				if (screenBrightness > 31)
+					screenBrightness = 31;
+			}
+			if (!fadeSpeed) {
+				fadeDelay++;
+				if (fadeDelay == 3)
+					fadeDelay = 0;
+			} else {
+				fadeDelay = 0;
+			}
 		}
 		if (controlBottomBright)
 			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
