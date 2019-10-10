@@ -489,14 +489,14 @@ void initMBK() {
 }
 
 
-void fixFlashcardForDSiMode(void) {
+/*void fixFlashcardForDSiMode(void) {
 	if ((memcmp(ndsHeader->gameTitle, "PASS", 4) == 0)
 	&& (memcmp(ndsHeader->gameCode, "ASME", 4) == 0))		// CycloDS Evolution
 	{
 		*(u16*)(0x0200197A) = 0xDF02;	// LZ77UnCompReadByCallbackWrite16bit
 		*(u16*)(0x020409FA) = 0xDF02;	// LZ77UnCompReadByCallbackWrite16bit
 	}
-}
+}*/
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -532,10 +532,12 @@ void arm7_main (void) {
 		*(u16*)0x4000500 = 0x807F;
 	}
 
-	if (twlMode) {
-		fixFlashcardForDSiMode();
-	} else {
-		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
+	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
+
+	if (!twlMode) {
+	//	fixFlashcardForDSiMode();
+	//} else {
+	//	REG_SCFG_ROM = 0x703;
 		if (twlClock) {
 			REG_SCFG_CLK = 0x0181;
 		} else {
