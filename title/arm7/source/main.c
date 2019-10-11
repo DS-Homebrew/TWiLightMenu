@@ -37,6 +37,8 @@ unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
+static bool isDSLite = false;
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -111,14 +113,18 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	u8 readCommand = readPowerManagement(4);
+	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
+
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
 	if (isDSiMode()) {
 		fifoSendValue32(FIFO_USER_01, i2cReadRegister(0x4A, 0x71));
 	}
 	//fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_04, *CPUID2);
-	fifoSendValue32(FIFO_USER_05, *CPUID);
+	fifoSendValue32(FIFO_USER_04, isDSLite);
+	//fifoSendValue32(FIFO_USER_04, *CPUID2);
+	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 	

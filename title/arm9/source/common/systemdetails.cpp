@@ -5,6 +5,7 @@ SystemDetails::SystemDetails()
     _flashcardUsed = false;
     _arm7SCFGLocked = false;
     _isRegularDS = true;
+    _isDSLite = false;
     _nitroFsInitOk = false;
     _fatInitOk = false;
 
@@ -18,7 +19,9 @@ SystemDetails::SystemDetails()
     {
         _isRegularDS = false; // If sound frequency setting is found, then the console is not a DS Phat/Lite
     }
-    
+
+	_isDSLite = fifoGetValue32(FIFO_USER_04);
+
 	/*if ((isDSiMode() && !_arm7SCFGLocked) || !isDSiMode()) {
 		// Restore value.
 		fifoSendValue32(FIFO_USER_07, arm7_SNDEXCNT);

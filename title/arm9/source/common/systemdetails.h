@@ -29,12 +29,14 @@ class SystemDetails
     bool isRegularDS() { return _isRegularDS; }
     bool fatInitOk() { return _fatInitOk; }
     bool useNitroFS() { return _nitroFsInitOk; }
+    bool isDSPhat() { return (_isRegularDS && !_isDSLite); }
     void initFilesystem(const char *nitrofsPath, const char *runningPath = NULL);
 
   private:
     bool _arm7SCFGLocked;
     bool _flashcardUsed;
     bool _isRegularDS;
+    bool _isDSLite;
     bool _fatInitOk;
     bool _nitroFsInitOk;
 };
