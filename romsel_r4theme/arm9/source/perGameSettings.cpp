@@ -88,9 +88,9 @@ char gameTIDText[16];
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", secondaryDevice);	// Homebrew only
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
 	if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
-		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	} else {
 		perGameSettings_dsiMode = -1;
 	}
@@ -105,7 +105,7 @@ void loadPerGameSettings (std::string filename) {
 void savePerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
 	CIniFile pergameini( pergamefilepath );
-	if (isHomebrew == 1) {
+	if (isHomebrew) {
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
 		if (isDSiMode()) {
 			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
@@ -191,16 +191,16 @@ void perGameSettings (std::string filename) {
 	
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
-	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0 || isHomebrew == 0) {
+	if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0 || !isHomebrew) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
-	if (isHomebrew == 0 && !useBootstrap && secondaryDevice) {
+	if (!isHomebrew && !useBootstrap && secondaryDevice) {
 		perGameSettings_cursorPosition = 2;
 	}
 
 	bool showPerGameSettings =
-		(!isDSiWare && isHomebrew != 2
+		(!isDSiWare
 		&& strcmp(game_TID, "HND") != 0
 		&& strcmp(game_TID, "HNE") != 0);
 	if (!useBootstrap && REG_SCFG_EXT == 0) {
@@ -229,7 +229,7 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (isHomebrew == 1) {
+	if (isHomebrew) {
 		if (REG_SCFG_EXT != 0) {
 			dialogboxHeight = 4+useBootstrap;
 		} else {
@@ -245,7 +245,7 @@ void perGameSettings (std::string filename) {
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
-		if (isHomebrew == 1) {
+		if (isHomebrew) {
 			printLargeCentered(false, 84, "Game settings");
 			printSmall(false, 172, 104, gameTIDText);
 			if (perGameSettings_cursorSide) {
@@ -259,7 +259,7 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, 112, "Direct boot: No");
 			}
 			if (!secondaryDevice) {
-				if (perGameSettings_ramDiskNo == -1) {
+				if (perGameSettings_ramDiskNo == -1 || perGameSettings_directBoot) {
 					printSmall(false, 162, 112, "RAM disk: No");
 				} else {
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "RAM disk: %i", perGameSettings_ramDiskNo);
@@ -270,8 +270,6 @@ void perGameSettings (std::string filename) {
 				printSmall(false, 32, 120, "Run in:");
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, 180, 120, "Default");
-				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, 120, 120, "DSi mode (Forced)");
 				} else if (perGameSettings_dsiMode == 1) {
 					printSmall(false, 180, 120, "DSi mode");
 				} else {
@@ -408,7 +406,7 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (isHomebrew == 1) {
+		if (isHomebrew) {
 			if (useBootstrap) {
 				if (pressed & KEY_UP) {
 					if (perGameSettings_cursorPosition == 0) {
@@ -449,16 +447,16 @@ void perGameSettings (std::string filename) {
 				switch (perGameSettings_cursorPosition) {
 					case 0:
 					default:
-						if (perGameSettings_cursorSide) {
+						if (perGameSettings_cursorSide && !perGameSettings_directBoot) {
 							perGameSettings_ramDiskNo++;
 							if (perGameSettings_ramDiskNo > 9) perGameSettings_ramDiskNo = -1;
-						} else {
+						} else if (!perGameSettings_cursorSide) {
 							perGameSettings_directBoot = !perGameSettings_directBoot;
 						}
 						break;
 					case 1:
 						perGameSettings_dsiMode++;
-						if (perGameSettings_dsiMode > 2) perGameSettings_dsiMode = -1;
+						if (perGameSettings_dsiMode > 1) perGameSettings_dsiMode = -1;
 						break;
 					case 2:
 						if (perGameSettings_dsiMode < 1) {

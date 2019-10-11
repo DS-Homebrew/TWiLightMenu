@@ -256,7 +256,8 @@ extern int bnrRomType[41];
 extern bool bnriconisDSi[41];
 extern int bnrWirelessIcon[41];	// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare[41];
-extern int isHomebrew[41];		// 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+extern bool isHomebrew[41];
+extern bool isModernHomebrew[41];		// false == No DSi-Extended header, true == Has DSi-Extended header
 extern bool requiresRamDisk[40];
 
 /**

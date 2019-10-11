@@ -1629,10 +1629,7 @@ int main(int argc, char **argv) {
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
-				} else if (isHomebrew == 2) {
-					useBackend = false;	// Bypass nds-bootstrap
-					homebrewBootstrap = true;
-				} else if (isHomebrew == 1) {
+				} else if (isHomebrew) {
 					loadPerGameSettings(filename);
 					if (perGameSettings_directBoot || (useBootstrap && secondaryDevice)) {
 						useBackend = false;	// Bypass nds-bootstrap
@@ -1660,14 +1657,14 @@ int main(int argc, char **argv) {
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);
+						mkdir (isHomebrew ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 						if (sdFound() && secondaryDevice && fcSaveOnSd) {
 							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
+						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
 							printSmall(false, 2, 80, "Creating save file...");
@@ -1729,7 +1726,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						if (isHomebrew == 0) {
+						if (!isHomebrew) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
@@ -1759,7 +1756,7 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
 
-						if (isDSiMode() && isHomebrew == 0) {
+						if (isDSiMode() && !isHomebrew) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);

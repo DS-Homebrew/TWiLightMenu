@@ -451,8 +451,9 @@ bool bnrSysSettings[41] = {false};
 int bnrRomType[41] = {0};
 bool bnriconisDSi[41] = {false};
 int bnrWirelessIcon[41] = {0}; // 0 = None, 1 = Local, 2 = WiFi
-bool isDSiWare[41] = {true};
-int isHomebrew[41] = {0}; // 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+bool isDSiWare[41] = {false};
+bool isHomebrew[41] = {false};
+bool isModernHomebrew[41] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
 bool requiresRamDisk[40] = {false};
 
 static u16 bannerDelayNum[41] = {0x0000};

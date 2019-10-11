@@ -1905,10 +1905,7 @@ int main(int argc, char **argv) {
 					dsModeDSiWare = true;
 					useBackend = false;	// Bypass nds-bootstrap
 					homebrewBootstrap = true;
-				} else if (isHomebrew == 2) {
-					useBackend = false;	// Bypass nds-bootstrap
-					homebrewBootstrap = true;
-				} else if (isHomebrew == 1) {
+				} else if (isHomebrew) {
 					loadPerGameSettings(filename);
 					if (perGameSettings_directBoot || (useBootstrap && previousUsedDevice)) {
 						useBackend = false;	// Bypass nds-bootstrap
@@ -1936,14 +1933,14 @@ int main(int argc, char **argv) {
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());
 						std::string romFolderNoSlash = romfolder;
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir ((isHomebrew == 1) ? "ramdisks" : "saves", 0777);
+						mkdir (isHomebrew ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash+"/saves/"+savename;
 						if (sdFound() && previousUsedDevice && fcSaveOnSd) {
 							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (getFileSize(savepath.c_str()) == 0 && isHomebrew == 0) {	// Create save if game isn't homebrew
+						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew) {	// Create save if game isn't homebrew
 							clearText();
 							ClearBrightness();
 							printSmallCentered(false, 20, "If this takes a while, close and open");
@@ -2032,7 +2029,7 @@ int main(int argc, char **argv) {
                         			CheatCodelist codelist;
 						u32 gameCode,crc32;
 
-						if (isDSiMode() && isHomebrew == 0) {
+						if (isDSiMode() && !isHomebrew) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);

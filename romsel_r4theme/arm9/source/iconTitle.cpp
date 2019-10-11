@@ -608,7 +608,8 @@ void getGameInfo(bool isDir, const char* name)
 	bnriconisDSi = false;
 	bnrWirelessIcon = 0;
 	isDSiWare = false;
-	isHomebrew = 0;
+	isHomebrew = false;
+	isModernHomebrew = false;
 	requiresRamDisk = false;
 
 	if (isDir)
@@ -743,7 +744,8 @@ void getGameInfo(bool isDir, const char* name)
 		 && arm9StartSig[1] == 0xE5800208
 		 && arm9StartSig[2] == 0xE3A00013
 		 && arm9StartSig[3] == 0xE129F000) {
-			isHomebrew = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
+			isHomebrew = true;
+			isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
 			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
 				|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
@@ -755,10 +757,11 @@ void getGameInfo(bool isDir, const char* name)
 				}
 			}
 		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
-			isHomebrew = 2; // No need to use nds-bootstrap
+			isHomebrew = true;
+			isModernHomebrew = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
 		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
-			isHomebrew = 1; // Homebrew is old (requires a DLDI driver to read from SD)
+			isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
@@ -767,7 +770,7 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew == 1) {
+		if (isHomebrew == true) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058

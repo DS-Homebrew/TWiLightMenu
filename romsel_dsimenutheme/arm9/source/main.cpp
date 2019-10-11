@@ -1254,10 +1254,7 @@ int main(int argc, char **argv) {
 					dsModeDSiWare = true;
 					useBackend = false; // Bypass nds-bootstrap
 					ms().homebrewBootstrap = true;
-				} else if (isHomebrew[CURPOS] == 2) {
-					useBackend = false; // Bypass nds-bootstrap
-					ms().homebrewBootstrap = true;
-				} else if (isHomebrew[CURPOS] == 1) {
+				} else if (isHomebrew[CURPOS]) {
 					loadPerGameSettings(filename);
 					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
 						useBackend = false; // Bypass nds-bootstrap
@@ -1285,15 +1282,14 @@ int main(int argc, char **argv) {
 						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
-						mkdir((isHomebrew[CURPOS] == 1) ? "ramdisks" : "saves", 0777);
+						mkdir(isHomebrew[CURPOS] ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
 						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
-						if (getFileSize(savepath.c_str()) == 0 &&
-						    isHomebrew[CURPOS] == 0)
+						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew[CURPOS])
 						{ // Create save if game isn't homebrew
 							printSmallCentered(false, 20, "If this takes a while, close and open");
 							printSmallCentered(false, 34, "the console's lid.");
@@ -1374,7 +1370,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						if (isHomebrew[CURPOS] == 0) {
+						if (!isHomebrew[CURPOS]) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img");
@@ -1403,7 +1399,7 @@ int main(int argc, char **argv) {
 						CheatCodelist codelist;
 						u32 gameCode, crc32;
 
-						if (isDSiMode() && isHomebrew[CURPOS] == 0) {
+						if (isDSiMode() && !isHomebrew[CURPOS]) {
 							bool cheatsEnabled = true;
 							const char* cheatDataBin = "/_nds/nds-bootstrap/cheatData.bin";
 							mkdir("/_nds", 0777);

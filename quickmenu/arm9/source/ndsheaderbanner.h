@@ -33,6 +33,7 @@
 #define NDS_HEADER2
 
 #include <nds.h>
+#include <stdio.h>
 
 // Bitmasks from 
 // http://problemkaputt.de/gbatek.htm#dscartridgeicontitle
@@ -248,9 +249,10 @@ extern int bannerFlip;
 extern bool isDirectory;
 extern int bnrRomType;
 extern bool bnriconisDSi;
-extern int bnrWirelessIcon;	// 0 = None, 1 = Local, 2 = WiFi
+extern int bnrWirelessIcon;		// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare;
-extern int isHomebrew;		// 0 = No, 1 = Yes with no DSi-Extended header, 2 = Yes with DSi-Extended header
+extern bool isHomebrew;
+extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

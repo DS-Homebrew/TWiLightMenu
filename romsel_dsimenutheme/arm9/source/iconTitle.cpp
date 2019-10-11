@@ -292,7 +292,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	bnriconisDSi[num] = false;
 	bnrWirelessIcon[num] = 0;
 	isDSiWare[num] = false;
-	isHomebrew[num] = 0;
+	isHomebrew[num] = false;
+	isModernHomebrew[num] = false;
 	requiresRamDisk[num] = false;
 	infoFound[num] = false;
 
@@ -419,7 +420,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		 && arm9StartSig[1] == 0xE5800208
 		 && arm9StartSig[2] == 0xE3A00013
 		 && arm9StartSig[3] == 0xE129F000) {
-			isHomebrew[num] = 2; // Homebrew is recent (supports reading from SD without a DLDI driver)
+			isHomebrew[num] = true;
+			isModernHomebrew[num] = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
 			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
 				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
 				|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
@@ -427,14 +429,15 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
 				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
 				|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-					isHomebrew[num] = 1; // Have nds-bootstrap load it (in case if non-DLDI SD read doesn't work)
+					isModernHomebrew[num] = false; // Have nds-bootstrap load it (in case if it doesn't)
 				}
 			}
 		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
-			isHomebrew[num] = 2; // No need to use nds-bootstrap
+			isHomebrew[num] = true;
+			isModernHomebrew[num] = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
 		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
-			isHomebrew[num] = 1; // Homebrew is old (requires a DLDI driver to read from SD)
+			isHomebrew[num] = true; // Homebrew is old (requires a DLDI driver to read from SD)
 		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
@@ -443,7 +446,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew[num] == 1) {
+		if (isHomebrew[num] == true) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
