@@ -199,7 +199,7 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	FILE* file = fopen("nitro:/video/twlmenupp/dsi.bmp", "rb");
+	FILE* file = fopen(sys().isDSPhat() ? "nitro:/video/twlmenupp/phat_dsi.bmp" : "nitro:/video/twlmenupp/dsi.bmp", "rb");
 
 	if (file) {
 		// Start loading
