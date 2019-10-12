@@ -250,12 +250,12 @@ void ThemeTextures::loadSaturnTheme() {
 	
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
-	loadManualImage(*_manualIconTexture);
 	loadBraceImage(*_braceTexture);
 
 	loadBoxfullImage(*_boxFullTexture);
 	loadBoxemptyImage(*_boxEmptyTexture);
 
+	loadManualImage(*_manualIconTexture);
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
@@ -366,7 +366,6 @@ void ThemeTextures::loadDSiTheme() {
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
-	loadManualImage(*_manualIconTexture);
 	loadBraceImage(*_braceTexture);
 
 	loadStartImage(*_startTextTexture);
@@ -380,6 +379,7 @@ void ThemeTextures::loadDSiTheme() {
 	// careful here, it's boxTexture, not boxFulltexture.
 	loadBoxfullImage(*_boxTexture);
 
+	loadManualImage(*_manualIconTexture);
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
