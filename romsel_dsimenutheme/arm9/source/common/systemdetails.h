@@ -34,6 +34,7 @@ class SystemDetails
     bool isRegularDS() { return _isRegularDS; }
     bool fatInitOk() { return _fatInitOk; }
     bool useNitroFS() { return _nitroFsInitOk; }
+    bool isDSPhat() { return (_isRegularDS && !_isDSLite); }
     void initFilesystem(const char *runningPath = NULL);
     void initArm7RegStatuses();
     int batteryStatus();
@@ -44,6 +45,7 @@ class SystemDetails
     bool _arm7SCFGLocked;
     bool _flashcardUsed;
     bool _isRegularDS;
+    bool _isDSLite;
     bool _fatInitOk;
     bool _fifoOk;
     bool _nitroFsInitOk;

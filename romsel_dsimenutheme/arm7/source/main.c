@@ -38,6 +38,7 @@
 volatile int timeTilVolumeLevelRefresh = 0;
 volatile int volumeLevel = -1;
 volatile int batteryLevel = 0;
+static bool isDSLite = false;
 //static bool gotCartHeader = false;
 
 
@@ -115,6 +116,9 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);
 	
+	u8 readCommand = readPowerManagement(4);
+	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
+
 	// 01: Fade Out
 	// 02: Return
 	// 03: SCFG_EXT7
@@ -124,6 +128,7 @@ int main() {
 	// 07: SNDEXCNT
 	// 08: SD
 	fifoSendValue32(FIFO_USER_03, SCFG_EXT7);
+	fifoSendValue32(FIFO_USER_04, isDSLite);
 	fifoSendValue32(FIFO_USER_07, SNDEXCNT);
 
 
