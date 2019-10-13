@@ -73,7 +73,7 @@ extern int colorBvalue;
 extern bool dropDown;
 int dropTime[5];
 int dropSeq[5];
-#define dropSpeedDefine 6
+#define dropSpeedDefine 7
 int dropSpeed[5] = {dropSpeedDefine};
 int dropSpeedChange[5];
 int titleboxYposDropDown[5] = {-85 - 80};
@@ -599,8 +599,8 @@ void vBlankHandler() {
 					dropSpeedChange[i % 5]++;
 					if (dropSpeedChange[i % 5] == 1) {
 						dropSpeed[i % 5]++;
-						if (dropSpeed[i % 5] > 4)
-							dropSpeed[i % 5] = 4;
+						if (dropSpeed[i % 5] > 5)
+							dropSpeed[i % 5] = 5;
 						dropSpeedChange[i % 5] = -1;
 					}
 				} else if (dropSeq[i % 5] == 3) {
