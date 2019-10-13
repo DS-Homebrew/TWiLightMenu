@@ -432,7 +432,7 @@ void vBlankHandler() {
 	{
 		if (fadeType == true) {
 			if (!fadeDelay) {
-				screenBrightness -= 1+fadeSpeed;
+				screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
 				if (screenBrightness < 0)
 					screenBrightness = 0;
 			}
@@ -445,7 +445,7 @@ void vBlankHandler() {
 			}
 		} else {
 			if (!fadeDelay) {
-				screenBrightness += 1+fadeSpeed;
+				screenBrightness += 1+(ms().theme<4 && fadeSpeed);
 				if (screenBrightness > 31)
 					screenBrightness = 31;
 			}

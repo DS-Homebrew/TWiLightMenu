@@ -513,6 +513,27 @@ void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
+	printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Loading...");
+	if (!sys().isRegularDS()) {
+		if (ms().theme == 4) {
+			if (ms().secondaryDevice) {
+				printSmallCentered(false, 48, "Location: Slot-1 microSD");
+			} else if (ms().consoleModel < 3) {
+				printSmallCentered(false, 48, "Location: SD Card");
+			} else {
+				printSmallCentered(false, 48, "Location: microSD Card");
+			}
+		} else {
+			printSmall(false, 8, 152, "Location:");
+			if (ms().secondaryDevice) {
+				printSmall(false, 8, 168, "Slot-1 microSD Card");
+			} else if (ms().consoleModel < 3) {
+				printSmall(false, 8, 168, "SD Card");
+			} else {
+				printSmall(false, 8, 168, "microSD Card");
+			}
+		}
+	}
 	nowLoadingDisplaying = true;
 	reloadFontPalettes();
 	while (!screenFadedIn()) 
@@ -759,7 +780,7 @@ void launchGba(void) {
 		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 30; i++) {
 				snd().updateStream();
 				swiWaitForVBlank();
 			}
@@ -871,7 +892,7 @@ void smsWarning(void) {
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 	} else {
-		for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "When the game starts, please");
 	printSmallCentered(false, 78, "touch the screen to go into");
@@ -931,7 +952,7 @@ void mdRomTooBig(void) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		snd().playWrong();
 	} else {
-		for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmallCentered(false, 64, "This Mega Drive or Genesis");
 	printSmallCentered(false, 78, "ROM cannot be launched,");
@@ -1039,7 +1060,7 @@ void ramDiskMsg(const char *filename) {
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
 		showdialogbox = true;
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 30; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
@@ -2334,7 +2355,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (ms().theme != 4) {
 						dbox_showIcon = true;
 						showdialogbox = true;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 30; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2413,7 +2434,7 @@ string browseForFile(const vector<string> extensionList) {
 							dbox_showIcon = true;
 							snd().playWrong();
 						} else {
-							for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
+							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
@@ -2832,7 +2853,7 @@ string browseForFile(const vector<string> extensionList) {
 					while (!screenFadedIn()) { swiWaitForVBlank(); }
 					dbox_showIcon = true;
 				} else {
-					for (int i = 0; i < 6; i++) { snd().updateStream(); swiWaitForVBlank(); }
+					for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
@@ -2897,7 +2918,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
 						snd().playLaunch();
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 30; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
@@ -2928,7 +2949,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (pressed & KEY_Y) {
 						snd().playLaunch();
 						fadeType = false; // Fade to white
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 30; i++) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
