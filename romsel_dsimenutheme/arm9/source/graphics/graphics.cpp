@@ -599,8 +599,8 @@ void vBlankHandler() {
 					dropSpeedChange[i % 5]++;
 					if (dropSpeedChange[i % 5] == 1) {
 						dropSpeed[i % 5]++;
-						if (dropSpeed[i % 5] > 5)
-							dropSpeed[i % 5] = 5;
+						if (dropSpeed[i % 5] > 6)
+							dropSpeed[i % 5] = 6;
 						dropSpeedChange[i % 5] = -1;
 					}
 				} else if (dropSeq[i % 5] == 3) {
