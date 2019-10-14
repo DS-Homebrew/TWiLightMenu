@@ -459,37 +459,6 @@ void getDirectoryContents(vector<DirEntry> &dirContents) {
 	getDirectoryContents(dirContents, extensionList);
 }
 
-void updatePath() {
-#ifndef EMULATE_FILES
-	getcwd(path, PATH_MAX);
-#else
-	if (strlen(path) < 1) {
-		path[0] = '/';
-		path[1] = '\0';
-	}
-#endif
-	if (pathText == nullptr) {
-		printLarge(false, 2 * FONT_SX, 1 * FONT_SY, path);
-		pathText = getPreviousTextEntry(false);
-		pathText->anim = TextEntry::AnimType::IN;
-		pathText->fade = TextEntry::FadeType::NONE;
-		pathText->y = 100;
-		pathText->immune = true;
-	}
-
-	int pathWidth = calcLargeFontWidth(path);
-	pathText->delay = TextEntry::ACTIVE;
-	pathText->finalX = min(2 * FONT_SX, -(pathWidth + 2 * FONT_SX - 256));
-}
-
-bool isTopLevel(const char *path) {
-#ifdef EMULATE_FILES
-	return strlen(path) <= strlen("/");
-#else
-	return strlen(path) <= strlen("fat: /");
-#endif
-}
-
 void waitForFadeOut(void) {
 	if (!dropDown && ms().theme == 0) {
 		dropDown = true;
@@ -1442,21 +1411,8 @@ string browseForFile(const vector<string> extensionList) {
 		snd().updateStream();
 		waitForFadeOut();
 		bool gameTapped = false;
-		/* clearText(false);
-		updatePath();
-		TextPane *pane = &createTextPane(20, 3 + ENTRIES_START_ROW*FONT_SY, ENTRIES_PER_SCREEN);
-		for (auto &i : dirContents[scrn])
-			pane->addLine(i.visibleName.c_str());
-		pane->createDefaultEntries();
-		pane->slideTransition(true);
-
-		printSmall(false, 12 - 16, 4 + 10 * (CURPOS - screenOffset +
-		ENTRIES_START_ROW), ">"); TextEntry *cursor = getPreviousTextEntry(false); cursor->fade =
-		TextEntry::FadeType::IN; cursor->finalX += 16; */
 
 		while (1) {
-			// cursor->finalY = 4 + 10 * (CURPOS - screenOffset +
-			// ENTRIES_START_ROW); cursor->delay = TextEntry::ACTIVE;
 			snd().updateStream();
 			if (!stopSoundPlayed) {
 				if ((ms().theme == 0 && !startMenu &&
