@@ -356,6 +356,7 @@ void SetMPUSettings(const char *filename) {
 void SetSpeedBumpInclude(void) {
 	static const char list[][4] = {
 		"ADM",	// Animal Crossing: Wild World
+		"CBB",	// Big Bang Mini
 		"ACB",	// Castlevania: Portrait of Ruin
 		"YR9",	// Castlevania: Order of Ecclesia
 		"AFF",	// Final Fantasy III
@@ -372,6 +373,7 @@ void SetSpeedBumpInclude(void) {
 		"YRV",	// MegaMan Star Force 2: Zerker x Ninja
 		"CRR",	// MegaMan Star Force 3: Red Joker
 		"CRB",	// MegaMan Star Force 3: Black Ace
+		"A5F",	// Professor Layton and the Curious Village
 		"YCX",	// Retro Game Challenge
 		"YT7",	// SEGA Superstars Tennis
 		"ASC",	// Sonic Rush
