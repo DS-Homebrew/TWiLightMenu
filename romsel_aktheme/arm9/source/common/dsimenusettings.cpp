@@ -39,8 +39,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     secondaryDevice = false;
 	fcSaveOnSd = false;
 
-    flashcard = EDSTTClone;
-
     slot1LaunchMethod = EReboot;
 
     useBootstrap = isDSiMode();
@@ -74,11 +72,11 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
-    CIniFile settingsini(settingsinipath);
-
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
+
+    CIniFile settingsini(settingsinipath);
 
     // UI settings.
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
@@ -112,7 +110,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	if (bothSDandFlashcard()) {
 		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	} else if (flashcardFound()) {
-		flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
 		secondaryDevice = true;
 	} else {
 		secondaryDevice = false;
@@ -185,8 +182,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-
-    settingsini.SetInt("SRLOADER", "FLASHCARD", flashcard);
 
     settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     settingsini.SetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);

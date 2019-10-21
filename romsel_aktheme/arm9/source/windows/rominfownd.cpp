@@ -70,12 +70,14 @@ RomInfoWnd::RomInfoWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
 
     _buttonGameSettings.setRelativePosition(Point(nextButtonXone, buttonY));
 
-    _buttonCheats.setStyle( Button::press );
-    _buttonCheats.setText( "\x03 " + LANG( "cheats", "button" ) );
-    _buttonCheats.setTextColor( uis().buttonTextColor );
-    _buttonCheats.loadAppearance( SFN_BUTTON3 );
-    _buttonCheats.clicked.connect( this, &RomInfoWnd::pressCheats );
-    addChildWindow( &_buttonCheats );
+	if (isDSiMode()) {
+		_buttonCheats.setStyle( Button::press );
+		_buttonCheats.setText( "\x03 " + LANG( "cheats", "button" ) );
+		_buttonCheats.setTextColor( uis().buttonTextColor );
+		_buttonCheats.loadAppearance( SFN_BUTTON3 );
+		_buttonCheats.clicked.connect( this, &RomInfoWnd::pressCheats );
+		addChildWindow( &_buttonCheats );
+	}
 
     buttonPitch = _buttonCheats.size().x + 8;
     nextButtonXone -= buttonPitch;
@@ -390,7 +392,7 @@ void RomInfoWnd::pressGameSettings(void)
 
 void RomInfoWnd::pressCheats(void)
 {
-  if(!_romInfo.isDSRom()||_romInfo.isHomebrew()) return;
+  if(!isDSiMode()||!_romInfo.isDSRom()||_romInfo.isHomebrew()) return;
   showCheats(_fullName);
 }
 

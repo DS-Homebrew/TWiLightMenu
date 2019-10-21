@@ -277,7 +277,7 @@ bool MainList::enterDir(const std::string &dirName)
         return false;
     }
 
-    if (dirName == S1SD_ROOT)
+    if (!isDSiMode() || strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0)
     {
         ms().secondaryDevice = true;
     }

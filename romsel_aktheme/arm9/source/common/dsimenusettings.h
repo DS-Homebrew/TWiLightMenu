@@ -29,26 +29,6 @@ class DSiMenuPlusPlusSettings
         EViewInternal = 2
     };
 
-    /*0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
-
-    enum TFlashCard
-    {
-        EDSTTClone = 0,
-        ER4Original = 1,
-        ER4iGoldClone = 2,
-        EAcekard2i = 3,
-        EAcekardRPG = 4,
-        EGatewayBlue = 5,
-        ESupercardDSTWO = 6
-    };
-
     enum TLanguage
     {
         ELangDefault = -1,
@@ -151,7 +131,6 @@ class DSiMenuPlusPlusSettings
     bool secondaryDevice;
 	bool fcSaveOnSd;
 
-    int flashcard;
     bool slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;
