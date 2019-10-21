@@ -371,7 +371,7 @@ void perGameSettings (std::string filename) {
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmall(false, 196, perGameOpYpos, "None");
+					printSmall(false, 200, perGameOpYpos, "None");
 				} else {
 					printSmall(false, 220, perGameOpYpos, saveNoDisplay);
 				}
@@ -421,17 +421,17 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_heapShrink == -1) {
 					printSmall(false, 200, perGameOpYpos, "Auto");
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, 146, perGameOpYpos, "On");
+					printSmall(false, 200, perGameOpYpos, "On");
 				} else {
-					printSmall(false, 156, perGameOpYpos, "Off");
+					printSmall(false, 200, perGameOpYpos, "Off");
 				}
 				break;
 			case 6:
 				printSmall(false, 24, perGameOpYpos, "Direct boot:");
 				if (perGameSettings_directBoot) {
-					printSmall(false, 188, perGameOpYpos, "Yes");
+					printSmall(false, 200, perGameOpYpos, "Yes");
 				} else {
-					printSmall(false, 188, perGameOpYpos, "No");
+					printSmall(false, 200, perGameOpYpos, "No");
 				}
 				break;
 			case 7:
