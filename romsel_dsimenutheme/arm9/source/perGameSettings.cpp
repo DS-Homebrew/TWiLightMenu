@@ -336,9 +336,11 @@ void perGameSettings (std::string filename) {
 
 		int perGameOpYpos = 98;
 
-		printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
+		if (showPerGameSettings) {
+			printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
+		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
-		if (perGameOp[i] == -1) break;
+		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
 				printSmall(false, 24, perGameOpYpos, "Language:");
