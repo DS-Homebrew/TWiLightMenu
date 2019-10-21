@@ -253,7 +253,7 @@ void perGameSettings (std::string filename) {
 		}
 		perGameOps++;
 		perGameOp[perGameOps] = 6;	// Direct boot
-		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+		if (isDSiMode() || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
 		}
@@ -277,10 +277,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 0;	// Language
 			perGameOps++;
 			perGameOp[perGameOps] = 1;	// Save number
-		}
-		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-			perGameOps++;
-			perGameOp[perGameOps] = 2;	// Run in
+			if (isDSiMode()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 2;	// Run in
+			}
 		}
 		if (REG_SCFG_EXT != 0) {
 			perGameOps++;
