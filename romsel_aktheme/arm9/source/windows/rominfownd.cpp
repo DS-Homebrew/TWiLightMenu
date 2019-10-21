@@ -250,6 +250,13 @@ void RomInfoWnd::pressGameSettings(void)
 		}
 
 		if (ms().useBootstrap || !ms().secondaryDevice) {
+			_values.push_back(LANG("game settings", "Auto")); // -1 => 0
+			_values.push_back(LANG("game settings", "Off")); // 0 => 1
+			_values.push_back(LANG("game settings", "On")); // 1 => 2            
+
+			settingWnd.addSettingItem(LANG("game settings", "Heap Shrink"), _values, settingsIni.heapShrink + 1);
+			_values.clear();
+
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "Release")); // 0 => 1
 			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
@@ -345,8 +352,12 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
-            selection++;
-            settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			if (ms().useBootstrap) {
+				selection++;
+				settingsIni.heapShrink = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
         }
         else
         {
@@ -365,8 +376,10 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
-            selection++;
-            settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			if (!ms().secondaryDevice) {
+				selection++;
+				settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
 		}
         settingsIni.saveSettings();
     }

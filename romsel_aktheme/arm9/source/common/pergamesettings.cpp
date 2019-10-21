@@ -18,6 +18,7 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
     boostVram = EDefault;
     dsiMode = EDefault;
     directBoot = EFalse;
+    heapShrink = EDefault;
     bootstrapFile = EDefault;
     loadSettings();
 }
@@ -33,6 +34,7 @@ void PerGameSettings::loadSettings()
 	ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
+    heapShrink = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
     bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 }
 
@@ -52,7 +54,10 @@ void PerGameSettings::saveSettings()
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
 	}
-    if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
+    if (ms().useBootstrap || !ms().secondaryDevice) {
+		pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
+		pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
+	}
     pergameini.SaveIniFile(_iniPath);
 }
 

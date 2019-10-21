@@ -45,6 +45,7 @@ class PerGameSettings
 	int ramDiskNo;
     TDefaultBool boostCpu;
     TDefaultBool boostVram;
+    TDefaultBool heapShrink;
     TDefaultBool bootstrapFile;
 
   private:

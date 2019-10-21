@@ -16,7 +16,7 @@
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
 
-BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion)
+BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion, int heapShrink)
 	: _fileName(fileName), _fullPath(fullPath), _gametid(gametid), _sdkVersion(sdkVersion)
 {
 	_donorSdk = 0;
@@ -36,7 +36,6 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_saveNo = 0;
 	_ramDiskNo = -1;
 	_softReset = false;
-	_soundFix = false;
 	_cpuBoost = false;
 	_useGbarBootstrap = false;
 
@@ -44,7 +43,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 		->saveSize()
 		.softReset()
 		.mpuSettings()
-		.speedBumpExclude()
+		.speedBumpExclude(heapShrink)
 		.donorSdk();
 }
 
@@ -142,9 +141,26 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 	}
 	return mpuRegion(0).mpuSize(0);
 }
-BootstrapConfig &BootstrapConfig::speedBumpExclude()
+BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 {
-	bool doCache = true;
+	if (heapShrink >= 0 && heapShrink < 2) {
+		return ceCached(heapShrink);
+	}
+
+	if (!isDSiMode()) {
+		static const char list2[][4] = {
+			"B3R",	// Pokemon Ranger: Guardian Signs
+		};
+
+		for (const char *speedtid : list2)
+		{
+			if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
+			{
+				return ceCached(false);
+			}
+		}
+		return ceCached(true);
+	}
 
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
@@ -156,7 +172,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 	{
 		if (strncmp(speedtid, _gametid.c_str(), 4) == 0)
 		{
-			doCache = false;
+			return ceCached(false);
 		}
 	}
 
@@ -222,16 +238,11 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude()
 	{
 		if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
 		{
-			doCache = false;
+			return ceCached(false);
 		}
 	}
 
-	scanKeys();
-	if(keysHeld() & KEY_L){
-		doCache = !doCache;
-	}
-
-	return ceCached(doCache);
+	return ceCached(true);
 }
 BootstrapConfig &BootstrapConfig::donorSdk()
 {
@@ -387,12 +398,6 @@ BootstrapConfig &BootstrapConfig::softReset(bool softReset)
 	_softReset = softReset;
 	return *this;
 }
-BootstrapConfig &BootstrapConfig::soundFix(bool soundFix)
-{
-	_soundFix = soundFix;
-	return *this;
-}
-
 BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handler)
 {
 	_saveCreatedHandler = handler;
@@ -575,7 +580,6 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "LANGUAGE", _language)
 		.option("NDS-BOOTSTRAP", "BOOST_CPU", _cpuBoost)
 		.option("NDS-BOOTSTRAP", "BOOST_VRAM", _vramBoost)
-		.option("NDS-BOOTSTRAP", "SOUND_FIX", _soundFix)
 		.option("NDS-BOOTSTRAP", "DSI_MODE", _dsiMode)
 		.option("NDS-BOOTSTRAP", "DONOR_SDK_VER", _donorSdk)
 		.option("NDS-BOOTSTRAP", "GAME_SOFT_RESET", _softReset)

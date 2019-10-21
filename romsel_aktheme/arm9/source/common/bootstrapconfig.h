@@ -14,7 +14,7 @@
 class BootstrapConfig
 {
     public:
-        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion);
+        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion, int heapShrink);
 
         ~BootstrapConfig();
         
@@ -26,7 +26,7 @@ class BootstrapConfig
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
-        BootstrapConfig& speedBumpExclude();
+        BootstrapConfig& speedBumpExclude(int heapShrink);
         BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
@@ -39,7 +39,6 @@ class BootstrapConfig
         BootstrapConfig& saveNo(int saveNo);
         BootstrapConfig& ramDiskNo(int ramDiskNo);
         BootstrapConfig& softReset(bool softReset);
-        BootstrapConfig& soundFix(bool soundFix);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
