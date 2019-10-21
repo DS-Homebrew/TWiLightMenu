@@ -486,7 +486,7 @@ void perGameSettings (std::string filename) {
 				perGameSettings_cursorPosition--;
 				if (perGameSettings_cursorPosition < 0) {
 					perGameSettings_cursorPosition = perGameOps;
-					firstPerGameOpShown = perGameOps-3;
+					firstPerGameOpShown = (perGameOps>2 ? perGameOps-3 : 0);
 				} else if (perGameSettings_cursorPosition < firstPerGameOpShown) {
 					firstPerGameOpShown--;
 				}
