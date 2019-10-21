@@ -352,7 +352,7 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
-			if (ms().useBootstrap) {
+			if (ms().useBootstrap || !ms().secondaryDevice) {
 				selection++;
 				settingsIni.heapShrink = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 				selection++;
@@ -376,7 +376,7 @@ void RomInfoWnd::pressGameSettings(void)
                 selection++;
                 settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
             }
-			if (!ms().secondaryDevice) {
+			if (ms().useBootstrap || !ms().secondaryDevice) {
 				selection++;
 				settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
