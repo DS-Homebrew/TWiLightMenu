@@ -272,10 +272,12 @@ void perGameSettings (std::string filename) {
 			perGameOp[i] = -1;
 		}
 	} else {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
-		perGameOps++;
-		perGameOp[perGameOps] = 0;	// Language
-		perGameOps++;
-		perGameOp[perGameOps] = 1;	// Save number
+		if (ms().useBootstrap || !ms().secondaryDevice) {
+			perGameOps++;
+			perGameOp[perGameOps] = 0;	// Language
+			perGameOps++;
+			perGameOp[perGameOps] = 1;	// Save number
+		}
 		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 2;	// Run in
@@ -286,10 +288,12 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
-		perGameOps++;
-		perGameOp[perGameOps] = 5;	// Heap shrink
-		perGameOps++;
-		perGameOp[perGameOps] = 7;	// Bootstrap
+		if (ms().useBootstrap || !ms().secondaryDevice) {
+			perGameOps++;
+			perGameOp[perGameOps] = 5;	// Heap shrink
+			perGameOps++;
+			perGameOp[perGameOps] = 7;	// Bootstrap
+		}
 	}
 
 	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTid[CURPOS]);
