@@ -26,7 +26,7 @@ class BootstrapConfig
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
-        BootstrapConfig& speedBumpInclude();
+        BootstrapConfig& speedBumpExclude();
         BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
         BootstrapConfig& softReset();
