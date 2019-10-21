@@ -354,6 +354,27 @@ void SetMPUSettings(const char *filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(void) {
+	if (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2) {
+		ceCached = perGameSettings_heapShrink;
+		return;
+	}
+
+	if (!isDSiMode()) {
+		static const char list2[][4] = {
+			"B3R",	// Pokemon Ranger: Guardian Signs
+		};
+
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
+			if (memcmp(gameTid[CURPOS], list2[i], 3) == 0) {
+				// Found match
+				ceCached = false;
+				break;
+			}
+		}
+		return;
+	}
+
 	static const char list[][5] = {
 		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
@@ -436,11 +457,6 @@ void SetSpeedBumpExclude(void) {
 			ceCached = false;
 			break;
 		}
-	}
-
-	scanKeys();
-	if(keysHeld() & KEY_L){
-		ceCached = !ceCached;
 	}
 }
 
@@ -1411,8 +1427,8 @@ int main(int argc, char **argv) {
 						SetMPUSettings(argarray[0]);
 						if (isDSiMode()) {
 							SetGameSoftReset(argarray[0]);
-							SetSpeedBumpExclude();
 						}
+						SetSpeedBumpExclude();
 
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);

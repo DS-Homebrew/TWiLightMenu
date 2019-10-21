@@ -11,6 +11,7 @@ extern int perGameSettings_language;
 extern int perGameSettings_ramDiskNo;
 extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;
+extern int perGameSettings_heapShrink;
 extern int perGameSettings_bootstrapFile;
 
 extern char fileCounter[8];
