@@ -74,7 +74,7 @@ jobs:
         mkdir nds-bootstrap
         cd nds-bootstrap
         curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
-        curl -L $(jq --raw-output '.assets[1].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
+        curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
         7z x nds-bootstrap.7z
         mv nds-bootstrap.* ..
         mkdir TWiLightMenu
@@ -84,25 +84,12 @@ jobs:
         7z x nds-bootstrap.7z
         mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
         mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
+        mv nds-bootstrap/b4ds-release.nds 7zfile/Flashcard\ users/_nds/
+        mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
         mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
         mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
-
-        # B4DS
-        mkdir B4DS
-        cd B4DS
-        curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
-        curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o B4DS.7z
-        7z x B4DS.7z
-        mv B4DS.* ..
-        mkdir TWiLightMenu
-        mv release-bootstrap.ver TWiLightMenu
-        cd ..
-        curl -L https://github.com/TWLBot/Builds/blob/master/extras/B4DS.7z?raw=true -o B4DS.7z
-        7z x B4DS.7z
-        mv B4DS/* 7zfile/Flashcard\ users/_nds/
-        rm -r 7zfile/Flashcard\ users/_nds/nds-bootstrap.json
 
         # version.txt
         echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
