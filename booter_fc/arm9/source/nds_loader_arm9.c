@@ -18,6 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
+#include <stdio.h>
 #include <string.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -39,28 +40,6 @@
 #define INIT_DISC (*(((u32*)LCDC_BANK_C) + 2))
 #define WANT_TO_PATCH_DLDI (*(((u32*)LCDC_BANK_C) + 3))
 
-
-/*
-	b	startUp
-	
-storedFileCluster:
-	.word	0x0FFFFFFF		@ default BOOT.NDS
-initDisc:
-	.word	0x00000001		@ init the disc by default
-wantToPatchDLDI:
-	.word	0x00000001		@ by default patch the DLDI section of the loaded NDS
-@ Used for passing arguments to the loaded app
-argStart:
-	.word	_end - _start
-argSize:
-	.word	0x00000000
-dldiOffset:
-	.word	_dldi_start - _start
-dsiSD:
-	.word	0
-dsiMode:
-	.word	0
-*/
 
 #define STORED_FILE_CLUSTER_OFFSET 4 
 #define INIT_DISC_OFFSET 8
@@ -153,7 +132,7 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 
 // Normal DLDI uses "\xED\xA5\x8D\xBF Chishm"
 // Bootloader string is different to avoid being patched
-static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
+data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
 
 #define DEVICE_TYPE_DLDI 0x49444C44
 
@@ -174,6 +153,10 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 
 	size_t dldiFileSize = 0;
 	
+	if (isDSiMode()) {
+		dldiMagicLoaderString[0]--;
+	}
+
 	// Find the DLDI reserved space in the file
 	patchOffset = quickFind (binData, dldiMagicLoaderString, binSize, sizeof(dldiMagicLoaderString));
 
@@ -353,6 +336,79 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
+void runNds9 (const char* filename, bool dldiPatchNds) {
+	consoleClear();
+	printf ("Now loading...\n");
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread(__DSiHeader->ndshdr.arm9destination, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread(__DSiHeader->ndshdr.arm7destination, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	if (isDSiMode()) {
+		if (__DSiHeader->arm9ibinarySize > 0) {
+			fseek(ndsFile, (u32)__DSiHeader->arm9iromOffset, SEEK_SET);
+			fread(__DSiHeader->arm9idestination, 1, __DSiHeader->arm9ibinarySize, ndsFile);
+		}
+		if (__DSiHeader->arm7ibinarySize > 0) {
+			fseek(ndsFile, (u32)__DSiHeader->arm7iromOffset, SEEK_SET);
+			fread(__DSiHeader->arm7idestination, 1, __DSiHeader->arm7ibinarySize, ndsFile);
+		}
+	}
+	fclose(ndsFile);
+
+	if(dldiPatchNds) {
+		// Patch the loader with a DLDI for the card
+		if (!dldiPatchLoader ((data_t*)__DSiHeader->ndshdr.arm9destination, __DSiHeader->ndshdr.arm9binarySize, true)) {
+			return;
+		}
+	}
+
+	irqDisable(IRQ_ALL);
+
+ 	register int i;
+  
+	//clear out ARM9 DMA channels
+	for (i=0; i<4; i++) {
+		DMA_CR(i) = 0;
+		DMA_SRC(i) = 0;
+		DMA_DEST(i) = 0;
+		TIMER_CR(i) = 0;
+		TIMER_DATA(i) = 0;
+	}
+
+	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
+	
+	u16 *mainregs = (u16*)0x04000000;
+	u16 *subregs = (u16*)0x04001000;
+	
+	for (i=0; i<43; i++) {
+		mainregs[i] = 0;
+		subregs[i] = 0;
+	}
+	
+	REG_DISPSTAT = 0;
+
+	VRAM_A_CR = 0;
+	VRAM_B_CR = 0;
+	VRAM_C_CR = 0;
+	VRAM_D_CR = 0;
+	VRAM_E_CR = 0;
+	VRAM_F_CR = 0;
+	VRAM_G_CR = 0;
+	VRAM_H_CR = 0;
+	VRAM_I_CR = 0;
+	REG_POWERCNT = 0x820F;
+
+	memcpy(__NDSHeader, __DSiHeader, 0x170);
+
+	resetARM7((u32)__DSiHeader->ndshdr.arm7destination);
+
+	swiSoftReset(); 
+	return;
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -375,6 +431,10 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 		argv = args;
 	}
 
+	if (isDSiMode()) {
+		runNds9(filename, true);
+	}
+
 	bool havedsiSD = false;
 
 	if(argv[0][0]=='s' && argv[0][1]=='d') havedsiSD = true;
@@ -384,25 +444,6 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv);
 }
 
-/*
-	b	startUp
-	
-storedFileCluster:
-	.word	0x0FFFFFFF		@ default BOOT.NDS
-initDisc:
-	.word	0x00000001		@ init the disc by default
-wantToPatchDLDI:
-	.word	0x00000001		@ by default patch the DLDI section of the loaded NDS
-@ Used for passing arguments to the loaded app
-argStart:
-	.word	_end - _start
-argSize:
-	.word	0x00000000
-dldiOffset:
-	.word	_dldi_start - _start
-dsiSD:
-	.word	0
-*/
 
 bool installBootStub(bool havedsiSD) {
 #ifndef _NO_BOOTSTUB_
@@ -434,4 +475,3 @@ bool installBootStub(bool havedsiSD) {
 #endif
 
 }
-

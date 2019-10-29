@@ -48,7 +48,7 @@ mm_sound_effect proceed;
 
 void splashSoundInit() {
 
-	mmInitDefaultMem((mm_addr)0x023A0000);
+	mmInitDefaultMem((mm_addr)0x02FA0000);
 
 	mmLoadEffect( SFX_DSIBOOT );
 	mmLoadEffect( SFX_SELECT );
