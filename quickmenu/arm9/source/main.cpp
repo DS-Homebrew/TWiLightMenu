@@ -1015,10 +1015,9 @@ int main(int argc, char **argv) {
 	if (!fatInited) {
 		graphicsInit();
 		fontInit();
-		whiteScreen = false;
+		whiteScreen = true;
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		stop();
 	}
 

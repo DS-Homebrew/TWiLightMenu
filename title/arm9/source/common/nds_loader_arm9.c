@@ -18,6 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
+#include <stdio.h>
 #include <string.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -71,6 +72,7 @@ dsiMode:
 #define DSIMODE_OFFSET 32
 #define CLEAR_MASTER_BRIGHT_OFFSET 36
 #define DSMODE_SWITCH_OFFSET 40
+#define LOADFROMRAM_OFFSET 44
 
 
 typedef signed int addr_t;
@@ -268,7 +270,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -298,6 +300,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	if (isDSiMode()) {
 		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
 	}
+	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -366,6 +369,27 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
+void runNds9i (const char* filename) {
+	memset((void*)0x02800000, 0, 0x500000);
+
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x02800000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x02B80000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	if (__DSiHeader->arm9ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm9iromOffset, SEEK_SET);
+		fread((void*)0x02C00000, 1, __DSiHeader->arm9ibinarySize, ndsFile);
+	}
+	if (__DSiHeader->arm7ibinarySize > 0) {
+		fseek(ndsFile, (u32)__DSiHeader->arm7iromOffset, SEEK_SET);
+		fread((void*)0x02C80000, 1, __DSiHeader->arm7ibinarySize, ndsFile);
+	}
+	fclose(ndsFile);
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -388,13 +412,17 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
+	if (isDSiMode() && access("sd:/", F_OK) != 0) {
+		runNds9i(filename);
+	}
+
 	bool havedsiSD = false;
 
 	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), (isDSiMode() && access("sd:/", F_OK) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*
@@ -433,7 +461,7 @@ bool installBootStub(bool havedsiSD) {
 		bootloader[3] = 0; // don't dldi patch
 		bootloader[7] = 1; // use internal dsi SD code
 	} else {
-		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size,false);
+		ret = dldiPatchLoader((data_t*)bootloader, load_bin_size, false);
 	}
 	bootstub->arm9reboot = (VoidFn)(((u32)bootstub->arm9reboot)+fake_heap_end);
 	bootstub->arm7reboot = (VoidFn)(((u32)bootstub->arm7reboot)+fake_heap_end);

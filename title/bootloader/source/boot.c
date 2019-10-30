@@ -47,6 +47,7 @@ Helpful information:
 #define ARM7
 #include <nds/arm7/audio.h>
 #include <nds/arm7/codec.h>
+#include "tonccpy.h"
 #include "sdmmc.h"
 #include "i2c.h"
 #include "fat.h"
@@ -76,6 +77,7 @@ extern unsigned long dsiSD;
 extern unsigned long dsiMode;
 extern unsigned long clearMasterBright;
 extern unsigned long dsMode;
+extern unsigned long loadFromRam;
 
 bool sdRead = false;
 
@@ -197,6 +199,13 @@ void resetMemory_ARM7 (void)
 	}
 
 	arm7clearRAM();
+	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
+	if (dsiMode && loadFromRam) {
+		toncset((void*)0x02000000, 0, 0x800000);
+		toncset((void*)0x02D00000, 0, 0x2F4000);
+	} else {
+		toncset((void*)0x02000000, 0, dsiMode ? 0xFF4000 : 0x3F4000);
+	}
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -229,6 +238,43 @@ u32 ROM_TID;
 
 void loadBinary_ARM7 (u32 fileCluster)
 {
+	if (dsiMode && loadFromRam) {
+		//char* ARM9_SRC = (char*)*(u32*)(TWL_HEAD+0x20);
+		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
+		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
+		//char* ARM7_SRC = (char*)*(u32*)(TWL_HEAD+0x30);
+		char* ARM7_DST = (char*)*(u32*)(TWL_HEAD+0x38);
+		u32 ARM7_LEN = *(u32*)(TWL_HEAD+0x3C);
+
+		ROM_TID = *(u32*)(TWL_HEAD+0xC);
+
+		tonccpy(ARM9_DST, (char*)0x02800000, ARM9_LEN);
+		tonccpy(ARM7_DST, (char*)0x02B80000, ARM7_LEN);
+
+		// first copy the header to its proper location, excluding
+		// the ARM9 start address, so as not to start it
+		TEMP_ARM9_START_ADDRESS = *(u32*)(TWL_HEAD+0x24);		// Store for later
+		*(u32*)(TWL_HEAD+0x24) = 0;
+		dmaCopyWords(3, (void*)TWL_HEAD, (void*)NDS_HEAD, 0x170);
+		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
+
+		//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
+		char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
+		u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
+		//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
+		char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
+		u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
+
+		if (ARM9i_LEN)
+			tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
+		if (ARM7i_LEN)
+			tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
+
+		toncset((void*)0x02800000, 0, 0x500000);
+
+		return;
+	}
+
 	u32 ndsHeader[0x170>>2];
 
 	// read NDS header
@@ -472,18 +518,20 @@ int main (void) {
 	sdRead = (dsiSD && dsiMode);
 #endif
 	u32 fileCluster = storedFileCluster;
-	// Init card
-	if(!FAT_InitFiles(initDisc))
-	{
-		return -1;
-	}
-	if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
-	{
-		fileCluster = getBootFileCluster(bootName);
-	}
-	if (fileCluster == CLUSTER_FREE)
-	{
-		return -1;
+	if (!dsiMode || !loadFromRam) {
+		// Init card
+		if(!FAT_InitFiles(initDisc))
+		{
+			return -1;
+		}
+		if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
+		{
+			fileCluster = getBootFileCluster(bootName);
+		}
+		if (fileCluster == CLUSTER_FREE)
+		{
+			return -1;
+		}
 	}
 
 	// ARM9 clears its memory part 2
