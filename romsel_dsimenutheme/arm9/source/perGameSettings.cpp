@@ -173,6 +173,21 @@ void dontShowAPMsgAgain (std::string filename) {
 	pergameini.SaveIniFile( pergamefilepath );
 }
 
+bool checkIfDSiMode (std::string filename) {
+	if (!isDSiMode() || (!ms().useBootstrap && ms().secondaryDevice)) {
+		return false;
+	}
+
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[CURPOS] ? true : -1));
+	if (perGameSettings_dsiMode == -1) {
+		return ms().bstrap_dsiMode;
+	} else {
+		return perGameSettings_dsiMode;
+	}
+}
+
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
@@ -289,8 +304,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			perGameOps++;
-			perGameOp[perGameOps] = 5;	// Heap shrink
+			if (SDKVersion < 0x5000000 || !isDSiMode()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 5;	// Heap shrink
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}

@@ -297,6 +297,24 @@ void ramDiskMsg(void) {
 	dialogboxHeight = 0;
 }
 
+void dsiBinariesMissingMsg(void) {
+	dialogboxHeight = 1;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Error!");
+	printSmallCentered(false, 104, "DSi binaries are missing.");
+	printSmallCentered(false, 112, "Please start in DS mode.");
+	printSmallCentered(false, 142, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
 extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList)
@@ -456,7 +474,8 @@ string browseForFile(const vector<string> extensionList)
 			} else {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
-				if (useBootstrap && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
+				bool useBootstrapAnyway = (useBootstrap || !secondaryDevice);
+				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
 				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
@@ -535,6 +554,20 @@ string browseForFile(const vector<string> extensionList)
 								printSmall(false, 8, 176, "microSD Card");
 							}
 						}
+					}
+				}
+
+				if (proceedToLaunch && useBootstrapAnyway && bnrRomType == 0 && !isDSiWare &&
+					isHomebrew == 0 &&
+					checkIfDSiMode(dirContents.at(fileOffset).name)) {
+					bool hasDsiBinaries = true;
+					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+					hasDsiBinaries = checkDsiBinaries(f_nds_file);
+					fclose(f_nds_file);
+
+					if (!hasDsiBinaries) {
+						dsiBinariesMissingMsg();
+						proceedToLaunch = false;
 					}
 				}
 

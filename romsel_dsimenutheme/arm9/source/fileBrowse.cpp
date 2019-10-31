@@ -1073,6 +1073,56 @@ void ramDiskMsg(const char *filename) {
 	}
 }
 
+void dsiBinariesMissingMsg(const char *filename) {
+	clearText();
+	snd().playWrong();
+	if (ms().theme != 4) {
+		dbox_showIcon = true;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		titleUpdate(false, filename, CURPOS);
+	}
+	std::string dirContName = filename;
+	// About 38 characters fit in the box.
+	if (strlen(dirContName.c_str()) > 38) {
+		// Truncate to 35, 35 + 3 = 38 (because we append "...").
+		dirContName.resize(35, ' ');
+		size_t first = dirContName.find_first_not_of(' ');
+		size_t last = dirContName.find_last_not_of(' ');
+		dirContName = dirContName.substr(first, (last - first + 1));
+		dirContName.append("...");
+	}
+	printSmall(false, 16, 66, dirContName.c_str());
+	int yPos1 = (ms().theme == 4 ? 24 : 112);
+	int yPos2 = (ms().theme == 4 ? 40 : 128);
+	printSmallCentered(false, yPos1, "The DSi binaries are missing.");
+	printSmallCentered(false, yPos2, "Please start in DS mode.");
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	if (ms().theme == 4) {
+		snd().playLaunch();
+	} else {
+		showdialogbox = false;
+	}
+}
+
 bool selectMenu(void) {
 	inSelectMenu = true;
 	dbox_showIcon = false;
@@ -2346,7 +2396,8 @@ string browseForFile(const vector<string> extensionList) {
 				} else {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
-					if (ms().useBootstrap && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
+					bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
+					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
 						isHomebrew[CURPOS] == 0 &&
 						checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
 						FILE *f_nds_file = fopen(
@@ -2458,6 +2509,21 @@ string browseForFile(const vector<string> extensionList) {
 							}
 						}
 						dbox_showIcon = false;
+					}
+
+					if (proceedToLaunch && useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
+						isHomebrew[CURPOS] == 0 &&
+						checkIfDSiMode(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+						bool hasDsiBinaries = true;
+						FILE *f_nds_file = fopen(
+							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
+						hasDsiBinaries = checkDsiBinaries(f_nds_file);
+						fclose(f_nds_file);
+
+						if (!hasDsiBinaries) {
+							dsiBinariesMissingMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							proceedToLaunch = false;
+						}
 					}
 
 					if (proceedToLaunch) {

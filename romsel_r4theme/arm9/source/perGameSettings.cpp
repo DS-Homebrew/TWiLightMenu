@@ -55,6 +55,7 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern int bstrap_dsiMode;
 extern bool useBootstrap;
 
 const char* SDKnumbertext;
@@ -153,6 +154,21 @@ void dontShowAPMsgAgain (std::string filename) {
 	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
 	pergameini.SaveIniFile( pergamefilepath );
+}
+
+bool checkIfDSiMode (std::string filename) {
+	if (!isDSiMode() || (!useBootstrap && secondaryDevice)) {
+		return false;
+	}
+
+	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
+	CIniFile pergameini( pergamefilepath );
+	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
+	if (perGameSettings_dsiMode == -1) {
+		return bstrap_dsiMode;
+	} else {
+		return perGameSettings_dsiMode;
+	}
 }
 
 void perGameSettings (std::string filename) {
@@ -258,8 +274,10 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			perGameOps++;
-			perGameOp[perGameOps] = 5;	// Heap shrink
+			if (SDKVersion < 0x5000000 || !isDSiMode()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 5;	// Heap shrink
+			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}

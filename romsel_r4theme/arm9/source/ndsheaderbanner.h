@@ -145,7 +145,18 @@ typedef struct {
 	u16 dsi_unk1;
 	u8 dsi_unk2;
 	u8 dsi_flags;
-	u8 zero2[0x40];
+
+	u32 arm9iromOffset;			//!< offset of the arm9 binary in the nds file.
+	u32 arm9iexecuteAddress;
+	u32 arm9idestination;		//!< destination address to where the arm9 binary should be copied.
+	u32 arm9ibinarySize;		//!< size of the arm9 binary.
+
+	u32 arm7iromOffset;			//!< offset of the arm7 binary in the nds file.
+	u32 deviceListDestination;
+	u32 arm7idestination;		//!< destination address to where the arm7 binary should be copied.
+	u32 arm7ibinarySize;		//!< size of the arm7 binary.
+
+	u8 zero2[0x20];
 
 	// 0x200
 	// TODO: More DSi-specific fields.
@@ -222,6 +233,8 @@ typedef enum {
 	N3DS_LANG_RUSSIAN		= 10,
 	N3DS_LANG_CHINESE_TRADITIONAL	= 11,
 } sNDSLanguage;
+
+bool checkDsiBinaries(FILE* ndsFile);
 
 /**
  * Get the title ID.
