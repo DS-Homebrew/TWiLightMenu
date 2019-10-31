@@ -285,7 +285,7 @@ void ramDiskMsg(void) {
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "This app requires a");
 	printSmallCentered(false, 112, "RAM disk to work.");
-	printSmallCentered(false, 142, "A: OK");
+	printSmallCentered(false, 126, "A: OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -303,7 +303,7 @@ void dsiBinariesMissingMsg(void) {
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "DSi binaries are missing.");
 	printSmallCentered(false, 112, "Please start in DS mode.");
-	printSmallCentered(false, 142, "A: OK");
+	printSmallCentered(false, 126, "A: OK");
 	int pressed = 0;
 	do {
 		scanKeys();
