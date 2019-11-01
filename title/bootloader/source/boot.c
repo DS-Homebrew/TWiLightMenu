@@ -589,7 +589,7 @@ int main (void) {
 #ifndef NO_DLDI
 	// Patch with DLDI if desired
 	if (wantToPatchDLDI) {
-		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B]);
+		dldiPatchBinary ((u8*)((u32*)NDS_HEAD)[0x0A], ((u32*)NDS_HEAD)[0x0B], initDisc);
 	}
 #endif
 

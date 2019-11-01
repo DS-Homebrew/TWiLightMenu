@@ -96,7 +96,7 @@ static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Diff
 
 extern const u32 _io_dldi;
 
-bool dldiPatchBinary (data_t *binData, u32 binSize) {
+bool dldiPatchBinary (data_t *binData, u32 binSize, bool clearBSS) {
 
 	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
 	addr_t patchOffset;			// Position of patch destination in the file
@@ -198,7 +198,7 @@ bool dldiPatchBinary (data_t *binData, u32 binSize) {
 		}
 	}
 
-	if (pDH[DO_fixSections] & FIX_BSS) { 
+	if (clearBSS && (pDH[DO_fixSections] & FIX_BSS)) { 
 		// Initialise the BSS to 0
 		memset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
