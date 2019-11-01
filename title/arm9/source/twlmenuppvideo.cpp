@@ -397,7 +397,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		loadFrameSprite = false;
 	}
 	
-	if (rocketVideo_playVideo && rocketVideo_currentFrame >= 13) {
+	/*if (rocketVideo_playVideo && rocketVideo_currentFrame >= 13) {
 		if (!anniversaryTextYposMove) {
 			anniversaryTextYposMoveDelay++;
 			anniversaryTextYposMove = (anniversaryTextYposMoveDelay == 2+anniversaryTextYposMoveDelayEven);
@@ -412,7 +412,7 @@ void twlMenuVideo_topGraphicRender(void) {
 			anniversaryTextYposMoveDelayEven = !anniversaryTextYposMoveDelayEven;
 			anniversaryTextYposMove = false;
 		}
-	}
+	}*/
 }
 
 void twlMenuVideo(void) {
@@ -454,12 +454,12 @@ void twlMenuVideo(void) {
 		fclose(videoFrameFile);
 
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 	}
 
 	while (zoomingIconYpos[8] < 64) {
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
 	}
 
@@ -474,7 +474,7 @@ void twlMenuVideo(void) {
 
 	while (rocketVideo_playVideo && rocketVideo_currentFrame < 5) {
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
 	}
 
@@ -505,12 +505,12 @@ void twlMenuVideo(void) {
 		fclose(videoFrameFile);
 
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 	}
 
 	while (rocketVideo_playVideo) {
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
 	}
 
@@ -568,7 +568,7 @@ void twlMenuVideo(void) {
 	for (int i = 0; i < 60 * 3; i++)
 	{
 		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT)) return;
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
 	}
 }
