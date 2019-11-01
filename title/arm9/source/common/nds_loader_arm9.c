@@ -422,7 +422,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), (isDSiMode() && access("sd:/", F_OK) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0), (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), (isDSiMode() && access("sd:/", F_OK) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*
