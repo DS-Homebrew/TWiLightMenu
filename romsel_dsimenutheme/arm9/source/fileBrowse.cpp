@@ -2572,6 +2572,9 @@ string browseForFile(const vector<string> extensionList) {
 								showProgressIcon = true;
 							}
 
+							printSmallCentered(false, 20, "If this crashes with an error, please");
+							printSmallCentered(false, 34, "disable \"Update recently played list\".");
+
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
