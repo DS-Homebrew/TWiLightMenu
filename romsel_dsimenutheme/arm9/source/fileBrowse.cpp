@@ -34,6 +34,7 @@
 #include "common/gl2d.h"
 #include <maxmod9.h>
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 
 #include "date.h"
 
@@ -485,6 +486,9 @@ void displayNowLoading(void) {
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 		printSmallCentered(false, 20, "If this takes a while, turn off");
 		printSmallCentered(false, 34, "the POWER, and try again.");
+	} else if (ms().consoleModel >= 2) {
+		printSmallCentered(false, 20, "If this takes a while, press HOME,");
+		printSmallCentered(false, 34, "then press B.");
 	} else {
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");

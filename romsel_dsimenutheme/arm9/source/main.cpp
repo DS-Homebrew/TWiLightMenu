@@ -1053,8 +1053,13 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
-					printSmallCentered(false, 34, "the console's lid.");
+					if (ms().consoleModel >= 2) {
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 34, "then press B.");
+					} else {
+						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+					}
 					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating public save file...");
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
@@ -1097,8 +1102,13 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
-					printSmallCentered(false, 34, "the console's lid.");
+					if (ms().consoleModel >= 2) {
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 34, "then press B.");
+					} else {
+						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+					}
 					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating private save file...");
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
@@ -1355,8 +1365,15 @@ int main(int argc, char **argv) {
 
 						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew[CURPOS])
 						{ // Create save if game isn't homebrew
-							printSmallCentered(false, 20, "If this takes a while, close and open");
-							printSmallCentered(false, 34, "the console's lid.");
+							if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+								// Display nothing
+							} else if (ms().consoleModel >= 2) {
+								printSmallCentered(false, 20, "If this takes a while, press HOME,");
+								printSmallCentered(false, 34, "then press B.");
+							} else {
+								printSmallCentered(false, 20, "If this takes a while, close and open");
+								printSmallCentered(false, 34, "the console's lid.");
+							}
 							printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating save file...");
 
 							if (ms().theme != 4) {
