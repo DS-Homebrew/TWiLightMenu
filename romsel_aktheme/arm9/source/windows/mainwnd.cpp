@@ -631,7 +631,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
 
-    config.dsiMode(gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
+    config.dsiMode(rominfo.isDSiWare() ? true : (gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode))
 		  .saveNo((int)gameConfig.saveNo)
 		  .ramDiskNo((int)gameConfig.ramDiskNo)
 		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
@@ -655,7 +655,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     }
 
 	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
-	 && !rominfo.hasExtendedBinaries()) {
+	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
 		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please start in DS mode.", MB_OK);
 		progressWnd().hide();
 		return;
@@ -1178,26 +1178,8 @@ void MainWnd::launchSelected()
 	chdir(_mainList->getCurrentDir().c_str());
 
     // Launch DSiWare
-    if (rominfo.isDSiWare() && rominfo.isArgv())
+    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel == 0)
     {
-		if (ms().consoleModel >= 2) {
-			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
-			return;
-		}
-
-        ms().launchType = DSiMenuPlusPlusSettings::ENoLaunch;
-        ms().saveSettings();
-        dsiLaunch(rominfo.saveInfo().dsiTid);
-        return;
-    }
-
-    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode())
-    {
-		if (ms().consoleModel >= 2) {
-			messageBox(this, LANG("game launch", "ROM Start Error"), "Cannot run this on 3DS.", MB_OK);
-			return;
-		}
-
         // Unlaunch boot here....
         UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
 
