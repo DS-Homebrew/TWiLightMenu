@@ -60,6 +60,7 @@ private:
   SAVE_INFO_EX _saveInfo;
   TBool _isDSRom;
   TBool _isHomebrew;
+  TBool _hasExtendedBinaries;
   TBool _isDSiWare;
   TBool _isGbaRom;
   TBool _isBannerAnimated;
@@ -77,7 +78,7 @@ private:
   bool loadDSRomInfo(const std::string &filename, bool loadBanner);
 
 public:
-  DSRomInfo() : _isDSRom(EFalse), _isHomebrew(EFalse), _isDSiWare(EFalse), 
+  DSRomInfo() : _isDSRom(EFalse), _isHomebrew(EFalse), _hasExtendedBinaries(EFalse), _isDSiWare(EFalse), 
   _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
   _isArgv(EFalse),
@@ -111,6 +112,7 @@ public:
   bool isDSRom(void);
   bool isHomebrew(void);
   bool isGbaRom(void);
+  bool hasExtendedBinaries(void);
   bool isDSiWare(void);
   bool isBannerAnimated(void);
   bool isArgv(void);
@@ -129,6 +131,7 @@ public:
     _isDSRom = EMayBe;
     _isHomebrew = EMayBe;
     _isDSiWare = EMayBe;
+    _hasExtendedBinaries = EMayBe;
     _fileName = filename;
   };
   void MayBeGbaRom(const std::string &filename)

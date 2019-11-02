@@ -654,6 +654,13 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         config.language(gameConfig.language);
     }
 
+	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
+	 && !rominfo.hasExtendedBinaries()) {
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please start in DS mode.", MB_OK);
+		progressWnd().hide();
+		return;
+	}
+
 	bool hasAP = false;
 	bool hasAP1 = false;
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());

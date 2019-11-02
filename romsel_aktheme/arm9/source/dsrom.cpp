@@ -37,7 +37,7 @@
 #include "common/tonccpy.h"
 #include <memory>
 
-static u32 arm9StartSig[4];
+static u32 arm9Sig[3][4];
 
 DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 {
@@ -54,6 +54,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _fileName = src._fileName;
     _romVersion = src._romVersion;
     _extIcon = src._extIcon;
+    _hasExtendedBinaries = src._hasExtendedBinaries;
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
@@ -62,7 +63,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 }
 
 DSRomInfo::DSRomInfo(const DSRomInfo &src)
-: _isDSRom(EFalse), _isHomebrew(EFalse), _isDSiWare(EFalse), 
+: _isDSRom(EFalse), _isHomebrew(EFalse), _hasExtendedBinaries(EFalse), _isDSiWare(EFalse), 
   _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
   _isArgv(EFalse),
@@ -81,6 +82,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
     _fileName = src._fileName;
     _romVersion = src._romVersion;
     _extIcon = src._extIcon;
+    _hasExtendedBinaries = src._hasExtendedBinaries;
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
@@ -127,13 +129,14 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     {
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
+        _hasExtendedBinaries = ETrue;
 
 		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
-		fread(arm9StartSig, sizeof(u32), 4, f);
-		if (arm9StartSig[0] == 0xE3A00301
-		 && arm9StartSig[1] == 0xE5800208
-		 && arm9StartSig[2] == 0xE3A00013
-		 && arm9StartSig[3] == 0xE129F000)
+		fread(arm9Sig[0], sizeof(u32), 4, f);
+		if (arm9Sig[0][0] == 0xE3A00301
+		 && arm9Sig[0][1] == 0xE5800208
+		 && arm9Sig[0][2] == 0xE3A00013
+		 && arm9Sig[0][3] == 0xE129F000)
 		{
 			_isDSiWare = ETrue;
             _isHomebrew = ETrue;
@@ -174,6 +177,36 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			_saveInfo.dsiTid[1] = header.dsi_tid2;
         }
     }
+
+    if (_isHomebrew == EFalse && header.unitCode != 0)
+    {
+		fseek(f, 0x8000, SEEK_SET);
+		fread(arm9Sig[0], sizeof(u32), 4, f);
+		fseek(f, header.arm9iromOffset, SEEK_SET);
+		fread(arm9Sig[1], sizeof(u32), 4, f);
+		fseek(f, header.arm7iromOffset, SEEK_SET);
+		fread(arm9Sig[2], sizeof(u32), 4, f);
+		for (int i = 1; i < 3; i++) {
+			if (arm9Sig[i][0] == arm9Sig[0][0]
+			 && arm9Sig[i][1] == arm9Sig[0][1]
+			 && arm9Sig[i][2] == arm9Sig[0][2]
+			 && arm9Sig[i][3] == arm9Sig[0][3]) {
+				_hasExtendedBinaries = EFalse;
+			}
+			if (arm9Sig[i][0] == 0
+			 && arm9Sig[i][1] == 0
+			 && arm9Sig[i][2] == 0
+			 && arm9Sig[i][3] == 0) {
+				_hasExtendedBinaries = EFalse;
+			}
+			if (arm9Sig[i][0] == 0xFFFFFFFF
+			 && arm9Sig[i][1] == 0xFFFFFFFF
+			 && arm9Sig[i][2] == 0xFFFFFFFF
+			 && arm9Sig[i][3] == 0xFFFFFFFF) {
+				_hasExtendedBinaries = EFalse;
+			}
+		}
+	}
 
     ///////// saveInfo /////////
     tonccpy(_saveInfo.gameTitle, header.gameTitle, 12);
@@ -541,6 +574,12 @@ bool DSRomInfo::isDSRom(void)
 {
     load();
     return (_isDSRom == ETrue) ? true : false;
+}
+
+bool DSRomInfo::hasExtendedBinaries(void)
+{
+    load();
+    return (_hasExtendedBinaries == ETrue) ? true : false;
 }
 
 bool DSRomInfo::isDSiWare(void)
