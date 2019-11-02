@@ -261,6 +261,7 @@ void CheatCodelist::selectCheats(std::string filename)
 
   clearText();
 
+  int oldDialogboxHeight = dialogboxHeight;
   dialogboxHeight = 6;
 
   titleUpdate(isDirectory, filename.c_str());
@@ -464,6 +465,7 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
   }
+  dialogboxHeight = oldDialogboxHeight;
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
