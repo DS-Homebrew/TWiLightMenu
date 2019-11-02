@@ -85,9 +85,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
 
-		/*SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
+		/*consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -119,7 +117,10 @@ TWL_CODE void twl_flashcardInit(void) {
 		} /*else if (!memcmp(gameid, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		}*/
+		} else if (!memcmp(gameid, "VCKF", 4)) {
+			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
+			fatMountSimple("fat", &io_dldi_data->ioInterface);
+		} */
 	}
 }
 
