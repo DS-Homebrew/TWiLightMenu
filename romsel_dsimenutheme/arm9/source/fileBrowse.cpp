@@ -482,6 +482,13 @@ void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
+	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+		printSmallCentered(false, 20, "If this takes a while, turn off");
+		printSmallCentered(false, 34, "the POWER, and try again.");
+	} else {
+		printSmallCentered(false, 20, "If this takes a while, close and open");
+		printSmallCentered(false, 34, "the console's lid.");
+	}
 	printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Loading...");
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
