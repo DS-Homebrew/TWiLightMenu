@@ -225,4 +225,4 @@ The 3DS theme loads its rotating cubes animation from the file located at `/vide
 
 #### Custom Background Music and Sound fonts.
 
-The DSi Menu and 3DS themes also support custom music. See [sound.md](https://github.com/RocketRobz/TWiLightMenu/tree/master/romsel_dsimenutheme/resources/sound/sound.md) for more details.
+The DSi Menu and 3DS themes also support custom music. See [sound.md](https://github.com/DS-Homebrew/TWiLightMenu/tree/master/romsel_dsimenutheme/resources/sound/sound.md) for more details.
