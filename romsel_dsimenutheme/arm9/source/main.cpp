@@ -419,7 +419,7 @@ void SetSpeedBumpExclude(void) {
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
 		"A2D",	// New Super Mario Bros.
-		"B2K",	// Ni no Kuni: Shikkoku no Madoushi
+		"BSK",	// Nine Hours, Nine Persons, Nine Doors
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
 		"B3R",	// Pokemon Ranger: Guardian Signs
