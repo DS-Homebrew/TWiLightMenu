@@ -677,6 +677,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
+		"YCP",	// Chuukana Janshi Tenhoo Painyan Remix
 		"BIG",	// Combat/Battle of Giants: Mutant Insects
 		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
@@ -685,6 +686,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"A26",	// Feel the Magic: XY XX (Demo)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
+		"YIP",	// Idol Janshi Suchi-Pai III Remix
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
 		"YLU",	// Last Window: The Secret of Cape West
