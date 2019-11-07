@@ -360,6 +360,7 @@ string browseForFile(const vector<string> extensionList)
 			if (extention(std_romsel_filename, ".nds")
 			 || extention(std_romsel_filename, ".dsi")
 			 || extention(std_romsel_filename, ".ids")
+			 || extention(std_romsel_filename, ".srl")
 			 || extention(std_romsel_filename, ".app")
 			 || extention(std_romsel_filename, ".argv"))
 			{
