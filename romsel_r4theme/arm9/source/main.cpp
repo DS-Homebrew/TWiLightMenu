@@ -1310,11 +1310,18 @@ int main(int argc, char **argv) {
 							if (useGbarunner) {
 								if (secondaryDevice) {
 									const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+									if (isDSiMode()) {
+										gbaRunner2Path = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+									}
 									if (useBootstrap) {
-										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, true, true, false);
+										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 										iprintf ("Start failed. Error %i\n", err);
 									} else {
-										loadGameOnFlashcard(gbaRunner2Path, (gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
+										if (isDSiMode()) {
+											loadGameOnFlashcard(gbaRunner2Path, (consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
+										} else {
+											loadGameOnFlashcard(gbaRunner2Path, (gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
+										}
 									}
 								} else {
 									std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");

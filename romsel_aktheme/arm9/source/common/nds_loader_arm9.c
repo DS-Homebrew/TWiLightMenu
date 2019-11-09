@@ -268,7 +268,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -349,7 +349,11 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		if (!boostCpu) {
 			REG_SCFG_CLK = 0x80;
 		}
-		REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+		if (lockScfg) {
+			REG_SCFG_EXT = (boostVram ? 0x03002000 : 0x03000000);		// 4MB memory mode, and lock SCFG
+		} else {
+			REG_SCFG_EXT = (boostVram ? 0x83002000 : 0x83000000);		// 4MB memory mode
+		}
 	}
 
 	// Give the VRAM to the ARM7
@@ -388,13 +392,15 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
+	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0);
+
 	bool havedsiSD = false;
 
 	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram);
 }
 
 /*

@@ -1469,11 +1469,25 @@ void MainWnd::bootGbaRunner(void)
     {
 		if (ms().useBootstrap)
 		{
-            bootFile(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "");
+			if (isDSiMode())
+			{
+				bootFile(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, "");
+			}
+			else
+			{
+				bootFile(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "");
+			}
 		}
 		else
 		{
-			bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "", false);
+			if (isDSiMode())
+			{
+				bootFlashcard(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, "", false);
+			}
+			else
+			{
+				bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "", false);
+			}
 		}
         return;
     }
