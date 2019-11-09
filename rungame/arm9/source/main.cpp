@@ -146,6 +146,14 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
+bool extention(const std::string& filename, const char* ext) {
+	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 TWL_CODE int lastRunROM() {
 	LoadSettings();
 
@@ -192,6 +200,17 @@ TWL_CODE int lastRunROM() {
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? bootstrapFile : perGameSettings_bootstrapFile);
 
 				if (!homebrewBootstrap) {
+					const char *typeToReplace = ".nds";
+					if (extention(filename, ".dsi")) {
+						typeToReplace = ".dsi";
+					} else if (extention(filename, ".ids")) {
+						typeToReplace = ".ids";
+					} else if (extention(filename, ".srl")) {
+						typeToReplace = ".srl";
+					} else if (extention(filename, ".app")) {
+						typeToReplace = ".app";
+					}
+
 					char game_TID[5];
 
 					FILE *f_nds_file = fopen(filename.c_str(), "rb");
@@ -203,7 +222,7 @@ TWL_CODE int lastRunROM() {
 
 					fclose(f_nds_file);
 
-					std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
+					std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
 					std::string romFolderNoSlash = romfolder;
 					RemoveTrailingSlashes(romFolderNoSlash);
 					mkdir ("saves", 0777);

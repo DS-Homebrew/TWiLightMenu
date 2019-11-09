@@ -1959,6 +1959,17 @@ int main(int argc, char **argv) {
 			if (extention(filename, ".nds") || extention(filename, ".dsi")
 			 || extention(filename, ".ids") || extention(filename, ".srl")
 			 || extention(filename, ".app")) {
+				const char *typeToReplace = ".nds";
+				if (extention(filename, ".dsi")) {
+					typeToReplace = ".dsi";
+				} else if (extention(filename, ".ids")) {
+					typeToReplace = ".ids";
+				} else if (extention(filename, ".srl")) {
+					typeToReplace = ".srl";
+				} else if (extention(filename, ".app")) {
+					typeToReplace = ".app";
+				}
+
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
@@ -2001,8 +2012,8 @@ int main(int argc, char **argv) {
 				if(useBackend) {
 					if(useBootstrap || !previousUsedDevice) {
 						std::string path = argarray[0];
-						std::string savename = ReplaceAll(filename, ".nds", getSavExtension());
-						std::string ramdiskname = ReplaceAll(filename, ".nds", getImgExtension());
+						std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
+						std::string ramdiskname = ReplaceAll(filename, typeToReplace, getImgExtension());
 						std::string romFolderNoSlash = romfolder;
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir (isHomebrew ? "ramdisks" : "saves", 0777);

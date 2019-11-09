@@ -15,6 +15,7 @@
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
+extern bool extention(const std::string& filename, const char* ext);
 
 BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion, int heapShrink)
 	: _fileName(fileName), _fullPath(fullPath), _gametid(gametid), _sdkVersion(sdkVersion)
@@ -447,8 +448,18 @@ void RemoveTrailingSlashes(std::string &path) {
 
 void BootstrapConfig::createSaveFileIfNotExists()
 {
+	const char *typeToReplace = ".nds";
+	if (extention(_fileName, ".dsi")) {
+		typeToReplace = ".dsi";
+	} else if (extention(_fileName, ".ids")) {
+		typeToReplace = ".ids";
+	} else if (extention(_fileName, ".srl")) {
+		typeToReplace = ".srl";
+	} else if (extention(_fileName, ".app")) {
+		typeToReplace = ".app";
+	}
 
-	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
+	std::string savename = replaceAll(_fileName, typeToReplace, getSavExtension(_saveNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 
 	RemoveTrailingSlashes(romFolderNoSlash);
@@ -526,8 +537,19 @@ int BootstrapConfig::launch()
 
 	bootWidescreen(_fileName.c_str());
 
-	std::string savename = replaceAll(_fileName, ".nds", getSavExtension(_saveNo));
-	std::string ramdiskname = replaceAll(_fileName, ".nds", getImgExtension(_ramDiskNo));
+	const char *typeToReplace = ".nds";
+	if (extention(_fileName, ".dsi")) {
+		typeToReplace = ".dsi";
+	} else if (extention(_fileName, ".ids")) {
+		typeToReplace = ".ids";
+	} else if (extention(_fileName, ".srl")) {
+		typeToReplace = ".srl";
+	} else if (extention(_fileName, ".app")) {
+		typeToReplace = ".app";
+	}
+
+	std::string savename = replaceAll(_fileName, typeToReplace, getSavExtension(_saveNo));
+	std::string ramdiskname = replaceAll(_fileName, typeToReplace, getImgExtension(_ramDiskNo));
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 	RemoveTrailingSlashes(romFolderNoSlash);
 	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
