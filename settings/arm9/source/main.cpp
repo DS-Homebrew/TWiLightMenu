@@ -542,9 +542,11 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && ms().consoleModel < 2)
 	{
-		gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
-						 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-		.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
+		if (sdAccessible) {
+			gamesPage.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
+		}
+		gamesPage.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
 				{true, false});
 	}
 
