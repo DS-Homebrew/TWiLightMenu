@@ -46,6 +46,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showDirectories = true;
     showHidden = false;
     showBoxArt = true;
+    cacheBoxArt = true;
     animateDsiIcons = true;
     sysRegion = -1;
     launcherApp = -1;
@@ -160,6 +161,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
+    cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	if (consoleModel < 2) {
 		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);

@@ -154,6 +154,7 @@ class DSiMenuPlusPlusSettings
     bool showDirectories;
     bool showHidden;
     bool showBoxArt;
+    bool cacheBoxArt;
     bool animateDsiIcons;
     int sysRegion;
     int launcherApp;

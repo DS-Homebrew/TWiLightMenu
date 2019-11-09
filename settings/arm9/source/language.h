@@ -36,6 +36,7 @@ extern std::string STR_SORT_METHOD;
 extern std::string STR_DIRECTORIES;
 extern std::string STR_SHOW_HIDDEN;
 extern std::string STR_BOXART;
+extern std::string STR_BOXARTMEM;
 extern std::string STR_ANIMATEDSIICONS;
 extern std::string STR_SYSREGION;
 extern std::string STR_LAUNCHERAPP;
@@ -97,6 +98,8 @@ extern std::string STR_DESCRIPTION_SHOW_MD;
 extern std::string STR_DESCRIPTION_SHOW_SNES;
 
 extern std::string STR_DESCRIPTION_BOXART_1;
+
+extern std::string STR_DESCRIPTION_BOXARTMEM;
 
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_1;
 

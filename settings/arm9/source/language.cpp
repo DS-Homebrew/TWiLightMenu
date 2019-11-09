@@ -43,6 +43,7 @@ std::string STR_SORT_METHOD = "STR_SORT_METHOD";
 std::string STR_DIRECTORIES = "STR_DIRECTORIES";
 std::string STR_SHOW_HIDDEN = "STR_SHOW_HIDDEN";
 std::string STR_BOXART = "STR_BOXART";
+std::string STR_BOXARTMEM = "STR_BOXARTMEM";
 std::string STR_ANIMATEDSIICONS = "STR_ANIMATEDSIICONS";
 std::string STR_SYSREGION = "STR_SYSREGION";
 std::string STR_LAUNCHERAPP = "STR_LAUNCHERAPP";
@@ -104,6 +105,8 @@ std::string STR_DESCRIPTION_SHOW_MD = "STR_DESCRIPTION_SHOW_MD";
 std::string STR_DESCRIPTION_SHOW_SNES = "STR_DESCRIPTION_SHOW_SNES";
 
 std::string STR_DESCRIPTION_BOXART_1 = "STR_DESCRIPTION_BOXART_1";
+
+std::string STR_DESCRIPTION_BOXARTMEM = "STR_DESCRIPTION_BOXARTMEM";
 
 std::string STR_DESCRIPTION_ANIMATEDSIICONS_1 = "STR_DESCRIPTION_ANIMATEDSIICONS_1";
 
@@ -317,6 +320,7 @@ void langInit(void)
 	STR_DIRECTORIES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DIRECTORIES", "Directories/Folders"));
 	STR_SHOW_HIDDEN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SHOW_HIDDEN", "Show hidden files"));
 	STR_BOXART = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOXART", "Box art/Game covers"));
+	STR_BOXARTMEM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOXARTMEM", "Cache box art to memory"));
 	STR_ANIMATEDSIICONS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ANIMATEDSIICONS", "Animate DSi icons"));
 	STR_SYSREGION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SYSREGION", "SysNAND Region"));
 	STR_LAUNCHERAPP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LAUNCHERAPP", "SysNAND Launcher"));
@@ -378,6 +382,8 @@ void langInit(void)
 	STR_DESCRIPTION_SHOW_SNES = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SHOW_SNES", "Display Super Nintendo/Super Famicom ROMs in the ROM list."));
 
 	STR_DESCRIPTION_BOXART_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOXART_1", "Displayed in the top screen of the DSi/3DS theme."));
+
+	STR_DESCRIPTION_BOXARTMEM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOXARTMEM", "Loads the box art images into RAM, for lagless scrolling, at the cost of slow ROM list loading."));
 
 	STR_DESCRIPTION_ANIMATEDSIICONS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ANIMATEDSIICONS_1", "Animate DSi-enhanced icons like in the DSi/3DS menus."));
 
