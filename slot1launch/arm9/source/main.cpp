@@ -31,6 +31,8 @@
 #include "launch_engine.h"
 #include "crc.h"
 
+sNDSHeader ndsHeader;
+
 u8 cheatData[0x8000] = {0};
 
 off_t getFileSize(const char *fileName)
@@ -67,8 +69,6 @@ int main() {
 		if(REG_SCFG_MC == 0x11) { fifoSendValue32(FIFO_USER_02, 1); }
 		if(REG_SCFG_MC == 0x10) { fifoSendValue32(FIFO_USER_02, 1); }
 	}
-
-	u32 ndsHeader[0x80];
 	
 	if (isDSiMode()) {
 		if (fatInitDefault()) {
@@ -127,7 +127,7 @@ int main() {
 
 		sysSetCardOwner (BUS_OWNER_ARM9);
 
-		getHeader (ndsHeader);
+		cardReadHeader((uint8*)&ndsHeader);
 
 		for (int i = 0; i < 30; i++) { swiWaitForVBlank(); }
 	} else {
@@ -139,16 +139,16 @@ int main() {
 			printf ("Please remove your flashcard.\n");
 			do {
 				swiWaitForVBlank();
-				getHeader (ndsHeader);
-			} while (ndsHeader[0] != 0xffffffff);
+				cardReadHeader((uint8*)&ndsHeader);
+			} while ((u32)ndsHeader.gameTitle == 0xffffffff);
 			for (int i = 0; i < 60; i++) {
 				swiWaitForVBlank();
 			}
 		}
 
-		getHeader (ndsHeader);
+		cardReadHeader((uint8*)&ndsHeader);
 
-		if (ndsHeader[0] == 0xffffffff) {
+		if ((u32)ndsHeader.gameTitle == 0xffffffff) {
 			if (!consoleInited) {
 				consoleDemoInit();
 				consoleInited = true;
@@ -158,8 +158,8 @@ int main() {
 			printf ("Insert a DS game.\n");
 			do {
 				swiWaitForVBlank();
-				getHeader (ndsHeader);
-			} while (ndsHeader[0] == 0xffffffff);
+				cardReadHeader((uint8*)&ndsHeader);
+			} while ((u32)ndsHeader.gameTitle == 0xffffffff);
 		}
 
 		// Delay half a second for the DS card to stabilise
@@ -180,7 +180,7 @@ int main() {
 				cheatData[wideCheatSize+3] = 0xCF;
 			}
 			memcpy((void*)0x023F0000, cheatData, 0x8000);
-			runLaunchEngine (EnableSD, language, scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
+			runLaunchEngine (EnableSD, language, (memcmp(ndsHeader.gameCode, "UBRP", 4) == 0), scfgUnlock, TWLMODE, TWLCLK, TWLVRAM, soundFreq, runCardEngine);
 		}
 	}
 	return 0;

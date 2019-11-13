@@ -37,6 +37,7 @@
 #include <nds/dma.h>
 #include <nds/arm7/audio.h>
 #include <nds/ipc.h>
+#include <string.h>
 
 // #include <nds/registers_alt.h>
 // #include <nds/memory.h>
@@ -498,6 +499,49 @@ void initMBK() {
 	}
 }*/
 
+void fixDSBrowser(void) {
+	// clear last part of EXRAM
+	arm7_clearmem ((void*)0x02400000, 0x3FF000);
+
+	extern void patchMpu(const tNDSHeader* ndsHeader, const module_params_t* moduleParams);
+	patchMpu(ndsHeader, findModuleParamsOffset(ndsHeader));
+
+	memset((char*)0x02400000, 0xFF, 0xC0);
+	*(u8*)0x024000B2 = 0;
+	*(u8*)0x024000B3 = 0;
+	*(u8*)0x024000B4 = 0;
+	*(u8*)0x024000B5 = 0x24;
+	*(u8*)0x024000B6 = 0x24;
+	*(u8*)0x024000B7 = 0x24;
+	*(u16*)0x024000BE = 0x7FFF;
+	*(u16*)0x024000CE = 0x7FFF;
+
+	// Opera RAM patch (ARM9)
+	*(u32*)0x02003D48 = 0x2400000;
+	*(u32*)0x02003D4C = 0x2400004;
+
+	*(u32*)0x02010FF0 = 0x2400000;
+	*(u32*)0x02010FF4 = 0x24000CE;
+
+	*(u32*)0x020112AC = 0x2400080;
+
+	*(u32*)0x020402BC = 0x24000C2;
+	*(u32*)0x020402C0 = 0x24000C0;
+	*(u32*)0x020402CC = 0x2FFFFFE;
+	*(u32*)0x020402D0 = 0x2800000;
+	*(u32*)0x020402D4 = 0x29FFFFF;
+	*(u32*)0x020402D8 = 0x2BFFFFF;
+	*(u32*)0x020402DC = 0x2FFFFFF;
+	*(u32*)0x020402E0 = 0xD7FFFFF;	// ???
+	memset((char*)0x2800000, 0xFF, 0x800000);		// Fill fake MEP with FFs
+
+	// Opera RAM patch (ARM7)
+	*(u32*)0x0238C7BC = 0x2400000;
+	*(u32*)0x0238C7C0 = 0x24000CE;
+
+	//*(u32*)0x0238C950 = 0x2400000;
+}
+
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Main function
@@ -546,6 +590,10 @@ void arm7_main (void) {
 		if (!sdAccess) {
 			REG_SCFG_EXT = 0x93FBFB06;
 		}
+	}
+
+	if (*(u32*)(NDS_HEAD+0xC) == 0x50524255) {
+		fixDSBrowser();
 	}
 
 	if ((*(u32*)(NDS_HEAD+0xC) & 0x00FFFFFF) == 0x52544E	// Download Play ROMs

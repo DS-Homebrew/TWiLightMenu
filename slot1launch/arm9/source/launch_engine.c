@@ -53,7 +53,7 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool EnableSD, int language, bool isDSBrowser, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -83,15 +83,15 @@ void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE
 	if (isDSiMode()) {
 		if (scfgUnlock || TWLMODE) {
 			if (TWLVRAM) {
-				REG_SCFG_EXT=0x83002000;
+				REG_SCFG_EXT = (isDSBrowser ? 0x8300E000 : 0x83002000);
 			} else {
-				REG_SCFG_EXT=0x83000000;
+				REG_SCFG_EXT = (isDSBrowser ? 0x8300C000 : 0x83000000);
 			}
 		} else {
 			if (TWLVRAM) {
-				REG_SCFG_EXT=0x03002000;
+				REG_SCFG_EXT = (isDSBrowser ? 0x0300E000 : 0x03002000);
 			} else {
-				REG_SCFG_EXT=0x03000000;
+				REG_SCFG_EXT = (isDSBrowser ? 0x0300C000 : 0x03000000);
 			}
 		}
 	}
