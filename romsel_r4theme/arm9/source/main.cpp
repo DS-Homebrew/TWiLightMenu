@@ -705,9 +705,9 @@ void SetSpeedBumpExclude(const char* filename) {
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
 		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
-	    "B3X",	// River City: Soccer Hooligans
-	    //"ARZ",	// Rockman ZX/MegaMan ZX
-		//"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
+		"B3X",	// River City: Soccer Hooligans
+		//"ARZ",	// Rockman ZX/MegaMan ZX
+		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6X",	// Rockman EXE: Operate Shooting Star
 		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
@@ -724,6 +724,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"AYT",	// Tales of Innocence
 		"YT9",	// Tony Hawk's Proving Ground
 		"YYK",	// Trauma Center: Under the Knife 2
+		"AUS",	// Ultimate Spider-Man
 		"CY8",	// Yu-Gi-Oh! World Championship 2009
 		"BYX",	// Yu-Gi-Oh! World Championship 2010
 	};
