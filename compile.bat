@@ -6,7 +6,8 @@ copy "booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41
 cd ..
 cd "booter_fc"
 make
-copy "booter_fc.nds" "../7zfile/BOOT_FC.NDS"
+copy "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
+copy "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
 cd ..
 cd "rungame"
 make

@@ -15,5 +15,6 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "booter_fc.nds" "../7zfile/BOOT_fc.nds"
+    Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/BOOT_fc.nds"
+    Copy-Item "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.nds"
 }

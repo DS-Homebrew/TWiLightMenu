@@ -117,7 +117,7 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf
+.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf arm9_cyclodsi/$(TARGET).elf
 
 all:	bootloader bootstub $(TARGET).nds
 	
@@ -128,15 +128,19 @@ dist:	all
 	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds hbmenu
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
 	
-$(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
+$(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
 
 $(TARGET).arm9: arm9/$(TARGET).elf
 	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
+
+$(TARGET)_cyclodsi.arm9: arm9_cyclodsi/$(TARGET).elf
+	cp arm9_cyclodsi/$(TARGET).elf $(TARGET)_cyclodsi.arm9.elf
 
 #---------------------------------------------------------------------------------
 arm7/$(TARGET).elf:
@@ -145,6 +149,10 @@ arm7/$(TARGET).elf:
 #---------------------------------------------------------------------------------
 arm9/$(TARGET).elf:
 	@$(MAKE) -C arm9
+
+#---------------------------------------------------------------------------------
+arm9_cyclodsi/$(TARGET).elf:
+	@$(MAKE) -C arm9_cyclodsi
 
 #---------------------------------------------------------------------------------
 #$(BUILD):
@@ -157,9 +165,11 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
 	@rm -fr $(TARGET).arm9.elf
+	@rm -fr $(TARGET).arm9_cyclodsi.elf
 	@$(MAKE) -C bootloader clean
 	@$(MAKE) -C bootstub clean
 	@$(MAKE) -C arm9 clean
+	@$(MAKE) -C arm9_cyclodsi clean
 	@$(MAKE) -C arm7 clean
 
 data:
