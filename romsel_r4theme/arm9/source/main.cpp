@@ -714,6 +714,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
 		"A3S",	// Shrek the Third
+		"ASC",	// Sonic Rush
 		"AIR",	// Space Invaders DS
 		"AIS",	// Space Invaders Revolution
 		"YV4",  // Spectrobes: Beyond the Portals
