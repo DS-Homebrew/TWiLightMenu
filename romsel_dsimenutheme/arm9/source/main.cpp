@@ -376,7 +376,6 @@ void SetSpeedBumpExclude(void) {
 	}
 
 	static const char list[][5] = {
-		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
 		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 		"AH9P",	// Tony Hawk's American Sk8land (EUR)
@@ -393,6 +392,7 @@ void SetSpeedBumpExclude(void) {
 
 	static const char list2[][4] = {
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
+		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altair's Chronicles
