@@ -178,6 +178,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 	}
 
 	static const char list2[][4] = {
+		"C32",	// Ace Attorney Investigations: Miles Edgeworth
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
@@ -194,6 +195,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic: XY XX
 		"A26",	// Feel the Magic: XY XX (Demo)
+		"CYY",	// Giana Sisters DS (EUR)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
