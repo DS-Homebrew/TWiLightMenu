@@ -569,7 +569,7 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 					// Clear top screen cubes
 					rocketVideo_playVideo = false;
 				}
-				if (isDSiMode()) {
+				if (isDSiMode() && ms().cacheBoxArt) {
 					tex().drawBoxArtFromMem(CURPOS); // Load box art
 				} else {
 					snprintf(boxArtPath, sizeof(boxArtPath),
