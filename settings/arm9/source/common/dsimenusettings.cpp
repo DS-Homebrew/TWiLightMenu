@@ -16,6 +16,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     guiLanguage = ELangDefault;
     colorMode = 0;
     blfLevel = 0;
+    wifiLed = true;
     sdRemoveDetect = true;
     useGbarunner = false;
 	gbar2DldiAccess = false;
@@ -109,6 +110,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     // Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
@@ -196,6 +198,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     // Customizable UI settings.
 	settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);

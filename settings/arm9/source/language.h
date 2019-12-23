@@ -22,6 +22,7 @@ extern std::string STR_DESCRIPTION_SCREENSCALESIZE;*/
 // GUI settings
 extern std::string STR_COLORMODE;
 extern std::string STR_BLF;
+extern std::string STR_WIFILED;
 extern std::string STR_SDREMOVALDETECTION;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
@@ -54,63 +55,35 @@ extern std::string STR_FILE_TYPE;
 extern std::string STR_CUSTOM;
 
 extern std::string STR_DESCRIPTION_COLORMODE;
-
 extern std::string STR_DESCRIPTION_BLF;
-
+extern std::string STR_DESCRIPTION_WIFILED;
 extern std::string STR_DESCRIPTION_SDREMOVALDETECTION;
-
 extern std::string STR_DESCRIPTION_S1SDACCESS_1;
-
 extern std::string STR_DESCRIPTION_MAINMENU;
-
 extern std::string STR_DESCRIPTION_THEME_1;
-
 extern std::string STR_DESCRIPTION_DSIMUSIC;
-
 extern std::string STR_DESCRIPTION_LASTPLAYEDROM_1;
-
 extern std::string STR_DESCRIPTION_DSISPLASH;
-
 extern std::string STR_DESCRIPTION_HSMSG;
-
 extern std::string STR_DESCRIPTION_DSIMENUPPLOGO_1;
-
 extern std::string STR_DESCRIPTION_UPDATE_RECENTLY_PLAYED_LIST;
-
 extern std::string STR_DESCRIPTION_SORT_METHOD;
-
 extern std::string STR_DESCRIPTION_DIRECTORIES_1;
-
 extern std::string STR_DESCRIPTION_SHOW_HIDDEN_1;
-
 extern std::string STR_DESCRIPTION_SHOW_NDS;
-
 extern std::string STR_DESCRIPTION_SHOW_RVID;
-
 extern std::string STR_DESCRIPTION_SHOW_NES;
-
 extern std::string STR_DESCRIPTION_SHOW_GB;
-
 extern std::string STR_DESCRIPTION_SHOW_SMS;
-
 extern std::string STR_DESCRIPTION_SHOW_MD;
-
 extern std::string STR_DESCRIPTION_SHOW_SNES;
-
 extern std::string STR_DESCRIPTION_BOXART_1;
-
 extern std::string STR_DESCRIPTION_BOXARTMEM;
-
 extern std::string STR_DESCRIPTION_ANIMATEDSIICONS_1;
-
 extern std::string STR_DESCRIPTION_SYSREGION_1;
-
 extern std::string STR_DESCRIPTION_LAUNCHERAPP_1;
-
 extern std::string STR_DESCRIPTION_SYSTEMSETTINGS_1;
-
 extern std::string STR_DESCRIPTION_REPLACEDSIMENU_1;
-
 extern std::string STR_DESCRIPTION_RESTOREDSIMENU_1;
 
 // GBARunner2 settings

@@ -16,6 +16,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     guiLanguage = ELangDefault;
     colorMode = 0;
     blfLevel = 0;
+    wifiLed = -1;
     useGbarunner = false;
     showMainMenu = true;
     theme = 0;
@@ -78,6 +79,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     // Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
@@ -145,6 +147,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
+	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
