@@ -12,18 +12,10 @@ include $(DEVKITARM)/ds_rules
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
 # SOURCES is a list of directories containing source code
-# INCLUDES is a list of directories containing extra header files
-# DATA is a list of directories containing binary files embedded using bin2o
-# GRAPHICS is a list of directories containing image files to be converted with grit
-# MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
 TARGET		:=	booter_fc
 BUILD		:=	build
-SOURCES		:=	source source/graphics
-INCLUDES	:=	include
-DATA		:=	../data  
-GRAPHICS	:=  ../gfx
-MUSIC       :=  ../music
+SOURCES		:=	source
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -133,24 +125,6 @@ $(OUTPUT).elf	:	$(OFILES)
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	$(bin2o)
-
-#---------------------------------------------------------------------------------
-# This rule creates assembly source files using grit
-# grit takes an image file and a .grit describing how the file is to be processed
-# add additional rules like this for each image extension
-# you use in the graphics folders 
-#---------------------------------------------------------------------------------
-%.s %.h	: %.bmp %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
-
-#---------------------------------------------------------------------------------
-%.s %.h   : %.png %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
--include $(DEPSDIR)/*.d
  
 #---------------------------------------------------------------------------------------
 endif
