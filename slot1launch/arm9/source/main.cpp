@@ -26,7 +26,7 @@
 #include <malloc.h>
 #include <list>
 
-#include "inifile.h"
+#include <easysave/ini.hpp>
 #include "nds_card.h"
 #include "launch_engine.h"
 #include "crc.h"
@@ -72,12 +72,12 @@ int main() {
 	
 	if (isDSiMode()) {
 		if (fatInitDefault()) {
-			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
+			easysave::ini settingsini("/_nds/TWiLightMenu/settings.ini");
 
-			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
-			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
-			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
-			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
+			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", 0);
+			runCardEngine = settingsini.GetInt("SRLOADER", "SLOT1_CARDENGINE", 1);
 
 			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 			//	consoleOn = true;
@@ -95,17 +95,17 @@ int main() {
 				swiWaitForVBlank();
 			}
 
-			if(settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0) == 1) {
+			if(settingsini.GetInt("SRLOADER", "SLOT1_ENABLESD", 0) == 1) {
 				//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 				//	printf("SD access ON\n");		
 				//}
 				EnableSD = true;
 			}
 
-			scfgUnlock = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
-			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
+			scfgUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", 0);
+			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
-			if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
+			if(settingsini.GetInt("SRLOADER", "RESET_SLOT1", 1) == 1) {
 				fifoSendValue32(FIFO_USER_02, 1);
 				fifoSendValue32(FIFO_USER_07, 1);
 			}
