@@ -2,7 +2,7 @@
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
-#include "common/inifile.h"
+#include <easysave/ini.hpp>
 #include <string.h>
 
 DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
@@ -89,7 +89,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    easysave::ini settingsini(DSIMENUPP_INI);
 
     // UI settings.
     romfolder = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder);
@@ -186,7 +186,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 void DSiMenuPlusPlusSettings::saveSettings()
 {
-    CIniFile settingsini(DSIMENUPP_INI);
+    easysave::ini settingsini(DSIMENUPP_INI);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder);
 
@@ -264,7 +264,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     //settingsini.SetInt("TWL_FIRM", "SCREENSCALESIZE", screenScaleSize);
     settingsini.SetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
-    settingsini.SaveIniFile(DSIMENUPP_INI);
+    settingsini.flush();
 }
 
 DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
