@@ -726,6 +726,8 @@ void SetSpeedBumpExclude(const char* filename) {
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence
 		"YT9",	// Tony Hawk's Proving Ground
+		"AFZ",	// Transformers: Autobots
+		"AFY",	// Transformers: Decepticons
 		"YYK",	// Trauma Center: Under the Knife 2
 		"AUS",	// Ultimate Spider-Man
 		"CY8",	// Yu-Gi-Oh! World Championship 2009
