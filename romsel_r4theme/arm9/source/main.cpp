@@ -1109,6 +1109,9 @@ int main(int argc, char **argv) {
 	if (showRvid) {
 		extensionList.push_back(".rvid");
 	}
+	if (useGbarunner) {
+		extensionList.emplace_back(".gba");
+	}
 	if (showGb) {
 		extensionList.push_back(".gb");
 		extensionList.push_back(".sgb");
@@ -1471,6 +1474,7 @@ int main(int argc, char **argv) {
 
 			bool dstwoPlg = false;
 			bool rvid = false;
+			bool GBA = false;
 			bool SNES = false;
 			bool GENESIS = false;
 			bool gameboy = false;
@@ -1950,6 +1954,19 @@ int main(int argc, char **argv) {
 				dstwoPlg = true;
 			} else if (extention(filename, ".rvid")) {
 				rvid = true;
+			} else if (extention(filename, ".gba")) {
+				//ms().launchType = Launch::ESDFlashcardLaunch;
+				//ms().previousUsedDevice = ms().secondaryDevice;
+				/*ms().saveSettings();
+
+				sysSetCartOwner(BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM in memory map
+
+				// Load GBA ROM into EZ Flash 3-in-1
+				FILE *gbaFile = fopen(filename.c_str(), "rb");
+				fread((void*)0x08000000, 1, 0x1000000, gbaFile);
+				fclose(gbaFile);
+				gbaSwitch();*/
+				GBA = true;
 			} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
 				gameboy = true;
 			} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
@@ -2030,7 +2047,7 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if (SNES || GENESIS) {
+			} else if (GBA || SNES || GENESIS) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -2042,7 +2059,12 @@ int main(int argc, char **argv) {
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				if (secondaryDevice) {
-					if (SNES) {
+					if (GBA) {
+						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+						}
+					} else if (SNES) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
@@ -2061,18 +2083,24 @@ int main(int argc, char **argv) {
 
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-					if (SNES) {
+					if (GBA) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					} else if (SNES) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 					} else {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					}
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
-					bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
 				}
 				argarray.at(0) = (char *)ndsToBoot;

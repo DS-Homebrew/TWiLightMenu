@@ -367,21 +367,23 @@ string browseForFile(const vector<string> extensionList)
 				getGameInfo(isDirectory, dirContents.at(fileOffset).name.c_str());
 				bnrRomType = 0;
 			} else if (extention(std_romsel_filename, ".plg") || extention(std_romsel_filename, ".rvid")) {
-				bnrRomType = 8;
-			} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
+				bnrRomType = 9;
+			} else if (extention(std_romsel_filename, ".gba")) {
 				bnrRomType = 1;
-			} else if (extention(std_romsel_filename, ".gbc")) {
+			} else if (extention(std_romsel_filename, ".gb") || extention(std_romsel_filename, ".sgb")) {
 				bnrRomType = 2;
-			} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
+			} else if (extention(std_romsel_filename, ".gbc")) {
 				bnrRomType = 3;
-			} else if(extention(std_romsel_filename, ".sms")) {
+			} else if (extention(std_romsel_filename, ".nes") || extention(std_romsel_filename, ".fds")) {
 				bnrRomType = 4;
-			} else if(extention(std_romsel_filename, ".gg")) {
+			} else if(extention(std_romsel_filename, ".sms")) {
 				bnrRomType = 5;
-			} else if(extention(std_romsel_filename, ".gen")) {
+			} else if(extention(std_romsel_filename, ".gg")) {
 				bnrRomType = 6;
-			} else if(extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
+			} else if(extention(std_romsel_filename, ".gen")) {
 				bnrRomType = 7;
+			} else if(extention(std_romsel_filename, ".smc") || extention(std_romsel_filename, ".sfc")) {
+				bnrRomType = 8;
 			}
 		}
 

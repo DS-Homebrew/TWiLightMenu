@@ -35,6 +35,8 @@
 #define GBARUNNER_3DS    "sd:/_nds/GBARunner2_arm7dldi_3ds.nds"
 #define GBARUNNER_DSI_FC "fat:/_nds/GBARunner2_arm7dldi_dsi.nds"
 #define GBARUNNER_3DS_FC "fat:/_nds/GBARunner2_arm7dldi_3ds.nds"
+#define GBARUNNER_A7_SD  "sd:/_nds/GBARunner2_arm7dldi_ds.nds"
+#define GBARUNNER_A9_SD  "sd:/_nds/GBARunner2_arm9dldi_ds.nds"
 #define GBARUNNER_A7     "fat:/_nds/GBARunner2_arm7dldi_ds.nds"
 #define GBARUNNER_A9     "fat:/_nds/GBARunner2_arm9dldi_ds.nds"
 
