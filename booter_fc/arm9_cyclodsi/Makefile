@@ -14,16 +14,12 @@ include $(DEVKITARM)/ds_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 # DATA is a list of directories containing binary files embedded using bin2o
-# GRAPHICS is a list of directories containing image files to be converted with grit
-# MAXMOD_SOUNDBANK contains a directory of music and sound effect files
 #---------------------------------------------------------------------------------
 TARGET		:=	booter_fc
 BUILD		:=	build
-SOURCES		:=	../arm9/source ../arm9/source/graphics
-INCLUDES	:=	../arm9/include
-DATA		:=	../data  
-GRAPHICS	:=  ../gfx
-MUSIC       :=  ../music
+SOURCES		:=	../arm9/source
+INCLUDES    :=  ../arm9/include
+DATA        :=    ../data
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -72,8 +68,6 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
-PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
  
@@ -134,24 +128,8 @@ $(OUTPUT).elf	:	$(OFILES)
 	@echo $(notdir $<)
 	$(bin2o)
 
-#---------------------------------------------------------------------------------
-# This rule creates assembly source files using grit
-# grit takes an image file and a .grit describing how the file is to be processed
-# add additional rules like this for each image extension
-# you use in the graphics folders 
-#---------------------------------------------------------------------------------
-%.s %.h	: %.bmp %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
-
-#---------------------------------------------------------------------------------
-%.s %.h   : %.png %.grit
-#---------------------------------------------------------------------------------
-	grit $< -fts -o$*
-
 -include $(DEPSDIR)/*.d
- 
+
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------

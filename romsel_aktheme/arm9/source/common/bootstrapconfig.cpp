@@ -164,7 +164,6 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 	}
 
 	static const char list[][5] = {
-		"AWRP",	// Advance Wars: Dual Strike (EUR)
 		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
 		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
 		"AH9P",	// Tony Hawk's American Sk8land (EUR)
@@ -178,6 +177,8 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 	}
 
 	static const char list2[][4] = {
+		"C32",	// Ace Attorney Investigations: Miles Edgeworth
+		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altaïr's Chronicles
@@ -194,6 +195,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic: XY XX
 		"A26",	// Feel the Magic: XY XX (Demo)
+		"CYY",	// Giana Sisters DS (EUR)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
@@ -234,6 +236,8 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence
 		"YT9",	// Tony Hawk's Proving Ground
+		"AFZ",	// Transformers: Autobots
+		"AFY",	// Transformers: Decepticons
 		"YYK",	// Trauma Center: Under the Knife 2
 		"AUS",	// Ultimate Spider-Man
 		"CY8",	// Yu-Gi-Oh! World Championship 2009

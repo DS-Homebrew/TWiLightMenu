@@ -120,8 +120,8 @@ int main() {
 	//fifoSendValue32(FIFO_USER_01, *SCFG_ROM);
 	fifoSendValue32(FIFO_USER_02, *SCFG_CLK);
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
-	fifoSendValue32(FIFO_USER_04, *CPUID2);
-	fifoSendValue32(FIFO_USER_05, *CPUID);
+	//fifoSendValue32(FIFO_USER_04, *CPUID2);
+	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 	
@@ -130,7 +130,11 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		if(fifoCheckValue32(FIFO_USER_08)) {
+		if (*(u8*)(0x023FFD00) != 0) {
+			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
+			*(u8*)(0x023FFD00) = 0;
+		}
+		if (fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
 		}
 		resyncClock();

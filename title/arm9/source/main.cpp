@@ -564,6 +564,18 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	bs().loadSettings();
 
+	if (isDSiMode() && ms().consoleModel < 2) {
+		if (ms().wifiLed == -1) {
+			if (*(u8*)(0x023FFD01) == 0x13) {
+				ms().wifiLed = true;
+			} else if (*(u8*)(0x023FFD01) == 0x12) {
+				ms().wifiLed = false;
+			}
+		} else {
+			*(u8*)(0x023FFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi LED On/Off
+		}
+	}
+
 	runGraphicIrq();
 
 	swiWaitForVBlank();

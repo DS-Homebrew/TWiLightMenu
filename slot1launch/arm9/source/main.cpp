@@ -140,7 +140,7 @@ int main() {
 			do {
 				swiWaitForVBlank();
 				cardReadHeader((uint8*)&ndsHeader);
-			} while ((u32)ndsHeader.gameTitle == 0xffffffff);
+			} while ((u32)ndsHeader.gameTitle != 0xffffffff);
 			for (int i = 0; i < 60; i++) {
 				swiWaitForVBlank();
 			}

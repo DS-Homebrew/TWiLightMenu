@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: nds-bootstrap Github Repository
+    url: https://github.com/ahezard/nds-bootstrap/issues/new
+    about: Please use this Github Repository to report issues related to Nintendo DS games (not as a retail cart)
+  - name: GBARunner2 Github Repository
+    url: https://github.com/Gericom/GBARunner2/issues/new
+    about: Please use this Github Repository to report issues related to GameBoy Advance games, or the GBARunner2 GUI
+  - name: TWiLight Menu++ Updater Github Repository
+    url: https://github.com/RocketRobz/TWiLightMenu-Updater/issues/new
+    about: Please use this Github Repository to report issues related to the TWiLight Menu++ updater application on the Nintendo 3DS
