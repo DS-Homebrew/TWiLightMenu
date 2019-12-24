@@ -1,5 +1,4 @@
-
-#include "common/inifile.h"
+#include <easysave/ini.hpp>
 #include "common/bootstrappaths.h"
 #include "gbarunner2settings.h"
 #include <string.h>
@@ -15,7 +14,7 @@ GBAR2Settings::GBAR2Settings()
 
 void GBAR2Settings::loadSettings()
 {
-    CIniFile gbarunner2ini(GBARUNNER2_INI);
+    easysave::ini gbarunner2ini(GBARUNNER2_INI);
 
     // UI settings.
    	useBottomScreen = (gbarunner2ini.GetString("emulation", "useBottomScreen", "false")=="false" ? false : true);
@@ -29,13 +28,13 @@ void GBAR2Settings::loadSettings()
 void GBAR2Settings::saveSettings()
 {
 	gbar2Fix = true;
-    CIniFile gbarunner2ini(GBARUNNER2_INI);
+    easysave::ini gbarunner2ini(GBARUNNER2_INI);
 
    	gbarunner2ini.SetString("emulation", "useBottomScreen", useBottomScreen ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "centerMask", centerMask ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "mainMemICache", mainMemICache ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "wramICache", wramICache ? "true" : "false");
    	gbarunner2ini.SetString("emulation", "skipIntro", skipIntro ? "true" : "false");
-    gbarunner2ini.SaveIniFile(GBARUNNER2_INI);
+    gbarunner2ini.flush();
 	gbar2Fix = false;
 }

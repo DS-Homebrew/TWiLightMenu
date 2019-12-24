@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "common/bootstrappaths.h"
-#include "common/inifile.h"
+#include <easysave/ini.hpp>
 #include "common/systemdetails.h"
 
 static sNDSHeader nds;
@@ -60,7 +60,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
-		CIniFile settingsini( DSIMENUPP_INI );
+		easysave::ini settingsini(DSIMENUPP_INI);
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
 			return;

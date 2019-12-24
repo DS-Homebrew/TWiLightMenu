@@ -37,7 +37,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/nds_loader_arm9.h"
-#include "common/inifile.h"
+#include <easysave/ini.hpp>
 #include "common/fileCopy.h"
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
@@ -178,27 +178,28 @@ void loadMainMenu()
 
 void loadROMselect()
 {
-	if (ms().theme == 3)
-	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
+	std::string temp = "";
+	switch (ms().theme) {
+		case 3:
+			temp = "/_nds/TWiLightMenu/akmenu.srldr";
+			break;
+		case 2:
+			temp = "/_nds/TWiLightMenu/r4menu.srldr";
+			break;
+		default:
+			temp = "/_nds/TWiLightMenu/dsimenu.srldr";
 	}
-	else if (ms().theme == 2)
-	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
-	}
-	else
-	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
-	}
+
+	runNdsFile(temp, 0, NULL, true, false, false, true, true);
 }
 
 
-void loadDSiThemeList()
+void loadThemeList(std::string themeListDir, std::vector<std::string> vectorList)
 {
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(DSI_SYSTEM_UI_DIRECTORY)) != NULL)
+	if ((dir = opendir(themeListDir)) != NULL)
 	{
 		// print all the files and directories within directory
 		while ((ent = readdir(dir)) != NULL)
@@ -208,72 +209,7 @@ void loadDSiThemeList()
 			themeDir = ent->d_name;
 			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
 
-			dsiThemeList.emplace_back(themeDir);
-		}
-		closedir(dir);
-	}
-}
-
-
-void load3DSThemeList()
-{
-	DIR *dir;
-	struct dirent *ent;
-	std::string themeDir;
-	if ((dir = opendir(_3DS_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
-		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
-			// Reallocation here, but prevents our vector from being filled with
-
-			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
-
-			_3dsThemeList.emplace_back(themeDir);
-		}
-		closedir(dir);
-	}
-}
-
-
-void loadAkThemeList()
-{
-	DIR *dir;
-	struct dirent *ent;
-	std::string themeDir;
-	if ((dir = opendir(AK_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
-		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
-			// Reallocation here, but prevents our vector from being filled with
-
-			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
-
-			akThemeList.emplace_back(themeDir);
-		}
-		closedir(dir);
-	}
-}
-
-void loadR4ThemeList()
-{
-	DIR *dir;
-	struct dirent *ent;
-	std::string themeDir;
-	if ((dir = opendir(R4_SYSTEM_UI_DIRECTORY)) != NULL)
-	{
-		// print all the files and directories within directory 
-		while ((ent = readdir(dir)) != NULL)
-		{
-			// Reallocation here, but prevents our vector from being filled with
-
-			themeDir = ent->d_name;
-			if (themeDir == ".." || themeDir == "..." || themeDir == ".") continue;
-
-			r4ThemeList.emplace_back(themeDir);
+			vectorList.emplace_back(themeDir);
 		}
 		closedir(dir);
 	}
@@ -328,10 +264,7 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 {
 	if (!next)
 	{
-		if (remove("sd:/hiya/autoboot.bin") != 0)
-		{
-		}
-		else
+		if (remove("sd:/hiya/autoboot.bin") == 0)
 		{
 			hiyaAutobootFound = false;
 		}
@@ -341,9 +274,9 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 		FILE *ResetData = fopen("sd:/hiya/autoboot.bin", "wb");
 		fwrite(autoboot_bin, 1, autoboot_bin_len, ResetData);
 		fclose(ResetData);
-		CIniFile hiyacfwini(hiyacfwinipath);
+		easysave::ini hiyacfwini(hiyacfwinipath);
 		hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
-		hiyacfwini.SaveIniFile(hiyacfwinipath);
+		hiyacfwini.flush();
 	}
 }
 
@@ -404,10 +337,10 @@ int main(int argc, char **argv)
 	ms().loadSettings();
 	gs().loadSettings();
 	bs().loadSettings();
-	loadAkThemeList();
-	loadR4ThemeList();
-	load3DSThemeList();
-	loadDSiThemeList();
+	loadThemeList(DSI_SYSTEM_UI_DIRECTORY, dsiThemeList);
+	loadThemeList(R4_SYSTEM_UI_DIRECTORY, r4ThemeList);
+	loadThemeList(_3DS_SYSTEM_UI_DIRECTORY, _3dsThemeList);
+	loadThemeList(AK_SYSTEM_UI_DIRECTORY, akThemeList);
 	swiWaitForVBlank();
 
 	snd().init();
@@ -494,13 +427,11 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (isDSiMode() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked())
-	{
-		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {"16:10 (Widescreen)", "4:3 (Full Screen)"}, {true, false});
-	}
-
-	if (!isDSiMode() && sys().isRegularDS())
-	{
+	if (isDSiMode()) {
+		if (ms().consoleModel >= 2 && !sys().arm7SCFGLocked()) {
+			gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {"16:10 (Widescreen)", "4:3 (Full Screen)"}, {true, false});
+		}
+	} else if (sys().isRegularDS()) {
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
@@ -516,12 +447,9 @@ int main(int argc, char **argv)
 	}
 
 	if (REG_SCFG_EXT != 0) {
-		gamesPage.option(STR_CPUSPEED,
-				STR_DESCRIPTION_CPUSPEED_1,
-				Option::Bool(&ms().boostCpu),
-				{"133 MHz (TWL)", "67 MHz (NTR)"},
-				{true, false})
-		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
+		gamesPage
+			.option(STR_CPUSPEED, STR_DESCRIPTION_CPUSPEED_1, Option::Bool(&ms().boostCpu), { "133 MHz (TWL)", "67 MHz (NTR)" }, { true, false })
+			.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), { STR_ON, STR_OFF }, { true, false });
 		if (!sys().arm7SCFGLocked()) {
 			if (isDSiMode()) {
 				gamesPage.option(sdAccessible ? "Slot-1 SD: "+STR_USEBOOTSTRAP : STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
@@ -559,13 +487,9 @@ int main(int argc, char **argv)
 	}
 
 	gamesPage
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
-				Option::Bool(&ms().bootstrapFile),
-				{STR_NIGHTLY, STR_RELEASE},
-				{true, false})
-
-		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
-		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1, Option::Bool(&ms().bootstrapFile), { STR_NIGHTLY, STR_RELEASE }, {true, false})
+		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), { STR_ON, STR_OFF }, { true, false })
+		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), { STR_ON, STR_OFF }, { true, false });
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
 
@@ -599,44 +523,31 @@ int main(int argc, char **argv)
 				 "B&W/Greyscale"},
 				{0,
 				 1});
-		/*.option(STR_BLF,
-				STR_DESCRIPTION_BLF,
-				Option::Int(&ms().blfLevel),
-				{STR_OFF,
-				 "Lv. 1",
-				 "Lv. 2",
-				 "Lv. 3",
-				 "Lv. 4",
-				 "Lv. 5"},
-				{0,
-				 1,
-				 2,
-				 3,
-				 4,
-				 5,});*/
 
-	if (isDSiMode() && sdAccessible) {
-		miscPage.option(STR_SDREMOVALDETECTION,
+	if (isDSiMode()) {
+		if (sdAccessible) {
+			miscPage.option(STR_SDREMOVALDETECTION,
 				STR_DESCRIPTION_SDREMOVALDETECTION,
 				Option::Bool(&ms().sdRemoveDetect),
 				{STR_ON, STR_OFF},
 				{true, false});
-	}
 
-	if (isDSiMode() && sdAccessible && !sys().arm7SCFGLocked()) {
-		miscPage.option(STR_S1SDACCESS,
-				STR_DESCRIPTION_S1SDACCESS_1,
-				Option::Bool(&ms().secondaryAccess),
-				{STR_ON, STR_OFF},
-				{true, false});
-	}
+			if (!sys().arm7SCFGLocked()) {
+				miscPage.option(STR_S1SDACCESS,
+					STR_DESCRIPTION_S1SDACCESS_1,
+					Option::Bool(&ms().secondaryAccess),
+					{STR_ON, STR_OFF},
+					{true, false});
+			}
+		}
 
-	if (isDSiMode() && ms().consoleModel < 2) {
-		miscPage.option(STR_WIFILED,
+		if (ms().consoleModel < 2) {
+			miscPage.option(STR_WIFILED,
 				STR_DESCRIPTION_WIFILED,
 				Option::Bool(&ms().wifiLed, opt_wifiLed_toggle),
 				{STR_ON, STR_OFF},
 				{true, false});
+		}
 	}
 
 	miscPage
@@ -645,8 +556,9 @@ int main(int argc, char **argv)
 		.option(STR_HSMSG, STR_DESCRIPTION_HSMSG, Option::Bool(&ms().hsMsg), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
-	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
-		miscPage
+	if (isDSiMode() && ms().consoleModel < 2) {
+		if (sdAccessible) {
+			miscPage
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
 				Option::Int(&ms().sysRegion),
@@ -666,10 +578,8 @@ int main(int argc, char **argv)
 				"00000007.app",
 				"00000008.app"},
 				{-1, 0, 1, 2, 3, 4, 5, 6, 7, 8});
-	}
+		}
 
-	if (isDSiMode() && ms().consoleModel < 2)
-	{
 		// Actions do not have to bound to an object.
 		// See for exam here we have bound an option to
 		// hiyaAutobootFound.
