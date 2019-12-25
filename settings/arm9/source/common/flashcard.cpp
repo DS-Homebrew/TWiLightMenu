@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "common/bootstrappaths.h"
-#include <easysave/ini.hpp>
+#include "easysave/ini.hpp"
 #include "common/systemdetails.h"
 
 static sNDSHeader nds;

@@ -231,18 +231,11 @@ void defaultExitHandler()
 		}
 	}
 
-	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp, F_OK) == 0);
+	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp.c_str(), F_OK) == 0);
 
 	int err = 0;
 	if (srldrFound) {
-		err = runNdsFile("/_nds/TWiLightMenu/" + temp, 0, NULL, true, false, false, true, true);
-	}
-
-	if(!graphicsInited) {
-		graphicsInit();
-		fontInit();
-		graphicsInited = true;
-		fadeType = true;
+		err = runNdsFile("/_nds/TWiLightMenu/" + temp.c_str(), 0, NULL, true, false, false, true, true);
 	}
 
 	clearText();

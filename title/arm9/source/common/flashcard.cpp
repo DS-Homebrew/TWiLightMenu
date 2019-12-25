@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "common/bootstrappaths.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "common/systemdetails.h"
 
 static sNDSHeader nds;
@@ -60,7 +60,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
-		CIniFile settingsini( DSIMENUPP_INI );
+		easysave::ini settingsini(DSIMENUPP_INI);
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
 			return;
@@ -85,7 +85,9 @@ TWL_CODE void twl_flashcardInit(void) {
 		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
 		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
 
-		/*consoleDemoInit();
+		/*SetBrightness(0, 0);
+		SetBrightness(1, 0);
+		consoleDemoInit();
 		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
 		ShowGameInfo(gameid, gamename);
 
@@ -99,7 +101,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		/*if (!memcmp(gameid, "ASMA", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4) || ((u32)gameid == 0xB003C24)) {
+		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
 		} else if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
@@ -117,10 +119,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		} /*else if (!memcmp(gameid, "ALXX", 4)) {
 			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
 			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "VCKF", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloIEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} */
+		}*/
 	}
 }
 
