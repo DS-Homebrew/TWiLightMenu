@@ -34,7 +34,7 @@
 
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 #include "flashcard.h"
 
 int perGameSettings_cursorPosition = 0;
@@ -52,7 +52,7 @@ char pergamefilepath[256];
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (previousUsedDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
+	easysave::ini pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);

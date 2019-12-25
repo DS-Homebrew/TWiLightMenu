@@ -843,28 +843,28 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	std::string path;
 	int err = 0;
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
-		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		fcrompathini.flush();
 		// Does not support autoboot; so only nds-bootstrap launching works.
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
