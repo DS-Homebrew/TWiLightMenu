@@ -255,6 +255,7 @@ void smsWarning(void) {
 		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
+	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
 }
@@ -275,6 +276,7 @@ void mdRomTooBig(void) {
 		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
+	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
 }
@@ -293,6 +295,7 @@ void ramDiskMsg(void) {
 		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
+	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
 }
@@ -311,6 +314,7 @@ void dsiBinariesMissingMsg(void) {
 		checkSdEject();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
+	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
 }
@@ -387,7 +391,7 @@ string browseForFile(const vector<string> extensionList)
 			}
 		}
 
-		if (bnrRomType > 0 && bnrRomType < 9) {
+		if (bnrRomType > 0 && bnrRomType < 10) {
 			bnrWirelessIcon = 0;
 			isDSiWare = false;
 			isHomebrew = 0;
@@ -474,6 +478,7 @@ string browseForFile(const vector<string> extensionList)
 					swiWaitForVBlank();
 				} while (!(pressed & KEY_A));
 				showdialogbox = false;
+				for (int i = 0; i < 25; i++) swiWaitForVBlank();
 			} else {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
@@ -493,11 +498,22 @@ string browseForFile(const vector<string> extensionList)
 						ramDiskMsg();
 					}
 				}
-				else if (bnrRomType == 4 || bnrRomType == 5)
+				else if (bnrRomType == 5 || bnrRomType == 6)
 				{
 					smsWarning();
+					titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+					if (!isRegularDS) {
+						printSmall(false, 8, 168, "Location:");
+						if (secondaryDevice) {
+							printSmall(false, 8, 176, "Slot-1 microSD Card");
+						} else if (consoleModel < 3) {
+							printSmall(false, 8, 176, "SD Card");
+						} else {
+							printSmall(false, 8, 176, "microSD Card");
+						}
+					}
 				}
-				else if (bnrRomType == 6)
+				else if (bnrRomType == 7)
 				{
 					if (getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
@@ -594,6 +610,8 @@ string browseForFile(const vector<string> extensionList)
 
 					// Return the chosen file
 					return entry->name;
+				} else {
+					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 			}
 		}
