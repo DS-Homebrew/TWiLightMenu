@@ -42,7 +42,7 @@
 
 #include "graphics/fontHandler.h"
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -141,7 +141,7 @@ void loadPageList() {
 void loadPageInfo(std::string pagePath) {
 	manPageLinks.clear();
 
-	CIniFile pageIni(pagePath);
+	easysave::ini pageIni(pagePath);
 	
 	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
@@ -168,7 +168,7 @@ void loadPageInfo(std::string pagePath) {
 
 void LoadSettings(void) {
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	easysave::ini settingsini(settingsinipath);
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
@@ -279,19 +279,37 @@ void loadROMselect()
 		swiWaitForVBlank();
 	}
 	chdir((access("sd:/", F_OK) == 0) ? "sd:/" : "fat:/");
-	if (theme == 3)
-	{
-		runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
+
+	std::string temp = "";
+	switch (theme) {
+		case 3:
+			temp = "akmenu.srldr";
+			break;
+		case 2:
+			temp = "r4menu.srldr";
+			break;
+		default:
+			temp = "dsimenu.srldr";
 	}
-	else if (theme == 2)
-	{
-		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
+
+	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp.c_str(), F_OK) == 0);
+
+	int err = 0;
+	if (srldrFound) {
+		err = runNdsFile("/_nds/TWiLightMenu/" + temp.c_str(), 0, NULL, true, false, false, true, true);
 	}
-	else
-	{
-		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
-	}
+
 	fadeType = true;	// Fade in from white
+	clearText();
+	if (!srldrFound) {
+		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
+		printSmall(false, 4, 12, temp + " not found.");
+	} else {
+		char errorText[16];
+		snprintf(errorText, sizeof(errorText), "Error %i", err);
+		printSmall(false, 4, 4, "Unable to start " + temp);
+		printSmall(false, 4, 12, errorText);
+	}
 }
 
 void unalunchRomBoot(const char* rom) {

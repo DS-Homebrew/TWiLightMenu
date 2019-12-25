@@ -2,13 +2,7 @@
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
-#include <string.h>
 #include <unistd.h>
-
-#include "inifile.h"
-//#include "common/nitrofs.h"
-
-const char* languageIniPath;
 
 extern int guiLanguage;
 extern int bstrap_language;
