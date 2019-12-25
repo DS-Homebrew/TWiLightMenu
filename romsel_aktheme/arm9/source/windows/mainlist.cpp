@@ -156,7 +156,10 @@ void MainList::setupExtnames()
     {
 		_extnameFilter.emplace_back(std::string(".rvid"));
 	}
-    _extnameFilter.emplace_back(std::string(".gba"));
+    if (ms().useGbarunner)
+	{
+		_extnameFilter.emplace_back(std::string(".gba"));
+	}
     if (ms().showGb)
     {
         _extnameFilter.emplace_back(std::string(".gb"));

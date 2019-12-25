@@ -2256,6 +2256,31 @@ int main(int argc, char **argv) {
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					}
+				} else if (extention(filename, ".gba")) {
+					launchType = 1;
+
+					if (previousUsedDevice) {
+						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+						}
+						dsModeSwitch = true;
+					} else {
+						useNDSB = true;
+
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
 					launchType = 5;
 					

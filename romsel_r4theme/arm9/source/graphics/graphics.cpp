@@ -249,14 +249,15 @@ void vBlankHandler()
 			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
 			glSprite(32, 24, GL_FLIP_NONE, iconboxImage);
 			if (isDirectory) drawIconFolder(36, 28);
-			else if (bnrRomType == 8) drawIconPlg(36, 28);
-			else if (bnrRomType == 7) drawIconSNES(36, 28);
-			else if (bnrRomType == 6) drawIconMD(36, 28);
-			else if (bnrRomType == 5) drawIconGG(36, 28);
-			else if (bnrRomType == 4) drawIconSMS(36, 28);
-			else if (bnrRomType == 3) drawIconNES(36, 28);
-			else if (bnrRomType == 2) drawIconGBC(36, 28);
-			else if (bnrRomType == 1) drawIconGB(36, 28);
+			else if (bnrRomType == 9) drawIconPlg(36, 28);
+			else if (bnrRomType == 8) drawIconSNES(36, 28);
+			else if (bnrRomType == 7) drawIconMD(36, 28);
+			else if (bnrRomType == 6) drawIconGG(36, 28);
+			else if (bnrRomType == 5) drawIconSMS(36, 28);
+			else if (bnrRomType == 4) drawIconNES(36, 28);
+			else if (bnrRomType == 3) drawIconGBC(36, 28);
+			else if (bnrRomType == 2) drawIconGB(36, 28);
+			else if (bnrRomType == 1) drawIconGBA(36, 28);
 			else drawIcon(36, 28);
 			if (bnrWirelessIcon > 0) glSprite(20, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
