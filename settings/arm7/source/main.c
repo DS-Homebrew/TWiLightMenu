@@ -130,7 +130,7 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		if (*(u8*)(0x023FFD00) != 0) {
+		if (isDSiMode() && *(u8*)(0x023FFD00) != 0) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
 			*(u8*)(0x023FFD00) = 0;
 		}

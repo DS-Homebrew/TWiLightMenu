@@ -126,7 +126,9 @@ int main() {
 	//fifoSendValue32(FIFO_USER_04, *CPUID2);
 	//fifoSendValue32(FIFO_USER_05, *CPUID);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
-	*(u8*)(0x023FFD01) = i2cReadRegister(0x4A, 0x30);
+	if (isDSiMode()) {
+		*(u8*)(0x023FFD01) = i2cReadRegister(0x4A, 0x30);
+	}
 	fifoSendValue32(FIFO_USER_06, 1);
 	
 	// Keep the ARM7 mostly idle
@@ -134,7 +136,7 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		if (*(u8*)(0x023FFD00) != 0) {
+		if (isDSiMode() && *(u8*)(0x023FFD00) != 0) {
 			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
 			*(u8*)(0x023FFD00) = 0;
 		}
