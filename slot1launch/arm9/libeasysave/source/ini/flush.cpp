@@ -50,7 +50,7 @@ size_t ini::flush() {
         // redone! Maybe break off the stripping of quotes into a function that
         // also takes a key index?
         file << m_keys[j].name << "=\""
-             << fetch(m_sections[m_keys[j].index], m_keys[j].name) << "\""
+             << GetString(m_sections[m_keys[j].index], m_keys[j].name) << "\""
              << std::endl;
       }
   }

@@ -112,10 +112,6 @@ extern std::string STR_CAMERA;
 extern std::string STR_REBOOT;
 extern std::string STR_DIRECT;
 extern std::string STR_REGULAR;
-extern std::string STR_DARK;
-extern std::string STR_LIGHT;
-extern std::string STR_BOTTOM;
-extern std::string STR_TOP;
 extern std::string STR_RELEASE;
 extern std::string STR_NIGHTLY;
 

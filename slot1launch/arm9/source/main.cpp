@@ -26,7 +26,7 @@
 #include <malloc.h>
 #include <list>
 
-#include <easysave/ini.hpp>
+#include "easysave/ini.hpp"
 #include "nds_card.h"
 #include "launch_engine.h"
 #include "crc.h"

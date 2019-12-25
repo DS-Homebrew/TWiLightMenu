@@ -37,7 +37,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/nds_loader_arm9.h"
-#include <easysave/ini.hpp>
+#include "easysave/ini.hpp"
 #include "common/fileCopy.h"
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
@@ -171,29 +171,6 @@ void rebootTWLMenuPP()
 		swiWaitForVBlank();
 }*/
 
-void loadMainMenu()
-{
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
-}
-
-void loadROMselect()
-{
-	std::string temp = "";
-	switch (ms().theme) {
-		case 3:
-			temp = "/_nds/TWiLightMenu/akmenu.srldr";
-			break;
-		case 2:
-			temp = "/_nds/TWiLightMenu/r4menu.srldr";
-			break;
-		default:
-			temp = "/_nds/TWiLightMenu/dsimenu.srldr";
-	}
-
-	runNdsFile(temp, 0, NULL, true, false, false, true, true);
-}
-
-
 void loadThemeList(std::string themeListDir, std::vector<std::string> vectorList)
 {
 	DIR *dir;
@@ -222,9 +199,9 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	case 0:
 		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case 2:
-		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETRETURN, Option::Str(&ms().r4_theme), r4ThemeList);
+		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME, Option::Str(&ms().r4_theme), r4ThemeList);
 	case 3:
-		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
+		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETSUBTHEME, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
 		return Option(STR_SUBTHEMESEL_3DS, STR_AB_SETSUBTHEME, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
@@ -236,17 +213,50 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 
 void defaultExitHandler()
 {
-	/*if (twlFirmChanged) {
-		applyTwlFirmSettings();
-		rebootTWLMenuPP();
-	}*/
 	flashcardInit();
-	if (ms().showMainMenu)
-	{
-		loadMainMenu();
+	std::string temp = "";
+
+	if (ms().showMainMenu) {
+		temp = "mainmenu.srldr";
+	} else {
+		switch (ms().theme) {
+			case 3:
+				temp = "akmenu.srldr";
+				break;
+			case 2:
+				temp = "r4menu.srldr";
+				break;
+			default:
+				temp = "dsimenu.srldr";
+		}
 	}
-	loadROMselect();
+
+	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp, F_OK) == 0);
+
+	int err = 0;
+	if (srldrFound) {
+		err = runNdsFile("/_nds/TWiLightMenu/" + temp, 0, NULL, true, false, false, true, true);
+	}
+
+	if(!graphicsInited) {
+		graphicsInit();
+		fontInit();
+		graphicsInited = true;
+		fadeType = true;
+	}
+
+	clearText();
+	if (!srldrFound) {
+		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
+		printSmall(false, 4, 12, temp + " not found.");
+	} else {
+		char errorText[16];
+		snprintf(errorText, sizeof(errorText), "Error %i", err);
+		printSmall(false, 4, 4, "Unable to start " + temp);
+		printSmall(false, 4, 12, errorText);
+	}
 }
+
 void opt_reset_subtheme(int prev, int next)
 {
 	if (prev != next)

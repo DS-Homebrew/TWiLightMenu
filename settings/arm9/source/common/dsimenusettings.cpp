@@ -2,7 +2,7 @@
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
-#include <easysave/ini.hpp>
+#include "easysave/ini.hpp"
 #include <string.h>
 
 DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
