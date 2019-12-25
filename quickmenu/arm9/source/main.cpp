@@ -1596,8 +1596,9 @@ int main(int argc, char **argv) {
 							if (secondaryDevice) {
 								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 								if (isDSiMode()) {
-									gbaRunner2Path = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+									gbaRunner2Path = consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
 								}
+
 								if (useBootstrap) {
 									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 									iprintf ("Start failed. Error %i\n", err);
@@ -1905,15 +1906,17 @@ int main(int argc, char **argv) {
 
 					argarray.at(0) = (char *)ndsToBoot;
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
-					char text[32];
-					snprintf (text, sizeof(text), "Start failed. Error %i", err);
+
 					clearText();
 					ClearBrightness();
+
+					char text[32];
+					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					printSmall(false, 4, 80, text);
-					if (err == 1) {
-						printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-						printSmall(false, 4, 96, "not found.");
-					}
+
+					printSmall(false, 4, 88, err == 1 ? "Could not find" : "Unable to launch");
+					printSmall(false, 4, 96, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+
 					stop();
 				}
 
@@ -2033,8 +2036,8 @@ int main(int argc, char **argv) {
 				strcpy (filePath + pathLen, name);
 				free(argarray.at(0));
 				argarray.at(0) = filePath;
-				if(useBackend) {
-					if(useBootstrap || !previousUsedDevice) {
+				if (useBackend) {
+					if (useBootstrap || !previousUsedDevice) {
 						std::string path = argarray[0];
 						std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
 						std::string ramdiskname = ReplaceAll(filename, typeToReplace, getImgExtension());
@@ -2190,15 +2193,16 @@ int main(int argc, char **argv) {
 
 						argarray.at(0) = (char *)ndsToBoot;
 						int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
-						char text[32];
-						snprintf (text, sizeof(text), "Start failed. Error %i", err);
+
 						clearText();
 						ClearBrightness();
+
+						char text[32];
+						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						printSmall(false, 4, 80, text);
-						if (err == 1) {
-							printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-							printSmall(false, 4, 96, "not found.");
-						}
+
+						printSmall(false, 4, 88, err == 1 ? "Could not find" : "Unable to launch");
+						printSmall(false, 4, 96, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 						stop();
 					} else {
 						launchType = 1;
@@ -2237,7 +2241,7 @@ int main(int argc, char **argv) {
 
 				homebrewArg = ROMpath;
 
-				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
+				std::string ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
 				if (extention(filename, ".plg")) {
 					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
 
@@ -2248,53 +2252,18 @@ int main(int argc, char **argv) {
 						if (ROMpath[4+i] == '\x00') break;
 					}
 
-					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					easysave::ini dstwobootini("fat:/_dstwo/twlm.ini");
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+					dstwobootini.flush();
 				} else if (extention(filename, ".rvid")) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					}
-				} else if (extention(filename, ".gba")) {
-					launchType = 1;
-
-					if (previousUsedDevice) {
-						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-						}
-						dsModeSwitch = true;
-					} else {
-						useNDSB = true;
-
-						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
-					}
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
 					launchType = 5;
-					
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
-					}
 				} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
 					launchType = 4;
 
 					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
-					}
 				} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
 					mkdir(previousUsedDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(previousUsedDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
@@ -2302,17 +2271,18 @@ int main(int argc, char **argv) {
 					launchType = 6;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
-					}
-				} else if (extention(filename, ".gen")) {
+				} else if (extention(filename, ".gen") || extention(filename, ".gba") || extention(filename, ".smc") || extention(filename, ".sfc")) {
 					launchType = 1;
 
 					if (previousUsedDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						if (extention(filename, ".gen")) {
+							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds"
+						} else if (extention(filename, ".gba")) {
+							ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
+
 						dsModeSwitch = true;
 					} else {
 						useNDSB = true;
@@ -2322,37 +2292,25 @@ int main(int argc, char **argv) {
 
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-						bootstrapini.flush();
-					}
-				} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
-					launchType = 1;
-
-					if (previousUsedDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						if (extention(filename, ".gen")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
+						} else if (extention(filename, ".gba")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
 						}
-						dsModeSwitch = true;
-					} else {
-						useNDSB = true;
 
-						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-						easysave::ini bootstrapini("sd:/_nds/nds-bootstrap.ini");
-
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", extention(filename, ".smc") || extention(filename, ".sfc") ? 1 : 0);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						if (extention(filename, ".gen") || extention(filename, ".smc") || extention(filename, ".sfc")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						}
+
 						bootstrapini.flush();
 					}
 				}
@@ -2361,21 +2319,28 @@ int main(int argc, char **argv) {
 				argarray.push_back(ROMpath);
 				int err = 0;
 
+				if(access(ndsToBoot, F_OK) != 0) {
+					ndsToBoot.replace(0, 2, "fat");
+				}
+
 				argarray.at(0) = (char *)ndsToBoot;
 				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, true);	// Pass ROM to emulator as argument
 
-				char text[32];
-				snprintf (text, sizeof(text), "Start failed. Error %i", err);
 				clearText();
 				ClearBrightness();
+
+				char text[32];
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);				
 				printLarge(false, 4, 80, text);
-				if (err == 1 && useNDSB) {
-					printSmall(false, 4, 88, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-					printSmall(false, 4, 96, "not found.");
+
+				if (useNDSB) {
+					printSmall(false, 4, 88, err == 1 ? "Could not find" : "Unable to launch");
+					printSmall(false, 4, 96, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 				}
+
 				stop();
 
-				while(argarray.size() !=0 ) {
+				while (argarray.size() != 0) {
 					free(argarray.at(0));
 					argarray.erase(argarray.begin());
 				}
