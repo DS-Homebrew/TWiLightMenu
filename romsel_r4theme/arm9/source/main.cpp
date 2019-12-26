@@ -2064,6 +2064,7 @@ int main(int argc, char **argv) {
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
 						}
+						argarray.push_back(ROMpath);
 					} else if (SNES) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
