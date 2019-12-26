@@ -1400,9 +1400,6 @@ int main(int argc, char **argv) {
 
 			if (menuButtonPressed) {
 				switch (startMenu_cursorPosition) {
-					case -1:
-					default:
-						break;
 					case 0:
 						if (launchType == -1) {
 							showCursor = false;
@@ -1657,17 +1654,16 @@ int main(int argc, char **argv) {
 						int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 						iprintf ("Start failed. Error %i\n", err);
 						break;
-				}
-				if (startMenu_cursorPosition == 6) {
-					// Proceed to ROM select menu
-					showCursor = false;
-					fadeType = false;	// Fade to white
-					mmEffectEx(&snd_launch);
-					for (int i = 0; i < 60; i++) {
-						iconYpos[6] -= 6;
-						swiWaitForVBlank();
-					}
-					loadROMselect();
+					case 6:
+						// Proceed to ROM select menu
+						showCursor = false;
+						fadeType = false;	// Fade to white
+						mmEffectEx(&snd_launch);
+						for (int i = 0; i < 60; i++) {
+							iconYpos[6] -= 6;
+							swiWaitForVBlank();
+						}
+						loadROMselect();
 				}
 
 				menuButtonPressed = false;
