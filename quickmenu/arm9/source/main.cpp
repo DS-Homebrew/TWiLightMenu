@@ -1646,7 +1646,7 @@ int main(int argc, char **argv) {
 							mmEffectEx(&snd_backlight);
 						}
 						break;
-					case 5:
+					case 5: {
 						// Launch settings
 						gotosettings = true;
 						if (sdFound()) {
@@ -1655,7 +1655,7 @@ int main(int argc, char **argv) {
 						int err = runNdsFile ("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 						iprintf ("Start failed. Error %i\n", err);
 						break;
-					case 6:
+					} case 6:
 						loadROMselect();
 				}
 
