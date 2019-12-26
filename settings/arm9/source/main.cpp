@@ -231,21 +231,23 @@ void defaultExitHandler()
 		}
 	}
 
-	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp.c_str(), F_OK) == 0);
+	const char *ROMpath = (std::string("/_nds/TWiLightMenu/") + temp).c_str();
+	bool srldrFound = (access(ROMpath, F_OK) == 0);
 
 	int err = 0;
 	if (srldrFound) {
-		err = runNdsFile("/_nds/TWiLightMenu/" + temp.c_str(), 0, NULL, true, false, false, true, true);
+		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
 	}
 
+	fadeType = true;
 	clearText();
 	if (!srldrFound) {
 		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, temp + " not found.");
+		printSmall(false, 4, 12, (temp + std::string(" not found.")).c_str());
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, "Unable to start " + temp);
+		printSmall(false, 4, 4, (std::string("Unable to start ") + temp).c_str());
 		printSmall(false, 4, 12, errorText);
 	}
 }

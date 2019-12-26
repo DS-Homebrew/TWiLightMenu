@@ -899,7 +899,7 @@ void loadROMselect()
 			temp = "dsimenu.srldr";
 	}
 
-	const char *ROMpath = (std::string("/_nds/TWiLightMenu/%s") + temp).c_str();
+	const char *ROMpath = (std::string("/_nds/TWiLightMenu/") + temp).c_str();
 	bool srldrFound = (access(ROMpath, F_OK) == 0);
 
 	int err = 0;
