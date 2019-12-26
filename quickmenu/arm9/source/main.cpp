@@ -899,21 +899,24 @@ void loadROMselect()
 			temp = "dsimenu.srldr";
 	}
 
-	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp.c_str(), F_OK) == 0);
+	char ROMpath[256];
+	snprintf (ROMpath, "/_nds/TWiLightMenu/%s", temp.c_str());
+
+	bool srldrFound = (access(ROMpath, F_OK) == 0);
 
 	int err = 0;
 	if (srldrFound) {
-		err = runNdsFile("/_nds/TWiLightMenu/" + temp.c_str(), 0, NULL, true, false, false, true, true);
+		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
 	}
 
 	clearText();
 	if (!srldrFound) {
 		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, temp + " not found.");
+		printSmall(false, 4, 12, temp.c_str() + std::string(" not found.").c_str());
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, "Unable to start " + temp);
+		printSmall(false, 4, 4, std::string("Unable to start ").c_str() + temp.c_str());
 		printSmall(false, 4, 12, errorText);
 	}
 }
@@ -2272,7 +2275,7 @@ int main(int argc, char **argv) {
 
 					if (previousUsedDevice) {
 						if (extention(filename, ".gen")) {
-							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds"
+							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						} else if (extention(filename, ".gba")) {
 							ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
@@ -2315,11 +2318,11 @@ int main(int argc, char **argv) {
 				argarray.push_back(ROMpath);
 				int err = 0;
 
-				if(access(ndsToBoot, F_OK) != 0) {
+				if(access(ndsToBoot.c_str(), F_OK) != 0) {
 					ndsToBoot.replace(0, 2, "fat");
 				}
 
-				argarray.at(0) = (char *)ndsToBoot;
+				argarray.at(0) = (char *)ndsToBoot.c_str(); // it seems to like the .c_str() on the end
 				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, true);	// Pass ROM to emulator as argument
 
 				clearText();
