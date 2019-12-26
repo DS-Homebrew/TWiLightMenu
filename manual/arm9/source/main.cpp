@@ -36,6 +36,7 @@
 #include "graphics/graphics.h"
 #include "graphics/topText.h"
 
+#include "common/tonccpy.h"
 #include "common/nitrofs.h"
 #include "nds_loader_arm9.h"
 #include "errorScreen.h"
@@ -143,7 +144,7 @@ void loadPageInfo(std::string pagePath) {
 
 	easysave::ini pageIni(pagePath);
 	
-	memset(&manPageTitle[0], 0, sizeof(manPageTitle));
+	toncset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
 	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);
 	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
@@ -292,22 +293,23 @@ void loadROMselect()
 			temp = "dsimenu.srldr";
 	}
 
-	bool srldrFound = (access("/_nds/TWiLightMenu/" + temp.c_str(), F_OK) == 0);
+	const char *ROMpath = (std::string("/_nds/TWiLightMenu/%s") + temp).c_str();
+	bool srldrFound = (access(ROMpath, F_OK) == 0);
 
 	int err = 0;
 	if (srldrFound) {
-		err = runNdsFile("/_nds/TWiLightMenu/" + temp.c_str(), 0, NULL, true, false, false, true, true);
+		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
 	}
 
-	fadeType = true;	// Fade in from white
+	fadeType = true;
 	clearText();
 	if (!srldrFound) {
 		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, temp + " not found.");
+		printSmall(false, 4, 12, (temp + std::string(" not found.")).c_str());
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, "Unable to start " + temp);
+		printSmall(false, 4, 4, (std::string("Unable to start ") + temp).c_str());
 		printSmall(false, 4, 12, errorText);
 	}
 }
@@ -320,7 +322,7 @@ void unalunchRomBoot(const char* rom) {
 	unlaunchDevicePath[2] = 'm';
 	unlaunchDevicePath[3] = 'c';
 
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
@@ -328,7 +330,7 @@ void unalunchRomBoot(const char* rom) {
 	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	int i2 = 0;
 	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
@@ -338,19 +340,19 @@ void unalunchRomBoot(const char* rom) {
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
 
-	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	for (int i = 0; i < 15; i++) swiWaitForVBlank();
 }
 
 void unlaunchSetHiyaBoot(void) {
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
 	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	int i2 = 0;
 	for (int i = 0; i < 14; i++) {
 		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)

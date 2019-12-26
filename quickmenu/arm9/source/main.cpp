@@ -465,9 +465,9 @@ void SetMPUSettings(const char* filename) {
 		mpuregion = 0;
 	}
 
-	if(pressed & KEY_RIGHT) {
+	if (pressed & KEY_RIGHT) {
 		mpusize = 3145728;
-	} else if(pressed & KEY_LEFT) {
+	} else if (pressed & KEY_LEFT) {
 		mpusize = 1;
 	} else {
 		mpusize = 0;
@@ -907,6 +907,7 @@ void loadROMselect()
 		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
 	}
 
+	fadeType = true;
 	clearText();
 	if (!srldrFound) {
 		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
