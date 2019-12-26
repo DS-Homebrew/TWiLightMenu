@@ -1400,6 +1400,16 @@ int main(int argc, char **argv) {
 			if (startMenu_cursorPosition > 6) startMenu_cursorPosition = 6;
 
 			if (menuButtonPressed) {
+				if (startMenu_cursorPosition == 5 || startMenu_cursorPosition == 6) {
+					showCursor = false;
+					fadeType = false;	// Fade to white
+					mmEffectEx(&snd_launch);
+					for (int i = 0; i < 60; i++) {
+						iconYpos[startMenu_cursorPosition] -= 6;
+						swiWaitForVBlank();
+					}
+				}
+
 				switch (startMenu_cursorPosition) {
 					case 0:
 						if (launchType == -1) {
@@ -1601,11 +1611,10 @@ int main(int argc, char **argv) {
 									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 									iprintf ("Start failed. Error %i\n", err);
 								} else {
-									if (isDSiMode()) {
-										loadGameOnFlashcard(gbaRunner2Path, (consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
-									} else {
-										loadGameOnFlashcard(gbaRunner2Path, (gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
-									}
+									char ndsToBoot[256];
+									sprintf(ndsToBoot, "GBARunner2_arm%sdldi_%s.nds", !isDSiMode() && !gbar2DldiAccess ? "9" : "7", isDSiMode() ? (consoleModel > 0 ? "3ds" : "dsi") : "ds");
+
+									loadGameOnFlashcard(gbaRunner2Path, ndsToBoot, false);
 								}
 							} else {
 								std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
@@ -1639,16 +1648,7 @@ int main(int argc, char **argv) {
 						break;
 					case 5:
 						// Launch settings
-						showCursor = false;
-						fadeType = false;	// Fade to white
-						mmEffectEx(&snd_launch);
-						for (int i = 0; i < 60; i++) {
-							iconYpos[5] -= 6;
-							swiWaitForVBlank();
-						}
-
 						gotosettings = true;
-						//SaveSettings();
 						if (sdFound()) {
 							chdir("sd:/");
 						}
@@ -1656,14 +1656,6 @@ int main(int argc, char **argv) {
 						iprintf ("Start failed. Error %i\n", err);
 						break;
 					case 6:
-						// Proceed to ROM select menu
-						showCursor = false;
-						fadeType = false;	// Fade to white
-						mmEffectEx(&snd_launch);
-						for (int i = 0; i < 60; i++) {
-							iconYpos[6] -= 6;
-							swiWaitForVBlank();
-						}
 						loadROMselect();
 				}
 
@@ -1729,13 +1721,12 @@ int main(int argc, char **argv) {
 			int pathLen = strlen(filePath);
 			vector<char*> argarray;
 
-			if (extention(filename, ".argv"))
-			{
+			if (extention(filename, ".argv")) {
 				FILE *argfile = fopen(filename.c_str(),"rb");
-					char str[PATH_MAX], *pstr;
+				char str[PATH_MAX], *pstr;
 				const char seps[]= "\n\r\t ";
 
-				while( fgets(str, PATH_MAX, argfile) ) {
+				while (fgets(str, PATH_MAX, argfile)) {
 					// Find comment and end string there
 					if( (pstr = strchr(str, '#')) )
 						*pstr= '\0';
@@ -1743,7 +1734,7 @@ int main(int argc, char **argv) {
 					// Tokenize arguments
 					pstr= strtok(str, seps);
 
-					while( pstr != NULL ) {
+					while (pstr != NULL) {
 						argarray.push_back(strdup(pstr));
 						pstr= strtok(NULL, seps);
 					}
