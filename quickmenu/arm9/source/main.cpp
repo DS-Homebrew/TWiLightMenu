@@ -912,7 +912,7 @@ void loadROMselect()
 	clearText();
 	if (!srldrFound) {
 		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, (std::string(temp + (" not found.")).c_str());
+		printSmall(false, 4, 12, (temp + std::string(" not found.")).c_str());
 	} else {
 		char errorText[16];
 		snprintf(errorText, sizeof(errorText), "Error %i", err);
