@@ -1,4 +1,4 @@
-name: TWiLight Menu++ Binary Compilation
+name: TWiLightMenu Binary Compilation
 
 on:
   push:
@@ -10,26 +10,24 @@ on:
 
 jobs:
   buildApplet:
-    name: Build TWiLight Menu++
+    name: Build TWiLightMenu
     runs-on: ubuntu-16.04
 
     steps:
     - uses: actions/checkout@v1
-    - name: Install devkitPro, devKitARM, libnds, p7zip & havegd
+    - name: Install devkit(Pro/ARM), libnds, and p7zip
       run: |
-        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-        sudo apt update
-        # Install haveged to ensure enough entropy
-        sudo apt install p7zip-full haveged
-        sudo dpkg -i pacman.deb
-        sudo dkp-pacman -Sy
-        sudo dkp-pacman -S nds-dev --noconfirm
+       curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+       sudo apt update
+       sudo apt install p7zip-full haveged
+       sudo dpkg -i pacman.deb
+       sudo dkp-pacman -Sy
+       sudo dkp-pacman -S nds-dev --noconfirm
+    - name: make
+      run: |
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
-        # export TWLNOPATCHSRLHEADER=1
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
-    - name: Build TWiLightMenu++
-      run: |
         make package
         cd booter/
         chmod +x make_cia
@@ -40,92 +38,32 @@ jobs:
         chmod +x make_cia
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
-    - name: Pack 7z Package for nightly
-      if: not(startsWith(variables['Build.SourceBranchName'], 'v'))
-      run: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
         rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
         7z a TWiLightMenu-Lite.7z TWiLightMenu/
-        cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
-        cp TWiLightMenu-Lite.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu-Lite.7z
-    - name: Pack 7z Package for release
-      if: startsWith(variables['Build.SourceBranchName'], 'v')
-      run: |
-        mkdir 7zfile/_nds/TWiLightMenu/boxart/
-        mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
-        mv 7zfile/BOOT.NDS 7zfile/DSi\&3DS\ -\ SD\ card\ users/
-        mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard\ users/BOOT.NDS
-        # nds-bootstrap
-        mkdir nds-bootstrap
-        cd nds-bootstrap
-        curl -H "Authorization: token ${{ secrets.BOT_TOKEN }}" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
-        curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
-        7z x nds-bootstrap.7z
-        mv nds-bootstrap.* ..
-        mkdir TWiLightMenu
-        mv release-bootstrap.ver TWiLightMenu
-        cd ..
-        curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
-        7z x nds-bootstrap.7z
-        mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
-        mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
-        mv nds-bootstrap/b4ds-release.nds 7zfile/Flashcard\ users/_nds/
-        mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
-        mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
-        mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
-        mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
-        mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
-        # version.txt
-        echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
-        cd 7zfile
-        7z a TWiLightMenu.7z .
-        cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
-    - name: Publish build to TWLBot
-      if: not(startsWith(variables['Build.SourceBranch'], 'refs/pull'))
-      run: |
-        export CURRENT_DATE="$(date +"%Y%m%d-%H%M%S")"
-        echo '##vso[task.setvariable variable=COMMIT_TAG;isOutput=true]'$(git log --format=%h -1)
-        echo '##vso[task.setvariable variable=COMMIT_MESSAGE;isOutput=true]'$(git log --pretty=format:"%an - %s" -1)
-
-        export COMMIT_TAG="$(git log --format=%h -1)"
-        export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
-        echo $COMMIT_TAG > commit.txt
-        echo $COMMIT_MESSAGE > message.txt
-        echo $CURRENT_DATE > date.txt
-        git config --global user.email "flamekat54@aol.com"
-        git config --global user.name "TWLBot"
-        git clone --depth 1 https://${{ secrets.BOT_TOKEN }}@github.com/TWLBot/Builds.git
-        cd Builds/
-        cp ../TWiLightMenu.7z TWiLightMenu.7z
-        cp ../TWiLightMenu-Lite.7z TWiLightMenu-Lite.7z
-        git stage .
-        git commit -m "TWiLight Menu++ | $COMMIT_TAG"
-        git push origin master
-        git tag v$CURRENT_DATE
-
-        echo '##vso[task.setvariable variable=TWLBOT_COMMIT]'$(git log -1 --format="%H")
-    - name: Send Discord Webhook (Failure)
-      if: failure()
-      run: |
-         COMMIT_TAG=$(<commit.txt)
-         COMMIT_MESSAGE=$(<message.txt)
-         CURRENT_DATE=$(<date.txt)
-         curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/github-actions-discord-webhook/master/send.sh
-         sudo chmod +x send.sh
-         ./send.sh failure ${{ secrets.WEBHOOK_URL }}
-    - name: Send Discord Webhook (Success)
+        ls
+    - name: Commit to TWLBot/overflow-builds
       if: success() # it worked yay
       run: |
-         COMMIT_TAG=$(<commit.txt)
-         COMMIT_MESSAGE=$(<message.txt)
-         CURRENT_DATE=$(<date.txt)
-         curl -o send.sh https://raw.githubusercontent.com/DiscordHooks/github-actions-discord-webhook/master/send.sh
-         sudo chmod +x send.sh
-         ./send.sh success ${{ secrets.WEBHOOK_URL }}
+        export COMMIT_TAG="$(git log --format=%h -1)"
+        export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
+        export CURRENT_DATE="$(date +"%Y%m%d-%H%M%S")"
+        git config --global user.email "flamekat54@aol.com"
+        git config --global user.name "TWLBot"
+        git clone --depth 1 https://${{ secrets.BOT_TOKEN }}@github.com/TWLBot/overflow-builds.git
+        cd overflow-builds/
+        cp ../TWiLightMenu.7z TWiLightMenu.7z
+        ls
+        git stage .
+        git commit -m "TWiLightMenu | $COMMIT_TAG"
+        git push origin master
+#        curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+#        sudo chmod +x send.sh
+#        ./send.sh success ${{ secrets.WEBHOOK_URL }}
     - uses: actions/upload-artifact@master
       with:
-        name: Relaunch-${{ github.sha }}
-        path: Relaunch/
+        name: TWiLightMenu-${{ github.sha }}
+        path: TWiLightMenu/
