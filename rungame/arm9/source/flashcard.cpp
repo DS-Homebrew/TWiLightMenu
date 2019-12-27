@@ -97,7 +97,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11) {
-		CIniFile settingsini( settingsinipath );
+		easysave::ini settingsini(settingsinipath);
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
 			return;

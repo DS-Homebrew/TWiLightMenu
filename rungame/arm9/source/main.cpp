@@ -31,7 +31,7 @@
 
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
 #include "perGameSettings.h"
 #include "fileCopy.h"
@@ -94,7 +94,7 @@ static bool bstrap_dsiMode = false;
 
 TWL_CODE void LoadSettings(void) {
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	easysave::ini settingsini( settingsinipath );
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", 0);
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
@@ -120,9 +120,8 @@ TWL_CODE void LoadSettings(void) {
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
 	// nds-bootstrap
-	CIniFile bootstrapini( bootstrapinipath );
-
-	ndsPath = bootstrapini.GetString( "NDS-BOOTSTRAP", "NDS_PATH", "");
+	easysave::ini bootstrapini( bootstrapinipath );
+	ndsPath = bootstrapini.GetString("NDS-BOOTSTRAP", "NDS_PATH", "");
 }
 
 using namespace std;
@@ -177,8 +176,7 @@ TWL_CODE int lastRunROM() {
 		case 0:
 			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
 		case 1:
-			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice)
-			{
+			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice) {
 				std::string savepath;
 
 				romfolder = romPath;
@@ -289,14 +287,14 @@ TWL_CODE int lastRunROM() {
 				}
 
 				argarray.at(0) = (char *)ndsToBoot;
-				CIniFile bootstrapini(bootstrapinipath);
+				easysave::ini bootstrapini(bootstrapinipath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
-				bootstrapini.SaveIniFile(bootstrapinipath);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
+				bootstrapini.flush();
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 			} else {
@@ -313,16 +311,16 @@ TWL_CODE int lastRunROM() {
 
 				std::string path;
 				if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+					easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
 					path = ReplaceAll(romPath, "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+					fcrompathini.flush();
 					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+					easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
 					path = ReplaceAll(romPath, "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+					fcrompathini.flush();
 					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");

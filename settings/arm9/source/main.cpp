@@ -171,16 +171,14 @@ void rebootTWLMenuPP()
 		swiWaitForVBlank();
 }*/
 
-void loadThemeList(std::string themeListDir, std::vector<std::string> vectorList)
+void loadThemeList(const std::string& themeListDir, const std::vector<std::string>& vectorList)
 {
 	DIR *dir;
 	struct dirent *ent;
 	std::string themeDir;
-	if ((dir = opendir(themeListDir)) != NULL)
-	{
+	if ((dir = opendir(themeListDir.c_str())) != NULL) {
 		// print all the files and directories within directory
-		while ((ent = readdir(dir)) != NULL)
-		{
+		while ((ent = readdir(dir)) != NULL) {
 			// Reallocation here, but prevents our vector from being filled with
 
 			themeDir = ent->d_name;
