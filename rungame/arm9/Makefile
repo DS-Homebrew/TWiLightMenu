@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	rungame
 BUILD		:=	build
-SOURCES		:=	source dldi-include
-INCLUDES	:=	include dldi-include
+SOURCES		:=	source libeasysave/source/ini dldi-include
+INCLUDES	:=	include libeasysave/include dldi-include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

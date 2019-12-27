@@ -32,6 +32,7 @@
 #include "nds_loader_arm9.h"
 
 #include "easysave/ini.hpp"
+#include "common/tonccpy.h"
 
 #include "perGameSettings.h"
 #include "fileCopy.h"
@@ -229,7 +230,7 @@ TWL_CODE int lastRunROM() {
 						savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 					}
 
-					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
+					if ((getFileSize(savepath.c_str()) == 0) && (memcmp(game_TID, "###", 3) != 0)) {
 						consoleDemoInit();
 						printf("Creating save file...\n");
 
@@ -240,27 +241,27 @@ TWL_CODE int lastRunROM() {
 						int savesize = 524288;	// 512KB (default size for most games)
 
 						// Set save size to 8KB for the following games
-						if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
+						if (memcmp(game_TID, "ASC", 3) == 0)	// Sonic Rush
 						{
 							savesize = 8192;
 						}
 
 						// Set save size to 256KB for the following games
-						if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
+						if (memcmp(game_TID, "AMH", 3) == 0)	// Metroid Prime Hunters
 						{
 							savesize = 262144;
 						}
 
 						// Set save size to 1MB for the following games
-						if (strcmp(game_TID, "AZL") == 0	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-						 || strcmp(game_TID, "BKI") == 0)	// The Legend of Zelda: Spirit Tracks
+						if (memcmp(game_TID, "AZL", 3) == 0		// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
+						 || memcmp(game_TID, "BKI", 3) == 0)	// The Legend of Zelda: Spirit Tracks
 						{
 							savesize = 1048576;
 						}
 
 						// Set save size to 32MB for the following games
-						if (strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
-						 || strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
+						if (memcmp(game_TID, "UOR", 3) == 0		// WarioWare - D.I.Y. (Do It Yourself)
+						 || memcmp(game_TID, "UXB", 3) == 0)	// Jam with the Band
 						{
 							savesize = 1048576*32;
 						}
@@ -371,14 +372,14 @@ TWL_CODE int lastRunROM() {
 				unlaunchDevicePath[3] = 'c';
 			}
 
-			memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+			tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 			*(u16*)(0x0200080C) = 0x3F0;			// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 			*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 			*(u32*)(0x02000810) |= BIT(0);			// Load the title at 2000838h
 			*(u32*)(0x02000810) |= BIT(1);			// Use colors 2000814h
 			*(u16*)(0x02000814) = 0x7FFF;			// Unlaunch Upper screen BG color (0..7FFFh)
 			*(u16*)(0x02000816) = 0x7FFF;			// Unlaunch Lower screen BG color (0..7FFFh)
-			memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
+			toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);	// Unlaunch Reserved (zero)
 			int i2 = 0;
 			for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 				*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
