@@ -20,6 +20,7 @@
 
 ------------------------------------------------------------------*/
 
+#include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include "flashcard.h"
 #include <vector>
