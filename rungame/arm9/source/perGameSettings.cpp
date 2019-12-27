@@ -32,26 +32,32 @@
 
 #include <nds.h>
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
+int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;
 int perGameSettings_language = -2;
 int perGameSettings_saveNo = 0;
+int perGameSettings_ramDiskNo = -1;
 int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
+int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
 
 char pergamefilepath[256];
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (previousUsedDevice ? "fat:" : "sd:"), filename.c_str());
-	CIniFile pergameini( pergamefilepath );
-	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", -1);
+	easysave::ini pergameini( pergamefilepath );
+	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
+	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
 	perGameSettings_saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
+	perGameSettings_ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
+	perGameSettings_heapShrink = pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 }
 
@@ -87,6 +93,42 @@ std::string getSavExtension(void) {
 			break;
 		case 9:
 			return ".sav9";
+			break;
+	}
+}
+
+std::string getImgExtension(void) {
+	switch (perGameSettings_ramDiskNo) {
+		case 0:
+		default:
+			return ".img";
+			break;
+		case 1:
+			return ".img1";
+			break;
+		case 2:
+			return ".img2";
+			break;
+		case 3:
+			return ".img3";
+			break;
+		case 4:
+			return ".img4";
+			break;
+		case 5:
+			return ".img5";
+			break;
+		case 6:
+			return ".img6";
+			break;
+		case 7:
+			return ".img7";
+			break;
+		case 8:
+			return ".img8";
+			break;
+		case 9:
+			return ".img9";
 			break;
 	}
 }

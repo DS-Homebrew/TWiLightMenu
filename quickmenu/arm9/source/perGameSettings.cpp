@@ -20,8 +20,8 @@
 
 ------------------------------------------------------------------*/
 
-#include "ndsheaderbanner.h"
 #include "perGameSettings.h"
+#include "flashcard.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -32,10 +32,7 @@
 
 #include <nds.h>
 
-#include "nds_loader_arm9.h"
-
 #include "easysave/ini.hpp"
-#include "flashcard.h"
 
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
