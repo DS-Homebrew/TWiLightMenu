@@ -377,16 +377,8 @@ void lastRunROM()
 				}
 
 				loadPerGameSettings(filename);
-				if (perGameSettings_boostCpu == -1) {
-					runNds_boostCpu = ms().boostCpu;
-				} else {
-					runNds_boostCpu = perGameSettings_boostCpu;
-				}
-				if (perGameSettings_boostVram == -1) {
-					runNds_boostVram = ms().boostVram;
-				} else {
-					runNds_boostVram = perGameSettings_boostVram;
-				}
+				runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
+				runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 			}
 			std::string path;
 			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
