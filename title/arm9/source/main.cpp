@@ -350,28 +350,16 @@ void lastRunROM()
 				argarray.push_back((char*)ndsToBoot);
 			}
 			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
-			bootstrapini.SetString( "NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);
-			bootstrapini.SetString( "NDS-BOOTSTRAP", "SAV_PATH", savepath);
-			if (perGameSettings_language == -2) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language);
-			}
-			if (perGameSettings_dsiMode == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", ms().bstrap_dsiMode);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode);
-			}
-			if (perGameSettings_boostCpu == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", ms().boostCpu);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu);
-			}
-			if (perGameSettings_boostVram == -1) {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", ms().boostVram);
-			} else {
-				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram);
-			}
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
+				(perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language));
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
+				(perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
+				(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
+				(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
 			bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
 
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
