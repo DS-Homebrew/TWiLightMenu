@@ -32,13 +32,13 @@ void loadSdRemovedImage(void) {
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
 	if(error)	printSmallCentered(false, 30, "Error");
-	for(unsigned i=0;i<image.size()/4;i++) {
-  		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedExtendedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
 	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
-	for(unsigned i=0;i<image.size()/4;i++) {
-  		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 }
 

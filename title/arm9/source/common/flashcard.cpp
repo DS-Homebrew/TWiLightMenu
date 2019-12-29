@@ -6,6 +6,7 @@
 
 #include "common/bootstrappaths.h"
 #include "easysave/ini.hpp"
+#include "common/tonccpy.h"
 #include "common/systemdetails.h"
 
 static sNDSHeader nds;
@@ -22,34 +23,22 @@ int flashcard;
 */
 
 bool sdFound(void) {
-	if (access("sd:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("sd:/", F_OK) == 0);
 }
 
 bool flashcardFound(void) {
-	if (access("fat:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("fat:/", F_OK) == 0);
 }
 
 bool bothSDandFlashcard(void) {
-	if ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0)) {
-		return true;
-	} else {
-		return false;
-	}
+	return ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0));
 }
 
 TWL_CODE bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
 	cardReadHeader((uint8*)nds);
-	memcpy(gameid, nds->gameCode, 4);
+	tonccpy(gameid, nds->gameCode, 4);
 	gameid[4] = 0x00;
-	memcpy(gamename, nds->gameTitle, 12);
+	tonccpy(gamename, nds->gameTitle, 12);
 	gamename[12] = 0x00;
 	return true;
 }

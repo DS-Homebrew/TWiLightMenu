@@ -1,9 +1,14 @@
 #include <nds.h>
 
+#include <iostream>
+#include <string>
+
 #include "graphics/bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
 #include "bootstrapsettings.h"
+
 #include "graphics/graphics.h"
+#include "graphics/lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -12,105 +17,23 @@ extern bool fadeType;
 extern bool controlTopBright;
 
 void LoadConsoleBMP(int consoleModel) {
-	FILE* file;
+	std::string names[] = { "dsi", "devdsi", "o3ds", "n3ds" };
+	std::string fileName = "nitro:/graphics/" + names[consoleModel] + ".png";
+
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, fileName);
+	for(int i = 0; i < image.size(); i * 4) {
+  		BG_GFX[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
+	}
+
 	int language = (ms().getGuiLanguage());
+	fileName = "nitro:/graphics/consoleseltext_" + names[consoleModel] + (language == 2 ? "-fr" : "") + ".png";
 
-	switch (consoleModel) {
-		case 0:
-		default:
-			file = fopen("nitro:/graphics/dsi.bmp", "rb");
-			break;
-		case 1:
-			file = fopen("nitro:/graphics/devdsi.bmp", "rb");
-			break;
-		case 2:
-			file = fopen("nitro:/graphics/o3ds.bmp", "rb");
-			break;
-		case 3:
-			file = fopen("nitro:/graphics/n3ds.bmp", "rb");
-			break;
+	lodepng::decode(image, width, height, fileName);
+	for(int i = 0; i < image.size(); i * 4) {
+  		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
-
-	//if french
-	if (language == 2){
-		switch (consoleModel) {
-			case 0:
-			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi-fr.bmp", "rb");
-				break;
-			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi-fr.bmp", "rb");
-				break;
-			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_o3ds-fr.bmp", "rb");
-				break;
-			case 3:
-				file = fopen("nitro:/graphics/consoleseltext_n3ds-fr.bmp", "rb");
-				break;
-		}
-	}
-	else {
-		switch (consoleModel) {
-			case 0:
-			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi.bmp", "rb");
-				break;
-			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
-				break;
-			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_o3ds.bmp", "rb");
-				break;
-			case 3:
-				file = fopen("nitro:/graphics/consoleseltext_n3ds.bmp", "rb");
-				break;
-		}
-	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
-
 }
 
 bool consoleModel_isSure(void) {
@@ -124,37 +47,14 @@ bool consoleModel_isSure(void) {
 
 	//Get the language for the splash screen
 	int language = (ms().getGuiLanguage());
-	FILE* file;
+	std::string fileName = "nitro:/graphics/consoleseltext_areyousure" + (language == 2 ? "-fr" : "") + ".png";
 
-	//If not french, then fallback to english
-	if(language == 2){
-		file = fopen("nitro:/graphics/consoleseltext_areyousure-fr.bmp", "rb");
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, fileName);
+	for(int i = 0; i < image.size(); i * 4) {
+  		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	else {
-		file = fopen("nitro:/graphics/consoleseltext_areyousure.bmp", "rb");
-	}
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
-		}
-	}
-
-	fclose(file);
 
 	fadeType = true;
 	for (int i = 0; i < 25; i++) {

@@ -4,7 +4,8 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
+#include "common/tonccpy.h"
 #include "dldi-include.h"
 
 static sNDSHeader nds;
@@ -26,27 +27,15 @@ int flashcard;
 */
 
 bool sdFound(void) {
-	if (access("sd:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("sd:/", F_OK) == 0);
 }
 
 bool flashcardFound(void) {
-	if (access("fat:/", F_OK) == 0) {
-		return true;
-	} else {
-		return false;
-	}
+	return (access("fat:/", F_OK) == 0);
 }
 
 bool bothSDandFlashcard(void) {
-	if ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0)) {
-		return true;
-	} else {
-		return false;
-	}
+	return ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0));
 }
 
 TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
@@ -68,7 +57,7 @@ TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
 	dldiSize = (dldiSize + 0x03) & ~0x03; 		// Round up to nearest integer multiple
 	
 	// Clear unused space
-	memset(device+dldiSize, 0, 0x4000-dldiSize);
+	toncset(device+dldiSize, 0, 0x4000-dldiSize);
 
 	dldiFixDriverAddresses (device);
 
@@ -84,9 +73,9 @@ TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
 
 TWL_CODE bool UpdateCardInfo(sNDSHeader* nds, char* gameid, char* gamename) {
 	cardReadHeader((uint8*)nds);
-	memcpy(gameid, nds->gameCode, 4);
+	tonccpy(gameid, nds->gameCode, 4);
 	gameid[4] = 0x00;
-	memcpy(gamename, nds->gameTitle, 12);
+	tonccpy(gamename, nds->gameTitle, 12);
 	gamename[12] = 0x00;
 	return true;
 }

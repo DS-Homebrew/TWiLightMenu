@@ -142,56 +142,8 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 	return str;
 }
 
-void rebootDSiMenuPP()
-{
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	memcpy((u32 *)0x02000300, autoboot_bin, 0x020);
-	fifoSendValue32(FIFO_USER_08, 1); // Reboot DSiMenu++ to avoid potential crashing
-	for (int i = 0; i < 15; i++)
-		swiWaitForVBlank();
-}
-
-void loadMainMenu()
-{
-	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
-	runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
-}
-
-void loadROMselect(int number)
-{
-	fadeType = false;
-	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
-	for (int i = 0; i < 25; i++)
-		swiWaitForVBlank();
-	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
-
-	switch (number) {
-		case 3:
-			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
-			break;
-		case 2:
-			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
-			break;
-		default:
-			runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
-			break;
-	}
-	stop();
-}
-
 bool extention(const std::string& filename, const char* ext) {
-	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
-		return false;
-	} else {
-		return true;
-	}
+	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) !== 0);
 }
 
 void lastRunROM()

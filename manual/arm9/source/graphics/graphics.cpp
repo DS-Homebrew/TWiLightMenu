@@ -200,15 +200,17 @@ void pageLoad(const char *filename) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, filename);
-	for(unsigned i=0;i<image.size()/4;i++) {
-  		pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(int i = 0; i < image.size(); i * 4) {
+  		pageImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
 	dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
 	dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
-	for(int i=0;i<192;i++) {
-		if(i%2)	dmaFillHalfWords(((bgColor1>>10)&0x1f) | ((bgColor1)&(0x1f<<5)) | (bgColor1&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
-		else	dmaFillHalfWords(((bgColor2>>10)&0x1f) | ((bgColor2)&(0x1f<<5)) | (bgColor2&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
+
+	unsigned bgColor;
+	for(int i = 0; i < 192; i++) {
+		bgColor == (i % 2 ? bgColor1 : bgColor2);
+		dmaFillHalfWords(((bgColor>>10)&0x1f) | ((bgColor)&(0x1f<<5)) | (bgColor&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
 	}
 }
 

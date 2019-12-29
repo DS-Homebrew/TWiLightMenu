@@ -54,7 +54,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "common/tonccpy.h"
 
 #include "sound.h"
@@ -631,28 +631,28 @@ void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerG
 	snd().stopStream();
 
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
-		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		fcrompathini.flush();
 		// Does not support autoboot; so only nds-bootstrap launching works.
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
@@ -793,6 +793,7 @@ int main(int argc, char **argv) {
 				if (CURPOS <= 39)
 					titleboxXmoveright = true;
 			}
+
 			if (CURPOS < 0) {
 				CURPOS = 0;
 			} else if (CURPOS > 39) {
@@ -1014,15 +1015,6 @@ int main(int argc, char **argv) {
 				argarray.push_back(strdup(filename.c_str()));
 			}
 
-			bool dstwoPlg = false;
-			bool rvid = false;
-			bool GBA = false;
-			bool SNES = false;
-			bool GENESIS = false;
-			bool gameboy = false;
-			bool nes = false;
-			bool gamegear = false;
-
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare[CURPOS]) {
 				const char *typeToReplace = ".nds";
@@ -1170,7 +1162,7 @@ int main(int argc, char **argv) {
 					loadPerGameSettings(filename);
 
 					bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
-					CIniFile bootstrapini(bootstrapinipath);
+					easysave::ini bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", ms().dsiWarePubPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
@@ -1191,7 +1183,7 @@ int main(int argc, char **argv) {
 					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 					);
 
-					bootstrapini.SaveIniFile(bootstrapinipath);
+					bootstrapini.flush();
 
 					if (isDSiMode()) {
 						SetWidescreen(filename.c_str());
@@ -1350,15 +1342,12 @@ int main(int argc, char **argv) {
 					ms().homebrewBootstrap = true;
 				} else if (isHomebrew[CURPOS]) {
 					loadPerGameSettings(filename);
-					if (perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice)) {
-						useBackend = false; // Bypass nds-bootstrap
-					} else {
-						useBackend = true;
-					}
+					useBackend = !(perGameSettings_directBoot || (ms().useBootstrap && ms().secondaryDevice));
+					ms().homebrewBootstrap = true;
+
 					if (isDSiMode() && !perGameSettings_dsiMode) {
 						dsModeSwitch = true;
 					}
-					ms().homebrewBootstrap = true;
 				} else {
 					loadPerGameSettings(filename);
 					useBackend = true;
@@ -1468,7 +1457,7 @@ int main(int argc, char **argv) {
 						SetSpeedBumpExclude();
 
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
-						CIniFile bootstrapini(bootstrapinipath);
+						easysave::ini bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						if (!isHomebrew[CURPOS]) {
@@ -1495,7 +1484,7 @@ int main(int argc, char **argv) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !sys().isRegularDS())
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !sys().isRegularDS()))
 						);
-						bootstrapini.SaveIniFile(bootstrapinipath);
+						bootstrapini.flush();
 
 						CheatCodelist codelist;
 						u32 gameCode, crc32;
@@ -1597,62 +1586,20 @@ int main(int argc, char **argv) {
 					printLarge(false, 4, 4, text);
 					stop();
 				}
-			} else if (extention(filename, ".plg")) {
-				dstwoPlg = true;
-			} else if (extention(filename, ".rvid")) {
-				rvid = true;
-			} else if (extention(filename, ".gba")) {
-				//ms().launchType = Launch::ESDFlashcardLaunch;
-				//ms().previousUsedDevice = ms().secondaryDevice;
-				/*ms().saveSettings();
+			} else {
+				bool useNDSB = false;
+				bool dsModeSwitch = false;
 
-				sysSetCartOwner(BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM in memory map
-
-				// Load GBA ROM into EZ Flash 3-in-1
-				FILE *gbaFile = fopen(filename.c_str(), "rb");
-				fread((void*)0x08000000, 1, 0x1000000, gbaFile);
-				fclose(gbaFile);
-				gbaSwitch();*/
-				GBA = true;
-			} else if (extention(filename, ".gb") || extention(filename, ".sgb") ||
-				   extention(filename, ".gbc")) {
-				gameboy = true;
-			} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
-				nes = true;
-			} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
-				mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
-				mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
-
-				gamegear = true;
-			} else if (extention(filename, ".gen")) {
-				GENESIS = true;
-			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
-				SNES = true;
-			}
-
-			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
-				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
+
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				ms().romPath = std::string(ROMpath);
 				ms().homebrewArg = std::string(ROMpath);
 
-				if (gameboy) {
-					ms().launchType = Launch::EGameYobLaunch;
-				} else if (nes) {
-					ms().launchType = Launch::ENESDSLaunch;
-				} else {
-					ms().launchType = Launch::ES8DSLaunch;
-				}
-
-				ms().previousUsedDevice = ms().secondaryDevice;
-				ms().saveSettings();
-				argarray.push_back(ROMpath);
-				int err = 0;
-
-				if (dstwoPlg) {
+				std::string ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
+				if (extention(filename, ".plg")) {
 					ndsToBoot = "/_nds/TWiLightMenu/bootplg.srldr";
 
 					// Print .plg path without "fat:" at the beginning
@@ -1662,111 +1609,94 @@ int main(int argc, char **argv) {
 						if (ROMpath[4+i] == '\x00') break;
 					}
 
-					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					easysave::ini dstwobootini("fat:/_dstwo/twlm.ini");
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
-				} else if (rvid) {
+					dstwobootini.flush();
+				} else if (extention(filename, ".rvid")) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
-					}
-				} else if (gameboy) {
+				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
+					launchType = Launch::EGameYobLaunch;
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
-					}
-				} else if (nes) {
-					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
-					}
-				} else {
+				} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
+					launchType = Launch::ENESDSLaunch;
+
+					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+				} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
+					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
+					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
+
+					launchType = Launch::ES8DSLaunch;
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+				} else if (extention(filename, ".gen") || extention(filename, ".gba") || extention(filename, ".smc") || extention(filename, ".sfc")) {
+					launchType = Launch::ESDFlashcardLaunch;
+
+					if (ms().secondaryDevice) {
+						if (extention(filename, ".gen")) {
+							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+						} else if (extention(filename, ".gba")) {
+							ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+						}
+
+						dsModeSwitch = true;
+					} else {
+						useNDSB = true;
+
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						easysave::ini bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+
+						if (extention(filename, ".gen")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
+						} else if (extention(filename, ".gba")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
+						}
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", extention(filename, ".smc") || extention(filename, ".sfc") ? 1 : 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						if (extention(filename, ".gen") || extention(filename, ".smc") || extention(filename, ".sfc")) {
+							bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						}
+
+						bootstrapini.flush();
 					}
 				}
-				argarray.at(0) = (char *)ndsToBoot;
+
+				if(access(ndsToBoot.c_str(), F_OK) != 0) {
+					ndsToBoot.replace(0, 2, "fat");
+				}
+
+				argarray.at(0) = (char *)ndsToBoot.c_str();
 				snd().stopStream();
-				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to emulator as argument
+				int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, true);	// Pass ROM to emulator as argument
+
+				fadeType = true;
 
 				char text[32];
-				snprintf(text, sizeof(text), "Start failed. Error %i", err);
-				fadeType = true;
-				printLarge(false, 4, 4, text);
-				stop();
-			} else if (GBA || SNES || GENESIS) {
-				const char *ndsToBoot;
-				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
-				RemoveTrailingSlashes(romfolderNoSlash);
-				char ROMpath[256];
-				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				ms().homebrewBootstrap = true;
-				ms().romPath = std::string(ROMpath);
-				ms().launchType = Launch::ESDFlashcardLaunch; // 1
-				ms().previousUsedDevice = ms().secondaryDevice;
-				ms().saveSettings();
-				if (ms().secondaryDevice) {
-					if (GBA) {
-						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-						}
-						argarray.push_back(ROMpath);
-					} else if (SNES) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
-						}
-					} else {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
-						}
-					}
-				} else {
-					ndsToBoot =
-					    (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-					CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+				snprintf (text, sizeof(text), "Start failed. Error %i", err);				
+				printLarge(false, 4, 80, text);
 
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-					if (GBA) {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-					} else if (SNES) {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
-					} else {
-						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
-						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-					}
-					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-
-					bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+				if (useNDSB) {
+					printSmall(false, 4, 88, err == 1 ? "Could not find" : "Unable to launch");
+					printSmall(false, 4, 96, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 				}
-				argarray.at(0) = (char *)ndsToBoot;
-				snd().stopStream();
-				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, ms().secondaryDevice, true, true);
-				char text[32];
-				snprintf(text, sizeof(text), "Start failed. Error %i", err);
-				fadeType = true;
-				printLarge(false, 4, 4, text);
-				if (err == 1) {
-					printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
-				}
-				stop();
-			}
 
-			while (argarray.size() != 0) {
-				free(argarray.at(0));
-				argarray.erase(argarray.begin());
+				stop();
+
+				while (argarray.size() != 0) {
+					free(argarray.at(0));
+					argarray.erase(argarray.begin());
+				}
 			}
 		}
 	}
