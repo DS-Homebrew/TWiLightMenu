@@ -3,6 +3,8 @@
 #include <maxmod9.h>
 
 #include "autoboot.h"
+#include "graphics/lodepng.h"
+#include "graphics/fontHandler.h"
 
 extern bool sdRemoveDetect;
 
@@ -25,50 +27,19 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
-	//FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
-	FILE* file = fopen("nitro:/graphics/sdRemovedError.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedExtendedImage[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
+	//FILE* file = fopen((arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
+	if(error)	printSmallCentered(false, 30, "Error");
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedExtendedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	fclose(file);
 
-	file = fopen("nitro:/graphics/sdRemoved.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedImage[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
+	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	fclose(file);
 }
 
 void checkSdEject(void) {
@@ -95,7 +66,6 @@ void checkSdEject(void) {
 	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 
 	while(1) {
-		// Currently not working
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
 			if (consoleModel < 2 && launcherApp != -1) {

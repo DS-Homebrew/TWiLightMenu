@@ -1,15 +1,10 @@
 #include <nds.h>
 #include <stdio.h>
-#include <fat.h>
 #include <sys/stat.h>
-#include <string.h>
 #include <unistd.h>
 
-#include "common/dsimenusettings.h"
-#include "common/inifile.h"
-
-const char* languageIniPath;
-
+extern int guiLanguage;
+extern int bstrap_language;
 int setLanguage = 0;
 int setGameLanguage = 0;
 
@@ -19,16 +14,6 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
-	printf("langInit\n");
-	if (ms().guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = ms().guiLanguage;
-	}
-
-	if (ms().bstrap_language == -1) {
-		setGameLanguage = PersonalData->language;
-	} else {
-		setGameLanguage = ms().bstrap_language;
-	}
+	setLanguage = ms().guiLanguage == -1 ? PersonalData->language : ms().guiLanguage;
+	setGameLanguage = ms().bstrap_language == -1 ? PersonalData->language : ms().bstrap_language;
 }

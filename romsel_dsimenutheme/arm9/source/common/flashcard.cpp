@@ -18,6 +18,7 @@ bool sdFound(void) {
 		}
 		sdAccessed = true;
 	}
+
 	return sdRead;
 }
 
@@ -30,13 +31,10 @@ bool flashcardFound(void) {
 		}
 		flashcardAccessed = true;
 	}
+
 	return flashcardRead;
 }
 
 bool bothSDandFlashcard(void) {
-	if (sdFound() && flashcardFound()) {
-		return true;
-	} else {
-		return false;
-	}
+	return (sdFound() && flashcardFound());
 }

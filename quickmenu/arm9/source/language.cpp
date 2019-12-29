@@ -1,6 +1,5 @@
 #include <nds.h>
 #include <stdio.h>
-#include <fat.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -15,15 +14,6 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
-	if (guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = guiLanguage;
-	}
-
-	if (bstrap_language == -1) {
-		setGameLanguage = PersonalData->language;
-	} else {
-		setGameLanguage = bstrap_language;
-	}
+	setLanguage = guiLanguage == -1 ? PersonalData->language : guiLanguage;
+	setGameLanguage = bstrap_language == -1 ? PersonalData->language : bstrap_language;
 }

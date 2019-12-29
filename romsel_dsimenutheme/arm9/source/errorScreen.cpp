@@ -2,24 +2,24 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "common/systemdetails.h"
-#include "common/dsimenusettings.h"
-#include "graphics/ThemeTextures.h"
-//#include "autoboot.h"
-#include "sound.h"
+#include "autoboot.h"
+#include "graphics/lodepng.h"
+#include "graphics/fontHandler.h"
+
+extern bool sdRemoveDetect;
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
+extern bool arm7SCFGLocked;
 
-extern bool rocketVideo_playVideo;
-extern bool showdialogbox;
-extern float dbox_Ypos;
+extern int consoleModel;
+extern int launcherApp;
 
-
-vu16* sdRemovedExtendedImage = (vu16*)0x026C8000;
-vu16* sdRemovedImage = (vu16*)0x026E0000;
+extern u16 bmpImageBuffer[256*192];
+u16* sdRemovedExtendedImage = (u16*)0x026C8000;
+u16* sdRemovedImage = (u16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -27,56 +27,25 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
-	//FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
-	FILE* file = fopen("nitro:/graphics/sdRemovedError.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
-		u16* src = tex().bmpImageBuffer();
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedExtendedImage[y*256+x] = tex().convertToDsBmp(val);
-			x++;
-		}
+	//FILE* file = fopen((arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
+	std::vector<unsigned char> image;
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
+	if(error)	printSmallCentered(false, 30, "Error");
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedExtendedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	fclose(file);
 
-	file = fopen("nitro:/graphics/sdRemoved.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
-		u16* src = tex().bmpImageBuffer();
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedImage[y*256+x] = tex().convertToDsBmp(val);
-			x++;
-		}
+	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
+	for(int i = 0; i < image.size(); i * 4) {
+  		sdRemovedImage[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	fclose(file);
 }
 
 void checkSdEject(void) {
-	if (!ms().sdRemoveDetect) return;
+	if (!sdRemoveDetect) return;
 
-	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
+	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;
 		if (timeTillChangeToNonExtendedImage > 10) {
 			showNonExtendedImage = true;
@@ -86,13 +55,6 @@ void checkSdEject(void) {
 	}
 	
 	// Show "SD removed" screen
-	rocketVideo_playVideo = false;
-	
-	if (showdialogbox) {
-		showdialogbox = false;
-		dbox_Ypos = 192;
-	}
-	snd().stopStream();
 	mmEffectCancelAll();
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -100,14 +62,13 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
 	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 
 	while(1) {
-		// Currently not working
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
-			if (ms().consoleModel < 2 && ms().launcherApp != -1) {
+			if (consoleModel < 2 && launcherApp != -1) {
 				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 				*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 				*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -128,8 +89,8 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (sys().sdStatus() == SystemDetails::ESDStatus::SDInserted && !sys().arm7SCFGLocked()) {
-			if (ms().consoleModel < 2) {
+		if (*(u8*)(0x023FF002) == 2 && !arm7SCFGLocked) {
+			if (consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}
 			memcpy((u32*)0x02000300, autoboot_bin, 0x020);

@@ -1,14 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
-#include <fat.h>
 #include <sys/stat.h>
-#include <string.h>
 #include <unistd.h>
-
-#include "inifile.h"
-//#include "common/nitrofs.h"
-
-const char* languageIniPath;
 
 extern int guiLanguage;
 extern int bstrap_language;
@@ -21,15 +14,6 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
-	if (guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = guiLanguage;
-	}
-
-	if (bstrap_language == -1) {
-		setGameLanguage = PersonalData->language;
-	} else {
-		setGameLanguage = bstrap_language;
-	}
+	setLanguage = guiLanguage == -1 ? PersonalData->language : guiLanguage;
+	setGameLanguage = bstrap_language == -1 ? PersonalData->language : bstrap_language;
 }
