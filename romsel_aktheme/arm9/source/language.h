@@ -60,7 +60,6 @@ private:
 public:
   LanguageFile(DSiMenuPlusPlusSettings::TLanguage language)
   {
-    m_bReadOnly = true;
     ini(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language).c_str()));
   }
   ~LanguageFile(){};

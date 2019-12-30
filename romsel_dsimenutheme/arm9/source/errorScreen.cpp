@@ -2,24 +2,24 @@
 #include <stdio.h>
 #include <maxmod9.h>
 
-#include "autoboot.h"
+#include "common/systemdetails.h"
+#include "common/dsimenusettings.h"
+#include "graphics/ThemeTextures.h"
 #include "graphics/lodepng.h"
 #include "graphics/fontHandler.h"
-
-extern bool sdRemoveDetect;
+//#include "autoboot.h"
+#include "sound.h"
 
 extern const char *unlaunchAutoLoadID;
 extern char unlaunchDevicePath[256];
 extern void unlaunchSetHiyaBoot();
 
-extern bool arm7SCFGLocked;
+extern bool rocketVideo_playVideo;
+extern bool showdialogbox;
+extern float dbox_Ypos;
 
-extern int consoleModel;
-extern int launcherApp;
-
-extern u16 bmpImageBuffer[256*192];
-u16* sdRemovedExtendedImage = (u16*)0x026C8000;
-u16* sdRemovedImage = (u16*)0x026E0000;
+vu16* sdRemovedExtendedImage = (vu16*)0x026C8000;
+vu16* sdRemovedImage = (vu16*)0x026E0000;
 
 extern u16 convertToDsBmp(u16 val);
 
@@ -43,9 +43,9 @@ void loadSdRemovedImage(void) {
 }
 
 void checkSdEject(void) {
-	if (!sdRemoveDetect) return;
+	if (!ms().sdRemoveDetect) return;
 
-	if (*(u8*)(0x023FF002) == 0 || !isDSiMode()) {
+	if (sys().sdStatus() == SystemDetails::ESDStatus::SDOk || !isDSiMode()) {
 		timeTillChangeToNonExtendedImage++;
 		if (timeTillChangeToNonExtendedImage > 10) {
 			showNonExtendedImage = true;
@@ -55,6 +55,13 @@ void checkSdEject(void) {
 	}
 	
 	// Show "SD removed" screen
+	rocketVideo_playVideo = false;
+
+	if (showdialogbox) {
+		showdialogbox = false;
+		dbox_Ypos = 192;
+	}
+	snd().stopStream();
 	mmEffectCancelAll();
 
 	videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
@@ -62,13 +69,13 @@ void checkSdEject(void) {
 
 	REG_BLDY = 0;
 
-	dmaCopyWordsAsynch(0, (showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
+	dmaCopyWordsAsynch(0, (void*)(showNonExtendedImage ? sdRemovedImage : sdRemovedExtendedImage), BG_GFX, 0x18000);
 	dmaFillWords(0, BG_GFX_SUB, 0x18000);
 
 	while(1) {
 		/*scanKeys();
 		if (keysDown() & KEY_B) {
-			if (consoleModel < 2 && launcherApp != -1) {
+			if (ms().consoleModel < 2 && ms().launcherApp != -1) {
 				memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 				*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 				*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
@@ -89,7 +96,7 @@ void checkSdEject(void) {
 			fifoSendValue32(FIFO_USER_02, 1);	// ReturntoDSiMenu
 			swiWaitForVBlank();
 		}
-		if (*(u8*)(0x023FF002) == 2 && !arm7SCFGLocked) {
+		if (sys().sdStatus() == SystemDetails::ESDStatus::SDInserted && !sys().arm7SCFGLocked()) {
 			if (consoleModel < 2) {
 				unlaunchSetHiyaBoot();
 			}
