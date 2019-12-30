@@ -2,7 +2,7 @@
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "flashcard.h"
 #include <string.h>
 
@@ -99,7 +99,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 void DSiMenuPlusPlusSettings::loadSettings()
 {
 	printf("ms().loadSettings()\n");
-    CIniFile settingsini(settingsinipath);
+    easysave::ini settingsini(settingsinipath);
 
     // UI settings.
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
@@ -199,7 +199,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 void DSiMenuPlusPlusSettings::saveSettings()
 {
-    CIniFile settingsini(settingsinipath);
+    easysave::ini settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
@@ -229,14 +229,10 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
-    settingsini.SaveIniFile(settingsinipath);
+    settingsini.flush();
 }
 
 DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
 {
-    if (guiLanguage == ELangDefault)
-    {
-        return (TLanguage)PersonalData->language;
-    }
-    return (TLanguage)guiLanguage;
+	return (TLanguage)(guiLanguage == ELangDefault ? PersonalData->language : guiLanguage);
 }

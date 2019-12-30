@@ -54,26 +54,23 @@ BootstrapConfig::~BootstrapConfig()
 
 BootstrapConfig &BootstrapConfig::saveSize()
 {
-	if (strncmp("ASC", _gametid.c_str(), 3) == 0)
+	int size = 0x80000;
+	if (strncmp("ASC", _gametid.c_str(), 3) == 0) {
+		size = 0x2000;
+	} else if (strncmp("AMH", _gametid.c_str(), 3) == 0) {
+		size = 0x40000;
+	} else if (strncmp("AZL", _gametid.c_str(), 3) == 0
+			|| strncmp("C6P", _gametid.c_str(), 3) == 0
+			|| strncmp("BKI", _gametid.c_str(), 3) == 0)
 	{
-		return saveSize(0x2000);
-	}
-	if (strncmp("AMH", _gametid.c_str(), 3) == 0)
+		size = 0x100000;
+	} else if (strncmp("UOR", _gametid.c_str(), 3) == 0
+			|| strncmp("UXB", _gametid.c_str(), 3) == 0)
 	{
-		return saveSize(0x40000);
-	}
-
-	if (strncmp("AZL", _gametid.c_str(), 3) == 0 || strncmp("C6P", _gametid.c_str(), 3) == 0 || strncmp("BKI", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x100000);
-	}
-
-	if (strncmp("UOR", _gametid.c_str(), 3) == 0 || strncmp("UXB", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x2000000);
+		size = 0x2000000;
 	}
 
-	return saveSize(0x80000);
+	return saveSize(size);
 }
 
 BootstrapConfig &BootstrapConfig::softReset()
@@ -181,7 +178,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
 		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altaïr's Chronicles
+		"YAH",	// Assassin's Creed: Altaï¿½r's Chronicles
 		"B6R",	// Bakugan: Battle Brawlers
 		"AB2",	// Battles of Prince of Persia
 		"YB4",	// Bee Movie

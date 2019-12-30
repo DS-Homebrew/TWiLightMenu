@@ -1,4 +1,3 @@
-
 #include <nds/arm9/dldi.h>
 
 #include "flashcardlaunch.h"

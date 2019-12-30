@@ -1,4 +1,5 @@
 #include <nds.h>
+#include "tonccpy.h"
 
 #ifndef __CARD_LAUNCH__
 #define __CARD_LAUNCH__
@@ -8,14 +9,14 @@ extern char hiyaNdsPath[14];
 #include "dsimenusettings.h"
 
 void unlaunchSetHiyaBoot(void) {
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
 	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	int i2 = 0;
 	for (int i = 0; i < 14; i++) {
 		*(u8*)(0x02000838+i2) = hiyaNdsPath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
@@ -94,14 +95,14 @@ void dsiSysMenuLaunch()
 		char unlaunchDevicePath[256];
 		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "nand:/title/00030017/484E41%x/content/0000000%i.app", setRegion, ms().launcherApp);
 
-		memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+		tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 		*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 		*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 		*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
 		*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 		*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 		*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-		memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+		toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 		int i2 = 0;
 		for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 			*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)

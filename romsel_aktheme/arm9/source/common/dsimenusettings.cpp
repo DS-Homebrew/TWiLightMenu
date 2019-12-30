@@ -2,7 +2,7 @@
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
 #include "systemdetails.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "common/flashcard.h"
 #include <string.h>
 

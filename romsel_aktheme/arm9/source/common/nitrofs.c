@@ -48,11 +48,14 @@
     2018-09-05 v0.9 - modernize devoptab (by chyyran)
         * Updated for libsysbase change in devkitARM r46 and above. 
 
+	2019-12-29 v0.91 - Use tonccpy (by NightScript)
+		* Gives a slight boost to copying functions
 */
 
 #include <string.h>
 #include <errno.h>
 #include "nds.h"
+#include "tonccpy.h"
 #include "nitrofs.h"
 
 //This seems to be a typo! memory.h has REG_EXEMEMCNT
@@ -110,7 +113,7 @@ inline ssize_t nitroSubRead(off_t *npos, void *ptr, size_t len)
     }
     else
     {                                             //reading from gbarom
-        memcpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
+        tonccpy(ptr, *npos + (void *)GBAROM, len); //len isnt checked here because other checks exist in the callers (hopefully)
     }
     if (len > 0)
         *npos += len;
@@ -165,10 +168,10 @@ nitroFSInit(const char *ndsfile)
         }
     }
     REG_EXMEMCNT &= ~ARM7_OWNS_CARD; //give us gba slot ownership
-    if (strncmp(((const char *)GBAROM) + LOADERSTROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
+    if (memcmp(((const char *)GBAROM) + LOADERSTROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
     { // We has gba rahm
         printf("yes i think this is GBA?!\n");
-        if (strncmp(((const char *)GBAROM) + LOADERSTROFFSET + LOADEROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
+        if (memcmp(((const char *)GBAROM) + LOADERSTROFFSET + LOADEROFFSET, LOADERSTR, strlen(LOADERSTR)) == 0)
         { //Look for second magic string, if found its a sc.nds or nds.gba
             printf("sc/gba\n");
             fntOffset = ((u32) * (u32 *)(((const char *)GBAROM) + FNTOFFSET + LOADEROFFSET)) + LOADEROFFSET;
@@ -290,7 +293,7 @@ int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct 
         { // ".."
             dirStruct->dir_id = dirStruct->parent_id;
         }
-        strcpy(filename, syspaths[dirStruct->spc++]);
+        tonccpy(filename, syspaths[dirStruct->spc++]);
         return (0);
     }
     nitroSubSeek(pos, fntOffset + dirStruct->namepos, SEEK_SET);
@@ -352,7 +355,7 @@ int nitroFSOpen(struct _reent *r, void *fileStruct, const char *path, int flags,
         if ((*cptr == '/') || (*cptr == ':'))
         { // split at either / or : (whichever comes first form the end!)
             cptr++;
-            strncpy(dirfilename, path, cptr - path); //copy string up till and including/ or : zero rest
+            tonccpy(dirfilename, path, cptr - path); //copy string up till and including/ or : zero rest
             dirfilename[cptr - path] = 0;            //it seems strncpy doesnt always zero?!
             filename = cptr;                         //filename = now remainder of string
             break;

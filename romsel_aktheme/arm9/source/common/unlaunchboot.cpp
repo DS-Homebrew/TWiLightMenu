@@ -2,6 +2,7 @@
 #include "tool/stringtool.h"
 #include <nds.h>
 #include "dsimenusettings.h"
+#include "tonccpy.h"
 #include "filecopy.h"
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
@@ -122,7 +123,7 @@ void UnlaunchBoot::launch()
 		unlaunchDevicePath[3] = 'c';
 	}
 
-	memcpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
 	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
 	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
@@ -130,7 +131,7 @@ void UnlaunchBoot::launch()
 	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
 	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
 	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
-	memset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
 	int i2 = 0;
 	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
 		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)

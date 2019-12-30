@@ -1,6 +1,6 @@
 #include "pergamesettings.h"
 #include "dsimenusettings.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "tool/stringtool.h"
 #include "tool/dbgtool.h"
 #include "bootstrappaths.h"
@@ -25,7 +25,7 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
 
 void PerGameSettings::loadSettings()
 {
-    CIniFile pergameini(_iniPath);
+    easysave::ini pergameini(_iniPath);
     dbg_printf("CINI LOAD %s", _iniPath.c_str());
     directBoot = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", ms().secondaryDevice);	// Homebrew only
     dsiMode = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
@@ -40,7 +40,7 @@ void PerGameSettings::loadSettings()
 
 void PerGameSettings::saveSettings()
 {
-    CIniFile pergameini(_iniPath);
+    easysave::ini pergameini(_iniPath);
     pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
     if (ms().useBootstrap || !ms().secondaryDevice) {
 		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
@@ -58,21 +58,18 @@ void PerGameSettings::saveSettings()
 		pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
 		pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 	}
-    pergameini.SaveIniFile(_iniPath);
+    pergameini.flush();
 }
 
 bool PerGameSettings::checkIfShowAPMsg() {
-    CIniFile pergameini(_iniPath);
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
-		return true;	// Show AP message
-	}
-	return false;	// Don't show AP message
+    easysave::ini pergameini(_iniPath);
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void PerGameSettings::dontShowAPMsgAgain() {
-    CIniFile pergameini(_iniPath);
+    easysave::ini pergameini(_iniPath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
-	pergameini.SaveIniFile(_iniPath);
+	pergameini.flush();
 }
 
 std::string getSavExtension(int number) {
