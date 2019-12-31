@@ -1616,27 +1616,27 @@ int main(int argc, char **argv) {
 				} else if (extention(filename, ".rvid")) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {
-					launchType = Launch::EGameYobLaunch;
+					ms().launchType = Launch::EGameYobLaunch;
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 				} else if (extention(filename, ".nes") || extention(filename, ".fds")) {
-					launchType = Launch::ENESDSLaunch;
+					ms().launchType = Launch::ENESDSLaunch;
 
-					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
+					ndsToBoot = (ms().secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 				} else if (extention(filename, ".sms") || extention(filename, ".gg")) {
 					mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-					launchType = Launch::ES8DSLaunch;
+					ms().launchType = Launch::ES8DSLaunch;
 
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 				} else if (extention(filename, ".gen") || extention(filename, ".gba") || extention(filename, ".smc") || extention(filename, ".sfc")) {
-					launchType = Launch::ESDFlashcardLaunch;
+					ms().launchType = Launch::ESDFlashcardLaunch;
 
 					if (ms().secondaryDevice) {
 						if (extention(filename, ".gen")) {
 							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						} else if (extention(filename, ".gba")) {
-							ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
 						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
@@ -1645,17 +1645,17 @@ int main(int argc, char **argv) {
 					} else {
 						useNDSB = true;
 
-						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						ndsToBoot = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						easysave::ini bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 
 						if (extention(filename, ".gen")) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
 						} else if (extention(filename, ".gba")) {
-							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel > 0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 							bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
 						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
@@ -1689,7 +1689,7 @@ int main(int argc, char **argv) {
 
 				if (useNDSB) {
 					printSmall(false, 4, 88, err == 1 ? "Could not find" : "Unable to launch");
-					printSmall(false, 4, 96, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+					printSmall(false, 4, 96, ms().bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
 				}
 
 				stop();

@@ -24,7 +24,6 @@
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
-#include "inifile.h"
 #include "flashcard.h"
 
 // Graphic files
@@ -34,6 +33,7 @@
 
 #include "../iconTitle.h"
 #include "graphics.h"
+#include "lodepng.h"
 #include "fontHandler.h"
 #include "../ndsheaderbanner.h"
 #include "../errorScreen.h"
@@ -369,79 +369,45 @@ void graphicsLoad()
 
 		char pathTop[256];
 		if (startMenu) {
-			std::ifstream file((r4_theme+"logo.bmp").c_str());
+			std::ifstream file((r4_theme+"logo.png").c_str());
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.bmp").c_str());
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"logo.png").c_str());
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.bmp");
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/logo.png");
 		} else {
-			std::ifstream file((r4_theme+"bckgrd_1.bmp").c_str());
+			std::ifstream file((r4_theme+"bckgrd_1.png").c_str());
 			if(file)
-				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.bmp").c_str());
+				snprintf(pathTop, sizeof(pathTop), (r4_theme+"bckgrd_1.png").c_str());
 			else
-				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.bmp");
+				snprintf(pathTop, sizeof(pathTop), "nitro:/themes/theme1/bckgrd_1.png");
 		}
 
 		char pathBottom[256];
 		if (startMenu) {
-			std::ifstream file((r4_theme+"icons.bmp").c_str());
+			std::ifstream file((r4_theme+"icons.png").c_str());
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.bmp").c_str());
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"icons.png").c_str());
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.bmp");
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/icons.png");
 		} else {
-			std::ifstream file((r4_theme+"bckgrd_2.bmp").c_str());
+			std::ifstream file((r4_theme+"bckgrd_2.png").c_str());
 			if(file)
-				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.bmp").c_str());
+				snprintf(pathBottom, sizeof(pathBottom), (r4_theme+"bckgrd_2.png").c_str());
 			else
-				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.bmp");
+				snprintf(pathBottom, sizeof(pathBottom), "nitro:/themes/theme1/bckgrd_2.png");
 		}
 
-		FILE* fileTop = fopen(pathTop, "rb");
-
-		if (fileTop) {
-			// Start loading
-			fseek(fileTop, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(fileTop) + 0xe;
-			fseek(fileTop, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, fileTop);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				topImage[startMenu][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
+		std::vector<unsigned char> image;
+		unsigned width, height;
+		unsigned error = lodepng::decode(image, width, height, pathTop);
+		for(int i = 0; i < image.size(); i * 4) {
+			topImage[startMenu][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		fclose(fileTop);
 
-		FILE* fileBottom = fopen(pathBottom, "rb");
-
-		if (fileBottom) {
-			// Start loading
-			fseek(fileBottom, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(fileBottom) + 0xe;
-			fseek(fileBottom, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, fileBottom);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				bottomImage[startMenu][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
+		lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
+		for(int i = 0; i < image.size(); i * 4) {
+			bottomImage[startMenu][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		fclose(fileBottom);
 	}
 
 	// Initialize the bottom background
