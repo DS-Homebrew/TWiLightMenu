@@ -47,6 +47,7 @@
 #include "fontHandler.h"
 #include "graphics.h"
 #include "graphics/ThemeTextures.h"
+#include "graphics/lodepng.h"
 #include "themefilenames.h"
 #include "date.h"
 #include "iconHandler.h"
@@ -1343,7 +1344,7 @@ void loadPhotoList() {
 		closedir(dir);
 		photoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
 	} else {
-		photoPath = "nitro:/graphics/photo_default.png"
+		photoPath = "nitro:/graphics/photo_default.png";
 	}
 }
 
@@ -1353,7 +1354,7 @@ void loadPhoto() {
 
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, photoPath);
-	for(int i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i * 4) {
 		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
@@ -1367,7 +1368,7 @@ void loadPhotoPart() {
 
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, photoPath);
-	for(int i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i * 4) {
 		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 

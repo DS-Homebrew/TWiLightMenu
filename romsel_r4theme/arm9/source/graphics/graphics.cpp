@@ -400,12 +400,12 @@ void graphicsLoad()
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		unsigned error = lodepng::decode(image, width, height, pathTop);
-		for(int i = 0; i < image.size(); i * 4) {
+		for(unsigned i = 0; i < image.size(); i * 4) {
 			topImage[startMenu][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
 
 		lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
-		for(int i = 0; i < image.size(); i * 4) {
+		for(unsigned i = 0; i < image.size(); i * 4) {
 			bottomImage[startMenu][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
 	}
