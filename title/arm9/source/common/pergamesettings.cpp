@@ -32,7 +32,7 @@
 
 #include <nds.h>
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
 bool perGameSettings_directBoot = false;	// Homebrew only
 int perGameSettings_dsiMode = -1;

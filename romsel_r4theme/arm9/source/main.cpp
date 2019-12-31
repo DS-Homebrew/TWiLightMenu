@@ -49,7 +49,7 @@
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
 #include "language.h"
 

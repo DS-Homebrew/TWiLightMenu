@@ -49,7 +49,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
+#include "easysave/ini.hpp"
 
 #include "fileCopy.h"
 

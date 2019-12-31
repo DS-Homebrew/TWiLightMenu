@@ -1334,7 +1334,7 @@ void loadPhotoList() {
 
 			photoDir = ent->d_name;
 			if (photoDir == ".." || photoDir == "..." || photoDir == "." || photoDir.substr(0, 2) == "._" ||
-			    photoDir.substr(photoDir.find_last_of(".") + 1) != "bmp")
+			    photoDir.substr(photoDir.find_last_of(".") + 1) != "png")
 				continue;
 
 			// Reallocation here, but prevents our vector from being filled with garbage
@@ -1342,70 +1342,36 @@ void loadPhotoList() {
 		}
 		closedir(dir);
 		photoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
+	} else {
+		photoPath = "nitro:/graphics/photo_default.png"
 	}
 }
 
 void loadPhoto() {
-	FILE *file = fopen(photoPath.c_str(), "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
+	std::vector<unsigned char> image;
+	u16 *bgSubBuffer = tex().beginBgSubModify();
 
-	if (file) {
-		u16 *bgSubBuffer = tex().beginBgSubModify();
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
-		u16 *src = tex().bmpImageBuffer();
-		int x = 24;
-		int y = 24 + 155;
-		for (int i = 0; i < 208 * 156; i++) {
-			if (x >= 24 + 208) {
-				x = 24;
-				y--;
-			}
-			u16 val = *(src++);
-			bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
-			x++;
-		}
-		tex().commitBgSubModify();
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, photoPath);
+	for(int i = 0; i < image.size(); i * 4) {
+		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
-	fclose(file);
+	tex().commitBgSubModify();
 }
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	FILE *file = fopen(photoPath.c_str(), "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
+	std::vector<unsigned char> image;
+	u16 *bgSubBuffer = tex().beginBgSubModify();
 
-	if (file) {
-		// Start loading
-		u16 *bgSubBuffer = tex().beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
-		u16 *src = tex().bmpImageBuffer();
-		int x = 24;
-		int y = 24 + 155;
-		for (int i = 0; i < 208 * 156; i++) {
-			if (x >= 24 + 208) {
-				x = 24;
-				y--;
-			}
-			u16 val = *(src++);
-			if (y <= 24 + 147) {
-				bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
-			}
-			x++;
-		}
-		tex().commitBgSubModify();
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, photoPath);
+	for(int i = 0; i < image.size(); i * 4) {
+		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
-	fclose(file);
+	tex().commitBgSubModify();
 }
 
 static std::string loadedDate;
