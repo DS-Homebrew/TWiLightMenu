@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "common/dsimenusettings.h"
 
-extern int guiLanguage;
-extern int bstrap_language;
 int setLanguage = 0;
 int setGameLanguage = 0;
 
