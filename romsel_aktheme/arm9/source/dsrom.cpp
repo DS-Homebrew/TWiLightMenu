@@ -41,25 +41,25 @@ static u32 arm9Sig[3][4];
 
 DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
 {
-    tonccpy(&_banner, &src._banner, sizeof(_banner));
-    tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
+	tonccpy(&_banner, &src._banner, sizeof(_banner));
+	tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
 
-    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
-    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+	_dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+	tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
 
 
-    _isDSRom = src._isDSRom;
-    _isHomebrew = src._isHomebrew;
-    _isGbaRom = src._isGbaRom;
-    _fileName = src._fileName;
-    _romVersion = src._romVersion;
-    _extIcon = src._extIcon;
-    _hasExtendedBinaries = src._hasExtendedBinaries;
-    _isDSiWare = src._isDSiWare;
-    _isBannerAnimated = src._isBannerAnimated;
-    _isArgv = src._isArgv;
-    
-    return *this;
+	_isDSRom = src._isDSRom;
+	_isHomebrew = src._isHomebrew;
+	_isGbaRom = src._isGbaRom;
+	_fileName = src._fileName;
+	_romVersion = src._romVersion;
+	_extIcon = src._extIcon;
+	_hasExtendedBinaries = src._hasExtendedBinaries;
+	_isDSiWare = src._isDSiWare;
+	_isBannerAnimated = src._isBannerAnimated;
+	_isArgv = src._isArgv;
+
+	return *this;
 }
 
 DSRomInfo::DSRomInfo(const DSRomInfo &src)
@@ -70,66 +70,59 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
   _extIcon(-1), 
   _romVersion(0)
 {
-    tonccpy(&_banner, &src._banner, sizeof(_banner));
-    tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
+	tonccpy(&_banner, &src._banner, sizeof(_banner));
+	tonccpy(&_saveInfo, &src._saveInfo, sizeof(_saveInfo));
 
-    _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
-    tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
-    
-    _isDSRom = src._isDSRom;
-    _isHomebrew = src._isHomebrew;
-    _isGbaRom = src._isGbaRom;
-    _fileName = src._fileName;
-    _romVersion = src._romVersion;
-    _extIcon = src._extIcon;
-    _hasExtendedBinaries = src._hasExtendedBinaries;
-    _isDSiWare = src._isDSiWare;
-    _isBannerAnimated = src._isBannerAnimated;
-    _isArgv = src._isArgv;
+	_dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+	tonccpy(_dsiIcon.get(), src._dsiIcon.get(), sizeof(tDSiAnimatedIcon));
+
+	_isDSRom = src._isDSRom;
+	_isHomebrew = src._isHomebrew;
+	_isGbaRom = src._isGbaRom;
+	_fileName = src._fileName;
+	_romVersion = src._romVersion;
+	_extIcon = src._extIcon;
+	_hasExtendedBinaries = src._hasExtendedBinaries;
+	_isDSiWare = src._isDSiWare;
+	_isBannerAnimated = src._isBannerAnimated;
+	_isArgv = src._isArgv;
 }
 
 bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 {
-    _isDSRom = EFalse;
-    _isHomebrew = EFalse;
-    FILE *f = fopen(filename.c_str(), "rb");
-    if (NULL == f)
-    {
-        return false;
-    }
+	_isDSRom = EFalse;
+	_isHomebrew = EFalse;
+	FILE *f = fopen(filename.c_str(), "rb");
+	if (f == NULL)
+	{
+		return false;
+	}
 
-    sNDSHeaderExt header;
-    if (1 != fread(&header, sizeof(header), 1, f))
-    {
-		if (1 != fread(&header, 0x160, 1, f))
-		{
-			dbg_printf("read rom header fail\n");
-            _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
-            tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
-            tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
-			fclose(f);
-			return false;
-		}
-    }
+	sNDSHeaderExt header;
+	if (1 != fread(&header, sizeof(header), 1, f) && 1 != fread(&header, 0x160, 1, f)) {
+		dbg_printf("read rom header fail\n");
+		_banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
+		tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
+		tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
+		tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+		fclose(f);
+		return false;
+	}
 
-    ///////// ROM Header /////////
-    u16 crc = header.headerCRC16;
-    if (crc != header.headerCRC16)
-    {
-        dbg_printf("%s rom header crc error\n", filename.c_str());
-        
-        _banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
-        tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
-        tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
-        tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));        fclose(f);
-        return true;
-    }
-    else
-    {
-        _isDSRom = ETrue;
-        _isDSiWare = EFalse;
-        _hasExtendedBinaries = ETrue;
+	///////// ROM Header /////////
+	u16 crc = header.headerCRC16;
+	if (crc != header.headerCRC16) {
+		dbg_printf("%s rom header crc error\n", filename.c_str());
+
+		_banner.crc = ((tNDSBanner*)unknown_nds_banner_bin)->crc;
+		tonccpy(_banner.icon,((tNDSBanner*)unknown_nds_banner_bin)->icon, sizeof(_banner.icon));
+		tonccpy(_banner.palette,((tNDSBanner*)unknown_nds_banner_bin)->palette, sizeof(_banner.palette));
+		tonccpy(_banner.title, ((tNDSBanner*)unknown_nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));        fclose(f);
+		return true;
+	} else {
+		_isDSRom = ETrue;
+		_isDSiWare = EFalse;
+		_hasExtendedBinaries = ETrue;
 
 		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9Sig[0], sizeof(u32), 4, f);
@@ -139,7 +132,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		 && arm9Sig[0][3] == 0xE129F000)
 		{
 			_isDSiWare = ETrue;
-            _isHomebrew = ETrue;
+			_isHomebrew = ETrue;
 			if ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000)
 			{
 				if ((header.arm9binarySize == 0xC9F68 && header.arm7binarySize == 0x12814)	// Colors! v1.1
@@ -152,34 +145,30 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 					_isDSiWare = EFalse; // Have nds-bootstrap load it
 				}
 			}
-		}
-		else if (memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
-		{
+		} else if (memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0) {
 			_isDSiWare = ETrue;
-            _isHomebrew = ETrue;
-		}
-        else if ((memcmp(header.gameTitle, "NMP4BOOT", 8) == 0)
+			_isHomebrew = ETrue;
+		} else if ((memcmp(header.gameTitle, "NMP4BOOT", 8) == 0)
 		 || ((u32)header.arm7destination >= 0x037F0000 && (u32)header.arm7executeAddress >= 0x037F0000))
-        {
-            _isHomebrew = ETrue;
+		{
+			_isHomebrew = ETrue;
 		}
 		else if ((header.gameCode[0] == 0x48 && header.makercode[0] != 0 && header.makercode[1] != 0)
 		 || (header.gameCode[0] == 0x4B && header.makercode[0] != 0 && header.makercode[1] != 0)
 		 || (header.gameCode[0] == 0x5A && header.makercode[0] != 0 && header.makercode[1] != 0)
 		 || (header.gameCode[0] == 0x42 && header.gameCode[1] == 0x38 && header.gameCode[2] == 0x38))
 		{
-            dbg_printf("DSIWAREFOUND Is DSiWare!\n");
+			dbg_printf("DSIWAREFOUND Is DSiWare!\n");
 			_isDSiWare = ETrue;
 
 			_saveInfo.dsiPrvSavSize = header.prvSavSize;
 			_saveInfo.dsiPubSavSize = header.pubSavSize;
 			_saveInfo.dsiTid[0] = header.dsi_tid;
 			_saveInfo.dsiTid[1] = header.dsi_tid2;
-        }
-    }
+		}
+	}
 
-    if (_isHomebrew == EFalse && header.unitCode != 0)
-    {
+	if (_isHomebrew == EFalse && header.unitCode != 0) {
 		fseek(f, 0x8000, SEEK_SET);
 		fread(arm9Sig[0], sizeof(u32), 4, f);
 		fseek(f, header.arm9iromOffset, SEEK_SET);
@@ -208,135 +197,122 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		}
 	}
 
-    ///////// saveInfo /////////
-    tonccpy(_saveInfo.gameTitle, header.gameTitle, 12);
-    tonccpy(_saveInfo.gameCode, header.gameCode, 4);
-    ///// SDK Version /////
+	///////// saveInfo /////////
+	tonccpy(_saveInfo.gameTitle, header.gameTitle, 12);
+	tonccpy(_saveInfo.gameCode, header.gameCode, 4);
+	///// SDK Version /////
 
-    if (_isHomebrew == EFalse)
-    {
-        _saveInfo.gameSdkVersion = getModuleParams(&header, f)->sdk_version;
-        dbg_printf("SDK: %X\n", _saveInfo.gameSdkVersion);
-    }
-    else
-    {
-        _saveInfo.gameSdkVersion = 0;
-    }
+	if (_isHomebrew == EFalse) {
+		_saveInfo.gameSdkVersion = getModuleParams(&header, f)->sdk_version;
+		dbg_printf("SDK: %X\n", _saveInfo.gameSdkVersion);
+	} else {
+		_saveInfo.gameSdkVersion = 0;
+	}
 
-    _saveInfo.gameCRC = header.headerCRC16;
-    _romVersion = header.romversion;
+	_saveInfo.gameCRC = header.headerCRC16;
+	_romVersion = header.romversion;
 
-    ///////// banner /////////
-    if (header.bannerOffset != 0)
-    {
-        fseek(f, header.bannerOffset, SEEK_SET);
-        sNDSBannerExt banner;
-        int bannerSize;
+	///////// banner /////////
+	if (header.bannerOffset != 0) {
+		fseek(f, header.bannerOffset, SEEK_SET);
+		sNDSBannerExt banner;
+		int bannerSize;
 
-        // Rely on short-circuiting to get a clean if statement.
+		// Rely on short-circuiting to get a clean if statement.
 
-        // If we get a full size banner, then continue as so, setting bannerSize appropriately.
-        // Otherwise, if we read an invalid amount of bytes, read a DS size header.
-        if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner)) || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
-        {
-            // Check for DSi Banner.
-            if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi)
-            {
-                dbg_printf("DSi Banner Found!");
-                _isBannerAnimated = ETrue;
-                fixBanner(&banner);
-                _dsiIcon = std::make_unique<tDSiAnimatedIcon>();
+		// If we get a full size banner, then continue as so, setting bannerSize appropriately.
+		// Otherwise, if we read an invalid amount of bytes, read a DS size header.
+		if ((fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, sizeof(banner), f)) == sizeof(banner))
+		 || (fseek(f, header.bannerOffset, SEEK_SET) == 0 && (bannerSize = fread(&banner, 1, NDS_BANNER_SIZE_ORIGINAL, f)) == NDS_BANNER_SIZE_ORIGINAL))
+		{
+			// Check for DSi Banner.
+			if (bannerSize == NDS_BANNER_SIZE_DSi && banner.version == NDS_BANNER_VER_DSi) {
+				dbg_printf("DSi Banner Found!");
+				_isBannerAnimated = ETrue;
+				fixBanner(&banner);
+				_dsiIcon = std::make_unique<tDSiAnimatedIcon>();
 
-                tonccpy(_dsiIcon->icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
-                tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
-                tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
-            }
+				tonccpy(_dsiIcon->icon_frames, banner.dsi_icon, sizeof(banner.dsi_icon));
+				tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
+				tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
+			}
 
-            _banner.crc = ((tNDSBanner*)&banner)->crc;
-            tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
-            tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
-        }
-        else
-        {
-            _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
-            tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
-            tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-            tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
-        }
-    }
-    else
-    {
-        //dbg_printf( "%s has no banner\n", filename );
-        _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
-        tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
-        tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-        tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
-    }
+			_banner.crc = ((tNDSBanner*)&banner)->crc;
+			tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
+			tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
+			tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
+		} else {
+			_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+			tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+			tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
+			tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+		}
+	} else {
+		//dbg_printf( "%s has no banner\n", filename );
+		_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+		tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+		tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
+		tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+	}
 
-    fclose(f);
+	fclose(f);
 
-    return true;
+	return true;
 }
 
 void DSRomInfo::drawDSRomIcon(u8 x, u8 y, GRAPHICS_ENGINE engine)
 {
-    if (_extIcon >= 0)
-    {
-        fileIcons().Draw(_extIcon, x, y, engine);
-        return;
-    }
-    bool skiptransparent = false;
-    switch (_saveInfo.getIcon())
-    {
-    case SAVE_INFO_EX_ICON_TRANSPARENT:
-        break;
-    case SAVE_INFO_EX_ICON_AS_IS:
-        skiptransparent = true;
-        break;
-    case SAVE_INFO_EX_ICON_FIRMWARE:
-        gdi().maskBlt(icon_bg_bin, x, y, 32, 32, engine);
-        break;
-    }
-    for (int tile = 0; tile < 16; ++tile)
-    {
-        for (int pixel = 0; pixel < 32; ++pixel)
-        {
-            u8 a_byte = _banner.icon[(tile << 5) + pixel];
+	if (_extIcon >= 0) {
+		fileIcons().Draw(_extIcon, x, y, engine);
+		return;
+	}
 
-            //int px = (tile & 3) * 8 + (2 * pixel & 7);
-            //int py = (tile / 4) * 8 + (2 * pixel / 8);
-            int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
-            int py = ((tile >> 2) << 3) + (pixel >> 2);
+	bool skiptransparent = false;
+	switch (_saveInfo.getIcon()) {
+		case SAVE_INFO_EX_ICON_TRANSPARENT:
+			break;
+		case SAVE_INFO_EX_ICON_AS_IS:
+			skiptransparent = true;
+			break;
+		case SAVE_INFO_EX_ICON_FIRMWARE:
+			gdi().maskBlt(icon_bg_bin, x, y, 32, 32, engine);
+			break;
+	}
 
-            u8 idx1 = (a_byte & 0xf0) >> 4;
-            if (skiptransparent || 0 != idx1)
-            {
-                gdi().setPenColor(_banner.palette[idx1], engine);
-                gdi().drawPixel(px + 1 + x, py + y, engine);
-            }
+	for (int tile = 0; tile < 16; ++tile) {
+		for (int pixel = 0; pixel < 32; ++pixel) {
+			u8 a_byte = _banner.icon[(tile << 5) + pixel];
 
-            u8 idx2 = (a_byte & 0x0f);
-            if (skiptransparent || 0 != idx2)
-            {
-                gdi().setPenColor(_banner.palette[idx2], engine);
-                gdi().drawPixel(px + x, py + y, engine);
-            }
-        }
-    }
+			//int px = (tile & 3) * 8 + (2 * pixel & 7);
+			//int py = (tile / 4) * 8 + (2 * pixel / 8);
+			int px = ((tile & 3) << 3) + ((pixel << 1) & 7);
+			int py = ((tile >> 2) << 3) + (pixel >> 2);
+
+			u8 idx1 = (a_byte & 0xf0) >> 4;
+			if (skiptransparent || 0 != idx1) {
+				gdi().setPenColor(_banner.palette[idx1], engine);
+				gdi().drawPixel(px + 1 + x, py + y, engine);
+			}
+
+			u8 idx2 = (a_byte & 0x0f);
+			if (skiptransparent || 0 != idx2) {
+				gdi().setPenColor(_banner.palette[idx2], engine);
+				gdi().drawPixel(px + x, py + y, engine);
+			}
+		}
+	}
 }
 
 void DSRomInfo::drawDSiAnimatedRomIcon(u8 x, u8 y, u8 frame, u8 palette, bool flipH, bool flipV, GRAPHICS_ENGINE engine)
 {
-    if (_extIcon >= 0)
-    {
-        fileIcons().Draw(_extIcon, x, y, engine);
-        return;
-    }
-    if (_isBannerAnimated != ETrue)
-    {
-        return drawDSRomIcon(x, y, engine);
-    }
+	if (_extIcon >= 0) {
+		fileIcons().Draw(_extIcon, x, y, engine);
+		return;
+	}
+
+	if (_isBannerAnimated != ETrue) {
+		return drawDSRomIcon(x, y, engine);
+	}
 
     bool skiptransparent = false;
     switch (_saveInfo.getIcon())
