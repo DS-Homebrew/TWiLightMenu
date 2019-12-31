@@ -293,7 +293,7 @@ int nitroFSDirNext(struct _reent *r, DIR_ITER *dirState, char *filename, struct 
         { // ".."
             dirStruct->dir_id = dirStruct->parent_id;
         }
-        tonccpy(filename, syspaths[dirStruct->spc++]);
+        strcpy(filename, syspaths[dirStruct->spc++]);
         return (0);
     }
     nitroSubSeek(pos, fntOffset + dirStruct->namepos, SEEK_SET);
