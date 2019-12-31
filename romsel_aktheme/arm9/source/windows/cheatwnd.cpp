@@ -21,6 +21,7 @@
 #include "cheatwnd.h"
 #include "ui/uisettings.h"
 #include "ui/windowmanager.h"
+#include "easysave/ini.hpp"
 #include "language.h"
 #include "ui/msgbox.h"
 #include "gamecode.h"
@@ -102,7 +103,7 @@ _List(0,0,w-8,h-44,this,"cheat tree", ms().ak_scrollSpeed)
 
   _List.setRelativePosition(Point(4, 20));
 
-  CIniFile ini(SFN_UI_SETTINGS);
+  easysave::ini ini(SFN_UI_SETTINGS);
   if(ini.GetInt("cheat menu","textColor",-1)!=-1)
   {
     _List.setColors(ini.GetInt("cheat menu","textColor",RGB15(7,7,7)),ini.GetInt("cheat menu","textColorHilight",RGB15(31,0,31)),ini.GetInt("cheat menu","selectionBarColor1",RGB15(16,20,24)),ini.GetInt("cheat menu","selectionBarColor2",RGB15(20,25,0)));

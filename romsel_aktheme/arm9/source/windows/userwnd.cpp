@@ -22,7 +22,7 @@
 #include "userwnd.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "unicode.h"
 #include "tool/stringtool.h"
 #include "tool/memtool.h"
@@ -46,7 +46,7 @@ UserWindow::UserWindow() : Window(NULL, "UserWindow")
 
 void UserWindow::init()
 {
-    CIniFile ini(SFN_USER_CUSTOM);
+    easysave::ini ini(SFN_USER_CUSTOM);
     std::string pictureFilename = ini.GetString("custom picture", "file", "");
     if (pictureFilename != "")
     {

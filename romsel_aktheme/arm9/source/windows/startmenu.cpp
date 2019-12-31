@@ -21,14 +21,14 @@
 #include "startmenu.h"
 #include "ui/windowmanager.h"
 #include "systemfilenames.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "language.h"
 
 using namespace akui;
 
 void StartMenu::init()
 {
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
     if(ini.GetInt("start menu", "showFileOperations", true))
     {
         addItem(START_MENU_ITEM_COPY, LANG("start menu", "Copy"));
@@ -69,7 +69,7 @@ Window &StartMenu::loadAppearance(const std::string &aFileName)
     _renderDesc->loadData(SFN_STARTMENU_BG);
     _size = _renderDesc->size();
 
-    CIniFile ini(aFileName);
+    easysave::ini ini(aFileName);
     //std::string bgFile = ini.GetString( "bg", "file",  );
     int ix = ini.GetInt("start menu", "itemX", 4);
     int iy = ini.GetInt("start menu", "itemY", 12);

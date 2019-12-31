@@ -76,7 +76,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 		settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
-    CIniFile settingsini(settingsinipath);
+    easysave::ini settingsini(settingsinipath);
 
     // UI settings.
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
@@ -161,7 +161,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 void DSiMenuPlusPlusSettings::saveSettings()
 {
-    CIniFile settingsini(settingsinipath);
+    easysave::ini settingsini(settingsinipath);
 
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
@@ -213,7 +213,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
-    settingsini.SaveIniFile(DSIMENUPP_INI);
+    settingsini.flush();
 }
 
 u32 DSiMenuPlusPlusSettings::CopyBufferSize(void)

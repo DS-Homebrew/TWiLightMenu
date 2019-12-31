@@ -55,7 +55,7 @@
 
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "common/systemdetails.h"
 
 #include "fileCopy.h"
@@ -268,7 +268,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	lockOutDirContentBlankFilling = true;
 
 	char str[12] = {0};
-	CIniFile twlmDirInfo("dirInfo.twlm.ini");
+	easysave::ini twlmDirInfo("dirInfo.twlm.ini");
 	int currentPos = PAGENUM*40;
 	for (int i = 0; i < 40; i++) {
 		sprintf(str, "%d", i+(PAGENUM*40));
@@ -306,7 +306,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			pageLoaded[i] = false;
 		}
 
-		CIniFile twlmDirInfo("dirInfo.twlm.ini");
+		easysave::ini twlmDirInfo("dirInfo.twlm.ini");
 		file_count = twlmDirInfo.GetInt("INFO", "GAMES", 0);
 		return;
 	} else {
@@ -320,7 +320,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		// iprintf("Unable to open the directory.\n");
 		printSmall(false, 4, 4, "Unable to open the directory.");
 	} else {
-		CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		easysave::ini hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
 		char str[12] = {0};
 
@@ -395,7 +395,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			case 1:
-				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+				easysave::ini recentlyPlayedIni(recentlyPlayedIniPath);
 				vector<std::string> recentlyPlayed;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -415,7 +415,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			case 2:
-				CIniFile timesPlayedIni(timesPlayedIniPath);
+				easysave::ini timesPlayedIni(timesPlayedIniPath);
 				vector<TimesPlayed> timesPlayed;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -439,7 +439,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
 				break;
 			case 4:
-				CIniFile gameOrderIni(gameOrderIniPath);
+				easysave::ini gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -846,7 +846,7 @@ void launchGba(void) {
 			argarray.push_back(strdup(bootstrapPath.c_str()));
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
-			CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+			easysave::ini bootstrapini("sd:/_nds/nds-bootstrap.ini");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
@@ -854,7 +854,7 @@ void launchGba(void) {
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+			bootstrapini.flush();
 			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 			char text[32];
 			snprintf(text, sizeof(text), "Start failed. Error %i", err);
@@ -1818,7 +1818,7 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = 1;
 					writeBannerText(0, "Please wait...", "", "");
 
-					CIniFile gameOrderIni(gameOrderIniPath);
+					easysave::ini gameOrderIni(gameOrderIniPath);
 					vector<std::string> gameOrder;
 					char str[12] = {0};
 
@@ -1869,7 +1869,7 @@ string browseForFile(const vector<string> extensionList) {
 						sprintf(str, "%d", i);
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 					}
-					gameOrderIni.SaveIniFile(gameOrderIniPath);
+					gameOrderIni.flush();
 
 					ms().sortMethod = 4;
 					ms().saveSettings();
@@ -2605,7 +2605,7 @@ string browseForFile(const vector<string> extensionList) {
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
-							CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
+							easysave::ini recentlyPlayedIni(recentlyPlayedIniPath);
 							vector<std::string> recentlyPlayed;
 							char str[12] = {0};
 
@@ -2657,11 +2657,11 @@ string browseForFile(const vector<string> extensionList) {
 								sprintf(str, "%d", i);
 								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
 							}
-							recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
+							recentlyPlayedIni.flush();
 
-							CIniFile timesPlayedIni(timesPlayedIniPath);
+							easysave::ini timesPlayedIni(timesPlayedIniPath);
 							timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
-							timesPlayedIni.SaveIniFile(timesPlayedIniPath);
+							timesPlayedIni.flush();
 
 							if(ms().sortMethod == 1) {
 								ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
@@ -2852,7 +2852,7 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if ((pressed & KEY_X) && !startMenu && bannerTextShown && showSTARTborder) {
-				CIniFile hiddenGamesIni(hiddenGamesIniPath);
+				easysave::ini hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
 				char str[12] = {0};
 
@@ -3022,7 +3022,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 					  0777);
-						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+						hiddenGamesIni.flush();
 
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art

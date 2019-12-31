@@ -166,7 +166,7 @@ void LoadSettings(void) {
 	useBootstrap = isDSiMode();
 
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	easysave::ini settingsini( settingsinipath );
 
 	// UI settings.
 	romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", "sd:/");
@@ -244,7 +244,7 @@ void LoadSettings(void) {
 
 void SaveSettings(void) {
 	// GUI
-	CIniFile settingsini( settingsinipath );
+	easysave::ini settingsini( settingsinipath );
 
 	settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
 	settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
@@ -270,7 +270,7 @@ void SaveSettings(void) {
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
-	settingsini.SaveIniFile(settingsinipath);
+	settingsini.flush();
 }
 
 int colorRvalue;
@@ -906,40 +906,43 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings) {
+void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
+
 	if (isDSiMode() && usePerGameSettings) {
 		loadPerGameSettings(filename);
-		
+
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
+
 	std::string path;
 	int err = 0;
+
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
 		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
-		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+		fcrompathini.flush();
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
 		path = ReplaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+		fcrompathini.flush();
 		// Does not support autoboot; so only nds-bootstrap launching works.
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
@@ -1339,7 +1342,7 @@ int main(int argc, char **argv) {
 									argarray.push_back(strdup(bootstrapPath.c_str()));
 									argarray.at(0) = (char*)bootstrapPath.c_str();
 
-									CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+									easysave::ini bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 									bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 									bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 									bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
@@ -1347,7 +1350,7 @@ int main(int argc, char **argv) {
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 									bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-									bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+									bootstrapini.flush();
 									int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 									iprintf ("Start failed. Error %i\n", err);
 									if (err == 1) {
@@ -1583,7 +1586,7 @@ int main(int argc, char **argv) {
 					loadPerGameSettings(filename);
 
 					bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
-					CIniFile bootstrapini(bootstrapinipath);
+					easysave::ini bootstrapini(bootstrapinipath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", dsiWareSrlPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", dsiWarePubPath);
 					bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", "");
@@ -1603,7 +1606,7 @@ int main(int argc, char **argv) {
 					|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
 					|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
 					);
-					bootstrapini.SaveIniFile(bootstrapinipath);
+					bootstrapini.flush();
 
 					if (isDSiMode()) {
 						SetWidescreen(filename.c_str());
@@ -1817,7 +1820,7 @@ int main(int argc, char **argv) {
 						bootstrapinipath =
 						    (sdFound() ? "sd:/_nds/nds-bootstrap.ini"
 									  : "fat:/_nds/nds-bootstrap.ini");
-						CIniFile bootstrapini( bootstrapinipath );
+						easysave::ini bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 						if (!isHomebrew) {
@@ -1845,7 +1848,7 @@ int main(int argc, char **argv) {
 						|| (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0 && !isRegularDS)
 						|| (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0 && !isRegularDS))
 						);
-						bootstrapini.SaveIniFile( bootstrapinipath );
+						bootstrapini.flush();
 
 						CheatCodelist codelist;
 						u32 gameCode,crc32;
@@ -2014,9 +2017,9 @@ int main(int argc, char **argv) {
 						if (ROMpath[4+i] == '\x00') break;
 					}
 
-					CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+					easysave::ini dstwobootini( "fat:/_dstwo/twlm.ini" );
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+					dstwobootini.flush();
 				} else if (rvid) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
@@ -2080,7 +2083,7 @@ int main(int argc, char **argv) {
 					ndsToBoot =
 					    (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
 									: "sd:/_nds/nds-bootstrap-hb-release.nds");
-					CIniFile bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
+					easysave::ini bootstrapini( "sd:/_nds/nds-bootstrap.ini" );
 
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -2102,7 +2105,7 @@ int main(int argc, char **argv) {
 					}
 					bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
-					bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
+					bootstrapini.flush();
 				}
 				argarray.at(0) = (char *)ndsToBoot;
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], secondaryDevice, true,

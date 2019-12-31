@@ -144,7 +144,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	if (pdir == NULL) {
 		iprintf ("Unable to open the directory.\n");
 	} else {
-		CIniFile hiddenGamesIni(hiddenGamesIniPath);
+		easysave::ini hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
 		char str[12] = {0};
 		for (int i = 0; true; i++) {
@@ -648,7 +648,7 @@ string browseForFile(const vector<string> extensionList)
 
 		if ((pressed & KEY_X) && strcmp(dirContents.at(fileOffset).name.c_str(), ".."))
 		{
-			CIniFile hiddenGamesIni(hiddenGamesIniPath);
+			easysave::ini hiddenGamesIni(hiddenGamesIniPath);
 			vector<std::string> hiddenGames;
 			char str[12] = {0};
 
@@ -731,7 +731,7 @@ string browseForFile(const vector<string> extensionList)
 							sprintf(str, "%d", i);
 							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
 						}
-						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
+						hiddenGamesIni.flush();
 					}
 					
 					if (settingsChanged) {

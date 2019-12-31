@@ -20,7 +20,7 @@
 
 #include "volumeicon.h"
 #include "drawing/bmp15.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
@@ -30,7 +30,7 @@ using namespace akui;
 
 VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
 {
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
     if(ini.GetInt("volume icon", "screen", true)) {
@@ -59,7 +59,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
 
 void VolumeIcon::draw()
 {
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
     if(ini.GetInt("volume icon", "show", false))
     {
         u8 volumeLevel = sys().volumeStatus();
@@ -81,7 +81,7 @@ void VolumeIcon::draw()
 void VolumeIcon::drawIcon(const BMP15 &icon)
 {
 
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
 
     u16 x = ini.GetInt("volume icon", "x", 238);
     u16 y = ini.GetInt("volume icon", "y", 172);

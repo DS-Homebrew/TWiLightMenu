@@ -34,7 +34,7 @@
 #include "tool/timetool.h"
 #include "tool/memtool.h"
 #include "tool/dbgtool.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "unknown_banner_bin.h"
 #include "nds_save_banner_bin.h"
 #include "nand_banner_bin.h"
@@ -64,14 +64,14 @@ using namespace akui;
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
     : ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
 {
-    _viewMode = VM_LIST;
-    _activeIconScale = 1;
-    _activeIcon.hide();
-    _activeIcon.update();
-    setupExtnames();
-    animationManager().addAnimation(&_activeIcon);
-    seq();
-    dbg_printf("_activeIcon.init\n");
+	_viewMode = VM_LIST;
+	_activeIconScale = 1;
+	_activeIcon.hide();
+	_activeIcon.update();
+	setupExtnames();
+	animationManager().addAnimation(&_activeIcon);
+	seq();
+	dbg_printf("_activeIcon.init\n");
 }
 
 MainList::~MainList()
@@ -80,179 +80,173 @@ MainList::~MainList()
 
 int MainList::init()
 {
-    CIniFile ini(SFN_UI_SETTINGS);
-    _textColor = ini.GetInt("main list", "textColor", RGB15(7, 7, 7));
-    _textColorHilight = ini.GetInt("main list", "textColorHilight", RGB15(31, 0, 31));
-    _selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
-    _selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0));
-    _selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
-    _showSelectionBarBg = ini.GetInt("main list", "showSelectionBarBg", false);
+	easysave::ini ini(SFN_UI_SETTINGS);
+	_textColor = ini.GetInt("main list", "textColor", RGB15(7, 7, 7));
+	_textColorHilight = ini.GetInt("main list", "textColorHilight", RGB15(31, 0, 31));
+	_selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));
+	_selectionBarColor2 = ini.GetInt("main list", "selectionBarColor2", RGB15(20, 25, 0));
+	_selectionBarOpacity = ini.GetInt("main list", "selectionBarOpacity", 100);
+	_showSelectionBarBg = ini.GetInt("main list", "showSelectionBarBg", false);
 
-    insertColumn(ICON_COLUMN, "icon", 0);
-    insertColumn(SHOWNAME_COLUMN, "showName", 0);
-    insertColumn(INTERNALNAME_COLUMN, "internalName", 0);
-    insertColumn(REALNAME_COLUMN, "realName", 0); // hidden column for contain real filename
-    insertColumn(SAVETYPE_COLUMN, "saveType", 0);
-    insertColumn(FILESIZE_COLUMN, "fileSize", 0);
+	insertColumn(ICON_COLUMN, "icon", 0);
+	insertColumn(SHOWNAME_COLUMN, "showName", 0);
+	insertColumn(INTERNALNAME_COLUMN, "internalName", 0);
+	insertColumn(REALNAME_COLUMN, "realName", 0); // hidden column for contain real filename
+	insertColumn(SAVETYPE_COLUMN, "saveType", 0);
+	insertColumn(FILESIZE_COLUMN, "fileSize", 0);
 
-    setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
+	setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
 
-    _activeIcon.hide();
+	_activeIcon.hide();
 
-    return 1;
+	return 1;
 }
 
 static bool itemSortComp(const ListView::itemVector &item1, const ListView::itemVector &item2)
 {
-    const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
-    const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
-    if ("../" == fn1)
-        return true;
-    if ("../" == fn2)
-        return false;
-    if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
-        return fn1 < fn2;
-    if ('/' == fn1[fn1.size() - 1])
-        return true;
-    if ('/' == fn2[fn2.size() - 1])
-        return false;
+	const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
+	const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
 
-    return fn1 < fn2;
+	if ("../" == fn1)
+		return true;
+	if ("../" == fn2)
+		return false;
+	if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
+		return fn1 < fn2;
+	if ('/' == fn1[fn1.size() - 1])
+		return true;
+	if ('/' == fn2[fn2.size() - 1])
+		return false;
+
+	return fn1 < fn2;
 }
 
 static bool extnameFilter(const std::vector<std::string> &extNames, std::string extName)
 {
-    if (0 == extNames.size())
-        return true;
+	if (0 == extNames.size())
+		return true;
 
-    for (size_t i = 0; i < extName.size(); ++i)
-        extName[i] = tolower(extName[i]);
+	for (size_t i = 0; i < extName.size(); ++i)
+		extName[i] = tolower(extName[i]);
 
-    for (size_t i = 0; i < extNames.size(); ++i)
-    {
-        if (extName == extNames[i])
-        {
-            return true;
-        }
-    }
-    return false;
+	for (size_t i = 0; i < extNames.size(); ++i) {
+		if (extName == extNames[i]) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void MainList::setupExtnames() 
 {
-    if (ms().showNds)
-    {
-        _extnameFilter.emplace_back(std::string(".nds"));
-        _extnameFilter.emplace_back(std::string(".ids"));
-        _extnameFilter.emplace_back(std::string(".dsi"));
-        _extnameFilter.emplace_back(std::string(".srl"));
-        _extnameFilter.emplace_back(std::string(".app"));
-        _extnameFilter.emplace_back(std::string(".argv"));
-    }
+	if (ms().showNds)
+	{
+		_extnameFilter.emplace_back(std::string(".nds"));
+		_extnameFilter.emplace_back(std::string(".ids"));
+		_extnameFilter.emplace_back(std::string(".dsi"));
+		_extnameFilter.emplace_back(std::string(".srl"));
+		_extnameFilter.emplace_back(std::string(".app"));
+		_extnameFilter.emplace_back(std::string(".argv"));
+	}
 	if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		_extnameFilter.emplace_back(std::string(".plg"));
 	}
-    if (ms().showRvid)
-    {
+	if (ms().showRvid)
+	{
 		_extnameFilter.emplace_back(std::string(".rvid"));
 	}
-    if (ms().useGbarunner)
+	if (ms().useGbarunner)
 	{
 		_extnameFilter.emplace_back(std::string(".gba"));
 	}
-    if (ms().showGb)
-    {
-        _extnameFilter.emplace_back(std::string(".gb"));
-        _extnameFilter.emplace_back(std::string(".gbc"));
-    }
-    if (ms().showNes)
-    {
-        _extnameFilter.emplace_back(std::string(".nes"));
-        _extnameFilter.emplace_back(std::string(".fds"));
-    }
-    if (ms().showSmsGg)
-    {
-        _extnameFilter.emplace_back(std::string(".sms"));
-        _extnameFilter.emplace_back(std::string(".gg"));
-    }
-    if (ms().showMd)
-    {
-        _extnameFilter.emplace_back(std::string(".gen"));
-    }
-    if (ms().showSnes)
-    {
-        _extnameFilter.emplace_back(std::string(".smc"));
-        _extnameFilter.emplace_back(std::string(".sfc"));
-    }
+	if (ms().showGb)
+	{
+		_extnameFilter.emplace_back(std::string(".gb"));
+		_extnameFilter.emplace_back(std::string(".gbc"));
+	}
+	if (ms().showNes)
+	{
+		_extnameFilter.emplace_back(std::string(".nes"));
+		_extnameFilter.emplace_back(std::string(".fds"));
+	}
+	if (ms().showSmsGg)
+	{
+		_extnameFilter.emplace_back(std::string(".sms"));
+		_extnameFilter.emplace_back(std::string(".gg"));
+	}
+	if (ms().showMd)
+	{
+		_extnameFilter.emplace_back(std::string(".gen"));
+	}
+	if (ms().showSnes)
+	{
+		_extnameFilter.emplace_back(std::string(".smc"));
+		_extnameFilter.emplace_back(std::string(".sfc"));
+	}
 }
 
 void MainList::addDirEntry(const std::string row1,
-    const std::string row2, 
-    const std::string path, const std::string &bannerKey, const u8 *banner)
+	const std::string row2, 
+	const std::string path, const std::string &bannerKey, const u8 *banner)
 {
-    nocashMessage("mainlist:140");
+	nocashMessage("mainlist:140");
 
-    std::vector<std::string> a_row;
-    a_row.reserve(4);
+	std::vector<std::string> a_row;
+	a_row.reserve(4);
 
-    a_row.push_back("");
-    a_row.push_back(row1);
-    a_row.push_back(row2);
-    a_row.push_back(path);
+	a_row.push_back("");
+	a_row.push_back(row1);
+	a_row.push_back(row2);
+	a_row.push_back(path);
 
-    nocashMessage("mainlist:152");
-    nocashMessage(a_row[0].c_str());
-    nocashMessage(a_row[1].c_str());
-    nocashMessage(a_row[2].c_str());
-    nocashMessage(a_row[3].c_str());
-    nocashMessage("mainlist:158");
+	nocashMessage("mainlist:152");
+	nocashMessage(a_row[0].c_str());
+	nocashMessage(a_row[1].c_str());
+	nocashMessage(a_row[2].c_str());
+	nocashMessage(a_row[3].c_str());
+	nocashMessage("mainlist:158");
 
-    appendRow(std::move(a_row));
-    nocashMessage("mainlist:157");
+	appendRow(std::move(a_row));
+	nocashMessage("mainlist:157");
 
-    DSRomInfo romInfo;
-    if (!bannerKey.empty())
-    {
-        romInfo.setBanner(bannerKey, banner);
-    }
-    _romInfoList.emplace_back(std::move(romInfo));
+	DSRomInfo romInfo;
+	if (!bannerKey.empty()) {
+		romInfo.setBanner(bannerKey, banner);
+	}
+	_romInfoList.emplace_back(std::move(romInfo));
 }
 
 bool MainList::enterDir(const std::string &dirName)
 {
-    cwl();
-    dbg_printf("Enter Dir: %s\n", dirName.c_str());
-    if (SPATH_ROOT == dirName)
-    {
-        removeAllRows();
-        _romInfoList.clear();
-        cwl();
+	cwl();
+	dbg_printf("Enter Dir: %s\n", dirName.c_str());
+	if (SPATH_ROOT == dirName) {
+		removeAllRows();
+		_romInfoList.clear();
+		cwl();
 
-        if (sdFound())
-        {
-            addDirEntry(LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
-        }
-        if (flashcardFound())
-        {
-            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
-        }
-        addDirEntry("GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
-        if (!sys().isRegularDS())
-        {
-            if (!flashcardFound() && sdFound())
-            {
-                addDirEntry("SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
-            }
-            addDirEntry("System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
-        }
-        addDirEntry("Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-        addDirEntry("Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
-        _currentDir = SPATH_ROOT;
-        directoryChanged();
-        cwl();
-        return true;
-    }
-    cwl();
+		if (sdFound()) {
+			addDirEntry(LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+		}
+
+		if (flashcardFound()) {
+			addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
+		}
+
+		if (!sys().isRegularDS()) {
+			if (!flashcardFound() && sdFound()) {
+				addDirEntry("SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+			}
+			addDirEntry("System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
+		}
+		addDirEntry("Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+		addDirEntry("Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
+		_currentDir = SPATH_ROOT;
+		directoryChanged();
+		cwl();
+		return true;
+	}
+	cwl();
 
     // Only compare first 4 characters
     if (!strncmp(dirName.c_str(), "^*::", 4))

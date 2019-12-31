@@ -20,7 +20,7 @@
 
 #include "batteryicon.h"
 #include "drawing/bmp15.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
@@ -30,7 +30,7 @@ using namespace akui;
 
 BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
 {
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
     _size = Size(0, 0);
     _position = Point(0, 0);
     if(ini.GetInt("battery icon", "screen", true)) {
@@ -59,9 +59,9 @@ BatteryIcon::BatteryIcon() : Window(NULL, "batteryicon")
 
 void BatteryIcon::draw()
 {
-    CIniFile ini(SFN_UI_SETTINGS);
-    if(ini.GetInt("battery icon", "show", false)) {
-        u8 batteryLevel = sys().batteryStatus();
+	easysave::ini ini(SFN_UI_SETTINGS);
+	if(ini.GetInt("battery icon", "show", false)) {
+		u8 batteryLevel = sys().batteryStatus();
 
 		if (isDSiMode()) {
 			if (batteryLevel & BIT(7)) {
@@ -90,7 +90,7 @@ void BatteryIcon::draw()
 void BatteryIcon::drawIcon(BMP15 &icon)
 {
 
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
 
     u16 x = ini.GetInt("battery icon", "x", 238);
     u16 y = ini.GetInt("battery icon", "y", 172);

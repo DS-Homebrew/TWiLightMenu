@@ -20,7 +20,7 @@
 
 #include "diskicon.h"
 #include "drawing/bmp15.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "systemfilenames.h"
 #include "tool/memtool.h"
 #include "tool/timetool.h"
@@ -48,41 +48,38 @@ void DiskIcon::draw()
 
 Window &DiskIcon::loadAppearance(const std::string &aFileName)
 {
+	easysave::ini ini(SFN_UI_SETTINGS);
 
-    CIniFile ini(SFN_UI_SETTINGS);
+	u16 x = ini.GetInt("disk icon", "x", 238);
+	u16 y = ini.GetInt("disk icon", "y", 172);
+	_icon.setPosition(x, y);
 
-    u16 x = ini.GetInt("disk icon", "x", 238);
-    u16 y = ini.GetInt("disk icon", "y", 172);
-    _icon.setPosition(x, y);
+	BMP15 icon = createBMP15FromFile(aFileName);
 
-    BMP15 icon = createBMP15FromFile(aFileName);
-
-    u32 pitch = icon.pitch() >> 1;
-    for (u8 i = 0; i < icon.height(); ++i)
-    {
-        for (u8 j = 0; j < icon.width(); ++j)
-        {
-            ((u16 *)_icon.buffer())[i * 32 + j] = ((u16 *)icon.buffer())[i * pitch + j];
-        }
-    }
-    dbg_printf("cDiskIcon::loadAppearance ok %d\n", icon.valid());
-    return *this;
+	u32 pitch = icon.pitch() >> 1;
+	for (u8 i = 0; i < icon.height(); ++i) {
+		for (u8 j = 0; j < icon.width(); ++j) {
+			((u16 *)_icon.buffer())[i * 32 + j] = ((u16 *)icon.buffer())[i * pitch + j];
+		}
+	}
+	dbg_printf("cDiskIcon::loadAppearance ok %d\n", icon.valid());
+	return *this;
 }
 
 void DiskIcon::blink(void)
 {
-    if (_icon.visible())
-        _icon.hide();
-    else
-        _icon.show();
+	if (_icon.visible())
+		_icon.hide();
+	else
+		_icon.show();
 }
 
 void DiskIcon::turnOn()
 {
-    _icon.show();
+	_icon.show();
 }
 
 void DiskIcon::turnOff()
 {
-    _icon.hide();
+	_icon.hide();
 }

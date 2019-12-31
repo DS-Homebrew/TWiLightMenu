@@ -21,7 +21,7 @@
 #include "windows/calendar.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "tool/stringtool.h"
 #include "tool/memtool.h"
 
@@ -55,7 +55,7 @@ Window &Calendar::loadAppearance(const std::string &aFileName)
     // load weekday text
     _weekdayText = createBMP15FromFile(SFN_WEEKDAY_TEXT);
 
-    CIniFile ini(aFileName);
+    easysave::ini ini(aFileName);
     _dayPosition.x = ini.GetInt("calendar day", "x", 134);
     _dayPosition.y = ini.GetInt("calendar day", "y", 34);
     _daySize.x = ini.GetInt("calendar day", "dw", 16);

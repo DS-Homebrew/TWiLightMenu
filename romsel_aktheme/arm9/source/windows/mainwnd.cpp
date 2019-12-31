@@ -45,7 +45,7 @@
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
 
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "language.h"
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
@@ -85,7 +85,7 @@ void MainWnd::init()
     COLOR color = 0;
     std::string file("");
     std::string text("");
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
 
     // self init
     dbg_printf("mainwnd init() %08x\n", this);
@@ -235,7 +235,7 @@ void MainWnd::listSelChange(u32 i)
 
 void MainWnd::startMenuItemClicked(s16 i)
 {
-    CIniFile ini(SFN_UI_SETTINGS);
+    easysave::ini ini(SFN_UI_SETTINGS);
     if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
     
     dbg_printf("start menu item %d\n", i);
@@ -253,10 +253,7 @@ void MainWnd::startMenuItemClicked(s16 i)
             return;
         }
         setSrcFile(_mainList->getSelectedFullPath(), SFM_COPY);
-    }
-
-    else if (START_MENU_ITEM_CUT == i)
-    {
+    } else if (START_MENU_ITEM_CUT == i) {
         if (_mainList->getSelectedFullPath() == "")
             return;
         struct stat st;
@@ -267,18 +264,12 @@ void MainWnd::startMenuItemClicked(s16 i)
             return;
         }
         setSrcFile(_mainList->getSelectedFullPath(), SFM_CUT);
-    }
-
-    else if (START_MENU_ITEM_PASTE == i)
-    {
+    } else if (START_MENU_ITEM_PASTE == i) {
         bool ret = false;
         ret = copyOrMoveFile(_mainList->getCurrentDir());
         if (ret) // refresh current directory
             _mainList->enterDir(_mainList->getCurrentDir());
-    }
-
-    else if (START_MENU_ITEM_DELETE == i)
-    {
+    } else if (START_MENU_ITEM_DELETE == i) {
         std::string fullPath = _mainList->getSelectedFullPath();
         if (fullPath != "")
         {
@@ -1251,9 +1242,9 @@ void MainWnd::launchSelected()
 			if (fullPath[4+i] == '\x00') break;
 		}
 
-		CIniFile dstwobootini( "fat:/_dstwo/twlm.ini" );
+		easysave::ini dstwobootini( "fat:/_dstwo/twlm.ini" );
 		dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-		dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
+		dstwobootini.flush();
 
         bootFile(BOOTPLG_SRL, fullPath);
 	}
@@ -1567,7 +1558,7 @@ void MainWnd::showFileInfo()
 
     dbg_printf("show '%s' info\n", _mainList->getSelectedFullPath().c_str());
 
-    CIniFile ini(SFN_UI_SETTINGS); //(256-)/2,(192-128)/2, 220, 128
+    easysave::ini ini(SFN_UI_SETTINGS); //(256-)/2,(192-128)/2, 220, 128
     u32 w = 240;
     u32 h = 144;
     w = ini.GetInt("rom info window", "w", w);

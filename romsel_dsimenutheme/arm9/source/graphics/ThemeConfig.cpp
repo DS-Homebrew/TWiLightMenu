@@ -3,7 +3,7 @@
 #include "themefilenames.h"
 #include "common/dsimenusettings.h"
 #include "common/singleton.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 
 #include <nds.h>
 #include <string>
@@ -43,7 +43,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 void ThemeConfig::loadConfig()
 {
 	printf("tc().loadConfig()\n");
-    CIniFile themeConfig(TFN_THEME_SETTINGS);
+    easysave::ini themeConfig(TFN_THEME_SETTINGS);
     _startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
     _startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
     _startBorderSpriteH = themeConfig.GetInt("THEME", "StartBorderSpriteH", _startBorderSpriteH);

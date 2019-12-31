@@ -22,7 +22,7 @@
 #include "tool/stringtool.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "common/inifile.h"
+#include "easysave/ini.hpp"
 #include "common/dsimenusettings.h"
 
 using namespace akui;
@@ -45,7 +45,7 @@ void BigClock::init()
 
 Window &BigClock::loadAppearance(const std::string &aFileName)
 {
-    CIniFile ini(aFileName);
+    easysave::ini ini(aFileName);
     _position.x = ini.GetInt("big clock", "x", 8);
     _position.y = ini.GetInt("big clock", "y", 80);
     _show = ini.GetInt("big clock", "show", _show);

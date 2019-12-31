@@ -324,16 +324,16 @@ TWL_CODE int lastRunROM() {
 					fcrompathini.flush();
 					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+					easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
 					path = ReplaceAll(romPath, "fat:/", dstwofat);
 					fcrompathini.SetString("Dir Info", "fullName", path);
-					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
+					fcrompathini.flush();
 					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-					CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+					easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
 					path = ReplaceAll(romPath, "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
-					fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
+					fcrompathini.flush();
 					// Does not support autoboot; so only nds-bootstrap launching works.
 					return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				}
