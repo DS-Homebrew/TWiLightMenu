@@ -394,7 +394,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			case 0:
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
-			case 1:
+			case 1: {
 				easysave::ini recentlyPlayedIni(recentlyPlayedIniPath);
 				vector<std::string> recentlyPlayed;
 
@@ -414,7 +414,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
-			case 2:
+			} case 2: {
 				easysave::ini timesPlayedIni(timesPlayedIniPath);
 				vector<TimesPlayed> timesPlayed;
 
@@ -435,10 +435,10 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				}
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
 				break;
-			case 3:
+			} case 3:
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
 				break;
-			case 4:
+			case 4: {
 				easysave::ini gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 
@@ -457,6 +457,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				}
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
+			}
 		}
 
 		closedir(pdir);
