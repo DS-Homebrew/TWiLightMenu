@@ -169,13 +169,16 @@ TWL_CODE int lastRunROM() {
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
+	bool runNds_boostCpu = true;
+	bool runNds_boostVram = true;
+
 	if (access(romPath.c_str(), F_OK) != 0 && launchType != 0) {
-		return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
+		return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, runNds_boostCpu, runNds_boostVram);	// Skip to running TWiLight Menu++
 	}
 
 	switch (launchType) {
 		case 0:
-			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
+			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, runNds_boostCpu, runNds_boostVram);
 		case 1:
 			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice) {
 				std::string savepath;
@@ -236,7 +239,7 @@ TWL_CODE int lastRunROM() {
 
 						static const int BUFFER_SIZE = 4096;
 						char buffer[BUFFER_SIZE];
-						memset(buffer, 0, sizeof(buffer));
+						toncset(buffer, 0, sizeof(buffer));
 
 						int savesize = 524288;	// 512KB (default size for most games)
 
@@ -297,7 +300,7 @@ TWL_CODE int lastRunROM() {
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 				bootstrapini.flush();
 
-				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
+				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, runNds_boostCpu, runNds_boostVram);
 			} else {
 				std::string filename = romPath;
 				const size_t last_slash_idx = filename.find_last_of("/");
@@ -307,8 +310,8 @@ TWL_CODE int lastRunROM() {
 				}
 
 				loadPerGameSettings(filename);
-				bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-				bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+				runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+				runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 				std::string path;
 				if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
@@ -338,7 +341,7 @@ TWL_CODE int lastRunROM() {
 					return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				}
 			}
-		case 2: {
+		case 2:
 			romfolder = romPath;
 			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 				romfolder.resize(romfolder.size()-1);
@@ -355,12 +358,12 @@ TWL_CODE int lastRunROM() {
 			argarray.push_back((char*)romPath.c_str());
 
 			loadPerGameSettings(filename);
-
-			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
-			bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
+			runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
+			runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
-		} case 3: {
+			break;
+		case 3:
 			char unlaunchDevicePath[256];
 			if (previousUsedDevice) {
 				snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -392,19 +395,22 @@ TWL_CODE int lastRunROM() {
 			fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
 			break;
-		} case 4:
+		case 4:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to nesDS as argument
+			break;
 		case 5:
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to GameYob as argument
+			break;
 		case 6:
 			mkdir("sd:/data", 0777);
 			mkdir("sd:/data/s8ds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 			return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
-	
+
+	bool error = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode && launchType == 2 ? true : false), runNds_boostCpu, runNds_boostVram);
 	return -1;
 }
 
