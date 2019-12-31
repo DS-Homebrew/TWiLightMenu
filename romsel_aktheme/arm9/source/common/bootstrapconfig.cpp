@@ -205,6 +205,7 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
 		"AMH",	// Metroid Prime Hunters
+		"YNP",	// Need for Speed: ProStreet
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
