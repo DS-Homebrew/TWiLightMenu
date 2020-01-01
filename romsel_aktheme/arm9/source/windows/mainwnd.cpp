@@ -1281,9 +1281,19 @@ void MainWnd::launchSelected()
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
-			ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7_SD : GBARUNNER_A9_SD;
-			if(access(ndsToBoot, F_OK) != 0) {
-				ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9;
+			if (isDSiMode())
+			{
+				ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI;
+				if(access(ndsToBoot, F_OK) != 0) {
+					ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC;
+				}
+			}
+			else
+			{
+				ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7_SD : GBARUNNER_A9_SD;
+				if(access(ndsToBoot, F_OK) != 0) {
+					ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9;
+				}
 			}
 
             bootFile(ndsToBoot, fullPath);
