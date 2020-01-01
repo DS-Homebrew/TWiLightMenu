@@ -171,7 +171,7 @@ void rebootTWLMenuPP()
 		swiWaitForVBlank();
 }*/
 
-void loadThemeList(const std::string& themeListDir, const std::vector<std::string>& vectorList)
+void loadThemeList(const std::string& themeListDir, std::vector<std::string>& vectorList)
 {
 	DIR *dir;
 	struct dirent *ent;
