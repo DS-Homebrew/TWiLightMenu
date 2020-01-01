@@ -29,14 +29,15 @@ class DSiMenuPlusPlusSettings
         EViewInternal = 2
     };
 
-    /*0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
-	1: R4DS (Original Non-SDHC version)/ M3 Simply
-	2: R4iDSN/R4i Gold RTS/R4 Ultra
-	3: Acekard 2(i)/Galaxy Eagle/M3DS Real
-	4: Acekard RPG
-	5: Ace 3DS+/Gateway Blue Card/R4iTT
-	6: SuperCard DSTWO
-*/
+    /*
+        0: DSTT/R4i Gold/R4i-SDHC/R4 SDHC Dual-Core/R4 SDHC Upgrade/SC DSONE
+        1: R4DS (Original Non-SDHC version)/ M3 Simply
+        2: R4iDSN/R4i Gold RTS/R4 Ultra
+        3: Acekard 2(i)/Galaxy Eagle/M3DS Real
+        4: Acekard RPG
+        5: Ace 3DS+/Gateway Blue Card/R4iTT
+        6: SuperCard DSTWO
+    */
 
     enum TFlashCard
     {
@@ -62,6 +63,13 @@ class DSiMenuPlusPlusSettings
         ELangKorean = 7
     };
 
+    enum TRunIn
+    {
+        EDSMode = 0,
+        EDSiMode = 1,
+        EDSiModeForced = 2
+    };
+
     enum TSlot1LaunchMethod
     {
         EReboot = false,
@@ -74,7 +82,6 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
-	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = -1,
@@ -99,6 +106,12 @@ class DSiMenuPlusPlusSettings
         E3DSNew = 3
     };
 
+    enum TSoundFreq
+    {
+        EFreq32KHz = 0,
+        EFreq47KHz = 1
+    };
+
   public:
     DSiMenuPlusPlusSettings();
     ~DSiMenuPlusPlusSettings();
@@ -108,6 +121,7 @@ class DSiMenuPlusPlusSettings
     void saveSettings();
 
     TLanguage getGuiLanguage();
+    const char* getAppName();
   public:
     std::string romfolder;
     int pagenum;
@@ -117,13 +131,27 @@ class DSiMenuPlusPlusSettings
     int guiLanguage;
     int colorMode;
     int blfLevel;
-    int wifiLed;
+    bool wifiLed;
+    bool sdRemoveDetect;
     bool useGbarunner;
+    bool gbar2DldiAccess;
     bool showMainMenu;
     int theme;
     int subtheme;
+    int dsiMusic;
+	bool showNds;
+	bool showRvid;
+	bool showNes;
+	bool showGb;
+	bool showSmsGg;
+	bool showMd;
+	bool showSnes;
+	bool updateRecentlyPlayedList;
+    int sortMethod;
     bool showDirectories;
+    bool showHidden;
     bool showBoxArt;
+    bool cacheBoxArt;
     bool animateDsiIcons;
     int sysRegion;
     int launcherApp;
@@ -140,10 +168,12 @@ class DSiMenuPlusPlusSettings
     int bstrap_language;
     bool boostCpu;
     bool boostVram;
-    bool bstrap_dsiMode;
+    int bstrap_dsiMode;
+    bool forceSleepPatch;
     bool slot1SCFGUnlock;
     bool autorun;
     bool show12hrClock;
+    bool snesEmulator;
 
     int ak_viewMode;
     int ak_scrollSpeed;
@@ -154,18 +184,19 @@ class DSiMenuPlusPlusSettings
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
 
-    std::string romPath;
-
     int launchType;
     std::string homebrewArg;
     bool homebrewBootstrap;
-    bool soundfreq;
+	bool soundFreq;
 	bool dsiSplash;
 	bool hsMsg;
     bool showlogo;
-    // unused...
-    std::string r4_theme;
 
+    std::string r4_theme;
+    std::string dsi_theme;
+    std::string _3ds_theme;
+
+    //int screenScaleSize;
 	bool wideScreen;
 };
 

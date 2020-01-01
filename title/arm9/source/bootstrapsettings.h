@@ -22,13 +22,6 @@ class BootstrapSettings
         ELEDPower = 2,
         ELEDCamera = 3
     };
-    enum TLoadingScreen
-    {
-        ELoadingNone = 0,
-        ELoadingRegular = 1,
-        ELoadingPong = 2,
-        ELoadingTicTacToe = 3
-    };
 
   public:
     BootstrapSettings();
@@ -39,11 +32,13 @@ class BootstrapSettings
     void saveSettings();
 
   public:
-    bool bstrap_debug;
-	bool bstrap_logging;
-	int bstrap_romreadled;
-	int bstrap_loadingScreen;
-	int consoleModel;
+    bool debug;
+	bool logging;
+	int romreadled;
+	bool preciseVolumeControl;
+
+  private:
+	bool soundFreq;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;
