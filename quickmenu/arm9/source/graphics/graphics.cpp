@@ -418,7 +418,7 @@ void loadBoxArt(const char* filename) {
 			std::vector<unsigned char> image;
 			unsigned width, height;
 			lodepng::decode(image, width, height, filename);
-			for(unsigned i = 0; i < image.size(); i * 4) {
+			for(unsigned i = 0; i < image.size(); i = i * 4) {
 				bmpImageBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 				if (colorMode == 1) {
 					bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
@@ -497,7 +497,7 @@ void topBarLoad(void) {
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filePath);
-		for(unsigned i = 0; i < image.size(); i * 4) {
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
 			bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1]>>3)<<5 | (image[i + 2] >> 3) << 10 | BIT(15);
 			if (colorMode == 1) {
 				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);

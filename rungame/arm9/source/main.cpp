@@ -338,7 +338,7 @@ TWL_CODE int lastRunROM() {
 						return runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 					}
 				}
-			case 2:
+			case 2: {
 				argarray.push_back((char*)romPath.c_str());
 
 				loadPerGameSettings(filename);
@@ -347,7 +347,7 @@ TWL_CODE int lastRunROM() {
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 				break;
-			case 3:
+			} case 3: {
 				char unlaunchDevicePath[256];
 				if (previousUsedDevice) {
 					snprintf(unlaunchDevicePath, (int)sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -379,7 +379,7 @@ TWL_CODE int lastRunROM() {
 				fifoSendValue32(FIFO_USER_08, 1);	// Reboot
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
 				break;
-			case 4:
+			} case 4:
 				argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/nestwl.nds";
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass ROM to nesDS as argument
 				break;

@@ -1354,7 +1354,7 @@ void loadPhoto() {
 
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, photoPath);
-	for(unsigned i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
 		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
@@ -1368,7 +1368,7 @@ void loadPhotoPart() {
 
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, photoPath);
-	for(unsigned i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
 		bgSubBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 

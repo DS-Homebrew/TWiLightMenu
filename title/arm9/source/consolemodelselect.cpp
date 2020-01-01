@@ -23,7 +23,7 @@ void LoadConsoleBMP(int consoleModel) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, fileName);
-	for(unsigned i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
   		BG_GFX[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
@@ -31,7 +31,7 @@ void LoadConsoleBMP(int consoleModel) {
 	fileName = "nitro:/graphics/consoleseltext_" + names[consoleModel] + (language == 2 ? "-fr" : "") + ".png";
 
 	lodepng::decode(image, width, height, fileName);
-	for(unsigned i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
   		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 }
@@ -52,7 +52,7 @@ bool consoleModel_isSure(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, fileName);
-	for(unsigned i = 0; i < image.size(); i * 4) {
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
   		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 

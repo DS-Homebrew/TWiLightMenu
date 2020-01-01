@@ -35,7 +35,7 @@ bool flashcardFound(void) {
 }
 
 bool bothSDandFlashcard(void) {
-	return ((access("sd:/", F_OK) == 0) && (access("fat:/", F_OK) == 0));
+	return sdFound() && flashcardFound();
 }
 
 TWL_CODE DLDI_INTERFACE* dldiLoadFromBin (const u8 dldiAddr[]) {
