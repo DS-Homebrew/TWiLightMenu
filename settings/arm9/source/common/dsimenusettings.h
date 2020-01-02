@@ -126,7 +126,7 @@ class DSiMenuPlusPlusSettings
 		int guiLanguage;
 		int colorMode;
 		int blfLevel;
-		int wifiLed;
+		bool wifiLed;
 		bool sdRemoveDetect;
 		bool useGbarunner;
 		bool gbar2DldiAccess;

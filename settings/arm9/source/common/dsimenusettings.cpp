@@ -16,7 +16,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	guiLanguage = ELangDefault;
 	colorMode = 0;
 	blfLevel = 0;
-	wifiLed = -1;
+	wifiLed = true;
 	sdRemoveDetect = true;
 	useGbarunner = false;
 	gbar2DldiAccess = false;
