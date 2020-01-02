@@ -143,7 +143,7 @@ std::string ReplaceAll(std::string str, const std::string &from, const std::stri
 }
 
 bool extention(const std::string& filename, const char* ext) {
-	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) !== 0);
+	return (strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext) != 0);
 }
 
 void lastRunROM()
@@ -189,13 +189,13 @@ void lastRunROM()
 	}
 
 	int err = 0;
-	if (ms().launchType !== Launch::ESlot1 && access(ms().romPath.c_str(), F_OK))
+	if (ms().launchType != Launch::ESlot1 && access(ms().romPath.c_str(), F_OK))
 		return;
 
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 
-	const char* ndsToBoot[44];
+	char* ndsToBoot[44];
 
 	switch (ms().launchType) {
 		case (Launch::ESlot1):
@@ -210,9 +210,9 @@ void lastRunROM()
 					char ndsBootstrapToUse[37];
 					sprintf(ndsBootstrapToUse, "sd:/_nds/nds-bootstrap-hb-%s.nds", (perGameSettings_bootstrapFile == -1 && ms().bootstrapFile) || perGameSettings_bootstrapFile ? "nightly" : "ds");
 
-					argarray.push_back((char*)ndsBootstrapToUse)
+					argarray.push_back((char*)ndsBootstrapToUse);
 				} else {
-					const char *typeToReplace = ".nds";
+					char *typeToReplace = ".nds";
 					if (extention(filename, ".dsi")) {
 						typeToReplace = ".dsi";
 					} else if (extention(filename, ".ids")) {
@@ -367,7 +367,7 @@ void lastRunROM()
 
 			err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 			break;
-		case (Launch::EDSiWareLaunch):
+		case (Launch::EDSiWareLaunch): {
 			char unlaunchDevicePath[256];
 			if (ms().previousUsedDevice) {
 				snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
@@ -401,7 +401,7 @@ void lastRunROM()
 			for (int i = 0; i < 15; i++) swiWaitForVBlank();
 
 			break;
-		case (Launch::ENESDSLaunch):
+		} case (Launch::ENESDSLaunch):
 			sprintf(ndsToBoot, "%s/_nds/TWiLightMenu/emulators/nes%s.ds", sys().flashcardUsed() ? "" : "sd:", sys().flashcardUsed() ? "ds" : "twl")
 			argarray.at(0) = ndsToBoot;
 
@@ -425,6 +425,19 @@ void lastRunROM()
 			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
+}
+
+void defaultExitHandler(const std::string& temp)
+{
+	const char *ROMpath = (std::string("/_nds/TWiLightMenu/") + temp).c_str();
+	bool srldrFound = (access(ROMpath, F_OK) == 0);
+
+	int err = 0;
+	if (srldrFound) {
+		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
+	}
+
+	stop();
 }
 
 //---------------------------------------------------------------------------------
@@ -553,7 +566,7 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 25; i++)
 				swiWaitForVBlank();
 
-			temp = "settings.srldr"
+			temp = "settings.srldr";
 		} else {
 			flashcardInit();
 			
@@ -582,27 +595,4 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
-}
-
-void defaultExitHandler(const std::string& temp)
-{
-	const char *ROMpath = (std::string("/_nds/TWiLightMenu/") + temp).c_str();
-	bool srldrFound = (access(ROMpath, F_OK) == 0);
-
-	int err = 0;
-	if (srldrFound) {
-		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
-	}
-
-	fadeType = true;
-	clearText();
-	if (!srldrFound) {
-		printSmall(false, 4, 4, "/_nds/TWiLightMenu/");
-		printSmall(false, 4, 12, (temp + std::string(" not found.")).c_str());
-	} else {
-		char errorText[16];
-		snprintf(errorText, sizeof(errorText), "Error %i", err);
-		printSmall(false, 4, 4, (std::string("Unable to start ") + temp).c_str());
-		printSmall(false, 4, 12, errorText);
-	}
 }
