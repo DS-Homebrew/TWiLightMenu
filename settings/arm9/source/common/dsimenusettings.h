@@ -117,6 +117,8 @@ class DSiMenuPlusPlusSettings
 		const char* getAppName();
 	public:
 		std::string romfolder;
+		std::string romPath;
+
 		int pagenum;
 		int cursorPosition;
 		int startMenu_cursorPosition;
