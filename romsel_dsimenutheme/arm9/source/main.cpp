@@ -1637,6 +1637,10 @@ int main(int argc, char **argv) {
 							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						} else if (extention(filename, ".gba")) {
 							ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+
+							if (isDSiMode()) {
+								ndsToBoot = ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+							}
 						} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 							ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}

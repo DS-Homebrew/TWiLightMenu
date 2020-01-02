@@ -2065,8 +2065,14 @@ int main(int argc, char **argv) {
 				if (secondaryDevice) {
 					if (GBA) {
 						ndsToBoot = gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";
+						if (isDSiMode()) {
+							ndsToBoot = consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds";
+						}
 						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+							ndsToBoot = gbar2DldiAccess ? "/_nds/GBARunner2_arm7dldi_ds.nds" : "/_nds/GBARunner2_arm9dldi_ds.nds";
+							if (isDSiMode()) {
+								ndsToBoot = consoleModel>0 ? "/_nds/GBARunner2_arm7dldi_3ds.nds" : "/_nds/GBARunner2_arm7dldi_dsi.nds";
+							}
 						}
 						argarray.push_back(ROMpath);
 					} else if (SNES) {
