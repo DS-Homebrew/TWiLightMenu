@@ -401,13 +401,13 @@ void lastRunROM()
 
 			break;
 		} case (Launch::ENESDSLaunch):
-			sprintf(ndsToBoot, "%s/_nds/TWiLightMenu/emulators/nes%s.ds", sys().flashcardUsed() ? "" : "sd:", sys().flashcardUsed() ? "ds" : "twl")
+			sprintf(ndsToBoot, "%s/_nds/TWiLightMenu/emulators/nes%s.ds", sys().flashcardUsed() ? "" : "sd:", sys().flashcardUsed() ? "ds" : "twl");
 			argarray.at(0) = ndsToBoot;
 
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
 			break;
 		case (Launch::EGameYobLaunch):
-			sprintf(ndsToBoot, "%s/_nds/TWiLightMenu/emulators/gameyob.ds", sys().flashcardUsed() ? "" : "sd:")
+			sprintf(ndsToBoot, "%s/_nds/TWiLightMenu/emulators/gameyob.ds", sys().flashcardUsed() ? "" : "sd:");
 			argarray.at(0) = ndsToBoot;
 
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
