@@ -207,9 +207,9 @@ void pageLoad(const char *filename) {
 	dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
 	dmaCopyWordsAsynch(1, (u16*)pageImage+(174*256), (u16*)BG_GFX, 0x18000);
 
-	unsigned bgColor;
+	int bgColor;
 	for(int i = 0; i < 192; i++) {
-		bgColor == (i % 2 ? bgColor1 : bgColor2);
+		bgColor = (i % 2 ? bgColor1 : bgColor2);
 		dmaFillHalfWords(((bgColor>>10)&0x1f) | ((bgColor)&(0x1f<<5)) | (bgColor&0x1f)<<10 | BIT(15), pageImage+(height*256)+(i*256), 512);
 	}
 }

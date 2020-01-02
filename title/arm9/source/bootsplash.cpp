@@ -9,6 +9,7 @@
 #include "common/systemdetails.h"
 
 #include "soundbank.h"
+#include "graphics/lodepng.h"
 //#include "soundbank_bin.h"
 
 extern u16 bmpImageBuffer[256*192];
@@ -97,41 +98,19 @@ void BootSplashDSi(void) {
 		BG_GFX_SUB[i] = whiteCol;
 	}
 
+	std::vector<unsigned char> image;
+	unsigned width, height;
+
 	if (ms().hsMsg) {
 		// Load H&S image
 		//Get the language for the splash screen
 		int language = (ms().getGuiLanguage());
-		FILE* file;
+		std::string filename = "nitro:/health_safety/hsmsg" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
 
-		//If french, then use the french hsmsh, else, use the english one
-		if (language != 2){
-			file = fopen("nitro:/graphics/hsmsg.bmp", "rb");
+		lodepng::decode(image, width, height, filename);
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
+			BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		else {
-			file = fopen("nitro:/graphics/hsmsg-fr.bmp", "rb");
-		}
-
-		if (file) {
-			// Start loading
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, file);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 191;
-			for (int i=0; i<256*192; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-
-		fclose(file);
 	}
 
 	bool sixtyFps = true;
@@ -142,7 +121,7 @@ void BootSplashDSi(void) {
 	fadeType = true;
 
 	if (cartInserted) {
-		videoFrameFile = fopen("nitro:/video/dsisplash/nintendo.bmp", "rb");
+		videoFrameFile = fopen("nitro:/health_safety/nintendo.bmp", "rb");
 
 		if (videoFrameFile) {
 			// Start loading
@@ -170,7 +149,7 @@ void BootSplashDSi(void) {
 		}
 		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT == 0x8300C000);
 
-		videoFrameFile = fopen(dsiSixtyFpsRead ? "nitro:/video/dsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.rvid", "rb");
+		videoFrameFile = fopen("nitro:/health_safety/dsisplash_60fps" + (dsiSixtyFpsRead ? std::string(".lz77") : std::string("")) + ".rvid", "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -238,33 +217,12 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFps = 24;
 
 		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-			if (selectedFrame < 10) {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame0%i.bmp", selectedFrame);
-			} else {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
-			}
-			videoFrameFile = fopen(videoFrameFilename, "rb");
+			sprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%s.png", selectedFrame < 10 ? std::string("0") + std::string(selectedFrame) : std::string(selectedFrame));
 
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-				u16* src = bmpImageBuffer;
-				int x = 0;
-				int y = 143;
-				for (int i=0; i<256*144; i++) {
-					if (x >= 256) {
-						x = 0;
-						y--;
-					}
-					u16 val = *(src++);
-					videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-					x++;
-				}
+			lodepng::decode(image, width, height, std::string(videoFrameFilename));
+			for(unsigned i = 0; i < image.size(); i = i * 4) {
+				videoImageBuffer[selectedFrame][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 			}
-			fclose(videoFrameFile);
 
 			if (cartInserted && selectedFrame > 5) {
 				// Draw first half of Nintendo logo
@@ -322,46 +280,27 @@ void BootSplashDSi(void) {
 
 	if (!sixtyFps) {
 		for (int selectedFrame = 39; selectedFrame <= 42; selectedFrame++) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
-			videoFrameFile = fopen(videoFrameFilename, "rb");
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.png", selectedFrame);
+			lodepng::decode(image, width, height, std::string(videoFrameFilename));
+			for(unsigned i = 0; i < image.size(); i = i * 4) {
+				videoImageBuffer[selectedFrame-39][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
+			}
 
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-				u16* src = bmpImageBuffer;
-				int x = 0;
-				int y = 143;
-				for (int i=0; i<256*144; i++) {
-					if (x >= 256) {
-						x = 0;
+			if (cartInserted) {
+				// Draw first half of Nintendo logo
+				int x = 66;
+				int y = 130 + 13;
+				for (int i = 122 * 14; i < 122 * 28; i++) {
+					if (x >= 66+122) {
+						x = 66;
 						y--;
 					}
-					u16 val = *(src++);
-					videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
+					if (BG_GFX[(256*192)+i] != 0xFFFF) {
+						videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
+					}
 					x++;
 				}
-
-				if (cartInserted) {
-					// Draw first half of Nintendo logo
-					int x = 66;
-					int y = 130+13;
-					for (int i=122*14; i<122*28; i++) {
-						if (x >= 66+122) {
-							x = 66;
-							y--;
-						}
-						if (BG_GFX[(256*192)+i] != 0xFFFF) {
-							videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
-						}
-						x++;
-					}
-				}
-				//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
 			}
-			fclose(videoFrameFile);
 		}
 	}
 

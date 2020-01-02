@@ -4,6 +4,7 @@
 #include <maxmod9.h>
 
 #include "soundbank.h"
+#include "graphics/lodepng.h"
 //#include "soundbank_bin.h"
 
 #include "common/dsimenusettings.h"
@@ -104,7 +105,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 	// NDS
 	glDeleteTextures(1, &ndsTexID);
-	
+
 	newPalette = (u16*)icon_ndsPal;
 	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
@@ -128,7 +129,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 	// GBA
 	glDeleteTextures(1, &gbaTexID);
-	
+
 	newPalette = (u16*)(sys().isDSPhat() ? iconPhat_gbaPal : icon_gbaPal);
 	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
@@ -152,7 +153,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 	// GB/GBC
 	glDeleteTextures(1, &gbTexID);
-	
+
 	newPalette = (u16*)icon_gbPal;
 	if (ms().colorMode == 1) {
 		for (int i2 = 0; i2 < 16; i2++) {
@@ -296,7 +297,6 @@ void twlMenuVideo_loadTopGraphics(void) {
 }
 
 void BootJingleTwlMenu() {
-	
 	mmInitDefaultMem((mm_addr)0x02FA0000);
 
 	mmLoadEffect( SFX_TWLMENUVIDEO );
@@ -424,34 +424,20 @@ void twlMenuVideo(void) {
 		BootJingleTwlMenu();
 	}
 
+	std::vector<unsigned char> image;
+	unsigned width, height;
+
 	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
 		if (selectedFrame < 10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame0%i.bmp", selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame0%i.png", selectedFrame);
 		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.bmp", selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.png", selectedFrame);
 		}
-		videoFrameFile = fopen(videoFrameFilename, "rb");
 
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 143;
-			for (int i=0; i<256*144; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
+		lodepng::decode(image, width, height, std::string(videoFrameFilename));
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
+			videoImageBuffer[selectedFrame][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		fclose(videoFrameFile);
 
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
@@ -479,30 +465,12 @@ void twlMenuVideo(void) {
 	}
 
 	for (int selectedFrame = 39; selectedFrame <= 43; selectedFrame++) {
-		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.bmp", selectedFrame);
-		videoFrameFile = fopen(videoFrameFilename, "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x14000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 143;
-			for (int i=0; i<256*144; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
+		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.png", selectedFrame);
+		
+		lodepng::decode(image, width, height, std::string(videoFrameFilename));
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
+			videoImageBuffer[selectedFrame-39][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		fclose(videoFrameFile);
 
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
@@ -540,30 +508,12 @@ void twlMenuVideo(void) {
 		}
 	}
 	fclose(videoFrameFile);
-	
-	// Load RocketVideo logo
-	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.bmp" : "nitro:/graphics/logo_rocketvideo.bmp", "rb");
 
-	if (videoFrameFile) {
-		// Start loading
-		fseek(videoFrameFile, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 192;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
+	// Load RocketVideo logo
+	lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.png" : "nitro:/graphics/logo_rocketvideo.png");
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
+		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	fclose(videoFrameFile);
 	
 	for (int i = 0; i < 60 * 3; i++)
 	{

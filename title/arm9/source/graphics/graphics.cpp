@@ -26,6 +26,7 @@
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
 #include "graphics.h"
+#include "lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -37,7 +38,7 @@ int screenBrightness = 31;
 
 bool rocketVideo_playVideo = false;
 bool rocketVideo_playBackwards = false;
-bool rocketVideo_screen = true;			// true == top, false == bottom
+bool rocketVideo_screen = true;	// true == top, false == bottom
 int rocketVideo_videoYpos = 0;
 int rocketVideo_videoYsize = 144;
 int rocketVideo_videoFrames = 0;
@@ -199,7 +200,7 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	FILE* file = fopen(sys().isDSPhat() ? "nitro:/video/twlmenupp/phat_dsi.bmp" : "nitro:/video/twlmenupp/dsi.bmp", "rb");
+	FILE* file = fopen("nitro:/" + sys().isDSPhat() ? std::string("phat_") : std::string("") + "dsi.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -223,33 +224,14 @@ void LoadBMP(void) {
 
 	fclose(file);
 
-	if (ms().useBootstrap || isDSiMode()) {		// Show nds-bootstrap logo, if nds-bootstrap is set to be used
-		file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobzbootstrap.bmp" : "nitro:/graphics/logo_rocketrobzbootstrap.bmp", "rb");
-	} else {
-		file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
-	}
+	std::vector<unsigned char> image;
+	unsigned width, height;
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
+	std::string filename = "nitro:/twilight_splash/logo" + (sys().isDSPhat() ? std::string("Phat") : std::string("")) + "_rocketrobz.png";
+	lodepng::decode(image, width, height, filename);
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
+		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-
-	fclose(file);
 }
 
 void runGraphicIrq(void) {
