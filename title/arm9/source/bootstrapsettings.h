@@ -14,31 +14,31 @@
  */
 class BootstrapSettings
 {
-  public:
-    enum TROMReadLED
-    {
-        ELEDNone = 0,
-        ELEDWifi = 1,
-        ELEDPower = 2,
-        ELEDCamera = 3
-    };
+	public:
+		enum TROMReadLED {
+			ELEDNone = 0,
+			ELEDWifi = 1,
+			ELEDPower = 2,
+			ELEDCamera = 3
+		};
 
-  public:
-    BootstrapSettings();
-    ~BootstrapSettings();
+	public:
+		BootstrapSettings();
+		~BootstrapSettings();
 
-  public:
-    void loadSettings();
-    void saveSettings();
+	public:
+		void loadSettings();
+		void saveSettings();
 
-  public:
-    bool debug;
-	bool logging;
-	int romreadled;
-	bool preciseVolumeControl;
+	public:
+		bool debug;
+		bool logging;
+		int romreadled;
+		bool preciseVolumeControl;
+		int consoleModel;
 
-  private:
-	bool soundFreq;
+	private:
+		bool soundFreq;
 };
 
 typedef singleton<BootstrapSettings> bootstrapSettings_s;

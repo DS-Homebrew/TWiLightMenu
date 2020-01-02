@@ -56,7 +56,7 @@ bool consoleModel_isSure(int consoleModel) {
 
 	//Get the language for the splash screen
 	int language = (ms().getGuiLanguage());
-	std::string fileName = "nitro:/graphics/consoleseltext_areyousure" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
+	fileName = "nitro:/graphics/consoleseltext_areyousure" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
 
 	lodepng::decode(image, width, height, fileName);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {

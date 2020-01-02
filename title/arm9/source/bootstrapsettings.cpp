@@ -6,11 +6,12 @@
 
 BootstrapSettings::BootstrapSettings()
 {
-    debug = false;
+	debug = false;
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
 	preciseVolumeControl = false;
-    soundFreq = false;
+	soundFreq = false;
+	consoleModel = 0;
 }
 
 void BootstrapSettings::loadSettings()
