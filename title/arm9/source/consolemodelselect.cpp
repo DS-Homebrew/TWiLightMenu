@@ -16,27 +16,26 @@
 extern bool fadeType;
 extern bool controlTopBright;
 
-void LoadConsoleBMP(int consoleModel) {
-	std::string names[] = { "dsi", "devdsi", "o3ds", "n3ds" };
-	std::string fileName = "nitro:/graphics/" + names[consoleModel] + ".png";
+void LoadConsoleBMP(void) {
+	std::string fileName = "nitro:/graphics/dsivs3ds.png";
 
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, fileName);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
-  		BG_GFX[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
+		BG_GFX[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 
 	int language = (ms().getGuiLanguage());
-	fileName = "nitro:/graphics/consoleseltext_" + names[consoleModel] + (language == 2 ? "-fr" : "") + ".png";
+	fileName = "nitro:/graphics/consoleseltext_" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
 
 	lodepng::decode(image, width, height, fileName);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
-  		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
+		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
 }
 
-bool consoleModel_isSure(void) {
+bool consoleModel_isSure(int consoleModel) {
 	int isSure_pressed = 0;
 
 	controlTopBright = false;
@@ -45,13 +44,21 @@ bool consoleModel_isSure(void) {
 		swiWaitForVBlank();
 	}
 
-	//Get the language for the splash screen
-	int language = (ms().getGuiLanguage());
-	std::string fileName = "nitro:/graphics/consoleseltext_areyousure" + (language == 2 ? "-fr" : "") + ".png";
+	std::string names[] = { "dsi", "3ds" };
+	std::string fileName = "nitro:/graphics/" + names[consoleModel - 1] + ".png";
 
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	unsigned error = lodepng::decode(image, width, height, fileName);
+	for(unsigned i = 0; i < image.size(); i = i * 4) {
+		BG_GFX[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
+	}
+
+	//Get the language for the splash screen
+	int language = (ms().getGuiLanguage());
+	std::string fileName = "nitro:/graphics/consoleseltext_areyousure" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
+
+	lodepng::decode(image, width, height, fileName);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
   		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
@@ -86,7 +93,7 @@ bool consoleModel_isSure(void) {
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
 			}
-			LoadConsoleBMP(ms().consoleModel);
+			LoadConsoleBMP();
 			fadeType = true;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();
@@ -117,11 +124,7 @@ void consoleModelSelect(void) {
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-	if (ms().consoleModel < 1 || ms().consoleModel > 3) {
-		ms().consoleModel = 1;
-	}
-
-	LoadConsoleBMP(ms().consoleModel);
+	LoadConsoleBMP();
 
 	int pressed = 0;
 	//touchPosition touch;
@@ -141,25 +144,10 @@ void consoleModelSelect(void) {
 		}
 		while (!pressed);
 
-		if (pressed & KEY_LEFT) {
-			ms().consoleModel--;
-			if (ms().consoleModel < 1) {
-				ms().consoleModel = 3;
-			}
-			LoadConsoleBMP(ms().consoleModel);
-		}
-		if (pressed & KEY_RIGHT) {
-			ms().consoleModel++;
-			if (ms().consoleModel > 3) {
-				ms().consoleModel = 1;
-			}
-			LoadConsoleBMP(ms().consoleModel);
-		}
-
-		if (pressed & KEY_A) {
-			if (consoleModel_isSure()) {
+		if (pressed & KEY_LEFT || pressed & KEY_RIGHT) {
+			ms().consoleModel = (pressed & KEY_LEFT ? 1 : 2);
+			if (consoleModel_isSure(ms().consoleModel))
 				break;
-			}
 		}
 	}
 }
