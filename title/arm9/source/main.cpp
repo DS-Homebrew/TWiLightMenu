@@ -195,7 +195,7 @@ void lastRunROM()
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 
-	char* ndsToBoot[44];
+	char ndsToBoot[256];
 
 	switch (ms().launchType) {
 		case (Launch::ESlot1):
@@ -297,7 +297,6 @@ void lastRunROM()
 
 					bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-					char ndsToBoot[256];
 					sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
 					if(access(ndsToBoot, F_OK) != 0) {
 						sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
