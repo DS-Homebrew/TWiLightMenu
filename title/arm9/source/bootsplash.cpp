@@ -183,11 +183,9 @@ void BootSplashDSi(void) {
 		}*/
 
 		if (videoFrameFile) {
-			bool doRead = false;
+			bool doRead = dsiSixtyFpsRead;
 
-			if (dsiSixtyFpsRead) {
-				doRead = true;
-			} else if (sys().isRegularDS()) {
+			if (sys().isRegularDS()) {
 				fseek(videoFrameFile, 0x200, SEEK_SET);
 				sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
 				*(vu32*)(0x08240000) = 1;
@@ -197,6 +195,7 @@ void BootSplashDSi(void) {
 					doRead = true;
 				}
 			}
+
 			if (doRead) {
 				if (dsiSixtyFpsRead) {
 					fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
@@ -212,12 +211,13 @@ void BootSplashDSi(void) {
 		}
 		fclose(videoFrameFile);
 	}
+
 	if (!sixtyFps) {
 		rocketVideo_videoFrames = 42;
 		rocketVideo_videoFps = 24;
 
 		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-			sprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%s.png", selectedFrame < 10 ? std::string("0") + std::string(selectedFrame) : std::string(selectedFrame));
+			sprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/health_safety/frames/frame%s.png", selectedFrame < 10 ? std::string("0") + std::string(selectedFrame) : std::string(selectedFrame));
 
 			lodepng::decode(image, width, height, std::string(videoFrameFilename));
 			for(unsigned i = 0; i < image.size(); i = i * 4) {
@@ -333,32 +333,15 @@ void BootSplashDSi(void) {
 
 	for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 		if (selectedFrame < 0x10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x0%x.bmp", (int)language, (int)selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/health_safety/tttstc_%i/0x0%x.png", (int)language, (int)selectedFrame);
 		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/tttstc_%i/0x%x.bmp", (int)language, (int)selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/health_safety/tttstc_%i/0x%x.png", (int)language, (int)selectedFrame);
 		}
-		videoFrameFile = fopen(videoFrameFilename, "rb");
 
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x4000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 31;
-			for (int i=0; i<256*32; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
+		lodepng::decode(image, width, height, std::string(videoFrameFilename));
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
+			videoImageBuffer[selectedFrame][i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 		}
-		fclose(videoFrameFile);
 	}
 
 	rocketVideo_videoYpos = (ms().hsMsg ? 160 : 80);

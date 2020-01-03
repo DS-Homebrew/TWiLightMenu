@@ -429,9 +429,9 @@ void twlMenuVideo(void) {
 
 	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
 		if (selectedFrame < 10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame0%i.png", selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/twilight_splash/frames/frame0%i.png", selectedFrame);
 		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.png", selectedFrame);
+			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/twilight_splash/frames/frame%i.png", selectedFrame);
 		}
 
 		lodepng::decode(image, width, height, std::string(videoFrameFilename));
@@ -465,7 +465,7 @@ void twlMenuVideo(void) {
 	}
 
 	for (int selectedFrame = 39; selectedFrame <= 43; selectedFrame++) {
-		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.png", selectedFrame);
+		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/twilight_splash/frames/frame%i.png", selectedFrame);
 		
 		lodepng::decode(image, width, height, std::string(videoFrameFilename));
 		for(unsigned i = 0; i < image.size(); i = i * 4) {
@@ -510,13 +510,12 @@ void twlMenuVideo(void) {
 	fclose(videoFrameFile);
 
 	// Load RocketVideo logo
-	lodepng::decode(image, width, height, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.png" : "nitro:/graphics/logo_rocketvideo.png");
+	lodepng::decode(image, width, height, "nitro:/twilight_splash/logo" + sys().isDSPhat() ? "Phat" : "" + "_rocketvideo.png");
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
 		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}
-	
-	for (int i = 0; i < 60 * 3; i++)
-	{
+
+	for (int i = 0; i < 60 * 3; i++) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();

@@ -31,6 +31,7 @@
 #include "common/gl2d.h"
 
 #include "autoboot.h"
+#include "consolemodelselect.h"
 
 #include "graphics/graphics.h"
 
@@ -325,11 +326,12 @@ int main(int argc, char **argv)
 			username[i * 2 / 2] = username[i * 2];
 	}
 
+	graphicsInit();
+	fontInit();
+	fadeType = true;
+
 	if (!sys().fatInitOk())
 	{
-		graphicsInit();
-		fontInit();
-		fadeType = true;
 		printSmall(true, 28, 1, username);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
@@ -346,23 +348,42 @@ int main(int argc, char **argv)
 	loadThemeList(AK_SYSTEM_UI_DIRECTORY, akThemeList);
 	swiWaitForVBlank();
 
+	if (REG_SCFG_EXT != 0) {
+		if (!isDSiMode()) {
+			REG_SCFG_EXT = 0x8300C000;
+		}
+		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
+
+		if ((*(vu32*)(0x0DFFFE0C) == 0x53524C41)) {
+			if (ms().consoleModel < 1 || ms().consoleModel > 3 || bs().consoleModel < 1 || bs().consoleModel > 3) {
+				consoleModelSelect();
+				defaultExitHandler();
+			}
+		} else if (ms().consoleModel != 0 || bs().consoleModel != 0) {
+			ms().consoleModel = 0;
+			bs().consoleModel = 0;
+			ms().saveSettings();
+			bs().saveSettings();
+		}
+
+		if (!isDSiMode()) {
+			REG_SCFG_EXT = 0x83000000;
+		}
+	}
+
 	snd().init();
 	keysSetRepeat(25, 5);
-	
+
 	bool sdAccessible = false;
 	if (access("sd:/", F_OK) == 0) {
 		sdAccessible = true;
 	}
 
-	graphicsInit();
-	fontInit();
 	langInit();
-	fadeType = true;
 
 	srand(time(NULL));
 
-	if (!sys().flashcardUsed() && ms().consoleModel < 2)
-	{
+	if (!sys().flashcardUsed() && ms().consoleModel < 2) {
 		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
 			hiyaAutobootFound = true;
 		else

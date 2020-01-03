@@ -47,7 +47,6 @@
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
 #include "twlmenuppvideo.h"
-#include "consolemodelselect.h"
 
 #include "sr_data_srllastran.h"			 // For rebooting into the game
 #include "common/systemdetails.h"
@@ -436,6 +435,8 @@ void defaultExitHandler(const std::string& temp)
 		err = runNdsFile(ROMpath, 0, NULL, true, false, false, true, true);
 	}
 
+	consoleDemoInit();
+	printf((temp + std::string(" not found.")).c_str());
 	stop();
 }
 
@@ -489,7 +490,7 @@ int main(int argc, char **argv)
 
 		if ((*(vu32*)(0x0DFFFE0C) == 0x53524C41)) {
 			if (ms().consoleModel < 1 || ms().consoleModel > 3 || bs().consoleModel < 1 || bs().consoleModel > 3) {
-				consoleModelSelect();
+				defaultExitHandler("settings.srldr");
 			}
 		} else if (ms().consoleModel != 0 || bs().consoleModel != 0) {
 			ms().consoleModel = 0;
