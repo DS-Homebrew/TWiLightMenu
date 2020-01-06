@@ -34,6 +34,9 @@ class CIniFile
     bool SaveIniFile(const std::string& FileName);
     bool SaveIniFileModified(const std::string& FileName);
 
+	bool SaveIniFile(void);
+	bool SaveIniFileModified(void);
+
     std::string GetString(const std::string& Section,const std::string& Item,const std::string& DefaultValue);
     void SetString(const std::string& Section,const std::string& Item,const std::string& Value);
     int GetInt(const std::string& Section,const std::string& Item,int DefaultValue);
@@ -55,9 +58,6 @@ class CIniFile
 
     void SetFileString(const std::string& Section,const std::string& Item,const std::string& Value);
     std::string GetFileString(const std::string& Section,const std::string& Item);
-
-	bool SaveIniFile(void);
-	bool SaveIniFileModified(void);
 
     std::string GetString(const std::string& Section,const std::string& Item);
     int GetInt(const std::string& Section,const std::string& Item);
