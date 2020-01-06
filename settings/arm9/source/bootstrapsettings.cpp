@@ -6,19 +6,20 @@
 
 BootstrapSettings::BootstrapSettings()
 {
-    debug = false;
+	debug = false;
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
 	preciseVolumeControl = false;
-    soundFreq = false;
+	soundFreq = false;
+	consoleModel = 0;
 }
 
 void BootstrapSettings::loadSettings()
 {
     easysave::ini bootstrapini(BOOTSTRAP_INI);
 
-    // UI settings.
-   	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
+	// UI settings.
+	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
 		romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);

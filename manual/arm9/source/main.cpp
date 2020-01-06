@@ -43,7 +43,7 @@
 
 #include "graphics/fontHandler.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
@@ -142,8 +142,8 @@ void loadPageList() {
 void loadPageInfo(std::string pagePath) {
 	manPageLinks.clear();
 
-	easysave::ini pageIni(pagePath);
-	
+	CIniFile pageIni(pagePath);
+
 	toncset(&manPageTitle[0], 0, sizeof(manPageTitle));
 	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
 	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);

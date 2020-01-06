@@ -49,7 +49,7 @@
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 #include "language.h"
 
@@ -183,7 +183,7 @@ void LoadSettings(void) {
 	useBootstrap = isDSiMode();
 
 	// GUI
-	easysave::ini settingsini( settingsinipath );
+	CIniFile settingsini(settingsinipath);
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
@@ -238,7 +238,7 @@ void LoadSettings(void) {
 
 void SaveSettings(void) {
 	// GUI
-	easysave::ini settingsini( settingsinipath );
+	CIniFile settingsini(settingsinipath);
 
 	// UI settings.
 	if (!gotosettings) {
@@ -251,7 +251,7 @@ void SaveSettings(void) {
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
 	//settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
-	settingsini.flush();
+	settingsini.SaveIniFile(settingsinipath);
 }
 
 bool isDSPhat(void) {
@@ -832,41 +832,48 @@ void InitSound() {
 	};
 }
 
-void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings) {
+void loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
+		std::string filename = ndsPath;
+
+		const size_t last_slash_idx = filename.find_last_of("\\/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
 		loadPerGameSettings(filename);
-		
+
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
+
 	std::string path;
 	int err = 0;
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-		easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		path = ReplaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		path = ReplaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
-		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
+		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		path = ReplaceAll(ndsPath.c_str(), "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		path = ReplaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
-		// Does not support autoboot; so only nds-bootstrap launching works.
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
@@ -882,8 +889,7 @@ void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePer
 	stop();
 }
 
-void loadROMselect()
-{
+void loadROMselect() {
 	if (sdFound()) {
 		chdir("sd:/");
 	}
@@ -1604,19 +1610,14 @@ int main(int argc, char **argv) {
 
 						if (useGbarunner && gbaBiosFound) {
 							if (secondaryDevice) {
-								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-								if (isDSiMode()) {
-									gbaRunner2Path = consoleModel > 0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-								}
+								char gbaRunner2Path[38];
+								sprintf(gbaRunner2Path, "fat:/_nds/GBARunner2_arm%sdldi_%s.nds", !isDSiMode() && !gbar2DldiAccess ? "9" : "7", isDSiMode() ? (consoleModel > 0 ? "3ds" : "dsi") : "ds");
 
 								if (useBootstrap) {
 									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 									iprintf ("Start failed. Error %i\n", err);
 								} else {
-									char ndsToBoot[256];
-									sprintf(ndsToBoot, "GBARunner2_arm%sdldi_%s.nds", !isDSiMode() && !gbar2DldiAccess ? "9" : "7", isDSiMode() ? (consoleModel > 0 ? "3ds" : "dsi") : "ds");
-
-									loadGameOnFlashcard(gbaRunner2Path, ndsToBoot, false);
+									loadGameOnFlashcard(std::string(gbaRunner2Path), false);
 								}
 							} else {
 								std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
@@ -2126,7 +2127,7 @@ int main(int argc, char **argv) {
 						);
 						bootstrapini.flush();
 
-                        CheatCodelist codelist;
+						CheatCodelist codelist;
 						u32 gameCode,crc32;
 
 						if (isDSiMode() && !isHomebrew) {
@@ -2197,7 +2198,7 @@ int main(int argc, char **argv) {
 					} else {
 						launchType = 1;
 						SaveSettings();
-						loadGameOnFlashcard(argarray[0], filename, true);
+						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					launchType = 2;
