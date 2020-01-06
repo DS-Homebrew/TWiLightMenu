@@ -33,7 +33,7 @@
 
 #include <nds.h>
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 int perGameSettings_cursorPosition = 0;
 bool perGameSettings_directBoot = false;	// Homebrew only
@@ -50,7 +50,7 @@ char pergamefilepath[256];
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (previousUsedDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	perGameSettings_language = pergameini.GetInt("GAMESETTINGS", "LANGUAGE", -2);
