@@ -45,7 +45,7 @@
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "language.h"
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
@@ -108,7 +108,8 @@ void MainWnd::initBatteryIcon() {
 	CIniFile ini(SFN_UI_SETTINGS);
 	int x = ini.GetInt("battery icon", "x", 238);
 	int y = ini.GetInt("battery icon", "y", 172);
-	bool showBatt = ;
+	int w = ini.GetInt("start button", "w", 48);
+	int h = ini.GetInt("start button", "h", 10);
 
 	if (!ini.GetInt("battery icon", "show", 0) && ini.GetInt("battery icon", "screen", true))
 		return;
@@ -187,9 +188,6 @@ void MainWnd::initStartMenu() {
 
 void MainWnd::init()
 {
-	bool showBatt = 0;
-	std::string file("");
-	std::string text("");
 
 	// self init
 	dbg_printf("mainwnd init() %08x\n", this);
@@ -253,7 +251,7 @@ void MainWnd::startMenuItemClicked(s16 i)
 
 	switch (i) {
 		case START_MENU_ITEM_COPY:
-		case START_MENU_ITEM_CUT:
+		case START_MENU_ITEM_CUT: {
 			if (_mainList->getSelectedFullPath() == "")
 				return;
 
@@ -267,18 +265,18 @@ void MainWnd::startMenuItemClicked(s16 i)
 
 			setSrcFile(_mainList->getSelectedFullPath(), i == START_MENU_ITEM_CUT ? SFM_CUT : SFM_COPY);
 			break;
-		case START_MENU_ITEM_PASTE:
+		} case START_MENU_ITEM_PASTE: {
 			if (copyOrMoveFile(_mainList->getCurrentDir()))
 				_mainList->enterDir(_mainList->getCurrentDir());
 
 			break;
-		case START_MENU_ITEM_DELETE:
+		} case START_MENU_ITEM_DELETE: {
 			std::string fullPath = _mainList->getSelectedFullPath();
 			if (fullPath != "" && deleteFile(fullPath))
 				_mainList->enterDir(_mainList->getCurrentDir());
 
 			break;
-		case START_MENU_ITEM_SETTING:
+		} case START_MENU_ITEM_SETTING:
 			showSettings();
 			break;
 		case START_MENU_ITEM_INFO:
@@ -1226,7 +1224,7 @@ void MainWnd::launchSelected()
 
 		CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
 		dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-		dstwobootini.flush();
+		dstwobootini.SaveIniFileModified();
 
 		bootFile(BOOTPLG_SRL, fullPath);
 	}

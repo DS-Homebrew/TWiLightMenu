@@ -2,6 +2,7 @@
 
 #include "flashcardlaunch.h"
 #include "pergamesettings.h"
+#include "common/stringtool.h"
 
 #define FC_PREFIX_SLASH "/"
 #define FC_PREFIX_FAT "fat:/"

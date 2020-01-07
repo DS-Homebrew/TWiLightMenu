@@ -22,7 +22,7 @@
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
 #include "common/inifile.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "tool/memtool.h"
 
 using namespace akui;

@@ -1,6 +1,5 @@
 #include "loaderconfig.h"
 #include "dsimenusettings.h"
-#include "tool/stringtool.h"
 
 #pragma once
 #ifndef __FLASHCARD_LAUNCH_H___

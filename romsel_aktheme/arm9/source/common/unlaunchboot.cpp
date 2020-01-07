@@ -1,5 +1,5 @@
 #include "unlaunchboot.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include <nds.h>
 #include "dsimenusettings.h"
 #include "tonccpy.h"

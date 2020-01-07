@@ -63,6 +63,4 @@ class CIniFile
     int GetInt(const std::string& Section,const std::string& Item);
 };
 
-std::string formatString( const char* fmt, ... );
-
 #endif // _INIFILE_H_

@@ -135,7 +135,7 @@ bool RomInfoWnd::process(const akui::Message &msg) {
 }
 
 bool RomInfoWnd::processKeyMessage(const KeyMessage &msg) {
-	if (msg.id() !== Message::keyDown)
+	if (msg.id() != Message::keyDown)
 		return false;
 
 	switch (msg.keyCode()) {
@@ -153,7 +153,7 @@ bool RomInfoWnd::processKeyMessage(const KeyMessage &msg) {
 			break;
 	};
 
-	return ret;
+	return true;
 }
 
 void RomInfoWnd::pressGameSettings(void)
@@ -422,7 +422,7 @@ void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &sho
 	if (stat(fullName.c_str(), &st) == -1)
 		return;
 
-	if ("/" == fullName)
+	if (fullName == "/")
 		return;
 
 	_filenameText = showName;
@@ -437,7 +437,7 @@ void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &sho
 	dbg_printf("st.st_mtime %d\n", (u32)st.st_mtime);
 	dbg_printf("%d-%d-%d %02d:%02d:%02d\n", filetime->tm_year + 1900, filetime->tm_mon + 1, filetime->tm_mday, filetime->tm_hour, filetime->tm_min, filetime->tm_sec);
 
-	_fileSizeText = (fullName[fullName.size() - 1] == "/") ? "" : formatString(LANG("rom info", "file size").c_str(), getFriendlyFileSizeString(st.st_size).c_str())
+	_fileSizeText = (fullName[fullName.size() - 1] == '/') ? "" : formatString(LANG("rom info", "file size").c_str(), getFriendlyFileSizeString(st.st_size).c_str());
 	_size = st.st_size;
 }
 

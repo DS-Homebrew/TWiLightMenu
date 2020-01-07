@@ -27,7 +27,7 @@
 #include "ui/statictext.h"
 #include "ui/message.h"
 #include "settingwnd.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include <string>
 #include "dsrom.h"
 

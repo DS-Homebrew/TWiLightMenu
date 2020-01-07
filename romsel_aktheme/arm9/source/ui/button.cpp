@@ -67,7 +67,7 @@ Window &Button::loadAppearance(const std::string &aFileName)
 
 bool Button::process(const Message &msg)
 {
-	return isVisible && (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd) ? processTouchMessage((TouchMessage &)msg) : false;
+	return isVisible() && (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd) ? processTouchMessage((TouchMessage &)msg) : false;
 }
 
 bool Button::processTouchMessage(const TouchMessage &msg)
@@ -78,8 +78,7 @@ bool Button::processTouchMessage(const TouchMessage &msg)
 	Rect myRect(_position.x, _position.y, _position.x + _size.x, _position.y + _size.y);
 	bool returnValue = false;
 
-	switch (msg.id()) {
-		case (Message::touchUp):
+	if (msg.id() == Message::touchUp) {
 			if (_captured) {
 				if (myRect.surrounds(msg.position())) {
 					onClicked();
@@ -91,8 +90,7 @@ bool Button::processTouchMessage(const TouchMessage &msg)
 				returnValue = true;
 			}
 			_state = up;
-			break;
-		case (Message::touchDown):
+	} else if (msg.id() == Message::touchDown) {
 			if (myRect.surrounds(msg.position())) {
 				onPressed();
 				pressed();
@@ -100,7 +98,6 @@ bool Button::processTouchMessage(const TouchMessage &msg)
 				_state = down;
 				returnValue = true;
 			}
-			break;
 	}
 
 	return returnValue;
@@ -147,29 +144,23 @@ void ButtonDesc::draw(const Rect &area, GRAPHICS_ENGINE engine) const
 	}
 
 	if (NULL != pBuffer)
-	{
-		gdi().maskBlt(pBuffer, area.position().x, area.position().y,
-					  _background.width(), height, _button->selectedEngine());
-	}
+		gdi().maskBlt(pBuffer, area.position().x, area.position().y, _background.width(), height, _button->selectedEngine());
 
-	// �����������
 	u32 textPixels = font().getStringScreenWidth(_button->text().c_str(), _button->text().size());
 	u32 textX = 0, textY = area.position().y + ((area.size().y - SYSTEM_FONT_HEIGHT) >> 1) + 1;
-	switch (_button->alignment())
-	{
-	case Button::center:
-		textX = area.position().x + ((area.size().x - textPixels) >> 1);
-		break;
-	case Button::right:
-		textX = area.position().x + (area.size().x - textPixels - 4);
-		break;
-	default:
-		textX = area.position().x + 4;
-		break;
+	switch (_button->alignment()) {
+		case Button::center:
+			textX = area.position().x + ((area.size().x - textPixels) >> 1);
+			break;
+		case Button::right:
+			textX = area.position().x + (area.size().x - textPixels - 4);
+			break;
+		default:
+			textX = area.position().x + 4;
+			break;
 	}
 
-	if (Button::down == _button->state())
-	{
+	if (Button::down == _button->state()) {
 		textX++;
 		textY++;
 	}

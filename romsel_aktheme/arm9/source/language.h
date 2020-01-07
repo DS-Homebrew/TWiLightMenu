@@ -27,7 +27,7 @@
 #include "common/inifile.h"
 #include "common/dsimenusettings.h"
 #include <nds.h>
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 
 class LanguageFile : public CIniFile
 {

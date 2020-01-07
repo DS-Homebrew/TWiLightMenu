@@ -24,7 +24,7 @@
 #include "ui/windowmanager.h"
 #include "common/inifile.h"
 #include "unicode.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "tool/memtool.h"
 
 using namespace akui;
@@ -46,7 +46,7 @@ UserWindow::UserWindow() : Window(NULL, "UserWindow")
 
 void UserWindow::init()
 {
-	easysave::ini ini(SFN_USER_CUSTOM);
+	CIniFile ini(SFN_USER_CUSTOM);
 
 	std::string pictureFilename = ini.GetString("custom picture", "file", "");
 	if (pictureFilename != "") {

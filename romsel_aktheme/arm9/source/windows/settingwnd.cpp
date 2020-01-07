@@ -24,6 +24,7 @@
 #include "ui/windowmanager.h"
 #include "ui/uisettings.h"
 #include "language.h"
+#include "common/inifile.h"
 #define TOP_MARGIN 4
 
 using namespace akui;
@@ -83,10 +84,9 @@ SettingWnd::SettingWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::st
   _tabs.push_back(sSetingTab(new std::vector<sSetingItem>, text));
   _currentTab = 0;
   _maxLabelLength = 0;
-  easysave::ini ini(SFN_UI_SETTINGS);
+  CIniFile ini(SFN_UI_SETTINGS);
   _spinBoxWidth = ini.GetInt("setting window", "spinBoxWidth", 108);
   _simpleTabs = ini.GetInt("setting window", "simpleTabs", 0);
-  ;
   _maxTabSize = 0;
   _confirmMessage = LANG("setting window", "confirm text");
 }

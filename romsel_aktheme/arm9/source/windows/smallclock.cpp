@@ -19,10 +19,10 @@
 */
 
 #include "smallclock.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "systemfilenames.h"
 #include "ui/windowmanager.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/dsimenusettings.h"
 
 using namespace akui;
@@ -42,7 +42,7 @@ void SmallClock::init() {
 }
 
 Window &SmallClock::loadAppearance(const std::string &aFileName) {
-	easysave::ini ini(aFileName);
+	CIniFile ini(aFileName);
 	_position.x = ini.GetInt("small clock", "x", 8);
 	_position.y = ini.GetInt("small clock", "y", 80);
 	_show = ini.GetInt("small clock", "show", _show);

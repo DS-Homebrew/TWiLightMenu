@@ -106,7 +106,7 @@ _List(0,0,w-8,h-44,this,"cheat tree", ms().ak_scrollSpeed)
 	_List.setRelativePosition(Point(4, 20));
 
 	CIniFile ini(SFN_UI_SETTINGS);
-	std::string& Section = ini.GetInt("cheat menu","textColor",-1) != -1 ? "cheat menu" : "main list";
+	std::string Section = (ini.GetInt("cheat menu","textColor",-1) != -1 ? "cheat menu" : "main list");
 	_List.setColors(
 	ini.GetInt(Section, "textColor", RGB15(7, 7, 7)),				// textColor
 	ini.GetInt(Section, "textColorHilight", RGB15(31, 0, 31)),		// textColorHighlight
@@ -146,7 +146,7 @@ bool CheatWnd::process(const akui::Message& msg)
 
 bool CheatWnd::processKeyMessage(const KeyMessage& msg)
 {
-	if (msg.id() !== Message::keyDown)
+	if (msg.id() != Message::keyDown)
 		return false;
 
 	switch(msg.keyCode()) {

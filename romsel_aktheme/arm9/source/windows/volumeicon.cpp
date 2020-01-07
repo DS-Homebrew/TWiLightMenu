@@ -33,7 +33,7 @@ VolumeIcon::VolumeIcon() : Window(NULL, "volumeicon")
 	CIniFile ini(SFN_UI_SETTINGS);
 	_size = Size(0, 0);
 	_position = Point(0, 0);
-	_engine = ini.GetInt("volume icon", "screen", true) ? GE_SUB : SE_MAIN;
+	_engine = ini.GetInt("volume icon", "screen", true) ? GE_SUB : GE_MAIN;
 
 	_volIcon0 =  createBMP15FromFile(SFN_VOLUME0);
 	_volIcon1 =  createBMP15FromFile(SFN_VOLUME1);

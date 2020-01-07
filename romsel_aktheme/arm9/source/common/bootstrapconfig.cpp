@@ -5,13 +5,15 @@
 #include "flashcard.h"
 #include "loaderconfig.h"
 #include "systemfilenames.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "windows/cheatwnd.h"
 #include "windows/mainlist.h"
 #include "windows/mainwnd.h"
 #include <stdio.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
+#include <map>
+#include <string>
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
@@ -252,7 +254,7 @@ BootstrapConfig &BootstrapConfig::donorSdk()
 	if (_isHomebrew)
 		return *this;
 
-	static constexpr std::map<uint_8, std::set<std::string>> donorMap = { 
+	static const std::map<uint, std::set<std::string>> donorMap = { 
 		{ 2, {
 			"AMQ", // Mario vs. Donkey Kong 2 - March of the Minis
 			"AMH", // Metroid Prime Hunters
@@ -298,8 +300,8 @@ BootstrapConfig &BootstrapConfig::donorSdk()
 		}}
 	};
 
-	for (auto& i : donorMap) {
-		if (i.first == 5 && _gametid[0] == 'V' || _sdkVersion > 0x5000000)
+	for (auto i : donorMap) {
+		if (i.first == 5 && (_gametid[0] == 'V' || _sdkVersion > 0x5000000))
 			return donorSdk(5);
 
 		if (i.second.find(_gametid.c_str()) != i.second.cend())

@@ -25,7 +25,7 @@
 #include "drawing/gdi.h"
 #include "tool/dbgtool.h"
 #include "tool/memtool.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "tool/timetool.h"
 
 #include "sigslot.h"

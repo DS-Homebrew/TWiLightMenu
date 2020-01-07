@@ -1,7 +1,7 @@
 #include "pergamesettings.h"
 #include "dsimenusettings.h"
 #include "common/inifile.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "tool/dbgtool.h"
 #include "bootstrappaths.h"
 #include <string.h>
@@ -75,7 +75,7 @@ bool PerGameSettings::checkIfShowAPMsg() {
 void PerGameSettings::dontShowAPMsgAgain() {
 	CIniFile pergameini(_iniPath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
-	pergameini.flush();
+	pergameini.SaveIniFileModified();
 }
 
 std::string getSavExtension(int number) {
