@@ -118,20 +118,12 @@ void SettingWnd::draw(void)
 
 bool SettingWnd::process(const akui::Message &msg)
 {
-  bool ret = false;
-  ret = Form::process(msg);
-  if (!ret)
-  {
-    if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
-    {
-      ret = processKeyMessage((KeyMessage &)msg);
-    }
-    //if(msg.id()>cMessage::touchMessageStart&&msg.id()<Message::touchMessageEnd)
-    //{
-    //  ret=processTouchMessage((TouchMessage&)msg);
-    //}
-  }
-  return ret;
+	bool ret = Form::process(msg);
+	if (!ret && (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)) {
+		ret = processKeyMessage((KeyMessage &)msg);
+	}
+
+	return ret;
 }
 
 void SettingWnd::onOK(void)

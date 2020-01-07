@@ -889,26 +889,6 @@ void loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 	stop();
 }
 
-void loadROMselect() {
-	if (sdFound()) {
-		chdir("sd:/");
-	}
-
-	std::string temp = "";
-	switch (theme) {
-		case 3:
-			temp = "akmenu.srldr";
-			break;
-		case 2:
-			temp = "r4menu.srldr";
-			break;
-		default:
-			temp = "dsimenu.srldr";
-	}
-
-	return loadSRLDR(temp);
-}
-
 void loadSRLDR(std::string temp) {
 	const char *ROMpath = (std::string("/_nds/TWiLightMenu/") + temp).c_str();
 	bool srldrFound = (access(ROMpath, F_OK) == 0);
@@ -929,6 +909,26 @@ void loadSRLDR(std::string temp) {
 		printSmall(false, 4, 4, (std::string("Unable to start ") + temp).c_str());
 		printSmall(false, 4, 12, errorText);
 	}
+}
+
+void loadROMselect() {
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+
+	std::string temp = "";
+	switch (theme) {
+		case 3:
+			temp = "akmenu.srldr";
+			break;
+		case 2:
+			temp = "r4menu.srldr";
+			break;
+		default:
+			temp = "dsimenu.srldr";
+	}
+
+	return loadSRLDR(temp);
 }
 
 void unalunchRomBoot(const char* rom) {

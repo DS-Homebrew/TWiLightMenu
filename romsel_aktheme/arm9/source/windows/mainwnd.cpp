@@ -75,138 +75,149 @@ MainWnd::~MainWnd()
     windowManager().removeWindow(this);
 }
 
+void MainWnd::initStartButton() {
+	std::string file("");
+	std::string text("");
+
+	CIniFile ini(SFN_UI_SETTINGS);
+	int x = ini.GetInt("start button", "x", 0);
+	int y = ini.GetInt("start button", "y", 172);
+	int w = ini.GetInt("start button", "w", 48);
+	int h = ini.GetInt("start button", "h", 10);
+	COLOR color = ini.GetInt("start button", "textColor", 0x7fff);
+	file = ini.GetString("start button", "file", "none");
+	text = ini.GetString("start button", "text", "START");
+	if (file != "none")
+		file = SFN_UI_CURRENT_DIRECTORY + file;
+
+	if (text == "ini")
+		text = LANG("start menu", "START");
+
+	_startButton = new Button(x, y, w, h, this, text);
+	_startButton->setStyle(Button::press);
+	_startButton->setRelativePosition(Point(x, y));
+	_startButton->loadAppearance(file);
+	_startButton->clicked.connect(this, &MainWnd::startButtonClicked);
+	_startButton->setTextColor(color | BIT(15));
+	if (!ini.GetInt("start button", "show", 1))
+		_startButton->hide();
+	addChildWindow(_startButton);
+}
+
+void MainWnd::initBatteryIcon() {
+	CIniFile ini(SFN_UI_SETTINGS);
+	int x = ini.GetInt("battery icon", "x", 238);
+	int y = ini.GetInt("battery icon", "y", 172);
+	bool showBatt = ;
+
+	if (!ini.GetInt("battery icon", "show", 0) && ini.GetInt("battery icon", "screen", true))
+		return;
+
+	_batteryIcon = new Button(x, y, w, h, this, "");
+	_batteryIcon->setRelativePosition(Point(x,y));
+
+	u8 batteryLevel = sys().batteryStatus();
+
+	if (isDSiMode()) {
+		if (batteryLevel & BIT(7)) {
+			_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+		} else if (batteryLevel == 0xF) {
+			_batteryIcon->loadAppearance(SFN_BATTERY4);
+		} else if (batteryLevel == 0xB) {
+			_batteryIcon->loadAppearance(SFN_BATTERY3);
+		} else if (batteryLevel == 0x7) {
+			_batteryIcon->loadAppearance(SFN_BATTERY2);
+		} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
+			_batteryIcon->loadAppearance(SFN_BATTERY1);
+		} else {
+			_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
+		}
+	} else {
+		if (batteryLevel & BIT(0)) {
+			_batteryIcon->loadAppearance(SFN_BATTERY1);
+		} else {
+			_batteryIcon->loadAppearance(SFN_BATTERY4);
+		}
+	}
+
+	addChildWindow(_batteryIcon);
+}
+
+void MainWnd::initFolderUp() {
+	CIniFile ini(SFN_UI_SETTINGS);
+
+	int x = ini.GetInt("folderup btn", "x", 0);
+	int y = ini.GetInt("folderup btn", "y", 2);
+	int w = ini.GetInt("folderup btn", "w", 32);
+	int h = ini.GetInt("folderup btn", "h", 16);
+	_folderUpButton = new Button(x, y, w, h, this, "");
+	_folderUpButton->setRelativePosition(Point(x, y));
+	_folderUpButton->loadAppearance(SFN_FOLDERUP_BUTTON);
+	_folderUpButton->setSize(Size(w, h));
+	_folderUpButton->pressed.connect(_mainList, &MainList::backParentDir);
+	addChildWindow(_folderUpButton);
+}
+
+void MainWnd::initFolderText() {
+	CIniFile ini(SFN_UI_SETTINGS);
+
+	int x = ini.GetInt("folder text", "x", 20);
+	int y = ini.GetInt("folder text", "y", 2);
+	int w = ini.GetInt("folder text", "w", 160);
+	int h = ini.GetInt("folder text", "h", 16);
+	_folderText = new StaticText(x, y, w, h, this, "");
+	_folderText->setRelativePosition(Point(x, y));
+	_folderText->setTextColor(ini.GetInt("folder text", "color", 0));
+	addChildWindow(_folderText);
+
+	if (!ms().showDirectories) {
+		_folderText->hide();
+	}
+}
+
+void MainWnd::initStartMenu() {
+	_startMenu = new StartMenu(160, 40, 61, 108, this, "start menu");
+	_startMenu->init();
+	_startMenu->itemClicked.connect(this, &MainWnd::startMenuItemClicked);
+	_startMenu->hide();
+	_startMenu->setRelativePosition(_startMenu->position());
+	addChildWindow(_startMenu);
+	dbg_printf("startMenu %08x\n", _startMenu);
+}
+
 void MainWnd::init()
 {
-    int x = 0;
-    int y = 0;
-    int w = 0;
-    int h = 0;
-    bool showBatt = 0;
-    COLOR color = 0;
-    std::string file("");
-    std::string text("");
-    easysave::ini ini(SFN_UI_SETTINGS);
+	bool showBatt = 0;
+	std::string file("");
+	std::string text("");
 
-    // self init
-    dbg_printf("mainwnd init() %08x\n", this);
-    loadAppearance(SFN_LOWER_SCREEN_BG);
-    windowManager().addWindow(this);
+	// self init
+	dbg_printf("mainwnd init() %08x\n", this);
+	loadAppearance(SFN_LOWER_SCREEN_BG);
+	windowManager().addWindow(this);
 
-    // init game file list
-    _mainList = new MainList(4, 20, 248, 152, this, "main list");
-    _mainList->setRelativePosition(Point(4, 20));
-    _mainList->init();
-    _mainList->selectChanged.connect(this, &MainWnd::listSelChange);
-    _mainList->selectedRowClicked.connect(this, &MainWnd::onMainListSelItemClicked);
-    _mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
-    _mainList->animateIcons.connect(this, &MainWnd::onAnimation);
+	// init game file list
+	_mainList = new MainList(4, 20, 248, 152, this, "main list");
+	_mainList->setRelativePosition(Point(4, 20));
+	_mainList->init();
+	_mainList->selectChanged.connect(this, &MainWnd::listSelChange);
+	_mainList->selectedRowClicked.connect(this, &MainWnd::onMainListSelItemClicked);
+	_mainList->directoryChanged.connect(this, &MainWnd::onFolderChanged);
+	_mainList->animateIcons.connect(this, &MainWnd::onAnimation);
 
-    addChildWindow(_mainList);
-    dbg_printf("mainlist %08x\n", _mainList);
+	addChildWindow(_mainList);
+	dbg_printf("mainlist %08x\n", _mainList);
 
-    //waitMs( 1000 );
+	//waitMs( 1000 );
 
-    // init start button
-    x = ini.GetInt("start button", "x", 0);
-    y = ini.GetInt("start button", "y", 172);
-    w = ini.GetInt("start button", "w", 48);
-    h = ini.GetInt("start button", "h", 10);
-    color = ini.GetInt("start button", "textColor", 0x7fff);
-    file = ini.GetString("start button", "file", "none");
-    text = ini.GetString("start button", "text", "START");
-    if (file != "none")
-    {
-        file = SFN_UI_CURRENT_DIRECTORY + file;
-    }
-    if (text == "ini")
-    {
-        text = LANG("start menu", "START");
-    }
-    _startButton = new Button(x, y, w, h, this, text);
-    _startButton->setStyle(Button::press);
-    _startButton->setRelativePosition(Point(x, y));
-    _startButton->loadAppearance(file);
-    _startButton->clicked.connect(this, &MainWnd::startButtonClicked);
-    _startButton->setTextColor(color | BIT(15));
-    if (!ini.GetInt("start button", "show", 1))
-        _startButton->hide();
-    addChildWindow(_startButton);
+	// init Sub-Elements now
+	initStartButton();
+	initBatteryIcon();
+	initFolderUp();
+	initFolderText();
+	initStartMenu();
 
-    // // init brightness button
-	
-	    x = ini.GetInt("battery icon", "x", 238);
-	    y = ini.GetInt("battery icon", "y", 172);
-	    showBatt = ini.GetInt("battery icon", "show", 0);
-
-	
-	    if(showBatt)
-	    {
-            if(!ini.GetInt("battery icon", "screen", true))
-            {
-                _batteryIcon = new Button(x, y, w, h, this, "");
-                _batteryIcon->setRelativePosition(Point(x,y));
-
-                u8 batteryLevel = sys().batteryStatus();
-
-				if (isDSiMode()) {
-					if (batteryLevel & BIT(7)) {
-						_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-					} else if (batteryLevel == 0xF) {
-						_batteryIcon->loadAppearance(SFN_BATTERY4);
-					} else if (batteryLevel == 0xB) {
-						_batteryIcon->loadAppearance(SFN_BATTERY3);
-					} else if (batteryLevel == 0x7) {
-						_batteryIcon->loadAppearance(SFN_BATTERY2);
-					} else if (batteryLevel == 0x3 || batteryLevel == 0x1) {
-						_batteryIcon->loadAppearance(SFN_BATTERY1);
-					} else {
-						_batteryIcon->loadAppearance(SFN_BATTERY_CHARGE);
-					}
-				} else {
-					if (batteryLevel & BIT(0)) {
-						_batteryIcon->loadAppearance(SFN_BATTERY1);
-					} else {
-						_batteryIcon->loadAppearance(SFN_BATTERY4);
-					}
-				}
-        
-                addChildWindow(_batteryIcon);
-            }
-	    }
-
-    x = ini.GetInt("folderup btn", "x", 0);
-    y = ini.GetInt("folderup btn", "y", 2);
-    w = ini.GetInt("folderup btn", "w", 32);
-    h = ini.GetInt("folderup btn", "h", 16);
-    _folderUpButton = new Button(x, y, w, h, this, "");
-    _folderUpButton->setRelativePosition(Point(x, y));
-    _folderUpButton->loadAppearance(SFN_FOLDERUP_BUTTON);
-    _folderUpButton->setSize(Size(w, h));
-    _folderUpButton->pressed.connect(_mainList, &MainList::backParentDir);
-    addChildWindow(_folderUpButton);
-
-    x = ini.GetInt("folder text", "x", 20);
-    y = ini.GetInt("folder text", "y", 2);
-    w = ini.GetInt("folder text", "w", 160);
-    h = ini.GetInt("folder text", "h", 16);
-    _folderText = new StaticText(x, y, w, h, this, "");
-    _folderText->setRelativePosition(Point(x, y));
-    _folderText->setTextColor(ini.GetInt("folder text", "color", 0));
-    addChildWindow(_folderText);
-    
-    if (!ms().showDirectories) {
-        _folderText->hide();
-    }
-    // init startmenu
-    _startMenu = new StartMenu(160, 40, 61, 108, this, "start menu");
-    _startMenu->init();
-    _startMenu->itemClicked.connect(this, &MainWnd::startMenuItemClicked);
-    _startMenu->hide();
-    _startMenu->setRelativePosition(_startMenu->position());
-    addChildWindow(_startMenu);
-    dbg_printf("startMenu %08x\n", _startMenu);
-
-    arrangeChildren();
+	arrangeChildren();
 }
 
 void MainWnd::draw()
@@ -235,60 +246,44 @@ void MainWnd::listSelChange(u32 i)
 
 void MainWnd::startMenuItemClicked(s16 i)
 {
-    easysave::ini ini(SFN_UI_SETTINGS);
-    if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
-    
-    dbg_printf("start menu item %d\n", i);
+	CIniFile ini(SFN_UI_SETTINGS);
+	if(!ini.GetInt("start menu", "showFileOperations", true)) i += 4;
 
-    // ------------------- Copy and Paste ---
-    if (START_MENU_ITEM_COPY == i)
-    {
-        if (_mainList->getSelectedFullPath() == "")
-            return;
-        struct stat st;
-        stat(_mainList->getSelectedFullPath().c_str(), &st);
-        if (st.st_mode & S_IFDIR)
-        {
-            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-            return;
-        }
-        setSrcFile(_mainList->getSelectedFullPath(), SFM_COPY);
-    } else if (START_MENU_ITEM_CUT == i) {
-        if (_mainList->getSelectedFullPath() == "")
-            return;
-        struct stat st;
-        stat(_mainList->getSelectedFullPath().c_str(), &st);
-        if (st.st_mode & S_IFDIR)
-        {
-            messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
-            return;
-        }
-        setSrcFile(_mainList->getSelectedFullPath(), SFM_CUT);
-    } else if (START_MENU_ITEM_PASTE == i) {
-        bool ret = false;
-        ret = copyOrMoveFile(_mainList->getCurrentDir());
-        if (ret) // refresh current directory
-            _mainList->enterDir(_mainList->getCurrentDir());
-    } else if (START_MENU_ITEM_DELETE == i) {
-        std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "")
-        {
-            bool ret = false;
-            ret = deleteFile(fullPath);
-            if (ret)
-                _mainList->enterDir(_mainList->getCurrentDir());
-        }
-    }
+	dbg_printf("start menu item %d\n", i);
 
-    if (START_MENU_ITEM_SETTING == i)
-    {
-        showSettings();
-    }
+	switch (i) {
+		case START_MENU_ITEM_COPY:
+		case START_MENU_ITEM_CUT:
+			if (_mainList->getSelectedFullPath() == "")
+				return;
 
-    else if (START_MENU_ITEM_INFO == i)
-    {
-        showFileInfo();
-    }
+			struct stat st;
+			stat(_mainList->getSelectedFullPath().c_str(), &st);
+
+			if (st.st_mode & S_IFDIR) {
+				messageBox(this, LANG("no copy dir", "title"), LANG("no copy dir", "text"), MB_YES | MB_NO);
+				return;
+			}
+
+			setSrcFile(_mainList->getSelectedFullPath(), i == START_MENU_ITEM_CUT ? SFM_CUT : SFM_COPY);
+			break;
+		case START_MENU_ITEM_PASTE:
+			if (copyOrMoveFile(_mainList->getCurrentDir()))
+				_mainList->enterDir(_mainList->getCurrentDir());
+
+			break;
+		case START_MENU_ITEM_DELETE:
+			std::string fullPath = _mainList->getSelectedFullPath();
+			if (fullPath != "" && deleteFile(fullPath))
+				_mainList->enterDir(_mainList->getCurrentDir());
+
+			break;
+		case START_MENU_ITEM_SETTING:
+			showSettings();
+			break;
+		case START_MENU_ITEM_INFO:
+			showFileInfo();
+	}
 }
 
 void MainWnd::startButtonClicked()
@@ -310,26 +305,20 @@ Window &MainWnd::loadAppearance(const std::string &aFileName)
 
 bool MainWnd::process(const Message &msg)
 {
-    if (_startMenu->isVisible())
-        return _startMenu->process(msg);
+	if (_startMenu->isVisible())
+		return _startMenu->process(msg);
 
-    bool ret = false;
+	bool ret = Form::process(msg);
 
-    ret = Form::process(msg);
+	if (!ret) {
+		if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
+			ret = processKeyMessage((KeyMessage &)msg);
 
-    if (!ret)
-    {
-        if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
-        {
-            ret = processKeyMessage((KeyMessage &)msg);
-        }
+		if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
+			ret = processTouchMessage((TouchMessage &)msg);
+	}
 
-        if (msg.id() > Message::touchMessageStart && msg.id() < Message::touchMessageEnd)
-        {
-            ret = processTouchMessage((TouchMessage &)msg);
-        }
-    }
-    return ret;
+	return ret;
 }
 
 bool MainWnd::processKeyMessage(const KeyMessage &msg)
@@ -431,68 +420,65 @@ bool MainWnd::processKeyMessage(const KeyMessage &msg)
 
 bool MainWnd::processTouchMessage(const TouchMessage &msg)
 {
-    return false;
+	return false;
 }
 
 void MainWnd::onKeyYPressed()
 {
-    showFileInfo();
+	showFileInfo();
 }
 
 void MainWnd::onMainListSelItemClicked(u32 index)
 {
-    onKeyAPressed();
+	onKeyAPressed();
 }
 
 void MainWnd::onKeyAPressed()
 {
-    cwl();
-    launchSelected();
+	cwl();
+	launchSelected();
 }
 
 void bootstrapSaveHandler()
 {
-    progressWnd().setPercent(50);
-    progressWnd().update();
+	progressWnd().setPercent(50);
+	progressWnd().update();
 }
 
 void bootstrapLaunchHandler()
 {
-    progressWnd().setPercent(90);
-    progressWnd().update();
+	progressWnd().setPercent(90);
+	progressWnd().update();
 }
 
 void MainWnd::bootArgv(DSRomInfo &rominfo)
 {
-    std::string fullPath = _mainList->getSelectedFullPath();
-    std::string launchPath = fullPath;
-    std::vector<const char *> cargv{};
-    if (rominfo.isArgv())
-    {
-        ArgvFile argv(fullPath);
-        launchPath = argv.launchPath();
-        for (auto &string : argv.launchArgs())
-            cargv.push_back(&string.front());
-    }
+	std::string fullPath = _mainList->getSelectedFullPath();
+	std::string launchPath = fullPath;
+	std::vector<const char *> cargv{};
+	if (rominfo.isArgv()) {
+		ArgvFile argv(fullPath);
+		launchPath = argv.launchPath();
+		for (auto &string : argv.launchArgs())
+			cargv.push_back(&string.front());
+	}
 
-    LoaderConfig config(fullPath, "");
-    progressWnd().setTipText(LANG("game launch", "Please wait"));
-    progressWnd().update();
-    progressWnd().show();
+	LoaderConfig config(fullPath, "");
+	progressWnd().setTipText(LANG("game launch", "Please wait"));
+	progressWnd().update();
+	progressWnd().show();
 
-    int err = config.launch(0, cargv.data());
+	int err = config.launch(0, cargv.data());
 
-    if (err)
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "ROM Start Error"), errorString, MB_OK);
-        progressWnd().hide();
-    }
+	if (err) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "ROM Start Error"), errorString, MB_OK);
+		progressWnd().hide();
+	}
 }
 
 //void MainWnd::apFix(const char *filename)
-std::string apFix(const char *filename, bool isHomebrew)
-{
+std::string apFix(const char *filename, bool isHomebrew) {
 	remove("fat:/_nds/nds-bootstrap/apFix.ips");
 
 	if (isHomebrew) {
@@ -616,18 +602,19 @@ void bootWidescreen(const char *filename)
 
 void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 {
-    dbg_printf("%s", _mainList->getSelectedShowName().c_str());
-    std::string fileName = _mainList->getSelectedShowName();
-    std::string fullPath = _mainList->getSelectedFullPath();
+	dbg_printf("%s", _mainList->getSelectedShowName().c_str());
+	std::string fileName = _mainList->getSelectedShowName();
+	std::string fullPath = _mainList->getSelectedFullPath();
 
-    BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
+	BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
 
-    config.dsiMode(rominfo.isDSiWare() ? true : (gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode))
-		  .saveNo((int)gameConfig.saveNo)
-		  .ramDiskNo((int)gameConfig.ramDiskNo)
-		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
-		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
-		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);
+	config
+		.dsiMode(rominfo.isDSiWare() ? true : (gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode))
+		.saveNo((int)gameConfig.saveNo)
+		.ramDiskNo((int)gameConfig.ramDiskNo)
+		.cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
+		.vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
+		.nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);
 
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
@@ -654,7 +641,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 	bool hasAP = false;
 	bool hasAP1 = false;
-    PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
+	PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 
 	char gameTid[5] = {0};
 	snprintf(gameTid, 4, "%s", rominfo.saveInfo().gameCode);
@@ -1049,15 +1036,16 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		if (hasAP)
 		{
-			optionPicked = messageBox(this, "Warning", "This game has AP (Anti-Piracy). Please make sure you're "
-										"using the latest version of TWiLight Menu++."
+			optionPicked = messageBox(this, "Warning", "This game has AP (Anti-Piracy). Please make sure you "
+										"have the patch files in the apfix folder of "
+										"TWiLight Menu++."
 											, MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
 
 		if (hasAP1)
 		{
 			optionPicked = messageBox(this, "Warning", "This game has AP (Anti-Piracy) and MUST be patched "
-										"using the RGF TWiLight Menu AP patcher."
+										"using the RGF TWiLight Menu++ AP patcher"
 											, MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
 
@@ -1107,42 +1095,41 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 void MainWnd::bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings)
 {
-    int err = loadGameOnFlashcard(ndsPath.c_str(), filename, usePerGameSettings);
-    if (err)
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "Flashcard Error"), errorString, MB_OK);
-    }
+	int err = loadGameOnFlashcard(ndsPath.c_str(), filename, usePerGameSettings);
+	if (err) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "Flashcard Error"), errorString, MB_OK);
+	}
 }
 
 void MainWnd::bootFile(const std::string &loader, const std::string &fullPath)
 {
-    LoaderConfig config(loader, "");
-    std::vector<const char *> argv{};
-    argv.emplace_back(loader.c_str());
-    argv.emplace_back(fullPath.c_str());
-    int err = config.launch(argv.size(), argv.data());
-    if (err)
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "Launch Error"), errorString, MB_OK);
-        progressWnd().hide();
-    }
+	LoaderConfig config(loader, "");
+
+	std::vector<const char *> argv{};
+	argv.emplace_back(loader.c_str());
+	argv.emplace_back(fullPath.c_str());
+
+	int err = config.launch(argv.size(), argv.data());
+	if (err) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "Launch Error"), errorString, MB_OK);
+		progressWnd().hide();
+	}
 }
 
 void MainWnd::launchSelected()
 {
-    cwl();
-    dbg_printf("Launch.");
-    std::string fullPath = _mainList->getSelectedFullPath();
+	cwl();
+	dbg_printf("Launch.");
+	std::string fullPath = _mainList->getSelectedFullPath();
 
-    cwl();
-    if (fullPath[fullPath.size() - 1] == '/')
-    {
-        cwl();
-        _mainList->enterDir(fullPath);
-        return;
-    }
+	cwl();
+	if (fullPath[fullPath.size() - 1] == '/') {
+		cwl();
+		_mainList->enterDir(fullPath);
+		return;
+	}
 
 	if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()) {
 		if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
@@ -1156,84 +1143,79 @@ void MainWnd::launchSelected()
 		}
 	}
 
-    ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
+	ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
 	ms().previousUsedDevice = ms().secondaryDevice;
-    ms().romPath = fullPath;
-    ms().saveSettings();
+	ms().romPath = fullPath;
+	ms().saveSettings();
 
-    DSRomInfo rominfo;
-    if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo)) {
-        return;
-	}
+	DSRomInfo rominfo;
+	if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
+		return;
 
 	chdir(_mainList->getCurrentDir().c_str());
 
-    // Launch DSiWare
-    if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel == 0)
-    {
-        // Unlaunch boot here....
-        UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
+	// Launch DSiWare
+	if (!rominfo.isHomebrew() && rominfo.isDSiWare() && isDSiMode() && ms().consoleModel == 0) {
+		// Unlaunch boot here....
+		UnlaunchBoot unlaunch(fullPath, rominfo.saveInfo().dsiPubSavSize, rominfo.saveInfo().dsiPrvSavSize);
 
-        // Roughly associated with 50%, 90%
-        unlaunch.onPrvSavCreated(bootstrapSaveHandler)
-            .onPubSavCreated(bootstrapLaunchHandler);
+		// Roughly associated with 50%, 90%
+		unlaunch
+			.onPrvSavCreated(bootstrapSaveHandler)
+			.onPubSavCreated(bootstrapLaunchHandler);
 
-            
-        progressWnd().setPercent(0);
-        progressWnd().setTipText(LANG("game launch", "Preparing Unlaunch Boot"));
-        progressWnd().update();
-        progressWnd().show();
+		progressWnd().setPercent(0);
+		progressWnd().setTipText(LANG("game launch", "Preparing Unlaunch Boot"));
+		progressWnd().update();
+		progressWnd().show();
 
-        if (unlaunch.prepare())
-        {
+		if (unlaunch.prepare()) {
 			progressWnd().hide();
-            messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
-        }
-        ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
-        ms().saveSettings();
-        progressWnd().hide();
-        unlaunch.launch();
-    }
+			messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
+		}
 
-    if (rominfo.isDSRom())
-    {
-        PerGameSettings gameConfig(_mainList->getSelectedShowName());
-        // Direct Boot for homebrew.
-        if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
-        {
+		ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
+		ms().saveSettings();
+
+		progressWnd().hide();
+		unlaunch.launch();
+	}
+
+	if (rominfo.isDSRom()) {
+		PerGameSettings gameConfig(_mainList->getSelectedShowName());
+
+		// Direct Boot for homebrew.
+		if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew())) {
 			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
-            bootArgv(rominfo);
-            return;
-        }
 
-        else if (ms().useBootstrap || !ms().secondaryDevice)
-        {
+			bootArgv(rominfo);
+			return;
+		} else if (ms().useBootstrap || !ms().secondaryDevice) {
 			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
-            bootBootstrap(gameConfig, rominfo);
-            return;
-        }
-        else
-        {
+
+			bootBootstrap(gameConfig, rominfo);
+			return;
+		} else {
 			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
-            dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
-            bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
-            return;
-        }
-    }
 
-    std::string extension;
-    size_t lastDotPos = fullPath.find_last_of('.');
-    if (fullPath.npos != lastDotPos)
-        extension = fullPath.substr(lastDotPos);
+			dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
+			bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
+			return;
+		}
+	}
 
-    // DSTWO Plugin Launch
-    if (extension == ".plg" && ms().secondaryDevice && memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
-    {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
+	std::string extension;
+	size_t lastDotPos = fullPath.find_last_of('.');
+	if (fullPath.npos != lastDotPos)
+		extension = fullPath.substr(lastDotPos);
+
+	// DSTWO Plugin Launch
+	if (extension == ".plg" && ms().secondaryDevice && memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
+		ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+		ms().saveSettings();
 
 		// Print .plg path without "fat:" at the beginning
 		char ROMpathDS2[256];
@@ -1242,175 +1224,156 @@ void MainWnd::launchSelected()
 			if (fullPath[4+i] == '\x00') break;
 		}
 
-		easysave::ini dstwobootini( "fat:/_dstwo/twlm.ini" );
+		CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
 		dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 		dstwobootini.flush();
 
-        bootFile(BOOTPLG_SRL, fullPath);
+		bootFile(BOOTPLG_SRL, fullPath);
 	}
 
 	const char *ndsToBoot;
 
-    // RVID Launch
-    if (extension == ".rvid")
-    {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
+	// RVID Launch
+	if (extension == ".rvid") {
+		ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+		ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if (access(ndsToBoot, F_OK) != 0)
 			ndsToBoot = RVIDPLAYER_FC;
-		}
 
-        bootFile(ndsToBoot, fullPath);
-    }
+		bootFile(ndsToBoot, fullPath);
+	}
 
-    // GBA Launch
-    if (extension == ".gba")
-	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
-		if (ms().secondaryDevice)
-        {
-			if (isDSiMode())
-			{
+	// GBA Launch
+	if (extension == ".gba") {
+		ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+		ms().saveSettings();
+
+		if (ms().secondaryDevice) {
+			if (isDSiMode()) {
 				ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI;
-				if(access(ndsToBoot, F_OK) != 0) {
+				if (access(ndsToBoot, F_OK) != 0) {
 					ndsToBoot = ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC;
 				}
-			}
-			else
-			{
+			} else {
 				ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7_SD : GBARUNNER_A9_SD;
-				if(access(ndsToBoot, F_OK) != 0) {
+				if (access(ndsToBoot, F_OK) != 0) {
 					ndsToBoot = ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9;
 				}
 			}
 
-            bootFile(ndsToBoot, fullPath);
-		}
-		else
-		{
+			bootFile(ndsToBoot, fullPath);
+		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 
 			std::vector<char*> argarray;
 			argarray.push_back(strdup(bootstrapPath.c_str()));
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
-			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
-			gen.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
-			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
-			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
-			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
-			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
-			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0], false))
-			{
+			LoaderConfig bootstrapIni(bootstrapPath, BOOTSTRAP_INI);
+			bootstrapIni
+				.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
+				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
+				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
+				.option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+				.option("NDS-BOOTSTRAP", "DSI_MODE", 0)
+				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
+				.option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+			if (int err = bootstrapIni.launch(argarray.size(), (const char **)&argarray[0], false)) {
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 			}
 		}
 	}
 
-    // NES Launch
-    if (extension == ".nes" || extension == ".fds")
-    {
-        ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
-        ms().saveSettings();
+	// NES Launch
+	if (extension == ".nes" || extension == ".fds") {
+		ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
+		ms().saveSettings();
 
 		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
-		if(access(ndsToBoot, F_OK) != 0) {
+		if(access(ndsToBoot, F_OK) != 0)
 			ndsToBoot = NESDS_FC;
-		}
 
-        bootFile(ndsToBoot, fullPath);
-    }
+		bootFile(ndsToBoot, fullPath);
+	}
 
-    // GB Launch
-    if (extension == ".gb" || extension == ".gbc")
-    {
-        ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
-        ms().saveSettings();
+	// GB Launch
+	if (extension == ".gb" || extension == ".gbc") {
+		ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
+		ms().saveSettings();
 
 		ndsToBoot = GAMEYOB_SD;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if (access(ndsToBoot, F_OK) != 0)
 			ndsToBoot = GAMEYOB_FC;
-		}
 
-        bootFile(ndsToBoot, fullPath);
-    }
+		bootFile(ndsToBoot, fullPath);
+	}
 
-    // SMS/GG Launch
-    if (extension == ".sms" || extension == ".gg")
-    {
-        ms().launchType = DSiMenuPlusPlusSettings::ES8DSLaunch;
-        ms().saveSettings();
+	// SMS/GG Launch
+	if (extension == ".sms" || extension == ".gg") {
+		ms().launchType = DSiMenuPlusPlusSettings::ES8DSLaunch;
+		ms().saveSettings();
+
 		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
 		ndsToBoot = S8DS_ROM;
-		if(access(ndsToBoot, F_OK) != 0) {
+		if (access(ndsToBoot, F_OK) != 0)
 			ndsToBoot = S8DS_FC;
-		}
 
-        bootFile(ndsToBoot, fullPath);
-    }
-	
-    // GEN Launch
-    if (extension == ".gen")
-	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
-		if (ms().secondaryDevice)
-        {
+		bootFile(ndsToBoot, fullPath);
+	}
+
+	// GEN Launch
+	if (extension == ".gen") {
+		ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+		ms().saveSettings();
+
+		if (ms().secondaryDevice) {
 			ndsToBoot = JENESISDS_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
+			if (access(ndsToBoot, F_OK) != 0)
 				ndsToBoot = JENESISDS_FC;
-			}
 
-            bootFile(ndsToBoot, fullPath);
-		}
-		else
-		{
+			bootFile(ndsToBoot, fullPath);
+		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 
 			std::vector<char*> argarray;
 			argarray.push_back(strdup(bootstrapPath.c_str()));
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
-			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
-			gen.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
-			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
-			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
-			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
-			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
-			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0], false))
-			{
+			LoaderConfig bootstrapIni(bootstrapPath, BOOTSTRAP_INI);
+			bootstrapIni
+				.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
+				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
+				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
+				.option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+				.option("NDS-BOOTSTRAP", "DSI_MODE", 0)
+				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
+				.option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+			if (int err = bootstrapIni.launch(argarray.size(), (const char **)&argarray[0], false)) {
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 			}
 		}
 	}
 
-    // SNES Launch
-    if (extension == ".smc" || extension == ".sfc")
-	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
-        ms().saveSettings();
-		if (ms().secondaryDevice)
-        {
-			ndsToBoot = SNEMULDS_ROM;
-			if(access(ndsToBoot, F_OK) != 0) {
-				ndsToBoot = SNEMULDS_FC;
-			}
+	// SNES Launch
+	if (extension == ".smc" || extension == ".sfc") {
+		ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+		ms().saveSettings();
 
-            bootFile(ndsToBoot, fullPath);
-		}
-		else
-		{
+		if (ms().secondaryDevice) {
+			ndsToBoot = SNEMULDS_ROM;
+			if (access(ndsToBoot, F_OK) != 0)
+				ndsToBoot = SNEMULDS_FC;
+
+			bootFile(ndsToBoot, fullPath);
+		} else {
 			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 
 			std::vector<char*> argarray;
@@ -1418,15 +1381,16 @@ void MainWnd::launchSelected()
 			argarray.at(0) = (char*)bootstrapPath.c_str();
 
 			LoaderConfig snes(bootstrapPath, BOOTSTRAP_INI);
-			snes.option("NDS-BOOTSTRAP", "NDS_PATH", SNEMULDS_ROM)
+			snes
+				.option("NDS-BOOTSTRAP", "NDS_PATH", SNEMULDS_ROM)
 				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC")
 				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
-			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
+				.option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+				.option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
-			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0], false))
-			{
+				.option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0], false)) {
 				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 			}
@@ -1436,106 +1400,94 @@ void MainWnd::launchSelected()
 
 void MainWnd::onKeyBPressed()
 {
-    _mainList->backParentDir();
+	_mainList->backParentDir();
 }
 
 void MainWnd::showSettings(void)
 {
-    dbg_printf("Launch settings...");
-	if (sdFound()) {
-		chdir("sd:/");
-	}
-    LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);
+	dbg_printf("Launch settings...");
 
-    if (int err = settingsLoader.launch())
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-    }
+	if (sdFound())
+		chdir("sd:/");
+
+	LoaderConfig settingsLoader(DSIMENUPP_SETTINGS_SRL, DSIMENUPP_INI);
+
+	if (int err = settingsLoader.launch()) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+	}
 }
 
 void MainWnd::showManual(void)
 {
-    dbg_printf("Launch manual...");
-	if (sdFound()) {
-		chdir("sd:/");
-	}
-    LoaderConfig manualLoader(TWLMENUPP_MANUAL_SRL, DSIMENUPP_INI);
+	dbg_printf("Launch manual...");
 
-    if (int err = manualLoader.launch())
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-    }
+	if (sdFound())
+		chdir("sd:/");
+
+	LoaderConfig manualLoader(TWLMENUPP_MANUAL_SRL, DSIMENUPP_INI);
+
+	if (int err = manualLoader.launch()) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+	}
 }
 
 void MainWnd::bootSlot1(void)
 {
-    dbg_printf("Launch Slot1..\n");
-    ms().launchType = DSiMenuPlusPlusSettings::ESlot1;
-    ms().saveSettings();
+	dbg_printf("Launch Slot1..\n");
 
-    if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
-    {
-        cardLaunch();
-        return;
-    }
+	ms().launchType = DSiMenuPlusPlusSettings::ESlot1;
+	ms().saveSettings();
+
+	if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
+		cardLaunch();
+		return;
+	}
 
 	bootWidescreen(NULL);
-	if (sdFound()) {
+	if (sdFound())
 		chdir("sd:/");
+
+	LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
+	if (int err = slot1Loader.launch()) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
 	}
-    LoaderConfig slot1Loader(SLOT1_SRL, DSIMENUPP_INI);
-    if (int err = slot1Loader.launch())
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
-    }
 }
 
 void MainWnd::bootGbaRunner(void)
 {
-	if (ms().useGbarunner) {
-	if ((access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
+	if (ms().useGbarunner
+	&& (access(ms().secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
 	&& (access(ms().secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) != 0)
 	&& (access(ms().secondaryDevice ? "fat:/_gba/bios.bin" : "sd:/_gba/bios.bin", F_OK) != 0)) {
-        messageBox(this, LANG("game launch", "GBARunner2 Error"), "BINF: bios.bin not found", MB_OK);
+		messageBox(this, LANG("game launch", "GBARunner2 Error"), "BINF: bios.bin not found", MB_OK);
 		return;
 	}
-	}
 
-    if (ms().secondaryDevice && ms().useGbarunner)
-    {
-		if (ms().useBootstrap)
-		{
-			if (isDSiMode())
-			{
+	if (ms().secondaryDevice && ms().useGbarunner) {
+		if (ms().useBootstrap) {
+			if (isDSiMode()) {
 				bootFile(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, "");
-			}
-			else
-			{
+			} else {
 				bootFile(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "");
 			}
-		}
-		else
-		{
-			if (isDSiMode())
-			{
+		} else {
+			if (isDSiMode()) {
 				bootFlashcard(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, "", false);
-			}
-			else
-			{
+			} else {
 				bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "", false);
 			}
 		}
-        return;
-    }
 
-    if (!isDSiMode() && !ms().useGbarunner)
-    {
-        gbaSwitch();
-        return;
-    }
+		return;
+	}
+
+	if (!isDSiMode() && !ms().useGbarunner) {
+		gbaSwitch();
+		return;
+	}
 
 	std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
 
@@ -1543,107 +1495,88 @@ void MainWnd::bootGbaRunner(void)
 	argarray.push_back(strdup(bootstrapPath.c_str()));
 	argarray.at(0) = (char*)bootstrapPath.c_str();
 
-    LoaderConfig gbaRunner(bootstrapPath, BOOTSTRAP_INI);
-	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
+	LoaderConfig gbaRunner(bootstrapPath, BOOTSTRAP_INI);
+	gbaRunner
+			.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
 			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
 			 .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-    if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0], false))
-    {
-        std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-        messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-    }
+
+	if (int err = gbaRunner.launch(argarray.size(), (const char **)&argarray[0], false)) {
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+	}
 }
 
 void MainWnd::showFileInfo()
 {
-    DSRomInfo rominfo;
-    if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo))
-    {
-        return;
-    }
+	DSRomInfo rominfo;
+	if (!_mainList->getRomInfo(_mainList->selectedRowId(), rominfo)) {
+		return;
+	}
 
-    dbg_printf("show '%s' info\n", _mainList->getSelectedFullPath().c_str());
+	dbg_printf("show '%s' info\n", _mainList->getSelectedFullPath().c_str());
 
-    easysave::ini ini(SFN_UI_SETTINGS); //(256-)/2,(192-128)/2, 220, 128
-    u32 w = 240;
-    u32 h = 144;
-    w = ini.GetInt("rom info window", "w", w);
-    h = ini.GetInt("rom info window", "h", h);
+	CIniFile ini(SFN_UI_SETTINGS); //(256-)/2,(192-128)/2, 220, 128
+	u32 w = ini.GetInt("rom info window", "w", 240);
+	u32 h = ini.GetInt("rom info window", "h", 144);
 
-    RomInfoWnd *romInfoWnd = new RomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
-    std::string showName = _mainList->getSelectedShowName();
-    std::string fullPath = _mainList->getSelectedFullPath();
-    romInfoWnd->setFileInfo(fullPath, showName);
-    romInfoWnd->setRomInfo(rominfo);
-    romInfoWnd->doModal();
-    rominfo = romInfoWnd->getRomInfo();
-    _mainList->setRomInfo(_mainList->selectedRowId(), rominfo);
+	RomInfoWnd *romInfoWnd = new RomInfoWnd((256 - w) / 2, (192 - h) / 2, w, h, this, LANG("rom info", "title"));
+	std::string showName = _mainList->getSelectedShowName();
+	std::string fullPath = _mainList->getSelectedFullPath();
+	romInfoWnd->setFileInfo(fullPath, showName);
+	romInfoWnd->setRomInfo(rominfo);
+	romInfoWnd->doModal();
+	rominfo = romInfoWnd->getRomInfo();
+	_mainList->setRomInfo(_mainList->selectedRowId(), rominfo);
 
-    delete romInfoWnd;
+	delete romInfoWnd;
 }
 
 void MainWnd::onFolderChanged()
 {
-    resetInputIdle();
-    std::string dirShowName = _mainList->getCurrentDir();
+	resetInputIdle();
+	std::string dirShowName = _mainList->getCurrentDir();
 
 
-    if (!strncmp(dirShowName.c_str(), "^*::", 2))
-    {
+	if (!strncmp(dirShowName.c_str(), "^*::", 2)) {
+		if (dirShowName == SPATH_TITLEANDSETTINGS) {
+			showSettings();
+		} else if (dirShowName == SPATH_MANUAL) {
+			showManual();
+		} else if (dirShowName == SPATH_SLOT1) {
+			bootSlot1();
+		} else if (dirShowName == SPATH_GBARUNNER) {
+			bootGbaRunner();
+		} else if (dirShowName == SPATH_SYSMENU) {
+			dsiSysMenuLaunch();
+		} else if (dirShowName == SPATH_SYSTEMSETTINGS) {
+			dsiLaunchSystemSettings();
+		}
 
-        if (dirShowName == SPATH_TITLEANDSETTINGS)
-        {
-            showSettings();
-        }
+		dirShowName.clear();
+	}
 
-        if (dirShowName == SPATH_MANUAL)
-        {
-            showManual();
-        }
+	dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
 
-        if (dirShowName == SPATH_SLOT1)
-        {
-            bootSlot1();
-        }
-
-        if (dirShowName == SPATH_GBARUNNER)
-        {
-            bootGbaRunner();
-        }
-
-        if (dirShowName == SPATH_SYSMENU)
-        {
-            dsiSysMenuLaunch();
-        }
-
-        if (dirShowName == SPATH_SYSTEMSETTINGS)
-        {
-            dsiLaunchSystemSettings();
-        }
-        dirShowName.clear();
-    }
-
-    dbg_printf("%s\n", _mainList->getSelectedFullPath().c_str());
-
-    _folderText->setText(dirShowName);
+	_folderText->setText(dirShowName);
 }
 
 void MainWnd::onAnimation(bool &anAllow)
 {
-    if (_startMenu->isVisible())
-        anAllow = false;
-    else if (windowManager().currentWindow() != this)
-        anAllow = false;
+	if (_startMenu->isVisible())
+		anAllow = false;
+	else if (windowManager().currentWindow() != this)
+		anAllow = false;
 }
 
 Window *MainWnd::windowBelow(const Point &p)
 {
-    Window *wbp = Form::windowBelow(p);
-    if (_startMenu->isVisible() && wbp != _startButton)
-        wbp = _startMenu;
-    return wbp;
+	Window *wbp = Form::windowBelow(p);
+	if (_startMenu->isVisible() && wbp != _startButton)
+		wbp = _startMenu;
+	return wbp;
 }

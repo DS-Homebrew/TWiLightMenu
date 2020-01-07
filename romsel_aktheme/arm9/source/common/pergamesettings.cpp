@@ -1,6 +1,6 @@
 #include "pergamesettings.h"
 #include "dsimenusettings.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "tool/stringtool.h"
 #include "tool/dbgtool.h"
 #include "bootstrappaths.h"
@@ -10,64 +10,70 @@
 
 PerGameSettings::PerGameSettings(const std::string &romFileName)
 {
-    _iniPath = formatString(PERGAMESETTINGS_PATH, (ms().secondaryDevice ? "fat:" : "sd:"), romFileName.c_str());
-    language = ELangDefault;
+	_iniPath = formatString(PERGAMESETTINGS_PATH, (ms().secondaryDevice ? "fat:" : "sd:"), romFileName.c_str());
+	language = ELangDefault;
 	saveNo = 0;
 	ramDiskNo = -1;
-    boostCpu = EDefault;
-    boostVram = EDefault;
-    dsiMode = EDefault;
-    directBoot = EFalse;
-    heapShrink = EDefault;
-    bootstrapFile = EDefault;
-    loadSettings();
+	boostCpu = EDefault;
+	boostVram = EDefault;
+	dsiMode = EDefault;
+	directBoot = EFalse;
+	heapShrink = EDefault;
+	bootstrapFile = EDefault;
+	loadSettings();
 }
 
 void PerGameSettings::loadSettings()
 {
-    easysave::ini pergameini(_iniPath);
-    dbg_printf("CINI LOAD %s", _iniPath.c_str());
-    directBoot = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", ms().secondaryDevice);	// Homebrew only
-    dsiMode = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
+	CIniFile pergameini(_iniPath);
+	dbg_printf("CINI LOAD %s", _iniPath.c_str());
+	directBoot = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", ms().secondaryDevice);	// Homebrew only
+	dsiMode = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
 	language = (TLanguage)pergameini.GetInt("GAMESETTINGS", "LANGUAGE", language);
 	saveNo = pergameini.GetInt("GAMESETTINGS", "SAVE_NUMBER", 0);
 	ramDiskNo = pergameini.GetInt("GAMESETTINGS", "RAM_DISK", -1);
 	boostCpu = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
-    heapShrink = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
-    bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
+	heapShrink = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
+	bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 }
 
 void PerGameSettings::saveSettings()
 {
-    easysave::ini pergameini(_iniPath);
-    pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
-    if (ms().useBootstrap || !ms().secondaryDevice) {
+	CIniFile pergameini(_iniPath);
+	pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", directBoot);	// Homebrew only
+
+	if (ms().useBootstrap || !ms().secondaryDevice) {
 		pergameini.SetInt("GAMESETTINGS", "LANGUAGE", language);
 		pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", saveNo);
 	}
-	if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "RAM_DISK", ramDiskNo);
-	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+
+	if (!ms().secondaryDevice)
+		pergameini.SetInt("GAMESETTINGS", "RAM_DISK", ramDiskNo);
+
+	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
 		pergameini.SetInt("GAMESETTINGS", "DSI_MODE", dsiMode);
-	}
+
 	if (REG_SCFG_EXT != 0) {
 		pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", boostCpu);
 		pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
 	}
-    if (ms().useBootstrap || !ms().secondaryDevice) {
+
+	if (ms().useBootstrap || !ms().secondaryDevice) {
 		pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
 		pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
 	}
-    pergameini.flush();
+
+	pergameini.SaveIniFileModified();
 }
 
 bool PerGameSettings::checkIfShowAPMsg() {
-    easysave::ini pergameini(_iniPath);
+	CIniFile pergameini(_iniPath);
 	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void PerGameSettings::dontShowAPMsgAgain() {
-    easysave::ini pergameini(_iniPath);
+	CIniFile pergameini(_iniPath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
 	pergameini.flush();
 }

@@ -20,7 +20,7 @@
 
 #include "ui.h"
 #include "uisettings.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 UISettings::UISettings()
 {
@@ -51,7 +51,7 @@ UISettings::~UISettings()
 
 void UISettings::loadSettings()
 {
-	easysave::ini ini( SFN_UI_SETTINGS );
+	CIniFile ini(SFN_UI_SETTINGS);
 
 	showCalendar = ini.GetInt("global settings", "showCalendar", showCalendar);
 	formFrameColor = ini.GetInt("global settings", "formFrameColor", formFrameColor);

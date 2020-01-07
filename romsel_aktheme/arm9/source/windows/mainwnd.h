@@ -1,21 +1,21 @@
 /*
-    mainwnd.h
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
-    Copyright (C) 2009 yellow wood goblin
+	mainwnd.h
+	Copyright (C) 2007 Acekard, www.acekard.com
+	Copyright (C) 2007-2009 somebody
+	Copyright (C) 2009 yellow wood goblin
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef _MAINWND_H_
@@ -35,89 +35,90 @@
 
 class MainWnd : public akui::Form
 {
-  public:
-    MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
+	public:
+		MainWnd(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text);
 
-    ~MainWnd();
+		~MainWnd();
 
-  public:
-    bool process(const akui::Message &msg);
+	public:
+		bool process(const akui::Message &msg);
 
-    Window &loadAppearance(const std::string &aFileName);
+		Window &loadAppearance(const std::string &aFileName);
 
-    void init();
+		void init();
 
-    void draw();
+		void draw();
 
-    Window *windowBelow(const akui::Point &p);
+		Window *windowBelow(const akui::Point &p);
 
-    MainList *_mainList;
+		MainList *_mainList;
 
-    //void bootWidescreen(const char *filename);
+		//void bootWidescreen(const char *filename);
 
-  protected:
-    void onMainListSelItemClicked(u32 index);
+	protected:
+		void onMainListSelItemClicked(u32 index);
 
-    void onKeyAPressed();
+		void initStartButton();
+		void initBatteryIcon();
+		void initFolderUp();
+		void initFolderText();
+		void initStartMenu();
 
-    void onKeyBPressed();
+		void onKeyAPressed();
+		void onKeyBPressed();
+		void onKeyXPressed();
+		void onKeyYPressed();
 
-    void onKeyXPressed();
+		void listSelChange(u32 i);
 
-    void onKeyYPressed();
+		void startMenuItemClicked(s16 i);
+		void startButtonClicked();
 
-    void listSelChange(u32 i);
+		void brightnessButtonClicked();
 
-    void startMenuItemClicked(s16 i);
+		bool processKeyMessage(const akui::KeyMessage &msg);
 
-    void startButtonClicked();
+		bool processTouchMessage(const akui::TouchMessage &msg);
 
-    void brightnessButtonClicked();
+		void setParam(void);
 
-    bool processKeyMessage(const akui::KeyMessage &msg);
+		void showSettings(void);
 
-    bool processTouchMessage(const akui::TouchMessage &msg);
+		void showManual(void);
 
-    void setParam(void);
+		void bootSlot1(void);
 
-    void showSettings(void);
+		void bootGbaRunner(void);
 
-    void showManual(void);
+		void onFolderChanged();
 
-    void bootSlot1(void);
+		void onAnimation(bool &anAllow);
 
-    void bootGbaRunner(void);
+		void showFileInfo();
 
-    void onFolderChanged();
+		void launchSelected();
 
-    void onAnimation(bool &anAllow);
+		void bootArgv(DSRomInfo& rominfo);
 
-    void showFileInfo();
+		void bootBootstrap(PerGameSettings &gameConfig, DSRomInfo& rominfo);
 
-    void launchSelected();
+		void bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings);
 
-    void bootArgv(DSRomInfo& rominfo);
+		void bootFile(const std::string &loader, const std::string &fullPath);
 
-    void bootBootstrap(PerGameSettings &gameConfig, DSRomInfo& rominfo);
+		StartMenu *_startMenu;
 
-    void bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings);
+		akui::Button *_startButton;
 
-    void bootFile(const std::string &loader, const std::string &fullPath);
+		akui::Button *_brightnessButton;
 
-    StartMenu *_startMenu;
+		akui::Button *_batteryIcon;
 
-    akui::Button *_startButton;
+		akui::Button *_folderUpButton;
 
-    akui::Button *_brightnessButton;
+		akui::StaticText *_folderText;
 
-    akui::Button *_batteryIcon;
-
-    akui::Button *_folderUpButton;
-
-    akui::StaticText *_folderText;
-
-    bool _processL;
-    
+		bool _processL;
 };
 
 std::string apFix(const char *filename, bool isHomebrew);

@@ -18,8 +18,6 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-//�
-
 #include <nds/arm9/dldi.h>
 #include <sys/dirent.h>
 #define ATTRIB_HID 0x02
@@ -34,7 +32,7 @@
 #include "tool/timetool.h"
 #include "tool/memtool.h"
 #include "tool/dbgtool.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "unknown_banner_bin.h"
 #include "nds_save_banner_bin.h"
 #include "nand_banner_bin.h"
@@ -80,7 +78,7 @@ MainList::~MainList()
 
 int MainList::init()
 {
-	easysave::ini ini(SFN_UI_SETTINGS);
+	CIniFile ini(SFN_UI_SETTINGS);
 	_textColor = ini.GetInt("main list", "textColor", RGB15(7, 7, 7));
 	_textColorHilight = ini.GetInt("main list", "textColorHilight", RGB15(31, 0, 31));
 	_selectionBarColor1 = ini.GetInt("main list", "selectionBarColor1", RGB15(16, 20, 24));

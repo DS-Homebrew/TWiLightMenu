@@ -1,7 +1,7 @@
 
 #include "loaderconfig.h"
 #include "tool/stringtool.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "nds_loader_arm9.h"
 #include "tool/dbgtool.h"
 
@@ -28,13 +28,13 @@ LoaderConfig& LoaderConfig::option(const std::string& section, const std::string
 
 int LoaderConfig::launch(int argc, const char** argv, bool dldiPatchNds, bool clearBrightness, bool dsModeSwitch, bool boostCpu, bool boostVram) 
 {
-	easysave::ini file(_configPath);
+	CIniFile file(_configPath);
 	std::string section, item, value;
 
 	for (auto &p  : _iniOptions) {
 		std::tie(section, item, value) = std::move(p);
 		file.SetString(section, item, value);
 	}
-	file.flush();
+	file.SaveIniFileModified();
 	return runNdsFile(_loaderPath.c_str(), argc, argv, dldiPatchNds, clearBrightness, dsModeSwitch, boostCpu, boostVram);
 }

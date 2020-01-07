@@ -145,23 +145,23 @@ void loadPageInfo(std::string pagePath) {
 	CIniFile pageIni(pagePath);
 
 	toncset(&manPageTitle[0], 0, sizeof(manPageTitle));
-	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO","TITLE","TWiLight Menu++ Manual").c_str());
-	pageYsize = pageIni.GetInt("INFO","HEIGHT",1036);
-	bgColor1 = pageIni.GetInt("INFO","BG_COLOR_1",0x6F7B);
-	bgColor2 = pageIni.GetInt("INFO","BG_COLOR_2",0x77BD);
+	snprintf(manPageTitle, sizeof(manPageTitle), pageIni.GetString("INFO", "TITLE", "TWiLight Menu++ Manual").c_str());
+	pageYsize = pageIni.GetInt("INFO", "HEIGHT", 1036);
+	bgColor1 = pageIni.GetInt("INFO", "BG_COLOR_1", 0x6F7B);
+	bgColor2 = pageIni.GetInt("INFO", "BG_COLOR_2", 0x77BD);
 
-	for(int i=1;i<99;i++) {
+	for (int i = 1; i < 99; i++) {
 		char link[7] = {0};
-		snprintf(link, sizeof(link),"LINK%i",i);
+		snprintf(link, sizeof(link), "LINK%i", i);
 
-		if(pageIni.GetString(link,"DEST","NONE") == "NONE")	break;
+		if(pageIni.GetString(link, "DEST", "NONE") == "NONE")	break;
 
 		PageLink pageLink;
-		pageLink.x = pageIni.GetInt(link,"X",0);
-		pageLink.y = pageIni.GetInt(link,"Y",0);
-		pageLink.w = pageIni.GetInt(link,"W",0);
-		pageLink.h = pageIni.GetInt(link,"H",0);
-		pageLink.dest = pageIni.GetString(link,"DEST","NONE");
+		pageLink.x = pageIni.GetInt(link, "X", 0);
+		pageLink.y = pageIni.GetInt(link, "Y", 0);
+		pageLink.w = pageIni.GetInt(link, "W", 0);
+		pageLink.h = pageIni.GetInt(link, "H", 0);
+		pageLink.dest = pageIni.GetString(link, "DEST", "NONE");
 
 		manPageLinks.push_back(pageLink);
 	}
@@ -169,7 +169,7 @@ void loadPageInfo(std::string pagePath) {
 
 void LoadSettings(void) {
 	// GUI
-	easysave::ini settingsini(settingsinipath);
+	CIniFile settingsini(settingsinipath);
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);

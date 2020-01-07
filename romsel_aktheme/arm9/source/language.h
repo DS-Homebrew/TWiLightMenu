@@ -24,12 +24,12 @@
 
 #include "common/singleton.h"
 #include "systemfilenames.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/dsimenusettings.h"
 #include <nds.h>
 #include "tool/stringtool.h"
 
-class LanguageFile : public easysave::ini
+class LanguageFile : public CIniFile
 {
 private:
   static std::string getIdentifier(DSiMenuPlusPlusSettings::TLanguage language)
@@ -60,7 +60,8 @@ private:
 public:
   LanguageFile(DSiMenuPlusPlusSettings::TLanguage language)
   {
-    ini(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language).c_str()));
+    m_bReadOnly = true;
+    LoadIniFile(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language).c_str()));
   }
   ~LanguageFile(){};
 };
