@@ -367,8 +367,7 @@ void vBlankHandler()
 }
 
 void loadBoxArt(const char* filename) {
-	FILE* file = fopen(filename, "rb");
-	if (!file) {
+	if(access(filename, F_OK) != 0) {
 		switch (boxArtType) {
 			case 0:
 			default:
@@ -384,79 +383,28 @@ void loadBoxArt(const char* filename) {
 				filename = "nitro:/graphics/boxart_unknown3.png";
 				break;
 		}
-		file = fopen(filename, "rb");
 	}
 
-	if (file) {
-		extern bool extention(const std::string& filename, const char* ext);
+	std::vector<unsigned char> image;
+	uint imageXpos, imageYpos, imageWidth, imageHeight;
+	lodepng::decode(image, imageWidth, imageHeight, filename);
+	if(imageWidth > 256 || imageHeight > 192)	return;
 
-		int imageXpos = 0;
-		int imageWidth = 0;
-
-		switch (boxArtType) {
-			case 0:
-			default:
-				imageXpos = 64;
-				imageWidth = 128;
-				break;
-			case 1:
-				imageXpos = 70;
-				imageWidth = 115;
-				break;
-			case 2:
-				imageXpos = 86;
-				imageWidth = 84;
-				break;
-			case 3:
-				imageXpos = 49;
-				imageWidth = 158;
-				break;
-		}
-
-		// Start loading
-		if (extention(filename, ".png")) {
-			std::vector<unsigned char> image;
-			unsigned width, height;
-			lodepng::decode(image, width, height, filename);
-			for(unsigned i = 0; i < image.size(); i = i * 4) {
-				bmpImageBuffer[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
-				if (colorMode == 1) {
-					bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
-				}
-			}
-			u16* src = bmpImageBuffer;
-			int x = imageXpos;
-			int y = 40;
-			for (int i = 0; i < imageWidth * 115; i++) {
-				if (x >= imageXpos + imageWidth) {
-					x = imageXpos;
-					y++;
-				}
-				u16 val = *(src++);
-				BG_GFX_SUB[y*256+x] = val;
-				x++;
-			}
-		} else {
-			fseek(file, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(file) + 0xe;
-			fseek(file, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x7800, file);
-			u16* src = bmpImageBuffer;
-			int x = imageXpos;
-			int y = 40+114;
-			for (int i = 0; i < imageWidth * 115; i++) {
-				if (x >= imageXpos + imageWidth) {
-					x = imageXpos;
-					y--;
-				}
-				u16 val = *(src++);
-				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-				x++;
-			}
+	for(uint i=0;i<image.size()/4;i++) {
+		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
+	imageXpos = (256-imageWidth)/2;
+	imageYpos = (192-imageHeight)/2;
+	u16 *src = bmpImageBuffer;
+	for(uint y = 0; y < imageHeight; y++) {
+		for(uint x = 0; x < imageWidth; x++) {
+			BG_GFX_SUB[(y+imageYpos) * 256 + imageXpos + x] = *(src++);
+		}
+	}
 }
 
 void topBgLoad(void) {
