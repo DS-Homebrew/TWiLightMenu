@@ -344,8 +344,8 @@ bool deleteFile(const std::string & filename)
 
 void setSrcFile(const std::string & filename, SRC_FILE_MODE mode)
 {
-    _srcFilename = filename;
-    _srcFileMode = mode;
+	_srcFilename = filename;
+	_srcFileMode = mode;
 }
 
 const std::string& getSrcFile(void)
@@ -501,16 +501,17 @@ bool copyOrMoveFile(const std::string & destDir)
 //   return false;
 // }
 
-bool getDiskSpaceInfo(const std::string& diskName,u64& total,u64& used,u64& freeSpace)
-{
-  if(""==diskName) return false;
-  
-  struct statvfs info;
-  
-  if(statvfs(diskName.c_str(), &info) != 0) return false;
-    
-  total = info.f_frsize*info.f_blocks;
-  freeSpace = info.f_frsize*info.f_bfree;
-  used=total-freeSpace;
-  return true;
+bool getDiskSpaceInfo(const std::string& diskName,u64& total,u64& used,u64& freeSpace) {
+	if(diskName == "")
+		return false;
+
+	struct statvfs info;
+
+	if(statvfs(diskName.c_str(), &info) != 0)
+		return false;
+
+	total = info.f_frsize * info.f_blocks;
+	freeSpace = info.f_frsize * info.f_bfree;
+	used = total - freeSpace;
+	return true;
 }

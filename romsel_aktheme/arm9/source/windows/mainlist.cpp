@@ -105,15 +105,15 @@ static bool itemSortComp(const ListView::itemVector &item1, const ListView::item
 	const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
 	const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
 
-	if ("../" == fn1)
+	if (fn1 == "../")
 		return true;
-	if ("../" == fn2)
+	if (fn2  == "../")
 		return false;
-	if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
+	if (fn1[fn1.size() - 1] == '/' && fn2[fn2.size() - 1] == '/')
 		return fn1 < fn2;
-	if ('/' == fn1[fn1.size() - 1])
+	if (fn1[fn1.size() - 1] == '/')
 		return true;
-	if ('/' == fn2[fn2.size() - 1])
+	if (fn2[fn2.size() - 1] == '/')
 		return false;
 
 	return fn1 < fn2;

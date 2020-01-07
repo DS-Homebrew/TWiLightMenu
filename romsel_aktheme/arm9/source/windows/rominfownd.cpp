@@ -110,9 +110,7 @@ void RomInfoWnd::draw()
         _romInfo.drawDSiAnimatedRomIcon(position().x + 8, position().y + 24, bmpIdx, palIdx, flipH, flipV, selectedEngine());
     }
     else
-    {
         _romInfo.drawDSRomIcon(position().x + 8, position().y + 24, selectedEngine());
-    }
 
     gdi().setPenColor(uiSettings().formTextColor, selectedEngine());
     gdi().textOutRect(position().x + 48, position().y + 22, size().x - 40, 40, _romInfoText.c_str(), selectedEngine());
@@ -127,76 +125,48 @@ void RomInfoWnd::draw()
     swiWaitForVBlank();
 }
 
-bool RomInfoWnd::process(const akui::Message &msg)
-{
-    bool ret = false;
+bool RomInfoWnd::process(const akui::Message &msg) {
+	bool ret = Form::process(msg);
 
-    ret = Form::process(msg);
+	if (!ret && msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
+		ret = processKeyMessage((KeyMessage &)msg);
 
-    if (!ret)
-    {
-        if (msg.id() > Message::keyMessageStart && msg.id() < Message::keyMessageEnd)
-        {
-            ret = processKeyMessage((KeyMessage &)msg);
-        }
-    }
-    return ret;
+	return ret;
 }
 
-bool RomInfoWnd::processKeyMessage(const KeyMessage &msg)
-{
-    bool ret = false;
-    if (msg.id() == Message::keyDown)
-    {
-        switch (msg.keyCode())
-        {
-        case KeyMessage::UI_KEY_A:
-        case KeyMessage::UI_KEY_B:
-            onOK();
-            ret = true;
-            break;
-        case KeyMessage::UI_KEY_Y:
-            pressGameSettings();
-            ret = true;
-            break;
-        case KeyMessage::UI_KEY_X:
-            if (_buttonCheats.isVisible())
-            {
-                pressCheats();
-            }
-            // else if (_buttonFlash.isVisible())
-            // {
-            //     pressFlash();
-            // }
-            ret = true;
-            break;
-        // case KeyMessage::UI_KEY_L:
-        //     pressCopy();
-        //     ret = true;
-        //     break;
-        default:
-        {
-        }
-        };
-    }
+bool RomInfoWnd::processKeyMessage(const KeyMessage &msg) {
+	if (msg.id() !== Message::keyDown)
+		return false;
 
-    return ret;
+	switch (msg.keyCode()) {
+		case KeyMessage::UI_KEY_A:
+		case KeyMessage::UI_KEY_B:
+			onOK();
+			break;
+		case KeyMessage::UI_KEY_Y:
+			pressGameSettings();
+			break;
+		case KeyMessage::UI_KEY_X:
+			if (_buttonCheats.isVisible())
+				pressCheats();
+
+			break;
+	};
+
+	return ret;
 }
 
 void RomInfoWnd::pressGameSettings(void)
 {
-    if (!_romInfo.isDSRom() && !_romInfo.isHomebrew())
-        return;
-    if (_romInfo.isDSiWare())
-        return;
+	if ((!_romInfo.isDSRom() && !_romInfo.isHomebrew()) || _romInfo.isDSiWare())
+		return;
 
-    SettingWnd settingWnd(0, 0, 252, 188, this, LANG("game settings", "Per Game Settings"));
+	SettingWnd settingWnd(0, 0, 252, 188, this, LANG("game settings", "Per Game Settings"));
 
-    PerGameSettings settingsIni(_filenameText);
-    std::vector<std::string> _values;
+	PerGameSettings settingsIni(_filenameText);
+	std::vector<std::string> _values;
 
-    if (!_romInfo.isHomebrew())
-    {
+	if (!_romInfo.isHomebrew()) {
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -2 => 0
 			_values.push_back(LANG("game settings", "System")); // -1 => 1
@@ -254,28 +224,25 @@ void RomInfoWnd::pressGameSettings(void)
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Auto")); // -1 => 0
 			_values.push_back(LANG("game settings", "Off")); // 0 => 1
-			_values.push_back(LANG("game settings", "On")); // 1 => 2            
+			_values.push_back(LANG("game settings", "On")); // 1 => 2
 
 			settingWnd.addSettingItem(LANG("game settings", "Heap Shrink"), _values, settingsIni.heapShrink + 1);
 			_values.clear();
 
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "Release")); // 0 => 1
-			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
+			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2
 
 			settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
 			_values.clear();
 		}
-    }
-    else
-    {
+	} else {
+		_values.push_back(LANG("game settings", "Default"));
+		_values.push_back(LANG("game settings", "No Direct Boot"));
+		_values.push_back(LANG("game settings", "Direct Boot"));
 
-        _values.push_back(LANG("game settings", "Default"));
-        _values.push_back(LANG("game settings", "No Direct Boot"));
-        _values.push_back(LANG("game settings", "Direct Boot"));
-
-        settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
-        _values.clear();
+		settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
+		_values.clear();
 
 		if (!ms().secondaryDevice) {
 			_values.push_back("None");
@@ -322,72 +289,74 @@ void RomInfoWnd::pressGameSettings(void)
 		if (!ms().secondaryDevice) {
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "Release")); // 0 => 1
-			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2            
+			_values.push_back(LANG("game settings", "Nightly")); // 1 => 2
 
 			settingWnd.addSettingItem(LANG("game settings", "Bootstrap File"), _values, settingsIni.bootstrapFile + 1);
 			_values.clear();
 		}
 	}
 
-    _settingWnd = &settingWnd;
-    u32 ret = settingWnd.doModal();
+	_settingWnd = &settingWnd;
+	u32 ret = settingWnd.doModal();
 
-    dbg_printf("SETRET %i\n", ret);
-    if (ret == ID_OK)
-    {
-        dbg_printf("FN: %s\n", _filenameText.c_str());
+	dbg_printf("SETRET %i\n", ret);
+	if (ret == ID_OK) {
+		dbg_printf("FN: %s\n", _filenameText.c_str());
 		int selection = 0;
-        if (!_romInfo.isHomebrew())
-        {
+		if (!_romInfo.isHomebrew()) {
 			if (ms().useBootstrap) {
 				settingsIni.language = (PerGameSettings::TLanguage)(settingWnd.getItemSelection(0, selection) - 2);
-                selection++;
-                settingsIni.saveNo = (int)settingWnd.getItemSelection(0, selection);
+				selection++;
+				settingsIni.saveNo = (int)settingWnd.getItemSelection(0, selection);
 			}
-            if (isDSiMode()) {
-                selection++;
-                settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-            }
-            if (REG_SCFG_EXT != 0) {
-                selection++;
-                settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-                selection++;
-                settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-            }
+
+			if (isDSiMode()) {
+				selection++;
+				settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
+
+			if (REG_SCFG_EXT != 0) {
+				selection++;
+				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
+
 			if (ms().useBootstrap || !ms().secondaryDevice) {
 				selection++;
 				settingsIni.heapShrink = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 				selection++;
 				settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
-        }
-        else
-        {
-            settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+		} else {
+			settingsIni.directBoot = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+
 			if (!ms().secondaryDevice && ms().useBootstrap) {
-                selection++;
-                settingsIni.ramDiskNo = (int)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.ramDiskNo = (int)(settingWnd.getItemSelection(0, selection) - 1);
 			}
-            if (isDSiMode()) {
-                selection++;
-                settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+
+			if (isDSiMode()) {
+				selection++;
+				settingsIni.dsiMode = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
-            if (REG_SCFG_EXT != 0) {
-                selection++;
-                settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-                selection++;
-                settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
-            }
+
+			if (REG_SCFG_EXT != 0) {
+				selection++;
+				settingsIni.boostCpu = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+				selection++;
+				settingsIni.boostVram = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
+			}
+
 			if (ms().useBootstrap || !ms().secondaryDevice) {
 				selection++;
 				settingsIni.bootstrapFile = (PerGameSettings::TDefaultBool)(settingWnd.getItemSelection(0, selection) - 1);
 			}
 		}
-        settingsIni.saveSettings();
-    }
-    _settingWnd = NULL;
-    if (ret == ID_CANCEL)
-        return;
+		settingsIni.saveSettings();
+	}
+
+	_settingWnd = NULL;
 }
 
 void RomInfoWnd::pressCheats(void)
@@ -398,154 +367,122 @@ void RomInfoWnd::pressCheats(void)
 
 void RomInfoWnd::showCheats(const std::string& aFileName)
 {
-  u32 w=256;
-  u32 h=179;
+	u32 w = 256;
+	u32 h = 179;
 
-  CheatWnd cheatWnd((256-w)/2,(192-h)/2,w,h,NULL,LANG("cheats","title"));
-  if(cheatWnd.parse(aFileName)) cheatWnd.doModal();
+	CheatWnd cheatWnd((256 - w) / 2, (192 - h) / 2, w, h, NULL, LANG("cheats", "title"));
+	if(cheatWnd.parse(aFileName))
+		cheatWnd.doModal();
 }
 
 Window &RomInfoWnd::loadAppearance(const std::string &aFileName)
 {
-    _renderDesc.loadData(SFN_FORM_TITLE_L, SFN_FORM_TITLE_R, SFN_FORM_TITLE_M);
-    _renderDesc.setTitleText(_text);
-    return *this;
+	_renderDesc.loadData(SFN_FORM_TITLE_L, SFN_FORM_TITLE_R, SFN_FORM_TITLE_M);
+	_renderDesc.setTitleText(_text);
+	return *this;
 }
 
 static std::string getFriendlyFileSizeString(u64 size)
 {
-    std::string fileSize;
-    std::string sizeUnit;
-    if (size < 1024)
-    {
-        fileSize = formatString("%d", size);
-        sizeUnit = " B";
-    }
-    else
-    {
-        u32 divider;
-        if (size < 1024 * 1024)
-        {
-            divider = 1024;
-            sizeUnit = " KB";
-        }
-        else if (size < 1024 * 1024 * 1024)
-        {
-            divider = 1024 * 1024;
-            sizeUnit = " MB";
-        }
-        else
-        {
-            divider = 1024 * 1024 * 1024;
-            sizeUnit = " GB";
-        }
-        fileSize = formatString("%d.%02d", (u32)(size / divider), (u32)((size * 100 + (divider >> 1)) / divider % 100));
-    }
-    return fileSize + sizeUnit;
+	std::string fileSize;
+	std::string sizeUnit;
+	if (size < 1024) {
+		fileSize = formatString("%d", size);
+		sizeUnit = " B";
+	} else {
+		u32 divider;
+
+		if (size < 1024 * 1024) {
+			divider = 1024;
+			sizeUnit = " KB";
+		} else if (size < 1024 * 1024 * 1024) {
+			divider = 1024 * 1024;
+			sizeUnit = " MB";
+		} else {
+			divider = 1024 * 1024 * 1024;
+			sizeUnit = " GB";
+		}
+
+		fileSize = formatString("%d.%02d", (u32)(size / divider), (u32)((size * 100 + (divider >> 1)) / divider % 100));
+	}
+
+	return fileSize + sizeUnit;
 }
 
 void RomInfoWnd::setFileInfo(const std::string &fullName, const std::string &showName)
 {
-    _fullName = fullName;
+	_fullName = fullName;
 
-    if ("" == showName)
-    {
-        dbg_printf("show name %s\n", showName.c_str());
-        return;
-    }
+	if (showName == "") {
+		dbg_printf("show name %s\n", showName.c_str());
+		return;
+	}
 
-    struct stat st;
-    if (-1 == stat(fullName.c_str(), &st))
-    {
-        return;
-    }
+	struct stat st;
+	if (stat(fullName.c_str(), &st) == -1)
+		return;
 
-    if ("/" == fullName)
-    {
-        // setDiskInfo();
-        return;
-    }
+	if ("/" == fullName)
+		return;
 
-    _filenameText = showName;
+	_filenameText = showName;
 
-    //dbg_printf("st.st_mtime %d\n", st.st_mtime );
-    //struct tm * filetime = localtime(&st.st_mtime);
+	//dbg_printf("st.st_mtime %d\n", st.st_mtime );
+	//struct tm * filetime = localtime(&st.st_mtime);
 
-    struct tm *filetime = gmtime(&st.st_mtime);
+	struct tm *filetime = gmtime(&st.st_mtime);
 
-    _fileDateText = formatString(LANG("rom info", "file date").c_str(),
-                                 filetime->tm_year + 1900, filetime->tm_mon + 1, filetime->tm_mday,
-                                 filetime->tm_hour, filetime->tm_min, filetime->tm_sec);
+	_fileDateText = formatString(LANG("rom info", "file date").c_str(), filetime->tm_year + 1900, filetime->tm_mon + 1, filetime->tm_mday, filetime->tm_hour, filetime->tm_min, filetime->tm_sec);
 
-    dbg_printf("st.st_mtime %d\n", (u32)st.st_mtime);
-    dbg_printf("%d-%d-%d %02d:%02d:%02d\n",
-               filetime->tm_year + 1900, filetime->tm_mon + 1, filetime->tm_mday,
-               filetime->tm_hour, filetime->tm_min, filetime->tm_sec);
+	dbg_printf("st.st_mtime %d\n", (u32)st.st_mtime);
+	dbg_printf("%d-%d-%d %02d:%02d:%02d\n", filetime->tm_year + 1900, filetime->tm_mon + 1, filetime->tm_mday, filetime->tm_hour, filetime->tm_min, filetime->tm_sec);
 
-    if ('/' == fullName[fullName.size() - 1])
-    {
-        _fileSizeText = "";
-    }
-    else
-    {
-        _fileSizeText = formatString(LANG("rom info", "file size").c_str(), getFriendlyFileSizeString(st.st_size).c_str());
-    }
-    _size = st.st_size;
+	_fileSizeText = (fullName[fullName.size() - 1] == "/") ? "" : formatString(LANG("rom info", "file size").c_str(), getFriendlyFileSizeString(st.st_size).c_str())
+	_size = st.st_size;
 }
 
-void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo)
-{
-    _romInfo = romInfo;
-    auto bannerTitle = _romInfo.banner().title;
-    _romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
+void RomInfoWnd::setRomInfo(const DSRomInfo &romInfo) {
+	_romInfo = romInfo;
+	auto bannerTitle = _romInfo.banner().title;
+	_romInfoText = unicode_to_local_string(bannerTitle, 128, NULL);
 
-    _buttonGameSettings.hide();
+	_buttonGameSettings.hide();
 
-    if (_romInfo.isDSRom() && !_romInfo.isHomebrew())
-    {
-        addCode();
-    }
-    if (!_romInfo.isDSiWare() && (_romInfo.isDSRom() || _romInfo.isHomebrew()))
-    {
-        _buttonGameSettings.show();
-    }
+	if (_romInfo.isDSRom() && !_romInfo.isHomebrew())
+		addCode();
 
-    _buttonCheats.hide();
+	if (!_romInfo.isDSiWare() && (_romInfo.isDSRom() || _romInfo.isHomebrew()))
+		_buttonGameSettings.show();
 
-    if (!_romInfo.isDSiWare() && _romInfo.isDSRom())
-    {
-        _buttonCheats.show();
-    }
+	_buttonCheats.hide();
+
+	if (!_romInfo.isDSiWare() && _romInfo.isDSRom())
+		_buttonCheats.show();
 }
 
-const DSRomInfo &RomInfoWnd::getRomInfo()
-{
-    return _romInfo;
+const DSRomInfo &RomInfoWnd::getRomInfo() {
+	return _romInfo;
 }
 
-void RomInfoWnd::onOK()
-{
-    Form::onOK();
+void RomInfoWnd::onOK() {
+	Form::onOK();
 }
 
-void RomInfoWnd::onShow()
-{
-    centerScreen();
+void RomInfoWnd::onShow() {
+	centerScreen();
 }
 
 void RomInfoWnd::addCode(void)
 {
-    char gameCode[5];
-    tonccpy(gameCode, _romInfo.saveInfo().gameCode, sizeof(_romInfo.saveInfo().gameCode));
-    gameCode[4] = 0;
-    // if (_saveTypeText.length())
-    //     _saveTypeText += ", ";
-    _saveTypeText += formatString(LANG("rom info", "game code").c_str(), gameCode);
-    if (_romInfo.version() > 0)
-    {
-        _saveTypeText += formatString("v%02d", _romInfo.version());
-    }
-    _saveTypeText += formatString(", SDK %X", (_romInfo.saveInfo().gameSdkVersion & 0xF000000) >> 0x18);
+	char gameCode[5];
+	tonccpy(gameCode, _romInfo.saveInfo().gameCode, sizeof(_romInfo.saveInfo().gameCode));
+	gameCode[4] = 0;
+
+	_saveTypeText += formatString(LANG("rom info", "game code").c_str(), gameCode);
+	if (_romInfo.version() > 0)
+		_saveTypeText += formatString("v%02d", _romInfo.version());
+
+	_saveTypeText += formatString(", SDK %X", (_romInfo.saveInfo().gameSdkVersion & 0xF000000) >> 0x18);
 }
 
 // #if defined(_STORAGE_rpg)

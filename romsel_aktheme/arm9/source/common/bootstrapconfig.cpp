@@ -130,13 +130,13 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 		"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 		"A2D", // New Super Mario Bros.
 	};
-	for (const char *mputid : mpu_3MB_list)
-	{
-		if (memcmp(mputid, _gametid.c_str(), 3) == 0)
-		{
+
+	for (const char *mputid : mpu_3MB_list) {
+		if (memcmp(mputid, _gametid.c_str(), 3) == 0) {
 			return mpuRegion(1).mpuSize(0x300000);
 		}
 	}
+
 	return mpuRegion(0).mpuSize(0);
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
