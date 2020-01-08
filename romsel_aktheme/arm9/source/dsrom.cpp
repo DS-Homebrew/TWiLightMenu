@@ -595,9 +595,9 @@ void DSRomInfo::setExtIcon(const std::string &aValue)
 
 void DSRomInfo::setBanner(const std::string &anExtIcon, const u8 *aBanner)
 {
-    setExtIcon(anExtIcon);
-    _banner.crc = ((tNDSBanner*)aBanner)->crc;
-    tonccpy(_banner.icon,((tNDSBanner*)aBanner)->icon, sizeof(_banner.icon));
-    tonccpy(_banner.palette,((tNDSBanner*)aBanner)->palette, sizeof(_banner.palette));
-    tonccpy(_banner.title, ((tNDSBanner*)aBanner)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+	setExtIcon(anExtIcon);
+	_banner.crc = ((tNDSBanner*)aBanner)->crc;
+	tonccpy(_banner.icon,((tNDSBanner*)aBanner)->icon, sizeof(_banner.icon));
+	tonccpy(_banner.palette,((tNDSBanner*)aBanner)->palette, sizeof(_banner.palette));
+	tonccpy(_banner.title, ((tNDSBanner*)aBanner)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
 }

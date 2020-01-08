@@ -1091,9 +1091,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	}
 }
 
-void MainWnd::bootFlashcard(const std::string &ndsPath, const std::string &filename, bool usePerGameSettings)
+void MainWnd::bootFlashcard(const std::string &ndsPath, bool usePerGameSettings)
 {
-	int err = loadGameOnFlashcard(ndsPath.c_str(), filename, usePerGameSettings);
+	int err = loadGameOnFlashcard(ndsPath, usePerGameSettings);
 	if (err) {
 		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
 		messageBox(this, LANG("game launch", "Flashcard Error"), errorString, MB_OK);
@@ -1200,7 +1200,7 @@ void MainWnd::launchSelected()
 			ms().saveSettings();
 
 			dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
-			bootFlashcard(fullPath, _mainList->getSelectedShowName(), true);
+			bootFlashcard(fullPath, true);
 			return;
 		}
 	}
@@ -1473,9 +1473,9 @@ void MainWnd::bootGbaRunner(void)
 			}
 		} else {
 			if (isDSiMode()) {
-				bootFlashcard(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, "", false);
+				bootFlashcard(ms().consoleModel>0 ? GBARUNNER_3DS_FC : GBARUNNER_DSI_FC, false);
 			} else {
-				bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, "", false);
+				bootFlashcard(ms().gbar2DldiAccess ? GBARUNNER_A7 : GBARUNNER_A9, false);
 			}
 		}
 

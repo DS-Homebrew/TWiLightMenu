@@ -696,14 +696,8 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		return;
 	}*/
 
-	if (isDir) {
-		// text
-		if (strcmp(name, "..") == 0) {
-			writeBannerText(0, "Back", "", "");
-		} else {
-			writeBannerText(0, name, "", "");
-		}
-	} else if (extention(name, ".plg")
+	if (isDir
+	 || extention(name, ".plg")
 	 || extention(name, ".rvid")
 	 || extention(name, ".gba")
 	 || extention(name, ".gb")
@@ -716,8 +710,7 @@ void titleUpdate(bool isDir, const char *name, int num) {
 	 || extention(name, ".gen")
 	 || extention(name, ".smc")
 	 || extention(name, ".sfc"))
-	{
-		writeBannerText(0, name, "", "");
+		writeBannerText(0, memcmp(name, "..", 2) == 0 ? "Back" : name, "", "");
 	} else {
 		// this is an nds/app file!
 

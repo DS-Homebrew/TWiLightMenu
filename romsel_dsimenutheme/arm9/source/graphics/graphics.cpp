@@ -168,6 +168,8 @@ bool rocketVideo_loadFrame = true;
 int bubbleYpos = 80;
 int bubbleXpos = 122;
 
+int dialogboxHeight = 0;
+
 void vramcpy_ui(void *dest, const void *src, int size) {
 	u16 *destination = (u16 *)dest;
 	u16 *source = (u16 *)src;

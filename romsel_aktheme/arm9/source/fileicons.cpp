@@ -99,15 +99,15 @@ void FileIcons::LoadFolder(IconPaths &aPaths, const std::string &aFolder)
 
 s32 FileIcons::Icon(const std::string &aValue)
 {
-  if (!_icons.size())
-    return -1;
-  std::vector<FileIconItem>::iterator result = akui::binary_find(_icons.begin(), _icons.end(), FileIconItem("", aValue), Comp);
-  if (result == _icons.end())
-  {
-    return -1;
-  }
-  BMP15 &image = (*result).Icon();
-  return ((image.valid() && image.width() == 32 && image.height() == 32) ? (result - _icons.begin()) : -1);
+	if (!_icons.size())
+		return -1;
+
+	std::vector<FileIconItem>::iterator result = akui::binary_find(_icons.begin(), _icons.end(), FileIconItem("", aValue), Comp);
+	if (result == _icons.end())
+		return -1;
+
+	BMP15 &image = (*result).Icon();
+	return ((image.valid() && image.width() == 32 && image.height() == 32) ? (result - _icons.begin()) : -1);
 }
 
 void FileIcons::Draw(s32 idx, u8 x, u8 y, GRAPHICS_ENGINE engine)

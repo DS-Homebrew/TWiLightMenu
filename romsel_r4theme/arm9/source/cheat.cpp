@@ -21,7 +21,7 @@
 #include "cheat.h"
 #include "flashcard.h"
 #include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include <algorithm>
 #include <iostream>
 #include <fstream>

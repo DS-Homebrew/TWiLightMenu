@@ -40,7 +40,6 @@ class BootstrapConfig
         BootstrapConfig& ramDiskNo(int ramDiskNo);
         BootstrapConfig& softReset(bool softReset);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
-        BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);

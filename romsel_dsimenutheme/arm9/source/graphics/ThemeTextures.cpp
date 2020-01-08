@@ -14,7 +14,7 @@
 
 #include "color.h"
 #include "errorScreen.h"
-#include "tool/stringtool.h"
+#include "common/stringtool.h"
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 #include "common/lzss.h"

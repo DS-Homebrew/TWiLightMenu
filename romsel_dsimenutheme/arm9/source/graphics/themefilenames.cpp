@@ -2,7 +2,7 @@
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "tool/dbgtool.h"
-#include "tool/stringtool.h"
+#include "common/inifile.h"
 #include <nds.h>
 #include <stdio.h>
 

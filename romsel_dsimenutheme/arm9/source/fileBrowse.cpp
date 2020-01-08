@@ -55,7 +55,7 @@
 
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/systemdetails.h"
 
 #include "fileCopy.h"
@@ -268,7 +268,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	lockOutDirContentBlankFilling = true;
 
 	char str[12] = {0};
-	easysave::ini twlmDirInfo("dirInfo.twlm.ini");
+	CIniFile twlmDirInfo("dirInfo.twlm.ini");
 	int currentPos = PAGENUM*40;
 	for (int i = 0; i < 40; i++) {
 		sprintf(str, "%d", i+(PAGENUM*40));
@@ -306,7 +306,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			pageLoaded[i] = false;
 		}
 
-		easysave::ini twlmDirInfo("dirInfo.twlm.ini");
+		CIniFile twlmDirInfo("dirInfo.twlm.ini");
 		file_count = twlmDirInfo.GetInt("INFO", "GAMES", 0);
 		return;
 	} else {
@@ -320,17 +320,16 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		// iprintf("Unable to open the directory.\n");
 		printSmall(false, 4, 4, "Unable to open the directory.");
 	} else {
-		easysave::ini hiddenGamesIni(hiddenGamesIniPath);
+		CIniFile hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
 		char str[12] = {0};
 
 		for (int i = 0; true; i++) {
 			sprintf(str, "%d", i);
-			if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
-			} else {
+			if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") == "")
 				break;
-			}
+
+			hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
 		}
 		int currentPos = 0;
 		while (true) {
@@ -395,7 +394,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			case 1: {
-				easysave::ini recentlyPlayedIni(recentlyPlayedIniPath);
+				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 				vector<std::string> recentlyPlayed;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -415,7 +414,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			} case 2: {
-				easysave::ini timesPlayedIni(timesPlayedIniPath);
+				CIniFile timesPlayedIni(timesPlayedIniPath);
 				vector<TimesPlayed> timesPlayed;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -439,7 +438,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
 				break;
 			case 4: {
-				easysave::ini gameOrderIni(gameOrderIniPath);
+				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
@@ -2441,9 +2440,7 @@ string browseForFile(const vector<string> extensionList) {
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
-						if (getFileSize(
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
-							0x300000) {
+						if (getFileSize(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) > 0x300000) {
 							proceedToLaunch = false;
 							mdRomTooBig();
 						}

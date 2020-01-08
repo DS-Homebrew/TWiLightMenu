@@ -40,7 +40,6 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_ramDiskNo = -1;
 	_softReset = false;
 	_cpuBoost = false;
-	_useGbarBootstrap = false;
 
 	this
 		->saveSize()
@@ -393,12 +392,6 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 	return *this;
 }
 
-BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
-{
-	_useGbarBootstrap = gbarBootstrap;
-	return *this;
-}
-
 
 
 
@@ -519,6 +512,7 @@ int BootstrapConfig::launch()
 	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 	RemoveTrailingSlashes(romFolderNoSlash);
 	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
+
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;
 	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
@@ -527,33 +521,16 @@ int BootstrapConfig::launch()
 
 	std::string bootstrapPath;
 
-	if(_useGbarBootstrap) {
-		if (_useNightlyBootstrap)
-			bootstrapPath = BOOTSTRAP_NIGHTLY_GBAR;
-		if (!_useNightlyBootstrap)
-			bootstrapPath = BOOTSTRAP_RELEASE_GBAR;
-	} else {
-		if (_useNightlyBootstrap && _isHomebrew)
-			bootstrapPath = BOOTSTRAP_NIGHTLY_HB;
-		if (_useNightlyBootstrap && !_isHomebrew)
-			bootstrapPath = BOOTSTRAP_NIGHTLY;
+	if (_isHomebrew)
+		bootstrapPath = _useNightlyBootstrap ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB;
+	else
+		bootstrapPath = _useNightlyBootstrap ? BOOTSTRAP_NIGHTLY : BOOTSTRAP_RELEASE_HB;
 
-		if (!_useNightlyBootstrap && _isHomebrew)
-			bootstrapPath = BOOTSTRAP_RELEASE_HB;
-		if (!_useNightlyBootstrap && !_isHomebrew)
-			bootstrapPath = BOOTSTRAP_RELEASE;
-
-		if(access(bootstrapPath.c_str(), F_OK) != 0) {
-			if (_useNightlyBootstrap && _isHomebrew)
-				bootstrapPath = BOOTSTRAP_NIGHTLY_HB_FC;
-			if (_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = (isDSiMode() ? BOOTSTRAP_NIGHTLY_FC : BOOTSTRAP_NIGHTLY_DS);
-
-			if (!_useNightlyBootstrap && _isHomebrew)
-				bootstrapPath = BOOTSTRAP_RELEASE_HB_FC;
-			if (!_useNightlyBootstrap && !_isHomebrew)
-				bootstrapPath = (isDSiMode() ? BOOTSTRAP_RELEASE_FC : BOOTSTRAP_RELEASE_DS);
-		}
+	if (access(bootstrapPath.c_str(), F_OK) != 0) {
+		if (isDSiMode())
+			bootstrapPath = replaceAll(savepath, "sd:/", "fat:/");
+		else
+			bootstrapPath = _useNightlyBootstrap ? BOOTSTRAP_NIGHTLY_DS : BOOTSTRAP_RELEASE_DS;
 	}
 
 	std::vector<char*> argarray;
@@ -562,7 +539,8 @@ int BootstrapConfig::launch()
 
 	LoaderConfig loader(bootstrapPath, (sdFound() ? BOOTSTRAP_INI : BOOTSTRAP_INI_FC));
 
-	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
+	loader
+		.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savepath)
 		.option("NDS-BOOTSTRAP", "AP_FIX_PATH", apFix(_fileName.c_str(), _isHomebrew))
 		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")

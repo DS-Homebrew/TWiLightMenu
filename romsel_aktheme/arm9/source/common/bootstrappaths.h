@@ -5,18 +5,11 @@
 
 #define BOOTSTRAP_NIGHTLY_HB "sd:/_nds/nds-bootstrap-hb-nightly.nds"
 #define BOOTSTRAP_NIGHTLY "sd:/_nds/nds-bootstrap-nightly.nds"
-#define BOOTSTRAP_NIGHTLY_HB_FC "fat:/_nds/nds-bootstrap-hb-nightly.nds"
-#define BOOTSTRAP_NIGHTLY_FC "fat:/_nds/nds-bootstrap-nightly.nds"
 #define BOOTSTRAP_NIGHTLY_DS "fat:/_nds/b4ds-nightly.nds"
 
 #define BOOTSTRAP_RELEASE_HB "sd:/_nds/nds-bootstrap-hb-release.nds"
 #define BOOTSTRAP_RELEASE "sd:/_nds/nds-bootstrap-release.nds"
-#define BOOTSTRAP_RELEASE_HB_FC "fat:/_nds/nds-bootstrap-hb-release.nds"
-#define BOOTSTRAP_RELEASE_FC "fat:/_nds/nds-bootstrap-release.nds"
 #define BOOTSTRAP_RELEASE_DS "fat:/_nds/b4ds-release.nds"
-
-#define BOOTSTRAP_NIGHTLY_GBAR "sd:/_nds/nds-bootstrap-gbar2-nightly.nds"
-#define BOOTSTRAP_RELEASE_GBAR "sd:/_nds/nds-bootstrap-gbar2-release.nds"
 
 #define BOOTSTRAP_INI "sd:/_nds/nds-bootstrap.ini"
 #define BOOTSTRAP_INI_FC "fat:/_nds/nds-bootstrap.ini"
@@ -45,9 +38,6 @@
 
 #define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
-#define LOLSNES_ROM "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds"
-#define LOLSNES_FC "fat:/_nds/TWiLightMenu/emulators/lolSNES.nds"
-#define SNES_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SNES.img"
 
 #define JENESISDS_ROM "sd:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
 #define JENESISDS_FC "fat:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"

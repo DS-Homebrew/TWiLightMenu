@@ -1,21 +1,21 @@
 /*
-    mainlist.cpp
-    Copyright (C) 2007 Acekard, www.acekard.com
-    Copyright (C) 2007-2009 somebody
-    Copyright (C) 2009 yellow wood goblin
+	mainlist.cpp
+	Copyright (C) 2007 Acekard, www.acekard.com
+	Copyright (C) 2007-2009 somebody
+	Copyright (C) 2009 yellow wood goblin
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <nds/arm9/dldi.h>
@@ -49,7 +49,6 @@
 #include "gbrom_banner_bin.h"
 #include "s8ds_banner_bin.h"
 #include "snemulds_banner_bin.h"
-#include "lolsnes_banner_bin.h"
 #include "smdrom_banner_bin.h"
 #include "ui/progresswnd.h"
 #include "language.h"
@@ -60,7 +59,7 @@
 using namespace akui;
 
 MainList::MainList(s32 x, s32 y, u32 w, u32 h, Window *parent, const std::string &text)
-    : ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
+	: ListView(x, y, w, h, parent, text, ms().ak_scrollSpeed), _showAllFiles(false)
 {
 	_viewMode = VM_LIST;
 	_activeIconScale = 1;
@@ -246,431 +245,375 @@ bool MainList::enterDir(const std::string &dirName)
 	}
 	cwl();
 
-    // Only compare first 4 characters
-    if (!strncmp(dirName.c_str(), "^*::", 4))
-    {
-        dbg_printf("Special directory entered");
-        _currentDir = dirName;
-        directoryChanged();
-        return true;
-    }
-    cwl();
+	// Only compare first 4 characters
+	if (!strncmp(dirName.c_str(), "^*::", 4))
+	{
+		dbg_printf("Special directory entered");
+		_currentDir = dirName;
+		directoryChanged();
+		return true;
+	}
+	cwl();
 
-    DIR *dir = NULL;
+	DIR *dir = NULL;
 
-    dir = opendir(dirName.c_str());
+	dir = opendir(dirName.c_str());
 
-    if (dir == NULL)
-    {
-        if (SD_ROOT == dirName || S1SD_ROOT == dirName)
-        {
-            std::string title = LANG("sd card error", "title");
-            std::string sdError = LANG("sd card error", "text");
-            messageBox(NULL, title, sdError, MB_OK);
-        }
-        dbg_printf("Unable to open directory<%s>.\n", dirName.c_str());
-        return false;
-    }
+	if (dir == NULL) {
+		if (SD_ROOT == dirName || S1SD_ROOT == dirName)
+		{
+			std::string title = LANG("sd card error", "title");
+			std::string sdError = LANG("sd card error", "text");
+			messageBox(NULL, title, sdError, MB_OK);
+		}
+		dbg_printf("Unable to open directory<%s>.\n", dirName.c_str());
+		return false;
+	}
 
-    if (!isDSiMode() || strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0)
-    {
-        ms().secondaryDevice = true;
-    }
-    else
-    {
-        ms().secondaryDevice = false;
-    }
-    cwl();
-    removeAllRows();
-    _romInfoList.clear();
+	ms().secondaryDevice = (!isDSiMode() || strncmp(dirName.c_str(), S1SD_ROOT, 5) == 0);
+
+	cwl();
+	removeAllRows();
+	_romInfoList.clear();
  
-    struct stat st;
-    dirent *direntry;
-    std::string extName;
-    char lfnBuf[dirName.length() + 256 + 2];
-    // list dir
+	struct stat st;
+	dirent *direntry;
+	char lfnBuf[dirName.length() + 256 + 2];
+	// list dir
 
-    cwl();
-    nocashMessage("mainlist:295");
-    if (dir)
-    {
-        nocashMessage(dirName.c_str());
-        _currentDir = std::string(dirName);
-        
-        while ((direntry = readdir(dir)) != NULL)
-        {
-            toncset(lfnBuf, 0, sizeof(lfnBuf));
-            snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", _currentDir.c_str(), direntry->d_name);
-            stat(lfnBuf, &st);
-            std::string lfn(direntry->d_name);
-            nocashMessage("mainlist:307");
+	cwl();
+	nocashMessage("mainlist:295");
+	if (dir) {
+		std::string extName;
+		nocashMessage(dirName.c_str());
+		_currentDir = std::string(dirName);
+		
+		while ((direntry = readdir(dir)) != NULL) {
+			toncset(lfnBuf, 0, sizeof(lfnBuf));
+			snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", _currentDir.c_str(), direntry->d_name);
+			stat(lfnBuf, &st);
+			std::string lfn(direntry->d_name);
+			nocashMessage("mainlist:307");
 
-            // st.st_mode & S_IFDIR indicates a directory
-            size_t lastDotPos = lfn.find_last_of('.');
-            if (lfn.npos != lastDotPos) {
-                extName = lfn.substr(lastDotPos);
-            } else {
-                extName = "";
-            }
-            nocashMessage("mainlist:316");
+			// st.st_mode & S_IFDIR indicates a directory
+			size_t lastDotPos = lfn.find_last_of('.');
+			extName = (lfn.npos != lastDotPos ? lfn.substr(lastDotPos) : "");
+			nocashMessage("mainlist:316");
 
 
-            dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
-            cwl();
-            bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories) // directory filter
-                                                   : extnameFilter(_showAllFiles ? std::vector<std::string>() : _extnameFilter, extName);                                                                                                                // extension name filter
-            showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));                                                                                                           // Hide dotfiles
-            cwl();
-            nocashMessage("mainlist:322");
+			dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
+			cwl();
+			bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories) // directory filter
+												   : extnameFilter(_showAllFiles ? std::vector<std::string>() : _extnameFilter, extName);																												// extension name filter
+			showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));																										   // Hide dotfiles
+			cwl();
+			nocashMessage("mainlist:322");
 
-            if (showThis)
-            {
-                nocashMessage("mainlist:324");
-                std::string real_name = dirName + lfn;
-                if (st.st_mode & S_IFDIR)
-                {
-                    real_name += "/";
-                }
-                nocashMessage("mainlist:337");
-                nocashMessage(lfn.c_str());
-                nocashMessage(real_name.c_str());
-                addDirEntry(lfn, "", real_name, "", unknown_banner_bin);
-                nocashMessage("mainlist:341");
-            }
-        }
-        nocashMessage("mainlist:341");
+			if (showThis) {
+				nocashMessage("mainlist:324");
+				std::string real_name = dirName + lfn;
+				if (st.st_mode & S_IFDIR)
+				{
+					real_name += "/";
+				}
+				nocashMessage("mainlist:337");
+				nocashMessage(lfn.c_str());
+				nocashMessage(real_name.c_str());
+				addDirEntry(lfn, "", real_name, "", unknown_banner_bin);
+				nocashMessage("mainlist:341");
+			}
+		}
+		nocashMessage("mainlist:341");
 
-        closedir(dir);
+		closedir(dir);
 
-        std::sort(_rows.begin(), _rows.end(), itemSortComp);
+		std::sort(_rows.begin(), _rows.end(), itemSortComp);
 
-        for (size_t ii = 0; ii < _rows.size(); ii++)
-        {
-            DSRomInfo &rominfo = _romInfoList[ii];
-            std::string filename = _rows[ii][REALNAME_COLUMN].text();
-            size_t lastDotPos = filename.find_last_of('.');
-            if (filename.npos != lastDotPos)
-                extName = filename.substr(lastDotPos);
-            else
-                extName = "";
-            for (size_t jj = 0; jj < extName.size(); jj++)
-                extName[jj] = tolower(extName[jj]);
+		for (size_t ii = 0; ii < _rows.size(); ii++) {
+			DSRomInfo &rominfo = _romInfoList[ii];
+			std::string filename = _rows[ii][REALNAME_COLUMN].text();
+			size_t lastDotPos = filename.find_last_of('.');
 
-            if ('/' == filename[filename.size() - 1])
-            {
-                rominfo.setBanner("folder", folder_banner_bin);
-            }
-            else
-            {
-                bool allowExt = true, allowUnknown = false;
-                if (".gba" == extName)
-                {
-                    rominfo.MayBeGbaRom(filename);
-                }
-                //else if (".launcharg" == extName || ".argv" == extName)
-                else if (".argv" == extName)
-                {
-                    rominfo.MayBeArgv(filename);
-                    allowUnknown = true;
-                }
-                else if (".plg" == extName)
-                {
-                    rominfo.setBanner("plg", ds2plg_banner_bin);
-                }
-                else if (".gb" == extName)
-                {
-                    rominfo.setBanner("gb", gbrom_banner_bin);
-                }
-                else if (".gbc" == extName)
-                {
-                    rominfo.setBanner("gbc", gbcrom_banner_bin);
-                }
-                else if (".nes" == extName)
-                {
-                    rominfo.setBanner("nes", nesrom_banner_bin);
-                }
-                else if (".sms" == extName || ".gg" == extName)
-                {
-                    rominfo.setBanner("sms", s8ds_banner_bin);
-                }
-                else if (".gen" == extName)
-                {
-                    rominfo.setBanner("sms", smdrom_banner_bin);
-                }
-                else if (".smc" == extName || ".sfc" == extName)
-                {
-                    rominfo.setBanner("sms", snemulds_banner_bin);
-                }
-                else if (".nds" != extName && ".ids" != extName && ".dsi" != extName && ".srl" != extName && ".app" != extName)
-                {
-                    rominfo.setBanner("", unknown_banner_bin);
-                    allowUnknown = true;
-                }
-                else
-                {
-                    rominfo.MayBeDSRom(filename);
-                    allowExt = false;
-                }
-                rominfo.setExtIcon(_rows[ii][SHOWNAME_COLUMN].text());
-                if (allowExt && extName.length() && !rominfo.isExtIcon())
-                    rominfo.setExtIcon(extName.substr(1));
-                if (allowUnknown && !rominfo.isExtIcon())
-                    rominfo.setExtIcon("unknown");
-            }
-        }
-    }
-    nocashMessage("mainlist:415");
-    directoryChanged();
-    nocashMessage("mainlist:418");
+			extName = (filename.npos != lastDotPos ? filename.substr(lastDotPos) : "");
+			for (size_t jj = 0; jj < extName.size(); jj++)
+				extName[jj] = tolower(extName[jj]);
 
-    return true;
+			bool allowExt = true, allowUnknown = false;
+
+			if ('/' == filename[filename.size() - 1])
+			{
+				rominfo.setBanner("folder", folder_banner_bin);
+			}
+			else
+			{
+				if (extName == ".gba") {
+					rominfo.MayBeGbaRom(filename);
+				} else if (extName == ".argv") {
+					rominfo.MayBeArgv(filename);
+					allowUnknown = true;
+				} else if (extName == ".plg") {
+					rominfo.setBanner("plg", ds2plg_banner_bin);
+				} else if (extName == ".gb") {
+					rominfo.setBanner("gb", gbrom_banner_bin);
+				} else if (extName == ".gbc") {
+					rominfo.setBanner("gbc", gbcrom_banner_bin);
+				} else if (extName == ".nes") {
+					rominfo.setBanner("nes", nesrom_banner_bin);
+				} else if (".sms" == extName || ".gg" == extName) {
+					rominfo.setBanner("sms", s8ds_banner_bin);
+				} else if (".gen" == extName) {
+					rominfo.setBanner("gen", smdrom_banner_bin);
+				} else if (".smc" == extName || ".sfc" == extName) {
+					rominfo.setBanner("smc", snemulds_banner_bin);
+				} else if (extName == ".nds" || extName == ".ids" || extName ==  ".dsi" || extName == ".srl" || extName ==  ".app") {
+					rominfo.MayBeDSRom(filename);
+					allowExt = false;
+				} else {
+					rominfo.setBanner("", unknown_banner_bin);
+					allowUnknown = true;
+				}
+				rominfo.setExtIcon(_rows[ii][SHOWNAME_COLUMN].text());
+				if (allowExt && extName.length() && !rominfo.isExtIcon())
+					rominfo.setExtIcon(extName.substr(1));
+				if (allowUnknown && !rominfo.isExtIcon())
+					rominfo.setExtIcon("unknown");
+			}
+		}
+	}
+	nocashMessage("mainlist:415");
+	directoryChanged();
+	nocashMessage("mainlist:418");
+
+	return true;
 }
 
 void MainList::onSelectChanged(u32 index)
 {
-    if (index >= 0) dbg_printf("%s\n", _rows[index][3].text().c_str());
+	if (index >= 0) dbg_printf("%s\n", _rows[index][3].text().c_str());
 }
 
 void MainList::onScrolled(u32 index)
 {
-    _activeIconScale = 1;
-    //updateActiveIcon( CONTENT );
+	_activeIconScale = 1;
+	//updateActiveIcon( CONTENT );
 }
 
 void MainList::backParentDir()
 {
-    if ("..." == _currentDir)
-        return;
+	if (_currentDir == "...")
+		return;
 
-    dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
-    if ("" == _currentDir || SD_ROOT == _currentDir || S1SD_ROOT == _currentDir || !ms().showDirectories)
-    {
-        dbg_printf("Entering HOME\n");
-        enterDir(SPATH_ROOT);
-        return;
-    }
+	dbg_printf("CURDIR:\"%s\"\n", _currentDir.c_str());
+	if (_currentDir == "" || SD_ROOT == _currentDir || S1SD_ROOT == _currentDir || !ms().showDirectories)
+	{
+		dbg_printf("Entering HOME\n");
+		enterDir(SPATH_ROOT);
+		return;
+	}
 
-    if (!strncmp(_currentDir.c_str(), "^*::", 4)) {
-        return;
-    }
+	if (!memcmp(_currentDir.c_str(), "^*::", 4)) {
+		return;
+	}
 
-    if (!ms().showDirectories)
-    {
-        // Allow going back into the root, but don't allow going
-        // back in other directories.
-        return;
-    }
+	if (!ms().showDirectories)
+	{
+		// Allow going back into the root, but don't allow going
+		// back in other directories.
+		return;
+	}
 
-    size_t pos = _currentDir.rfind("/", _currentDir.size() - 2);
-    std::string parentDir = _currentDir.substr(0, pos + 1);
-    dbg_printf("%s->%s\n", _currentDir.c_str(), parentDir.c_str());
+	size_t pos = _currentDir.rfind("/", _currentDir.size() - 2);
+	std::string parentDir = _currentDir.substr(0, pos + 1);
+	dbg_printf("%s->%s\n", _currentDir.c_str(), parentDir.c_str());
 
-    std::string oldCurrentDir = _currentDir;
+	std::string oldCurrentDir = _currentDir;
 
-    cwl();
-    if (enterDir(parentDir))
-    { // select last entered director
-        for (size_t i = 0; i < _rows.size(); ++i)
-        {
-            if (parentDir + _rows[i][SHOWNAME_COLUMN].text() == oldCurrentDir)
-            {
-                selectRow(i);
-            }
-        }
-    }
+	cwl();
+	if (enterDir(parentDir))
+	{ // select last entered director
+		for (size_t i = 0; i < _rows.size(); ++i)
+		{
+			if (parentDir + _rows[i][SHOWNAME_COLUMN].text() == oldCurrentDir) {
+				selectRow(i);
+			}
+		}
+	}
 }
 
 std::string MainList::getSelectedFullPath()
 {
-    if (!_rows.size())
-        return std::string("");
-    return _rows[_selectedRowId][REALNAME_COLUMN].text();
+	if (!_rows.size())
+		return std::string("");
+
+	return _rows[_selectedRowId][REALNAME_COLUMN].text();
 }
 
 std::string MainList::getSelectedShowName()
 {
-    if (!_rows.size())
-        return std::string("");
-    return _rows[_selectedRowId][SHOWNAME_COLUMN].text();
+	if (!_rows.size())
+		return std::string("");
+
+	return _rows[_selectedRowId][SHOWNAME_COLUMN].text();
 }
 
 bool MainList::getRomInfo(u32 rowIndex, DSRomInfo &info) const
 {
-    if (rowIndex < _romInfoList.size())
-    {
-        info = _romInfoList[rowIndex];
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+	if (rowIndex < _romInfoList.size()) {
+		info = _romInfoList[rowIndex];
+		return true;
+	}
+
+	return false;
 }
 
 void MainList::setRomInfo(u32 rowIndex, const DSRomInfo &info)
 {
-    if (!_romInfoList[rowIndex].isDSRom())
-        return;
+	if (!_romInfoList[rowIndex].isDSRom())
+		return;
 
-    if (rowIndex < _romInfoList.size())
-    {
-        _romInfoList[rowIndex] = info;
-    }
+	if (rowIndex < _romInfoList.size())
+		_romInfoList[rowIndex] = info;
 }
 
 void MainList::draw()
 {
-    updateInternalNames();
-    ListView::draw();
-    updateActiveIcon(POSITION);
-    drawIcons();
+	updateInternalNames();
+	ListView::draw();
+	updateActiveIcon(POSITION);
+	drawIcons();
 }
 
 void MainList::drawIcons()
 {
-    size_t total = _visibleRowCount;
-    if (total > _rows.size() - _firstVisibleRowId)
-        total = _rows.size() - _firstVisibleRowId;
+	size_t total = _visibleRowCount;
+	if (total > _rows.size() - _firstVisibleRowId)
+		total = _rows.size() - _firstVisibleRowId;
 
-    for (size_t i = 0; i < total; ++i)
-    {
-        if (_firstVisibleRowId + i == _selectedRowId)
-        {
-            if (_activeIcon.visible())
-            {
-                continue;
-            }
-        }
-        s32 itemX = _position.x + 1;
-        s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-        if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons)
-        {
-            int seqIdx = seq().allocate_sequence(
-                _romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
-                _romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
+	for (size_t i = 0; i < total; ++i) {
+		if (_firstVisibleRowId + i == _selectedRowId && _activeIcon.visible())
+				continue;
 
-            int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
-            int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
-            bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
-            bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
-            if (VM_LIST != _viewMode)
-            {
-                _romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, flipH, flipV, _engine);
-            }
-        }
-        else
-        {
-            if (VM_LIST != _viewMode)
-            {
-                _romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
-            }
-        }
-    }
+		s32 itemX = _position.x + 1;
+		s32 itemY = _position.y + i * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
+		if (_romInfoList[_firstVisibleRowId + i].isBannerAnimated() && ms().animateDsiIcons) {
+			int seqIdx = seq().allocate_sequence(
+				_romInfoList[_firstVisibleRowId + i].saveInfo().gameCode,
+				_romInfoList[_firstVisibleRowId + i].animatedIcon().sequence);
+
+			int bmpIdx = seq()._dsiIconSequence[seqIdx]._bitmapIndex;
+			int palIdx = seq()._dsiIconSequence[seqIdx]._paletteIndex;
+			bool flipH = seq()._dsiIconSequence[seqIdx]._flipH;
+			bool flipV = seq()._dsiIconSequence[seqIdx]._flipV;
+			if (VM_LIST != _viewMode)
+			{
+				_romInfoList[_firstVisibleRowId + i].drawDSiAnimatedRomIcon(itemX, itemY, bmpIdx, palIdx, flipH, flipV, _engine);
+			}
+		} else {
+			if (VM_LIST != _viewMode)
+			{
+				_romInfoList[_firstVisibleRowId + i].drawDSRomIcon(itemX, itemY, _engine);
+			}
+		}
+	}
 }
 
 void MainList::setViewMode(VIEW_MODE mode)
 {
-    if (!_columns.size())
-        return;
-    _viewMode = mode;
-    switch (_viewMode)
-    {
-    case VM_LIST:
-        _columns[ICON_COLUMN].width = 0;
-        _columns[SHOWNAME_COLUMN].width = 250;
-        _columns[INTERNALNAME_COLUMN].width = 0;
-        arangeColumnsSize();
-        setRowHeight(15);
-        break;
-    case VM_ICON:
-        _columns[ICON_COLUMN].width = 36;
-        _columns[SHOWNAME_COLUMN].width = 214;
-        _columns[INTERNALNAME_COLUMN].width = 0;
-        arangeColumnsSize();
-        setRowHeight(38);
-        break;
-    case VM_INTERNAL:
-        _columns[ICON_COLUMN].width = 36;
-        _columns[SHOWNAME_COLUMN].width = 0;
-        _columns[INTERNALNAME_COLUMN].width = 214;
-        arangeColumnsSize();
-        setRowHeight(38);
-        break;
-    }
-    scrollTo(_selectedRowId - _visibleRowCount + 1);
+	if (!_columns.size())
+		return;
+
+	switch (mode) {
+		case VM_LIST:
+			_columns[ICON_COLUMN].width = 0;
+			_columns[SHOWNAME_COLUMN].width = 250;
+			_columns[INTERNALNAME_COLUMN].width = 0;
+			arangeColumnsSize();
+			setRowHeight(15);
+			break;
+		case VM_ICON:
+			_columns[ICON_COLUMN].width = 36;
+			_columns[SHOWNAME_COLUMN].width = 214;
+			_columns[INTERNALNAME_COLUMN].width = 0;
+			arangeColumnsSize();
+			setRowHeight(38);
+			break;
+		case VM_INTERNAL:
+			_columns[ICON_COLUMN].width = 36;
+			_columns[SHOWNAME_COLUMN].width = 0;
+			_columns[INTERNALNAME_COLUMN].width = 214;
+			arangeColumnsSize();
+			setRowHeight(38);
+			break;
+	}
+	scrollTo(_selectedRowId - _visibleRowCount + 1);
 }
 
 void MainList::updateActiveIcon(bool updateContent)
 {
-    const INPUT &temp = getInput();
-    bool allowAnimation = true;
-    animateIcons(allowAnimation);
+	const INPUT &temp = getInput();
+	bool allowAnimation = true;
+	animateIcons(allowAnimation);
 
-    //do not show active icon when hold key to list files. Otherwise the icon will not show correctly.
-    if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && ms().ak_zoomIcons)
-    {
-        if (!_activeIcon.visible())
-        {
-            u8 backBuffer[32 * 32 * 2];
-            zeroMemory(backBuffer, 32 * 32 * 2);
-            
-            _romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
-            tonccpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
-            _activeIcon.setBufferChanged();
+	//do not show active icon when hold key to list files. Otherwise the icon will not show correctly.
+	if (getInputIdleMs() > 1000 && VM_LIST != _viewMode && allowAnimation && _romInfoList.size() && 0 == temp.keysHeld && ms().ak_zoomIcons)
+	{
+		if (!_activeIcon.visible())
+		{
+			u8 backBuffer[32 * 32 * 2];
+			zeroMemory(backBuffer, 32 * 32 * 2);
+			
+			_romInfoList[_selectedRowId].drawDSRomIconMem(backBuffer);
+			tonccpy(_activeIcon.buffer(), backBuffer, 32 * 32 * sizeof(u16));
+			_activeIcon.setBufferChanged();
 
-            s32 itemX = _position.x;
-            s32 itemY = _position.y + (_selectedRowId - _firstVisibleRowId) * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
-            _activeIcon.setPosition(itemX, itemY);
-            _activeIcon.show();
-            dbg_printf("sel %d ac ico x %d y %d\n", _selectedRowId, itemX, itemY);
-            for (u8 i = 0; i < 8; ++i)
-                dbg_printf("%02x", backBuffer[i]);
-            dbg_printf("\n");
-        }
-    }
-    else
-    {
-        if (_activeIcon.visible())
-        {
-            _activeIcon.hide();
-            cwl();
-        }
-    }
+			s32 itemX = _position.x;
+			s32 itemY = _position.y + (_selectedRowId - _firstVisibleRowId) * _rowHeight + ((_rowHeight - 32) >> 1) - 1;
+			_activeIcon.setPosition(itemX, itemY);
+			_activeIcon.show();
+			dbg_printf("sel %d ac ico x %d y %d\n", _selectedRowId, itemX, itemY);
+			for (u8 i = 0; i < 8; ++i)
+				dbg_printf("%02x", backBuffer[i]);
+			dbg_printf("\n");
+		}
+	}
+	else
+	{
+		if (_activeIcon.visible())
+		{
+			_activeIcon.hide();
+			cwl();
+		}
+	}
 }
 
 std::string MainList::getCurrentDir()
 {
-    return _currentDir;
+	return _currentDir;
 }
 
-void MainList::updateInternalNames(void)
-{
-    if (_viewMode == VM_INTERNAL)
-    {
-        size_t total = _visibleRowCount;
-        if (total > _rows.size() - _firstVisibleRowId)
-            total = _rows.size() - _firstVisibleRowId;
-        for (size_t ii = 0; ii < total; ++ii)
-        {
-            if (0 == _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN].text().length())
-            {
-                if (_romInfoList[_firstVisibleRowId + ii].isDSRom())
-                {
-                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
-                        .setText(unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().title, 128, NULL));
-                }
-                else
-                {
-                    _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
-                        .setText(_rows[_firstVisibleRowId + ii][SHOWNAME_COLUMN].text());
-                }
-            }
-        }
-    }
+void MainList::updateInternalNames(void) {
+	if (_viewMode != VM_INTERNAL)
+		return;
+
+	size_t total = _visibleRowCount;
+	if (total > _rows.size() - _firstVisibleRowId)
+		total = _rows.size() - _firstVisibleRowId;
+
+	for (size_t ii = 0; ii < total; ++ii) {
+		if (0 != _rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN].text().length())
+			continue;
+
+		_rows[_firstVisibleRowId + ii][INTERNALNAME_COLUMN]
+			.setText(
+				_romInfoList[_firstVisibleRowId + ii].isDSRom()
+				? unicode_to_local_string(_romInfoList[_firstVisibleRowId + ii].banner().title, 128, NULL)
+				: _rows[_firstVisibleRowId + ii][SHOWNAME_COLUMN].text()
+			);
+	}
 }
 
 void MainList::SwitchShowAllFiles(void)
 {
-    _showAllFiles = !_showAllFiles;
-    enterDir(getCurrentDir());
+	_showAllFiles = !_showAllFiles;
+	enterDir(getCurrentDir());
 }
