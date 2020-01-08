@@ -1,5 +1,5 @@
 /*
-    inifile.cpp
+    inifile.cpp + stringtool.cpp
     Copyright (C) 2007 Acekard, www.acekard.com
     Copyright (C) 2007-2009 somebody
     Copyright (C) 2009 yellow wood goblin
@@ -19,8 +19,6 @@
 #include <cstdlib>
 #include "inifile.h"
 #include "stringtool.h"
-#include <cstdarg>
-#include <malloc.h>
 
 static bool freadLine(FILE* f,std::string& str)
 {

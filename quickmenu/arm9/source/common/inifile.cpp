@@ -19,8 +19,6 @@
 #include <cstdlib>
 #include "inifile.h"
 #include "stringtool.h"
-#include <cstdarg>
-#include <malloc.h>
 
 static bool freadLine(FILE* f,std::string& str)
 {

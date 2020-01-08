@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	title
 BUILD		:=	build
-SOURCES		:=	source libeasysave/source/ini source/graphics source/tool source/common
-INCLUDES	:=	include libeasysave/include source
+SOURCES		:=	source source/graphics source/tool source/common
+INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

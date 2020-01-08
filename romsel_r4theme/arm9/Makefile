@@ -19,8 +19,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_r4theme
 BUILD		:=	build
-SOURCES		:=	source libeasysave/source/ini source/common source/graphics 
-INCLUDES	:=	include libeasysave/include source
+SOURCES		:=	source source/common source/graphics 
+INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 

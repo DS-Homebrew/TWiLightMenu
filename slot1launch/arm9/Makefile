@@ -17,8 +17,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	slot1launch
 BUILD		:=	build
-SOURCES		:=	source libeasysave/source/ini
-INCLUDES	:=	include libeasysave/include
+SOURCES		:=	source
+INCLUDES	:=	include
 DATA		:=	../data
 
 #---------------------------------------------------------------------------------
