@@ -167,19 +167,15 @@ void Calendar_2::draw()
 		}
 	}
 
-	if (_showDayX_2) {
+	if (_showDayX_2)
 		drawText(_dayxPosition, datetime().day(), 10);
-	}
 
-	if (_showMonth_2) {
+	if (_showMonth_2)
 		drawText(_monthPosition, datetime().month(), 10);
-	}
 
-	if (_showYear_2) {
+	if (_showYear_2)
 		drawText(_yearPosition, datetime().year(), 1000);
-	}
 
-	if (_showWeekday_2) {
+	if (_showWeekday_2)
 		drawWeekday(_weekdayPosition, datetime().weekday());
-	}
 }

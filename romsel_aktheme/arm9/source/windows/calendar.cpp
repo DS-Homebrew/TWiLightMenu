@@ -103,11 +103,9 @@ void Calendar::drawDayNumber(u8 day)
 	u8 secondNumber = day % 10;
 
 	if (day == datetime().day())
-		gdi().fillRect(_dayHighlightColor, _dayHighlightColor,
-					   x - (_daySize.x / 2 - w), y - (_daySize.y - h) / 2, _daySize.x - 1, _daySize.y - 1, selectedEngine());
+		gdi().fillRect(_dayHighlightColor, _dayHighlightColor, x - (_daySize.x / 2 - w), y - (_daySize.y - h) / 2, _daySize.x - 1, _daySize.y - 1, selectedEngine());
 
-	if (_dayNumbers.valid())
-	{
+	if (_dayNumbers.valid()) {
 		gdi().maskBlt(_dayNumbers.buffer() + firstNumber * pitch * h / 2, x, y, w, h, selectedEngine());
 		gdi().maskBlt(_dayNumbers.buffer() + secondNumber * pitch * h / 2, x + w, y, w, h, selectedEngine());
 	}
@@ -163,28 +161,21 @@ void Calendar::drawText(const akui::Point &position, u32 value, u32 factor)
 
 void Calendar::draw()
 {
-	if (_showDay)
-	{
-		for (u8 i = 1; i <= daysOfMonth(); ++i)
-		{
+	if (_showDay) {
+		for (u8 i = 1; i <= daysOfMonth(); ++i) {
 			drawDayNumber(i);
 		}
 	}
 
 	if (_showDayX)
-	{
 		drawText(_dayxPosition, datetime().day(), 10);
-	}
+
 	if (_showMonth)
-	{
 		drawText(_monthPosition, datetime().month(), 10);
-	}
+
 	if (_showYear)
-	{
 		drawText(_yearPosition, datetime().year(), 1000);
-	}
+
 	if (_showWeekday)
-	{
 		drawWeekday(_weekdayPosition, datetime().weekday());
-	}
 }
