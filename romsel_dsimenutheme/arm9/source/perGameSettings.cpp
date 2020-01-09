@@ -87,8 +87,6 @@ extern int file_count;
 
 char pergamefilepath[256];
 
-extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 extern mm_sound_effect snd_launch;
 extern mm_sound_effect snd_select;
 extern mm_sound_effect snd_stop;
@@ -355,118 +353,139 @@ void perGameSettings (std::string filename) {
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);
 
-		int perGameOpYpos = 98;
+		int perGameOpYpos = ms.theme() == 2 ? 112 : 98;
 
 		if (showPerGameSettings) {
 			printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
 		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
-		if (!showPerGameSettings || perGameOp[i] == -1) break;
-		switch (perGameOp[i]) {
-			case 0:
-				printSmall(false, 24, perGameOpYpos, "Language:");
-				if (perGameSettings_language == -2) {
-					printSmall(false, 188, perGameOpYpos, "Default");
-				} else if (perGameSettings_language == -1) {
-					printSmall(false, 188, perGameOpYpos, "System");
-				} else if (perGameSettings_language == 0) {
-					printSmall(false, 188, perGameOpYpos, "Japanese");
-				} else if (perGameSettings_language == 1) {
-					printSmall(false, 188, perGameOpYpos, "English");
-				} else if (perGameSettings_language == 2) {
-					printSmall(false, 188, perGameOpYpos, "French");
-				} else if (perGameSettings_language == 3) {
-					printSmall(false, 188, perGameOpYpos, "German");
-				} else if (perGameSettings_language == 4) {
-					printSmall(false, 188, perGameOpYpos, "Italian");
-				} else if (perGameSettings_language == 5) {
-					printSmall(false, 188, perGameOpYpos, "Spanish");
-				}
+			if (!showPerGameSettings || perGameOp[i] == -1)
 				break;
-			case 1:
-				if (isHomebrew[CURPOS]) {
-					printSmall(false, 24, perGameOpYpos, "RAM disk:");
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
-				} else {
-					printSmall(false, 24, perGameOpYpos, "Save number:");
-					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
-				}
-				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmall(false, 200, perGameOpYpos, "None");
-				} else {
-					printSmall(false, 220, perGameOpYpos, saveNoDisplay);
-				}
-				break;
-			case 2:
-				printSmall(false, 24, perGameOpYpos, "Run in:");
-				if (perGameSettings_dsiMode == -1) {
-					printSmall(false, 188, perGameOpYpos, "Default");
-				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, 128, perGameOpYpos, "DSi mode (Forced)");
-				} else if (perGameSettings_dsiMode == 1) {
-					printSmall(false, 184, perGameOpYpos, "DSi mode");
-				} else {
-					printSmall(false, 184, perGameOpYpos, "DS mode");
-				}
-				break;
-			case 3:
-				printSmall(false, 24, perGameOpYpos, "ARM9 CPU Speed:");
-				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-					printSmall(false, 146, perGameOpYpos, "133mhz (TWL)");
-				} else {
-					if (perGameSettings_boostCpu == -1) {
+
+			int xPos;
+			switch (perGameOp[i]) {
+				case 0:
+					printSmall(false, 24, perGameOpYpos, "Language:");
+
+					std::string languageText;
+					xPos = 188 - (ms.theme() == 2 ? 8 : 0);
+					switch (perGameSettings_language){
+						case -2:
+							languageText = "Default";
+							break;
+						case -1:
+							languageText = "System";
+							break;
+						case 0:
+							languageText = "Japanese";
+							if (ms.theme() == 2)
+								xPos = 172;
+							break;
+						case 1:
+							languageText = "English";
+							break;
+						case 2:
+							languageText = "French";
+							break;
+						case 3:
+							languageText = "German";
+							break;
+						case 4:
+							languageText = "Italian";
+							break;
+						case 5:
+							languageText = "Spanish";
+							break;
+					} 
+
+					printSmall(false, xPos, perGameOpYpos, languageText.c_str());
+					break;
+				case 1:
+					xPos = 24 + (ms.theme() == 2 ? 8 : 0);
+					if (isHomebrew[CURPOS]) {
+						printSmall(false, xPos, perGameOpYpos, "RAM disk:");
+						snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
+					} else {
+						printSmall(false, xPos, perGameOpYpos, "Save number:");
+						snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
+					}
+
+					if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
+						printSmall(false, 200, perGameOpYpos, "None");
+					} else {
+						printSmall(false, 220, perGameOpYpos, saveNoDisplay);
+					}
+					break;
+				case 2:
+					printSmall(false, 24, perGameOpYpos, "Run in:");
+					if (perGameSettings_dsiMode == -1) {
 						printSmall(false, 188, perGameOpYpos, "Default");
-					} else if (perGameSettings_boostCpu == 1) {
+					} else if (perGameSettings_dsiMode == 2) {
+						printSmall(false, 128, perGameOpYpos, "DSi mode (Forced)");
+					} else if (perGameSettings_dsiMode == 1) {
+						printSmall(false, 184, perGameOpYpos, "DSi mode");
+					} else {
+						printSmall(false, 184, perGameOpYpos, "DS mode");
+					}
+					break;
+				case 3:
+					printSmall(false, 24, perGameOpYpos, "ARM9 CPU Speed:");
+					if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 						printSmall(false, 146, perGameOpYpos, "133mhz (TWL)");
 					} else {
-						printSmall(false, 156, perGameOpYpos, "67mhz (NTR)");
+						if (perGameSettings_boostCpu == -1) {
+							printSmall(false, 188, perGameOpYpos, "Default");
+						} else if (perGameSettings_boostCpu == 1) {
+							printSmall(false, 146, perGameOpYpos, "133mhz (TWL)");
+						} else {
+							printSmall(false, 156, perGameOpYpos, "67mhz (NTR)");
+						}
 					}
-				}
-				break;
-			case 4:
-				printSmall(false, 24, perGameOpYpos, "VRAM boost:");
-				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-					printSmall(false, 188, perGameOpYpos, "On");
-				} else {
-					if (perGameSettings_boostVram == -1) {
-						printSmall(false, 188, perGameOpYpos, "Default");
-					} else if (perGameSettings_boostVram == 1) {
+					break;
+				case 4:
+					printSmall(false, 24, perGameOpYpos, "VRAM boost:");
+					if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 						printSmall(false, 188, perGameOpYpos, "On");
 					} else {
-						printSmall(false, 188, perGameOpYpos, "Off");
+						if (perGameSettings_boostVram == -1) {
+							printSmall(false, 188, perGameOpYpos, "Default");
+						} else if (perGameSettings_boostVram == 1) {
+							printSmall(false, 188, perGameOpYpos, "On");
+						} else {
+							printSmall(false, 188, perGameOpYpos, "Off");
+						}
 					}
-				}
-				break;
-			case 5:
-				printSmall(false, 24, perGameOpYpos, "Heap shrink:");
-				if (perGameSettings_heapShrink == -1) {
-					printSmall(false, 200, perGameOpYpos, "Auto");
-				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, 200, perGameOpYpos, "On");
-				} else {
-					printSmall(false, 200, perGameOpYpos, "Off");
-				}
-				break;
-			case 6:
-				printSmall(false, 24, perGameOpYpos, "Direct boot:");
-				if (perGameSettings_directBoot) {
-					printSmall(false, 200, perGameOpYpos, "Yes");
-				} else {
-					printSmall(false, 200, perGameOpYpos, "No");
-				}
-				break;
-			case 7:
-				printSmall(false, 24, perGameOpYpos, "Bootstrap:");
-				if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, 188, perGameOpYpos, "Default");
-				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, 188, perGameOpYpos, "Nightly");
-				} else {
-					printSmall(false, 188, perGameOpYpos, "Release");
-				}
-				break;
-		}
-		perGameOpYpos += 14;
+					break;
+				case 5:
+					printSmall(false, 24, perGameOpYpos, "Heap shrink:");
+					if (perGameSettings_heapShrink == -1) {
+						printSmall(false, 200, perGameOpYpos, "Auto");
+					} else if (perGameSettings_heapShrink == 1) {
+						printSmall(false, 200, perGameOpYpos, "On");
+					} else {
+						printSmall(false, 200, perGameOpYpos, "Off");
+					}
+					break;
+				case 6:
+					printSmall(false, 24, perGameOpYpos, "Direct boot:");
+					if (perGameSettings_directBoot) {
+						printSmall(false, 200, perGameOpYpos, "Yes");
+					} else {
+						printSmall(false, 200, perGameOpYpos, "No");
+					}
+					break;
+				case 7:
+					printSmall(false, 24, perGameOpYpos, "Bootstrap:");
+					if (perGameSettings_bootstrapFile == -1) {
+						printSmall(false, 188, perGameOpYpos, "Default");
+					} else if (perGameSettings_bootstrapFile == 1) {
+						printSmall(false, 188, perGameOpYpos, "Nightly");
+					} else {
+						printSmall(false, 188, perGameOpYpos, "Release");
+					}
+					break;
+			}
+			perGameOpYpos += 14;
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
 			printSmall(false, 194, 160, BUTTON_B" Back");
@@ -492,11 +511,9 @@ void perGameSettings (std::string filename) {
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		if (!showPerGameSettings) {
-			if ((pressed & KEY_A) || (pressed & KEY_B)) {
-				snd().playBack();
-				break;
-			}
+		if (!showPerGameSettings && ((pressed & KEY_A) || (pressed & KEY_B))) {
+			snd().playBack();
+			break;
 		} else {
 			if (pressed & KEY_UP) {
 				snd().playSelect();
@@ -507,8 +524,7 @@ void perGameSettings (std::string filename) {
 				} else if (perGameSettings_cursorPosition < firstPerGameOpShown) {
 					firstPerGameOpShown--;
 				}
-			}
-			if (pressed & KEY_DOWN) {
+			} else if (pressed & KEY_DOWN) {
 				snd().playSelect();
 				perGameSettings_cursorPosition++;
 				if (perGameSettings_cursorPosition > perGameOps) {

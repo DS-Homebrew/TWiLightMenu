@@ -92,6 +92,8 @@ extern bool applaunchprep;
 extern touchPosition touch;
 
 extern bool showdialogbox;
+extern int dialogboxHeight;
+
 extern bool dboxInFrame;
 extern bool dbox_showIcon;
 extern bool dbox_selectMenu;
@@ -822,51 +824,51 @@ void launchGba(void) {
 	ms().saveSettings();
 
 	// Switch to GBA mode
-	if (ms().useGbarunner) {
-		if (ms().secondaryDevice) {
-			const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-			if (isDSiMode()) {
-				gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
-			}
-			if (ms().useBootstrap) {
-				int err = runNdsFile(gbaRunner2Path, 0, NULL, true, true, false, true, false);
-				iprintf("Start failed. Error %i\n", err);
-			} else {
-				if (isDSiMode()) {
-					loadGameOnFlashcard(gbaRunner2Path, (ms().consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
-				} else {
-					loadGameOnFlashcard(gbaRunner2Path, (ms().gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
-				}
-			}
+	if (!ms().useGbarunner) {
+		gbaSwitch();
+		return;
+	}
+
+	if (ms().secondaryDevice) {
+		const char* gbaRunner2Path = ms().gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
+		if (isDSiMode()) {
+			gbaRunner2Path = ms().consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+		}
+		if (ms().useBootstrap) {
+			int err = runNdsFile(gbaRunner2Path, 0, NULL, true, true, false, true, false);
+			iprintf("Start failed. Error %i\n", err);
 		} else {
-			std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds"
-								: "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-			std::vector<char*> argarray;
-			argarray.push_back(strdup(bootstrapPath.c_str()));
-			argarray.at(0) = (char*)bootstrapPath.c_str();
-
-			easysave::ini bootstrapini("sd:/_nds/nds-bootstrap.ini");
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
-			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-			bootstrapini.flush();
-			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
-			char text[32];
-			snprintf(text, sizeof(text), "Start failed. Error %i", err);
-			fadeType = true;
-			printLarge(false, 4, 4, text);
-			if (err == 1) {
-				printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+			if (isDSiMode()) {
+				loadGameOnFlashcard(gbaRunner2Path, (ms().consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
+			} else {
+				loadGameOnFlashcard(gbaRunner2Path, (ms().gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
 			}
-			stop();
 		}
 	} else {
-		gbaSwitch();
+		std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+
+		std::vector<char*> argarray;
+		argarray.push_back(strdup(bootstrapPath.c_str()));
+		argarray.at(0) = (char*)bootstrapPath.c_str();
+
+		CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+		bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+		bootstrapini.SaveIniFileModified();
+		int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
+		char text[32];
+		snprintf(text, sizeof(text), "Start failed. Error %i", err);
+		fadeType = true;
+		printLarge(false, 4, 4, text);
+		if (err == 1) {
+			printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+		}
+		stop();
 	}
 }
 
@@ -881,19 +883,26 @@ void smsWarning(void) {
 		displayGameIcons = false;
 		fadeType = true;
 	} else {
+		dialogboxHeight = 3;
 		showdialogbox = true;
 	}
+
 	clearText();
+
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
+	} else if (ms().theme == 2) {
+		printLargeCentered(false, 84, "Warning");
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmallCentered(false, 64, "When the game starts, please");
-	printSmallCentered(false, 78, "touch the screen to go into");
-	printSmallCentered(false, 92, "the menu, and exit out of it");
-	printSmallCentered(false, 106, "for the sound to work.");
+
+	printSmallCentered(false, ms().theme == 2 ? 104 : 64, "When the game starts, please");
+	printSmallCentered(false, ms().theme == 2 ? 112 : 78, "touch the screen to go into");
+	printSmallCentered(false, ms().theme == 2 ? 120 : 92, "the menu, and exit out of it");
+	printSmallCentered(false, ms().theme == 2 ? 128 : 106, "for the sound to work.");
 	printSmall(false, 208, 160, BUTTON_A " OK");
+
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -926,8 +935,6 @@ void smsWarning(void) {
 }
 
 void mdRomTooBig(void) {
-	// int bottomBright = 0;
-
 	if (ms().theme == 4) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
@@ -940,20 +947,30 @@ void mdRomTooBig(void) {
 	} else {
 		snd().playWrong();
 		dbox_showIcon = true;
+		dialogboxHeight = 3;
 		showdialogbox = true;
 	}
 	clearText();
+
 	if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		snd().playWrong();
+	} else if (ms().theme == 2) {
+		printLargeCentered(false, 84, "Error!")
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmallCentered(false, 64, "This Mega Drive or Genesis");
-	printSmallCentered(false, 78, "ROM cannot be launched,");
-	printSmallCentered(false, 92, "due to the size of it");
-	printSmallCentered(false, 106, "being above 3MB.");
-	printSmall(false, 208, 160, BUTTON_A " OK");
+
+	printSmallCentered(false, ms().theme == 2 ? 104 : 64, "This SEGA Genesis/Mega Drive");
+	printSmallCentered(false, ms().theme == 2 ? 112 : 78, "ROM cannot be launched,");
+	printSmallCentered(false, ms().theme == 2 ? 120 : 92, "due to it surpassing the");
+	printSmallCentered(false, ms().theme == 2 ? 128 : 106, "size limit of 3 MB.");
+
+	if (ms().theme == 2)
+		printSmallCentered(false, 142, BUTTON_A " OK");
+	else
+		printSmall(false, 208, 160, BUTTON_A " OK");
+
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -966,71 +983,6 @@ void mdRomTooBig(void) {
 		drawClockColon();
 		snd().updateStream();
 		swiWaitForVBlank();
-
-		// Debug code for changing brightness of BG layer
-
-		/*if (pressed & KEY_UP) {
-			bottomBright--;
-		} else if (pressed & KEY_DOWN) {
-			bottomBright++;
-		}
-		
-
-
-		if (bottomBright < 0) bottomBright = 0;
-		if (bottomBright > 15) bottomBright = 15;
-
-		switch (bottomBright) {
-			case 0:
-			default:
-				REG_BLDY = 0;
-				break;
-			case 1:
-				REG_BLDY = (0b0001 << 1);
-				break;
-			case 2:
-				REG_BLDY = (0b0010 << 1);
-				break;
-			case 3:
-				REG_BLDY = (0b0011 << 1);
-				break;
-			case 4:
-				REG_BLDY = (0b0100 << 1);
-				break;
-			case 5:
-				REG_BLDY = (0b0101 << 1);
-				break;
-			case 6:
-				REG_BLDY = (0b0110 << 1);
-				break;
-			case 7:
-				REG_BLDY = (0b0111 << 1);
-				break;
-			case 8:
-				REG_BLDY = (0b1000 << 1);
-				break;
-			case 9:
-				REG_BLDY = (0b1001 << 1);
-				break;
-			case 10:
-				REG_BLDY = (0b1010 << 1);
-				break;
-			case 11:
-				REG_BLDY = (0b1011 << 1);
-				break;
-			case 12:
-				REG_BLDY = (0b1100 << 1);
-				break;
-			case 13:
-				REG_BLDY = (0b1101 << 1);
-				break;
-			case 14:
-				REG_BLDY = (0b1110 << 1);
-				break;
-			case 15:
-				REG_BLDY = (0b1111 << 1);
-				break;
-		}*/
 	} while (!(pressed & KEY_A));
 	snd().playBack();
 	showdialogbox = false;
@@ -1046,13 +998,17 @@ void mdRomTooBig(void) {
 		snd().playStartup();
 	} else {
 		clearText();
+		showdialogbox = false;
+		dialogboxHeight = 0;
 	}
 }
 
 void ramDiskMsg(const char *filename) {
 	clearText();
 	snd().playWrong();
+
 	if (ms().theme != 4) {
+		dialogboxHeight = 1;
 		dbox_showIcon = true;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
@@ -1061,22 +1017,52 @@ void ramDiskMsg(const char *filename) {
 		}
 		titleUpdate(false, filename, CURPOS);
 	}
-	std::string dirContName = filename;
-	// About 38 characters fit in the box.
-	if (strlen(dirContName.c_str()) > 38) {
-		// Truncate to 35, 35 + 3 = 38 (because we append "...").
-		dirContName.resize(35, ' ');
-		size_t first = dirContName.find_first_not_of(' ');
-		size_t last = dirContName.find_last_not_of(' ');
-		dirContName = dirContName.substr(first, (last - first + 1));
-		dirContName.append("...");
+
+	if (ms().theme != 2) {
+		std::string dirContName = filename;
+		// About 38 characters fit in the box.
+		if (strlen(dirContName.c_str()) > 38) {
+			// Truncate to 35, 35 + 3 = 38 (because we append "...").
+			dirContName.resize(35, ' ');
+			size_t first = dirContName.find_first_not_of(' ');
+			size_t last = dirContName.find_last_not_of(' ');
+			dirContName = dirContName.substr(first, (last - first + 1));
+			dirContName.append("...");
+		}
+		printSmall(false, 16, 66, dirContName.c_str());
 	}
-	printSmall(false, 16, 66, dirContName.c_str());
-	int yPos1 = (ms().theme == 4 ? 24 : 112);
-	int yPos2 = (ms().theme == 4 ? 40 : 128);
+
+	int yPos1;
+	int yPos2;
+	int okButton;
+
+	switch (ms.theme()) {
+		case 4:
+			yPos1 = 24;
+			yPos2 = 40;
+			okButton = 64;
+			break;
+		case 2:
+			printLargeCentered(false, 84, "Error!");
+
+			yPos1 = 104;
+			yPos2 = 112;
+			okButton = 126;
+			break;
+		default:
+			yPos1 = 112;
+			yPos2 = 128;
+			okButton = 160;
+	}
+
 	printSmallCentered(false, yPos1, "This app requires a");
 	printSmallCentered(false, yPos2, "RAM disk to work.");
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+
+	if (ms().theme == 2)
+		printSmallCentered(false, okButton, BUTTON_A " OK");
+	else
+		printSmall(false, 208, okButton, BUTTON_A " OK");
+
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1096,6 +1082,7 @@ void ramDiskMsg(const char *filename) {
 		snd().playLaunch();
 	} else {
 		showdialogbox = false;
+		dialogboxHeight = 0;
 	}
 }
 
