@@ -51,7 +51,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
 
@@ -107,7 +107,7 @@ int perGameOp[8] = {-1};
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew[CURPOS] || ms().secondaryDevice));	// Homebrew only
 	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[CURPOS] ? true : -1));
@@ -120,12 +120,12 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostCpu = pergameini.GetInt("GAMESETTINGS", "BOOST_CPU", -1);
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_heapShrink = pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", -1);
-    perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
+	perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
 }
 
 void savePerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew[CURPOS]) {
 		if (!ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
@@ -138,52 +138,45 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
 	} else {
-		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
-		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
+		if (ms().useBootstrap || !ms().secondaryDevice) {
+			pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
+			pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+			pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", perGameSettings_heapShrink);
+			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
-		if (ms().useBootstrap || !ms().secondaryDevice) pergameini.SetInt("GAMESETTINGS", "SAVE_NUMBER", perGameSettings_saveNo);
+
+		if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
+			pergameini.SetInt("GAMESETTINGS", "DSI_MODE", perGameSettings_dsiMode);
+
 		if (REG_SCFG_EXT != 0) {
 			pergameini.SetInt("GAMESETTINGS", "BOOST_CPU", perGameSettings_boostCpu);
 			pergameini.SetInt("GAMESETTINGS", "BOOST_VRAM", perGameSettings_boostVram);
 		}
-		if (ms().useBootstrap || !ms().secondaryDevice) {
-			pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", perGameSettings_heapShrink);
-			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
-		}
 	}
-	pergameini.flush();
+	pergameini.SaveIniFileModified();
 }
 
 bool checkIfShowAPMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
-		return true;	// Show AP message
-	}
-	return false;	// Don't show AP message
+	CIniFile pergameini(pergamefilepath);
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void dontShowAPMsgAgain (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini(pergamefilepath);
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
-	pergameini.flush();
+	pergameini.SaveIniFileModified();
 }
 
 bool checkIfDSiMode (std::string filename) {
-	if (!isDSiMode() || (!ms().useBootstrap && ms().secondaryDevice)) {
+	if (!isDSiMode() || (!ms().useBootstrap && ms().secondaryDevice))
 		return false;
-	}
 
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini(pergamefilepath);
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew[CURPOS] ? true : -1));
-	if (perGameSettings_dsiMode == -1) {
-		return ms().bstrap_dsiMode;
-	} else {
-		return perGameSettings_dsiMode;
-	}
+	return perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode;
 }
 
 void perGameSettings (std::string filename) {

@@ -54,7 +54,7 @@
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/tonccpy.h"
 
 #include "sound.h"
@@ -582,43 +582,50 @@ std::string ReplaceAll(const std::string str, const std::string &from, const std
 	return newStr;
 }
 
-void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings) {
+void loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
+		std::string filename = ndsPath;
+
+		const size_t last_slash_idx = filename.find_last_of("\\/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
 		loadPerGameSettings(filename);
 
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 	}
+
 	std::string path;
 	int err = 0;
 	snd().stopStream();
 
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
-		easysave::ini fcrompathini("fat:/_wfwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
+		path = replaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
-		easysave::ini fcrompathini("fat:/_afwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
+		path = replaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
-		easysave::ini fcrompathini("fat:/_dstwo/autoboot.ini");
-		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
+		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
+		path = replaceAll(ndsPath.c_str(), "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
-		fcrompathini.flush();
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		easysave::ini fcrompathini("fat:/__rpg/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
+		path = replaceAll(ndsPath.c_str(), "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
-		fcrompathini.flush();
-		// Does not support autoboot; so only nds-bootstrap launching works.
+		fcrompathini.SaveIniFileModified();
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
@@ -646,8 +653,7 @@ void unlaunchSetHiyaBoot(void) {
 	toncset((u8 *)0x02000818, 0, 0x20 + 0x208 + 0x1C0); // Unlaunch Reserved (zero)
 	int i2 = 0;
 	for (int i = 0; i < 14; i++) {
-		*(u8 *)(0x02000838 + i2) =
-		    hiyaNdsPath[i]; // Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+		*(u8 *)(0x02000838 + i2) = hiyaNdsPath[i]; // Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
 		i2 += 2;
 	}
 	while (*(vu16 *)(0x0200080E) == 0) { // Keep running, so that CRC16 isn't 0
@@ -695,9 +701,7 @@ int main(int argc, char **argv) {
 	sys().initArm7RegStatuses();
 
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath =
-		    "fat:/_nds/TWiLightMenu/settings.ini"; // Fallback to .ini path on flashcard, if not found on
-							   // SD card, or if SD access is disabled
+		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini"; // Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
 	}
 
 	ms().loadSettings();
@@ -934,8 +938,7 @@ int main(int argc, char **argv) {
 
 		if (applaunch) {
 			// Delete previously used DSiWare of flashcard from SD
-			if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice &&
-			    bothSDandFlashcard()) {
+			if (!ms().gotosettings && ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
 					remove("sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 				}
@@ -1040,8 +1043,7 @@ int main(int argc, char **argv) {
 					toncset(buffer, 0, sizeof(buffer));
 					bool bufferCleared = false;
 					char savHdrPath[64];
-					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
-						 (unsigned int)NDSHeader.pubSavSize);
+					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.pubSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
 					if (hdrFile)
 						fread(buffer, 1, 0x200, hdrFile);
@@ -1191,14 +1193,12 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = true;
 					fcopy(ms().dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
-					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
-						fcopy(ms().dsiWarePubPath.c_str(),
-						      "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
-					}
-					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0)) {
-						fcopy(ms().dsiWarePrvPath.c_str(),
-						      "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
-					}
+					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0))
+						fcopy(ms().dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
+
+					if ((access(ms().dsiWarePrvPath.c_str(), F_OK) == 0) && (NDSHeader.prvSavSize > 0))
+						fcopy(ms().dsiWarePrvPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
+
 					showProgressIcon = false;
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
@@ -1239,12 +1239,10 @@ int main(int argc, char **argv) {
 				}
 
 				char unlaunchDevicePath[256];
-				if (ms().secondaryDevice) {
-					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath),
-						 "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
-				} else {
-					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s",
-						 ms().dsiWareSrlPath.c_str());
+				if (ms().secondaryDevice)
+					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
+				else {
+					snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", ms().dsiWareSrlPath.c_str());
 					unlaunchDevicePath[0] = 's';
 					unlaunchDevicePath[1] = 'd';
 					unlaunchDevicePath[2] = 'm';
@@ -1578,9 +1576,9 @@ int main(int argc, char **argv) {
 						if (ROMpath[4+i] == '\x00') break;
 					}
 
-					easysave::ini dstwobootini("fat:/_dstwo/twlm.ini");
+					CIniFile dstwobootini("fat:/_dstwo/twlm.ini");
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
-					dstwobootini.flush();
+					dstwobootini.SaveIniFileModified();
 				} else if (extention(filename, ".rvid")) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 				} else if (extention(filename, ".gb") || extention(filename, ".sgb") || extention(filename, ".gbc")) {

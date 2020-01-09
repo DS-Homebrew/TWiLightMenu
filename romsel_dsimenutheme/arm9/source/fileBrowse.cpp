@@ -1838,7 +1838,7 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = 1;
 					writeBannerText(0, "Please wait...", "", "");
 
-					easysave::ini gameOrderIni(gameOrderIniPath);
+					CIniFile gameOrderIni(gameOrderIniPath);
 					vector<std::string> gameOrder;
 					char str[12] = {0};
 
@@ -1889,7 +1889,7 @@ string browseForFile(const vector<string> extensionList) {
 						sprintf(str, "%d", i);
 						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
 					}
-					gameOrderIni.flush();
+					gameOrderIni.SaveIniFileModified();
 
 					ms().sortMethod = 4;
 					ms().saveSettings();
@@ -2622,14 +2622,13 @@ string browseForFile(const vector<string> extensionList) {
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
 
-							easysave::ini recentlyPlayedIni(recentlyPlayedIniPath);
+							CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 							vector<std::string> recentlyPlayed;
 							char str[12] = {0};
 
 							for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
 								sprintf(str, "%d", i);
-								recentlyPlayed.push_back(
-										recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
+								recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 								if (recentlyPlayed[i] == "NULL")
 									recentlyPlayed[i] = dirContents[scrn][i].name;
 							}
@@ -2674,11 +2673,11 @@ string browseForFile(const vector<string> extensionList) {
 								sprintf(str, "%d", i);
 								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
 							}
-							recentlyPlayedIni.flush();
+							recentlyPlayedIni.SaveIniFileModified();
 
-							easysave::ini timesPlayedIni(timesPlayedIniPath);
+							CIniFile timesPlayedIni(timesPlayedIniPath);
 							timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
-							timesPlayedIni.flush();
+							timesPlayedIni.SaveIniFileModified();
 
 							if(ms().sortMethod == 1) {
 								ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
@@ -2869,7 +2868,7 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if ((pressed & KEY_X) && !startMenu && bannerTextShown && showSTARTborder) {
-				easysave::ini hiddenGamesIni(hiddenGamesIniPath);
+				CIniFile hiddenGamesIni(hiddenGamesIniPath);
 				vector<std::string> hiddenGames;
 				char str[12] = {0};
 

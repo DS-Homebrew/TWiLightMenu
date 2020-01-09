@@ -418,16 +418,16 @@ void SetGameSoftReset(const char* filename) {
 
 	// Check for games that have it's own reset function (OS_Reset not used).
 	static const char list[][4] = {
-	    "NTR", // Download Play ROMs
-	    "ASM", // Super Mario 64 DS
-	    "SMS", // Super Mario Star World, and Mario's Holiday
-	    "AMC", // Mario Kart DS
-	    "EKD", // Ermii Kart DS
-	    "A2D", // New Super Mario Bros.
-	    "ARZ", // Rockman ZX/MegaMan ZX
-	    "AKW", // Kirby Squeak Squad/Mouse Attack
-	    "YZX", // Rockman ZX Advent/MegaMan ZX Advent
-	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
+		"NTR", // Download Play ROMs
+		"ASM", // Super Mario 64 DS
+		"SMS", // Super Mario Star World, and Mario's Holiday
+		"AMC", // Mario Kart DS
+		"EKD", // Ermii Kart DS
+		"A2D", // New Super Mario Bros.
+		"ARZ", // Rockman ZX/MegaMan ZX
+		"AKW", // Kirby Squeak Squad/Mouse Attack
+		"YZX", // Rockman ZX Advent/MegaMan ZX Advent
+		"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	};
 
 	// TODO: If the list gets large enough, switch to bsearch().

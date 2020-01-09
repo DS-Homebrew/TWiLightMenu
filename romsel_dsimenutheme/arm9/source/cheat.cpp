@@ -137,11 +137,11 @@ bool CheatCodelist::parseInternal(FILE* aDat, uint32_t gamecode, uint32_t crc32)
 
 	uint32_t* ccode = (uint32_t*)(((uint32_t)gameTitle + strlen(gameTitle)+4)&~3);
 	uint32_t cheatCount = *ccode;
-	cheatCount& = 0x0fffffff;
+	cheatCount&=0x0fffffff;
 	ccode += 9;
 
-	uint32_t cc=0;
-	while(cc<cheatCount) {
+	uint32_t cc = 0;
+	while(cc < cheatCount) {
 		uint32_t folderCount = 1;
 		char* folderName = NULL;
 		char* folderNote = NULL;

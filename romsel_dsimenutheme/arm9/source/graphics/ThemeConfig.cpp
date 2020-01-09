@@ -3,7 +3,7 @@
 #include "themefilenames.h"
 #include "common/dsimenusettings.h"
 #include "common/singleton.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 #include <nds.h>
 #include <string>
@@ -43,38 +43,37 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 void ThemeConfig::loadConfig()
 {
 	printf("tc().loadConfig()\n");
-    easysave::ini themeConfig(TFN_THEME_SETTINGS);
-    _startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
-    _startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
-    _startBorderSpriteH = themeConfig.GetInt("THEME", "StartBorderSpriteH", _startBorderSpriteH);
-    _startTextRenderY = themeConfig.GetInt("THEME", "StartTextRenderY", _startTextRenderY);
+	CIniFile themeConfig(TFN_THEME_SETTINGS);
+	_startBorderRenderY = themeConfig.GetInt("THEME", "StartBorderRenderY", _startBorderRenderY);
+	_startBorderSpriteW = themeConfig.GetInt("THEME", "StartBorderSpriteW", _startBorderSpriteW);
+	_startBorderSpriteH = themeConfig.GetInt("THEME", "StartBorderSpriteH", _startBorderSpriteH);
+	_startTextRenderY = themeConfig.GetInt("THEME", "StartTextRenderY", _startTextRenderY);
 
-    _bubbleTipRenderY = themeConfig.GetInt("THEME", "BubbleTipRenderY", _bubbleTipRenderY);
-    _bubbleTipRenderX = themeConfig.GetInt("THEME", "BubbleTipRenderX", _bubbleTipRenderX);
-    _bubbleTipSpriteW = themeConfig.GetInt("THEME", "BubbleTipSpriteW", _bubbleTipSpriteW);
-    _bubbleTipSpriteH = themeConfig.GetInt("THEME", "BubbleTipSpriteH", _bubbleTipSpriteH);
-    _titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
-    _volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
-    _volumeRenderY = themeConfig.GetInt("THEME", "VolumeRenderY", _volumeRenderY);
-    // _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);
-    // _photoRenderY = themeConfig.GetInt("THEME", "PhotoRenderY", _photoRenderY);
-    _shoulderLRenderY = themeConfig.GetInt("THEME", "ShoulderLRenderY", _shoulderLRenderY);
-    _shoulderLRenderX = themeConfig.GetInt("THEME", "ShoulderLRenderX", _shoulderLRenderX);
-    _shoulderRRenderY = themeConfig.GetInt("THEME", "ShoulderRRenderY", _shoulderRRenderY);
-    _shoulderRRenderX = themeConfig.GetInt("THEME", "ShoulderRRenderX", _shoulderRRenderX);
-    _batteryRenderY = themeConfig.GetInt("THEME", "BatteryRenderY", _batteryRenderY);
-    _batteryRenderX = themeConfig.GetInt("THEME", "BatteryRenderX", _batteryRenderX);
+	_bubbleTipRenderY = themeConfig.GetInt("THEME", "BubbleTipRenderY", _bubbleTipRenderY);
+	_bubbleTipRenderX = themeConfig.GetInt("THEME", "BubbleTipRenderX", _bubbleTipRenderX);
+	_bubbleTipSpriteW = themeConfig.GetInt("THEME", "BubbleTipSpriteW", _bubbleTipSpriteW);
+	_bubbleTipSpriteH = themeConfig.GetInt("THEME", "BubbleTipSpriteH", _bubbleTipSpriteH);
+	_titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
+	_volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
+	_volumeRenderY = themeConfig.GetInt("THEME", "VolumeRenderY", _volumeRenderY);
+	// _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);
+	// _photoRenderY = themeConfig.GetInt("THEME", "PhotoRenderY", _photoRenderY);
+	_shoulderLRenderY = themeConfig.GetInt("THEME", "ShoulderLRenderY", _shoulderLRenderY);
+	_shoulderLRenderX = themeConfig.GetInt("THEME", "ShoulderLRenderX", _shoulderLRenderX);
+	_shoulderRRenderY = themeConfig.GetInt("THEME", "ShoulderRRenderY", _shoulderRRenderY);
+	_shoulderRRenderX = themeConfig.GetInt("THEME", "ShoulderRRenderX", _shoulderRRenderX);
+	_batteryRenderY = themeConfig.GetInt("THEME", "BatteryRenderY", _batteryRenderY);
+	_batteryRenderX = themeConfig.GetInt("THEME", "BatteryRenderX", _batteryRenderX);
 
-    _startTextUserPalette = themeConfig.GetInt("THEME", "StartTextUserPalette", _startTextUserPalette);
-    _startBorderUserPalette = themeConfig.GetInt("THEME", "StartBorderUserPalette", _startBorderUserPalette);
-    _buttonArrowUserPalette = themeConfig.GetInt("THEME", "ButtonArrowUserPalette", _buttonArrowUserPalette);
-    _movingArrowUserPalette = themeConfig.GetInt("THEME", "MovingArrowUserPalette", _movingArrowUserPalette);
-    _launchDotsUserPalette = themeConfig.GetInt("THEME", "LaunchDotsUserPalette", _launchDotsUserPalette);
-    _dialogBoxUserPalette = themeConfig.GetInt("THEME", "DialogBoxUserPalette", _dialogBoxUserPalette);
-    _rotatingCubesRenderY = themeConfig.GetInt("THEME", "RotatingCubesRenderY", _rotatingCubesRenderY);
-    _renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
+	_startTextUserPalette = themeConfig.GetInt("THEME", "StartTextUserPalette", _startTextUserPalette);
+	_startBorderUserPalette = themeConfig.GetInt("THEME", "StartBorderUserPalette", _startBorderUserPalette);
+	_buttonArrowUserPalette = themeConfig.GetInt("THEME", "ButtonArrowUserPalette", _buttonArrowUserPalette);
+	_movingArrowUserPalette = themeConfig.GetInt("THEME", "MovingArrowUserPalette", _movingArrowUserPalette);
+	_launchDotsUserPalette = themeConfig.GetInt("THEME", "LaunchDotsUserPalette", _launchDotsUserPalette);
+	_dialogBoxUserPalette = themeConfig.GetInt("THEME", "DialogBoxUserPalette", _dialogBoxUserPalette);
+	_rotatingCubesRenderY = themeConfig.GetInt("THEME", "RotatingCubesRenderY", _rotatingCubesRenderY);
+	_renderPhoto = themeConfig.GetInt("THEME", "RenderPhoto", _renderPhoto);
 
-    _playStartupJingle = themeConfig.GetInt("THEME", "PlayStartupJingle", _playStartupJingle);
-    _startupJingleDelayAdjust = themeConfig.GetInt("THEME", "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
-
+	_playStartupJingle = themeConfig.GetInt("THEME", "PlayStartupJingle", _playStartupJingle);
+	_startupJingleDelayAdjust = themeConfig.GetInt("THEME", "StartupJingleDelayAdjust", _startupJingleDelayAdjust);
 }
