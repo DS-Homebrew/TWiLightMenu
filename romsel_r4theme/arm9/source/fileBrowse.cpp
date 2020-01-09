@@ -266,8 +266,8 @@ void mdRomTooBig(void) {
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "This SEGA Genesis/Mega Drive");
 	printSmallCentered(false, 112, "ROM cannot be launched,");
-	printSmallCentered(false, 120, "due to its surpassing the");
-	printSmallCentered(false, 128, "size limit of 3MB.");
+	printSmallCentered(false, 120, "due to it surpassing the");
+	printSmallCentered(false, 128, "size limit of 3 MB.");
 	printSmallCentered(false, 142, "A: OK");
 	int pressed = 0;
 	do {
@@ -489,17 +489,13 @@ string browseForFile(const vector<string> extensionList)
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
 					hasAP = checkRomAP(f_nds_file);
 					fclose(f_nds_file);
-				}
-				else if (isHomebrew == 1)
-				{
+				} else if (isHomebrew == 1) {
 					loadPerGameSettings(dirContents.at(fileOffset).name);
 					if (requiresRamDisk && perGameSettings_ramDiskNo == -1) {
 						proceedToLaunch = false;
 						ramDiskMsg();
 					}
-				}
-				else if (bnrRomType == 5 || bnrRomType == 6)
-				{
+				} else if (bnrRomType == 5 || bnrRomType == 6) {
 					smsWarning();
 					titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 					if (!isRegularDS) {

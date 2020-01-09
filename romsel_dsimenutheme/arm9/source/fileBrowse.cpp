@@ -144,7 +144,7 @@ bool bannerTextShown = false;
 
 extern void stop();
 
-extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings);
+extern void loadGameOnFlashcard(std::string ndsPath, bool usePerGameSettings);
 extern void dsCardLaunch();
 extern void unlaunchSetHiyaBoot();
 extern void SetWidescreen(const char *filename);
@@ -836,11 +836,7 @@ void launchGba(void) {
 			int err = runNdsFile(gbaRunner2Path, 0, NULL, true, true, false, true, false);
 			iprintf("Start failed. Error %i\n", err);
 		} else {
-			if (isDSiMode()) {
-				loadGameOnFlashcard(gbaRunner2Path, (ms().consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
-			} else {
-				loadGameOnFlashcard(gbaRunner2Path, (ms().gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
-			}
+			loadGameOnFlashcard(gbaRunner2Path, false);
 		}
 	} else {
 		std::string bootstrapPath = (ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
@@ -961,7 +957,7 @@ void mdRomTooBig(void) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		snd().playWrong();
 	} else if (ms().theme == 2) {
-		printLargeCentered(false, 84, "Error!")
+		printLargeCentered(false, 84, "Error!");
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
@@ -1040,7 +1036,7 @@ void ramDiskMsg(const char *filename) {
 	int yPos2;
 	int okButton;
 
-	switch (ms.theme()) {
+	switch (ms().theme) {
 		case 4:
 			yPos1 = 24;
 			yPos2 = 40;
@@ -1123,7 +1119,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 	int yPos2;
 	int okButton;
 
-	switch (ms.theme()) {
+	switch (ms().theme) {
 		case 4:
 			yPos1 = 24;
 			yPos2 = 40;
@@ -3021,24 +3017,23 @@ string browseForFile(const vector<string> extensionList) {
 							snd().updateStream();
 							swiWaitForVBlank();
 						}
-						if (ms().theme != 4) whiteScreen = true;
+
+						if (ms().theme != 4)
+							whiteScreen = true;
 
 						if (unHide) {
 							hiddenGames.erase(hiddenGames.begin() + whichToUnhide);
 							hiddenGames.push_back("");
-						} else {
+						} else
 							hiddenGames.push_back(gameBeingHidden);
-						}
 
 						for (int i = 0; i < (int)hiddenGames.size(); i++) {
 							char str[12] = {0};
 							sprintf(str, "%d", i);
-							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str,
-										 hiddenGames[i]);
+							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
 						}
-						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
-					  0777);
-						hiddenGamesIni.flush();
+						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
+						hiddenGamesIni.SaveIniFileModified();
 
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art

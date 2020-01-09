@@ -73,35 +73,35 @@ std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
 void writeBannerText(int textlines, const char *text1, const char *text2, const char *text3) {
 	if (ms().theme == 1) {
 		switch (textlines) {
-		case 0:
-		default:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printSmallCentered(false, BOX_PY, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
-			break;
+			case 0:
+			default:
+				printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+				break;
+			case 1:
+				printSmallCentered(false, BOX_PY + BOX_PY_spacing2, text1);
+				printSmallCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+				break;
+			case 2:
+				printSmallCentered(false, BOX_PY, text1);
+				printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text2);
+				printSmallCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+				break;
 		}
 	} else {
 		switch (textlines) {
-		case 0:
-		default:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
-			break;
+			case 0:
+			default:
+				printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+				break;
+			case 1:
+				printLargeCentered(false, BOX_PY + BOX_PY_spacing2, text1);
+				printLargeCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+				break;
+			case 2:
+				printLargeCentered(false, BOX_PY, text1);
+				printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text2);
+				printLargeCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+				break;
 		}
 	}
 }
@@ -711,7 +711,7 @@ void titleUpdate(bool isDir, const char *name, int num) {
 	 || extention(name, ".smc")
 	 || extention(name, ".sfc"))
 		writeBannerText(0, memcmp(name, "..", 2) == 0 ? "Back" : name, "", "");
-	} else {
+	else {
 		// this is an nds/app file!
 
 		// turn unicode into ascii (kind of)

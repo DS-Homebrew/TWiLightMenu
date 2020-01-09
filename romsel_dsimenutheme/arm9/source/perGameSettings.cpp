@@ -346,7 +346,7 @@ void perGameSettings (std::string filename) {
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);
 
-		int perGameOpYpos = ms.theme() == 2 ? 112 : 98;
+		int perGameOpYpos = ms().theme == 2 ? 112 : 98;
 
 		if (showPerGameSettings) {
 			printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
@@ -357,12 +357,12 @@ void perGameSettings (std::string filename) {
 
 			int xPos;
 			switch (perGameOp[i]) {
-				case 0:
+				case 0: {
 					printSmall(false, 24, perGameOpYpos, "Language:");
 
 					std::string languageText;
-					xPos = 188 - (ms.theme() == 2 ? 8 : 0);
-					switch (perGameSettings_language){
+					xPos = 188 - (ms().theme == 2 ? 8 : 0);
+					switch (perGameSettings_language) {
 						case -2:
 							languageText = "Default";
 							break;
@@ -371,7 +371,8 @@ void perGameSettings (std::string filename) {
 							break;
 						case 0:
 							languageText = "Japanese";
-							if (ms.theme() == 2)
+
+							if (ms().theme == 2)
 								xPos = 172;
 							break;
 						case 1:
@@ -389,12 +390,12 @@ void perGameSettings (std::string filename) {
 						case 5:
 							languageText = "Spanish";
 							break;
-					} 
+					}
 
 					printSmall(false, xPos, perGameOpYpos, languageText.c_str());
 					break;
-				case 1:
-					xPos = 24 + (ms.theme() == 2 ? 8 : 0);
+				} case 1:
+					xPos = 24 + (ms().theme == 2 ? 8 : 0);
 					if (isHomebrew[CURPOS]) {
 						printSmall(false, xPos, perGameOpYpos, "RAM disk:");
 						snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
