@@ -142,8 +142,6 @@ int waitForNeedToPlayStopSound = 0;
 
 bool bannerTextShown = false;
 
-extern std::string ReplaceAll(std::string str, const std::string &from, const std::string &to);
-
 extern void stop();
 
 extern void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings);
@@ -901,7 +899,11 @@ void smsWarning(void) {
 	printSmallCentered(false, ms().theme == 2 ? 112 : 78, "touch the screen to go into");
 	printSmallCentered(false, ms().theme == 2 ? 120 : 92, "the menu, and exit out of it");
 	printSmallCentered(false, ms().theme == 2 ? 128 : 106, "for the sound to work.");
-	printSmall(false, 208, 160, BUTTON_A " OK");
+
+	if (ms().theme == 2)
+		printSmallCentered(false, 142, BUTTON_A " OK");
+	else
+		printSmall(false, 208, 160, BUTTON_A " OK");
 
 	int pressed = 0;
 	do {
@@ -916,7 +918,10 @@ void smsWarning(void) {
 		snd().updateStream();
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
+
 	showdialogbox = false;
+	dialogboxHeight = 0;
+
 	if (ms().theme == 4) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -928,7 +933,7 @@ void smsWarning(void) {
 		fadeType = true;
 		snd().playStartup();
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
-	} else {
+	} else if (ms().theme != 2) {
 		clearText();
 		for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
@@ -986,6 +991,7 @@ void mdRomTooBig(void) {
 	} while (!(pressed & KEY_A));
 	snd().playBack();
 	showdialogbox = false;
+	dialogboxHeight = 0;
 	if (ms().theme == 4) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -998,8 +1004,6 @@ void mdRomTooBig(void) {
 		snd().playStartup();
 	} else {
 		clearText();
-		showdialogbox = false;
-		dialogboxHeight = 0;
 	}
 }
 
@@ -1091,6 +1095,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 	snd().playWrong();
 	if (ms().theme != 4) {
 		dbox_showIcon = true;
+		dialogboxHeight = 1;
 		showdialogbox = true;
 		for (int i = 0; i < 30; i++) {
 			snd().updateStream();
@@ -1098,22 +1103,53 @@ void dsiBinariesMissingMsg(const char *filename) {
 		}
 		titleUpdate(false, filename, CURPOS);
 	}
-	std::string dirContName = filename;
-	// About 38 characters fit in the box.
-	if (strlen(dirContName.c_str()) > 38) {
-		// Truncate to 35, 35 + 3 = 38 (because we append "...").
-		dirContName.resize(35, ' ');
-		size_t first = dirContName.find_first_not_of(' ');
-		size_t last = dirContName.find_last_not_of(' ');
-		dirContName = dirContName.substr(first, (last - first + 1));
-		dirContName.append("...");
+
+	if (ms().theme != 2) {
+		std::string dirContName = filename;
+		// About 38 characters fit in the box.
+		if (strlen(dirContName.c_str()) > 38) {
+			// Truncate to 35, 35 + 3 = 38 (because we append "...").
+			dirContName.resize(35, ' ');
+			size_t first = dirContName.find_first_not_of(' ');
+			size_t last = dirContName.find_last_not_of(' ');
+			dirContName = dirContName.substr(first, (last - first + 1));
+			dirContName.append("...");
+		}
+
+		printSmall(false, 16, 66, dirContName.c_str());
 	}
-	printSmall(false, 16, 66, dirContName.c_str());
-	int yPos1 = (ms().theme == 4 ? 24 : 112);
-	int yPos2 = (ms().theme == 4 ? 40 : 128);
+
+	int yPos1;
+	int yPos2;
+	int okButton;
+
+	switch (ms.theme()) {
+		case 4:
+			yPos1 = 24;
+			yPos2 = 40;
+			okButton = 64;
+			break;
+		case 2:
+			printLargeCentered(false, 84, "Error!");
+
+			yPos1 = 104;
+			yPos2 = 112;
+			okButton = 126;
+			break;
+		default:
+			yPos1 = 112;
+			yPos2 = 128;
+			okButton = 160;
+	}
+
 	printSmallCentered(false, yPos1, "The DSi binaries are missing.");
 	printSmallCentered(false, yPos2, "Please start in DS mode.");
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+
+	if (ms().theme == 2)
+		printSmallCentered(false, okButton, "A: OK");
+	else
+		printSmall(false, 208, okButton, BUTTON_A " OK");
+
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1132,6 +1168,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 	if (ms().theme == 4) {
 		snd().playLaunch();
 	} else {
+		dialogboxHeight = 0;
 		showdialogbox = false;
 	}
 }
@@ -1436,14 +1473,10 @@ string browseForFile(const vector<string> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();
-	gameOrderIniPath =
-		sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
-	recentlyPlayedIniPath =
-		sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
-	timesPlayedIniPath =
-		sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
-	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini"
-					   : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
+	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
+	recentlyPlayedIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+	timesPlayedIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
+	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
 
 	bool displayBoxArt = ms().showBoxArt;
 
@@ -2318,7 +2351,6 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				}	// End of DSi/3DS theme check
 				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-				;
 				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 				boxArtLoaded = false;
 				settingsChanged = true;

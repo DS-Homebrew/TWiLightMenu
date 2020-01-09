@@ -68,7 +68,7 @@ bool CheatCodelist::parse(const std::string& aFileName)
 	bool res = false;
 	uint32_t romcrc32,gamecode;
 	if (romData(aFileName, gamecode, romcrc32)) {
-		FILE* dat = fopen((sdFound() || !ms().secondaryDevice) ? "sd" : "fat" + ":/_nds/TWiLightMenu/extras/usrcheat.dat", "rb");
+		FILE* dat = fopen((sdFound() || !ms().secondaryDevice ? std::string("sd") : std::string("fat") + std::string(":/_nds/TWiLightMenu/extras/usrcheat.dat")).c_str(), "rb");
 		if(dat) {
 			res = parseInternal(dat, gamecode, romcrc32);
 			fclose(dat);
@@ -284,7 +284,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	dialogboxHeight = 6;
 	dbox_showIcon = true;
 
-	int HeaderPosition = ms.theme() == 2 ? 84 : 30;
+	int HeaderPosition = ms().theme == 2 ? 84 : 30;
 
 	printLargeCentered(false, HeaderPosition, "Cheats");
 	printSmallCentered(false, 100, "Loading...");
@@ -343,7 +343,7 @@ void CheatCodelist::selectCheats(std::string filename)
 	while(cheatsFound) {
 		clearText();
 		printLargeCentered(false, HeaderPosition, "Cheats");
-		int cheatPosition = ms.theme() == 2 ? 167 : 160;
+		int cheatPosition = ms().theme == 2 ? 167 : 160;
 
 		// Print bottom text
 
@@ -526,7 +526,7 @@ static void updateDB(u8 value,uint32_t offset,FILE* db)
 
 void CheatCodelist::onGenerate(void)
 {
-	FILE* dat = fopen((sdFound() || !ms().secondaryDevice) ? "sd" : "fat" + ":/_nds/TWiLightMenu/extras/usrcheat.dat", "r+b");
+	FILE* db = fopen((sdFound() || !ms().secondaryDevice ? std::string("sd") : std::string("fat") + std::string(":/_nds/TWiLightMenu/extras/usrcheat.dat")).c_str(), "r+b");
 	if(db) {
 		std::vector<cParsedItem>::iterator itr=_data.begin();
 		while (itr != _data.end()) {
