@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "common/bootstrappaths.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/tonccpy.h"
 #include "common/systemdetails.h"
 
@@ -49,7 +49,7 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 
 TWL_CODE void twl_flashcardInit(void) {
 	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
-		easysave::ini settingsini(DSIMENUPP_INI);
+		CIniFile settingsini(DSIMENUPP_INI);
 
 		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
 			return;

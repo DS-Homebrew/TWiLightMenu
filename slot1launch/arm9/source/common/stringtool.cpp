@@ -24,21 +24,32 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------------*/
 
+#include "stringtool.hpp"
+#include <cstdarg>
+#include <cstdio>
+#include <malloc.h>
 
+std::string formatString( const char* fmt, ... )
+{
+    const char * f = fmt;
+    va_list argList;
+    va_start(argList, fmt);
+    char * ptempStr = NULL;
+    size_t max_len = vasiprintf( &ptempStr, f, argList);
+    std::string str( ptempStr );
+    str.resize( max_len );
+    free( ptempStr );
+    va_end(argList);
+    return str;
+}
 
-
-
-
-
-
-
-#ifndef _STRINGTOOL_H_
-#define _STRINGTOOL_H_
-
-#include <string>
-
-std::string formatString( const char* fmt, ... );
-
-
-
-#endif//_STRINGTOOL_H_
+std::string replaceAll(std::string str, const std::string &from, const std::string &to)
+{
+	size_t start_pos = 0;
+	while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+	{
+		str.replace(start_pos, from.length(), to);
+		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+	}
+	return str;
+}

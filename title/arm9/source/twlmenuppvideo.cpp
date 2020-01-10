@@ -510,7 +510,9 @@ void twlMenuVideo(void) {
 	fclose(videoFrameFile);
 
 	// Load RocketVideo logo
-	lodepng::decode(image, width, height, "nitro:/twilight_splash/logo" + sys().isDSPhat() ? "Phat" : "" + "_rocketvideo.png");
+	char fileName[50];
+	sprintf(fileName, "nitro:/twilight_splash/logo%s_rocketvideo.png", sys().isDSPhat() ? "Phat" : "");
+	lodepng::decode(image, width, height, fileName);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
 		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
 	}

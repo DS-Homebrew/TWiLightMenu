@@ -1,4 +1,4 @@
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/bootstrappaths.h"
 #include "common/dsimenusettings.h"
 #include "bootstrapsettings.h"
@@ -16,7 +16,7 @@ BootstrapSettings::BootstrapSettings()
 
 void BootstrapSettings::loadSettings()
 {
-	easysave::ini bootstrapini(BOOTSTRAP_INI);
+	CIniFile bootstrapini(BOOTSTRAP_INI);
 
 	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
@@ -30,7 +30,7 @@ void BootstrapSettings::loadSettings()
 
 void BootstrapSettings::saveSettings()
 {
-	easysave::ini bootstrapini(BOOTSTRAP_INI);
+	CIniFile bootstrapini(BOOTSTRAP_INI);
 
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
@@ -40,6 +40,6 @@ void BootstrapSettings::saveSettings()
 	}
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", ms().soundFreq);
-	bootstrapini.SetInt( "NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
-	bootstrapini.flush();
+	bootstrapini.SetInt("NDS-BOOTSTRAP", "CONSOLE_MODEL", consoleModel);
+	bootstrapini.SaveIniFileModified();
 }

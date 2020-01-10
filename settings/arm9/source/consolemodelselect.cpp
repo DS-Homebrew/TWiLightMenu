@@ -14,7 +14,6 @@
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool fadeType;
-extern bool controlTopBright;
 
 void LoadConsoleBMP(void) {
 	std::string fileName = "nitro:/console_selector/dsivs3ds.png";
@@ -38,7 +37,6 @@ void LoadConsoleBMP(void) {
 bool consoleModel_isSure(int consoleModel) {
 	int isSure_pressed = 0;
 
-	controlTopBright = false;
 	fadeType = false;
 	for (int i = 0; i < 90; i++) {
 		swiWaitForVBlank();
@@ -78,7 +76,6 @@ bool consoleModel_isSure(int consoleModel) {
 		while (!isSure_pressed);
 
 		if (isSure_pressed & KEY_A) {
-			controlTopBright = true;
 			fadeType = false;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();

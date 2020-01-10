@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "common/bootstrappaths.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/systemdetails.h"
 
 static sNDSHeader nds;
@@ -47,72 +47,69 @@ TWL_CODE void ShowGameInfo(const char gameid[], const char gamename[]) {
 }
 
 TWL_CODE void twl_flashcardInit(void) {
-	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {
-		easysave::ini settingsini(DSIMENUPP_INI);
+	if (REG_SCFG_MC != 0x11 && !sys().arm7SCFGLocked()) {} else { return; }
 
-		if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false) {
-			return;
-		}
+	CIniFile settingsini(DSIMENUPP_INI);
+	if (settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", 0) == false)
+		return;
 
-		// Reset Slot-1 to allow reading title name and ID
-		sysSetCardOwner (BUS_OWNER_ARM9);
-		disableSlot1();
-		for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
-		enableSlot1();
-		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
+	// Reset Slot-1 to allow reading title name and ID
+	sysSetCardOwner (BUS_OWNER_ARM9);
+	disableSlot1();
+	for(int i = 0; i < 25; i++) { swiWaitForVBlank(); }
+	enableSlot1();
+	for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		nds.gameCode[0] = 0;
-		nds.gameTitle[0] = 0;
-		char gamename[13];
-		char gameid[5];
+	nds.gameCode[0] = 0;
+	nds.gameTitle[0] = 0;
+	char gamename[13];
+	char gameid[5];
 
-		/*fifoSendValue32(FIFO_USER_04, 1);
-		for (int i = 0; i < 10; i++) {
-			swiWaitForVBlank();
-		}
-		memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
-		UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
-
-		/*SetBrightness(0, 0);
-		SetBrightness(1, 0);
-		consoleDemoInit();
-		iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
-		ShowGameInfo(gameid, gamename);
-
-		for (int i = 0; i < 60*5; i++) {
-			swiWaitForVBlank();
-		}*/
-
-		sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
-
-		// Read a DLDI driver specific to the cart
-		/*if (!memcmp(gameid, "ASMA", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else*/ if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} else if (!memcmp(gameid, "ACEK", 4) || !memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4) || !memcmp(gameid, "CHPJ", 4) || !memcmp(gameid, "ADLP", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		} /*else if (!memcmp(gameid, "ALXX", 4)) {
-			io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
-			fatMountSimple("fat", &io_dldi_data->ioInterface);
-		}*/
+	/*fifoSendValue32(FIFO_USER_04, 1);
+	for (int i = 0; i < 10; i++) {
+		swiWaitForVBlank();
 	}
+	memcpy(&nds, (void*)0x02000000, sizeof(nds));*/
+	UpdateCardInfo(&nds, &gameid[0], &gamename[0]);
+
+	/*SetBrightness(0, 0);
+	SetBrightness(1, 0);
+	consoleDemoInit();
+	iprintf("REG_SCFG_MC: %x\n", REG_SCFG_MC);
+	ShowGameInfo(gameid, gamename);
+
+	for (int i = 0; i < 60*5; i++) {
+		swiWaitForVBlank();
+	}*/
+
+	sysSetCardOwner (BUS_OWNER_ARM7);	// 3DS fix
+
+	// Read a DLDI driver specific to the cart
+	/*if (!memcmp(gameid, "ASMA", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4tf.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} else if (!memcmp(gamename, "TOP TF/SD DS", 12) || !memcmp(gameid, "A76E", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/ttio.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} else if (!memcmp(gamename, "PASS", 4) && !memcmp(gameid, "ASME", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/CycloEvo.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} else if (!memcmp(gamename, "D!S!XTREME", 12) && !memcmp(gameid, "AYIE", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/dsx.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} else*/ if (!memcmp(gamename, "QMATETRIAL", 9) || !memcmp(gamename, "R4DSULTRA", 9)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/r4idsn_sd.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} else if (!memcmp(gameid, "ACEK", 4) || !memcmp(gameid, "YCEP", 4) || !memcmp(gameid, "AHZH", 4) || !memcmp(gameid, "CHPJ", 4) || !memcmp(gameid, "ADLP", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/ak2_sd.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	} /*else if (!memcmp(gameid, "ALXX", 4)) {
+		io_dldi_data = dldiLoadFromFile("nitro:/dldi/dstwo.dldi");
+		fatMountSimple("fat", &io_dldi_data->ioInterface);
+	}*/
 }
 
 void flashcardInit(void) {
-	if (isDSiMode() && !flashcardFound()) {
+	if (isDSiMode() && !flashcardFound())
 		twl_flashcardInit();
-	}
 }

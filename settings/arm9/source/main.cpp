@@ -38,7 +38,7 @@
 #include "graphics/fontHandler.h"
 
 #include "common/nds_loader_arm9.h"
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/fileCopy.h"
 #include "common/nitrofs.h"
 #include "common/bootstrappaths.h"
@@ -278,9 +278,9 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 		FILE *ResetData = fopen("sd:/hiya/autoboot.bin", "wb");
 		fwrite(autoboot_bin, 1, autoboot_bin_len, ResetData);
 		fclose(ResetData);
-		easysave::ini hiyacfwini(hiyacfwinipath);
+		CIniFile hiyacfwini(hiyacfwinipath);
 		hiyacfwini.SetInt("HIYA-CFW", "TITLE_AUTOBOOT", 1);
-		hiyacfwini.flush();
+		hiyacfwini.SaveIniFileModified();
 	}
 }
 
@@ -383,12 +383,8 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 
-	if (!sys().flashcardUsed() && ms().consoleModel < 2) {
-		if (access("sd:/hiya/autoboot.bin", F_OK) == 0)
-			hiyaAutobootFound = true;
-		else
-			hiyaAutobootFound = false;
-	}
+	if (!sys().flashcardUsed() && ms().consoleModel < 2)
+		hiyaAutobootFound = (access("sd:/hiya/autoboot.bin", F_OK) == 0);
 
 	currentTheme = ms().theme;
 

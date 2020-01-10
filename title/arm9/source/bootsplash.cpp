@@ -105,7 +105,7 @@ void BootSplashDSi(void) {
 		// Load H&S image
 		//Get the language for the splash screen
 		int language = (ms().getGuiLanguage());
-		std::string filename = "nitro:/health_safety/hsmsg" + (language == 2 ? std::string("-fr") : std::string("")) + ".png";
+		std::string filename = "nitro:/health_safety/hsmsg" + (language == 2 ? "-fr" : "") + ".png";
 
 		lodepng::decode(image, width, height, filename);
 		for(unsigned i = 0; i < image.size(); i = i * 4) {
@@ -149,7 +149,9 @@ void BootSplashDSi(void) {
 		}
 		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT == 0x8300C000);
 
-		videoFrameFile = fopen("nitro:/health_safety/dsisplash_60fps" + (dsiSixtyFpsRead ? std::string(".lz77") : std::string("")) + ".rvid", "rb");
+		char videoFrameFileName[47];
+		sprintf(videoFrameFileName, "nitro:/health_safety/dsisplash_60fps%s.rvid", dsiSixtyFpsRead ? ".lz77" : "");
+		videoFrameFile = fopen(videoFrameFileName, "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -217,7 +219,7 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFps = 24;
 
 		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-			sprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/health_safety/frames/frame%s.png", selectedFrame < 10 ? std::string("0") + std::string(selectedFrame) : std::string(selectedFrame));
+			sprintf(videoFrameFilename, "nitro:/health_safety/frames/frame%s.png", (selectedFrame < 10 ? "0" + std::to_string(selectedFrame).c_str() : std::to_string(selectedFrame)));
 
 			lodepng::decode(image, width, height, std::string(videoFrameFilename));
 			for(unsigned i = 0; i < image.size(); i = i * 4) {

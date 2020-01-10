@@ -26,7 +26,7 @@
 #include <malloc.h>
 #include <list>
 
-#include "easysave/ini.hpp"
+#include "common/inifile.hpp"
 #include "nds_card.h"
 #include "launch_engine.h"
 #include "crc.h"
@@ -72,7 +72,7 @@ int main() {
 	
 	if (isDSiMode()) {
 		if (fatInitDefault()) {
-			easysave::ini settingsini("/_nds/TWiLightMenu/settings.ini");
+			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
 			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);

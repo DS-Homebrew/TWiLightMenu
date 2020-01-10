@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string>
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "common/dsimenusettings.h"
 
 // Strings
@@ -216,7 +216,7 @@ void langInit(void)
 			break;
 	}
 
-	easysave::ini languageini(languageIniPath);
+	CIniFile languageini(languageIniPath);
 
 	STR_MISC_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "MISC_SETTINGS", "Misc. settings"));
 	STR_GUI_SETTINGS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "GUI_SETTINGS", "GUI Settings"));

@@ -17,8 +17,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	slot1launch
 BUILD		:=	build
-SOURCES		:=	source
-INCLUDES	:=	include
+SOURCES		:=	source source/common
+INCLUDES	:=	include source
 DATA		:=	../data
 
 #---------------------------------------------------------------------------------
