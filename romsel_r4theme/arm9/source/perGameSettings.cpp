@@ -47,7 +47,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 #include "flashcard.h"
 
 #define SCREEN_COLS 32
@@ -78,8 +78,6 @@ int perGameSettings_bootstrapFile = -1;
 
 char pergamefilepath[256];
 
-extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
 
@@ -92,7 +90,7 @@ int perGameOp[8] = {-1};
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	perGameSettings_directBoot = pergameini.GetInt("GAMESETTINGS", "DIRECT_BOOT", (isModernHomebrew || previousUsedDevice));	// Homebrew only
 	if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
 		perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
@@ -110,7 +108,7 @@ void loadPerGameSettings (std::string filename) {
 
 void savePerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	if (isHomebrew) {
 		if (!secondaryDevice) pergameini.SetInt("GAMESETTINGS", "LANGUAGE", perGameSettings_language);
 		pergameini.SetInt("GAMESETTINGS", "DIRECT_BOOT", perGameSettings_directBoot);
@@ -137,23 +135,20 @@ void savePerGameSettings (std::string filename) {
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
 		}
 	}
-	pergameini.flush();
+	pergameini.SaveIniFileModified();
 }
 
 bool checkIfShowAPMsg (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
-	if (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0) {
-		return true;	// Show AP message
-	}
-	return false;	// Don't show AP message
+	CIniFile pergameini( pergamefilepath );
+	return (pergameini.GetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 0) == 0);
 }
 
 void dontShowAPMsgAgain (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	pergameini.SetInt("GAMESETTINGS", "NO_SHOW_AP_MSG", 1);
-	pergameini.flush();
+	pergameini.SaveIniFileModified();
 }
 
 bool checkIfDSiMode (std::string filename) {
@@ -162,7 +157,7 @@ bool checkIfDSiMode (std::string filename) {
 	}
 
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (secondaryDevice ? "fat:" : "sd:"), filename.c_str());
-	easysave::ini pergameini( pergamefilepath );
+	CIniFile pergameini( pergamefilepath );
 	perGameSettings_dsiMode = pergameini.GetInt("GAMESETTINGS", "DSI_MODE", (isModernHomebrew ? true : -1));
 	if (perGameSettings_dsiMode == -1) {
 		return bstrap_dsiMode;

@@ -20,7 +20,7 @@
 
 #include "cheat.h"
 #include "flashcard.h"
-#include "tool/dbgtool.h"
+#include "common/dbgtool.h"
 #include "common/stringtool.h"
 #include <algorithm>
 #include <iostream>
@@ -31,6 +31,7 @@
 #include "iconTitle.h"
 #include "graphics/fontHandler.h"
 #include "errorScreen.h"
+#include "common/tonccpy.h"
 
 extern int dialogboxHeight;
 extern bool useBootstrap;
@@ -79,7 +80,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
   const char* KHeader="R4 CheatCode";
   char header[12];
   fread(header,12,1,aDat);
-  if(strncmp(KHeader,header,12)) return false;
+  if(memcmp(KHeader,header,12)) return false;
 
   sDatIndex idx,nidx;
 
@@ -93,7 +94,7 @@ bool CheatCodelist::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos
 
   while(!done)
   {
-    memcpy(&idx,&nidx,sizeof(idx));
+    tonccpy(&idx,&nidx,sizeof(idx));
     fread(&nidx,sizeof(nidx),1,aDat);
     if(gamecode==idx._gameCode&&crc32==idx._crc32)
     {

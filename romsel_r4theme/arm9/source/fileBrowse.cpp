@@ -49,7 +49,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "easysave/ini.hpp"
+#include "common/inifile.h"
 
 #include "fileCopy.h"
 
@@ -100,8 +100,6 @@ extern void SaveSettings();
 const char *hiddenGamesIniPath;
 char path[PATH_MAX] = {0};
 
-extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 struct DirEntry {
 	string name;
 	bool isDirectory;
@@ -144,7 +142,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	if (pdir == NULL) {
 		iprintf ("Unable to open the directory.\n");
 	} else {
-		easysave::ini hiddenGamesIni(hiddenGamesIniPath);
+		CIniFile hiddenGamesIni(hiddenGamesIniPath);
 		vector<std::string> hiddenGames;
 		char str[12] = {0};
 		for (int i = 0; true; i++) {
@@ -642,9 +640,8 @@ string browseForFile(const vector<string> extensionList)
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && strcmp(dirContents.at(fileOffset).name.c_str(), ".."))
-		{
-			easysave::ini hiddenGamesIni(hiddenGamesIniPath);
+		if ((pressed & KEY_X) && memcmp(dirContents.at(fileOffset).name.c_str(), "..", 2)) {
+			CIniFile hiddenGamesIni(hiddenGamesIniPath);
 			vector<std::string> hiddenGames;
 			char str[12] = {0};
 
@@ -727,7 +724,7 @@ string browseForFile(const vector<string> extensionList)
 							sprintf(str, "%d", i);
 							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
 						}
-						hiddenGamesIni.flush();
+						hiddenGamesIni.SaveIniFileModified();
 					}
 					
 					if (settingsChanged) {
