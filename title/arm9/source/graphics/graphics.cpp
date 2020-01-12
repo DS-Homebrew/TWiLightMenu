@@ -200,7 +200,7 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	FILE* file = fopen("nitro:/" + sys().isDSPhat() ? std::string("phat_") : std::string("") + "dsi.bmp", "rb");
+	FILE* file = fopen((std::string("nitro:/") + (sys().isDSPhat() ? "phat_" : "") + "dsi.bmp").c_str(), "rb");
 
 	if (file) {
 		// Start loading
@@ -227,7 +227,7 @@ void LoadBMP(void) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 
-	std::string filename = "nitro:/twilight_splash/logo" + (sys().isDSPhat() ? std::string("Phat") : std::string("")) + "_rocketrobz.png";
+	std::string filename = std::string("nitro:/twilight_splash/logo") + (sys().isDSPhat() ? "Phat" : "") + "_rocketrobz.png";
 	lodepng::decode(image, width, height, filename);
 	for(unsigned i = 0; i < image.size(); i = i * 4) {
 		BG_GFX_SUB[i] = image[i]>>3 | (image[i + 1]>>3)<<5 | (image[i + 2]>>3)<<10 | BIT(15);
