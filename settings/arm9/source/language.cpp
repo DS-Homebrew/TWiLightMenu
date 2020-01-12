@@ -349,7 +349,11 @@ void langInit(void)
 	STR_DESCRIPTION_ROMREADLED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator."));
 
 	STR_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "PRECISEVOLUMECTRL", "Precise volume control"));
+	STR_DESCRIPTION_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_PRECISEVOLUMECTRL", "Adds more volume levels in between ones from the VOL -/+ buttons. Press SELECT+UP/DOWN to adjust the volume with the extra levels."));
+
 	STR_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIWAREBOOTER", "DSiWare booter"));
+	STR_DESCRIPTION_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIWAREBOOTER", "Select which app boots launched DSiWare apps or games."));
+
 	STR_RUNIN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RUNIN", "Run in"));
 	STR_DESCRIPTION_RUNIN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RUNIN_1", "Run in either DS or DSi mode."));
 
