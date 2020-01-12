@@ -365,7 +365,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		}
 
 		switch (ms().sortMethod) {
-			case 1:
+			case 1: {
 				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 				std::vector<std::string> recentlyPlayed;
 				getcwd(path, PATH_MAX);
@@ -382,10 +382,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 						break;
 					}
 				}
-			case 0:
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
-			case 2: {
+			} case 2: {
 				CIniFile timesPlayedIni(timesPlayedIniPath);
 				vector<TimesPlayed> timesPlayed;
 
@@ -405,12 +403,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 					}
 				}
 
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
 				break;
-			} case 3:
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateFileType);
-				break;
-			case 4: {
+			} case 4: {
 				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
 				getcwd(path, PATH_MAX);
@@ -427,11 +421,11 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 					}
 				}
 
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			}
 		}
 
+		sort(dirContents.begin(), dirContents.end(), ms().sortMethod == 2 ? dirEntryPredicateMostPlayed : ms().sortMethod == 3 ? dirEntryPredicateFileType : dirEntryPredicate);
 		closedir(pdir);
 	}
 }
