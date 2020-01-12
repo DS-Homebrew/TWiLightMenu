@@ -725,21 +725,15 @@ void titleUpdate(bool isDir, const char *name, int num) {
 				titleToDisplay[bannerlines][charIndex] = 0;
 				bannerlines++;
 				charIndex = 0;
-			} else if (cachedTitle[num][i] <= 0x00FF) { // ASCII+Latin Extended Range is 0x0 to 0xFF.
-				// Handle ASCII here
-				titleToDisplay[bannerlines][charIndex] = cachedTitle[num][i];
-				charIndex++;
-			} else {
-				// We need to split U16 into two characters here.
-				char lowerBits = cachedTitle[num][i] & 0xFF;
-				char higherBits = cachedTitle[num][i] >> 8;
-				// Since we have UTF16LE, assemble in FontGraphic the other way.
-				// We will need to peek in FontGraphic.cpp since the higher bit is significant.
-				titleToDisplay[bannerlines][charIndex] = UTF16_SIGNAL_BYTE;
-				// 0x0F signal bit to treat the next two characters as UTF
-				titleToDisplay[bannerlines][charIndex + 1] = lowerBits;
-				titleToDisplay[bannerlines][charIndex + 2] = higherBits;
-				charIndex += 3;
+			} else if (cachedTitle[num][i] <= 0x007F) { // ASCII are one UTF-8 character
+				titleToDisplay[bannerlines][charIndex++] = cachedTitle[num][i];
+			} else if (cachedTitle[num][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
+				titleToDisplay[bannerlines][charIndex++] = (0xC0 | ((cachedTitle[num][i] & 0x7C0) >> 6));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x03F));
+			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
+				titleToDisplay[bannerlines][charIndex++] = (0xE0 | ((cachedTitle[num][i] & 0xF000) >> 12));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | ((cachedTitle[num][i] & 0x0FC0) >> 6));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x003F));
 			}
 		}
 

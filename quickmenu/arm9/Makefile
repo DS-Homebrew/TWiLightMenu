@@ -21,7 +21,7 @@ TARGET		:=	mainmenu
 BUILD		:=	build
 SOURCES		:=	source source/common source/graphics 
 INCLUDES	:=	include source
-DATA		:=	../data  
+DATA		:=	../data
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
 

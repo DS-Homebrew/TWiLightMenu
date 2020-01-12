@@ -11,7 +11,6 @@
 #include "common/gl2d.h"
 #define FONT_SX 8
 #define FONT_SY 10
-#define UTF16_SIGNAL_BYTE  0x0F
 
 class FontGraphic
 {

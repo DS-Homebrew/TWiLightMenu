@@ -30,11 +30,11 @@
 
 #include <string.h>
 #include <unistd.h>
-#include "common/gl2d.h"
 
 #include "date.h"
 #include "fileCopy.h"
 
+#include "common/gl2d.h"
 #include "graphics/graphics.h"
 
 #include "common/tonccpy.h"
@@ -1054,9 +1054,8 @@ int main(int argc, char **argv) {
 
 	nitroFSInit("/_nds/TWiLightMenu/mainmenu.srldr");
 
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
+	if (access(settingsinipath, F_OK) != 0 && flashcardFound())
 		settingsinipath = "fat:/_nds/TWiLightMenu/settings.ini";		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-	}
 
 	langInit();
 
@@ -1197,7 +1196,7 @@ int main(int argc, char **argv) {
 
 	topBgLoad();
 	bottomBgLoad();
-	
+
 	bool romFound = false;
 
 	if (launchType > 0 && romPath != "" && access(romPath.c_str(), F_OK) == 0) {

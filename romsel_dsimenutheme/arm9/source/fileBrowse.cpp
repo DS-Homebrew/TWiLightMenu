@@ -154,10 +154,7 @@ extern bool rocketVideo_playVideo;
 extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
-const char *gameOrderIniPath;
-const char *recentlyPlayedIniPath;
-const char *timesPlayedIniPath;
-const char *hiddenGamesIniPath;
+std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 
 static bool inSelectMenu = false;
 
@@ -213,15 +210,18 @@ bool nameEndsWith(const string &name, const vector<string> extensionList) {
 
 bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 
-	if (lhs.customPos) {
-		if(lhs.position < rhs.position)	return true;
-		else return false;
+	if (lhs.isDirectory && !lhs.customPos && !rhs.isDirectory) {
+		return true;
 	}
-	if (!lhs.isDirectory && rhs.isDirectory) {
+	if (!lhs.isDirectory && rhs.isDirectory && !rhs.customPos) {
 		return false;
 	}
-	if (lhs.isDirectory && !rhs.isDirectory) {
-		return true;
+	if (lhs.customPos || rhs.customPos) {
+		if(!lhs.customPos)	return false;
+		else if(!rhs.customPos)	return true;
+
+		if(lhs.position < rhs.position)	return true;
+		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
 }
@@ -320,17 +320,6 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		// iprintf("Unable to open the directory.\n");
 		printSmall(false, 4, 4, "Unable to open the directory.");
 	} else {
-		CIniFile hiddenGamesIni(hiddenGamesIniPath);
-		vector<std::string> hiddenGames;
-		char str[12] = {0};
-
-		for (int i = 0; true; i++) {
-			sprintf(str, "%d", i);
-			if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") == "")
-				break;
-
-			hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
-		}
 		int currentPos = 0;
 		while (true) {
 			snd().updateStream();
@@ -351,28 +340,14 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") &&
 					dirEntry.name.compare("saves") != 0 &&
 					(dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					bool isHidden = false;
-					for (int i = 0; i < (int)hiddenGames.size(); i++) {
-						if (dirEntry.name == hiddenGames[i]) {
-							isHidden = true;
-							break;
-						}
-					}
-					if (!isHidden || ms().showHidden) {
+					if (ms().showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0 || dirEntry.name == "..") {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					bool isHidden = false;
-					for (int i = 0; i < (int)hiddenGames.size(); i++) {
-						if (dirEntry.name == hiddenGames[i]) {
-							isHidden = true;
-							break;
-						}
-					}
-					if (!isHidden || ms().showHidden) {
+					if (ms().showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0|| dirEntry.name == "..") {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
@@ -395,18 +370,22 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				break;
 			case 1: {
 				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
-				vector<std::string> recentlyPlayed;
+				std::vector<std::string> recentlyPlayed;
+				getcwd(path, PATH_MAX);
+				recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':');
 
 				for (int i = 0; i < (int)dirContents.size(); i++) {
 					sprintf(str, "%d", i);
 					recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
 				}
 
-				for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-					for (int j = 0; j <= (int)dirContents.size(); j++) {
+				int k = 0;
+				for (uint i = 0; i < recentlyPlayed.size(); i++) {
+					for (uint j = 0; j <= dirContents.size(); j++) {
 						if (recentlyPlayed[i] == dirContents[j].name) {
-							dirContents[j].position = i;
+							dirContents[j].position = k++;
 							dirContents[j].customPos = true;
+							break;
 						}
 					}
 				}
@@ -440,17 +419,15 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			case 4: {
 				CIniFile gameOrderIni(gameOrderIniPath);
 				vector<std::string> gameOrder;
+				getcwd(path, PATH_MAX);
+				gameOrderIni.GetStringVector("ORDER", path, gameOrder, ':');
 
-				for (int i = 0; i < (int)dirContents.size(); i++) {
-					sprintf(str, "%d", i);
-					gameOrder.push_back(gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-				}
-
-				for (int i = 0; i < (int)gameOrder.size(); i++) {
-					for (int j = 0; j <= (int)dirContents.size(); j++) {
+				for (uint i = 0; i < gameOrder.size(); i++) {
+					for (uint j = 0; j < dirContents.size(); j++) {
 						if (gameOrder[i] == dirContents[j].name) {
 							dirContents[j].position = i;
 							dirContents[j].customPos = true;
+							break;
 						}
 					}
 				}
@@ -1469,10 +1446,9 @@ string browseForFile(const vector<string> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();
-	gameOrderIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/gameorder.ini" : "fat:/_nds/TWiLightMenu/extras/gameorder.ini";
-	recentlyPlayedIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/recentlyplayed.ini" : "fat:/_nds/TWiLightMenu/extras/recentlyplayed.ini";
-	timesPlayedIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/timesplayed.ini" : "fat:/_nds/TWiLightMenu/extras/timesplayed.ini";
-	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini" : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
+	gameOrderIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/gameorder.ini";
+	recentlyPlayedIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/recentlyplayed.ini";
+	timesPlayedIniPath = std::string(sdFound() ? "sd" : "fat") + ":/_nds/TWiLightMenu/extras/timesplayed.ini";
 
 	bool displayBoxArt = ms().showBoxArt;
 
@@ -1655,7 +1631,6 @@ string browseForFile(const vector<string> extensionList) {
 				clearText();
 				mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 					  0777);
-				std::string gameBeingMoved = dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name;
 				movingApp = (PAGENUM * 40) + (CURPOS);
 				if (dirContents[scrn][movingApp].isDirectory)
 					movingAppIsDir = true;
@@ -1834,77 +1809,28 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = 1;
 					writeBannerText(0, "Please wait...", "", "");
 
+					int dest = CURPOS + (PAGENUM * 40);
+
+					DirEntry entry = dirContents[scrn][movingApp];
+					dirContents[scrn].erase(dirContents[scrn].begin()+movingApp);
+					dirContents[scrn].insert(dirContents[scrn].begin() + dest, entry);
+
+					std::vector<std::string> dirNames;
+					for(uint i=0;i<dirContents[scrn].size();i++) {
+						dirNames.push_back(dirContents[scrn][i].name);
+					}
+
 					CIniFile gameOrderIni(gameOrderIniPath);
-					vector<std::string> gameOrder;
-					char str[12] = {0};
+					getcwd(path, PATH_MAX);
+					gameOrderIni.SetStringVector("ORDER", path, dirNames, ':');
+					gameOrderIni.SaveIniFile(gameOrderIniPath);
 
-					for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
-						sprintf(str, "%d", i);
-						gameOrder.push_back(
-							gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-						if (gameOrder[i] == "NULL" || ms().sortMethod != 3)
-							gameOrder[i] = dirContents[scrn][i].name;
+					if(ms().sortMethod != 4) {
+						ms().sortMethod = 4;
+						ms().saveSettings();
 					}
-
-					for (int i = 0; i < (int)gameOrder.size(); i++) {
-						for (int j = 0; j < (int)gameOrder.size(); j++) {
-							if (i != j) {
-								if (gameOrder[i] == gameOrder[j]) {
-									gameOrder.erase(gameOrder.begin() + j);
-								}
-							}
-						}
-					}
-
-					for (int i = gameOrder.size(); true; i++) {
-						sprintf(str, "%d", i);
-						if (gameOrderIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-							gameOrderIni.SetString(getcwd(path, PATH_MAX), str, "");
-						} else {
-							break;
-						}
-					}
-
-					for (int i = 0; i < (int)gameOrder.size(); i++) {
-						bool stillExists = false;
-						for (int j = 0; j < (int)dirContents[scrn].size(); j++) {
-							if (gameOrder[i] == dirContents[scrn][j].name) {
-								stillExists = true;
-								break;
-							}
-						}
-						if (!stillExists)
-							gameOrder.erase(gameOrder.begin() + i);
-					}
-
-					gameOrder.erase(gameOrder.begin() + movingApp);
-					gameOrder.insert(gameOrder.begin() + CURPOS + (PAGENUM * 40), gameBeingMoved);
-
-					for (int i = 0; i < (int)gameOrder.size(); i++) {
-						char str[12] = {0};
-						sprintf(str, "%d", i);
-						gameOrderIni.SetString(getcwd(path, PATH_MAX), str, gameOrder[i]);
-					}
-					gameOrderIni.SaveIniFileModified();
-
-					ms().sortMethod = 4;
-					ms().saveSettings();
-
-					// getDirectoryContents(dirContents[scrn], extensionList);
-
-					DirEntry dirEntry;
-
-					dirEntry.name = gameBeingMoved.c_str();
-					dirEntry.isDirectory = movingAppIsDir;
-
-					dirContents[scrn].erase(dirContents[scrn].begin() + movingApp);
-					dirContents[scrn].insert(dirContents[scrn].begin() + CURPOS + (PAGENUM * 40),
-								 dirEntry);
 
 					getFileInfo(scrn, dirContents, false);
-
-					settingsChanged = true;
-					boxArtLoaded = false;
 				}
 				movingApp = -1;
 
@@ -2619,65 +2545,24 @@ string browseForFile(const vector<string> extensionList) {
 						  0777);
 
 							CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
-							vector<std::string> recentlyPlayed;
-							char str[12] = {0};
+							std::vector<std::string> recentlyPlayed;
 
-							for (int i = 0; i < (int)dirContents[scrn].size(); i++) {
-								sprintf(str, "%d", i);
-								recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-								if (recentlyPlayed[i] == "NULL")
-									recentlyPlayed[i] = dirContents[scrn][i].name;
-							}
-							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-								for (int j = 0; j < (int)recentlyPlayed.size(); j++) {
-									if (i != j) {
-										if (recentlyPlayed[i] == recentlyPlayed[j]) {
-											recentlyPlayed.erase(recentlyPlayed.begin() + j);
-										}
-									}
-								}
-							}
-							for (int i = recentlyPlayed.size(); true; i++) {
-								sprintf(str, "%d", i);
-								if (recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-									recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, "");
-								} else {
-									break;
-								}
-							}
-							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-								bool stillExists = false;
-								for (int j = 0; j < (int)dirContents[scrn].size(); j++) {
-									if (recentlyPlayed[i] == dirContents[scrn][j].name) {
-										stillExists = true;
-										break;
-									}
-								}
-								if (!stillExists)
-									recentlyPlayed.erase(recentlyPlayed.begin() + i);
+							getcwd(path, PATH_MAX);
+							recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':'); // : isn't allowed in FAT-32 names, so its a good deliminator
+
+							std::vector<std::string>::iterator it = std::find(recentlyPlayed.begin(), recentlyPlayed.end(), entry->name);
+							if(it != recentlyPlayed.end()) {
+								recentlyPlayed.erase(it);
 							}
 
-							recentlyPlayed.erase(recentlyPlayed.begin() + CURPOS);
-							int firstNonDir = 0;
-							while(dirContents[scrn].at(firstNonDir).isDirectory) {
-								firstNonDir++;
-							}
-							recentlyPlayed.insert(recentlyPlayed.begin()+firstNonDir, dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name);
+							recentlyPlayed.insert(recentlyPlayed.begin(), entry->name);
 
-							for (int i = 0; i < (int)recentlyPlayed.size(); i++) {
-								char str[12] = {0};
-								sprintf(str, "%d", i);
-								recentlyPlayedIni.SetString(getcwd(path, PATH_MAX), str, recentlyPlayed[i]);
-							}
-							recentlyPlayedIni.SaveIniFileModified();
+							recentlyPlayedIni.SetStringVector("RECENT", path, recentlyPlayed, ':');
+							recentlyPlayedIni.SaveIniFile(recentlyPlayedIniPath);
 
 							CIniFile timesPlayedIni(timesPlayedIniPath);
-							timesPlayedIni.SetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name, (timesPlayedIni.GetInt(getcwd(path, PATH_MAX),dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name,0) + 1));
-							timesPlayedIni.SaveIniFileModified();
-
-							if(ms().sortMethod == 1) {
-								ms().cursorPosition[ms().secondaryDevice] = firstNonDir;
-							}
+							timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
+							timesPlayedIni.SaveIniFile(timesPlayedIniPath);
 
 							if (ms().theme != 4) {
 								showProgressIcon = false;
@@ -2864,40 +2749,8 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if ((pressed & KEY_X) && !startMenu && bannerTextShown && showSTARTborder) {
-				CIniFile hiddenGamesIni(hiddenGamesIniPath);
-				vector<std::string> hiddenGames;
-				char str[12] = {0};
-
-				for (int i = 0; true; i++) {
-					sprintf(str, "%d", i);
-					if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-						hiddenGames.push_back(
-							hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
-					} else {
-						break;
-					}
-				}
-
-				for (int i = 0; i < (int)hiddenGames.size(); i++) {
-					for (int j = 0; j < (int)hiddenGames.size(); j++) {
-						if (i != j) {
-							if (hiddenGames[i] == hiddenGames[j]) {
-								hiddenGames.erase(hiddenGames.begin() + j);
-							}
-						}
-					}
-				}
-
-				std::string gameBeingHidden = dirContents[scrn].at((PAGENUM * 40) + (CURPOS)).name;
-				bool unHide = false;
-				int whichToUnhide;
-
-				for (int i = 0; i < (int)hiddenGames.size(); i++) {
-					if (hiddenGames[i] == gameBeingHidden) {
-						whichToUnhide = i;
-						unHide = true;
-					}
-				}
+				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
+				bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
 
 				if (ms().theme == 4) {
 					snd().playStartup();
@@ -3022,18 +2875,10 @@ string browseForFile(const vector<string> extensionList) {
 							whiteScreen = true;
 
 						if (unHide) {
-							hiddenGames.erase(hiddenGames.begin() + whichToUnhide);
-							hiddenGames.push_back("");
-						} else
-							hiddenGames.push_back(gameBeingHidden);
-
-						for (int i = 0; i < (int)hiddenGames.size(); i++) {
-							char str[12] = {0};
-							sprintf(str, "%d", i);
-							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
+							rename(entry->name.c_str(), entry->name.substr(1).c_str());
+						} else {
+							rename(entry->name.c_str(), ("."+entry->name).c_str());
 						}
-						mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras", 0777);
-						hiddenGamesIni.SaveIniFileModified();
 
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art
