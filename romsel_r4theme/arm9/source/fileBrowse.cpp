@@ -97,7 +97,6 @@ bool settingsChanged = false;
 
 extern void SaveSettings();
 
-const char *hiddenGamesIniPath;
 char path[PATH_MAX] = {0};
 
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
@@ -144,18 +143,6 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 	if (pdir == NULL) {
 		iprintf ("Unable to open the directory.\n");
 	} else {
-		CIniFile hiddenGamesIni(hiddenGamesIniPath);
-		vector<std::string> hiddenGames;
-		char str[12] = {0};
-		for (int i = 0; true; i++) {
-			sprintf(str, "%d", i);
-			if (hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-				hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
-			} else {
-				break;
-			}
-		}
-
 		while(true) {
 			DirEntry dirEntry;
 
@@ -166,14 +153,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			bool isHidden = false;
-			for(int i = 0; i < (int)hiddenGames.size(); i++) {
-				if(dirEntry.name == hiddenGames[i]) {
-					isHidden = true;
-					break;
-				}
-			}
-			if(!isHidden || showHidden) {
+			if(showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0 || dirEntry.name == "..") {
 				if (showDirectories) {
 					if (dirEntry.name.compare(".") && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 						dirContents.push_back (dirEntry);
@@ -321,11 +301,7 @@ void dsiBinariesMissingMsg(void) {
 
 extern bool extention(const std::string& filename, const char* ext);
 
-string browseForFile(const vector<string> extensionList)
-{
-	hiddenGamesIniPath = sdFound() ? "sd:/_nds/TWiLightMenu/extras/hiddengames.ini"
-				       : "fat:/_nds/TWiLightMenu/extras/hiddengames.ini";
-
+string browseForFile(const vector<string> extensionList) {
 	int pressed = 0;
 	int screenOffset = 0;
 	int fileOffset = 0;
@@ -648,37 +624,8 @@ string browseForFile(const vector<string> extensionList)
 
 		if ((pressed & KEY_X) && strcmp(dirContents.at(fileOffset).name.c_str(), ".."))
 		{
-			CIniFile hiddenGamesIni(hiddenGamesIniPath);
-			vector<std::string> hiddenGames;
-			char str[12] = {0};
-
-			for(int i = 0; true; i++) {
-				sprintf(str, "%d", i);
-				if(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, "") != "") {
-					hiddenGames.push_back(hiddenGamesIni.GetString(getcwd(path, PATH_MAX), str, ""));
-				} else {
-					break;
-				}
-			}
-
-			for(int i = 0; i < (int)hiddenGames.size(); i++) {
-				for(int j = 0; j < (int)hiddenGames.size(); j++) {
-					if(i != j && hiddenGames[i] == hiddenGames[j]) {
-						hiddenGames.erase(hiddenGames.begin()+j);
-					}
-				}
-			}
-
-			std::string gameBeingHidden = dirContents.at(fileOffset).name;
-			bool unHide = false;
-			int whichToUnhide;
-
-			for(int i = 0; i < (int)hiddenGames.size(); i++) {
-				if(hiddenGames[i] == gameBeingHidden) {
-					whichToUnhide = i;
-					unHide = true;
-				}
-			}
+			DirEntry *entry = &dirContents.at(fileOffset);
+			bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
 
 			showdialogbox = true;
 			dialogboxHeight = 3;
@@ -720,18 +667,11 @@ string browseForFile(const vector<string> extensionList)
 					if (pressed & KEY_A && !isDirectory) {
 						remove(dirContents.at(fileOffset).name.c_str());
 					} else if (pressed & KEY_Y) {
-						if(unHide) {
-							hiddenGames.erase(hiddenGames.begin()+whichToUnhide);
-							hiddenGames.push_back("");
+						if (unHide) {
+							rename(entry->name.c_str(), entry->name.substr(1).c_str());
 						} else {
-							hiddenGames.push_back(gameBeingHidden);
+							rename(entry->name.c_str(), ("."+entry->name).c_str());
 						}
-						for(int i=0;i<(int)hiddenGames.size();i++) {
-							char str[9];
-							sprintf(str, "%d", i);
-							hiddenGamesIni.SetString(getcwd(path, PATH_MAX), str, hiddenGames[i]);
-						}
-						hiddenGamesIni.SaveIniFile(hiddenGamesIniPath);
 					}
 					
 					if (settingsChanged) {
