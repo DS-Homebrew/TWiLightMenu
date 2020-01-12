@@ -1073,8 +1073,6 @@ void dsiBinariesMissingMsg(const char *filename) {
 			swiWaitForVBlank();
 		}
 		titleUpdate(false, filename, CURPOS);
-	}
-	if (ms().theme != 4) {
 		std::string dirContName = filename;
 		// About 38 characters fit in the box.
 		if (strlen(dirContName.c_str()) > 38) {
