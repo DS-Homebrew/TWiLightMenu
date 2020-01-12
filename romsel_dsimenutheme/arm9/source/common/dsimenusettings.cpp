@@ -70,6 +70,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     bstrap_dsiMode = EDSMode;
     forceSleepPatch = false;
     slot1SCFGUnlock = false;
+    dsiWareBooter = false;
 
     show12hrClock = true;
 
@@ -179,6 +180,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
+	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);

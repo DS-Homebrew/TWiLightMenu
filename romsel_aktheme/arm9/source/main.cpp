@@ -219,9 +219,9 @@ int main(int argc, char **argv)
 	gdi().present(GE_SUB);
 
 	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
-	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
+	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && !ms().dsiWareBooter && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
-	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv")))
+	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && !ms().dsiWareBooter && extention(ms().dsiWarePrvPath.c_str(), ".prv")))
 	{
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {
 			fcopy("sd:/_nds/TWiLightMenu/tempDSiWare.pub", ms().dsiWarePubPath.c_str());

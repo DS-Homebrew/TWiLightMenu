@@ -112,6 +112,7 @@ std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
 std::string STR_PRECISEVOLUMECTRL = "STR_PRECISEVOLUMECTRL";
+std::string STR_DSIWAREBOOTER = "STR_DSIWAREBOOTER";
 std::string STR_RUNIN = "STR_RUNIN";
 std::string STR_FORCESLEEPPATCH = "STR_FORCESLEEPPATCH";
 std::string STR_SLOT1SCFGUNLOCK = "STR_SLOT1SCFGUNLOCK";
@@ -163,6 +164,8 @@ std::string STR_DESCRIPTION_LOGGING_1 = "STR_DESCRIPTION_LOGGING_1";
 std::string STR_DESCRIPTION_ROMREADLED_1 = "STR_DESCRIPTION_ROMREADLED_1";
 
 std::string STR_DESCRIPTION_PRECISEVOLUMECTRL = "STR_DESCRIPTION_PRECISEVOLUMECTRL";
+
+std::string STR_DESCRIPTION_DSIWAREBOOTER = "STR_DESCRIPTION_DSIWAREBOOTER";
 
 std::string STR_DESCRIPTION_SNDFREQ_1 = "STR_DESCRIPTION_SNDFREQ_1";
 
@@ -392,6 +395,7 @@ void langInit(void)
 	STR_LOGGING = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOGGING", "Logging"));
 	STR_ROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED"));
 	STR_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "PRECISEVOLUMECTRL", "Precise volume control"));
+	STR_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIWAREBOOTER", "DSiWare booter"));
 	STR_RUNIN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RUNIN", "Run in"));
 	STR_FORCESLEEPPATCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FORCESLEEPPATCH", "Force sleep mode patch"));
 	STR_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1SCFGUNLOCK", "SCFG access in Slot-1"));
@@ -443,6 +447,8 @@ void langInit(void)
 	STR_DESCRIPTION_ROMREADLED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator."));
 
 	STR_DESCRIPTION_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_PRECISEVOLUMECTRL", "Adds more volume levels in between ones from the VOL -/+ buttons. Press SELECT+UP/DOWN to adjust the volume with the extra levels."));
+
+	STR_DESCRIPTION_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIWAREBOOTER", "Select which app boots launched DSiWare apps or games."));
 
 	STR_DESCRIPTION_SNDFREQ_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz is original quality, 47.61kHz is high quality. Does not affect retail Slot-1 cards."));
 

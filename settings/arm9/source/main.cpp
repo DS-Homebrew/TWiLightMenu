@@ -556,6 +556,10 @@ int main(int argc, char **argv)
 		}
 		gamesPage.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
 				{true, false});
+		if (sdAccessible) {
+			gamesPage.option(STR_DSIWAREBOOTER, STR_DESCRIPTION_DSIWAREBOOTER, Option::Bool(&ms().dsiWareBooter), {"nds-bootstrap", "Unlaunch"},
+					{true, false});
+		}
 	}
 
 	gamesPage
