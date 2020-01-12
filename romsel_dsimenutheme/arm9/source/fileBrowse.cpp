@@ -2500,7 +2500,7 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 
 						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Saving...");
+							printLargeCentered(false, 88, "Now Saving...");
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
