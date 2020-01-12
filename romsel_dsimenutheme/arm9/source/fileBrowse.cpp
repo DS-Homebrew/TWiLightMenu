@@ -365,34 +365,27 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 		}
 
 		switch (ms().sortMethod) {
-			case 0:
-				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
-				break;
-			case 1: {
+			case 1:
 				CIniFile recentlyPlayedIni(recentlyPlayedIniPath);
 				std::vector<std::string> recentlyPlayed;
 				getcwd(path, PATH_MAX);
 				recentlyPlayedIni.GetStringVector("RECENT", path, recentlyPlayed, ':');
 
-				for (int i = 0; i < (int)dirContents.size(); i++) {
-					sprintf(str, "%d", i);
-					recentlyPlayed.push_back(recentlyPlayedIni.GetString(getcwd(path, PATH_MAX), str, "NULL"));
-				}
-
 				int k = 0;
 				for (uint i = 0; i < recentlyPlayed.size(); i++) {
 					for (uint j = 0; j <= dirContents.size(); j++) {
-						if (recentlyPlayed[i] == dirContents[j].name) {
-							dirContents[j].position = k++;
-							dirContents[j].customPos = true;
-							break;
-						}
+						if (recentlyPlayed[i] != dirContents[j].name)
+							continue;
+
+						dirContents[j].position = k++;
+						dirContents[j].customPos = true;
+						break;
 					}
 				}
-
+			case 0:
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
-			} case 2: {
+			case 2: {
 				CIniFile timesPlayedIni(timesPlayedIniPath);
 				vector<TimesPlayed> timesPlayed;
 
@@ -400,17 +393,18 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 					TimesPlayed timesPlayedTemp;
 					timesPlayedTemp.name = dirContents[i].name;
 					timesPlayedTemp.amount = timesPlayedIni.GetInt(getcwd(path, PATH_MAX), dirContents[i].name, 0);
-					// if(timesPlayedTemp.amount)
-						timesPlayed.push_back(timesPlayedTemp);
+					timesPlayed.push_back(timesPlayedTemp);
 				}
 
 				for (int i = 0; i < (int)timesPlayed.size(); i++) {
 					for (int j = 0; j <= (int)dirContents.size(); j++) {
-						if (timesPlayed[i].name == dirContents[j].name) {
-							dirContents[j].position = timesPlayed[i].amount;
-						}
+						if (timesPlayed[i].name != dirContents[j].name)
+							continue;
+
+						dirContents[j].position = timesPlayed[i].amount;
 					}
 				}
+
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicateMostPlayed);
 				break;
 			} case 3:
@@ -424,13 +418,15 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 				for (uint i = 0; i < gameOrder.size(); i++) {
 					for (uint j = 0; j < dirContents.size(); j++) {
-						if (gameOrder[i] == dirContents[j].name) {
-							dirContents[j].position = i;
-							dirContents[j].customPos = true;
-							break;
-						}
+						if (gameOrder[i] != dirContents[j].name)
+							continue;
+
+						dirContents[j].position = i;
+						dirContents[j].customPos = true;
+						break;
 					}
 				}
+
 				sort(dirContents.begin(), dirContents.end(), dirEntryPredicate);
 				break;
 			}
