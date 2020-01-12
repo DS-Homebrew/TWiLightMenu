@@ -4,10 +4,10 @@
 
 #define BUTTON_A "\xEE\x80\x80"
 #define BUTTON_B "\xEE\x80\x81"
-#define BUTTON_X "\xEE\x80\x81"
-#define BUTTON_Y "\xEE\x80\x81"
-#define BUTTON_L "\xEE\x80\x81"
-#define BUTTON_R "\xEE\x80\x81"
+#define BUTTON_X "\xEE\x80\x82"
+#define BUTTON_Y "\xEE\x80\x83"
+#define BUTTON_L "\xEE\x80\x84"
+#define BUTTON_R "\xEE\x80\x85"
 
 #define BUTTON_RIGHT    "\xEE\x80\x99"
 #define BUTTON_LEFT     "\xEE\x80\x9A"
