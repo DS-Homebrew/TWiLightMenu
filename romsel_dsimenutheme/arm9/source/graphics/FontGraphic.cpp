@@ -93,7 +93,14 @@ void FontGraphic::print(int x, int y, const char *text)
 		} else if((*text & 0xF0) == 0xE0) {
 			char16_t c = (*text++ & 0xF) << 12;
 			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF8) == 0xF0) {
+			char16_t c = (*text++ & 0x7) << 18;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 			fontChar = getSpriteIndex(c);
 		}
@@ -121,7 +128,14 @@ int FontGraphic::calcWidth(const char *text)
 		} else if((*text & 0xF0) == 0xE0) {
 			char16_t c = (*text++ & 0xF) << 12;
 			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF8) == 0xF0) {
+			char16_t c = (*text++ & 0x7) << 18;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 			fontChar = getSpriteIndex(c);
 		}
@@ -154,7 +168,14 @@ int FontGraphic::getCenteredX(const char *text)
 		} else if((*text & 0xF0) == 0xE0) {
 			char16_t c = (*text++ & 0xF) << 12;
 			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF8) == 0xF0) {
+			char16_t c = (*text++ & 0x7) << 18;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 			fontChar = getSpriteIndex(c);
 		}
@@ -182,7 +203,14 @@ void FontGraphic::printCentered(int y, const char *text)
 		} else if((*text & 0xF0) == 0xE0) {
 			char16_t c = (*text++ & 0xF) << 12;
 			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF8) == 0xF0) {
+			char16_t c = (*text++ & 0x7) << 18;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
 
 			fontChar = getSpriteIndex(c);
 		}
