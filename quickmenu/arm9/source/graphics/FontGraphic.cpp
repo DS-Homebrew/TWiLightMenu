@@ -56,9 +56,22 @@ int FontGraphic::load(int textureID, glImage *_font_sprite,
  */
 unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 	unsigned int spriteIndex = 0;
-	for (unsigned int i = 0; i < imageCount; i++) {
-		if (mapping[i] == letter) {
-			spriteIndex = i;
+	long int left = 0;
+	long int right = imageCount;
+	long int mid = 0;
+
+	while (left <= right)
+	{
+		mid = left + ((right - left) / 2);
+		if (mapping[mid] == letter) {
+			spriteIndex = mid;
+			break;
+		}
+
+		if (mapping[mid] < letter) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
 		}
 	}
 	return spriteIndex;
@@ -66,22 +79,25 @@ unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 
 void FontGraphic::print(int x, int y, const char *text)
 {
-	unsigned short int fontChar;
-	unsigned char lowBits;
-	unsigned char highBits;
+	unsigned short int fontChar = 0;
 	while (*text)
 	{
-		lowBits = *(unsigned char*) text++;
-		if (lowBits != UTF16_SIGNAL_BYTE) { // check if the lower bits is the signal bits.
-			fontChar = getSpriteIndex(lowBits);
-		} else {
-			lowBits = *(unsigned char*) text++; // LSB
-			highBits = *(unsigned char*) text++; // HSB
-			u16 assembled = (u16)(lowBits | highBits << 8);
-			
-			fontChar = getSpriteIndex(assembled);
+		// UTF-8 handling
+		if((*text & 0x80) == 0) {
+			fontChar = getSpriteIndex(*text++);
+		} else if((*text & 0xE0) == 0xC0) {
+			char16_t c = ((*text++ & 0x1F) << 6);
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF0) == 0xE0) {
+			char16_t c = (*text++ & 0xF) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
 		}
-		
+
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}
@@ -89,20 +105,25 @@ void FontGraphic::print(int x, int y, const char *text)
 
 int FontGraphic::calcWidth(const char *text)
 {
-	unsigned short int fontChar;
-	unsigned char lowBits;
-	unsigned char highBits;
+	unsigned short int fontChar = 0;
 	int x = 0;
 
 	while (*text)
 	{
-		lowBits = *(unsigned char*) text++;
-		if (lowBits != UTF16_SIGNAL_BYTE) {
-			fontChar = getSpriteIndex(lowBits);
-		} else {
-			lowBits = *(unsigned char*) text++;
-			highBits = *(unsigned char*) text++;
-			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		// UTF-8 handling
+		if((*text & 0x80) == 0) {
+			fontChar = getSpriteIndex(*text++);
+		} else if((*text & 0xE0) == 0xC0) {
+			char16_t c = ((*text++ & 0x1F) << 6);
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF0) == 0xE0) {
+			char16_t c = (*text++ & 0xF) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
 		}
 
 		x += fontSprite[fontChar].width;
@@ -118,19 +139,24 @@ void FontGraphic::print(int x, int y, int value)
 
 int FontGraphic::getCenteredX(const char *text)
 {
-	unsigned short int fontChar;
-	unsigned char lowBits;
-	unsigned char highBits;
+	unsigned short int fontChar = 0;
 	int total_width = 0;
 	while (*text)
 	{
-		lowBits = *(unsigned char*) text++;
-		if (lowBits != UTF16_SIGNAL_BYTE) {
-			fontChar = getSpriteIndex(lowBits);
-		} else {
-			lowBits = *(unsigned char*) text++;
-			highBits = *(unsigned char*) text++;
-			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		// UTF-8 handling
+		if((*text & 0x80) == 0) {
+			fontChar = getSpriteIndex(*text++);
+		} else if((*text & 0xE0) == 0xC0) {
+			char16_t c = ((*text++ & 0x1F) << 6);
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF0) == 0xE0) {
+			char16_t c = (*text++ & 0xF) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
 		}
 
 		total_width += fontSprite[fontChar].width;
@@ -140,23 +166,27 @@ int FontGraphic::getCenteredX(const char *text)
 
 void FontGraphic::printCentered(int y, const char *text)
 {
-	unsigned short int fontChar;
-	unsigned char lowBits;
-	unsigned char highBits;	
+	unsigned short int fontChar = 0;
 
 	int x = getCenteredX(text);
 	while (*text)
 	{
-		lowBits = *(unsigned char*) text++;
-		if (lowBits != UTF16_SIGNAL_BYTE) {
-			fontChar = getSpriteIndex(lowBits);
-		} else {
-			lowBits = *(unsigned char*) text++;
-			highBits = *(unsigned char*) text++;
-			fontChar = getSpriteIndex((u16)(lowBits | highBits << 8));
+		// UTF-8 handling
+		if((*text & 0x80) == 0) {
+			fontChar = getSpriteIndex(*text++);
+		} else if((*text & 0xE0) == 0xC0) {
+			char16_t c = ((*text++ & 0x1F) << 6);
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
+		} else if((*text & 0xF0) == 0xE0) {
+			char16_t c = (*text++ & 0xF) << 12;
+			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+			fontChar = getSpriteIndex(c);
 		}
 
-		fontChar = getSpriteIndex(*(unsigned char*) text++);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}
