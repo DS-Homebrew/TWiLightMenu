@@ -468,7 +468,7 @@ void displayNowLoading(void) {
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");
 	}
-	printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Loading...");
+	printLargeCentered(false, 88, "Now Loading...");
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
@@ -1065,21 +1065,21 @@ void dsiBinariesMissingMsg(const char *filename) {
 			swiWaitForVBlank();
 		}
 		titleUpdate(false, filename, CURPOS);
-	}
 
-	if (ms().theme != 2) {
-		std::string dirContName = filename;
-		// About 38 characters fit in the box.
-		if (strlen(dirContName.c_str()) > 38) {
-			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			dirContName.resize(35, ' ');
-			size_t first = dirContName.find_first_not_of(' ');
-			size_t last = dirContName.find_last_not_of(' ');
-			dirContName = dirContName.substr(first, (last - first + 1));
-			dirContName.append("...");
+		if (ms().theme != 2) {
+			std::string dirContName = filename;
+			// About 38 characters fit in the box.
+			if (strlen(dirContName.c_str()) > 38) {
+				// Truncate to 35, 35 + 3 = 38 (because we append "...").
+				dirContName.resize(35, ' ');
+				size_t first = dirContName.find_first_not_of(' ');
+				size_t last = dirContName.find_last_not_of(' ');
+				dirContName = dirContName.substr(first, (last - first + 1));
+				dirContName.append("...");
+			}
+
+			printSmall(false, 16, 66, dirContName.c_str());
 		}
-
-		printSmall(false, 16, 66, dirContName.c_str());
 	}
 
 	int yPos1;
