@@ -166,6 +166,7 @@ class DSiMenuPlusPlusSettings
 		int bstrap_dsiMode;
 		bool forceSleepPatch;
 		bool slot1SCFGUnlock;
+		bool dsiWareBooter;
 		bool autorun;
 		bool show12hrClock;
 		bool snesEmulator;

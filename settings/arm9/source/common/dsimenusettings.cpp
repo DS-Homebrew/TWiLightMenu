@@ -58,6 +58,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	bstrap_dsiMode = EDSMode;
 	forceSleepPatch = false;
 	slot1SCFGUnlock = false;
+	dsiWareBooter = false;
 
 	snesEmulator = true;
 
@@ -154,7 +155,12 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	soundFreq = settingsini.GetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+<<<<<<< HEAD
 	slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
+=======
+    slot1SCFGUnlock = settingsini.GetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
+	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+>>>>>>> e6c89e34efa450390839e2aad358b42b0e58a45d
 
 	ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -244,7 +250,12 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
 	settingsini.SetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
 	settingsini.SetInt("NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
+<<<<<<< HEAD
 	settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
+=======
+    settingsini.SetInt("SRLOADER", "SLOT1_SCFG_UNLOCK", slot1SCFGUnlock);
+	settingsini.SetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+>>>>>>> e6c89e34efa450390839e2aad358b42b0e58a45d
 
 	settingsini.SetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
 	settingsini.SetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);

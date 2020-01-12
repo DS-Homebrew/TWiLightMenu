@@ -140,6 +140,7 @@ class DSiMenuPlusPlusSettings
     bool boostVram;
     int bstrap_dsiMode;
     bool forceSleepPatch;
+    bool dsiWareBooter;
     bool autorun;
     bool show12hrClock;
 

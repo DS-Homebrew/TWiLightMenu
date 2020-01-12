@@ -179,6 +179,7 @@ bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 0;
 bool forceSleepPatch = false;
+bool dsiWareBooter = false;
 
 void LoadSettings(void) {
 	useBootstrap = isDSiMode();
@@ -227,6 +228,7 @@ void LoadSettings(void) {
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
+	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
@@ -1168,6 +1170,7 @@ int main(int argc, char **argv) {
 	 && previousUsedDevice
 	 && bothSDandFlashcard()
 	 && launchType == 3
+	 && !dsiWareBooter
 	 && (
 		(access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
 	     || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv"))
@@ -1850,7 +1853,7 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 25; i++) swiWaitForVBlank();
 				}
 
-				if (consoleModel > 0) {
+				if (dsiWareBooter || consoleModel > 0) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 

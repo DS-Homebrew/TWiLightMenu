@@ -881,10 +881,10 @@ int main(int argc, char **argv) {
 		snd().beginStream();
 	}
 
-	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
-	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
-	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == Launch::EDSiWareLaunch &&
-	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
+	if (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()
+	&& ms().launchType == Launch::EDSiWareLaunch && !ms().dsiWareBooter) {
+	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
+	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
 		printSmallCentered(false, 20, "If this takes a while, close and open");
 		printSmallCentered(false, 34, "the console's lid.");
@@ -916,6 +916,7 @@ int main(int argc, char **argv) {
 			}
 		}
 		clearText();
+	  }
 	}
 
 	while (1) {
@@ -1118,7 +1119,7 @@ int main(int argc, char **argv) {
 					}
 				}
 
-				if (ms().consoleModel > 0) {
+				if (ms().dsiWareBooter || ms().consoleModel > 0) {
 					// Use nds-bootstrap
 					loadPerGameSettings(filename);
 
