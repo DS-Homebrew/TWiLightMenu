@@ -87,6 +87,8 @@ extern int file_count;
 
 char pergamefilepath[256];
 
+extern std::string dirContName;
+
 extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
 
 extern mm_sound_effect snd_launch;
@@ -336,21 +338,21 @@ void perGameSettings (std::string filename) {
 	}
 
 	// About 38 characters fit in the box.
-	std::string displayFilename = filename;
-	if (strlen(displayFilename.c_str()) > 35) {
+	dirContName = filename;
+	if (strlen(dirContName.c_str()) > 35) {
 		// Truncate to 35, 35 + 3 = 38 (because we append "...").
-		displayFilename.resize(32, ' ');
-		size_t first = displayFilename.find_first_not_of(' ');
-		size_t last = displayFilename.find_last_not_of(' ');
-		displayFilename = displayFilename.substr(first, (last - first + 1));
-		displayFilename.append("...");
+		dirContName.resize(32, ' ');
+		size_t first = dirContName.find_first_not_of(' ');
+		size_t last = dirContName.find_last_not_of(' ');
+		dirContName = dirContName.substr(first, (last - first + 1));
+		dirContName.append("...");
 	}
 
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
-		printSmall(false, 16, 66, displayFilename.c_str());
+		printSmall(false, 16, 66, dirContName.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);

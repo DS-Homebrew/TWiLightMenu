@@ -125,6 +125,7 @@ bool dirInfoIniFound = false;
 bool pageLoaded[100] = {false};
 bool dirContentBlankFilled[100] = {false};
 bool lockOutDirContentBlankFilling = false;
+std::string dirContName;
 
 char boxArtPath[256];
 
@@ -1024,7 +1025,7 @@ void ramDiskMsg(const char *filename) {
 		}
 		titleUpdate(false, filename, CURPOS);
 	}
-	std::string dirContName = filename;
+	dirContName = filename;
 	// About 38 characters fit in the box.
 	if (strlen(dirContName.c_str()) > 38) {
 		// Truncate to 35, 35 + 3 = 38 (because we append "...").
@@ -1073,7 +1074,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 			swiWaitForVBlank();
 		}
 		titleUpdate(false, filename, CURPOS);
-		std::string dirContName = filename;
+		dirContName = filename;
 		// About 38 characters fit in the box.
 		if (strlen(dirContName.c_str()) > 38) {
 			// Truncate to 35, 35 + 3 = 38 (because we append "...").
@@ -1085,10 +1086,12 @@ void dsiBinariesMissingMsg(const char *filename) {
 		}
 		printSmall(false, 16, 66, dirContName.c_str());
 	}
-	int yPos1 = (ms().theme == 4 ? 24 : 112);
-	int yPos2 = (ms().theme == 4 ? 40 : 128);
+	int yPos1 = (ms().theme == 4 ? 8 : 96);
+	int yPos2 = (ms().theme == 4 ? 24 : 112);
+	int yPos3 = (ms().theme == 4 ? 40 : 128);
 	printSmallCentered(false, yPos1, "The DSi binaries are missing.");
-	printSmallCentered(false, yPos2, "Please start in DS mode.");
+	printSmallCentered(false, yPos2, "Please get a clean dump of");
+	printSmallCentered(false, yPos3, "this ROM, or start in DS mode.");
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -2745,7 +2748,7 @@ string browseForFile(const vector<string> extensionList) {
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 						dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-				std::string dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
+				dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
 				// About 38 characters fit in the box.
 				if (strlen(dirContName.c_str()) > 38) {
 					// Truncate to 35, 35 + 3 = 38 (because we append "...").

@@ -281,12 +281,13 @@ void ramDiskMsg(void) {
 }
 
 void dsiBinariesMissingMsg(void) {
-	dialogboxHeight = 1;
+	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "DSi binaries are missing.");
-	printSmallCentered(false, 112, "Please start in DS mode.");
-	printSmallCentered(false, 126, "A: OK");
+	printSmallCentered(false, 104, "The DSi binaries are missing.");
+	printSmallCentered(false, 112, "Please get a clean dump of");
+	printSmallCentered(false, 120, "this ROM, or start in DS mode.");
+	printSmallCentered(false, 134, "A: OK");
 	int pressed = 0;
 	do {
 		scanKeys();
