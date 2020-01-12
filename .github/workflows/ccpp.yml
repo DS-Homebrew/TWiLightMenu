@@ -38,6 +38,7 @@ jobs:
         chmod +x make_cia
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+        cd ../
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
