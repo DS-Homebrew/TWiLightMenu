@@ -90,13 +90,26 @@ static addr_t quickFind (const data_t* data, const data_t* search, size_t dataLe
 	return -1;
 }
 
-static const data_t dldiMagicString[] = "\xED\xA5\x8D\xBF Chishm";	// Normal DLDI file
-static const data_t dldiMagicLoaderString[] = "\xEE\xA5\x8D\xBF Chishm";	// Different to a normal DLDI file
+// Strings are stored with bit 0x20 flipped (case inverted) to prevent accidental DLDI patching of them
+#define DLDI_MAGIC_LEN 12
+#define DLDI_MAGIC_MANGLE_VALUE 0x20
+static const data_t dldiMagicStringMangled[DLDI_MAGIC_LEN] = "\xCD\x85\xAD\x9F\0cHISHM";	// Normal DLDI file
+
+// Demangle the magic string by XORing every byte with 0x20, except the NULL terminator
+static void demangleMagicString(data_t *dest, const data_t *src) {
+	int i;
+
+	memcpy(dest, src, DLDI_MAGIC_LEN);
+	for (i = 0; i < DLDI_MAGIC_LEN - 1; ++i) {
+		dest[i] ^= DLDI_MAGIC_MANGLE_VALUE;
+	}
+}
+
 #define DEVICE_TYPE_DLDI 0x49444C44
 
-extern const u32 _io_dldi;
+extern data_t _dldi_start[];
 
-bool dldiPatchBinary (data_t *binData, u32 binSize, bool clearBSS) {
+bool dldiPatchBinary (data_t *binData, u32 binSize) {
 
 	addr_t memOffset;			// Offset of DLDI after the file is loaded into memory
 	addr_t patchOffset;			// Position of patch destination in the file
@@ -110,17 +123,19 @@ bool dldiPatchBinary (data_t *binData, u32 binSize, bool clearBSS) {
 	data_t *pDH;
 	data_t *pAH;
 
+	data_t dldiMagicString[DLDI_MAGIC_LEN];
 	size_t dldiFileSize = 0;
-	
+
 	// Find the DLDI reserved space in the file
-	patchOffset = quickFind (binData, dldiMagicString, binSize, sizeof(dldiMagicLoaderString));
+	demangleMagicString(dldiMagicString, dldiMagicStringMangled);
+	patchOffset = quickFind (binData, dldiMagicString, binSize, sizeof(dldiMagicString));
 
 	if (patchOffset < 0) {
 		// does not have a DLDI section
 		return false;
 	}
 
-	pDH = (data_t*)(((u32*)(&_io_dldi)) - 24);
+	pDH = _dldi_start;
 	pAH = &(binData[patchOffset]);
 
 	if (*((u32*)(pDH + DO_ioType)) == DEVICE_TYPE_DLDI) {
@@ -198,7 +213,7 @@ bool dldiPatchBinary (data_t *binData, u32 binSize, bool clearBSS) {
 		}
 	}
 
-	if (clearBSS && (pDH[DO_fixSections] & FIX_BSS)) { 
+	if (pDH[DO_fixSections] & FIX_BSS) { 
 		// Initialise the BSS to 0
 		memset (&pAH[readAddr(pDH, DO_bss_start) - ddmemStart] , 0, readAddr(pDH, DO_bss_end) - readAddr(pDH, DO_bss_start));
 	}
