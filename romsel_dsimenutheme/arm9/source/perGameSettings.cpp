@@ -87,6 +87,8 @@ extern int file_count;
 
 char pergamefilepath[256];
 
+extern std::string dirContName;
+
 extern mm_sound_effect snd_launch;
 extern mm_sound_effect snd_select;
 extern mm_sound_effect snd_stop;
@@ -244,12 +246,15 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
-	if (!ms().useBootstrap && REG_SCFG_EXT == 0) {
+	if (!ms().useBootstrap && !isHomebrew[CURPOS] && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
+	for (int i = 0; i < 8; i++) {
+		perGameOp[i] = -1;
+	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
 		if (!ms().secondaryDevice) {
 			perGameOps++;
@@ -273,11 +278,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}
-	} else if (!showPerGameSettings) {
-		for (int i = 0; i < 8; i++) {
-			perGameOp[i] = -1;
-		}
-	} else {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
+	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
@@ -327,21 +328,21 @@ void perGameSettings (std::string filename) {
 	}
 
 	// About 38 characters fit in the box.
-	std::string displayFilename = filename;
-	if (strlen(displayFilename.c_str()) > 35) {
+	dirContName = filename;
+	if (strlen(dirContName.c_str()) > 35) {
 		// Truncate to 35, 35 + 3 = 38 (because we append "...").
-		displayFilename.resize(32, ' ');
-		size_t first = displayFilename.find_first_not_of(' ');
-		size_t last = displayFilename.find_last_not_of(' ');
-		displayFilename = displayFilename.substr(first, (last - first + 1));
-		displayFilename.append("...");
+		dirContName.resize(32, ' ');
+		size_t first = dirContName.find_first_not_of(' ');
+		size_t last = dirContName.find_last_not_of(' ');
+		dirContName = dirContName.substr(first, (last - first + 1));
+		dirContName.append("...");
 	}
 
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
-		printSmall(false, 16, 66, displayFilename.c_str());
+		printSmall(false, 16, 66, dirContName.c_str());
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);

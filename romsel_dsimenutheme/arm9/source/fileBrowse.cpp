@@ -127,6 +127,7 @@ bool dirInfoIniFound = false;
 bool pageLoaded[100] = {false};
 bool dirContentBlankFilled[100] = {false};
 bool lockOutDirContentBlankFilling = false;
+std::string dirContName;
 
 char boxArtPath[256];
 
@@ -986,7 +987,7 @@ void ramDiskMsg(const char *filename) {
 	}
 
 	if (ms().theme != 2) {
-		std::string dirContName = filename;
+		dirContName = filename;
 		// About 38 characters fit in the box.
 		if (strlen(dirContName.c_str()) > 38) {
 			// Truncate to 35, 35 + 3 = 38 (because we append "...").
@@ -1067,7 +1068,7 @@ void dsiBinariesMissingMsg(const char *filename) {
 		titleUpdate(false, filename, CURPOS);
 
 		if (ms().theme != 2) {
-			std::string dirContName = filename;
+			dirContName = filename;
 			// About 38 characters fit in the box.
 			if (strlen(dirContName.c_str()) > 38) {
 				// Truncate to 35, 35 + 3 = 38 (because we append "...").
@@ -1084,12 +1085,14 @@ void dsiBinariesMissingMsg(const char *filename) {
 
 	int yPos1;
 	int yPos2;
+	int yPos3;
 	int okButton;
 
 	switch (ms().theme) {
 		case 4:
-			yPos1 = 24;
-			yPos2 = 40;
+      yPos1 = 8;
+			yPos2 = 24;
+			yPos3 = 40;
 			okButton = 64;
 			break;
 		case 2:
@@ -1097,16 +1100,19 @@ void dsiBinariesMissingMsg(const char *filename) {
 
 			yPos1 = 104;
 			yPos2 = 112;
-			okButton = 126;
+      yPos3 = 120;
+			okButton = 134;
 			break;
 		default:
-			yPos1 = 112;
-			yPos2 = 128;
+      yPos1 = 96;
+			yPos2 = 112;
+			yPos3 = 128;
 			okButton = 160;
 	}
 
 	printSmallCentered(false, yPos1, "The DSi binaries are missing.");
-	printSmallCentered(false, yPos2, "Please start in DS mode.");
+  printSmallCentered(false, yPos2, "Please get a clean dump of");
+	printSmallCentered(false, yPos3, "this ROM, or start in DS mode.");
 
 	if (ms().theme == 2)
 		printSmallCentered(false, okButton, "A: OK");
@@ -2518,7 +2524,7 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 
 						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Now Saving...");
+							printLargeCentered(false, (ms().theme == 4 ? 72 : 88), "Now Saving...");
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
@@ -2766,7 +2772,7 @@ string browseForFile(const vector<string> extensionList) {
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 						dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-				std::string dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
+				dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
 				// About 38 characters fit in the box.
 				if (strlen(dirContName.c_str()) > 38) {
 					// Truncate to 35, 35 + 3 = 38 (because we append "...").
