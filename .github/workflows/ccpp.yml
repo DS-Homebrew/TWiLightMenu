@@ -16,11 +16,11 @@ jobs:
         sudo dpkg -i pacman.deb
         sudo dkp-pacman -Sy
         sudo dkp-pacman -S nds-dev --noconfirm
+    - name: Compile and Setup application
+      run: |
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
-    - name: Compile and Setup application
-      run: |
         make package
     - name: Create the CIAs (optional)
       run: |
