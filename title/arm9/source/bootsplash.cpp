@@ -219,7 +219,7 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFps = 24;
 
 		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-			sprintf(videoFrameFilename, "nitro:/health_safety/frames/frame%s.png", (selectedFrame < 10 ? std::string("0") + std::to_string(selectedFrame) : std::to_string(selectedFrame)));
+			sprintf(videoFrameFilename, "nitro:/health_safety/frames/frame%s.png", (selectedFrame < 10 ? (std::string("0") + std::to_string(selectedFrame)).c_str() : std::to_string(selectedFrame).c_str()));
 
 			lodepng::decode(image, width, height, std::string(videoFrameFilename));
 			for(unsigned i = 0; i < image.size(); i = i * 4) {

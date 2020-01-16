@@ -196,8 +196,8 @@ void lastRunROM()
 
 				loadPerGameSettings(filename);
 				if (ms().homebrewBootstrap) {
-					char ndsBootstrapToUse[37];
-					sprintf(ndsBootstrapToUse, "sd:/_nds/nds-bootstrap-hb-%s.nds", (perGameSettings_bootstrapFile == -1 && ms().bootstrapFile) || perGameSettings_bootstrapFile ? "nightly" : "ds");
+					char ndsBootstrapToUse[39];
+					sprintf(ndsBootstrapToUse, "sd:/_nds/nds-bootstrap-hb-%s.nds", (perGameSettings_bootstrapFile == -1 && ms().bootstrapFile) || perGameSettings_bootstrapFile ? "nightly" : "release");
 
 					argarray.push_back((char*)ndsBootstrapToUse);
 				} else {

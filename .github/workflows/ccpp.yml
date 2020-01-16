@@ -1,34 +1,29 @@
-name: TWiLightMenu Binary Compilation
-
-on:
-  push:
-    branches:
-    - master
-    - release/*
-    tags:
-      - v*
+name: Compile and Build
+on: push
 
 jobs:
-  buildApplet:
-    name: Build TWiLightMenu
-    runs-on: ubuntu-16.04
+  build:
+    name: Build TWiLight Menu++ using the latest devkitPro
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Install devkit(Pro/ARM), libnds, and p7zip
+    - uses: actions/checkout@v2
+    - name: Setup Required libraries (devkitPro, haveged, p7zip-full)
       run: |
-       curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
-       sudo apt update
-       sudo apt install p7zip-full haveged
-       sudo dpkg -i pacman.deb
-       sudo dkp-pacman -Sy
-       sudo dkp-pacman -S nds-dev --noconfirm
-    - name: make
-      run: |
+        curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        sudo apt install p7zip-full haveged
+        sudo dpkg -i pacman.deb
+        sudo dkp-pacman -Sy
+        sudo dkp-pacman -S nds-dev --noconfirm
         export DEVKITPRO="/opt/devkitpro"
         export DEVKITARM="/opt/devkitpro/devkitARM"
         sudo cp libmm7.a /opt/devkitpro/libnds/lib/libmm7.a
+    - name: Compile and Setup application
+      run: |
         make package
+    - name: Create the CIAs (optional)
+      run: |
         cd booter/
         chmod +x make_cia
         ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
@@ -39,32 +34,107 @@ jobs:
         ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
         cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
         cd ../
+    - name: Package files
+      run: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
         rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
         7z a TWiLightMenu-Lite.7z TWiLightMenu/
-        ls
-    - name: Commit to TWLBot/overflow-builds
-      if: success() # it worked yay
-      run: |
-        export COMMIT_TAG="$(git log --format=%h -1)"
-        export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
-        export CURRENT_DATE="$(date +"%Y%m%d-%H%M%S")"
-        git config --global user.email "flamekat54@aol.com"
-        git config --global user.name "TWLBot"
-        git clone --depth 1 https://${{ secrets.BOT_TOKEN }}@github.com/TWLBot/overflow-builds.git
-        cd overflow-builds/
-        cp ../TWiLightMenu.7z TWiLightMenu.7z
-        ls
-        git stage .
-        git commit -m "TWiLightMenu | $COMMIT_TAG"
-        git push origin master
-#        curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
-#        sudo chmod +x send.sh
-#        ./send.sh success ${{ secrets.WEBHOOK_URL }}
-    - uses: actions/upload-artifact@master
+    - name: Upload artifacts to Github (Full TWiLight)
+      if: success()
+      uses: actions/upload-artifact@master
       with:
         name: TWiLightMenu-${{ github.sha }}
         path: TWiLightMenu/
+    - name: Upload artifacts to Github (TWiLight Lite)
+      if: success()
+      uses: actions/upload-artifact@master
+      with:
+        name: TWiLightMenu-Lite-${{ github.sha }}
+        path: TWiLightMenu-Lite/
+
+  buildDocker:
+    name: Build TWiLight Menu++ with Docker using forked libnds and devkitARM r50
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set-Up Required Libraries (p7zip-full)
+      run: |
+        sudo apt update
+        sudo apt install p7zip-full
+    - name: Build Docker image
+      run: |
+        docker build -t twilightmenu --label twilightmenu ./docker
+        docker ps -a
+    - name: Build TWilight Menu++
+      run: |
+        docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
+    - name: Create the CIAs (optional)
+      run: |
+        cd booter/
+        chmod +x make_cia
+        ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+        mkdir -p "../7zfile/3DS - CFW users/"
+        cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+        cd ../rungame/
+        chmod +x make_cia
+        ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+        cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+        cd ../
+    - name: Package files
+      run: |
+        rm -r 7zfile/_nds/TWiLightMenu/*menu/
+        mv 7zfile/ TWiLightMenu_docker/
+        7z a TWiLightMenu_docker.7z TWiLightMenu_docker/
+        rm -r TWiLightMenu_docker/_nds/TWiLightMenu/widescreen/
+        rm -r TWiLightMenu_docker/_nds/TWiLightMenu/apfix/
+        7z a TWiLightMenu-Lite_docker.7z TWiLightMenu_docker/
+    - name: Upload artifacts to Github (TWiLight Docker Full)
+      if: success()
+      uses: actions/upload-artifact@master
+      with:
+        name: TWiLightMenu_docker-${{ github.sha }}
+        path: TWiLightMenu_docker/
+    - name: Upload artifacts to Github (TWiLight Docker Lite)
+      if: success()
+      uses: actions/upload-artifact@master
+      with:
+        name: TWiLightMenu-Lite_docker-${{ github.sha }}
+        path: TWiLightMenu-Lite_docker/
+
+#  finalSteps:
+#    needs: build
+#    name: Final Steps
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Downloa
+#      if: success()
+#      uses: actions/upload-artifact@master
+#      with:
+#        name: TWiLightMenu-${{ github.sha }}
+#        path: TWiLightMenu/
+#    - name: Commit to TWLBot/overflow-builds
+#      if: success() # it worked yay
+#      run: |
+#        export COMMIT_TAG="$(git log --format=%h -1)"
+#        export COMMIT_MESSAGE="$(git log --pretty=format:"%an - %s" -1)"
+#        export CURRENT_DATE="$(date +"%Y%m%d-%H%M%S")"
+#        git config --global user.email "flamekat54@aol.com"
+#        git config --global user.name "TWLBot"
+#        git clone --depth 1 https://${{ secrets.BOT_TOKEN }}@github.com/TWLBot/overflow-builds.git
+#        cd overflow-builds/
+#        cp ../TWiLightMenu.7z TWiLightMenu.7z
+#        cp ../TWiLightMenu-Lite.7z TWiLightMenu-Lite.7z
+#        ls
+#        git stage .
+#        git commit -m "TWiLightMenu | $COMMIT_TAG"
+#        git push origin master
+#
+#        curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
+#        sudo chmod +x send.sh
+#        ./send.sh success ${{ secrets.WEBHOOK_URL }}
