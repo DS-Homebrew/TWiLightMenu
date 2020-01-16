@@ -255,12 +255,15 @@ void perGameSettings (std::string filename) {
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
 		&& memcmp(gameTid[CURPOS], "HNE", 3) != 0);
-	if (!ms().useBootstrap && REG_SCFG_EXT == 0) {
+	if (!ms().useBootstrap && !isHomebrew[CURPOS] && REG_SCFG_EXT == 0) {
 		showPerGameSettings = false;
 	}
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
+	for (int i = 0; i < 8; i++) {
+		perGameOp[i] = -1;
+	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
 		if (!ms().secondaryDevice) {
 			perGameOps++;
@@ -284,11 +287,7 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}
-	} else if (!showPerGameSettings) {
-		for (int i = 0; i < 8; i++) {
-			perGameOp[i] = -1;
-		}
-	} else {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
+	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
 			perGameOp[perGameOps] = 0;	// Language
