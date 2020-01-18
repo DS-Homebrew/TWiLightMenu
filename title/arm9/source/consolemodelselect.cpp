@@ -208,8 +208,8 @@ void consoleModelSelect(void) {
 	REG_BG3PC_SUB = 0;
 	REG_BG3PD_SUB = 1<<8;
 
-	if (ms().consoleModel < 1 || ms().consoleModel > 3) {
-		ms().consoleModel = 1;
+	if (ms().consoleModel < 1 || ms().consoleModel > 2) {
+		ms().consoleModel = 2;
 	}
 
 	LoadConsoleBMP(ms().consoleModel);
