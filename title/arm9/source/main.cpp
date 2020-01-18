@@ -571,16 +571,18 @@ int main(int argc, char **argv)
 			if (ms().consoleModel < 1 || ms().consoleModel > 2
 			|| bs().consoleModel < 1 || bs().consoleModel > 2)
 			{
-				if (access("sd:/Nintendo 3DS", F_OK) == 0)		// Console is Nintendo 3DS/2DS
+				if (access("sd:/", F_OK) == 0)		// If SD card is found
 				{
-					ms().consoleModel = 2;
-					bs().consoleModel = 2;
+					bool is3ds = (access("sd:/Nintendo 3DS", F_OK) == 0);		// Console is Nintendo 3DS/2DS,
+																				// or else, console is Nintendo DSi (Panda/Dev unit)
+					ms().consoleModel = 1+is3ds;
+					bs().consoleModel = 1+is3ds;
 					ms().saveSettings();
 					bs().saveSettings();
 				}
-				else if (access("sd:/", F_OK) != 0)			// Else, console is Nintendo DSi (Panda/Dev unit)...
+				else
 				{
-					consoleModelSelect();						// unless there's no SD card
+					consoleModelSelect();			// There's no SD card
 				}
 			}
 		}
