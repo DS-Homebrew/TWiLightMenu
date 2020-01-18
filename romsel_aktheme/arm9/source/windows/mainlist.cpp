@@ -231,7 +231,7 @@ bool MainList::enterDir(const std::string &dirName)
 
         if (sdFound())
         {
-            addDirEntry(LANG("mainlist", ((ms().consoleModel < 3) ? "SD Card" : "microSD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+            addDirEntry(LANG("mainlist", ((ms().showMicroSd) ? "microSD Card" : "SD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
         }
         if (flashcardFound())
         {

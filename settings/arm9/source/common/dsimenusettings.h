@@ -131,6 +131,7 @@ class DSiMenuPlusPlusSettings
     int blfLevel;
     bool wifiLed;
     bool sdRemoveDetect;
+    bool showMicroSd;
     bool useGbarunner;
     bool gbar2DldiAccess;
     bool showMainMenu;

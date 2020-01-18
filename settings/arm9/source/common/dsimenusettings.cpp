@@ -18,6 +18,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     blfLevel = 0;
     wifiLed = true;
     sdRemoveDetect = true;
+    showMicroSd = false;
     useGbarunner = false;
 	gbar2DldiAccess = false;
     showMainMenu = true;
@@ -114,6 +115,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
+    showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
@@ -205,6 +207,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
+	settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
     settingsini.SetInt("SRLOADER", "HS_MSG", hsMsg);

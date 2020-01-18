@@ -138,6 +138,7 @@ class DSiMenuPlusPlusSettings
     int colorMode;
     int blfLevel;
     bool sdRemoveDetect;
+	bool showMicroSd;
     bool useGbarunner;
     bool gbar2DldiAccess;
     bool showMainMenu;

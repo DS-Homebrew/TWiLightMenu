@@ -92,6 +92,7 @@ extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
 extern int pagenum[2];
+extern bool showMicroSd;
 
 bool settingsChanged = false;
 
@@ -300,6 +301,17 @@ void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 0;
 }
 
+void showLocation(void) {
+	if (isRegularDS) return;
+
+	printSmall(false, 8, 168, "Location:");
+	if (secondaryDevice) {
+		printSmall(false, 8, 176, "Slot-1 microSD Card");
+	} else {
+		printSmall(false, 8, 176, showMicroSd ? "microSD Card" : "SD Card");
+	}
+}
+
 extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList) {
@@ -377,16 +389,7 @@ string browseForFile(const vector<string> extensionList) {
 		if (bnrRomType == 0) iconUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 		titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
 
-		if (!isRegularDS) {
-			printSmall(false, 8, 168, "Location:");
-			if (secondaryDevice) {
-				printSmall(false, 8, 176, "Slot-1 microSD Card");
-			} else if (consoleModel < 3) {
-				printSmall(false, 8, 176, "SD Card");
-			} else {
-				printSmall(false, 8, 176, "microSD Card");
-			}
-		}
+		showLocation();
 
 		// Power saving loop. Only poll the keys once per frame and sleep the CPU if there is nothing else to do
 		do {
@@ -479,16 +482,7 @@ string browseForFile(const vector<string> extensionList) {
 				{
 					smsWarning();
 					titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-					if (!isRegularDS) {
-						printSmall(false, 8, 168, "Location:");
-						if (secondaryDevice) {
-							printSmall(false, 8, 176, "Slot-1 microSD Card");
-						} else if (consoleModel < 3) {
-							printSmall(false, 8, 176, "SD Card");
-						} else {
-							printSmall(false, 8, 176, "microSD Card");
-						}
-					}
+					showLocation();
 				}
 				else if (bnrRomType == 7)
 				{
@@ -540,16 +534,7 @@ string browseForFile(const vector<string> extensionList) {
 
 					if (proceedToLaunch) {
 						titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-						if (!isRegularDS) {
-							printSmall(false, 8, 168, "Location:");
-							if (secondaryDevice) {
-								printSmall(false, 8, 176, "Slot-1 microSD Card");
-							} else if (consoleModel < 3) {
-								printSmall(false, 8, 176, "SD Card");
-							} else {
-								printSmall(false, 8, 176, "microSD Card");
-							}
-						}
+						showLocation();
 					}
 				}
 

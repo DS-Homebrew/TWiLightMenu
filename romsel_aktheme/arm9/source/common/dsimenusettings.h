@@ -112,6 +112,7 @@ class DSiMenuPlusPlusSettings
     int guiLanguage;
     bool useGbarunner;
     bool gbar2DldiAccess;
+    bool showMicroSd;
     int theme;
     int subtheme;
 	bool showNds;

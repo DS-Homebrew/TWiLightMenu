@@ -23,6 +23,7 @@ extern std::string STR_DESCRIPTION_SCREENSCALESIZE;*/
 extern std::string STR_COLORMODE;
 extern std::string STR_BLF;
 extern std::string STR_WIFILED;
+extern std::string STR_REFERSD;
 extern std::string STR_SDREMOVALDETECTION;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_MAINMENU;
@@ -58,6 +59,7 @@ extern std::string STR_DESCRIPTION_COLORMODE;
 extern std::string STR_DESCRIPTION_BLF;
 extern std::string STR_DESCRIPTION_WIFILED;
 extern std::string STR_DESCRIPTION_SDREMOVALDETECTION;
+extern std::string STR_DESCRIPTION_REFERSD;
 extern std::string STR_DESCRIPTION_S1SDACCESS_1;
 extern std::string STR_DESCRIPTION_MAINMENU;
 extern std::string STR_DESCRIPTION_THEME_1;

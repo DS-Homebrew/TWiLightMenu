@@ -29,6 +29,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     colorMode = 0;
     blfLevel = 0;
     sdRemoveDetect = true;
+    showMicroSd = false;
     useGbarunner = false;
 	gbar2DldiAccess = false;
     showMainMenu = true;
@@ -131,6 +132,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
+    showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;

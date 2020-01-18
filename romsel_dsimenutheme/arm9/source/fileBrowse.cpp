@@ -470,19 +470,15 @@ void displayNowLoading(void) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
 				printSmallCentered(false, 48, "Location: Slot-1 microSD");
-			} else if (ms().consoleModel < 3) {
-				printSmallCentered(false, 48, "Location: SD Card");
 			} else {
-				printSmallCentered(false, 48, "Location: microSD Card");
+				printSmallCentered(false, 48, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card");
 			}
 		} else {
 			printSmall(false, 8, 152, "Location:");
 			if (ms().secondaryDevice) {
 				printSmall(false, 8, 168, "Slot-1 microSD Card");
-			} else if (ms().consoleModel < 3) {
-				printSmall(false, 8, 168, "SD Card");
 			} else {
-				printSmall(false, 8, 168, "microSD Card");
+				printSmall(false, 8, 168, ms().showMicroSd ? "microSD Card" : "SD Card");
 			}
 		}
 	}
@@ -1187,11 +1183,7 @@ bool selectMenu(void) {
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
-						if (ms().consoleModel < 3) {
-							printSmall(false, 64, textYpos, "Switch to SD Card");
-						} else {
-							printSmall(false, 64, textYpos, "Switch to microSD Card");
-						}
+						printSmall(false, 64, textYpos, ms().showMicroSd ? "Switch to microSD Card" : "Switch to SD Card");
 					} else {
 						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
 					}

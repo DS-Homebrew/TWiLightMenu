@@ -21,6 +21,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     guiLanguage = ELangDefault;
     useGbarunner = false;
 	gbar2DldiAccess = false;
+	showMicroSd = false;
     theme = 0;
     subtheme = 0;
 
@@ -103,6 +104,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
         useGbarunner = true;
     }
 	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
+    showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
 	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
