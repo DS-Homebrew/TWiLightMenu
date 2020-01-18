@@ -89,8 +89,6 @@ char pergamefilepath[256];
 
 extern std::string dirContName;
 
-extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 extern mm_sound_effect snd_launch;
 extern mm_sound_effect snd_select;
 extern mm_sound_effect snd_stop;

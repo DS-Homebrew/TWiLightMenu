@@ -1202,7 +1202,7 @@ int main(int argc, char **argv) {
 			iconUpdate (false, filename.c_str());
 			bnrRomType = 0;
 			boxArtType = 0;
-		} else if (extention(filename, ".plg") || extention(filename, ".rvid")) {
+		} else if (extention(filename, ".plg") || extention(filename, ".rvid") || extention(filename, ".mp4")) {
 			bnrRomType = 9;
 			boxArtType = 0;
 		} else if (extention(filename, ".gba")) {
@@ -2243,6 +2243,11 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					}
+				} else if (extention(filename, ".mp4")) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 					}
 				} else if (extention(filename, ".gba")) {
 					launchType = 1;

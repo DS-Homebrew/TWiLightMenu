@@ -970,6 +970,7 @@ void titleUpdate(bool isDir, const char* name)
 {
 	if (extention(name, ".plg")
 	 || extention(name, ".rvid")
+	 || extention(name, ".mp4")
 	 || extention(name, ".gba")
 	 || extention(name, ".gb")
 	 || extention(name, ".sgb")

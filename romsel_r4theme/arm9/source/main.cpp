@@ -1111,6 +1111,7 @@ int main(int argc, char **argv) {
 	}
 	if (showRvid) {
 		extensionList.push_back(".rvid");
+		extensionList.push_back(".mp4");
 	}
 	if (useGbarunner) {
 		extensionList.emplace_back(".gba");
@@ -1477,6 +1478,7 @@ int main(int argc, char **argv) {
 
 			bool dstwoPlg = false;
 			bool rvid = false;
+			bool mpeg4 = false;
 			bool GBA = false;
 			bool SNES = false;
 			bool GENESIS = false;
@@ -1957,6 +1959,8 @@ int main(int argc, char **argv) {
 				dstwoPlg = true;
 			} else if (extention(filename, ".rvid")) {
 				rvid = true;
+			} else if (extention(filename, ".mp4")) {
+				mpeg4 = true;
 			} else if (extention(filename, ".gba")) {
 				//ms().launchType = Launch::ESDFlashcardLaunch;
 				//ms().previousUsedDevice = ms().secondaryDevice;
@@ -1985,7 +1989,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || gamegear) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);

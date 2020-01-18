@@ -878,6 +878,7 @@ int main(int argc, char **argv) {
 	}
 	if (ms().showRvid) {
 		extensionList.emplace_back(".rvid");
+		extensionList.emplace_back(".mp4");
 	}
 	if (ms().useGbarunner) {
 		extensionList.emplace_back(".gba");
@@ -1018,6 +1019,7 @@ int main(int argc, char **argv) {
 
 			bool dstwoPlg = false;
 			bool rvid = false;
+			bool mpeg4 = false;
 			bool GBA = false;
 			bool SNES = false;
 			bool GENESIS = false;
@@ -1603,6 +1605,8 @@ int main(int argc, char **argv) {
 				dstwoPlg = true;
 			} else if (extention(filename, ".rvid")) {
 				rvid = true;
+			} else if (extention(filename, ".mp4")) {
+				mpeg4 = true;
 			} else if (extention(filename, ".gba")) {
 				//ms().launchType = Launch::ESDFlashcardLaunch;
 				//ms().previousUsedDevice = ms().secondaryDevice;
@@ -1632,7 +1636,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || gamegear) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1671,6 +1675,11 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+					}
+				} else if (mpeg4) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 					}
 				} else if (gameboy) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";

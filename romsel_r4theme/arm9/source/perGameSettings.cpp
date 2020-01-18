@@ -78,8 +78,6 @@ int perGameSettings_bootstrapFile = -1;
 
 char pergamefilepath[256];
 
-extern std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
 

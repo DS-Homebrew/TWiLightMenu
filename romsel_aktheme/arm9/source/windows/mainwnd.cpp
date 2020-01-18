@@ -1274,6 +1274,20 @@ void MainWnd::launchSelected()
         bootFile(ndsToBoot, fullPath);
     }
 
+    // MPEG4 Launch
+    if (extension == ".mp4")
+    {
+        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
+
+		ndsToBoot = MPEG4PLAYER_SD;
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = MPEG4PLAYER_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
+    }
+
     // GBA Launch
     if (extension == ".gba")
 	{

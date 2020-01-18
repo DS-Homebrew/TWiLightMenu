@@ -155,6 +155,7 @@ void MainList::setupExtnames()
     if (ms().showRvid)
     {
 		_extnameFilter.emplace_back(std::string(".rvid"));
+		_extnameFilter.emplace_back(std::string(".mp4"));
 	}
     if (ms().useGbarunner)
 	{
@@ -381,7 +382,7 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
-                else if (".plg" == extName)
+                else if (".plg" == extName || ".rvid" == extName || ".mp4" == extName)
                 {
                     rominfo.setBanner("plg", ds2plg_banner_bin);
                 }
