@@ -566,22 +566,21 @@ int main(int argc, char **argv)
 		}
 		*(vu32*)(0x0DFFFE0C) = 0x53524C41;		// Check for 32MB of RAM
 		bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
-		bool is3ds = (access("sd:/Nintendo 3DS", F_OK) == 0);
 		if (isDevConsole)
 		{
 			if (ms().consoleModel < 1 || ms().consoleModel > 2
 			|| bs().consoleModel < 1 || bs().consoleModel > 2)
 			{
-				if (is3ds)
+				if (access("sd:/Nintendo 3DS", F_OK) == 0)		// Console is Nintendo 3DS/2DS
 				{
 					ms().consoleModel = 2;
 					bs().consoleModel = 2;
 					ms().saveSettings();
 					bs().saveSettings();
 				}
-				else
+				else if (access("sd:/", F_OK) != 0)			// Else, console is Nintendo DSi (Panda/Dev unit)...
 				{
-					consoleModelSelect();
+					consoleModelSelect();						// unless there's no SD card
 				}
 			}
 		}
