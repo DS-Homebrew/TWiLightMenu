@@ -223,11 +223,7 @@ void LoadBMP(void) {
 
 	fclose(file);
 
-	if (ms().useBootstrap || isDSiMode()) {		// Show nds-bootstrap logo, if nds-bootstrap is set to be used
-		file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobzbootstrap.bmp" : "nitro:/graphics/logo_rocketrobzbootstrap.bmp", "rb");
-	} else {
-		file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
-	}
+	file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
 
 	if (file) {
 		// Start loading
