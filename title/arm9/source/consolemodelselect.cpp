@@ -26,9 +26,6 @@ void LoadConsoleBMP(int consoleModel) {
 		case 2:
 			file = fopen("nitro:/graphics/o3ds.bmp", "rb");
 			break;
-		case 3:
-			file = fopen("nitro:/graphics/n3ds.bmp", "rb");
-			break;
 	}
 
 	if (file) {
@@ -64,10 +61,7 @@ void LoadConsoleBMP(int consoleModel) {
 				file = fopen("nitro:/graphics/consoleseltext_devdsi-fr.bmp", "rb");
 				break;
 			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_o3ds-fr.bmp", "rb");
-				break;
-			case 3:
-				file = fopen("nitro:/graphics/consoleseltext_n3ds-fr.bmp", "rb");
+				file = fopen("nitro:/graphics/consoleseltext_3ds-fr.bmp", "rb");
 				break;
 		}
 	}
@@ -81,10 +75,7 @@ void LoadConsoleBMP(int consoleModel) {
 				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
 				break;
 			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_o3ds.bmp", "rb");
-				break;
-			case 3:
-				file = fopen("nitro:/graphics/consoleseltext_n3ds.bmp", "rb");
+				file = fopen("nitro:/graphics/consoleseltext-3ds.bmp", "rb");
 				break;
 		}
 	}
@@ -244,13 +235,13 @@ void consoleModelSelect(void) {
 		if (pressed & KEY_LEFT) {
 			ms().consoleModel--;
 			if (ms().consoleModel < 1) {
-				ms().consoleModel = 3;
+				ms().consoleModel = 2;
 			}
 			LoadConsoleBMP(ms().consoleModel);
 		}
 		if (pressed & KEY_RIGHT) {
 			ms().consoleModel++;
-			if (ms().consoleModel > 3) {
+			if (ms().consoleModel > 2) {
 				ms().consoleModel = 1;
 			}
 			LoadConsoleBMP(ms().consoleModel);
