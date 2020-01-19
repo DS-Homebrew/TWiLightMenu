@@ -4,64 +4,58 @@
 #include "common/dsimenusettings.h"
 #include "bootstrapsettings.h"
 #include "graphics/graphics.h"
+#include "graphics/lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
+
+extern u16 convertVramColorToGrayscale(u16 val);
 
 extern bool fadeType;
 extern bool controlTopBright;
 
 void LoadConsoleBMP(int consoleModel) {
-	FILE* file;
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image[2];
+
+	const char* filePath;
 	int language = (ms().getGuiLanguage());
 
 	switch (consoleModel) {
 		case 0:
 		default:
-			file = fopen("nitro:/graphics/dsi.bmp", "rb");
 			break;
 		case 1:
-			file = fopen("nitro:/graphics/devdsi.bmp", "rb");
+			filePath = "nitro:/graphics/devdsi.png";
 			break;
 		case 2:
-			file = fopen("nitro:/graphics/o3ds.bmp", "rb");
+			filePath = "nitro:/graphics/o3ds.png";
 			break;
 	}
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
+	lodepng::decode(image[0], imageWidth, imageHeight, filePath);
+
+	for(uint i=0;i<image[0].size()/4;i++) {
+		bmpImageBuffer[i] = image[0][i*4]>>3 | (image[0][(i*4)+1]>>3)<<5 | (image[0][(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
+	// Start loading
+	dmaCopyWordsAsynch(0, bmpImageBuffer, (u16*)BG_GFX, 0x200*192);
 
 	//if french
 	if (language == 2){
 		switch (consoleModel) {
 			case 0:
 			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi-fr.bmp", "rb");
 				break;
 			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi-fr.bmp", "rb");
+				filePath = "nitro:/graphics/consoleseltext_devdsi-fr.png";
 				break;
 			case 2:
-				file = fopen("nitro:/graphics/consoleseltext_3ds-fr.bmp", "rb");
+				filePath = "nitro:/graphics/consoleseltext_3ds-fr.png";
 				break;
 		}
 	}
@@ -69,39 +63,28 @@ void LoadConsoleBMP(int consoleModel) {
 		switch (consoleModel) {
 			case 0:
 			default:
-				file = fopen("nitro:/graphics/consoleseltext_dsi.bmp", "rb");
 				break;
 			case 1:
-				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
+				filePath = "nitro:/graphics/consoleseltext_devdsi.png";
 				break;
 			case 2:
-				file = fopen("nitro:/graphics/consoleseltext-3ds.bmp", "rb");
+				filePath = "nitro:/graphics/consoleseltext-3ds.png";
 				break;
 		}
 	}
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
+	lodepng::decode(image[1], imageWidth, imageHeight, filePath);
+
+	while(dmaBusy(0));
+	for(uint i=0;i<image[1].size()/4;i++) {
+		bmpImageBuffer[i] = image[1][i*4]>>3 | (image[1][(i*4)+1]>>3)<<5 | (image[1][(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
-
+	// Start loading
+	dmaCopyWordsAsynch(1, bmpImageBuffer, (u16*)BG_GFX, 0x200*192);
 }
 
 bool consoleModel_isSure(void) {
@@ -109,43 +92,36 @@ bool consoleModel_isSure(void) {
 
 	controlTopBright = false;
 	fadeType = false;
-	for (int i = 0; i < 90; i++) {
+	for (int i = 0; i < 60; i++) {
 		swiWaitForVBlank();
 	}
 
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image;
+
 	//Get the language for the splash screen
 	int language = (ms().getGuiLanguage());
-	FILE* file;
+	const char* filePath;
 
 	//If not french, then fallback to english
 	if(language == 2){
-		file = fopen("nitro:/graphics/consoleseltext_areyousure-fr.bmp", "rb");
+		filePath = "nitro:/graphics/consoleseltext_areyousure-fr.png";
 	}
 	else {
-		file = fopen("nitro:/graphics/consoleseltext_areyousure.bmp", "rb");
+		filePath = "nitro:/graphics/consoleseltext_areyousure.png";
 	}
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = ((val>>10)&0x1f) | ((val)&(0x1f<<5)) | (val&0x1f)<<10 | BIT(15);
-			x++;
+	lodepng::decode(image, imageWidth, imageHeight, filePath);
+
+	for(uint i=0;i<image.size()/4;i++) {
+		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
+	// Start loading
+	dmaCopyWordsAsynch(1, bmpImageBuffer, (u16*)BG_GFX, 0x200*192);
 
 	fadeType = true;
 	for (int i = 0; i < 25; i++) {

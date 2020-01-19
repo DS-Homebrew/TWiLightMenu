@@ -26,6 +26,7 @@
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
 #include "graphics.h"
+#include "graphics/lodepng.h"
 
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
@@ -199,53 +200,33 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	FILE* file = fopen(sys().isDSPhat() ? "nitro:/video/twlmenupp/phat_dsi.bmp" : "nitro:/video/twlmenupp/dsi.bmp", "rb");
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image[2];
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x14000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 143;
-		for (int i=0; i<256*144; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[(y+24)*256+x] = convertToDsBmp(val);
-			x++;
+	lodepng::decode(image[0], imageWidth, imageHeight, sys().isDSPhat() ? "nitro:/video/twlmenupp/phat_dsi.png" : "nitro:/video/twlmenupp/dsi.png");
+
+	for(uint i=0;i<image[0].size()/4;i++) {
+		bmpImageBuffer[i] = image[0][i*4]>>3 | (image[0][(i*4)+1]>>3)<<5 | (image[0][(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
+	// Start loading
+	dmaCopyWordsAsynch(0, bmpImageBuffer, (u16*)BG_GFX+(256*24), 0x200*144);
 
-	file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
+	lodepng::decode(image[1], imageWidth, imageHeight, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.png" : "nitro:/graphics/logo_rocketrobz.png");
 
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
+	while(dmaBusy(0));
+	for(uint i=0;i<image[1].size()/4;i++) {
+		bmpImageBuffer[i] = image[1][i*4]>>3 | (image[1][(i*4)+1]>>3)<<5 | (image[1][(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
 	}
 
-	fclose(file);
+	// Start loading
+	dmaCopyWordsAsynch(1, bmpImageBuffer, (u16*)BG_GFX_SUB, 0x200*192);
 }
 
 void runGraphicIrq(void) {
@@ -256,6 +237,12 @@ void runGraphicIrq(void) {
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
+}
+
+void runGraphicVcountIrq(void) {
+	irqSet(IRQ_VCOUNT, vCountHandler);
+	REG_DISPSTAT = (REG_DISPSTAT & ~0xFF80) | 0xE400 | DISP_YTRIGGER_IRQ;
+	irqEnable(IRQ_VCOUNT);
 }
 
 void loadTitleGraphics() {
