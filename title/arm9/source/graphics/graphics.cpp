@@ -239,12 +239,6 @@ void runGraphicIrq(void) {
 	irqEnable(IRQ_VBLANK);
 }
 
-void runGraphicVcountIrq(void) {
-	irqSet(IRQ_VCOUNT, vCountHandler);
-	REG_DISPSTAT = (REG_DISPSTAT & ~0xFF80) | 0xE400 | DISP_YTRIGGER_IRQ;
-	irqEnable(IRQ_VCOUNT);
-}
-
 void loadTitleGraphics() {
 	videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
