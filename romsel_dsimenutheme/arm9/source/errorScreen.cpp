@@ -5,6 +5,7 @@
 #include "common/systemdetails.h"
 #include "common/dsimenusettings.h"
 #include "graphics/ThemeTextures.h"
+#include "graphics/lodepng.h"
 //#include "autoboot.h"
 #include "sound.h"
 
@@ -27,50 +28,20 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
-	//FILE* file = fopen((sys().arm7SCFGLocked() ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
-	FILE* file = fopen("nitro:/graphics/sdRemovedError.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
-		u16* src = tex().bmpImageBuffer();
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedExtendedImage[y*256+x] = tex().convertToDsBmp(val);
-			x++;
-		}
-	}
-	fclose(file);
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image[2];
 
-	file = fopen("nitro:/graphics/sdRemoved.bmp", "rb");
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x18000, file);
-		u16* src = tex().bmpImageBuffer();
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			sdRemovedImage[y*256+x] = tex().convertToDsBmp(val);
-			x++;
-		}
+	lodepng::decode(image[0], imageWidth, imageHeight, "nitro:/graphics/sdRemovedError.png");
+
+	for(uint i=0;i<image[0].size()/4;i++) {
+		sdRemovedExtendedImage[i] = image[0][i*4]>>3 | (image[0][(i*4)+1]>>3)<<5 | (image[0][(i*4)+2]>>3)<<10 | BIT(15);
 	}
-	fclose(file);
+
+	lodepng::decode(image[1], imageWidth, imageHeight, "nitro:/graphics/sdRemoved.png");
+
+	for(uint i=0;i<image[1].size()/4;i++) {
+		sdRemovedImage[i] = image[1][i*4]>>3 | (image[1][(i*4)+1]>>3)<<5 | (image[1][(i*4)+2]>>3)<<10 | BIT(15);
+	}
 }
 
 void checkSdEject(void) {

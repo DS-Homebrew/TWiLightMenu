@@ -47,6 +47,7 @@
 #include "fontHandler.h"
 #include "graphics.h"
 #include "graphics/ThemeTextures.h"
+#include "graphics/lodepng.h"
 #include "themefilenames.h"
 #include "date.h"
 #include "iconHandler.h"
@@ -1334,7 +1335,7 @@ void loadPhotoList() {
 
 			photoDir = ent->d_name;
 			if (photoDir == ".." || photoDir == "..." || photoDir == "." || photoDir.substr(0, 2) == "._" ||
-			    photoDir.substr(photoDir.find_last_of(".") + 1) != "bmp")
+			    photoDir.substr(photoDir.find_last_of(".") + 1) != "png")
 				continue;
 
 			// Reallocation here, but prevents our vector from being filled with garbage
@@ -1346,66 +1347,54 @@ void loadPhotoList() {
 }
 
 void loadPhoto() {
-	FILE *file = fopen(photoPath.c_str(), "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
+	uint imageWidth, imageHeight;
+	std::vector<unsigned char> image;
 
-	if (file) {
-		u16 *bgSubBuffer = tex().beginBgSubModify();
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
-		u16 *src = tex().bmpImageBuffer();
-		int x = 24;
-		int y = 24 + 155;
-		for (int i = 0; i < 208 * 156; i++) {
-			if (x >= 24 + 208) {
-				x = 24;
-				y--;
-			}
-			u16 val = *(src++);
-			bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
-			x++;
-		}
-		tex().commitBgSubModify();
+	if ((access(photoPath.c_str(), F_OK) == 0) && (photoPath.substr(photoPath.find_last_of(".") + 1) == "png")) {
+		lodepng::decode(image, imageWidth, imageHeight, photoPath.c_str());
+	} else {
+		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/photo_default.png");
 	}
 
-	fclose(file);
+	for(uint i=0;i<image.size()/4;i++) {
+		tex().photoBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		if (ms().colorMode == 1) {
+			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
+		}
+	}
+
+	u16 *bgSubBuffer = tex().beginBgSubModify();
+	// Start loading
+	u16 *src = tex().photoBuffer();
+	int x = 24;
+	int y = 24;
+	for (int i = 0; i < 208 * 156; i++) {
+		if (x >= 24 + 208) {
+			x = 24;
+			y++;
+		}
+		bgSubBuffer[y * 256 + x] = *(src++);
+		x++;
+	}
+	tex().commitBgSubModify();
 }
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	FILE *file = fopen(photoPath.c_str(), "rb");
-	if (!file)
-		file = fopen("nitro:/graphics/photo_default.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		u16 *bgSubBuffer = tex().beginBgSubModify();
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(tex().bmpImageBuffer(), 2, 0x10000, file);
-		u16 *src = tex().bmpImageBuffer();
-		int x = 24;
-		int y = 24 + 155;
-		for (int i = 0; i < 208 * 156; i++) {
-			if (x >= 24 + 208) {
-				x = 24;
-				y--;
-			}
-			u16 val = *(src++);
-			if (y <= 24 + 147) {
-				bgSubBuffer[y * 256 + x] = tex().convertToDsBmp(val);
-			}
-			x++;
+	// Start loading
+	u16 *bgSubBuffer = tex().beginBgSubModify();
+	u16 *src = tex().photoBuffer();
+	int x = 24;
+	int y = 24;
+	for (int i = 0; i < 208 * 146; i++) {
+		if (x >= 24 + 208) {
+			x = 24;
+			y++;
 		}
-		tex().commitBgSubModify();
+		bgSubBuffer[y * 256 + x] = *(src++);
+		x++;
 	}
-
-	fclose(file);
+	tex().commitBgSubModify();
 }
 
 static std::string loadedDate;

@@ -31,6 +31,7 @@ extern bool showColon;
 static u16 _bmpImageBuffer[256 * 192] = {0};
 static u16 _bgMainBuffer[256 * 192] = {0};
 static u16 _bgSubBuffer[256 * 192] = {0};
+static u16 _photoBuffer[208 * 156] = {0};
 
 static void* boxArtCache = (void*)0x02500000;	// Size: 0x1B8000
 static bool boxArtFound[40] = {false};
@@ -1088,6 +1089,7 @@ void ThemeTextures::applyGrayscaleToAllGrfTextures() {
 }
 
 u16 *ThemeTextures::bmpImageBuffer() { return _bmpImageBuffer; }
+u16 *ThemeTextures::photoBuffer() { return _photoBuffer; }
 
 void ThemeTextures::videoSetup() {
 	printf("tex().videoSetup()\n");

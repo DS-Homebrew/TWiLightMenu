@@ -157,6 +157,7 @@ public:
   const Texture *rightShoulderGreyedTexture() { return _rightShoulderGreyedTexture.get(); }
 
   static u16* bmpImageBuffer();
+  static u16* photoBuffer();
 
   const Texture *volumeTexture(int texture) { 
     switch(texture) {
