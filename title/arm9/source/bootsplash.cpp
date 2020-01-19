@@ -7,7 +7,6 @@
 #include "common/tonccpy.h"
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
-#include "graphics/lodepng.h"
 
 #include "soundbank.h"
 //#include "soundbank_bin.h"
@@ -16,7 +15,6 @@ extern u16 bmpImageBuffer[256*192];
 extern u16 videoImageBuffer[39][256*144];
 
 extern u16 convertToDsBmp(u16 val);
-extern u16 convertVramColorToGrayscale(u16 val);
 
 extern void* dsiSplashLocation;
 
@@ -103,30 +101,37 @@ void BootSplashDSi(void) {
 		// Load H&S image
 		//Get the language for the splash screen
 		int language = (ms().getGuiLanguage());
-
-		uint imageWidth, imageHeight;
-		std::vector<unsigned char> image;
-		const char* filePath;
+		FILE* file;
 
 		//If french, then use the french hsmsh, else, use the english one
 		if (language != 2){
-			filePath = "nitro:/graphics/hsmsg.png";
+			file = fopen("nitro:/graphics/hsmsg.bmp", "rb");
 		}
 		else {
-			filePath = "nitro:/graphics/hsmsg-fr.png";
+			file = fopen("nitro:/graphics/hsmsg-fr.bmp", "rb");
 		}
 
-		lodepng::decode(image, imageWidth, imageHeight, filePath);
-
-		for(uint i=0;i<image.size()/4;i++) {
-			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
-			if (ms().colorMode == 1) {
-				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+		if (file) {
+			// Start loading
+			fseek(file, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(file) + 0xe;
+			fseek(file, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 2, 0x18000, file);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 191;
+			for (int i=0; i<256*192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+				x++;
 			}
 		}
 
-		// Start loading
-		dmaCopyWordsAsynch(0, bmpImageBuffer, (u16*)BG_GFX_SUB, 0x200*192);
+		fclose(file);
 	}
 
 	bool sixtyFps = true;

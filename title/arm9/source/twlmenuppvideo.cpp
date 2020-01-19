@@ -9,7 +9,6 @@
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
 #include "common/gl2d.h"
-#include "graphics/lodepng.h"
 
 #include "logo_anniversary.h"
 #include "logoPhat_anniversary.h"
@@ -516,47 +515,56 @@ void twlMenuVideo(void) {
 	}
 
 	// Change TWL letters to user color
-	uint imageWidth, imageHeight;
-	std::vector<unsigned char> image[2];
-	sprintf(videoFrameFilename, "nitro:/graphics/TWL_%i.png", (int)PersonalData->theme);
-	lodepng::decode(image[0], imageWidth, imageHeight, videoFrameFilename);
+	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)PersonalData->theme);
+	videoFrameFile = fopen(videoFrameFilename, "rb");
 
-	for(uint i=0;i<image[0].size()/4;i++) {
-		bmpImageBuffer[i] = image[0][i*4]>>3 | (image[0][(i*4)+1]>>3)<<5 | (image[0][(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x800, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 68;
+		int y = 69;
+		for (int i=0; i<62*14; i++) {
+			if (x >= 130) {
+				x = 68;
+				y--;
+			}
+			u16 val = *(src++);
+			if (val != 0x7C1F) {
+				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = convertToDsBmp(val);
+			}
+			x++;
 		}
 	}
-
-	// Start loading
-	u16* src = bmpImageBuffer;
-	int x = 68;
-	int y = 56;
-	for (int i=0; i<62*14; i++) {
-		if (x >= 130) {
-			x = 68;
-			y++;
-		}
-		u16 val = *(src++);
-		if (val != 0xFC1F) {
-			BG_GFX[(y+rocketVideo_videoYpos)*256+x] = val;
-		}
-		x++;
-	}
+	fclose(videoFrameFile);
 	
 	// Load RocketVideo logo
-	lodepng::decode(image[1], imageWidth, imageHeight, sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.png" : "nitro:/graphics/logo_rocketvideo.png");
+	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.bmp" : "nitro:/graphics/logo_rocketvideo.bmp", "rb");
 
-	for(uint i=0;i<image[1].size()/4;i++) {
-		bmpImageBuffer[i] = image[1][i*4]>>3 | (image[1][(i*4)+1]>>3)<<5 | (image[1][(i*4)+2]>>3)<<10 | BIT(15);
-		if (ms().colorMode == 1) {
-			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 192;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+			x++;
 		}
 	}
-
-	// Start loading
-	dmaCopyWordsAsynch(1, bmpImageBuffer, (u16*)BG_GFX_SUB, 0x200*192);
-
+	fclose(videoFrameFile);
+	
 	for (int i = 0; i < 60 * 3; i++)
 	{
 		scanKeys();
