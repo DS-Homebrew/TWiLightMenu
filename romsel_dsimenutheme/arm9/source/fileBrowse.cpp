@@ -101,8 +101,6 @@ extern bool applaunch;
 extern int vblankRefreshCounter;
 using namespace std;
 
-extern bool startMenu;
-
 int file_count = 0;
 
 extern int spawnedtitleboxes;
@@ -1445,10 +1443,8 @@ string browseForFile(const vector<string> extensionList) {
 		while (1) {
 			snd().updateStream();
 			if (!stopSoundPlayed) {
-				if ((ms().theme == 0 && !startMenu &&
-					 CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) ||
-					(ms().theme == 0 && startMenu &&
-					 ms().startMenu_cursorPosition < (3 - flashcardFound()))) {
+				if (ms().theme == 0 &&
+					 CURPOS + PAGENUM * 40 <= ((int)dirContents[scrn].size() - 1)) {
 					needToPlayStopSound = true;
 				}
 				stopSoundPlayed = true;
@@ -1694,7 +1690,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 						break;
 					} else if (pressed & KEY_L) {
-						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright &&
+						if (!titleboxXmoveleft && !titleboxXmoveright &&
 							PAGENUM != 0) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
@@ -1730,7 +1726,7 @@ string browseForFile(const vector<string> extensionList) {
 							snd().playWrong();
 						}
 					} else if (pressed & KEY_R) {
-						if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright &&
+						if (!titleboxXmoveleft && !titleboxXmoveright &&
 							file_count > 40 + PAGENUM * 40) {
 							snd().playSwitch();
 							fadeType = false; // Fade to white
@@ -2610,7 +2606,7 @@ string browseForFile(const vector<string> extensionList) {
 			if (pressed & KEY_L) {
 				if (CURPOS == 0 && !showLshoulder) {
 					snd().playWrong();
-				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
+				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
@@ -2642,7 +2638,7 @@ string browseForFile(const vector<string> extensionList) {
 			} else if (pressed & KEY_R) {
 				if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
 					snd().playWrong();
-				} else if (!startMenu && !titleboxXmoveleft && !titleboxXmoveright) {
+				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
 					if (ms().theme != 4) {
 						fadeType = false; // Fade to white
@@ -2712,7 +2708,8 @@ string browseForFile(const vector<string> extensionList) {
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && !startMenu && bannerTextShown && showSTARTborder) {
+			if ((pressed & KEY_X) && bannerTextShown && showSTARTborder
+			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
 				bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
 
@@ -2874,7 +2871,7 @@ string browseForFile(const vector<string> extensionList) {
 				dbox_showIcon = false;
 			}
 
-			if ((pressed & KEY_Y) && !startMenu && (isDirectory[CURPOS] == false) &&
+			if ((pressed & KEY_Y) && (isDirectory[CURPOS] == false) &&
 				(bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
 				bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);

@@ -120,7 +120,6 @@ int mpusize = 0;
 bool ceCached = true;
 
 bool applaunch = false;
-bool startMenu = false;
 
 bool gbaBiosFound[2] = {false};
 

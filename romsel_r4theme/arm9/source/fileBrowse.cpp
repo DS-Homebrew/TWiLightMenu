@@ -608,7 +608,7 @@ string browseForFile(const vector<string> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && strcmp(dirContents.at(fileOffset).name.c_str(), ".."))
+		if ((pressed & KEY_X) && dirContents.at(fileOffset).name != "..")
 		{
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
