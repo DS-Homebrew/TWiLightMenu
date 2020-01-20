@@ -466,6 +466,10 @@ void twlMenuVideo(void) {
 	twlMenuSplash = true;
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
+	if (ms().consoleModel < 2) {
+		fifoSendValue32(FIFO_USER_05, 1);	// Enable frame rate hack
+	}
+
 	if (ms().colorMode == 0) {
 		BootJingleTwlMenu();
 	}

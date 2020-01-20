@@ -37,7 +37,25 @@ unsigned int * SCFG_MC=(unsigned int*)0x4004010;
 unsigned int * CPUID=(unsigned int*)0x4004D00;
 unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
+static bool doFrameRateHackAgain = false;
+static bool runFrameRateHack = false;
 static bool isDSLite = false;
+
+static u32 sRateCounter = 0;
+
+void frameRateHack()
+{
+	doFrameRateHackAgain = !doFrameRateHackAgain;
+	if (!doFrameRateHackAgain) return;
+
+	sRateCounter += 484839276;
+	if(sRateCounter >= 1116733440)
+	{
+		sRateCounter -= 1116733440;
+		while(REG_DISPSTAT & DISP_IN_HBLANK);
+		*(vu16*)0x04000006 = *(vu16*)0x04000006;//repeat line
+	}
+}
 
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
@@ -65,6 +83,9 @@ void VblankHandler(void) {
 //---------------------------------------------------------------------------------
 void VcountHandler() {
 //---------------------------------------------------------------------------------
+	if (runFrameRateHack) {
+		frameRateHack();
+	}
 	inputGetAndSend();
 }
 
@@ -142,6 +163,13 @@ int main() {
 		}
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+		if (fifoGetValue32(FIFO_USER_05) == 1) {
+			SetYtrigger(202);
+			REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
+			REG_DISPSTAT |= BIT(7);
+			runFrameRateHack = true;
+			fifoSendValue32(FIFO_USER_05, 0);
 		}
 		resyncClock();
 		swiWaitForVBlank();
