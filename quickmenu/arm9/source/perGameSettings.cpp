@@ -34,7 +34,7 @@
 
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
+#include "common/inifile.h"
 #include "flashcard.h"
 
 int perGameSettings_cursorPosition = 0;
