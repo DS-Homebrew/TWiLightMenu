@@ -55,6 +55,7 @@
 #include "graphics/iconHandler.h"
 
 #include "common/inifile.h"
+#include "tool/stringtool.h"
 #include "common/tonccpy.h"
 
 #include "sound.h"
@@ -574,16 +575,6 @@ void doPause() {
 	scanKeys();
 }
 
-std::string ReplaceAll(const std::string str, const std::string &from, const std::string &to) {
-	size_t start_pos = 0;
-	std::string newStr = std::string(str);
-	while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-		newStr.replace(start_pos, from.length(), to);
-		start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
-	}
-	return newStr;
-}
-
 void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
@@ -606,25 +597,25 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 
 	if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 		CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		path = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 		err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		path = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 		err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 		CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-		path = ReplaceAll(ndsPath, "fat:/", dstwofat);
+		path = replaceAll(ndsPath, "fat:/", dstwofat);
 		fcrompathini.SetString("Dir Info", "fullName", path);
 		fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 		err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
 		CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
-		path = ReplaceAll(ndsPath, "fat:/", woodfat);
+		path = replaceAll(ndsPath, "fat:/", woodfat);
 		fcrompathini.SetString("Save Info", "lastLoaded", path);
 		fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
 		// Does not support autoboot; so only nds-bootstrap launching works.
@@ -1019,8 +1010,8 @@ int main(int argc, char **argv) {
 				argarray.at(0) = filePath;
 
 				ms().dsiWareSrlPath = std::string(argarray[0]);
-				ms().dsiWarePubPath = ReplaceAll(argarray[0], typeToReplace, ".pub");
-				ms().dsiWarePrvPath = ReplaceAll(argarray[0], typeToReplace, ".prv");
+				ms().dsiWarePubPath = replaceAll(argarray[0], typeToReplace, ".pub");
+				ms().dsiWarePrvPath = replaceAll(argarray[0], typeToReplace, ".prv");
 				if (!isArgv) {
 					ms().romPath = std::string(argarray[0]);
 				}
@@ -1349,14 +1340,14 @@ int main(int argc, char **argv) {
 				if (useBackend) {
 					if (ms().useBootstrap || !ms().secondaryDevice) {
 						std::string path = argarray[0];
-						std::string savename = ReplaceAll(filename, typeToReplace, getSavExtension());
-						std::string ramdiskname = ReplaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
+						std::string savename = replaceAll(filename, typeToReplace, getSavExtension());
+						std::string ramdiskname = replaceAll(filename, typeToReplace, getImgExtension(perGameSettings_ramDiskNo));
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						mkdir(isHomebrew[CURPOS] ? "ramdisks" : "saves", 0777);
 						std::string savepath = romFolderNoSlash + "/saves/" + savename;
 						if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
-							savepath = ReplaceAll(savepath, "fat:/", "sd:/");
+							savepath = replaceAll(savepath, "fat:/", "sd:/");
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
