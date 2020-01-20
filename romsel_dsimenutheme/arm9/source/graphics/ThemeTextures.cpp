@@ -705,8 +705,8 @@ void ThemeTextures::drawBoxArt(const char *filename) {
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i = 0; i < image.size(); i = i * 4) {
-		_bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	for(uint i=0;i<image.size()/4;i++) {
+		_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 		}
@@ -741,8 +741,8 @@ void ThemeTextures::drawBoxArtFromMem(int num) {
 	lodepng::decode(image, imageWidth, imageHeight, (unsigned char*)boxArtCache+(num*0xB000), 0xB000);
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i = 0; i < image.size(); i = i * 4) {
-		_bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	for(uint i=0;i<image.size()/4;i++) {
+		_bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			_bmpImageBuffer[i] = convertVramColorToGrayscale(_bmpImageBuffer[i]);
 		}

@@ -200,8 +200,8 @@ void pageLoad(const char *filename) {
 	std::vector<unsigned char> image;
 	unsigned width, height;
 	lodepng::decode(image, width, height, filename);
-	for(unsigned i = 0; i < image.size(); i = i * 4) {
-  		pageImage[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		pageImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	dmaCopyWordsAsynch(0, (u16*)pageImage, (u16*)BG_GFX_SUB+(18*256), 0x15C00);
@@ -217,8 +217,8 @@ void topBarLoad(void) {
 	unsigned width, height;
 	lodepng::decode(image, width, height, "nitro:/graphics/topbar.png");
 	printSmallCentered(true, 0, "str");
-	for(unsigned i = 0; i < image.size(); i = i * 4) {
-  		BG_GFX_SUB[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		BG_GFX_SUB[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 }
 

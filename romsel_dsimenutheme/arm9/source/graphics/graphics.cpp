@@ -1356,8 +1356,8 @@ void loadPhoto() {
 		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/photo_default.png");
 	}
 
-	for(uint i = 0; i < image.size(); i = i * 4) {
-		tex().photoBuffer()[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	for(uint i=0;i<image.size()/4;i++) {
+		tex().photoBuffer()[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 		if (ms().colorMode == 1) {
 			tex().photoBuffer()[i] = convertVramColorToGrayscale(tex().photoBuffer()[i]);
 		}

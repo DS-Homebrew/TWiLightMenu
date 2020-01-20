@@ -27,20 +27,19 @@ static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
-	uint imageWidth, imageHeight;
+	//FILE* file = fopen((arm7SCFGLocked ? "nitro:/graphics/sdRemovedSimple.bmp" : "nitro:/graphics/sdRemoved.bmp"), "rb");
 	std::vector<unsigned char> image;
-
-	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemovedError.png");
-
-	for(uint i = 0; i < image.size(); i = i * 4) {
-		sdRemovedExtendedImage[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	unsigned width, height;
+	unsigned error = lodepng::decode(image, width, height, "nitro:/graphics/sdRemovedError.png");
+	if(error)	printSmallCentered(false, 30, "Error");
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		sdRemovedExtendedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 
 	image.clear();
-	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemoved.png");
-
-	for(uint i = 0; i < image.size(); i = i * 4) {
-		sdRemovedImage[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
+	lodepng::decode(image, width, height, "nitro:/graphics/sdRemoved.png");
+	for(unsigned i=0;i<image.size()/4;i++) {
+  		sdRemovedImage[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
 	}
 }
 
