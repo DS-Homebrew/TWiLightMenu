@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	romsel_r4theme
 BUILD		:=	build
-SOURCES		:=	source source/common source/graphics 
+SOURCES		:=	source source/graphics source/tool source/common
 INCLUDES	:=	include source
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx

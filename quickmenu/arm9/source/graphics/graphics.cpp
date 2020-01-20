@@ -207,8 +207,8 @@ void bottomBgLoad(void) {
 	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/bottombg.png");
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
-		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(uint i = 0; i < image.size(); i = i * 4) {
+		bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 	}
 
 	// Start loading
@@ -388,8 +388,8 @@ void loadBoxArt(const char* filename) {
 	lodepng::decode(image, imageWidth, imageHeight, filename);
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
-		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(uint i = 0; i < image.size(); i = i * 4) {
+		bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 		if (colorMode == 1) {
 			bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 		}
@@ -414,8 +414,8 @@ void topBgLoad(void) {
 	lodepng::decode(image, imageWidth, imageHeight, filePath);
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
-	for(uint i=0;i<image.size()/4;i++) {
-		bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+	for(uint i = 0; i < image.size(); i = i * 4) {
+		bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 	}
 
 	// Start loading
@@ -442,8 +442,8 @@ void topBarLoad(void) {
 		std::vector<unsigned char> image;
 		unsigned width, height;
 		lodepng::decode(image, width, height, filePath);
-		for(unsigned i=0;i<image.size()/4;i++) {
-			bmpImageBuffer[i] = image[i*4]>>3 | (image[(i*4)+1]>>3)<<5 | (image[(i*4)+2]>>3)<<10 | BIT(15);
+		for(unsigned i = 0; i < image.size(); i = i * 4) {
+			bmpImageBuffer[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 			if (colorMode == 1) {
 				bmpImageBuffer[i] = convertVramColorToGrayscale(bmpImageBuffer[i]);
 			}

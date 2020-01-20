@@ -20,8 +20,8 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include "inifile.h"
-#include "stringtool.h"
+#include "common/inifile.h"
+#include "tool/stringtool.h"
 
 static bool freadLine(FILE* f,std::string& str)
 {

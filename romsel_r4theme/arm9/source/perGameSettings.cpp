@@ -47,7 +47,7 @@
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
 
-#include "inifile.h"
+#include "common/inifile.h"
 #include "flashcard.h"
 
 #define SCREEN_COLS 32

@@ -23,18 +23,19 @@ static bool showNonExtendedImage = false;
 
 void loadSdRemovedImage(void) {
 	uint imageWidth, imageHeight;
-	std::vector<unsigned char> image[2];
+	std::vector<unsigned char> image;
 
-	lodepng::decode(image[0], imageWidth, imageHeight, "nitro:/graphics/sdRemovedError.png");
+	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemovedError.png");
 
-	for(uint i=0;i<image[0].size()/4;i++) {
-		sdRemovedExtendedImage[i] = image[0][i*4]>>3 | (image[0][(i*4)+1]>>3)<<5 | (image[0][(i*4)+2]>>3)<<10 | BIT(15);
+	for(uint i = 0; i < image.size(); i = i * 4) {
+		sdRemovedExtendedImage[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 	}
 
-	lodepng::decode(image[1], imageWidth, imageHeight, "nitro:/graphics/sdRemoved.png");
+	image.clear();
+	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/sdRemoved.png");
 
-	for(uint i=0;i<image[1].size()/4;i++) {
-		sdRemovedImage[i] = image[1][i*4]>>3 | (image[1][(i*4)+1]>>3)<<5 | (image[1][(i*4)+2]>>3)<<10 | BIT(15);
+	for(uint i = 0; i < image.size(); i = i * 4) {
+		sdRemovedImage[i] = image[i] >> 3 | (image[i + 1] >> 3) << 5 | (image[i + 2] >> 3) << 10 | BIT(15);
 	}
 }
 
