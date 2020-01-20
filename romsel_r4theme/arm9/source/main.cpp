@@ -866,12 +866,19 @@ std::string ReplaceAll(std::string str, const std::string& from, const std::stri
     return str;
 }
 
-void loadGameOnFlashcard (const char* ndsPath, std::string filename, bool usePerGameSettings) {
+void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
+		std::string filename = ndsPath;
+
+		const size_t last_slash_idx = filename.find_last_of("\\/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
 		loadPerGameSettings(filename);
-		
+
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 		runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
 	}
@@ -1287,11 +1294,7 @@ int main(int argc, char **argv) {
 										int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
 										iprintf ("Start failed. Error %i\n", err);
 									} else {
-										if (isDSiMode()) {
-											loadGameOnFlashcard(gbaRunner2Path, (consoleModel>0 ? "GBARunner2_arm7dldi_3ds.nds" : "GBARunner2_arm7dldi_dsi.nds"), false);
-										} else {
-											loadGameOnFlashcard(gbaRunner2Path, (gbar2DldiAccess ? "GBARunner2_arm7dldi_ds.nds" : "GBARunner2_arm9dldi_ds.nds"), false);
-										}
+										loadGameOnFlashcard(gbaRunner2Path, false);
 									}
 								} else {
 									std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
@@ -1887,7 +1890,7 @@ int main(int argc, char **argv) {
 						launchType = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
-						loadGameOnFlashcard(argarray[0], filename, true);
+						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					if (!isArgv) {

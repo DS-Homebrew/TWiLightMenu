@@ -584,10 +584,17 @@ std::string ReplaceAll(const std::string str, const std::string &from, const std
 	return newStr;
 }
 
-void loadGameOnFlashcard(const char *ndsPath, std::string filename, bool usePerGameSettings) {
+void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	bool runNds_boostCpu = false;
 	bool runNds_boostVram = false;
 	if (isDSiMode() && usePerGameSettings) {
+		std::string filename = ndsPath;
+
+		const size_t last_slash_idx = filename.find_last_of("\\/");
+		if (std::string::npos != last_slash_idx) {
+			filename.erase(0, last_slash_idx + 1);
+		}
+
 		loadPerGameSettings(filename);
 
 		runNds_boostCpu = perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu;
@@ -1542,7 +1549,7 @@ int main(int argc, char **argv) {
 						ms().launchType = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
-						loadGameOnFlashcard(argarray[0], filename, true);
+						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					if (!isArgv) {
