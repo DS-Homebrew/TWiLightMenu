@@ -74,6 +74,7 @@ static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS
 
 static int zoomingIconXpos[9] = {-32, 128, 256, 256, 128, -32, -128, 128, 256+96};
 static int zoomingIconYpos[9] = {0, -32, -64, 192+64, 192+128, 192, -96, -168, -240};
+static int zoomingIconFade[9] = {31, 31, 31, 31, 31, 31, 31, 31, 31};
 
 void twlMenuVideo_loadTopGraphics(void) {
 	u16* newPalette;
@@ -329,30 +330,39 @@ void twlMenuVideo_topGraphicRender(void) {
 		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
 		glSprite(0, anniversaryTextYpos, GL_FLIP_NONE, anniversaryText);
 		if (zoomingIconYpos[0] < 64) {
+			glColor(RGB15(zoomingIconFade[0], zoomingIconFade[0], zoomingIconFade[0]));
 			glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);
 		}
 		if (zoomingIconYpos[1] < 64) {
+			glColor(RGB15(zoomingIconFade[1], zoomingIconFade[1], zoomingIconFade[1]));
 			glSprite(zoomingIconXpos[1], zoomingIconYpos[1], GL_FLIP_NONE, smsIcon);
 		}
 		if (zoomingIconYpos[2] < 64) {
+			glColor(RGB15(zoomingIconFade[2], zoomingIconFade[2], zoomingIconFade[2]));
 			glSprite(zoomingIconXpos[2], zoomingIconYpos[2], GL_FLIP_NONE, mdIcon);
 		}
 		if (zoomingIconYpos[3] > 64+32) {
+			glColor(RGB15(zoomingIconFade[3], zoomingIconFade[3], zoomingIconFade[3]));
 			glSprite(zoomingIconXpos[3], zoomingIconYpos[3], GL_FLIP_NONE, gbIcon);
 		}
 		if (zoomingIconYpos[4] > 64+32) {
+			glColor(RGB15(zoomingIconFade[4], zoomingIconFade[4], zoomingIconFade[4]));
 			glSprite(zoomingIconXpos[4], zoomingIconYpos[4], GL_FLIP_NONE, ggIcon);
 		}
 		if (zoomingIconYpos[5] > 64+32) {
+			glColor(RGB15(zoomingIconFade[5], zoomingIconFade[5], zoomingIconFade[5]));
 			glSprite(zoomingIconXpos[5], zoomingIconYpos[5], GL_FLIP_NONE, &gbIcon[1]);
 		}
 		if (zoomingIconYpos[6] < 64) {
+			glColor(RGB15(zoomingIconFade[6], zoomingIconFade[6], zoomingIconFade[6]));
 			glSprite(zoomingIconXpos[6], zoomingIconYpos[6], GL_FLIP_NONE, snesIcon);
 		}
 		if (zoomingIconYpos[7] < 64) {
+			glColor(RGB15(zoomingIconFade[7], zoomingIconFade[7], zoomingIconFade[7]));
 			glSprite(zoomingIconXpos[7], zoomingIconYpos[7], GL_FLIP_NONE, gbaIcon);
 		}
 		if (zoomingIconYpos[8] < 64) {
+			glColor(RGB15(zoomingIconFade[8], zoomingIconFade[8], zoomingIconFade[8]));
 			glSprite(zoomingIconXpos[8], zoomingIconYpos[8], GL_FLIP_NONE, ndsIcon);
 		}
 
@@ -368,29 +378,65 @@ void twlMenuVideo_topGraphicRender(void) {
 	}
 
 	if (loadFrameSprite) {
-		zoomingIconXpos[0] += 4;
+		zoomingIconXpos[0] += 5;
 		zoomingIconYpos[0] += 4;
+		if (zoomingIconYpos[0] > 32) {
+			zoomingIconFade[0] -= 4;
+			if (zoomingIconFade[0] < 0) zoomingIconFade[0] = 0;
+		}
 
 		zoomingIconYpos[1] += 4;
+		if (zoomingIconYpos[1] > 32) {
+			zoomingIconFade[1] -= 4;
+			if (zoomingIconFade[1] < 0) zoomingIconFade[1] = 0;
+		}
 
 		zoomingIconXpos[2] -= 4;
 		zoomingIconYpos[2] += 4;
+		if (zoomingIconYpos[2] > 32) {
+			zoomingIconFade[2] -= 4;
+			if (zoomingIconFade[2] < 0) zoomingIconFade[2] = 0;
+		}
 
 		zoomingIconXpos[3] -= 4;
 		zoomingIconYpos[3] -= 4;
+		if (zoomingIconYpos[3] < 192-48) {
+			zoomingIconFade[3] -= 4;
+			if (zoomingIconFade[3] < 0) zoomingIconFade[3] = 0;
+		}
 
 		zoomingIconYpos[4] -= 5;
+		if (zoomingIconYpos[4] < 192-48) {
+			zoomingIconFade[4] -= 4;
+			if (zoomingIconFade[4] < 0) zoomingIconFade[4] = 0;
+		}
 
 		zoomingIconXpos[5] += 4;
 		zoomingIconYpos[5] -= 4;
+		if (zoomingIconYpos[5] < 192-48) {
+			zoomingIconFade[5] -= 4;
+			if (zoomingIconFade[5] < 0) zoomingIconFade[5] = 0;
+		}
 
 		zoomingIconXpos[6] += 5;
 		zoomingIconYpos[6] += 4;
+		if (zoomingIconYpos[6] > 32) {
+			zoomingIconFade[6] -= 4;
+			if (zoomingIconFade[6] < 0) zoomingIconFade[6] = 0;
+		}
 
 		zoomingIconYpos[7] += 5;
+		if (zoomingIconYpos[7] > 32) {
+			zoomingIconFade[7] -= 4;
+			if (zoomingIconFade[7] < 0) zoomingIconFade[7] = 0;
+		}
 
 		zoomingIconXpos[8] -= 5;
 		zoomingIconYpos[8] += 6;
+		if (zoomingIconYpos[8] > 32) {
+			zoomingIconFade[8] -= 4;
+			if (zoomingIconFade[8] < 0) zoomingIconFade[8] = 0;
+		}
 
 		frameDelaySprite = 0;
 		frameDelaySpriteEven = !frameDelaySpriteEven;
