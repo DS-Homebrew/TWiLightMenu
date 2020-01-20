@@ -2776,7 +2776,7 @@ string browseForFile(const vector<string> extensionList) {
 						printSmall(false, 93, 160, BUTTON_Y" Unhide");
 					else
 						printSmall(false, 107, 160, BUTTON_Y" Hide");
-					printSmall(false, 160, 160, BUTTON_A " Yes");
+					printSmall(false, 160, 160, BUTTON_A " Del.");
 					printSmall(false, 208, 160, BUTTON_B " No");
 				}
 				while (1) {
