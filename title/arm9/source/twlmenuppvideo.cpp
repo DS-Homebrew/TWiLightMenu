@@ -554,6 +554,30 @@ void twlMenuVideo(void) {
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 	}
 
+	// Load RocketVideo logo
+	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.bmp" : "nitro:/graphics/logo_rocketvideo.bmp", "rb");
+
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 192;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+	fclose(videoFrameFile);
+
 	while (rocketVideo_playVideo) {
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
@@ -586,32 +610,8 @@ void twlMenuVideo(void) {
 		}
 	}
 	fclose(videoFrameFile);
-	
-	// Load RocketVideo logo
-	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.bmp" : "nitro:/graphics/logo_rocketvideo.bmp", "rb");
 
-	if (videoFrameFile) {
-		// Start loading
-		fseek(videoFrameFile, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-		fseek(videoFrameFile, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 192;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-	fclose(videoFrameFile);
-	
-	for (int i = 0; i < 60 * 3; i++)
+	for (int i = 0; i < 60 * 2; i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
