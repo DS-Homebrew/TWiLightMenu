@@ -42,7 +42,7 @@
 
 #include "graphics/fontHandler.h"
 
-#include "inifile.h"
+#include "common/inifile.h"
 
 #include "soundbank.h"
 #include "soundbank_bin.h"
