@@ -72,7 +72,7 @@ static int anniversaryTextYposMoveSpeed = 9;
 static int anniversaryTextYposMoveDelay = 0;
 static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS
 
-static int zoomingIconXpos[9] = {-32, 128, 256, 256, 128, -32, -128, 128, 256+96};
+static int zoomingIconXpos[9] = {-32, 128, 280, 256, 128, -32, -128, 128, 256+96};
 static int zoomingIconYpos[9] = {0, -32, -64, 192+64, 192+128, 192, -96, -168, -240};
 static int zoomingIconFade[9] = {31, 31, 31, 31, 31, 31, 31, 31, 31};
 
@@ -411,7 +411,7 @@ void twlMenuVideo_topGraphicRender(void) {
 			if (zoomingIconFade[4] < 0) zoomingIconFade[4] = 0;
 		}
 
-		zoomingIconXpos[5] += 4;
+		zoomingIconXpos[5] += 5;
 		zoomingIconYpos[5] -= 4;
 		if (zoomingIconYpos[5] < 192-48) {
 			zoomingIconFade[5] -= 4;
@@ -434,7 +434,7 @@ void twlMenuVideo_topGraphicRender(void) {
 		zoomingIconXpos[8] -= 5;
 		zoomingIconYpos[8] += 6;
 		if (zoomingIconYpos[8] > 32) {
-			zoomingIconFade[8] -= 4;
+			zoomingIconFade[8] -= 5;
 			if (zoomingIconFade[8] < 0) zoomingIconFade[8] = 0;
 		}
 
