@@ -63,6 +63,9 @@
 #include "cheat.h"
 #include "crc.h"
 
+#include <map>
+#include <set>
+
 #include "sr_data_srllastran.h"		 // For rebooting into the game
 
 bool whiteScreen = true;
@@ -111,8 +114,6 @@ static const std::string dstwofat = "fat1:/";
 
 typedef DSiMenuPlusPlusSettings::TLaunchType Launch;
 
-int donorSdkVer = 0;
-
 bool gameSoftReset = false;
 
 int mpuregion = 0;
@@ -158,96 +159,62 @@ void stop(void) {
 /**
  * Set donor SDK version for a specific game.
  */
-void SetDonorSDK(const char *filename) {
-	donorSdkVer = 0;
-
-	// Check for ROM hacks that need an SDK version.
-	static const char sdk2_list[][4] = {
-	    "AMQ", // Mario vs. Donkey Kong 2 - March of the Minis
-	    "AMH", // Metroid Prime Hunters
-	    "ASM", // Super Mario 64 DS
+int SetDonorSDK() {
+	static const std::map<uint, std::set<std::string>> donorMap = { 
+		{ 2, {
+			"AMQ", // Mario vs. Donkey Kong 2 - March of the Minis
+			"AMH", // Metroid Prime Hunters
+			"ASM", // Super Mario 64 DS
+		}},
+		{ 3, {
+			"AMC", // Mario Kart DS
+			"EKD", // Ermii Kart DS (Mario Kart DS hack)
+			"A2D", // New Super Mario Bros.
+			"ADA", // Pokemon Diamond
+			"APA", // Pokemon Pearl
+			"ARZ", // Rockman ZX/MegaMan ZX
+			"YZX", // Rockman ZX Advent/MegaMan ZX Advent
+		}},
+		{ 4, {
+			"YKW", // Kirby Super Star Ultra
+			"A6C", // MegaMan Star Force: Dragon
+			"A6B", // MegaMan Star Force: Leo
+			"A6A", // MegaMan Star Force: Pegasus
+			"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
+			"YT7", // SEGA Superstars Tennis
+			"AZL", // Style Savvy
+			"BKI", // The Legend of Zelda: Spirit Tracks
+			"B3R", // Pokemon Ranger: Guardian Signs
+		}},
+		{ 5, {
+			"B2D", // Doctor Who: Evacuation Earth
+			"BH2", // Super Scribblenauts
+			"BSD", // Lufia: Curse of the Sinistrals
+			"BXS", // Sonic Colo(u)rs
+			"BOE", // Inazuma Eleven 3: Sekai heno Chousen! The Ogre
+			"BQ8", // Crafting Mama
+			"BK9", // Kingdom Hearts: Re-Coded
+			"BRJ", // Radiant Historia
+			"IRA", // Pokemon Black Version
+			"IRB", // Pokemon White Version
+			"VI2", // Fire Emblem: Shin Monshou no Nazo Hikari to Kage no Eiyuu
+			"BYY", // Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
+			"UZP", // Learn with Pokemon: Typing Adventure
+			"B6F", // LEGO Batman 2: DC Super Heroes
+			"IRE", // Pokemon Black Version 2
+			"IRD", // Pokemon White Version 2
+		}}
 	};
 
-	static const char sdk3_list[][4] = {
-	    "AMC", // Mario Kart DS
-	    "EKD", // Ermii Kart DS (Mario Kart DS hack)
-	    "A2D", // New Super Mario Bros.
-	    "ADA", // Pokemon Diamond
-	    "APA", // Pokemon Pearl
-	    "ARZ", // Rockman ZX/MegaMan ZX
-	    "YZX", // Rockman ZX Advent/MegaMan ZX Advent
-	};
+	for (auto i : donorMap) {
+		if (i.first == 5 && gameTid[CURPOS][0] == 'V')
+			return 5;
 
-	static const char sdk4_list[][4] = {
-	    "YKW", // Kirby Super Star Ultra
-	    "A6C", // MegaMan Star Force: Dragon
-	    "A6B", // MegaMan Star Force: Leo
-	    "A6A", // MegaMan Star Force: Pegasus
-	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-	    "YT7", // SEGA Superstars Tennis
-	    "AZL", // Style Savvy
-	    "BKI", // The Legend of Zelda: Spirit Tracks
-	    "B3R", // Pokemon Ranger: Guardian Signs
-	};
-
-	static const char sdk5_list[][4] = {
-	    "B2D", // Doctor Who: Evacuation Earth
-	    "BH2", // Super Scribblenauts
-	    "BSD", // Lufia: Curse of the Sinistrals
-	    "BXS", // Sonic Colo(u)rs
-	    "BOE", // Inazuma Eleven 3: Sekai heno Chousen! The Ogre
-	    "BQ8", // Crafting Mama
-	    "BK9", // Kingdom Hearts: Re-Coded
-	    "BRJ", // Radiant Historia
-	    "IRA", // Pokemon Black Version
-	    "IRB", // Pokemon White Version
-	    "VI2", // Fire Emblem: Shin Monshou no Nazo Hikari to Kage no Eiyuu
-	    "BYY", // Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
-	    "UZP", // Learn with Pokemon: Typing Adventure
-	    "B6F", // LEGO Batman 2: DC Super Heroes
-	    "IRE", // Pokemon Black Version 2
-	    "IRD", // Pokemon White Version 2
-	};
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(sdk2_list) / sizeof(sdk2_list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], sdk2_list[i], 3) == 0) {
-			// Found a match.
-			donorSdkVer = 2;
-			break;
-		}
+		if (i.second.find(gameTid[CURPOS]) != i.second.cend())
+			return i.first;
 	}
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(sdk3_list) / sizeof(sdk3_list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], sdk3_list[i], 3) == 0) {
-			// Found a match.
-			donorSdkVer = 3;
-			break;
-		}
-	}
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(sdk4_list) / sizeof(sdk4_list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], sdk4_list[i], 3) == 0) {
-			// Found a match.
-			donorSdkVer = 4;
-			break;
-		}
-	}
-
-	if (strncmp(gameTid[CURPOS], "V", 1) == 0) {
-		donorSdkVer = 5;
-	} else {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(sdk5_list) / sizeof(sdk5_list[0]); i++) {
-			if (memcmp(gameTid[CURPOS], sdk5_list[i], 3) == 0) {
-				// Found a match.
-				donorSdkVer = 5;
-				break;
-			}
-		}
-	}
+	return 0;
 }
 
 /**
@@ -1463,7 +1430,7 @@ int main(int argc, char **argv) {
 							clearText();
 						}
 
-						SetDonorSDK(argarray[0]);
+						int donorSdkVer = SetDonorSDK();
 						SetMPUSettings(argarray[0]);
 						if (isDSiMode()) {
 							SetGameSoftReset(argarray[0]);
