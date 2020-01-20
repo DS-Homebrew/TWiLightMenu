@@ -210,16 +210,16 @@ void bottomBgLoad(void) {
 
 	switch (ms().theme) {
 		case 0: // DSi Theme
-			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms().dsi_theme);
+			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms().dsi_theme.c_str());
 			break;
 		case 1:
-			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms()._3ds_theme);
+			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms()._3ds_theme.c_str());
 			break;
 		case 2:
-			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", ms().r4_theme);
+			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", ms().r4_theme.c_str());
 			break;
 		case 3:
-			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme);
+			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme.c_str());
 			break;
 		case 4:
 			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");

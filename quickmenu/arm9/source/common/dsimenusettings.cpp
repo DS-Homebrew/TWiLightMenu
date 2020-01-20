@@ -1,7 +1,6 @@
 
 #include "dsimenusettings.h"
 #include "bootstrappaths.h"
-#include "systemdetails.h"
 #include "common/inifile.h"
 #include <string.h>
 
@@ -19,7 +18,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     wifiLed = true;
     sdRemoveDetect = true;
     showMicroSd = false;
-    useGbarunner = false;
 	gbar2DldiAccess = false;
     showMainMenu = true;
     theme = 0;
@@ -116,10 +114,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
     sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
     showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
-    useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
-    if (!sys().isRegularDS()) {
-        useGbarunner = true;
-    }
     gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
@@ -204,7 +198,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
-    settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     settingsini.SetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 	settingsini.SetInt("SRLOADER", "SD_REMOVE_DETECT", sdRemoveDetect);
 	settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
