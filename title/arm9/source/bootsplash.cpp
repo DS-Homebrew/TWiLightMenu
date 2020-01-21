@@ -283,9 +283,9 @@ void BootSplashDSi(void) {
 			}
 		}
 
-		if (ms().consoleModel < 2) {
+		/*if (ms().consoleModel < 2) {
 			fifoSendValue32(FIFO_USER_05, 1);	// Enable frame rate hack
-		}
+		}*/
 	}
 
 	controlTopBright = false;
