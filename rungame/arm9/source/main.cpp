@@ -37,6 +37,8 @@
 #include "fileCopy.h"
 #include "flashcard.h"
 
+#include "saveMap.h"
+
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
@@ -241,30 +243,11 @@ TWL_CODE int lastRunROM() {
 
 						int savesize = 524288;	// 512KB (default size for most games)
 
-						// Set save size to 8KB for the following games
-						if (strcmp(game_TID, "ASC") == 0 )	// Sonic Rush
-						{
-							savesize = 8192;
-						}
-
-						// Set save size to 256KB for the following games
-						if (strcmp(game_TID, "AMH") == 0 )	// Metroid Prime Hunters
-						{
-							savesize = 262144;
-						}
-
-						// Set save size to 1MB for the following games
-						if (strcmp(game_TID, "AZL") == 0	// Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
-						 || strcmp(game_TID, "BKI") == 0)	// The Legend of Zelda: Spirit Tracks
-						{
-							savesize = 1048576;
-						}
-
-						// Set save size to 32MB for the following games
-						if (strcmp(game_TID, "UOR") == 0	// WarioWare - D.I.Y. (Do It Yourself)
-						 || strcmp(game_TID, "UXB") == 0 )	// Jam with the Band
-						{
-							savesize = 1048576*32;
+						for (auto i : saveMap) {
+							if (i.second.find(game_TID) != i.second.cend()) {
+								savesize = i.first;
+								break;
+							}
 						}
 
 						FILE *pFile = fopen(savepath.c_str(), "wb");

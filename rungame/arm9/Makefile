@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	rungame
 BUILD		:=	build
 SOURCES		:=	source dldi-include
-INCLUDES	:=	include dldi-include
+INCLUDES	:=	include dldi-include ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

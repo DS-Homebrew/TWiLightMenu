@@ -15,6 +15,7 @@
 
 #include "donorMap.h"
 #include "speedBumpExcludeMap.h"
+#include "saveMap.h"
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
@@ -57,23 +58,9 @@ BootstrapConfig::~BootstrapConfig()
 
 BootstrapConfig &BootstrapConfig::saveSize()
 {
-	if (strncmp("ASC", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x2000);
-	}
-	if (strncmp("AMH", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x40000);
-	}
-
-	if (strncmp("AZL", _gametid.c_str(), 3) == 0 || strncmp("C6P", _gametid.c_str(), 3) == 0 || strncmp("BKI", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x100000);
-	}
-
-	if (strncmp("UOR", _gametid.c_str(), 3) == 0 || strncmp("UXB", _gametid.c_str(), 3) == 0)
-	{
-		return saveSize(0x2000000);
+	for (auto i : saveMap) {
+		if (i.second.find(_gametid.c_str()) != i.second.cend())
+			return saveSize(i.first);
 	}
 
 	return saveSize(0x80000);

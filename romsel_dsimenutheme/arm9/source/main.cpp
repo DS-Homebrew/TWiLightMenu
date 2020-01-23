@@ -66,6 +66,7 @@
 
 #include "donorMap.h"
 #include "speedBumpExcludeMap.h"
+#include "saveMap.h"
 
 #include "sr_data_srllastran.h"		 // For rebooting into the game
 
@@ -1242,44 +1243,16 @@ int main(int argc, char **argv) {
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
-								for (int i = 0; i < 35; i++) {
-									swiWaitForVBlank();
-								}
 							}
 							showProgressIcon = true;
 
 							int savesize = 524288; // 512KB (default size for most games)
 
-							// Set save size to 8KB for the following games
-							if (memcmp(gameTid[CURPOS], "ASC", 3) == 0) // Sonic Rush
-							{
-								savesize = 8192;
-							}
-
-							// Set save size to 256KB for the following games
-							if (memcmp(gameTid[CURPOS], "AMH", 3) == 0) // Metroid Prime Hunters
-							{
-								savesize = 262144;
-							}
-
-							// Set save size to 1MB for the following games
-							if (memcmp(gameTid[CURPOS], "AZL", 3) ==
-								0 // Wagamama Fashion: Girls Mode/Style Savvy/Nintendo
-								  // presents: Style Boutique/Namanui Collection: Girls
-								  // Style
-							    || memcmp(gameTid[CURPOS], "C6P", 3) ==
-								   0 // Picross 3D
-							    || memcmp(gameTid[CURPOS], "BKI", 3) ==
-								   0) // The Legend of Zelda: Spirit Tracks
-							{
-								savesize = 1048576;
-							}
-
-							// Set save size to 32MB for the following games
-							if (memcmp(gameTid[CURPOS], "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
-							 || memcmp(gameTid[CURPOS], "UXB", 3) == 0)	// Jam with the Band
-							{
-								savesize = 1048576 * 32;
+							for (auto i : saveMap) {
+								if (i.second.find(gameTid[CURPOS]) != i.second.cend()) {
+									savesize = i.first;
+									break;
+								}
 							}
 
 							FILE *pFile = fopen(savepath.c_str(), "wb");
