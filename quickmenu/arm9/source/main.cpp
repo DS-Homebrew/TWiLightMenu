@@ -1355,6 +1355,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
 								if (romFound) {
 									titleUpdate(false, filename.c_str());
 								} else {
@@ -1371,6 +1374,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
 								if (romFound) {
 									titleUpdate(false, filename.c_str());
 								} else {
@@ -1391,6 +1397,9 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
 								printNdsCartBannerText();
 								printGbaBannerText();
 								swiWaitForVBlank();
@@ -1416,8 +1425,8 @@ int main(int argc, char **argv) {
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
-								clearText();
 								iconYpos[1] -= 6;
+								clearText();
 								printSmallCentered(false, 72, 6, RetTime().c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
@@ -1470,8 +1479,11 @@ int main(int argc, char **argv) {
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
-								clearText();
 								iconYpos[2] -= 6;
+								clearText();
+								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
@@ -1526,8 +1538,11 @@ int main(int argc, char **argv) {
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
 							for (int i = 0; i < 60; i++) {
-								clearText();
 								iconYpos[3] -= 6;
+								clearText();
+								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
