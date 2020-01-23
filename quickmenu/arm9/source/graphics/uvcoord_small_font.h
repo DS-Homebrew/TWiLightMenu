@@ -47,7 +47,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 0,  2,  TEXT_SY, // colon
     270, 0,  3,  TEXT_SY, // semicolon
     280, 0,  4,  TEXT_SY, // less
-    390, 0,  6,  TEXT_SY, // equal
+    290, 0,  6,  TEXT_SY, // equal
     300, 0,  4,  TEXT_SY, // greater
     310, 0,  6,  TEXT_SY, // question
     320, 0,  8,  TEXT_SY, // at
@@ -98,7 +98,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 11, 8,  TEXT_SY, // m
     270, 11, 6,  TEXT_SY, // n
     280, 11, 6,  TEXT_SY, // o
-    390, 11, 6,  TEXT_SY, // p
+    290, 11, 6,  TEXT_SY, // p
     300, 11, 6,  TEXT_SY, // q
     310, 11, 5,  TEXT_SY, // r
     320, 11, 5,  TEXT_SY, // s
@@ -149,7 +149,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 22, 5,  TEXT_SY, // Ecircumflex
     270, 22, 5,  TEXT_SY, // Edieresis
     280, 22, 4,  TEXT_SY, // Igrave
-    390, 22, 4,  TEXT_SY, // Iacute
+    290, 22, 4,  TEXT_SY, // Iacute
     300, 22, 4,  TEXT_SY, // Icircumflex
     310, 22, 4,  TEXT_SY, // Idieresis
     320, 22, 6,  TEXT_SY, // Eth
@@ -200,7 +200,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 33, 6,  TEXT_SY, // yacute
     270, 33, 5,  TEXT_SY, // thorn
     280, 33, 6,  TEXT_SY, // ydieresis
-    390, 33, 6,  TEXT_SY, // Ydieresis
+    290, 33, 6,  TEXT_SY, // Ydieresis
     300, 33, 6,  TEXT_SY, // uni1E9E
     310, 33, 3,  TEXT_SY, // quoteleft
     320, 33, 4,  TEXT_SY, // quoteright
@@ -251,7 +251,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 44, 10, TEXT_SY, // smileface
     270, 44, 10, TEXT_SY, // invsmileface
     280, 44, 10, TEXT_SY, // spade
-    390, 44, 10, TEXT_SY, // club
+    290, 44, 10, TEXT_SY, // club
     300, 44, 10, TEXT_SY, // heart
     310, 44, 10, TEXT_SY, // diamond
     320, 44, 9,  TEXT_SY, // uni3041
@@ -302,7 +302,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 55, 10, TEXT_SY, // uni306E
     270, 55, 10, TEXT_SY, // uni306F
     280, 55, 10, TEXT_SY, // uni3070
-    390, 55, 11, TEXT_SY, // uni3071
+    290, 55, 11, TEXT_SY, // uni3071
     300, 55, 10, TEXT_SY, // uni3072
     310, 55, 10, TEXT_SY, // uni3073
     320, 55, 10, TEXT_SY, // uni3074
@@ -353,7 +353,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 66, 8,  TEXT_SY, // uni30A3
     270, 66, 8,  TEXT_SY, // uni30A4
     280, 66, 8,  TEXT_SY, // uni30A5
-    390, 66, 9,  TEXT_SY, // uni30A6
+    290, 66, 9,  TEXT_SY, // uni30A6
     300, 66, 8,  TEXT_SY, // uni30A7
     310, 66, 10, TEXT_SY, // uni30A8
     320, 66, 8,  TEXT_SY, // uni30A9
@@ -404,7 +404,7 @@ static constexpr unsigned int small_font_texcoords[] = {
     260, 77, 10, TEXT_SY, // uni30D6
     270, 77, 10, TEXT_SY, // uni30D7
     280, 77, 10, TEXT_SY, // uni30D8
-    390, 77, 10, TEXT_SY, // uni30D9
+    290, 77, 10, TEXT_SY, // uni30D9
     300, 77, 10, TEXT_SY, // uni30DA
     310, 77, 10, TEXT_SY, // uni30DB
     320, 77, 10, TEXT_SY, // uni30DC
