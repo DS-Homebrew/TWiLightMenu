@@ -8,626 +8,456 @@
 #ifndef SMALL_FONT__H
 #define SMALL_FONT__H
 #define SMALL_FONT_BITMAP_WIDTH  512
-#define SMALL_FONT_BITMAP_HEIGHT  128
-#define SMALL_FONT_NUM_IMAGES  0x150
+#define SMALL_FONT_BITMAP_HEIGHT 128
+#define SMALL_FONT_NUM_IMAGES    427
 
 // U,V,Width,Height
 
-#define TEXT_SY 16
+#define TEXT_SY 11
 		//	Format:
 		//	U,V,Width,Height
-// static constexpr unsigned int legacy_small_font_texcoords[] = {
-// 	0, 0, 0, TEXT_SY, // 0
-// 	16, 0, 0, TEXT_SY, // 1
-// 	32, 0, 0, TEXT_SY, // 2
-// 	48, 0, 0, TEXT_SY, // 3
-// 	64, 0, 0, TEXT_SY, // 4
-// 	80, 0, 0, TEXT_SY, // 5
-// 	96, 0, 0, TEXT_SY, // 6
-// 	112, 0, 0, TEXT_SY, // 7
-// 	128, 0, 0, TEXT_SY, // 8
-// 	144, 0, 0, TEXT_SY, // 9
-// 	160, 0, 0, TEXT_SY, // 10
-// 	176, 0, 0, TEXT_SY, // 11
-// 	192, 0, 0, TEXT_SY, // 12
-// 	208, 0, 0, TEXT_SY, // 13
-// 	224, 0, 0, TEXT_SY, // 14
-// 	240, 0, 0, TEXT_SY, // 15
-// 	256, 0, 0, TEXT_SY, // 16
-// 	272, 0, 0, TEXT_SY, // 17
-// 	288, 0, 0, TEXT_SY, // 18
-// 	304, 0, 0, TEXT_SY, // 19
-// 	320, 0, 0, TEXT_SY, // 20
-// 	336, 0, 0, TEXT_SY, // 21
-// 	352, 0, 0, TEXT_SY, // 22
-// 	368, 0, 0, TEXT_SY, // 23
-// 	384, 0, 0, TEXT_SY, // 24
-// 	400, 0, 0, TEXT_SY, // 25
-// 	416, 0, 0, TEXT_SY, // 26
-// 	432, 0, 0, TEXT_SY, // 27
-// 	448, 0, 0, TEXT_SY, // 28
-// 	464, 0, 0, TEXT_SY, // 29
-// 	480, 0, 0, TEXT_SY, // 30
-// 	496, 0, 0, TEXT_SY, // 31
-// 	0, 16, 4, TEXT_SY, // Space
-// 	16, 16, 2, TEXT_SY, // !
-// 	32, 16, 5, TEXT_SY, // "
-// 	48, 16, 9, TEXT_SY, // #
-// 	64, 16, 8, TEXT_SY, // $
-// 	80, 16, 12, TEXT_SY, // %
-// 	96, 16, 10, TEXT_SY, // &
-// 	112, 16, 2, TEXT_SY, // '
-// 	128, 16, 4, TEXT_SY, // (
-// 	144, 16, 4, TEXT_SY, // )
-// 	160, 16, 8, TEXT_SY, // *
-// 	176, 16, 8, TEXT_SY, // +
-// 	192, 16, 3, TEXT_SY, // ,
-// 	208, 16, 5, TEXT_SY, // -
-// 	224, 16, 3, TEXT_SY, // .
-// 	240, 16, 5, TEXT_SY, // /
-// 	256, 16, 8, TEXT_SY, // 0
-// 	272, 16, 4, TEXT_SY, // 1
-// 	288, 16, 8, TEXT_SY, // 2
-// 	304, 16, 8, TEXT_SY, // 3
-// 	320, 16, 9, TEXT_SY, // 4
-// 	336, 16, 8, TEXT_SY, // 5
-// 	352, 16, 8, TEXT_SY, // 6
-// 	368, 16, 8, TEXT_SY, // 7
-// 	384, 16, 8, TEXT_SY, // 8
-// 	400, 16, 8, TEXT_SY, // 9
-// 	416, 16, 2, TEXT_SY, // :
-// 	432, 16, 2, TEXT_SY, // ;
-// 	448, 16, 7, TEXT_SY, // <
-// 	464, 16, 8, TEXT_SY, // =
-// 	480, 16, 7, TEXT_SY, // >
-// 	496, 16, 8, TEXT_SY, // ?
-// 	0, 32, 12, TEXT_SY, // @
-// 	16, 32, 9, TEXT_SY, // A
-// 	32, 32, 8, TEXT_SY, // B
-// 	48, 32, 8, TEXT_SY, // C
-// 	64, 32, 9, TEXT_SY, // D
-// 	80, 32, 8, TEXT_SY, // E
-// 	96, 32, 7, TEXT_SY, // F
-// 	112, 32, 9, TEXT_SY, // G
-// 	128, 32, 8, TEXT_SY, // H
-// 	144, 32, 3, TEXT_SY, // I
-// 	160, 32, 5, TEXT_SY, // J
-// 	176, 32, 8, TEXT_SY, // K
-// 	192, 32, 7, TEXT_SY, // L
-// 	208, 32, 10, TEXT_SY, // M
-// 	224, 32, 8, TEXT_SY, // N
-// 	240, 32, 9, TEXT_SY, // O
-// 	256, 32, 8, TEXT_SY, // P
-// 	272, 32, 9, TEXT_SY, // Q
-// 	288, 32, 8, TEXT_SY, // R
-// 	304, 32, 7, TEXT_SY, // S
-// 	320, 32, 8, TEXT_SY, // T
-// 	336, 32, 8, TEXT_SY, // U
-// 	352, 32, 9, TEXT_SY, // V
-// 	368, 32, 12, TEXT_SY, // W
-// 	384, 32, 8, TEXT_SY, // X
-// 	400, 32, 8, TEXT_SY, // Y
-// 	416, 32, 7, TEXT_SY, // Z
-// 	432, 32, 5, TEXT_SY, // [
-// 	448, 32, 6, TEXT_SY, // "\"
-// 	464, 32, 5, TEXT_SY, // ]
-// 	480, 32, 6, TEXT_SY, // ^
-// 	496, 32, 7, TEXT_SY, // _
-// 	0, 48, 4, TEXT_SY, // `
-// 	16, 48, 7, TEXT_SY, // a
-// 	32, 48, 7, TEXT_SY, // b
-// 	48, 48, 6, TEXT_SY, // c
-// 	64, 48, 7, TEXT_SY, // d
-// 	80, 48, 7, TEXT_SY, // e
-// 	96, 48, 5, TEXT_SY, // f
-// 	112, 48, 7, TEXT_SY, // g
-// 	128, 48, 7, TEXT_SY, // h
-// 	144, 48, 2, TEXT_SY, // i
-// 	160, 48, 5, TEXT_SY, // j
-// 	176, 48, 6, TEXT_SY, // k
-// 	192, 48, 2, TEXT_SY, // l
-// 	208, 48, 10, TEXT_SY, // m
-// 	224, 48, 7, TEXT_SY, // n
-// 	240, 48, 7, TEXT_SY, // o
-// 	256, 48, 7, TEXT_SY, // p
-// 	272, 48, 7, TEXT_SY, // q
-// 	288, 48, 4, TEXT_SY, // r
-// 	304, 48, 6, TEXT_SY, // s
-// 	320, 48, 5, TEXT_SY, // t
-// 	336, 48, 7, TEXT_SY, // u
-// 	352, 48, 7, TEXT_SY, // v
-// 	368, 48, 10, TEXT_SY, // w
-// 	384, 48, 7, TEXT_SY, // x
-// 	400, 48, 6, TEXT_SY, // y
-// 	416, 48, 6, TEXT_SY, // z
-// 	432, 48, 4, TEXT_SY, // {
-// 	448, 48, 3, TEXT_SY, // |
-// 	464, 48, 4, TEXT_SY, // }
-// 	480, 48, 8, TEXT_SY, // ~
-// 	496, 48, 0, TEXT_SY, // NULL
-// 	0, 64, 9, TEXT_SY, // �
-// 	16, 64, 0, TEXT_SY, // NULL
-// 	32, 64, 2, TEXT_SY, // �
-// 	48, 64, 7, TEXT_SY, // �
-// 	64, 64, 5, TEXT_SY, // �
-// 	80, 64, 13, TEXT_SY, // �
-// 	96, 64, 6, TEXT_SY, // �
-// 	112, 64, 6, TEXT_SY, // �
-// 	128, 64, 5, TEXT_SY, // �
-// 	144, 64, 12, TEXT_SY, // �
-// 	160, 64, 8, TEXT_SY, // �
-// 	176, 64, 5, TEXT_SY, // �
-// 	192, 64, 11, TEXT_SY, // �
-// 	208, 64, 0, TEXT_SY, // NULL
-// 	224, 64, 8, TEXT_SY, // �
-// 	240, 64, 0, TEXT_SY, // NULL
-// 	256, 64, 0, TEXT_SY, // NULL
-// 	272, 64, 2, TEXT_SY, // �
-// 	288, 64, 2, TEXT_SY, // �
-// 	304, 64, 5, TEXT_SY, // �
-// 	320, 64, 5, TEXT_SY, // �
-// 	336, 64, 3, TEXT_SY, // �
-// 	352, 64, 7, TEXT_SY, // �
-// 	368, 64, 14, TEXT_SY, // �
-// 	384, 64, 5, TEXT_SY, // �
-// 	400, 64, 11, TEXT_SY, // �
-// 	416, 64, 6, TEXT_SY, // �
-// 	432, 64, 5, TEXT_SY, // �
-// 	448, 64, 12, TEXT_SY, // �
-// 	464, 64, 0, TEXT_SY, // NULL
-// 	480, 64, 6, TEXT_SY, // �
-// 	496, 64, 8, TEXT_SY, // �
-// 	0, 80, 4, TEXT_SY, // Space
-// 	16, 80, 2, TEXT_SY, // �
-// 	32, 80, 6, TEXT_SY, // �
-// 	48, 80, 8, TEXT_SY, // �
-// 	64, 80, 6, TEXT_SY, // �
-// 	80, 80, 8, TEXT_SY, // �
-// 	96, 80, 3, TEXT_SY, // �
-// 	112, 80, 7, TEXT_SY, // �
-// 	128, 80, 5, TEXT_SY, // �
-// 	144, 80, 9, TEXT_SY, // �
-// 	160, 80, 4, TEXT_SY, // �
-// 	176, 80, 7, TEXT_SY, // �
-// 	192, 80, 7, TEXT_SY, // �
-// 	208, 80, 0, TEXT_SY, // NULL
-// 	224, 80, 9, TEXT_SY, // �
-// 	240, 80, 5, TEXT_SY, // �
-// 	256, 80, 4, TEXT_SY, // �
-// 	272, 80, 7, TEXT_SY, // �
-// 	288, 80, 3, TEXT_SY, // �
-// 	304, 80, 4, TEXT_SY, // �
-// 	320, 80, 3, TEXT_SY, // �
-// 	336, 80, 7, TEXT_SY, // �
-// 	352, 80, 7, TEXT_SY, // �
-// 	368, 80, 3, TEXT_SY, // �
-// 	384, 80, 3, TEXT_SY, // �
-// 	400, 80, 3, TEXT_SY, // �
-// 	416, 80, 3, TEXT_SY, // �
-// 	432, 80, 7, TEXT_SY, // �
-// 	448, 80, 10, TEXT_SY, // �
-// 	464, 80, 10, TEXT_SY, // �
-// 	480, 80, 10, TEXT_SY, // �
-// 	496, 80, 8, TEXT_SY, // �
-// 	0, 96, 9, TEXT_SY, // �
-// 	16, 96, 9, TEXT_SY, // �
-// 	32, 96, 9, TEXT_SY, // �
-// 	48, 96, 9, TEXT_SY, // �
-// 	64, 96, 9, TEXT_SY, // �
-// 	80, 96, 9, TEXT_SY, // �
-// 	96, 96, 11, TEXT_SY, // �
-// 	112, 96, 8, TEXT_SY, // �
-// 	128, 96, 8, TEXT_SY, // �
-// 	144, 96, 8, TEXT_SY, // �
-// 	160, 96, 8, TEXT_SY, // �
-// 	176, 96, 8, TEXT_SY, // �
-// 	192, 96, 3, TEXT_SY, // �
-// 	208, 96, 3, TEXT_SY, // �
-// 	224, 96, 6, TEXT_SY, // �
-// 	240, 96, 6, TEXT_SY, // �
-// 	256, 96, 9, TEXT_SY, // �
-// 	272, 96, 9, TEXT_SY, // �
-// 	288, 96, 9, TEXT_SY, // �
-// 	304, 96, 9, TEXT_SY, // �
-// 	320, 96, 9, TEXT_SY, // �
-// 	336, 96, 9, TEXT_SY, // �
-// 	352, 96, 9, TEXT_SY, // �
-// 	368, 96, 7, TEXT_SY, // �
-// 	384, 96, 9, TEXT_SY, // �
-// 	400, 96, 9, TEXT_SY, // �
-// 	416, 96, 9, TEXT_SY, // �
-// 	432, 96, 9, TEXT_SY, // �
-// 	448, 96, 9, TEXT_SY, // �
-// 	464, 96, 8, TEXT_SY, // �
-// 	480, 96, 8, TEXT_SY, // �
-// 	496, 96, 8, TEXT_SY, // �
-// 	0, 112, 7, TEXT_SY, // �
-// 	16, 112, 7, TEXT_SY, // �
-// 	32, 112, 7, TEXT_SY, // �
-// 	48, 112, 7, TEXT_SY, // �
-// 	64, 112, 7, TEXT_SY, // �
-// 	80, 112, 7, TEXT_SY, // �
-// 	96, 112, 10, TEXT_SY, // �
-// 	112, 112, 6, TEXT_SY, // �
-// 	128, 112, 7, TEXT_SY, // �
-// 	144, 112, 7, TEXT_SY, // �
-// 	160, 112, 7, TEXT_SY, // �
-// 	176, 112, 7, TEXT_SY, // �
-// 	192, 112, 3, TEXT_SY, // �
-// 	208, 112, 3, TEXT_SY, // �
-// 	224, 112, 6, TEXT_SY, // �
-// 	240, 112, 5, TEXT_SY, // �
-// 	256, 112, 7, TEXT_SY, // �
-// 	272, 112, 7, TEXT_SY, // �
-// 	288, 112, 7, TEXT_SY, // �
-// 	304, 112, 7, TEXT_SY, // �
-// 	320, 112, 7, TEXT_SY, // �
-// 	336, 112, 7, TEXT_SY, // �
-// 	352, 112, 7, TEXT_SY, // �
-// 	368, 112, 7, TEXT_SY, // �
-// 	384, 112, 7, TEXT_SY, // �
-// 	400, 112, 7, TEXT_SY, // �
-// 	416, 112, 7, TEXT_SY, // �
-// 	432, 112, 7, TEXT_SY, // �
-// 	448, 112, 7, TEXT_SY, // �
-// 	464, 112, 6, TEXT_SY, // �
-// 	480, 112, 7, TEXT_SY, // �
-// 	496, 112, 6, TEXT_SY, // �
-// };
-
 
 static constexpr unsigned int small_font_texcoords[] = {
-    0, 0, 4, TEXT_SY, // SPACE
-    12, 0, 5, TEXT_SY, // EXCLAMATION MARK
-    24, 0, 6, TEXT_SY, // QUOTATION MARK
-    36, 0, 9, TEXT_SY, // NUMBER SIGN
-    48, 0, 9, TEXT_SY, // DOLLAR SIGN
-    60, 0, 12, TEXT_SY, // PERCENT SIGN
-    72, 0, 9, TEXT_SY, // AMPERSAND
-    84, 0, 5, TEXT_SY, // APOSTROPHE
-    96, 0, 5, TEXT_SY, // LEFT PARENTHESIS
-    108, 0, 5, TEXT_SY, // RIGHT PARENTHESIS
-    120, 0, 6, TEXT_SY, // ASTERISK
-    132, 0, 9, TEXT_SY, // PLUS SIGN
-    144, 0, 5, TEXT_SY, // COMMA
-    156, 0, 6, TEXT_SY, // HYPHEN-MINUS
-    168, 0, 3, TEXT_SY, // FULL STOP
-    180, 0, 6, TEXT_SY, // SOLIDUS
-    192, 0, 9, TEXT_SY, // DIGIT ZERO
-    204, 0, 7, TEXT_SY, // DIGIT ONE
-    216, 0, 9, TEXT_SY, // DIGIT TWO
-    228, 0, 9, TEXT_SY, // DIGIT THREE
-    240, 0, 9, TEXT_SY, // DIGIT FOUR
-    252, 0, 9, TEXT_SY, // DIGIT FIVE
-    264, 0, 9, TEXT_SY, // DIGIT SIX
-    276, 0, 9, TEXT_SY, // DIGIT SEVEN
-    288, 0, 9, TEXT_SY, // DIGIT EIGHT
-    300, 0, 9, TEXT_SY, // DIGIT NINE
-    312, 0, 5, TEXT_SY, // COLON
-    324, 0, 5, TEXT_SY, // SEMICOLON
-    336, 0, 9, TEXT_SY, // LESS-THAN SIGN
-    348, 0, 9, TEXT_SY, // EQUALS SIGN
-    360, 0, 9, TEXT_SY, // GREATER-THAN SIGN
-    372, 0, 9, TEXT_SY, // QUESTION MARK
-    384, 0, 11, TEXT_SY, // COMMERCIAL AT
-    396, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER A
-    408, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER B
-    420, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER C
-    432, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER D
-    444, 0, 8, TEXT_SY, // LATIN CAPITAL LETTER E
-    456, 0, 7, TEXT_SY, // LATIN CAPITAL LETTER F
-    468, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER G
-    480, 0, 9, TEXT_SY, // LATIN CAPITAL LETTER H
-    492, 0, 3, TEXT_SY, // LATIN CAPITAL LETTER I
-    0, 16, 5, TEXT_SY, // LATIN CAPITAL LETTER J
-    12, 16, 9, TEXT_SY, // LATIN CAPITAL LETTER K
-    24, 16, 7, TEXT_SY, // LATIN CAPITAL LETTER L
-    36, 16, 11, TEXT_SY, // LATIN CAPITAL LETTER M
-    48, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER N
-    60, 16, 10, TEXT_SY, // LATIN CAPITAL LETTER O
-    72, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER P
-    84, 16, 10, TEXT_SY, // LATIN CAPITAL LETTER Q
-    96, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER R
-    108, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER S
-    120, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER T
-    132, 16, 9, TEXT_SY, // LATIN CAPITAL LETTER U
-    144, 16, 9, TEXT_SY, // LATIN CAPITAL LETTER V
-    156, 16, 12, TEXT_SY, // LATIN CAPITAL LETTER W
-    168, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER X
-    180, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER Y
-    192, 16, 8, TEXT_SY, // LATIN CAPITAL LETTER Z
-    204, 16, 5, TEXT_SY, // LEFT SQUARE BRACKET
-    216, 16, 6, TEXT_SY, // REVERSE SOLIDUS
-    228, 16, 5, TEXT_SY, // RIGHT SQUARE BRACKET
-    240, 16, 9, TEXT_SY, // CIRCUMFLEX ACCENT
-    252, 16, 6, TEXT_SY, // LOW LINE
-    264, 16, 5, TEXT_SY, // GRAVE ACCENT
-    276, 16, 7, TEXT_SY, // LATIN SMALL LETTER A
-    288, 16, 7, TEXT_SY, // LATIN SMALL LETTER B
-    300, 16, 7, TEXT_SY, // LATIN SMALL LETTER C
-    312, 16, 8, TEXT_SY, // LATIN SMALL LETTER D
-    324, 16, 7, TEXT_SY, // LATIN SMALL LETTER E
-    336, 16, 4, TEXT_SY, // LATIN SMALL LETTER F
-    348, 16, 7, TEXT_SY, // LATIN SMALL LETTER G
-    360, 16, 7, TEXT_SY, // LATIN SMALL LETTER H
-    372, 16, 3, TEXT_SY, // LATIN SMALL LETTER I
-    384, 16, 5, TEXT_SY, // LATIN SMALL LETTER J
-    396, 16, 7, TEXT_SY, // LATIN SMALL LETTER K
-    408, 16, 3, TEXT_SY, // LATIN SMALL LETTER L
-    420, 16, 11, TEXT_SY, // LATIN SMALL LETTER M
-    432, 16, 7, TEXT_SY, // LATIN SMALL LETTER N
-    444, 16, 8, TEXT_SY, // LATIN SMALL LETTER O
-    456, 16, 7, TEXT_SY, // LATIN SMALL LETTER P
-    468, 16, 8, TEXT_SY, // LATIN SMALL LETTER Q
-    480, 16, 5, TEXT_SY, // LATIN SMALL LETTER R
-    492, 16, 7, TEXT_SY, // LATIN SMALL LETTER S
-    0, 32, 5, TEXT_SY, // LATIN SMALL LETTER T
-    12, 32, 7, TEXT_SY, // LATIN SMALL LETTER U
-    24, 32, 7, TEXT_SY, // LATIN SMALL LETTER V
-    36, 32, 10, TEXT_SY, // LATIN SMALL LETTER W
-    48, 32, 7, TEXT_SY, // LATIN SMALL LETTER X
-    60, 32, 7, TEXT_SY, // LATIN SMALL LETTER Y
-    72, 32, 7, TEXT_SY, // LATIN SMALL LETTER Z
-    84, 32, 5, TEXT_SY, // LEFT CURLY BRACKET
-    96, 32, 5, TEXT_SY, // VERTICAL LINE
-    108, 32, 5, TEXT_SY, // RIGHT CURLY BRACKET
-    120, 32, 6, TEXT_SY, // TILDE
-    132, 32, 5, TEXT_SY, // INVERTED EXCLAMATION MARK
-    144, 32, 7, TEXT_SY, // CENT SIGN
-    156, 32, 9, TEXT_SY, // POUND SIGN
-    168, 32, 10, TEXT_SY, // COPYRIGHT SIGN
-    180, 32, 10, TEXT_SY, // REGISTERED SIGN
-    192, 32, 4, TEXT_SY, // DEGREE SIGN
-    204, 32, 8, TEXT_SY, // PLUS-MINUS SIGN
-    216, 32, 6, TEXT_SY, // ACUTE ACCENT
-    228, 32, 9, TEXT_SY, // INVERTED QUESTION MARK
-    240, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER A WITH GRAVE
-    252, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER A WITH ACUTE
-    264, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER A WITH CIRCUMFLEX
-    276, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER A WITH DIAERESIS
-    288, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER C WITH CEDILLA
-    300, 32, 8, TEXT_SY, // LATIN CAPITAL LETTER E WITH GRAVE
-    312, 32, 8, TEXT_SY, // LATIN CAPITAL LETTER E WITH ACUTE
-    324, 32, 8, TEXT_SY, // LATIN CAPITAL LETTER E WITH CIRCUMFLEX
-    336, 32, 8, TEXT_SY, // LATIN CAPITAL LETTER E WITH DIAERESIS
-    348, 32, 5, TEXT_SY, // LATIN CAPITAL LETTER I WITH GRAVE
-    360, 32, 5, TEXT_SY, // LATIN CAPITAL LETTER I WITH ACUTE
-    372, 32, 5, TEXT_SY, // LATIN CAPITAL LETTER I WITH CIRCUMFLEX
-    384, 32, 5, TEXT_SY, // LATIN CAPITAL LETTER I WITH DIAERESIS
-    396, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER N WITH TILDE
-    408, 32, 10, TEXT_SY, // LATIN CAPITAL LETTER O WITH GRAVE
-    420, 32, 10, TEXT_SY, // LATIN CAPITAL LETTER O WITH ACUTE
-    432, 32, 10, TEXT_SY, // LATIN CAPITAL LETTER O WITH CIRCUMFLEX
-    444, 32, 10, TEXT_SY, // LATIN CAPITAL LETTER O WITH DIAERESIS
-    456, 32, 8, TEXT_SY, // MULTIPLICATION SIGN
-    468, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER U WITH GRAVE
-    480, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER U WITH ACUTE
-    492, 32, 9, TEXT_SY, // LATIN CAPITAL LETTER U WITH CIRCUMFLEX
-    0, 48, 9, TEXT_SY, // LATIN CAPITAL LETTER U WITH DIAERESIS
-    12, 48, 8, TEXT_SY, // LATIN SMALL LETTER SHARP S
-    24, 48, 7, TEXT_SY, // LATIN SMALL LETTER A WITH GRAVE
-    36, 48, 7, TEXT_SY, // LATIN SMALL LETTER A WITH ACUTE
-    48, 48, 7, TEXT_SY, // LATIN SMALL LETTER A WITH CIRCUMFLEX
-    60, 48, 7, TEXT_SY, // LATIN SMALL LETTER A WITH DIAERESIS
-    72, 48, 7, TEXT_SY, // LATIN SMALL LETTER C WITH CEDILLA
-    84, 48, 8, TEXT_SY, // LATIN SMALL LETTER E WITH GRAVE
-    96, 48, 8, TEXT_SY, // LATIN SMALL LETTER E WITH ACUTE
-    108, 48, 8, TEXT_SY, // LATIN SMALL LETTER E WITH CIRCUMFLEX
-    120, 48, 8, TEXT_SY, // LATIN SMALL LETTER E WITH DIAERESIS
-    132, 48, 5, TEXT_SY, // LATIN SMALL LETTER I WITH GRAVE
-    144, 48, 5, TEXT_SY, // LATIN SMALL LETTER I WITH ACUTE
-    156, 48, 6, TEXT_SY, // LATIN SMALL LETTER I WITH CIRCUMFLEX
-    168, 48, 5, TEXT_SY, // LATIN SMALL LETTER I WITH DIAERESIS
-    180, 48, 8, TEXT_SY, // LATIN SMALL LETTER N WITH TILDE
-    192, 48, 8, TEXT_SY, // LATIN SMALL LETTER O WITH GRAVE
-    204, 48, 8, TEXT_SY, // LATIN SMALL LETTER O WITH ACUTE
-    216, 48, 8, TEXT_SY, // LATIN SMALL LETTER O WITH CIRCUMFLEX
-    228, 48, 8, TEXT_SY, // LATIN SMALL LETTER O WITH DIAERESIS
-    240, 48, 8, TEXT_SY, // DIVISION SIGN
-    252, 48, 8, TEXT_SY, // LATIN SMALL LETTER U WITH GRAVE
-    264, 48, 8, TEXT_SY, // LATIN SMALL LETTER U WITH ACUTE
-    276, 48, 8, TEXT_SY, // LATIN SMALL LETTER U WITH CIRCUMFLEX
-    288, 48, 8, TEXT_SY, // LATIN SMALL LETTER U WITH DIAERESIS
-    300, 48, 11, TEXT_SY, // LATIN CAPITAL LIGATURE OE
-    312, 48, 12, TEXT_SY, // LATIN SMALL LIGATURE OE
-    324, 48, 5, TEXT_SY, // LEFT DOUBLE QUOTATION MARK
-    336, 48, 5, TEXT_SY, // RIGHT DOUBLE QUOTATION MARK
-    348, 48, 5, TEXT_SY, // BULLET
-    360, 48, 12, TEXT_SY, // HORIZONTAL ELLIPSIS
-    372, 48, 12, TEXT_SY, // DOUBLE PRIME
-    384, 48, 12, TEXT_SY, // REFERENCE MARK
-    396, 48, 10, TEXT_SY, // TRADE MARK SIGN
-    408, 48, 12, TEXT_SY, // LEFTWARDS ARROW
-    420, 48, 12, TEXT_SY, // UPWARDS ARROW
-    432, 48, 12, TEXT_SY, // RIGHTWARDS ARROW
-    444, 48, 12, TEXT_SY, // DOWNWARDS ARROW
-    456, 48, 12, TEXT_SY, // IDEOGRAPHIC SPACE
-    468, 48, 12, TEXT_SY, // IDEOGRAPHIC COMMA
-    480, 48, 12, TEXT_SY, // IDEOGRAPHIC FULL STOP
-    492, 48, 12, TEXT_SY, // LEFT CORNER BRACKET
-    0, 64, 12, TEXT_SY, // RIGHT CORNER BRACKET
-    12, 64, 12, TEXT_SY, // POSTAL MARK
-    24, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL A
-    36, 64, 12, TEXT_SY, // HIRAGANA LETTER A
-    48, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL I
-    60, 64, 12, TEXT_SY, // HIRAGANA LETTER I
-    72, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL U
-    84, 64, 12, TEXT_SY, // HIRAGANA LETTER U
-    96, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL E
-    108, 64, 12, TEXT_SY, // HIRAGANA LETTER E
-    120, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL O
-    132, 64, 12, TEXT_SY, // HIRAGANA LETTER O
-    144, 64, 12, TEXT_SY, // HIRAGANA LETTER KA
-    156, 64, 12, TEXT_SY, // HIRAGANA LETTER GA
-    168, 64, 12, TEXT_SY, // HIRAGANA LETTER KI
-    180, 64, 12, TEXT_SY, // HIRAGANA LETTER GI
-    192, 64, 12, TEXT_SY, // HIRAGANA LETTER KU
-    204, 64, 12, TEXT_SY, // HIRAGANA LETTER GU
-    216, 64, 12, TEXT_SY, // HIRAGANA LETTER KE
-    228, 64, 12, TEXT_SY, // HIRAGANA LETTER GE
-    240, 64, 12, TEXT_SY, // HIRAGANA LETTER KO
-    252, 64, 12, TEXT_SY, // HIRAGANA LETTER GO
-    264, 64, 12, TEXT_SY, // HIRAGANA LETTER SA
-    276, 64, 12, TEXT_SY, // HIRAGANA LETTER ZA
-    288, 64, 12, TEXT_SY, // HIRAGANA LETTER SI
-    300, 64, 12, TEXT_SY, // HIRAGANA LETTER ZI
-    312, 64, 12, TEXT_SY, // HIRAGANA LETTER SU
-    324, 64, 12, TEXT_SY, // HIRAGANA LETTER ZU
-    336, 64, 12, TEXT_SY, // HIRAGANA LETTER SE
-    348, 64, 12, TEXT_SY, // HIRAGANA LETTER ZE
-    360, 64, 12, TEXT_SY, // HIRAGANA LETTER SO
-    372, 64, 12, TEXT_SY, // HIRAGANA LETTER ZO
-    384, 64, 12, TEXT_SY, // HIRAGANA LETTER TA
-    396, 64, 12, TEXT_SY, // HIRAGANA LETTER DA
-    408, 64, 12, TEXT_SY, // HIRAGANA LETTER TI
-    420, 64, 12, TEXT_SY, // HIRAGANA LETTER DI
-    432, 64, 12, TEXT_SY, // HIRAGANA LETTER SMALL TU
-    444, 64, 12, TEXT_SY, // HIRAGANA LETTER TU
-    456, 64, 12, TEXT_SY, // HIRAGANA LETTER DU
-    468, 64, 12, TEXT_SY, // HIRAGANA LETTER TE
-    480, 64, 12, TEXT_SY, // HIRAGANA LETTER DE
-    492, 64, 12, TEXT_SY, // HIRAGANA LETTER TO
-    0, 80, 12, TEXT_SY, // HIRAGANA LETTER DO
-    12, 80, 12, TEXT_SY, // HIRAGANA LETTER NA
-    24, 80, 12, TEXT_SY, // HIRAGANA LETTER NI
-    36, 80, 12, TEXT_SY, // HIRAGANA LETTER NU
-    48, 80, 12, TEXT_SY, // HIRAGANA LETTER NE
-    60, 80, 12, TEXT_SY, // HIRAGANA LETTER NO
-    72, 80, 12, TEXT_SY, // HIRAGANA LETTER HA
-    84, 80, 12, TEXT_SY, // HIRAGANA LETTER BA
-    96, 80, 12, TEXT_SY, // HIRAGANA LETTER PA
-    108, 80, 12, TEXT_SY, // HIRAGANA LETTER HI
-    120, 80, 12, TEXT_SY, // HIRAGANA LETTER BI
-    132, 80, 12, TEXT_SY, // HIRAGANA LETTER PI
-    144, 80, 12, TEXT_SY, // HIRAGANA LETTER HU
-    156, 80, 12, TEXT_SY, // HIRAGANA LETTER BU
-    168, 80, 12, TEXT_SY, // HIRAGANA LETTER PU
-    180, 80, 12, TEXT_SY, // HIRAGANA LETTER HE
-    192, 80, 12, TEXT_SY, // HIRAGANA LETTER BE
-    204, 80, 12, TEXT_SY, // HIRAGANA LETTER PE
-    216, 80, 12, TEXT_SY, // HIRAGANA LETTER HO
-    228, 80, 12, TEXT_SY, // HIRAGANA LETTER BO
-    240, 80, 12, TEXT_SY, // HIRAGANA LETTER PO
-    252, 80, 12, TEXT_SY, // HIRAGANA LETTER MA
-    264, 80, 12, TEXT_SY, // HIRAGANA LETTER MI
-    276, 80, 12, TEXT_SY, // HIRAGANA LETTER MU
-    288, 80, 12, TEXT_SY, // HIRAGANA LETTER ME
-    300, 80, 12, TEXT_SY, // HIRAGANA LETTER MO
-    312, 80, 12, TEXT_SY, // HIRAGANA LETTER SMALL YA
-    324, 80, 12, TEXT_SY, // HIRAGANA LETTER YA
-    336, 80, 12, TEXT_SY, // HIRAGANA LETTER SMALL YU
-    348, 80, 12, TEXT_SY, // HIRAGANA LETTER YU
-    360, 80, 12, TEXT_SY, // HIRAGANA LETTER SMALL YO
-    372, 80, 12, TEXT_SY, // HIRAGANA LETTER YO
-    384, 80, 12, TEXT_SY, // HIRAGANA LETTER RA
-    396, 80, 12, TEXT_SY, // HIRAGANA LETTER RI
-    408, 80, 12, TEXT_SY, // HIRAGANA LETTER RU
-    420, 80, 12, TEXT_SY, // HIRAGANA LETTER RE
-    432, 80, 12, TEXT_SY, // HIRAGANA LETTER RO
-    444, 80, 12, TEXT_SY, // HIRAGANA LETTER SMALL WA
-    456, 80, 12, TEXT_SY, // HIRAGANA LETTER WA
-    468, 80, 12, TEXT_SY, // HIRAGANA LETTER WO
-    480, 80, 12, TEXT_SY, // HIRAGANA LETTER N
-    492, 80, 12, TEXT_SY, // KATAKANA LETTER SMALL A
-    0, 96, 12, TEXT_SY, // KATAKANA LETTER A
-    12, 96, 12, TEXT_SY, // KATAKANA LETTER SMALL I
-    24, 96, 12, TEXT_SY, // KATAKANA LETTER I
-    36, 96, 12, TEXT_SY, // KATAKANA LETTER SMALL U
-    48, 96, 12, TEXT_SY, // KATAKANA LETTER U
-    60, 96, 12, TEXT_SY, // KATAKANA LETTER SMALL E
-    72, 96, 12, TEXT_SY, // KATAKANA LETTER E
-    84, 96, 12, TEXT_SY, // KATAKANA LETTER SMALL O
-    96, 96, 12, TEXT_SY, // KATAKANA LETTER O
-    108, 96, 12, TEXT_SY, // KATAKANA LETTER KA
-    120, 96, 12, TEXT_SY, // KATAKANA LETTER GA
-    132, 96, 12, TEXT_SY, // KATAKANA LETTER KI
-    144, 96, 12, TEXT_SY, // KATAKANA LETTER GI
-    156, 96, 12, TEXT_SY, // KATAKANA LETTER KU
-    168, 96, 12, TEXT_SY, // KATAKANA LETTER GU
-    180, 96, 12, TEXT_SY, // KATAKANA LETTER KE
-    192, 96, 12, TEXT_SY, // KATAKANA LETTER GE
-    204, 96, 12, TEXT_SY, // KATAKANA LETTER KO
-    216, 96, 12, TEXT_SY, // KATAKANA LETTER GO
-    228, 96, 12, TEXT_SY, // KATAKANA LETTER SA
-    240, 96, 12, TEXT_SY, // KATAKANA LETTER ZA
-    252, 96, 12, TEXT_SY, // KATAKANA LETTER SI
-    264, 96, 12, TEXT_SY, // KATAKANA LETTER ZI
-    276, 96, 12, TEXT_SY, // KATAKANA LETTER SU
-    288, 96, 12, TEXT_SY, // KATAKANA LETTER ZU
-    300, 96, 12, TEXT_SY, // KATAKANA LETTER SE
-    312, 96, 12, TEXT_SY, // KATAKANA LETTER ZE
-    324, 96, 12, TEXT_SY, // KATAKANA LETTER SO
-    336, 96, 12, TEXT_SY, // KATAKANA LETTER ZO
-    348, 96, 12, TEXT_SY, // KATAKANA LETTER TA
-    360, 96, 12, TEXT_SY, // KATAKANA LETTER DA
-    372, 96, 12, TEXT_SY, // KATAKANA LETTER TI
-    384, 96, 12, TEXT_SY, // KATAKANA LETTER DI
-    396, 96, 12, TEXT_SY, // KATAKANA LETTER SMALL TU
-    408, 96, 12, TEXT_SY, // KATAKANA LETTER TU
-    420, 96, 12, TEXT_SY, // KATAKANA LETTER DU
-    432, 96, 12, TEXT_SY, // KATAKANA LETTER TE
-    444, 96, 12, TEXT_SY, // KATAKANA LETTER DE
-    456, 96, 12, TEXT_SY, // KATAKANA LETTER TO
-    468, 96, 12, TEXT_SY, // KATAKANA LETTER DO
-    480, 96, 12, TEXT_SY, // KATAKANA LETTER NA
-    492, 96, 12, TEXT_SY, // KATAKANA LETTER NI
-    0, 112, 12, TEXT_SY, // KATAKANA LETTER NU
-    12, 112, 12, TEXT_SY, // KATAKANA LETTER NE
-    24, 112, 12, TEXT_SY, // KATAKANA LETTER NO
-    36, 112, 12, TEXT_SY, // KATAKANA LETTER HA
-    48, 112, 12, TEXT_SY, // KATAKANA LETTER BA
-    60, 112, 12, TEXT_SY, // KATAKANA LETTER PA
-    72, 112, 12, TEXT_SY, // KATAKANA LETTER HI
-    84, 112, 12, TEXT_SY, // KATAKANA LETTER BI
-    96, 112, 12, TEXT_SY, // KATAKANA LETTER PI
-    108, 112, 12, TEXT_SY, // KATAKANA LETTER HU
-    120, 112, 12, TEXT_SY, // KATAKANA LETTER BU
-    132, 112, 12, TEXT_SY, // KATAKANA LETTER PU
-    144, 112, 12, TEXT_SY, // KATAKANA LETTER HE
-    156, 112, 12, TEXT_SY, // KATAKANA LETTER BE
-    168, 112, 12, TEXT_SY, // KATAKANA LETTER PE
-    180, 112, 12, TEXT_SY, // KATAKANA LETTER HO
-    192, 112, 12, TEXT_SY, // KATAKANA LETTER BO
-    204, 112, 12, TEXT_SY, // KATAKANA LETTER PO
-    216, 112, 12, TEXT_SY, // KATAKANA LETTER MA
-    228, 112, 12, TEXT_SY, // KATAKANA LETTER MI
-    240, 112, 12, TEXT_SY, // KATAKANA LETTER MU
-    252, 112, 12, TEXT_SY, // KATAKANA LETTER ME
-    264, 112, 12, TEXT_SY, // KATAKANA LETTER MO
-    276, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL YA
-    288, 112, 12, TEXT_SY, // KATAKANA LETTER YA
-    300, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL YU
-    312, 112, 12, TEXT_SY, // KATAKANA LETTER YU
-    324, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL YO
-    336, 112, 12, TEXT_SY, // KATAKANA LETTER YO
-    348, 112, 12, TEXT_SY, // KATAKANA LETTER RA
-    360, 112, 12, TEXT_SY, // KATAKANA LETTER RI
-    372, 112, 12, TEXT_SY, // KATAKANA LETTER RU
-    384, 112, 12, TEXT_SY, // KATAKANA LETTER RE
-    396, 112, 12, TEXT_SY, // KATAKANA LETTER RO
-    408, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL WA
-    420, 112, 12, TEXT_SY, // KATAKANA LETTER WA
-    432, 112, 12, TEXT_SY, // KATAKANA LETTER WO
-    444, 112, 12, TEXT_SY, // KATAKANA LETTER N
-    456, 112, 12, TEXT_SY, // KATAKANA LETTER VU
-    468, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL KA
-    480, 112, 12, TEXT_SY, // KATAKANA LETTER SMALL KE
-    492, 112, 12, TEXT_SY, // KATAKANA-HIRAGANA PROLONGED SOUND MARK
-
+    0,   0,  2,  TEXT_SY, // space
+    10,  0,  3,  TEXT_SY, // exclam
+    20,  0,  5,  TEXT_SY, // quotedbl
+    30,  0,  8,  TEXT_SY, // numbersign
+    40,  0,  6,  TEXT_SY, // dollar
+    50,  0,  8,  TEXT_SY, // percent
+    60,  0,  7,  TEXT_SY, // ampersand
+    70,  0,  2,  TEXT_SY, // quotesingle
+    80,  0,  4,  TEXT_SY, // parenleft
+    90,  0,  4,  TEXT_SY, // parenright
+    100, 0,  8,  TEXT_SY, // asterisk
+    110, 0,  6,  TEXT_SY, // plus
+    120, 0,  3,  TEXT_SY, // comma
+    130, 0,  6,  TEXT_SY, // hyphen
+    140, 0,  2,  TEXT_SY, // period
+    150, 0,  4,  TEXT_SY, // slash
+    160, 0,  6,  TEXT_SY, // zero
+    170, 0,  3,  TEXT_SY, // one
+    180, 0,  6,  TEXT_SY, // two
+    190, 0,  6,  TEXT_SY, // three
+    200, 0,  7,  TEXT_SY, // four
+    210, 0,  6,  TEXT_SY, // five
+    220, 0,  6,  TEXT_SY, // six
+    230, 0,  6,  TEXT_SY, // seven
+    240, 0,  6,  TEXT_SY, // eight
+    250, 0,  6,  TEXT_SY, // nine
+    260, 0,  2,  TEXT_SY, // colon
+    270, 0,  3,  TEXT_SY, // semicolon
+    280, 0,  4,  TEXT_SY, // less
+    390, 0,  6,  TEXT_SY, // equal
+    300, 0,  4,  TEXT_SY, // greater
+    310, 0,  6,  TEXT_SY, // question
+    320, 0,  8,  TEXT_SY, // at
+    330, 0,  6,  TEXT_SY, // A
+    340, 0,  6,  TEXT_SY, // B
+    350, 0,  6,  TEXT_SY, // C
+    360, 0,  6,  TEXT_SY, // D
+    370, 0,  5,  TEXT_SY, // E
+    380, 0,  5,  TEXT_SY, // F
+    390, 0,  6,  TEXT_SY, // G
+    400, 0,  6,  TEXT_SY, // H
+    410, 0,   4,  TEXT_SY, // I
+    420, 0,  5,  TEXT_SY, // J
+    430, 0,  6,  TEXT_SY, // K
+    440, 0,  5,  TEXT_SY, // L
+    450, 0,  6,  TEXT_SY, // M
+    460, 0,  6,  TEXT_SY, // N
+    470, 0,  6,  TEXT_SY, // O
+    480, 0,  6,  TEXT_SY, // P
+    490, 0,  6,  TEXT_SY, // Q
+    500, 0,  6,  TEXT_SY, // R
+    0,   11, 5,  TEXT_SY, // S
+    10,  11, 6,  TEXT_SY, // T
+    20,  11, 6,  TEXT_SY, // U
+    30,  11, 6,  TEXT_SY, // V
+    40,  11, 6,  TEXT_SY, // W
+    50,  11, 6,  TEXT_SY, // X
+    60,  11, 6,  TEXT_SY, // Y
+    70,  11, 5,  TEXT_SY, // Z
+    80,  11, 4,  TEXT_SY, // bracketleft
+    90,  11, 4,  TEXT_SY, // backslash
+    100, 11, 4,  TEXT_SY, // bracketright
+    110, 11, 5,  TEXT_SY, // asciicircum
+    120, 11, 6,  TEXT_SY, // underscore
+    130, 11, 4,  TEXT_SY, // grave
+    140, 11, 6,  TEXT_SY, // a
+    150, 11, 6,  TEXT_SY, // b
+    160, 11, 6,  TEXT_SY, // c
+    170, 11, 6,  TEXT_SY, // d
+    180, 11, 6,  TEXT_SY, // e
+    190, 11, 5,  TEXT_SY, // f
+    200, 11, 6,  TEXT_SY, // g
+    210, 11, 6,  TEXT_SY, // h
+    220, 11, 2,  TEXT_SY, // i
+    230, 11, 4,  TEXT_SY, // j
+    240, 11, 5,  TEXT_SY, // k
+    250, 11, 3,  TEXT_SY, // l
+    260, 11, 8,  TEXT_SY, // m
+    270, 11, 6,  TEXT_SY, // n
+    280, 11, 6,  TEXT_SY, // o
+    390, 11, 6,  TEXT_SY, // p
+    300, 11, 6,  TEXT_SY, // q
+    310, 11, 5,  TEXT_SY, // r
+    320, 11, 5,  TEXT_SY, // s
+    330, 11, 5,  TEXT_SY, // t
+    340, 11, 6,  TEXT_SY, // u
+    350, 11, 6,  TEXT_SY, // v
+    360, 11, 6,  TEXT_SY, // w
+    370, 11, 6,  TEXT_SY, // x
+    380, 11, 6,  TEXT_SY, // y
+    390, 11, 6,  TEXT_SY, // z
+    400, 11, 5,  TEXT_SY, // braceleft
+    410, 11,  3,  TEXT_SY, // bar
+    420, 11, 5,  TEXT_SY, // braceright
+    430, 11, 10, TEXT_SY, // asciitilde
+    440, 11, 3,  TEXT_SY, // exclamdown
+    450, 11, 7,  TEXT_SY, // cent
+    460, 11, 6,  TEXT_SY, // sterling
+    470, 11, 6,  TEXT_SY, // currency
+    480, 11, 6,  TEXT_SY, // yen
+    490, 11, 2,  TEXT_SY, // brokenbar
+    500, 11, 5,  TEXT_SY, // section
+    0,   22, 4,  TEXT_SY, // dieresis
+    10,  22, 10, TEXT_SY, // copyright
+    20,  22, 5,  TEXT_SY, // ordfeminine
+    30,  22, 6,  TEXT_SY, // guillemotleft
+    40,  22, 6,  TEXT_SY, // logicalnot
+    50,  22, 10, TEXT_SY, // registered
+    60,  22, 4,  TEXT_SY, // degree
+    70,  22, 6,  TEXT_SY, // plusminus
+    80,  22, 4,  TEXT_SY, // uni00B2
+    90,  22, 4,  TEXT_SY, // uni00B3
+    100, 22, 3,  TEXT_SY, // acute
+    110, 22, 6,  TEXT_SY, // mu
+    120, 22, 7,  TEXT_SY, // paragraph
+    130, 22, 2,  TEXT_SY, // periodcentered
+    140, 22, 6,  TEXT_SY, // guillemotright
+    150, 22, 5,  TEXT_SY, // questiondown
+    160, 22, 6,  TEXT_SY, // Agrave
+    170, 22, 6,  TEXT_SY, // Aacute
+    180, 22, 6,  TEXT_SY, // Acircumflex
+    190, 22, 6,  TEXT_SY, // Atilde
+    200, 22, 6,  TEXT_SY, // Adieresis
+    210, 22, 6,  TEXT_SY, // Aring
+    220, 22, 8,  TEXT_SY, // AE
+    230, 22, 5,  TEXT_SY, // Ccedilla
+    240, 22, 5,  TEXT_SY, // Egrave
+    250, 22, 5,  TEXT_SY, // Eacute
+    260, 22, 5,  TEXT_SY, // Ecircumflex
+    270, 22, 5,  TEXT_SY, // Edieresis
+    280, 22, 4,  TEXT_SY, // Igrave
+    390, 22, 4,  TEXT_SY, // Iacute
+    300, 22, 4,  TEXT_SY, // Icircumflex
+    310, 22, 4,  TEXT_SY, // Idieresis
+    320, 22, 6,  TEXT_SY, // Eth
+    330, 22, 6,  TEXT_SY, // Ntilde
+    340, 22, 6,  TEXT_SY, // Ograve
+    350, 22, 6,  TEXT_SY, // Oacute
+    360, 22, 6,  TEXT_SY, // Ocircumflex
+    370, 22, 6,  TEXT_SY, // Otilde
+    380, 22, 6,  TEXT_SY, // Odieresis
+    390, 22, 6,  TEXT_SY, // multiply
+    400, 22, 10,  TEXT_SY, // Oslash
+    410, 22,  6,  TEXT_SY, // Ugrave
+    420, 22, 6,  TEXT_SY, // Uacute
+    430, 22, 6,  TEXT_SY, // Ucircumflex
+    440, 22, 6,  TEXT_SY, // Udieresis
+    450, 22, 6,  TEXT_SY, // Yacute
+    460, 22, 5,  TEXT_SY, // Thorn
+    470, 22, 6,  TEXT_SY, // germandbls
+    480, 22, 6,  TEXT_SY, // agrave
+    490, 22, 6,  TEXT_SY, // aacute
+    500, 22, 6,  TEXT_SY, // acircumflex
+    0,   33, 6,  TEXT_SY, // atilde
+    10,  33, 6,  TEXT_SY, // adieresis
+    20,  33, 6,  TEXT_SY, // aring
+    30,  33, 8,  TEXT_SY, // ae
+    40,  33, 5,  TEXT_SY, // ccedilla
+    50,  33, 6,  TEXT_SY, // egrave
+    60,  33, 6,  TEXT_SY, // eacute
+    70,  33, 6,  TEXT_SY, // ecircumflex
+    80,  33, 6,  TEXT_SY, // edieresis
+    90,  33, 3,  TEXT_SY, // igrave
+    100, 33, 4,  TEXT_SY, // iacute
+    110, 33, 4,  TEXT_SY, // icircumflex
+    120, 33, 4,  TEXT_SY, // idieresis
+    130, 33, 5,  TEXT_SY, // eth
+    140, 33, 6,  TEXT_SY, // ntilde
+    150, 33, 6,  TEXT_SY, // ograve
+    160, 33, 6,  TEXT_SY, // oacute
+    170, 33, 6,  TEXT_SY, // ocircumflex
+    180, 33, 6,  TEXT_SY, // otilde
+    190, 33, 6,  TEXT_SY, // odieresis
+    200, 33, 6,  TEXT_SY, // divide
+    210, 33, 7,  TEXT_SY, // oslash
+    220, 33, 6,  TEXT_SY, // ugrave
+    230, 33, 6,  TEXT_SY, // uacute
+    240, 33, 6,  TEXT_SY, // ucircumflex
+    250, 33, 6,  TEXT_SY, // udieresis
+    260, 33, 6,  TEXT_SY, // yacute
+    270, 33, 5,  TEXT_SY, // thorn
+    280, 33, 6,  TEXT_SY, // ydieresis
+    390, 33, 6,  TEXT_SY, // Ydieresis
+    300, 33, 6,  TEXT_SY, // uni1E9E
+    310, 33, 3,  TEXT_SY, // quoteleft
+    320, 33, 4,  TEXT_SY, // quoteright
+    330, 33, 3,  TEXT_SY, // quotesinglbase
+    340, 33, 5,  TEXT_SY, // quotedblleft
+    350, 33, 5,  TEXT_SY, // quotedblright
+    360, 33, 5,  TEXT_SY, // quotedblbase
+    370, 33, 4,  TEXT_SY, // bullet
+    380, 33, 6,  TEXT_SY, // ellipsis
+    390, 33, 4,  TEXT_SY, // guilsinglleft
+    400, 33, 4,  TEXT_SY, // guilsinglright
+    410, 33,  7,  TEXT_SY, // Euro
+    420, 33, 10, TEXT_SY, // trademark
+    430, 33, 10, TEXT_SY, // arrowleft
+    440, 33, 10, TEXT_SY, // arrowup
+    450, 33, 10, TEXT_SY, // arrowright
+    460, 33, 10, TEXT_SY, // arrowdown
+    470, 33, 10, TEXT_SY, // uni2427
+    480, 33, 10, TEXT_SY, // uni2428
+    490, 33, 10, TEXT_SY, // uni2429
+    500, 33, 10, TEXT_SY, // uni242A
+    0,   44, 11, TEXT_SY, // uni242B
+    10,  44, 10, TEXT_SY, // uni242C
+    20,  44, 10, TEXT_SY, // uni242D
+    30,  44, 10, TEXT_SY, // uni242E
+    40,  44, 10, TEXT_SY, // uni242F
+    50,  44, 10, TEXT_SY, // uni2430
+    60,  44, 10, TEXT_SY, // filledbox
+    70,  44, 10, TEXT_SY, // H22073
+    80,  44, 10, TEXT_SY, // triagup
+    90,  44, 10, TEXT_SY, // uni25B3
+    100, 44, 10, TEXT_SY, // triagdn
+    110, 44, 10, TEXT_SY, // uni25BD
+    120, 44, 10, TEXT_SY, // uni25C6
+    130, 44, 10, TEXT_SY, // uni25C7
+    140, 44, 10, TEXT_SY, // circle
+    150, 44, 10, TEXT_SY, // uni25CE
+    160, 44, 10, TEXT_SY, // H18533
+    170, 44, 10, TEXT_SY, // uni2600
+    180, 44, 10, TEXT_SY, // uni2601
+    190, 44, 10, TEXT_SY, // uni2602
+    200, 44, 8,  TEXT_SY, // uni2603
+    210, 44, 10, TEXT_SY, // uni2605
+    220, 44, 10, TEXT_SY, // uni2606
+    230, 44, 6,  TEXT_SY, // uni260E
+    240, 44, 10, TEXT_SY, // uni2613
+    250, 44, 10, TEXT_SY, // uni2639
+    260, 44, 10, TEXT_SY, // smileface
+    270, 44, 10, TEXT_SY, // invsmileface
+    280, 44, 10, TEXT_SY, // spade
+    390, 44, 10, TEXT_SY, // club
+    300, 44, 10, TEXT_SY, // heart
+    310, 44, 10, TEXT_SY, // diamond
+    320, 44, 9,  TEXT_SY, // uni3041
+    330, 44, 10, TEXT_SY, // uni3042
+    340, 44, 8,  TEXT_SY, // uni3043
+    350, 44, 10, TEXT_SY, // uni3044
+    360, 44, 8,  TEXT_SY, // uni3045
+    370, 44, 9,  TEXT_SY, // uni3046
+    380, 44, 8,  TEXT_SY, // uni3047
+    390, 44, 10, TEXT_SY, // uni3048
+    400, 44, 10, TEXT_SY, // uni3049
+    410, 44,  10, TEXT_SY, // uni304A
+    420, 44, 10, TEXT_SY, // uni304B
+    430, 44, 10, TEXT_SY, // uni304C
+    440, 44, 10, TEXT_SY, // uni304D
+    450, 44, 10, TEXT_SY, // uni304E
+    460, 44, 8,  TEXT_SY, // uni304F
+    470, 44, 10, TEXT_SY, // uni3050
+    480, 44, 10, TEXT_SY, // uni3051
+    490, 44, 10, TEXT_SY, // uni3052
+    500, 44, 9,  TEXT_SY, // uni3053
+    0,   55, 10, TEXT_SY, // uni3054
+    10,  55, 9,  TEXT_SY, // uni3055
+    20,  55, 10, TEXT_SY, // uni3056
+    30,  55, 8,  TEXT_SY, // uni3057
+    40,  55, 8,  TEXT_SY, // uni3058
+    50,  55, 10, TEXT_SY, // uni3059
+    60,  55, 10, TEXT_SY, // uni305A
+    70,  55, 10, TEXT_SY, // uni305B
+    80,  55, 10, TEXT_SY, // uni305C
+    90,  55, 10, TEXT_SY, // uni305D
+    100, 55, 10, TEXT_SY, // uni305E
+    110, 55, 9,  TEXT_SY, // uni305F
+    120, 55, 10, TEXT_SY, // uni3060
+    130, 55, 9,  TEXT_SY, // uni3061
+    140, 55, 10, TEXT_SY, // uni3062
+    150, 55, 9,  TEXT_SY, // uni3063
+    160, 55, 10, TEXT_SY, // uni3064
+    170, 55, 10, TEXT_SY, // uni3065
+    180, 55, 10, TEXT_SY, // uni3066
+    190, 55, 11, TEXT_SY, // uni3067
+    200, 55, 9,  TEXT_SY, // uni3068
+    210, 55, 10, TEXT_SY, // uni3069
+    220, 55, 10, TEXT_SY, // uni306A
+    230, 55, 10, TEXT_SY, // uni306B
+    240, 55, 10, TEXT_SY, // uni306C
+    250, 55, 10, TEXT_SY, // uni306D
+    260, 55, 10, TEXT_SY, // uni306E
+    270, 55, 10, TEXT_SY, // uni306F
+    280, 55, 10, TEXT_SY, // uni3070
+    390, 55, 11, TEXT_SY, // uni3071
+    300, 55, 10, TEXT_SY, // uni3072
+    310, 55, 10, TEXT_SY, // uni3073
+    320, 55, 10, TEXT_SY, // uni3074
+    330, 55, 10, TEXT_SY, // uni3075
+    340, 55, 10, TEXT_SY, // uni3076
+    350, 55, 10, TEXT_SY, // uni3077
+    360, 55, 10, TEXT_SY, // uni3078
+    370, 55, 10, TEXT_SY, // uni3079
+    380, 55, 10, TEXT_SY, // uni307A
+    390, 55, 10, TEXT_SY, // uni307B
+    400, 55, 10, TEXT_SY, // uni307C
+    410, 55,  10, TEXT_SY, // uni307D
+    420, 55, 10, TEXT_SY, // uni307E
+    430, 55, 10, TEXT_SY, // uni307F
+    440, 55, 10, TEXT_SY, // uni3080
+    450, 55, 10, TEXT_SY, // uni3081
+    460, 55, 9,  TEXT_SY, // uni3082
+    470, 55, 9,  TEXT_SY, // uni3083
+    480, 55, 10, TEXT_SY, // uni3084
+    490, 55, 9,  TEXT_SY, // uni3085
+    500, 55, 10, TEXT_SY, // uni3086
+    0,   66, 9,  TEXT_SY, // uni3087
+    10,  66, 9,  TEXT_SY, // uni3088
+    20,  66, 9,  TEXT_SY, // uni3089
+    30,  66, 8,  TEXT_SY, // uni308A
+    40,  66, 10, TEXT_SY, // uni308B
+    50,  66, 10, TEXT_SY, // uni308C
+    60,  66, 8,  TEXT_SY, // uni308D
+    70,  66, 9,  TEXT_SY, // uni308E
+    80,  66, 10, TEXT_SY, // uni308F
+    90,  66, 11, TEXT_SY, // uni3090
+    100, 66, 11, TEXT_SY, // uni3091
+    110, 66, 10, TEXT_SY, // uni3092
+    120, 66, 10, TEXT_SY, // uni3093
+    130, 66, 8,  TEXT_SY, // uni3094
+    140, 66, 9,  TEXT_SY, // uni3095
+    150, 66, 7,  TEXT_SY, // uni3096
+    160, 66, 7,  TEXT_SY, // uni3099
+    170, 66, 7,  TEXT_SY, // uni309A
+    180, 66, 4,  TEXT_SY, // uni309B
+    190, 66, 4,  TEXT_SY, // uni309C
+    200, 66, 5,  TEXT_SY, // uni309D
+    210, 66, 6,  TEXT_SY, // uni309E
+    220, 66, 7,  TEXT_SY, // uni309F
+    230, 66, 7,  TEXT_SY, // uni30A0
+    240, 66, 9,  TEXT_SY, // uni30A1
+    250, 66, 9,  TEXT_SY, // uni30A2
+    260, 66, 8,  TEXT_SY, // uni30A3
+    270, 66, 8,  TEXT_SY, // uni30A4
+    280, 66, 8,  TEXT_SY, // uni30A5
+    390, 66, 9,  TEXT_SY, // uni30A6
+    300, 66, 8,  TEXT_SY, // uni30A7
+    310, 66, 10, TEXT_SY, // uni30A8
+    320, 66, 8,  TEXT_SY, // uni30A9
+    330, 66, 10, TEXT_SY, // uni30AA
+    340, 66, 10, TEXT_SY, // uni30AB
+    350, 66, 10, TEXT_SY, // uni30AC
+    360, 66, 9,  TEXT_SY, // uni30AD
+    370, 66, 10, TEXT_SY, // uni30AE
+    380, 66, 9,  TEXT_SY, // uni30AF
+    390, 66, 10, TEXT_SY, // uni30B0
+    400, 66, 9,  TEXT_SY, // uni30B1
+    410, 66,  10, TEXT_SY, // uni30B2
+    420, 66, 9,  TEXT_SY, // uni30B3
+    430, 66, 10, TEXT_SY, // uni30B4
+    440, 66, 10, TEXT_SY, // uni30B5
+    450, 66, 10, TEXT_SY, // uni30B6
+    460, 66, 9,  TEXT_SY, // uni30B7
+    470, 66, 10, TEXT_SY, // uni30B8
+    480, 66, 10, TEXT_SY, // uni30B9
+    490, 66, 10, TEXT_SY, // uni30BA
+    500, 66, 10, TEXT_SY, // uni30BB
+    0,   77, 10, TEXT_SY, // uni30BC
+    10,  77, 10, TEXT_SY, // uni30BD
+    20,  77, 10, TEXT_SY, // uni30BE
+    30,  77, 10, TEXT_SY, // uni30BF
+    40,  77, 10, TEXT_SY, // uni30C0
+    50,  77, 10, TEXT_SY, // uni30C1
+    60,  77, 10, TEXT_SY, // uni30C2
+    70,  77, 9,  TEXT_SY, // uni30C3
+    80,  77, 10, TEXT_SY, // uni30C4
+    90,  77, 10, TEXT_SY, // uni30C5
+    100, 77, 10, TEXT_SY, // uni30C6
+    110, 77, 10, TEXT_SY, // uni30C7
+    120, 77, 7,  TEXT_SY, // uni30C8
+    130, 77, 8,  TEXT_SY, // uni30C9
+    140, 77, 10, TEXT_SY, // uni30CA
+    150, 77, 9,  TEXT_SY, // uni30CB
+    160, 77, 9,  TEXT_SY, // uni30CC
+    170, 77, 10, TEXT_SY, // uni30CD
+    180, 77, 8,  TEXT_SY, // uni30CE
+    190, 77, 10, TEXT_SY, // uni30CF
+    200, 77, 10, TEXT_SY, // uni30D0
+    210, 77, 10, TEXT_SY, // uni30D1
+    220, 77, 9,  TEXT_SY, // uni30D2
+    230, 77, 9,  TEXT_SY, // uni30D3
+    240, 77, 9,  TEXT_SY, // uni30D4
+    250, 77, 9,  TEXT_SY, // uni30D5
+    260, 77, 10, TEXT_SY, // uni30D6
+    270, 77, 10, TEXT_SY, // uni30D7
+    280, 77, 10, TEXT_SY, // uni30D8
+    390, 77, 10, TEXT_SY, // uni30D9
+    300, 77, 10, TEXT_SY, // uni30DA
+    310, 77, 10, TEXT_SY, // uni30DB
+    320, 77, 10, TEXT_SY, // uni30DC
+    330, 77, 10, TEXT_SY, // uni30DD
+    340, 77, 10, TEXT_SY, // uni30DE
+    350, 77, 9,  TEXT_SY, // uni30DF
+    360, 77, 10, TEXT_SY, // uni30E0
+    370, 77, 9,  TEXT_SY, // uni30E1
+    380, 77, 10, TEXT_SY, // uni30E2
+    390, 77, 9,  TEXT_SY, // uni30E3
+    400, 77, 10, TEXT_SY, // uni30E4
+    410, 77,  9,  TEXT_SY, // uni30E5
+    420, 77, 10, TEXT_SY, // uni30E6
+    430, 77, 7,  TEXT_SY, // uni30E7
+    440, 77, 8,  TEXT_SY, // uni30E8
+    450, 77, 9,  TEXT_SY, // uni30E9
+    460, 77, 8,  TEXT_SY, // uni30EA
+    470, 77, 10, TEXT_SY, // uni30EB
+    480, 77, 8,  TEXT_SY, // uni30EC
+    490, 77, 9,  TEXT_SY, // uni30ED
+    500, 77, 7,  TEXT_SY, // uni30EE
+    0,   88, 9,  TEXT_SY, // uni30EF
+    10,  88, 10, TEXT_SY, // uni30F0
+    20,  88, 10, TEXT_SY, // uni30F1
+    30,  88, 9,  TEXT_SY, // uni30F2
+    40,  88, 10, TEXT_SY, // uni30F3
+    50,  88, 10, TEXT_SY, // uni30F4
+    60,  88, 8,  TEXT_SY, // uni30F5
+    70,  88, 8,  TEXT_SY, // uni30F6
+    80,  88, 10, TEXT_SY, // uni30F7
+    90,  88, 11, TEXT_SY, // uni30F8
+    100, 88, 11, TEXT_SY, // uni30F9
+    110, 88, 11, TEXT_SY, // uni30FA
+    120, 88, 6,  TEXT_SY, // uni30FB
+    130, 88, 9,  TEXT_SY, // uni30FC
+    140, 88, 5,  TEXT_SY, // uni30FD
+    150, 88, 7,  TEXT_SY, // uni30FE
+    160, 88, 8,  TEXT_SY, // uni30FF
+    170, 88, 8,  TEXT_SY, // .notdef
+    // 180, 88, 1,  TEXT_SY, // glyph1
+    // 190, 88, 1,  TEXT_SY, // glyph2
 };
 
 static constexpr unsigned short int small_utf16_lookup_table[] = {
-0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x2A,0x2B,0x2C,0x2D,0x2E,0x2F,0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3A,0x3B,0x3C,0x3D,0x3E,0x3F,0x40,
-0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x5B,0x5C,0x5D,0x5E,0x5F,0x60,0x61,
-0x62,0x63,0x64,0x65,0x66,0x67,0x68,0x69,0x6A,0x6B,0x6C,0x6D,0x6E,0x6F,0x70,0x71,0x72,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7A,0x7B,0x7C,0x7D,0x7E,0xA1,0xA2,0xA3,0xA9,
-0xAE,0xB0,0xB1,0xB4,0xBF,0xC0,0xC1,0xC2,0xC4,0xC7,0xC8,0xC9,0xCA,0xCB,0xCC,0xCD,0xCE,0xCF,0xD1,0xD2,0xD3,0xD4,0xD6,0xD7,0xD9,0xDA,0xDB,0xDC,0xDF,0xE0,0xE1,0xE2,0xE4,
-0xE7,0xE8,0xE9,0xEA,0xEB,0xEC,0xED,0xEE,0xEF,0xF1,0xF2,0xF3,0xF4,0xF6,0xF7,0xF9,0xFA,0xFB,0xFC,0x152,0x153,0x201C,0x201D,0x2022,0x2026,0x2033,0x203B,0x2122,0x2190,0x2191,0x2192,0x2193,0x3000,
-0x3001,0x3002,0x300C,0x300D,0x3012,0x3041,0x3042,0x3043,0x3044,0x3045,0x3046,0x3047,0x3048,0x3049,0x304A,0x304B,0x304C,0x304D,0x304E,0x304F,0x3050,0x3051,0x3052,0x3053,0x3054,0x3055,0x3056,0x3057,0x3058,0x3059,0x305A,0x305B,0x305C,
-0x305D,0x305E,0x305F,0x3060,0x3061,0x3062,0x3063,0x3064,0x3065,0x3066,0x3067,0x3068,0x3069,0x306A,0x306B,0x306C,0x306D,0x306E,0x306F,0x3070,0x3071,0x3072,0x3073,0x3074,0x3075,0x3076,0x3077,0x3078,0x3079,0x307A,0x307B,0x307C,0x307D,
-0x307E,0x307F,0x3080,0x3081,0x3082,0x3083,0x3084,0x3085,0x3086,0x3087,0x3088,0x3089,0x308A,0x308B,0x308C,0x308D,0x308E,0x308F,0x3092,0x3093,0x30A1,0x30A2,0x30A3,0x30A4,0x30A5,0x30A6,0x30A7,0x30A8,0x30A9,0x30AA,0x30AB,0x30AC,0x30AD,
-0x30AE,0x30AF,0x30B0,0x30B1,0x30B2,0x30B3,0x30B4,0x30B5,0x30B6,0x30B7,0x30B8,0x30B9,0x30BA,0x30BB,0x30BC,0x30BD,0x30BE,0x30BF,0x30C0,0x30C1,0x30C2,0x30C3,0x30C4,0x30C5,0x30C6,0x30C7,0x30C8,0x30C9,0x30CA,0x30CB,0x30CC,0x30CD,0x30CE,
-0x30CF,0x30D0,0x30D1,0x30D2,0x30D3,0x30D4,0x30D5,0x30D6,0x30D7,0x30D8,0x30D9,0x30DA,0x30DB,0x30DC,0x30DD,0x30DE,0x30DF,0x30E0,0x30E1,0x30E2,0x30E3,0x30E4,0x30E5,0x30E6,0x30E7,0x30E8,0x30E9,0x30EA,0x30EB,0x30EC,0x30ED,0x30EE,0x30EF,
-0x30F2,0x30F3,0x30F4,0x30F5,0x30F6,0x30FC,
+    u' ', u'!', u'"', u'#', u'$', u'%', u'&', u'\'', u'(', u'0', u'*', u'+', u',', u'-', u'.', u'/', u'0', u'1', u'2', u'3', u'4', u'5', u'6', u'7', u'8', u'9', u':', u';', u'<', u'=', u'>', u'?', u'@', u'A', u'B', u'C', u'D', u'E', u'F', u'G', u'H', u'I', u'J', u'K', u'L', u'M', u'N', u'O', u'P', u'Q', u'R',
+    u'S', u'T', u'U', u'V', u'W', u'X', u'Y', u'Z', u'[', u'\\', u']', u'^', u'_', u'`', u'a', u'b', u'c', u'd', u'e', u'f', u'g', u'h', u'i', u'j', u'k', u'l', u'm', u'n', u'o', u'p', u'q', u'r', u's', u't', u'u', u'v', u'w', u'x', u'y', u'z', u'[', u'|', u']', u'~', u'¡', u'¢', u'£', u'¤', u'¥', u'¦', u'§',
+    u'¨', u'©', u'ª', u'«', u'¬', u'®', u'°', u'±', u'²', u'³', u'´', u'µ', u'¶', u'·', u'»', u'¿', u'À', u'Á', u'Â', u'Ã', u'Ä', u'Å', u'Æ', u'Ç', u'È', u'É', u'Ê', u'Ë', u'Ì', u'Í', u'Î', u'Ï', u'Ð', u'Ñ', u'Ò', u'Ó', u'Ô', u'Õ', u'Ö', u'×', u'Ø', u'Ù', u'Ú', u'Û', u'Ü', u'Ý', u'Þ', u'ß', u'à', u'á', u'â',
+    u'ã', u'ä', u'å', u'æ', u'ç', u'è', u'é', u'ê', u'ë', u'ì', u'í', u'î', u'ï', u'ð', u'ñ', u'ò', u'ó', u'ô', u'õ', u'ö', u'÷', u'ø', u'ù', u'ú', u'û', u'ü', u'ý', u'þ', u'ÿ', u'Ÿ', u'ẞ', u'‘', u'’', u'‚', u'“', u'“', u'„', u'•', u'…', u'‹', u'›', u'€', u'™', u'←', u'↑', u'→', u'↓', u'\u2427', u'\u2428', u'\u2429', u'\u242A',
+    u'\u242B', u'\u242C', u'\u242D', u'\u242E', u'\u242F', u'\u2430', u'■', u'□', u'▲', u'△', u'▼', u'▽', u'◆', u'◇', u'○', u'◎', u'●', u'\u2600', u'\u2601', u'\u2602', u'\u2603', u'\u2605', u'\u2606', u'\u260E', u'\u2613', u'\u2639', u'☹', u'☻', u'♠', u'♣', u'♥', u'♦', u'\u3041', u'\u3042', u'\u3043', u'\u3044', u'\u3045', u'\u3046', u'\u3047', u'\u3048', u'\u3049', u'\u304A', u'\u304B', u'\u304C', u'\u304D', u'\u304E', u'\u304F', u'\u3050', u'\u3051', u'\u3052', u'\u3053',
+    u'\u3054', u'\u3055', u'\u3056', u'\u3057', u'\u3058', u'\u3059', u'\u305A', u'\u305B', u'\u305C', u'\u305D', u'\u305E', u'\u305F', u'\u3060', u'\u3061', u'\u3062', u'\u3063', u'\u3064', u'\u3065', u'\u3066', u'\u3067', u'\u3068', u'\u3069', u'\u306A', u'\u306B', u'\u306C', u'\u306D', u'\u306E', u'\u306F', u'\u3070', u'\u3071', u'\u3072', u'\u3073', u'\u3074', u'\u3075', u'\u3076', u'\u3077', u'\u3078', u'\u3079', u'\u307A', u'\u307B', u'\u307C', u'\u307D', u'\u307E', u'\u307F', u'\u3080', u'\u3081', u'\u3082', u'\u3083', u'\u3084', u'\u3085', u'\u3086',
+    u'\u3087', u'\u3088', u'\u3089', u'\u308A', u'\u308B', u'\u308C', u'\u308D', u'\u308E', u'\u308F', u'\u3090', u'\u3091', u'\u3092', u'\u3093', u'\u3094', u'\u3095', u'\u3096', u'\u3099', u'\u309A', u'\u309B', u'\u309C', u'\u309D', u'\u309E', u'\u309F', u'\u30A0', u'\u30A1', u'\u30A2', u'\u30A3', u'\u30A4', u'\u30A5', u'\u30A6', u'\u30A7', u'\u30A8', u'\u30A9', u'\u30AA', u'\u30AB', u'\u30AC', u'\u30AD', u'\u30AE', u'\u30AF', u'\u30B0', u'\u30B1', u'\u30B2', u'\u30B3', u'\u30B4', u'\u30B5', u'\u30B6', u'\u30B7', u'\u30B8', u'\u30B9', u'\u30BA', u'\u30BB',
+    u'\u30BC', u'\u30BD', u'\u30BE', u'\u30BF', u'\u30C0', u'\u30C1', u'\u30C2', u'\u30C3', u'\u30C4', u'\u30C5', u'\u30C6', u'\u30C7', u'\u30C8', u'\u30C9', u'\u30CA', u'\u30CB', u'\u30CC', u'\u30CD', u'\u30CE', u'\u30CF', u'\u30D0', u'\u30D1', u'\u30D2', u'\u30D3', u'\u30D4', u'\u30D5', u'\u30D6', u'\u30D7', u'\u30D8', u'\u30D9', u'\u30DA', u'\u30DB', u'\u30DC', u'\u30DD', u'\u30DE', u'\u30DF', u'\u30E0', u'\u30E1', u'\u30E2', u'\u30E3', u'\u30E4', u'\u30E5', u'\u30E6', u'\u30E7', u'\u30E8', u'\u30E9', u'\u30EA', u'\u30EB', u'\u30EC', u'\u30ED', u'\u30EE',
+    u'\u30EF', u'\u30F0', u'\u30F1', u'\u30F2', u'\u30F3', u'\u30F4', u'\u30F5', u'\u30F6', u'\u30F7', u'\u30F8', u'\u30F9', u'\u30FA', u'\u30FB', u'\u30FC', u'\u30FD', u'\u30FE', u'\u30FF', u'\uFFFF',
 };
 
 #endif
