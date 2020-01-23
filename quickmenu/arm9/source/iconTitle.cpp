@@ -31,14 +31,10 @@
 #include "ndsheaderbanner.h"
 #include "language.h"
 
+#include "iconTitle.h"
+
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
-
-#define BOX_PX				80
-#define BOX_PY				2
-#define BOX_PY_spacing1		12
-#define BOX_PY_spacing2		6
-#define BOX_PY_spacing3		18
 
 // Graphic files
 #include "icon_unk.h"
@@ -110,16 +106,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing2, text1);
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing3, text2);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY, text1);
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text2);
-			printSmall(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -1017,8 +1013,8 @@ void titleUpdate(bool isDir, const char* name)
 		if (infoFound) {
 			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 		} else {
-			printSmallCentered(false, iconYpos[0]+BOX_PY+BOX_PY_spacing2, name);
-			printSmallCentered(false, iconYpos[0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing2, name);
+			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
 		}
 		
 	}

@@ -930,26 +930,26 @@ void dsCardLaunch() {
 }
 
 void printLastPlayedText() {
-	printSmall(false, 96, iconYpos[0]+8, "Last-played game");
-	printSmall(false, 104, iconYpos[0]+20, "will appear here.");
+	printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, "Last-played game");
+	printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "will appear here.");
 }
 
 void printNdsCartBannerText() {
 	if (REG_SCFG_MC == 0x11) {
-		printSmall(false, 80, iconYpos[0]+8, "There is no Game Card");
-		printSmall(false, 124, iconYpos[0]+20, "inserted.");
+		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, "There is no Game Card");
+		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "inserted.");
 	} else {
-		printSmall(false, 100, iconYpos[0]+14, "Start Game Card");
+		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, "Start Game Card");
 	}
 }
 
 void printGbaBannerText() {
 	if (useGbarunner && !gbaBiosFound) {
-		printSmall(false, 96, iconYpos[3]+2, "BINF: bios.bin not");
-		printSmall(false, 84, iconYpos[3]+14, "found. Add GBA BIOS");
-		printSmall(false, 80, iconYpos[3]+26, "to enable GBARunner2.");
+		printSmallCentered(false, 24, iconYpos[3]+BOX_PY, "BINF: bios.bin not");
+		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, "found. Add GBA BIOS");
+		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1*2, "to enable GBARunner2.");
 	} else {
-		printSmall(false, useGbarunner ? 94 : 96, iconYpos[3]+14,
+		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1,
 							useGbarunner ? gbarunnerText : gbamodeText);
 	}
 }
@@ -1253,7 +1253,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 180, 2, RetTime().c_str());
+				printSmall(false, 188, 6, RetTime().c_str());
 				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
 					printNdsCartBannerText();
 				} else if (romFound) {
