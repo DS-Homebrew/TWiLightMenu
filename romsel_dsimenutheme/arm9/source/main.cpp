@@ -414,6 +414,7 @@ void SetSpeedBumpExclude(void) {
 		"AS2",  // Spider-Man 2
 		"AQ3",	// Spider-Man 3
 		"AST",	// Star Wars Episode III: Revenge of the Sith
+		"YG4",	// Suikoden: Tierkreis
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence
 		"YT9",	// Tony Hawk's Proving Ground
