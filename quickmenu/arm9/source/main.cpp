@@ -1253,7 +1253,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 188, 6, RetTime().c_str());
+				printSmallCentered(false, 72, 6, RetTime().c_str());
 				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
 					printNdsCartBannerText();
 				} else if (romFound) {
@@ -1418,7 +1418,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 60; i++) {
 								clearText();
 								iconYpos[1] -= 6;
-								printSmall(false, 180, 2, RetTime().c_str());
+								printSmallCentered(false, 72, 6, RetTime().c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
