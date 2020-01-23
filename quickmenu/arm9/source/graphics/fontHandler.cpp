@@ -69,7 +69,7 @@ void fontInit()
 				small_font_texcoords,
 				GL_RGB16,
 				TEXTURE_SIZE_512,
-				TEXTURE_SIZE_256,
+				TEXTURE_SIZE_128,
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				4,
 				(u16*) large_fontPal,
