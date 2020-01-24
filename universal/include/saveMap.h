@@ -5,6 +5,13 @@
 #include <set>
 
 static const std::map<uint, std::set<std::string>> saveMap = { 
+	{ 0x200, {		// 512 bytes
+		"DMF", // Foto Showdown
+		"DSY", // System Flaw
+	}},
+	{ 0x400, {		// 1KB
+		"DHS", // Picture Perfect Hair Salon
+	}},
 	{ 0x2000, {		// 8KB
 		"ASC", // Sonic Rush
 	}},
