@@ -434,7 +434,7 @@ void loadBoxArt(const char* filename) {
 
 void topBgLoad(void) {
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg" : "topbg");
+	sprintf(filePath, "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg" : "topbg");
 
 	char temp[256];
 	ms().loadSettings();
@@ -458,7 +458,7 @@ void topBgLoad(void) {
 	}
 
 	if (access(temp, F_OK) == 0)
-		filePath = temp;
+		sprintf(filePath, "%s", temp);
 
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
