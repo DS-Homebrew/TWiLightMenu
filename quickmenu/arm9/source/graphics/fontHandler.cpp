@@ -69,7 +69,7 @@ void fontInit()
 				small_font_texcoords,
 				GL_RGB16,
 				TEXTURE_SIZE_512,
-				TEXTURE_SIZE_256,
+				TEXTURE_SIZE_128,
 				TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
 				4,
 				(u16*) large_fontPal,
@@ -155,6 +155,11 @@ void printSmallCentered(bool top, int y, const char *message)
 	getTextQueue(top).emplace_back(false, smallFont.getCenteredX(message), y, message);
 }
 
+void printSmallCentered(bool top, int x, int y, const char *message)
+{
+	getTextQueue(top).emplace_back(false, smallFont.getCenteredX(message)+x, y, message);
+}
+
 void printLarge(bool top, int x, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(true, x, y, message);
@@ -163,6 +168,11 @@ void printLarge(bool top, int x, int y, const char *message)
 void printLargeCentered(bool top, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(true, largeFont.getCenteredX(message), y, message);
+}
+
+void printLargeCentered(bool top, int x, int y, const char *message)
+{
+	getTextQueue(top).emplace_back(true, largeFont.getCenteredX(message)+x, y, message);
 }
 
 int calcSmallFontWidth(const char *text)

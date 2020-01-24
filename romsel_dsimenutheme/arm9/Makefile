@@ -20,7 +20,7 @@ include $(DEVKITARM)/ds_rules
 TARGET		:=	romsel_dsimenutheme
 BUILD		:=	build
 SOURCES		:=	source source/common source/graphics source/tool
-INCLUDES	:=	include source
+INCLUDES	:=	include source ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music

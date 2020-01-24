@@ -64,8 +64,9 @@
 #include "cheat.h"
 #include "crc.h"
 
-#include <map>
-#include <set>
+#include "donorMap.h"
+#include "speedBumpExcludeMap.h"
+#include "saveMap.h"
 
 #include "sr_data_srllastran.h"		 // For rebooting into the game
 
@@ -161,52 +162,6 @@ void stop(void) {
  * Set donor SDK version for a specific game.
  */
 int SetDonorSDK() {
-	static const std::map<uint, std::set<std::string>> donorMap = { 
-		{ 2, {
-			"AMQ", // Mario vs. Donkey Kong 2 - March of the Minis
-			"AMH", // Metroid Prime Hunters
-			"ASM", // Super Mario 64 DS
-		}},
-		{ 3, {
-			"AMC", // Mario Kart DS
-			"EKD", // Ermii Kart DS (Mario Kart DS hack)
-			"A2D", // New Super Mario Bros.
-			"ADA", // Pokemon Diamond
-			"APA", // Pokemon Pearl
-			"ARZ", // Rockman ZX/MegaMan ZX
-			"YZX", // Rockman ZX Advent/MegaMan ZX Advent
-		}},
-		{ 4, {
-			"YKW", // Kirby Super Star Ultra
-			"A6C", // MegaMan Star Force: Dragon
-			"A6B", // MegaMan Star Force: Leo
-			"A6A", // MegaMan Star Force: Pegasus
-			"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-			"YT7", // SEGA Superstars Tennis
-			"AZL", // Style Savvy
-			"BKI", // The Legend of Zelda: Spirit Tracks
-			"B3R", // Pokemon Ranger: Guardian Signs
-		}},
-		{ 5, {
-			"B2D", // Doctor Who: Evacuation Earth
-			"BH2", // Super Scribblenauts
-			"BSD", // Lufia: Curse of the Sinistrals
-			"BXS", // Sonic Colo(u)rs
-			"BOE", // Inazuma Eleven 3: Sekai heno Chousen! The Ogre
-			"BQ8", // Crafting Mama
-			"BK9", // Kingdom Hearts: Re-Coded
-			"BRJ", // Radiant Historia
-			"IRA", // Pokemon Black Version
-			"IRB", // Pokemon White Version
-			"VI2", // Fire Emblem: Shin Monshou no Nazo Hikari to Kage no Eiyuu
-			"BYY", // Yu-Gi-Oh 5Ds World Championship 2011: Over The Nexus
-			"UZP", // Learn with Pokemon: Typing Adventure
-			"B6F", // LEGO Batman 2: DC Super Heroes
-			"IRE", // Pokemon Black Version 2
-			"IRD", // Pokemon White Version 2
-		}}
-	};
-
 	for (auto i : donorMap) {
 		if (i.first == 5 && gameTid[CURPOS][0] == 'V')
 			return 5;
@@ -327,13 +282,9 @@ void SetSpeedBumpExclude(void) {
 	}
 
 	if (!isDSiMode()) {
-		static const char list2[][4] = {
-			"B3R",	// Pokemon Ranger: Guardian Signs
-		};
-
 		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
-			if (memcmp(gameTid[CURPOS], list2[i], 3) == 0) {
+		for (unsigned int i = 0; i < sizeof(sbeListB4DS)/sizeof(sbeListB4DS[0]); i++) {
+			if (memcmp(gameTid[CURPOS], sbeListB4DS[i], 3) == 0) {
 				// Found match
 				ceCached = false;
 				break;
@@ -342,93 +293,18 @@ void SetSpeedBumpExclude(void) {
 		return;
 	}
 
-	static const char list[][5] = {
-		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
-		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
-		"AH9P",	// Tony Hawk's American Sk8land (EUR)
-	};
-
 	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list)/sizeof(list[0]); i++) {
-		if (memcmp(gameTid[CURPOS], list[i], 4) == 0) {
+	for (unsigned int i = 0; i < sizeof(sbeList)/sizeof(sbeList[0]); i++) {
+		if (memcmp(gameTid[CURPOS], sbeList[i], 4) == 0) {
 			// Found a match.
 			ceCached = false;
 			break;
 		}
 	}
 
-	static const char list2[][4] = {
-		"C32",	// Ace Attorney Investigations: Miles Edgeworth
-		"AWR",	// Advance Wars: Dual Strike
-		"AEK",	// Age of Empires: The Age of Kings
-		"ALC",	// Animaniacs: Lights, Camera, Action!
-		"YAH",	// Assassin's Creed: Altair's Chronicles
-		"B6R",	// Bakugan: Battle Brawlers
-		"AB2",	// Battles of Prince of Persia
-		"YB4",	// Bee Movie
-		"CBK",	// Bolt
-		"CBD",	// Bolt: Be-Awesome Edition
-		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
-		"YCP",	// Chuukana Janshi Tenhoo Painyan Remix
-		"BIG",	// Combat/Battle of Giants: Mutant Insects
-		"BDB",	// Dragon Ball: Origins 2
-		"YIV",	// Dragon Quest IV: Chapters of the Chosen
-		"AE4",	// Eyeshield 21 Max Devil Power
-		"APR",	// Feel the Magic: XY XX
-		"A26",	// Feel the Magic: XY XX (Demo)
-		"CYY",	// Giana Sisters DS (EUR)
-		"A5P",	// Harry Potter and the Order of the Phoenix
-		"CQ7",	// Henry Hatsworth
-		"YIP",	// Idol Janshi Suchi-Pai III Remix
-		"AR2",	// Kirarin * Revolution: Naasan to Issho
-		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
-		"YLU",	// Last Window: The Secret of Cape West
-		"AVC",	// Magical Starsign
-		"ARM",	// Mario & Luigi: Partners in Time
-		"CLJ",	// Mario & Luigi: Bowser's Inside Story
-		"COL",	// Mario & Sonic at the Olympic Winter Games
-		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
-		"AMH",	// Metroid Prime Hunters
-		"YNP",	// Need for Speed: ProStreet
-		"A2D",	// New Super Mario Bros.
-		"BSK",	// Nine Hours, Nine Persons, Nine Doors
-		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
-		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-		"B3R",	// Pokemon Ranger: Guardian Signs
-		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
-		"APU",	// Puyo Puyo!! 15th Anniversary
-		"BYO",	// Puyo Puyo 7
-		"BQ2",	// Quiz Magic Academy DS: Futatsu no Jikuuseki
-		"B3X",	// River City: Soccer Hooligans
-		//"ARZ",	// Rockman ZX/MegaMan ZX
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6X",	// Rockman EXE: Operate Shooting Star
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
-		"AKA",	// The Rub Rabbits!
-		"ARF",	// Rune Factory: A Fantasy Harvest Moon
-		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
-		"A3S",	// Shrek the Third
-		"ASC",	// Sonic Rush
-		"AIR",	// Space Invaders DS
-		"AIS",	// Space Invaders Revolution
-		"YV4",  // Spectrobes: Beyond the Portals
-		"AS2",  // Spider-Man 2
-		"AQ3",	// Spider-Man 3
-		"AST",	// Star Wars Episode III: Revenge of the Sith
-		"CS7",	// Summon Night X: Tears Crown
-		"AYT",	// Tales of Innocence
-		"YT9",	// Tony Hawk's Proving Ground
-		"AFZ",	// Transformers: Autobots
-		"AFY",	// Transformers: Decepticons
-		"YYK",	// Trauma Center: Under the Knife 2
-		"AUS",	// Ultimate Spider-Man
-		"CY8",	// Yu-Gi-Oh! World Championship 2009
-		"BYX",	// Yu-Gi-Oh! World Championship 2010
-	};
-
 	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list2)/sizeof(list2[0]); i++) {
-		if (memcmp(gameTid[CURPOS], list2[i], 3) == 0) {
+	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
+		if (memcmp(gameTid[CURPOS], sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
 			break;
@@ -1367,44 +1243,16 @@ int main(int argc, char **argv) {
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
-								for (int i = 0; i < 35; i++) {
-									swiWaitForVBlank();
-								}
 							}
 							showProgressIcon = true;
 
 							int savesize = 524288; // 512KB (default size for most games)
 
-							// Set save size to 8KB for the following games
-							if (memcmp(gameTid[CURPOS], "ASC", 3) == 0) // Sonic Rush
-							{
-								savesize = 8192;
-							}
-
-							// Set save size to 256KB for the following games
-							if (memcmp(gameTid[CURPOS], "AMH", 3) == 0) // Metroid Prime Hunters
-							{
-								savesize = 262144;
-							}
-
-							// Set save size to 1MB for the following games
-							if (memcmp(gameTid[CURPOS], "AZL", 3) ==
-								0 // Wagamama Fashion: Girls Mode/Style Savvy/Nintendo
-								  // presents: Style Boutique/Namanui Collection: Girls
-								  // Style
-							    || memcmp(gameTid[CURPOS], "C6P", 3) ==
-								   0 // Picross 3D
-							    || memcmp(gameTid[CURPOS], "BKI", 3) ==
-								   0) // The Legend of Zelda: Spirit Tracks
-							{
-								savesize = 1048576;
-							}
-
-							// Set save size to 32MB for the following games
-							if (memcmp(gameTid[CURPOS], "UOR", 3) == 0	// WarioWare - D.I.Y. (Do It Yourself)
-							 || memcmp(gameTid[CURPOS], "UXB", 3) == 0)	// Jam with the Band
-							{
-								savesize = 1048576 * 32;
+							for (auto i : saveMap) {
+								if (i.second.find(gameTid[CURPOS]) != i.second.cend()) {
+									savesize = i.first;
+									break;
+								}
 							}
 
 							FILE *pFile = fopen(savepath.c_str(), "wb");
