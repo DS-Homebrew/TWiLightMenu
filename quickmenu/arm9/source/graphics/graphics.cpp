@@ -23,6 +23,7 @@
 #include "common/gl2d.h"
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
+#include "common/dsimenusettings.h"
 
 // Graphic files
 #include "cursor.h"
@@ -202,9 +203,35 @@ u16 convertVramColorToGrayscale(u16 val) {
 }
 
 void bottomBgLoad(void) {
+	std::string bottomBGFile = "nitro:/graphics/bottombg.png";
+
+	char temp[256];
+	ms().loadSettings();
+
+	switch (ms().theme) {
+		case 0: // DSi Theme
+			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/bottombg.png", ms().dsi_theme.c_str());
+			break;
+		case 1:
+			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/bottombg.png", ms()._3ds_theme.c_str());
+			break;
+		case 2:
+			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/bottombg.png", ms().r4_theme.c_str());
+			break;
+		case 3:
+			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/bottombg.png", ms().ak_theme.c_str());
+			break;
+		case 4:
+			sprintf(temp, "nitro:/graphics/bottombg_saturn.png");
+			break;
+	}
+
+	if (access(temp, F_OK) == 0)
+		bottomBGFile = std::string(temp);
+
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
-	lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/bottombg.png");
+	lodepng::decode(image, imageWidth, imageHeight, bottomBGFile);
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
@@ -409,9 +436,33 @@ void topBgLoad(void) {
 	char filePath[256];
 	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg" : "topbg");
 
+	char temp[256];
+	ms().loadSettings();
+
+	switch (ms().theme) {
+		case 0: // DSi Theme
+			sprintf(temp, "/_nds/TwilightMenu/dsimenu/themes/%s/quickmenu/%s.png", ms().dsi_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
+			break;
+		case 1:
+			sprintf(temp, "/_nds/TwilightMenu/3dsmenu/themes/%s/quickmenu/%s.png", ms()._3ds_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
+			break;
+		case 2:
+			sprintf(temp, "/_nds/TwilightMenu/r4menu/themes/%s/quickmenu/%s.png", ms().r4_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
+			break;
+		case 3:
+			sprintf(temp, "/_nds/TwilightMenu/akmenu/themes/%s/quickmenu/%s.png", ms().ak_theme.c_str(), isDSPhat() ? "phat_topbg" : "topbg");
+			break;
+		case 4:
+			sprintf(temp, "nitro:/graphics/%s.png", isDSPhat() ? "phat_topbg_saturn" : "topbg_saturn");
+			break;
+	}
+
+	if (access(temp, F_OK) == 0)
+		filePath = temp;
+
 	std::vector<unsigned char> image;
 	uint imageWidth, imageHeight;
-	lodepng::decode(image, imageWidth, imageHeight, filePath);
+	lodepng::decode(image, imageWidth, imageHeight, std::string(filePath));
 	if(imageWidth > 256 || imageHeight > 192)	return;
 
 	for(uint i=0;i<image.size()/4;i++) {
