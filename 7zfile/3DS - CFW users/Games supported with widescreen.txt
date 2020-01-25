@@ -1,4 +1,4 @@
-Total: 473
+Total: 475
 
 007 - Blood Stone (USA/Canada/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -186,6 +186,7 @@ Need for Speed - ProStreet (Europe)
 Need for Speed - ProStreet (Korea)
 Need for Speed - Nitro (USA/Europe)
 Need for Speed - Nitro (Japan)
+Need for Speed - Nitro-X (Europe, Australia)
 New Super Mario Bros. (USA) (Requires xdelta patch here: https://www.dropbox.com/s/5mrrwp92i7qq38f/nsmbws.xdelta?dl=0)
 Nicktoons Unite! (USA)
 SpongeBob SquarePants and Friends Unite! (Europe)
@@ -211,6 +212,7 @@ The Penguins of Madagascar - Dr. Blowhole Returns Again! (USA/Europe {En,Fr}/Eur
 The Penguins of Madagascar - Dr. Blowhole Returns Again! (Europe {De,Nl})
 Phantasy Star 0 (USA/Europe)
 Phantasy Star 0 (Japan)
+Phantasy Star 0 Mini (Japan)
 Pokémon - Diamond/Pearl Version (USA/Europe)
 Pokémon - Version Diamant/Perle (France)/Diamant/Perl-Edition (Germany)/Versione Diamante/Perla (Italy)/Edicion Diamante/Perla (Spain)
 Pocket Monsters - Diamond/Pearl (Japan)/(Japan) (Rev 5)
