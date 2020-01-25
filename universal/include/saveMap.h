@@ -9,24 +9,29 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"ASC", // Sonic Rush
 	}},
 	{ 0x40000, {	// 256KB
+		"YBN", // 100 Classic Book Collection
 		"YJZ", // 1 Nichi 10 Pun de E ga Jouzu ni Kakeru DS
 		"UNS", // 1Seg Jushin Adaptor - DS TV
 		"YW2", // Advance Wars - Days of Ruin
 		"AWR", // Advance Wars - Dual Strike
 		"ADM", // Animal Crossing - Wild World
+		"CAN", // Anno 1701 - Dawn of Discovery
 		"A6J", // Arasuji de Kitaeru Hayamimi no Susume DS
+		"BAR", // A Ressha de Ikou DS
 		"YAS", // Ash - Archaic Sealed Heat
 		"APX", // Atsumare! Power Pro Kun no DS Koushien
 		"AY6", // Bangai-O Spirits
 		"AZ6", // Beetle King
 		"YYB", // Blue Dragon Plus
 		"YB3", // Bokujou Monogatari - KiraKira Taiyou to Nakamatachi
+		"CB9", // Bokujou Monogatari - Youkoso! Kaze no Bazaar e
 		"YKH", // Bokura wa Kaseki Horider
 		"AND", // Brain Age - Train Your Brain in Minutes a Day!
 		"ANM", // Brain Age 2 - More Training in Minutes a Day!
 		"CBG", // Bratz - Girlz Really Rock
 		"AJB", // Chibi-Robo! - Park Patrol
 		"ACO", // Contact
+		"COV", // The Conveni DS - Otona no Keieiryoku Training
 		"YPD", // Cosmetic Paradise
 		"YCJ", // Crazy Frog Collectables - Art School
 		"ACK", // Croket! DS - Tenkuu no Yuushatachi
@@ -41,19 +46,21 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"AGO", // Dragon Tamer - Sound Spirits
 		"YDW", // Drawn to Life
 		"CDL", // Drawn to Life - SpongeBob SquarePants Edition
+		"CCE", // Drivers Ed Portable
 		"YBN", // DS Bungaku Zenshuu
 		"ADJ", // DS Rakubiki Jiten
 		"YVK", // DS Vitamin - Health Food Guide!
 		"YDH", // Ducati Moto
-		"YLD", // Dungeon Maker - Mahou no Shovel to Chiisana Yuusha
 		"ANG", // Eigo ga Nigate na Otona no DS Training - Eigo Zuke
 		"AOS", // Elite Beat Agents
+		"CPX", // Emily - My Personal Diary
 		"ANG", // English Training - Have Fun Improving Your Skills
 		"YIK", // Etrian Odyssey II - Heroes of Lagaard
 		"THM", // FabStyle
 		"YKO", // Facening de Hyoujou Yutaka ni Inshou Up - Otana no DS Kao Training
 		"YFE", // Fire Emblem - Shadow Dragon
 		"AG3", // Flash Focus - Vision Training in Minutes a Day
+		"CFF", // Football Director DS
 		"ACH", // Freshly Picked - Tingle's Rosy Rupeeland
 		"AGR", // Guru Guru
 		"ABC", // Harvest Moon DS
@@ -65,6 +72,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"AWI", // Hotel Dusk - Room 215
 		"A2H", // I Did It Mum! - Boy
 		"A2I", // I Did It Mum! - Girl
+		"C6C", // Infinite Space
 		"AWG", // Jet Impulse
 		"AJG", // Jinsei Game DS
 		"ALA", // Jissen Pachi-Slot Hisshouhou! DS - Aladdin 2 Evolution
@@ -77,7 +85,6 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"AKL", // Kirarin Revolution - Kira Kira Idol Audition
 		"AR2", // Kirarin ' Revolution - Naasan to Issho
 		"AIM", // Kokoro ni Shimiru - Mouhitsu de Kaku - Aida Mitsuo DS
-		"YU2", // Kokoro o Yasumeru - Otona no Nurie DS 2
 		"YJ9", // Korg DS-10 Synthesizer
 		"YCH", // Kousoku Card Battle - Card Hero
 		"A2K", // Kurikin - Nano Island Story
@@ -103,12 +110,15 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"A6C", // MegaMan Star Force - Dragon
 		"YRV", // MegaMan Star Force 2 - Zerker x Ninja
 		"YRW", // MegaMan Star Force 2 - Zerker x Saurian
+		"CRB", // MegaMan Star Force 3 - Black Ace
+		"CRR", // MegaMan Star Force 3 - Red Joker
 		"AMH", // Metroid Prime Hunters
 		"ACY", // Mezase! Shoujo Manga Ka! Chao Manga School
 		"AG3", // Miru Chikara wo Jissen de Kitaeru - DS Medikara Training
 		"CPP", // MLB Power Pros 2008
 		"AO2", // Moero! Nekketsu Rhythm Damashii - Osu! Tatakae! Ouendan 2
 		"YMS", // Mushishi - Ame Furu Sato
+		"CKZ", // My DoItAll
 		"AQI", // MySims
 		"CK5", // MySims Kingdom
 		"AN2", // Naruto RPG 2 - Chidori vs Rasengan
@@ -122,15 +132,18 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"ANB", // Nobunaga no Yabou DS
 		"CN2", // Nobunaga no Yabou DS 2
 		"YIQ", // Nounai Aesthe - IQ Suppli DS 2 - Sukkiri King Ketteisen
+		"B62", // Okaeri! Chibi-Robo! Happy Rich Oosouji
 		"YOE", // Orcs & Elves
 		"AJY", // Otona no Joushikiryoku Training DS
 		"AON", // Paint by DS
+		"YU2", // Paint by DS - Classic Masterpieces
 		"AO5", // Paint by DS - Military Vehicles (Zen Series)
 		"CNV", // Personal Trainer - Cooking
 		"AGY", // Phoenix Wright - Ace Attorney
 		"A8N", // Planet Puzzle League
 		"APH", // Pokemon Mystery Dungeon - Blue Rescue Team
 		"YFY", // Pokemon Mystery Dungeon - Explorers of Darkness
+		"C2S", // Pokemon Mystery Dungeon - Explorers of Sky
 		"YFT", // Pokemon Mystery Dungeon - Explorers of Time
 		"ARG", // Pokemon Ranger
 		"YP2", // Pokemon Ranger - Shadows of Almia
@@ -141,14 +154,19 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CXI", // Power Pro Kun Pocket 11
 		"YW8", // Pro Evolution Soccer 2008
 		"ADH", // Project Hacker - Kakusei
+		"C29", // Pro Yakyuu Famista DS 2009
+		"B89", // Pro Yakyuu Team o Tsukurou! 2
 		"YPT", // Puppy Palace
 		"AJZ", // Puzzle Series Vol. 13 - Kanji Puzzle
+		"C48", // Puzzling - Masterpiece Exploration DS
 		"AKA", // The Rub Rabbits!
 		"A3G", // San Goku Shi DS
 		"A3F", // San Goku Shi DS 2
 		"ASG", // SD Gundam G Generation DS
 		"AUZ", // The Settlers
 		"A4V", // Shaberu! DS Oryouri Navi
+		"CBO", // Shibou Nenshou Keikaku - YaseTore!! DS
+		"YVU", // Shiseido Beauty Solution Kaihatsu Center Kanshuu - Project Beauty
 		"YS6", // Sid Meier's Civilization Revolution
 		"AG3", // Sight Training
 		"AC3", // SimCity DS
@@ -160,11 +178,13 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"YS2", // The Sims 2 - Castaway
 		"A4O", // The Sims 2 - Pets
 		"YID", // Smart Kid's Gameclub
+		"CSZ", // Smart Kid's Party Fun Pak
 		"ASF", // Star Fox Command
 		"ABS", // Style Book - Cinnamoroll
 		"ABF", // Style Book - Fushigi Boshi no Futago Hime
 		"ABI", // Style Book - Junior City
 		"AS6", // Super Robot Taisen W
+		"YSD", // Super Robot Taisen K
 		"AUB", // Tabi no Yubisashi Kaiwachou DS - DS Series 1 Thai
 		"AUC", // Tabi no Yubisashi Kaiwachou DS - DS Series 2 China
 		"AUE", // Tabi no Yubisashi Kaiwachou DS - DS Series 3 Korea
@@ -174,14 +194,19 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CTB", // Tecmo Bowl - Kickoff
 		"ACU", // Tenchu Dark Secret
 		"A8Q", // Theme Park
+		"CX4", // Tokutenryoku Gakushuu DS - Chuugaku Jitsugi 4 Kyouka
 		"ATC", // Tom Clancy's Splinter Cell - Chaos Theory
+		"CCU", // Tomodachi Collection
+		"YUD", // Tomodachi Tsukurou! Mahou no Koukan Nikki
 		"AH9", // Tony Hawk's American Sk8land
 		"AWK", // Tony Hawk's Downhill Jam
 		"ATP", // Touch de Rakushou! Pachislo Sengen - Rio de Carnival
 		"AIX", // Touch de Tanoshimu Hyakunin Isshu - DS Shigureden
+		"C5T", // Treasure World
 		"CP3", // Viva Pinata - Pocket Paradise
 		"AYK", // Wi-Fi Taiou - Yakuman DS
 		"AWE", // Winning Eleven Pro Evolution Soccer 2007
+		"YGD", // Winx Club - Secret Diary 2009
 		"YSL", // World Destruction - Michibikareshi Ishi
 		"AYJ", // Yakitate!! Japan Game 1 Gou Choujou Kessen!! Pantasic Grand Prix!
 		"AMJ", // Yakuman DS
