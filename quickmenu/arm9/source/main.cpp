@@ -1228,7 +1228,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
@@ -1247,7 +1247,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
@@ -1270,7 +1270,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
@@ -1300,7 +1300,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[1] -= 6;
 								clearText();
 								printSmallCentered(false, 72, 6, RetTime().c_str());
@@ -1354,7 +1354,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[2] -= 6;
 								clearText();
 								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
@@ -1413,7 +1413,7 @@ int main(int argc, char **argv) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 60; i++) {
+							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
@@ -1474,7 +1474,7 @@ int main(int argc, char **argv) {
 						showCursor = false;
 						fadeType = false;	// Fade to white
 						mmEffectEx(&snd_launch);
-						for (int i = 0; i < 60; i++) {
+						for (int i = 0; i < 50; i++) {
 							iconYpos[5] -= 6;
 							swiWaitForVBlank();
 						}
@@ -1493,7 +1493,7 @@ int main(int argc, char **argv) {
 					showCursor = false;
 					fadeType = false;	// Fade to white
 					mmEffectEx(&snd_launch);
-					for (int i = 0; i < 60; i++) {
+					for (int i = 0; i < 50; i++) {
 						iconYpos[6] -= 6;
 						swiWaitForVBlank();
 					}
