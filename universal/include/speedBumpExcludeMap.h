@@ -22,6 +22,7 @@
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
+		"YCE",	// Chessmaster - The Art of Learning
 		"YCP",	// Chuukana Janshi Tenhoo Painyan Remix
 		"BIG",	// Combat/Battle of Giants: Mutant Insects
 		"BDB",	// Dragon Ball: Origins 2

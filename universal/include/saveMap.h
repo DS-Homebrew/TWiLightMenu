@@ -77,6 +77,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 	{ 0x2000, {		// 8 KB/64 kbit
 		"YBD", // Bikkuriman Daijiten
 		"YTJ", // The Cheetah Girls - Passport to Stardom
+		"YCE", // Chessmaster - The Art of Learning
 		"CSH", // Chi's Sweet Home - Chi ga Ouchi ni Yattekita!
 		"YJV", // Clever! Das Spiel, das Wissen Schafft
 		"CD2", // Code Geass - Hangyaku no Lelouch R2 - Banjou no Geass Gekijou
