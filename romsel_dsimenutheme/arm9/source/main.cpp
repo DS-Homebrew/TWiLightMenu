@@ -162,11 +162,16 @@ void stop(void) {
  * Set donor SDK version for a specific game.
  */
 int SetDonorSDK() {
+	char gameTid3[5];
+	for (int i = 0; i < 3; i++) {
+		gameTid3[i] = gameTid[CURPOS][i];
+	}
+
 	for (auto i : donorMap) {
-		if (i.first == 5 && gameTid[CURPOS][0] == 'V')
+		if (i.first == 5 && gameTid3[0] == 'V')
 			return 5;
 
-		if (i.second.find(gameTid[CURPOS]) != i.second.cend())
+		if (i.second.find(gameTid3) != i.second.cend())
 			return i.first;
 	}
 
@@ -1187,6 +1192,11 @@ int main(int argc, char **argv) {
 				bool dsModeSwitch = false;
 				bool dsModeDSiWare = false;
 
+				char gameTid3[5];
+				for (int i = 0; i < 3; i++) {
+					gameTid3[i] = gameTid[CURPOS][i];
+				}
+
 				if (memcmp(gameTid[CURPOS], "HND", 3) == 0 || memcmp(gameTid[CURPOS], "HNE", 3) == 0) {
 					dsModeSwitch = true;
 					dsModeDSiWare = true;
@@ -1232,7 +1242,7 @@ int main(int argc, char **argv) {
 							int savesize = 524288; // 512KB (default size for most games)
 
 							for (auto i : saveMap) {
-								if (i.second.find(gameTid[CURPOS]) != i.second.cend()) {
+								if (i.second.find(gameTid3) != i.second.cend()) {
 									savesize = i.first;
 									break;
 								}
@@ -1255,7 +1265,6 @@ int main(int argc, char **argv) {
 									fadeType = true; // Fade in from white
 								}
 								showProgressIcon = true;
-
 
 								FILE *pFile = fopen(savepath.c_str(), "wb");
 								if (pFile) {

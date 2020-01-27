@@ -233,14 +233,7 @@ TWL_CODE int lastRunROM() {
 						savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 					}
 
-					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0)) {
-						consoleDemoInit();
-						printf("Creating save file...\n");
-
-						static const int BUFFER_SIZE = 4096;
-						char buffer[BUFFER_SIZE];
-						memset(buffer, 0, sizeof(buffer));
-
+					if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0) && (strcmp(game_TID, "NTR") != 0)) {
 						int savesize = 524288;	// 512KB (default size for most games)
 
 						for (auto i : saveMap) {
@@ -250,17 +243,21 @@ TWL_CODE int lastRunROM() {
 							}
 						}
 
-						FILE *pFile = fopen(savepath.c_str(), "wb");
-						if (pFile) {
-							for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-								fwrite(buffer, 1, sizeof(buffer), pFile);
+						if (savesize > 0) {
+							consoleDemoInit();
+							printf("Creating save file...\n");
+
+							FILE *pFile = fopen(savepath.c_str(), "wb");
+							if (pFile) {
+								fseek(pFile, savesize - 1, SEEK_SET);
+								fputc('\0', pFile);
+								fclose(pFile);
 							}
-							fclose(pFile);
-						}
-						printf("Save file created!\n");
-					
-						for (int i = 0; i < 30; i++) {
-							swiWaitForVBlank();
+							printf("Save file created!\n");
+						
+							for (int i = 0; i < 30; i++) {
+								swiWaitForVBlank();
+							}
 						}
 					}
 				}

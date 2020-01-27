@@ -299,7 +299,9 @@ int SetDonorSDK(const char* filename) {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	fclose(f_nds_file);
-	
+	game_TID[4] = 0;
+	game_TID[3] = 0;
+
 	for (auto i : donorMap) {
 		if (i.first == 5 && game_TID[0] == 'V')
 			return 5;
@@ -1834,9 +1836,9 @@ int main(int argc, char **argv) {
 
 				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 				fread(game_TID, 1, 4, f_nds_file);
+				fclose(f_nds_file);
 				game_TID[4] = 0;
 				game_TID[3] = 0;
-				fclose(f_nds_file);
 
 				if (strcmp(game_TID, "HND") == 0 || strcmp(game_TID, "HNE") == 0) {
 					dsModeSwitch = true;
@@ -1891,19 +1893,21 @@ int main(int argc, char **argv) {
 							if (savesize > 0) {
 								clearText();
 								ClearBrightness();
-								printSmallCentered(false, 20, "If this takes a while, close and open");
-								printSmallCentered(false, 34, "the console's lid.");
+								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+									// Display nothing
+								} else if (consoleModel >= 2) {
+									printSmallCentered(false, 20, "If this takes a while, press HOME,");
+									printSmallCentered(false, 34, "then press B.");
+								} else {
+									printSmallCentered(false, 20, "If this takes a while, close and open");
+									printSmallCentered(false, 34, "the console's lid.");
+								}
 								printSmallCentered(false, 88, "Creating save file...");
-
-								static const int BUFFER_SIZE = 4096;
-								char buffer[BUFFER_SIZE];
-								memset(buffer, 0, sizeof(buffer));
 
 								FILE *pFile = fopen(savepath.c_str(), "wb");
 								if (pFile) {
-									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-										fwrite(buffer, 1, sizeof(buffer), pFile);
-									}
+									fseek(pFile, savesize - 1, SEEK_SET);
+									fputc('\0', pFile);
 									fclose(pFile);
 								}
 								clearText();

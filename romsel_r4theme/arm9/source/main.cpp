@@ -409,6 +409,8 @@ int SetDonorSDK(const char* filename) {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	fclose(f_nds_file);
+	game_TID[4] = 0;
+	game_TID[3] = 0;
 	
 	for (auto i : donorMap) {
 		if (i.first == 5 && game_TID[0] == 'V')
@@ -1547,9 +1549,9 @@ int main(int argc, char **argv) {
 
 				fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 				fread(game_TID, 1, 4, f_nds_file);
+				fclose(f_nds_file);
 				game_TID[4] = 0;
 				game_TID[3] = 0;
-				fclose(f_nds_file);
 
 				if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0) {
 					dsModeSwitch = true;
@@ -1606,15 +1608,10 @@ int main(int argc, char **argv) {
 								ClearBrightness();
 								printSmall(false, 2, 80, "Creating save file...");
 
-								static const int BUFFER_SIZE = 4096;
-								char buffer[BUFFER_SIZE];
-								toncset(buffer, 0, sizeof(buffer));
-
 								FILE *pFile = fopen(savepath.c_str(), "wb");
 								if (pFile) {
-									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-										fwrite(buffer, 1, sizeof(buffer), pFile);
-									}
+									fseek(pFile, savesize - 1, SEEK_SET);
+									fputc('\0', pFile);
 									fclose(pFile);
 								}
 								printSmall(false, 2, 88, "Save file created!");

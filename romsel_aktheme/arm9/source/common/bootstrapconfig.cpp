@@ -58,8 +58,13 @@ BootstrapConfig::~BootstrapConfig()
 
 BootstrapConfig &BootstrapConfig::saveSize()
 {
+	char gameTid3[5];
+	for (int i = 0; i < 3; i++) {
+		gameTid3[i] = _gametid.c_str()[i];
+	}
+
 	for (auto i : saveMap) {
-		if (i.second.find(_gametid.c_str()) != i.second.cend())
+		if (i.second.find(gameTid3) != i.second.cend())
 			return saveSize(i.first);
 	}
 
@@ -174,11 +179,16 @@ BootstrapConfig &BootstrapConfig::donorSdk()
 		return *this;
 	}
 
+	char gameTid3[5];
+	for (int i = 0; i < 3; i++) {
+		gameTid3[i] = _gametid.c_str()[i];
+	}
+
 	for (auto i : donorMap) {
-		if (i.first == 5 && _gametid.c_str()[0] == 'V')
+		if (i.first == 5 && gameTid3[0] == 'V')
 			return donorSdk(5);
 
-		if (i.second.find(_gametid.c_str()) != i.second.cend())
+		if (i.second.find(gameTid3) != i.second.cend())
 			return donorSdk(i.first);
 	}
 
