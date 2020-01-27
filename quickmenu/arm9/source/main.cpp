@@ -1878,18 +1878,8 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew) {	// Create save if game isn't homebrew
-							clearText();
-							ClearBrightness();
-							printSmallCentered(false, 20, "If this takes a while, close and open");
-							printSmallCentered(false, 34, "the console's lid.");
-							printSmallCentered(false, 88, "Creating save file...");
-
-							static const int BUFFER_SIZE = 4096;
-							char buffer[BUFFER_SIZE];
-							memset(buffer, 0, sizeof(buffer));
-
-							int savesize = 524288;	// 512KB (default size for most games)
+						if ((getFileSize(savepath.c_str()) == 0) && !isHomebrew && (strcmp(game_TID, "NTR") != 0)) {	// Create save if game isn't homebrew
+							int savesize = 524288;	// 512KB (default size)
 
 							for (auto i : saveMap) {
 								if (i.second.find(game_TID) != i.second.cend()) {
@@ -1898,16 +1888,28 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							FILE *pFile = fopen(savepath.c_str(), "wb");
-							if (pFile) {
-								for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
-									fwrite(buffer, 1, sizeof(buffer), pFile);
+							if (savesize > 0) {
+								clearText();
+								ClearBrightness();
+								printSmallCentered(false, 20, "If this takes a while, close and open");
+								printSmallCentered(false, 34, "the console's lid.");
+								printSmallCentered(false, 88, "Creating save file...");
+
+								static const int BUFFER_SIZE = 4096;
+								char buffer[BUFFER_SIZE];
+								memset(buffer, 0, sizeof(buffer));
+
+								FILE *pFile = fopen(savepath.c_str(), "wb");
+								if (pFile) {
+									for (int i = savesize; i > 0; i -= BUFFER_SIZE) {
+										fwrite(buffer, 1, sizeof(buffer), pFile);
+									}
+									fclose(pFile);
 								}
-								fclose(pFile);
+								clearText();
+								printSmallCentered(false, 88, "Save file created!");
+								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
-							clearText();
-							printSmallCentered(false, 88, "Save file created!");
-							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 						}
 
 						int donorSdkVer = SetDonorSDK(argarray[0]);

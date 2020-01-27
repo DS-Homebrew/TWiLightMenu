@@ -1227,25 +1227,8 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
-						if (getFileSize(savepath.c_str()) == 0 && !isHomebrew[CURPOS])
+						if ((getFileSize(savepath.c_str()) == 0) && !isHomebrew[CURPOS] && (strcmp(gameTid[CURPOS], "NTR") != 0))
 						{ // Create save if game isn't homebrew
-							if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-								// Display nothing
-							} else if (ms().consoleModel >= 2) {
-								printSmallCentered(false, 20, "If this takes a while, press HOME,");
-								printSmallCentered(false, 34, "then press B.");
-							} else {
-								printSmallCentered(false, 20, "If this takes a while, close and open");
-								printSmallCentered(false, 34, "the console's lid.");
-							}
-							printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating save file...");
-
-							if (ms().theme != 4) {
-								fadeSpeed = true; // Fast fading
-								fadeType = true; // Fade in from white
-							}
-							showProgressIcon = true;
-
 							int savesize = 524288; // 512KB (default size for most games)
 
 							for (auto i : saveMap) {
@@ -1255,25 +1238,45 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							FILE *pFile = fopen(savepath.c_str(), "wb");
-							if (pFile) {
-								fseek(pFile, savesize - 1, SEEK_SET);
-								fputc('\0', pFile);
-								fclose(pFile);
-							}
-							showProgressIcon = false;
-							clearText();
-							printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Save file created!");
-							for (int i = 0; i < 30; i++) {
-								swiWaitForVBlank();
-							}
-							if (ms().theme != 4) {
-								fadeType = false;	   // Fade to white
-								for (int i = 0; i < 25; i++) {
+							if (savesize > 0) {
+								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+									// Display nothing
+								} else if (ms().consoleModel >= 2) {
+									printSmallCentered(false, 20, "If this takes a while, press HOME,");
+									printSmallCentered(false, 34, "then press B.");
+								} else {
+									printSmallCentered(false, 20, "If this takes a while, close and open");
+									printSmallCentered(false, 34, "the console's lid.");
+								}
+								printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating save file...");
+
+								if (ms().theme != 4) {
+									fadeSpeed = true; // Fast fading
+									fadeType = true; // Fade in from white
+								}
+								showProgressIcon = true;
+
+
+								FILE *pFile = fopen(savepath.c_str(), "wb");
+								if (pFile) {
+									fseek(pFile, savesize - 1, SEEK_SET);
+									fputc('\0', pFile);
+									fclose(pFile);
+								}
+								showProgressIcon = false;
+								clearText();
+								printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Save file created!");
+								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}
+								if (ms().theme != 4) {
+									fadeType = false;	   // Fade to white
+									for (int i = 0; i < 25; i++) {
+										swiWaitForVBlank();
+									}
+								}
+								clearText();
 							}
-							clearText();
 						}
 
 						int donorSdkVer = SetDonorSDK();
