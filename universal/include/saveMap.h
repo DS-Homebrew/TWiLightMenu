@@ -53,21 +53,30 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"Y2J", // Wario - Master of Disguise (Demo)
 	}},
 	{ 0x200, {		// 1 KB/4 kbit
+		"CLF", // Code Lyoko - Fall of X.A.N.A.
 		"YGO", // Dragon Hunters
 		"B2J", // Dragon Quest Monsters - Joker 2 Professional
 		"YEN", // ElvenLand
+		"YFR", // Ferrari Challenge - Trofeo Pirelli
 		"CGF", // Garfield's Fun Fest
 		"YGJ", // George of the Jungle
+		"CHK", // Hell's Kitchen - The Game
+		"AL4", // Illumislight - Hikari no Puzzle
 		"CIT", // Imagine - Teacher
+		"YJB", // LEGO Batman - The Videogame
 		"YEL", // Level5 Premium Silver (Demo)
 		"YEW", // Level5 Premium Gold (Demo)
 		"B5P", // Level5 Premium Platinum (Demo)
+		"CIL", // Long Vacation - Iruka to Watashi
 		"CNL", // Miteha Ikenai
 		"CRP", // The Price is Right
+		"YFW", // Rain Drops
 		"CGX", // Shinreigari - Ghost Hound DS
+		"YZL", // Simple DS Series Vol. 44 - The Gal Mahjong
 	}},
 	{ 0x2000, {		// 8 KB/64 kbit
 		"YBD", // Bikkuriman Daijiten
+		"YTJ", // The Cheetah Girls - Passport to Stardom
 		"CSH", // Chi's Sweet Home - Chi ga Ouchi ni Yattekita!
 		"YJV", // Clever! Das Spiel, das Wissen Schafft
 		"CD2", // Code Geass - Hangyaku no Lelouch R2 - Banjou no Geass Gekijou
@@ -76,8 +85,11 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"ADB", // Dragon Ball Z - Supersonic Warriors 2
 		"ADQ", // Dragon Quest Heroes - Rocket Slime
 		"CJR", // Dragon Quest Monsters - Joker 2
+		"CDP", // DropCast
 		"AER", // Ecolis
 		"YM8", // Gakken Mu Henshuubu Kanshuu - Choujou Genshou Research File
+		"CAI", // Gyakkyou Burai Kaiji - Death or Survival
+		"CMA", // Hoshizora no Comic Garden
 		"YEE", // Inazuma Eleven
 		"BEE", // Inazuma Eleven 2 - Firestorm
 		"BEB", // Inazuma Eleven 2 - Blizzard
@@ -86,6 +98,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"BOE", // Inazuma Eleven 3 - Team Ogre Attacks!
 		"YX2", // Kageyama Method - Masu x Masu Pure Hyaku Masu Keisan - Hyaku Masu no Maeni Kore Dayo!
 		"AKW", // Kirby - Squeak Squad
+		"CKN", // Knights in the Nightmare
 		"CLH", // Little League World Series Baseball 2008
 		"A8T", // Mario Party DS
 		"AMK", // Mezase! Koushien
@@ -95,8 +108,11 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"A2D", // New Super Mario Bros.
 		"YNI", // Ninja Reflex
 		"YU6", // Panda-San Nikki
+		"YRI", // Playmobil Interactive - Pirates Boarding
+		"CP4", // Princess Maker 4 DS - Special Edition
 		"CPC", // Puzzler Collection
 		"YG6", // Race Driver - GRID
+		"CM6", // Rhapsody - A Musical Adventure
 		"YLZ", // Rhythm Heaven
 		"CX3", // San-X Character Channel - All-Star Daishuugou!
 		"A3M", // Shin Sangoku Musou DS - Fighter's Battle
@@ -106,11 +122,14 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"YGC", // Quick Yoga Training - Learn in Minutes a Day
 		"ATR", // Tetris DS
 		"YJA", // Theresia.. - Dear Emile
+		"YUP", // U-Can - Penji Training DS
+		"CUU", // Umiuru to Sudoku Shiyo! - Nikoli Gensen 7 Dai Puzzle 555 Mon
 		"AWA", // Wario - Master of Disguise
 		"CZK", // Zettai Karen Children DS - Dai-4 no Children
 	}},
 	{ 0x10000, {		// 64 KB/512 kbit
 		"YQU", // Chrono Trigger
+		"CTL", // City Life DS
 		"YDI", // Digimon World Championship
 		"YIV", // Dragon Quest IV - Chapters of the Chosen
 		"YV5", // Dragon Quest V - Hand of the Heavenly Bride
@@ -121,6 +140,8 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CHU", // Harukanaru Toki no Naka de - Yume no Ukihashi
 		"C6C", // Infinite Space
 		"YKW", // Kirby - Super Star Ultra
+		"CKU", // Kumatanchi
+		"CLR", // Line Rider 2 - Unbound
 		"CSP", // Lock's Quest
 		"CMY", // Matching Maker DS
 		"CWM", // Moe Sta - Moeru Toudai Eigojuku
@@ -132,6 +153,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CGM", // Sigma Harmonics
 		"CAP", // The Sims 2 - Apartment Pets
 		"A3Y", // Sonic Rush Adventure
+		"YHL", // Time Hollow
 		"YYM", // Tokyo Majin Gakuen - Kenpuuchou
 		"CUW", // Uwasa no Midori-kun!! 2 - Futari no Midori!
 	}},
@@ -285,6 +307,8 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"API", // Power Pro Kun Pocket 9
 		"YPJ", // Power Pro Kun Pocket 10
 		"CXI", // Power Pro Kun Pocket 11
+		"VPT", // Power Pro Kun Pocket 12
+		"VPL", // Power Pro Kun Pocket 13
 		"YW8", // Pro Evolution Soccer 2008
 		"ADH", // Project Hacker - Kakusei
 		"C29", // Pro Yakyuu Famista DS 2009
