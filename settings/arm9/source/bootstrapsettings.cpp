@@ -10,6 +10,7 @@ BootstrapSettings::BootstrapSettings()
     debug = false;
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
+	dmaromreadled = BootstrapSettings::ELEDSame;
 	preciseVolumeControl = false;
     soundFreq = false;
 }
@@ -23,6 +24,7 @@ void BootstrapSettings::loadSettings()
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
 		romreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
+		dmaromreadled = bootstrapini.GetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);
 		preciseVolumeControl = bootstrapini.GetInt("NDS-BOOTSTRAP", "PRECISE_VOLUME_CONTROL", preciseVolumeControl);
 	}
 	soundFreq = bootstrapini.GetInt( "NDS-BOOTSTRAP", "SOUND_FREQ", soundFreq);
@@ -38,6 +40,7 @@ void BootstrapSettings::saveSettings()
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "ROMREAD_LED", romreadled);
+		bootstrapini.SetInt("NDS-BOOTSTRAP", "DMA_ROMREAD_LED", dmaromreadled);
 		bootstrapini.SetInt("NDS-BOOTSTRAP", "PRECISE_VOLUME_CONTROL", preciseVolumeControl);
 	}
 	bootstrapini.SetInt( "NDS-BOOTSTRAP", "COLOR_MODE", ms().colorMode);

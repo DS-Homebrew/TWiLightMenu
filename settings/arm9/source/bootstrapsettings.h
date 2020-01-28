@@ -17,6 +17,7 @@ class BootstrapSettings
   public:
     enum TROMReadLED
     {
+        ELEDSame = -1,
         ELEDNone = 0,
         ELEDWifi = 1,
         ELEDPower = 2,
@@ -35,6 +36,7 @@ class BootstrapSettings
     bool debug;
 	bool logging;
 	int romreadled;
+	int dmaromreadled;
 	bool preciseVolumeControl;
 
   private:

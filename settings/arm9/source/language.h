@@ -106,6 +106,7 @@ extern std::string STR_FCSAVELOCATION;
 extern std::string STR_DEBUG;
 extern std::string STR_LOGGING;
 extern std::string STR_ROMREADLED;
+extern std::string STR_DMAROMREADLED;
 extern std::string STR_PRECISEVOLUMECTRL;
 extern std::string STR_DSIWAREBOOTER;
 extern std::string STR_RUNIN;
@@ -160,6 +161,7 @@ extern std::string STR_DESCRIPTION_DEBUG_1;
 extern std::string STR_DESCRIPTION_LOGGING_1;
 
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
+extern std::string STR_DESCRIPTION_DMAROMREADLED;
 
 extern std::string STR_DESCRIPTION_PRECISEVOLUMECTRL;
 

@@ -113,6 +113,7 @@ std::string STR_FCSAVELOCATION = "STR_FCSAVELOCATION";
 std::string STR_DEBUG = "STR_DEBUG";
 std::string STR_LOGGING = "STR_LOGGING";
 std::string STR_ROMREADLED = "STR_ROMREADLED";
+std::string STR_DMAROMREADLED = "STR_DMAREADLED";
 std::string STR_PRECISEVOLUMECTRL = "STR_PRECISEVOLUMECTRL";
 std::string STR_DSIWAREBOOTER = "STR_DSIWAREBOOTER";
 std::string STR_RUNIN = "STR_RUNIN";
@@ -164,6 +165,7 @@ std::string STR_DESCRIPTION_DEBUG_1 = "STR_DESCRIPTION_DEBUG_1";
 std::string STR_DESCRIPTION_LOGGING_1 = "STR_DESCRIPTION_LOGGING_1";
 
 std::string STR_DESCRIPTION_ROMREADLED_1 = "STR_DESCRIPTION_ROMREADLED_1";
+std::string STR_DESCRIPTION_DMAROMREADLED = "STR_DESCRIPTION_DMAROMREADLED";
 
 std::string STR_DESCRIPTION_PRECISEVOLUMECTRL = "STR_DESCRIPTION_PRECISEVOLUMECTRL";
 
@@ -399,6 +401,7 @@ void langInit(void)
 	STR_DEBUG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DEBUG", "Debug"));
 	STR_LOGGING = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LOGGING", "Logging"));
 	STR_ROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ROMREADLED", "ROM read LED"));
+	STR_DMAROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DMAROMREADLED", "DMA ROM read LED"));
 	STR_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "PRECISEVOLUMECTRL", "Precise volume control"));
 	STR_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIWAREBOOTER", "DSiWare booter"));
 	STR_RUNIN = ConvertFromUTF8(languageini.GetString("LANGUAGE", "RUNIN", "Run in"));
@@ -449,7 +452,8 @@ void langInit(void)
 
 	STR_DESCRIPTION_LOGGING_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching to sd:/NDSBTSRP.LOG"));
 
-	STR_DESCRIPTION_ROMREADLED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as ROM read indicator."));
+	STR_DESCRIPTION_ROMREADLED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as CPU ROM read indicator."));
+	STR_DESCRIPTION_DMAROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DMAROMREADLED", "Sets LED as DMA ROM read indicator."));
 
 	STR_DESCRIPTION_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_PRECISEVOLUMECTRL", "Adds more volume levels in between ones from the VOL -/+ buttons. Press SELECT+UP/DOWN to adjust the volume with the extra levels."));
 
