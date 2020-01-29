@@ -65,6 +65,7 @@ extern u32 soundFreq;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
+extern bool arm9_twlMode;
 
 bool gameSoftReset = false;
 
@@ -193,7 +194,7 @@ void arm7_resetMemory (void)
 	arm7_clearmem ((void*)0x02000000, 0x003F0000);
 
 	// clear last part of EXRAM, skipping the ARM9's section
-	arm7_clearmem ((void*)0x023FF000, 0x1000);
+	arm7_clearmem ((void*)0x023FDC00, 0x2400);
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -211,8 +212,10 @@ void arm7_resetMemory (void)
 	
 	if ((settings1 & 0x7F) == ((settings2+1) & 0x7F)) {
 		arm7_readFirmware(settingsOffset + 0x000, (u8*)0x027FFC80, 0x70);
+		arm7_readFirmware(settingsOffset + 0x000, (u8*)0x027FFD80, 0x70);
 	} else {
 		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFC80, 0x70);
+		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFD80, 0x70);
 	}
 	if (language >= 0 && language < 6) {
 		*(u8*)(0x027FFCE4) = language;	// Change language
@@ -457,8 +460,12 @@ void arm7_startBinary (void)
 	while(REG_VCOUNT==191);
 
 	// Start ARM7
-	VoidFn arm7code = *(VoidFn*)(0x27FFE34);
-	arm7code();
+	if (twlMode) {
+		VoidFn arm7code = *(VoidFn*)(0x27FFE34);
+		arm7code();
+	} else {
+		resetCpu();
+	}
 }
 
 
@@ -558,12 +565,16 @@ void arm7_main (void) {
 	// Wait for ARM9 to at least start
 	while (arm9_stateFlag < ARM9_START);
 
+	arm9_twlMode = twlMode;
+
 	debugOutput (ERR_STS_CLR_MEM);
 	
 	// Get ARM7 to clear RAM
 	arm7_resetMemory();	
 
 	debugOutput (ERR_STS_LOAD_BIN);
+
+	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 
 	// Load the NDS file
 	errorCode = arm7_loadBinary();
@@ -575,8 +586,6 @@ void arm7_main (void) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 	}
-
-	REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 
 	if (!twlMode) {
 	//	fixFlashcardForDSiMode();

@@ -43,6 +43,7 @@
 #include "common.h"
 
 bool arm9_runCardEngine = false;
+bool arm9_twlMode = false;
 
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
@@ -281,7 +282,11 @@ void arm9_main (void) {
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
-	VoidFn arm9code = *(VoidFn*)(0x27FFE24);
-	arm9code();
+	if (arm9_twlMode) {
+		VoidFn arm9code = *(VoidFn*)(0x27FFE24);
+		arm9code();
+	} else {
+		resetCpu();
+	}
 }
 
