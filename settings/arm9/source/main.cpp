@@ -413,10 +413,8 @@ int main(int argc, char **argv)
 	snd().init();
 	keysSetRepeat(25, 5);
 	
-	bool sdAccessible = false;
-	if (access("sd:/", F_OK) == 0) {
-		sdAccessible = true;
-	}
+	bool sdAccessible = (access("sd:/", F_OK) == 0);
+	bool fatAccessible = (access("fat:/", F_OK) == 0);
 
 	graphicsInit();
 	fontInit();
@@ -532,7 +530,7 @@ int main(int argc, char **argv)
 			if (sdAccessible) {
 				gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {"Console's SD", "Slot-1 SD"}, {true, false});
 			}
-		} else {
+		} else if (!isDSiMode() && fatAccessible) {
 			gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
 		if (sdAccessible) {
