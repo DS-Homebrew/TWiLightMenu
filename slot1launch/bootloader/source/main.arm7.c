@@ -194,7 +194,7 @@ void arm7_resetMemory (void)
 	arm7_clearmem ((void*)0x02000000, 0x003F0000);
 
 	// clear last part of EXRAM, skipping the ARM9's section
-	arm7_clearmem ((void*)0x023FDC00, 0x2400);
+	arm7_clearmem ((void*)0x023FE000, 0x2000);
 
 	REG_IE = 0;
 	REG_IF = ~0;
@@ -212,10 +212,8 @@ void arm7_resetMemory (void)
 	
 	if ((settings1 & 0x7F) == ((settings2+1) & 0x7F)) {
 		arm7_readFirmware(settingsOffset + 0x000, (u8*)0x027FFC80, 0x70);
-		arm7_readFirmware(settingsOffset + 0x000, (u8*)0x027FFD80, 0x70);
 	} else {
 		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFC80, 0x70);
-		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFD80, 0x70);
 	}
 	if (language >= 0 && language < 6) {
 		*(u8*)(0x027FFCE4) = language;	// Change language
