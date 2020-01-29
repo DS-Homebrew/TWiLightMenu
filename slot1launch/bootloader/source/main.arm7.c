@@ -65,7 +65,6 @@ extern u32 soundFreq;
 extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
-extern bool arm9_twlMode;
 
 bool gameSoftReset = false;
 
@@ -458,12 +457,8 @@ void arm7_startBinary (void)
 	while(REG_VCOUNT==191);
 
 	// Start ARM7
-	if (twlMode) {
-		VoidFn arm7code = *(VoidFn*)(0x27FFE34);
-		arm7code();
-	} else {
-		resetCpu();
-	}
+	VoidFn arm7code = *(VoidFn*)(0x27FFE34);
+	arm7code();
 }
 
 
@@ -562,8 +557,6 @@ void arm7_main (void) {
 	
 	// Wait for ARM9 to at least start
 	while (arm9_stateFlag < ARM9_START);
-
-	arm9_twlMode = twlMode;
 
 	debugOutput (ERR_STS_CLR_MEM);
 	
