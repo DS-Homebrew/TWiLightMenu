@@ -98,11 +98,80 @@ static u32* hookInterruptHandler (u32* addr, size_t size) {
 
 
 int hookNdsRetail (const tNDSHeader* ndsHeader, u32* cardEngineLocation) {
-	u32* hookLocation = NULL;
-	u32* hookAccel = NULL;
+	u32* hookLocation = hookInterruptHandler((u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
 
-	if (!hookLocation) {
-		hookLocation = hookInterruptHandler((u32*)ndsHeader->arm7destination, ndsHeader->arm7binarySize);
+	// SDK 5
+	if (!hookLocation && ndsHeader->unitCode != 0) {
+		switch (ndsHeader->arm7binarySize) {
+			case 0x0001D5A8:
+				hookLocation = (u32*)0x239D280;		// DS WiFi Settings
+				break;
+
+			case 0x00022B40:
+				hookLocation = (u32*)0x238DED8;
+				break;
+
+			case 0x00022BCC:
+				hookLocation = (u32*)0x238DF60;
+				break;
+
+			case 0x00025664:
+				hookLocation = (u32*)0x23A5330;		// DSi-Exclusive cart games
+				break;
+
+			case 0x000257DC:
+				hookLocation = (u32*)0x23A54B8;		// DSi-Exclusive cart games
+				break;
+
+			case 0x00025860:
+				hookLocation = (u32*)0x23A5538;		// DSi-Exclusive cart games
+				break;
+
+			case 0x00026DF4:
+				hookLocation = (u32*)0x23A6AD4;		// DSi-Exclusive cart games
+				break;
+
+			case 0x00028F84:
+				hookLocation = (u32*)0x2391918;
+				break;
+
+			case 0x0002909C:
+				hookLocation = (u32*)0x2391A30;
+				break;
+
+			case 0x0002914C:
+			case 0x00029164:
+				hookLocation = (u32*)0x2391ADC;
+				break;
+
+			case 0x00029EE8:
+				hookLocation = (u32*)0x2391F70;
+				break;
+
+			case 0x0002A2EC:
+				hookLocation = (u32*)0x23921BC;
+				break;
+
+			case 0x0002A318:
+				hookLocation = (u32*)0x23921D8;
+				break;
+
+			case 0x0002AF18:
+				hookLocation = (u32*)0x239227C;
+				break;
+
+			case 0x0002B184:
+				hookLocation = (u32*)0x23924CC;
+				break;
+
+			case 0x0002B24C:
+				hookLocation = (u32*)0x2392578;
+				break;
+
+			case 0x0002C5B4:
+				hookLocation = (u32*)0x2392E74;
+				break;
+		}
 	}
 
 	if (!hookLocation) {

@@ -195,10 +195,8 @@ int cardInit (tNDSHeader* ndsHeader, u32* chipID)
 	if (normalChip) {
 		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 		cardDelay(ndsHeader->readTimeout);
-		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
-	} else {
-		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 	}
+	cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 
 	// Set the KEY2 encryption registers
 	REG_ROMCTRL = 0;
@@ -217,10 +215,8 @@ int cardInit (tNDSHeader* ndsHeader, u32* chipID)
 	if (normalChip) {
 		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 		cardDelay(ndsHeader->readTimeout);
-		cardPolledTransfer(portFlagsKey1 | CARD_BLK_SIZE(7), NULL, 0, cmdData);
-	} else {
-		cardPolledTransfer(portFlagsKey1 | CARD_BLK_SIZE(7), NULL, 0, cmdData);
 	}
+	cardPolledTransfer(portFlagsKey1 | CARD_BLK_SIZE(7), NULL, 0, cmdData);
 
 	// 2bbbbiii jjjkkkkk - Get Secure Area Block
 	secureArea = secureAreaData;
@@ -249,10 +245,8 @@ int cardInit (tNDSHeader* ndsHeader, u32* chipID)
 	if (normalChip) {
 		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 		cardDelay(ndsHeader->readTimeout);
-		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
-    } else {
-		cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
-	}
+    }
+	cardPolledTransfer(portFlagsKey1, NULL, 0, cmdData);
 
 	// Now deal with secure area decryption and verification
 	decryptSecureArea (gameCode->key, secureAreaData);
@@ -269,7 +263,6 @@ int cardInit (tNDSHeader* ndsHeader, u32* chipID)
 		}
 		// Disabled error checks on secure area. This was able to boot a DS-Xtreme. May increase flashcart compatiblity drastically.
 		// return normalChip ? ERR_SEC_NORM : ERR_SEC_OTHR;
-		return normalChip ? ERR_NONE : ERR_NONE;
 	}
 
 	return ERR_NONE;
