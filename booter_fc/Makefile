@@ -117,7 +117,7 @@ endif
  
 export GAME_TITLE := $(TARGET)
 
-.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm9/$(TARGET).elf arm9_cyclodsi/$(TARGET).elf
+.PHONY: bootloader bootstub clean arm7/$(TARGET).elf arm7_cyclodsi/$(TARGET).elf arm9/$(TARGET).elf arm9_cyclodsi/$(TARGET).elf
 
 all:	bootloader bootstub $(TARGET).nds
 	
@@ -128,13 +128,16 @@ dist:	all
 	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds hbmenu
 	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
 	
-$(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
+$(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
-	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET).arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
+	ndstool	-h 0x200 -c $(TARGET)_cyclodsi.nds -7 $(TARGET)_cyclodsi.arm7.elf -9 $(TARGET)_cyclodsi.arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"
 
 $(TARGET).arm7: arm7/$(TARGET).elf
 	cp arm7/$(TARGET).elf $(TARGET).arm7.elf
+
+$(TARGET)_cyclodsi.arm7: arm7_cyclodsi/$(TARGET).elf
+	cp arm7_cyclodsi/$(TARGET).elf $(TARGET)_cyclodsi.arm7.elf
 
 $(TARGET).arm9: arm9/$(TARGET).elf
 	cp arm9/$(TARGET).elf $(TARGET).arm9.elf
@@ -146,6 +149,10 @@ $(TARGET)_cyclodsi.arm9: arm9_cyclodsi/$(TARGET).elf
 arm7/$(TARGET).elf:
 	@$(MAKE) -C arm7
 	
+#---------------------------------------------------------------------------------
+arm7_cyclodsi/$(TARGET).elf:
+	@$(MAKE) -C arm7_cyclodsi
+
 #---------------------------------------------------------------------------------
 arm9/$(TARGET).elf:
 	@$(MAKE) -C arm9
@@ -164,6 +171,7 @@ clean:
 	@rm -fr data
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds
 	@rm -fr $(TARGET).arm7.elf
+	@rm -fr $(TARGET).arm7_cyclodsi.elf
 	@rm -fr $(TARGET).arm9.elf
 	@rm -fr $(TARGET).arm9_cyclodsi.elf
 	@$(MAKE) -C bootloader clean
