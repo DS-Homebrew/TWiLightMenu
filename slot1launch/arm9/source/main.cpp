@@ -112,6 +112,11 @@ int main() {
 
 			language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 
+			scanKeys();
+			if (keysHeld() & KEY_A) {
+				runCardEngine = !runCardEngine;
+			}
+
 		} else {
 			fifoSendValue32(FIFO_USER_02, 1);
 			fifoSendValue32(FIFO_USER_07, 1);
