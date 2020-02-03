@@ -337,14 +337,14 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				if (dirEntry.name.compare(".") != 0 && dirEntry.name.compare("_nds") &&
 					dirEntry.name.compare("saves") != 0 &&
 					(dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
-					if (ms().showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0 || dirEntry.name == "..") {
+					if (ms().showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN || (strncmp(dirEntry.name.c_str(), ".", 1) == 0 && dirEntry.name != ".."))) {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					if (ms().showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0|| dirEntry.name == "..") {
+					if (ms().showHidden || FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN) {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
@@ -2705,8 +2705,7 @@ string browseForFile(const vector<string> extensionList) {
 			if ((pressed & KEY_X) && bannerTextShown && showSTARTborder
 			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
-				bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
-
+				bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 				if (ms().theme == 4) {
 					snd().playStartup();
 					fadeType = false;	   // Fade to black
@@ -2827,10 +2826,11 @@ string browseForFile(const vector<string> extensionList) {
 						}
 						if (ms().theme != 4) whiteScreen = true;
 
-						if (unHide) {
+						// Remove leading . if it exists
+						if((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
 							rename(entry->name.c_str(), entry->name.substr(1).c_str());
-						} else {
-							rename(entry->name.c_str(), ("."+entry->name).c_str());
+						} else { // Otherwise toggle the hidden attribute bit
+							FAT_setAttr(entry->name.c_str(), FAT_getAttr(entry->name.c_str()) ^ ATTR_HIDDEN);
 						}
 
 						if (ms().showBoxArt)
