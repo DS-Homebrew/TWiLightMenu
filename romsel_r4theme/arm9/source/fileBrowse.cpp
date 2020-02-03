@@ -31,6 +31,7 @@
 #include <vector>
 
 #include <nds.h>
+#include <fat.h>
 #include "common/gl2d.h"
 
 #include "date.h"
