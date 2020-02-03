@@ -154,7 +154,7 @@ void getDirectoryContents(vector<DirEntry>& dirContents, const vector<string> ex
 			dirEntry.name = pent->d_name;
 			dirEntry.isDirectory = (st.st_mode & S_IFDIR) ? true : false;
 
-			if(showHidden || strncmp(dirEntry.name.c_str(), ".", 1) != 0 || dirEntry.name == "..") {
+			if(showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN || (strncmp(dirEntry.name.c_str(), ".", 1) == 0 && dirEntry.name != ".."))) {
 				if (showDirectories) {
 					if (dirEntry.name.compare(".") && dirEntry.name.compare("_nds") && dirEntry.name.compare("saves") && (dirEntry.isDirectory || nameEndsWith(dirEntry.name, extensionList))) {
 						dirContents.push_back (dirEntry);
@@ -611,7 +611,7 @@ string browseForFile(const vector<string> extensionList) {
 		if ((pressed & KEY_X) && dirContents.at(fileOffset).name != "..")
 		{
 			DirEntry *entry = &dirContents.at(fileOffset);
-			bool unHide = strncmp(entry->name.c_str(), ".", 1) == 0;
+			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
 
 			showdialogbox = true;
 			dialogboxHeight = 3;
@@ -653,10 +653,11 @@ string browseForFile(const vector<string> extensionList) {
 					if (pressed & KEY_A && !isDirectory) {
 						remove(dirContents.at(fileOffset).name.c_str());
 					} else if (pressed & KEY_Y) {
-						if (unHide) {
+						// Remove leading . if it exists
+						if((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
 							rename(entry->name.c_str(), entry->name.substr(1).c_str());
-						} else {
-							rename(entry->name.c_str(), ("."+entry->name).c_str());
+						} else { // Otherwise toggle the hidden attribute bit
+							FAT_setAttr(entry->name.c_str(), FAT_getAttr(entry->name.c_str()) ^ ATTR_HIDDEN);
 						}
 					}
 					
