@@ -7,6 +7,7 @@ Copy = Copy
 Cut = Cut
 Paste = Paste
 Delete = Delete
+Hide = Hide
 Setting = Settings Menu
 Info = Properties
 
@@ -62,6 +63,11 @@ text = Are you sure you want to cancel file copy?
 title = Confirm File/Folder Delete
 text = File/folder can not be undeleted, are you sure you want to delete '%s'?
 text2 = If you wish to continue press no otherwise press yes.
+
+[confirm hide file]
+title = Confirm File/Folder Hide
+hide = '%s' will be hidden unless you enable "show hidden files" in settings, hide?
+unhide = '%s' will no longer be hidden, unhide?
 
 [do not delete directory]
 title = Error Folder Delete

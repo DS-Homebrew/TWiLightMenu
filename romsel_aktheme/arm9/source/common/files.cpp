@@ -24,6 +24,7 @@
 //#include "dbgtool.h"
 // #include <elm.h>
 #include <dirent.h>
+#include <fat.h>
 #include <sys/iosupport.h>
 #include "ui/msgbox.h"
 #include "ui/progresswnd.h"
@@ -339,6 +340,41 @@ bool deleteFile(const std::string & filename)
         return false;
     }
     // cFavorites::RemoveFromFavorites(filename);
+    return true;
+}
+
+bool hideFile(const std::string & filename)
+{
+    if("" == filename)
+        return false;
+
+    struct stat destSt;
+    if(0 != stat(filename.c_str(), &destSt)) {
+        return false;
+    }
+
+    bool isHidden = FAT_getAttr(filename.c_str()) & ATTR_HIDDEN;
+
+    std::string confirmText = LANG("confirm hide file", isHidden ? "unhide" : "hide");
+    std::string showname,realname;
+    if('/' == filename[filename.size()-1])
+        showname = filename.substr(0, filename.size() - 1);
+    else
+        showname = filename;
+    realname = showname;
+
+    size_t slashPos = showname.find_last_of('/');
+    if(showname.npos != slashPos)
+        showname = showname.substr(slashPos + 1);
+
+    confirmText = formatString(confirmText.c_str(), showname.c_str());
+    u32 result = messageBox(NULL, LANG("confirm hide file","title"), confirmText.c_str(), MB_YES | MB_NO);
+    if(result != ID_YES) {
+        return false;
+    }
+
+    FAT_setAttr(filename.c_str(), FAT_getAttr(filename.c_str()) ^ ATTR_HIDDEN);
+
     return true;
 }
 

@@ -8,6 +8,7 @@ Copy = コピー
 Cut = 切り取り
 Paste = 貼り付け
 Delete = 削除
+Hide = 隠します
 Setting = 設定メニュー
 Info = ファイル詳細
 
@@ -63,6 +64,11 @@ text = ファイルのコピーを中止しますか？
 [confirm delete file]
 title = 確認
 text = 一度ファイルを削除すると復元はできません。"%s"を削除しても宜しいですか？
+
+[confirm hide file]
+title = ファイル/フォルダを隠すの確認
+hide = 設定で「隠しファイルを表示」を有効にしない限り、「%s」を隠しますか？
+unhide = 「%s」を再表示しますか？
 
 [do not delete directory]
 title = 警告
