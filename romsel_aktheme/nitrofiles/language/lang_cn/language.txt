@@ -1,23 +1,26 @@
-// Translation By R-YaTian
+﻿// Translation By R-YaTian
 [font]
 main = wenquanyi_9pt.pcf
 language = 1
 
 [start menu]
-Start = 菜单
+START = 菜单
 Copy = 复制
 Cut = 剪切
 Paste = 粘贴
 Delete = 删除
-Save Type = 设置存档类型
-Patches = 特殊功能
 Setting = 系统设置
 Info = 文件信息
-Help = 帮助
-More = 更多 ->
-3in1 = EZ3合1
-Cheats = 金手指
-Back = <- 返回
+Hide = 隐藏
+
+[mainlist]
+Manual = 说明书
+microSD Card = TF 卡
+SD Card = SD 卡
+Settings = 系统设置
+SLOT-1 Card = SLOT-1 卡带
+SLOT-1 microSD Card = SLOT-1 TF 卡
+System Menu = 系统菜单
 
 [message box]
 yes = 是
@@ -28,18 +31,10 @@ cancel = 取消
 [cheats]
 button = 金手指
 title = 金手指
-error_title = 错误
-error_text = 没有找到金手指文件。
-selectrom = 请选择.NDS 文件
-noxml = 没有找到金手指 XML 文件
-ccexists = .CC 金手指文件已经存在，重新创建？
-nonefound = 在 XML 文件中没有找到金手指
-xmlselect = XML 选择
+info = 信息
+deselect = 清除所有
 confirm = 确定
-confirm_rebuild = 重建 .CC 金手指文件?
-invalid cheatdb = 无效的金手指数据文库
-Rebuild = 重建
-Sel. DB = 选择金手指数据库
+Cancel = 取消
 
 [progress window]
 processing save = 正在处理存档，请不要关闭电源！
@@ -79,6 +74,11 @@ text = 确定需要停止复制操作吗？
 title = 注意
 text = 删除文件后不可以恢复，确定需要删除"%s" 吗？
 text2 = 如果您想继续请按“否”。否则请按“是”。
+
+[confirm hide file]
+title = 确认隐藏 文件/目录
+hide = '%s' 将会不可见直到你在系统设置中开启"显示隐藏文件"，确定吗?
+unhide = '%s' 将不再被隐藏，确定吗?
 
 [do not delete directory]
 title = 警告
@@ -124,7 +124,6 @@ Fast = 快速
 Medium = 中速
 Slow = 慢速
 
-
 [system setting]
 title = 系统设置
 
@@ -155,7 +154,7 @@ text = 无法读取SD卡的内容，SD卡可能没有插好！
 
 [no sd for save]
 title = SD卡上的存档无法保存
-text = 无法读取SD卡，之前的存档信息将被备份到内置闪存的: %s文件中！
+text = 无法读取SD卡，之前的存档信息将被备份到内置闪存的 %s 文件中！
 
 [no gba card]
 title = 未检测到扩展卡
@@ -165,7 +164,7 @@ text = Slot2端没有插入设备！
 text = 列表格式
 item0 = NDS图标
 item1 = NDS和SAV
-item2 = NDS,SAV和BAK
+item2 = NDS/SAV/BAK
 item3 = 显示所有
 
 [rom trim]
@@ -218,16 +217,16 @@ versions = HW: %02x NDD: %02x
 [exp window]
 title = EZ3合1 扩展卡设置
 ram = RAM
-sram = SRAM
+sram = 导出SRAM
 off = 关闭
 low = 低档
 mid = 中档
 high = 高档
 strength = 震动级别
-NOR Mode = 使用NOR内存运行gba游戏
+NOR Mode = 使用NOR内存运行GBA游戏
 auto = 自动
 always = 始终
-notdetected = 没有找到EZ3合1/EWin扩展卡
+notdetected = 没有找到EZ3合1/EWin/FlashAdvance扩展卡
 
 [abort save]
 title = 询问
@@ -453,11 +452,24 @@ Language = 语言
 CPU Frequency = CPU频率
 Off = 关闭
 On = 开启
-Sound Fix = 音效修正
-Async Prefetch = 异步预取
-Use Bootstrap = 使用Bootstrap
+Bootstrap File = Bootstrap文件
+Run in = 运行于
+DS mode = DS模式
+DSi mode = DSi模式
+DSi mode (Forced) = 强制DSi模式
+Boost VRAM = 增强VRAM
+Heap Shrink = 减少堆栈
+Nightly = Nightly
+Save number = 存档编号
+67MHz (NTR) = 67MHz(NTR)
+133MHz (TWL) = 133MHz
+RAM disk = 内存盘
 Direct Boot = 直接启动
-Per Game Settings = 单个游戏设置
+No Direct Boot = 非直接启动
+Per Game Settings = 游戏设置
+Release = Release
+Use Bootstrap = 使用Bootstrap
+Auto = 自动
 
 [game launch]
 ROM Start Error = 游戏启动错误
