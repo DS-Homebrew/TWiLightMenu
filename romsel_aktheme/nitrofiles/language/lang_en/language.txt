@@ -7,15 +7,8 @@ Copy = Copy
 Cut = Cut
 Paste = Paste
 Delete = Delete
-Save Type = Save Type
-Patches = Patches
 Setting = Settings Menu
 Info = Properties
-Help = Help
-More = More ->
-3in1 = 3in1/FAS1
-Cheats = Cheats
-Back = <- Back
 
 [message box]
 yes = Yes
@@ -25,19 +18,11 @@ cancel = Cancel
 
 [cheats]
 button = Cheats
+Cancel = Cancel
+deselect = Deselect all
+info = Info
 title = Cheats Menu
-error_title = Error
-error_text = Cheat file was not found.
-selectrom = Please select a .NDS file
-noxml = Cheat DB file not found
-ccexists = .CC exists, Generate new one?
-nonefound = No Cheats found in DB
-xmlselect = Select Cheat Database:
 confirm = Confirm
-confirm_rebuild = Rebuild .CC file?
-invalid cheatdb = Invalid Cheat Database
-Rebuild = Rebuild
-Sel. DB = Sel. DB
 
 [progress window]
 processing save = Processing... Do not power off!
@@ -489,23 +474,35 @@ title = Clone
 text = It may not be a genuine Acekard.\n Please contact your vender or\n      access our website:\n\n      www.acekard.com\n
 
 [game settings]
-Default = Default
-System = System
 Japanese = Japanese
 English = English
 French = French
 German = German
 Italian = Italian
 Spanish = Spanish
-Language = Language
+133MHz (TWL) = 133MHz (TWL)
+67MHz (NTR) = 67MHz (NTR)
+Auto = Auto
+Boost VRAM = Boost VRAM
+Bootstrap File = Bootstrap File
 CPU Frequency = CPU Frequency
+Default = Default
+Direct Boot = Direct Boot
+DS mode = DS mode
+DSi mode = DSi mode
+DSi mode (Forced) = DSi mode (Forced)
+Heap Shrink = Heap Shrink
+Language = Language
+Nightly = Nightly
 Off = Off
 On = On
-Sound Fix = Sound Fix
-Async Prefetch = Async Prefetch
-Use Bootstrap = Use Bootstrap
-Direct Boot = Direct Boot
 Per Game Settings = Per Game Settings
+RAM disk = RAM Disk
+Release = Release
+Run in = Run in
+Save number = Save Number
+System = System
+Use Bootstrap = Use Bootstrap
 
 [game launch]
 ROM Start Error = ROM Start Error
@@ -527,4 +524,14 @@ Unlaunch Error = Unlaunch Error
 unlaunch boot = Boot DSiWare with Unlaunch
 
 unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+
+[mainlist]
+Manual = Manual
+microSD Card = microSD Card
+SD Card = SD Card
+Settings = Settings
+SLOT-1 Card = SLOT-1 Card
+SLOT-1 microSD Card = SLOT-1 microSD Card
+System Menu = System Menu
+
 [end]

@@ -8,38 +8,23 @@ Copy = コピー
 Cut = 切り取り
 Paste = 貼り付け
 Delete = 削除
-Save Type = セーブタイプ設定
-Patches = オプション
-Setting = システム設定
+Setting = 設定メニュー
 Info = ファイル詳細
-Help = ヘルプ
-More = 次のページ ->
-3in1 = 3in1拡張設定
-Cheats = チート設定
-Back = <- 後ろの
 
 [message box]
 yes = はい
 no = いいえ
-ok = 決定
+ok = OK
 cancel = 取消し
 
 [cheats]
 button = チート
-title = チートメニュー
-error_title = エラー
-error_text = チートコードが登録されていません
-selectrom = NDSファイルを選択してください
-noxml = チートDBを見つけられません
-nonefound = このタイトルのチートコードは未登録です
-xmlselect = チートDB選択
-confirm_rebuild = 現在のファイルを削除し再構築します宜しいですか？
-confirm = 確認
 Cancel = 取消し
-confirm_rebuild = .CCファイルを再建しますか?
+deselect = すべての選択を解除
+info = 説明
 invalid cheatdb = このチートDBは無効です
 Rebuild = リビルド
-Sel. DB = DB選択
+title = チートメニュー
 
 [progress window]
 processing save = 作業中につき電源を切らないで下さい
@@ -404,29 +389,41 @@ title = エラー
 memory allocation error = メモリ割り当てエラー
 
 [game settings]
-Default = Default
-System = System
-Japanese = Japanese
-English = 日本語
-French = French
-German = German
-Italian = Italian
-Spanish = Spanish
-Language = Language
+Japanese = 日本語
+English = 英語
+French = フランス語
+German = ドイツ語
+Italian = イタリア語
+Spanish = スペイン語
+133MHz (TWL) = 133MHz (TWL)
+67MHz (NTR) = 67MHz (NTR)
+Auto = 自動
+Boost VRAM = VRAMを押し上げる
+Bootstrap File = Bootstrapファイル
 CPU Frequency = CPU 周波数
-Off = 使用
-On = 不使用
-Sound Fix = サウンドFIX
-Async Prefetch = アシンクロナスプリフェッチ
-Use Bootstrap =　Bootstrapでブート
-Direct Boot = 直接ROMをブートします
+Default = デフォルト
+Direct Boot = ROMを直接ブートします
+DS mode = DSモード
+DSi mode = DSiモード
+DSi mode (Forced) = DSiモード（強制）
+Heap Shrink = ヒープを縮む
+Language = 言語
+Nightly = ナイトリー
+Off = オフ
+On = オン
 Per Game Settings = ゲーム設定
+RAM disk = RAMディスク
+Release = リリース
+Run in = 実行モード
+Save number = セーブの番号
+System = 本体
+Use Bootstrap =　Bootstrapでブート
 
 [game launch]
 ROM Start Error = このROMは起動ことができませんでした。
 error = エラー %i
 Please wait = 少々お待ちください。
-NDS Bootstrap Error = Bootstrapエラー
+NDS Bootstrap Error = NDS Bootstrapエラー
 GBARunner2 Error = GBARunner2エラー
 SNES Error = スーパーファミコンRAMディスクエラー
 SNES Error Message = 「sd:/_nds/TWiLightMenu/emulators/」のスーパーファミコンRAMディスクが見つかりませんでした。
@@ -439,5 +436,15 @@ Preparing Unlaunch Boot = DSiWare起動の準備中です.
 Unlaunch Error = Unlaunchエラー
 unlaunch boot = DSiWare起動の説明
 
-unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+unlaunch instructions = セーブして後、このメニューを再起動してセーブデータを転送してください。
+
+[mainlist]
+Manual = 説明書
+microSD Card = microSDカード
+SD Card = SDカード
+Settings = 本体設定
+SLOT-1 Card = SLOT-1カード
+SLOT-1 microSD Card = SLOT-1 microSDカード
+System Menu = 本体メニュー
+
 [end]
