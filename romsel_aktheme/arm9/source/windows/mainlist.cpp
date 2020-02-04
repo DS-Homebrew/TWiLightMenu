@@ -242,12 +242,12 @@ bool MainList::enterDir(const std::string &dirName)
         {
             if (!flashcardFound() && sdFound())
             {
-                addDirEntry("SLOT-1 Card", "", SPATH_SLOT1, "slot1", nand_banner_bin);
+                addDirEntry(LANG("mainlist", "SLOT-1 Card"), "", SPATH_SLOT1, "slot1", nand_banner_bin);
             }
-            addDirEntry("System Menu", "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
+            addDirEntry(LANG("mainlist", "System Menu"), "", SPATH_SYSMENU, "sysmenu", sysmenu_banner_bin);
         }
-        addDirEntry("Settings", "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
-        addDirEntry("Manual", "", SPATH_MANUAL, "manual", manual_banner_bin);
+        addDirEntry(LANG("mainlist", "Settings"), "", SPATH_TITLEANDSETTINGS, "titleandsettings", settings_banner_bin);
+        addDirEntry(LANG("mainlist", "Manual"), "", SPATH_MANUAL, "manual", manual_banner_bin);
         _currentDir = SPATH_ROOT;
         directoryChanged();
         cwl();
