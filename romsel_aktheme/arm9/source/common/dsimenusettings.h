@@ -61,7 +61,7 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
-	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+    // 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = -1,
@@ -75,9 +75,9 @@ class DSiMenuPlusPlusSettings
     };
 
     /*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
+    1 = Nintendo DSi (Dev/Panda)
+    2 = Nintendo 3DS
+    3 = New Nintendo 3DS	*/
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -115,14 +115,15 @@ class DSiMenuPlusPlusSettings
     bool showMicroSd;
     int theme;
     int subtheme;
-	bool showNds;
-	bool showRvid;
-	bool showNes;
-	bool showGb;
-	bool showSmsGg;
-	bool showMd;
-	bool showSnes;
+    bool showNds;
+    bool showRvid;
+    bool showNes;
+    bool showGb;
+    bool showSmsGg;
+    bool showMd;
+    bool showSnes;
     bool showDirectories;
+    bool showHidden;
     bool showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
@@ -130,7 +131,7 @@ class DSiMenuPlusPlusSettings
     bool gotosettings;
     bool previousUsedDevice;
     bool secondaryDevice;
-	bool fcSaveOnSd;
+    bool fcSaveOnSd;
 
     bool slot1LaunchMethod;
     bool useBootstrap;
@@ -164,8 +165,8 @@ class DSiMenuPlusPlusSettings
     bool showlogo;
     // unused...
     std::string r4_theme;
-	
-	bool wideScreen;
+    
+    bool wideScreen;
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;

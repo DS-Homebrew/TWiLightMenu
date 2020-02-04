@@ -277,6 +277,18 @@ void MainWnd::startMenuItemClicked(s16 i)
             _mainList->enterDir(_mainList->getCurrentDir());
     }
 
+    else if (START_MENU_ITEM_HIDE == i)
+    {
+        std::string fullPath = _mainList->getSelectedFullPath();
+        if (fullPath != "")
+        {
+            bool ret = false;
+            ret = hideFile(fullPath);
+            if (ret)
+                _mainList->enterDir(_mainList->getCurrentDir());
+        }
+    }
+
     else if (START_MENU_ITEM_DELETE == i)
     {
         std::string fullPath = _mainList->getSelectedFullPath();

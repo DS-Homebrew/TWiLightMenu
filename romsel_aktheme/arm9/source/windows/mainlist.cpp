@@ -326,9 +326,10 @@ bool MainList::enterDir(const std::string &dirName)
 
             dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
             cwl();
-            bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories) // directory filter
-                                                   : extnameFilter(_showAllFiles ? std::vector<std::string>() : _extnameFilter, extName);                                                                                                                // extension name filter
-            showThis = showThis && (_showAllFiles || (strncmp(".", direntry->d_name, 1)));                                                                                                           // Hide dotfiles
+            bool showThis = (st.st_mode & S_IFDIR) ? ((lfn != "." && lfn != ".." && lfn != "_nds" && lfn != "saves") && ms().showDirectories)   // directory filter
+                                                   : extnameFilter(_showAllFiles ? std::vector<std::string>() : _extnameFilter, extName);       // extension name filter
+            showThis = showThis && (ms().showHidden || (strncmp(".", direntry->d_name, 1)));                                                    // Hide dotfiles
+            showThis = showThis && (ms().showHidden || !(FAT_getAttr((dirName + lfn).c_str()) & ATTR_HIDDEN));                                  // Hide if the hidden FAT attribute is true
             cwl();
             nocashMessage("mainlist:322");
 
