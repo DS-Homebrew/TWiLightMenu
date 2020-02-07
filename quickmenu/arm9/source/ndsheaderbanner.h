@@ -146,22 +146,38 @@ typedef struct {
 	u16 dsi_unk1;
 	u8 dsi_unk2;
 	u8 dsi_flags;
-	u8 zero2[0x40];
+
+	u32 arm9iromOffset;			//!< offset of the arm9 binary in the nds file.
+	u32 arm9iexecuteAddress;
+	u32 arm9idestination;		//!< destination address to where the arm9 binary should be copied.
+	u32 arm9ibinarySize;		//!< size of the arm9 binary.
+
+	u32 arm7iromOffset;			//!< offset of the arm7 binary in the nds file.
+	u32 deviceListDestination;
+	u32 arm7idestination;		//!< destination address to where the arm7 binary should be copied.
+	u32 arm7ibinarySize;		//!< size of the arm7 binary.
+
+	u8 zero2[0x20];
 
 	// 0x200
 	// TODO: More DSi-specific fields.
-	u8 dsi1[0x30];
+	u32 dsi1[0x10/4];
+	u32 twlRomSize;
+	u32 dsi_unk3;
+	u32 dsi_unk4;
+	u32 dsi_unk5;
+	u8 dsi2[0x10];
 	u32 dsi_tid;
 	u32 dsi_tid2;
 	u32 pubSavSize;
 	u32 prvSavSize;
-	u8 dsi2[0x174];
+	u8 dsi3[0x174];
 } sNDSHeaderExt;
 
 //#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
 // Make sure the banner size is correct.
-static_assert(sizeof(sNDSHeaderExt) == 0x3B4, "sizeof(sNDSHeaderExt) is not 0x3B4 bytes");
+//static_assert(sizeof(sNDSHeaderExt) == 0x3B4, "sizeof(sNDSHeaderExt) is not 0x3B4 bytes");
 
 
 /*!
@@ -202,7 +218,7 @@ typedef enum {
 } sNDSBannerSize;
 
 // Make sure the banner size is correct.
-static_assert(sizeof(sNDSBannerExt) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBannerExt) is not 0x23C0 bytes");
+//static_assert(sizeof(sNDSBannerExt) == NDS_BANNER_SIZE_DSi, "sizeof(sNDSBannerExt) is not 0x23C0 bytes");
 
 // Language indexes.
 typedef enum {

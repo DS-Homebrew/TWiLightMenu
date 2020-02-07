@@ -79,6 +79,7 @@ extern bool isDSPhat(void);
 extern int theme;
 extern int subtheme;
 extern int consoleModel;
+extern bool cardEjected;
 
 int boxArtType = 0;
 
@@ -297,9 +298,11 @@ void vBlankHandler()
 
 		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		if (startMenu) {
-			if (isDSiMode() && launchType == 0) {
-				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
-				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+			if (isDSiMode() && (launchType == 0) && cardEjected) {
+				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
+				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[1]);
+				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
 				if (bnrRomType == 9) drawIconPlg(40, iconYpos[0]+6);

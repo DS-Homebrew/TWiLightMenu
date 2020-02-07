@@ -39,6 +39,7 @@
 
 #include "common/tonccpy.h"
 #include "common/nitrofs.h"
+#include "read_card.h"
 #include "flashcard.h"
 #include "ndsheaderbanner.h"
 #include "gbaswitch.h"
@@ -76,6 +77,9 @@ bool controlTopBright = true;
 bool controlBottomBright = true;
 int colorMode = 0;
 int blfLevel = 0;
+
+bool cardEjected = false;
+static bool cardRefreshed = false;
 
 extern void ClearBrightness();
 extern int boxArtType;
@@ -478,8 +482,6 @@ void SetSpeedBumpExclude(const char* filename) {
 	}
 }
 
-sNDSHeader ndsCart;
-
 /**
  * Enable widescreen for some games.
  */
@@ -506,13 +508,13 @@ TWL_CODE void SetWidescreen(const char *filename) {
 		enableSlot1();
 		for(int i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		cardReadHeader((uint8*)&ndsCart);
+		cardReadHeader((uint8*)&ndsCardHeader);
 
 		char game_TID[5];
-		tonccpy(game_TID, ndsCart.gameCode, 4);
+		tonccpy(game_TID, ndsCardHeader.gameCode, 4);
 		game_TID[4] = 0;
 
-		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCart.headerCRC16);
+		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, ndsCardHeader.headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	} else if (!wideCheatFound) {
 		FILE *f_nds_file = fopen(filename, "rb");
@@ -812,12 +814,35 @@ void printLastPlayedText() {
 	printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "will appear here.");
 }
 
+void refreshNdsCard() {
+	if (cardRefreshed) return;
+
+	cardInit();
+	char game_TID[5] = {0};
+	tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
+
+	getGameInfo(false, "slot1");
+	iconUpdate (false, "slot1");
+	bnrRomType = 0;
+	boxArtType = 0;
+
+	if (showBoxArt) {
+		char boxArtPath[256];
+		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+		loadBoxArt(boxArtPath);	// Load box art
+	}
+
+	cardRefreshed = true;
+	cardEjected = false;
+}
+
 void printNdsCartBannerText() {
-	if (REG_SCFG_MC == 0x11) {
+	if (cardEjected) {
 		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, "There is no Game Card");
 		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "inserted.");
 	} else {
-		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, "Start Game Card");
+		//printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, "Start Game Card");
+		titleUpdate(false, "slot1");
 	}
 }
 
@@ -1109,9 +1134,16 @@ int main(int argc, char **argv) {
 				game_TID[4] = 0;
 				fclose(f_nds_file);
 
-				snprintf (boxArtPath, sizeof(boxArtPath), (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+				sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
 			}
 			loadBoxArt(boxArtPath);	// Load box art
+		}
+	} else if (isDSiMode() && !flashcardFound()) {
+		if (REG_SCFG_MC == 0x11) {
+			loadBoxArt("nitro:/graphics/boxart_unknown.png");
+			cardEjected = true;
+		} else {
+			refreshNdsCard();
 		}
 	}
 
@@ -1140,6 +1172,18 @@ int main(int argc, char **argv) {
 					printLastPlayedText();
 				}
 				printGbaBannerText();
+
+				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
+					if (REG_SCFG_MC == 0x11) {
+						if (cardRefreshed && showBoxArt) {
+							loadBoxArt("nitro:/graphics/boxart_unknown.png");
+						}
+						cardRefreshed = false;
+						cardEjected = true;
+					} else if (cardEjected) {
+						refreshNdsCard();
+					}
+				}
 
 				scanKeys();
 				pressed = keysDownRepeat();

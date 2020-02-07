@@ -30,6 +30,7 @@
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
 #include "language.h"
+#include "read_card.h"
 
 #include "iconTitle.h"
 
@@ -659,7 +660,8 @@ void getGameInfo(bool isDir, const char* name)
 		// clean up the allocated line
 		free(line);
 	}
-	else if (extention(name, ".nds")
+	else if (strcmp(name, "slot1")==0
+			 || extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
 			 || extention(name, ".srl")
@@ -669,65 +671,72 @@ void getGameInfo(bool isDir, const char* name)
 		FILE *fp;
 		int ret;
 
-		// open file for reading info
-		fp = fopen(name, "rb");
-		if (fp == NULL)
+		if (strcmp(name, "slot1") == 0)
 		{
-			// banner sequence
-			fclose(fp);
-			return;
+			cardRead(0, &ndsHeader, sizeof(ndsHeader));
 		}
-
-		ret = fseek(fp, 0, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
 		else
-			ret = 0; // if seek fails set to !=1
+		{
+			// open file for reading info
+			fp = fopen(name, "rb");
+			if (fp == NULL)
+			{
+				// banner sequence
+				fclose(fp);
+				return;
+			}
 
-		if (ret != 1) {
-			// try again, but using regular header size
 			ret = fseek(fp, 0, SEEK_SET);
 			if (ret == 0)
-				ret = fread(&ndsHeader, 0x160, 1, fp); // read if seek succeed
+				ret = fread(&ndsHeader, sizeof(ndsHeader), 1, fp); // read if seek succeed
 			else
 				ret = 0; // if seek fails set to !=1
 
 			if (ret != 1) {
-				fclose(fp);
-				return;
-			}
-		}
+				// try again, but using regular header size
+				ret = fseek(fp, 0, SEEK_SET);
+				if (ret == 0)
+					ret = fread(&ndsHeader, 0x160, 1, fp); // read if seek succeed
+				else
+					ret = 0; // if seek fails set to !=1
 
-		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
-		fread(arm9StartSig, sizeof(u32), 4, fp);
-		if (arm9StartSig[0] == 0xE3A00301
-		 && arm9StartSig[1] == 0xE5800208
-		 && arm9StartSig[2] == 0xE3A00013
-		 && arm9StartSig[3] == 0xE129F000) {
-			isHomebrew = true;
-			isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
-			if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
-				if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
-				|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
-				|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)		// ikuReader v0.058
-				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
-				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
-				|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-					isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
+				if (ret != 1) {
+					fclose(fp);
+					return;
 				}
 			}
-		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
-			isHomebrew = true;
-			isModernHomebrew = true; // No need to use nds-bootstrap
-		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
-		 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
-			isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
-		} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
-		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
-		{
-			isDSiWare = true; // Is a DSiWare game
+
+			fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
+			fread(arm9StartSig, sizeof(u32), 4, fp);
+			if (arm9StartSig[0] == 0xE3A00301
+			 && arm9StartSig[1] == 0xE5800208
+			 && arm9StartSig[2] == 0xE3A00013
+			 && arm9StartSig[3] == 0xE129F000) {
+				isHomebrew = true;
+				isModernHomebrew = true; // Homebrew is recent (supports reading from SD without a DLDI driver)
+				if (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000) {
+					if ((ndsHeader.arm9binarySize == 0xC9F68 && ndsHeader.arm7binarySize == 0x12814)	// Colors! v1.1
+					|| (ndsHeader.arm9binarySize == 0x1B0864 && ndsHeader.arm7binarySize == 0xDB50)	// Mario Paint Composer DS v2 (Bullet Bill)
+					|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)		// ikuReader v0.058
+					|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
+					|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
+					|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
+						isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
+					}
+				}
+			} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
+				isHomebrew = true;
+				isModernHomebrew = true; // No need to use nds-bootstrap
+			} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
+			 || (ndsHeader.arm7executeAddress >= 0x037F0000 && ndsHeader.arm7destination >= 0x037F0000)) {
+				isHomebrew = true; // Homebrew is old (requires a DLDI driver to read from SD)
+			} else if ((ndsHeader.gameCode[0] == 0x48 && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+			 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+			 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
+			 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
+			{
+				isDSiWare = true; // Is a DSiWare game
+			}
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
@@ -749,39 +758,46 @@ void getGameInfo(bool isDir, const char* name)
 
 			return;
 		}
-		ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
+		if (strcmp(name, "slot1") == 0)
 		{
-			// try again, but using regular banner size
+			cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
+		}
+		else
+		{
 			ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
 			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
+				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
 			else
 				ret = 0; // if seek fails set to !=1
 
 			if (ret != 1)
 			{
-				fclose(fp);
+				// try again, but using regular banner size
+				ret = fseek(fp, ndsHeader.bannerOffset, SEEK_SET);
+				if (ret == 0)
+					ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
+				else
+					ret = 0; // if seek fails set to !=1
 
-				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
-				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
-				fclose(bannerFile);
+				if (ret != 1)
+				{
+					fclose(fp);
 
-				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-					cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
+					FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+					fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+					fclose(bannerFile);
+
+					for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
+						cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
+					}
+
+					return;
 				}
-
-				return;
 			}
-		}
 
-		// close file!
-		fclose(fp);
+			// close file!
+			fclose(fp);
+		}
 
 		loadFixedBanner();
 
@@ -881,60 +897,37 @@ void iconUpdate(bool isDir, const char* name)
 		}
 		// clean up the allocated line
 		free(line);
-	} else if (extention(name, ".nds")
+	} else if (strcmp(name, "slot1")==0
+			 || extention(name, ".nds")
 			 || extention(name, ".dsi")
 			 || extention(name, ".ids")
 			 || extention(name, ".srl")
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!
-		FILE *fp;
 		unsigned int iconTitleOffset;
 		int ret;
 
-		// open file for reading info
-		fp = fopen(name, "rb");
-		if (fp == NULL)
+		if (strcmp(name, "slot1") == 0)
 		{
-			// icon
-			clearIcon();
-			fclose(fp);
-			return;
+			cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
 		}
-
-		ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
-		if (ret == 0)
-			ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
 		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
 		{
-			// icon
-			loadUnkIcon();
-			fclose(fp);
-			return;
-		}
+			FILE *fp;
+			// open file for reading info
+			fp = fopen(name, "rb");
+			if (fp == NULL)
+			{
+				// icon
+				clearIcon();
+				fclose(fp);
+				return;
+			}
 
-		if (iconTitleOffset == 0)
-		{
-			// icon
-			loadUnkIcon();
-			fclose(fp);
-			return;
-		}
-		ret = fseek(fp, iconTitleOffset, SEEK_SET);
-		if (ret == 0)
-			ret = fread(&ndsBanner, sizeof (ndsBanner), 1, fp); // read if seek succeed
-		else
-			ret = 0; // if seek fails set to !=1
-
-		if (ret != 1)
-		{
-			// try again, but using regular banner size
-			ret = fseek(fp, iconTitleOffset, SEEK_SET);
+			ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
 			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
+				ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
 			else
 				ret = 0; // if seek fails set to !=1
 
@@ -945,10 +938,41 @@ void iconUpdate(bool isDir, const char* name)
 				fclose(fp);
 				return;
 			}
-		}
 
-		// close file!
-		fclose(fp);
+			if (iconTitleOffset == 0)
+			{
+				// icon
+				loadUnkIcon();
+				fclose(fp);
+				return;
+			}
+			ret = fseek(fp, iconTitleOffset, SEEK_SET);
+			if (ret == 0)
+				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
+			else
+				ret = 0; // if seek fails set to !=1
+
+			if (ret != 1)
+			{
+				// try again, but using regular banner size
+				ret = fseek(fp, iconTitleOffset, SEEK_SET);
+				if (ret == 0)
+					ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
+				else
+					ret = 0; // if seek fails set to !=1
+
+				if (ret != 1)
+				{
+					// icon
+					loadUnkIcon();
+					fclose(fp);
+					return;
+				}
+			}
+
+			// close file!
+			fclose(fp);
+		}
 
 		loadFixedBanner();
 
