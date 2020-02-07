@@ -68,7 +68,7 @@
 #include "sr_data_srllastran.h"	// For rebooting into the game
 
 #define gbamodeText "Start GBA game."
-#define gbarunnerText "Start GBARunner2"
+#define featureUnavailableText "This feature is unavailable."
 
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
@@ -164,7 +164,6 @@ bool pictochatFound = false;
 bool dlplayFound = false;
 bool pictochatReboot = false;
 bool dlplayReboot = false;
-bool gbaBiosFound = false;
 bool sdRemoveDetect = true;
 bool useGbarunner = false;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
@@ -851,16 +850,9 @@ void printNdsCartBannerText() {
 	}
 }
 
-/*void printGbaBannerText() {
-	if (useGbarunner && !gbaBiosFound) {
-		printSmallCentered(false, 24, iconYpos[3]+BOX_PY, "BINF: bios.bin not");
-		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, "found. Add GBA BIOS");
-		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1*2, "to enable GBARunner2.");
-	} else {
-		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1,
-							useGbarunner ? gbarunnerText : gbamodeText);
-	}
-}*/
+void printGbaBannerText() {
+	printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, isRegularDS ? gbamodeText : featureUnavailableText);
+}
 
 bool extention(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
@@ -917,12 +909,6 @@ int main(int argc, char **argv) {
 
 	LoadSettings();
 	
-	if ((access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) == 0)
-	|| (access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) == 0)
-	|| (access(secondaryDevice ? "fat:/_gba/bios.bin" : "sd:/_gba/bios.bin", F_OK) == 0)) {
-		gbaBiosFound = true;
-	}
-
 	if (isDSiMode() && arm7SCFGLocked) {
 		if (consoleModel < 2) {
 			pictochatFound = true;
@@ -1239,7 +1225,9 @@ int main(int argc, char **argv) {
 				} else if (isDSiMode() && !flashcardFound()) {
 					printNdsCartBannerText();
 				}
-				if (romFound[0]) {
+				if (!sdFound()) {
+					printGbaBannerText();
+				} else if (romFound[0]) {
 					titleUpdate(0, false, filename[0].c_str());
 				} else {
 					printLastPlayedText(3);
@@ -1359,7 +1347,9 @@ int main(int argc, char **argv) {
 								} else {
 									printLastPlayedText(0);
 								}
-								if (romFound[0]) {
+								if (!sdFound()) {
+									printGbaBannerText();
+								} else if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
 									printLastPlayedText(3);
@@ -1382,7 +1372,9 @@ int main(int argc, char **argv) {
 								} else {
 									printLastPlayedText(0);
 								}
-								if (romFound[0]) {
+								if (!sdFound()) {
+									printGbaBannerText();
+								} else if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
 									printLastPlayedText(3);
@@ -1439,7 +1431,9 @@ int main(int argc, char **argv) {
 								iconYpos[1] -= 6;
 								clearText();
 								printSmallCentered(false, 72, 6, RetTime().c_str());
-								if (romFound[0]) {
+								if (!sdFound()) {
+									printGbaBannerText();
+								} else if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
 									printLastPlayedText(3);
@@ -1499,7 +1493,9 @@ int main(int argc, char **argv) {
 								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
-								if (romFound[0]) {
+								if (!sdFound()) {
+									printGbaBannerText();
+								} else if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
 									printLastPlayedText(3);
@@ -1593,8 +1589,22 @@ int main(int argc, char **argv) {
 							}
 						  }
 						  secondaryDevice = false;
+						} else if (isRegularDS) {
+							// Switch to GBA mode
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							for (int i = 0; i < 50; i++) {
+								iconYpos[3] -= 6;
+								clearText();
+								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
+								}
+								printGbaBannerText();
+								swiWaitForVBlank();
+							}
+							gbaSwitch();
 						} else {
-							// To be replaced with switching to GBA mode
 							mmEffectEx(&snd_wrong);
 						} 
 						break;

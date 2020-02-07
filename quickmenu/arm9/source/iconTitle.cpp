@@ -53,7 +53,6 @@ extern bool extention(const std::string& filename, const char* ext);
 
 extern int theme;
 extern int colorMode;
-extern bool useGbarunner;
 extern bool animateDsiIcons;
 extern int consoleModel;
 
@@ -61,7 +60,7 @@ extern u16 convertVramColorToGrayscale(u16 val);
 
 static int iconTexID[2][8];
 static int plgTexID;
-static int gbaTexID;
+static int gbaModeTexID;
 static int gbTexID;
 static int nesTexID;
 static int smsTexID;
@@ -83,7 +82,7 @@ static glImage plgIcon[1];
 
 static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
 
-static glImage gbaIcon[1];
+static glImage gbaModeIcon[1];
 static glImage gbIcon[(32 / 32) * (64 / 32)];
 static glImage nesIcon[1];
 static glImage smsIcon[1];
@@ -228,39 +227,16 @@ void loadConsoleIcons()
 				(u8*) icon_plgBitmap // Raw image data
 				);
 
-	// GBA
-	glDeleteTextures(1, &gbaTexID);
-	
-	if (useGbarunner) {
-		newPalette = (u16*)icon_gbaPal;
-		if (colorMode == 1) {
-			for (int i2 = 0; i2 < 16; i2++) {
-				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-			}
-		}
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
-					32, // sprite width
-					32, // sprite height
-					32, // bitmap image width
-					32, // bitmap image height
-					GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
-					TEXTURE_SIZE_32, // sizeY for glTexImage2D() in videoGL.h
-					TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-					16, // Length of the palette to use (16 colors)
-					(u16*) newPalette, // Image palette
-					(u8*) icon_gbaBitmap // Raw image data
-					);
-	} else {
+	if (!isDSiMode()) {
+		// GBA Mode
 		newPalette = (u16*)icon_gbamodePal;
 		if (colorMode == 1) {
 			for (int i2 = 0; i2 < 16; i2++) {
 				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
 			}
 		}
-		gbaTexID =
-		glLoadTileSet(gbaIcon, // pointer to glImage array
+		gbaModeTexID =
+		glLoadTileSet(gbaModeIcon, // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap width
@@ -436,7 +412,7 @@ void drawIconPlg(int Xpos, int Ypos)
 }
 void drawIconGBA(int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaIcon);
+	glSprite(Xpos, Ypos, GL_FLIP_NONE, gbaModeIcon);
 }
 void drawIconGB(int Xpos, int Ypos)
 {
