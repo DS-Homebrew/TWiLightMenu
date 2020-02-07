@@ -1140,7 +1140,7 @@ int main(int argc, char **argv) {
 		}
 	} else if (isDSiMode() && !flashcardFound()) {
 		if (REG_SCFG_MC == 0x11) {
-			loadBoxArt("nitro:/graphics/boxart_unknown.png");
+			if (showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png");
 			cardEjected = true;
 		} else {
 			refreshNdsCard();
