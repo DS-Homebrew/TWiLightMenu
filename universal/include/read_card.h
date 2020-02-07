@@ -36,6 +36,7 @@
 extern "C" {
 #endif
 
+extern bool cardInited;
 extern sNDSHeaderExt ndsCardHeader;
 
 int cardInit (void);

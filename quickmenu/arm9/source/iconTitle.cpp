@@ -746,7 +746,8 @@ void getGameInfo(bool isDir, const char* name)
 
 		if (ndsHeader.bannerOffset == 0)
 		{
-			fclose(fp);
+			if (strcmp(name, "slot1") != 0)
+				fclose(fp);
 
 			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
@@ -755,6 +756,7 @@ void getGameInfo(bool isDir, const char* name)
 			for (int i = 0; i < 128; i++) {
 				cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
 			}
+			infoFound = false;
 
 			return;
 		}
@@ -910,7 +912,15 @@ void iconUpdate(bool isDir, const char* name)
 
 		if (strcmp(name, "slot1") == 0)
 		{
-			cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
+			if ((ndsCardHeader.bannerOffset > 0) && cardInited)
+			{
+				cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
+			}
+			else
+			{
+				loadUnkIcon();
+				return;
+			}
 		}
 		else
 		{

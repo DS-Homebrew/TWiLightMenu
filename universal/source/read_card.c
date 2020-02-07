@@ -48,8 +48,8 @@ typedef union
 	u32 key;
 } GameCode;
 
+bool cardInited = false;
 static bool twlBlowfish = false;
-
 static bool normalChip = false;	// As defined by GBAtek, normal chip secure area is accessed in blocks of 0x200, other chip in blocks of 0x1000
 static u32 portFlags = 0;
 static u32 headerData[0x1000/sizeof(u32)] = {0};
@@ -154,7 +154,7 @@ static void cardDelay (u16 readTimeout) {
 }
 
 static void switchToTwlBlowfish(void) {
-	if (twlBlowfish || ndsCardHeader.unitCode == 0) return;
+	if (!cardInited || twlBlowfish || ndsCardHeader.unitCode == 0) return;
 
 	// Used for dumping the DSi arm9i/7i binaries
 
@@ -320,7 +320,7 @@ int cardInit (void)
 		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
 		(void*)headerData, 0x200/sizeof(u32));
 
-	tonccpy(&ndsCardHeader, headerData, 0x200);
+	tonccpy(&ndsCardHeader, headerData, sizeof(sNDSHeaderExt));
 
 	if ((ndsCardHeader.unitCode != 0) || (ndsCardHeader.dsi_flags != 0))
 	{
@@ -338,6 +338,9 @@ int cardInit (void)
 
 	// Check header CRC
 	if (ndsCardHeader.headerCRC16 != swiCRC16(0xFFFF, (void*)&ndsCardHeader, 0x15E)) {
+		toncset(&ndsCardHeader, 0, sizeof(sNDSHeaderExt));
+		toncset(headerData, 0, 0x1000);
+		cardInited = false;
 		return ERR_HEAD_CRC;
 	}
 
@@ -441,6 +444,7 @@ int cardInit (void)
 		//return normalChip ? ERR_SEC_NORM : ERR_SEC_OTHR;
 	}
 
+	cardInited = true;
 	return ERR_NONE;
 }
 
@@ -452,7 +456,7 @@ void cardRead (u32 src, void* dest, size_t len)
 		// Read header
 		tonccpy (dest, (u8*)headerData + src, len);
 		return;
-	} else if (src < CARD_SECURE_AREA_OFFSET) {
+	} else if ((src < CARD_SECURE_AREA_OFFSET) || !cardInited) {
 		toncset (dest, 0, len);
 		return;
 	} else if (src < CARD_DATA_OFFSET) {

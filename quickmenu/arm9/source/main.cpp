@@ -817,20 +817,21 @@ void printLastPlayedText() {
 void refreshNdsCard() {
 	if (cardRefreshed) return;
 
-	cardInit();
-	char game_TID[5] = {0};
-	tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
+	if ((cardInit() == 0) && showBoxArt) {
+		char game_TID[5] = {0};
+		tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
+
+		char boxArtPath[256];
+		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
+		loadBoxArt(boxArtPath);	// Load box art
+	} else if (showBoxArt) {
+		loadBoxArt("nitro:/graphics/boxart_unknown.png");
+	}
 
 	getGameInfo(false, "slot1");
 	iconUpdate (false, "slot1");
 	bnrRomType = 0;
 	boxArtType = 0;
-
-	if (showBoxArt) {
-		char boxArtPath[256];
-		sprintf (boxArtPath, (sdFound() ? "sd:/_nds/TWiLightMenu/boxart/%s.png" : "fat:/_nds/TWiLightMenu/boxart/%s.png"), game_TID);
-		loadBoxArt(boxArtPath);	// Load box art
-	}
 
 	cardRefreshed = true;
 	cardEjected = false;
