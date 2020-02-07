@@ -298,35 +298,42 @@ void vBlankHandler()
 
 		glColor(RGB15(31, 31-(3*blfLevel), 31-(6*blfLevel)));
 		if (startMenu) {
-			if (isDSiMode() && (launchType == 0) && cardEjected) {
+			if (isDSiMode() && cardEjected) {
 				//glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 				//glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[(REG_SCFG_MC == 0x11) ? 1 : 0]);
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[1]);
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
-				if (bnrRomType == 9) drawIconPlg(40, iconYpos[0]+6);
-				else if (bnrRomType == 8) drawIconSNES(40, iconYpos[0]+6);
-				else if (bnrRomType == 7) drawIconMD(40, iconYpos[0]+6);
-				else if (bnrRomType == 6) drawIconGG(40, iconYpos[0]+6);
-				else if (bnrRomType == 5) drawIconSMS(40, iconYpos[0]+6);
-				else if (bnrRomType == 4) drawIconNES(40, iconYpos[0]+6);
-				else if (bnrRomType == 3) drawIconGBC(40, iconYpos[0]+6);
-				else if (bnrRomType == 2) drawIconGB(40, iconYpos[0]+6);
-				else if (bnrRomType == 1) glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, gbaIconImage);
-				else drawIcon(40, iconYpos[0]+6);
+				drawIcon(0, 40, iconYpos[0]+6);
 			}
-			if (bnrWirelessIcon > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
-			// Playback animated icons
-			if(bnriconisDSi==true) {
-				playBannerSequence();
+			if (bnrWirelessIcon[0] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
+			// Playback animated icon
+			if(bnriconisDSi[0]==true) {
+				playBannerSequence(0);
 			}
 			glSprite(33, iconYpos[1], GL_FLIP_NONE, &pictodlpImage[1-pictochatFound]);
 			glSprite(129, iconYpos[2], GL_FLIP_NONE, &pictodlpImage[3-dlplayFound]);
-			glSprite(33, iconYpos[3], GL_FLIP_NONE, &iconboxImage[1-gbaBiosFound]);
-			glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
+			//glSprite(33, iconYpos[3], GL_FLIP_NONE, &iconboxImage[1-gbaBiosFound]);
+			glSprite(33, iconYpos[3], GL_FLIP_NONE, &iconboxImage[0]);
+			//glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
+			if (bnrRomType == 9) drawIconPlg(40, iconYpos[3]+6);
+			else if (bnrRomType == 8) drawIconSNES(40, iconYpos[3]+6);
+			else if (bnrRomType == 7) drawIconMD(40, iconYpos[3]+6);
+			else if (bnrRomType == 6) drawIconGG(40, iconYpos[3]+6);
+			else if (bnrRomType == 5) drawIconSMS(40, iconYpos[3]+6);
+			else if (bnrRomType == 4) drawIconNES(40, iconYpos[3]+6);
+			else if (bnrRomType == 3) drawIconGBC(40, iconYpos[3]+6);
+			else if (bnrRomType == 2) drawIconGB(40, iconYpos[3]+6);
+			else if (bnrRomType == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
+			else drawIcon(1, 40, iconYpos[3]+6);
 			if (isDSiMode() && consoleModel < 2) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
+			}
+			if (bnrWirelessIcon[1] > 0) glSprite(207, iconYpos[3]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[1]-1) & 31]);
+			// Playback animated icon
+			if(bnriconisDSi[1]==true) {
+				playBannerSequence(1);
 			}
 			glSprite(117, iconYpos[5], GL_FLIP_NONE, settingsIconImage);
 			glSprite(235, iconYpos[6], GL_FLIP_NONE, &cornerIcons[3]);

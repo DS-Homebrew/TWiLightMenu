@@ -9,10 +9,10 @@
 
 void iconTitleInit();
 void loadConsoleIcons();
-void getGameInfo(bool isDir, const char* name);
-void iconUpdate(bool isDir, const char* name);
-void titleUpdate(bool isDir, const char* name);
-void drawIcon(int Xpos, int Ypos);
+void getGameInfo(int num, bool isDir, const char* name);
+void iconUpdate(int num, bool isDir, const char* name);
+void titleUpdate(int num, bool isDir, const char* name);
+void drawIcon(int num, int Xpos, int Ypos);
 void drawIconPlg(int Xpos, int Ypos);
 void drawIconGBA(int Xpos, int Ypos);
 void drawIconGB(int Xpos, int Ypos);

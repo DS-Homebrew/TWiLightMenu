@@ -257,15 +257,15 @@ int grabTID(FILE* ndsFile, char *buf);
 u32 getSDKVersion(FILE* ndsFile);
 
 // bnriconframenum[]
-extern int bnriconPalLine;
-extern int bnriconframenumY;
-extern int bannerFlip;
+extern int bnriconPalLine[2];
+extern int bnriconframenumY[2];
+extern int bannerFlip[2];
 
 // bnriconisDSi[]
 extern bool isDirectory;
 extern int bnrRomType;
-extern bool bnriconisDSi;
-extern int bnrWirelessIcon;		// 0 = None, 1 = Local, 2 = WiFi
+extern bool bnriconisDSi[2];
+extern int bnrWirelessIcon[2];		// 0 = None, 1 = Local, 2 = WiFi
 extern bool isDSiWare;
 extern bool isHomebrew;
 extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header
@@ -274,17 +274,17 @@ extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has D
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence();
+void grabBannerSequence(int num);
 
 /**
  * Clear loaded banner sequence.
  */
-void clearBannerSequence();
+void clearBannerSequence(int num);
 
 /**
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence();
+void playBannerSequence(int num);
 
 #endif // NDS_HEADER2

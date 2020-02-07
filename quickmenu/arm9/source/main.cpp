@@ -810,8 +810,8 @@ void dsCardLaunch() {
 }
 
 void printLastPlayedText() {
-	printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, "Last-played game");
-	printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "will appear here.");
+	printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing2, "Last-played game");
+	printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing3, "will appear here.");
 }
 
 void refreshNdsCard() {
@@ -828,8 +828,8 @@ void refreshNdsCard() {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png");
 	}
 
-	getGameInfo(false, "slot1");
-	iconUpdate (false, "slot1");
+	getGameInfo(0, false, "slot1");
+	iconUpdate (0, false, "slot1");
 	bnrRomType = 0;
 	boxArtType = 0;
 
@@ -841,13 +841,14 @@ void printNdsCartBannerText() {
 	if (cardEjected) {
 		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing2, "There is no Game Card");
 		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing3, "inserted.");
+	} else if (arm7SCFGLocked) {
+		printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, "Start Game Card");
 	} else {
-		//printSmallCentered(false, 24, iconYpos[0]+BOX_PY+BOX_PY_spacing1, "Start Game Card");
-		titleUpdate(false, "slot1");
+		titleUpdate(0, false, "slot1");
 	}
 }
 
-void printGbaBannerText() {
+/*void printGbaBannerText() {
 	if (useGbarunner && !gbaBiosFound) {
 		printSmallCentered(false, 24, iconYpos[3]+BOX_PY, "BINF: bios.bin not");
 		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1, "found. Add GBA BIOS");
@@ -856,7 +857,7 @@ void printGbaBannerText() {
 		printSmallCentered(false, 24, iconYpos[3]+BOX_PY+BOX_PY_spacing1,
 							useGbarunner ? gbarunnerText : gbamodeText);
 	}
-}
+}*/
 
 bool extention(const std::string& filename, const char* ext) {
 	if(strcasecmp(filename.c_str() + filename.size() - strlen(ext), ext)) {
@@ -1060,8 +1061,8 @@ int main(int argc, char **argv) {
 		}
 
 		if (extention(filename, ".nds") || extention(filename, ".dsi") || extention(filename, ".ids") || extention(filename, ".app") || extention(filename, ".srl") || extention(filename, ".argv")) {
-			getGameInfo(false, filename.c_str());
-			iconUpdate (false, filename.c_str());
+			getGameInfo(1, false, filename.c_str());
+			iconUpdate (1, false, filename.c_str());
 			bnrRomType = 0;
 			boxArtType = 0;
 		} else if (extention(filename, ".plg") || extention(filename, ".rvid") || extention(filename, ".mp4")) {
@@ -1139,7 +1140,8 @@ int main(int argc, char **argv) {
 			}
 			loadBoxArt(boxArtPath);	// Load box art
 		}
-	} else if (isDSiMode() && !flashcardFound()) {
+	}
+	if (isDSiMode() && !flashcardFound()) {
 		if (REG_SCFG_MC == 0x11) {
 			if (showBoxArt) loadBoxArt("nitro:/graphics/boxart_unknown.png");
 			cardEjected = true;
@@ -1165,16 +1167,16 @@ int main(int argc, char **argv) {
 			do {
 				clearText();
 				printSmallCentered(false, 72, 6, RetTime().c_str());
-				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
+				if (isDSiMode() && !flashcardFound()) {
 					printNdsCartBannerText();
-				} else if (romFound) {
-					titleUpdate(false, filename.c_str());
+				}
+				if (romFound) {
+					titleUpdate(1, false, filename.c_str());
 				} else {
 					printLastPlayedText();
 				}
-				printGbaBannerText();
 
-				if (isDSiMode() && launchType == 0 && !flashcardFound()) {
+				if (isDSiMode() && !flashcardFound()) {
 					if (REG_SCFG_MC == 0x11) {
 						if (cardRefreshed && showBoxArt) {
 							loadBoxArt("nitro:/graphics/boxart_unknown.png");
@@ -1271,49 +1273,8 @@ int main(int argc, char **argv) {
 					default:
 						break;
 					case 0:
-						if (launchType == -1) {
-							showCursor = false;
-							fadeType = false;	// Fade to white
-							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 50; i++) {
-								iconYpos[0] -= 6;
-								clearText();
-								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
-									printSmallCentered(false, 72, 6, RetTime().c_str());
-								}
-								if (romFound) {
-									titleUpdate(false, filename.c_str());
-								} else {
-									printLastPlayedText();
-								}
-								printGbaBannerText();
-								swiWaitForVBlank();
-							}
-							loadROMselect();
-						} else if (launchType > 0) {
-							showCursor = false;
-							fadeType = false;	// Fade to white
-							mmEffectEx(&snd_launch);
-							for (int i = 0; i < 50; i++) {
-								iconYpos[0] -= 6;
-								clearText();
-								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
-									printSmallCentered(false, 72, 6, RetTime().c_str());
-								}
-								if (romFound) {
-									titleUpdate(false, filename.c_str());
-								} else {
-									printLastPlayedText();
-								}
-								printGbaBannerText();
-								swiWaitForVBlank();
-							}
-							if (romFound) {
-								applaunch = true;
-							} else {
-								loadROMselect();
-							}
-						} else if (launchType == 0 && !flashcardFound() && REG_SCFG_MC != 0x11) {
+						// Launch Slot-1
+						if (!flashcardFound() && REG_SCFG_MC != 0x11) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
@@ -1324,7 +1285,11 @@ int main(int argc, char **argv) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
 								printNdsCartBannerText();
-								printGbaBannerText();
+								if (romFound) {
+									titleUpdate(1, false, filename.c_str());
+								} else {
+									printLastPlayedText();
+								}
 								swiWaitForVBlank();
 							}
 
@@ -1351,7 +1316,11 @@ int main(int argc, char **argv) {
 								iconYpos[1] -= 6;
 								clearText();
 								printSmallCentered(false, 72, 6, RetTime().c_str());
-								printGbaBannerText();
+								if (romFound) {
+									titleUpdate(1, false, filename.c_str());
+								} else {
+									printLastPlayedText();
+								}
 								swiWaitForVBlank();
 							}
 
@@ -1407,7 +1376,11 @@ int main(int argc, char **argv) {
 								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
-								printGbaBannerText();
+								if (romFound) {
+									titleUpdate(1, false, filename.c_str());
+								} else {
+									printLastPlayedText();
+								}
 								swiWaitForVBlank();
 							}
 
@@ -1453,10 +1426,8 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 3:
-						// Switch to GBA mode
-						if ((useGbarunner && gbaBiosFound)
-						|| (!useGbarunner))
-						{
+						// Launch last-run ROM
+						if (launchType == -1) {
 							showCursor = false;
 							fadeType = false;	// Fade to white
 							mmEffectEx(&snd_launch);
@@ -1466,47 +1437,36 @@ int main(int argc, char **argv) {
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
-								printGbaBannerText();
+								if (romFound) {
+									titleUpdate(1, false, filename.c_str());
+								} else {
+									printLastPlayedText();
+								}
 								swiWaitForVBlank();
 							}
-						}
-						if (useGbarunner && !gbaBiosFound) {
-							mmEffectEx(&snd_wrong);
-						}
-
-						if (useGbarunner && gbaBiosFound) {
-							if (secondaryDevice) {
-								const char* gbaRunner2Path = gbar2DldiAccess ? "fat:/_nds/GBARunner2_arm7dldi_ds.nds" : "fat:/_nds/GBARunner2_arm9dldi_ds.nds";
-								if (isDSiMode()) {
-									gbaRunner2Path = consoleModel>0 ? "fat:/_nds/GBARunner2_arm7dldi_3ds.nds" : "fat:/_nds/GBARunner2_arm7dldi_dsi.nds";
+							loadROMselect();
+						} else if (launchType > 0) {
+							showCursor = false;
+							fadeType = false;	// Fade to white
+							mmEffectEx(&snd_launch);
+							for (int i = 0; i < 50; i++) {
+								iconYpos[3] -= 6;
+								clearText();
+								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
+									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
-								if (useBootstrap) {
-									int err = runNdsFile (gbaRunner2Path, 0, NULL, true, true, false, true, false);
-									iprintf ("Start failed. Error %i\n", err);
+								if (romFound) {
+									titleUpdate(1, false, filename.c_str());
 								} else {
-									loadGameOnFlashcard(gbaRunner2Path, false);
+									printLastPlayedText();
 								}
-							} else {
-								std::string bootstrapPath = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
-
-								std::vector<char*> argarray;
-								argarray.push_back(strdup(bootstrapPath.c_str()));
-								argarray.at(0) = (char*)bootstrapPath.c_str();
-
-								CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
-								bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
-								bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
-								bootstrapini.SaveIniFile( "sd:/_nds/nds-bootstrap.ini" );
-								int err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
-								iprintf ("Start failed. Error %i\n", err);
+								swiWaitForVBlank();
 							}
-						} else if (!useGbarunner) {
-							gbaSwitch();
+							if (romFound) {
+								applaunch = true;
+							} else {
+								loadROMselect();
+							}
 						}
 						break;
 					case 4:

@@ -59,7 +59,7 @@ extern int consoleModel;
 
 extern u16 convertVramColorToGrayscale(u16 val);
 
-static int iconTexID[8];
+static int iconTexID[2][8];
 static int plgTexID;
 static int gbaTexID;
 static int gbTexID;
@@ -74,14 +74,14 @@ sNDSBannerExt ndsBanner;
 #define TITLE_CACHE_SIZE 0x80
 
 static bool infoFound = false;
-static u16 cachedTitle[TITLE_CACHE_SIZE]; 
-static char titleToDisplay[3][384]; 
+static u16 cachedTitle[2][TITLE_CACHE_SIZE]; 
+static char titleToDisplay[2][3][384]; 
 
 static u32 arm9StartSig[4];
 
 static glImage plgIcon[1];
 
-static glImage ndsIcon[8][(32 / 32) * (256 / 32)];
+static glImage ndsIcon[2][8][(32 / 32) * (256 / 32)];
 
 static glImage gbaIcon[1];
 static glImage gbIcon[(32 / 32) * (64 / 32)];
@@ -102,21 +102,21 @@ void iconTitleInit()
 	tilesModified = new u8[(32 * 256) / 2];
 }
 
-static inline void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3)
+static inline void writeBannerText(int num, int textlines, const char* text1, const char* text2, const char* text3)
 {
 	switch(textlines) {
 		case 0:
 		default:
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing3, text2);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY, text1);
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY, text1);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -140,7 +140,7 @@ static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl)
 
 int loadIcon_loopTimes = 1;
 
-void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
+void loadIcon(int num, u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2], u16(*palSrc)[16])
 {
 	convertIconTilesToRaw(tilesSrc, tilesModified, twl);
 
@@ -154,7 +154,7 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 	}
 
 	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
 	for (int i = 0; i < loadIcon_loopTimes; i++) {
 		if (colorMode == 1) {
@@ -162,8 +162,8 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 				*(palSrc+i2+(i*16)) = convertVramColorToGrayscale(*(palSrc+i2+(i*16)));
 			}
 		}
-		iconTexID[i] =
-		glLoadTileSet(ndsIcon[i], // pointer to glImage array
+		iconTexID[num][i] =
+		glLoadTileSet(ndsIcon[num][i], // pointer to glImage array
 					32, // sprite width
 					32, // sprite height
 					32, // bitmap image width
@@ -179,13 +179,13 @@ void loadIcon(u8 *tilesSrc, u16 *palSrc, bool twl)//(u8(*tilesSrc)[(32 * 32) / 2
 	}
 }
 
-void loadUnkIcon()
+void loadUnkIcon(int num)
 {
 	for (int i = 0; i < 8; i++) {
-		glDeleteTextures(1, &iconTexID[i]);
+		glDeleteTextures(1, &iconTexID[num][i]);
 	}
-	iconTexID[0] =
-	glLoadTileSet(ndsIcon[0], // pointer to glImage array
+	iconTexID[num][0] =
+	glLoadTileSet(ndsIcon[num][0], // pointer to glImage array
 				32, // sprite width
 				32, // sprite height
 				32, // bitmap image width
@@ -420,14 +420,14 @@ void loadConsoleIcons()
 				);
 }
 
-static void clearIcon()
+static void clearIcon(int num)
 {
-	loadIcon(clearTiles, blackPalette, true);
+	loadIcon(num, clearTiles, blackPalette, true);
 }
 
-void drawIcon(int Xpos, int Ypos)
+void drawIcon(int num, int Xpos, int Ypos)
 {
-	glSprite(Xpos, Ypos, bannerFlip, &ndsIcon[bnriconPalLine][bnriconframenumY & 31]);
+	glSprite(Xpos, Ypos, bannerFlip[num], &ndsIcon[num][bnriconPalLine[num]][bnriconframenumY[num] & 31]);
 }
 
 void drawIconPlg(int Xpos, int Ypos)
@@ -573,13 +573,13 @@ void loadFixedBanner(void) {
 	}
 }
 
-void getGameInfo(bool isDir, const char* name)
+void getGameInfo(int num, bool isDir, const char* name)
 {
-	bnriconPalLine = 0;
-	bnriconframenumY = 0;
-	bannerFlip = GL_FLIP_NONE;
-	bnriconisDSi = false;
-	bnrWirelessIcon = 0;
+	bnriconPalLine[num] = 0;
+	bnriconframenumY[num] = 0;
+	bannerFlip[num] = GL_FLIP_NONE;
+	bnriconisDSi[num] = false;
+	bnrWirelessIcon[num] = 0;
 	isDSiWare = false;
 
 	if (extention(name, ".argv")) {
@@ -593,7 +593,7 @@ void getGameInfo(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL)
 		{
-			clearBannerSequence();
+			clearBannerSequence(num);
 			fclose(fp);
 			return;
 		}
@@ -635,27 +635,27 @@ void getGameInfo(bool isDir, const char* name)
 				if (rc != 0)
 				{
 					// stat failed
-					clearBannerSequence();
+					clearBannerSequence(num);
 				}
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
-					clearBannerSequence();
+					clearBannerSequence(num);
 				}
 				else
 				{
-					getGameInfo(false, p);
+					getGameInfo(num, false, p);
 				}
 			}
 			else
 			{
 				// this is not an nds/app file!
-				clearBannerSequence();
+				clearBannerSequence(num);
 			}
 		}
 		else
 		{
-			clearBannerSequence();
+			clearBannerSequence(num);
 		}
 		// clean up the allocated line
 		free(line);
@@ -740,9 +740,9 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		if (ndsHeader.dsi_flags & BIT(4))
-			bnrWirelessIcon = 1;
+			bnrWirelessIcon[num] = 1;
 		else if (ndsHeader.dsi_flags & BIT(3))
-			bnrWirelessIcon = 2;
+			bnrWirelessIcon[num] = 2;
 
 		if (ndsHeader.bannerOffset == 0)
 		{
@@ -754,7 +754,7 @@ void getGameInfo(bool isDir, const char* name)
 			fclose(bannerFile);
 
 			for (int i = 0; i < 128; i++) {
-				cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
+				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 			}
 			infoFound = false;
 
@@ -790,7 +790,7 @@ void getGameInfo(bool isDir, const char* name)
 					fclose(bannerFile);
 
 					for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-						cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
+						cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 					}
 
 					return;
@@ -806,19 +806,19 @@ void getGameInfo(bool isDir, const char* name)
 		DC_FlushAll();
 
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-			cachedTitle[i] = ndsBanner.titles[setGameLanguage][i];
+			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 		}
 		infoFound = true;
 
 		// banner sequence
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			grabBannerSequence();
-			bnriconisDSi = true;
+			grabBannerSequence(num);
+			bnriconisDSi[num] = true;
 		}
 	}
 }
 
-void iconUpdate(bool isDir, const char* name)
+void iconUpdate(int num, bool isDir, const char* name)
 {
 	clearText(false);
 
@@ -833,7 +833,7 @@ void iconUpdate(bool isDir, const char* name)
 		fp = fopen(name, "rb");
 		if (fp == NULL)
 		{
-			clearIcon();
+			clearIcon(num);
 			fclose(fp);
 			return;
 		}
@@ -875,27 +875,27 @@ void iconUpdate(bool isDir, const char* name)
 				if (rc != 0)
 				{
 					// stat failed
-					clearIcon();
+					clearIcon(num);
 				}
 				else if (S_ISDIR(st.st_mode))
 				{
 					// this is a directory!
-					clearIcon();
+					clearIcon(num);
 				}
 				else
 				{
-					iconUpdate(false, p);
+					iconUpdate(num, false, p);
 				}
 			}
 			else
 			{
 				// this is not an nds/app file!
-				clearIcon();
+				clearIcon(num);
 			}
 		}
 		else
 		{
-			clearIcon();
+			clearIcon(num);
 		}
 		// clean up the allocated line
 		free(line);
@@ -918,7 +918,7 @@ void iconUpdate(bool isDir, const char* name)
 			}
 			else
 			{
-				loadUnkIcon();
+				loadUnkIcon(num);
 				return;
 			}
 		}
@@ -930,7 +930,7 @@ void iconUpdate(bool isDir, const char* name)
 			if (fp == NULL)
 			{
 				// icon
-				clearIcon();
+				clearIcon(num);
 				fclose(fp);
 				return;
 			}
@@ -944,7 +944,7 @@ void iconUpdate(bool isDir, const char* name)
 			if (ret != 1)
 			{
 				// icon
-				loadUnkIcon();
+				loadUnkIcon(num);
 				fclose(fp);
 				return;
 			}
@@ -952,7 +952,7 @@ void iconUpdate(bool isDir, const char* name)
 			if (iconTitleOffset == 0)
 			{
 				// icon
-				loadUnkIcon();
+				loadUnkIcon(num);
 				fclose(fp);
 				return;
 			}
@@ -974,7 +974,7 @@ void iconUpdate(bool isDir, const char* name)
 				if (ret != 1)
 				{
 					// icon
-					loadUnkIcon();
+					loadUnkIcon(num);
 					fclose(fp);
 					return;
 				}
@@ -989,14 +989,14 @@ void iconUpdate(bool isDir, const char* name)
 		// icon
 		DC_FlushAll();
 		if(animateDsiIcons && ndsBanner.version == NDS_BANNER_VER_DSi) {
-			loadIcon(ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
+			loadIcon(num, ndsBanner.dsi_icon[0], ndsBanner.dsi_palette[0], true);
 		} else {
-			loadIcon(ndsBanner.icon, ndsBanner.palette, false);
+			loadIcon(num, ndsBanner.icon, ndsBanner.palette, false);
 		}
 	}
 }
 
-void titleUpdate(bool isDir, const char* name)
+void titleUpdate(int num, bool isDir, const char* name)
 {
 	if (extention(name, ".plg")
 	 || extention(name, ".rvid")
@@ -1013,7 +1013,7 @@ void titleUpdate(bool isDir, const char* name)
 	 || extention(name, ".smc")
 	 || extention(name, ".sfc"))
 	{
-		writeBannerText(0, name, "", "");
+		writeBannerText(num, 0, name, "", "");
 	}
 	else
 	{
@@ -1027,28 +1027,28 @@ void titleUpdate(bool isDir, const char* name)
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
 		{
 			// todo: fix crash on titles that are too long (homebrew)
-			if ((cachedTitle[i] == 0x000A) || (cachedTitle[i] == 0xFFFF)) {
-				titleToDisplay[bannerlines][charIndex] = 0;
+			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
+				titleToDisplay[num][bannerlines][charIndex] = 0;
 				bannerlines++;
 				charIndex = 0;
-			} else if (cachedTitle[i] <= 0x007F) { // ASCII are one UTF-8 character
-				titleToDisplay[bannerlines][charIndex++] = cachedTitle[i];
-			} else if (cachedTitle[i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
-				titleToDisplay[bannerlines][charIndex++] = (0xC0 | ((cachedTitle[i] & 0x7C0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[i] & 0x03F));
+			} else if (cachedTitle[num][i] <= 0x007F) { // ASCII are one UTF-8 character
+				titleToDisplay[num][bannerlines][charIndex++] = cachedTitle[num][i];
+			} else if (cachedTitle[num][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
+				titleToDisplay[num][bannerlines][charIndex++] = (0xC0 | ((cachedTitle[num][i] & 0x7C0) >> 6));
+				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x03F));
 			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
-				titleToDisplay[bannerlines][charIndex++] = (0xE0 | ((cachedTitle[i] & 0xF000) >> 12));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | ((cachedTitle[i] & 0x0FC0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[i] & 0x003F));
+				titleToDisplay[num][bannerlines][charIndex++] = (0xE0 | ((cachedTitle[num][i] & 0xF000) >> 12));
+				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | ((cachedTitle[num][i] & 0x0FC0) >> 6));
+				titleToDisplay[num][bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x003F));
 			}
 		}
 
 		// text
 		if (infoFound) {
-			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+			writeBannerText(num, bannerlines, titleToDisplay[num][0], titleToDisplay[num][1], titleToDisplay[num][2]);
 		} else {
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing2, name);
-			printSmallCentered(false, BOX_PX, iconYpos[0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, name);
+			printSmallCentered(false, BOX_PX, iconYpos[num== 1 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[num][0]);
 		}
 		
 	}

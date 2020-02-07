@@ -47,18 +47,18 @@ u32 getSDKVersion(FILE *ndsFile)
 }
 
 // bnriconframeseq[]
-static u16 bnriconframeseq[64] = {0x0000};
+static u16 bnriconframeseq[2][64] = {0x0000};
 
 // bnriconframenum[]
-int bnriconPalLine = 0;
-int bnriconframenumY = 0;
-int bannerFlip = GL_FLIP_NONE;
+int bnriconPalLine[2] = {0};
+int bnriconframenumY[2] = {0};
+int bannerFlip[2] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
 bool isDirectory = false;
 int bnrRomType = 0;
-bool bnriconisDSi = false;
-int bnrWirelessIcon = 0; 			// 0 = None, 1 = Local, 2 = WiFi
+bool bnriconisDSi[2] = {false};
+int bnrWirelessIcon[2] = {0}; 			// 0 = None, 1 = Local, 2 = WiFi
 bool isDSiWare = false;
 bool isHomebrew = false;
 bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
@@ -67,74 +67,74 @@ bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has 
  * Get banner sequence from banner file.
  * @param binFile Banner file.
  */
-void grabBannerSequence()
+void grabBannerSequence(int num)
 {
 	for (int i = 0; i < 64; i++)
 	{
-		bnriconframeseq[i] = ndsBanner.dsi_seq[i];
+		bnriconframeseq[num][i] = ndsBanner.dsi_seq[i];
 	}
 }
 
 /**
  * Clear loaded banner sequence.
  */
-void clearBannerSequence()
+void clearBannerSequence(int num)
 {
 	for (int i = 0; i < 64; i++)
 	{
-		bnriconframeseq[i] = 0x0000;
+		bnriconframeseq[num][i] = 0x0000;
 	}
 }
 
-static u16 bannerDelayNum = 0x0000;
-int currentbnriconframeseq = 0;
+static u16 bannerDelayNum[2] = {0x0000};
+int currentbnriconframeseq[2] = {0};
 
 /**
  * Play banner sequence.
  * @param binFile Banner file.
  */
-void playBannerSequence()
+void playBannerSequence(int num)
 {
-	if (bnriconframeseq[currentbnriconframeseq] == 0x0001 && bnriconframeseq[currentbnriconframeseq + 1] == 0x0100)
+	if (bnriconframeseq[num][currentbnriconframeseq[num]] == 0x0001 && bnriconframeseq[num][currentbnriconframeseq[num] + 1] == 0x0100)
 	{
 		// Do nothing if icon isn't animated
-		bnriconPalLine = 0;
-		bnriconframenumY = 0;
-		bannerFlip = GL_FLIP_NONE;
+		bnriconPalLine[num] = 0;
+		bnriconframenumY[num] = 0;
+		bannerFlip[num] = GL_FLIP_NONE;
 	}
 	else
 	{
-		u16 setframeseq = bnriconframeseq[currentbnriconframeseq];
-		bnriconPalLine = SEQ_PAL(setframeseq);
-		bnriconframenumY =  SEQ_BMP(setframeseq);
+		u16 setframeseq = bnriconframeseq[num][currentbnriconframeseq[num]];
+		bnriconPalLine[num] = SEQ_PAL(setframeseq);
+		bnriconframenumY[num] =  SEQ_BMP(setframeseq);
 		bool flipH = SEQ_FLIPH(setframeseq);
 		bool flipV = SEQ_FLIPV(setframeseq);
 
 		if (flipH && flipV)
 		{
-			bannerFlip = GL_FLIP_BOTH;
+			bannerFlip[num] = GL_FLIP_BOTH;
 		}
 		else if (!flipH && !flipV)
 		{
-			bannerFlip = GL_FLIP_NONE;
+			bannerFlip[num] = GL_FLIP_NONE;
 		}
 		else if (flipH && !flipV)
 		{
-			bannerFlip = GL_FLIP_H;
+			bannerFlip[num] = GL_FLIP_H;
 		}
 		else if (!flipH && flipV)
 		{
-			bannerFlip = GL_FLIP_V;
+			bannerFlip[num] = GL_FLIP_V;
 		}
 
-		bannerDelayNum++;
-		if (bannerDelayNum >= (setframeseq & 0x00FF))
+		bannerDelayNum[num]++;
+		if (bannerDelayNum[num] >= (setframeseq & 0x00FF))
 		{
-			bannerDelayNum = 0x0000;
-			currentbnriconframeseq++;
-			if (bnriconframeseq[currentbnriconframeseq] == 0x0000)
+			bannerDelayNum[num] = 0x0000;
+			currentbnriconframeseq[num]++;
+			if (bnriconframeseq[num][currentbnriconframeseq[num]] == 0x0000)
 			{
-				currentbnriconframeseq = 0; // Reset sequence
+				currentbnriconframeseq[num] = 0; // Reset sequence
 			}
 		}
 	}
