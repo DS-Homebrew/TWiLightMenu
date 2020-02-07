@@ -77,7 +77,7 @@ extern void ClearBrightness();
 const char* settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
 const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 
-std::string romPath;
+std::string romPath[2];
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
@@ -128,7 +128,8 @@ bool applaunch = false;
 bool startMenu = true;
 bool gotosettings = false;
 
-int launchType = 1;		// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+bool slot1Launched = false;
+int launchType[2] = {0};		// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
@@ -240,11 +241,13 @@ void LoadSettings(void) {
 	forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", 0);
 	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
-	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+	launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
@@ -267,11 +270,14 @@ void SaveSettings(void) {
 	}
 	if (!gotosettings) {
 		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
+		settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
@@ -638,12 +644,12 @@ TWL_CODE void SetWidescreen(const char *filename) {
 
 	bool wideCheatFound = false;
 	char wideBinPath[256];
-	if (launchType == 1) {
+	if (launchType[secondaryDevice] == 1) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (launchType == 0) {
+	if (slot1Launched) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -742,7 +748,7 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	if (isDSiMode() && usePerGameSettings) {
 		std::string filename = ndsPath;
 
-		const size_t last_slash_idx = filename.find_last_of("\\/");
+		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx) {
 			filename.erase(0, last_slash_idx + 1);
 		}
@@ -972,8 +978,8 @@ int main(int argc, char **argv) {
 	}
 	srand(time(NULL));
 	
-	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && !dsiWareBooter && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
-							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType == 3 && !dsiWareBooter && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")));
+	bool copyDSiWareSavBack = ((consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3 && !dsiWareBooter && access(dsiWarePubPath.c_str(), F_OK) == 0 && extention(dsiWarePubPath.c_str(), ".pub"))
+							|| (consoleModel < 2 && previousUsedDevice && bothSDandFlashcard() && launchType[previousUsedDevice] == 3 && !dsiWareBooter && access(dsiWarePrvPath.c_str(), F_OK) == 0 && extention(dsiWarePrvPath.c_str(), ".prv")));
 	
 	if (copyDSiWareSavBack) {
 		blackScreen = true;
@@ -1112,8 +1118,7 @@ int main(int argc, char **argv) {
 								swiWaitForVBlank();
 							}
 
-							romPath = "";
-							launchType = 0;
+							slot1Launched = 0;
 							SaveSettings();
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
@@ -1338,9 +1343,9 @@ int main(int argc, char **argv) {
 				dsiWarePubPath = replaceAll(argarray[0], typeToReplace, ".pub");
 				dsiWarePrvPath = replaceAll(argarray[0], typeToReplace, ".prv");
 				if (!isArgv) {
-					romPath = argarray[0];
+					romPath[secondaryDevice] = argarray[0];
 				}
-				launchType = (consoleModel>0 ? 1 : 3);
+				launchType[secondaryDevice] = (consoleModel>0 ? 1 : 3);
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 
@@ -1702,9 +1707,9 @@ int main(int argc, char **argv) {
 						}
 
 						if (!isArgv) {
-							romPath = argarray[0];
+							romPath[secondaryDevice] = argarray[0];
 						}
-						launchType = 1;
+						launchType[secondaryDevice] = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 
@@ -1733,17 +1738,17 @@ int main(int argc, char **argv) {
 						}
 						stop();
 					} else {
-						romPath = argarray[0];
-						launchType = 1;
+						romPath[secondaryDevice] = argarray[0];
+						launchType[secondaryDevice] = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					if (!isArgv) {
-						romPath = argarray[0];
+						romPath[secondaryDevice] = argarray[0];
 					}
-					launchType = 2;
+					launchType[secondaryDevice] = 2;
 					previousUsedDevice = secondaryDevice;
 					SaveSettings();
 					bool runNds_boostCpu = false;
@@ -1769,7 +1774,7 @@ int main(int argc, char **argv) {
 			} else if (extention(filename, ".mp4")) {
 				mpeg4 = true;
 			} else if (extention(filename, ".gba")) {
-				//ms().launchType = Launch::ESDFlashcardLaunch;
+				//ms().launchType[secondaryDevice] = Launch::ESDFlashcardLaunch;
 				//ms().previousUsedDevice = ms().secondaryDevice;
 				/*ms().saveSettings();
 
@@ -1802,15 +1807,15 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				romPath = ROMpath;
+				romPath[secondaryDevice] = ROMpath;
 				homebrewArg = ROMpath;
 
 				if (gameboy) {
-					launchType = 5;
+					launchType[secondaryDevice] = 5;
 				} else if (nes) {
-					launchType = 4;
+					launchType[secondaryDevice] = 4;
 				} else {
-					launchType = 6;
+					launchType[secondaryDevice] = 6;
 				}
 
 				previousUsedDevice = secondaryDevice;
@@ -1868,8 +1873,8 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				homebrewBootstrap = true;
-				romPath = ROMpath;
-				launchType = 1;
+				romPath[secondaryDevice] = ROMpath;
+				launchType[secondaryDevice] = 1;
 				previousUsedDevice = secondaryDevice;
 				SaveSettings();
 				if (secondaryDevice) {

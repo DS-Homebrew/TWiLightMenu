@@ -74,11 +74,10 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
-	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
-        ENoLaunch = -1,
-        ESlot1 = 0,
+        ENoLaunch = 0,
         ESDFlashcardLaunch = 1,
         ESDFlashcardDirectLaunch = 2,
         EDSiWareLaunch = 3,
@@ -154,9 +153,9 @@ class DSiMenuPlusPlusSettings
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
 
-    std::string romPath;
-
-    int launchType;
+    bool slot1Launched;
+    int launchType[2];
+    std::string romPath[2];
     std::string homebrewArg;
     bool homebrewBootstrap;
     bool soundfreq;

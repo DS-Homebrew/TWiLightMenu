@@ -82,7 +82,9 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     ak_theme = "zelda";
     ak_zoomIcons = true;
 
-    launchType = ENoLaunch;
+	slot1Launched = false;
+    launchType[0] = ENoLaunch;
+    launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
@@ -90,8 +92,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     _3ds_theme = "light";
     
     soundfreq = EFreq32KHz;
-	dsiSplash = isDSiMode();
-	hsMsg = false;
     showlogo = true;
     autorun = false;
 
@@ -143,7 +143,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-   	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+   	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+   	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 
     // secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
     // flashcard = settingsini.GetInt("SRLOADER", "FLASHCARD", flashcard);
@@ -187,7 +188,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+    launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+    launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
     homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
@@ -222,11 +224,14 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     if (!gotosettings) {
 		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
+		settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}

@@ -262,13 +262,13 @@ extern int bnriconframenumY[2];
 extern int bannerFlip[2];
 
 // bnriconisDSi[]
-extern bool isDirectory;
-extern int bnrRomType;
+extern bool isDirectory[2];
+extern int bnrRomType[2];
 extern bool bnriconisDSi[2];
 extern int bnrWirelessIcon[2];		// 0 = None, 1 = Local, 2 = WiFi
-extern bool isDSiWare;
-extern bool isHomebrew;
-extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header
+extern bool isDSiWare[2];
+extern bool isHomebrew[2];
+extern bool isModernHomebrew[2];		// false == No DSi-Extended header, true == Has DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

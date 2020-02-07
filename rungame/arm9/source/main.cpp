@@ -63,7 +63,7 @@ static int consoleModel = 0;
 	2 = Nintendo 3DS
 	3 = New Nintendo 3DS	*/
 
-static std::string romPath;
+static std::string romPath[2];
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -80,7 +80,8 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-static int launchType = 1;	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+static bool slot1Launched = false;
+static int launchType[2] = {0};	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
 static bool useBootstrap = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
@@ -114,8 +115,11 @@ TWL_CODE void LoadSettings(void) {
 	dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", "");
 	dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", "");
 	dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", "");
-	launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", 1);
-	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+	slot1Launched = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
+	launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
+	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
@@ -166,30 +170,32 @@ TWL_CODE int lastRunROM() {
 	}
 
 	vector<char*> argarray;
-	if (launchType > 3) {
+	if (launchType[secondaryDevice] > 3) {
 		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
-	if (access(romPath.c_str(), F_OK) != 0 && launchType != 0) {
+	if (access(romPath[secondaryDevice].c_str(), F_OK) != 0 || launchType[secondaryDevice] == 0) {
 		return runNdsFile ("/_nds/TWiLightMenu/main.srldr", 0, NULL, true, false, false, true, true);	// Skip to running TWiLight Menu++
 	}
 
-	switch (launchType) {
-		case 0:
-			return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
+	if (slot1Launched) {
+		return runNdsFile ("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, false, false, true, true);
+	}
+
+	switch (launchType[previousUsedDevice]) {
 		case 1:
 			if ((useBootstrap && !homebrewBootstrap) || !previousUsedDevice)
 			{
 				std::string savepath;
 
-				romfolder = romPath;
+				romfolder = romPath[previousUsedDevice];
 				while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 					romfolder.resize(romfolder.size()-1);
 				}
 				chdir(romfolder.c_str());
 
-				filename = romPath;
+				filename = romPath[previousUsedDevice];
 				const size_t last_slash_idx = filename.find_last_of("/");
 				if (std::string::npos != last_slash_idx)
 				{
@@ -270,7 +276,7 @@ TWL_CODE int lastRunROM() {
 
 				argarray.at(0) = (char *)ndsToBoot;
 				CIniFile bootstrapini(bootstrapinipath);
-				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath[secondaryDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
@@ -280,7 +286,7 @@ TWL_CODE int lastRunROM() {
 
 				return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], (homebrewBootstrap ? false : true), true, false, true, true);
 			} else {
-				std::string filename = romPath;
+				std::string filename = romPath[1];
 				const size_t last_slash_idx = filename.find_last_of("/");
 				if (std::string::npos != last_slash_idx)
 				{
@@ -294,25 +300,25 @@ TWL_CODE int lastRunROM() {
 				std::string path;
 				if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 					CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-					path = ReplaceAll(romPath, "fat:/", woodfat);
+					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 					return runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 					CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-					path = ReplaceAll(romPath, "fat:/", woodfat);
+					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 					return runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 					CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-					path = ReplaceAll(romPath, "fat:/", dstwofat);
+					path = ReplaceAll(romPath[1], "fat:/", dstwofat);
 					fcrompathini.SetString("Dir Info", "fullName", path);
 					fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 					return runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 				} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
 					CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
-					path = ReplaceAll(romPath, "fat:/", woodfat);
+					path = ReplaceAll(romPath[1], "fat:/", woodfat);
 					fcrompathini.SetString("Save Info", "lastLoaded", path);
 					fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
 					// Does not support autoboot; so only nds-bootstrap launching works.
@@ -320,20 +326,20 @@ TWL_CODE int lastRunROM() {
 				}
 			}
 		case 2: {
-			romfolder = romPath;
+			romfolder = romPath[secondaryDevice];
 			while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 				romfolder.resize(romfolder.size()-1);
 			}
 			chdir(romfolder.c_str());
 
-			filename = romPath;
+			filename = romPath[secondaryDevice];
 			const size_t last_slash_idx = filename.find_last_of("/");
 			if (std::string::npos != last_slash_idx)
 			{
 				filename.erase(0, last_slash_idx + 1);
 			}
 
-			argarray.push_back((char*)romPath.c_str());
+			argarray.push_back((char*)romPath[secondaryDevice].c_str());
 
 			loadPerGameSettings(filename);
 

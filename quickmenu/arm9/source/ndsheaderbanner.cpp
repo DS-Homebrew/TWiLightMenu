@@ -55,13 +55,13 @@ int bnriconframenumY[2] = {0};
 int bannerFlip[2] = {GL_FLIP_NONE};
 
 // bnriconisDSi[]
-bool isDirectory = false;
-int bnrRomType = 0;
+bool isDirectory[2] = {false};
+int bnrRomType[2] = {0};
 bool bnriconisDSi[2] = {false};
 int bnrWirelessIcon[2] = {0}; 			// 0 = None, 1 = Local, 2 = WiFi
-bool isDSiWare = false;
-bool isHomebrew = false;
-bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
+bool isDSiWare[2] = {false};
+bool isHomebrew[2] = {false};
+bool isModernHomebrew[2] = {false};		// false == No DSi-Extended header, true == Has DSi-Extended header
 
 /**
  * Get banner sequence from banner file.

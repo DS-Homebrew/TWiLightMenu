@@ -361,12 +361,12 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	
 	bool wideCheatFound = false;
 	char wideBinPath[256];
-	if (ms().launchType == Launch::ESDFlashcardLaunch) {
+	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (ms().launchType == Launch::ESlot1) {
+	if (ms().slot1Launched) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -462,7 +462,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	if (isDSiMode() && usePerGameSettings) {
 		std::string filename = ndsPath;
 
-		const size_t last_slash_idx = filename.find_last_of("\\/");
+		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx) {
 			filename.erase(0, last_slash_idx + 1);
 		}
@@ -765,7 +765,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard()
-	&& ms().launchType == Launch::EDSiWareLaunch && !ms().dsiWareBooter) {
+	&& ms().launchType[ms().previousUsedDevice] == Launch::EDSiWareLaunch && !ms().dsiWareBooter) {
 	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
@@ -836,7 +836,7 @@ int main(int argc, char **argv) {
 
 			bool isArgv = false;
 			if (strcasecmp(filename.c_str() + filename.size() - 5, ".argv") == 0) {
-				ms().romPath = std::string(filePath) + std::string(filename);
+				ms().romPath[ms().secondaryDevice] = std::string(filePath) + std::string(filename);
 
 				FILE *argfile = fopen(filename.c_str(), "rb");
 				char str[PATH_MAX], *pstr;
@@ -894,9 +894,9 @@ int main(int argc, char **argv) {
 				ms().dsiWarePubPath = replaceAll(argarray[0], typeToReplace, ".pub");
 				ms().dsiWarePrvPath = replaceAll(argarray[0], typeToReplace, ".prv");
 				if (!isArgv) {
-					ms().romPath = std::string(argarray[0]);
+					ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 				}
-				ms().launchType = (ms().consoleModel>0 ? Launch::ESDFlashcardLaunch : Launch::EDSiWareLaunch);
+				ms().launchType[ms().secondaryDevice] = (ms().consoleModel>0 ? Launch::ESDFlashcardLaunch : Launch::EDSiWareLaunch);
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
 
@@ -1365,9 +1365,9 @@ int main(int argc, char **argv) {
 						}
 
 						if (!isArgv) {
-							ms().romPath = std::string(argarray[0]);
+							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 						}
-						ms().launchType = Launch::ESDFlashcardLaunch; // 1
+						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
@@ -1396,17 +1396,17 @@ int main(int argc, char **argv) {
 						}
 						stop();
 					} else {
-						ms().romPath = std::string(argarray[0]);
-						ms().launchType = Launch::ESDFlashcardLaunch;
+						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
+						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
 					if (!isArgv) {
-						ms().romPath = std::string(argarray[0]);
+						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					}
-					ms().launchType = Launch::ESDFlashcardDirectLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
 					bool runNds_boostCpu = false;
@@ -1432,7 +1432,7 @@ int main(int argc, char **argv) {
 			} else if (extention(filename, ".mp4")) {
 				mpeg4 = true;
 			} else if (extention(filename, ".gba")) {
-				//ms().launchType = Launch::ESDFlashcardLaunch;
+				//ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 				//ms().previousUsedDevice = ms().secondaryDevice;
 				/*ms().saveSettings();
 
@@ -1466,15 +1466,15 @@ int main(int argc, char **argv) {
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
-				ms().romPath = std::string(ROMpath);
+				ms().romPath[ms().secondaryDevice] = std::string(ROMpath);
 				ms().homebrewArg = std::string(ROMpath);
 
 				if (gameboy) {
-					ms().launchType = Launch::EGameYobLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::EGameYobLaunch;
 				} else if (nes) {
-					ms().launchType = Launch::ENESDSLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::ENESDSLaunch;
 				} else {
-					ms().launchType = Launch::ES8DSLaunch;
+					ms().launchType[ms().secondaryDevice] = Launch::ES8DSLaunch;
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;
@@ -1537,8 +1537,8 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf(ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename.c_str());
 				ms().homebrewBootstrap = true;
-				ms().romPath = std::string(ROMpath);
-				ms().launchType = Launch::ESDFlashcardLaunch; // 1
+				ms().romPath[ms().secondaryDevice] = std::string(ROMpath);
+				ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
 				if (ms().secondaryDevice) {

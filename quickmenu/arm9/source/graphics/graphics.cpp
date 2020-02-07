@@ -71,6 +71,7 @@ extern bool startMenu;
 extern int startMenu_cursorPosition;
 
 extern int launchType;
+extern bool secondaryDevice;
 extern bool pictochatFound;
 extern bool dlplayFound;
 extern bool gbaBiosFound;
@@ -81,7 +82,7 @@ extern int subtheme;
 extern int consoleModel;
 extern bool cardEjected;
 
-int boxArtType = 0;
+int boxArtType[2] = {0};
 
 //bool moveIconUp[7] = {false};
 int iconYpos[7] = {25, 73, 73, 121, 175, 170, 175};
@@ -305,7 +306,16 @@ void vBlankHandler()
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
-				drawIcon(0, 40, iconYpos[0]+6);
+				if (bnrRomType[1] == 9) drawIconPlg(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 8) drawIconSNES(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 7) drawIconMD(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 6) drawIconGG(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 5) drawIconSMS(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 4) drawIconNES(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 3) drawIconGBC(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 2) drawIconGB(40, iconYpos[0]+6);
+				else if (bnrRomType[1] == 1) glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, gbaIconImage);
+				else drawIcon(1, 40, iconYpos[0]+6);
 			}
 			if (bnrWirelessIcon[0] > 0) glSprite(207, iconYpos[0]+30, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon[0]-1) & 31]);
 			// Playback animated icon
@@ -317,16 +327,16 @@ void vBlankHandler()
 			//glSprite(33, iconYpos[3], GL_FLIP_NONE, &iconboxImage[1-gbaBiosFound]);
 			glSprite(33, iconYpos[3], GL_FLIP_NONE, &iconboxImage[0]);
 			//glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
-			if (bnrRomType == 9) drawIconPlg(40, iconYpos[3]+6);
-			else if (bnrRomType == 8) drawIconSNES(40, iconYpos[3]+6);
-			else if (bnrRomType == 7) drawIconMD(40, iconYpos[3]+6);
-			else if (bnrRomType == 6) drawIconGG(40, iconYpos[3]+6);
-			else if (bnrRomType == 5) drawIconSMS(40, iconYpos[3]+6);
-			else if (bnrRomType == 4) drawIconNES(40, iconYpos[3]+6);
-			else if (bnrRomType == 3) drawIconGBC(40, iconYpos[3]+6);
-			else if (bnrRomType == 2) drawIconGB(40, iconYpos[3]+6);
-			else if (bnrRomType == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
-			else drawIcon(1, 40, iconYpos[3]+6);
+			if (bnrRomType[0] == 9) drawIconPlg(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 8) drawIconSNES(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 7) drawIconMD(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 6) drawIconGG(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 5) drawIconSMS(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 4) drawIconNES(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 3) drawIconGBC(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 2) drawIconGB(40, iconYpos[3]+6);
+			else if (bnrRomType[0] == 1) glSprite(40, iconYpos[3]+6, GL_FLIP_NONE, gbaIconImage);
+			else drawIcon(0, 40, iconYpos[3]+6);
 			if (isDSiMode() && consoleModel < 2) {
 				glSprite(10, iconYpos[4], GL_FLIP_NONE, &cornerIcons[0]);
 			}
@@ -403,7 +413,7 @@ void vBlankHandler()
 
 void loadBoxArt(const char* filename) {
 	if(access(filename, F_OK) != 0) {
-		switch (boxArtType) {
+		switch (boxArtType[secondaryDevice]) {
 			case 0:
 			default:
 				filename = "nitro:/graphics/boxart_unknown.png";

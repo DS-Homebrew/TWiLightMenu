@@ -52,7 +52,9 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     ak_theme = "zelda";
     ak_zoomIcons = true;
 
-    launchType = ENoLaunch;
+	slot1Launched = false;
+    launchType[0] = ENoLaunch;
+    launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
@@ -95,7 +97,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
-   	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+   	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+   	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -125,7 +128,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
+    launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+    launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
     homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 

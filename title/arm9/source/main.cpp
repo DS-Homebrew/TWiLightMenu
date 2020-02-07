@@ -202,13 +202,13 @@ void lastRunROM()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out*/
 
-	std::string romfolder = ms().romPath;
+	std::string romfolder = ms().romPath[ms().secondaryDevice];
 	while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 		romfolder.resize(romfolder.size()-1);
 	}
 	chdir(romfolder.c_str());
 
-	std::string filename = ms().romPath;
+	std::string filename = ms().romPath[ms().secondaryDevice];
 	const size_t last_slash_idx = filename.find_last_of("/");
 	if (std::string::npos != last_slash_idx)
 	{
@@ -219,7 +219,7 @@ void lastRunROM()
 	if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
 	&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
 	&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
-	  if (ms().launchType == Launch::ESlot1 || ms().launchType == Launch::ESDFlashcardLaunch) {
+	  if (ms().slot1Launched || ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch) {
 		// Prepare for reboot into 16:10 TWL_FIRM
 		rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
 		rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
@@ -232,20 +232,20 @@ void lastRunROM()
 	}
 
 	vector<char *> argarray;
-	if (ms().launchType > Launch::EDSiWareLaunch)
+	if (ms().launchType[ms().secondaryDevice] > Launch::EDSiWareLaunch)
 	{
 		argarray.push_back(strdup("null"));
 		argarray.push_back(strdup(homebrewArg.c_str()));
 	}
 
 	int err = 0;
-	if (ms().launchType == Launch::ESlot1)
+	if (ms().slot1Launched)
 	{
 		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 	}
-	else if (ms().launchType == Launch::ESDFlashcardLaunch)
+	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 		if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice)
 		{
 			std::string savepath;
@@ -328,7 +328,7 @@ void lastRunROM()
 				argarray.push_back((char*)ndsToBoot);
 			}
 			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath);
+			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().secondaryDevice]);
 			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
 				(perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language));
@@ -347,7 +347,7 @@ void lastRunROM()
 			bool runNds_boostCpu = false;
 			bool runNds_boostVram = false;
 			if (isDSiMode()) {
-				std::string filename = ms().romPath;
+				std::string filename = ms().romPath[1];
 				const size_t last_slash_idx = filename.find_last_of("/");
 				if (std::string::npos != last_slash_idx)
 				{
@@ -361,25 +361,25 @@ void lastRunROM()
 			std::string path;
 			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
-				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", path);
 				fcrompathini.SaveIniFile("fat:/_wfwd/lastsave.ini");
 				err = runNdsFile("fat:/Wfwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if (memcmp(io_dldi_data->friendlyName, "Acekard AK2", 0xB) == 0) {
 				CIniFile fcrompathini("fat:/_afwd/lastsave.ini");
-				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", path);
 				fcrompathini.SaveIniFile("fat:/_afwd/lastsave.ini");
 				err = runNdsFile("fat:/Afwd.dat", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if (memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0) {
 				CIniFile fcrompathini("fat:/_dstwo/autoboot.ini");
-				path = ReplaceAll(ms().romPath, "fat:/", dstwofat);
+				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", dstwofat);
 				fcrompathini.SetString("Dir Info", "fullName", path);
 				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 			} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
 				CIniFile fcrompathini("fat:/__rpg/lastsave.ini");
-				path = ReplaceAll(ms().romPath, "fat:/", woodfat);
+				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", path);
 				fcrompathini.SaveIniFile("fat:/__rpg/lastsave.ini");
 				// Does not support autoboot; so only nds-bootstrap launching works.
@@ -387,11 +387,11 @@ void lastRunROM()
 			}
 		}
 	}
-	else if (ms().launchType == Launch::ESDFlashcardDirectLaunch)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardDirectLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		argarray.push_back((char*)ms().romPath.c_str());
+		argarray.push_back((char*)ms().romPath[ms().secondaryDevice].c_str());
 
 		bool runNds_boostCpu = false;
 		bool runNds_boostVram = false;
@@ -403,9 +403,9 @@ void lastRunROM()
 
 		err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, (!perGameSettings_dsiMode ? true : false), runNds_boostCpu, runNds_boostVram);
 	}
-	else if (ms().launchType == Launch::EDSiWareLaunch)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EDSiWareLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		char unlaunchDevicePath[256];
 		if (ms().previousUsedDevice) {
@@ -439,9 +439,9 @@ void lastRunROM()
 		fifoSendValue32(FIFO_USER_08, 1); // Reboot
 		for (int i = 0; i < 15; i++) swiWaitForVBlank();
 	}
-	else if (ms().launchType == Launch::ENESDSLaunch)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::ENESDSLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		if (sys().flashcardUsed())
 		{
@@ -453,9 +453,9 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to nesDS as argument
 	}
-	else if (ms().launchType == Launch::EGameYobLaunch)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EGameYobLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		if (sys().flashcardUsed())
 		{
@@ -467,9 +467,9 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to GameYob as argument
 	}
-	else if (ms().launchType == Launch::ES8DSLaunch)
+	else if (ms().launchType[ms().secondaryDevice] == Launch::ES8DSLaunch)
 	{
-		if (access(ms().romPath.c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
 		if (sys().flashcardUsed())
 		{

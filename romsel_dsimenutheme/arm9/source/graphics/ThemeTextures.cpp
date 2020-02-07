@@ -675,7 +675,7 @@ TWL_CODE void ThemeTextures::loadBoxArtToMem(const char *filename, int num) {
 
 	boxArtFound[num] = true;
 
-	fread(boxArtCache+(num*0xB000), 1, 0xB000, file);
+	fread((u8*)boxArtCache+(num*0xB000), 1, 0xB000, file);
 	fclose(file);
 }
 
