@@ -1159,12 +1159,12 @@ void vBlankHandler() {
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
-				if (isDSiMode() && sdFound()) {
-					for (int i = 0; i < 5; i++) {
+				if (isDSiMode() && bothSDandFlashcard()) {
+					for (int i = 0; i < 4; i++) {
 						selIconYpos -= 14;
 					}
 				} else {
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < 3; i++) {
 						selIconYpos -= 14;
 					}
 				}
@@ -1176,7 +1176,7 @@ void vBlankHandler() {
 				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
-				if (isDSiMode() && sdFound()) {
+				if (isDSiMode() && bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
 						glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							 &tex().smallCartImage()[2]); // SD card
@@ -1188,13 +1188,13 @@ void vBlankHandler() {
 					}
 					selIconYpos += 28;
 				}
-				if (ms().useGbarunner) {
+				/*if (ms().useGbarunner) {
 					drawSmallIconGBA(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos); // GBARunner2
 				} else {
 					glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 						 &tex().smallCartImage()[3]); // GBA Mode
 				}
-				selIconYpos += 28;
+				selIconYpos += 28;*/
 				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 tex().manualImage()); // Manual
 			}

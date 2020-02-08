@@ -18,7 +18,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     blfLevel = 0;
     wifiLed = -1;
     useGbarunner = false;
-    showMainMenu = true;
+    showMainMenu = false;
     theme = 0;
     subtheme = 0;
 

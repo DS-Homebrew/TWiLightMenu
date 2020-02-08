@@ -534,7 +534,7 @@ void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 }
 
 
-void launchSettings(void) {
+void launchDsClassicMenu(void) {
 	snd().playLaunch();
 	controlTopBright = true;
 	ms().gotosettings = true;
@@ -548,11 +548,11 @@ void launchSettings(void) {
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
-	// Launch settings
+	// Launch DS Classic Menu
 	if (sdFound()) {
 		chdir("sd:/");
 	}
-	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 	char text[32];
 	snprintf(text, sizeof(text), "Start failed. Error %i", err);
 	fadeType = true;
@@ -576,7 +576,7 @@ void launchManual(void) {
 	mmEffectCancelAll();
 	snd().stopStream();
 	ms().saveSettings();
-	// Launch settings
+	// Launch manual
 	if (sdFound()) {
 		chdir("sd:/");
 	}
@@ -1106,31 +1106,28 @@ bool selectMenu(void) {
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
-	if (isDSiMode() && sdFound()) {
-		for (int i = 0; i < 5; i++) {
+	if (isDSiMode() && bothSDandFlashcard()) {
+		for (int i = 0; i < 4; i++) {
 			selIconYpos -= 14;
 		}
 		assignedOp[0] = 0;
 		assignedOp[1] = 1;
 		assignedOp[2] = 2;
-		assignedOp[3] = 3;
-		assignedOp[4] = 4;
-		maxCursors = 4;
+		assignedOp[3] = 4;
+		maxCursors = 3;
 	} else {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			selIconYpos -= 14;
 		}
 		if (!sys().isRegularDS()) {
 			assignedOp[0] = 0;
 			assignedOp[1] = 1;
-			assignedOp[2] = 3;
-			assignedOp[3] = 4;
-			maxCursors = 3;
-		} else {
-			assignedOp[0] = 1;
-			assignedOp[1] = 3;
 			assignedOp[2] = 4;
 			maxCursors = 2;
+		} else {
+			assignedOp[0] = 1;
+			assignedOp[1] = 4;
+			maxCursors = 1;
 		}
 	}
 	if (ms().theme == 4) {
@@ -1149,22 +1146,22 @@ bool selectMenu(void) {
 			if (assignedOp[i] == 0) {
 				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
 			} else if (assignedOp[i] == 1) {
-				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
+				printSmall(false, 64, textYpos, "DS Classic Menu");
 			} else if (assignedOp[i] == 2) {
-				if (bothSDandFlashcard()) {
+				//if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
 						printSmall(false, 64, textYpos, ms().showMicroSd ? "Switch to microSD Card" : "Switch to SD Card");
 					} else {
 						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
 					}
-				} else {
+				/*} else {
 					printSmall(false, 64, textYpos,
 						   (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted"
 									 : "Launch Slot-1 card");
-				}
-			} else if (assignedOp[i] == 3) {
+				}*/
+			/*} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos,
-					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");
+					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");*/
 			} else if (assignedOp[i] == 4) {
 				printSmall(false, 64, textYpos, "Open Manual");
 			}
@@ -1200,7 +1197,7 @@ bool selectMenu(void) {
 				exitToSystemMenu();
 				break;
 			case 1:
-				launchSettings();
+				launchDsClassicMenu();
 				break;
 			case 2:
 				if (REG_SCFG_MC != 0x11) {
@@ -2514,10 +2511,10 @@ string browseForFile(const vector<string> extensionList) {
 			gameTapped = false;
 
 			if (ms().theme == 1) {
-				// Launch settings by touching corner button
+				// Launch DS Classic Menu by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft &&
 					!titleboxXmoveright) {
-					launchSettings();
+					launchDsClassicMenu();
 				}
 
 				// Exit to system menu by touching corner button
