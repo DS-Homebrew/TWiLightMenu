@@ -151,6 +151,7 @@ bool showCursor = true;
 bool startMenu = false;
 bool gotosettings = false;
 
+bool slot1Launched = false;
 int launchType[2] = {0};	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
 bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
@@ -255,6 +256,7 @@ void SaveSettings(void) {
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
@@ -502,7 +504,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (launchType[secondaryDevice] == 0) {
+	if (slot1Launched) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -1407,6 +1409,8 @@ int main(int argc, char **argv) {
 								}
 								swiWaitForVBlank();
 							}
+							slot1Launched = true;
+							SaveSettings();
 
 							if (!slot1LaunchMethod || arm7SCFGLocked) {
 								dsCardLaunch();
