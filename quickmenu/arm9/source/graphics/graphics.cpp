@@ -75,9 +75,11 @@ extern bool secondaryDevice;
 extern bool pictochatFound;
 extern bool dlplayFound;
 extern bool gbaBiosFound;
+extern bool arm7SCFGLocked;
 extern bool isRegularDS;
 extern bool isDSPhat(void);
 extern bool sdFound(void);
+extern bool flashcardFound(void);
 extern int theme;
 extern int subtheme;
 extern int consoleModel;
@@ -307,7 +309,10 @@ void vBlankHandler()
 				glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[1]);
 			} else {
 				glSprite(33, iconYpos[0], GL_FLIP_NONE, &iconboxImage[0]);
-				if (bnrRomType[1] == 9) drawIconPlg(40, iconYpos[0]+6);
+				if (isDSiMode() && !flashcardFound() && arm7SCFGLocked) {
+					glSprite(40, iconYpos[0]+6, GL_FLIP_NONE, &dscardIconImage[0]);
+				}
+				else if (bnrRomType[1] == 9) drawIconPlg(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 8) drawIconSNES(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 7) drawIconMD(40, iconYpos[0]+6);
 				else if (bnrRomType[1] == 6) drawIconGG(40, iconYpos[0]+6);
