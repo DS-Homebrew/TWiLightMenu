@@ -320,7 +320,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 				}
 			} else {
 				if (dirEntry.name.compare(".") != 0 && (nameEndsWith(dirEntry.name, extensionList))) {
-					if (ms().showHidden || FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN) {
+					if (ms().showHidden || !(FAT_getAttr(dirEntry.name.c_str()) & ATTR_HIDDEN)) {
 						dirContents.push_back(dirEntry);
 						file_count++;
 					}
@@ -333,7 +333,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 			drawCurrentTime();
 			drawCurrentDate();
 			drawClockColon();
-			
+
 			snd().updateStream();
 		}
 
