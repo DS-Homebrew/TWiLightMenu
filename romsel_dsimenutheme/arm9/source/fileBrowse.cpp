@@ -695,8 +695,8 @@ void switchDevice(void) {
 	}
 }
 
-void launchGba(void) {
-	if (!gbaBiosFound[ms().secondaryDevice] && ms().useGbarunner) {
+bool checkGbaBios(void) {
+	if (!gbaBiosFound[ms().secondaryDevice]) {
 		snd().playWrong();
 		clearText();
 		dbox_selectMenu = false;
@@ -728,16 +728,22 @@ void launchGba(void) {
 		} while (!(pressed & KEY_A));
 		snd().playBack();
 		clearText();
-		if (!inSelectMenu) {
-			showdialogbox = false;
-			for (int i = 0; i < 15; i++) {
-				snd().updateStream();
-				swiWaitForVBlank();
-			}
-		} else {
-			dbox_selectMenu = true;
+		showdialogbox = false;
+		for (int i = 0; i < 15; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
 		}
-		return;
+		return false;
+	}
+	return true;
+}
+
+void launchGba(void) {
+	if (ms().useGbarunner) {
+		// Show GBA BIOS message, if GBARunner2 is set in TWLMenu++ Settings
+		if (!checkGbaBios()) {
+			return;
+		}
 	}
 
 	snd().playLaunch();
@@ -2305,6 +2311,8 @@ string browseForFile(const vector<string> extensionList) {
 							proceedToLaunch = false;
 							ramDiskMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						}
+					} else if (bnrRomType[CURPOS] == 1) {
+						proceedToLaunch = checkGbaBios();
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
 						smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {

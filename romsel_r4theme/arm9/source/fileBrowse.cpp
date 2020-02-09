@@ -63,6 +63,8 @@ extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
 
+extern bool gbaBiosFound[2];
+
 extern bool useBootstrap;
 extern bool homebrewBootstrap;
 extern bool useGbarunner;
@@ -219,6 +221,31 @@ void showDirectoryContents (const vector<DirEntry>& dirContents, int startRow) {
 			iprintf (" %s", entryName);
 		}
 	}
+}
+
+bool checkGbaBios(void) {
+	if (gbaBiosFound[secondaryDevice]) {
+		return true;
+	}
+
+	dialogboxHeight = 1;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Error code: BINF");
+	printSmallCentered(false, 104, "The GBA BIOS is required");
+	printSmallCentered(false, 112, "to run GBA games.");
+	printSmallCentered(false, 126, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+
+	return false;
 }
 
 void smsWarning(void) {
@@ -478,6 +505,10 @@ string browseForFile(const vector<string> extensionList) {
 						proceedToLaunch = false;
 						ramDiskMsg();
 					}
+				}
+				else if (bnrRomType == 1)
+				{
+					proceedToLaunch = checkGbaBios();
 				}
 				else if (bnrRomType == 5 || bnrRomType == 6)
 				{

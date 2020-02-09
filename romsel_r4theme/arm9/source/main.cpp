@@ -125,6 +125,9 @@ int mpusize = 0;
 bool ceCached = true;
 
 bool applaunch = false;
+
+bool gbaBiosFound[2] = {false};
+
 bool startMenu = true;
 bool gotosettings = false;
 
@@ -886,6 +889,9 @@ int main(int argc, char **argv) {
 
 	std::string filename;
 
+	gbaBiosFound[0] = ((access("sd:/bios.bin", F_OK) == 0) || (access("sd:/gba/bios.bin", F_OK) == 0) || (access("sd:/_gba/bios.bin", F_OK) == 0));
+	gbaBiosFound[1] = ((access("fat:/bios.bin", F_OK) == 0) || (access("fat:/gba/bios.bin", F_OK) == 0) || (access("fat:/_gba/bios.bin", F_OK) == 0));
+
 	fifoWaitValue32(FIFO_USER_06);
 	if (fifoGetValue32(FIFO_USER_03) == 0) arm7SCFGLocked = true;	// If DSiMenu++ is being run from DSiWarehax or flashcard, then arm7 SCFG is locked.
 	u16 arm7_SNDEXCNT = fifoGetValue32(FIFO_USER_07);
@@ -1133,9 +1139,7 @@ int main(int argc, char **argv) {
 						}
 						break;
 					case 2:
-						if ((useGbarunner && access(secondaryDevice ? "fat:/bios.bin" : "sd:/bios.bin", F_OK) != 0)
-						&& (useGbarunner && access(secondaryDevice ? "fat:/gba/bios.bin" : "sd:/gba/bios.bin", F_OK) != 0)
-						&& (useGbarunner && access(secondaryDevice ? "fat:/_gba/bios.bin" : "sd:/_gba/bios.bin", F_OK) != 0)) {
+						if (useGbarunner && !gbaBiosFound[secondaryDevice]) {
 							clearText();
 							dialogboxHeight = 1;
 							showdialogbox = true;
