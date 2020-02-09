@@ -73,7 +73,6 @@ extern touchPosition touch;
 extern bool showdialogbox;
 extern bool dboxInFrame;
 extern bool dbox_showIcon;
-extern bool dbox_selectMenu;
 
 extern bool applaunch;
 
@@ -131,8 +130,6 @@ extern char usernameRendered[11];
 extern bool usernameRenderedDone;
 
 std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
-
-static bool inSelectMenu = false;
 
 struct DirEntry {
 	string name;
@@ -560,6 +557,32 @@ void launchDsClassicMenu(void) {
 	stop();
 }
 
+void launchSettings(void) {
+	snd().playLaunch();
+	controlTopBright = true;
+	ms().gotosettings = true;
+
+	fadeType = false;		  // Fade to white
+	snd().fadeOutStream();
+	for (int i = 0; i < 60; i++) {
+		snd().updateStream();
+		swiWaitForVBlank();
+	}
+	mmEffectCancelAll();
+	snd().stopStream();
+	ms().saveSettings();
+	// Launch TWLMenu++ Settings
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
+	char text[32];
+	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	fadeType = true;
+	printLarge(false, 4, 4, text);
+	stop();
+}
+
 void launchManual(void) {
 	snd().playLaunch();
 	
@@ -699,7 +722,6 @@ bool checkGbaBios(void) {
 	if (!gbaBiosFound[ms().secondaryDevice]) {
 		snd().playWrong();
 		clearText();
-		dbox_selectMenu = false;
 		if (!showdialogbox) {
 			showdialogbox = true;
 			for (int i = 0; i < 30; i++) {
@@ -1087,166 +1109,6 @@ void dsiBinariesMissingMsg(const char *filename) {
 	}
 }
 
-bool selectMenu(void) {
-	inSelectMenu = true;
-	dbox_showIcon = false;
-	if (ms().theme == 4) {
-		snd().playStartup();
-		fadeType = false;	   // Fade to black
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
-		currentBg = 1;
-		displayGameIcons = false;
-		fadeType = true;
-	} else {
-		dbox_selectMenu = true;
-		showdialogbox = true;
-	}
-	clearText();
-	if (!rocketVideo_playVideo || ms().showBoxArt)
-		clearBoxArt(); // Clear box art
-	boxArtLoaded = false;
-	rocketVideo_playVideo = true;
-	int maxCursors = 0;
-	int selCursorPosition = 0;
-	int assignedOp[5] = {-1};
-	int selIconYpos = 96;
-	if (isDSiMode() && bothSDandFlashcard()) {
-		for (int i = 0; i < 4; i++) {
-			selIconYpos -= 14;
-		}
-		assignedOp[0] = 0;
-		assignedOp[1] = 1;
-		assignedOp[2] = 2;
-		assignedOp[3] = 4;
-		maxCursors = 3;
-	} else {
-		for (int i = 0; i < 3; i++) {
-			selIconYpos -= 14;
-		}
-		if (!sys().isRegularDS()) {
-			assignedOp[0] = 0;
-			assignedOp[1] = 1;
-			assignedOp[2] = 4;
-			maxCursors = 2;
-		} else {
-			assignedOp[0] = 1;
-			assignedOp[1] = 4;
-			maxCursors = 1;
-		}
-	}
-	if (ms().theme == 4) {
-		while (!screenFadedIn()) { swiWaitForVBlank(); }
-		dbox_selectMenu = true;
-	} else {
-		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
-	}
-	int pressed = 0;
-	while (1) {
-		int textYpos = selIconYpos + 4;
-		clearText();
-		printSmallCentered(false, (ms().theme == 4 ? 8 : 16), "SELECT menu");
-		printSmall(false, 24, -2 + textYpos + (28 * selCursorPosition), ">");
-		for (int i = 0; i <= maxCursors; i++) {
-			if (assignedOp[i] == 0) {
-				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
-			} else if (assignedOp[i] == 1) {
-				printSmall(false, 64, textYpos, "DS Classic Menu");
-			} else if (assignedOp[i] == 2) {
-				//if (bothSDandFlashcard()) {
-					if (ms().secondaryDevice) {
-						printSmall(false, 64, textYpos, ms().showMicroSd ? "Switch to microSD Card" : "Switch to SD Card");
-					} else {
-						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
-					}
-				/*} else {
-					printSmall(false, 64, textYpos,
-						   (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted"
-									 : "Launch Slot-1 card");
-				}*/
-			/*} else if (assignedOp[i] == 3) {
-				printSmall(false, 64, textYpos,
-					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");*/
-			} else if (assignedOp[i] == 4) {
-				printSmall(false, 64, textYpos, "Open Manual");
-			}
-			textYpos += 28;
-		}
-		printSmallCentered(false, (ms().theme == 4 ? 164 : 160), "SELECT/" BUTTON_B " Back, " BUTTON_A " Select");
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
-		snd().updateStream();
-		swiWaitForVBlank();
-		if (pressed & KEY_UP) {
-			snd().playSelect();
-			selCursorPosition--;
-			if (selCursorPosition < 0)
-				selCursorPosition = maxCursors;
-		}
-		if (pressed & KEY_DOWN) {
-			snd().playSelect();
-			selCursorPosition++;
-			if (selCursorPosition > maxCursors)
-				selCursorPosition = 0;
-		}
-		if (pressed & KEY_A) {
-			switch (assignedOp[selCursorPosition]) {
-			case 0:
-			default:
-				exitToSystemMenu();
-				break;
-			case 1:
-				launchDsClassicMenu();
-				break;
-			case 2:
-				if (REG_SCFG_MC != 0x11) {
-					switchDevice();
-					inSelectMenu = false;
-					return true;
-				} else {
-					snd().playWrong();
-				}
-				break;
-			case 3:
-				launchGba();
-				break;
-			case 4:
-				launchManual();
-				break;
-			}
-		}
-		if ((pressed & KEY_B) || (pressed & KEY_SELECT)) {
-			snd().playBack();
-			break;
-		}
-	};
-	showdialogbox = false;
-	if (ms().theme == 4) {
-		fadeType = false;	   // Fade to black
-		for (int i = 0; i < 25; i++) {
-			swiWaitForVBlank();
-		}
-		clearText();
-		dbox_selectMenu = false;
-		inSelectMenu = false;
-		currentBg = 0;
-		displayGameIcons = true;
-		fadeType = true;
-		snd().playStartup();
-	} else {
-		clearText();
-		inSelectMenu = false;
-	}
-	return false;
-}
-
 void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool reSpawnBoxes) {
 	extern bool extention(const std::string& filename, const char* ext);
 
@@ -1465,7 +1327,6 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					}
 					dbox_showIcon = false;
-					dbox_selectMenu = false;
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
@@ -2519,10 +2380,10 @@ string browseForFile(const vector<string> extensionList) {
 			gameTapped = false;
 
 			if (ms().theme == 1) {
-				// Launch DS Classic Menu by touching corner button
+				// Launch TWLMenu++ Settings by touching corner button
 				if ((pressed & KEY_TOUCH) && touch.py <= 26 && touch.px <= 44 && !titleboxXmoveleft &&
 					!titleboxXmoveright) {
-					launchDsClassicMenu();
+					launchSettings();
 				}
 
 				// Exit to system menu by touching corner button
@@ -2854,16 +2715,29 @@ string browseForFile(const vector<string> extensionList) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 			}
 
-			if (pressed & KEY_SELECT) {
+			if (held & KEY_SELECT) {
 				if (ms().theme == 0 || ms().theme == 4) {
-					if (selectMenu()) {
-						clearText();
-						showdialogbox = false;
-						dbox_selectMenu = false;
-						if (ms().theme == 4) currentBg = 0;
-						return "null";
+					while (held & KEY_SELECT) {
+						scanKeys();
+						pressed = keysDown();
+						held = keysHeld();
+						updateScrollingState(held, pressed);
+						checkSdEject();
+						tex().drawVolumeImageCached();
+						tex().drawBatteryImageCached();
+						drawCurrentTime();
+						drawCurrentDate();
+						drawClockColon();
+						snd().updateStream();
+						swiWaitForVBlank();
+
+						if ((pressed & KEY_UP) || (pressed & KEY_DOWN)) {
+							switchDevice();
+							return "null";
+						}
 					}
 				}
+				launchDsClassicMenu();
 			}
 		}
 	}
