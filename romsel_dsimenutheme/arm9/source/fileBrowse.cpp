@@ -2731,7 +2731,8 @@ string browseForFile(const vector<string> extensionList) {
 						snd().updateStream();
 						swiWaitForVBlank();
 
-						if ((pressed & KEY_UP) || (pressed & KEY_DOWN)) {
+						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN)))
+						{
 							switchDevice();
 							return "null";
 						}
