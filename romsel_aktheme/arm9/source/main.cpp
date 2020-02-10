@@ -218,9 +218,9 @@ int main(int argc, char **argv)
 	gdi().present(GE_MAIN);
 	gdi().present(GE_SUB);
 
-	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
+	if ((ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
 	     access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && !ms().dsiWareBooter && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
-	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
+	    (ms().consoleModel < 2 && ms().previousUsedDevice && bothSDandFlashcard() && ms().launchType[ms().previousUsedDevice] == DSiMenuPlusPlusSettings::TLaunchType::EDSiWareLaunch &&
 	     access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && !ms().dsiWareBooter && extention(ms().dsiWarePrvPath.c_str(), ".prv")))
 	{
 		if (access(ms().dsiWarePubPath.c_str(), F_OK) == 0) {

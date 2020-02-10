@@ -137,7 +137,8 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
-bool snesEmulator = true;
+//bool snesEmulator = true;
+bool smsGgInRam = false;
 bool fcSaveOnSd = false;
 bool wideScreen = false;
 
@@ -234,7 +235,8 @@ void LoadSettings(void) {
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -1805,7 +1807,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam)) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1894,6 +1896,11 @@ int main(int argc, char **argv) {
 							}
 						}
 						argarray.push_back(ROMpath);
+					} else if (gamegear) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS07.nds";
+						}
 					} else if (SNES) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
@@ -1917,6 +1924,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					} else if (gamegear) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					} else if (SNES) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");

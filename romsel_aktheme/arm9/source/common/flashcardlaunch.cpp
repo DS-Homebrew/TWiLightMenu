@@ -17,7 +17,7 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 	if (isDSiMode() && usePerGameSettings) {
 		std::string filename = ndsPath;
 
-		const size_t last_slash_idx = filename.find_last_of("\\/");
+		const size_t last_slash_idx = filename.find_last_of("/");
 		if (std::string::npos != last_slash_idx) {
 			filename.erase(0, last_slash_idx + 1);
 		}

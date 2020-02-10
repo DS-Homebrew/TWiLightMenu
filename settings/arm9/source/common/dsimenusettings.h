@@ -173,7 +173,8 @@ class DSiMenuPlusPlusSettings
     bool dsiWareBooter;
     bool autorun;
     bool show12hrClock;
-    bool snesEmulator;
+    //bool snesEmulator;
+    bool smsGgInRam;
 
     int ak_viewMode;
     int ak_scrollSpeed;

@@ -75,7 +75,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     show12hrClock = true;
 
-    snesEmulator = true;
+    //snesEmulator = true;
+    smsGgInRam = false;
 
     ak_viewMode = EViewInternal;
     ak_scrollSpeed = EScrollFast;
@@ -198,7 +199,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsi_theme = settingsini.GetString("SRLOADER", "DSI_THEME", dsi_theme);
     _3ds_theme = settingsini.GetString("SRLOADER", "3DS_THEME", _3ds_theme);
 
-    snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 	
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }

@@ -33,7 +33,6 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	showMd = true;
 	showSnes = true;
     showDirectories = true;
-    showHidden = false;
     showBoxArt = true;
     animateDsiIcons = true;
     launcherApp = -1;
@@ -55,14 +54,17 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     show12hrClock = true;
 
-    snesEmulator = true;
+    //snesEmulator = true;
+    smsGgInRam = false;
 
     ak_viewMode = EViewInternal;
     ak_scrollSpeed = EScrollFast;
     ak_theme = "zelda";
     ak_zoomIcons = true;
 
-    launchType = ENoLaunch;
+	slot1Launched = false;
+    launchType[0] = ENoLaunch;
+    launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
 
     r4_theme = "unused";
@@ -123,7 +125,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
-    showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	if (consoleModel < 2) {
@@ -151,14 +152,17 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsiWareSrlPath = settingsini.GetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
     dsiWarePubPath = settingsini.GetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-    launchType = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType);
-	romPath = settingsini.GetString("SRLOADER", "ROM_PATH", romPath);
+    launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+    launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
+	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
     homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
-    show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+    show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
-    snesEmulator =  settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
 	
@@ -186,7 +190,6 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
-    settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 
@@ -210,15 +213,15 @@ void DSiMenuPlusPlusSettings::saveSettings()
 		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
 		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType);
-		settingsini.SetString("SRLOADER", "ROM_PATH", romPath);
+		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
+		settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
+		settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
 		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
-
-    settingsini.SetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }

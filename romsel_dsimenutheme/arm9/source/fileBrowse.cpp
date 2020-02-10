@@ -2175,7 +2175,8 @@ string browseForFile(const vector<string> extensionList) {
 					} else if (bnrRomType[CURPOS] == 1) {
 						proceedToLaunch = checkGbaBios();
 					} else if (bnrRomType[CURPOS] == 5 || bnrRomType[CURPOS] == 6) {
-						smsWarning();
+						if (!ms().smsGgInRam)
+							smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
 						if (getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >

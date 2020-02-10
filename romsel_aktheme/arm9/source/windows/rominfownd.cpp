@@ -271,8 +271,8 @@ void RomInfoWnd::pressGameSettings(void)
     {
 
         _values.push_back(LANG("game settings", "Default"));
-        _values.push_back(LANG("game settings", "No"));
-        _values.push_back(LANG("game settings", "Yes"));
+        _values.push_back(LANG("game settings", "No Direct Boot"));
+        _values.push_back(LANG("game settings", "Direct Boot"));
 
         settingWnd.addSettingItem(LANG("game settings", "Direct Boot"), _values, settingsIni.directBoot + 1);
         _values.clear();

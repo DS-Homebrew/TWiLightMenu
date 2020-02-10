@@ -1456,7 +1456,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || gamegear) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam)) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1526,7 +1526,7 @@ int main(int argc, char **argv) {
 				fadeType = true;
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if (GBA || SNES || GENESIS) {
+			} else if (GBA || gamegear || SNES || GENESIS) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1550,6 +1550,11 @@ int main(int argc, char **argv) {
 							}
 						}
 						argarray.push_back(ROMpath);
+					} else if (gamegear) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS07.nds";
+						}
 					} else if (SNES) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
@@ -1572,6 +1577,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+					} else if (gamegear) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					} else if (SNES) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");

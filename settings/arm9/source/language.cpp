@@ -123,6 +123,7 @@ std::string STR_SNDFREQ = "STR_SNDFREQ";
 std::string STR_SLOT1LAUNCHMETHOD = "STR_SLOT1LAUNCHMETHOD";
 std::string STR_BOOTSTRAP = "STR_BOOTSTRAP";
 std::string STR_USEGBARUNNER2 = "STR_USEGBARUNNER2";
+std::string STR_SMSGGINRAM = "STR_SMSGGINRAM";
 
 std::string STR_SYSTEM = "STR_SYSTEM";
 std::string STR_ON = "STR_ON";
@@ -143,43 +144,26 @@ std::string STR_RELEASE = "STR_RELEASE";
 std::string STR_NIGHTLY = "STR_NIGHTLY";
 
 std::string STR_DESCRIPTION_ASPECTRATIO = "STR_DESCRIPTION_ASPECTRATIO";
-
 std::string STR_DESCRIPTION_LANGUAGE_1 = "STR_DESCRIPTION_LANGUAGE_1";
-
 std::string STR_DESCRIPTION_RUNIN_1 = "STR_DESCRIPTION_RUNIN_1";
-
 std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
-
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
-
 std::string STR_DESCRIPTION_FORCESLEEPPATCH = "STR_DESCRIPTION_FORCESLEEPPATCH";
-
 std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK = "STR_DESCRIPTION_SLOT1SCFGUNLOCK";
-
 std::string STR_DESCRIPTION_USEBOOTSTRAP = "STR_DESCRIPTION_USEBOOTSTRAP";
-
 std::string STR_DESCRIPTION_FCSAVELOCATION = "STR_DESCRIPTION_FCSAVELOCATION";
-
 std::string STR_DESCRIPTION_DEBUG_1 = "STR_DESCRIPTION_DEBUG_1";
-
 std::string STR_DESCRIPTION_LOGGING_1 = "STR_DESCRIPTION_LOGGING_1";
-
 std::string STR_DESCRIPTION_ROMREADLED_1 = "STR_DESCRIPTION_ROMREADLED_1";
 std::string STR_DESCRIPTION_DMAROMREADLED = "STR_DESCRIPTION_DMAROMREADLED";
-
 std::string STR_DESCRIPTION_PRECISEVOLUMECTRL = "STR_DESCRIPTION_PRECISEVOLUMECTRL";
-
 std::string STR_DESCRIPTION_DSIWAREBOOTER = "STR_DESCRIPTION_DSIWAREBOOTER";
-
 std::string STR_DESCRIPTION_SNDFREQ_1 = "STR_DESCRIPTION_SNDFREQ_1";
-
 std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = "STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1";
-
 std::string STR_DESCRIPTION_BOOTSTRAP_1 = "STR_DESCRIPTION_BOOTSTRAP_1";
-
 std::string STR_DESCRIPTION_FLASHCARD_1 = "STR_DESCRIPTION_FLASHCARD_1";
-
 std::string STR_DESCRIPTION_GBARUNNER2_1 = "STR_DESCRIPTION_GBARUNNER2_1";
+std::string STR_DESCRIPTION_SMSGGINRAM = "STR_DESCRIPTION_SMSGGINRAM";
 
 // Flashcard settings
 std::string STR_FLASHCARD_SELECT = "STR_FLASHCARD_SELECT";
@@ -411,6 +395,7 @@ void langInit(void)
 	STR_SLOT1LAUNCHMETHOD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SLOT1LAUNCHMETHOD", "Slot-1 launch method"));
 	STR_BOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "BOOTSTRAP", "Bootstrap"));
 	STR_USEGBARUNNER2 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "USEGBARUNNER2", "Use GBARunner2"));
+	STR_SMSGGINRAM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SMSGGINRAM", "Load SMS/GG ROM into RAM"));
 
 	STR_SYSTEM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SYSTEM", "System"));
 	STR_ON = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ON", "On"));
@@ -431,43 +416,26 @@ void langInit(void)
 	STR_NIGHTLY = ConvertFromUTF8(languageini.GetString("LANGUAGE", "NIGHTLY", "Nightly"));
 
 	STR_DESCRIPTION_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ASPECTRATIO", "Adjusts the top screen to be the original size, or wider, for DS games. Some games may not use this. Requires Sono's patcher to be used, as well as external sysmodules enabled in Luma."));
-
 	STR_DESCRIPTION_LANGUAGE_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections of your console language by setting this option."));
-
 	STR_DESCRIPTION_RUNIN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RUNIN_1", "Run in either DS or DSi mode."));
-
 	STR_DESCRIPTION_CPUSPEED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags in some games."));
-
 	STR_DESCRIPTION_VRAMBOOST_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit."));
-
 	STR_DESCRIPTION_FORCESLEEPPATCH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FORCESLEEPMODE", "If a certain Slot-1 card is preventing sleep mode from working, please turn this on. Remember to turn this off if you have a retail game card inserted."));
-
 	STR_DESCRIPTION_SLOT1SCFGUNLOCK = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1SCFGUNLOCK", "Have access to SCFG while running a Slot-1 flashcard. Allows setting extended memory mode and/or clock speed in flashcard homebrew."));
-
 	STR_DESCRIPTION_USEBOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_USEBOOTSTRAP", "nds-bootstrap is used instead of the flashcard kernel or firmware."));
-
 	STR_DESCRIPTION_FCSAVELOCATION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FCSAVELOCATION", "Pick the location of Slot-1 SD (or flashcard) saves."));
-
 	STR_DESCRIPTION_DEBUG_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DEBUG_1", "Displays some text before launched game."));
-
 	STR_DESCRIPTION_LOGGING_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LOGGING_1", "Logs the process of patching to sd:/NDSBTSRP.LOG"));
-
 	STR_DESCRIPTION_ROMREADLED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ROMREADLED_1", "Sets LED as CPU ROM read indicator."));
 	STR_DESCRIPTION_DMAROMREADLED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DMAROMREADLED", "Sets LED as DMA ROM read indicator."));
-
 	STR_DESCRIPTION_PRECISEVOLUMECTRL = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_PRECISEVOLUMECTRL", "Adds more volume levels in between ones from the VOL -/+ buttons. Press SELECT+UP/DOWN to adjust the volume with the extra levels."));
-
 	STR_DESCRIPTION_DSIWAREBOOTER = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSIWAREBOOTER", "Select which app boots launched DSiWare apps or games."));
-
 	STR_DESCRIPTION_SNDFREQ_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SNDFREQ_1", "32.73kHz is original quality, 47.61kHz is high quality. Does not affect retail Slot-1 cards."));
-
 	STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SLOT1LAUNCHMETHOD_1", "Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed."));
-
 	STR_DESCRIPTION_BOOTSTRAP_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_BOOTSTRAP_1", "Pick release or nightly bootstrap"));
-
 	STR_DESCRIPTION_FLASHCARD_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_FLASHCARD_1", ""));
-
 	STR_DESCRIPTION_GBARUNNER2_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_GBARUNNER2_1", ""));
+	STR_DESCRIPTION_SMSGGINRAM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SMSGGINRAM", "Load a SEGA Master System or Game Gear ROM into a RAM drive. An older S8DS version will be used. Enable this, if you can't run said ROMs."));
 
 	// Flashcard settings
 	STR_FLASHCARD_SELECT = ConvertFromUTF8(languageini.GetString("LANGUAGE", "FLASHCARD_SELECT", "Select Flashcard"));

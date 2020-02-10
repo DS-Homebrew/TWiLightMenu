@@ -157,7 +157,8 @@ bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
-bool snesEmulator = true;
+//bool snesEmulator = true;
+bool smsGgInRam = false;
 bool fcSaveOnSd = false;
 bool wideScreen = false;
 
@@ -226,7 +227,8 @@ void LoadSettings(void) {
 	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
-	snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
+    smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -2257,11 +2259,30 @@ int main(int argc, char **argv) {
 					mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-					launchType[secondaryDevice] = 6;
+					if (smsGgInRam) {
+						launchType[secondaryDevice] = 1;
 
-					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
-					if(access(ndsToBoot, F_OK) != 0) {
-						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+						useNDSB = true;
+
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					} else {
+						launchType[secondaryDevice] = 6;
+
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+						}
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
 					launchType[secondaryDevice] = 1;

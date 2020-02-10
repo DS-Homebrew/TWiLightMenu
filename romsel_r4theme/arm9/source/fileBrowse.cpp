@@ -70,6 +70,7 @@ extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
 extern bool isRegularDS;
+extern bool smsGgInRam;
 
 extern bool showdialogbox;
 extern int dialogboxHeight;
@@ -512,9 +513,11 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				else if (bnrRomType == 5 || bnrRomType == 6)
 				{
-					smsWarning();
-					titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
-					showLocation();
+					if (!smsGgInRam) {
+						smsWarning();
+						titleUpdate (dirContents.at(fileOffset).isDirectory,dirContents.at(fileOffset).name.c_str());
+						showLocation();
+					}
 				}
 				else if (bnrRomType == 7)
 				{

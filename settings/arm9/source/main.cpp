@@ -502,6 +502,11 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {"16:10 (Widescreen)", "4:3 (Full Screen)"}, {true, false});
 	}
 
+	if (isDSiMode() && sdAccessible)
+	{
+		gamesPage.option(STR_SMSGGINRAM, STR_DESCRIPTION_SMSGGINRAM, Option::Bool(&ms().smsGgInRam), {STR_YES, STR_NO}, {true, false});
+	}
+
 	if (!isDSiMode() && sys().isRegularDS())
 	{
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});

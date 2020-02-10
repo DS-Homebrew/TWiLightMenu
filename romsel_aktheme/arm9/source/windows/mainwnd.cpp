@@ -277,18 +277,6 @@ void MainWnd::startMenuItemClicked(s16 i)
             _mainList->enterDir(_mainList->getCurrentDir());
     }
 
-    else if (START_MENU_ITEM_HIDE == i)
-    {
-        std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "")
-        {
-            bool ret = false;
-            ret = hideFile(fullPath);
-            if (ret)
-                _mainList->enterDir(_mainList->getCurrentDir());
-        }
-    }
-
     else if (START_MENU_ITEM_DELETE == i)
     {
         std::string fullPath = _mainList->getSelectedFullPath();
@@ -568,12 +556,12 @@ void bootWidescreen(const char *filename)
 	
 	bool wideCheatFound = false;
 	char wideBinPath[256];
-	if (ms().launchType == DSiMenuPlusPlusSettings::ESDFlashcardLaunch) {
+	if (ms().launchType[ms().secondaryDevice] == DSiMenuPlusPlusSettings::ESDFlashcardLaunch) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
 
-	if (ms().launchType == DSiMenuPlusPlusSettings::ESlot1) {
+	if (ms().slot1Launched) {
 		// Reset Slot-1 to allow reading card header
 		sysSetCardOwner (BUS_OWNER_ARM9);
 		disableSlot1();
@@ -1179,7 +1167,7 @@ void MainWnd::launchSelected()
 
     ms().romfolder[ms().secondaryDevice] = _mainList->getCurrentDir();
 	ms().previousUsedDevice = ms().secondaryDevice;
-    ms().romPath = fullPath;
+    ms().romPath[ms().secondaryDevice] = fullPath;
     ms().saveSettings();
 
     DSRomInfo rominfo;
@@ -1210,7 +1198,7 @@ void MainWnd::launchSelected()
 			progressWnd().hide();
             messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
         }
-        ms().launchType = DSiMenuPlusPlusSettings::EDSiWareLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EDSiWareLaunch;
         ms().saveSettings();
         progressWnd().hide();
         unlaunch.launch();
@@ -1222,7 +1210,7 @@ void MainWnd::launchSelected()
         // Direct Boot for homebrew.
         if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
         {
-			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
+			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
             bootArgv(rominfo);
             return;
@@ -1230,14 +1218,14 @@ void MainWnd::launchSelected()
 
         else if (ms().useBootstrap || !ms().secondaryDevice)
         {
-			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
             bootBootstrap(gameConfig, rominfo);
             return;
         }
         else
         {
-			ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
             dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
             bootFlashcard(fullPath, true);
@@ -1253,7 +1241,7 @@ void MainWnd::launchSelected()
     // DSTWO Plugin Launch
     if (extension == ".plg" && ms().secondaryDevice && memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 
 		// Print .plg path without "fat:" at the beginning
@@ -1275,7 +1263,7 @@ void MainWnd::launchSelected()
     // RVID Launch
     if (extension == ".rvid")
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
@@ -1289,7 +1277,7 @@ void MainWnd::launchSelected()
     // MPEG4 Launch
     if (extension == ".mp4")
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 
 		ndsToBoot = MPEG4PLAYER_SD;
@@ -1303,7 +1291,7 @@ void MainWnd::launchSelected()
     // GBA Launch
     if (extension == ".gba")
 	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1351,7 +1339,7 @@ void MainWnd::launchSelected()
     // NES Launch
     if (extension == ".nes" || extension == ".fds")
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ENESDSLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ENESDSLaunch;
         ms().saveSettings();
 
 		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
@@ -1365,7 +1353,7 @@ void MainWnd::launchSelected()
     // GB Launch
     if (extension == ".gb" || extension == ".gbc")
     {
-        ms().launchType = DSiMenuPlusPlusSettings::EGameYobLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EGameYobLaunch;
         ms().saveSettings();
 
 		ndsToBoot = GAMEYOB_SD;
@@ -1379,23 +1367,52 @@ void MainWnd::launchSelected()
     // SMS/GG Launch
     if (extension == ".sms" || extension == ".gg")
     {
-        ms().launchType = DSiMenuPlusPlusSettings::ES8DSLaunch;
-        ms().saveSettings();
 		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-		ndsToBoot = S8DS_ROM;
-		if(access(ndsToBoot, F_OK) != 0) {
-			ndsToBoot = S8DS_FC;
-		}
+		if (!ms().secondaryDevice && ms().smsGgInRam)
+		{
+			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().saveSettings();
 
-        bootFile(ndsToBoot, fullPath);
+			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+
+			std::vector<char*> argarray;
+			argarray.push_back(strdup(bootstrapPath.c_str()));
+			argarray.at(0) = (char*)bootstrapPath.c_str();
+
+			LoaderConfig gen(bootstrapPath, BOOTSTRAP_INI);
+			gen.option("NDS-BOOTSTRAP", "NDS_PATH", S8DS07_ROM)
+			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
+			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
+			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
+			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+			if (int err = gen.launch(argarray.size(), (const char **)&argarray[0], false))
+			{
+				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
+			}
+		}
+		else
+		{
+			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ES8DSLaunch;
+			ms().saveSettings();
+
+			ndsToBoot = S8DS_ROM;
+			if(access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = S8DS_FC;
+			}
+
+			bootFile(ndsToBoot, fullPath);
+		}
     }
 	
     // GEN Launch
     if (extension == ".gen")
 	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1433,7 +1450,7 @@ void MainWnd::launchSelected()
     // SNES Launch
     if (extension == ".smc" || extension == ".sfc")
 	{
-        ms().launchType = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1507,7 +1524,7 @@ void MainWnd::showManual(void)
 void MainWnd::bootSlot1(void)
 {
     dbg_printf("Launch Slot1..\n");
-    ms().launchType = DSiMenuPlusPlusSettings::ESlot1;
+    ms().slot1Launched = true;
     ms().saveSettings();
 
     if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())

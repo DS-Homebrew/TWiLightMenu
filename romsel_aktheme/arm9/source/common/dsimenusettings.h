@@ -61,11 +61,10 @@ class DSiMenuPlusPlusSettings
         ENightlyBootstrap = true
     };
 
-    // 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
-        ENoLaunch = -1,
-        ESlot1 = 0,
+        ENoLaunch = 0,
         ESDFlashcardLaunch = 1,
         ESDFlashcardDirectLaunch = 2,
         EDSiWareLaunch = 3,
@@ -75,9 +74,9 @@ class DSiMenuPlusPlusSettings
     };
 
     /*	0 = Nintendo DSi (Retail)
-    1 = Nintendo DSi (Dev/Panda)
-    2 = Nintendo 3DS
-    3 = New Nintendo 3DS	*/
+	1 = Nintendo DSi (Dev/Panda)
+	2 = Nintendo 3DS
+	3 = New Nintendo 3DS	*/
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -115,15 +114,14 @@ class DSiMenuPlusPlusSettings
     bool showMicroSd;
     int theme;
     int subtheme;
-    bool showNds;
-    bool showRvid;
-    bool showNes;
-    bool showGb;
-    bool showSmsGg;
-    bool showMd;
-    bool showSnes;
+	bool showNds;
+	bool showRvid;
+	bool showNes;
+	bool showGb;
+	bool showSmsGg;
+	bool showMd;
+	bool showSnes;
     bool showDirectories;
-    bool showHidden;
     bool showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
@@ -131,7 +129,7 @@ class DSiMenuPlusPlusSettings
     bool gotosettings;
     bool previousUsedDevice;
     bool secondaryDevice;
-    bool fcSaveOnSd;
+	bool fcSaveOnSd;
 
     bool slot1LaunchMethod;
     bool useBootstrap;
@@ -146,7 +144,8 @@ class DSiMenuPlusPlusSettings
     bool autorun;
     bool show12hrClock;
 
-    bool snesEmulator;
+    //bool snesEmulator;
+    bool smsGgInRam;
 
     int ak_viewMode;
     int ak_scrollSpeed;
@@ -157,16 +156,17 @@ class DSiMenuPlusPlusSettings
     std::string dsiWarePubPath;
     std::string dsiWarePrvPath;
 
-    int launchType;
-    std::string romPath;
+    bool slot1Launched;
+    int launchType[2];
+    std::string romPath[2];
     std::string homebrewArg;
     bool homebrewBootstrap;
     bool soundfreq;
     bool showlogo;
     // unused...
     std::string r4_theme;
-    
-    bool wideScreen;
+	
+	bool wideScreen;
 };
 
 typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;

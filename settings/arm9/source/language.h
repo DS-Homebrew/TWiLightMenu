@@ -119,6 +119,7 @@ extern std::string STR_LOADINGSCREENTHEME;
 extern std::string STR_LOADINGSCREENLOCATION;
 extern std::string STR_BOOTSTRAP;
 extern std::string STR_USEGBARUNNER2;
+extern std::string STR_SMSGGINRAM;
 
 extern std::string STR_SYSTEM;
 extern std::string STR_ON;
@@ -139,49 +140,29 @@ extern std::string STR_RELEASE;
 extern std::string STR_NIGHTLY;
 
 extern std::string STR_DESCRIPTION_ASPECTRATIO;
-
 extern std::string STR_DESCRIPTION_LANGUAGE_1;
-
 extern std::string STR_DESCRIPTION_RUNIN_1;
-
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
-
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;
-
 extern std::string STR_DESCRIPTION_FORCESLEEPPATCH;
-
 extern std::string STR_DESCRIPTION_SLOT1SCFGUNLOCK;
-
 extern std::string STR_DESCRIPTION_USEBOOTSTRAP;
-
 extern std::string STR_DESCRIPTION_FCSAVELOCATION;
-
 extern std::string STR_DESCRIPTION_DEBUG_1;
-
 extern std::string STR_DESCRIPTION_LOGGING_1;
-
 extern std::string STR_DESCRIPTION_ROMREADLED_1;
 extern std::string STR_DESCRIPTION_DMAROMREADLED;
-
 extern std::string STR_DESCRIPTION_PRECISEVOLUMECTRL;
-
 extern std::string STR_DESCRIPTION_DSIWAREBOOTER;
-
 extern std::string STR_DESCRIPTION_SNDFREQ_1;
-
 extern std::string STR_DESCRIPTION_SLOT1LAUNCHMETHOD_1;
-
 extern std::string STR_DESCRIPTION_LOADINGSCREEN_1;
-
 extern std::string STR_DESCRIPTION_LOADINGSCREENTHEME;
-
 extern std::string STR_DESCRIPTION_LOADINGSCREENLOCATION;
-
 extern std::string STR_DESCRIPTION_BOOTSTRAP_1;
-
 extern std::string STR_DESCRIPTION_FLASHCARD_1;
-
 extern std::string STR_DESCRIPTION_GBARUNNER2_1;
+extern std::string STR_DESCRIPTION_SMSGGINRAM;
 
 // Flashcard settings
 extern std::string STR_FLASHCARD_SELECT;

@@ -36,8 +36,6 @@ bool renameFile( const std::string & oldName, const std::string & newName );
 
 bool deleteFile( const std::string & filename );
 
-bool hideFile(const std::string & filename);
-
 enum SRC_FILE_MODE
 {
     SFM_COPY = 0,

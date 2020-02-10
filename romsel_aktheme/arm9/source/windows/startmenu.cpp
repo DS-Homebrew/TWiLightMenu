@@ -35,7 +35,6 @@ void StartMenu::init()
         addItem(START_MENU_ITEM_CUT, LANG("start menu", "Cut"));
         addItem(START_MENU_ITEM_PASTE, LANG("start menu", "Paste"));
         addItem(START_MENU_ITEM_DELETE, LANG("start menu", "Delete"));
-        addItem(START_MENU_ITEM_HIDE, LANG("start menu", "Hide"));
         //addItem(START_MENU_ITEM_HELP, LANG("start menu", "Help"));
 
         addItem(START_MENU_ITEM_SETTING, LANG("start menu", "Setting"));
