@@ -170,7 +170,7 @@ void BootSplashDSi(void) {
 		}
 		bool dsiSixtyFpsRead = (isDSiMode() || REG_SCFG_EXT == 0x8300C000);
 
-		videoFrameFile = fopen(dsiSixtyFpsRead ? "nitro:/video/dsisplash_60fps.lz77.rvid" : "nitro:/video/dsisplash_60fps.rvid", "rb");
+		videoFrameFile = fopen("nitro:/video/dsisplash_60fps.lz77.rvid", "rb");
 
 		/*for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 			if (selectedFrame < 0x10) {
@@ -208,7 +208,7 @@ void BootSplashDSi(void) {
 
 			if (dsiSixtyFpsRead) {
 				doRead = true;
-			} else if (sys().isRegularDS()) {
+			} /*else if (sys().isRegularDS()) {
 				fseek(videoFrameFile, 0x200, SEEK_SET);
 				sysSetCartOwner (BUS_OWNER_ARM9);	// Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
 				*(vu32*)(0x08240000) = 1;
@@ -217,14 +217,10 @@ void BootSplashDSi(void) {
 					dsiSplashLocation = (void*)0x09000000;
 					doRead = true;
 				}
-			}
+			}*/
 			if (doRead) {
-				if (dsiSixtyFpsRead) {
-					fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
-					LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
-				} else {
-					fread(dsiSplashLocation, 1, 0x7AA000, videoFrameFile);
-				}
+				fread(videoImageBuffer, 1, 0x100000, videoFrameFile);
+				LZ77_Decompress((u8*)videoImageBuffer, (u8*)dsiSplashLocation);
 			} else {
 				sixtyFps = false;
 			}
@@ -282,10 +278,6 @@ void BootSplashDSi(void) {
 				}
 			}
 		}
-
-		/*if (ms().consoleModel < 2) {
-			fifoSendValue32(FIFO_USER_05, 1);	// Enable frame rate hack
-		}*/
 	}
 
 	controlTopBright = false;
