@@ -199,31 +199,7 @@ void vBlankHandler()
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	FILE* file = fopen(sys().isDSPhat() ? "nitro:/video/twlmenupp/phat_dsi.bmp" : "nitro:/video/twlmenupp/dsi.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x14000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 143;
-		for (int i=0; i<256*144; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX[(y+24)*256+x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-
-	fclose(file);
-
-	file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
+	FILE* file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
 
 	if (file) {
 		// Start loading
@@ -241,6 +217,54 @@ void LoadBMP(void) {
 			}
 			u16 val = *(src++);
 			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+
+	fclose(file);
+
+	file = fopen("nitro:/graphics/effect_twilight.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			videoImageBuffer[0][y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+
+	fclose(file);
+
+	file = fopen("nitro:/graphics/effect_menupp.bmp", "rb");
+
+	if (file) {
+		// Start loading
+		fseek(file, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(file) + 0xe;
+		fseek(file, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, file);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			videoImageBuffer[2][y*256+x] = convertToDsBmp(val);
 			x++;
 		}
 	}

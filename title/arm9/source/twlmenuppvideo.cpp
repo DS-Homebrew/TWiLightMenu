@@ -53,14 +53,9 @@ static char videoFrameFilename[256];
 
 static FILE* videoFrameFile;
 
-extern bool rocketVideo_playVideo;
-extern bool rocketVideo_playBackwards;
-extern bool rocketVideo_screen;
-extern int rocketVideo_videoYpos;
-extern int rocketVideo_videoYsize;
-extern int rocketVideo_videoFrames;
-extern int rocketVideo_videoFps;
-extern int rocketVideo_currentFrame;
+static int twilightCurrentLine = 191;
+static int menuCurrentLine = 0;
+static bool videoDonePlaying = false;
 
 static int frameDelaySprite = 0;
 static bool frameDelaySpriteEven = true;	// For 24FPS
@@ -317,18 +312,32 @@ static bool waitTillSoundPlay = true;
 static int timeTillSoundPlay = 0;
 
 void twlMenuVideo_topGraphicRender(void) {
-	if (ms().colorMode == 1 && waitTillSoundPlay) {
+	/*if (ms().colorMode == 1 && waitTillSoundPlay) {
 		timeTillSoundPlay++;
 		if (timeTillSoundPlay > 60) {
 			BootJingleTwlMenu();
 			waitTillSoundPlay = false;
 		}
+	}*/
+
+
+	if (twilightCurrentLine < 0 && menuCurrentLine > 191) {
+		videoDonePlaying = true;
+	}
+	if (!videoDonePlaying) {
+		for (int y = 0; y < 94; y++) {
+			dmaCopyWordsAsynch(0, (u16*)videoImageBuffer[0]+(256*twilightCurrentLine), (u16*)BG_GFX+(256*y), 0x200);
+			dmaCopyWordsAsynch(1, (u16*)videoImageBuffer[2]+(256*menuCurrentLine), (u16*)BG_GFX+(256*(191-y)), 0x200);
+			while (dmaBusy(0) || dmaBusy(1));
+		}
+		twilightCurrentLine--;
+		menuCurrentLine++;
 	}
 
 	glBegin2D();
 	{
 		glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
-		glSprite(0, anniversaryTextYpos, GL_FLIP_NONE, anniversaryText);
+		//glSprite(0, anniversaryTextYpos, GL_FLIP_NONE, anniversaryText);
 		if (zoomingIconYpos[0] < 64) {
 			glColor(RGB15(zoomingIconFade[0], zoomingIconFade[0], zoomingIconFade[0]));
 			glSprite(zoomingIconXpos[0], zoomingIconYpos[0], GL_FLIP_NONE, nesIcon);
@@ -366,8 +375,8 @@ void twlMenuVideo_topGraphicRender(void) {
 			glSprite(zoomingIconXpos[8], zoomingIconYpos[8], GL_FLIP_NONE, ndsIcon);
 		}
 
-		glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
-		glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
+		//glBoxFilled(0, 0, 256, 23, RGB15(0, 0, 0));
+		//glBoxFilled(0, 168, 256, 192, RGB15(0, 0, 0));
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
@@ -466,96 +475,13 @@ void twlMenuVideo(void) {
 	twlMenuSplash = true;
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
-	/*if (ms().consoleModel < 2) {
-		fifoSendValue32(FIFO_USER_05, 1);	// Enable frame rate hack
-	}*/
+	BootJingleTwlMenu();
 
-	if (ms().colorMode == 0) {
-		BootJingleTwlMenu();
-	}
-
-	for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-		if (selectedFrame < 10) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame0%i.bmp", selectedFrame);
-		} else {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.bmp", selectedFrame);
-		}
-		videoFrameFile = fopen(videoFrameFilename, "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 143;
-			for (int i=0; i<256*144; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-		}
-		fclose(videoFrameFile);
-
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
-	}
-
-	while (zoomingIconYpos[8] < 64) {
+	for (int i = 0; i < 60 * 3; i++)
+	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
-	}
-
-	rocketVideo_videoFrames = 43;
-	rocketVideo_videoFps = 24;
-	rocketVideo_currentFrame = -1;
-	rocketVideo_videoYpos = 24;
-	rocketVideo_videoYsize = 144;
-	rocketVideo_screen = true;
-	rocketVideo_playBackwards = false;
-	rocketVideo_playVideo = true;
-
-	while (rocketVideo_playVideo && rocketVideo_currentFrame < 5) {
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
-		swiWaitForVBlank();
-	}
-
-	for (int selectedFrame = 39; selectedFrame <= 43; selectedFrame++) {
-		snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/twlmenupp/frame%i.bmp", selectedFrame);
-		videoFrameFile = fopen(videoFrameFilename, "rb");
-
-		if (videoFrameFile) {
-			// Start loading
-			fseek(videoFrameFile, 0xe, SEEK_SET);
-			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x14000, videoFrameFile);
-			u16* src = bmpImageBuffer;
-			int x = 0;
-			int y = 143;
-			for (int i=0; i<256*144; i++) {
-				if (x >= 256) {
-					x = 0;
-					y--;
-				}
-				u16 val = *(src++);
-				videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
-				x++;
-			}
-			//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*24), 0x12000);
-		}
-		fclose(videoFrameFile);
-
-		scanKeys();
-		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 	}
 
 	// Load RocketVideo logo
@@ -582,11 +508,36 @@ void twlMenuVideo(void) {
 	}
 	fclose(videoFrameFile);
 
-	while (rocketVideo_playVideo) {
+	while (!videoDonePlaying)
+	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
 		swiWaitForVBlank();
 	}
+
+	// Load TWLMenu++ logo
+	videoFrameFile = fopen("nitro:/graphics/logo_twlmenupp.bmp", "rb");
+
+	if (videoFrameFile) {
+		// Start loading
+		fseek(videoFrameFile, 0xe, SEEK_SET);
+		u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+		fseek(videoFrameFile, pixelStart, SEEK_SET);
+		fread(bmpImageBuffer, 2, 0x18000, videoFrameFile);
+		u16* src = bmpImageBuffer;
+		int x = 0;
+		int y = 191;
+		for (int i=0; i<256*192; i++) {
+			if (x >= 256) {
+				x = 0;
+				y--;
+			}
+			u16 val = *(src++);
+			BG_GFX[y*256+x] = convertToDsBmp(val);
+			x++;
+		}
+	}
+	fclose(videoFrameFile);
 
 	// Change TWL letters to user color
 	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)PersonalData->theme);
@@ -608,14 +559,14 @@ void twlMenuVideo(void) {
 			}
 			u16 val = *(src++);
 			if (val != 0x7C1F) {
-				BG_GFX[(y+rocketVideo_videoYpos)*256+x] = convertToDsBmp(val);
+				BG_GFX[(y+24)*256+x] = convertToDsBmp(val);
 			}
 			x++;
 		}
 	}
 	fclose(videoFrameFile);
 
-	for (int i = 0; i < 60 * 2; i++)
+	for (int i = 0; i < 60 * 3; i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
