@@ -443,9 +443,14 @@ void drawIconSNES(int Xpos, int Ypos)
 	glSprite(Xpos, Ypos, GL_FLIP_NONE, snesIcon);
 }
 
-void loadFixedBanner(void) {
+void loadFixedBanner(bool isSlot1) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
+
+	/*FILE* bannerFile = fopen("sd:/_nds/TWiLightMenu/slot1.bnr", "wb");
+	bannersize = NDS_BANNER_SIZE_ORIGINAL;
+	fwrite(&ndsBanner, 1, bannersize, bannerFile);
+	fclose(bannerFile);*/
 
 	// Fire Emblem - Heroes of Light and Shadow (English Translation)
 	if(ndsBanner.crc[0] == 0xECF9
@@ -546,6 +551,16 @@ void loadFixedBanner(void) {
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
+	} else if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
+		cardRead(0x75600, &arm9StartSig, 0x10);
+		if (arm9StartSig[0] == 0xE58D0008
+		 && arm9StartSig[1] == 0xE1500005
+		 && arm9StartSig[2] == 0xBAFFFFC5
+		 && arm9StartSig[3] == 0xE59D100C)
+		{
+			// It's a SuperCard DSTWO, so use correct banner.
+			cardRead(0x1843400, &ndsBanner, NDS_BANNER_SIZE_ORIGINAL);
+		}
 	}
 }
 
@@ -649,8 +664,9 @@ void getGameInfo(int num, bool isDir, const char* name)
 		// this is an nds/app file!
 		FILE *fp;
 		int ret;
+		bool isSlot1 = (strcmp(name, "slot1") == 0);
 
-		if (strcmp(name, "slot1") == 0)
+		if (isSlot1)
 		{
 			cardRead(0, &ndsHeader, sizeof(ndsHeader));
 		}
@@ -725,7 +741,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		if (ndsHeader.bannerOffset == 0)
 		{
-			if (strcmp(name, "slot1") != 0)
+			if (!isSlot1)
 				fclose(fp);
 
 			FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
@@ -738,9 +754,24 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 			return;
 		}
-		if (strcmp(name, "slot1") == 0)
+		if (isSlot1)
 		{
-			cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
+			if ((ndsCardHeader.bannerOffset > 0) && cardInited)
+			{
+				cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
+			}
+			else
+			{
+				FILE* bannerFile = fopen("nitro:/noinfo.bnr", "rb");
+				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
+				fclose(bannerFile);
+
+				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
+					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+				}
+
+				return;
+			}
 		}
 		else
 		{
@@ -779,7 +810,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			fclose(fp);
 		}
 
-		loadFixedBanner();
+		loadFixedBanner(isSlot1);
 
 		DC_FlushAll();
 
@@ -885,84 +916,6 @@ void iconUpdate(int num, bool isDir, const char* name)
 			 || extention(name, ".app"))
 	{
 		// this is an nds/app file!
-		unsigned int iconTitleOffset;
-		int ret;
-
-		if (strcmp(name, "slot1") == 0)
-		{
-			if ((ndsCardHeader.bannerOffset > 0) && cardInited)
-			{
-				cardRead(ndsCardHeader.bannerOffset, &ndsBanner, NDS_BANNER_SIZE_DSi);
-			}
-			else
-			{
-				loadUnkIcon(num);
-				return;
-			}
-		}
-		else
-		{
-			FILE *fp;
-			// open file for reading info
-			fp = fopen(name, "rb");
-			if (fp == NULL)
-			{
-				// icon
-				clearIcon(num);
-				fclose(fp);
-				return;
-			}
-
-			ret = fseek(fp, offsetof(tNDSHeader, bannerOffset), SEEK_SET);
-			if (ret == 0)
-				ret = fread(&iconTitleOffset, sizeof (int), 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1)
-			{
-				// icon
-				loadUnkIcon(num);
-				fclose(fp);
-				return;
-			}
-
-			if (iconTitleOffset == 0)
-			{
-				// icon
-				loadUnkIcon(num);
-				fclose(fp);
-				return;
-			}
-			ret = fseek(fp, iconTitleOffset, SEEK_SET);
-			if (ret == 0)
-				ret = fread(&ndsBanner, NDS_BANNER_SIZE_DSi, 1, fp); // read if seek succeed
-			else
-				ret = 0; // if seek fails set to !=1
-
-			if (ret != 1)
-			{
-				// try again, but using regular banner size
-				ret = fseek(fp, iconTitleOffset, SEEK_SET);
-				if (ret == 0)
-					ret = fread(&ndsBanner, NDS_BANNER_SIZE_ORIGINAL, 1, fp); // read if seek succeed
-				else
-					ret = 0; // if seek fails set to !=1
-
-				if (ret != 1)
-				{
-					// icon
-					loadUnkIcon(num);
-					fclose(fp);
-					return;
-				}
-			}
-
-			// close file!
-			fclose(fp);
-		}
-
-		loadFixedBanner();
 
 		// icon
 		DC_FlushAll();
