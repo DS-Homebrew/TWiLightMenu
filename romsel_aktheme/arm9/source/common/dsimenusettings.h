@@ -122,6 +122,7 @@ class DSiMenuPlusPlusSettings
 	bool showMd;
 	bool showSnes;
     bool showDirectories;
+	bool showHidden;
     bool showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
