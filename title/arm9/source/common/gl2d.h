@@ -314,7 +314,7 @@ void glSpriteRotateScale( int x, int y, s32 angle, s32 scale, int flipmode, cons
 void glSpriteRotateScaleXY( int x, int y, s32 angle, s32 scaleX, s32 scaleY, int flipmode, const glImage *spr);
 
 
-/*! \brief Draws a Horizontaly Stretched Sprite (Clean Stretching) <Br>
+/*! \brief Draws a Horizontally Stretched Sprite (Clean Stretching) <Br>
 	Useful for "Laser Effects".
 \param x X position of the sprite center.
 \param y Y position of the sprite center.
@@ -322,6 +322,16 @@ void glSpriteRotateScaleXY( int x, int y, s32 angle, s32 scaleX, s32 scaleY, int
 \param *spr pointer to a glImage. 
 */
 void glSpriteStretchHorizontal(int x, int y, int length_x, const glImage *spr );
+
+
+/*! \brief Draws a Vertically Stretched Sprite (Clean Stretching) <Br>
+	Useful for "Laser Effects".
+\param x X position of the sprite center.
+\param y Y position of the sprite center.
+\param length_y The length(in pixels) to stretch the sprite.
+\param *spr pointer to a glImage. 
+*/
+void glSpriteStretchVertical(int x, int y, int length_y, const glImage *spr );
 
 
 /*! \brief Draws a Horizontaly Stretched Sprite (Clean Stretching) <Br>
