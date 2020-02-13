@@ -140,7 +140,7 @@ soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
 # rule to build soundbank from music files
 #---------------------------------------------------------------------------------
-soundbank_bday.bin : $(AUDIOFILES)
+soundbank_bday.bin : $(AUDIOFILES_BDAY)
 #---------------------------------------------------------------------------------
 	@mmutil $^ -d -o../../nitrofiles/soundbank_bday.bin -hsoundbank_bday.h
 
