@@ -345,7 +345,7 @@ void twlMenuVideo_loadTopGraphics(void) {
 
 void BootJingleTwlMenu() {
 	
-	mmInitDefaultMem((mm_addr)0x02FA0000);
+	mmInitDefaultMem((mm_addr)(isDSiMode() ? 0x02FA0000 : 0x023A0000));
 
 	mmLoadEffect( SFX_TWLMENUVIDEO );
 

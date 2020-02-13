@@ -578,9 +578,30 @@ int main(int argc, char **argv)
 	}
 
 	if (ms().dsiSplash || ms().showlogo) {
+		// Get date
+		char soundBankPath[32], currentDate[16], birthDate[16], dateOutput[2][5];
+		time_t Raw;
+		time(&Raw);
+		const struct tm *Time = localtime(&Raw);
+
+		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+		if (PersonalData->birthMonth >= 1 && PersonalData->birthMonth < 10) {
+			sprintf(dateOutput[0], "0%i", PersonalData->birthMonth);
+		} else {
+			sprintf(dateOutput[0], "%i", PersonalData->birthMonth);
+		}
+		if (PersonalData->birthDay >= 1 && PersonalData->birthDay < 10) {
+			sprintf(dateOutput[1], "0%i", PersonalData->birthDay);
+		} else {
+			sprintf(dateOutput[1], "%i", PersonalData->birthDay);
+		}
+		sprintf(birthDate, "%s/%s", dateOutput[0], dateOutput[1]);
+
+		sprintf(soundBankPath, "nitro:/soundbank%s.bin", (strcmp(currentDate, birthDate) == 0) ? "_bday" : "");
+
 		// Load sound bank into memory
-		FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
-		fread((void*)0x02FA0000, 1, 0x58000, soundBank);
+		FILE* soundBank = fopen(soundBankPath, "rb");
+		fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
 		fclose(soundBank);
 	}
 
