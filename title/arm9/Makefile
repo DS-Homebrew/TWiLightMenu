@@ -24,7 +24,7 @@ INCLUDES	:=	include source ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
 MUSIC       :=  ../music
-MUSICBDAY   :=  ../music_birthday
+MUSICBDAY   :=  ../music_bday
 
 #---------------------------------------------------------------------------------
 # options for code generation
