@@ -64,7 +64,7 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 export AUDIOFILES	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC)/*.*)),$(CURDIR)/$(MUSIC)/$(dir))
-export AUDIOFILES_BDAY	:=	$(foreach dir,$(notdir $(wildcard $(MUSIC_BDAY)/*.*)),$(CURDIR)/$(MUSIC_BDAY)/$(dir))
+export AUDIOFILESBDAY	:=	$(foreach dir,$(notdir $(wildcard $(MUSICBDAY)/*.*)),$(CURDIR)/$(MUSICBDAY)/$(dir))
 
 export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
@@ -140,7 +140,7 @@ soundbank.bin : $(AUDIOFILES)
 #---------------------------------------------------------------------------------
 # rule to build soundbank from music files
 #---------------------------------------------------------------------------------
-soundbank_bday.bin : $(AUDIOFILES_BDAY)
+soundbank_bday.bin : $(AUDIOFILESBDAY)
 #---------------------------------------------------------------------------------
 	@mmutil $^ -d -o../../nitrofiles/soundbank_bday.bin -hsoundbank_bday.h
 
