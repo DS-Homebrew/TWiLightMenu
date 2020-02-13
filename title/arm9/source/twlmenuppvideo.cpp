@@ -71,11 +71,11 @@ static int frameDelaySprite = 0;
 static bool frameDelaySpriteEven = true;	// For 24FPS
 static bool loadFrameSprite = true;
 
-static int anniversaryTextYpos = -14;
+/*static int anniversaryTextYpos = -14;
 static bool anniversaryTextYposMove = false;
 static int anniversaryTextYposMoveSpeed = 9;
 static int anniversaryTextYposMoveDelay = 0;
-static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS
+static bool anniversaryTextYposMoveDelayEven = true;	// For 24FPS */
 
 static int zoomingIconXpos[9] = {-32, 128, 280, 256, 128, -32, -128, 128, 256+96};
 static int zoomingIconYpos[9] = {0, -32, -64, 192+64, 192+128, 192, -96, -168, -240};
@@ -560,6 +560,23 @@ void twlMenuVideo(void) {
 	//dmaFillHalfWords(0, BG_GFX, 0x18000);
 
 	BootJingleTwlMenu();
+	
+	char currentDate[16], bgPath[256], logoPath[256];
+	time_t Raw;
+	time(&Raw);
+	const struct tm *Time = localtime(&Raw);
+
+	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+	if (strcmp(currentDate, "02/14") == 0) {
+		// Load pink BG for Valentine's Day
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppPink.bmp");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.bmp");
+	} else {
+		// Load normal BG
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenupp.bmp");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.bmp");
+	}
 
 	while (!videoDonePlaying)
 	{
@@ -596,7 +613,7 @@ void twlMenuVideo(void) {
 	changeBgAlpha = true;
 
 	// Load TWLMenu++ BG
-	videoFrameFile = fopen("nitro:/graphics/bg_twlmenupp.bmp", "rb");
+	videoFrameFile = fopen(bgPath, "rb");
 
 	if (videoFrameFile) {
 		// Start loading
@@ -627,7 +644,7 @@ void twlMenuVideo(void) {
 	}
 
 	// Load TWLMenu++ logo
-	videoFrameFile = fopen("nitro:/graphics/logo_twlmenupp.bmp", "rb");
+	videoFrameFile = fopen(logoPath, "rb");
 
 	if (videoFrameFile) {
 		// Start loading
