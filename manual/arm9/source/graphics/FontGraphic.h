@@ -21,6 +21,7 @@ private:
 	char buffer[256];
 	char buffer2[256];
 	unsigned int getSpriteIndex(const u16 letter);
+	char16_t getCharacter(const char *&text);
 
 public:
 
