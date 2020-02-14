@@ -1643,7 +1643,7 @@ int main(int argc, char **argv) {
 						break;
 				}
 				if (startMenu_cursorPosition == 6) {
-					// Proceed to ROM select menu
+					// Open manual
 					showCursor = false;
 					fadeType = false;	// Fade to white
 					mmEffectEx(&snd_launch);
@@ -1651,7 +1651,11 @@ int main(int argc, char **argv) {
 						iconYpos[6] -= 6;
 						swiWaitForVBlank();
 					}
-					loadROMselect();
+					if (sdFound()) {
+						chdir("sd:/");
+					}
+					int err = runNdsFile ("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);
+					iprintf ("Start failed. Error %i\n", err);
 				}
 
 				menuButtonPressed = false;
