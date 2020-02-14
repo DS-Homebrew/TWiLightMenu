@@ -442,7 +442,7 @@ int main(int argc, char **argv)
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
-		.option(STR_MAINMENU, STR_DESCRIPTION_MAINMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_SHOW, STR_HIDE}, {true, false})
 
 		// Theme
 		.option(STR_THEME,
