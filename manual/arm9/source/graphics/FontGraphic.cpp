@@ -15,7 +15,6 @@
 
 int fontTextureID[2];
 
-
 int FontGraphic::load(int textureID, glImage *_font_sprite,
 				  const unsigned int numframes,
 				  const unsigned int *texcoords,
@@ -77,34 +76,40 @@ unsigned int FontGraphic::getSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
+char16_t FontGraphic::getCharacter(const char *&text) {
+	// UTF-8 handling
+	if((*text & 0x80) == 0) {
+		return getSpriteIndex(*text++);
+	} else if((*text & 0xE0) == 0xC0) {
+		char16_t c = ((*text++ & 0x1F) << 6);
+		if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
+
+		return getSpriteIndex(c);
+	} else if((*text & 0xF0) == 0xE0) {
+		char16_t c = (*text++ & 0xF) << 12;
+		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+		return getSpriteIndex(c);
+	} else if((*text & 0xF8) == 0xF0) {
+		char16_t c = (*text++ & 0x7) << 18;
+		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
+		if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
+		if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
+
+		return getSpriteIndex(c);
+	} else {
+		// Character isn't valid, return ?
+		text++;
+		return getSpriteIndex('?');
+	}
+}
+
 void FontGraphic::print(int x, int y, const char *text)
 {
-	unsigned short int fontChar = 0;
 	while (*text)
 	{
-		// UTF-8 handling
-		if((*text & 0x80) == 0) {
-			fontChar = getSpriteIndex(*text++);
-		} else if((*text & 0xE0) == 0xC0) {
-			char16_t c = ((*text++ & 0x1F) << 6);
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF0) == 0xE0) {
-			char16_t c = (*text++ & 0xF) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF8) == 0xF0) {
-			char16_t c = (*text++ & 0x7) << 18;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		}
-
+		char16_t fontChar = getCharacter(text);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}
@@ -112,35 +117,11 @@ void FontGraphic::print(int x, int y, const char *text)
 
 int FontGraphic::calcWidth(const char *text)
 {
-	unsigned short int fontChar = 0;
 	int x = 0;
 
 	while (*text)
 	{
-		// UTF-8 handling
-		if((*text & 0x80) == 0) {
-			fontChar = getSpriteIndex(*text++);
-		} else if((*text & 0xE0) == 0xC0) {
-			char16_t c = ((*text++ & 0x1F) << 6);
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF0) == 0xE0) {
-			char16_t c = (*text++ & 0xF) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF8) == 0xF0) {
-			char16_t c = (*text++ & 0x7) << 18;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		}
-
-		x += fontSprite[fontChar].width;
+		x += fontSprite[getCharacter(text)].width;
 	}
 	return x;
 }
@@ -153,68 +134,20 @@ void FontGraphic::print(int x, int y, int value)
 
 int FontGraphic::getCenteredX(const char *text)
 {
-	unsigned short int fontChar = 0;
 	int total_width = 0;
 	while (*text)
 	{
-		// UTF-8 handling
-		if((*text & 0x80) == 0) {
-			fontChar = getSpriteIndex(*text++);
-		} else if((*text & 0xE0) == 0xC0) {
-			char16_t c = ((*text++ & 0x1F) << 6);
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF0) == 0xE0) {
-			char16_t c = (*text++ & 0xF) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF8) == 0xF0) {
-			char16_t c = (*text++ & 0x7) << 18;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		}
-
-		total_width += fontSprite[fontChar].width;
+		total_width += fontSprite[getCharacter(text)].width;
 	}
 	return (SCREEN_WIDTH - total_width) / 2;
 }
 
 void FontGraphic::printCentered(int y, const char *text)
 {
-	unsigned short int fontChar = 0;
-
 	int x = getCenteredX(text);
 	while (*text)
 	{
-		// UTF-8 handling
-		if((*text & 0x80) == 0) {
-			fontChar = getSpriteIndex(*text++);
-		} else if((*text & 0xE0) == 0xC0) {
-			char16_t c = ((*text++ & 0x1F) << 6);
-			if((*text & 0xC0) == 0x80) c |= *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF0) == 0xE0) {
-			char16_t c = (*text++ & 0xF) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		} else if((*text & 0xF8) == 0xF0) {
-			char16_t c = (*text++ & 0x7) << 18;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 12;
-			if((*text & 0xC0) == 0x80) c |= (*text++ & 0x3F) << 6;
-			if((*text & 0xC0) == 0x80) c |=  *text++ & 0x3F;
-
-			fontChar = getSpriteIndex(c);
-		}
-
+		char16_t fontChar = getCharacter(text);
 		glSprite(x, y, GL_FLIP_NONE, &fontSprite[fontChar]);
 		x += fontSprite[fontChar].width;
 	}
