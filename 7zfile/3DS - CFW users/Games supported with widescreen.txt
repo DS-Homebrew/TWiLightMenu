@@ -1,4 +1,4 @@
-﻿Total: 488
+﻿Total: 490
 
 007 - Blood Stone (USA/Canada/Europe/France/Germany)
 American Dragon - Jake Long - Attack of the Dark Dragon (USA)
@@ -157,6 +157,8 @@ Mario Slam Basketball (Europe)
 Mario Basketball 3 on 3 (Japan)
 Mario Kart DS (USA/Europe) (Optional xdelta patch (USA and English only): https://www.dropbox.com/s/5111awpf08vtoag/mkdswide.xdelta3?dl=1)
 Mario Kart DS (Japan)
+Mario Kart DS (Simplified Chinese translation)
+Mario Kart DS (Traditional Chinese translation)
 Mario Kart DS (Korea)
 Mario Kart DS (Kiosk Demo) (USA)
 Marvel - Ultimate Alliance 2 (USA)
