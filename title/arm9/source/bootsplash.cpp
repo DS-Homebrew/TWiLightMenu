@@ -142,7 +142,7 @@ void BootSplashDSi(void) {
 	fadeType = true;
 
 	if (cartInserted) {
-		videoFrameFile = fopen("nitro:/video/dsisplash/nintendo.bmp", "rb");
+		videoFrameFile = fopen("nitro:/graphics/nintendo.bmp", "rb");
 
 		if (videoFrameFile) {
 			// Start loading
@@ -233,34 +233,11 @@ void BootSplashDSi(void) {
 		rocketVideo_videoFrames = 42;
 		rocketVideo_videoFps = 24;
 
-		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
-			if (selectedFrame < 10) {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame0%i.bmp", selectedFrame);
-			} else {
-				snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
-			}
-			videoFrameFile = fopen(videoFrameFilename, "rb");
+		videoFrameFile = fopen("nitro:/video/dsisplash.rvid", "rb");
+		fseek(videoFrameFile, 0x200, SEEK_SET);
 
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-				u16* src = bmpImageBuffer;
-				int x = 0;
-				int y = 143;
-				for (int i=0; i<256*144; i++) {
-					if (x >= 256) {
-						x = 0;
-						y--;
-					}
-					u16 val = *(src++);
-					videoImageBuffer[selectedFrame][y*256+x] = convertToDsBmp(val);
-					x++;
-				}
-			}
-			fclose(videoFrameFile);
+		for (int selectedFrame = 0; selectedFrame < 39; selectedFrame++) {
+			fread(videoImageBuffer[selectedFrame], 1, 0x12000, videoFrameFile);
 
 			if (cartInserted && selectedFrame > 5) {
 				// Draw first half of Nintendo logo
@@ -318,47 +295,25 @@ void BootSplashDSi(void) {
 
 	if (!sixtyFps) {
 		for (int selectedFrame = 39; selectedFrame <= 42; selectedFrame++) {
-			snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/video/dsisplash/frame%i.bmp", selectedFrame);
-			videoFrameFile = fopen(videoFrameFilename, "rb");
+			fread(videoImageBuffer[selectedFrame-39], 1, 0x12000, videoFrameFile);
 
-			if (videoFrameFile) {
-				// Start loading
-				fseek(videoFrameFile, 0xe, SEEK_SET);
-				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
-				fseek(videoFrameFile, pixelStart, SEEK_SET);
-				fread(bmpImageBuffer, 2, 0x12000, videoFrameFile);
-				u16* src = bmpImageBuffer;
-				int x = 0;
-				int y = 143;
-				for (int i=0; i<256*144; i++) {
-					if (x >= 256) {
-						x = 0;
+			if (cartInserted) {
+				// Draw first half of Nintendo logo
+				int x = 66;
+				int y = 130+13;
+				for (int i=122*14; i<122*28; i++) {
+					if (x >= 66+122) {
+						x = 66;
 						y--;
 					}
-					u16 val = *(src++);
-					videoImageBuffer[selectedFrame-39][y*256+x] = convertToDsBmp(val);
+					if (BG_GFX[(256*192)+i] != 0xFFFF) {
+						videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
+					}
 					x++;
 				}
-
-				if (cartInserted) {
-					// Draw first half of Nintendo logo
-					int x = 66;
-					int y = 130+13;
-					for (int i=122*14; i<122*28; i++) {
-						if (x >= 66+122) {
-							x = 66;
-							y--;
-						}
-						if (BG_GFX[(256*192)+i] != 0xFFFF) {
-							videoImageBuffer[selectedFrame-39][y*256+x] = BG_GFX[(256*192)+i];
-						}
-						x++;
-					}
-				}
-				//dmaCopy((void*)videoImageBuffer[0], (u16*)BG_GFX+(256*12), 0x12000);
 			}
-			fclose(videoFrameFile);
 		}
+		fclose(videoFrameFile);
 	}
 
 	while (rocketVideo_playVideo) {
