@@ -287,9 +287,13 @@ void loadROMselect()
 	{
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else
+	else if (theme == 1)
 	{
 		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
+	}
+	else
+	{
+		runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 	}
 	fadeType = true;	// Fade in from white
 }
