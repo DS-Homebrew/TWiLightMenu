@@ -1456,7 +1456,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam)) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam) || (gamegear&&ms().secondaryDevice)) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1469,8 +1469,12 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EGameYobLaunch;
 				} else if (nes) {
 					ms().launchType[ms().secondaryDevice] = Launch::ENESDSLaunch;
-				} else {
+				} else if (gamegear) {
 					ms().launchType[ms().secondaryDevice] = Launch::ES8DSLaunch;
+				} else if (rvid) {
+					ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
+				} else if (mpeg4) {
+					ms().launchType[ms().secondaryDevice] = Launch::EMPEG4Launch;
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;

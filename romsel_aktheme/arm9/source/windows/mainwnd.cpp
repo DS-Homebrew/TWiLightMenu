@@ -1275,7 +1275,7 @@ void MainWnd::launchSelected()
     // RVID Launch
     if (extension == ".rvid")
     {
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ERVideoLaunch;
         ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
@@ -1289,7 +1289,7 @@ void MainWnd::launchSelected()
     // MPEG4 Launch
     if (extension == ".mp4")
     {
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EMPEG4Launch;
         ms().saveSettings();
 
 		ndsToBoot = MPEG4PLAYER_SD;

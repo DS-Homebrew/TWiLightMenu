@@ -2235,11 +2235,15 @@ int main(int argc, char **argv) {
 					dstwobootini.SetString("boot_settings", "file", ROMpathDS2);
 					dstwobootini.SaveIniFile( "fat:/_dstwo/twlm.ini" );
 				} else if (extention(filename[secondaryDevice], ".rvid")) {
+					launchType[secondaryDevice] = 7;
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					}
 				} else if (extention(filename[secondaryDevice], ".mp4")) {
+					launchType[secondaryDevice] = 8;
+
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
@@ -2293,7 +2297,7 @@ int main(int argc, char **argv) {
 					mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 					mkdir(secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
-					if (smsGgInRam) {
+					if (!secondaryDevice && smsGgInRam) {
 						launchType[secondaryDevice] = 1;
 
 						useNDSB = true;

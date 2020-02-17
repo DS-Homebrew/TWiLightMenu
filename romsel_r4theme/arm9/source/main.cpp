@@ -1807,7 +1807,7 @@ int main(int argc, char **argv) {
 				SNES = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam)) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam) || (gamegear&&secondaryDevice)) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1820,8 +1820,12 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 5;
 				} else if (nes) {
 					launchType[secondaryDevice] = 4;
-				} else {
+				} else if (gamegear) {
 					launchType[secondaryDevice] = 6;
+				} else if (rvid) {
+					launchType[secondaryDevice] = 7;
+				} else if (mpeg4) {
+					launchType[secondaryDevice] = 8;
 				}
 
 				previousUsedDevice = secondaryDevice;

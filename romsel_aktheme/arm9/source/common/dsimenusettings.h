@@ -71,6 +71,8 @@ class DSiMenuPlusPlusSettings
         ENESDSLaunch = 4,
         EGameYobLaunch = 5,
         ES8DSLaunch = 6,
+        ERVideoLaunch = 7,
+        EMPEG4Launch = 8,
     };
 
     /*	0 = Nintendo DSi (Retail)

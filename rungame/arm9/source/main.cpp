@@ -390,6 +390,12 @@ TWL_CODE int lastRunROM() {
 			mkdir("sd:/data/s8ds", 0777);
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 			return runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
+		case 7:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/RocketVideoPlayer.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass video to Rocket Video Player as argument
+		case 8:
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/MPEG4Player.nds";
+			return runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);	// Pass video to MPEG4Player as argument
 	}
 	
 	return -1;

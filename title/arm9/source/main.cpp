@@ -485,6 +485,34 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to S8DS as argument
 	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::ERVideoLaunch)
+	{
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/RocketVideoPlayer.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/RocketVideoPlayer.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to Rocket Video Player as argument
+	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EMPEG4Launch)
+	{
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/MPEG4Player.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/MPEG4Player.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
+	}
 }
 
 void defaultExitHandler()
