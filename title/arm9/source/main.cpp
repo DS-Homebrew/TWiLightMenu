@@ -252,11 +252,8 @@ void lastRunROM()
 
 			loadPerGameSettings(filename);
 			if (ms().homebrewBootstrap) {
-				if (perGameSettings_bootstrapFile == -1) {
-					argarray.push_back((char*)(ms().bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
-				} else {
-					argarray.push_back((char*)(perGameSettings_bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
-				}
+				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
+				argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds"));
 			} else {
 				const char *typeToReplace = ".nds";
 				if (extention(filename, ".dsi")) {
@@ -302,6 +299,7 @@ void lastRunROM()
 					if (savesize > 0) {
 						consoleDemoInit();
 						printf("Creating save file...\n");
+						fadeType = true;
 
 						FILE *pFile = fopen(savepath.c_str(), "wb");
 						if (pFile) {
@@ -310,8 +308,12 @@ void lastRunROM()
 							fclose(pFile);
 						}
 						printf("Save file created!\n");
-						
+
 						for (int i = 0; i < 30; i++) {
+							swiWaitForVBlank();
+						}
+						fadeType = false;
+						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
 						}
 					}
@@ -319,13 +321,15 @@ void lastRunROM()
 
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
-				char ndsToBoot[256];
-				sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
-				if(access(ndsToBoot, F_OK) != 0) {
-					sprintf(ndsToBoot, "fat:/_nds/%s-%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", useNightly ? "nightly" : "release");
+				if (sdFound()) {
+					argarray.push_back((char*)(useNightly ? "sd:/_nds/nds-bootstrap-nightly.nds" : "sd:/_nds/nds-bootstrap-release.nds"));
+				} else {
+					if (isDSiMode()) {
+						argarray.push_back((char*)(useNightly ? "/_nds/nds-bootstrap-nightly.nds" : "/_nds/nds-bootstrap-release.nds"));
+					} else {
+						argarray.push_back((char*)(useNightly ? "/_nds/b4ds-nightly.nds" : "/_nds/b4ds-release.nds"));
+					}
 				}
-
-				argarray.push_back((char*)ndsToBoot);
 			}
 			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().secondaryDevice]);
@@ -512,6 +516,18 @@ void lastRunROM()
 			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
+	}
+	if (err > 0) {
+		consoleDemoInit();
+		printf("Start failed. Error %i\n", err);
+		fadeType = true;
+		for (int i = 0; i < 60*3; i++) {
+			swiWaitForVBlank();
+		}
+		fadeType = false;
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
 	}
 }
 
