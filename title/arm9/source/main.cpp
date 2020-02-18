@@ -320,9 +320,9 @@ void lastRunROM()
 				bool useNightly = (perGameSettings_bootstrapFile == -1 ? ms().bootstrapFile : perGameSettings_bootstrapFile);
 
 				char ndsToBoot[256];
-				sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s%s.nds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+				sprintf(ndsToBoot, "sd:/_nds/nds-bootstrap-%s.nds", useNightly ? "nightly" : "release");
 				if(access(ndsToBoot, F_OK) != 0) {
-					sprintf(ndsToBoot, "fat:/_nds/%s-%s%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", ms().homebrewBootstrap ? "hb-" : "", useNightly ? "nightly" : "release");
+					sprintf(ndsToBoot, "fat:/_nds/%s-%s.nds", isDSiMode() ? "nds-bootstrap" : "b4ds", useNightly ? "nightly" : "release");
 				}
 
 				argarray.push_back((char*)ndsToBoot);
@@ -491,11 +491,11 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/RocketVideoPlayer.nds";
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 		}
 		else
 		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/RocketVideoPlayer.nds";
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to Rocket Video Player as argument
 	}
@@ -505,11 +505,11 @@ void lastRunROM()
 
 		if (sys().flashcardUsed())
 		{
-			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/MPEG4Player.nds";
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 		}
 		else
 		{
-			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/MPEG4Player.nds";
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
 	}
