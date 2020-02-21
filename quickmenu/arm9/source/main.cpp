@@ -1786,8 +1786,15 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
-					printSmallCentered(false, 34, "the console's lid.");
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						// Display nothing
+					} else if (consoleModel >= 2) {
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 34, "then press B.");
+					} else {
+						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+					}
 					printSmall(false, 2, 80, "Creating public save file...");
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
@@ -1797,7 +1804,6 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
-					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.pubSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
@@ -1806,13 +1812,9 @@ int main(int argc, char **argv) {
 
 					FILE *pFile = fopen(dsiWarePubPath.c_str(), "wb");
 					if (pFile) {
-						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), pFile);
-							if (!bufferCleared) {
-								memset(buffer, 0, sizeof(buffer));
-								bufferCleared = true;
-							}
-						}
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.pubSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, "Public save file created!");
@@ -1821,8 +1823,15 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
-					printSmallCentered(false, 34, "the console's lid.");
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						// Display nothing
+					} else if (consoleModel >= 2) {
+						printSmallCentered(false, 20, "If this takes a while, press HOME,");
+						printSmallCentered(false, 34, "then press B.");
+					} else {
+						printSmallCentered(false, 20, "If this takes a while, close and open");
+						printSmallCentered(false, 34, "the console's lid.");
+					}
 					printSmall(false, 2, 80, "Creating private save file...");
 					if (!fadeType) {
 						fadeType = true;	// Fade in from white
@@ -1832,7 +1841,6 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					memset(buffer, 0, sizeof(buffer));
-					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr", (unsigned int)NDSHeader.prvSavSize);
 					FILE *hdrFile = fopen(savHdrPath, "rb");
@@ -1841,13 +1849,9 @@ int main(int argc, char **argv) {
 
 					FILE *pFile = fopen(dsiWarePrvPath.c_str(), "wb");
 					if (pFile) {
-						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), pFile);
-							if (!bufferCleared) {
-								memset(buffer, 0, sizeof(buffer));
-								bufferCleared = true;
-							}
-						}
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.prvSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
 						fclose(pFile);
 					}
 					printSmall(false, 2, 88, "Private save file created!");

@@ -907,7 +907,9 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						// Display nothing
+					} else if (ms().consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
@@ -926,7 +928,6 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					toncset(buffer, 0, sizeof(buffer));
-					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
 						 (unsigned int)NDSHeader.pubSavSize);
@@ -937,13 +938,9 @@ int main(int argc, char **argv) {
 
 					FILE *pFile = fopen(ms().dsiWarePubPath.c_str(), "wb");
 					if (pFile) {
-						for (int i = NDSHeader.pubSavSize; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), pFile);
-							if (!bufferCleared) {
-								toncset(buffer, 0, sizeof(buffer));
-								bufferCleared = true;
-							}
-						}
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.pubSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
 						fclose(pFile);
 					}
 					showProgressIcon = false;
@@ -956,7 +953,9 @@ int main(int argc, char **argv) {
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					if (ms().consoleModel >= 2) {
+					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
+						// Display nothing
+					} else if (ms().consoleModel >= 2) {
 						printSmallCentered(false, 20, "If this takes a while, press HOME,");
 						printSmallCentered(false, 34, "then press B.");
 					} else {
@@ -975,7 +974,6 @@ int main(int argc, char **argv) {
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
 					toncset(buffer, 0, sizeof(buffer));
-					bool bufferCleared = false;
 					char savHdrPath[64];
 					snprintf(savHdrPath, sizeof(savHdrPath), "nitro:/DSiWareSaveHeaders/%x.savhdr",
 						 (unsigned int)NDSHeader.prvSavSize);
@@ -986,13 +984,9 @@ int main(int argc, char **argv) {
 
 					FILE *pFile = fopen(ms().dsiWarePrvPath.c_str(), "wb");
 					if (pFile) {
-						for (int i = NDSHeader.prvSavSize; i > 0; i -= BUFFER_SIZE) {
-							fwrite(buffer, 1, sizeof(buffer), pFile);
-							if (!bufferCleared) {
-								toncset(buffer, 0, sizeof(buffer));
-								bufferCleared = true;
-							}
-						}
+						fwrite(buffer, 1, sizeof(buffer), pFile);
+						fseek(pFile, NDSHeader.prvSavSize - 1, SEEK_SET);
+						fputc('\0', pFile);
 						fclose(pFile);
 					}
 					showProgressIcon = false;
