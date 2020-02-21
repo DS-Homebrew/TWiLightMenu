@@ -86,6 +86,7 @@ int consoleModel = 0;
 	3 = New Nintendo 3DS	*/
 bool isRegularDS = true;
 
+bool showSelectMenu = false;
 int theme = 0;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -170,11 +171,10 @@ void LoadSettings(void) {
 	// GUI
 	CIniFile settingsini( settingsinipath );
 
-	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+	showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", 0);
 	theme = settingsini.GetInt("SRLOADER", "THEME", 0);
 
-	// Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -287,7 +287,9 @@ void loadROMselect()
 	{
 		runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 	}
-	else if (theme == 1)
+	else if ((showSelectMenu && theme==0)
+			|| (theme==1)
+		|| (showSelectMenu && theme==4))
 	{
 		runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
 	}
