@@ -24,6 +24,7 @@
 #include <dirent.h>
 #include <maxmod9.h>
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 
 // This is use for the top font.
 #include "../include/startborderpal.h"
@@ -1159,7 +1160,7 @@ void vBlankHandler() {
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
-				if (isDSiMode() && bothSDandFlashcard()) {
+				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					for (int i = 0; i < 4; i++) {
 						selIconYpos -= 14;
 					}
@@ -1176,7 +1177,7 @@ void vBlankHandler() {
 				glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 					 &tex().cornerButtonImage()[0]); // Settings
 				selIconYpos += 28;
-				if (isDSiMode() && bothSDandFlashcard()) {
+				if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					if (ms().secondaryDevice) {
 						glSprite(32, (ms().theme == 4 ? 0 : dbox_Ypos) + selIconYpos, GL_FLIP_NONE,
 							 &tex().smallCartImage()[2]); // SD card

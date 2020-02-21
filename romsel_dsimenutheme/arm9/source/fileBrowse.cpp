@@ -1138,7 +1138,7 @@ bool selectMenu(void) {
 	int selCursorPosition = 0;
 	int assignedOp[5] = {-1};
 	int selIconYpos = 96;
-	if (isDSiMode() && bothSDandFlashcard()) {
+	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 		for (int i = 0; i < 4; i++) {
 			selIconYpos -= 14;
 		}
@@ -1180,17 +1180,17 @@ bool selectMenu(void) {
 			} else if (assignedOp[i] == 1) {
 				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
 			} else if (assignedOp[i] == 2) {
-				//if (bothSDandFlashcard()) {
+				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
 						printSmall(false, 64, textYpos, ms().showMicroSd ? "Switch to microSD Card" : "Switch to SD Card");
 					} else {
 						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
 					}
-				/*} else {
+				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
 					printSmall(false, 64, textYpos,
 						   (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted"
 									 : "Launch Slot-1 card");
-				}*/
+				}
 			/*} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos,
 					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");*/
