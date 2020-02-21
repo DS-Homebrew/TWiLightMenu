@@ -191,7 +191,6 @@ void DSiMenuPlusPlusSettings::loadSettings()
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
     launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-    homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
@@ -234,7 +233,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
+		settingsini.SetString("SRLOADER", ms().secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 	

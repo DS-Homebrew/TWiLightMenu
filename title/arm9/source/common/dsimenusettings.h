@@ -158,7 +158,7 @@ class DSiMenuPlusPlusSettings
     bool slot1Launched;
     int launchType[2];
     std::string romPath[2];
-    std::string homebrewArg;
+    std::string homebrewArg[2];
     bool homebrewBootstrap;
     bool soundfreq;
 	bool dsiSplash;

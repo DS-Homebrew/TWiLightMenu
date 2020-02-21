@@ -1275,6 +1275,7 @@ void MainWnd::launchSelected()
     // RVID Launch
     if (extension == ".rvid")
     {
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ERVideoLaunch;
         ms().saveSettings();
 
@@ -1289,6 +1290,7 @@ void MainWnd::launchSelected()
     // MPEG4 Launch
     if (extension == ".mp4")
     {
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EMPEG4Launch;
         ms().saveSettings();
 
@@ -1303,6 +1305,7 @@ void MainWnd::launchSelected()
     // GBA Launch
     if (extension == ".gba")
 	{
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
@@ -1351,6 +1354,7 @@ void MainWnd::launchSelected()
     // NES Launch
     if (extension == ".nes" || extension == ".fds")
     {
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ENESDSLaunch;
         ms().saveSettings();
 
@@ -1365,6 +1369,7 @@ void MainWnd::launchSelected()
     // GB Launch
     if (extension == ".gb" || extension == ".gbc")
     {
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EGameYobLaunch;
         ms().saveSettings();
 
@@ -1382,6 +1387,7 @@ void MainWnd::launchSelected()
 		mkdir(ms().secondaryDevice ? "fat:/data" : "sd:/data", 0777);
 		mkdir(ms().secondaryDevice ? "fat:/data/s8ds" : "sd:/data/s8ds", 0777);
 
+		ms().homebrewArg = fullPath;
 		if (!ms().secondaryDevice && ms().smsGgInRam)
 		{
 			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
@@ -1424,6 +1430,7 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
@@ -1462,6 +1469,7 @@ void MainWnd::launchSelected()
     // SNES Launch
     if (extension == ".smc" || extension == ".sfc")
 	{
+        ms().homebrewArg = fullPath;
         ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)

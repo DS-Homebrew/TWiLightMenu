@@ -45,7 +45,7 @@ const char* bootstrapinipath = "sd:/_nds/nds-bootstrap.ini";
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
-std::string homebrewArg;
+std::string homebrewArg[2];
 std::string ndsPath;
 std::string romfolder;
 std::string filename;
@@ -120,7 +120,8 @@ TWL_CODE void LoadSettings(void) {
 	launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
 	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
-	homebrewArg = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
+	homebrewArg[0] = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
+	homebrewArg[1] = settingsini.GetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
@@ -172,7 +173,7 @@ TWL_CODE int lastRunROM() {
 	vector<char*> argarray;
 	if (launchType[secondaryDevice] > 3) {
 		argarray.push_back(strdup("null"));
-		argarray.push_back(strdup(homebrewArg.c_str()));
+		argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
 	}
 
 	if (access(romPath[secondaryDevice].c_str(), F_OK) != 0 || launchType[secondaryDevice] == 0) {

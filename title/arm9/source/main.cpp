@@ -71,8 +71,6 @@ bool hiyaAutobootFound = false;
 
 const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 
-std::string homebrewArg;
-
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
 
@@ -235,7 +233,7 @@ void lastRunROM()
 	if (ms().launchType[ms().secondaryDevice] > Launch::EDSiWareLaunch)
 	{
 		argarray.push_back(strdup("null"));
-		argarray.push_back(strdup(homebrewArg.c_str()));
+		argarray.push_back(strdup(ms().homebrewArg[ms().secondaryDevice].c_str()));
 	}
 
 	int err = 0;

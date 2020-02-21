@@ -283,7 +283,7 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
+		settingsini.SetString("SRLOADER", secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);

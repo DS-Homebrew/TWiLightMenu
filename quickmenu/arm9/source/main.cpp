@@ -91,7 +91,6 @@ std::string romPath[2];
 std::string dsiWareSrlPath;
 std::string dsiWarePubPath;
 std::string dsiWarePrvPath;
-std::string homebrewArg;
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 static char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
@@ -261,7 +260,6 @@ void SaveSettings(void) {
 		settingsini.SetInt("SRLOADER", "SLOT1_LAUNCHED", slot1Launched);
 		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-		settingsini.SetString("SRLOADER", "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 	}
 	//settingsini.SetInt("SRLOADER", "THEME", theme);
@@ -2217,8 +2215,6 @@ int main(int argc, char **argv) {
 				char ROMpath[256];
 				snprintf (ROMpath, sizeof(ROMpath), "%s/%s", romfolderNoSlash.c_str(), filename[secondaryDevice].c_str());
 				romPath[secondaryDevice] = ROMpath;
-
-				homebrewArg = ROMpath;
 
 				const char *ndsToBoot = "sd:/_nds/nds-bootstrap-release.nds";
 				if (extention(filename[secondaryDevice], ".plg")) {
