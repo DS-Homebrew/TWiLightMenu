@@ -578,8 +578,13 @@ int main(int argc, char **argv)
 		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
 				Option::Bool(&ms().bootstrapFile),
 				{STR_NIGHTLY, STR_RELEASE},
-				{true, false})
+				{true, false});
 
+	if (isDSiMode()) {
+		gamesPage.option(STR_SAVEFATTABLECACHE, STR_DESCRIPTION_SAVEFATTABLECACHE, Option::Bool(&bs().cacheFatTable), {STR_YES, STR_NO}, {true, false});
+	}
+
+	gamesPage
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 

@@ -33,6 +33,7 @@ class BootstrapSettings
     void saveSettings();
 
   public:
+    bool cacheFatTable;
     bool debug;
 	bool logging;
 	int romreadled;

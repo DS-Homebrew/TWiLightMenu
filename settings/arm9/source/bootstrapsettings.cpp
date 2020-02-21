@@ -7,6 +7,7 @@
 
 BootstrapSettings::BootstrapSettings()
 {
+    cacheFatTable = false;
     debug = false;
 	logging = false;
 	romreadled = BootstrapSettings::ELEDNone;
@@ -19,7 +20,7 @@ void BootstrapSettings::loadSettings()
 {
     CIniFile bootstrapini(BOOTSTRAP_INI);
 
-    // UI settings.
+    cacheFatTable = bootstrapini.GetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
    	debug = bootstrapini.GetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	logging = bootstrapini.GetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
@@ -35,7 +36,7 @@ void BootstrapSettings::saveSettings()
 {
     CIniFile bootstrapini(BOOTSTRAP_INI);
 
-    // UI settings.
+    bootstrapini.SetInt("NDS-BOOTSTRAP", "CACHE_FAT_TABLE", cacheFatTable);
     bootstrapini.SetInt("NDS-BOOTSTRAP", "DEBUG", debug);
 	bootstrapini.SetInt("NDS-BOOTSTRAP", "LOGGING", logging);
 	if (isDSiMode()) {
