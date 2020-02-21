@@ -34,6 +34,7 @@ std::string STR_REFERSD = "STR_REFERSD";
 std::string STR_SDREMOVALDETECTION = "STR_SDREMOVALDETECTION";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_DSCLASSICMENU = "STR_DSCLASSICMENU";
+std::string STR_SELECTBUTTONOPTION = "STR_SELECTBUTTONOPTION";
 std::string STR_THEME = "STR_THEME";
 std::string STR_DSIMUSIC = "STR_DSIMUSIC";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
@@ -69,6 +70,7 @@ std::string STR_DESCRIPTION_SDREMOVALDETECTION = "STR_DESCRIPTION_SDREMOVALDETEC
 std::string STR_DESCRIPTION_REFERSD = "STR_DESCRIPTION_REFERSD";
 std::string STR_DESCRIPTION_S1SDACCESS_1 = "STR_DESCRIPTION_S1SDACCESS_1";
 std::string STR_DESCRIPTION_DSCLASSICMENU = "STR_DESCRIPTION_DSCLASSICMENU";
+std::string STR_DESCRIPTION_SELECTBUTTONOPTION = "STR_DESCRIPTION_SELECTBUTTONOPTION";
 std::string STR_DESCRIPTION_THEME_1 = "STR_DESCRIPTION_THEME_1";
 std::string STR_DESCRIPTION_DSIMUSIC = "STR_DESCRIPTION_DSIMUSIC";
 std::string STR_DESCRIPTION_LASTPLAYEDROM_1 = "STR_DESCRIPTION_LASTPLAYEDROM_1";
@@ -274,10 +276,11 @@ void langInit(void)
 	STR_REFERSD = ConvertFromUTF8(languageini.GetString("LANGUAGE", "REFERSD", "Refer to the SD as"));
 	STR_SDREMOVALDETECTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SDREMOVALDETECTION", "SD removal detection"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
-	STR_DSCLASSICMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSCLASSICMENU", "DS Classic Menu"));
+	STR_DSCLASSICMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSCLASSICMENU", "DS Classic Menu on startup"));
+	STR_SELECTBUTTONOPTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SELECTBUTTONOPTION", "SELECT button"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
 	STR_DSIMUSIC = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMUSIC", "DSi/3DS Theme Music"));
-	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup."));
+	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup"));
 	STR_DSISPLASH = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSISPLASH", "Nintendo DSi Splash Screen"));
 	STR_HSMSG = ConvertFromUTF8(languageini.GetString("LANGUAGE", "HSMSG", "Health & Safety message"));
 	STR_DSIMENUPPLOGO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMENUPPLOGO", "TWLMenu++ Splash Screen"));
@@ -316,6 +319,7 @@ void langInit(void)
 	STR_DESCRIPTION_S1SDACCESS_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_S1SDACCESS_1", "Allows your flashcard to be used as a secondary device. Turn this off, if IR functionality doesn't work, or if the app crashes."));
 
 	STR_DESCRIPTION_DSCLASSICMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_DSCLASSICMENU", "The menu that is shown by pressing SELECT in the DSi theme, can be shown before the ROM select menu."));
+	STR_DESCRIPTION_SELECTBUTTONOPTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_SELECTBUTTONOPTION", "Choose a menu to show, when pressing SELECT in the DSi or SEGA Saturn theme."));
 
 	STR_DESCRIPTION_THEME_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_THEME_1", "The theme to use in TWiLight Menu++. Press Left/Right to select, A for sub-themes."));
 

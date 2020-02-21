@@ -21,7 +21,8 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showMicroSd = false;
     useGbarunner = false;
 	gbar2DldiAccess = false;
-    showMainMenu = true;
+    showMainMenu = false;
+    showSelectMenu = false;
     theme = 0;
     subtheme = 0;
     dsiMusic = 1;
@@ -133,6 +134,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     showMainMenu = settingsini.GetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
+    showSelectMenu = settingsini.GetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
     dsiMusic = settingsini.GetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
@@ -217,6 +219,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 
     settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
     settingsini.SetInt("SRLOADER", "SHOW_MAIN_MENU", showMainMenu);
+    settingsini.SetInt("SRLOADER", "SHOW_SELECT_MENU", showSelectMenu);
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);

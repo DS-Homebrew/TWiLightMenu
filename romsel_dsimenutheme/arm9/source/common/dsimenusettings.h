@@ -142,7 +142,7 @@ class DSiMenuPlusPlusSettings
 	bool showMicroSd;
     bool useGbarunner;
     bool gbar2DldiAccess;
-    bool showMainMenu;
+    bool showSelectMenu;
     int theme;
     int subtheme;
     int dsiMusic;
