@@ -198,32 +198,9 @@ void vBlankHandler()
 
 void LoadBMP(void) {
 	dmaFillHalfWords(0, BG_GFX, 0x18000);
+	dmaFillHalfWords(0, BG_GFX_SUB, 0x18000);
 
-	FILE* file = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
-
-	if (file) {
-		// Start loading
-		fseek(file, 0xe, SEEK_SET);
-		u8 pixelStart = (u8)fgetc(file) + 0xe;
-		fseek(file, pixelStart, SEEK_SET);
-		fread(bmpImageBuffer, 2, 0x18000, file);
-		u16* src = bmpImageBuffer;
-		int x = 0;
-		int y = 191;
-		for (int i=0; i<256*192; i++) {
-			if (x >= 256) {
-				x = 0;
-				y--;
-			}
-			u16 val = *(src++);
-			BG_GFX_SUB[y*256+x] = convertToDsBmp(val);
-			x++;
-		}
-	}
-
-	fclose(file);
-
-	file = fopen("nitro:/graphics/effect_twilight.bmp", "rb");
+	FILE* file = fopen("nitro:/graphics/effect_twilight.bmp", "rb");
 
 	if (file) {
 		// Start loading

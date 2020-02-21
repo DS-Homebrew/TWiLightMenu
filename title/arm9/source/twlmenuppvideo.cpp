@@ -586,8 +586,8 @@ void twlMenuVideo(void) {
 	}
 	while (dmaBusy(0) || dmaBusy(1));
 
-	// Load RocketVideo logo
-	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketvideo.bmp" : "nitro:/graphics/logo_rocketvideo.bmp", "rb");
+	// Load RocketRobz logo
+	videoFrameFile = fopen(sys().isDSPhat() ? "nitro:/graphics/logoPhat_rocketrobz.bmp" : "nitro:/graphics/logo_rocketrobz.bmp", "rb");
 
 	if (videoFrameFile) {
 		// Start loading
