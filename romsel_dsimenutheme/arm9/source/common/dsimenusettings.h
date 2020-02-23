@@ -136,6 +136,7 @@ class DSiMenuPlusPlusSettings
     bool gotosettings;
     
     int guiLanguage;
+	int titleLanguage;
     int colorMode;
     int blfLevel;
     bool sdRemoveDetect;
