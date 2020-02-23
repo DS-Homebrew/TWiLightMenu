@@ -19,6 +19,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     gotosettings = false;
     guiLanguage = ELangDefault;
+	titleLanguage = -1;
     useGbarunner = false;
 	gbar2DldiAccess = false;
 	showMicroSd = false;
@@ -103,6 +104,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
     // Customizable UI settings.
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
@@ -183,6 +185,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
+	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 
 	if (bothSDandFlashcard()) {
