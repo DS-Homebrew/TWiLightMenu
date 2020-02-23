@@ -1,7 +1,6 @@
 ﻿// Translation By R-YaTian
 [font]
 main = wenquanyi_9pt.pcf
-language = 1
 
 [start menu]
 START = 菜单

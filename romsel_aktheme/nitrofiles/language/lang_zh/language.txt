@@ -1,6 +1,5 @@
 ﻿[font]
 main = wenquanyi_9pt.pcf
-language = 2
 
 [start menu]
 Start = 開始
