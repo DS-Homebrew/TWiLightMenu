@@ -443,7 +443,7 @@ int main(int argc, char **argv)
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
-		.option("DSi/Saturn thm.: "+STR_SELECTBUTTONOPTION, STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {"SELECT Menu", "DS Classic Menu"}, {true, false})
+		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {"SELECT Menu", "DS Classic Menu"}, {true, false})
 
 		// Theme
 		.option(STR_THEME,

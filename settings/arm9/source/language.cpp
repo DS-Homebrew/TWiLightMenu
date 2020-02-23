@@ -34,7 +34,7 @@ std::string STR_REFERSD = "STR_REFERSD";
 std::string STR_SDREMOVALDETECTION = "STR_SDREMOVALDETECTION";
 std::string STR_S1SDACCESS = "STR_S1SDACCESS";
 std::string STR_DSCLASSICMENU = "STR_DSCLASSICMENU";
-std::string STR_SELECTBUTTONOPTION = "STR_SELECTBUTTONOPTION";
+//std::string STR_SELECTBUTTONOPTION = "STR_SELECTBUTTONOPTION";
 std::string STR_THEME = "STR_THEME";
 std::string STR_DSIMUSIC = "STR_DSIMUSIC";
 std::string STR_LASTPLAYEDROM = "STR_LASTPLAYEDROM";
@@ -279,7 +279,6 @@ void langInit(void)
 	STR_SDREMOVALDETECTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SDREMOVALDETECTION", "SD removal detection"));
 	STR_S1SDACCESS = ConvertFromUTF8(languageini.GetString("LANGUAGE", "S1SDACCESS", "Slot-1 microSD access"));
 	STR_DSCLASSICMENU = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSCLASSICMENU", "DS Classic Menu on startup"));
-	STR_SELECTBUTTONOPTION = ConvertFromUTF8(languageini.GetString("LANGUAGE", "SELECTBUTTONOPTION", "SELECT button"));
 	STR_THEME = ConvertFromUTF8(languageini.GetString("LANGUAGE", "THEME", "Theme"));
 	STR_DSIMUSIC = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DSIMUSIC", "DSi/3DS Theme Music"));
 	STR_LASTPLAYEDROM = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LASTPLAYEDROM", "Last played ROM on startup"));

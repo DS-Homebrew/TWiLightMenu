@@ -27,7 +27,7 @@ extern std::string STR_REFERSD;
 extern std::string STR_SDREMOVALDETECTION;
 extern std::string STR_S1SDACCESS;
 extern std::string STR_DSCLASSICMENU;
-extern std::string STR_SELECTBUTTONOPTION;
+//extern std::string STR_SELECTBUTTONOPTION;
 extern std::string STR_THEME;
 extern std::string STR_DSIMUSIC;
 extern std::string STR_LASTPLAYEDROM;
