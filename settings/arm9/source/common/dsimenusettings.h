@@ -127,6 +127,7 @@ class DSiMenuPlusPlusSettings
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
+	int titleLanguage;
     int colorMode;
     int blfLevel;
     bool wifiLed;
