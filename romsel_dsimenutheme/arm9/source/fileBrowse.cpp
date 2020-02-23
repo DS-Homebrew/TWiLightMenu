@@ -2912,8 +2912,8 @@ string browseForFile(const vector<string> extensionList) {
 								return "null";
 							}
 						}
+						launchDsClassicMenu();
 					}
-					launchDsClassicMenu();
 				}
 			}
 		}
