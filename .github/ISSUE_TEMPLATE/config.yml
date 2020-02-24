@@ -6,6 +6,9 @@ contact_links:
   - name: GBARunner2 Github Repository
     url: https://github.com/Gericom/GBARunner2/issues/new
     about: Please use this Github Repository to report issues related to GameBoy Advance games, or the GBARunner2 GUI
+  - name: MPEG4Player Github Repository
+    url: https://github.com/Gericom/MPEG4Player/issues/new
+    about: Please use this Github Repository to report issues related to .mp4 playback
   - name: TWiLight Menu++ Updater Github Repository
     url: https://github.com/RocketRobz/TWiLightMenu-Updater/issues/new
     about: Please use this Github Repository to report issues related to the TWiLight Menu++ updater application on the Nintendo 3DS
