@@ -108,6 +108,7 @@ std::string STR_DESCRIPTION_BIOSINTRO = "STR_DESCRIPTION_BIOSINTRO";
 // Games/Apps settings
 std::string STR_ASPECTRATIO = "STR_ASPECTRATIO";
 std::string STR_LANGUAGE = "STR_LANGUAGE";
+std::string STR_TITLELANGUAGE = "STR_TITLELANGUAGE";
 std::string STR_CPUSPEED = "STR_CPUSPEED";
 std::string STR_VRAMBOOST = "STR_VRAMBOOST";
 std::string STR_USEBOOTSTRAP = "STR_USEBOOTSTRAP";
@@ -148,6 +149,7 @@ std::string STR_NIGHTLY = "STR_NIGHTLY";
 
 std::string STR_DESCRIPTION_ASPECTRATIO = "STR_DESCRIPTION_ASPECTRATIO";
 std::string STR_DESCRIPTION_LANGUAGE_1 = "STR_DESCRIPTION_LANGUAGE_1";
+std::string STR_DESCRIPTION_TITLELANGUAGE_1 = "STR_DESCRIPTION_TITLELANGUAGE_1";
 std::string STR_DESCRIPTION_RUNIN_1 = "STR_DESCRIPTION_RUNIN_1";
 std::string STR_DESCRIPTION_CPUSPEED_1 = "STR_DESCRIPTION_CPUSPEED_1";
 std::string STR_DESCRIPTION_VRAMBOOST_1 = "STR_DESCRIPTION_VRAMBOOST_1";
@@ -383,6 +385,7 @@ void langInit(void)
 	// Games/Apps settings
 	STR_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "ASPECTRATIO", "Screen Aspect Ratio"));
 	STR_LANGUAGE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "LANGUAGE", "Language"));
+	STR_TITLELANGUAGE = ConvertFromUTF8(languageini.GetString("LANGUAGE", "TITLELANGUAGE", "Game Title Language"));
 	STR_CPUSPEED = ConvertFromUTF8(languageini.GetString("LANGUAGE", "CPUSPEED", "ARM9 CPU Speed"));
 	STR_VRAMBOOST = ConvertFromUTF8(languageini.GetString("LANGUAGE", "VRAMBOOST", "VRAM boost"));
 	STR_USEBOOTSTRAP = ConvertFromUTF8(languageini.GetString("LANGUAGE", "USEBOOTSTRAP", "Use nds-bootstrap"));
@@ -423,6 +426,7 @@ void langInit(void)
 
 	STR_DESCRIPTION_ASPECTRATIO = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_ASPECTRATIO", "Adjusts the top screen to be the original size, or wider, for DS games. Some games may not use this. Requires Sono's patcher to be used, as well as external sysmodules enabled in Luma."));
 	STR_DESCRIPTION_LANGUAGE_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_LANGUAGE_1", "Avoid the limited selections of your console language by setting this option."));
+	STR_DESCRIPTION_TITLELANGUAGE_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_TITLELANGUAGE_1", "Set Banner Title Language for DS ROMs (expect DSiWare)."));
 	STR_DESCRIPTION_RUNIN_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_RUNIN_1", "Run in either DS or DSi mode."));
 	STR_DESCRIPTION_CPUSPEED_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_CPUSPEED_1", "Set to TWL to get rid of lags in some games."));
 	STR_DESCRIPTION_VRAMBOOST_1 = ConvertFromUTF8(languageini.GetString("LANGUAGE", "DESCRIPTION_VRAMBOOST_1", "Allow 8 bit VRAM writes and expands the bus to 32 bit."));

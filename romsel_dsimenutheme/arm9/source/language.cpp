@@ -12,6 +12,7 @@ const char* languageIniPath;
 
 int setLanguage = 0;
 int setGameLanguage = 0;
+int setTitleLanguage = 0;
 
 /**
  * Initialize translations.
@@ -24,6 +25,12 @@ void langInit(void)
 		setLanguage = PersonalData->language;
 	} else {
 		setLanguage = ms().guiLanguage;
+	}
+
+	if (ms().titleLanguage == -1) {
+		setTitleLanguage = PersonalData->language;
+	} else {
+		setTitleLanguage = ms().titleLanguage;
 	}
 
 	if (ms().bstrap_language == -1) {

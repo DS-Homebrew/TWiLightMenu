@@ -29,6 +29,8 @@
 #include <nds.h>
 #include "tool/stringtool.h"
 
+extern int setTitleLanguage;
+
 class LanguageFile : public CIniFile
 {
 private:
@@ -71,5 +73,6 @@ inline LanguageFile &lang() { return languageFile_s::instance(ms().getGuiLanguag
 #define LANG(i, t) lang().GetString(i, t, t)
 
 bool stringComp(const std::string &item1, const std::string &item2);
+void langInit(void);
 
 #endif //_AK_LANGUAGE_H_

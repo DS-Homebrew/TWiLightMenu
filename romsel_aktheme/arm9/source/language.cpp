@@ -20,8 +20,28 @@
 
 #include "language.h"
 #include <nds.h>
-#include <string>
-#include <strings.h>
+#include <stdio.h>
+#include <fat.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "common/dsimenusettings.h"
+#include "common/inifile.h"
+
+const char* languageIniPath;
+
+int setTitleLanguage = 0;
+
+void langInit(void)
+{
+	printf("langInit\n");
+	if (ms().titleLanguage == -1) {
+		setTitleLanguage = PersonalData->language;
+	} else {
+		setTitleLanguage = ms().titleLanguage;
+	}
+}
 
 bool stringComp(const std::string &item1, const std::string &item2)
 {

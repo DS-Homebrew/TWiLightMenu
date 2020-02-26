@@ -101,6 +101,7 @@ extern std::string STR_DESCRIPTION_BIOSINTRO;
 // Games/Apps settings
 extern std::string STR_ASPECTRATIO;
 extern std::string STR_LANGUAGE;
+extern std::string STR_TITLELANGUAGE;
 extern std::string STR_CPUSPEED;
 extern std::string STR_VRAMBOOST;
 extern std::string STR_USEBOOTSTRAP;
@@ -144,6 +145,7 @@ extern std::string STR_NIGHTLY;
 
 extern std::string STR_DESCRIPTION_ASPECTRATIO;
 extern std::string STR_DESCRIPTION_LANGUAGE_1;
+extern std::string STR_DESCRIPTION_TITLELANGUAGE_1;
 extern std::string STR_DESCRIPTION_RUNIN_1;
 extern std::string STR_DESCRIPTION_CPUSPEED_1;
 extern std::string STR_DESCRIPTION_VRAMBOOST_1;

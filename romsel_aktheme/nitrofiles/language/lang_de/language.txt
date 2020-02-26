@@ -1,6 +1,5 @@
 ﻿[font]
 main = tahoma.pcf
-language = 6
 
 [start menu]
 Start = START

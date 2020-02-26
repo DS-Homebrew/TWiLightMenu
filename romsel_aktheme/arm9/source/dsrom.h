@@ -69,7 +69,6 @@ private:
   s32 _extIcon;
   u8 _romVersion;
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
-  
 
 private:
   void load(void);
