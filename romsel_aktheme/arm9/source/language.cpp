@@ -23,8 +23,6 @@
 #include <stdio.h>
 #include <fat.h>
 #include <sys/stat.h>
-#include <string>
-#include <strings.h>
 #include <string.h>
 #include <unistd.h>
 

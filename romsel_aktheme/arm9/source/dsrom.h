@@ -25,7 +25,6 @@
 #include <string.h>
 #include "saveinfo.h"
 #include "drawing/gdi.h"
-#include "language.h"
 #include "common/ndsheader.h"
 #include "common/tonccpy.h"
 #include "unknown_banner_bin.h"
