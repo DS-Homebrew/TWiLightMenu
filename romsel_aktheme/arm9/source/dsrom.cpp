@@ -252,13 +252,10 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
                 tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
                 tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
             }
-			else
-			{
-				_banner.crc = ((tNDSBanner*)&banner)->crc;
-				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
-				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
-				tonccpy(_banner.title, &banner.titles[_isDSiWare == ETrue && _isHomebrew == EFalse ? ms().getGuiLanguage() : setTitleLanguage], sizeof(_banner.title));
-			}
+		_banner.crc = ((tNDSBanner*)&banner)->crc;
+		tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
+		tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
+		tonccpy(_banner.title, &banner.titles[_isDSiWare == ETrue && _isHomebrew == EFalse ? ms().getGuiLanguage() : setTitleLanguage], sizeof(_banner.title));
         }
         else
         {
