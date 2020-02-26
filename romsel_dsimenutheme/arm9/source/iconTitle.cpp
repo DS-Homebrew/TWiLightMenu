@@ -473,7 +473,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 			for (int i = 0; i < 128; i++) {
-				if (isDSiWare[num] == true)
+				if (isDSiWare[num])
 					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 				else
 					cachedTitle[num][i] = ndsBanner.titles[setTitleLanguage][i];
@@ -505,7 +505,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-					if (isDSiWare[num] == true)
+					if (isDSiWare[num])
 						cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 					else
 						cachedTitle[num][i] = ndsBanner.titles[setTitleLanguage][i];
@@ -525,7 +525,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
 
 		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-			if (isDSiWare[num] == true)
+			if (isDSiWare[num])
 				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
 			else
 				cachedTitle[num][i] = ndsBanner.titles[setTitleLanguage][i];
