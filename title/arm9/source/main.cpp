@@ -660,6 +660,7 @@ int main(int argc, char **argv)
 	}
 
 	mkdir("/_gba", 0777);
+	mkdir("/_nds/TWiLightMenu/gamesettings", 0777);
 
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
 		// Create "nds-bootstrap.ini"
