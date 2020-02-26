@@ -116,6 +116,7 @@ extern int spawnedtitleboxes;
 
 std::vector<std::string> photoList;
 static std::string photoPath;
+uint photoWidth, photoHeight;
 int titleboxXmovespeed[8] = {12, 10, 8, 8, 8, 8, 6, 4};
 #define titleboxXscrollspeed 8
 int titleboxXpos[2];
@@ -1316,24 +1317,23 @@ void vBlankHandler() {
 	bottomBgRefresh(); // Refresh the background image on vblank
 }
 
+void loadPhoto(const std::string &path);
+
 void loadPhotoList() {
 	DIR *dir;
 	struct dirent *ent;
 	std::string photoDir;
-	bool dirOpen = false;
-	std::string dirPath;
-	if ((dir = opendir("sd:/_nds/TWiLightMenu/dsimenu/photos/")) != NULL) {
-		dirOpen = true;
-		dirPath = "sd:/_nds/TWiLightMenu/dsimenu/photos/";
-	} else if ((dir = opendir("fat:/_nds/TWiLightMenu/dsimenu/photos/")) != NULL) {
-		dirOpen = true;
+	std::string dirPath = "sd:/_nds/TWiLightMenu/dsimenu/photos/";
+	std::vector<std::string> photoList;
+
+	if ((dir = opendir(dirPath.c_str())) == NULL) {
 		dirPath = "fat:/_nds/TWiLightMenu/dsimenu/photos/";
+		dir = opendir(dirPath.c_str());
 	}
 
-	if (dirOpen) {
+	if (dir) {
 		/* print all the files and directories within directory */
 		while ((ent = readdir(dir)) != NULL) {
-
 			photoDir = ent->d_name;
 			if (photoDir == ".." || photoDir == "..." || photoDir == "." || photoDir.substr(0, 2) == "._" ||
 				photoDir.substr(photoDir.find_last_of(".") + 1) != "png")
@@ -1343,18 +1343,24 @@ void loadPhotoList() {
 			photoList.emplace_back(dirPath + photoDir);
 		}
 		closedir(dir);
-		photoPath = photoList[rand() / ((RAND_MAX + 1u) / photoList.size())];
+		if(photoList.size() > 0) {
+			loadPhoto(photoList[rand() / ((RAND_MAX + 1u) / photoList.size())]);
+			return;
+		}
 	}
+	// If dir not opened or no photos found, then draw the default
+	loadPhoto("nitro:/graphics/photo_default.png");
 }
 
-void loadPhoto() {
-	uint imageWidth, imageHeight;
+void loadPhoto(const std::string &path) {
 	std::vector<unsigned char> image;
 
-	if ((access(photoPath.c_str(), F_OK) == 0) && (photoPath.substr(photoPath.find_last_of(".") + 1) == "png")) {
-		lodepng::decode(image, imageWidth, imageHeight, photoPath.c_str());
-	} else {
-		lodepng::decode(image, imageWidth, imageHeight, "nitro:/graphics/photo_default.png");
+	lodepng::decode(image, photoWidth, photoHeight, path);
+
+	if(photoWidth > 208 || photoHeight > 156) {
+		image.clear();
+		// Image is too big, load the default
+		lodepng::decode(image, photoWidth, photoHeight, "nitro:/graphics/photo_default.png");
 	}
 
 	for(uint i=0;i<image.size()/4;i++) {
@@ -1365,13 +1371,20 @@ void loadPhoto() {
 	}
 
 	u16 *bgSubBuffer = tex().beginBgSubModify();
+
+	// Fill area with black
+	for(int y = 24; y < 180; y++) {
+		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+	}
+
 	// Start loading
 	u16 *src = tex().photoBuffer();
-	int x = 24;
-	int y = 24;
-	for (int i = 0; i < 208 * 156; i++) {
-		if (x >= 24 + 208) {
-			x = 24;
+	uint startX = 24 + (208 - photoWidth) / 2;
+	uint y = 24 + ((156 - photoHeight) / 2);
+	uint x = startX;
+	for (uint i = 0; i < photoWidth * photoHeight; i++) {
+		if (x >= startX + photoWidth) {
+			x = startX;
 			y++;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
@@ -1382,15 +1395,23 @@ void loadPhoto() {
 
 // Load photo without overwriting shoulder button images
 void loadPhotoPart() {
-	// Start loading
 	u16 *bgSubBuffer = tex().beginBgSubModify();
+
+	// Fill area with black
+	for(int y = 24; y < 172; y++) {
+		dmaFillHalfWords(0x8000, bgSubBuffer + (y * 256) + 24, 208 * 2);
+	}
+
+	// Start loading
 	u16 *src = tex().photoBuffer();
-	int x = 24;
-	int y = 24;
-	for (int i = 0; i < 208 * 146; i++) {
-		if (x >= 24 + 208) {
-			x = 24;
+	uint startX = 24 + (208 - photoWidth) / 2;
+	uint y = 24 + ((156 - photoHeight) / 2);
+	uint x = startX;
+	for (uint i = 0; i < photoWidth * photoHeight; i++) {
+		if (x >= startX + photoWidth) {
+			x = startX;
 			y++;
+			if(y >= 172)	break;
 		}
 		bgSubBuffer[y * 256 + x] = *(src++);
 		x++;
@@ -1640,7 +1661,6 @@ void graphicsInit() {
 	if (tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
-		loadPhoto();
 	}
 
 	tex().drawVolumeImageCached();
