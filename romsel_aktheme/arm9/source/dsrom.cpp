@@ -255,14 +255,20 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				_banner.crc = ((tNDSBanner*)&banner)->crc;
 				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
 				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
-				tonccpy(_banner.title, &banner.titles[_isDSiWare == ETrue && _isHomebrew == EFalse ? ms().getGuiLanguage() : setTitleLanguage], sizeof(_banner.title));
+				if (banner.version == NDS_BANNER_VER_DSi)
+					tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
+				else
+					tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
         }
         else
         {
 			_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
 			tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
 			tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-			tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[_isDSiWare == ETrue && _isHomebrew == EFalse ? ms().getGuiLanguage() : setTitleLanguage], sizeof(_banner.title));
+			if (banner.version == NDS_BANNER_VER_DSi)
+				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+			else
+				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
         }
     }
     else
@@ -270,7 +276,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 		_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
 		tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
 		tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-		tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[_isDSiWare == ETrue && _isHomebrew == EFalse ? ms().getGuiLanguage() : setTitleLanguage], sizeof(_banner.title));
+		tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
     }
 
     fclose(f);
