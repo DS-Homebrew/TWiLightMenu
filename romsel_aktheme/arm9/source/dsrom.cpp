@@ -252,34 +252,55 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
                 tonccpy(_dsiIcon->palette_frames, banner.dsi_palette, sizeof(banner.dsi_palette));
                 tonccpy(_dsiIcon->sequence, banner.dsi_seq, sizeof(banner.dsi_seq));
             }
-            _banner.crc = ((tNDSBanner*)&banner)->crc;
-            tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
-            tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
 			if (_isDSiWare == ETrue && _isHomebrew == EFalse)
+			{
+				_banner.crc = ((tNDSBanner*)&banner)->crc;
+				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
+				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
 				tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
+			}
 			else
+			{
+				_banner.crc = ((tNDSBanner*)&banner)->crc;
+				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
+				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
 				tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
+			}
         }
         else
         {
-            _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
-            tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
-            tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 			if (_isDSiWare == ETrue && _isHomebrew == EFalse)
+			{
+				_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+				tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+				tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+			}
 			else
+			{
+				_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+				tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+				tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+			}
         }
     }
     else
     {
-        _banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
-        tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
-        tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 		if (_isDSiWare == ETrue && _isHomebrew == EFalse)
+		{
+			_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+			tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+			tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 			tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+		}
 		else
+		{
+			_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
+			tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
+			tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
 			tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+		}
     }
 
     fclose(f);
