@@ -11,6 +11,7 @@ extern int perGameSettings_language;
 extern int perGameSettings_boostCpu;
 extern int perGameSettings_boostVram;
 extern int perGameSettings_bootstrapFile;
+extern int perGameSettings_wideScreen;
 
 void loadPerGameSettings(std::string filename);
 std::string getSavExtension(void);

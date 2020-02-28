@@ -175,11 +175,7 @@ TWL_CODE int lastRunROM() {
 	vector<char*> argarray;
 	if (launchType[secondaryDevice] > 3) {
 		argarray.push_back(strdup("null"));
-		if (consoleModel >= 2 && homebrewHasWide) {
-			argarray.push_back(strdup("wide"));
-		} else {
-			argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
-		}
+		argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
 	}
 
 	if (access(romPath[secondaryDevice].c_str(), F_OK) != 0 || launchType[secondaryDevice] == 0) {
@@ -349,6 +345,12 @@ TWL_CODE int lastRunROM() {
 			argarray.push_back((char*)romPath[secondaryDevice].c_str());
 
 			loadPerGameSettings(filename);
+
+			bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
+			if (consoleModel >= 2 && useWidescreen && homebrewHasWide) {
+				argarray.push_back((char*)"wide");
+			}
 
 			bool runNds_boostCpu = perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu;
 			bool runNds_boostVram = perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram;
