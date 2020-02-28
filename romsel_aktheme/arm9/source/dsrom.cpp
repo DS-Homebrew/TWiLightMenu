@@ -255,20 +255,33 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				_banner.crc = ((tNDSBanner*)&banner)->crc;
 				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
 				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
-				if (banner.version == NDS_BANNER_VER_DSi)
-					tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
-				else
+				if (banner.version == NDS_BANNER_VER_ZH || banner.version == NDS_BANNER_VER_ZH_KO || banner.version == NDS_BANNER_VER_DSi) {
+					if (banner.titles[ms().getGuiLanguage()][0] == 0) {
+						tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
+					} else {
+						tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
+					}
+				} else {
 					tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
+				}
         }
         else
         {
 			_banner.crc = ((tNDSBanner*)nds_banner_bin)->crc;
 			tonccpy(_banner.icon,((tNDSBanner*)nds_banner_bin)->icon, sizeof(_banner.icon));
 			tonccpy(_banner.palette,((tNDSBanner*)nds_banner_bin)->palette, sizeof(_banner.palette));
-			if (banner.version == NDS_BANNER_VER_DSi)
-				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
-			else
+			if (((tNDSBanner*)nds_banner_bin)->version == NDS_BANNER_VER_ZH
+			 || ((tNDSBanner*)nds_banner_bin)->version == NDS_BANNER_VER_ZH_KO
+			 || ((tNDSBanner*)nds_banner_bin)->version == NDS_BANNER_VER_DSi)
+			{
+				if (((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()][0] == 0) {
+					tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+				} else {
+					tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
+				}
+			} else {
 				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+			}
         }
     }
     else
