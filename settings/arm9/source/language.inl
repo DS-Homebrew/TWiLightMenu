@@ -184,8 +184,8 @@ STRING(DESCRIPTION_DSIWAREBOOTER, "Select which app boots launched DSiWare apps 
 STRING(DESCRIPTION_SNDFREQ_1, "32.73kHz is original quality, 47.61kHz is high quality. Does not affect retail Slot-1 cards.")
 STRING(DESCRIPTION_SLOT1LAUNCHMETHOD_1, "Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed.")
 STRING(DESCRIPTION_BOOTSTRAP_1, "Pick release or nightly bootstrap")
-STRING(DESCRIPTION_FLASHCARD_1, "")
-STRING(DESCRIPTION_GBARUNNER2_1, "")
+STRING(DESCRIPTION_FLASHCARD_1, "Pick a flashcard to use to run ROMs from it.")
+STRING(DESCRIPTION_GBARUNNER2_1, "Use either GBARunner2 or the native GBA mode to play GBA games.")
 STRING(DESCRIPTION_SMSGGINRAM, "Load a SEGA Master System or Game Gear ROM into a RAM drive. An older S8DS version will be used. Enable this, if you can't run said ROMs.")
 
 // Flashcard settings
