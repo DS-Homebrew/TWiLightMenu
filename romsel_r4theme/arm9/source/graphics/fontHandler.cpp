@@ -156,6 +156,11 @@ void printSmallCentered(bool top, int y, const char *message)
 	getTextQueue(top).emplace_back(false, smallFont.getCenteredX(message), y, message);
 }
 
+void printSmallRightAlign(bool top, int x, int y, const char *message)
+{
+    getTextQueue(top).emplace_back(false, x - smallFont.calcWidth(message), y, message);
+}
+
 void printLarge(bool top, int x, int y, const char *message)
 {
 	getTextQueue(top).emplace_back(true, x, y, message);
