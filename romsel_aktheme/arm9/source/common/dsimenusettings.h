@@ -165,6 +165,7 @@ class DSiMenuPlusPlusSettings
     std::string romPath[2];
     std::string homebrewArg;
     bool homebrewBootstrap;
+    bool homebrewHasWide;
     bool soundfreq;
     bool showlogo;
     // unused...

@@ -606,6 +606,16 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 	}
 
 	if (isHomebrew) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		if (game_TID[0] != 'W') return;
+
 		// Prepare for reboot into 16:10 TWL_FIRM
 		mkdir("sd:/luma", 0777);
 		mkdir("sd:/luma/sysmodules", 0777);
@@ -669,7 +679,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
 		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
 		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
-		  .nightlyBootstrap(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
+		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
@@ -1243,8 +1253,15 @@ void MainWnd::launchSelected()
         // Direct Boot for homebrew.
         if (rominfo.isDSiWare() || (gameConfig.directBoot && rominfo.isHomebrew()))
         {
+			std::string fileName = _mainList->getSelectedShowName();
+			std::string fullPath = _mainList->getSelectedFullPath();
+
+			BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
+
+			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W');
 			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
+			bootWidescreen(fileName.c_str(), true, (gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen));
             bootArgv(rominfo);
             return;
         }
