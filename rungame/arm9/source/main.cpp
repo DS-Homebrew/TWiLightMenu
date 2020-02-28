@@ -85,6 +85,7 @@ static int launchType[2] = {0};	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flas
 static bool useBootstrap = true;
 static bool bootstrapFile = false;
 static bool homebrewBootstrap = false;
+static bool homebrewHasWide = false;
 static bool fcSaveOnSd = false;
 static bool wideScreen = false;
 
@@ -123,6 +124,7 @@ TWL_CODE void LoadSettings(void) {
 	homebrewArg[0] = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", "");
 	homebrewArg[1] = settingsini.GetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", "");
 	homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", 0);
+	homebrewHasWide = settingsini.GetInt("SRLOADER", "HOMEBREW_HAS_WIDE", 0);
 
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 
@@ -173,7 +175,11 @@ TWL_CODE int lastRunROM() {
 	vector<char*> argarray;
 	if (launchType[secondaryDevice] > 3) {
 		argarray.push_back(strdup("null"));
-		argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
+		if (consoleModel >= 2 && homebrewHasWide) {
+			argarray.push_back(strdup("wide"));
+		} else {
+			argarray.push_back(strdup(homebrewArg[secondaryDevice].c_str()));
+		}
 	}
 
 	if (access(romPath[secondaryDevice].c_str(), F_OK) != 0 || launchType[secondaryDevice] == 0) {

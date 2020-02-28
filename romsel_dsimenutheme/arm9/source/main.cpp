@@ -354,7 +354,9 @@ sNDSHeader ndsCart;
 TWL_CODE void SetWidescreen(const char *filename) {
 	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen
+	bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+
+	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !useWidescreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
@@ -385,6 +387,56 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	} else if (!wideCheatFound) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", gameTid[CURPOS], headerCRC[CURPOS]);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (isHomebrew[CURPOS]) {
+		if (gameTid[CURPOS][0] != 'W') return;
+
+		const char* resultText1;
+		const char* resultText2;
+		// Prepare for reboot into 16:10 TWL_FIRM
+		mkdir("sd:/luma", 0777);
+		mkdir("sd:/luma/sysmodules", 0777);
+		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
+		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
+			resultText1 = "Failed to backup custom";
+			resultText2 = "TwlBg.";
+		} else {
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+				stop();
+			} else {
+				resultText1 = "Failed to reboot TwlBg";
+				resultText2 = "in widescreen.";
+			}
+		}
+		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		int textXpos[2] = {0};
+		if (ms().theme == 4) {
+			textXpos[0] = 24;
+			textXpos[1] = 40;
+		} else {
+			textXpos[0] = 72;
+			textXpos[1] = 88;
+		}
+		clearText();
+		printLargeCentered(false, textXpos[0], resultText1);
+		printLargeCentered(false, textXpos[1], resultText2);
+		if (ms().theme != 4) {
+			fadeType = true; // Fade in from white
+		}
+		for (int i = 0; i < 60 * 3; i++) {
+			swiWaitForVBlank(); // Wait 3 seconds
+		}
+		if (ms().theme != 4) {
+			fadeType = false;	   // Fade to white
+			for (int i = 0; i < 25; i++) {
+				swiWaitForVBlank();
+			}
+		}
+		return;
 	}
 
 	if (wideCheatFound) {
@@ -1285,10 +1337,13 @@ int main(int argc, char **argv) {
 						}
 						SetSpeedBumpExclude();
 
+						bool useWidescreen = (perGameSettings_wideScreen == -1 ? ms().wideScreen : perGameSettings_wideScreen);
+
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && gameTid[CURPOS][0] == 'W') ? "wide" : "");
 						if (!isHomebrew[CURPOS]) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 						}
@@ -1357,6 +1412,7 @@ int main(int argc, char **argv) {
 						if (!isArgv) {
 							ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 						}
+						ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
@@ -1396,9 +1452,15 @@ int main(int argc, char **argv) {
 					if (!isArgv) {
 						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					}
+					ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
+
+					if (isDSiMode()) {
+						SetWidescreen(filename.c_str());
+					}
+
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {

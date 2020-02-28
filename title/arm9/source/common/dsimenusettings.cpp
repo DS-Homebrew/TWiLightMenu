@@ -56,6 +56,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     launchType[0] = ENoLaunch;
     launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
+    homebrewHasWide = false;
 
     r4_theme = "unused";
 	dsiSplash = isDSiMode();
@@ -133,6 +134,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     homebrewArg[0] = settingsini.GetString("SRLOADER", "HOMEBREW_ARG", homebrewArg[0]);
     homebrewArg[1] = settingsini.GetString("SRLOADER", "SECONDARY_HOMEBREW_ARG", homebrewArg[0]);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+    homebrewHasWide = settingsini.GetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 
     show12hrClock =  settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 

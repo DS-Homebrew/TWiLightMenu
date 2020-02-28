@@ -160,6 +160,7 @@ class DSiMenuPlusPlusSettings
     std::string romPath[2];
     std::string homebrewArg[2];
     bool homebrewBootstrap;
+    bool homebrewHasWide;
     bool soundfreq;
 	bool dsiSplash;
 	bool hsMsg;

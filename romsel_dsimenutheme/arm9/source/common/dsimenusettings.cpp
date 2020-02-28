@@ -88,6 +88,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     launchType[0] = ENoLaunch;
     launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
+    homebrewHasWide = false;
 
     r4_theme = "unused";
     dsi_theme = "dark";
@@ -237,6 +238,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
 		settingsini.SetString("SRLOADER", ms().secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
 		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
 	}
 	
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);

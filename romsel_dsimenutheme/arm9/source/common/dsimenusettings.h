@@ -200,6 +200,7 @@ class DSiMenuPlusPlusSettings
     int launchType[2];
     std::string homebrewArg;
     bool homebrewBootstrap;
+    bool homebrewHasWide;
     bool soundfreq;
     bool showlogo;
 

@@ -492,11 +492,13 @@ void SetSpeedBumpExclude(const char* filename) {
 TWL_CODE void SetWidescreen(const char *filename) {
 	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (arm7SCFGLocked || consoleModel < 2 || !wideScreen
+	bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
+	if (arm7SCFGLocked || consoleModel < 2 || !useWidescreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
-
+	
 	bool wideCheatFound = false;
 	char wideBinPath[256];
 	if (launchType[secondaryDevice] == 1) {
@@ -534,6 +536,55 @@ TWL_CODE void SetWidescreen(const char *filename) {
 
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (isHomebrew[secondaryDevice]) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		if (game_TID[0] != 'W') return;
+
+		const char* resultText1;
+		const char* resultText2;
+		// Prepare for reboot into 16:10 TWL_FIRM
+		mkdir("sd:/luma", 0777);
+		mkdir("sd:/luma/sysmodules", 0777);
+		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
+		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
+			resultText1 = "Failed to backup custom";
+			resultText2 = "TwlBg.";
+		} else {
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+				stop();
+			} else {
+				resultText1 = "Failed to reboot TwlBg";
+				resultText2 = "in widescreen.";
+			}
+		}
+		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		int textXpos[2] = {0};
+		textXpos[0] = 72;
+		textXpos[1] = 84;
+		clearText();
+		printSmallCentered(false, textXpos[0], resultText1);
+		printSmallCentered(false, textXpos[1], resultText2);
+		fadeType = true; // Fade in from white
+		for (int i = 0; i < 60 * 3; i++) {
+			swiWaitForVBlank(); // Wait 3 seconds
+		}
+		fadeType = false;	   // Fade to white
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		return;
 	}
 
 	if (wideCheatFound) {
@@ -2089,10 +2140,13 @@ int main(int argc, char **argv) {
 						}
 						SetSpeedBumpExclude(argarray[0]);
 
+						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini( bootstrapinipath );
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && game_TID[0] == 'W') ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {
@@ -2193,6 +2247,11 @@ int main(int argc, char **argv) {
 				} else {
 					launchType[secondaryDevice] = 2;
 					SaveSettings();
+
+					if (isDSiMode()) {
+						SetWidescreen(filename[secondaryDevice].c_str());
+					}
+
 					bool runNds_boostCpu = false;
 					bool runNds_boostVram = false;
 					if (isDSiMode() && !dsModeDSiWare) {

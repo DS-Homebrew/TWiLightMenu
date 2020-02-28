@@ -47,6 +47,7 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
+int perGameSettings_wideScreen = -1;
 
 char pergamefilepath[256];
 
@@ -62,6 +63,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_heapShrink = pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
+    perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 }
 
 std::string getSavExtension(void) {

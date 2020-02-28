@@ -82,6 +82,7 @@ int perGameSettings_boostCpu = -1;
 int perGameSettings_boostVram = -1;
 int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
+int perGameSettings_wideScreen = -1;
 
 extern int file_count;
 
@@ -105,7 +106,7 @@ char saveNoDisplay[8];
 
 int firstPerGameOpShown = 0;
 int perGameOps = -1;
-int perGameOp[8] = {-1};
+int perGameOp[10] = {-1};
 
 void loadPerGameSettings (std::string filename) {
 	snprintf(pergamefilepath, sizeof(pergamefilepath), "%s/_nds/TWiLightMenu/gamesettings/%s.ini", (ms().secondaryDevice ? "fat:" : "sd:"), filename.c_str());
@@ -123,6 +124,7 @@ void loadPerGameSettings (std::string filename) {
 	perGameSettings_boostVram = pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", -1);
 	perGameSettings_heapShrink = pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", -1);
     perGameSettings_bootstrapFile = pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", -1);
+    perGameSettings_wideScreen = pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", -1);
 }
 
 void savePerGameSettings (std::string filename) {
@@ -152,6 +154,9 @@ void savePerGameSettings (std::string filename) {
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", perGameSettings_heapShrink);
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
+			if (isDSiMode() && ms().consoleModel >= 2 && sdFound()) {
+				pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
+			}
 		}
 	}
 	pergameini.SaveIniFile( pergamefilepath );
@@ -259,7 +264,7 @@ void perGameSettings (std::string filename) {
 
 	firstPerGameOpShown = 0;
 	perGameOps = -1;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 10; i++) {
 		perGameOp[i] = -1;
 	}
 	if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
@@ -285,6 +290,10 @@ void perGameSettings (std::string filename) {
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
 		}
+		if (isDSiMode() && ms().consoleModel >= 2 && sdFound() && gameTid[CURPOS][0] == 'W') {
+			perGameOps++;
+			perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
+		}
 	} else if (showPerGameSettings) {	// Per-game settings for retail/commercial games with nds-bootstrap/B4DS
 		if (ms().useBootstrap || !ms().secondaryDevice) {
 			perGameOps++;
@@ -309,6 +318,10 @@ void perGameSettings (std::string filename) {
 			}
 			perGameOps++;
 			perGameOp[perGameOps] = 7;	// Bootstrap
+			if (isDSiMode() && ms().consoleModel >= 2 && sdFound()) {
+				perGameOps++;
+				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
+			}
 		}
 	}
 
@@ -365,21 +378,21 @@ void perGameSettings (std::string filename) {
 			case 0:
 				printSmall(false, 24, perGameOpYpos, "Language:");
 				if (perGameSettings_language == -2) {
-					printSmall(false, 188, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_language == -1) {
-					printSmall(false, 188, perGameOpYpos, "System");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
 				} else if (perGameSettings_language == 0) {
-					printSmall(false, 188, perGameOpYpos, "Japanese");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japanese");
 				} else if (perGameSettings_language == 1) {
-					printSmall(false, 188, perGameOpYpos, "English");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "English");
 				} else if (perGameSettings_language == 2) {
-					printSmall(false, 188, perGameOpYpos, "French");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "French");
 				} else if (perGameSettings_language == 3) {
-					printSmall(false, 188, perGameOpYpos, "German");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "German");
 				} else if (perGameSettings_language == 4) {
-					printSmall(false, 188, perGameOpYpos, "Italian");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Italian");
 				} else if (perGameSettings_language == 5) {
-					printSmall(false, 188, perGameOpYpos, "Spanish");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Spanish");
 				}
 				break;
 			case 1:
@@ -391,77 +404,87 @@ void perGameSettings (std::string filename) {
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmall(false, 200, perGameOpYpos, "None");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "None");
 				} else {
-					printSmall(false, 220, perGameOpYpos, saveNoDisplay);
+					printSmallRightAlign(false, 256-24, perGameOpYpos, saveNoDisplay);
 				}
 				break;
 			case 2:
 				printSmall(false, 24, perGameOpYpos, "Run in:");
 				if (perGameSettings_dsiMode == -1) {
-					printSmall(false, 188, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, 128, perGameOpYpos, "DSi mode (Forced)");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode (Forced)");
 				} else if (perGameSettings_dsiMode == 1) {
-					printSmall(false, 184, perGameOpYpos, "DSi mode");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode");
 				} else {
-					printSmall(false, 184, perGameOpYpos, "DS mode");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "DS mode");
 				}
 				break;
 			case 3:
 				printSmall(false, 24, perGameOpYpos, "ARM9 CPU Speed:");
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-					printSmall(false, 146, perGameOpYpos, "133mhz (TWL)");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
-						printSmall(false, 188, perGameOpYpos, "Default");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 					} else if (perGameSettings_boostCpu == 1) {
-						printSmall(false, 146, perGameOpYpos, "133mhz (TWL)");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 					} else {
-						printSmall(false, 156, perGameOpYpos, "67mhz (NTR)");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "67mhz (NTR)");
 					}
 				}
 				break;
 			case 4:
 				printSmall(false, 24, perGameOpYpos, "VRAM boost:");
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-					printSmall(false, 188, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
 				} else {
 					if (perGameSettings_boostVram == -1) {
-						printSmall(false, 188, perGameOpYpos, "Default");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 					} else if (perGameSettings_boostVram == 1) {
-						printSmall(false, 188, perGameOpYpos, "On");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
 					} else {
-						printSmall(false, 188, perGameOpYpos, "Off");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 					}
 				}
 				break;
 			case 5:
 				printSmall(false, 24, perGameOpYpos, "Heap shrink:");
 				if (perGameSettings_heapShrink == -1) {
-					printSmall(false, 200, perGameOpYpos, "Auto");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmall(false, 200, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
 				} else {
-					printSmall(false, 200, perGameOpYpos, "Off");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
 				break;
 			case 6:
 				printSmall(false, 24, perGameOpYpos, "Direct boot:");
 				if (perGameSettings_directBoot) {
-					printSmall(false, 200, perGameOpYpos, "Yes");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes");
 				} else {
-					printSmall(false, 200, perGameOpYpos, "No");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "No");
 				}
 				break;
 			case 7:
 				printSmall(false, 24, perGameOpYpos, "Bootstrap:");
 				if (perGameSettings_bootstrapFile == -1) {
-					printSmall(false, 188, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmall(false, 188, perGameOpYpos, "Nightly");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Nightly");
 				} else {
-					printSmall(false, 188, perGameOpYpos, "Release");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Release");
+				}
+				break;
+			case 8:
+				printSmall(false, 24, perGameOpYpos, "Screen Aspect Ratio:");
+				if (perGameSettings_wideScreen == -1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+				} else if (perGameSettings_wideScreen == 1) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "4:3");
+				} else {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "16:10");
 				}
 				break;
 		}
@@ -562,6 +585,10 @@ void perGameSettings (std::string filename) {
 						perGameSettings_bootstrapFile--;
 						if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
 						break;
+					case 8:
+						perGameSettings_wideScreen++;
+						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -608,6 +635,10 @@ void perGameSettings (std::string filename) {
 					case 7:
 						perGameSettings_bootstrapFile++;
 						if (perGameSettings_bootstrapFile > 1) perGameSettings_bootstrapFile = -1;
+						break;
+					case 8:
+						perGameSettings_wideScreen++;
+						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
