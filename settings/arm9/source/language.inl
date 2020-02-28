@@ -208,8 +208,8 @@ STRING(DESCRIPTION_DEFAULT_LAUNCHER_1, "Launch Nintendo DSi Menu or TWiLight Men
 STRING(12_HOUR_CLOCK, "Use a 12 hour clock")
 STRING(DESCRIPTION_12_HOUR_CLOCK, "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme.")
 
-STRING(SNES_EMULATOR, "Zooming icons")
-STRING(DESCRIPTION_SNES_EMULATOR, "Display a zoom effect for the selected icon in the Acekard theme.")
+//STRING(SNES_EMULATOR, "Choose a SNES emulator")
+//STRING(DESCRIPTION_SNES_EMULATOR, "Choose whether you would rather use SNEmulDS or lolSNES.")
 
 STRING(AK_ZOOMING_ICON, "Zooming icons")
 STRING(DESCRIPTION_ZOOMING_ICON, "Display a zoom effect for the selected icon in the Acekard theme.")
