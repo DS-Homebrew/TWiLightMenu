@@ -474,7 +474,7 @@ int main(int argc, char **argv)
 		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
-		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_AK_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage filetypePage(STR_FILETYPE_SETTINGS);
 
@@ -489,11 +489,11 @@ int main(int argc, char **argv)
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
-	gbar2Page.option(sdAccessible ? "Slot-1 SD: DLDI access" : "DLDI access", STR_DESCRIPTION_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false})
+	gbar2Page.option(sdAccessible ? "Slot-1 SD: DLDI access" : "DLDI access", STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false})
 			.option("Use bottom screen", STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
 			.option("Center and mask", STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
-			.option("DS main memory i-cache", STR_DESCRIPTION_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
-			.option("WRAM i-cache", STR_DESCRIPTION_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
+			.option("DS main memory i-cache", STR_DESCRIPTION_GBAR2_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
+			.option("WRAM i-cache", STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
 			.option("BIOS intro", STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
@@ -540,7 +540,7 @@ int main(int argc, char **argv)
 			gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 		}
 		if (sdAccessible) {
-			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPPATCH, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})
+			gamesPage.option(STR_FORCESLEEPPATCH, STR_DESCRIPTION_FORCESLEEPMODE, Option::Bool(&ms().forceSleepPatch), {STR_ON, STR_OFF}, {true, false})
 				.option(STR_SLOT1SCFGUNLOCK, STR_DESCRIPTION_SLOT1SCFGUNLOCK, Option::Bool(&ms().slot1SCFGUnlock), {STR_ON, STR_OFF}, {true, false});
 		}
 	} else {
@@ -691,7 +691,7 @@ int main(int argc, char **argv)
 				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
 				{-1, 0, 1, 2, 3, 4, 5})
 			.option(STR_LAUNCHERAPP,
-				STR_DESCRIPTION_LAUNCHERAPP_1,
+				STR_DESCRIPTION_LAUNCHERAPP,
 				Option::Int(&ms().launcherApp),
 				{STR_NONE,
 				"00000000.app",
