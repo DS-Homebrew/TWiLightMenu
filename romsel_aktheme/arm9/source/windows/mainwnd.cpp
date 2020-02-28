@@ -557,11 +557,11 @@ std::string apFix(const char *filename, bool isHomebrew)
 sNDSHeader ndsCart;
 
 //void MainWnd::bootWidescreen(const char *filename)
-void bootWidescreen(const char *filename)
+void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 {
 	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !ms().wideScreen
+	if (sys().arm7SCFGLocked() || ms().consoleModel < 2 || !useWidescreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
@@ -603,6 +603,26 @@ void bootWidescreen(const char *filename)
 
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s-%X.bin", game_TID, headerCRC16);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
+	}
+
+	if (isHomebrew) {
+		// Prepare for reboot into 16:10 TWL_FIRM
+		mkdir("sd:/luma", 0777);
+		mkdir("sd:/luma/sysmodules", 0777);
+		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
+		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
+			//resultText = "Failed to backup custom TwlBg.";
+		} else {
+			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+				swiWaitForVBlank();
+			} else {
+				//resultText = "Failed to reboot TwlBg in widescreen.";
+			}
+		}
+		return;
 	}
 
 	if (wideCheatFound) {
@@ -648,7 +668,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .ramDiskNo((int)gameConfig.ramDiskNo)
 		  .cpuBoost(gameConfig.boostCpu == PerGameSettings::EDefault ? ms().boostCpu : (bool)gameConfig.boostCpu)
 		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
-		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile);
+		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
+		  .nightlyBootstrap(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
@@ -1553,7 +1574,7 @@ void MainWnd::bootSlot1(void)
         return;
     }
 
-	bootWidescreen(NULL);
+	bootWidescreen(NULL, false, ms().wideScreen);
 	if (sdFound()) {
 		chdir("sd:/");
 	}

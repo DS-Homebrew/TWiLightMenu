@@ -47,6 +47,7 @@ class PerGameSettings
     TDefaultBool boostVram;
     TDefaultBool heapShrink;
     TDefaultBool bootstrapFile;
+    TDefaultBool wideScreen;
 
   private:
     std::string _iniPath;

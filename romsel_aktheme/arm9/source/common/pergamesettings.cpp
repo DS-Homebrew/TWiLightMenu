@@ -8,6 +8,8 @@
 #include <cstdio>
 #include "systemdetails.h"
 
+extern bool sdFound(void);
+
 PerGameSettings::PerGameSettings(const std::string &romFileName)
 {
     _iniPath = formatString(PERGAMESETTINGS_PATH, (ms().secondaryDevice ? "fat:" : "sd:"), romFileName.c_str());
@@ -20,6 +22,7 @@ PerGameSettings::PerGameSettings(const std::string &romFileName)
     directBoot = EFalse;
     heapShrink = EDefault;
     bootstrapFile = EDefault;
+    wideScreen = EDefault;
     loadSettings();
 }
 
@@ -36,6 +39,7 @@ void PerGameSettings::loadSettings()
 	boostVram = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOST_VRAM", boostVram);
     heapShrink = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
     bootstrapFile = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
+    wideScreen = (TDefaultBool)pergameini.GetInt("GAMESETTINGS", "WIDESCREEN", wideScreen);
 }
 
 void PerGameSettings::saveSettings()
@@ -57,6 +61,9 @@ void PerGameSettings::saveSettings()
     if (ms().useBootstrap || !ms().secondaryDevice) {
 		pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", heapShrink);
 		pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", bootstrapFile);
+	}
+	if (isDSiMode() && ms().consoleModel >= 2 && sdFound()) {
+		pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", wideScreen);
 	}
     pergameini.SaveIniFile(_iniPath);
 }

@@ -121,6 +121,6 @@ class MainWnd : public akui::Form
 };
 
 std::string apFix(const char *filename, bool isHomebrew);
-void bootWidescreen(const char *filename);
+void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen);
 
 #endif //_MAINWND_H_

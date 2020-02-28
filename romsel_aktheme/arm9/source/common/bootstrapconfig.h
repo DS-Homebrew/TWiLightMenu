@@ -40,6 +40,7 @@ class BootstrapConfig
         BootstrapConfig& ramDiskNo(int ramDiskNo);
         BootstrapConfig& softReset(bool softReset);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
+        BootstrapConfig& wideScreen(bool wideScreen);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
@@ -66,6 +67,7 @@ class BootstrapConfig
         std::function<void(void)>  _configSavedHandler;
         std::function<void(void)>  _cheatsAppliedHandler;
 
+        bool _useWideScreen;
         bool _useNightlyBootstrap;
         bool _useGbarBootstrap;
         int _donorSdk;

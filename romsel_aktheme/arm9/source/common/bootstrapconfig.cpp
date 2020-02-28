@@ -277,6 +277,12 @@ BootstrapConfig &BootstrapConfig::nightlyBootstrap(bool nightlyBootstrap)
 	return *this;
 }
 
+BootstrapConfig &BootstrapConfig::wideScreen(bool wideScreen)
+{
+	_useWideScreen = wideScreen;
+	return *this;
+}
+
 BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
 {
 	_useGbarBootstrap = gbarBootstrap;
@@ -387,7 +393,7 @@ int BootstrapConfig::launch()
 	if (_saveCreatedHandler)
 		_saveCreatedHandler();
 
-	bootWidescreen(_fileName.c_str());
+	bootWidescreen(_fileName.c_str(), _isHomebrew, _useWideScreen);
 
 	const char *typeToReplace = ".nds";
 	if (extention(_fileName, ".dsi")) {
@@ -451,7 +457,7 @@ int BootstrapConfig::launch()
 	loader.option("NDS-BOOTSTRAP", "NDS_PATH", _fullPath)
 		.option("NDS-BOOTSTRAP", "SAV_PATH", savepath)
 		.option("NDS-BOOTSTRAP", "AP_FIX_PATH", apFix(_fileName.c_str(), _isHomebrew))
-		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
+		.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", _useWideScreen ? "wide" : "")
 		.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (_ramDiskNo >= 0 && !ms().secondaryDevice) ? ramdiskpath : "sd:/null.img")
 		.option("NDS-BOOTSTRAP", "LANGUAGE", _language)
 		.option("NDS-BOOTSTRAP", "BOOST_CPU", _cpuBoost)
