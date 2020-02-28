@@ -190,7 +190,7 @@ STRING(DESCRIPTION_SMSGGINRAM, "Load a SEGA Master System or Game Gear ROM into 
 
 // Flashcard settings
 STRING(FLASHCARD_SELECT, "Select Flashcard")
-STRING(LEFTRIGHT_FLASHCARD, "")
+STRING(LEFTRIGHT_FLASHCARD, "Left/Right: Select flashcard(s)")
 STRING(AB_SETRETURN, "A/B: Set and Return")
 
 // Sub-theme select
