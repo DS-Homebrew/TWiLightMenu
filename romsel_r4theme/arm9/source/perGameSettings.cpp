@@ -137,9 +137,9 @@ void savePerGameSettings (std::string filename) {
 		if (useBootstrap || !secondaryDevice) {
 			pergameini.SetInt("GAMESETTINGS", "HEAP_SHRINK", perGameSettings_heapShrink);
 			pergameini.SetInt("GAMESETTINGS", "BOOTSTRAP_FILE", perGameSettings_bootstrapFile);
-			if (isDSiMode() && consoleModel >= 2 && sdFound()) {
-				pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
-			}
+		}
+		if (isDSiMode() && consoleModel >= 2 && sdFound()) {
+			pergameini.SetInt("GAMESETTINGS", "WIDESCREEN", perGameSettings_wideScreen);
 		}
 	}
 	pergameini.SaveIniFile( pergamefilepath );
