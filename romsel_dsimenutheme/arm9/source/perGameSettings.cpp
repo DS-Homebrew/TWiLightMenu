@@ -482,9 +482,9 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_wideScreen == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
 				} else if (perGameSettings_wideScreen == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "4:3");
-				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "16:10");
+				} else {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "4:3");
 				}
 				break;
 		}
