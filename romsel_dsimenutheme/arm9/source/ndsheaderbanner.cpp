@@ -13,6 +13,7 @@ static u32 arm9Sig[3][4];
 extern sNDSBannerExt ndsBanner;
 
 char gameTid[40][5] = {0};
+u8 romVersion[40] = {0};
 u16 headerCRC[40] = {0};
 
 typedef enum

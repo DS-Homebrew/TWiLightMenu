@@ -411,6 +411,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
+			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
 		}
 

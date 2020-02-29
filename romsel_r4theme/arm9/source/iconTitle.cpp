@@ -738,6 +738,8 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
+		romVersion = ndsHeader.romversion;
+
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
 		if (arm9StartSig[0] == 0xE3A00301

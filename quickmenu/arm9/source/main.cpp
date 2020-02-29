@@ -542,12 +542,15 @@ TWL_CODE void SetWidescreen(const char *filename) {
 		FILE *f_nds_file = fopen(filename, "rb");
 
 		char game_TID[5];
+		u8 romVersion = 0;
 		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
 		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, romversion), SEEK_SET);
+		fread(&romVersion, sizeof(u8), 1, f_nds_file);
 		fclose(f_nds_file);
 		game_TID[4] = 0;
 
-		if (game_TID[0] != 'W') return;
+		if (game_TID[0] != 'W' && romVersion != 0x57) return;
 
 		const char* resultText1;
 		const char* resultText2;

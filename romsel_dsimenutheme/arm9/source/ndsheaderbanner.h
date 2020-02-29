@@ -253,6 +253,7 @@ u32 getSDKVersion(FILE* ndsFile);
 int checkRomAP(FILE *ndsFile, int num);
 
 extern char gameTid[40][5];
+extern u8 romVersion[40];
 extern u16 headerCRC[40];
 
 extern char bnriconTile[41][0x23C0];

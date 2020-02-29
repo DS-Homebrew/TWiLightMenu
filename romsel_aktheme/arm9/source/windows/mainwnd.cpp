@@ -606,15 +606,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 	}
 
 	if (isHomebrew) {
-		FILE *f_nds_file = fopen(filename, "rb");
-
-		char game_TID[5];
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-		fclose(f_nds_file);
-		game_TID[4] = 0;
-
-		if (game_TID[0] != 'W') return;
+		if (!ms().homebrewHasWide) return;
 
 		// Prepare for reboot into 16:10 TWL_FIRM
 		mkdir("sd:/luma", 0777);
@@ -1258,7 +1250,7 @@ void MainWnd::launchSelected()
 
 			BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
 
-			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W');
+			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W' || rominfo.version() == 0x57);
 			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
 			bootWidescreen(fileName.c_str(), true, (gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen));

@@ -644,7 +644,9 @@ sNDSHeader ndsCart;
 TWL_CODE void SetWidescreen(const char *filename) {
 	remove("/_nds/nds-bootstrap/wideCheatData.bin");
 
-	if (arm7SCFGLocked || consoleModel < 2 || !wideScreen
+	bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
+	if (arm7SCFGLocked || consoleModel < 2 || !useWidescreen
 	|| (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) != 0)) {
 		return;
 	}
@@ -689,15 +691,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (isHomebrew) {
-		FILE *f_nds_file = fopen(filename, "rb");
-
-		char game_TID[5];
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-		fclose(f_nds_file);
-		game_TID[4] = 0;
-
-		if (game_TID[0] != 'W') return;
+		if (!homebrewHasWide) return;
 
 		const char* resultText1;
 		const char* resultText2;
@@ -1678,6 +1672,8 @@ int main(int argc, char **argv) {
 						}
 						SetSpeedBumpExclude(argarray[0]);
 
+						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
+
 						bootstrapinipath =
 						    (sdFound() ? "sd:/_nds/nds-bootstrap.ini"
 									  : "fat:/_nds/nds-bootstrap.ini");
@@ -1687,7 +1683,7 @@ int main(int argc, char **argv) {
 						if (!isHomebrew) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 						}
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (game_TID[0] == 'W' || romVersion == 0x57)) ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
 						if (isDSiMode()) {
@@ -1756,7 +1752,7 @@ int main(int argc, char **argv) {
 						if (!isArgv) {
 							romPath[secondaryDevice] = argarray[0];
 						}
-						homebrewHasWide = (isHomebrew && game_TID[0] == 'W');
+						homebrewHasWide = (isHomebrew && (game_TID[0] == 'W' || romVersion == 0x57));
 						launchType[secondaryDevice] = 1;
 						previousUsedDevice = secondaryDevice;
 						SaveSettings();
@@ -1796,7 +1792,7 @@ int main(int argc, char **argv) {
 					if (!isArgv) {
 						romPath[secondaryDevice] = argarray[0];
 					}
-					homebrewHasWide = (isHomebrew && game_TID[0] == 'W');
+					homebrewHasWide = (isHomebrew && (game_TID[0] == 'W' || romVersion == 0x57));
 					launchType[secondaryDevice] = 2;
 					previousUsedDevice = secondaryDevice;
 					SaveSettings();

@@ -390,7 +390,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (isHomebrew[CURPOS]) {
-		if (gameTid[CURPOS][0] != 'W') return;
+		if (!ms().homebrewHasWide) return;
 
 		const char* resultText1;
 		const char* resultText2;
@@ -1343,7 +1343,7 @@ int main(int argc, char **argv) {
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", path);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && gameTid[CURPOS][0] == 'W') ? "wide" : "");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && (gameTid[CURPOS][0] == 'W' || romVersion[CURPOS] == 0x57)) ? "wide" : "");
 						if (!isHomebrew[CURPOS]) {
 							bootstrapini.SetString("NDS-BOOTSTRAP", "AP_FIX_PATH", setApFix(argarray[0]));
 						}
@@ -1452,7 +1452,7 @@ int main(int argc, char **argv) {
 					if (!isArgv) {
 						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
 					}
-					ms().homebrewHasWide = (isHomebrew[CURPOS] && gameTid[CURPOS][0] == 'W');
+					ms().homebrewHasWide = (isHomebrew[CURPOS] && (gameTid[CURPOS][0] == 'W' || romVersion[CURPOS] == 0x57));
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
