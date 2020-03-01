@@ -21,6 +21,7 @@ package: all
 
 	@mkdir -p "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content"
 	@cp "rungame/rungame.nds" "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
+	@cp "rungame/rungame.nds" "$(PACKAGE)/_nds/TWiLightMenu/resetgame.srldr"
 
 	@mkdir -p "$(PACKAGE)/_nds/TWiLightMenu"
 	@cp "quickmenu/mainmenu.nds" "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
