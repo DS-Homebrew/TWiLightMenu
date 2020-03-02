@@ -605,6 +605,7 @@ int main(int argc, char **argv)
 	}
 
 	remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
+	remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 
 	std::string filename;
 
