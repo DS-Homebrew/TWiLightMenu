@@ -604,6 +604,8 @@ int main(int argc, char **argv)
 		stop();
 	}
 
+	remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
+
 	std::string filename;
 
 	ms().loadSettings();
