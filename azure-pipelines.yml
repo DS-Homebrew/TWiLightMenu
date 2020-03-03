@@ -53,6 +53,10 @@ jobs:
 
     - script: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
+        # Clean .gitkeep files
+        rm -rf 7zfile/*/.gitkeep
+        rm -rf 7zfile/*/*/.gitkeep
+
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
