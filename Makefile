@@ -12,7 +12,7 @@ all:	booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel
 
 package: all
 	@mkdir -p "$(PACKAGE)"
-	@cp "booter/booter.nds" "$(PACKAGE)/BOOT.NDS"
+	@cp "booter/booter.nds" "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
 	@cp "booter_fc/booter_fc.nds" "$(PACKAGE)/Flashcard users/BOOT.NDS"
 	@cp "booter_fc/booter_fc_cyclodsi.nds" "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
 
@@ -81,7 +81,7 @@ clean:
 	@$(MAKE) -C title clean
 
 	@echo clean package files
-	@rm -rf "$(PACKAGE)/BOOT.NDS"
+	@rm -rf "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
 	@rm -rf "$(PACKAGE)/Flashcard users/BOOT.NDS"
 	@rm -rf "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
