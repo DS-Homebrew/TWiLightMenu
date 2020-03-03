@@ -701,10 +701,16 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 
 	char gameTid[5] = {0};
-	snprintf(gameTid, 4, "%s", rominfo.saveInfo().gameCode);
+	tonccpy(gameTid, rominfo.saveInfo().gameCode, 4);
+
+	FILE *f_nds_file = fopen(fullPath.c_str(), "rb");
+	u16 headerCRC16 = 0;
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+	fclose(f_nds_file);
 
 	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, rominfo.saveInfo().gameCRC);
+	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
 
 	if (settingsIni.checkIfShowAPMsg() && (access(ipsPath, F_OK) != 0)) {
 		// Check for SDK4-5 ROMs that don't have AP measures.
