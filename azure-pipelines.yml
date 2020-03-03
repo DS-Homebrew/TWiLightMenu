@@ -53,6 +53,10 @@ jobs:
 
     - script: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
+        # Clean .gitkeep files
+        rm -rf 7zfile/*/.gitkeep
+        rm -rf 7zfile/*/*/.gitkeep
+
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
         rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
@@ -67,8 +71,9 @@ jobs:
         mkdir 7zfile/_nds/TWiLightMenu/boxart/
         mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
 
-        mv 7zfile/BOOT.NDS 7zfile/DSi\&3DS\ -\ SD\ card\ users/
-        mv 7zfile/BOOT_FC.NDS 7zfile/Flashcard\ users/BOOT.NDS
+        # Clean .gitkeep files
+        rm -rf 7zfile/*/.gitkeep
+        rm -rf 7zfile/*/*/.gitkeep
 
         # nds-bootstrap
         mkdir nds-bootstrap
