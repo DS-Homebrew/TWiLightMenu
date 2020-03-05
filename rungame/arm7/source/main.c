@@ -103,6 +103,10 @@ int main() {
 	
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
+		if (isDSiMode() && *(u8*)(0x023FFD00) != 0) {
+			i2cWriteRegister(0x4A, 0x30, *(u8*)(0x023FFD00));
+			*(u8*)(0x023FFD00) = 0;
+		}
 		if(fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
 		}
