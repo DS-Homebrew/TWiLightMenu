@@ -139,8 +139,6 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-bool gameSoftReset = false;
-
 int mpuregion = 0;
 int mpusize = 0;
 bool ceCached = true;
@@ -319,51 +317,6 @@ int SetDonorSDK(const char* filename) {
 	}
 
 	return 0;
-}
-
-/**
- * Disable soft-reset, in favor of non OS_Reset one, for a specific game.
- */
-void SetGameSoftReset(const char* filename) {
-	scanKeys();
-	if(keysHeld() & KEY_R){
-		gameSoftReset = true;
-		return;
-	}
-
-	FILE *f_nds_file = fopen(filename, "rb");
-
-	char game_TID[5] = {0};
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-	fread(game_TID, 1, 4, f_nds_file);
-	game_TID[4] = 0;
-	game_TID[3] = 0;
-	fclose(f_nds_file);
-
-	gameSoftReset = false;
-
-	// Check for games that have it's own reset function (OS_Reset not used).
-	static const char list[][4] = {
-	    "NTR", // Download Play ROMs
-	    "ASM", // Super Mario 64 DS
-	    "SMS", // Super Mario Star World, and Mario's Holiday
-	    "AMC", // Mario Kart DS
-	    "EKD", // Ermii Kart DS
-	    "A2D", // New Super Mario Bros.
-	    "ARZ", // Rockman ZX/MegaMan ZX
-	    "AKW", // Kirby Squeak Squad/Mouse Attack
-	    "YZX", // Rockman ZX Advent/MegaMan ZX Advent
-	    "B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-	};
-
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
-		if (memcmp(game_TID, list[i], 3) == 0) {
-			// Found a match.
-			gameSoftReset = true;
-			break;
-		}
-	}
 }
 
 /**
@@ -2129,9 +2082,6 @@ int main(int argc, char **argv) {
 
 						int donorSdkVer = SetDonorSDK(argarray[0]);
 						SetMPUSettings(argarray[0]);
-						if (isDSiMode()) {
-							SetGameSoftReset(argarray[0]);
-						}
 						SetSpeedBumpExclude(argarray[0]);
 
 						bool useWidescreen = (perGameSettings_wideScreen == -1 ? wideScreen : perGameSettings_wideScreen);
@@ -2151,7 +2101,6 @@ int main(int argc, char **argv) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);
 						}
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DONOR_SDK_VER", donorSdkVer);
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "GAME_SOFT_RESET", gameSoftReset);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_REGION", mpuregion);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", mpusize);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "CARDENGINE_CACHED", ceCached);

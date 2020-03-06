@@ -29,7 +29,6 @@ class BootstrapConfig
         BootstrapConfig& speedBumpExclude(int heapShrink);
         BootstrapConfig& forceSleepPatch();
         BootstrapConfig& saveSize();
-        BootstrapConfig& softReset();
 
         BootstrapConfig& dsiMode(int dsiMode);
         BootstrapConfig& vramBoost(bool vramBoost);
@@ -38,7 +37,6 @@ class BootstrapConfig
         BootstrapConfig& language(int language);
         BootstrapConfig& saveNo(int saveNo);
         BootstrapConfig& ramDiskNo(int ramDiskNo);
-        BootstrapConfig& softReset(bool softReset);
         BootstrapConfig& nightlyBootstrap(bool nightlyBootstrap);
         BootstrapConfig& wideScreen(bool wideScreen);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
@@ -83,7 +81,6 @@ class BootstrapConfig
         int _language;
         int _saveNo;
         int _ramDiskNo;
-        bool _softReset;
         bool _soundFix;
 };
 #endif

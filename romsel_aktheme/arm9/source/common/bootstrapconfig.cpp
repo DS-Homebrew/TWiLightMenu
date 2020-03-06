@@ -40,13 +40,11 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_language = -1;
 	_saveNo = 0;
 	_ramDiskNo = -1;
-	_softReset = false;
 	_cpuBoost = false;
 	_useGbarBootstrap = false;
 
 	this
 		->saveSize()
-		.softReset()
 		.mpuSettings()
 		.speedBumpExclude(heapShrink)
 		.donorSdk();
@@ -71,29 +69,6 @@ BootstrapConfig &BootstrapConfig::saveSize()
 	return saveSize(0x80000);
 }
 
-BootstrapConfig &BootstrapConfig::softReset()
-{
-	static const char list[][4] = {
-		"NTR", // Download Play ROMs
-		"ASM", // Super Mario 64 DS
-		"SMS", // Super Mario Star World, and Mario's Holiday
-		"AMC", // Mario Kart DS
-		"EKD", // Ermii Kart DS
-		"A2D", // New Super Mario Bros.
-		"ARZ", // Rockman ZX/MegaMan ZX
-		"AKW", // Kirby Squeak Squad/Mouse Attack
-		"YZX", // Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-	};
-	for (const char *resettid : list)
-	{
-		if (strncmp(resettid, _gametid.c_str(), 3) == 0)
-		{
-			return softReset(true);
-		}
-	}
-	return softReset(false);
-}
 BootstrapConfig &BootstrapConfig::donorSdk(int sdk)
 {
 	_donorSdk = sdk;
@@ -238,11 +213,6 @@ BootstrapConfig &BootstrapConfig::saveNo(int saveNo)
 BootstrapConfig &BootstrapConfig::ramDiskNo(int ramDiskNo)
 {
 	_ramDiskNo = ramDiskNo;
-	return *this;
-}
-BootstrapConfig &BootstrapConfig::softReset(bool softReset)
-{
-	_softReset = softReset;
 	return *this;
 }
 BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handler)
@@ -456,7 +426,6 @@ int BootstrapConfig::launch()
 		.option("NDS-BOOTSTRAP", "BOOST_VRAM", _vramBoost)
 		.option("NDS-BOOTSTRAP", "DSI_MODE", _dsiMode)
 		.option("NDS-BOOTSTRAP", "DONOR_SDK_VER", _donorSdk)
-		.option("NDS-BOOTSTRAP", "GAME_SOFT_RESET", _softReset)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_REGION", _mpuRegion)
 		.option("NDS-BOOTSTRAP", "PATCH_MPU_SIZE", _mpuSize)
 		.option("NDS-BOOTSTRAP", "CARDENGINE_CACHED", _ceCached)
