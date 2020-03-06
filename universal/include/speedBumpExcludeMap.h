@@ -32,6 +32,7 @@
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
 		"YLU",	// Last Window: The Secret of Cape West
+		"ANI",	// Luminous Arc
 		"AVC",	// Magical Starsign
 		"ARM",	// Mario & Luigi: Partners in Time
 		"CLJ",	// Mario & Luigi: Bowser's Inside Story
