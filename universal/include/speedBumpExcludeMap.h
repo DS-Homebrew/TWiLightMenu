@@ -5,11 +5,6 @@
 		"B3R",	// Pokemon Ranger: Guardian Signs
 	};
 
-	static const char sbeList[][5] = {
-		"YFTP",	// Pokemon Mystery Dungeon: Explorers of Time (EUR)
-		"YFYP",	// Pokemon Mystery Dungeon: Explorers of Darkness (EUR)
-	};
-
 	static const char sbeList2[][4] = {
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
 		"AWR",	// Advance Wars: Dual Strike
@@ -46,6 +41,9 @@
 		"YNP",	// Need for Speed: ProStreet
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
+		"YFY",	// Pokemon Mystery Dungeon: Explorers of Darkness
+		"YFT",	// Pokemon Mystery Dungeon: Explorers of Time
+		"Y4R",	// Pokemon Mystery Dungeon: Explorers of Time + Explorers of Darkness (Demo)
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
 		"B3R",	// Pokemon Ranger: Guardian Signs
@@ -69,6 +67,7 @@
 		"AS2",  // Spider-Man 2
 		"AQ3",	// Spider-Man 3
 		"AST",	// Star Wars Episode III: Revenge of the Sith
+		"BJM",	// Stitch Jam
 		"YG4",	// Suikoden: Tierkreis
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence

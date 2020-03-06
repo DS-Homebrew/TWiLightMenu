@@ -154,14 +154,6 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 		return ceCached(true);
 	}
 
-	for (const char *speedtid : sbeList)
-	{
-		if (strncmp(speedtid, _gametid.c_str(), 4) == 0)
-		{
-			return ceCached(false);
-		}
-	}
-
 	for (const char *speedtid : sbeList2)
 	{
 		if (strncmp(speedtid, _gametid.c_str(), 3) == 0)

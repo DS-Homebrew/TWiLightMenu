@@ -468,15 +468,6 @@ void SetSpeedBumpExclude(const char* filename) {
 	}
 
 	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(sbeList)/sizeof(sbeList[0]); i++) {
-		if (memcmp(game_TID, sbeList[i], 4) == 0) {
-			// Found a match.
-			ceCached = false;
-			break;
-		}
-	}
-
-	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
