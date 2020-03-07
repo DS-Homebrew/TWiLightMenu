@@ -34,6 +34,7 @@
 
 #include "date.h"
 #include "fileCopy.h"
+#include "nand/nandio.h"
 
 #include "graphics/graphics.h"
 
@@ -919,23 +920,40 @@ int main(int argc, char **argv) {
 		dlplayFound = true;
 		dlplayReboot = true;
 	} else {
+		bool nandInited = false;
+
 		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-		if (access(pictochatPath, F_OK) == 0) {
-			pictochatFound = true;
-		}
+		pictochatFound = (access(pictochatPath, F_OK) == 0);
 		if (!pictochatFound) {
 			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e4541/content/00000000.app");
-			if (access(pictochatPath, F_OK) == 0) {
+			pictochatFound = (access(pictochatPath, F_OK) == 0);
+		}
+		if (!pictochatFound && isDSiMode() && consoleModel < 2) {
+			if (!nandInited) {
+				fatMountSimple("nand", &io_dsi_nand);
+				nandInited = true;
+			}
+			if (access("nand:/", F_OK) == 0) {
+				snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+				fcopy("nand:/title/00030005/484e4541/content/00000000.app", pictochatPath);	// Copy from NAND
 				pictochatFound = true;
 			}
 		}
+
 		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-		if (access(dlplayPath, F_OK) == 0) {
-			dlplayFound = true;
-		}
+		dlplayFound = (access(dlplayPath, F_OK) == 0);
 		if (!dlplayFound) {
 			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
-			if (access(dlplayPath, F_OK) == 0) {
+			dlplayFound = (access(dlplayPath, F_OK) == 0);
+		}
+		if (!dlplayFound && isDSiMode() && consoleModel < 2) {
+			if (!nandInited) {
+				fatMountSimple("nand", &io_dsi_nand);
+				nandInited = true;
+			}
+			if (access("nand:/", F_OK) == 0) {
+				snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+				fcopy("nand:/title/00030005/484e4441/content/00000001.app", pictochatPath);	// Copy from NAND
 				dlplayFound = true;
 			}
 		}

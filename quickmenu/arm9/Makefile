@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	mainmenu
 BUILD		:=	build
-SOURCES		:=	source source/graphics source/tool source/common ../../universal/source
+SOURCES		:=	source source/nand source/graphics source/tool source/common ../../universal/source mbedtls
 INCLUDES	:=	include source ../../universal/include
 DATA		:=	../data  
 GRAPHICS	:=  ../gfx
