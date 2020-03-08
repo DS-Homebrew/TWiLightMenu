@@ -928,7 +928,7 @@ int main(int argc, char **argv) {
 			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e4541/content/00000000.app");
 			pictochatFound = (access(pictochatPath, F_OK) == 0);
 		}
-		if (!pictochatFound && isDSiMode() && consoleModel < 2) {
+		if (!pictochatFound && isDSiMode() && sdFound() && consoleModel < 2) {
 			if (!nandInited) {
 				fatMountSimple("nand", &io_dsi_nand);
 				nandInited = true;
@@ -946,14 +946,14 @@ int main(int argc, char **argv) {
 			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
 			dlplayFound = (access(dlplayPath, F_OK) == 0);
 		}
-		if (!dlplayFound && isDSiMode() && consoleModel < 2) {
+		if (!dlplayFound && isDSiMode() && sdFound() && consoleModel < 2) {
 			if (!nandInited) {
 				fatMountSimple("nand", &io_dsi_nand);
 				nandInited = true;
 			}
 			if (access("nand:/", F_OK) == 0) {
 				snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-				fcopy("nand:/title/00030005/484e4441/content/00000001.app", pictochatPath);	// Copy from NAND
+				fcopy("nand:/title/00030005/484e4441/content/00000001.app", dlplayPath);	// Copy from NAND
 				dlplayFound = true;
 			}
 		}
