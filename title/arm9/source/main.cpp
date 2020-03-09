@@ -200,6 +200,14 @@ void lastRunROM()
 		swiWaitForVBlank();
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out*/
 
+	if (bothSDandFlashcard()) {
+		// Do nothing
+	} else if (flashcardFound()) {
+		ms().secondaryDevice = true;
+	} else {
+		ms().secondaryDevice = false;
+	}
+
 	std::string romfolder = ms().romPath[ms().secondaryDevice];
 	while (!romfolder.empty() && romfolder[romfolder.size()-1] != '/') {
 		romfolder.resize(romfolder.size()-1);
