@@ -921,12 +921,21 @@ int main(int argc, char **argv) {
 		dlplayReboot = true;
 	} else {
 		bool nandInited = false;
+		char srcPath[256];
+		u8 regions[3] = {0x41, 0x43, 0x4B};
 
 		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 		pictochatFound = (access(pictochatPath, F_OK) == 0);
 		if (!pictochatFound) {
-			snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e4541/content/00000000.app");
-			pictochatFound = (access(pictochatPath, F_OK) == 0);
+			for (int i = 0; i < 3; i++)
+			{
+				snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
+				if (access(pictochatPath, F_OK) == 0)
+				{
+					pictochatFound = true;
+					break;
+				}
+			}
 		}
 		if (!pictochatFound && isDSiMode() && sdFound() && consoleModel < 2) {
 			if (!nandInited) {
@@ -934,8 +943,17 @@ int main(int argc, char **argv) {
 				nandInited = true;
 			}
 			if (access("nand:/", F_OK) == 0) {
+				for (int i = 0; i < 3; i++)
+				{
+					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e45%x/content/00000000.app", regions[i]);
+					if (access(srcPath, F_OK) == 0)
+					{
+						break;
+					}
+				}
+
 				snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-				fcopy("nand:/title/00030005/484e4541/content/00000000.app", pictochatPath);	// Copy from NAND
+				fcopy(srcPath, pictochatPath);	// Copy from NAND
 				pictochatFound = true;
 			}
 		}
@@ -943,8 +961,15 @@ int main(int argc, char **argv) {
 		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
 		dlplayFound = (access(dlplayPath, F_OK) == 0);
 		if (!dlplayFound) {
-			snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
-			dlplayFound = (access(dlplayPath, F_OK) == 0);
+			for (int i = 0; i < 3; i++)
+			{
+				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000001.app", regions[i]);
+				if (access(dlplayPath, F_OK) == 0)
+				{
+					dlplayFound = true;
+					break;
+				}
+			}
 		}
 		if (!dlplayFound && isDSiMode() && sdFound() && consoleModel < 2) {
 			if (!nandInited) {
@@ -952,8 +977,17 @@ int main(int argc, char **argv) {
 				nandInited = true;
 			}
 			if (access("nand:/", F_OK) == 0) {
+				for (int i = 0; i < 3; i++)
+				{
+					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000001.app", regions[i]);
+					if (access(srcPath, F_OK) == 0)
+					{
+						break;
+					}
+				}
+
 				snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-				fcopy("nand:/title/00030005/484e4441/content/00000001.app", dlplayPath);	// Copy from NAND
+				fcopy(srcPath, dlplayPath);	// Copy from NAND
 				dlplayFound = true;
 			}
 		}
