@@ -354,7 +354,9 @@ int main (void) {
 	sdRead = false;
 
 	// Fix for Pictochat and DLP
-	if (ROM_TID == 0x41444E48 || ROM_TID == 0x41454E48) {
+	if (ROM_TID == 0x41444E48 || ROM_TID == 0x41454E48
+	 || ROM_TID == 0x43444E48 || ROM_TID == 0x43454E48
+	 || ROM_TID == 0x4B444E48 || ROM_TID == 0x4B454E48) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
