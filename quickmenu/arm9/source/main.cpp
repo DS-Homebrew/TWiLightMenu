@@ -1309,7 +1309,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+				printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 				printSmallCentered(false, 72, 6, RetTime().c_str());
 				if (flashcardFound()) {
 					if (romFound[1]) {
@@ -1434,7 +1434,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1460,7 +1460,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1493,7 +1493,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1530,7 +1530,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[1] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								printSmallCentered(false, 72, 6, RetTime().c_str());
 								if (!sdFound()) {
 									printGbaBannerText();
@@ -1591,7 +1591,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[2] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1656,7 +1656,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1675,7 +1675,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1701,7 +1701,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
-								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
+								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
