@@ -1003,14 +1003,7 @@ int main(int argc, char **argv) {
 		if (!dlplayFound) {
 			for (int i = 0; i < 3; i++)
 			{
-				if (regions[i] == 0x43 || regions[i] == 0x4B)
-				{
-					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
-				}
-				else
-				{
-					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
-				}
+				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000001.app", regions[i]);
 				if (access(dlplayPath, F_OK) == 0)
 				{
 					dlplayFound = true;
@@ -1026,14 +1019,7 @@ int main(int argc, char **argv) {
 			if (access("nand:/", F_OK) == 0) {
 				for (int i = 0; i < 3; i++)
 				{
-					if (regions[i] == 0x43 || regions[i] == 0x4B)
-					{
-						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
-					}
-					else
-					{
-						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
-					}
+					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000001.app", regions[i]);
 					if (access(srcPath, F_OK) == 0)
 					{
 						break;
@@ -1323,6 +1309,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
+				printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 				printSmallCentered(false, 72, 6, RetTime().c_str());
 				if (flashcardFound()) {
 					if (romFound[1]) {
@@ -1447,6 +1434,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1472,6 +1460,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1504,6 +1493,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[0] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1540,6 +1530,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[1] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								printSmallCentered(false, 72, 6, RetTime().c_str());
 								if (!sdFound()) {
 									printGbaBannerText();
@@ -1559,24 +1550,9 @@ int main(int argc, char **argv) {
 							if (pictochatReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
-								if (sysRegion == 4)
-								{
-									*(u32 *)(0x02000308) = 0x484E4543;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4543;
-								}
-								else if (sysRegion == 5)
-								{
-									*(u32 *)(0x02000308) = 0x484E454B;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E454B;
-								}
-								else
-								{
-									*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4541;	// "HNEA"
-								}
+								*(u32 *)(0x02000308) = 0x484E4541;	// "HNEA"
+								*(u32 *)(0x0200030C) = 0x00030005;
+								*(u32 *)(0x02000310) = 0x484E4541;	// "HNEA"
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
@@ -1615,6 +1591,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[2] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1636,24 +1613,9 @@ int main(int argc, char **argv) {
 							if (dlplayReboot) {
 								*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
 								*(u16 *)(0x02000304) = 0x1801;
-								if (sysRegion == 4)
-								{
-									*(u32 *)(0x02000308) = 0x484E4443;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4443;
-								}
-								else if (sysRegion == 5)
-								{
-									*(u32 *)(0x02000308) = 0x484E444B;
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E444B;
-								}
-								else
-								{
-									*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
-									*(u32 *)(0x0200030C) = 0x00030005;
-									*(u32 *)(0x02000310) = 0x484E4441;	// "HNDA"
-								}
+								*(u32 *)(0x02000308) = 0x484E4441;	// "HNDA"
+								*(u32 *)(0x0200030C) = 0x00030005;
+								*(u32 *)(0x02000310) = 0x484E4441;	// "HNDA"
 								*(u32 *)(0x02000314) = 0x00030005;
 								*(u32 *)(0x02000318) = 0x00000017;
 								*(u32 *)(0x0200031C) = 0x00000000;
@@ -1694,6 +1656,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1712,6 +1675,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
@@ -1737,6 +1701,7 @@ int main(int argc, char **argv) {
 							for (int i = 0; i < 50; i++) {
 								iconYpos[3] -= 6;
 								clearText();
+								printSmall(false, 6, 6, "\x9F Back");	// "(B) Back"
 								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
 									printSmallCentered(false, 72, 6, RetTime().c_str());
 								}
