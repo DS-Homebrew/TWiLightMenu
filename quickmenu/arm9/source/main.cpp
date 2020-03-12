@@ -1003,7 +1003,14 @@ int main(int argc, char **argv) {
 		if (!dlplayFound) {
 			for (int i = 0; i < 3; i++)
 			{
-				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000001.app", regions[i]);
+				if (regions[i] == 0x43 || regions[i] == 0x4B)
+				{
+					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
+				}
+				else
+				{
+					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
+				}
 				if (access(dlplayPath, F_OK) == 0)
 				{
 					dlplayFound = true;
@@ -1019,7 +1026,14 @@ int main(int argc, char **argv) {
 			if (access("nand:/", F_OK) == 0) {
 				for (int i = 0; i < 3; i++)
 				{
-					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000001.app", regions[i]);
+					if (regions[i] == 0x43 || regions[i] == 0x4B)
+					{
+						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
+					}
+					else
+					{
+						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
+					}
 					if (access(srcPath, F_OK) == 0)
 					{
 						break;
