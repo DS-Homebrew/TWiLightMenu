@@ -25,6 +25,7 @@ yes = 예
 no = 아니오
 ok = 확인
 cancel = 취소
+Don't show = Don't show
 
 [cheats]
 button = 치트를
@@ -32,6 +33,7 @@ title = 치트를 메뉴
 info = 정보
 confirm = 확인
 Cancel = 취소
+deselect = Deselect all
 
 [progress window]
 processing save = 진행 중입니다. 전원을 끄지 마십시오.
@@ -70,6 +72,11 @@ text = 복사를 취소하시겠습니까?
 [confirm delete file]
 title = 파일/폴더 삭제 확인
 text = 삭제한 파일이나 폴더는 복구할 수 없습니다. 정말 '%s'를 삭제하시겠습니까?
+
+[confirm hide file]
+title = 파일/폴더 정보 확인
+hide = '%s' will be hidden unless you enable "show hidden files" in settings, hide?
+unhide = '%s' will no longer be hidden, unhide?
 
 [do not delete directory]
 title = 폴더 삭제 오류
