@@ -11,6 +11,8 @@
 #include "soundbank.h"
 //#include "soundbank_bin.h"
 
+extern bool useTwlCfg;
+
 extern u16 bmpImageBuffer[256*192];
 extern u16 videoImageBuffer[39][256*144];
 
@@ -97,19 +99,16 @@ void BootSplashDSi(void) {
 		BG_GFX_SUB[i] = whiteCol;
 	}
 
+	int language = ms().getGuiLanguage();
+	if (ms().getGuiLanguage() == -1) {
+		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	}
+
 	if (ms().hsMsg) {
 		// Load H&S image
 		//Get the language for the splash screen
-		int language = (ms().getGuiLanguage());
-		FILE* file;
-
-		//If french, then use the french hsmsh, else, use the english one
-		if (language != 2){
-			file = fopen("nitro:/graphics/hsmsg.bmp", "rb");
-		}
-		else {
-			file = fopen("nitro:/graphics/hsmsg-fr.bmp", "rb");
-		}
+		sprintf(videoFrameFilename, "nitro:/graphics/hsmsg%i.bmp", language);
+		FILE* file = fopen(videoFrameFilename, "rb");
 
 		if (file) {
 			// Start loading
@@ -334,14 +333,6 @@ void BootSplashDSi(void) {
 
 	rocketVideo_videoFrames = 29;
 	rocketVideo_videoFps = 60;
-
-	//Get the language for the splash screen
-	int language = (ms().getGuiLanguage());
-
-	//If not french, then fallback to english (since there is still no other language than french or english)
-	if (language != 2){
-		language = 1;
-	}
 
 	for (u8 selectedFrame = 0; selectedFrame <= rocketVideo_videoFrames; selectedFrame++) {
 		if (selectedFrame < 0x10) {
