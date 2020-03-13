@@ -1,55 +1,45 @@
 #include "ndsheader.h"
 #ifndef __FIXED_BANNERS_H__
 #define __FIXED_BANNERS_H__
-#define PACK_CRC(a, b, c, d) ((unsigned long long)a << 48 | (unsigned long long)b << 32 | (unsigned long long)c << 16 | (unsigned long long)d)
 
 inline void fixBanner(sNDSBannerExt *banner)
 {
     // Check for fixed banner here.
-    u64 crc = PACK_CRC(banner->crc[0], banner->crc[1], banner->crc[2], banner->crc[3]);
+    u16 crc1 = banner->crc[0];
+	u16 crc2 = banner->crc[1];
+	u16 crc3 = banner->crc[2];
+	u16 crc4 = banner->crc[3];
     std::string fixedBannerPath;
 
-    switch (crc)
-    {
-    case 0xECF9D18FE22AD8F4:
-        // Fire Emblem - Heroes of Light and Shadow (English Translation)
+    if (crc4 == 0xD8F4) {
+		// Fire Emblem - Heroes of Light and Shadow
         fixedBannerPath = "nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr";
-        break;
-    case 0x4A1940AD5641EE5D:
+	} else if (crc4 == 0xEE5D && crc1 != 0x4683 && crc1 != 0xA251) {
         // Pokemon Black Version
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Black Version.bnr";
-        break;
-    case 0x468340AD5641EE5D:
+    } else if (crc4 == 0xEE5D && crc1 == 0x4683) {
         // Pokemon Blaze Black (Clean Version)
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Blaze Black (Clean Version).bnr";
-        break;
-    case 0xA25140AD5641EE5D:
+    } else if (crc4 == 0xEE5D && crc1 == 0xA251) {
         // Pokemon Blaze Black (Full Version)
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Blaze Black (Full Version).bnr";
-        break;
-    case 0xE2495C94BF180C88:
+    } else if (crc4 == 0x0C88 && crc1 != 0x77F4 && crc1 != 0x9CA8) {
         // Pokemon White Version
         fixedBannerPath = "nitro:/fixedbanners/Pokemon White Version.bnr";
-        break;
-    case 0x77F45C94BF180C88:
+    } else if (crc4 == 0x0C88 && crc1 == 0x77F4) {
         // Pokemon Volt White (Clean Version)
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Volt White (Clean Version).bnr";
-        break;
-    case 0x9CA85C94BF180C88:
+    } else if (crc4 == 0x0C88 && crc1 == 0x9CA8) {
         // Pokemon Volt White (Full Version)
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Volt White (Full Version).bnr";
-        break;
-    case 0xF996D784A2572CA3:
+    } else if (crc4 == 0x2CA3) {
         // Pokemon Black Version 2
         fixedBannerPath = "nitro:/fixedbanners/Pokemon Black Version 2.bnr";
-        break;
-    case 0xA487F58CAF9E3B18:
+    } else if (crc4 == 0x3B18) {
         // Pokemon White Version 2
         fixedBannerPath = "nitro:/fixedbanners/Pokemon White Version 2.bnr";
-        break;
-    default:
-        break;
     }
+
     if (fixedBannerPath.empty())
         return;
 
