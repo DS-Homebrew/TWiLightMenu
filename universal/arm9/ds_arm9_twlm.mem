@@ -1,0 +1,11 @@
+/*--------------------------------------------------------------------------------
+	This Source Code Form is subject to the terms of the Mozilla Public License,
+	v. 2.0. If a copy of the MPL was not distributed with this file, You can
+	obtain one at https://mozilla.org/MPL/2.0/.
+--------------------------------------------------------------------------------*/
+MEMORY {
+	ewram	: ORIGIN = 0x02004000, LENGTH = 3M + 512K - 0x4000
+	dtcm	: ORIGIN = 0x0b000000, LENGTH = 16K
+	vectors	: ORIGIN = 0x01000000, LENGTH = 256
+	itcm	: ORIGIN = 0x01000100, LENGTH = 32K - 256
+}

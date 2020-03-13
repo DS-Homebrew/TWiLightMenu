@@ -201,10 +201,10 @@ void resetMemory_ARM7 (void)
 	arm7clearRAM();
 	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
 	if (dsiMode && loadFromRam) {
-		toncset((void*)0x02000000, 0, 0x800000);
+		toncset((void*)0x02004000, 0, 0x7FC000);
 		toncset((void*)0x02D00000, 0, 0x2F4000);
 	} else {
-		toncset((void*)0x02000000, 0, dsiMode ? 0xFF4000 : 0x3F4000);
+		toncset((void*)0x02004000, 0, dsiMode ? 0xFF0000 : 0x3F0000);
 	}
 
 	REG_IE = 0;

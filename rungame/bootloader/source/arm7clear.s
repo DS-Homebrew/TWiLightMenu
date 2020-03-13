@@ -47,7 +47,8 @@ clear_IWRAM_loop:
 
 	// clear most of EWRAM - except after RAM end - 0xc000, which has the bootstub
 	mov	r8, #0x02000000
-	
+	add	r8, #0x00004000
+
 	ldr	r9,=0x4004008
 	ldr	r9,[r9]
 	ands	r9,r9,#0x8000
@@ -56,7 +57,7 @@ clear_IWRAM_loop:
 	mov	r9, #0x02400000
 	b	ds_mode
 dsi_mode:
-	mov	r9, #0x03000000	
+	mov	r9, #0x03000000
 ds_mode:
 	sub	r9, #0x0000c000
 clear_EWRAM_loop:
