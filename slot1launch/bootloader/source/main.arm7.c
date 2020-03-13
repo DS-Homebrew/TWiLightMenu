@@ -214,13 +214,9 @@ void arm7_resetMemory (void)
 	} else {
 		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFC80, 0x70);
 	}
-	if ((language >= 0 && language < 6) || (language == 7)) {
+	if (language >= 0 && language <= 7) {
 		// Change language
 		*(u8*)(0x027FFCE4) = language;
-		*(u8*)(0x027FFCF5) = language;
-	} else if (language == 6) {
-		*(u8*)(0x027FFCE4) = 1;
-		*(u8*)(0x027FFCF5) = 6;
 	}
 	
 	// Load FW header 
