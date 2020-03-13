@@ -381,24 +381,25 @@ int main(int argc, char **argv)
 
 	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
 
-	// Read user name
-	char *username = (useTwlCfg ? (char*)0x02000448 : (char*)PersonalData->name);
-
-	// text
-	for (int i = 0; i < 10; i++)
-	{
-		if (username[i * 2] == 0x00)
-			username[i * 2 / 2] = 0;
-		else
-			username[i * 2 / 2] = username[i * 2];
-	}
-
 	if (!sys().fatInitOk())
 	{
+		// Read user name
+		char usernameRendered[16];
+		char *username = (useTwlCfg ? (char*)0x02000448 : (char*)PersonalData->name);
+
+		// text
+		for (int i = 0; i < 10; i++)
+		{
+			if (username[i * 2] == 0x00)
+				usernameRendered[i * 2 / 2] = 0;
+			else
+				usernameRendered[i * 2 / 2] = username[i * 2];
+		}
+
 		graphicsInit();
 		fontInit();
 		fadeType = true;
-		printSmall(true, 28, 1, username);
+		printSmall(true, 28, 1, usernameRendered);
 		printSmall(false, 4, 4, "fatinitDefault failed!");
 		stop();
 	}
