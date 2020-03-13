@@ -618,7 +618,8 @@ int main(int argc, char **argv)
 				 TLanguage::ELangGerman,
 				 TLanguage::ELangItalian,
 				 TLanguage::ELangSpanish,
-				 TLanguage::ELangChinese})
+				 TLanguage::ELangChinese,
+				 TLanguage::ELangKorean})
 		.option(STR_TITLELANGUAGE,
 				STR_DESCRIPTION_TITLELANGUAGE_1,
 				Option::Int(&ms().titleLanguage),
