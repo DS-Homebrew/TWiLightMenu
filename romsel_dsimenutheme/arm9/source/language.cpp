@@ -8,6 +8,8 @@
 #include "common/dsimenusettings.h"
 #include "common/inifile.h"
 
+extern bool useTwlCfg;
+
 const char* languageIniPath;
 
 int setLanguage = 0;
@@ -20,22 +22,10 @@ int setTitleLanguage = 0;
  */
 void langInit(void)
 {
-	printf("langInit\n");
-	if (ms().guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = ms().guiLanguage;
-	}
+	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 
-	if (ms().titleLanguage == -1) {
-		setTitleLanguage = PersonalData->language;
-	} else {
-		setTitleLanguage = ms().titleLanguage;
-	}
-
-	if (ms().bstrap_language == -1) {
-		setGameLanguage = PersonalData->language;
-	} else {
-		setGameLanguage = ms().bstrap_language;
-	}
+	//printf("langInit\n");
+	setLanguage = (ms().guiLanguage == -1) ? userLanguage : ms().guiLanguage;
+	setTitleLanguage = (ms().titleLanguage == -1) ? userLanguage : ms().titleLanguage;
+	setGameLanguage = (ms().bstrap_language == -1) ? userLanguage : ms().bstrap_language;
 }

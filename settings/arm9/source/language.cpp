@@ -13,9 +13,9 @@
 #include "language.inl"
 #undef STRING
 
-const char *languageIniPath;
+extern bool useTwlCfg;
 
-int setLanguage = 0;
+const char *languageIniPath;
 
 std::string ConvertFromUTF8(const std::string& input) {
 	std::string res;
@@ -44,7 +44,10 @@ std::string ConvertFromUTF8(const std::string& input) {
  */
 void langInit(void)
 {
-	switch (ms().getGuiLanguage()) {
+	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	int setLanguage = (ms().getGuiLanguage() == -1) ? userLanguage : ms().getGuiLanguage();
+
+	switch (setLanguage) {
 		case 0:
 			languageIniPath = "nitro:/languages/japanese.ini";
 			break;

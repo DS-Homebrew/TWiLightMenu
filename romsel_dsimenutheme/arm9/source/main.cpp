@@ -70,6 +70,8 @@
 
 #include "sr_data_srllastran.h"		 // For rebooting into the game
 
+bool useTwlCfg = false;
+
 bool whiteScreen = true;
 bool fadeType = false; // false = out, true = in
 bool fadeSpeed = true; // false = slow (for DSi launch effect), true = fast
@@ -586,6 +588,8 @@ int main(int argc, char **argv) {
 							   // SD card, or if SD access is disabled
 	}
 
+	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+
 	ms().loadSettings();
 	tfn(); //
 	tc().loadConfig();
@@ -601,8 +605,8 @@ int main(int argc, char **argv) {
 		tex().loadDSiTheme();
 	}
 
-	printf("Username copied\n");
-	tonccpy(usernameRendered, PersonalData->name, sizeof(s16) * 10);
+	//printf("Username copied\n");
+	tonccpy(usernameRendered, (useTwlCfg ? (s16*)0x02000448 : PersonalData->name), sizeof(s16) * 10);
 
 	if (!sys().fatInitOk()) {
 		graphicsInit();

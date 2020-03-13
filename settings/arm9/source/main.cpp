@@ -62,6 +62,8 @@
 #define AK_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/akmenu/themes/"
 #define R4_SYSTEM_UI_DIRECTORY "/_nds/TWiLightMenu/r4menu/themes/"
 
+bool useTwlCfg = false;
+
 static int currentTheme = 0;
 
 std::vector<std::string> akThemeList;
@@ -370,15 +372,17 @@ int main(int argc, char **argv)
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
-#pragma region init
+//#pragma region init
 
 	sys().initFilesystem();
 	sys().flashcardUsed();
 	ms();
 	defaultExceptionHandler();
 
+	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+
 	// Read user name
-	char *username = (char *)PersonalData->name;
+	char *username = (useTwlCfg ? (char*)0x02000448 : (char*)PersonalData->name);
 
 	// text
 	for (int i = 0; i < 10; i++)
@@ -434,7 +438,7 @@ int main(int argc, char **argv)
 	currentTheme = ms().theme;
 
 	int pressed = 0;
-#pragma endregion
+//#pragma endregion
 
 	// consoleDemoInit();
 	SettingsPage guiPage(STR_GUI_SETTINGS);

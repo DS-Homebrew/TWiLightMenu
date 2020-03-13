@@ -23,6 +23,8 @@
 #include "ndsheaderbanner.h"
 
 
+extern bool useTwlCfg;
+
 // #include <nds/arm9/decompress.h>
 // extern u16 bmpImageBuffer[256*192];
 extern s16 usernameRendered[11];
@@ -146,7 +148,7 @@ inline GL_TEXTURE_SIZE_ENUM get_tex_size(int texSize) {
 }
 
 inline const unsigned short *apply_personal_theme(const unsigned short *palette) {
-	return palette + ((PersonalData->theme) * 16);
+	return palette + ((useTwlCfg ? *(unsigned short*)0x02000444 : PersonalData->theme) * 16);
 }
 
 unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &texture, unsigned int arraySize,
@@ -568,7 +570,7 @@ void ThemeTextures::drawProfileName() {
 						break;
 					// #404040
 					case 0xA108:
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
+						val = alphablend(bmpPal_topSmallFont[1 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
 								 bg, 224U);
 						break;
 					// #808080
@@ -576,7 +578,7 @@ void ThemeTextures::drawProfileName() {
 						// blend the colors with the background to make it look better.
 						// Fills in the
 						// 1 for light
-						val = alphablend(bmpPal_topSmallFont[1 + ((PersonalData->theme) * 16)],
+						val = alphablend(bmpPal_topSmallFont[1 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
 								 bg, 224U);
 						break;
 					// #b8b8b8
@@ -584,7 +586,7 @@ void ThemeTextures::drawProfileName() {
 						// 6 looks good on lighter themes
 						// 3 do an average blend twice
 						//
-						val = alphablend(bmpPal_topSmallFont[3 + ((PersonalData->theme) * 16)],
+						val = alphablend(bmpPal_topSmallFont[3 + ((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) * 16)],
 								 bg, 128U);
 						break;
 					default:
