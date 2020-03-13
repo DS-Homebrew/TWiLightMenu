@@ -50,6 +50,7 @@ void langInit(void)
 			break;
 		case 1:
 		case 6:
+		case 7:
 		default:
 			languageIniPath = "nitro:/languages/english.ini";
 			break;

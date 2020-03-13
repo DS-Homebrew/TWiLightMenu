@@ -214,8 +214,13 @@ void arm7_resetMemory (void)
 	} else {
 		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFC80, 0x70);
 	}
-	if (language >= 0 && language < 6) {
-		*(u8*)(0x027FFCE4) = language;	// Change language
+	if ((language >= 0 && language < 6) || (language == 7)) {
+		// Change language
+		*(u8*)(0x027FFCE4) = language;
+		*(u8*)(0x027FFCF5) = language;
+	} else if (language == 6) {
+		*(u8*)(0x027FFCE4) = 1;
+		*(u8*)(0x027FFCF5) = 6;
 	}
 	
 	// Load FW header 
@@ -398,6 +403,11 @@ int arm7_loadBinary (void) {
 	errorCode = cardInit(ndsHeader, &chipID);
 	if (errorCode) {
 		return errorCode;
+	}
+
+	if (language != 6 && ndsHeader->reserved1[8] == 0x80) {
+		ndsHeader->reserved1[8] = 0;	// Patch iQue game to be region-free
+		ndsHeader->headerCRC16 = swiCRC16(0xFFFF, ndsHeader, 0x15E);	// Fix CRC
 	}
 
 	// Fix Pokemon games needing header data.

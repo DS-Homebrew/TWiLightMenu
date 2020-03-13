@@ -393,6 +393,10 @@ void perGameSettings (std::string filename) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Italian");
 				} else if (perGameSettings_language == 5) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Spanish");
+				} else if (perGameSettings_language == 6) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Chinese");
+				} else if (perGameSettings_language == 7) {
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Korean");
 				}
 				break;
 			case 1:
@@ -545,7 +549,7 @@ void perGameSettings (std::string filename) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language--;
-						if (perGameSettings_language < -2) perGameSettings_language = 5;
+						if (perGameSettings_language < -2) perGameSettings_language = 7;
 						break;
 					case 1:
 						if (isHomebrew[CURPOS]) {
@@ -596,7 +600,7 @@ void perGameSettings (std::string filename) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language++;
-						if (perGameSettings_language > 5) perGameSettings_language = -2;
+						if (perGameSettings_language > 7) perGameSettings_language = -2;
 						break;
 					case 1:
 						if (isHomebrew[CURPOS]) {

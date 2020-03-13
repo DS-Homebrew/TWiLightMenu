@@ -58,8 +58,13 @@ static void unlaunchSetHiyaBoot(void) {
 }
 
 void myIrqHandlerVBlank(void) {
-	if (language >= 0 && language < 6) {
-		*(u8*)(0x027FFCE4) = language;	// Change language
+	if ((language >= 0 && language < 6) || (language == 7)) {
+		// Change language
+		*(u8*)(0x027FFCE4) = language;
+		*(u8*)(0x027FFCF5) = language;
+	} else if (language == 6) {
+		*(u8*)(0x027FFCE4) = 1;
+		*(u8*)(0x027FFCF5) = 6;
 	}
 
 	if (0 == (REG_KEYINPUT & (KEY_L | KEY_R | KEY_DOWN | KEY_B))) {

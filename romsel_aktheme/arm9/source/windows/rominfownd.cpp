@@ -206,6 +206,8 @@ void RomInfoWnd::pressGameSettings(void)
 			_values.push_back(LANG("game settings", "German"));
 			_values.push_back(LANG("game settings", "Italian"));
 			_values.push_back(LANG("game settings", "Spanish"));
+			_values.push_back(LANG("game settings", "Chinese"));
+			_values.push_back(LANG("game settings", "Korean"));
 
 			settingWnd.addSettingItem(LANG("game settings", "Language"), _values, settingsIni.language + 2); // Default is -2
 			_values.clear();
