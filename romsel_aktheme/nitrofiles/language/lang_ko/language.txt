@@ -2,20 +2,23 @@
 main = ugulim12.pcf
 
 [start menu]
-Start = 시작
+START = 시작
 Copy = 복사
 Cut = 잘라내기
 Paste = 붙여넣기
 Delete = 삭제
-Save Type = 저장 방식
-Patches = 특수 기능
-Setting = 환경 설정
-Info = 파일/폴더 정보
-Help = 도움말
-More = 다음 페이지
-3in1 = 3in1 확장팩 설정
-Cheats = 치트 설정
-Back = 이전 페이지
+Setting = 설정
+Info = 정보
+Hide = 감추다
+
+[mainlist]
+Manual = 조작
+microSD Card = microSD 카드
+SD Card = SD 카드
+Settings = 설정
+SLOT-1 Card = SLOT-1 카드
+SLOT-1 microSD Card = SLOT-1 microSD 카드
+System Menu = 본체 메뉴
 
 [message box]
 yes = 예
@@ -26,18 +29,9 @@ cancel = 취소
 [cheats]
 button = 치트를
 title = 치트를 메뉴
-error_title = 오류
-error_text = 치트파일이 없습니다.
-selectrom = NDS 파일을 선택해 주십시오.
-noxml = 치트 DB 파일이 없습니다.
-ccexists = CC 파일이 존재합니다. 새로 만드시겠습니까?
-nonefound = DB에서 치트를 찾을 수 없습니다.
-xmlselect = 치트 DB 선택
+info = 정보
 confirm = 확인
-confirm_rebuild = CC 파일을 다시 만드시겠습니까?
-invalid cheatdb = 잘못된 치트 DB 입니다.
-Rebuild = 재생성
-Sel. DB = DB 선택
+Cancel = 취소
 
 [progress window]
 processing save = 진행 중입니다. 전원을 끄지 마십시오.
@@ -80,15 +74,10 @@ text = 삭제한 파일이나 폴더는 복구할 수 없습니다. 정말 '%s'�
 [do not delete directory]
 title = 폴더 삭제 오류
 text = 폴더가 비어있지 않습니다. 먼저 폴더의 내용을 삭제하신 후 폴더를 삭제하십시오.
-text2 = 계속하시려면 아니오를 그렇지 않으면 예를 누르세요.
 
 [unknown save type]
 title = 저장 방식 경고
 text = 이 프로그램의 저장 방식을 알 수 없습니다. "A"버튼을 눌러 저장 방식을 설정하십시오.
-
-[no savelist]
-title = 세이브 파일 목록 불러오기 오류
-text = 세이브 파일 목록을 불러올 수 없습니다. "savelist.bin" 파일이 없습니다.
 
 [restore save fail]
 title = 세이브 파일 복구 오류
@@ -142,10 +131,6 @@ item1 = 빠름
 item2 = 보통
 item3 = 느림
 
-[unsupported sd]
-title = 지원되지 않는 MicroSD 메모리
-text = 이 MicroSD 메모리(모델:%s)는 DS 프로그램을 실행하는데 부적합 합니다. SD 메모리에서 Acekard의 내장 메모리로 복사하신 후 다시 시도해 주십시오.
-
 [sd card error]
 title = MicroSD 메모리 엑세스 오류
 text = 이 MicroSD 메모리를 엑세스할 수 없습니다. MicroSD 메모리가 포맷되고 정확히 삽입되었는지 확인해 주십시오.
@@ -161,7 +146,7 @@ text = 슬롯2에 장치가 없습니다.
 [filelist type]
 text = 파일 표시 설정
 item0 = NDS
-item1 = NDS + SAV
+item1 = NDS/SAV
 item2 = NDS/SAV/BAK
 item3 = 모두 보이기
 
@@ -210,7 +195,6 @@ item5 = %c  상위 폴더로 돌아가기
 item6 = %c  화면밝기: 1/2/3/4
 item7 = %s  시작 메뉴 열기
 item8 = %s  파일목록 보기방식 변경
-item9 = 한글번역: 체리체리(다음 닌텐도월드)
 versions = HW: %02x NDD: %02x
 
 [abort save]
@@ -305,7 +289,7 @@ confirm text = 현재 설정을 저장하시겠습니까?
 shortcut = 바로가기
 delete shortcut = 삭제
 rominfo = Rom 설정
-setting = Settings
+setting = 설정
 
 [switches]
 Default = 기본
@@ -355,48 +339,6 @@ Cheat Scrolling = 치트 스크롤
 Cheat Scrolling Speed = 치트 스크롤 속도
 Homebrew Reset Type = 홈브류 리셋 방식
 
-[cheatupdate]
-DATorXML = 다운로드할 파일
-updateDB = Wifi 업데이트
-cheatDBbutton = DB 업데이트
-SaveList = savelist.bin
-startupdatetitle = AKAIO 치트파일 업데이트
-get whatsnew = WhatsNew.txt 받기
-startupdatequestion = 업데이트를 시작하시겠습니까?
-WFCConnection = WiFi로 연결중입니다. (취소는 %c)
-cantconnect = 연결할 수 없습니다. WiFi 설정을 확인하세요.
-stopconnectquestion = Wifi 연결을 종료하시겠습니까?
-stopconnecttitle = 연결 종료
-getwhatsnew = WhatsNew.txt 받는 중
-downloadthisfile = %s일자 치트파일을 다운로드하시겠습니까?
-downloaderror = 파일 다운로드 오류입니다.
-downloadstart = 파일을 다운로드 중입니다. (취소는 %c)
-stopdownloadquestion = 다운로드를 종료하시겠습니까?
-stopdownloadtitle = 다운로드 종료
-downloading = 다운로드중 %.0fKb/%.0fKb (취소는 %c)
-unzipstop = 압축풀기를 중단하시겠습니까?
-unzipstoptitle = 압축풀기 일시정지
-unzipping = 압축을 푸는 중입니다. (취소는 %c)
-unziperror = 압축풀기 오류입니다.
-success = 최신의 %s를 마음껏 사용하세요.
-error = 업데이트 오류입니다. 다시 시도하시겠습니까?
-resumeupdatetitle = 중단된 다운로드 이어받기
-resumethisfile = %.0fKb에서 중단된 %s를 이어받으시겠습니까?
-deletepartial = 일부만 다운로드된 파일을 삭제하시겠습니까?
-previousdates = 이전 날자
-previousfiles = 이전 파일
-previous date notice = Wifi와 로더만 업데이트
-cheats = 치트
-loader = 로더 업데이트
-wifi = Wifi 플러그인
-3version = 3파일 검색
-5version = 5파일 검색
-Checking Site = AKAIO 사이트 확인
-whatsnew notice = 공식 사이트만
-site = 치트 데이터베이스?
-site1 = 공식 사이트
-site2 = AKAIO (yusuo)
-
 [text viewer]
 text = 문서보기 프로그램
 item0 = 플러그인
@@ -412,36 +354,6 @@ filelist style = 파일 목록 표시 방법
 Hide File Extensions = 확장자 숨김
 Icon Animation = 아이콘 애니메이션
 
-[exp window]
-title = 슬롯 2 카드리지 설정
-ram = RAM
-sram = SRAM 덤프
-off = 끄기
-low = 약
-mid = 중
-high = 강
-strength = 진동 세기
-NOR Mode = NOR 모드
-auto = 자동
-always = 항상
-notdetected = 3in1/EWin/FlashAdvance를 찾을 수 없습니다.
-NOR Flash = NOR에 쓰기
-norquestion = NOR에 쓰시겠습니까?
-norblank = 비어있는 NOR
-erasenor = NOR를 삭제하시겠습니까?
-
-[gba settings]
-gbabutton = GBA 설정
-gbasleepdescription = (L+R+Start: 슬립모드/ Select+Start: 깨우기)
-title = GBA 설정
-sleephack = GBA 전체 슬립모드
-autosave = 시작시 GBA 세이브 백업
-gbaSavePrompt = 저장/불러오기 전에 알림
-Load Save = 세이브파일 불러오기
-Load File = %s를 불러오시겠습니까?
-Backup Save = 세이브파일 백업
-Backup File = %s를 백업하시겠습니까?
-
 [ram allocation]
 title = 오류
 memory allocation error = 메모리 할당 오류
@@ -452,41 +364,56 @@ CheatOff = 이 게임의 치트를 끕니다.
 SoftresetOn = 이 게임의 소프트리셋을 켭니다.
 SoftresetOff = 이 게임의 소프트리셋을 끕니다.
 
-[clone card error]
-title = 짝퉁
-text = 정상 에카가 아닙니다. 구입처에 문의하세요.
-
 [game settings]
-Default = Default
-System = System
-Japanese = Japanese
-English = English
-French = French
-German = German
-Italian = Italian
-Spanish = Spanish
-Language = Language
-CPU Frequency = CPU Frequency
-Off = Off
-On = On
-Sound Fix = Sound Fix
-Async Prefetch = Async Prefetch
-Use Bootstrap = Use Bootstrap
-Direct Boot = Direct Boot
-Per Game Settings = Per Game Settings
+Default = 기본
+System = 본체
+Japanese = 일본어
+English = 영어
+French = 프랑스어
+German = 독일어
+Italian = 이탈리아어
+Spanish = 스페인어
+Chinese = 중문
+Korean = 한국어
+Language = 언어
+CPU Frequency = CPU 주파수
+Off = 끕니다
+On = 켭니다
+Bootstrap File = Bootstrap 파일
+DS mode = DS 방법
+DSi mode = DSi 방법
+DSi mode (Forced) = DSi 방법(강제)
+Boost VRAM = VRAM 상승
+Nightly = Nightly
+Save number = SAV 번호
+67MHz (NTR) = 67MHz(NTR)
+133MHz (TWL) = 133MHz
+RAM disk = RAM 디스크
+Per Game Settings = 게임 별 설정
+Release = Release
+Use Bootstrap = Bootstrap 사용하다
+Auto = 자동
 
 [game launch]
-ROM Start Error = ROM Start Error
-error = Error %i
-Please wait = Please wait...
-NDS Bootstrap Error = NDS Bootstrap Error
-GBARunner2 Error = GBARunner2 Error
-Flashcard Error = Flashcard Error
-Launch Error = Launch Error
-
+ROM Start Error = ROM 시작 오류
+error = 오류 %i
+Please wait = 기다려주세요...
+NDS Bootstrap Error = NDS Bootstrap 오류
+GBARunner2 Error = GBARunner2 오류
+Sega8bit Error = SEGA 8-bit RAM 디스크 오류
+Sega8bit Error Message = SEGA 8-bit RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SegaMD Error = SEGA MD RAM 디스크 오류
+SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SNES Error = SNES RAM 디스크 오류
+SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+Flashcard Error = Flashcard 오류
+Launch Error = 시작 오류
 Preparing Unlaunch Boot = Preparing Unlaunch Boot...
-Unlaunch Error = Unlaunch Error
+Unlaunch Error = Unlaunch 오류
 unlaunch boot = Boot DSiWare with Unlaunch
-
 unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+ap warning = 경고
+ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
+ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
+
 [end]

@@ -26,6 +26,7 @@ yes = 是
 no = 否 
 ok = 确定
 cancel = 取消
+Don't show = 不再显示
 
 [cheats]
 button = 金手指
@@ -87,10 +88,6 @@ text = 该目录下还有文件或目录，不能直接删除！
 title = 注意
 text = 存档类型是未知的，请按需求选择存档类型！
 
-[no savelist]
-title = 读取存档列表错误
-text = 不能读取存档列表或 “savelist.bin” 丢失
-
 [restore save fail]
 title = 警告
 text = 恢复存档错误，要继续吗？
@@ -143,10 +140,6 @@ item1 = 快速
 item2 = 中速
 item3 = 慢速
 
-[unsupported sd]
-title = 不兼容的SD卡
-text = 您使用的SD卡(型号:%s)不适合直接运行DS官方程序，请复制到内置闪存中再运行！
-
 [sd card error]
 title = SD卡读取错误
 text = 无法读取SD卡的内容，SD卡可能没有插好！
@@ -191,8 +184,8 @@ item4 = 法语
 item5 = 意大利语
 item6 = 德语
 item7 = 西班牙语
-item8 = 韩语
-item9 = 荷兰语
+item8 = 荷兰语
+item9 = 韩语
 
 [brightness]
 text = 屏幕亮度
@@ -212,20 +205,6 @@ item6 = %c  调节亮度（四级亮度调节）
 item7 = %s  开始菜单
 item8 = %s  列表模式/经典模式
 versions = HW: %02x NDD: %02x
-
-[exp window]
-title = EZ3合1 扩展卡设置
-ram = RAM
-sram = 导出SRAM
-off = 关闭
-low = 低档
-mid = 中档
-high = 高档
-strength = 震动级别
-NOR Mode = 使用NOR内存运行GBA游戏
-auto = 自动
-always = 始终
-notdetected = 没有找到EZ3合1/EWin/FlashAdvance扩展卡
 
 [abort save]
 title = 询问
@@ -371,48 +350,6 @@ Cheat Scrolling = 金手指滚动条
 Cheat Scrolling Speed = 金手指滚动速度
 Homebrew Reset Type = 自制软件软复位类型
 
-[cheatupdate]
-DATorXML = 要下载的文件
-updateDB = 通过Wifi升级
-updateDB = 更新 DB
-SaveList = savelist.bin
-startupdatetitle = 更新程序
-get whatsnew = 获取 WhatsNew.txt
-startupdatequestion = 请问你要启动更新程序吗?
-WFCConnection = 正在使用 WFC, 按 %c 取消
-cantconnect = 无法连接, 请查看 WFC 设置
-stopconnectquestion = 请问你要停止 wifi 连接吗?
-stopconnecttitle = 停止
-getwhatsnew = 获取 What's New
-downloadthisfile = 下载金手指文件日期 %s?
-downloaderror = 下载文件错误
-downloadstart = 正在下载文件, 按 %c 取消
-stopdownloadquestion = 请问你要停止下载吗?
-stopdownloadtitle = 停止下载
-downloading = 已下载 %.0fKb/%.0fKb, 按 %c 取消
-unzipstop = 要停止解压吗?
-unzipstoptitle = 暂停解压
-unzipping = 解压文件中, 按 %c 取消
-unziperror = 解压出现错误
-success = 成功，请享用最新的 %s
-error = 更新错误，仍要继续？
-resumeupdatetitle = 继续下载
-resumethisfile = 继续下载 %s/%.0fKb?
-deletepartial = 删除未下载完成的文件？
-previousdates = 前一个数据
-previousfiles = 前一个文件
-cheats = 金手指
-loader = 更新Loader
-wifi = Wifi插件
-3version = 版本3
-5version = 版本5
-Checking Site = 查看AKAIO网站
-whatsnew notice = 仅官网
-site = 哪一个金手指文件?
-site1 = 官方网站
-site2 = AKAIO (yusuo)
-previous date notice = 仅Wifi和Loader更新
-
 [text viewer]
 text = 文本查看器
 item0 = 插件
@@ -447,6 +384,8 @@ French = 法语
 German = 德语
 Italian = 意大利语
 Spanish = 西班牙语
+Chinese = 汉语
+Korean = 韩语
 Language = 语言
 CPU Frequency = CPU频率
 Off = 关闭
@@ -488,5 +427,8 @@ Preparing Unlaunch Boot = 准备 Unlaunch 启动...
 Unlaunch Error = Unlaunch 错误
 unlaunch boot = 使用Unlaunch启动DSiWare
 unlaunch instructions = 在保存后, 请重启此菜单来转回你保存的数据
+ap warning = 警告
+ap msg = 此游戏有反烧录机制, 请确保你正在使用的是最新版本的 TWiLight Menu++
+ap msg1 = 此游戏有反烧录机制, 并且 "必须!" 使用 "RGF TWiLight Menu AP patcher" 打补丁
 
 [end]
