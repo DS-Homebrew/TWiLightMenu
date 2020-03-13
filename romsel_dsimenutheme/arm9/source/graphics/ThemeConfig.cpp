@@ -13,7 +13,7 @@ ThemeConfig::ThemeConfig()
 
 // Magic numbers derived from default dark theme
 ThemeConfig::ThemeConfig(bool _3dsDefaults)
-    : _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(144), _titleboxRenderY(85),
+    : _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143), _titleboxRenderY(85),
       _bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
       _rotatingCubesRenderY(78),  _shoulderLRenderY(172), _shoulderLRenderX(0),  _shoulderRRenderY(172), _shoulderRRenderX(178),
       _volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(15), _batteryRenderX(235),
