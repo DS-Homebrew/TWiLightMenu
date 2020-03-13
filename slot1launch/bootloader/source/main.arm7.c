@@ -401,7 +401,7 @@ int arm7_loadBinary (void) {
 		return errorCode;
 	}
 
-	if (language != 6 && ndsHeader->reserved1[8] == 0x80) {
+	if (*(u8*)(0x027FFCE4) != 6 && ndsHeader->reserved1[8] == 0x80) {
 		ndsHeader->reserved1[8] = 0;	// Patch iQue game to be region-free
 		ndsHeader->headerCRC16 = swiCRC16(0xFFFF, ndsHeader, 0x15E);	// Fix CRC
 	}
