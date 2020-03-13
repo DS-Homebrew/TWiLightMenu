@@ -63,6 +63,8 @@
 
 #include "sr_data_srllastran.h"	// For rebooting into the game
 
+bool useTwlCfg = false;
+
 bool whiteScreen = false;
 bool blackScreen = false;
 bool fadeType = true;		// false = out, true = in
@@ -299,7 +301,7 @@ int colorBvalue;
  * Load the console's color.
  */
 void LoadColor(void) {
-	switch (PersonalData->theme) {
+	switch (useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme) {
 		case 0:
 		default:
 			colorRvalue = 99;
@@ -398,8 +400,8 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-char usernameRendered[10];
-bool usernameRenderedDone = false;
+//char usernameRendered[10];
+//bool usernameRenderedDone = false;
 
 touchPosition touch;
 
@@ -847,6 +849,8 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+
 	graphicsInit();
 
 	bool fatInited = fatInitDefault();
@@ -860,15 +864,15 @@ int main(int argc, char **argv) {
 	}
 
 	// Read user name
-	char *username = (char*)PersonalData->name;
-		
+	/*char *username = (char*)PersonalData->name;
+
 	// text
 	for (int i = 0; i < 10; i++) {
 		if (username[i*2] == 0x00)
 			username[i*2/2] = 0;
 		else
 			username[i*2/2] = username[i*2];
-	}
+	}*/
 	
 	LoadColor();
 

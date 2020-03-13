@@ -49,6 +49,8 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
+extern bool useTwlCfg;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -510,7 +512,7 @@ void topBgLoad(void) {
 
 void topBarLoad(void) {
 	char filePath[256];
-	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", isDSPhat() ? "phat_topbar" : "topbar", PersonalData->theme);
+	snprintf(filePath, sizeof(filePath), "nitro:/graphics/%s/%i.png", isDSPhat() ? "phat_topbar" : "topbar", (useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
 	FILE* file = fopen(filePath, "rb");
 
 	if (file) {
@@ -597,7 +599,7 @@ void graphicsInit()
 
 	swiWaitForVBlank();
 
-	u16* newPalette = (u16*)cursorPals+(PersonalData->theme*16);
+	u16* newPalette = (u16*)cursorPals+((useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme)*16);
 	if (colorMode == 1) {
 		// Convert palette to grayscale
 		for (int i2 = 0; i2 < 3; i2++) {

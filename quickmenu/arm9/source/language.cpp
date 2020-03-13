@@ -8,6 +8,8 @@
 #include "common/inifile.h"
 //#include "common/nitrofs.h"
 
+extern bool useTwlCfg;
+
 const char* languageIniPath;
 
 extern int guiLanguage;
@@ -21,15 +23,8 @@ int setGameLanguage = 0;
  */
 void langInit(void)
 {
-	if (guiLanguage == -1) {
-		setLanguage = PersonalData->language;
-	} else {
-		setLanguage = guiLanguage;
-	}
+	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 
-	if (bstrap_language == -1) {
-		setGameLanguage = PersonalData->language;
-	} else {
-		setGameLanguage = bstrap_language;
-	}
+	setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
+	setGameLanguage = (bstrap_language == -1) ? userLanguage : bstrap_language;
 }

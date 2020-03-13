@@ -71,6 +71,8 @@
 #define gbamodeText "Start GBA game."
 #define featureUnavailableText "This feature is unavailable."
 
+bool useTwlCfg = false;
+
 bool whiteScreen = true;
 bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
@@ -284,8 +286,8 @@ bool applaunchprep = false;
 
 int spawnedtitleboxes = 0;
 
-char usernameRendered[10];
-bool usernameRenderedDone = false;
+//char usernameRendered[10];
+//bool usernameRenderedDone = false;
 
 touchPosition touch;
 
@@ -911,10 +913,12 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
+	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+
 	bool fatInited = fatInitDefault();
 
 	// Read user name
-	char *username = (char*)PersonalData->name;
+	/*char *username = (char*)PersonalData->name;
 		
 	// text
 	for (int i = 0; i < 10; i++) {
@@ -922,7 +926,7 @@ int main(int argc, char **argv) {
 			username[i*2/2] = 0;
 		else
 			username[i*2/2] = username[i*2];
-	}
+	}*/
 	
 	if (!fatInited) {
 		graphicsInit();
