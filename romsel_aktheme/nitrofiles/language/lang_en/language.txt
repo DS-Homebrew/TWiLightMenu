@@ -2,7 +2,7 @@
 main = tahoma.pcf
 
 [start menu]
-Start = START
+START = START
 Copy = Copy
 Cut = Cut
 Paste = Paste

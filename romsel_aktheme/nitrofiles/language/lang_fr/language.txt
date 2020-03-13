@@ -2,24 +2,14 @@
 main = tahoma.pcf
 
 [start menu]
-Start = Demarrer
+START = Demarrer
 Copy = Copier
-
 Cut = Couper
 Paste = Coller
 Delete = Supprimer
-Save Type = Type Sauvegarde
-Patches = Spécial
-
-
 Setting = Conf. Système
 Info = Infos Fichier
-Help = Aide
-More = Plus ->
-3in1 = 3in1
-
-Cheats = Codes
-Back = <- Retour
+Hide = Cacher
 
 [message box]
 yes = Oui
@@ -30,97 +20,84 @@ cancel = Annuler
 [cheats]
 button = Triches
 title = Menu codes triche
-error_title = Erreur
-error_text = Fichier codes triche non trouvé 
-selectrom = Sélectionnez un .NDS SVP.
-noxml = Fichier codes Triches XML n'a pas été trouvé 
-ccexists = .CC existe deja, Crée un nouveau ?
-nonefound = Pas de codes triches trouvé dans le fichier XML
-xmlselect = Select. fichier codes triche:
 confirm = Confirmer
-confirm_rebuild = Sauvegarder dans le fichier .CC?
-invalid cheatdb = Fichier code triche invalide
-Rebuild = Sauver
-Sel. DB = Choix
 cancel = Annuler
+info = Infos Fichier
+deselect = Deselect all
 
 [progress window]
 processing save = Sauvegarde... ne pas éteindre
 processing copy = Copie... ne pas éteindre, %c pour annuler
-
 first use sd = Vérification de la microSD pour une première utilisation
 gba load = Chargement du jeu GBA
-
 gba save load = Chargement de la sauvegarde du jeu GBA
 gba save store = Sauvegarde GBA... Ne pas éteindre
-
-
 erase nor = Effacement de la mémoire NOR... Ne pas éteindre
 rebuilding cheat data = Reconstruction du fichier de codes triche.
+
 [copy file error]
 title = Erreur
-
 text = Le fichier n'existe pas.
+
 [copy file exists]
 title = Attention
-
 text = Le fichier existe déjà , l'écraser ?
+
 [copy dest is directory]
 title = Erreur
-
 text = Le répertoire existe déjà , impossible de copier.
+
 [move dest is directory]
 title = Erreur
-
 text = Le répertoire existe déjà , impossible de déplacer.
+
 [no copy dir]
 title = Erreur
-
 text = La copie de dossier n'est pas supportée.
+
 [stop copying file]
-
-
 title = Arrêter la copie
 text = Voulez-vous arrêter la copie ?
+
 [confirm delete file]
-
-
 title = Confirmation
 text = La suppression est définitive, voulez-vous vraiment supprimer "%s" ?
 text2 = Si vous souhaitez continuer appuyez sur oui sinon appuyez sur non.
 
+[confirm hide file]
+title = Confirm File/Folder Hide
+hide = '%s' will be hidden unless you enable "show hidden files" in settings, hide?
+unhide = '%s' will no longer be hidden, unhide?
+
 [do not delete directory]
 title = Erreur
-
 text = Le dossier n'est pas vide, impossible de supprimer.
+
 [unknown save type]
-
-
 title = Notification
 text = Le type de sauvegarde est inconnu, pressez A pour choisir.
+
 [no savelist]
 title = Attention
-
 text = La liste des sauvegardes "savelist.bin" est introuvable.
+
 [restore save fail]
 title = Attention
-
 text = Impossible de restaurer la sauvegarde, continuer ?
+
 [backup save fail]
 title = Attention
-
 text = Echec de l'écriture de la sauvegarde, espace disque insuffisant.
+
 [language changed]
 title = Question
-
 text = La configuration système a été mise à jour, redémarrer pour appliquer les changements ? Choisissez "Non" pour redémarrer plus tard.
+
 [ui style changed]
 title = Question
-
 text = L'interface utilisateur a été mise à jour, redémarrer pour appliquer les changements ? Choisissez "Non" pour annuler les modifications.
+
 [save type]
-
-
 title = Choisir type sauvegarde
 text = Choisir type de sauvegarde
 Unknown = Automatique
@@ -137,50 +114,37 @@ Medium = Moyen
 Slow = Lent
 
 [system setting]
-
 title = Configuration système
+
 [disk info]
 total = Capacité  %s
-
-
 used = Espace utilisée: %s
 free = Espace libre : %s
+
 [no free space]
 title = Erreur
-
 text = L'espace disque est insuffisant. Impossible de copier.
 
 [sd speed]
-
-
 text = Régler la vitesse de la microSD
 item0 = Très rapide
 item1 = Rapide
 item2 = Moyenne
 item3 = Lente
 
-[unsupported sd]
-
-
-title = microSD incompatible
-text = Cette micro SD (modèle %s) n'est pas compatible avec les jeux DS. Veuillez copier les jeux sur la mémoire interne du Acekard et réessayer.
 [sd card error]
-
-
 title = Erreur microSD
 text = microSD inaccessible, vérifiez qu'elle est bien insérée.
+
 [no sd for save]
-
-
 title = Erreur microSD
 text = microSD inaccessible, la sauvegarde du dernier jeu lancé a été écrite dans "%s".
+
 [no gba card]
-
-
 title = Notification
 text = Il n'y a pas de cartouche insérée dans le slot 2.
-[filelist type]
 
+[filelist type]
 text = Afficher les fichiers
 item0 = NDS
 item1 = NDS et SAV
@@ -188,19 +152,16 @@ item2 = NDS,SAV,BAK
 item3 = TOUT
 
 [rom trim]
-
 text = Trimmer lors de la copie
 item0 = Non
 item1 = Oui
 
 [cheat]
-
 text = Activer les codes de triche
 item0 = Non
 Item1 = Oui
 
 [autorun]
-
 text = Lancement automatique
 item0 = Non
 item1 = Oui
@@ -218,50 +179,40 @@ item7 = Español
 item8 = Nederlands
 
 [brightness]
-
 text = Luminosité 
+
 [ui style]
 text = Interface utilisateur
 
 [help window]
 title = Aide
-
 item0 = %c  Sélectionner un logiciel
 item1 = %c  Lancer/OK/Oui
-
-
-
-
-
 item2 = %c  Retour/Annuler/Non
 item3 = %c  Propriétés/Type sauvegarde
 item4 = %c  Basculer SD/FLASH
 item5 = %c  Précédent répertoire
 item6 = %c  Ajuster la luminosité 
 item7 = %s  Menu de démarrage
-
 item8 = %s  Style nouveau/classique
 versions = HW: %02x NDD: %02x
 
 [abort save]
-
-
 title = Annuler la sauvegarde
 text = Etes-vous sûr de vouloir annuler la sauvegarde ?
+
 [gba warn]
 title = Attention
-
 text = Les roms GBA avec une taille supérieur à 32Mb ne sont pas supportées.
+
 [shortcut overwrite]
-
-
 title = Confirmer le raccourci
 text = Voulez vous vraiment créer/écraser le raccourci ?
+
 [shortcut delete]
-
-
 title = Confirmer la suppression du raccourci
 text = Voulez vous vraiment supprimer le raccourci ?
+
 [slot2]
 gbamode = Démarrer en mode GBA
 passme = Démarrer en mode NDS (PassMe)
@@ -272,7 +223,6 @@ question = Question
 title = Options FAS1
 useFAS1 = Utiliser les options du FlashAdvance
 listgba = Lister les ficher GBA/BIN
-
 verifyFAS1 = Vérifier les blocs écrits
 item0 = Oui
 item1 = Non
@@ -282,43 +232,31 @@ flashquestion = Flasher la rom sur la carte FlashAdvance ? (%.2fMB / pour %.1f m
 writeprompt = Ecrire les sauvegardes dans la Bank 1?
 backupsramq = Sauvegarder le Slot-1 de la cartouche FlashAdvance
 backupsram = Sauvegarde de la Bank 1 [%iKB] en cours (%c pour annuler)
-
 saveerror = Ce n'est pas une sauvegarde de 64KB, continuer ?
 unsupported = FAS1: Cartouche non supportée
 writingpercent = %iKB des %iKB écrits, (%c pour annuler)
 savebytes = %i octets écrits (%c pour annuler)
 
 [save backup]
-
 question = Sauvegarder la sauvegarde ?
 backing up = Sauvegarde le .SAV avec l'extension .BAK
-
 overwrite = La sauvegarde existe déjà, remplacer ?
-[save restore]
 
+[save restore]
 question = Restaurer la sauvegarde depuis le backup ?
 restoring save = Restaure le .SAV depuis l'extension .BAK
-
 overwrite = La sauvegarde existe déjà remplacer ?
+
 [textview]
 confirm = Confirmer
-
 exit = Voulez-vous vraiment quitter ?
 error = Erreur
-
 file open error = Impossible d'ouvrir ce fichier, retour au menu.
 screen angle = Angle de l'écran
 normal = Normal
 rotate 90 = 90°
 rotate 270 = 270°
 screen mode = Affichage
-
-
-
-
-
-
-
 dual = Deux écrans
 dual copy = Deux écran identiques
 lower = Bas uniquement
@@ -326,19 +264,18 @@ upper = Haut uniquement
 add bookmark = Voulez-vous ajouter un nouveau marque-page à  cette position ?
 remove bookmark = Voulez-vous supprimer ce marque-page ?
 goto toppage? = Voulez-vous revenir à  la première page ?
-[save slot]
 
+[save slot]
 title = Choisir slot de sauvegarde
 default = Default
-
 text = Choix du slot de sauvegarde à utiliser 
+
 [romnametype]
 Normal = Normal
 HideExtName = Cacher .NDS
 BannerTitle = Nom interne
 
 [cheat]
-
 text = Utiliser les codes triche
 item0 = Non
 Item1 = Oui
@@ -348,7 +285,6 @@ ok = OK
 savetype = Sauvegarde
 cancel = Annuler
 confirm = Confirmer
-
 confirm text = Sauvegarder la configuration ?
 shortcut = Raccourci
 delete shortcut = Supprimer
@@ -362,20 +298,17 @@ Disable = Désactivé
 auto menu = Menu Auto
 
 [rom info]
-
 title = Propriétés
 title_copywnd = Copier la sauvegarde
 file date = Derniere Modif : %d/%d/%d %02d:%02d:%02d(GMT)
 file size = Taille Fichier: %s
 save type = Type Sauvegarde: %s
 game code = Code jeux: %s
-
 save slot = Sélection slot sauvegarde
 save slot copy = De %s vers:
 Slot = Slot
 cheat menu = Menu codes triche
 copy menu = Copie slot 
-
 save extension = Extension de la sauvegarde
 convert text = Conversion
 convert text = Conversion de %s à %s ?
@@ -385,7 +318,6 @@ title = Options spéciales
 download play = Corriger Download Play
 cheating system = Triche/Action Replay
 slow motion = Ralentir les jeux
-
 reset in game = Soft-Reset
 3in1 = 3in1
 ak2 loader = AK2 Loader
@@ -394,11 +326,10 @@ patching loader = Patch du Loader Alt. pour une utilisation avec AKAIO
 IRQ Hook = Hack IRQ
 SWI Hook = Hack SWI
 bypass antipiracy = Contourner l'AntiPiratage
-[advanced setting]
 
+[advanced setting]
 title = Configuration avancée
 Advanced = Avancée
-
 Show Hidden Files = Afficher les fichiers cachés
 Hide Extension Name = Cacher les extensions
 Scrolling Speed = Vitesse de défilement
@@ -407,123 +338,31 @@ Delete Saves Too = Effacer SAV avec ROM
 Cheat Scrolling = Défil. codes
 Cheat Scrolling Speed = Vitesse défil. codes
 Homebrew Reset Type = Type de reset homebrew
-[cheatupdate]
 
-
-DATorXML = Téléchargement
-updateDB = Mise à jour WiFi
-cheatDBbutton = Mise à jour DB
-SaveList = savelist.bin
-startupdatetitle = AKAIO Updater
-get whatsnew = Récupérer changelog
-
-startupdatequestion = Désirez-vous lancer la procédure de mise à jour?
-WFCConnection = Connexion Wifi, %c pour annuler
-
-cantconnect = Connexion impossible, vérifiez les paramètres Wifi
-stopconnectquestion = Désirez-vous arrêter la connexion Wifi?
-stopconnecttitle = Déconnexion
-
-getwhatsnew = Téléchargement du changelog
-downloadthisfile = Télécharger le fichier de triche du %s?
-
-downloaderror = Erreur de Téléchargement
-downloadstart = Téléchargement, %c pour annuler
-
-stopdownloadquestion = Désirez-vous arrêter le téléchargement?
-stopdownloadtitle = Arrêt du téléchargement
-downloading = Téléchargement %.0fKb/%.0fKb, %c pour annuler
-
-unzipstop = Désirez-vous arrêter la décompression?
-unzipstoptitle = Pause décompression
-
-
-
-
-
-
-
-unzipping = Décompression, %c pour annuler.
-unziperror = Erreur pendant l'extraction.
-success = Vous pouvez utiliser la dernière mise à jour.
-error = Erreur de mise à jour, veuillez recommencer.
-resumeupdatetitle = Reprise du Téléchargement interrompu.
-resumethisfile = Reprise du téléchargement de %s à %.0fKo?
-deletepartial = Effacer le Téléchargement partiel?
-previousdates = Dates précédentes
-previousfiles = Fichiers précédents
-previous date notice = Pour MàJ Wifi et Loader SEULEMENT
-cheats = Codes
-loader = Loader
-wifi = Plugin Wifi
-3version = 3 versions
-5version = 5 versions
-Checking Site = Vérification du site
-whatsnew notice = Site officiel SEULEMENT
-site = Quel BDD de codes?
-site1 = Site officiel
-site2 = AKAIO (yusuo)
 [text viewer]
-
 text = Editeur de texte
 item0 = Plugin
 item1 = Interne
 title = Paramètres Plugin
 
 [interface settings]
-
 title = Paramètres de l'interface
 oldschool = Liste Texte
-
 modern = Nom du Fichier
 internal = Nom Interne
 filelist style = Style de la liste de fichier
 Hide File Extensions = Masquer l'extension
 Icon Animation = Animation des icônes
-[exp window]
-
-title = Configuration du 3in1 expansion pack
-ram = RAM
-sram = sRAM
-
-
-
-off = Désactivée
-low = Faible
-mid = Moyenne
-high = Forte
-strength = Vibrations
-NOR Mode = Mode NOR
-auto = Auto.
-always = Toujours
-notdetected = Aucun 3in1/EWin détecté 
-NOR Flash = Flash de la NOR
-norquestion = Flash de la NOR?
-norblank = NOR vierge
-erasenor = Voulez-vous effacer la NOR?
-[gba settings]
-gbabutton = Paramètres GBA
-gbasleepdescription = (L+R+Start: veille/ Select+Start: réveil)
-title = Paramètres GBA
-sleephack = Mise en veille
-
-autosave = Sauvegarde au démarrage
-gbaSavePrompt = Prompt avant Sauvegarde/Chargement
-
-Load Save = Chargement de la sauvegarde
-Load File = Charger %s?
-Backup Save = Backup de la sauvegarde
-Backup File = Backup %s?
 
 [ram allocation]
 title = Erreur
 memory allocation error = Erreur allocation Mémoire
+
 [LShortcuts]
 CheatOn = Codes activés pour ce jeu.
 CheatOff = Codes désactivés pour ce jeu.
 SoftresetOn = Soft-reset activé pour ce jeu.
 SoftresetOff = Soft-reset désactivé pour ce jeu.
-
 
 [game settings]
 Default = Default
@@ -538,8 +377,6 @@ Language = Language
 CPU Frequency = CPU Frequency
 Off = Off
 On = On
-Sound Fix = Sound Fix
-Async Prefetch = Async Prefetch
 Use Bootstrap = Use Bootstrap
 Direct Boot = Direct Boot
 Per Game Settings = Per Game Settings
@@ -550,12 +387,20 @@ error = Error %i
 Please wait = Please wait...
 NDS Bootstrap Error = NDS Bootstrap Error
 GBARunner2 Error = GBARunner2 Error
+Sega8bit Error = SEGA 8-bit RAM Disk Error
+Sega8bit Error Message = SEGA 8-bit RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SegaMD Error = SEGA MD RAM Disk Error
+SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SNES Error = SNES RAM Disk Error
+SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
 Flashcard Error = Flashcard Error
 Launch Error = Launch Error
-
 Preparing Unlaunch Boot = Preparing Unlaunch Boot...
 Unlaunch Error = Unlaunch Error
 unlaunch boot = Boot DSiWare with Unlaunch
-
 unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+ap warning = Warning
+ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
+ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
+
 [end]

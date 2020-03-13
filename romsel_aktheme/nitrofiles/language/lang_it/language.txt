@@ -2,20 +2,14 @@
 main = tahoma.pcf
 
 [start menu]
-Start = |MENU|
+START = |MENU|
 Copy = Copia
 Cut = Taglia
 Paste = Incolla
 Delete = Elimina
-Save Type = Tipo Salvataggio
-Patches = Patches
 Setting = Impostazioni
 Info = Proprietà
-Help = Aiuto
-More = Avanti ->
-3in1 = GBA 3in1
-Cheats = Cheats
-Back = <- Indietro
+Hide = Senza
 
 [message box]
 yes = Si
@@ -26,18 +20,10 @@ cancel = Annulla
 [cheats]
 button = Cheats
 title = Menu cheat
-error_title = Errore
-error_text = Cheats non trovati.
-selectrom = Seleziona un file .NDS
-noxml = Cheat DB non trovato.
-ccexists = .CC esiste, Crearne uno nuovo?
-nonefound = Nessun cheat nel DB.
-xmlselect = Seleziona Cheat DB:
 confirm = Conferma
-confirm_rebuild = Riscrivi il file .CC?
-invalid cheatdb = Cheat DB non valido.
-Rebuild = Riscrivi
-Sel. DB = Sel. DB
+Cancel = Annulla
+info = Proprietà
+deselect = Deselect all
 
 [progress window]
 processing save = Caricamento in corso... Non spegnere!
@@ -76,6 +62,11 @@ text = Vuoi annullare la copia del File?
 [confirm delete file]
 title = Conferma Eliminazione File/Cartella.
 text = Il File o la Cartella non potrà essere recuperato, sei sicuro di voler cancellare '%s'?
+
+[confirm hide file]
+title = Confirm File/Folder Hide
+hide = '%s' will be hidden unless you enable "show hidden files" in settings, hide?
+unhide = '%s' will no longer be hidden, unhide?
 
 [do not delete directory]
 title = Impossibile eliminare la Cartella.
@@ -451,8 +442,6 @@ Language = Language
 CPU Frequency = CPU Frequency
 Off = Off
 On = On
-Sound Fix = Sound Fix
-Async Prefetch = Async Prefetch
 Use Bootstrap = Use Bootstrap
 Direct Boot = Direct Boot
 Per Game Settings = Per Game Settings
@@ -463,12 +452,20 @@ error = Error %i
 Please wait = Please wait...
 NDS Bootstrap Error = NDS Bootstrap Error
 GBARunner2 Error = GBARunner2 Error
+Sega8bit Error = SEGA 8-bit RAM Disk Error
+Sega8bit Error Message = SEGA 8-bit RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SegaMD Error = SEGA MD RAM Disk Error
+SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
+SNES Error = SNES RAM Disk Error
+SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
 Flashcard Error = Flashcard Error
 Launch Error = Launch Error
-
 Preparing Unlaunch Boot = Preparing Unlaunch Boot...
 Unlaunch Error = Unlaunch Error
 unlaunch boot = Boot DSiWare with Unlaunch
-
 unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+ap warning = Warning
+ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
+ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
+
 [end]
