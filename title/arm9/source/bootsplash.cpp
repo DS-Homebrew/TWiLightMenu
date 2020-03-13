@@ -323,7 +323,7 @@ void BootSplashDSi(void) {
 	}
 	if (!sixtyFps) swiWaitForVBlank();
 
-	for (int i = 0; i < 256*60; i++) {
+	for (int i = 0; i < 256*59; i++) {
 		BG_GFX[i] = whiteCol;
 	}
 
