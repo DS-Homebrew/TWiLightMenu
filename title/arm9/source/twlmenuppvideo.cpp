@@ -24,6 +24,8 @@
 #include "icon_md.h"
 #include "icon_snes.h"
 
+extern bool useTwlCfg;
+
 extern u16 convertVramColorToGrayscale(u16 val);
 
 static int twlmenuTexID;
@@ -670,7 +672,7 @@ void twlMenuVideo(void) {
 	hideTwlMenuTextSprite = true;
 
 	// Change TWL letters to user color
-	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)PersonalData->theme);
+	snprintf(videoFrameFilename, sizeof(videoFrameFilename), "nitro:/graphics/TWL_%i.bmp", (int)(useTwlCfg ? *(u8*)0x02000444 : PersonalData->theme));
 	videoFrameFile = fopen(videoFrameFilename, "rb");
 
 	if (videoFrameFile) {

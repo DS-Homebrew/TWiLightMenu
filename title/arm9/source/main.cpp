@@ -53,6 +53,8 @@
 
 #include "saveMap.h"
 
+bool useTwlCfg = false;
+
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
@@ -617,6 +619,8 @@ int main(int argc, char **argv)
 
 	std::string filename;
 
+	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+
 	ms().loadSettings();
 	bs().loadSettings();
 
@@ -677,21 +681,23 @@ int main(int argc, char **argv)
 
 	if (ms().dsiSplash || ms().showlogo) {
 		// Get date
+		int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
+		int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
 		char soundBankPath[32], currentDate[16], birthDate[16], dateOutput[2][5];
 		time_t Raw;
 		time(&Raw);
 		const struct tm *Time = localtime(&Raw);
 
 		strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
-		if (PersonalData->birthMonth >= 1 && PersonalData->birthMonth < 10) {
-			sprintf(dateOutput[0], "0%i", PersonalData->birthMonth);
+		if (birthMonth >= 1 && birthMonth < 10) {
+			sprintf(dateOutput[0], "0%i", birthMonth);
 		} else {
-			sprintf(dateOutput[0], "%i", PersonalData->birthMonth);
+			sprintf(dateOutput[0], "%i", birthMonth);
 		}
-		if (PersonalData->birthDay >= 1 && PersonalData->birthDay < 10) {
-			sprintf(dateOutput[1], "0%i", PersonalData->birthDay);
+		if (birthDay >= 1 && birthDay < 10) {
+			sprintf(dateOutput[1], "0%i", birthDay);
 		} else {
-			sprintf(dateOutput[1], "%i", PersonalData->birthDay);
+			sprintf(dateOutput[1], "%i", birthDay);
 		}
 		sprintf(birthDate, "%s/%s", dateOutput[0], dateOutput[1]);
 
