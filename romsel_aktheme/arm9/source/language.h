@@ -54,6 +54,8 @@ private:
       return "lang_it";
     case DSiMenuPlusPlusSettings::ELangChinese:
       return "lang_cn";
+	case DSiMenuPlusPlusSettings::ELangKorean:
+      return "lang_ko";
     default:
       return "lang_en";
     }
