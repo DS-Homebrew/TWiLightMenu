@@ -21,7 +21,7 @@ cancel = Annuler
 button = Triches
 title = Menu codes triche
 confirm = Confirmer
-cancel = Annuler
+Cancel = Annuler
 info = Infos Fichier
 deselect = Deselect all
 
