@@ -1099,16 +1099,12 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		if (hasAP)
 		{
-			optionPicked = messageBox(this, "Warning", "This game has AP (Anti-Piracy). Please make sure you're "
-										"using the latest version of TWiLight Menu++."
-											, MB_OK | MB_HOLD_X | MB_CANCEL);
+			optionPicked = messageBox(this, LANG("game launch", "ap warning"), LANG("game launch", "ap msg"), MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
 
 		if (hasAP1)
 		{
-			optionPicked = messageBox(this, "Warning", "This game has AP (Anti-Piracy) and MUST be patched "
-										"using the RGF TWiLight Menu AP patcher."
-											, MB_OK | MB_HOLD_X | MB_CANCEL);
+			optionPicked = messageBox(this, LANG("game launch", "ap warning"), LANG("game launch", "ap msg1"), MB_OK | MB_HOLD_X | MB_CANCEL);
 		}
 
 		scanKeys();
