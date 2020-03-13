@@ -2,7 +2,7 @@
 main = tahoma.pcf
 
 [start menu]
-Start = START
+START = START
 Copy = Copy
 Cut = Cut
 Paste = Paste
@@ -16,6 +16,7 @@ yes = Yes
 no = No
 ok = OK
 cancel = Cancel
+Don't show = Don't show
 
 [cheats]
 button = Cheats
@@ -77,10 +78,6 @@ text = This folder is not empty, delete folder contents first and retry.
 title = Unknown Safe Type
 text = The save type of this program is unknown, press "A" to manually set a type.
 
-[no savelist]
-title = Error Loading Save List
-text = The save list could not be loaded, "savelist.bin" is missing.
-
 [restore save fail]
 title = Failed Save Data Restore
 text = The save data could not be restored, ignore and continue anyway?
@@ -125,17 +122,12 @@ free = Free Space: %s
 title = Error not enough Space
 text = There is not enough space on the target disk, can not copy file.
 
-
 [sd speed]
 text = Set MicroSD speed
 item0 = Extreme
 item1 = Fast
 item2 = Medium
 item3 = Slow
-
-[unsupported sd]
-title = Unsupported MicroSD Card
-text = This MicroSD card(Model:%s) is not suitable for running offical DS programs, please copy program from SD card to Acekard Internal Flash Memory and try again.
 
 [sd card error]
 title = Error Accessing MicroSD Card
@@ -346,79 +338,6 @@ Cheat Scrolling = Cheat Scrolling
 Cheat Scrolling Speed = Cheat Scrolling Speed
 Homebrew Reset Type = Homebrew Reset Type
 
-[cheatupdate]
-DATorXML = File to Download
-updateDB = Wifi Update
-cheatDBbutton = Update DB
-SaveList = savelist.bin
-startupdatetitle = AKAIO Updater
-get whatsnew = Get WhatsNew.txt
-startupdatequestion = Do you wish to start the update procedure?
-WFCConnection = Connecting using WFC, %c to Cancel
-cantconnect = Could not connect, check WFC settings
-stopconnectquestion = Do you want to stop Wifi Connecting?
-stopconnecttitle = Stop Connecting
-getwhatsnew = Getting What's New
-downloadthisfile = Download cheat file dated %s?
-downloaderror = Error Downloading File
-downloadstart = Downloading file, %c to Cancel
-stopdownloadquestion = Do you want to stop Downloading?
-stopdownloadtitle = Stop Downloading
-downloading = Downloading %.0fKb/%.0fKb, %c to Cancel
-unzipstop = Do you want to stop unzipping?
-unzipstoptitle = Unzip Paused
-unzipping = Unzipping file, %c to Cancel
-unziperror = Error in extracting file
-success = Enjoy the latest %s
-error = Error updating, try again?
-resumeupdatetitle = Resume Interrupted Download
-resumethisfile = Resume download of %s at %.0fKb?
-deletepartial = Delete Partially Downloaded File?
-previousdates = Previous Dates
-previousfiles = Previous Files
-previous date notice = Wifi and Loader Updates ONLY
-cheats = Cheats
-loader = Update Loader
-wifi = Wifi Plugin
-3version = 3 versions
-5version = 5 versions
-Checking Site = Checking AKAIO Site
-whatsnew notice = Official Site ONLY
-site = Which Cheat DB?
-site1 = Official Site
-site2 = AKAIO (yusuo)
-
-[wifisave]
-zipstart = Compressing file, %c to Cancel
-zipping = Compressing %.0fKb/%.0fKb, %c to Cancel
-zipstop = Do you want to stop compressing?
-zipstoptitle = Compression Paused
-ziperror = Error in compressing file
-uploaderror = Error Uploading File
-uploadprepare = Preparing upload, %c to Cancel
-uploading = Uploading %.0fKb/%.0fKb, %c to Cancel
-uploaddone = Closing connection
-uploadreturn = File name:<br>%s<br>Size: %s<br>Used: %s<br>
-stopuploadquestion = Do you want to stop uploading?
-stopuploadtitle = Stop Uploading
-dnuztitle = Start Download and Unzip?
-dnuzprompt = Download and Unzip "%s?"
-znutitle = Start Zip and Upload?
-znuprompt = Zip and Upload "%s?"
-savetitle =  Save List
-saveuploadtitle = Choose Save to Upload
-savedownloadtitle = Choose Save to Download or Delete
-extracttitle = Extract to...
-uploadtoobig = Upload will breach quota, sorry
-overquota = Quota reached, delete some files and try again
-checking = Checking Remote Site
-switch = Ch. Mode
-success = %s downloaded
-deleted = %s deleted
-deletestart = Deleting file
-dodeletetitle = Delete This File?
-dodeleteprompt = Delete "%s?"
-
 [text viewer]
 text = TXT Viewer
 item0 = Plugin
@@ -435,24 +354,6 @@ smalliconinternal = Sm. Icon Internal
 filelist style = File List Style
 Hide File Extensions = Hide File Extensions
 Icon Animation = Icon Animation
-
-[exp window]
-title = Slot 2 Cartridge Settings
-ram = RAM
-sram = Dump SRAM
-off = Off
-low = Low
-mid = Medium
-high = High
-strength = Rumble level
-NOR Mode = NOR Mode
-auto = Auto
-always = Always
-notdetected = 3in1/EWin/FlashAdvance not found!
-NOR Flash = Flash to NOR
-norquestion = Flash to NOR?
-norblank = Blank NOR
-erasenor = Do you want to erase the NOR?
 
 [gba settings]
 gbabutton = GBA Settings
@@ -475,9 +376,6 @@ CheatOn = Cheats has been enabled for this game.
 CheatOff = Cheats has been disabled for this game.
 SoftresetOn = Soft-Reset has been enabled for this game.
 SoftresetOff = Soft-Reset has been disabled for this game.
-[clone card error]
-title = Clone
-text = It may not be a genuine Acekard.\n Please contact your vender or\n      access our website:\n\n      www.acekard.com\n
 
 [game settings]
 Japanese = Japanese
@@ -486,6 +384,8 @@ French = French
 German = German
 Italian = Italian
 Spanish = Spanish
+Chinese = Chinese
+Korean = Korean
 133MHz (TWL) = 133MHz (TWL)
 67MHz (NTR) = 67MHz (NTR)
 Auto = Auto
@@ -524,12 +424,13 @@ SNES Error = SNES RAM Disk Error
 SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
 Flashcard Error = Flashcard Error
 Launch Error = Launch Error
-
 Preparing Unlaunch Boot = Preparing Unlaunch Boot...
 Unlaunch Error = Unlaunch Error
 unlaunch boot = Boot DSiWare with Unlaunch
-
 unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
+ap warning = Warning
+ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
+ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
 
 [mainlist]
 Manual = Manual

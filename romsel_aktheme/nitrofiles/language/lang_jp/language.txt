@@ -2,7 +2,7 @@
 main = tahoma.pcf
 
 [start menu]
-Start = START
+START = START
 Copy = コピー
 Cut = 切り取り
 Paste = 貼り付け
@@ -22,8 +22,6 @@ button = チート
 Cancel = 取消し
 deselect = すべての選択を解除
 info = 説明
-invalid cheatdb = このチートDBは無効です
-Rebuild = リビルド
 title = チートメニュー
 
 [progress window]
@@ -436,12 +434,13 @@ SegaMD Error = メガドライブRAMディスクエラー
 SegaMD Error Message = 「sd:/_nds/TWiLightMenu/emulators/」のメガドライブRAMディスクが見つかりませんでした。
 Flashcard Error = フラッシュカードエラー
 Launch Error = 起動エラー
-
 Preparing Unlaunch Boot = DSiWare起動の準備中です.
 Unlaunch Error = Unlaunchエラー
 unlaunch boot = DSiWare起動の説明
-
 unlaunch instructions = セーブして後、このメニューを再起動してセーブデータを転送してください。
+ap warning = Warning
+ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
+ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
 
 [mainlist]
 Manual = 説明書
