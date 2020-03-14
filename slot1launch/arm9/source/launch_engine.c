@@ -27,10 +27,11 @@
 #define DSIMODE_OFFSET 4
 #define LANGUAGE_OFFSET 8
 #define SDACCESS_OFFSET 12
-#define TWLMODE_OFFSET 16
-#define TWLCLOCK_OFFSET 20
-#define SOUNDFREQ_OFFSET 24
-#define RUNCARDENGINE_OFFSET 28
+#define SCFGUNLOCK_OFFSET 16
+#define TWLMODE_OFFSET 20
+#define TWLCLOCK_OFFSET 24
+#define SOUNDFREQ_OFFSET 28
+#define RUNCARDENGINE_OFFSET 32
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -72,6 +73,7 @@ void runLaunchEngine (bool EnableSD, int language, bool isDSBrowser, bool scfgUn
 	writeAddr ((data_t*) LCDC_BANK_D, DSIMODE_OFFSET, isDSiMode());
 	writeAddr ((data_t*) LCDC_BANK_D, LANGUAGE_OFFSET, language);
 	writeAddr ((data_t*) LCDC_BANK_D, SDACCESS_OFFSET, EnableSD);
+	writeAddr ((data_t*) LCDC_BANK_D, SCFGUNLOCK_OFFSET, scfgUnlock);
 	writeAddr ((data_t*) LCDC_BANK_D, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_D, TWLCLOCK_OFFSET, TWLCLK);
 	writeAddr ((data_t*) LCDC_BANK_D, SOUNDFREQ_OFFSET, soundFreq);

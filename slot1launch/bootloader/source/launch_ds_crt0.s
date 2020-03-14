@@ -4,6 +4,7 @@
 	.global dsiMode
 	.global language
 	.global sdAccess
+	.global scfgUnlock
 	.global twlMode
 	.global twlClock
 	.global soundFreq
@@ -21,6 +22,8 @@ dsiMode:
 language:
 	.word	0x00000000
 sdAccess:
+	.word	0x00000000
+scfgUnlock:
 	.word	0x00000000
 twlMode:
 	.word	0x00000000

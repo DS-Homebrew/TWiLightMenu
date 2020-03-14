@@ -59,6 +59,7 @@
 extern u32 dsiMode;
 extern u32 language;
 extern u32 sdAccess;
+extern u32 scfgUnlock;
 extern u32 twlMode;
 extern u32 twlClock;
 extern u32 soundFreq;
@@ -637,7 +638,7 @@ void arm7_main (void) {
 
 	debugOutput (ERR_STS_START);
 
-	if (!twlMode) {
+	if (!scfgUnlock && !twlMode) {
 		// lock SCFG
 		REG_SCFG_EXT &= ~(1UL << 31);
 	}
