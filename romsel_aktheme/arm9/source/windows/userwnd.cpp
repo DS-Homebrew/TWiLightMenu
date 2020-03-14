@@ -46,6 +46,8 @@ UserWindow::UserWindow() : Window(NULL, "UserWindow")
 
 void UserWindow::init()
 {
+	extern bool useTwlCfg;
+
     CIniFile ini(SFN_USER_CUSTOM);
     std::string pictureFilename = ini.GetString("custom picture", "file", "");
     if (pictureFilename != "")
@@ -74,7 +76,7 @@ void UserWindow::init()
     _showUserName = ini.GetInt("user name", "show", 0);
     _showCustomText = ini.GetInt("custom text", "show", 0);
     _showCustomPic = ini.GetInt("custom picture", "show", 0);
-    _userName = unicode_to_local_string((u16 *)PersonalData->name, PersonalData->nameLen, NULL);
+    _userName = unicode_to_local_string((useTwlCfg ? (u16 *)0x02000448 : (u16 *)PersonalData->name), (useTwlCfg ? 10 : PersonalData->nameLen), NULL);
 }
 
 void UserWindow::draw()

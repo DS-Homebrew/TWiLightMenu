@@ -34,10 +34,10 @@ extern int setTitleLanguage;
 class LanguageFile : public CIniFile
 {
 private:
-  static std::string getIdentifier(DSiMenuPlusPlusSettings::TLanguage language)
+  static std::string getIdentifier(DSiMenuPlusPlusSettings::TLanguage language, bool useTwlCfg)
   {
     if (language == DSiMenuPlusPlusSettings::ELangDefault)
-      language = (DSiMenuPlusPlusSettings::TLanguage)PersonalData->language;
+      language = (DSiMenuPlusPlusSettings::TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     switch (language)
     {
     case DSiMenuPlusPlusSettings::ELangJapanese:
@@ -64,8 +64,9 @@ private:
 public:
   LanguageFile(DSiMenuPlusPlusSettings::TLanguage language)
   {
+	extern bool useTwlCfg;
     m_bReadOnly = true;
-    LoadIniFile(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language).c_str()));
+    LoadIniFile(formatString(SFN_LANGUAGE_TEXT, getIdentifier(language, useTwlCfg).c_str()));
   }
   ~LanguageFile(){};
 };

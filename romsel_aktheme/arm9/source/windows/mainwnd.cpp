@@ -681,7 +681,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
     // GameConfig is system, or global is defaut
     else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == DSiMenuPlusPlusSettings::ELangDefault)
     {
-        config.language(PersonalData->language);
+        config.language(-1);
     }
     else
     // gameConfig is not default
