@@ -913,7 +913,7 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
 
 	bool fatInited = fatInitDefault();
 
