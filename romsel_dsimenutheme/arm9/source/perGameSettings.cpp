@@ -61,6 +61,8 @@
 #define ENTRY_PAGE_LENGTH 10
 
 
+extern bool useTwlCfg;
+
 extern int currentBg;
 extern bool displayGameIcons;
 
@@ -358,11 +360,17 @@ void perGameSettings (std::string filename) {
 		dirContName.append("...");
 	}
 
+	// Test 3DS TWLCFG extraction
+	/*FILE* cfgFile = fopen("sd:/TWLCFG.bin", "wb");
+	fwrite((void*)0x02000000, 1, 0x4000, cfgFile);
+	fclose(cfgFile);*/
+
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
 		printSmall(false, 16, 66, dirContName.c_str());
+		//if (showSDKVersion) printSmall(false, 16, 80, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
 		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
 		printSmall(false, 176, 80, gameTIDText);
 		printSmall(false, 16, 160, fileCounter);

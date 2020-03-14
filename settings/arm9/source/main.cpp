@@ -379,7 +379,7 @@ int main(int argc, char **argv)
 	ms();
 	defaultExceptionHandler();
 
-	useTwlCfg = (*(u32*)0x0200043C == 0x0201209C);
+	useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
 
 	if (!sys().fatInitOk())
 	{
