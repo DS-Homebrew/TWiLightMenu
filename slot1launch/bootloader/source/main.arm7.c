@@ -67,6 +67,9 @@ extern u32 runCardEngine;
 
 extern bool arm9_runCardEngine;
 
+bool useTwlCfg = false;
+int twlCfgLang = 0;
+
 bool gameSoftReset = false;
 
 void arm7_clearmem (void* loc, size_t len);
@@ -191,7 +194,7 @@ void arm7_resetMemory (void)
 	arm7_clearmem ((void*)0x037F8000, 96*1024);
 	
 	// clear most of EXRAM - except after 0x023F0000, which has the cheat data and ARM9 code
-	arm7_clearmem ((void*)0x02000000, 0x003F0000);
+	arm7_clearmem ((void*)0x02004000, 0x003EC000);
 
 	// clear last part of EXRAM, skipping the ARM9's section
 	arm7_clearmem ((void*)0x023FE000, 0x2000);
@@ -201,7 +204,10 @@ void arm7_resetMemory (void)
 	(*(vu32*)(0x04000000-4)) = 0;  //IRQ_HANDLER ARM7 version
 	(*(vu32*)(0x04000000-8)) = ~0; //VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuffs
-	
+
+	useTwlCfg = (dsiMode && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	twlCfgLang = *(u8*)0x02000406;
+
 	// Get settings location
 	arm7_readFirmware((u32)0x00020, (u8*)&settingsOffset, 0x2);
 	settingsOffset *= 8;
@@ -215,11 +221,16 @@ void arm7_resetMemory (void)
 	} else {
 		arm7_readFirmware(settingsOffset + 0x100, (u8*)0x027FFC80, 0x70);
 	}
+
+	if (useTwlCfg && language == -1) {
+		language = twlCfgLang;
+	}
+
 	if (language >= 0 && language <= 7) {
 		// Change language
 		*(u8*)(0x027FFCE4) = language;
 	}
-	
+
 	// Load FW header 
 	arm7_readFirmware((u32)0x000000, (u8*)0x027FF830, 0x20);
 }
