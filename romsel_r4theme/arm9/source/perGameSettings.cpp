@@ -286,7 +286,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			if ((arm9dst < 0x02004000 && SDKVersion < 0x5000000) || !isDSiMode()) {
+			if ((arm9dst < 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) || !isDSiMode()) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
