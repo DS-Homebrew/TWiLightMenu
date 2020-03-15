@@ -197,7 +197,8 @@ DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {
-        return (TLanguage)PersonalData->language;
+		extern bool useTwlCfg;
+        return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     }
     return (TLanguage)guiLanguage;
 }

@@ -99,8 +99,8 @@ void BootSplashDSi(void) {
 		BG_GFX_SUB[i] = whiteCol;
 	}
 
-	int language = ms().getGuiLanguage();
-	if (ms().getGuiLanguage() == -1) {
+	int language = ms().guiLanguage;
+	if (ms().guiLanguage == -1) {
 		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
 
