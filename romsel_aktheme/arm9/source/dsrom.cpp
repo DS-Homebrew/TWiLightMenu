@@ -212,6 +212,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     ///////// saveInfo /////////
     tonccpy(_saveInfo.gameTitle, header.gameTitle, 12);
     tonccpy(_saveInfo.gameCode, header.gameCode, 4);
+    _saveInfo.arm9destination = header.arm9destination;
     ///// SDK Version /////
 
     if (_isHomebrew == EFalse)

@@ -254,12 +254,14 @@ void RomInfoWnd::pressGameSettings(void)
 		}
 
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			_values.push_back(LANG("game settings", "Auto")); // -1 => 0
-			_values.push_back(LANG("game settings", "Off")); // 0 => 1
-			_values.push_back(LANG("game settings", "On")); // 1 => 2            
+			if (_romInfo.saveInfo().arm9destination < 0x02004000 && _romInfo.saveInfo().gameSdkVersion < 0x5000000) {
+				_values.push_back(LANG("game settings", "Auto")); // -1 => 0
+				_values.push_back(LANG("game settings", "Off")); // 0 => 1
+				_values.push_back(LANG("game settings", "On")); // 1 => 2            
 
-			settingWnd.addSettingItem(LANG("game settings", "Heap Shrink"), _values, settingsIni.heapShrink + 1);
-			_values.clear();
+				settingWnd.addSettingItem(LANG("game settings", "Heap Shrink"), _values, settingsIni.heapShrink + 1);
+				_values.clear();
+			}
 
 			_values.push_back(LANG("game settings", "Default")); // -1 => 0
 			_values.push_back(LANG("game settings", "Release")); // 0 => 1

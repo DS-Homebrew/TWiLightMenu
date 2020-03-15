@@ -31,6 +31,7 @@ typedef struct _SAVE_INFO_T
   u8 gameTitle[12];
   u8 gameCode[4];
   u32 dsiTid[2];
+  u32 arm9destination;
   PACKED u16 gameCRC;
   u32 gameSdkVersion;
   u32 dsiPubSavSize;
@@ -104,6 +105,7 @@ typedef struct SAVE_INFO_EX_T
   u8 gameTitle[12];
   u8 gameCode[4];
   u16 gameCRC;
+  u32 arm9destination;
   u8 saveType;
   u8 flags;
   u32 flags2;

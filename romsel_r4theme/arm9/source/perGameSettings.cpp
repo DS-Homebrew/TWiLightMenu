@@ -216,13 +216,17 @@ void perGameSettings (std::string filename) {
 	char game_TID[5];
 	grabTID(f_nds_file, game_TID);
 	game_TID[4] = 0;
-	
+
 	bool showSDKVersion = false;
 	u32 SDKVersion = 0;
 	if (memcmp(game_TID, "HND", 3) == 0 || memcmp(game_TID, "HNE", 3) == 0 || !isHomebrew) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+	u32 arm9dst = 0;
+	fseek(f_nds_file, 0x28, SEEK_SET);
+	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
+	fclose(f_nds_file);
 
 	bool showPerGameSettings =
 		(!isDSiWare
@@ -282,7 +286,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			if (SDKVersion < 0x5000000 || !isDSiMode()) {
+			if ((arm9dst < 0x02004000 && SDKVersion < 0x5000000) || !isDSiMode()) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
