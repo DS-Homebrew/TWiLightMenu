@@ -7,6 +7,7 @@
 	.global scfgUnlock
 	.global twlMode
 	.global twlClock
+	.global boostVram
 	.global soundFreq
 	.global runCardEngine
 @---------------------------------------------------------------------------------
@@ -28,6 +29,8 @@ scfgUnlock:
 twlMode:
 	.word	0x00000000
 twlClock:
+	.word	0x00000000
+boostVram:
 	.word	0x00000000
 soundFreq:
 	.word	0x00000000

@@ -20,7 +20,7 @@
 #define ENCRYPTION_H
 
 #include <nds/ndstypes.h>
-void init_keycode (u32 idcode, u32 level, u32 modulo);
+void init_keycode (u32 idcode, u32 level, u32 modulo, int iCardDevice);
 void crypt_64bit_down (u32* ptr);
 void crypt_64bit_up (u32* ptr);
 

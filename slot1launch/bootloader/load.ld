@@ -5,7 +5,7 @@ ENTRY(_start)
 MEMORY {
 
 	vram	: ORIGIN = 0x06020000, LENGTH = 128K
-	arm9ram	: ORIGIN = 0x023FD800, LENGTH = 2K		/* Used for the ARM9's functions */
+	arm9ram	: ORIGIN = 0x023FE000, LENGTH = 8K		/* Used for the ARM9's functions */
 }
 
 __vram_start	=	ORIGIN(vram);
@@ -15,6 +15,7 @@ __sp_svc	=	__sp_irq - 0x100;
 __sp_usr	=	__sp_svc - 0x100;
 
 __irq_flags	=	__vram_top - 8;
+__irq_flagsaux	=	__vram_top - 0x40; /*__irq_flagsaux	=	0x04000000 - 0x40;*/
 __irq_vector	=	__vram_top - 4;
 
 

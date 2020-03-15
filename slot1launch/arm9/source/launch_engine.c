@@ -30,8 +30,9 @@
 #define SCFGUNLOCK_OFFSET 16
 #define TWLMODE_OFFSET 20
 #define TWLCLOCK_OFFSET 24
-#define SOUNDFREQ_OFFSET 28
-#define RUNCARDENGINE_OFFSET 32
+#define BOOSTVRAM_OFFSET 28
+#define SOUNDFREQ_OFFSET 32
+#define RUNCARDENGINE_OFFSET 36
 
 typedef signed int addr_t;
 typedef unsigned char data_t;
@@ -54,7 +55,7 @@ void vramcpy (void* dst, const void* src, int len)
 	}
 }	
 
-void runLaunchEngine (bool EnableSD, int language, bool isDSBrowser, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
+void runLaunchEngine (bool EnableSD, int language, bool scfgUnlock, bool TWLMODE, bool TWLCLK, bool TWLVRAM, bool soundFreq, bool runCardEngine)
 {
 	nocashMessage("runLaunchEngine");
 
@@ -76,28 +77,13 @@ void runLaunchEngine (bool EnableSD, int language, bool isDSBrowser, bool scfgUn
 	writeAddr ((data_t*) LCDC_BANK_D, SCFGUNLOCK_OFFSET, scfgUnlock);
 	writeAddr ((data_t*) LCDC_BANK_D, TWLMODE_OFFSET, TWLMODE);
 	writeAddr ((data_t*) LCDC_BANK_D, TWLCLOCK_OFFSET, TWLCLK);
+	writeAddr ((data_t*) LCDC_BANK_D, BOOSTVRAM_OFFSET, TWLVRAM);
 	writeAddr ((data_t*) LCDC_BANK_D, SOUNDFREQ_OFFSET, soundFreq);
 	writeAddr ((data_t*) LCDC_BANK_D, RUNCARDENGINE_OFFSET, runCardEngine);
 
 	nocashMessage("irqDisable(IRQ_ALL);");
 	irqDisable(IRQ_ALL);
 
-	if (isDSiMode()) {
-		if (scfgUnlock || TWLMODE) {
-			if (TWLVRAM) {
-				REG_SCFG_EXT = (isDSBrowser ? 0x8300E000 : 0x83002000);
-			} else {
-				REG_SCFG_EXT = (isDSBrowser ? 0x8300C000 : 0x83000000);
-			}
-		} else {
-			if (TWLVRAM) {
-				REG_SCFG_EXT = (isDSBrowser ? 0x0300E000 : 0x03002000);
-			} else {
-				REG_SCFG_EXT = (isDSBrowser ? 0x0300C000 : 0x03000000);
-			}
-		}
-	}
-	
 	// Give the VRAM to the ARM7
 	nocashMessage("Give the VRAM to the ARM7");
 	VRAM_D_CR = VRAM_ENABLE | VRAM_D_ARM7_0x06020000;

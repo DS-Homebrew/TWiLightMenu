@@ -38,11 +38,16 @@
 #include <nds/ipc.h>
 
 #include <nds/dma.h>
+#include <stddef.h> // NULL
 #include <stdlib.h>
 
 #include "common.h"
 
+tNDSHeader* ndsHeader = NULL;
+
 bool arm9_runCardEngine = false;
+bool dsiModeConfirmed = false;
+bool arm9_boostVram = false;
 
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
@@ -92,7 +97,7 @@ arm9_errorOutput
 Displays an error code on screen.
 Written by Chishm
 --------------------------------------------------------------------------*/
-/*static void arm9_errorOutput (u32 code, bool clearBG) {
+static void arm9_errorOutput (u32 code, bool clearBG) {
 // Re-enable for debugging
 	int i, j, k;
 	u16 colour;
@@ -168,7 +173,7 @@ Written by Chishm
 		}
 	}		
 }
-*/
+
 
 /*-------------------------------------------------------------------------
 arm9_main
@@ -177,8 +182,7 @@ Clears the ARM9's DMA channels and resets video memory
 Jumps to the ARM9 NDS binary in sync with the display and ARM7
 Written by Darkain, modified by Chishm
 --------------------------------------------------------------------------*/
-void arm9_main (void) {
-
+void __attribute__((target("arm"))) arm9_main (void) {
 	register int i;
 	
 	//set shared ram to ARM7
@@ -256,7 +260,7 @@ void arm9_main (void) {
 	VRAM_G_CR = 0;
 	VRAM_H_CR = 0;
 	VRAM_I_CR = 0;
-	REG_POWERCNT  = 0x820F;
+	REG_POWERCNT = 0x820F;
 
 	*(u16*)0x0400006C |= BIT(14);
 	*(u16*)0x0400006C &= BIT(15);
@@ -268,20 +272,37 @@ void arm9_main (void) {
 	while ( arm9_stateFlag != ARM9_BOOTBIN ) {
 		if (arm9_stateFlag == ARM9_DISPERR) {
 			// Re-enable for debugging
-			//arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
+			arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
 			if ( arm9_stateFlag == ARM9_DISPERR) {
 				arm9_stateFlag = ARM9_READY;
 			}
 		}
+		if (arm9_stateFlag == ARM9_SETSCFG) {
+			if (dsiModeConfirmed) {
+				REG_SCFG_EXT = 0x8307F100;
+				REG_SCFG_CLK = 0x84;
+			} else {
+				REG_SCFG_EXT = 0x8300C000;
+				if (arm9_boostVram) {
+					REG_SCFG_EXT |= BIT(13);	// Extended VRAM Access
+				}
+				// lock SCFG
+				REG_SCFG_EXT &= ~(1UL << 31);
+			}
+			arm9_stateFlag = ARM9_READY;
+		}
 	}
 	
+	REG_IME = 0;
+	REG_EXMEMCNT = 0xE880;
+
 	// wait for vblank then boot
 	while(REG_VCOUNT!=191);
 	while(REG_VCOUNT==191);
 	
 	// arm9_errorOutput (*(u32*)(first), true);
 
-	VoidFn arm9code = *(VoidFn*)(0x27FFE24);
+	VoidFn arm9code = (VoidFn)ndsHeader->arm9executeAddress;
 	arm9code();
 }
 
