@@ -37,9 +37,6 @@ void patchMpu(const tNDSHeader* ndsHeader, const module_params_t* moduleParams) 
 				break;
 		}
 
-		*(vu32*)((u32)ndsHeader + 0x200) = (vu32)mpuDataOffset;
-		*(vu32*)((u32)ndsHeader + 0x204) = (vu32)*mpuDataOffset;
-
 		*mpuDataOffset = mpuInitRegionNewData;
 
 		if (mpuAccessOffset) {
