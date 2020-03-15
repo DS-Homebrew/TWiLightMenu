@@ -733,6 +733,7 @@ void arm7_main (void) {
 	debugOutput (ERR_STS_START);
 
 	arm9_boostVram = boostVram;
+	arm9_scfgUnlock = scfgUnlock;
 	//arm9_isSdk5 = isSdk5(moduleParams);
 
 	if (!scfgUnlock && !dsiModeConfirmed) {

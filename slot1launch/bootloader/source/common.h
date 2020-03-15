@@ -36,6 +36,7 @@ enum {ARM9_BOOT, ARM9_START, ARM9_MEMCLR, ARM9_READY, ARM9_BOOTBIN, ARM9_DISPERR
 extern tNDSHeader* ndsHeader;
 extern bool dsiModeConfirmed;
 extern bool arm9_boostVram;
+extern bool arm9_scfgUnlock;
 extern volatile int arm9_stateFlag;
 extern volatile u32 arm9_errorCode;
 extern volatile bool arm9_errorClearBG;

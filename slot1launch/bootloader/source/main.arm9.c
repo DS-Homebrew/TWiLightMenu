@@ -48,6 +48,7 @@ tNDSHeader* ndsHeader = NULL;
 bool arm9_runCardEngine = false;
 bool dsiModeConfirmed = false;
 bool arm9_boostVram = false;
+bool arm9_scfgUnlock = false;
 
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
@@ -97,7 +98,7 @@ arm9_errorOutput
 Displays an error code on screen.
 Written by Chishm
 --------------------------------------------------------------------------*/
-static void arm9_errorOutput (u32 code, bool clearBG) {
+/*static void arm9_errorOutput (u32 code, bool clearBG) {
 // Re-enable for debugging
 	int i, j, k;
 	u16 colour;
@@ -173,7 +174,7 @@ static void arm9_errorOutput (u32 code, bool clearBG) {
 		}
 	}		
 }
-
+*/
 
 /*-------------------------------------------------------------------------
 arm9_main
@@ -272,7 +273,7 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	while ( arm9_stateFlag != ARM9_BOOTBIN ) {
 		if (arm9_stateFlag == ARM9_DISPERR) {
 			// Re-enable for debugging
-			arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
+			//arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
 			if ( arm9_stateFlag == ARM9_DISPERR) {
 				arm9_stateFlag = ARM9_READY;
 			}
@@ -286,16 +287,15 @@ void __attribute__((target("arm"))) arm9_main (void) {
 				if (arm9_boostVram) {
 					REG_SCFG_EXT |= BIT(13);	// Extended VRAM Access
 				}
-				// lock SCFG
-				REG_SCFG_EXT &= ~(1UL << 31);
+				if (!arm9_scfgUnlock) {
+					// lock SCFG
+					REG_SCFG_EXT &= ~(1UL << 31);
+				}
 			}
 			arm9_stateFlag = ARM9_READY;
 		}
 	}
 	
-	REG_IME = 0;
-	REG_EXMEMCNT = 0xE880;
-
 	// wait for vblank then boot
 	while(REG_VCOUNT!=191);
 	while(REG_VCOUNT==191);
