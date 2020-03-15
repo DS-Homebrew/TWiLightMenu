@@ -2679,7 +2679,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 			}
 
-			if ((pressed & KEY_B) && ms().showDirectories) {
+			if ((pressed & KEY_B) && ms().showDirectories && !titleboxXmoveleft && !titleboxXmoveright) {
 				// Go up a directory
 				snd().playBack();
 				if (ms().theme != 4) {
