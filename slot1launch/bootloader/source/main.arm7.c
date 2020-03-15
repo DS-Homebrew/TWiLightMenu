@@ -469,7 +469,7 @@ int arm7_loadBinary (const tDSiHeader* dsiHeaderTemp) {
 	cardRead(dsiHeaderTemp->ndshdr.arm9romOffset, (u32*)dsiHeaderTemp->ndshdr.arm9destination, dsiHeaderTemp->ndshdr.arm9binarySize);
 	cardRead(dsiHeaderTemp->ndshdr.arm7romOffset, (u32*)dsiHeaderTemp->ndshdr.arm7destination, dsiHeaderTemp->ndshdr.arm7binarySize);
 
-	moduleParams = (module_params_t*)findModuleParamsOffset((tNDSHeader*)dsiHeaderTemp);
+	moduleParams = (module_params_t*)findModuleParamsOffset(&dsiHeaderTemp->ndshdr);
 
 	return ERR_NONE;
 }
@@ -596,7 +596,7 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 	//	const char *ndsPath = "nand:/dsiware.nds";
 	//	tonccpy(deviceListAddr+0x3C0, ndsPath, sizeof(ndsPath));
 
-		tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header
+		//tonccpy((u32*)0x02FFC000, (u32*)DSI_HEADER_SDK5, 0x1000);		// Make a duplicate of DSi header
 		tonccpy((u32*)0x02FFFA80, (u32*)NDS_HEADER_SDK5, 0x160);	// Make a duplicate of DS header
 
 		*(u32*)(0x02FFA680) = 0x02FD4D80;
@@ -650,10 +650,10 @@ void arm7_main (void) {
 		REG_SCFG_ROM = 0x703;	// Not running this prevents (some?) flashcards from running
 	}
 
-	tDSiHeader dsiHeaderTemp;
+	tDSiHeader* dsiHeaderTemp = (tDSiHeader*)0x02FFC000;
 
 	// Load the NDS file
-	errorCode = arm7_loadBinary(&dsiHeaderTemp);
+	errorCode = arm7_loadBinary(dsiHeaderTemp);
 	if (errorCode) {
 		debugOutput(errorCode);
 	}
@@ -662,20 +662,20 @@ void arm7_main (void) {
 		if (twlMode == 2) {
 			dsiModeConfirmed = twlMode;
 		} else {
-			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp.ndshdr);
+			dsiModeConfirmed = twlMode && ROMsupportsDsiMode(&dsiHeaderTemp->ndshdr);
 		}
 	}
 
 	if (dsiModeConfirmed) {
-		if (dsiHeaderTemp.arm9ibinarySize > 0) {
-			cardRead((u32*)dsiHeaderTemp.arm9iromOffset, (u32*)dsiHeaderTemp.arm9idestination, dsiHeaderTemp.arm9ibinarySize);
+		if (dsiHeaderTemp->arm9ibinarySize > 0) {
+			cardRead(dsiHeaderTemp->arm9iromOffset, (u32*)dsiHeaderTemp->arm9idestination, dsiHeaderTemp->arm9ibinarySize);
 		}
-		if (dsiHeaderTemp.arm7ibinarySize > 0) {
-			cardRead((u32*)dsiHeaderTemp.arm7iromOffset, (u32*)dsiHeaderTemp.arm7idestination, dsiHeaderTemp.arm7ibinarySize);
+		if (dsiHeaderTemp->arm7ibinarySize > 0) {
+			cardRead(dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
 	}
 
-	ndsHeader = loadHeader(&dsiHeaderTemp);
+	ndsHeader = loadHeader(dsiHeaderTemp);
 
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 

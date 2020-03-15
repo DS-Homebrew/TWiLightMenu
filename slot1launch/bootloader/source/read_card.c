@@ -285,7 +285,7 @@ int cardInit (sNDSHeaderExt* ndsHeader, u32* chipID)
 		{
 			toncset((u8*)headerData+0x200, 0, 0xE00);	// Clear out FFs
 		}
-		tonccpy(ndsHeader, headerData, sizeof(tDSiHeader));
+		tonccpy(ndsHeader, headerData, 0x1000);
 	}
 
 	// Check header CRC
