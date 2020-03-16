@@ -8,12 +8,17 @@
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
+extern bool useTwlCfg;
+
 extern bool fadeType;
 extern bool controlTopBright;
 
 void LoadConsoleBMP(int consoleModel) {
 	FILE* file;
-	int language = (ms().getGuiLanguage());
+	int language = ms().guiLanguage;
+	if (ms().guiLanguage == -1) {
+		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	}
 
 	switch (consoleModel) {
 		case 0:
@@ -75,7 +80,7 @@ void LoadConsoleBMP(int consoleModel) {
 				file = fopen("nitro:/graphics/consoleseltext_devdsi.bmp", "rb");
 				break;
 			case 2:
-				file = fopen("nitro:/graphics/consoleseltext-3ds.bmp", "rb");
+				file = fopen("nitro:/graphics/consoleseltext_3ds.bmp", "rb");
 				break;
 		}
 	}
@@ -114,7 +119,10 @@ bool consoleModel_isSure(void) {
 	}
 
 	//Get the language for the splash screen
-	int language = (ms().getGuiLanguage());
+	int language = ms().guiLanguage;
+	if (ms().guiLanguage == -1) {
+		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+	}
 	FILE* file;
 
 	//If not french, then fallback to english
