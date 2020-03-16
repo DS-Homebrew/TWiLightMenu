@@ -617,9 +617,37 @@ int main(int argc, char **argv)
 	remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
 	remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 
-	std::string filename;
-
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	if (isDSiMode()) {
+		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
+		u16 cfgCrcFromFile = 0;
+
+		char twlCfgPath[256];
+		sprintf(twlCfgPath, "%s:/_nds/TWiLightMenu/16KBcache.bin", sdFound() ? "sd" : "fat");
+
+		FILE* twlCfg = fopen(twlCfgPath, "rb");
+		if (twlCfg) {
+			fseek(twlCfg, 0x4000, SEEK_SET);
+			fread((u16*)&cfgCrcFromFile, sizeof(u16), 1, twlCfg);
+		}
+		if (useTwlCfg) {
+			if (cfgCrcFromFile != cfgCrc) {
+				fclose(twlCfg);
+				// Cache first 16KB containing TWLCFG, in case some homebrew overwrites it
+				twlCfg = fopen(twlCfgPath, "wb");
+				fwrite((void*)0x02000000, 1, 0x4000, twlCfg);
+				fwrite((u16*)&cfgCrc, sizeof(u16), 1, twlCfg);
+			}
+		} else {
+			if (cfgCrc != cfgCrcFromFile) {
+				// Reload first 16KB from cache
+				fseek(twlCfg, 0, SEEK_SET);
+				fread((void*)0x02000000, 1, 0x4000, twlCfg);
+				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+			}
+		}
+		fclose(twlCfg);
+	}
 
 	ms().loadSettings();
 	bs().loadSettings();
