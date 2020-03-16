@@ -1453,9 +1453,7 @@ int main(int argc, char **argv) {
 								iconYpos[0] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								if (romFound[1]) {
 									titleUpdate(1, false, filename[1].c_str());
 								} else {
@@ -1479,9 +1477,7 @@ int main(int argc, char **argv) {
 								iconYpos[0] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								if (romFound[1]) {
 									titleUpdate(1, false, filename[1].c_str());
 								} else {
@@ -1512,9 +1508,7 @@ int main(int argc, char **argv) {
 								iconYpos[0] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[0] < -44 || iconYpos[0] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								printNdsCartBannerText();
 								if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
@@ -1625,9 +1619,7 @@ int main(int argc, char **argv) {
 								iconYpos[2] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[2] < -44 || iconYpos[2] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								if (!sdFound()) {
 									printGbaBannerText();
 								} else if (romFound[0]) {
@@ -1705,9 +1697,7 @@ int main(int argc, char **argv) {
 								iconYpos[3] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
@@ -1724,9 +1714,7 @@ int main(int argc, char **argv) {
 								iconYpos[3] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								if (romFound[0]) {
 									titleUpdate(0, false, filename[0].c_str());
 								} else {
@@ -1750,9 +1738,7 @@ int main(int argc, char **argv) {
 								iconYpos[3] -= 6;
 								clearText();
 								printSmall(false, 6, 6, "\u2428 Back");	// "(B) Back"
-								if (iconYpos[3] < -44 || iconYpos[3] > 24) {
-									printSmallCentered(false, 112, 6, RetTime().c_str());
-								}
+								printSmallCentered(false, 112, 6, RetTime().c_str());
 								printGbaBannerText();
 								swiWaitForVBlank();
 							}
