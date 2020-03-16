@@ -63,7 +63,7 @@ string RetTime()
 	const struct tm *Time = localtime(&Raw);
 
 	char Tmp[24];
-	strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
+	strftime(Tmp, sizeof(Tmp), "%k : %M", Time);
 
 	return string(Tmp);
 }
