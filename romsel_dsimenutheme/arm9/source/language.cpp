@@ -26,6 +26,6 @@ void langInit(void)
 
 	//printf("langInit\n");
 	setLanguage = (ms().guiLanguage == -1) ? userLanguage : ms().guiLanguage;
-	setTitleLanguage = (ms().titleLanguage == -1) ? userLanguage : ms().titleLanguage;
+	setTitleLanguage = (ms().titleLanguage == -1) ? PersonalData->language : ms().titleLanguage;
 	setGameLanguage = (ms().bstrap_language == -1) ? userLanguage : ms().bstrap_language;
 }
