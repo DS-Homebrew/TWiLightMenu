@@ -118,6 +118,10 @@ int main() {
 	u8 readCommand = readPowerManagement(4);
 	isDSLite = (readCommand & BIT(4) || readCommand & BIT(5) || readCommand & BIT(6) || readCommand & BIT(7));
 
+	for (int i = 0; i < 8; i++) {
+		*(u8*)(0x2FFFD00+i) = *(u8*)(0x4004D07-i);	// Get ConsoleID
+	}
+
 	fifoSendValue32(FIFO_USER_03, *SCFG_EXT);
 	fifoSendValue32(FIFO_USER_04, isDSLite);
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
@@ -142,6 +146,10 @@ int main() {
 		if(fifoGetValue32(FIFO_USER_04) == 1) {
 			changeBacklightLevel();
 			fifoSendValue32(FIFO_USER_04, 0);
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
+			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
+			*(u32*)(0x2FFFD0C) = 0;
 		}
 		swiWaitForVBlank();
 	}

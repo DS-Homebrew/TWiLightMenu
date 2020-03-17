@@ -992,13 +992,13 @@ int main(int argc, char **argv) {
 					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e45%x/content/00000000.app", regions[i]);
 					if (access(srcPath, F_OK) == 0)
 					{
+						snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
+						remove(pictochatPath);
+						fcopy(srcPath, pictochatPath);	// Copy from NAND
+						pictochatFound = true;
 						break;
 					}
 				}
-
-				snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
-				fcopy(srcPath, pictochatPath);	// Copy from NAND
-				pictochatFound = true;
 			}
 		}
 
@@ -1007,18 +1007,16 @@ int main(int argc, char **argv) {
 		if (!dlplayFound) {
 			for (int i = 0; i < 3; i++)
 			{
-				if (regions[i] == 0x43 || regions[i] == 0x4B)
-				{
-					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
-				}
-				else
-				{
-					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
-				}
-				if (access(dlplayPath, F_OK) == 0)
-				{
+				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
+				if (access(dlplayPath, F_OK) == 0) {
 					dlplayFound = true;
 					break;
+				} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
+					snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e4441/content/00000001.app");
+					if (access(dlplayPath, F_OK) == 0) {
+						dlplayFound = true;
+						break;
+					}
 				}
 			}
 		}
@@ -1030,23 +1028,24 @@ int main(int argc, char **argv) {
 			if (access("nand:/", F_OK) == 0) {
 				for (int i = 0; i < 3; i++)
 				{
-					if (regions[i] == 0x43 || regions[i] == 0x4B)
-					{
-						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
-					}
-					else
-					{
-						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
-					}
-					if (access(srcPath, F_OK) == 0)
-					{
+					snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e44%x/content/00000000.app", regions[i]);
+					if (access(srcPath, F_OK) == 0) {
+						snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+						remove(dlplayPath);
+						fcopy(srcPath, dlplayPath);	// Copy from NAND
+						dlplayFound = true;
 						break;
+					} else if (regions[i] != 0x43 && regions[i] != 0x4B) {
+						snprintf(srcPath, sizeof(srcPath), "nand:/title/00030005/484e4441/content/00000001.app");
+						if (access(srcPath, F_OK) == 0) {
+							snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
+							remove(dlplayPath);
+							fcopy(srcPath, dlplayPath);	// Copy from NAND
+							dlplayFound = true;
+							break;
+						}
 					}
 				}
-
-				snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
-				fcopy(srcPath, dlplayPath);	// Copy from NAND
-				dlplayFound = true;
 			}
 		}
 		if (!dlplayFound && consoleModel >= 2) {
