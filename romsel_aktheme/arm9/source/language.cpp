@@ -29,8 +29,6 @@
 #include "common/dsimenusettings.h"
 #include "common/inifile.h"
 
-extern bool useTwlCfg;
-
 const char* languageIniPath;
 
 int setTitleLanguage = 0;
@@ -39,7 +37,7 @@ void langInit(void)
 {
 	printf("langInit\n");
 	if (ms().titleLanguage == -1) {
-		setTitleLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+		setTitleLanguage = PersonalData->language;
 	} else {
 		setTitleLanguage = ms().titleLanguage;
 	}
