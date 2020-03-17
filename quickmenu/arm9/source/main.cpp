@@ -180,7 +180,7 @@ bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
 
-int guiLanguage = -1;
+//int guiLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
@@ -200,7 +200,7 @@ void LoadSettings(void) {
 	// Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
-	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
+	//guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;
@@ -970,7 +970,7 @@ int main(int argc, char **argv) {
 
 		snprintf(pictochatPath, sizeof(pictochatPath), "/_nds/pictochat.nds");
 		pictochatFound = (access(pictochatPath, F_OK) == 0);
-		if (!pictochatFound) {
+		if (!pictochatFound && consoleModel == 0) {
 			for (int i = 0; i < 3; i++)
 			{
 				snprintf(pictochatPath, sizeof(pictochatPath), "/title/00030005/484e45%x/content/00000000.app", regions[i]);
@@ -981,7 +981,7 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-		if (!pictochatFound && isDSiMode() && sdFound() && consoleModel < 2) {
+		if (!pictochatFound && isDSiMode() && sdFound() && consoleModel == 0) {
 			if (!nandInited) {
 				fatMountSimple("nand", &io_dsi_nand);
 				nandInited = true;
@@ -1004,7 +1004,7 @@ int main(int argc, char **argv) {
 
 		snprintf(dlplayPath, sizeof(dlplayPath), "/_nds/dlplay.nds");
 		dlplayFound = (access(dlplayPath, F_OK) == 0);
-		if (!dlplayFound) {
+		if (!dlplayFound && consoleModel == 0) {
 			for (int i = 0; i < 3; i++)
 			{
 				snprintf(dlplayPath, sizeof(dlplayPath), "/title/00030005/484e44%x/content/00000000.app", regions[i]);
@@ -1020,7 +1020,7 @@ int main(int argc, char **argv) {
 				}
 			}
 		}
-		if (!dlplayFound && isDSiMode() && sdFound() && consoleModel < 2) {
+		if (!dlplayFound && isDSiMode() && sdFound() && consoleModel == 0) {
 			if (!nandInited) {
 				fatMountSimple("nand", &io_dsi_nand);
 				nandInited = true;
