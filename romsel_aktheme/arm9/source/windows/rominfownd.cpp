@@ -254,7 +254,7 @@ void RomInfoWnd::pressGameSettings(void)
 		}
 
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			if ((_romInfo.saveInfo().arm9destination < 0x02004000
+			if ((_romInfo.saveInfo().arm9destination != 0x02004000
 			&& _romInfo.saveInfo().gameSdkVersion >= 0x2008000 && _romInfo.saveInfo().gameSdkVersion < 0x5000000)
 			|| !isDSiMode()) {
 				_values.push_back(LANG("game settings", "Auto")); // -1 => 0
