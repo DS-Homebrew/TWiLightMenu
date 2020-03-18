@@ -25,7 +25,7 @@
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic: XY XX
 		"A26",	// Feel the Magic: XY XX (Demo)
-		"CYY",	// Giana Sisters DS (EUR)
+		//"CYY",	// Giana Sisters DS (EUR)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
@@ -34,11 +34,11 @@
 		"YLU",	// Last Window: The Secret of Cape West
 		"ANI",	// Luminous Arc
 		"AVC",	// Magical Starsign
-		"ARM",	// Mario & Luigi: Partners in Time
-		"CLJ",	// Mario & Luigi: Bowser's Inside Story
+		//"ARM",	// Mario & Luigi: Partners in Time
+		//"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
-		"AMH",	// Metroid Prime Hunters
+		//"AMH",	// Metroid Prime Hunters
 		"YNP",	// Need for Speed: ProStreet
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
