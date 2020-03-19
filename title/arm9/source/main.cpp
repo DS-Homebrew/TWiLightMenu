@@ -1,24 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <cstdio>
@@ -43,6 +22,7 @@
 #include "common/cardlaunch.h"
 #include "common/flashcard.h"
 #include "common/fileCopy.h"
+#include "nandio.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
 #include "twlmenuppvideo.h"
@@ -676,22 +656,23 @@ int main(int argc, char **argv)
 		bool isDevConsole = (*(vu32*)(0x0DFFFE0C) == 0x53524C41);
 		if (isDevConsole)
 		{
-			if (ms().consoleModel < 1 || ms().consoleModel > 2
-			|| bs().consoleModel < 1 || bs().consoleModel > 2)
+			// Check for Nintendo 3DS console
+			if (sdFound())
 			{
-				if (access("sd:/", F_OK) == 0)		// If SD card is found
+				bool is3DS = !nandio_startup();
+				int resultModel = 1+is3DS;
+				if (ms().consoleModel != resultModel || bs().consoleModel != resultModel)
 				{
-					bool is3ds = (access("sd:/Nintendo 3DS", F_OK) == 0);		// Console is Nintendo 3DS/2DS,
-																				// or else, console is Nintendo DSi (Panda/Dev unit)
-					ms().consoleModel = 1+is3ds;
-					bs().consoleModel = 1+is3ds;
+					ms().consoleModel = resultModel;
+					bs().consoleModel = resultModel;
 					ms().saveSettings();
 					bs().saveSettings();
 				}
-				else
-				{
-					consoleModelSelect();			// There's no SD card
-				}
+			}
+			else if (ms().consoleModel < 1 || ms().consoleModel > 2
+				  || bs().consoleModel < 1 || bs().consoleModel > 2)
+			{
+				consoleModelSelect();			// There's no SD card
 			}
 		}
 		else
