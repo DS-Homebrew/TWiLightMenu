@@ -232,7 +232,7 @@ void lastRunROM()
 	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch)
 	{
 		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
-		if ((ms().useBootstrap && !ms().homebrewBootstrap) || !ms().previousUsedDevice)
+		if (ms().useBootstrap || !ms().secondaryDevice)
 		{
 			std::string savepath;
 
@@ -348,19 +348,20 @@ void lastRunROM()
 					}
 				}
 			}
-			CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
-			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().secondaryDevice]);
-			bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
-				(perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language));
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
-				(perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
-				(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
-				(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
-			bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
-
+			if (ms().secondaryDevice || !ms().homebrewBootstrap) {
+				CIniFile bootstrapini( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().secondaryDevice]);
+				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
+					(perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
+					(perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",
+					(perGameSettings_boostCpu == -1 ? ms().boostCpu : perGameSettings_boostCpu));
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM",
+					(perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram));
+				bootstrapini.SaveIniFile( sdFound() ? BOOTSTRAP_INI_SD : BOOTSTRAP_INI_FC );
+			}
 			err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
 		}
 		else
