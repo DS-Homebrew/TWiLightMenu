@@ -43,6 +43,7 @@
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
 		"CUP",	// Peppa Pig: The Game
+		"A8N",	// Planet Puzzle League
 		"YFY",	// Pokemon Mystery Dungeon: Explorers of Darkness
 		"YFT",	// Pokemon Mystery Dungeon: Explorers of Time
 		"Y4R",	// Pokemon Mystery Dungeon: Explorers of Time + Explorers of Darkness (Demo)
