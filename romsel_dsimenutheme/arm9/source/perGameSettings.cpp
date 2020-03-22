@@ -43,6 +43,7 @@
 #include "graphics/FontGraphic.h"
 #include "graphics/TextPane.h"
 #include "graphics/ThemeTextures.h"
+#include "language.h"
 #include "sound.h"
 #include "SwitchState.h"
 #include "cheat.h"
@@ -387,11 +388,11 @@ void perGameSettings (std::string filename) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, 24, perGameOpYpos, "Language:");
+				printSmall(false, 24, perGameOpYpos, (STR_LANGUAGE+":").c_str());
 				if (perGameSettings_language == -2) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_language == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "System");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_SYSTEM.c_str());
 				} else if (perGameSettings_language == 0) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Japanese");
 				} else if (perGameSettings_language == 1) {
@@ -412,22 +413,22 @@ void perGameSettings (std::string filename) {
 				break;
 			case 1:
 				if (isHomebrew[CURPOS]) {
-					printSmall(false, 24, perGameOpYpos, "RAM disk:");
+					printSmall(false, 24, perGameOpYpos, (STR_RAM_DISK+":").c_str());
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
 				} else {
-					printSmall(false, 24, perGameOpYpos, "Save number:");
+					printSmall(false, 24, perGameOpYpos, (STR_SAVE_NO+":").c_str());
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "None");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_NONE.c_str());
 				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, saveNoDisplay);
 				}
 				break;
 			case 2:
-				printSmall(false, 24, perGameOpYpos, "Run in:");
+				printSmall(false, 24, perGameOpYpos, (STR_RUN_IN+":").c_str());
 				if (perGameSettings_dsiMode == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_dsiMode == 2) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "DSi mode (Forced)");
 				} else if (perGameSettings_dsiMode == 1) {
@@ -437,12 +438,12 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 3:
-				printSmall(false, 24, perGameOpYpos, "ARM9 CPU Speed:");
+				printSmall(false, 24, perGameOpYpos, (STR_ARM9_CPU_SPEED+":").c_str());
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
 					if (perGameSettings_boostCpu == -1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 					} else if (perGameSettings_boostCpu == 1) {
 						printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 					} else {
@@ -451,51 +452,51 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 4:
-				printSmall(false, 24, perGameOpYpos, "VRAM boost:");
+				printSmall(false, 24, perGameOpYpos, (STR_VRAM_BOOST+":").c_str());
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
 				} else {
 					if (perGameSettings_boostVram == -1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 					} else if (perGameSettings_boostVram == 1) {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
 					} else {
-						printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+						printSmallRightAlign(false, 256-24, perGameOpYpos, STR_OFF.c_str());
 					}
 				}
 				break;
 			case 5:
-				printSmall(false, 24, perGameOpYpos, "Heap shrink:");
+				printSmall(false, 24, perGameOpYpos, (STR_HEAP_SHRINK+":").c_str());
 				if (perGameSettings_heapShrink == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_AUTO.c_str());
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_OFF.c_str());
 				}
 				break;
 			case 6:
-				printSmall(false, 24, perGameOpYpos, "Direct boot:");
+				printSmall(false, 24, perGameOpYpos, (STR_DIRECT_BOOT+":").c_str());
 				if (perGameSettings_directBoot) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_YES.c_str());
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "No");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_NO.c_str());
 				}
 				break;
 			case 7:
 				printSmall(false, 24, perGameOpYpos, "Bootstrap:");
 				if (perGameSettings_bootstrapFile == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_bootstrapFile == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Nightly");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_NIGHTLY.c_str());
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Release");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_RELEASE.c_str());
 				}
 				break;
 			case 8:
-				printSmall(false, 24, perGameOpYpos, "Screen Aspect Ratio:");
+				printSmall(false, 24, perGameOpYpos, (STR_SCREEN_ASPECT_RATIO+":").c_str());
 				if (perGameSettings_wideScreen == -1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Default");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_wideScreen == 1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "16:10");
 				} else {

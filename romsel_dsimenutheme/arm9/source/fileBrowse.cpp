@@ -36,6 +36,7 @@
 #include "common/flashcard.h"
 #include "common/inifile.h"
 #include "common/systemdetails.h"
+#include "language.h"
 
 #include "fileCopy.h"
 #include "sound.h"
@@ -431,16 +432,16 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		printSmallCentered(false, 20, "If this takes a while, turn off");
-		printSmallCentered(false, 34, "the POWER, and try again.");
+		printSmallCentered(false, 20, STR_TAKEWHILE_TURNOFF_1.c_str());
+		printSmallCentered(false, 34, STR_TAKEWHILE_TURNOFF_2.c_str());
 	} else if (ms().consoleModel >= 2) {
-		printSmallCentered(false, 20, "If this takes a while, press HOME,");
-		printSmallCentered(false, 34, "then press B.");
+		printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME_1.c_str());
+		printSmallCentered(false, 34, STR_TAKEWHILE_PRESSHOME_2.c_str());
 	} else {
-		printSmallCentered(false, 20, "If this takes a while, close and open");
-		printSmallCentered(false, 34, "the console's lid.");
+		printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
+		printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
 	}
-	printLargeCentered(false, 88, "Now Loading...");
+	printLargeCentered(false, 88, STR_NOW_LOADING.c_str());
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
@@ -1087,9 +1088,9 @@ void dsiBinariesMissingMsg(const char *filename) {
 	int yPos1 = (ms().theme == 4 ? 8 : 96);
 	int yPos2 = (ms().theme == 4 ? 24 : 112);
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, "The DSi binaries are missing.");
-	printSmallCentered(false, yPos2, "Please get a clean dump of");
-	printSmallCentered(false, yPos3, "this ROM, or start in DS mode.");
+	printSmallCentered(false, yPos1, STR_DSIBINARIES_MISSING_1.c_str());
+	printSmallCentered(false, yPos2, STR_DSIBINARIES_MISSING_2.c_str());
+	printSmallCentered(false, yPos3, STR_DSIBINARIES_MISSING_3.c_str());
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -2492,7 +2493,7 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 
 						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, (ms().theme == 4 ? 72 : 88), "Now Saving...");
+							printLargeCentered(false, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING.c_str());
 							if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white

@@ -774,10 +774,10 @@ int main(int argc, char **argv) {
 	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
-		printSmallCentered(false, 20, "If this takes a while, close and open");
-		printSmallCentered(false, 34, "the console's lid.");
-		printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Now copying data...");
-		printSmallCentered(false, (ms().theme == 4 ? 96 : 104), "Do not turn off the power.");
+		printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
+		printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
+		printLargeCentered(false, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA.c_str());
+		printSmallCentered(false, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER.c_str());
 		for (int i = 0; i < 15; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -1069,10 +1069,10 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice) {
 					clearText();
-					printSmallCentered(false, 20, "If this takes a while, close and open");
-					printSmallCentered(false, 34, "the console's lid.");
-					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Now copying data...");
-					printSmallCentered(false, (ms().theme == 4 ? 96 : 104), "Do not turn off the power.");
+					printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
+					printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
+					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA.c_str());
+					printSmallCentered(false, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER.c_str());
 					if (ms().theme != 4) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {

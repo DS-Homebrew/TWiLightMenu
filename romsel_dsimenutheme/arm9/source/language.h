@@ -6,6 +6,10 @@ extern int setLanguage;
 extern int setGameLanguage;
 extern int setTitleLanguage;
 
+#define STRING(what,def) extern std::string STR_##what;
+#include "language.inl"
+#undef STRING
+
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.
