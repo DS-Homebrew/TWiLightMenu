@@ -580,17 +580,19 @@ int main(int argc, char **argv)
 		}
 	}
 
-	gamesPage
-		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
-				Option::Bool(&ms().bootstrapFile),
-				{STR_NIGHTLY, STR_RELEASE},
-				{true, false});
-
 	if (isDSiMode()) {
+		gamesPage.option(STR_EXPANDROMSPACE, ms().consoleModel==0 ? STR_DESCRIPTION_EXPANDROMSPACE_DSI : STR_DESCRIPTION_EXPANDROMSPACE_3DS, Option::Bool(&bs().extendedMemory), {STR_YES, STR_NO}, {true, false});
+		if (sdAccessible) {
+			gamesPage.option(STR_CACHEBLOCKSIZE, STR_DESCRIPTION_CACHEBLOCKSIZE, Option::Bool(&bs().cacheBlockSize), {"16KB", "32KB"}, {false, true});
+		}
 		gamesPage.option(STR_SAVEFATTABLECACHE, STR_DESCRIPTION_SAVEFATTABLECACHE, Option::Bool(&bs().cacheFatTable), {STR_YES, STR_NO}, {true, false});
 	}
 
 	gamesPage
+		.option(STR_BOOTSTRAP, STR_DESCRIPTION_BOOTSTRAP_1,
+				Option::Bool(&ms().bootstrapFile),
+				{STR_NIGHTLY, STR_RELEASE},
+				{true, false})
 		.option(STR_DEBUG, STR_DESCRIPTION_DEBUG_1, Option::Bool(&bs().debug), {STR_ON, STR_OFF}, {true, false})
 		.option(STR_LOGGING, STR_DESCRIPTION_LOGGING_1, Option::Bool(&bs().logging), {STR_ON, STR_OFF}, {true, false});
 
