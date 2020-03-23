@@ -87,6 +87,16 @@ int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 
+static char LANGUAGE[32];
+static char RAM_DISK[32];
+static char SAVE_NO[32];
+static char RUN_IN[32];
+static char ARM9_CPU_SPEED[32];
+static char VRAM_BOOST[32];
+static char HEAP_SHRINK[32];
+static char DIRECT_BOOT[32];
+static char SCREEN_ASPECT_RATIO[32];
+
 extern int file_count;
 
 char pergamefilepath[256];
@@ -353,6 +363,15 @@ void perGameSettings (std::string filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 
+	sprintf(LANGUAGE, "%s:", STR_LANGUAGE.c_str());
+	sprintf(RAM_DISK, "%s:", STR_RAM_DISK.c_str());
+	sprintf(SAVE_NO, "%s:", STR_SAVE_NO.c_str());
+	sprintf(RUN_IN, "%s:", STR_RUN_IN.c_str());
+	sprintf(ARM9_CPU_SPEED, "%s:", STR_ARM9_CPU_SPEED.c_str());
+	sprintf(VRAM_BOOST, "%s:", STR_VRAM_BOOST.c_str());
+	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
+	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
+
 	// About 38 characters fit in the box.
 	dirContName = filename;
 	if (strlen(dirContName.c_str()) > 35) {
@@ -388,7 +407,7 @@ void perGameSettings (std::string filename) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, 24, perGameOpYpos, (STR_LANGUAGE+":").c_str());
+				printSmall(false, 24, perGameOpYpos, LANGUAGE);
 				if (perGameSettings_language == -2) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_language == -1) {
@@ -413,10 +432,10 @@ void perGameSettings (std::string filename) {
 				break;
 			case 1:
 				if (isHomebrew[CURPOS]) {
-					printSmall(false, 24, perGameOpYpos, (STR_RAM_DISK+":").c_str());
+					printSmall(false, 24, perGameOpYpos, RAM_DISK);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
 				} else {
-					printSmall(false, 24, perGameOpYpos, (STR_SAVE_NO+":").c_str());
+					printSmall(false, 24, perGameOpYpos, SAVE_NO);
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
@@ -426,7 +445,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 2:
-				printSmall(false, 24, perGameOpYpos, (STR_RUN_IN+":").c_str());
+				printSmall(false, 24, perGameOpYpos, RUN_IN);
 				if (perGameSettings_dsiMode == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_dsiMode == 2) {
@@ -438,7 +457,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 3:
-				printSmall(false, 24, perGameOpYpos, (STR_ARM9_CPU_SPEED+":").c_str());
+				printSmall(false, 24, perGameOpYpos, ARM9_CPU_SPEED);
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "133mhz (TWL)");
 				} else {
@@ -452,7 +471,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 4:
-				printSmall(false, 24, perGameOpYpos, (STR_VRAM_BOOST+":").c_str());
+				printSmall(false, 24, perGameOpYpos, VRAM_BOOST);
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
 				} else {
@@ -466,7 +485,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 5:
-				printSmall(false, 24, perGameOpYpos, (STR_HEAP_SHRINK+":").c_str());
+				printSmall(false, 24, perGameOpYpos, HEAP_SHRINK);
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_AUTO.c_str());
 				} else if (perGameSettings_heapShrink == 1) {
@@ -476,7 +495,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 6:
-				printSmall(false, 24, perGameOpYpos, (STR_DIRECT_BOOT+":").c_str());
+				printSmall(false, 24, perGameOpYpos, DIRECT_BOOT);
 				if (perGameSettings_directBoot) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_YES.c_str());
 				} else {
@@ -494,7 +513,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 8:
-				printSmall(false, 24, perGameOpYpos, (STR_SCREEN_ASPECT_RATIO+":").c_str());
+				printSmall(false, 24, perGameOpYpos, SCREEN_ASPECT_RATIO);
 				if (perGameSettings_wideScreen == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_DEFAULT.c_str());
 				} else if (perGameSettings_wideScreen == 1) {
@@ -602,8 +621,8 @@ void perGameSettings (std::string filename) {
 						if (perGameSettings_bootstrapFile < -1) perGameSettings_bootstrapFile = 1;
 						break;
 					case 8:
-						perGameSettings_wideScreen++;
-						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						perGameSettings_wideScreen--;
+						if (perGameSettings_wideScreen < -1) perGameSettings_wideScreen = 1;
 						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
