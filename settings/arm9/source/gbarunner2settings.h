@@ -23,6 +23,7 @@ class GBAR2Settings
   public:
     bool useBottomScreen;
 	bool centerMask;
+	bool gbaColors;
     bool mainMemICache;
     bool wramICache;
 	bool skipIntro;
