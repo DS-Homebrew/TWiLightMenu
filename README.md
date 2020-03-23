@@ -30,7 +30,7 @@ Please note that Docker compilation is not compatible with native compilation on
 ## Main Developers
 - [RocketRobz](https://github.com/RocketRobz): Lead Developer, implementing the auto-reset power button function used in NTR-mode.
 - [chyyran](https://github.com/chyyran): Porting the akMenu/Wood UI to TWiLight Menu++ & adding the ability to load sub-themes off the SD card for DSi/3DS themes.
-- [Epicpkmn11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme.
+- [Pk11](https://github.com/Epicpkmn11): Adding the ability to load sub-themes off the SD card for the R4 theme, implemented sorting & made manuals use PNG
 ## App Launchers
 - [ahezard](https://github.com/ahezard) & [shutterbug2000](https://github.com/shutterbug2000): [nds-bootstrap](https://github.com/ahezard/nds-bootstrap) (used to launch Nintendo DS ROMs off the SD card), and NDMA SD read code.
 - [Drenn](https://github.com/Drenn1): [GameYob](https://github.com/Drenn1/GameYob) (used to launch Gameboy ROMs)
@@ -45,5 +45,7 @@ Please note that Docker compilation is not compatible with native compilation on
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
-- Another World and Yellow Wood Goblin: The original akMenu/Wood UI.
-- [NightYoshi370](https://github.com/NightYoshi370): Code cleanup
+- Another World & Yellow Wood Goblin: The original akMenu/Wood UI.
+- [NightScript](https://github.com/NightYoshi370): Code cleanup, added functionality for Acekard theme in regards to flashcarts.
+- retrogamefan & Rudolph: Included AP-patches for nds-bootstrap.
+- fintogive, RadDude McCoolguy, KazoWAR, Vague Rant, gamemasterplc, RocketRobz & ChampionLeake: Widescreen Cheats
