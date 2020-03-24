@@ -49,7 +49,7 @@
 		"Y4R",	// Pokemon Mystery Dungeon: Explorers of Time + Explorers of Darkness (Demo)
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-		"B3R",	// Pokemon Ranger: Guardian Signs
+		//"B3R",	// Pokemon Ranger: Guardian Signs
 		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
