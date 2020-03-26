@@ -595,8 +595,8 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
-	remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+	//remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
+	//remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
 	if (isDSiMode()) {
@@ -689,7 +689,16 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ms().dsiSplash || ms().showlogo) {
+	bool softResetParamsFound = false;
+	u32 softResetParams = 0;
+	FILE* file = fopen("sd:/_nds/nds-bootstrap/softResetParams.bin", "rb");
+	if (file) {
+		fread(&softResetParams, sizeof(u32), 1, file);
+		softResetParamsFound = (softResetParams != 0xFFFFFFFF);
+	}
+	fclose(file);
+
+	if (!softResetParamsFound && (ms().dsiSplash || ms().showlogo)) {
 		// Get date
 		int birthMonth = (useTwlCfg ? *(u8*)0x02000446 : PersonalData->birthMonth);
 		int birthDay = (useTwlCfg ? *(u8*)0x02000447 : PersonalData->birthDay);
@@ -719,7 +728,7 @@ int main(int argc, char **argv)
 		fclose(soundBank);
 	}
 
-	if (ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
+	if (!softResetParamsFound && ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
 		BootSplashInit();
 		if (isDSiMode()) {
 			fifoSendValue32(FIFO_USER_01, 10);
@@ -738,10 +747,12 @@ int main(int argc, char **argv)
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
 	}
-
+	
 	scanKeys();
 
-	if ((ms().autorun && !(keysHeld() & KEY_B)) || (!ms().autorun && (keysHeld() & KEY_B)))
+	if (softResetParamsFound
+	 || (ms().autorun && !(keysHeld() & KEY_B))
+	 || (!ms().autorun && (keysHeld() & KEY_B)))
 	{
 		flashcardInit();
 		lastRunROM();
