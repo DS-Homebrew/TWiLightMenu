@@ -689,6 +689,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	bool soundBankLoaded = false;
+
 	bool softResetParamsFound = false;
 	u32 softResetParams = 0;
 	FILE* file = fopen("sd:/_nds/nds-bootstrap/softResetParams.bin", "rb");
@@ -726,6 +728,7 @@ int main(int argc, char **argv)
 		FILE* soundBank = fopen(soundBankPath, "rb");
 		fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
 		fclose(soundBank);
+		soundBankLoaded = true;
 	}
 
 	if (!softResetParamsFound && ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
@@ -763,6 +766,14 @@ int main(int argc, char **argv)
 
 	if (ms().autorun || ms().showlogo)
 	{
+		if (!soundBankLoaded) {
+			// Load sound bank into memory
+			FILE* soundBank = fopen("nitro:/soundbank.bin", "rb");
+			fread((void*)(isDSiMode() ? 0x02FA0000 : 0x023A0000), 1, 0x58000, soundBank);
+			fclose(soundBank);
+			soundBankLoaded = true;
+		}
+
 		loadTitleGraphics();
 		fadeType = true;
 		for (int i = 0; i < 25; i++)
