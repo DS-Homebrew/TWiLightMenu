@@ -130,6 +130,7 @@ class DSiMenuPlusPlusSettings
 	int titleLanguage;
     int colorMode;
     int blfLevel;
+    int dsiWareExploit;
     bool wifiLed;
     bool sdRemoveDetect;
     bool showMicroSd;

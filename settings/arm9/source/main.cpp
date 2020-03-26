@@ -44,6 +44,7 @@
 #include "common/dsimenusettings.h"
 #include "common/cardlaunch.h"
 #include "common/flashcard.h"
+#include "common/tonccpy.h"
 #include "settingspage.h"
 #include "settingsgui.h"
 #include "language.h"
@@ -65,6 +66,8 @@
 bool useTwlCfg = false;
 
 static int currentTheme = 0;
+static int previousDSiWareExploit = 0;
+static int previousSysRegion = 0;
 
 std::vector<std::string> akThemeList;
 std::vector<std::string> r4ThemeList;
@@ -306,6 +309,71 @@ void defaultExitHandler()
 		applyTwlFirmSettings();
 		rebootTWLMenuPP();
 	}*/
+
+	if (previousDSiWareExploit != ms().dsiWareExploit
+	 || previousSysRegion != ms().sysRegion)
+	{
+		u32 currentSrBackendId[2] = {0};
+		u8 sysValue = 0;
+
+		switch (ms().dsiWareExploit) {
+			case 1:
+			default:
+				currentSrBackendId[0] = 0x4B344441;		// SUDOKU
+				break;
+			case 2:
+				currentSrBackendId[0] = 0x4B513941;		// Legend of Zelda: Four Swords
+				break;
+			case 3:
+				currentSrBackendId[0] = 0x4B464441;		// Fieldrunners
+				break;
+			case 4:
+				currentSrBackendId[0] = 0x4B475241;		// Guitar Rock Tour
+				break;
+			case 5:
+				currentSrBackendId[0] = 0x4B475541;		// Flipnote Studio
+				break;
+			case 6:
+				currentSrBackendId[0] = 0x4B554E41;		// UNO
+				break;
+			case 7:
+				currentSrBackendId[0] = 0x484E4941;		// Nintendo DSi Camera
+				break;
+		}
+		switch (ms().sysRegion) {
+			case 0:
+				sysValue = 0x4A;		// JPN
+				break;
+			case 1:
+				sysValue = 0x45;		// USA
+				break;
+			case 2:
+				sysValue = (ms().dsiWareExploit==5 ? 0x56 : 0x50);		// EUR
+				break;
+			case 3:
+				sysValue = 0x56;		// AUS
+				break;
+			case 4:
+				sysValue = 0x43;		// CHN
+				break;
+			case 5:
+				sysValue = 0x4B;		// KOR
+				break;
+		}
+		tonccpy(&currentSrBackendId, &sysValue, 1);
+		currentSrBackendId[1] = (ms().dsiWareExploit==7 ? 0x00030005 : 0x00030004);
+
+		if (ms().dsiWareExploit > 0) {
+			FILE* file = fopen("sd:/_nds/nds-bootstrap/srBackendId.bin", "wb");
+			if (file) {
+				fwrite(&currentSrBackendId, sizeof(u32), 2, file);
+			}
+			fclose(file);
+		} else {
+			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+		}
+	}
+
 	flashcardInit();
 	if (ms().showMainMenu)
 	{
@@ -437,6 +505,8 @@ int main(int argc, char **argv)
 	}
 
 	currentTheme = ms().theme;
+	previousDSiWareExploit = ms().dsiWareExploit;
+	previousSysRegion = ms().sysRegion;
 
 	int pressed = 0;
 //#pragma endregion
@@ -693,13 +763,21 @@ int main(int argc, char **argv)
 		.option(STR_HSMSG, STR_DESCRIPTION_HSMSG, Option::Bool(&ms().hsMsg), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_DSIMENUPPLOGO, STR_DESCRIPTION_DSIMENUPPLOGO_1, Option::Bool(&ms().showlogo), {STR_SHOW, STR_HIDE}, {true, false});
 
-	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+	if (isDSiMode() && sdAccessible) {
 		miscPage
+			.option("DSiWare Exploit",
+				"The exploited DSiWare app/game you're using for TWiLight Menu++ and nds-bootstrap. Set to \"None\" if not using one.",
+				Option::Int(&ms().dsiWareExploit),
+				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
+				{0, 1, 2, 3, 4, 5, 6, 7})
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
 				Option::Int(&ms().sysRegion),
-				{"Auto", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
-				{-1, 0, 1, 2, 3, 4, 5})
+				{"Auto (hiyaCFW only)", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
+				{-1, 0, 1, 2, 3, 4, 5});
+	}
+	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
+		miscPage
 			.option(STR_LAUNCHERAPP,
 				STR_DESCRIPTION_LAUNCHERAPP,
 				Option::Int(&ms().launcherApp),

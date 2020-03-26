@@ -118,6 +118,7 @@ class DSiMenuPlusPlusSettings
     int guiLanguage;
     int colorMode;
     int blfLevel;
+    int dsiWareExploit;
     int wifiLed;
     bool useGbarunner;
     bool showMainMenu;

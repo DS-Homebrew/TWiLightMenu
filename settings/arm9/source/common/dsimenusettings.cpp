@@ -17,6 +17,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	titleLanguage = -1;
     colorMode = 0;
     blfLevel = 0;
+    dsiWareExploit = 0;
     wifiLed = true;
     sdRemoveDetect = true;
     showMicroSd = false;
@@ -115,6 +116,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     // Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	wifiLed = settingsini.GetInt("SRLOADER", "WIFI_LED", wifiLed);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
@@ -208,6 +210,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     // Customizable UI settings.
 	settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
+	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
 	settingsini.SetInt("SRLOADER", "WIFI_LED", wifiLed);
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
 	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);

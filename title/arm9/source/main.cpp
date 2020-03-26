@@ -645,6 +645,10 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (ms().dsiWareExploit == 0) {
+		remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+	}
+
 	runGraphicIrq();
 
 	swiWaitForVBlank();
