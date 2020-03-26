@@ -348,10 +348,10 @@ void defaultExitHandler()
 				sysValue = 0x45;		// USA
 				break;
 			case 2:
-				sysValue = (ms().dsiWareExploit==5 ? 0x56 : 0x50);		// EUR
+				sysValue = (ms().dsiWareExploit==7 ? 0x50 : 0x56);		// EUR
 				break;
 			case 3:
-				sysValue = 0x56;		// AUS
+				sysValue = (ms().dsiWareExploit==7 ? 0x55 : 0x56);		// AUS
 				break;
 			case 4:
 				sysValue = 0x43;		// CHN
