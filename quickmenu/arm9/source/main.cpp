@@ -1,24 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <maxmod9.h>
@@ -2352,6 +2331,7 @@ int main(int argc, char **argv) {
 			} else {
 				bool useNDSB = false;
 				bool dsModeSwitch = false;
+				bool boostVram = false;
 
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -2379,6 +2359,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/RocketVideoPlayer.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".mp4")) {
 					launchType[secondaryDevice] = 8;
@@ -2386,6 +2367,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/apps/MPEG4Player.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gba")) {
 					launchType[secondaryDevice] = 1;
@@ -2401,7 +2383,7 @@ int main(int argc, char **argv) {
 								ndsToBoot = consoleModel>0 ? "/_nds/GBARunner2_arm7dldi_3ds.nds" : "/_nds/GBARunner2_arm7dldi_dsi.nds";
 							}
 						}
-						dsModeSwitch = true;
+						boostVram = false;
 					} else {
 						useNDSB = true;
 
@@ -2424,6 +2406,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/gameyob.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/gameyob.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".nes") || extention(filename[secondaryDevice], ".fds")) {
 					launchType[secondaryDevice] = 4;
@@ -2431,6 +2414,7 @@ int main(int argc, char **argv) {
 					ndsToBoot = (secondaryDevice ? "sd:/_nds/TWiLightMenu/emulators/nesds.nds" : "sd:/_nds/TWiLightMenu/emulators/nestwl.nds");
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".sms") || extention(filename[secondaryDevice], ".gg")) {
 					mkdir(secondaryDevice ? "fat:/data" : "sd:/data", 0777);
@@ -2459,6 +2443,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+							boostVram = true;
 						}
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
@@ -2468,6 +2453,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+							boostVram = true;
 						}
 						dsModeSwitch = true;
 					} else {
@@ -2493,6 +2479,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
+							boostVram = true;
 						}
 						dsModeSwitch = true;
 					} else {
@@ -2518,7 +2505,7 @@ int main(int argc, char **argv) {
 				int err = 0;
 
 				argarray.at(0) = (char *)ndsToBoot;
-				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, true);	// Pass ROM to emulator as argument
+				err = runNdsFile (argarray[0], argarray.size(), (const char **)&argarray[0], !useNDSB, true, dsModeSwitch, true, boostVram);	// Pass ROM to emulator as argument
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
