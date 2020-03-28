@@ -39,6 +39,8 @@ unsigned int * CPUID2=(unsigned int*)0x4004D04;
 
 static int soundVolume = 127;
 
+static int rebootTimer = 0;
+
 //---------------------------------------------------------------------------------
 void soundFadeOut() {
 //---------------------------------------------------------------------------------
@@ -136,6 +138,12 @@ int main() {
 		}
 		if (fifoCheckValue32(FIFO_USER_08)) {
 			ReturntoDSiMenu();
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
+			if (rebootTimer == 60*2) {
+				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+			}
+			rebootTimer++;
 		}
 		resyncClock();
 		swiWaitForVBlank();

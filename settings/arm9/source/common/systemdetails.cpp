@@ -25,10 +25,13 @@ SystemDetails::SystemDetails()
 
 void SystemDetails::initFilesystem(const char *runningPath)
 {
-    if (_fatInitOk)
+    if (_fatInitOk) {
         return;
+	}
 
+	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
     _fatInitOk = fatInitDefault();
+	*(u32*)(0x2FFFD0C) = 0;
     int ntr = nitroFSInit("/_nds/TWiLightMenu/settings.srldr");
     _nitroFsInitOk = (ntr == 1);
 

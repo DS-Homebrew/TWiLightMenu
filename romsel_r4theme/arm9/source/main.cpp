@@ -832,7 +832,9 @@ int main(int argc, char **argv) {
 
 	graphicsInit();
 
+	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 	bool fatInited = fatInitDefault();
+	*(u32*)(0x2FFFD0C) = 0;
 
 	if (!fatInited) {
 		fontInit();

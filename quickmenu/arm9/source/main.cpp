@@ -894,7 +894,9 @@ int main(int argc, char **argv) {
 
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
 
+	*(u32*)(0x2FFFD0C) = 0x54494D52;	// Run reboot timer
 	bool fatInited = fatInitDefault();
+	*(u32*)(0x2FFFD0C) = 0;
 
 	// Read user name
 	/*char *username = (char*)PersonalData->name;

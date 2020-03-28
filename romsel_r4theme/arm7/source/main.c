@@ -32,6 +32,8 @@
 
 unsigned int * SCFG_EXT=(unsigned int*)0x4004008;
 
+static int rebootTimer = 0;
+
 //---------------------------------------------------------------------------------
 void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
@@ -117,6 +119,12 @@ int main() {
 		}
 		if(fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
+			if (rebootTimer == 60*2) {
+				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+			}
+			rebootTimer++;
 		}
 		swiWaitForVBlank();
 	}

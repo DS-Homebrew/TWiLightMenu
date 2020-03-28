@@ -38,6 +38,7 @@
 volatile int timeTilVolumeLevelRefresh = 0;
 volatile int volumeLevel = -1;
 volatile int batteryLevel = 0;
+volatile int rebootTimer = 0;
 static bool isDSLite = false;
 //static bool gotCartHeader = false;
 
@@ -166,6 +167,12 @@ int main() {
 
 		if (fifoCheckValue32(FIFO_USER_02)) {
 			ReturntoDSiMenu();
+		}
+		if (*(u32*)(0x2FFFD0C) == 0x54494D52) {
+			if (rebootTimer == 60*2) {
+				ReturntoDSiMenu();	// Reboot, if fat init code is stuck in a loop
+			}
+			rebootTimer++;
 		}
 		swiWaitForVBlank();
 	}
