@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "crypto.h"
 #include "sector0.h"
+#include "common/tonccpy.h"
+#include "f_xy.h"
 
 //#define SECTOR_SIZE 512
 #define CRYPT_BUF_LEN 64
@@ -24,6 +26,25 @@ void nandio_set_fat_sig_fix(u32 offset) {
 	fat_sig_fix_offset = offset;
 }
 
+void getConsoleID(u8 *consoleID){
+	u8 *fifo=(u8*)0x02300000; //shared mem address that has our computed key3 stuff
+	u8 key[16]; //key3 normalkey - keyslot 3 is used for DSi/twln NAND crypto
+	u8 key_xy[16]; //key3_y ^ key3_x
+	u8 key_x[16];////key3_x - contains a DSi console id (which just happens to be the LFCS on 3ds)
+	u8 key_y[16] = {0x76, 0xDC, 0xB9, 0x0A, 0xD3, 0xC4, 0x4D, 0xBD, 0x1D, 0xDD, 0x2D, 0x20, 0x05, 0x00, 0xA0, 0xE1}; //key3_y NAND constant
+	
+	tonccpy(key, fifo, 16);  //receive the goods from arm7
+
+	F_XY_reverse((uint32_t*)key, (uint32_t*)key_xy); //work backwards from the normalkey to get key_x that has the consoleID
+
+	for(int i=0;i<16;i++){
+		key_x[i] = key_xy[i] ^ key_y[i];             //''
+	}
+
+	tonccpy(&consoleID[0], &key_x[0], 4);             
+	tonccpy(&consoleID[4], &key_x[0xC], 4);
+}
+
 bool nandio_startup() {
 	if (!nand_Startup()) return false;
 
@@ -37,8 +58,17 @@ bool nandio_startup() {
 		while (*(u32*)(0x2FFFD0C) != 0);
 	}
 
+	u8 consoleID[8];
+	u8 consoleIDfixed[8];
+
+	// Get ConsoleID
+	getConsoleID(consoleID);
+	for (int i = 0; i < 8; i++) {
+		consoleIDfixed[i] = consoleID[7-i];
+	}
+
 	// iprintf("sector 0 is %s\n", is3DS ? "3DS" : "DSi");
-	dsi_crypt_init((const u8*)0x2FFFD00, (const u8*)0x2FFD7BC, is3DS);
+	dsi_crypt_init((const u8*)consoleIDfixed, (const u8*)0x2FFD7BC, is3DS);
 	dsi_nand_crypt(sector_buf, sector_buf, 0, SECTOR_SIZE / AES_BLOCK_SIZE);
 	parse_mbr(sector_buf, is3DS, 0);
 
