@@ -226,6 +226,8 @@ void resetMemory_ARM7 (void)
 
 
 u32 ROM_TID;
+u32 ARM9_SRC;
+u8 dsiFlags;
 
 void loadBinary_ARM7 (u32 fileCluster)
 {
@@ -233,8 +235,9 @@ void loadBinary_ARM7 (u32 fileCluster)
 
 	// read NDS header
 	fileRead ((char*)ndsHeader, fileCluster, 0, 0x170);
+	fileRead ((char*)&dsiFlags, fileCluster, 0x1BF, 1);
 	// read ARM9 info from NDS header
-	u32 ARM9_SRC = ndsHeader[0x020>>2];
+	ARM9_SRC = ndsHeader[0x020>>2];
 	char* ARM9_DST = (char*)ndsHeader[0x028>>2];
 	u32 ARM9_LEN = ndsHeader[0x02C>>2];
 	// read ARM7 info from NDS header
@@ -529,12 +532,12 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
-	if (dsMode) {
+	if ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);	// Bootflag = Warmboot/SkipHealthSafety
-		if (REG_SCFG_EXT != 0) {
+		if (dsMode && REG_SCFG_EXT != 0) {
 			REG_SCFG_ROM = 0x703;								// NTR BIOS
 			REG_SCFG_EXT = 0x12A03000;
 		}
