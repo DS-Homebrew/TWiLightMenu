@@ -532,7 +532,7 @@ int main (void) {
 		(*(vu16*)0x02FFFCFA) = 0x1041;	// NoCash: channel ch1+7+13
 	}
 
-	if ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode) {
+	if (dsiMode && ((ARM9_SRC==0x4000 && dsiFlags==0) || dsMode)) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
 		i2cWriteRegister(I2C_PM, I2CREGPM_MMCPWR, 0);		// Press power button for auto-reset
