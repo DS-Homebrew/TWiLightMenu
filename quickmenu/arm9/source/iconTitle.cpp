@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include "common/gl2d.h"
+#include "common/tonccpy.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"
 #include "ndsheaderbanner.h"
@@ -713,9 +714,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			for (int i = 0; i < 128; i++) {
-				cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
-			}
+			tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
 
 			return;
 		}
@@ -731,9 +730,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-					cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
-				}
+				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
 
 				return;
 			}
@@ -763,9 +760,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 					fclose(bannerFile);
 
-					for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-						cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
-					}
+					tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
 
 					return;
 				}
@@ -779,9 +774,17 @@ void getGameInfo(int num, bool isDir, const char* name)
 
 		DC_FlushAll();
 
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-			cachedTitle[num][i] = ndsBanner.titles[setGameLanguage][i];
+		int currentLang = 0;
+		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
+			currentLang = setGameLanguage;
+		} else {
+			currentLang = PersonalData->language;
 		}
+		while (ndsBanner.titles[currentLang][0] == 0) {
+			if (currentLang == 0) break;
+			currentLang--;
+		}
+		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE);
 		infoFound[num] = true;
 
 		// banner sequence

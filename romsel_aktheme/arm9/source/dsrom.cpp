@@ -234,6 +234,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         fseek(f, header.bannerOffset, SEEK_SET);
         sNDSBannerExt banner;
         int bannerSize;
+		int currentLang = 0;
 
         // Rely on short-circuiting to get a clean if statement.
 
@@ -256,15 +257,20 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				_banner.crc = ((tNDSBanner*)&banner)->crc;
 				tonccpy(_banner.icon, &banner.icon, sizeof(_banner.icon));
 				tonccpy(_banner.palette,&banner.palette, sizeof(_banner.palette));
-				if (banner.version == NDS_BANNER_VER_ZH || banner.version == NDS_BANNER_VER_ZH_KO || banner.version == NDS_BANNER_VER_DSi) {
-					if (banner.titles[ms().getGuiLanguage()][0] == 0) {
-						tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
-					} else {
-						tonccpy(_banner.title, &banner.titles[ms().getGuiLanguage()], sizeof(_banner.title));
-					}
-				} else {
-					tonccpy(_banner.title, &banner.titles[setTitleLanguage], sizeof(_banner.title));
+				if (banner.version == NDS_BANNER_VER_ZH || banner.version == NDS_BANNER_VER_ZH_KO || banner.version == NDS_BANNER_VER_DSi)
+				{
+					currentLang = ms().getGuiLanguage();
 				}
+				else
+				{
+					currentLang = setTitleLanguage;
+				}
+				while (&banner.titles[currentLang][0] == 0)
+				{
+					if (currentLang == 0) break;
+					currentLang--;
+				}
+				tonccpy(_banner.title, &banner.titles[currentLang], sizeof(_banner.title));
         }
         else
         {
@@ -275,14 +281,18 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			 || ((tNDSBanner*)nds_banner_bin)->version == NDS_BANNER_VER_ZH_KO
 			 || ((tNDSBanner*)nds_banner_bin)->version == NDS_BANNER_VER_DSi)
 			{
-				if (((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()][0] == 0) {
-					tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
-				} else {
-					tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[ms().getGuiLanguage()], sizeof(_banner.title));
-				}
-			} else {
-				tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[setTitleLanguage], sizeof(_banner.title));
+				currentLang = ms().getGuiLanguage();
 			}
+			else
+			{
+				currentLang = setTitleLanguage;
+			}
+			while (((tNDSBanner*)nds_banner_bin)->titles[currentLang][0] == 0)
+			{
+				if (currentLang == 0) break;
+				currentLang--;
+			}
+			tonccpy(_banner.title, ((tNDSBanner*)nds_banner_bin)->titles[currentLang], sizeof(_banner.title));
         }
     }
     else

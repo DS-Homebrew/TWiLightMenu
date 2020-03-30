@@ -1131,11 +1131,22 @@ void titleUpdate(bool isDir, const char* name)
 
 		loadFixedBanner();
 
+		int currentLang = 0;
+		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
+			currentLang = setGameLanguage;
+		} else {
+			currentLang = PersonalData->language;
+		}
+		while (ndsBanner.titles[currentLang][0] == 0) {
+			if (currentLang == 0) break;
+			currentLang--;
+		}
+
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
-		char *p = (char*) ndsBanner.titles[setGameLanguage];
+		char *p = (char*) ndsBanner.titles[currentLang];
 		int bannerlines = 0;
-		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[setGameLanguage]); i += 2)
+		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[currentLang]); i += 2)
 		{
 			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
 				p[i / 2] = 0;
