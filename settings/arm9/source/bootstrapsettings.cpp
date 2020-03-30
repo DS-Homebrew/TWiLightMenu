@@ -7,7 +7,7 @@
 
 BootstrapSettings::BootstrapSettings()
 {
-    extendedMemory = false;
+    extendedMemory = 0;
     cacheBlockSize = false;
     cacheFatTable = false;
     debug = false;

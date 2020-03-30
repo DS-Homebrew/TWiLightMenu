@@ -33,7 +33,7 @@ class BootstrapSettings
     void saveSettings();
 
   public:
-    bool extendedMemory;
+    int extendedMemory;
     bool cacheBlockSize;
     bool cacheFatTable;
     bool debug;
