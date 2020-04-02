@@ -370,6 +370,7 @@ void perGameSettings (std::string filename) {
 	sprintf(ARM9_CPU_SPEED, "%s:", STR_ARM9_CPU_SPEED.c_str());
 	sprintf(VRAM_BOOST, "%s:", STR_VRAM_BOOST.c_str());
 	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
+	sprintf(DIRECT_BOOT, "%s:", STR_DIRECT_BOOT.c_str());
 	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
 
 	// About 38 characters fit in the box.
