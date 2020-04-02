@@ -778,7 +778,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 		if (ndsBanner.version == NDS_BANNER_VER_ZH || ndsBanner.version == NDS_BANNER_VER_ZH_KO || ndsBanner.version == NDS_BANNER_VER_DSi) {
 			currentLang = setGameLanguage;
 		} else {
-			currentLang = PersonalData->language;
+			currentLang = setTitleLanguage;
 		}
 		while (ndsBanner.titles[currentLang][0] == 0) {
 			if (currentLang == 0) break;

@@ -4,6 +4,7 @@
 
 extern int setLanguage;
 extern int setGameLanguage;
+extern int setTitleLanguage;
 
 /**
  * Initialize translations.
