@@ -74,6 +74,7 @@ int main() {
 		if (fatInitDefault()) {
 			CIniFile settingsini("/_nds/TWiLightMenu/settings.ini");
 
+			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
 			TWLCLK = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_CPU",0);
 			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
@@ -84,7 +85,7 @@ int main() {
 			//	consoleDemoInit();
 			//}
 
-			if( TWLCLK == false ) {
+			if(!TWLCLK && !TWLMODE) {
 				//if(settingsini.GetInt("TWL-MODE","DEBUG",0) == 1) {
 				//	printf("TWL_CLOCK ON\n");		
 				//}
@@ -103,7 +104,6 @@ int main() {
 			}
 
 			scfgUnlock = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
-			TWLMODE = settingsini.GetInt("NDS-BOOTSTRAP","DSI_MODE",0);
 
 			if(settingsini.GetInt("SRLOADER","RESET_SLOT1",1) == 1) {
 				fifoSendValue32(FIFO_USER_02, 1);
