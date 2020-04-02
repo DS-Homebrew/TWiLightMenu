@@ -99,15 +99,81 @@ void BootSplashDSi(void) {
 		BG_GFX_SUB[i] = whiteCol;
 	}
 
+	cartInserted = (REG_SCFG_MC != 0x11);
+
 	int language = ms().guiLanguage;
 	if (ms().guiLanguage == -1) {
 		language = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 	}
 
+	char currentDate[16];
+	time_t Raw;
+	time(&Raw);
+	const struct tm *Time = localtime(&Raw);
+
+	strftime(currentDate, sizeof(currentDate), "%m/%d", Time);
+
+	bool virtualPain = (strcmp(currentDate, "04/01") == 0);
+
+	if (virtualPain) {
+		videoFrameFile = fopen("nitro:/graphics/VirtualPain.bmp", "rb");
+
+		if (videoFrameFile) {
+			// Start loading
+			fseek(videoFrameFile, 0xe, SEEK_SET);
+			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+			fseek(videoFrameFile, pixelStart, SEEK_SET);
+			fread(bmpImageBuffer, 1, 0x18000, videoFrameFile);
+			u16* src = bmpImageBuffer;
+			int x = 0;
+			int y = 191;
+			for (int i=0; i<256*192; i++) {
+				if (x >= 256) {
+					x = 0;
+					y--;
+				}
+				u16 val = *(src++);
+				BG_GFX[y*256+x] = convertToDsBmp(val);
+				x++;
+			}
+		}
+		fclose(videoFrameFile);
+
+		if (cartInserted) {
+			videoFrameFile = fopen("nitro:/graphics/nintendoPain.bmp", "rb");
+
+			if (videoFrameFile) {
+				// Start loading
+				fseek(videoFrameFile, 0xe, SEEK_SET);
+				u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
+				fseek(videoFrameFile, pixelStart, SEEK_SET);
+				fread(bmpImageBuffer, 1, 0x1D00, videoFrameFile);
+				u16* src = bmpImageBuffer;
+				int x = 67;
+				int y = 159;
+				for (int i=0; i<122*30; i++) {
+					if (x >= 67+122) {
+						x = 67;
+						y--;
+					}
+					u16 val = *(src++);
+					BG_GFX[y*256+x] = convertToDsBmp(val);
+					x++;
+				}
+			}
+			fclose(videoFrameFile);
+		}
+
+		controlTopBright = true;
+		controlBottomBright = true;
+	} else {
+		controlBottomBright = false;
+	}
+
 	if (ms().hsMsg) {
 		// Load H&S image
 		//Get the language for the splash screen
-		sprintf(videoFrameFilename, "nitro:/graphics/hsmsg%i.bmp", language);
+		sprintf(videoFrameFilename, (virtualPain ? "nitro:/graphics/VirtualPain_bot.bmp" : "nitro:/graphics/hsmsg%i.bmp"), language);
 		FILE* file = fopen(videoFrameFilename, "rb");
 
 		if (file) {
@@ -115,7 +181,7 @@ void BootSplashDSi(void) {
 			fseek(file, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(file) + 0xe;
 			fseek(file, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x18000, file);
+			fread(bmpImageBuffer, 1, 0x18000, file);
 			u16* src = bmpImageBuffer;
 			int x = 0;
 			int y = 191;
@@ -135,9 +201,6 @@ void BootSplashDSi(void) {
 
 	bool sixtyFps = true;
 
-	cartInserted = (REG_SCFG_MC != 0x11);
-
-	controlBottomBright = false;
 	fadeType = true;
 
 	if (cartInserted) {
@@ -148,7 +211,7 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x1B00, videoFrameFile);
+			fread(bmpImageBuffer, 1, 0x1B00, videoFrameFile);
 			u16* src = bmpImageBuffer;
 			for (int i=0; i<122*28; i++) {
 				u16 val = *(src++);
@@ -160,6 +223,7 @@ void BootSplashDSi(void) {
 		fclose(videoFrameFile);
 	}
 
+	if (!virtualPain) {
 	if (sixtyFps) {
 		rocketVideo_videoFrames = 108;
 		rocketVideo_videoFps = 60;
@@ -255,18 +319,17 @@ void BootSplashDSi(void) {
 			}
 		}
 	}
+		controlTopBright = false;
+		fadeType = false;
+		screenBrightness = 20;
+		swiWaitForVBlank();
 
-	controlTopBright = false;
-	fadeType = false;
-	screenBrightness = 20;
-	swiWaitForVBlank();
-
-	rocketVideo_videoYpos = 12;
-	rocketVideo_videoYsize = 144;
-	rocketVideo_screen = true;
-	rocketVideo_playVideo = true;
-	controlBottomBright = true;
-	fadeType = true;
+		rocketVideo_videoYpos = 12;
+		rocketVideo_videoYsize = 144;
+		rocketVideo_screen = true;
+		rocketVideo_playVideo = !virtualPain;
+		controlBottomBright = true;
+		fadeType = true;
 
 	while (rocketVideo_playVideo) {
 		if (sixtyFps && rocketVideo_currentFrame >= 16) {
@@ -326,6 +389,7 @@ void BootSplashDSi(void) {
 	for (int i = 0; i < 256*59; i++) {
 		BG_GFX[i] = whiteCol;
 	}
+	}
 
 	if (!isDSiMode()) {
 		REG_SCFG_EXT = 0x83000000;
@@ -347,7 +411,7 @@ void BootSplashDSi(void) {
 			fseek(videoFrameFile, 0xe, SEEK_SET);
 			u8 pixelStart = (u8)fgetc(videoFrameFile) + 0xe;
 			fseek(videoFrameFile, pixelStart, SEEK_SET);
-			fread(bmpImageBuffer, 2, 0x4000, videoFrameFile);
+			fread(bmpImageBuffer, 1, 0x4000, videoFrameFile);
 			u16* src = bmpImageBuffer;
 			int x = 0;
 			int y = 31;

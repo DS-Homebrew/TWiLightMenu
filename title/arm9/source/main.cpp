@@ -595,9 +595,6 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	//remove("sd:/_nds/nds-bootstrap/softResetParams.bin");	// Delete existing soft-reset parameters
-	//remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
-
 	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
 	if (isDSiMode()) {
 		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
