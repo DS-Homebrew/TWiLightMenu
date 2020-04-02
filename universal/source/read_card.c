@@ -274,7 +274,7 @@ static void switchToTwlBlowfish(void) {
 }
 
 
-int cardInit (void)
+int cardInit (bool properReset)
 {
 	u32 portFlagsKey1, portFlagsSecRead;
 	normalChip = false;	// As defined by GBAtek, normal chip secure area is accessed in blocks of 0x200, other chip in blocks of 0x1000
@@ -293,11 +293,14 @@ int cardInit (void)
 		enableSlot1();
 		for(i = 0; i < 15; i++) { swiWaitForVBlank(); }
 
-		// Dummy command sent after card reset
-		cardParamCommand (CARD_CMD_DUMMY, 0,
-			CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
-			NULL, 0);
-	} else {
+		if (!properReset) {
+			// Dummy command sent after card reset
+			cardParamCommand (CARD_CMD_DUMMY, 0,
+				CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
+				NULL, 0);
+		}
+	}
+	if (!isDSiMode() || properReset) {
 		REG_ROMCTRL=0;
 		REG_AUXSPICNT=0;
 		//ioDelay2(167550);

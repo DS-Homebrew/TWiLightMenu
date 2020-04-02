@@ -845,7 +845,7 @@ void refreshNdsCard() {
 
 	if (arm7SCFGLocked && showBoxArt) {
 		loadBoxArt("nitro:/graphics/boxart_unknown.png");
-	} else if ((cardInit() == 0) && showBoxArt) {
+	} else if ((cardInit(true) == 0) && showBoxArt) {
 		char game_TID[5] = {0};
 		tonccpy(&game_TID, ndsCardHeader.gameCode, 4);
 

@@ -39,7 +39,7 @@ extern "C" {
 extern bool cardInited;
 extern sNDSHeaderExt ndsCardHeader;
 
-int cardInit (void);
+int cardInit (bool properReset);
 
 void cardRead (u32 src, void* dest, size_t len);
 

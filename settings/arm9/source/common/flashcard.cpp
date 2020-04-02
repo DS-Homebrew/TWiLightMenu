@@ -55,7 +55,7 @@ TWL_CODE void twl_flashcardInit(void) {
 		}
 
 		// Reset Slot-1 to allow reading title name and ID
-		cardInit();
+		cardInit(false);
 
 		//char gamename[13];
 		//char gameid[5];
