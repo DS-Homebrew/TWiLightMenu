@@ -500,7 +500,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 				fclose(bannerFile);
 
 				tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
-				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
+				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
 
 				return;
 			}
@@ -525,7 +525,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 		}
 
 		tonccpy(bnriconTile[num], (char *)&ndsBanner, 0x23C0);
-		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE);
+		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
 
 		infoFound[num] = true;
 

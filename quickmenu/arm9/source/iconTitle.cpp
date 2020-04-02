@@ -714,7 +714,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 			fclose(bannerFile);
 
-			tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
+			tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
 
 			return;
 		}
@@ -730,7 +730,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 				fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 				fclose(bannerFile);
 
-				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
+				tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
 
 				return;
 			}
@@ -760,7 +760,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 					fread(&ndsBanner, 1, NDS_BANNER_SIZE_ZH_KO, bannerFile);
 					fclose(bannerFile);
 
-					tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE);
+					tonccpy(cachedTitle[num], ndsBanner.titles[setGameLanguage], TITLE_CACHE_SIZE*sizeof(u16));
 
 					return;
 				}
@@ -784,7 +784,7 @@ void getGameInfo(int num, bool isDir, const char* name)
 			if (currentLang == 0) break;
 			currentLang--;
 		}
-		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE);
+		tonccpy(cachedTitle[num], ndsBanner.titles[currentLang], TITLE_CACHE_SIZE*sizeof(u16));
 		infoFound[num] = true;
 
 		// banner sequence
