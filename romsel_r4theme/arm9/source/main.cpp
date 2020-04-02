@@ -145,6 +145,7 @@ int launcherApp = -1;
 int sysRegion = -1;
 
 int guiLanguage = -1;
+int titleLanguage = -1;
 int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
@@ -180,6 +181,7 @@ void LoadSettings(void) {
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
+	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
 	sdRemoveDetect = settingsini.GetInt("SRLOADER", "SD_REMOVE_DETECT", 1);
 	useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", 0);
 	if (!isRegularDS) useGbarunner = true;
