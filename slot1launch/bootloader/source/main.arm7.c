@@ -498,6 +498,10 @@ static tNDSHeader* loadHeader(tDSiHeader* dsiHeaderTemp) {
 		*dsiHeader = *dsiHeaderTemp;
 	}
 
+	if (!isSdk5(moduleParams)) {
+		tonccpy((u32*)0x023FF000, (u32*)0x027FF000, 0x1000);
+	}
+
 	return ndsHeader;
 }
 
@@ -749,7 +753,7 @@ void arm7_main (void) {
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
-	//arm9_isSdk5 = isSdk5(moduleParams);
+	arm9_extendedMemory = (isSdk5(moduleParams) || *(u32*)(NDS_HEADER+0xC) == 0x50524255);
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
 		// lock SCFG
