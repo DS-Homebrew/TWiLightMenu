@@ -595,7 +595,7 @@ int main(int argc, char **argv)
 		stop();
 	}
 
-	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 	if (isDSiMode()) {
 		u16 cfgCrc = swiCRC16(0xFFFF, (void*)0x02000400, 0x128);
 		u16 cfgCrcFromFile = 0;
@@ -621,7 +621,7 @@ int main(int argc, char **argv)
 				// Reload first 16KB from cache
 				fseek(twlCfg, 0, SEEK_SET);
 				fread((void*)0x02000000, 1, 0x4000, twlCfg);
-				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+				useTwlCfg = ((*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 			}
 		}
 		fclose(twlCfg);

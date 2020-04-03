@@ -266,7 +266,7 @@ void arm7_resetMemory (void)
 	(*(vu32*)(0x04000000-8)) = ~0; //VBLANK_INTR_WAIT_FLAGS, ARM7 version
 	REG_POWERCNT = 1;  //turn off power to stuffs
 
-	useTwlCfg = (dsiMode && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (dsiMode && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 	twlCfgLang = *(u8*)0x02000406;
 
 	// Load FW header 

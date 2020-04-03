@@ -112,7 +112,7 @@ bool extention(const std::string& filename, const char* ext) {
 
 int main(int argc, char **argv)
 {
-	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000404 == 0));
+	useTwlCfg = (isDSiMode() && (*(u8*)0x02000400 & 0x0F) && (*(u8*)0x02000401 == 0) && (*(u8*)0x02000402 == 0) && (*(u8*)0x02000404 == 0));
 
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
