@@ -250,10 +250,11 @@ void arm7_resetMemory (void)
 	}
 
 	// clear most of EXRAM - except before 0x023F0000, which has the cheat data
-	toncset ((void*)0x02004000, 0, 0x3EC000);
+	memset_addrs_arm7(0x02004000, 0x023DA000);
+	memset_addrs_arm7(0x023DB000, 0x023F0000);
 
 	// clear more of EXRAM, skipping the cheat data section
-	toncset ((void*)0x023F8000, 0, 0x6000);
+	toncset ((void*)0x023F8000, 0, 0x8000);
 
 	// clear last part of EXRAM
 	toncset ((void*)0x02400000, 0, 0xC00000);
@@ -498,10 +499,6 @@ static tNDSHeader* loadHeader(tDSiHeader* dsiHeaderTemp) {
 		*dsiHeader = *dsiHeaderTemp;
 	}
 
-	if (!isSdk5(moduleParams)) {
-		tonccpy((u32*)0x023FF000, (u32*)0x027FF000, 0x1000);
-	}
-
 	return ndsHeader;
 }
 
@@ -568,7 +565,7 @@ void initMBK() {
 
 void fixDSBrowser(void) {
 	extern void patchMpu(const tNDSHeader* ndsHeader, const module_params_t* moduleParams);
-	patchMpu(ndsHeader, moduleParams);
+	patchMpu((tNDSHeader*)NDS_HEADER, moduleParams);
 
 	toncset((char*)0x02400000, 0xFF, 0xC0);
 	*(u8*)0x024000B2 = 0;
@@ -696,6 +693,13 @@ void arm7_main (void) {
 
 	ndsHeader = loadHeader(dsiHeaderTemp);
 
+	bool isDSBrowser = (memcmp(ndsHeader->gameCode, "UBRP", 4) == 0);
+
+	arm9_extendedMemory = (dsiModeConfirmed || isDSBrowser);
+	if (!arm9_extendedMemory) {
+		tonccpy((u32*)0x023FF000, (u32*)(isSdk5(moduleParams) ? 0x02FFF000 : 0x027FF000), 0x1000);
+	}
+
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
 	if (dsiMode && !dsiModeConfirmed) {
@@ -712,7 +716,7 @@ void arm7_main (void) {
 		}
 	}
 
-	if (*(u32*)(NDS_HEADER+0xC) == 0x50524255) {
+	if (isDSBrowser) {
 		fixDSBrowser();
 	}
 
@@ -753,7 +757,6 @@ void arm7_main (void) {
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
-	arm9_extendedMemory = (isSdk5(moduleParams) || *(u32*)(NDS_HEADER+0xC) == 0x50524255);
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
 		// lock SCFG
