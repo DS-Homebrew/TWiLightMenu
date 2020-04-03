@@ -97,7 +97,8 @@ class DSiMenuPlusPlusSettings
         ES8DSLaunch = 6,
         ERVideoLaunch = 7,
         EMPEG4Launch = 8,
-    };
+        EStellaDSLaunch = 9
+   };
 
     /*	0 = Nintendo DSi (Retail)
 	1 = Nintendo DSi (Dev/Panda)
@@ -149,6 +150,7 @@ class DSiMenuPlusPlusSettings
     int dsiMusic;
 	bool showNds;
 	bool showRvid;
+	bool showA26;
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;

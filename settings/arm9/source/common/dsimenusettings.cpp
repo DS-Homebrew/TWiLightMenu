@@ -31,6 +31,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 	showNds = true;
 	showRvid = true;
+	showA26 = true;
 	showNes = true;
 	showGb = true;
 	showSmsGg = true;
@@ -107,6 +108,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
+	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
@@ -231,6 +233,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "DSI_MUSIC", dsiMusic);
 	settingsini.SetInt("SRLOADER", "SHOW_NDS", showNds);
 	settingsini.SetInt("SRLOADER", "SHOW_RVID", showRvid);
+	settingsini.SetInt("SRLOADER", "SHOW_A26", showA26);
 	settingsini.SetInt("SRLOADER", "SHOW_NES", showNes);
 	settingsini.SetInt("SRLOADER", "SHOW_GB", showGb);
 	settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);

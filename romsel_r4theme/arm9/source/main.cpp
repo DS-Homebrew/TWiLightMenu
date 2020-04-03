@@ -133,6 +133,7 @@ int pagenum[2] = {0};
 bool showMicroSd = false;
 bool showNds = true;
 bool showRvid = true;
+bool showA26 = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
@@ -171,6 +172,7 @@ void LoadSettings(void) {
 
 	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", true);
 	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", true);
+	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", true);
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
@@ -942,6 +944,9 @@ int main(int argc, char **argv) {
 	if (useGbarunner) {
 		extensionList.emplace_back(".gba");
 	}
+	if (showA26) {
+		extensionList.emplace_back(".a26");
+	}
 	if (showGb) {
 		extensionList.push_back(".gb");
 		extensionList.push_back(".sgb");
@@ -1304,6 +1309,7 @@ int main(int argc, char **argv) {
 			bool gameboy = false;
 			bool nes = false;
 			bool gamegear = false;
+			bool atari2600 = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare) {
@@ -1778,9 +1784,11 @@ int main(int argc, char **argv) {
 				GENESIS = true;
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
+			} else if (extention(filename, ".a26")) {
+				atari2600 = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam) || (gamegear&&secondaryDevice)) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam) || (gamegear&&secondaryDevice) || atari2600) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1799,6 +1807,8 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 7;
 				} else if (mpeg4) {
 					launchType[secondaryDevice] = 8;
+				} else if (atari2600) {
+					launchType[secondaryDevice] = 9;
 				}
 
 				previousUsedDevice = secondaryDevice;
@@ -1834,10 +1844,15 @@ int main(int argc, char **argv) {
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
 					}
-				} else {
+				} else if (gamegear) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					}
+				} else if (atari2600) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					}
 				}
 				argarray.at(0) = (char *)ndsToBoot;

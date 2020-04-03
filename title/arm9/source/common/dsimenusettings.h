@@ -86,6 +86,7 @@ class DSiMenuPlusPlusSettings
         ES8DSLaunch = 6,
         ERVideoLaunch = 7,
         EMPEG4Launch = 8,
+        EStellaDSLaunch = 9
     };
 
     /*	0 = Nintendo DSi (Retail)

@@ -45,6 +45,9 @@
 #define MPEG4PLAYER_SD "sd:/_nds/TWiLightMenu/apps/MPEG4Player.nds"
 #define MPEG4PLAYER_FC "/_nds/TWiLightMenu/apps/MPEG4Player.nds"
 
+#define STELLADS_SD "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds"
+#define STELLADS_FC "/_nds/TWiLightMenu/emulators/StellaDS.nds"
+
 #define SNEMULDS_ROM "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define SNEMULDS_FC "fat:/_nds/TWiLightMenu/emulators/SNEmulDS.nds"
 #define LOLSNES_ROM "sd:/_nds/TWiLightMenu/emulators/lolSNES.nds"

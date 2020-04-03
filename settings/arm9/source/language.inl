@@ -90,6 +90,8 @@ STRING(DESCRIPTION_SHOW_VIDEO, "Display Rocket Video and MPEG4 files in the ROM 
 
 STRING(DESCRIPTION_SHOW_NES, "Display NES and Famicom Disk System ROMs in the ROM list.")
 
+STRING(DESCRIPTION_SHOW_A26, "Display Atari 2600 ROMs in the ROM list.")
+
 STRING(DESCRIPTION_SHOW_GB, "Display GameBoy, Super GB, and GBC ROMs in the ROM list.")
 
 STRING(DESCRIPTION_SHOW_SMS, "Display Sega Master System and Game Gear ROMs in the ROM list.")

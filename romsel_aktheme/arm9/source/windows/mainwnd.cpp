@@ -1383,6 +1383,21 @@ void MainWnd::launchSelected()
 		}
 	}
 
+    // A26 Launch
+    if (extension == ".a26")
+    {
+        ms().homebrewArg = fullPath;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EStellaDSLaunch;
+        ms().saveSettings();
+
+		ndsToBoot = STELLADS_SD;
+		if(access(ndsToBoot, F_OK) != 0) {
+			ndsToBoot = STELLADS_FC;
+		}
+
+        bootFile(ndsToBoot, fullPath);
+    }
+
     // NES Launch
     if (extension == ".nes" || extension == ".fds")
     {

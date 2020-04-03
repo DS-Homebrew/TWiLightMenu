@@ -551,6 +551,20 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass video to MPEG4Player as argument
 	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EStellaDSLaunch)
+	{
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/StellaDS.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		printf("Start failed. Error %i\n", err);

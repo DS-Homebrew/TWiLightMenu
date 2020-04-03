@@ -143,6 +143,7 @@ class DSiMenuPlusPlusSettings
     int dsiMusic;
 	bool showNds;
 	bool showRvid;
+	bool showA26;
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;

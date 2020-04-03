@@ -910,7 +910,8 @@ void titleUpdate(int num, bool isDir, const char* name)
 	 || extention(name, ".gg")
 	 || extention(name, ".gen")
 	 || extention(name, ".smc")
-	 || extention(name, ".sfc"))
+	 || extention(name, ".sfc")
+	 || extention(name, ".a26"))
 	{
 		writeBannerText(num, 0, name, "", "");
 	}

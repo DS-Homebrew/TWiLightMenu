@@ -161,6 +161,10 @@ void MainList::setupExtnames()
 	{
 		_extnameFilter.emplace_back(std::string(".gba"));
 	}
+    if (ms().showA26)
+    {
+        _extnameFilter.emplace_back(std::string(".a26"));
+    }
     if (ms().showGb)
     {
         _extnameFilter.emplace_back(std::string(".gb"));
@@ -383,7 +387,7 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
-                else if (".plg" == extName || ".rvid" == extName || ".mp4" == extName)
+                else if (".plg" == extName || ".rvid" == extName || ".mp4" == extName || ".a26" == extName)
                 {
                     rominfo.setBanner("plg", ds2plg_banner_bin);
                 }

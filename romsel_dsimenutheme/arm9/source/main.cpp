@@ -712,6 +712,9 @@ int main(int argc, char **argv) {
 	if (ms().useGbarunner) {
 		extensionList.emplace_back(".gba");
 	}
+	if (ms().showA26) {
+		extensionList.emplace_back(".a26");
+	}
 	if (ms().showGb) {
 		extensionList.emplace_back(".gb");
 		extensionList.emplace_back(".sgb");
@@ -855,6 +858,7 @@ int main(int argc, char **argv) {
 			bool gameboy = false;
 			bool nes = false;
 			bool gamegear = false;
+			bool atari2600 = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare[CURPOS]) {
@@ -1442,9 +1446,11 @@ int main(int argc, char **argv) {
 				GENESIS = true;
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
+			} else if (extention(filename, ".a26")) {
+				atari2600 = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam) || (gamegear&&ms().secondaryDevice)) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam) || (gamegear&&ms().secondaryDevice) || atari2600) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1463,6 +1469,8 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ERVideoLaunch;
 				} else if (mpeg4) {
 					ms().launchType[ms().secondaryDevice] = Launch::EMPEG4Launch;
+				} else if (atari2600) {
+					ms().launchType[ms().secondaryDevice] = Launch::EStellaDSLaunch;
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;
@@ -1503,10 +1511,15 @@ int main(int argc, char **argv) {
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/nesds.nds";
 					}
-				} else {
+				} else if (gamegear) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					}
+				} else if (atari2600) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					}
 				}
 				argarray.at(0) = (char *)ndsToBoot;

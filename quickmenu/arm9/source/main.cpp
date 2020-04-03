@@ -1149,7 +1149,7 @@ int main(int argc, char **argv) {
 			iconUpdate (0, false, filename[0].c_str());
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4")) {
+		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".gba")) {
@@ -1207,7 +1207,7 @@ int main(int argc, char **argv) {
 			iconUpdate (1, false, filename[1].c_str());
 			bnrRomType[1] = 0;
 			boxArtType[1] = 0;
-		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4")) {
+		} else if (extention(filename[1], ".plg") || extention(filename[1], ".rvid") || extention(filename[1], ".mp4") || extention(filename[1], ".a26")) {
 			bnrRomType[1] = 9;
 			boxArtType[1] = 0;
 		} else if (extention(filename[1], ".gba")) {
@@ -2403,6 +2403,14 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
+				} else if (extention(filename[secondaryDevice], ".a26")) {
+					launchType[secondaryDevice] = 9;
+					
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/StellaDS.nds";
+						boostVram = true;
 					}
 				} else if (extention(filename[secondaryDevice], ".gb") || extention(filename[secondaryDevice], ".sgb") || extention(filename[secondaryDevice], ".gbc")) {
 					launchType[secondaryDevice] = 5;
