@@ -22,6 +22,7 @@
 #include "common/cardlaunch.h"
 #include "common/flashcard.h"
 #include "common/fileCopy.h"
+#include "common/tonccpy.h"
 #include "nandio.h"
 #include "bootstrapsettings.h"
 #include "bootsplash.h"
@@ -55,6 +56,7 @@ const char *hiyacfwinipath = "sd:/hiya/settings.ini";
 
 const char *unlaunchAutoLoadID = "AutoLoadInfo";
 char hiyaNdsPath[14] = {'s','d','m','c',':','/','h','i','y','a','.','d','s','i'};
+char unlaunchDevicePath[256];
 
 typedef struct {
 	char gameTitle[12];			//!< 12 characters for the game title.
@@ -175,6 +177,58 @@ bool extention(const std::string& filename, const char* ext) {
 	}
 }
 
+void unlaunchRomBoot(const char* rom) {
+	if (strncmp(rom, "cart:", 5) == 0) {
+		sprintf(unlaunchDevicePath, "cart:");
+	} else {
+		sprintf(unlaunchDevicePath, "__%s", rom);
+		unlaunchDevicePath[0] = 's';
+		unlaunchDevicePath[1] = 'd';
+		unlaunchDevicePath[2] = 'm';
+		unlaunchDevicePath[3] = 'c';
+	}
+
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	int i2 = 0;
+	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+		i2 += 2;
+	}
+	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	stop();
+}
+
+void dsCardLaunch() {
+	*(u32 *)(0x02000300) = 0x434E4C54; // Set "CNLT" warmboot flag
+	*(u16 *)(0x02000304) = 0x1801;
+	*(u32 *)(0x02000308) = 0x43415254; // "CART"
+	*(u32 *)(0x0200030C) = 0x00000000;
+	*(u32 *)(0x02000310) = 0x43415254; // "CART"
+	*(u32 *)(0x02000314) = 0x00000000;
+	*(u32 *)(0x02000318) = 0x00000013;
+	*(u32 *)(0x0200031C) = 0x00000000;
+	while (*(u16 *)(0x02000306) == 0) { // Keep running, so that CRC16 isn't 0
+		*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
+	}
+
+	unlaunchSetHiyaBoot();
+
+	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
+	stop();
+}
+
 void lastRunROM()
 {
 	/*fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
@@ -213,21 +267,27 @@ void lastRunROM()
 	int err = 0;
 	if (ms().slot1Launched)
 	{
-		// Set Widescreen
-		if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
-		&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
-		&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
-			// Prepare for reboot into 16:10 TWL_FIRM
-			rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-			rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
+			dsCardLaunch();
+		} else if (ms().slot1LaunchMethod==2) {
+			unlaunchRomBoot("cart:");
+		} else {
+			// Set Widescreen
+			if (!sys().arm7SCFGLocked() && ms().consoleModel >= 2 && ms().wideScreen
+			&& (access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0)
+			&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
+				// Prepare for reboot into 16:10 TWL_FIRM
+				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
+				rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
-			irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
-			memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
-			fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
-			stop();
+				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
+				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
+				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
+				stop();
+			}
+
+			err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 		}
-
-		err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 	}
 	if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardLaunch)
 	{
@@ -445,8 +505,7 @@ void lastRunROM()
 	{
 		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
 
-		char unlaunchDevicePath[256];
-		if (ms().previousUsedDevice) {
+		if (ms().secondaryDevice) {
 			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
 		} else {
 			snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", ms().dsiWareSrlPath.c_str());
