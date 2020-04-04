@@ -282,7 +282,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 		if (arm9_stateFlag == ARM9_SETSCFG) {
 			if (dsiModeConfirmed) {
 				REG_SCFG_EXT = 0x8307F100;
-				REG_SCFG_CLK = 0x84;
+				REG_SCFG_CLK = 0x87;
+				REG_SCFG_RST = 1;
 			} else {
 				REG_SCFG_EXT = (arm9_extendedMemory ? 0x8300C000 : 0x83000000);
 				if (arm9_boostVram) {
