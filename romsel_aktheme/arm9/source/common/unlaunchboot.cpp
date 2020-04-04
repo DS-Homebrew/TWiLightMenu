@@ -105,7 +105,9 @@ bool UnlaunchBoot::prepare()
 void UnlaunchBoot::launch()
 {
 	char unlaunchDevicePath[256];
-	if (ms().secondaryDevice) {
+	if (strncmp(_fileName.c_str(), "cart:", 5) == 0) {
+		sprintf(unlaunchDevicePath, "cart:");
+	} else if (ms().secondaryDevice) {
 		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "sdmc:/_nds/TWiLightMenu/tempDSiWare.dsi");
 	} else {
 		snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", _fileName.c_str());

@@ -501,6 +501,40 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	stop();
 }
 
+void unlaunchRomBoot(const char* rom) {
+	snd().stopStream();
+	if (strncmp(rom, "cart:", 5) == 0) {
+		sprintf(unlaunchDevicePath, "cart:");
+	} else {
+		sprintf(unlaunchDevicePath, "__%s", rom);
+		unlaunchDevicePath[0] = 's';
+		unlaunchDevicePath[1] = 'd';
+		unlaunchDevicePath[2] = 'm';
+		unlaunchDevicePath[3] = 'c';
+	}
+
+	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
+	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
+	*(u16*)(0x0200080E) = 0;			// Unlaunch CRC16 (empty)
+	*(u32*)(0x02000810) = 0;			// Unlaunch Flags
+	*(u32*)(0x02000810) |= BIT(0);		// Load the title at 2000838h
+	*(u32*)(0x02000810) |= BIT(1);		// Use colors 2000814h
+	*(u16*)(0x02000814) = 0x7FFF;		// Unlaunch Upper screen BG color (0..7FFFh)
+	*(u16*)(0x02000816) = 0x7FFF;		// Unlaunch Lower screen BG color (0..7FFFh)
+	toncset((u8*)0x02000818, 0, 0x20+0x208+0x1C0);		// Unlaunch Reserved (zero)
+	int i2 = 0;
+	for (int i = 0; i < (int)sizeof(unlaunchDevicePath); i++) {
+		*(u8*)(0x02000838+i2) = unlaunchDevicePath[i];		// Unlaunch Device:/Path/Filename.ext (16bit Unicode,end by 0000h)
+		i2 += 2;
+	}
+	while (*(u16*)(0x0200080E) == 0) {	// Keep running, so that CRC16 isn't 0
+		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
+	}
+
+	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
+	stop();
+}
+
 void unlaunchSetHiyaBoot(void) {
 	snd().stopStream();
 	tonccpy((u8 *)0x02000800, unlaunchAutoLoadID, 12);
@@ -532,16 +566,14 @@ void dsCardLaunch() {
 	*(u32 *)(0x02000314) = 0x00000000;
 	*(u32 *)(0x02000318) = 0x00000013;
 	*(u32 *)(0x0200031C) = 0x00000000;
-	while (*(u16 *)(0x02000306) == 0x0000) { // Keep running, so that CRC16 isn't 0
+	while (*(u16 *)(0x02000306) == 0) { // Keep running, so that CRC16 isn't 0
 		*(u16 *)(0x02000306) = swiCRC16(0xFFFF, (void *)0x02000308, 0x18);
 	}
 
 	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) {
-		swiWaitForVBlank();
-	}
+	stop();
 }
 
 bool extention(const std::string& filename, const char* ext) {
@@ -1451,7 +1483,7 @@ int main(int argc, char **argv) {
 			}
 
 			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam) || (gamegear&&ms().secondaryDevice) || atari2600) {
-				const char *ndsToBoot;
+				const char *ndsToBoot = "";
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];

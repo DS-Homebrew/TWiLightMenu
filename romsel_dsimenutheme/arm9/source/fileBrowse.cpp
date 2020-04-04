@@ -57,6 +57,7 @@ extern bool controlBottomBright;
 extern bool gbaBiosFound[2];
 
 extern const char *unlaunchAutoLoadID;
+extern void unlaunchRomBoot(const char* rom);
 
 extern bool dropDown;
 extern int currentBg;
@@ -705,8 +706,10 @@ void switchDevice(void) {
 		ms().slot1Launched = true; // 0
 		ms().saveSettings();
 
-		if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked()) {
+		if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked()) {
 			dsCardLaunch();
+		} else if (ms().slot1LaunchMethod==2) {
+			unlaunchRomBoot("cart:");
 		} else {
 			SetWidescreen(NULL);
 			if (sdFound()) {

@@ -72,8 +72,8 @@ class DSiMenuPlusPlusSettings
 
     enum TSlot1LaunchMethod
     {
-        EReboot = false,
-        EDirect = true
+        EReboot = 0,
+        EDirect = 1
     };
 
     enum TBootstrapFile
@@ -164,7 +164,7 @@ class DSiMenuPlusPlusSettings
 	bool fcSaveOnSd;
 
     int flashcard;
-    bool slot1LaunchMethod;
+    int slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;
 

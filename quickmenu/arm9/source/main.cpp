@@ -132,7 +132,7 @@ bool gotosettings = false;
 
 bool slot1Launched = false;
 int launchType[2] = {0};	// 0 = Slot-1, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
-bool slot1LaunchMethod = true;	// false == Reboot, true == Direct
+int slot1LaunchMethod = 1;	// 0 == Reboot, 1 == Direct, 2 == Unlaunch
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
@@ -205,7 +205,7 @@ void LoadSettings(void) {
 	}
 	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
-	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", 1);
+	slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
@@ -767,13 +767,17 @@ void loadROMselect()
 	}
 }
 
-void unalunchRomBoot(const char* rom) {
-	char unlaunchDevicePath[256];
-	snprintf(unlaunchDevicePath, sizeof(unlaunchDevicePath), "__%s", rom);
-	unlaunchDevicePath[0] = 's';
-	unlaunchDevicePath[1] = 'd';
-	unlaunchDevicePath[2] = 'm';
-	unlaunchDevicePath[3] = 'c';
+void unlaunchRomBoot(const char* rom) {
+	char unlaunchDevicePath[256] = {0};
+	if (strncmp(rom, "cart:", 5) == 0) {
+		sprintf(unlaunchDevicePath, "cart:");
+	} else {
+		sprintf(unlaunchDevicePath, "__%s", rom);
+		unlaunchDevicePath[0] = 's';
+		unlaunchDevicePath[1] = 'd';
+		unlaunchDevicePath[2] = 'm';
+		unlaunchDevicePath[3] = 'c';
+	}
 
 	tonccpy((u8*)0x02000800, unlaunchAutoLoadID, 12);
 	*(u16*)(0x0200080C) = 0x3F0;		// Unlaunch Length for CRC16 (fixed, must be 3F0h)
@@ -794,7 +798,7 @@ void unalunchRomBoot(const char* rom) {
 	}
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	stop();
 }
 
 void unlaunchSetHiyaBoot(void) {
@@ -825,14 +829,14 @@ void dsCardLaunch() {
 	*(u32*)(0x02000314) = 0x00000000;
 	*(u32*)(0x02000318) = 0x00000013;
 	*(u32*)(0x0200031C) = 0x00000000;
-	while (*(u16*)(0x02000306) == 0x0000) {	// Keep running, so that CRC16 isn't 0
+	while (*(u16*)(0x02000306) == 0) {	// Keep running, so that CRC16 isn't 0
 		*(u16*)(0x02000306) = swiCRC16(0xFFFF, (void*)0x02000308, 0x18);
 	}
 	
 	unlaunchSetHiyaBoot();
 
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
-	for (int i = 0; i < 15; i++) swiWaitForVBlank();
+	stop();
 }
 
 void printLastPlayedText(int num) {
@@ -1502,8 +1506,10 @@ int main(int argc, char **argv) {
 							slot1Launched = true;
 							SaveSettings();
 
-							if (!slot1LaunchMethod || arm7SCFGLocked) {
+							if (slot1LaunchMethod==0 || arm7SCFGLocked) {
 								dsCardLaunch();
+							} else if (slot1LaunchMethod==2) {
+								unlaunchRomBoot("cart:");
 							} else {
 								SetWidescreen(NULL);
 								if (sdFound()) {

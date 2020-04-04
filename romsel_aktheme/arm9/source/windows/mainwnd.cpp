@@ -1594,11 +1594,30 @@ void MainWnd::bootSlot1(void)
     ms().slot1Launched = true;
     ms().saveSettings();
 
-    if (!ms().slot1LaunchMethod || sys().arm7SCFGLocked())
+    if (ms().slot1LaunchMethod==0 || sys().arm7SCFGLocked())
     {
         cardLaunch();
         return;
     }
+	else if (ms().slot1LaunchMethod==2)
+	{
+        // Unlaunch boot here....
+        UnlaunchBoot unlaunch("cart:", 0, 0);
+
+        // Roughly associated with 50%, 90%
+        unlaunch.onPrvSavCreated(bootstrapSaveHandler)
+            .onPubSavCreated(bootstrapLaunchHandler);
+
+            
+        progressWnd().setPercent(0);
+        progressWnd().setTipText(LANG("game launch", "Preparing Unlaunch Boot"));
+        progressWnd().update();
+        progressWnd().show();
+
+        unlaunch.prepare();
+		progressWnd().hide();
+        unlaunch.launch();
+	}
 
 	bootWidescreen(NULL, false, ms().wideScreen);
 	if (sdFound()) {
