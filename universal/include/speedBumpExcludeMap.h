@@ -6,6 +6,7 @@
 	};
 
 	static const char sbeList2[][4] = {
+		"CQS",	// 007: Quantum of Solace
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
 		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
@@ -78,6 +79,8 @@
 		"AH9",	// Tony Hawk's American Sk8land
 		"AFZ",	// Transformers: Autobots
 		"AFY",	// Transformers: Decepticons
+		"BAO",	// Transformers: War for Cybertron: Autobots
+		"BDI",	// Transformers: War for Cybertron: Decepticons
 		"YYK",	// Trauma Center: Under the Knife 2
 		"AUS",	// Ultimate Spider-Man
 		"CY8",	// Yu-Gi-Oh! World Championship 2009
