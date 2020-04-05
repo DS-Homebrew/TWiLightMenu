@@ -310,6 +310,8 @@ void CheatCodelist::selectCheats(std::string filename)
   int mainListCurPos = -1, mainListScreenPos = -1,
       cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
 
+  keysSetRepeat(25, 5); // Slow down key repeat
+
   while(cheatsFound) {
     clearText();
     titleUpdate(isDirectory, filename.c_str());
@@ -344,13 +346,14 @@ void CheatCodelist::selectCheats(std::string filename)
 
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
-  do {
-    scanKeys();
-    pressed = keysDown();
-    held = keysDownRepeat();
-    checkSdEject();
-    swiWaitForVBlank();
-  } while(!pressed && !held);
+    do {
+      scanKeys();
+      pressed = keysDown();
+      held = keysDownRepeat();
+      checkSdEject();
+      swiWaitForVBlank();
+    } while(!pressed && !held);
+
     if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         cheatWnd_cursorPosition--;
@@ -464,8 +467,19 @@ void CheatCodelist::selectCheats(std::string filename)
         }
       }
     }
+    if(pressed & KEY_L) {
+      // Delect all in the actual data so it doesn't just get the folder
+      for(auto itr = _data.begin(); itr != _data.end(); itr++) {
+        (*itr)._flags &= ~cParsedItem::ESelected;
+      }
+      // Also deselect them in the current list so that it updates the display
+      for(auto itr = currentList.begin(); itr != currentList.end(); itr++) {
+        (*itr)._flags &= ~cParsedItem::ESelected;
+      }
+    }
   }
   dialogboxHeight = oldDialogboxHeight;
+  keysSetRepeat(10, 2); // Reset key repeat
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
