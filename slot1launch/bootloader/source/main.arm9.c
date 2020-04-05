@@ -50,6 +50,7 @@ bool dsiModeConfirmed = false;
 bool arm9_boostVram = false;
 bool arm9_scfgUnlock = false;
 bool arm9_extendedMemory = false;
+bool arm9_isSdk5 = false;
 
 volatile int arm9_stateFlag = ARM9_BOOT;
 volatile u32 arm9_errorCode = 0xFFFFFFFF;
@@ -81,6 +82,27 @@ void initMBKARM9() {
 	REG_MBK8=0x07403700; // same as dsiware
 }
 
+void initMBKARM9_dsiEnhanced(void) {
+	// ARM7 is master of WRAM-A, arm9 of WRAM-B & C
+	REG_MBK9 = 0x0000000F;
+
+	// WRAM-A fully mapped to ARM7
+	*(vu32*)REG_MBK1 = 0x8185898D; // Same as DSiWare
+
+	// WRAM-B fully mapped to ARM7 // inverted order
+	*(vu32*)REG_MBK2 = 0x0105090D;
+	*(vu32*)REG_MBK3 = 0x1115191D;
+
+	// WRAM-C fully mapped to arm7 // inverted order
+	*(vu32*)REG_MBK4 = 0x0105090D;
+	*(vu32*)REG_MBK5 = 0x1115191D;
+}
+
+// SDK 5
+static bool ROMisDsiExclusive(const tNDSHeader* ndsHeader) {
+	return (ndsHeader->unitCode == 0x03);
+}
+
 void SetBrightness(u8 screen, s8 bright) {
 	u16 mode = 1 << 14;
 
@@ -99,7 +121,7 @@ arm9_errorOutput
 Displays an error code on screen.
 Written by Chishm
 --------------------------------------------------------------------------*/
-/*static void arm9_errorOutput (u32 code, bool clearBG) {
+static void arm9_errorOutput (u32 code, bool clearBG) {
 // Re-enable for debugging
 	int i, j, k;
 	u16 colour;
@@ -175,7 +197,7 @@ Written by Chishm
 		}
 	}		
 }
-*/
+
 
 /*-------------------------------------------------------------------------
 arm9_main
@@ -274,13 +296,16 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	while ( arm9_stateFlag != ARM9_BOOTBIN ) {
 		if (arm9_stateFlag == ARM9_DISPERR) {
 			// Re-enable for debugging
-			//arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
+			arm9_errorOutput (arm9_errorCode, arm9_errorClearBG);
 			if ( arm9_stateFlag == ARM9_DISPERR) {
 				arm9_stateFlag = ARM9_READY;
 			}
 		}
 		if (arm9_stateFlag == ARM9_SETSCFG) {
 			if (dsiModeConfirmed) {
+				if (arm9_isSdk5 && ndsHeader->unitCode != 0) {
+					ROMisDsiExclusive(ndsHeader) ? initMBKARM9() : initMBKARM9_dsiEnhanced();
+				}
 				REG_SCFG_EXT = 0x8307F100;
 				REG_SCFG_CLK = 0x87;
 				REG_SCFG_RST = 1;

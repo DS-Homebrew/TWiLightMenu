@@ -620,6 +620,24 @@ void initMBK() {
 	REG_MBK8=0x07403700; // same as dsiware
 }
 
+static void initMBK_dsiEnhanced(void) {
+	// This function has no effect with ARM7 SCFG locked
+
+	// ARM7 is master of WRAM-A, arm9 of WRAM-B & C
+	REG_MBK9 = 0x0000000F;
+
+	// WRAM-B fully mapped to ARM7 // inverted order
+	*(vu32*)REG_MBK2 = 0x0105090D;
+	*(vu32*)REG_MBK3 = 0x1115191D;
+
+	// WRAM-C fully mapped to arm7 // inverted order
+	*(vu32*)REG_MBK4 = 0x0105090D;
+	*(vu32*)REG_MBK5 = 0x1115191D;
+
+	// WRAM-A mapped to the 0x3000000 - 0x303FFFF area : 256k
+	REG_MBK6 = 0x00403000;
+}
+
 
 /*void fixFlashcardForDSiMode(void) {
 	if ((memcmp(ndsHeader->gameTitle, "PASS", 4) == 0)
@@ -824,6 +842,11 @@ void arm7_main (void) {
 
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
+	arm9_isSdk5 = isSdk5(moduleParams);
+
+	if (isSdk5(moduleParams) && ndsHeader->unitCode != 0 && dsiModeConfirmed) {
+		ROMisDsiExclusive(ndsHeader) ? initMBK() : initMBK_dsiEnhanced();
+	}
 
 	if (!scfgUnlock && !dsiModeConfirmed) {
 		// lock SCFG

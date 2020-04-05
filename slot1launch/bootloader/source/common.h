@@ -38,6 +38,7 @@ extern bool dsiModeConfirmed;
 extern bool arm9_boostVram;
 extern bool arm9_scfgUnlock;
 extern bool arm9_extendedMemory;
+extern bool arm9_isSdk5;
 extern volatile int arm9_stateFlag;
 extern volatile u32 arm9_errorCode;
 extern volatile bool arm9_errorClearBG;
