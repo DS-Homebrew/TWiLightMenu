@@ -271,7 +271,7 @@ void arm7_resetMemory (void)
 	twlCfgLang = *(u8*)0x02000406;
 
 	// Load FW header 
-	//arm7_readFirmware((u32)0x000000, (u8*)0x027FF830, 0x20);
+	//readFirmware((u32)0x000000, (u8*)0x027FF830, 0x20);
 }
 
 static void NDSTouchscreenMode(void) {
@@ -751,10 +751,10 @@ void arm7_main (void) {
 
 	if (dsiModeConfirmed) {
 		if (dsiHeaderTemp->arm9ibinarySize > 0) {
-			cardRead(dsiHeaderTemp->arm9iromOffset, (u32*)dsiHeaderTemp->arm9idestination, dsiHeaderTemp->arm9ibinarySize);
+			cardRead((u32)dsiHeaderTemp->arm9iromOffset, (u32*)dsiHeaderTemp->arm9idestination, dsiHeaderTemp->arm9ibinarySize);
 		}
 		if (dsiHeaderTemp->arm7ibinarySize > 0) {
-			cardRead(dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
+			cardRead((u32)dsiHeaderTemp->arm7iromOffset, (u32*)dsiHeaderTemp->arm7idestination, dsiHeaderTemp->arm7ibinarySize);
 		}
 	}
 
