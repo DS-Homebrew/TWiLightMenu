@@ -311,6 +311,8 @@ void CheatCodelist::selectCheats(std::string filename)
   int mainListCurPos = -1, mainListScreenPos = -1,
       cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
 
+  keysSetRepeat(25, 5); // Slow down key repeat
+
   while(cheatsFound) {
     clearText();
     printLargeCentered(false, 30, "Cheats");
@@ -344,19 +346,20 @@ void CheatCodelist::selectCheats(std::string filename)
 
     drawCheatList(currentList, cheatWnd_cursorPosition, cheatWnd_screenPosition);
 
-  do {
-    scanKeys();
-    pressed = keysDown();
-    held = keysDownRepeat();
-    checkSdEject();
-    tex().drawVolumeImageCached();
-    tex().drawBatteryImageCached();
-    drawCurrentTime();
-    drawCurrentDate();
-    drawClockColon();
-    snd().updateStream();
-    swiWaitForVBlank();
-  } while(!pressed && !held);
+    do {
+      scanKeys();
+      pressed = keysDown();
+      held = keysDownRepeat();
+      checkSdEject();
+      tex().drawVolumeImageCached();
+      tex().drawBatteryImageCached();
+      drawCurrentTime();
+      drawCurrentDate();
+      drawClockColon();
+      snd().updateStream();
+      swiWaitForVBlank();
+    } while(!pressed && !held);
+
     if(held & KEY_UP) {
       if(cheatWnd_cursorPosition>0) {
         snd().playSelect();
@@ -371,7 +374,7 @@ void CheatCodelist::selectCheats(std::string filename)
       snd().playSelect();
       cheatWnd_cursorPosition -= (cheatWnd_cursorPosition > 8 ? 8 : cheatWnd_cursorPosition);
     } else if(held & KEY_RIGHT) {
-     snd().playSelect();
+      snd().playSelect();
       cheatWnd_cursorPosition += (cheatWnd_cursorPosition < (int)(currentList.size()-8) ? 8 : currentList.size()-cheatWnd_cursorPosition-1);
     } else if(pressed & KEY_A) {
       (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
@@ -483,7 +486,19 @@ void CheatCodelist::selectCheats(std::string filename)
         }
       }
     }
+    if(pressed & KEY_L) {
+      // Delect all in the actual data so it doesn't just get the folder
+      for(auto itr = _data.begin(); itr != _data.end(); itr++) {
+        (*itr)._flags &= ~cParsedItem::ESelected;
+      }
+      // Also deselect them in the current list so that it updates the display
+      for(auto itr = currentList.begin(); itr != currentList.end(); itr++) {
+        (*itr)._flags &= ~cParsedItem::ESelected;
+      }
+    }
   }
+
+  keysSetRepeat(10, 2); // Reset key repeat
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
