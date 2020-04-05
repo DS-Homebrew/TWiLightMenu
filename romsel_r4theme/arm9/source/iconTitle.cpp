@@ -733,7 +733,7 @@ void getGameInfo(bool isDir, const char* name)
 		 || (ndsHeader.gameCode[0] == 0x4B && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x5A && ndsHeader.makercode[0] != 0 && ndsHeader.makercode[1] != 0)
 		 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
-		{
+		{ if (ndsHeader.unitCode != 0)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
