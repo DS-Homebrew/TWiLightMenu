@@ -281,15 +281,82 @@ static void NDSTouchscreenMode(void) {
 	//unsigned char * I2C_DATA=	(unsigned char*)0x4004500;
 	//unsigned char * I2C_CNT=	(unsigned char*)0x4004501;
 
+	bool specialSetting = false;
 	u8 volLevel;
 	
-	//if (fifoCheckValue32(FIFO_MAXMOD)) {
-	//	// special setting (when found special gamecode)
-	//	volLevel = 0xAC;
-	//} else {
+	static const char list[][4] = {
+		"ABX",	// NTR-ABXE Bomberman Land Touch!
+		"YO9",	// NTR-YO9J Bokura no TV Game Kentei - Pikotto! Udedameshi
+		"ALH",	// NTR-ALHE Flushed Away
+		"ACC",	// NTR-ACCE Cooking Mama
+		"YCQ",	// NTR-YCQE Cooking Mama 2 - Dinner with Friends
+		"YYK",	// NTR-YYKE Trauma Center - Under the Knife 2
+		"AZW",	// NTR-AZWE WarioWare - Touched!
+		"AKA",	// NTR-AKAE Rub Rabbits!, The
+		"AN9",	// NTR-AN9E Little Mermaid - Ariel's Undersea Adventure, The
+		"AKE",	// NTR-AKEJ Keroro Gunsou - Enshuu da Yo! Zenin Shuugou Part 2
+		"YFS",	// NTR-YFSJ Frogman Show - DS Datte, Shouganaijanai, The
+		"YG8",	// NTR-YG8E Yu-Gi-Oh! World Championship 2008
+		"AY7",	// NTR-AY7E Yu-Gi-Oh! World Championship 2007
+		"YON",	// NTR-YONJ Minna no DS Seminar - Kantan Ongakuryoku
+		"A5H",	// NTR-A5HE Interactive Storybook DS - Series 2
+		"A5I",	// NTR-A5IE Interactive Storybook DS - Series 3
+		"AMH",	// NTR-AMHE Metroid Prime Hunters
+		"A3T",	// NTR-A3TE Tak - The Great Juju Challenge
+		"YBO",	// NTR-YBOE Boogie
+		"ADA",	// NTR-ADAE PKMN Diamond
+		"APA",	// NTR-APAE PKMN Pearl
+		"CPU",	// NTR-CPUE PKMN Platinum
+		"APY",	// NTR-APYE Puyo Pop Fever
+		"AWH",	// NTR-AWHE Bubble Bobble Double Shot
+		"AXB",	// NTR-AXBJ Daigassou! Band Brothers DX
+		"A4U",	// NTR-A4UJ Wi-Fi Taiou - Morita Shogi
+		"A8N",	// NTR-A8NE Planet Puzzle League
+		"ABJ",	// NTR-ABJE Harvest Moon DS - Island of Happiness
+		"ABN",	// NTR-ABNE Bomberman Story DS
+		"ACL",	// NTR-ACLE Custom Robo Arena
+		"ART",	// NTR-ARTJ Shin Lucky Star Moe Drill - Tabidachi
+		"AVT",	// NTR-AVTJ Kou Rate Ura Mahjong Retsuden Mukoubuchi - Goburei, Shuuryou desu ne
+		"AWY",	// NTR-AWYJ Wi-Fi Taiou - Gensen Table Game DS
+		"AXJ",	// NTR-AXJE Dungeon Explorer - Warriors of Ancient Arts
+		"AYK",	// NTR-AYKJ Wi-Fi Taiou - Yakuman DS
+		"YB2",	// NTR-YB2E Bomberman Land Touch! 2
+		"YB3",	// NTR-YB3E Harvest Moon DS - Sunshine Islands
+		"YCH",	// NTR-YCHJ Kousoku Card Battle - Card Hero
+		"YFE",	// NTR-YFEE Fire Emblem - Shadow Dragon
+		"YGD",	// NTR-YGDE Diary Girl
+		"YKR",	// NTR-YKRJ Culdcept DS
+		"YRM",	// NTR-YRME My Secret World by Imagine
+		"YW2",	// NTR-YW2E Advance Wars - Days of Ruin
+		"AJU",	// NTR-AJUJ Jump! Ultimate Stars
+		"ACZ",	// NTR-ACZE Cars
+		"AHD",	// NTR-AHDE Jam Sessions
+		"ANR",	// NTR-ANRE Naruto - Saikyou Ninja Daikesshu 3
+		"YT3",	// NTR-YT3E Tamagotchi Connection - Corner Shop 3
+		"AVI",	// NTR-AVIJ Kodomo no Tame no Yomi Kikase - Ehon de Asobou 1-Kan
+		"AV2",	// NTR-AV2J Kodomo no Tame no Yomi Kikase - Ehon de Asobou 2-Kan
+		"AV3",	// NTR-AV3J Kodomo no Tame no Yomi Kikase - Ehon de Asobou 3-Kan
+		"AV4",	// NTR-AV4J Kodomo no Tame no Yomi Kikase - Ehon de Asobou 4-Kan
+		"AV5",	// NTR-AV5J Kodomo no Tame no Yomi Kikase - Ehon de Asobou 5-Kan
+		"AV6",	// NTR-AV6J Kodomo no Tame no Yomi Kikase - Ehon de Asobou 6-Kan
+		"YNZ",	// NTR-YNZE Petz - Dogz Fashion
+	};
+
+	for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++) {
+		if (memcmp(ndsHeader->gameCode, list[i], 3) == 0) {
+			// Found a match.
+			specialSetting = true; // Special setting (when found special gamecode)
+			break;
+		}
+	}
+
+	if (specialSetting) {
+		// special setting (when found special gamecode)
+		volLevel = 0xAC;
+	} else {
 		// normal setting (for any other gamecodes)
 		volLevel = 0xA7;
-	//}
+	}
 
 	// Touchscreen
 	cdcReadReg (0x63, 0x00);
