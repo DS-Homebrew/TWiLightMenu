@@ -716,7 +716,8 @@ int main(int argc, char **argv)
 	}
 
 	if (ms().dsiWareExploit == 0) {
-		remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
+		if (access("sd:/_nds/nds-bootstrap/srBackendId.bin", F_OK) == 0)
+			remove("sd:/_nds/nds-bootstrap/srBackendId.bin");
 	}
 
 	runGraphicIrq();
