@@ -689,7 +689,7 @@ int main(int argc, char **argv)
 				fwrite((void*)0x02000000, 1, 0x4000, twlCfg);
 				fwrite((u16*)&cfgCrc, sizeof(u16), 1, twlCfg);
 			}
-		} else {
+		} else if (twlCfg) {
 			if (cfgCrc != cfgCrcFromFile) {
 				// Reload first 16KB from cache
 				fseek(twlCfg, 0, SEEK_SET);
