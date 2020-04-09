@@ -75,32 +75,32 @@ void writeBannerText(int textlines, const char *text1, const char *text2, const 
 		switch (textlines) {
 		case 0:
 		default:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing1, text1, Alignment::center);
 			break;
 		case 1:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing2, text1, Alignment::center);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing3, text2, Alignment::center);
 			break;
 		case 2:
-			printSmallCentered(false, BOX_PY, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+			printSmall(false, 0, BOX_PY, text1, Alignment::center);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing1, text2, Alignment::center);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing1 * 2, text3, Alignment::center);
 			break;
 		}
 	} else {
 		switch (textlines) {
 		case 0:
 		default:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text1);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing1, text1, Alignment::center);
 			break;
 		case 1:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, text2);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing2, text1, Alignment::center);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing3, text2, Alignment::center);
 			break;
 		case 2:
-			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
+			printLarge(false, 0, BOX_PY, text1, Alignment::center);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing1, text2, Alignment::center);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing1 * 2, text3, Alignment::center);
 			break;
 		}
 	}
@@ -760,11 +760,11 @@ void titleUpdate(bool isDir, const char *name, int num) {
 				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			}
 		} else if (ms().theme == 1) {
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, name);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing2, name, Alignment::center);
+			printSmall(false, 0, BOX_PY + BOX_PY_spacing3, titleToDisplay[0], Alignment::center);
 		} else {
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, name);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing2, name, Alignment::center);
+			printLarge(false, 0, BOX_PY + BOX_PY_spacing3, titleToDisplay[0], Alignment::center);
 		}
 	}
 }

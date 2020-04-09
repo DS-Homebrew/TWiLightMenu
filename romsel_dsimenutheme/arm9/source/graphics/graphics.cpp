@@ -18,42 +18,37 @@
 
 ------------------------------------------------------------------*/
 
-#include "FontGraphic.h"
-#include "common/gl2d.h"
+#include "graphics.h"
 #include <ctime>
 #include <dirent.h>
 #include <maxmod9.h>
-#include <nds.h>
 #include <nds/arm9/dldi.h>
-
-// This is use for the top font.
-#include "../include/startborderpal.h"
-
-#include "tool/colortool.h"
-
-#include "ThemeConfig.h"
-#include "queueControl.h"
-#include "uvcoord_date_time_font.h"
-#include "uvcoord_top_font.h"
 
 #include "../errorScreen.h"
 #include "../iconTitle.h"
 #include "../language.h"
 #include "../ndsheaderbanner.h"
-#include "../perGameSettings.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
-#include "common/systemdetails.h"
+#include "common/gl2d.h"
 #include "common/lzss.h"
-#include "fontHandler.h"
-#include "graphics.h"
-#include "graphics/ThemeTextures.h"
-#include "graphics/lodepng.h"
-#include "themefilenames.h"
+#include "common/systemdetails.h"
 #include "date.h"
 #include "iconHandler.h"
-#include "sound.h"
+#include "FontGraphic.h"
+#include "fontHandler.h"
+#include "graphics/ThemeTextures.h"
+#include "graphics/lodepng.h"
 #include "launchDots.h"
+#include "queueControl.h"
+#include "sound.h"
+#include "ThemeConfig.h"
+#include "themefilenames.h"
+#include "tool/colortool.h"
+
+#include "uvcoord_date_time_font.h"
+#include "uvcoord_top_font.h"
+
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
 
@@ -1221,14 +1216,12 @@ void vBlankHandler() {
 			} else if (!showdialogbox) {
 
 				reloadIconPalettes();
-				reloadFontPalettes();
 			}
 			vblankRefreshCounter = 0;
 		} else {
 			vblankRefreshCounter++;
 		}
 		updateText(false);
-		//}
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;

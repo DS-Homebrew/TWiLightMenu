@@ -33,6 +33,7 @@
 #define NDS_HEADER2
 
 #include <nds.h>
+#include <stdio.h>
 
 // Bitmasks from 
 // http://problemkaputt.de/gbatek.htm#dscartridgeicontitle

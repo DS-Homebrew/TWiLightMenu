@@ -2,6 +2,8 @@
 #ifndef DSIMENUPP_LANGUAGE_H
 #define DSIMENUPP_LANGUAGE_H
 
+#include <string>
+
 extern int setLanguage;
 extern int setGameLanguage;
 extern int setTitleLanguage;
