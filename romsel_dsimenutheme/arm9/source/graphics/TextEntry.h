@@ -6,8 +6,8 @@ class TextEntry {
 public:
 	bool large;
 	int x, y;
-	std::string message;
+	std::string_view message;
 	Alignment align;
 
-	TextEntry(bool large, int x, int y, const std::string &message, Alignment align);
+	TextEntry(bool large, int x, int y, std::string_view message, Alignment align);
 };

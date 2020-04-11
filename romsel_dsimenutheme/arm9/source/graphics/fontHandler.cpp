@@ -53,12 +53,12 @@ void clearText() {
 	clearText(false);
 }
 
-void printSmall(bool top, int x, int y, const std::string &message, Alignment align) {
-	getTextQueue(top).emplace_back(false, x, y, message.c_str(), align);
+void printSmall(bool top, int x, int y, std::string_view message, Alignment align) {
+	getTextQueue(top).emplace_back(false, x, y, message, align);
 }
 
-void printLarge(bool top, int x, int y, const std::string &message, Alignment align) {
-	getTextQueue(top).emplace_back(true, x, y, message.c_str(), align);
+void printLarge(bool top, int x, int y, std::string_view message, Alignment align) {
+	getTextQueue(top).emplace_back(true, x, y, message, align);
 }
 
 int calcSmallFontWidth(const char *text) {

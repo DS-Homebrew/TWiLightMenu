@@ -116,7 +116,7 @@ u16 FontGraphic::getCharIndex(char16_t c) {
 	return questionMark;
 }
 
-std::u16string FontGraphic::utf8to16(const std::string &text) {
+std::u16string FontGraphic::utf8to16(std::string_view text) {
 	std::u16string out;
 	for(uint i=0;i<text.size();) {
 		char16_t c;
@@ -137,7 +137,7 @@ std::u16string FontGraphic::utf8to16(const std::string &text) {
 	return out;
 }
 
-int FontGraphic::calcWidth(const std::u16string &text) {
+int FontGraphic::calcWidth(std::u16string_view text) {
 	int x = 0;
 
 	for(uint i = 0; i < text.size(); i++) {
@@ -148,7 +148,7 @@ int FontGraphic::calcWidth(const std::u16string &text) {
 	return x;
 }
 
-void FontGraphic::print(int x, int y, const std::u16string &text, Alignment align) {
+void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left:
