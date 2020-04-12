@@ -125,8 +125,8 @@ void SettingsGUI::draw()
         {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
             // print scroller on the other side
-            printSmall(false, 252, 30 + (i - _topCursor) * 14, "|");
-            printSmall(false, 254, 30 + (i - _topCursor) * 14, "|");
+            printSmall(false, 252, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
+            printSmall(false, 254, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
         }
 
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
@@ -190,8 +190,8 @@ void SettingsGUI::drawSub()
             printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
 
             // print scroller on the other side
-            printSmall(false, 252, 30 + (i - _subTopCursor) * 14, "|");
-            printSmall(false, 254, 30 + (i - _subTopCursor) * 14, "|");
+            printSmall(false, 252, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
+            printSmall(false, 254, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
         }
 
         printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
