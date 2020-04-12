@@ -23,7 +23,7 @@ title = Cheats-Menü
 confirm = Bestätigen
 Cancel = Abbrechen
 info = Eigenschaften
-deselect = Auswahl rückgangig machen
+deselect = Alles abwählen
 
 [progress window]
 processing save = Wird bearbeitet... Bitte warten!
