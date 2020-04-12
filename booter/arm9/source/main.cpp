@@ -66,6 +66,8 @@ void doPause(int x, int y) {
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 
+	REG_SCFG_CLK &= (BIT(1) | BIT(2));	// Disable DSP and Camera Interface clocks
+
 	// Turn on screen backlights if they're disabled
 	powerOn(PM_BACKLIGHT_TOP);
 	powerOn(PM_BACKLIGHT_BOTTOM);
