@@ -9,31 +9,31 @@ Paste = Einfügen
 Delete = Löschen
 Setting = Einstellungen
 Info = Eigenschaften
-Hide = Verstecke
+Hide = Verstecken
 
 [message box]
 yes = Ja
 no = Nein
 ok = OK
-cancel = Abbr.
+cancel = Abbrechen
 
 [cheats]
 button = Cheats
 title = Cheats-Menü
 confirm = Bestätigen
-Cancel = Abbr.
+Cancel = Abbrechen
 info = Eigenschaften
-deselect = Deselect all
+deselect = Alles abwählen
 
 [progress window]
-processing save = Verarbeite... nicht ausschalten!
-processing copy = Kopiere... nicht ausschalten, %c=Abbrechen!
-first use sd = Überprüfe SD-Karte vor der ersten Verwendung...
-gba load = Lade GBA Spiel...
-gba save load = Lade GBA Spielstand...
-gba save store = Verarbeite GBA Spielstand... nicht ausschalten!
-erase nor = Lösche NOR-Speicher... nicht ausschalten!
-rebuilding cheat data = Erstelle Cheat-Datei neu.
+processing save = Wird bearbeitet... Bitte warten!
+processing copy = Wird kopiert... Bitte warten!, %c=Abbrechen!
+first use sd = Die SD-Karte wird vor der ersten Verwendung überprüft...
+gba load = GBA-Spiel wird geladen...
+gba save load = GBA-Spielstand wird geladen...
+gba save store = GBA-Spielstand wird bearbeitet... Bitte warten!
+erase nor = NOR-Speicher wird gelöscht... Bitte warten!
+rebuilding cheat data = Cheat-Datei neu erstellen.
 
 [copy file error]
 title = Fehler beim Kopieren
@@ -41,15 +41,15 @@ text = Datei oder Ordner ist nicht vorhanden.
 
 [copy file exists]
 title = Ersetzen bestätigen
-text = Dieser Ordner enthält bereits eine Datei mit demselben Namen. Möchtest Du die vorhandene Datei ersetzen?
+text = Dieser Ordner enthält bereits eine Datei mit demselben Namen. Möchtest du die vorhandene Datei ersetzen?
 
 [copy dest is directory]
 title = Fehler beim Kopieren
-text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Kopieren ist nicht möglich.
+text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Kopieren nicht möglich.
 
 [move dest is directory]
 title = Fehler beim Verschieben
-text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Verschieben ist nicht möglich.
+text = Dieser Ordner enthält bereits einen Ordner mit demselben Namen. Verschieben nicht möglich.
 
 [no copy dir]
 title = Fehler beim Kopieren/Verschieben
@@ -57,16 +57,16 @@ text = Das Kopieren/Verschieben von Ordnern ist noch nicht möglich!
 
 [stop copying file]
 title = Abbrechen bestätigen
-text = Möchtest Du den Kopiervorgang wirklich abbrechen??
+text = Möchtest du den Kopiervorgang wirklich abbrechen?
 
 [confirm delete file]
 title = Löschen bestätigen
 text = Gelöschte Dateien/Ordner können nicht wiederhergestellt werden, möchtest Du '%s' wirklich löschen?
 
 [confirm hide file]
-title = Confirm File/Folder Hide
-hide = '%s' will be hidden unless you enable "show hidden files" in settings, hide?
-unhide = '%s' will no longer be hidden, unhide?
+title = Datei verstecken
+hide = '%s' wird solange versteckt, bis du „Zeige versteckte Dateien“-Option in den Einstellungen aktivierst. Verstecken?
+unhide = '%s' wird wieder sichtbar sein. Sichtbar machen?
 
 [do not delete directory]
 title = Löschen fehlgeschlagen
@@ -122,19 +122,19 @@ free = Freier Speicher: %s
 
 [no free space]
 title = Fehler - nicht genug freier Speicher
-text = Auf dem Zieldatenträger ist nicht genug freier Speicher verfügbar, die Datei kann nicht kopiert werden.
+text = Auf dem Zieldatenträger ist nicht genug freier Speicher verfügbar. Die Datei kann nicht kopiert werden.
 
 
 [sd speed]
 text = MicroSD-Geschwindigkeit einstellen
-item0 = Extrem
+item0 = Extrem schnell
 item1 = Schnell
 item2 = Mittel
 item3 = Langsam
 
 [unsupported sd]
 title = MicroSD-Karte wird nicht unterstützt
-text = Diese MicroSD-Karte(Modell:%s) ist nicht dafür geeignet offizielle DS-Programme auszuführen, bitte kopiere das Programm von der SD-Karte in den internen Speicher der Acekard und versuche es erneut.
+text = Diese MicroSD-Karte (Modell:%s) ist nicht dafür geeignet offizielle DS-Programme auszuführen! Bitte kopiere das Programm von der SD-Karte in den internen Speicher der Acekard und versuche es erneut.
 
 [sd card error]
 title = Fehler beim Zugriff auf die MicroSD-Karte
@@ -175,8 +175,8 @@ text = Sprache
 item0 = English
 item1 = S.Chinese
 item2 = T.Chinese
-item3 = Japanese
-item4 = Francais
+item3 = 日本語
+item4 = Français
 item5 = Italiano
 item6 = Deutsch
 item7 = Español
@@ -258,8 +258,8 @@ error = Fehler beim Öffnen der Datei
 file open error = Diese Textdatei kann nicht geöffnet werden. Du kommst ins OS-Menü zurück.
 screen angle = Bildschirmausrichtung
 normal = Normal
-rotate 90 = 90° gedreht
-rotate 270 = 270° gedreht
+rotate 90 = um 90° drehen
+rotate 270 = um 270° drehen
 screen mode = Bildschirm-Modus
 dual = Beide Bildschirme
 dual copy = Bildschirm kopieren
@@ -272,17 +272,17 @@ goto toppage? = Möchtest Du wirklich zum Seitenanfang springen?
 [save slot]
 title = Speicherplatz 
 default = Standard
-text = Welcher Speicherplatz soll verwendet werden
+text = Welcher Speicherplatz soll verwendet werden?
 
 [romnametype]
 Normal = Normal
-HideExtName = Verstecke ROM-Erw.
+HideExtName = Verstecke ROM-Erweiterung
 BannerTitle = Interner Name
 
 [cheat]
 text = Cheat-Codes
-item0 = Deaktiviert
-Item1 = Aktiviert
+item0 = Deaktivieren
+Item1 = Aktivieren
 
 [setting window]
 ok = OK
@@ -458,25 +458,25 @@ Direct Boot = Direct Boot
 Per Game Settings = Per Game Settings
 
 [game launch]
-ROM Start Error = ROM Start Error
-error = Error %i
-Please wait = Please wait...
-NDS Bootstrap Error = NDS Bootstrap Error
-GBARunner2 Error = GBARunner2 Error
-Sega8bit Error = SEGA 8-bit RAM Disk Error
-Sega8bit Error Message = SEGA 8-bit RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
-SegaMD Error = SEGA MD RAM Disk Error
-SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
-SNES Error = SNES RAM Disk Error
-SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" was not found
-Flashcard Error = Flashcard Error
-Launch Error = Launch Error
-Preparing Unlaunch Boot = Preparing Unlaunch Boot...
-Unlaunch Error = Unlaunch Error
-unlaunch boot = Boot DSiWare with Unlaunch
-unlaunch instructions = After saving, please re-start this menu to transfer your save data back.
-ap warning = Warning
-ap msg = This game has AP (Anti-Piracy). Please make sure you're using the latest version of TWiLight Menu++.
-ap msg1 = This game has AP (Anti-Piracy) and MUST be patched using the RGF TWiLight Menu AP patcher.
+ROM Start Error = Fehler beim Ausführen des ROM
+error = Fehler %i
+Please wait = Bitte warten...
+NDS Bootstrap Error = NDS Bootstrap Fehler
+GBARunner2 Error = GBARunner2 Fehler
+Sega8bit Error = SEGA 8-bit RAM Disk Fehler
+Sega8bit Error Message = SEGA 8-bit RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" wurde nicht gefunden
+SegaMD Error = SEGA MD RAM Disk Fehler
+SegaMD Error Message = SEGA Mega Drive (Genesis) RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" wurde nicht gefunden
+SNES Error = SNES RAM Disk Fehler
+SNES Error Message = SNES RAM Disk in "sd:/_nds/TWiLightMenu/emulators/" wurde nicht gefunden
+Flashcard Error = Flashkartenfehler
+Launch Error = Fehler beim Start
+Preparing Unlaunch Boot = Unlaunch Start wird vorbereitet...
+Unlaunch Error = Unlaunch Fehler
+unlaunch boot = Starte DSiWare mit Unlaunch
+unlaunch instructions = Nach dem speichern, bitte starte das Menü neu, um die vorherigen Speicherdaten zurück zum Ursprung zu kopieren.
+ap warning = Achtung
+ap msg = Dieses Spiel hat einen AP-Patch (Anti-Piracy). Stelle sicher, dass du die aktuelle Version von TWiLightmenu++ hast.
+ap msg1 = Dieses Spiel hat einen AP-Patch (Anti-Piracy) und muss mit dem „RGF TWiLight Menu AP patcher“ gepatcht werden.
 
 [end]
