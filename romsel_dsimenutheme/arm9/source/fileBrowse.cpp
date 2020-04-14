@@ -2347,7 +2347,7 @@ string browseForFile(const vector<string> extensionList) {
 						if (!ms().smsGgInRam)
 							smsWarning();
 					} else if (bnrRomType[CURPOS] == 7) {
-						if (getFileSize(
+						if (ms().showMd==1 && getFileSize(
 							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str()) >
 							0x300000) {
 							proceedToLaunch = false;

@@ -90,6 +90,7 @@ extern bool startMenu;
 
 extern int theme;
 
+extern int showMd;
 extern bool showDirectories;
 extern bool showHidden;
 extern int spawnedtitleboxes;
@@ -521,7 +522,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				else if (bnrRomType == 7)
 				{
-					if (getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
+					if (showMd==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}

@@ -150,6 +150,7 @@ bool useGbarunner = false;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
 int subtheme = 0;
+int showMd = 3;
 int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
@@ -176,6 +177,8 @@ void LoadSettings(void) {
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
 	// Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
@@ -2465,15 +2468,16 @@ int main(int argc, char **argv) {
 						}
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
-					launchType[secondaryDevice] = 1;
+					bool usePicoDrive = (showMd==2 || (showMd==3 && getFileSize(filename[secondaryDevice].c_str()) > 0x300000));
+					launchType[secondaryDevice] = (usePicoDrive ? 10 : 1);
 
-					if (secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+					if (usePicoDrive || secondaryDevice) {
+						ndsToBoot = usePicoDrive ? "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+							ndsToBoot = usePicoDrive ? "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 							boostVram = true;
 						}
-						dsModeSwitch = true;
+						dsModeSwitch = !usePicoDrive;
 					} else {
 						useNDSB = true;
 

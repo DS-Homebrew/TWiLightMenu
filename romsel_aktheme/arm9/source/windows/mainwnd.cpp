@@ -1478,14 +1478,15 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
+		bool usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = (usePicoDrive ? DSiMenuPlusPlusSettings::EPicoDriveTWLLaunch : DSiMenuPlusPlusSettings::ESDFlashcardLaunch);
         ms().saveSettings();
-		if (ms().secondaryDevice)
+		if (usePicoDrive || ms().secondaryDevice)
         {
-			ndsToBoot = JENESISDS_ROM;
+			ndsToBoot = usePicoDrive ? PICODRIVETWL_ROM : JENESISDS_ROM;
 			if(access(ndsToBoot, F_OK) != 0) {
-				ndsToBoot = JENESISDS_FC;
+				ndsToBoot = usePicoDrive ? PICODRIVETWL_FC : JENESISDS_FC;
 			}
 
             bootFile(ndsToBoot, fullPath);

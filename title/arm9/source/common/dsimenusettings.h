@@ -86,7 +86,8 @@ class DSiMenuPlusPlusSettings
         ES8DSLaunch = 6,
         ERVideoLaunch = 7,
         EMPEG4Launch = 8,
-        EStellaDSLaunch = 9
+        EStellaDSLaunch = 9,
+        EPicoDriveTWLLaunch = 10
     };
 
     /*	0 = Nintendo DSi (Retail)
@@ -125,6 +126,7 @@ class DSiMenuPlusPlusSettings
     bool showMainMenu;
     int theme;
     int subtheme;
+	int showMd;
     bool showDirectories;
     bool showBoxArt;
     bool animateDsiIcons;

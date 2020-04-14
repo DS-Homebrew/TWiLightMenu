@@ -56,6 +56,8 @@
 
 #define JENESISDS_ROM "sd:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
 #define JENESISDS_FC "fat:/_nds/TWiLightMenu/emulators/JEnesisDS.nds"
+#define PICODRIVETWL_ROM "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds"
+#define PICODRIVETWL_FC "fat:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds"
 #define SEGAMD_RAMDISK "sd:/_nds/TWiLightMenu/emulators/SegaMD.img"
 
 #define S8DS_NOTOUCH_ROM "sd:/_nds/TWiLightMenu/emulators/S8DS_notouch.nds"

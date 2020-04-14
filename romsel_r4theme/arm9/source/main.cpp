@@ -137,7 +137,7 @@ bool showA26 = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
-bool showMd = true;
+int showMd = 3;
 bool showSnes = true;
 bool showDirectories = true;
 bool showHidden = false;
@@ -176,7 +176,7 @@ void LoadSettings(void) {
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
-	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", true);
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
@@ -1340,7 +1340,7 @@ int main(int argc, char **argv) {
 			bool mpeg4 = false;
 			bool GBA = false;
 			bool SNES = false;
-			bool GENESIS = false;
+			bool GENESIS = false, usePicoDrive = false;
 			bool gameboy = false;
 			bool nes = false;
 			bool gamegear = false;
@@ -1817,13 +1817,18 @@ int main(int argc, char **argv) {
 				gamegear = true;
 			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
+				usePicoDrive = (showMd==2 || (showMd==3 && getFileSize(filename.c_str()) > 0x300000));
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			} else if (extention(filename, ".a26")) {
 				atari2600 = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam) || (gamegear&&secondaryDevice) || atari2600) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes
+			|| (gamegear && !smsGgInRam)
+			|| (gamegear && secondaryDevice)
+			|| (GENESIS && usePicoDrive)
+			|| atari2600) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1844,6 +1849,8 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 8;
 				} else if (atari2600) {
 					launchType[secondaryDevice] = 9;
+				} else if (GENESIS) {
+					launchType[secondaryDevice] = 10;
 				}
 
 				previousUsedDevice = secondaryDevice;
@@ -1883,6 +1890,11 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					}
+				} else if (GENESIS) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 					}
 				} else if (atari2600) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";

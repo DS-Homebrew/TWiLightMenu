@@ -5,7 +5,7 @@ STRING(LR_SWITCH, "L/R/Y/X Switch Pages")
 STRING(MISC_SETTINGS, "Misc. settings")
 //STRING(TWLFIRM_SETTINGS, "TWL_FIRM settings")
 STRING(GUI_SETTINGS, "GUI Settings")
-STRING(FILETYPE_SETTINGS, "Filetype settings")
+STRING(EMULATION_HB_SETTINGS, "Emulation/HB settings")
 STRING(GBARUNNER2_SETTINGS, "GBARunner2 Emulation settings")
 STRING(GAMESAPPS_SETTINGS, "Games and Apps settings")
 
@@ -42,6 +42,7 @@ STRING(RESTOREDSIMENU, "Restore DSi Menu")
 
 STRING(SHOW, "Show")
 STRING(HIDE, "Hide")
+STRING(HYBRID, "Hybrid")
 
 STRING(ALPHABETICAL, "Alphabetical")
 STRING(RECENT, "Recent")

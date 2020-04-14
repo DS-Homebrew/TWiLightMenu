@@ -886,7 +886,7 @@ int main(int argc, char **argv) {
 			bool mpeg4 = false;
 			bool GBA = false;
 			bool SNES = false;
-			bool GENESIS = false;
+			bool GENESIS = false, usePicoDrive = false;
 			bool gameboy = false;
 			bool nes = false;
 			bool gamegear = false;
@@ -1476,13 +1476,18 @@ int main(int argc, char **argv) {
 				gamegear = true;
 			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
+				usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(filename.c_str()) > 0x300000));
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			} else if (extention(filename, ".a26")) {
 				atari2600 = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!ms().smsGgInRam) || (gamegear&&ms().secondaryDevice) || atari2600) {
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes
+			|| (gamegear && !ms().smsGgInRam)
+			|| (gamegear && ms().secondaryDevice)
+			|| (GENESIS && usePicoDrive)
+			|| atari2600) {
 				const char *ndsToBoot = "";
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1503,6 +1508,8 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::EMPEG4Launch;
 				} else if (atari2600) {
 					ms().launchType[ms().secondaryDevice] = Launch::EStellaDSLaunch;
+				} else if (GENESIS) {
+					ms().launchType[ms().secondaryDevice] = Launch::EPicoDriveTWLLaunch;
 				}
 
 				ms().previousUsedDevice = ms().secondaryDevice;
@@ -1547,6 +1554,11 @@ int main(int argc, char **argv) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/S8DS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
+					}
+				} else if (GENESIS) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
 					}
 				} else if (atari2600) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
