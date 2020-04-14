@@ -289,14 +289,7 @@ bool renameFile(const std::string & oldName, const std::string & newName)
 
     if(0 != rename(oldName.c_str(), newName.c_str())) {
         if(EEXIST == errno || EXDEV == errno) {
-            bool success = copyFile(oldName, newName, true);
-            if(success) {
-                unlink(oldName.c_str());
-                return true;
-            } else {
-                unlink(newName.c_str());
-                return false;
-            }
+            return (copyFile(oldName, newName, true));
         }
         return false;
     }
