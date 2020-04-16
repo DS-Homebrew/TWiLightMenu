@@ -15,12 +15,14 @@
 		"B6R",	// Bakugan: Battle Brawlers
 		"AB2",	// Battles of Prince of Persia
 		"YB4",	// Bee Movie
+		"B7N",	// Ben 10 Triple Pack
 		"CBK",	// Bolt
 		"CBD",	// Bolt: Be-Awesome Edition
 		//"ACV",	// Castlevania: Dawn of Sorrow	(fixed on nds-bootstrap side)
 		"YCE",	// Chessmaster - The Art of Learning
 		"YCP",	// Chuukana Janshi Tenhoo Painyan Remix
 		"BIG",	// Combat/Battle of Giants: Mutant Insects
+		"ADK",	// Daikoukai Jidai IV: Rota Nova
 		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
 		"AE4",	// Eyeshield 21 Max Devil Power
@@ -75,6 +77,7 @@
 		"YG4",	// Suikoden: Tierkreis
 		"CS7",	// Summon Night X: Tears Crown
 		"AYT",	// Tales of Innocence
+		"AG7",	// Tamagotchi Connection: Corner Shop
 		"YT9",	// Tony Hawk's Proving Ground
 		"AH9",	// Tony Hawk's American Sk8land
 		"AFZ",	// Transformers: Autobots
@@ -82,7 +85,10 @@
 		"BAO",	// Transformers: War for Cybertron: Autobots
 		"BDI",	// Transformers: War for Cybertron: Decepticons
 		"YYK",	// Trauma Center: Under the Knife 2
+		"ATB",	// Tsubasa Chronicle
 		"AUS",	// Ultimate Spider-Man
+		"AWW",	// The Wild West
+		"AYJ",	// Yakitate!! Japan: Game Ichigou: Choujou Kessen!! Pantasic Grand Prix!
 		"CY8",	// Yu-Gi-Oh! World Championship 2009
 		"BYX",	// Yu-Gi-Oh! World Championship 2010
 	};
