@@ -689,6 +689,18 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         config.language(gameConfig.language);
     }
 
+	if (!rominfo.isDSiWare() && rominfo.requiresDonorRom()) {
+		std::string donorRomPath;
+		const char* bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+		CIniFile bootstrapini(bootstrapinipath);
+		donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", "");
+		if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
+			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "This game requires a donor ROM to run. Please switch the theme, and set an existing DS SDK5 game as a donor ROM.", MB_OK);
+			progressWnd().hide();
+			return;
+		}
+	}
+
 	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
 	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
 		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please start in DS mode.", MB_OK);

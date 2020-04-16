@@ -59,6 +59,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
+    _requiresDonorRom = src._requiresDonorRom;
     
     return *this;
 }
@@ -68,6 +69,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
   _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
   _isArgv(EFalse),
+  _requiresDonorRom(EFalse),
   _extIcon(-1), 
   _romVersion(0)
 {
@@ -87,6 +89,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
+    _requiresDonorRom = src._requiresDonorRom;
 }
 
 bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
@@ -131,6 +134,10 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
+		if (header.arm7binarySize == 0x27618 || header.arm7binarySize == 0x2762C)
+		{
+			_requiresDonorRom = ETrue;
+		}
 
 		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9Sig[0], sizeof(u32), 4, f);
@@ -623,6 +630,12 @@ bool DSRomInfo::isArgv(void)
 {
     load();
     return (_isArgv == ETrue) ? true : false;
+}
+
+bool DSRomInfo::requiresDonorRom(void)
+{
+    load();
+    return (_requiresDonorRom == ETrue) ? true : false;
 }
 
 bool DSRomInfo::isBannerAnimated(void)

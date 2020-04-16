@@ -65,6 +65,7 @@ private:
   TBool _isGbaRom;
   TBool _isBannerAnimated;
   TBool _isArgv;
+  TBool _requiresDonorRom;
   std::string _fileName;
   s32 _extIcon;
   u8 _romVersion;
@@ -81,6 +82,7 @@ public:
   _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
   _isArgv(EFalse),
+  _requiresDonorRom(EFalse),
   _extIcon(-1), 
   _romVersion(0)
   {
@@ -115,6 +117,7 @@ public:
   bool isDSiWare(void);
   bool isBannerAnimated(void);
   bool isArgv(void);
+  bool requiresDonorRom(void);
 
   DSRomInfo &operator=(const DSRomInfo &src);
   void MayBeArgv(const std::string &filename)
