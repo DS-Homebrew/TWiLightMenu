@@ -405,7 +405,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
-			requiresDonorRom[num] = (ndsHeader.arm7binarySize == 0x27618 || ndsHeader.arm7binarySize == 0x2762C);
+			requiresDonorRom[num] = (ndsHeader.arm7binarySize == 0x27618 || ndsHeader.arm7binarySize == 0x2762C || ndsHeader.arm7binarySize == 0x29CEC);
 		}
 
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);

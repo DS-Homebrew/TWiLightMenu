@@ -134,7 +134,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
-		if (header.arm7binarySize == 0x27618 || header.arm7binarySize == 0x2762C)
+		if (header.arm7binarySize == 0x27618 || header.arm7binarySize == 0x2762C || header.arm7binarySize == 0x29CEC)
 		{
 			_requiresDonorRom = ETrue;
 		}

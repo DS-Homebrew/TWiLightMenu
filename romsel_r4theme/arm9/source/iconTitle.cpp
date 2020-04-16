@@ -705,7 +705,7 @@ void getGameInfo(bool isDir, const char* name)
 		}
 
 		romVersion = ndsHeader.romversion;
-		requiresDonorRom = (ndsHeader.arm7binarySize == 0x27618 || ndsHeader.arm7binarySize == 0x2762C);
+		requiresDonorRom = (ndsHeader.arm7binarySize == 0x27618 || ndsHeader.arm7binarySize == 0x2762C || ndsHeader.arm7binarySize == 0x29CEC);
 
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9StartSig, sizeof(u32), 4, fp);
