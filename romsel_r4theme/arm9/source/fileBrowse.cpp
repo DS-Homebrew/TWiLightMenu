@@ -59,6 +59,8 @@
 #define ENTRIES_START_ROW 2
 #define ENTRY_PAGE_LENGTH 10
 
+extern const char *bootstrapinipath;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -331,6 +333,26 @@ void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 0;
 }
 
+void donorRomMsg(void) {
+	dialogboxHeight = 2;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Error!");
+	printSmallCentered(false, 104, "This game requires a donor ROM");
+	printSmallCentered(false, 112, "to run. Please set an existing");
+	printSmallCentered(false, 120, "DS SDK5 game as a donor ROM.");
+	printSmallCentered(false, 134, "A: OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
 void showLocation(void) {
 	if (isRegularDS) return;
 
@@ -493,12 +515,25 @@ string browseForFile(const vector<string> extensionList) {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 				bool useBootstrapAnyway = (useBootstrap || !secondaryDevice);
-				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
-				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
+				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
 				{
-					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-					hasAP = checkRomAP(f_nds_file);
-					fclose(f_nds_file);
+					if (requiresDonorRom)
+					{
+						std::string donorRomPath;
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						CIniFile bootstrapini(bootstrapinipath);
+						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", "");
+						if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
+							proceedToLaunch = false;
+							donorRomMsg();
+						}
+					}
+					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))
+					{
+						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+						hasAP = checkRomAP(f_nds_file);
+						fclose(f_nds_file);
+					}
 				}
 				else if (isHomebrew == 1)
 				{

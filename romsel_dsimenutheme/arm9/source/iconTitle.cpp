@@ -286,6 +286,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
 	requiresRamDisk[num] = false;
+	requiresDonorRom[num] = false;
 	infoFound[num] = false;
 
 	if (isDir) {
@@ -404,6 +405,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
+			requiresDonorRom[num] = (ndsHeader.arm7binarySize == 0x27618 || ndsHeader.arm7binarySize == 0x2762C);
 		}
 
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
@@ -438,7 +440,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew[num] == true) {
+		if (isHomebrew[num] == true && num < 40) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058

@@ -275,6 +275,7 @@ extern bool isDSiWare;
 extern bool isHomebrew;
 extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header
 extern bool requiresRamDisk;
+extern bool requiresDonorRom;
 
 /**
  * Get banner sequence from banner file.

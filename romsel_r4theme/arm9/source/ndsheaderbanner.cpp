@@ -513,6 +513,7 @@ bool isDSiWare = false;
 bool isHomebrew = false;
 bool isModernHomebrew = false;		// false == No DSi-Extended header, true == Has DSi-Extended header
 bool requiresRamDisk = false;
+bool requiresDonorRom = false;
 
 /**
  * Get banner sequence from banner file.

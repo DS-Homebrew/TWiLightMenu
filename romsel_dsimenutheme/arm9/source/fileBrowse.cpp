@@ -48,6 +48,8 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern const char *bootstrapinipath;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -1094,6 +1096,58 @@ void dsiBinariesMissingMsg(const char *filename) {
 	printSmallCentered(false, yPos1, STR_DSIBINARIES_MISSING_1.c_str());
 	printSmallCentered(false, yPos2, STR_DSIBINARIES_MISSING_2.c_str());
 	printSmallCentered(false, yPos3, STR_DSIBINARIES_MISSING_3.c_str());
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	if (ms().theme == 4) {
+		snd().playLaunch();
+	} else {
+		showdialogbox = false;
+	}
+}
+
+void donorRomMsg(const char *filename) {
+	clearText();
+	snd().playWrong();
+	if (ms().theme != 4) {
+		dbox_showIcon = true;
+		showdialogbox = true;
+		for (int i = 0; i < 30; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		titleUpdate(false, filename, CURPOS);
+		dirContName = filename;
+		// About 38 characters fit in the box.
+		if (strlen(dirContName.c_str()) > 38) {
+			// Truncate to 35, 35 + 3 = 38 (because we append "...").
+			dirContName.resize(35, ' ');
+			size_t first = dirContName.find_first_not_of(' ');
+			size_t last = dirContName.find_last_not_of(' ');
+			dirContName = dirContName.substr(first, (last - first + 1));
+			dirContName.append("...");
+		}
+		printSmall(false, 16, 66, dirContName.c_str());
+	}
+	int yPos1 = (ms().theme == 4 ? 8 : 96);
+	int yPos2 = (ms().theme == 4 ? 24 : 112);
+	int yPos3 = (ms().theme == 4 ? 40 : 128);
+	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
+	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
+	printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3.c_str());
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -2328,13 +2382,25 @@ string browseForFile(const vector<string> extensionList) {
 					int hasAP = 0;
 					bool proceedToLaunch = true;
 					bool useBootstrapAnyway = (ms().useBootstrap || !ms().secondaryDevice);
-					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS] &&
-						isHomebrew[CURPOS] == 0 &&
-						checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
-						FILE *f_nds_file = fopen(
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
-						hasAP = checkRomAP(f_nds_file, CURPOS);
-						fclose(f_nds_file);
+					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
+					 &&	isHomebrew[CURPOS] == 0)
+					{
+						if (requiresDonorRom[CURPOS]) {
+							std::string donorRomPath;
+							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+							CIniFile bootstrapini(bootstrapinipath);
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", "");
+							if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
+								proceedToLaunch = false;
+								donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+							}
+						}
+						if (proceedToLaunch && checkIfShowAPMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name)) {
+							FILE *f_nds_file = fopen(
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), "rb");
+							hasAP = checkRomAP(f_nds_file, CURPOS);
+							fclose(f_nds_file);
+						}
 					} else if (isHomebrew[CURPOS] == 1) {
 						loadPerGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
 						if (requiresRamDisk[CURPOS] && perGameSettings_ramDiskNo == -1) {

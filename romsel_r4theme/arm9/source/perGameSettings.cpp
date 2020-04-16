@@ -55,10 +55,14 @@
 #define ENTRIES_START_ROW 3
 #define ENTRY_PAGE_LENGTH 10
 
+extern const char *bootstrapinipath;
+
 extern int consoleModel;
 
 extern int bstrap_dsiMode;
 extern bool useBootstrap;
+
+extern std::string romfolder[2];
 
 const char* SDKnumbertext;
 
@@ -79,7 +83,11 @@ int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 
+static char SET_AS_DONOR_ROM[32];
+
 char pergamefilepath[256];
+
+extern void RemoveTrailingSlashes(std::string &path);
 
 extern char usernameRendered[10];
 extern bool usernameRenderedDone;
@@ -176,6 +184,13 @@ bool checkIfDSiMode (std::string filename) {
 	}
 }
 
+bool donorRomTextShown = false;
+void revertDonorRomText(void) {
+	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
+
+	sprintf(SET_AS_DONOR_ROM, "Set as Donor ROM");
+}
+
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
@@ -223,7 +238,10 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+	u8 unitCode = 0;
 	u32 arm9dst = 0;
+	fseek(f_nds_file, 0x12, SEEK_SET);
+	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
@@ -296,6 +314,13 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
+			if (!requiresDonorRom && unitCode == 0 && SDKVersion > 0x5000000) {
+				perGameOps++;
+				perGameOp[perGameOps] = 9;	// Set as Donor ROM
+				donorRomTextShown = true;
+			} else {
+				donorRomTextShown = false;
+			}
 		}
 	}
 
@@ -321,6 +346,9 @@ void perGameSettings (std::string filename) {
 	} else {
 		dialogboxHeight = 4;
 	}
+
+	sprintf(SET_AS_DONOR_ROM, "Set as Donor ROM");
+
 	showdialogbox = true;
 
 	while (1) {
@@ -369,7 +397,7 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 32, perGameOpYpos, "RAM disk:");
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
 				} else {
-					printSmall(false, 32, perGameOpYpos, "Save number:");
+					printSmall(false, 32, perGameOpYpos, "Save Number:");
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew && perGameSettings_ramDiskNo == -1) {
@@ -405,7 +433,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 4:
-				printSmall(false, 32, perGameOpYpos, "VRAM boost:");
+				printSmall(false, 32, perGameOpYpos, "VRAM Boost:");
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmallRightAlign(false, 180, perGameOpYpos, "On");
 				} else {
@@ -419,7 +447,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 5:
-				printSmall(false, 32, perGameOpYpos, "Heap shrink:");
+				printSmall(false, 32, perGameOpYpos, "Heap Shrink:");
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
 				} else if (perGameSettings_heapShrink == 1) {
@@ -429,7 +457,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 6:
-				printSmall(false, 32, perGameOpYpos, "Direct boot:");
+				printSmall(false, 32, perGameOpYpos, "Direct Boot:");
 				if (perGameSettings_directBoot) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Yes");
 				} else {
@@ -455,6 +483,9 @@ void perGameSettings (std::string filename) {
 				} else {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "4:3");
 				}
+				break;
+			case 9:
+				printSmallCentered(false, perGameOpYpos, SET_AS_DONOR_ROM);
 				break;
 		}
 		perGameOpYpos += 8;
@@ -483,6 +514,7 @@ void perGameSettings (std::string filename) {
 			}
 		} else {
 			if (pressed & KEY_UP) {
+				revertDonorRomText();
 				perGameSettings_cursorPosition--;
 				if (perGameSettings_cursorPosition < 0) {
 					perGameSettings_cursorPosition = perGameOps;
@@ -492,6 +524,7 @@ void perGameSettings (std::string filename) {
 				}
 			}
 			if (pressed & KEY_DOWN) {
+				revertDonorRomText();
 				perGameSettings_cursorPosition++;
 				if (perGameSettings_cursorPosition > perGameOps) {
 					perGameSettings_cursorPosition = 0;
@@ -598,6 +631,17 @@ void perGameSettings (std::string filename) {
 					case 8:
 						perGameSettings_wideScreen++;
 						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
+						break;
+					case 9:
+					  if (pressed & KEY_A) {
+						std::string romFolderNoSlash = romfolder[secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						CIniFile bootstrapini(bootstrapinipath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", romFolderNoSlash+"/"+filename);
+						bootstrapini.SaveIniFile(bootstrapinipath);
+						sprintf(SET_AS_DONOR_ROM, "Done!");
+					  }
 						break;
 				}
 				perGameSettingsChanged = true;
