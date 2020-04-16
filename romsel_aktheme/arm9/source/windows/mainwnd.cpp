@@ -703,7 +703,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
 	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
-		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please start in DS mode.", MB_OK);
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please get a clean dump of this ROM, or start in DS mode.", MB_OK);
 		progressWnd().hide();
 		return;
 	}
