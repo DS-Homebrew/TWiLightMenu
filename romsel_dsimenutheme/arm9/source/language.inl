@@ -42,3 +42,8 @@ STRING(DSIBINARIES_MISSING_3, "this ROM, or start in DS mode.")
 STRING(DONOR_ROM_MSG_1, "This game requires a donor ROM")
 STRING(DONOR_ROM_MSG_2, "to run. Please set an existing")
 STRING(DONOR_ROM_MSG_3, "DS SDK5 game as a donor ROM.")
+
+STRING(DSIWAREHAX_BLOCK_MSG_1, "This game cannot be launched.")
+STRING(DSIWAREHAX_BLOCK_MSG_2, "Please start TWiLight Menu++")
+STRING(DSIWAREHAX_BLOCK_MSG_DSI_3, "through Unlaunch to play this.")
+STRING(DSIWAREHAX_BLOCK_MSG_3DS_3, "as installed, to play this.")

@@ -44,6 +44,7 @@
 #include "common/files.h"
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
+#include "dsiWareHaxGameBListMap.h"
 
 #include "common/inifile.h"
 #include "language.h"
@@ -689,6 +690,32 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         config.language(gameConfig.language);
     }
 
+	char gameTid[5] = {0};
+	tonccpy(gameTid, rominfo.saveInfo().gameCode, 4);
+
+	FILE *f_nds_file = fopen(fullPath.c_str(), "rb");
+	u16 headerCRC16 = 0;
+	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+	fclose(f_nds_file);
+
+	if (!rominfo.isDSiWare() && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
+		// Block certain games from being lauched, when in DSiWareHax
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {
+			if (memcmp(gameTid, dsiWareHaxGameBList[i], 3) == 0) {
+				// Found match
+				messageBox(this, LANG("game launch", "NDS Bootstrap Error"),
+					ms().consoleModel==0
+					? "This game cannot be launched. Please start TWiLight Menu++ through Unlaunch to play this."
+					: "This game cannot be launched. Please start TWiLight Menu++ as installed, to play this."
+				, MB_OK);
+				progressWnd().hide();
+				return;
+			}
+		}
+	}
+
 	if (!rominfo.isDSiWare() && rominfo.requiresDonorRom()) {
 		std::string donorRomPath;
 		const char* bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
@@ -711,15 +738,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	bool hasAP = false;
 	bool hasAP1 = false;
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
-
-	char gameTid[5] = {0};
-	tonccpy(gameTid, rominfo.saveInfo().gameCode, 4);
-
-	FILE *f_nds_file = fopen(fullPath.c_str(), "rb");
-	u16 headerCRC16 = 0;
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-	fclose(f_nds_file);
 
 	char ipsPath[256];
 	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
