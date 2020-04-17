@@ -47,6 +47,7 @@
 #include "perGameSettings.h"
 #include "errorScreen.h"
 #include "dsiWareHaxGameBListMap.h"
+#include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -386,6 +387,58 @@ void showLocation(void) {
 	}
 }
 
+bool checkForCompatibleGame(char gameTid[5], const char *filename) {
+	bool proceedToLaunch = true;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+		if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
+			// Found match
+			proceedToLaunch = false;
+			break;
+		}
+	}
+
+	if (proceedToLaunch) return true;	// Game is compatible
+
+	dialogboxHeight = 4;
+	showdialogbox = true;
+	printLargeCentered(false, 84, "Compatibility Warning");
+	printSmallCentered(false, 104, "This game is known to not run.");
+	printSmallCentered(false, 112, "If there's an nds-bootstrap");
+	printSmallCentered(false, 120, "version that fixes this,");
+	printSmallCentered(false, 128, "please ignore this message.");
+	printSmallCentered(false, 150, "A: Ignore   B: Don't launch");
+
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+
+	if (proceedToLaunch) {
+		titleUpdate(false, filename);
+		showLocation();
+	}
+
+	return proceedToLaunch;
+}
+
 extern bool extention(const std::string& filename, const char* ext);
 
 string browseForFile(const vector<string> extensionList) {
@@ -539,14 +592,15 @@ string browseForFile(const vector<string> extensionList) {
 				bool useBootstrapAnyway = (useBootstrap || !secondaryDevice);
 				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
 				{
-					if (!secondaryDevice && arm7SCFGLocked)
-					{
-						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-						char game_TID[5];
-						grabTID(f_nds_file, game_TID);
-						game_TID[4] = 0;
-						fclose(f_nds_file);
+					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+					char game_TID[5];
+					grabTID(f_nds_file, game_TID);
+					game_TID[4] = 0;
+					fclose(f_nds_file);
 
+					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
+					if (proceedToLaunch && !secondaryDevice && arm7SCFGLocked)
+					{
 						// Block certain games from being lauched, when in DSiWareHax
 						// TODO: If the list gets large enough, switch to bsearch().
 						for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {

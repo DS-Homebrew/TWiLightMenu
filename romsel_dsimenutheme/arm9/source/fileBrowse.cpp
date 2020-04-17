@@ -29,6 +29,7 @@
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
 #include "dsiWareHaxGameBListMap.h"
+#include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -1222,6 +1223,99 @@ void dsiWareHaxBlockMsg(const char *filename) {
 	} else {
 		showdialogbox = false;
 	}
+}
+
+bool checkForCompatibleGame(const char *filename) {
+	bool proceedToLaunch = true;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+		if (memcmp(gameTid[CURPOS], incompatibleGameList[i], 3) == 0) {
+			// Found match
+			proceedToLaunch = false;
+			break;
+		}
+	}
+
+	if (proceedToLaunch) return true;	// Game is compatible
+
+	if (ms().theme == 4) {
+		snd().playStartup();
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+		currentBg = 1;
+		displayGameIcons = false;
+		fadeType = true;
+	} else {
+		dbox_showIcon = true;
+		showdialogbox = true;
+	}
+	clearText();
+	if (ms().theme == 4) {
+		while (!screenFadedIn()) { swiWaitForVBlank(); }
+		dbox_showIcon = true;
+		snd().playWrong();
+	} else {
+		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
+	}
+	titleUpdate(false, filename, CURPOS);
+	printSmallCentered(false, 72, STR_GAME_INCOMPATIBLE_MSG_1.c_str());
+	printSmallCentered(false, 104, STR_GAME_INCOMPATIBLE_MSG_2.c_str());
+	printSmallCentered(false, 118, STR_GAME_INCOMPATIBLE_MSG_3.c_str());
+	printSmallCentered(false, 132, STR_GAME_INCOMPATIBLE_MSG_4.c_str());
+	printSmallCentered(false, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch");
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		tex().drawVolumeImageCached();
+		tex().drawBatteryImageCached();
+
+		drawCurrentTime();
+		drawCurrentDate();
+		drawClockColon();
+		snd().updateStream();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			snd().playBack();
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
+	showdialogbox = false;
+	if (ms().theme == 4) {
+		fadeType = false;	   // Fade to black
+		for (int i = 0; i < 25; i++) {
+			swiWaitForVBlank();
+		}
+		clearText();
+		currentBg = 0;
+		displayGameIcons = true;
+		fadeType = true;
+		snd().playStartup();
+		if (proceedToLaunch) {
+			while (!screenFadedIn()) { swiWaitForVBlank(); }
+		}
+	} else {
+		clearText();
+		for (int i = 0; i < (proceedToLaunch ? 20 : 15); i++) {
+			snd().updateStream();
+			swiWaitForVBlank();
+		}
+	}
+	dbox_showIcon = false;
+
+	return proceedToLaunch;
 }
 
 bool selectMenu(void) {
@@ -2438,7 +2532,8 @@ string browseForFile(const vector<string> extensionList) {
 					if (useBootstrapAnyway && bnrRomType[CURPOS] == 0 && !isDSiWare[CURPOS]
 					 &&	isHomebrew[CURPOS] == 0)
 					{
-						if (!ms().secondaryDevice && sys().arm7SCFGLocked()) {
+						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
+						if (proceedToLaunch && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
 							// Block certain games from being lauched, when in DSiWareHax
 							// TODO: If the list gets large enough, switch to bsearch().
 							for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {

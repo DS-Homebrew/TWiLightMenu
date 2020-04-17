@@ -45,6 +45,7 @@
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
 #include "dsiWareHaxGameBListMap.h"
+#include "incompatibleGameMap.h"
 
 #include "common/inifile.h"
 #include "language.h"
@@ -698,6 +699,32 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
 	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
 	fclose(f_nds_file);
+
+	if (!rominfo.isDSiWare()) {
+		bool proceedToLaunch = true;
+
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+			if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+
+		if (!proceedToLaunch) {
+			int optionPicked = messageBox(this, LANG("game launch", "Compatibility Warning"), "This game is known to not run. If there's an nds-bootstrap version that fixes this, please ignore this message.", MB_OK | MB_CANCEL);
+			progressWnd().hide();
+
+			scanKeys();
+			int pressed = keysHeld();
+
+			if (pressed & KEY_B || optionPicked == ID_CANCEL)
+			{
+				return;
+			}
+		}
+	}
 
 	if (!rominfo.isDSiWare() && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
 		// Block certain games from being lauched, when in DSiWareHax
