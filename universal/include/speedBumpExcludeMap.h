@@ -10,6 +10,7 @@
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
 		"AWR",	// Advance Wars: Dual Strike
 		"AEK",	// Age of Empires: The Age of Kings
+		"ARD",	// American Dragon Jake Long
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altair's Chronicles
 		"B6R",	// Bakugan: Battle Brawlers
@@ -82,6 +83,8 @@
 		"AH9",	// Tony Hawk's American Sk8land
 		"AFZ",	// Transformers: Autobots
 		"AFY",	// Transformers: Decepticons
+		"CXR",	// Transformers: Revenge of the Fallen: Autobots
+		"CXO",	// Transformers: Revenge of the Fallen: Decepticons
 		"BAO",	// Transformers: War for Cybertron: Autobots
 		"BDI",	// Transformers: War for Cybertron: Decepticons
 		"YYK",	// Trauma Center: Under the Knife 2
