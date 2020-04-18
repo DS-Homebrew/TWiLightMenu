@@ -240,10 +240,13 @@ void perGameSettings (std::string filename) {
 	}
 	u8 unitCode = 0;
 	u32 arm9dst = 0;
+	u32 arm7size = 0;
 	fseek(f_nds_file, 0x12, SEEK_SET);
 	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
+	fseek(f_nds_file, 0x3C, SEEK_SET);
+	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
 
 	bool showPerGameSettings =
@@ -314,7 +317,8 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (!requiresDonorRom && unitCode == 0 && SDKVersion > 0x5000000) {
+			if (!requiresDonorRom && unitCode == 0 && SDKVersion > 0x5000000
+			 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;
