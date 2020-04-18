@@ -26,6 +26,7 @@
 		"ADK",	// Daikoukai Jidai IV: Rota Nova
 		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
+		"YER",	// Elebits: The Adventures of Kai and Zero
 		"AE4",	// Eyeshield 21 Max Devil Power
 		"APR",	// Feel the Magic: XY XX
 		"A26",	// Feel the Magic: XY XX (Demo)
