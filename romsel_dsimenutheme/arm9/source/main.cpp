@@ -183,6 +183,11 @@ void SetMPUSettings(const char *filename) {
 
 	// Check for games that need an MPU size of 3 MB.
 	static const char mpu_3MB_list[][4] = {
+	    "AQC", // Crayon Shin-chan DS - Arashi o Yobu Nutte Crayoon Daisakusen!
+	    "YRC", // Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
+	    "CL4", // Crayon Shin-Chan - Arashi o Yobu Nendororoon Daihenshin!
+	    "BQB", // Crayon Shin-chan - Obaka Dainin Den - Susume! Kasukabe Ninja Tai!
+	    "YD8", // Doraemon - Nobita to Midori no Kyojinden DS
 	    "A7A", // DS Download Station - Vol 1
 	    "A7B", // DS Download Station - Vol 2
 	    "A7C", // DS Download Station - Vol 3
