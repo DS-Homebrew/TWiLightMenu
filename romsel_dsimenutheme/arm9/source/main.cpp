@@ -59,6 +59,7 @@ bool controlTopBright = true;
 bool controlBottomBright = true;
 
 extern void ClearBrightness();
+extern bool displayGameIcons;
 extern bool showProgressIcon;
 
 const char *settingsinipath = "sd:/_nds/TWiLightMenu/settings.ini";
@@ -939,6 +940,7 @@ int main(int argc, char **argv) {
 				fadeSpeed = true; // Fast fading
 
 				if ((getFileSize(ms().dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
+					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
@@ -982,9 +984,11 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
+					if (ms().theme == 5) displayGameIcons = true;
 				}
 
 				if ((getFileSize(ms().dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
+					if (ms().theme == 5) displayGameIcons = false;
 					clearText();
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
@@ -1028,9 +1032,10 @@ int main(int argc, char **argv) {
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
+					if (ms().theme == 5) displayGameIcons = true;
 				}
 
-				if (ms().theme != 4 && fadeType) {
+				if (ms().theme != 4 && ms().theme != 5 && fadeType) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
@@ -1064,6 +1069,13 @@ int main(int argc, char **argv) {
 					);
 
 					bootstrapini.SaveIniFile(bootstrapinipath);
+
+					if (ms().theme == 5) {
+						fadeType = false;		  // Fade to black
+						for (int i = 0; i < 60; i++) {
+							swiWaitForVBlank();
+						}
+					}
 
 					if (isDSiMode()) {
 						SetWidescreen(filename.c_str());
@@ -1114,7 +1126,7 @@ int main(int argc, char **argv) {
 						      "sd:/_nds/TWiLightMenu/tempDSiWare.prv");
 					}
 					showProgressIcon = false;
-					if (ms().theme != 4) {
+					if (ms().theme != 4 && ms().theme != 5) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 25; i++) {
 							swiWaitForVBlank();
@@ -1143,12 +1155,19 @@ int main(int argc, char **argv) {
 						for (int i = 0; i < 60 * 3; i++) {
 							swiWaitForVBlank(); // Wait 3 seconds
 						}
-						if (ms().theme != 4) {
+						if (ms().theme != 4 && ms().theme != 5) {
 							fadeType = false;	   // Fade to white
 							for (int i = 0; i < 25; i++) {
 								swiWaitForVBlank();
 							}
 						}
+					}
+				}
+
+				if (ms().theme == 5) {
+					fadeType = false;		  // Fade to black
+					for (int i = 0; i < 60; i++) {
+						swiWaitForVBlank();
 					}
 				}
 
@@ -1185,12 +1204,7 @@ int main(int argc, char **argv) {
 					*(u16 *)(0x0200080E) =
 					    swiCRC16(0xFFFF, (void *)0x02000810, 0x3F0); // Unlaunch CRC16
 				}
-				// Stabilization code to make DSiWare always boot successfully(?)
-				clearText();
-				for (int i = 0; i < 15; i++) {
-					swiWaitForVBlank();
-				}
-
+				DC_FlushAll();
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Unlaunch
 				for (int i = 0; i < 15; i++) {
 					swiWaitForVBlank();
@@ -1272,6 +1286,7 @@ int main(int argc, char **argv) {
 							}
 
 							if (savesize > 0) {
+								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
 								} else if (ms().consoleModel >= 2) {
@@ -1283,7 +1298,7 @@ int main(int argc, char **argv) {
 								}
 								printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating save file...");
 
-								if (ms().theme != 4) {
+								if (ms().theme != 4 && ms().theme != 5) {
 									fadeSpeed = true; // Fast fading
 									fadeType = true; // Fade in from white
 								}
@@ -1301,13 +1316,14 @@ int main(int argc, char **argv) {
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}
-								if (ms().theme != 4) {
+								if (ms().theme != 4 && ms().theme != 5) {
 									fadeType = false;	   // Fade to white
 									for (int i = 0; i < 25; i++) {
 										swiWaitForVBlank();
 									}
 								}
 								clearText();
+								if (ms().theme == 5) displayGameIcons = true;
 							}
 						}
 
@@ -1394,6 +1410,13 @@ int main(int argc, char **argv) {
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
 
+						if (ms().theme == 5) {
+							fadeType = false;		  // Fade to black
+							for (int i = 0; i < 60; i++) {
+								swiWaitForVBlank();
+							}
+						}
+
 						if (isDSiMode()) {
 							SetWidescreen(filename.c_str());
 						}
@@ -1423,6 +1446,14 @@ int main(int argc, char **argv) {
 						ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch;
 						ms().previousUsedDevice = ms().secondaryDevice;
 						ms().saveSettings();
+
+						if (ms().theme == 5) {
+							fadeType = false;		  // Fade to black
+							for (int i = 0; i < 60; i++) {
+								swiWaitForVBlank();
+							}
+						}
+
 						loadGameOnFlashcard(argarray[0], true);
 					}
 				} else {
@@ -1433,6 +1464,13 @@ int main(int argc, char **argv) {
 					ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardDirectLaunch;
 					ms().previousUsedDevice = ms().secondaryDevice;
 					ms().saveSettings();
+
+					if (ms().theme == 5) {
+						fadeType = false;		  // Fade to black
+						for (int i = 0; i < 60; i++) {
+							swiWaitForVBlank();
+						}
+					}
 
 					if (isDSiMode()) {
 						SetWidescreen(filename.c_str());
@@ -1523,6 +1561,14 @@ int main(int argc, char **argv) {
 
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
+
+				if (ms().theme == 5) {
+					fadeType = false;		  // Fade to black
+					for (int i = 0; i < 60; i++) {
+						swiWaitForVBlank();
+					}
+				}
+
 				argarray.push_back(ROMpath);
 				int err = 0;
 
@@ -1595,6 +1641,14 @@ int main(int argc, char **argv) {
 				ms().launchType[ms().secondaryDevice] = Launch::ESDFlashcardLaunch; // 1
 				ms().previousUsedDevice = ms().secondaryDevice;
 				ms().saveSettings();
+
+				if (ms().theme == 5) {
+					fadeType = false;		  // Fade to black
+					for (int i = 0; i < 60; i++) {
+						swiWaitForVBlank();
+					}
+				}
+
 				if (ms().secondaryDevice) {
 					if (GBA) {
 						ndsToBoot = ms().gbar2DldiAccess ? "sd:/_nds/GBARunner2_arm7dldi_ds.nds" : "sd:/_nds/GBARunner2_arm9dldi_ds.nds";

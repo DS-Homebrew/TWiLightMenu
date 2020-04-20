@@ -224,19 +224,19 @@ void ThemeTextures::loadBackgrounds() {
 void ThemeTextures::loadHBTheme() {	
 	printf("tex().loadHBTheme()\n");
 
-	printf("tex().loadBackgrounds()\n");
+	// printf("tex().loadBackgrounds()\n");
 	loadBackgrounds();
-	printf("tex().loadUITextures()\n");
+	// printf("tex().loadUITextures()\n");
 	loadUITextures();
 
-	printf("tex().loadVolumeTextures()\n");
+	// printf("tex().loadVolumeTextures()\n");
 	loadVolumeTextures();
-	printf("tex().loadBatteryTextures()\n");
+	// printf("tex().loadBatteryTextures()\n");
 	loadBatteryTextures();
-	printf("tex().loadIconTextures()\n");
+	// printf("tex().loadIconTextures()\n");
 	loadIconTextures();
 	
-	printf("tex().loadDateFont(_dateTimeFontTexture->texture())\n");
+	// printf("tex().loadDateFont(_dateTimeFontTexture->texture())\n");
 	loadDateFont(_dateTimeFontTexture->texture());
 
 	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
@@ -245,6 +245,7 @@ void ThemeTextures::loadHBTheme() {
 	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
 
 	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 
 	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
 	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
@@ -253,35 +254,35 @@ void ThemeTextures::loadHBTheme() {
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	if (ms().colorMode == 1) {
-		printf("tex().applyGrayscaleToAllGrfTextures()\n");
+		// printf("tex().applyGrayscaleToAllGrfTextures()\n");
 		applyGrayscaleToAllGrfTextures();
 	}
 
 	
-	printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
-	printf("tex().loadSettingsImage(*_settingsIconTexture)\n");
+	// printf("tex().loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
-	printf("tex().loadBraceImage(*_braceTexture)\n");
+	// printf("tex().loadBraceImage(*_braceTexture)\n");
 	loadBraceImage(*_braceTexture);
 
-	printf("tex().loadBoxfullImage(*_boxFullTexture)\n");
+	// printf("tex().loadBoxfullImage(*_boxFullTexture)\n");
 	loadBoxfullImage(*_boxFullTexture);
-	printf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
+	// printf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
 	loadBoxemptyImage(*_boxEmptyTexture);
 
-	printf("tex().loadManualImage(*_manualIconTexture)\n");
+	// printf("tex().loadManualImage(*_manualIconTexture)\n");
 	loadManualImage(*_manualIconTexture);
-	printf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
+	// printf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
-	printf("tex().loadSmallCartImage(*_smallCartTexture)\n");
+	// printf("tex().loadSmallCartImage(*_smallCartTexture)\n");
 	loadSmallCartImage(*_smallCartTexture);
-	printf("tex().loadFolderImage(*_folderTexture)\n");
+	// printf("tex().loadFolderImage(*_folderTexture)\n");
 	loadFolderImage(*_folderTexture);
 	
-	printf("tex().loadProgressImage(*_progressTexture)\n");
+	// printf("tex().loadProgressImage(*_progressTexture)\n");
 	loadProgressImage(*_progressTexture);
-	printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
 	
 }

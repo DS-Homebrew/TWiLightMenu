@@ -2726,7 +2726,10 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 						}
-						if (ms().theme != 4) {
+						if (ms().theme == 5) {
+							currentBg = 0;
+							snd().fadeOutStream();
+						} else if (ms().theme != 4) {
 							fadeType = false;		  // Fade to white
 							snd().fadeOutStream();
 							for (int i = 0; i < 60; i++) {
@@ -2746,7 +2749,10 @@ string browseForFile(const vector<string> extensionList) {
 
 						if(ms().updateRecentlyPlayedList) {
 							printLargeCentered(false, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING.c_str());
-							if (ms().theme != 4) {
+							if (ms().theme == 5) {
+								displayGameIcons = false;
+								showProgressIcon = true;
+							} else if (ms().theme != 4) {
 								fadeSpeed = true; // Fast fading
 								fadeType = true; // Fade in from white
 								for (int i = 0; i < 25; i++) {
@@ -2781,7 +2787,9 @@ string browseForFile(const vector<string> extensionList) {
 							timesPlayedIni.SetInt(path, entry->name, (timesPlayedIni.GetInt(path, entry->name, 0) + 1));
 							timesPlayedIni.SaveIniFile(timesPlayedIniPath);
 
-							if (ms().theme != 4) {
+							if (ms().theme == 5) {
+								displayGameIcons = true;
+							} else if (ms().theme != 4) {
 								showProgressIcon = false;
 								fadeType = false;	   // Fade to white
 								for (int i = 0; i < 25; i++) {
