@@ -1725,6 +1725,7 @@ string browseForFile(const vector<string> extensionList) {
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
 				if (ms().theme == 5) {
+					printLargeCentered(false, 142, "^");
 					printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
 					printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
 				}
@@ -2124,10 +2125,6 @@ string browseForFile(const vector<string> extensionList) {
 					}
 					prevPos = CURPOS;
 
-					if (ms().theme == 5) {
-						printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-						printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
-					}
 					checkSdEject();
 					tex().drawVolumeImageCached();
 					tex().drawBatteryImageCached();
@@ -2435,6 +2432,10 @@ string browseForFile(const vector<string> extensionList) {
 								CURPOS);
 						} else {
 							currentBg = 0;
+						}
+						if (ms().theme == 5) {
+							printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
+							printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
 						}
 					}
 					prevTouch2 = prevTouch1;
