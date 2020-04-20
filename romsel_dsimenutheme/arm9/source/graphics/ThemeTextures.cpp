@@ -187,7 +187,7 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &
 }
 
 void ThemeTextures::reloadPalDialogBox() {
-	if (ms().theme == 4) return;
+	if (ms().theme == 4 || ms().theme == 5) return;
 	glBindTexture(0, dialogboxTexID);
 	glColorSubTableEXT(0, 0, _dialogBoxTexture->paletteLength(), 0, 0, _dialogBoxTexture->palette());
 	if (ms().theme != 1) {
@@ -224,13 +224,19 @@ void ThemeTextures::loadBackgrounds() {
 void ThemeTextures::loadHBTheme() {	
 	printf("tex().loadHBTheme()\n");
 
+	printf("tex().loadBackgrounds()\n");
 	loadBackgrounds();
+	printf("tex().loadUITextures()\n");
 	loadUITextures();
 
+	printf("tex().loadVolumeTextures()\n");
 	loadVolumeTextures();
+	printf("tex().loadBatteryTextures()\n");
 	loadBatteryTextures();
+	printf("tex().loadIconTextures()\n");
 	loadIconTextures();
 	
+	printf("tex().loadDateFont(_dateTimeFontTexture->texture())\n");
 	loadDateFont(_dateTimeFontTexture->texture());
 
 	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
@@ -247,23 +253,35 @@ void ThemeTextures::loadHBTheme() {
 	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	if (ms().colorMode == 1) {
+		printf("tex().applyGrayscaleToAllGrfTextures()\n");
 		applyGrayscaleToAllGrfTextures();
 	}
 
 	
+	printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
+	printf("tex().loadSettingsImage(*_settingsIconTexture)\n");
 	loadSettingsImage(*_settingsIconTexture);
+	printf("tex().loadBraceImage(*_braceTexture)\n");
 	loadBraceImage(*_braceTexture);
 
+	printf("tex().loadBoxfullImage(*_boxFullTexture)\n");
 	loadBoxfullImage(*_boxFullTexture);
+	printf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
 	loadBoxemptyImage(*_boxEmptyTexture);
 
+	printf("tex().loadManualImage(*_manualIconTexture)\n");
 	loadManualImage(*_manualIconTexture);
+	printf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
+	printf("tex().loadSmallCartImage(*_smallCartTexture)\n");
 	loadSmallCartImage(*_smallCartTexture);
+	printf("tex().loadFolderImage(*_folderTexture)\n");
 	loadFolderImage(*_folderTexture);
 	
+	printf("tex().loadProgressImage(*_progressTexture)\n");
 	loadProgressImage(*_progressTexture);
+	printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
 	loadWirelessIcons(*_wirelessIconsTexture);
 	
 }

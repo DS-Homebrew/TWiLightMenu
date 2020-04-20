@@ -676,7 +676,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (ms().theme == 4) {
+	if (ms().theme == 4 || ms().theme == 5) {
 		whiteScreen = false;
 		fadeColor = false;
 	}
