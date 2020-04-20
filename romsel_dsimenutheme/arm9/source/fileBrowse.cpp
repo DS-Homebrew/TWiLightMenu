@@ -2476,7 +2476,7 @@ string browseForFile(const vector<string> extensionList) {
 				if (entry->isDirectory) {
 					// Enter selected directory
 					(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
-					if (ms().theme != 4) {
+					if (ms().theme != 4 && ms().theme != 5) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
@@ -2487,7 +2487,7 @@ string browseForFile(const vector<string> extensionList) {
 					ms().cursorPosition[ms().secondaryDevice] = 0;
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
-					if (ms().theme != 4) whiteScreen = true;
+					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
