@@ -43,6 +43,7 @@ Please note that Docker compilation is not compatible with native compilation on
 - [spinal_cord](https://gbatemp.net/members/spinal_cord.90607/): [DSi4DS](https://gbatemp.net/threads/dsi4ds.173617/) and [DSision2](https://gbatemp.net/threads/dsision2.92740/) graphics.
 - [StarvingArtist](https://www.deviantart.com/starvingartist/): Game Console icons.
 - [FlameKat53](https://github.com/FlameKat53): Manual icon for DSi theme's `SELECT` menu.
+- [fail0verflow](https://github.com/fail0verflow/), Fluto, and Arkhandar: Homebrew Channel/Launcher graphics.
 ## Others
 - [profi200](https://github.com/profi200): Improved SD code from fastboot3DS.
 - [devkitPro](https://github.com/devkitPro): Code used in nds-hb-menu, and the use of the bootloader, devkitARM, libnds, and libfat.
