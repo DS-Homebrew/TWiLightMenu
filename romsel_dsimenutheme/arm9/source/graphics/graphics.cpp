@@ -1030,7 +1030,7 @@ void vBlankHandler() {
 				 tex().braceImage());
 		}
 
-		if (movingApp != -1 && !ms().theme && showMovingArrow) {
+		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
 			if (movingArrowYdirection) {
 				movingArrowYpos += 0.33;
 				if (movingArrowYpos > 67)
@@ -1146,7 +1146,7 @@ void vBlankHandler() {
 		}
 
 		// Refresh the background layer.
-		if (currentBg == 1 && ms().theme != 4)
+		if (currentBg == 1 && ms().theme != 4 && ms().theme != 5)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);
@@ -1155,7 +1155,7 @@ void vBlankHandler() {
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
 		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1)) {
 			// Draw the dialog box.
-			if (ms().theme != 4) drawDbox();
+			if (ms().theme != 4 && ms().theme != 5) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
 				drawIcon(24, (ms().theme == 4 ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
@@ -1606,7 +1606,7 @@ void graphicsInit() {
 		dropSeq[i] = 0;
 		dropSpeed[i] = dropSpeedDefine;
 		dropSpeedChange[i] = 0;
-		if (ms().theme == 1 || ms().theme == 4)
+		if (ms().theme == 1 || ms().theme == 4 || ms().theme == 5)
 			titleboxYposDropDown[i] = 0;
 		else
 			titleboxYposDropDown[i] = -85 - 80;
@@ -1622,8 +1622,8 @@ void graphicsInit() {
 	titleboxXpos[1] = ms().cursorPosition[1] * 64;
 	titlewindowXpos[1] = ms().cursorPosition[1] * 5;
 
-	SetBrightness(0, ms().theme == 4 ? -31 : 31);
-	SetBrightness(1, ms().theme == 4 ? -31 : 31);
+	SetBrightness(0, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
+	SetBrightness(1, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
 
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
@@ -1644,7 +1644,7 @@ void graphicsInit() {
 	}
 
 	tex().drawTopBg();
-	if (ms().theme != 4) {
+	if (ms().theme != 4 && ms().theme != 5) {
 		tex().drawProfileName();
 	}
 

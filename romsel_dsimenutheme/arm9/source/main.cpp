@@ -615,7 +615,9 @@ int main(int argc, char **argv) {
 
 	fontInit();
 
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		tex().loadHBTheme();
+	} else if (ms().theme == 4) {
 		tex().loadSaturnTheme();
 	} else if (ms().theme == 1) {
 		tex().load3DSTheme();
@@ -674,7 +676,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (ms().theme == 4) {
+	if (ms().theme == 4 || ms().theme == 5) {
 		whiteScreen = false;
 		fadeColor = false;
 	}

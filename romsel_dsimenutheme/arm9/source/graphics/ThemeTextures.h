@@ -25,6 +25,7 @@ public:
   virtual ~ThemeTextures() = default;
 
 public:
+  void loadHBTheme();
   void loadSaturnTheme();
   void loadDSiTheme();
   void load3DSTheme();
