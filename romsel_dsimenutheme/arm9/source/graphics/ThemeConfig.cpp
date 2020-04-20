@@ -34,7 +34,7 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
             _renderPhoto = false;
           }
 		  
-		  if (ms().theme == 4) {
+		  if (ms().theme == 4 || ms().theme == 5) {
             _renderPhoto = false;
 		  }
       }

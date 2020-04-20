@@ -1672,15 +1672,11 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if (!shouldersRendered) {
-				showLshoulder = false;
-				showRshoulder = false;
-				if (PAGENUM != 0) {
-					showLshoulder = true;
+				showLshoulder = (PAGENUM != 0);
+				showRshoulder = (file_count > 40 + PAGENUM * 40);
+				if (ms().theme != 5) {
+					tex().drawShoulders(showLshoulder, showRshoulder);
 				}
-				if (file_count > 40 + PAGENUM * 40) {
-					showRshoulder = true;
-				}
-				tex().drawShoulders(showLshoulder, showRshoulder);
 				shouldersRendered = true;
 			}
 
@@ -1727,6 +1723,10 @@ string browseForFile(const vector<string> extensionList) {
 					clearText(false);
 					currentBg = 0;
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
+				}
+				if (ms().theme == 5) {
+					printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
+					printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
 				}
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);

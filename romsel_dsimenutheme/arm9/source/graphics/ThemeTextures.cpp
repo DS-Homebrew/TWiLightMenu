@@ -483,14 +483,15 @@ void ThemeTextures::loadBatteryTextures() {
 }
 
 void ThemeTextures::loadUITextures() {
-
 	_dateTimeFontTexture = std::make_unique<Texture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
-	_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
-	_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
-	_leftShoulderGreyedTexture =
-	    std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
-	_rightShoulderGreyedTexture =
-	    std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+	if (ms().theme != 5) {
+		_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
+		_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
+		_leftShoulderGreyedTexture =
+			std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
+		_rightShoulderGreyedTexture =
+			std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+	}
 }
 
 void ThemeTextures::loadIconTextures() {
@@ -952,7 +953,6 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 }
 
 void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
-
 	beginBgSubModify();
 
 	const Texture *rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
