@@ -1802,7 +1802,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 				// Move apps
-			} else if ((pressed & KEY_UP) && (ms().theme != 4) && !dirInfoIniFound && (ms().sortMethod == 4)
+			} else if ((pressed & KEY_UP) && (ms().theme != 4 && ms().theme != 5) && !dirInfoIniFound && (ms().sortMethod == 4)
 				   && !titleboxXmoveleft && !titleboxXmoveright &&CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 				showSTARTborder = false;
 				currentBg = 2;
@@ -2124,6 +2124,10 @@ string browseForFile(const vector<string> extensionList) {
 					}
 					prevPos = CURPOS;
 
+					if (ms().theme == 5) {
+						printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
+						printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
+					}
 					checkSdEject();
 					tex().drawVolumeImageCached();
 					tex().drawBatteryImageCached();
