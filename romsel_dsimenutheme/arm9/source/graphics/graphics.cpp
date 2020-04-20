@@ -1423,7 +1423,10 @@ static std::string loadedDate;
 
 void drawCurrentDate() {
 	// Load date
-	int x = (ms().theme == 4 ? 122 : 162);
+	int x = (ms().theme >= 4 ? 122 : 162);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1444,7 +1447,10 @@ static bool initialClockDraw = true;
 
 void drawCurrentTime() {
 	// Load time
-	int x = (ms().theme == 4 ? 162 : 200);
+	int x = (ms().theme >= 4 ? 162 : 200);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
 	char time[10];
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
@@ -1469,7 +1475,10 @@ void drawCurrentTime() {
 
 void drawClockColon() {
 	// Load time
-	int x = (ms().theme == 4 ? 176 : 214);
+	int x = (ms().theme >= 4 ? 176 : 214);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
 	int imgY = 15;
 	char colon[1];
 
