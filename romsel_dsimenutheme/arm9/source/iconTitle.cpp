@@ -46,6 +46,7 @@ static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
 
 extern bool showdialogbox;
+extern bool dbox_showIcon;
 extern bool startMenu;
 
 
@@ -755,8 +756,9 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		}
 
 		// text
-		if (showdialogbox || (ms().theme == 4 && currentBg == 1) || infoFound[num]) {
-			if (showdialogbox || (ms().theme == 4 && currentBg == 1)) {
+		bool theme_showdialogbox = (showdialogbox || (ms().theme == 4 && currentBg == 1) || (ms().theme == 5 && dbox_showIcon));
+		if (theme_showdialogbox || infoFound[num]) {
+			if (theme_showdialogbox) {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			} else {
 				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);

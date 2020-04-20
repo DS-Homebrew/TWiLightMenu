@@ -502,7 +502,7 @@ void updateScrollingState(u32 held, u32 pressed) {
 void updateBoxArt(vector<vector<DirEntry>> dirContents, SwitchState scrn) {
 	if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 		showSTARTborder = true;
-		if (!ms().showBoxArt) {
+		if (ms().theme == 5 || !ms().showBoxArt) {
 			return;
 		}
 
@@ -678,7 +678,7 @@ void switchDevice(void) {
 		ms().secondaryDevice = !ms().secondaryDevice;
 		if (!rocketVideo_playVideo || ms().showBoxArt)
 			clearBoxArt(); // Clear box art
-		if (ms().theme != 4) whiteScreen = true;
+		if (ms().theme != 4 && ms().theme == 5) whiteScreen = true;
 		boxArtLoaded = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
@@ -1062,6 +1062,9 @@ void ramDiskMsg(const char *filename) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
 	if (ms().theme == 4) {
 		snd().playLaunch();
 	} else {
@@ -1114,6 +1117,9 @@ void dsiBinariesMissingMsg(const char *filename) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
 	if (ms().theme == 4) {
 		snd().playLaunch();
 	} else {
@@ -1166,6 +1172,9 @@ void donorRomMsg(const char *filename) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
 	if (ms().theme == 4) {
 		snd().playLaunch();
 	} else {
@@ -1218,6 +1227,9 @@ void dsiWareHaxBlockMsg(const char *filename) {
 		swiWaitForVBlank();
 	} while (!(pressed & KEY_A));
 	clearText();
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
 	if (ms().theme == 4) {
 		snd().playLaunch();
 	} else {
@@ -1293,6 +1305,9 @@ bool checkForCompatibleGame(const char *filename) {
 		}
 	}
 	showdialogbox = false;
+	if (ms().theme == 5) {
+		dbox_showIcon = false;
+	}
 	if (ms().theme == 4) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -1573,7 +1588,7 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	if (nowLoadingDisplaying) {
 		snd().updateStream();
 		showProgressIcon = false;
-		if (ms().theme != 4) fadeType = false; // Fade to white
+		if (ms().theme != 4 && ms().theme != 5) fadeType = false; // Fade to white
 	}
 	// Load correct icons depending on cursor position
 	if (CURPOS <= 1) {
@@ -1630,7 +1645,7 @@ string browseForFile(const vector<string> extensionList) {
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
 		reloadFontPalettes();
-		if (ms().theme != 4) {
+		if (ms().theme != 4 && ms().theme != 5) {
 			while (!screenFadedOut());
 		}
 		nowLoadingDisplaying = false;
@@ -2520,6 +2535,9 @@ string browseForFile(const vector<string> extensionList) {
 						swiWaitForVBlank();
 					} while (!(pressed & KEY_A));
 					clearText();
+					if (ms().theme == 5) {
+						dbox_showIcon = false;
+					}
 					if (ms().theme == 4) {
 						snd().playLaunch();
 					} else {
@@ -2842,7 +2860,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playWrong();
 				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
-					if (ms().theme != 4) {
+					if (ms().theme != 4 && ms().theme != 5) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
@@ -2854,7 +2872,7 @@ string browseForFile(const vector<string> extensionList) {
 					CURPOS = 0;
 					titleboxXpos[ms().secondaryDevice] = 0;
 					titlewindowXpos[ms().secondaryDevice] = 0;
-					if (ms().theme != 4) whiteScreen = true;
+					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
@@ -2874,7 +2892,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playWrong();
 				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
 					snd().playSwitch();
-					if (ms().theme != 4) {
+					if (ms().theme != 4 && ms().theme != 5) {
 						fadeType = false; // Fade to white
 						for (int i = 0; i < 6; i++) {
 							snd().updateStream();
@@ -2892,7 +2910,7 @@ string browseForFile(const vector<string> extensionList) {
 						titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 						titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
 					}
-					if (ms().theme != 4) whiteScreen = true;
+					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 					if (ms().showBoxArt)
 						clearBoxArt(); // Clear box art
 					boxArtLoaded = false;
@@ -2912,7 +2930,7 @@ string browseForFile(const vector<string> extensionList) {
 			if ((pressed & KEY_B) && ms().showDirectories && !titleboxXmoveleft && !titleboxXmoveright) {
 				// Go up a directory
 				snd().playBack();
-				if (ms().theme != 4) {
+				if (ms().theme != 4 && ms().theme != 5) {
 					fadeType = false; // Fade to white
 					for (int i = 0; i < 6; i++) {
 						snd().updateStream();
@@ -2923,7 +2941,7 @@ string browseForFile(const vector<string> extensionList) {
 				CURPOS = 0;
 				titleboxXpos[ms().secondaryDevice] = 0;
 				titlewindowXpos[ms().secondaryDevice] = 0;
-				if (ms().theme != 4) whiteScreen = true;
+				if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
@@ -3088,7 +3106,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 				}
 				showdialogbox = false;
-				if (ms().theme == 4) {
+				if (ms().theme == 4 || ms().theme == 5) {
 					fadeType = false;	   // Fade to black
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
@@ -3097,7 +3115,7 @@ string browseForFile(const vector<string> extensionList) {
 					currentBg = 0;
 					displayGameIcons = true;
 					fadeType = true;
-					snd().playStartup();
+					if (ms().theme == 4) snd().playStartup();
 				} else {
 					clearText();
 					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
@@ -3112,7 +3130,7 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if (held & KEY_SELECT) {
-				if (ms().theme == 0 || ms().theme == 4) {
+				if (ms().theme == 0 || ms().theme == 4 || ms().theme == 5) {
 					if (ms().showSelectMenu) {
 						if (selectMenu()) {
 							clearText();

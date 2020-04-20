@@ -1153,11 +1153,11 @@ void vBlankHandler() {
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
-		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1)) {
+		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1) || ms().theme == 5) {
 			// Draw the dialog box.
 			if (ms().theme != 4 && ms().theme != 5) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
-				drawIcon(24, (ms().theme == 4 ? 0 : dbox_Ypos) + 24, CURPOS);
+				drawIcon(24, ((ms().theme == 4 || ms().theme == 5) ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;

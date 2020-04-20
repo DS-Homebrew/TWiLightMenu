@@ -221,7 +221,9 @@ void revertDonorRomText(void) {
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		displayGameIcons = false;
+	} else if (ms().theme == 4) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -382,7 +384,9 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		dbox_showIcon = true;
+	} else if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		dbox_showIcon = true;
 	} else {
@@ -416,20 +420,24 @@ void perGameSettings (std::string filename) {
 	fwrite((void*)0x02000000, 1, 0x4000, cfgFile);
 	fclose(cfgFile);*/
 
+	int row1Y = (ms().theme==5 ? 78 : 66);
+	int row2Y = (ms().theme==5 ? 92 : 80);
+	int botRowY = (ms().theme==5 ? 172 : 160);
+
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
-		printSmall(false, 16, 66, dirContName.c_str());
-		//if (showSDKVersion) printSmall(false, 16, 80, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
-		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
-		printSmall(false, 176, 80, gameTIDText);
-		printSmall(false, 16, 160, fileCounter);
+		printSmall(false, 16, row1Y, dirContName.c_str());
+		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
+		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext);
+		printSmall(false, 176, row2Y, gameTIDText);
+		printSmall(false, 16, botRowY, fileCounter);
 
-		int perGameOpYpos = 98;
+		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
 
 		if (showPerGameSettings) {
-			printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
+			printSmall(false, 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
 		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
@@ -557,14 +565,14 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 14;
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-			printSmall(false, 194, 160, BUTTON_B" Back");
+			printSmall(false, 194, botRowY, BUTTON_B" Back");
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, 160, BUTTON_A" OK");
+			printSmall(false, 208, botRowY, BUTTON_A" OK");
 		} else {	// Per-game settings for retail/commercial games
 			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-				printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
+				printSmall(false, 128, botRowY, BUTTON_X " Cheats  " BUTTON_B" Back");
 			} else {
-				printSmall(false, 194, 160, BUTTON_B" Back");
+				printSmall(false, 194, botRowY, BUTTON_B" Back");
 			}
 		}
 		do {
@@ -742,7 +750,10 @@ void perGameSettings (std::string filename) {
 		}
 	}
 	showdialogbox = false;
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		displayGameIcons = true;
+		dbox_showIcon = false;
+	} else if (ms().theme == 4) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
 			swiWaitForVBlank();
