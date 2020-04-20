@@ -221,6 +221,53 @@ void ThemeTextures::loadBackgrounds() {
 	
 }
 
+void ThemeTextures::loadHBTheme() {	
+	printf("tex().loadHBTheme()\n");
+
+	loadBackgrounds();
+	loadUITextures();
+
+	loadVolumeTextures();
+	loadBatteryTextures();
+	loadIconTextures();
+	
+	loadDateFont(_dateTimeFontTexture->texture());
+
+	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
+	_boxEmptyTexture = std::make_unique<Texture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
+	_braceTexture = std::make_unique<Texture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
+	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
+
+	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+
+	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
+	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
+	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
+	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
+
+	if (ms().colorMode == 1) {
+		applyGrayscaleToAllGrfTextures();
+	}
+
+	
+	loadWirelessIcons(*_wirelessIconsTexture);
+	loadSettingsImage(*_settingsIconTexture);
+	loadBraceImage(*_braceTexture);
+
+	loadBoxfullImage(*_boxFullTexture);
+	loadBoxemptyImage(*_boxEmptyTexture);
+
+	loadManualImage(*_manualIconTexture);
+	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
+	loadSmallCartImage(*_smallCartTexture);
+	loadFolderImage(*_folderTexture);
+	
+	loadProgressImage(*_progressTexture);
+	loadWirelessIcons(*_wirelessIconsTexture);
+	
+}
+
 void ThemeTextures::loadSaturnTheme() {	
 	printf("tex().loadSaturnTheme()\n");
 
