@@ -784,7 +784,7 @@ int main(int argc, char **argv)
 
 	bool softResetParamsFound = false;
 	u32 softResetParams = 0;
-	FILE* file = fopen("sd:/_nds/nds-bootstrap/softResetParams.bin", "rb");
+	FILE* file = fopen(isDSiMode() ? (sdFound() ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin") : "fat:/_nds/nds-bootstrap/B4DS-softResetParams.bin", "rb");
 	if (file) {
 		fread(&softResetParams, sizeof(u32), 1, file);
 		softResetParamsFound = (softResetParams != 0xFFFFFFFF);
