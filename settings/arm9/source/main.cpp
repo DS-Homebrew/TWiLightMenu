@@ -398,7 +398,7 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 
 void opt_wifiLed_toggle(bool prev, bool next)
 {
-	*(u8*)(0x023FFD00) = (next ? 0x13 : 0x12);		// On/Off
+	*(u8*)(0x023FFD00) = (next ? 0x13 : 0);		// On/Off
 }
 
 /*void opt_twlFirm_changed(int prev, int next)
@@ -735,8 +735,8 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		miscPage.option(STR_WIFILED,
-				STR_DESCRIPTION_WIFILED,
+		miscPage.option(STR_WIFI,
+				STR_DESCRIPTION_WIFI,
 				Option::Bool(&ms().wifiLed, opt_wifiLed_toggle),
 				{STR_ON, STR_OFF},
 				{true, false});

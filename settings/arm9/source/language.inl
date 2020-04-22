@@ -16,7 +16,7 @@ STRING(DESCRIPTION_SCREENSCALESIZE, "Changes screen scaling size.")*/
 // GUI settings
 STRING(COLORMODE, "Color mode")
 STRING(BLUELIGHTFILTER, "Blue light filter")
-STRING(WIFILED, "WiFi LED")
+STRING(WIFI, "Wireless Communications")
 STRING(REFERSD, "Refer to the SD as")
 STRING(SDREMOVALDETECTION, "SD removal detection")
 STRING(S1SDACCESS, "Slot-1 microSD access")
@@ -54,7 +54,7 @@ STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work i
 
 STRING(DESCRIPTION_BLF, "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect bugs.")
 
-STRING(DESCRIPTION_WIFILED, "Enables/Disables the DSi console's WiFi LED.")
+STRING(DESCRIPTION_WIFI, "Set to ON to use Wireless Communications. Set to OFF to disable Wireless Communications.")
 
 STRING(DESCRIPTION_SDREMOVALDETECTION, "Enables/Disables SD removal detection. Disable it, if an error message is shown, instead of the ROM menu.")
 
