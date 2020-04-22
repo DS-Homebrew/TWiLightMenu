@@ -735,8 +735,8 @@ int main(int argc, char **argv)
 	}
 
 	if (isDSiMode() && ms().consoleModel < 2) {
-		miscPage.option(STR_WIFI,
-				STR_DESCRIPTION_WIFI,
+		miscPage.option(STR_WIFILED,
+				STR_DESCRIPTION_WIFILED,
 				Option::Bool(&ms().wifiLed, opt_wifiLed_toggle),
 				{STR_ON, STR_OFF},
 				{true, false});
