@@ -408,6 +408,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			headerCRC[num] = ndsHeader.headerCRC16;
 			switch (ndsHeader.arm7binarySize) {
 				case 0x24DA8:
+				case 0x24F50:
 					requiresDonorRom[num] = 2;
 					break;
 				case 0x27618:

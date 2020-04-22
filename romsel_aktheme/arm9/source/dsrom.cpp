@@ -136,6 +136,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _hasExtendedBinaries = ETrue;
 		switch (header.arm7binarySize) {
 			case 0x24DA8:
+			case 0x24F50:
 				_requiresDonorRom = 2;
 				break;
 			case 0x27618:
