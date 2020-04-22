@@ -48,6 +48,8 @@
 #define NULL 0
 #endif
 
+#define REG_GPIO_WIFI *(vu16*)0x4004C04
+
 #include "common.h"
 #include "tonccpy.h"
 #include "read_card.h"
@@ -787,9 +789,12 @@ void arm7_main (void) {
 
 	my_readUserSettings(ndsHeader); // Header has to be loaded first
 
+	if (dsiMode) REG_GPIO_WIFI &= BIT(8);	// New Atheros/DSi-Wifi mode
+
 	if (dsiMode && !dsiModeConfirmed) {
 		NDSTouchscreenMode();
 		*(u16*)0x4000500 = 0x807F;
+		REG_GPIO_WIFI |= BIT(8);	// Old NDS-Wifi mode
 
 		if (twlClock) {
 			REG_SCFG_CLK = 0x0181;
