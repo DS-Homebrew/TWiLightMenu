@@ -2999,12 +2999,14 @@ string browseForFile(const vector<string> extensionList) {
 
 					if (pressed & KEY_A && !isDirectory[CURPOS]) {
 						snd().playLaunch();
-						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
+						if (ms().theme != 4 && ms().theme != 5) {
+							fadeType = false; // Fade to white
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
+							whiteScreen = true;
 						}
-						whiteScreen = true;
 						remove(dirContents[scrn]
 							   .at(CURPOS + PAGENUM * 40)
 							   .name.c_str()); // Remove game/folder
@@ -3018,6 +3020,7 @@ string browseForFile(const vector<string> extensionList) {
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
+						dbox_showIcon = false;
 						ms().saveSettings();
 						settingsChanged = false;
 						return "null";
@@ -3030,12 +3033,14 @@ string browseForFile(const vector<string> extensionList) {
 
 					if (pressed & KEY_Y) {
 						snd().playLaunch();
-						fadeType = false; // Fade to white
-						for (int i = 0; i < 30; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
+						if (ms().theme != 4 && ms().theme != 5) {
+							fadeType = false; // Fade to white
+							for (int i = 0; i < 30; i++) {
+								snd().updateStream();
+								swiWaitForVBlank();
+							}
+							whiteScreen = true;
 						}
-						if (ms().theme != 4) whiteScreen = true;
 
 						// Remove leading . if it exists
 						if((strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != "..")) {
@@ -3053,13 +3058,17 @@ string browseForFile(const vector<string> extensionList) {
 						stopSoundPlayed = false;
 						clearText();
 						showdialogbox = false;
+						dbox_showIcon = false;
 						ms().saveSettings();
 						settingsChanged = false;
 						return "null";
 					}
 				}
 				showdialogbox = false;
-				if (ms().theme == 4 || ms().theme == 5) {
+				if (ms().theme == 5) {
+					dbox_showIcon = false;
+				}
+				if (ms().theme == 4) {
 					fadeType = false;	   // Fade to black
 					for (int i = 0; i < 25; i++) {
 						swiWaitForVBlank();
