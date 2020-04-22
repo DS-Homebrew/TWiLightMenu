@@ -23,6 +23,8 @@
 		"YCE",	// Chessmaster - The Art of Learning
 		"YCP",	// Chuukana Janshi Tenhoo Painyan Remix
 		"BIG",	// Combat/Battle of Giants: Mutant Insects
+		"AQC",	// Crayon Shin-chan DS - Arashi o Yobu Nutte Crayoon Daisakusen!
+		"YRC",	// Crayon Shin-chan - Arashi o Yobu Cinemaland Kachinko Gachinko Daikatsugeki!
 		"ADK",	// Daikoukai Jidai IV: Rota Nova
 		"BDB",	// Dragon Ball: Origins 2
 		"YIV",	// Dragon Quest IV: Chapters of the Chosen
