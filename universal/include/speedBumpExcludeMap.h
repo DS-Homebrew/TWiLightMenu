@@ -36,6 +36,7 @@
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
+	    "AK4",	// Kabu Trader Shun
 		"AR2",	// Kirarin * Revolution: Naasan to Issho
 		"B3X",	// Kunio-kun no Chou Nekketsu!: Soccer League Plus: World Hyper Cup Hen
 		"YLU",	// Last Window: The Secret of Cape West

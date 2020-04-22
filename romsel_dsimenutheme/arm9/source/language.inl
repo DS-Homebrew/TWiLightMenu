@@ -43,11 +43,6 @@ STRING(DONOR_ROM_MSG_1, "This game requires a donor ROM")
 STRING(DONOR_ROM_MSG_2, "to run. Please set an existing")
 STRING(DONOR_ROM_MSG_3, "DS SDK5 game as a donor ROM.")
 
-STRING(DSIWAREHAX_BLOCK_MSG_1, "This game cannot be launched.")
-STRING(DSIWAREHAX_BLOCK_MSG_2, "Please start TWiLight Menu++")
-STRING(DSIWAREHAX_BLOCK_MSG_DSI_3, "through Unlaunch to play this.")
-STRING(DSIWAREHAX_BLOCK_MSG_3DS_3, "as installed, to play this.")
-
 STRING(GAME_INCOMPATIBLE_MSG_1, "This game is known to not run.")
 STRING(GAME_INCOMPATIBLE_MSG_2, "If there's an nds-bootstrap")
 STRING(GAME_INCOMPATIBLE_MSG_3, "version that fixes this,")
