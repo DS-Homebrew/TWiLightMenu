@@ -46,7 +46,6 @@
 #include "SwitchState.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
-#include "dsiWareHaxGameBListMap.h"
 #include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
@@ -356,26 +355,6 @@ void donorRomMsg(void) {
 	dialogboxHeight = 0;
 }
 
-void dsiWareHaxBlockMsg(void) {
-	dialogboxHeight = 2;
-	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This game cannot be launched.");
-	printSmallCentered(false, 112, "Please start TWiLight Menu++");
-	printSmallCentered(false, 120, consoleModel==0 ? "through Unlaunch to play this." : "as installed, to play this.");
-	printSmallCentered(false, 134, "A: OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	clearText();
-	showdialogbox = false;
-	dialogboxHeight = 0;
-}
-
 void showLocation(void) {
 	if (isRegularDS) return;
 
@@ -599,19 +578,6 @@ string browseForFile(const vector<string> extensionList) {
 					fclose(f_nds_file);
 
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
-					if (proceedToLaunch && !secondaryDevice && arm7SCFGLocked)
-					{
-						// Block certain games from being lauched, when in DSiWareHax
-						// TODO: If the list gets large enough, switch to bsearch().
-						for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {
-							if (memcmp(game_TID, dsiWareHaxGameBList[i], 3) == 0) {
-								// Found match
-								proceedToLaunch = false;
-								dsiWareHaxBlockMsg();
-								break;
-							}
-						}
-					}
 					if (proceedToLaunch && requiresDonorRom)
 					{
 						std::string donorRomPath;

@@ -28,7 +28,6 @@
 #include "iconTitle.h"
 #include "ndsheaderbanner.h"
 #include "perGameSettings.h"
-#include "dsiWareHaxGameBListMap.h"
 #include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
@@ -1156,61 +1155,6 @@ void donorRomMsg(const char *filename) {
 	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
 	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 	printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3.c_str());
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
-		snd().updateStream();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	clearText();
-	if (ms().theme == 5) {
-		dbox_showIcon = false;
-	}
-	if (ms().theme == 4) {
-		snd().playLaunch();
-	} else {
-		showdialogbox = false;
-	}
-}
-
-void dsiWareHaxBlockMsg(const char *filename) {
-	clearText();
-	snd().playWrong();
-	if (ms().theme != 4) {
-		dbox_showIcon = true;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
-		titleUpdate(false, filename, CURPOS);
-		dirContName = filename;
-		// About 38 characters fit in the box.
-		if (strlen(dirContName.c_str()) > 38) {
-			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			dirContName.resize(35, ' ');
-			size_t first = dirContName.find_first_not_of(' ');
-			size_t last = dirContName.find_last_not_of(' ');
-			dirContName = dirContName.substr(first, (last - first + 1));
-			dirContName.append("...");
-		}
-		printSmall(false, 16, 66, dirContName.c_str());
-	}
-	int yPos1 = (ms().theme == 4 ? 8 : 96);
-	int yPos2 = (ms().theme == 4 ? 24 : 112);
-	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, STR_DSIWAREHAX_BLOCK_MSG_1.c_str());
-	printSmallCentered(false, yPos2, STR_DSIWAREHAX_BLOCK_MSG_2.c_str());
-	printSmallCentered(false, yPos3, (ms().consoleModel==0 ? STR_DSIWAREHAX_BLOCK_MSG_DSI_3 : STR_DSIWAREHAX_BLOCK_MSG_3DS_3).c_str());
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -2556,18 +2500,6 @@ string browseForFile(const vector<string> extensionList) {
 					 &&	isHomebrew[CURPOS] == 0)
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-						if (proceedToLaunch && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
-							// Block certain games from being lauched, when in DSiWareHax
-							// TODO: If the list gets large enough, switch to bsearch().
-							for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {
-								if (memcmp(gameTid[CURPOS], dsiWareHaxGameBList[i], 3) == 0) {
-									// Found match
-									proceedToLaunch = false;
-									dsiWareHaxBlockMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-									break;
-								}
-							}
-						}
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
 							std::string donorRomPath;
 							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

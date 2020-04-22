@@ -44,7 +44,6 @@
 #include "common/files.h"
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
-#include "dsiWareHaxGameBListMap.h"
 #include "incompatibleGameMap.h"
 
 #include "common/inifile.h"
@@ -721,23 +720,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 			if (pressed & KEY_B || optionPicked == ID_CANCEL)
 			{
-				return;
-			}
-		}
-	}
-
-	if (!rominfo.isDSiWare() && !ms().secondaryDevice && sys().arm7SCFGLocked()) {
-		// Block certain games from being lauched, when in DSiWareHax
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(dsiWareHaxGameBList)/sizeof(dsiWareHaxGameBList[0]); i++) {
-			if (memcmp(gameTid, dsiWareHaxGameBList[i], 3) == 0) {
-				// Found match
-				messageBox(this, LANG("game launch", "NDS Bootstrap Error"),
-					ms().consoleModel==0
-					? "This game cannot be launched. Please start TWiLight Menu++ through Unlaunch to play this."
-					: "This game cannot be launched. Please start TWiLight Menu++ as installed, to play this."
-				, MB_OK);
-				progressWnd().hide();
 				return;
 			}
 		}
