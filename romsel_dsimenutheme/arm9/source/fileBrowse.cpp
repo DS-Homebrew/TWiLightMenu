@@ -1154,7 +1154,15 @@ void donorRomMsg(const char *filename) {
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
 	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
 	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
-	printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3.c_str());
+	switch (requiresDonorRom[CURPOS]) {
+		case 2:
+			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str());
+			break;
+		case 5:
+		default:
+			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str());
+			break;
+	}
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -2504,7 +2512,7 @@ string browseForFile(const vector<string> extensionList) {
 							std::string donorRomPath;
 							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 							CIniFile bootstrapini(bootstrapinipath);
-							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", "");
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", requiresDonorRom[CURPOS]==2 ? "DONOR2_NDS_PATH": "DONOR_NDS_PATH", "");
 							if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
 								proceedToLaunch = false;
 								donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());

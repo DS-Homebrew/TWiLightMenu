@@ -279,11 +279,8 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
-	u8 unitCode = 0;
 	u32 arm9dst = 0;
 	u32 arm7size = 0;
-	fseek(f_nds_file, 0x12, SEEK_SET);
-	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
@@ -358,8 +355,13 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (!requiresDonorRom[CURPOS] && unitCode == 0 && SDKVersion > 0x5000000
-			 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488)) {
+			if (
+				!requiresDonorRom[CURPOS]
+			&& ((SDKVersion >= 0x2008000 && SDKVersion < 0x3000000
+			 && (arm7size==0x26F24 || arm7size==0x26F28))
+			 || (SDKVersion > 0x5000000
+			 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488)))
+			) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;
@@ -718,11 +720,15 @@ void perGameSettings (std::string filename) {
 						break;
 					case 9:
 					  if (pressed & KEY_A) {
+						const char* pathDefine = "DONOR_NDS_PATH";
+						if (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000) {
+							pathDefine = "DONOR2_NDS_PATH";
+						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
-						bootstrapini.SetString("NDS-BOOTSTRAP", "DONOR_NDS_PATH", romFolderNoSlash+"/"+filename);
+						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);
 						sprintf(SET_AS_DONOR_ROM, "Done!");
 					  }
