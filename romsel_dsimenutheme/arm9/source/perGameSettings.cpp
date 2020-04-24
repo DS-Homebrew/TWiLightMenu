@@ -1,25 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
-
 #include "perGameSettings.h"
 #include "buttontext.h"
 #include <vector>
@@ -211,6 +189,25 @@ bool checkIfDSiMode (std::string filename) {
 	}
 }
 
+bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
+	if (requiresDonorRom[CURPOS]) return false;
+
+	if ((!isDSiMode() && SDKVersion >= 0x2000000 && SDKVersion < 0x2008000
+	 && (arm7size==0x25F70
+	  || arm7size==0x25FA4
+	  || arm7size==0x2619C
+	  || arm7size==0x26A60
+	  || arm7size==0x27218
+	  || arm7size==0x27224
+	  || arm7size==0x2724C))
+	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))
+	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))) {
+		return true;
+	}
+
+	return false;
+}
+
 bool donorRomTextShown = false;
 void revertDonorRomText(void) {
 	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
@@ -355,13 +352,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (
-				!requiresDonorRom[CURPOS]
-			&& ((SDKVersion >= 0x2008000 && SDKVersion < 0x3000000
-			 && (arm7size==0x26F24 || arm7size==0x26F28))
-			 || (SDKVersion > 0x5000000
-			 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488)))
-			) {
+			if (showSetDonorRom(arm7size, SDKVersion)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;
@@ -721,7 +712,9 @@ void perGameSettings (std::string filename) {
 					case 9:
 					  if (pressed & KEY_A) {
 						const char* pathDefine = "DONOR_NDS_PATH";
-						if (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000) {
+						if (SDKVersion >= 0x2000000 && SDKVersion < 0x2008000) {
+							pathDefine = "DONORE2_NDS_PATH";
+						} else if (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000) {
 							pathDefine = "DONOR2_NDS_PATH";
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];

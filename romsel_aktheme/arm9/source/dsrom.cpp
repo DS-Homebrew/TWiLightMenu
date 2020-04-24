@@ -134,7 +134,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
+		_requiresDonorRom = 0;
 		switch (header.arm7binarySize) {
+			case 0x23CAC:
+				if (!isDSiMode()) _requiresDonorRom = 20;
+				break;
 			case 0x24DA8:
 			case 0x24F50:
 				_requiresDonorRom = 2;
@@ -145,7 +149,6 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				_requiresDonorRom = 5;
 				break;
 			default:
-				_requiresDonorRom = 0;
 				break;
 		}
 

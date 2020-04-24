@@ -342,6 +342,9 @@ void donorRomMsg(void) {
 	printSmallCentered(false, 104, "This game requires a donor ROM");
 	printSmallCentered(false, 112, "to run. Please set an existing");
 	switch (requiresDonorRom) {
+		case 20:
+			printSmallCentered(false, 120, "early SDK2 game as a donor ROM.");
+			break;
 		case 2:
 			printSmallCentered(false, 120, "late SDK2 game as a donor ROM.");
 			break;
@@ -588,10 +591,16 @@ string browseForFile(const vector<string> extensionList) {
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
 					if (proceedToLaunch && requiresDonorRom)
 					{
+						const char* pathDefine = "DONOR_NDS_PATH";
+						if (requiresDonorRom==20) {
+							pathDefine = "DONORE2_NDS_PATH";
+						} else if (requiresDonorRom==2) {
+							pathDefine = "DONOR2_NDS_PATH";
+						}
 						std::string donorRomPath;
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 						CIniFile bootstrapini(bootstrapinipath);
-						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", requiresDonorRom==2 ? "DONOR2_NDS_PATH" : "DONOR_NDS_PATH", "");
+						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 						if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
 							proceedToLaunch = false;
 							donorRomMsg();

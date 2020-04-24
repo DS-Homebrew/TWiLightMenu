@@ -41,6 +41,7 @@ STRING(DSIBINARIES_MISSING_3, "this ROM, or start in DS mode.")
 
 STRING(DONOR_ROM_MSG_1, "This game requires a donor ROM")
 STRING(DONOR_ROM_MSG_2, "to run. Please set an existing")
+STRING(DONOR_ROM_MSG_3_ESDK2, "early SDK2 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_3_SDK2, "late SDK2 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_3_SDK5, "DS SDK5 game as a donor ROM.")
 

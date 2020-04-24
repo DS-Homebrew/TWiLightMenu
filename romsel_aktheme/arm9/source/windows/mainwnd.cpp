@@ -726,16 +726,21 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	}
 
 	if (!rominfo.isDSiWare() && rominfo.requiresDonorRom()) {
+		const char* pathDefine = "DONOR_NDS_PATH";
+		const char* msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing DS SDK5 game as a donor ROM.";
+		if (rominfo.requiresDonorRom()==20) {
+			pathDefine = "DONORE2_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing early SDK2 game as a donor ROM.";
+		} else if (rominfo.requiresDonorRom()==2) {
+			pathDefine = "DONOR2_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing late SDK2 game as a donor ROM.";
+		}
 		std::string donorRomPath;
 		const char* bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 		CIniFile bootstrapini(bootstrapinipath);
-		donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", rominfo.requiresDonorRom()==2 ? "DONOR2_NDS_PATH" : "DONOR_NDS_PATH", "");
+		donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 		if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
-			messageBox(this, LANG("game launch", "NDS Bootstrap Error"),
-			rominfo.requiresDonorRom()==2
-			? "This game requires a donor ROM to run. Please switch the theme, and set an existing late SDK2 game as a donor ROM."
-			: "This game requires a donor ROM to run. Please switch the theme, and set an existing DS SDK5 game as a donor ROM."
-			, MB_OK);
+			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), msg, MB_OK);
 			progressWnd().hide();
 			return;
 		}

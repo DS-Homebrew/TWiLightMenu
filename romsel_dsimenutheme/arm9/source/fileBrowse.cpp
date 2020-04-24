@@ -1155,6 +1155,9 @@ void donorRomMsg(const char *filename) {
 	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
 	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 	switch (requiresDonorRom[CURPOS]) {
+		case 20:
+			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str());
+			break;
 		case 2:
 			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str());
 			break;
@@ -2509,10 +2512,16 @@ string browseForFile(const vector<string> extensionList) {
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
+							const char* pathDefine = "DONOR_NDS_PATH";
+							if (requiresDonorRom[CURPOS]==20) {
+								pathDefine = "DONORE2_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS]==2) {
+								pathDefine = "DONOR2_NDS_PATH";
+							}
 							std::string donorRomPath;
 							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
 							CIniFile bootstrapini(bootstrapinipath);
-							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", requiresDonorRom[CURPOS]==2 ? "DONOR2_NDS_PATH": "DONOR_NDS_PATH", "");
+							donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
 							if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
 								proceedToLaunch = false;
 								donorRomMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());

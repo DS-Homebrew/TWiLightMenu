@@ -706,6 +706,9 @@ void getGameInfo(bool isDir, const char* name)
 
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
+			case 0x23CAC:
+				if (!isDSiMode()) requiresDonorRom = 20;
+				break;
 			case 0x24DA8:
 			case 0x24F50:
 				requiresDonorRom = 2;
