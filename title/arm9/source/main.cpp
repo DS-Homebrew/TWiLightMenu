@@ -822,7 +822,7 @@ int main(int argc, char **argv)
 		soundBankLoaded = true;
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 == 0)) {
+	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
 		BootSplashInit();
 		isDSiMode() ? fifoSendValue32(FIFO_USER_01, 10) : *(u32*)0x02000000 = 1;
 	}
