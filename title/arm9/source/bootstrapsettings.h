@@ -40,11 +40,11 @@ class BootstrapSettings
     void saveSettings();
 
   public:
-    bool bstrap_debug;
-	bool bstrap_logging;
-	int bstrap_romreadled;
+    bool cacheFatTable;
+    bool debug;
+	bool logging;
+	int romreadled;
 	int dmaromreadled;
-	int bstrap_loadingScreen;
 	int consoleModel;
 };
 
