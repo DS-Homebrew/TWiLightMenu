@@ -783,13 +783,25 @@ int main(int argc, char **argv)
 	bool soundBankLoaded = false;
 
 	bool softResetParamsFound = false;
+	const char* softResetParamsPath = (isDSiMode() ? (sdFound() ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin") : "fat:/_nds/nds-bootstrap/B4DS-softResetParams.bin");
 	u32 softResetParams = 0;
-	FILE* file = fopen(isDSiMode() ? (sdFound() ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin") : "fat:/_nds/nds-bootstrap/B4DS-softResetParams.bin", "rb");
+	FILE* file = fopen(softResetParamsPath, "rb");
 	if (file) {
 		fread(&softResetParams, sizeof(u32), 1, file);
 		softResetParamsFound = (softResetParams != 0xFFFFFFFF);
 	}
 	fclose(file);
+
+	if (softResetParamsFound) {
+		scanKeys();
+		if (keysHeld() & KEY_B) {
+			softResetParams = 0xFFFFFFFF;
+			file = fopen(softResetParamsPath, "wb");
+			fwrite(&softResetParams, sizeof(u32), 1, file);
+			fclose(file);
+			softResetParamsFound = false;
+		}
+	}
 
 	if (!softResetParamsFound && (ms().dsiSplash || ms().showlogo)) {
 		// Get date
