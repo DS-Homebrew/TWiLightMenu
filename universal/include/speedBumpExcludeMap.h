@@ -14,6 +14,7 @@
 		"ALC",	// Animaniacs: Lights, Camera, Action!
 		"YAH",	// Assassin's Creed: Altair's Chronicles
 		"B6R",	// Bakugan: Battle Brawlers
+		"BGH",	// Band Hero
 		"AB2",	// Battles of Prince of Persia
 		"YB4",	// Bee Movie
 		"B7N",	// Ben 10 Triple Pack
@@ -66,7 +67,7 @@
 		//"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6X",	// Rockman EXE: Operate Shooting Star
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
+		//"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
