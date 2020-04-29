@@ -362,7 +362,7 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTid[CURPOS]);
+	snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "TID: %s", gameTid[CURPOS]);
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
@@ -414,6 +414,9 @@ void perGameSettings (std::string filename) {
 	fclose(cfgFile);*/
 
 	int row1Y = (ms().theme==5 ? 78 : 66);
+	if (!showSDKVersion && gameTid[CURPOS][0] == 0) {
+		row1Y += 4;
+	}
 	int row2Y = (ms().theme==5 ? 92 : 80);
 	int botRowY = (ms().theme==5 ? 172 : 160);
 

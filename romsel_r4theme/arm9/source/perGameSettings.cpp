@@ -321,7 +321,7 @@ void perGameSettings (std::string filename) {
 		}
 	}
 
-	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", game_TID);
+	snprintf (gameTIDText, sizeof(gameTIDText), game_TID[0]==0 ? "" : "TID: %s", game_TID);
 
 	char saveNoDisplay[16];
 
