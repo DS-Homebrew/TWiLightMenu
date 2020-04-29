@@ -737,7 +737,7 @@ void getGameInfo(bool isDir, const char* name)
 				|| (ndsHeader.arm9binarySize == 0x54620 && ndsHeader.arm7binarySize == 0x1538)		// XRoar 0.24fp3
 				|| (ndsHeader.arm9binarySize == 0x2C9A8 && ndsHeader.arm7binarySize == 0xFB98)		// NitroGrafx v0.7
 				|| (ndsHeader.arm9binarySize == 0x22AE4 && ndsHeader.arm7binarySize == 0xA764)) {	// It's 1975 and this man is about to show you the future
-					isHomebrew = 1; // Have nds-bootstrap load it (in case if it doesn't)
+					isModernHomebrew = false; // Have nds-bootstrap load it (in case if it doesn't)
 				}
 			}
 		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
