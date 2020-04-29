@@ -174,7 +174,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				}
 			}
 		}
-		else if (memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
+		else if ((memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
+			   || (memcmp(header.gameTitle, "UNLAUNCH.DSI", 12) == 0))
 		{
 			_isDSiWare = ETrue;
             _isHomebrew = ETrue;
