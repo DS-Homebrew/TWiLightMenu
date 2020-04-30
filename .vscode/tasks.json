@@ -6,7 +6,8 @@
 			"type": "shell",
 			"command": "make",
 			"args": [
-				"${input:makeVariable}"
+				"${input:makeVariable}",
+				"-s"
 			],
 			"group": "build",
 			"problemMatcher": [

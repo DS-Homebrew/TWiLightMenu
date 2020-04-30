@@ -85,7 +85,7 @@ You may configure various options on how the theme is drawn in the `theme.ini`, 
 | `ShoulderRRenderX`       | The X position on the top screen to draw the right shoulder                                                  | 178           | 178           |
 | `VolumeRenderX`          | The X position on the top screen to draw the right shoulder                                                  | 4             | 4             |
 | `VolumeRenderY`          | The Y position on the top screen to draw the volume icon                                                     | 16            | 16            |
-| `BatteryRenderY`         | The Y position on the top screen to draw the battery icon                                                    | 15            | 15            |
+| `BatteryRenderY`         | The Y position on the top screen to draw the battery icon                                                    | 4             | 4             |
 | `BatteryRenderX`         | The X position on the top screen to draw the battery icon                                                    | 235           | 235           |
 | `RenderPhoto`            | Whether or not to draw a photo on the top screen                                                             | 0             | 1             |
 | `StartTextUserPalette`   | Assign the DSi Profile Theme to the palette of the start text                                                | N/A           | 1             |
