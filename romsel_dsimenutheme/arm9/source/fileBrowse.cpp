@@ -1153,16 +1153,22 @@ void donorRomMsg(const char *filename) {
 	int yPos2 = (ms().theme == 4 ? 24 : 112);
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
 	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
-	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
+			printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str());
 			break;
 		case 2:
+			printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str());
+			break;
+		case 3:
+			printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2_MKDS.c_str());
+			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_MKDS.c_str());
 			break;
 		case 5:
 		default:
+			printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
 			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str());
 			break;
 	}
@@ -2517,6 +2523,8 @@ string browseForFile(const vector<string> extensionList) {
 								pathDefine = "DONORE2_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS]==2) {
 								pathDefine = "DONOR2_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS]==3) {
+								pathDefine = "DONOR3_NDS_PATH";
 							}
 							std::string donorRomPath;
 							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

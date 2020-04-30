@@ -18,6 +18,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nds/arm9/dldi.h>
+
 #include "dsrom.h"
 #include "tool/dbgtool.h"
 #include "fileicons.h"
@@ -135,13 +137,22 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
 		_requiresDonorRom = 0;
+		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		switch (header.arm7binarySize) {
 			case 0x23CAC:
-				if (!isDSiMode()) _requiresDonorRom = 20;
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 20;
 				break;
 			case 0x24DA8:
 			case 0x24F50:
 				_requiresDonorRom = 2;
+				break;
+			case 0x2434C:
+			case 0x2484C:
+			case 0x249DC:
+			case 0x25D04:
+			case 0x25D94:
+			case 0x25FFC:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 3;
 				break;
 			case 0x27618:
 			case 0x2762C:

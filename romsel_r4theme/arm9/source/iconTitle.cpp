@@ -22,6 +22,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/stat.h>
@@ -704,14 +705,23 @@ void getGameInfo(bool isDir, const char* name)
 			}
 		}
 
+		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
 			case 0x23CAC:
-				if (!isDSiMode()) requiresDonorRom = 20;
+				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 20;
 				break;
 			case 0x24DA8:
 			case 0x24F50:
 				requiresDonorRom = 2;
+				break;
+			case 0x2434C:
+			case 0x2484C:
+			case 0x249DC:
+			case 0x25D04:
+			case 0x25D94:
+			case 0x25FFC:
+				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 3;
 				break;
 			case 0x27618:
 			case 0x2762C:

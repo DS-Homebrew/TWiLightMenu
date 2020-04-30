@@ -340,16 +340,22 @@ void donorRomMsg(void) {
 	showdialogbox = true;
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "This game requires a donor ROM");
-	printSmallCentered(false, 112, "to run. Please set an existing");
 	switch (requiresDonorRom) {
 		case 20:
+			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "early SDK2 game as a donor ROM.");
 			break;
 		case 2:
+			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "late SDK2 game as a donor ROM.");
+			break;
+		case 3:
+			printSmallCentered(false, 112, "to run. Please set Mario Kart");
+			printSmallCentered(false, 120, "DS as a donor ROM.");
 			break;
 		case 5:
 		default:
+			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "DS SDK5 game as a donor ROM.");
 			break;
 	}
@@ -596,6 +602,8 @@ string browseForFile(const vector<string> extensionList) {
 							pathDefine = "DONORE2_NDS_PATH";
 						} else if (requiresDonorRom==2) {
 							pathDefine = "DONOR2_NDS_PATH";
+						} else if (requiresDonorRom==3) {
+							pathDefine = "DONOR3_NDS_PATH";
 						}
 						std::string donorRomPath;
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

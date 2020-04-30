@@ -201,6 +201,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
 	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))
+	 || (memcmp(gameTid[CURPOS], "AMC", 3) == 0)	// Mario Kart DS
 	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))) {
 		return true;
 	}
@@ -719,6 +720,8 @@ void perGameSettings (std::string filename) {
 							pathDefine = "DONORE2_NDS_PATH";
 						} else if (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000) {
 							pathDefine = "DONOR2_NDS_PATH";
+						} else if (SDKVersion >= 0x3000000 && SDKVersion < 0x5000000) {
+							pathDefine = "DONOR3_NDS_PATH";
 						}
 						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);

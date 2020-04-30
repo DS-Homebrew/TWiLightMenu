@@ -33,6 +33,7 @@
 #include "common/tonccpy.h"
 #include <ctype.h>
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
@@ -402,17 +403,27 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
+		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
 			switch (ndsHeader.arm7binarySize) {
 				case 0x23CAC:
-					if (!isDSiMode()) requiresDonorRom[num] = 20;
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 20;
 					break;
 				case 0x24DA8:
 				case 0x24F50:
 					requiresDonorRom[num] = 2;
+					break;
+				case 0x2434C:
+				case 0x2484C:
+				case 0x249DC:
+				case 0x25D04:
+				case 0x25D94:
+				case 0x25FFC:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 3;
 					break;
 				case 0x27618:
 				case 0x2762C:
