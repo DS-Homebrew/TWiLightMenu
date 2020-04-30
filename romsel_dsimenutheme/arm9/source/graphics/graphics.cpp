@@ -1464,7 +1464,7 @@ void drawCurrentDate() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
-	int y = (ms().theme == 4 ? 11 : 6);
+	int y = (ms().theme == 4 ? 12 : 7);
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1489,7 +1489,7 @@ void drawCurrentTime() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
-	int y = (ms().theme == 4 ? 11 : 6);
+	int y = (ms().theme == 4 ? 12 : 7);
 	char time[10];
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
@@ -1518,7 +1518,7 @@ void drawClockColon() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
-	int y = (ms().theme == 4 ? 11 : 6);
+	int y = (ms().theme == 4 ? 12 : 7);
 	char colon[1];
 
 	// Blink the ':' once per second.
