@@ -103,9 +103,7 @@ void Texture::loadBitmap(FILE *file) noexcept {
 	// Apply filtering and flip image right-side up
 	for(uint y = 0; y < _texHeight; y++) {
 		for(uint x = 0; x < _texWidth; x++) {
-			if((buffer[((_texHeight - y) * _texWidth) + x] & 0x7FFF) != 0x71CF) { // Don't include 0xF1CF or 0x71CF
-				_texture[(y * _texWidth) + x] = bmpToDS(buffer[((_texHeight - y) * _texWidth) + x]);
-			}
+			_texture[(y * _texWidth) + x] = bmpToDS(buffer[((_texHeight - y - 1) * _texWidth) + x]);
 		}
 	}
 }
@@ -195,6 +193,10 @@ void Texture::applyBitmapEffect(Texture::BitmapEffect effect) {
 }
 
 u16 Texture::bmpToDS(u16 val) {
+	// Return 0 for #ff00ff
+	if((val & 0x7FFF) == 0x7C1F)
+		return 0;
+
 	int blfLevel = ms().blfLevel;
 	if (ms().colorMode == 1) {
 		u8 b = val & 31;
@@ -210,6 +212,6 @@ u16 Texture::bmpToDS(u16 val) {
 
 		return max | (max & (31 - 3 * blfLevel)) << 5 | (max & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	} else {
-		return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel) << 5) | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
+		return ((val >> 10) & 31) | ((val >> 5) & (31 - 3 * blfLevel)) << 5 | (val & (31 - 6 * blfLevel)) << 10 | BIT(15);
 	}
 }
