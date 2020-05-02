@@ -177,7 +177,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x27218
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
-	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4000000	// SDK3
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4008000	// SDK3
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
 	  || arm7size==0x286A0
