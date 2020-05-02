@@ -177,7 +177,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x27218
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
-	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4008000	// SDK3
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4000000	// SDK3
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
 	  || arm7size==0x286A0
@@ -185,8 +185,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x289A4
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8
-	  || arm7size==0x28FFC
-	  || arm7size==0x2931C))
+	  || arm7size==0x28FFC))
 	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))
 	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))) {
 		return true;
