@@ -8,6 +8,7 @@
 #include <dirent.h>
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include "common/gl2d.h"
 
 #include "date.h"
@@ -163,10 +164,12 @@ bool checkIfDSiMode (std::string filename) {
 	}
 }
 
-bool showSetDonorRom(u32 arm7size, u32 SDKVersion, char gameTid[]) {
+bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	if (requiresDonorRom) return false;
 
-	if ((!isDSiMode() && SDKVersion >= 0x2000000 && SDKVersion < 0x2008000
+	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+
+	if (((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70
 	  || arm7size==0x25FA4
 	  || arm7size==0x2619C
@@ -174,8 +177,17 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion, char gameTid[]) {
 	  || arm7size==0x27218
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4000000	// SDK3
+	 && (arm7size==0x28464
+	  || arm7size==0x28684
+	  || arm7size==0x286A0
+	  || arm7size==0x286B0
+	  || arm7size==0x289A4
+	  || arm7size==0x289C0
+	  || arm7size==0x289F8
+	  || arm7size==0x28FFC
+	  || arm7size==0x2931C))
 	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))
-	 || (memcmp(gameTid, "AMC", 3) == 0)	// Mario Kart DS
 	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))) {
 		return true;
 	}
@@ -321,7 +333,7 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
-			if (showSetDonorRom(arm7size, SDKVersion, game_TID)) {
+			if (showSetDonorRom(arm7size, SDKVersion)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 9;	// Set as Donor ROM
 				donorRomTextShown = true;

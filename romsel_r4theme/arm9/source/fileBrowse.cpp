@@ -340,22 +340,19 @@ void donorRomMsg(void) {
 	showdialogbox = true;
 	printLargeCentered(false, 84, "Error!");
 	printSmallCentered(false, 104, "This game requires a donor ROM");
+	printSmallCentered(false, 112, "to run. Please set an existing");
 	switch (requiresDonorRom) {
 		case 20:
-			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "early SDK2 game as a donor ROM.");
 			break;
 		case 2:
-			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "late SDK2 game as a donor ROM.");
 			break;
 		case 3:
-			printSmallCentered(false, 112, "to run. Please set Mario Kart");
-			printSmallCentered(false, 120, "DS as a donor ROM.");
+			printSmallCentered(false, 120, "early SDK3 game as a donor ROM.");
 			break;
 		case 5:
 		default:
-			printSmallCentered(false, 112, "to run. Please set an existing");
 			printSmallCentered(false, 120, "DS SDK5 game as a donor ROM.");
 			break;
 	}
