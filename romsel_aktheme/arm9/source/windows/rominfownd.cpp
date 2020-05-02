@@ -261,7 +261,7 @@ void RomInfoWnd::pressGameSettings(void)
 				expansionPakFound = (*(vu32*)(0x08240000) == 1);
 			}
 
-			if ((_romInfo.saveInfo().arm9destination != 0x02004000
+			if ((isDSiMode() && _romInfo.saveInfo().arm9destination != 0x02004000
 			&& _romInfo.saveInfo().gameSdkVersion >= 0x2008000 && _romInfo.saveInfo().gameSdkVersion < 0x5000000)
 			|| (!isDSiMode() && !expansionPakFound && _romInfo.saveInfo().gameSdkVersion >= 0x2008000)) {
 				_values.push_back(LANG("game settings", "Auto")); // -1 => 0
