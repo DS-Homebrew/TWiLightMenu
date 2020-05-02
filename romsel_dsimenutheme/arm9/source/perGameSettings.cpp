@@ -429,7 +429,7 @@ void perGameSettings (std::string filename) {
 	sprintf(RUN_IN, "%s:", STR_RUN_IN.c_str());
 	sprintf(ARM9_CPU_SPEED, "%s:", STR_ARM9_CPU_SPEED.c_str());
 	sprintf(VRAM_BOOST, "%s:", STR_VRAM_BOOST.c_str());
-	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
+	sprintf(HEAP_SHRINK, "%s:", isDSiMode() ? STR_HEAP_SHRINK_TYPE.c_str() : STR_HEAP_SHRINK.c_str());
 	sprintf(DIRECT_BOOT, "%s:", STR_DIRECT_BOOT.c_str());
 	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
 	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
@@ -558,9 +558,9 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_AUTO.c_str());
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
+					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? STR_ON.c_str() : "Lo");
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_OFF.c_str());
+					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? STR_OFF.c_str() : "Hi");
 				}
 				break;
 			case 6:

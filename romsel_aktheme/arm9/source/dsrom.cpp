@@ -143,6 +143,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			case 0x22BCC:
 				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 51;
 				break;
+			case 0x23708:
+			case 0x2378C:
+			case 0x237F0:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 5;
+				break;
 			case 0x23CAC:
 				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 20;
 				break;

@@ -712,6 +712,11 @@ void getGameInfo(bool isDir, const char* name)
 			case 0x22BCC:
 				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 51;
 				break;
+			case 0x23708:
+			case 0x2378C:
+			case 0x237F0:
+				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 5;
+				break;
 			case 0x23CAC:
 				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 20;
 				break;

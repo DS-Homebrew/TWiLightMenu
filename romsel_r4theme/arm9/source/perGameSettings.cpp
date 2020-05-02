@@ -481,13 +481,13 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 5:
-				printSmall(false, 32, perGameOpYpos, "Heap Shrink:");
+				printSmall(false, 32, perGameOpYpos, isDSiMode() ? "Heap Shrink:" : "Heap Shrink type:");
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? "On" : "Lo");
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? "Off" : "Hi");
 				}
 				break;
 			case 6:
