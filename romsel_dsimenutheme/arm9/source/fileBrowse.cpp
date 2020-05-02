@@ -1168,6 +1168,9 @@ void donorRomMsg(const char *filename) {
 		default:
 			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str());
 			break;
+		case 51:
+			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str());
+			break;
 	}
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
@@ -2522,6 +2525,8 @@ string browseForFile(const vector<string> extensionList) {
 								pathDefine = "DONOR2_NDS_PATH";
 							} else if (requiresDonorRom[CURPOS]==3) {
 								pathDefine = "DONOR3_NDS_PATH";
+							} else if (requiresDonorRom[CURPOS]==51) {
+								pathDefine = "DONORTWL_NDS_PATH";
 							}
 							std::string donorRomPath;
 							bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

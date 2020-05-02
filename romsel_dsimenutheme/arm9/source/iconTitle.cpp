@@ -410,6 +410,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
 			switch (ndsHeader.arm7binarySize) {
+				case 0x22B40:
+				case 0x22BCC:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 51;
+					break;
 				case 0x23CAC:
 					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 20;
 					break;

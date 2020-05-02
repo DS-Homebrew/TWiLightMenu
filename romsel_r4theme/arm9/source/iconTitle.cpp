@@ -708,6 +708,10 @@ void getGameInfo(bool isDir, const char* name)
 		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
 		switch (ndsHeader.arm7binarySize) {
+			case 0x22B40:
+			case 0x22BCC:
+				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 51;
+				break;
 			case 0x23CAC:
 				if (!isDSiMode() || hasCycloDSi) requiresDonorRom = 20;
 				break;

@@ -737,6 +737,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		} else if (rominfo.requiresDonorRom()==3) {
 			pathDefine = "DONOR3_NDS_PATH";
 			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing early SDK3 game as a donor ROM.";
+		} else if (rominfo.requiresDonorRom()==51) {
+			pathDefine = "DONORTWL_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing DSi-Enhanced game as a donor ROM.";
 		}
 		std::string donorRomPath;
 		const char* bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

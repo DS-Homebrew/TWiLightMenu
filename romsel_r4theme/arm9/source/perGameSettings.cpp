@@ -169,7 +169,7 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 
 	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 
-	if (((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
+	if (((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
 	 && (arm7size==0x25F70
 	  || arm7size==0x25FA4
 	  || arm7size==0x2619C
@@ -177,7 +177,8 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x27218
 	  || arm7size==0x27224
 	  || arm7size==0x2724C))
-	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion >= 0x3000000 && SDKVersion < 0x4000000	// SDK3
+	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))	// Late SDK2
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x3000000 && SDKVersion < 0x4000000	// SDK3
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
 	  || arm7size==0x286A0
@@ -186,8 +187,20 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8
 	  || arm7size==0x28FFC))
-	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))
-	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))) {
+	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	 && (arm7size==0x28F84
+	  || arm7size==0x2909C
+	  || arm7size==0x2914C
+	  || arm7size==0x29164
+	  || arm7size==0x29EE8
+	  || arm7size==0x2A2EC
+	  || arm7size==0x2A318
+	  || arm7size==0x2AF18
+	  || arm7size==0x2B184
+	  || arm7size==0x2B24C
+	  || arm7size==0x2C5B4)))
+	{
 		return true;
 	}
 
@@ -248,8 +261,11 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+	u8 unitCode = 0;
 	u32 arm9dst = 0;
 	u32 arm7size = 0;
+	fseek(f_nds_file, 0x12, SEEK_SET);
+	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
 	fseek(f_nds_file, 0x3C, SEEK_SET);
@@ -653,12 +669,14 @@ void perGameSettings (std::string filename) {
 					case 9:
 					  if (pressed & KEY_A) {
 						const char* pathDefine = "DONOR_NDS_PATH";
-						if (SDKVersion >= 0x2000000 && SDKVersion < 0x2008000) {
+						if (SDKVersion > 0x2000000 && SDKVersion < 0x2008000) {
 							pathDefine = "DONORE2_NDS_PATH";
-						} else if (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000) {
+						} else if (SDKVersion > 0x2008000 && SDKVersion < 0x3000000) {
 							pathDefine = "DONOR2_NDS_PATH";
-						} else if (SDKVersion >= 0x3000000 && SDKVersion < 0x5000000) {
+						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x5000000) {
 							pathDefine = "DONOR3_NDS_PATH";
+						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
+							pathDefine = "DONORTWL_NDS_PATH";
 						}
 						std::string romFolderNoSlash = romfolder[secondaryDevice];
 						RemoveTrailingSlashes(romFolderNoSlash);

@@ -355,6 +355,9 @@ void donorRomMsg(void) {
 		default:
 			printSmallCentered(false, 120, "DS SDK5 game as a donor ROM.");
 			break;
+		case 51:
+			printSmallCentered(false, 120, "DSi-Enhncd. game as a donor ROM.");
+			break;
 	}
 	printSmallCentered(false, 134, "A: OK");
 	int pressed = 0;
@@ -601,6 +604,8 @@ string browseForFile(const vector<string> extensionList) {
 							pathDefine = "DONOR2_NDS_PATH";
 						} else if (requiresDonorRom==3) {
 							pathDefine = "DONOR3_NDS_PATH";
+						} else if (requiresDonorRom==51) {
+							pathDefine = "DONORTWL_NDS_PATH";
 						}
 						std::string donorRomPath;
 						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");

@@ -45,6 +45,7 @@ STRING(DONOR_ROM_MSG_3_ESDK2, "early SDK2 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_3_SDK2, "late SDK2 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_3_ESDK3, "early SDK3 game as a donor ROM.")
 STRING(DONOR_ROM_MSG_3_SDK5, "DS SDK5 game as a donor ROM.")
+STRING(DONOR_ROM_MSG_3_SDK5TWL, "DSi-Enhanced game as a donor ROM.")
 
 STRING(GAME_INCOMPATIBLE_MSG_1, "This game is known to not run.")
 STRING(GAME_INCOMPATIBLE_MSG_2, "If there's an nds-bootstrap")
