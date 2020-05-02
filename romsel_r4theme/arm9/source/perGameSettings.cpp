@@ -35,6 +35,7 @@
 
 extern const char *bootstrapinipath;
 
+extern bool isRegularDS;
 extern int consoleModel;
 
 extern int bstrap_dsiMode;
@@ -244,6 +245,13 @@ void perGameSettings (std::string filename) {
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
 
+	bool expansionPakFound = false;
+	if (!isDSiMode() && isRegularDS && (useBootstrap || !secondaryDevice)) {
+		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
+		*(vu32*)(0x08240000) = 1;
+		expansionPakFound = (*(vu32*)(0x08240000) == 1);
+	}
+
 	bool showPerGameSettings =
 		(!isDSiWare
 		&& memcmp(game_TID, "HND", 3) != 0
@@ -303,7 +311,7 @@ void perGameSettings (std::string filename) {
 		}
 		if (useBootstrap || !secondaryDevice) {
 			if ((arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000)
-			|| (!isDSiMode() && SDKVersion >= 0x2008000)) {
+			|| (!isDSiMode() && !expansionPakFound && SDKVersion >= 0x2008000)) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
