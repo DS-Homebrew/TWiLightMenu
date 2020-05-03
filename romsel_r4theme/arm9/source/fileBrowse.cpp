@@ -386,12 +386,25 @@ void showLocation(void) {
 bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 	bool proceedToLaunch = true;
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
-		if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
-			// Found match
-			proceedToLaunch = false;
-			break;
+	if (!isDSiMode()) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
+			if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	}
+
+	if (proceedToLaunch) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+			if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
 		}
 	}
 

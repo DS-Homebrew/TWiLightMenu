@@ -1201,12 +1201,25 @@ void donorRomMsg(const char *filename) {
 bool checkForCompatibleGame(const char *filename) {
 	bool proceedToLaunch = true;
 
-	// TODO: If the list gets large enough, switch to bsearch().
-	for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
-		if (memcmp(gameTid[CURPOS], incompatibleGameList[i], 3) == 0) {
-			// Found match
-			proceedToLaunch = false;
-			break;
+	if (!isDSiMode()) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
+			if (memcmp(gameTid[CURPOS], incompatibleGameListB4DS[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	}
+
+	if (proceedToLaunch) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+			if (memcmp(gameTid[CURPOS], incompatibleGameList[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
 		}
 	}
 
