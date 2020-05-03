@@ -1258,7 +1258,7 @@ int main(int argc, char **argv) {
 								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
-								} else if (ms().consoleModel >= 2) {
+								} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
 									printSmallCentered(false, 20, "If this takes a while, press HOME,");
 									printSmallCentered(false, 34, "then press B.");
 								} else {

@@ -2161,7 +2161,7 @@ int main(int argc, char **argv) {
 								ClearBrightness();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
-								} else if (consoleModel >= 2) {
+								} else if (REG_SCFG_EXT != 0 && consoleModel >= 2) {
 									printSmallCentered(false, 20, "If this takes a while, press HOME,");
 									printSmallCentered(false, 34, "then press B.");
 								} else {

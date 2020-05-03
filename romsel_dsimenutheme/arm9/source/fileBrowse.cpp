@@ -438,7 +438,7 @@ void displayNowLoading(void) {
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 		printSmallCentered(false, 20, STR_TAKEWHILE_TURNOFF_1.c_str());
 		printSmallCentered(false, 34, STR_TAKEWHILE_TURNOFF_2.c_str());
-	} else if (ms().consoleModel >= 2) {
+	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
 		printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME_1.c_str());
 		printSmallCentered(false, 34, STR_TAKEWHILE_PRESSHOME_2.c_str());
 	} else {
