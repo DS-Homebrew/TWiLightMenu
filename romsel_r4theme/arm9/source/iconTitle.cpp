@@ -31,14 +31,12 @@
 #include "ndsheaderbanner.h"
 #include "language.h"
 
+#include "iconTitle.h"
+
 #define ICON_POS_X	112
 #define ICON_POS_Y	96
 
-#define BOX_PX				73
-#define BOX_PY				32
-#define BOX_PY_spacing1		8
-#define BOX_PY_spacing2		4
-#define BOX_PY_spacing3		12
+#define TITLE_CACHE_SIZE 0x80
 
 // Graphic files
 #include "icon_unk.h"
@@ -76,6 +74,8 @@ static int snesTexID;
 sNDSHeaderExt ndsHeader;
 sNDSBannerExt ndsBanner;
 
+static char titleToDisplay[3][384]; 
+
 static u32 arm9StartSig[4];
 
 static glImage folderIcon[1];
@@ -107,16 +107,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text1);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing2, text1);
-			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing3, text2);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printSmall(false, BOX_PX, BOX_PY, text1);
-			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text2);
-			printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY, text1);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }
@@ -1182,39 +1182,34 @@ void titleUpdate(bool isDir, const char* name)
 
 		// turn unicode into ascii (kind of)
 		// and convert 0x0A into 0x00
-		char *p = (char*) ndsBanner.titles[currentLang];
 		int bannerlines = 0;
-		for (unsigned int i = 0; i < sizeof (ndsBanner.titles[currentLang]); i += 2)
+		// The index of the character array
+		int charIndex = 0;
+		for (int i = 0; i < TITLE_CACHE_SIZE; i++)
 		{
-			if ((p[i] == 0x0A) || (p[i] == 0xFF)) {
-				p[i / 2] = 0;
+			// todo: fix crash on titles that are too long (homebrew)
+			if ((ndsBanner.titles[currentLang][i] == 0x000A) || (ndsBanner.titles[currentLang][i] == 0xFFFF)) {
+				titleToDisplay[bannerlines][charIndex] = 0;
 				bannerlines++;
-			} else if (p[i] == 0xE9) {
-				p[i / 2] = 0x65;	// Replace bugged "�" with regular "e"
-			} else {
-				p[i / 2] = p[i];
+				charIndex = 0;
+			} else if (ndsBanner.titles[currentLang][i] <= 0x007F) { // ASCII are one UTF-8 character
+				titleToDisplay[bannerlines][charIndex++] = ndsBanner.titles[currentLang][i];
+			} else if (ndsBanner.titles[currentLang][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
+				titleToDisplay[bannerlines][charIndex++] = (0xC0 | ((ndsBanner.titles[currentLang][i] & 0x7C0) >> 6));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | (ndsBanner.titles[currentLang][i] & 0x03F));
+			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
+				titleToDisplay[bannerlines][charIndex++] = (0xE0 | ((ndsBanner.titles[currentLang][i] & 0xF000) >> 12));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | ((ndsBanner.titles[currentLang][i] & 0x0FC0) >> 6));
+				titleToDisplay[bannerlines][charIndex++] = (0x80 | (ndsBanner.titles[currentLang][i] & 0x003F));
 			}
 		}
 
 		// text
-		switch(bannerlines) {
-			case 0:
-			default:
-				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, p);
-				break;
-			case 1:
-				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing2, p);
-				p += strlen(p) + 1;
-				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing3, p);
-				break;
-			case 2:
-				printSmall(false, BOX_PX, BOX_PY, p);
-				p += strlen(p) + 1;
-				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1, p);
-				p += strlen(p) + 1;
-				printSmall(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, p);
-				break;
-		}
-		
+		//if (infoFound[num]) {
+			writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
+		//} else {
+		//	printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing2, name);
+		//	printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing3, titleToDisplay[0]);
+		//}
 	}
 }

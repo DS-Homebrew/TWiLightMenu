@@ -951,6 +951,5 @@ void titleUpdate(int num, bool isDir, const char* name)
 			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, name);
 			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[num][0]);
 		}
-		
 	}
 }

@@ -1026,7 +1026,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printLargeCentered(false, 182, "SELECT: Settings menu");
+				printLargeCentered(false, 180, "SELECT: Settings menu");
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
@@ -1047,7 +1047,7 @@ int main(int argc, char **argv) {
 						}
 						break;
 				}
-				printLarge(false, 212, 166, RetTime().c_str());
+				printLargeCentered(false, 112, 166, RetTime().c_str());
 
 				scanKeys();
 				pressed = keysDownRepeat();
