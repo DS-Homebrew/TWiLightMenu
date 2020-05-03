@@ -40,6 +40,12 @@ STRING(DSIBINARIES_MISSING_1, "The DSi binaries are missing.")
 STRING(DSIBINARIES_MISSING_2, "Please get a clean dump of")
 STRING(DSIBINARIES_MISSING_3, "this ROM, or start in DS mode.")
 
+STRING(ROM_TOO_BIG_1, "This ROM is too big.")
+STRING(ROM_TOO_BIG_2, "Please insert the")
+STRING(ROM_TOO_BIG_3, "DS Memory Expansion Pak.")
+STRING(ROM_TOO_BIG_2_SD, "Please run this on the")
+STRING(ROM_TOO_BIG_3_SD, "console's SD Card.")
+
 STRING(DONOR_ROM_MSG_1, "This game requires a donor ROM")
 STRING(DONOR_ROM_MSG_2, "to run. Please set an existing")
 STRING(DONOR_ROM_MSG_3_ESDK2, "early SDK2 game as a donor ROM.")

@@ -271,6 +271,7 @@ extern int bnrRomType;
 extern bool bnriconisDSi;
 extern int bnrWirelessIcon;	// 0 = None, 1 = Local, 2 = WiFi
 extern u8 romVersion;
+extern u8 romDeviceSize;
 extern bool isDSiWare;
 extern bool isHomebrew;
 extern bool isModernHomebrew;		// false == No DSi-Extended header, true == Has DSi-Extended header

@@ -707,6 +707,7 @@ void getGameInfo(bool isDir, const char* name)
 
 		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
 		romVersion = ndsHeader.romversion;
+		romDeviceSize = ndsHeader.deviceSize;
 		switch (ndsHeader.arm7binarySize) {
 			case 0x22B40:
 			case 0x22BCC:

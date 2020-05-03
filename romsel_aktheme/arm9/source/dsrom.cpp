@@ -55,6 +55,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _isHomebrew = src._isHomebrew;
     _isGbaRom = src._isGbaRom;
     _fileName = src._fileName;
+    _deviceSize = src._deviceSize;
     _romVersion = src._romVersion;
     _extIcon = src._extIcon;
     _hasExtendedBinaries = src._hasExtendedBinaries;
@@ -73,6 +74,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
   _isArgv(EFalse),
   _requiresDonorRom(0),
   _extIcon(-1), 
+  _deviceSize(0),
   _romVersion(0)
 {
     tonccpy(&_banner, &src._banner, sizeof(_banner));
@@ -85,6 +87,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
     _isHomebrew = src._isHomebrew;
     _isGbaRom = src._isGbaRom;
     _fileName = src._fileName;
+    _deviceSize = src._deviceSize;
     _romVersion = src._romVersion;
     _extIcon = src._extIcon;
     _hasExtendedBinaries = src._hasExtendedBinaries;
@@ -269,6 +272,7 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
     }
 
     _saveInfo.gameCRC = header.headerCRC16;
+    _deviceSize = header.deviceSize;
     _romVersion = header.romversion;
 
     ///////// banner /////////
@@ -634,6 +638,12 @@ SAVE_INFO_EX &DSRomInfo::saveInfo(void)
 {
     load();
     return _saveInfo;
+}
+
+u8 DSRomInfo::deviceSize(void)
+{
+    load();
+    return _deviceSize;
 }
 
 u8 DSRomInfo::version(void)
