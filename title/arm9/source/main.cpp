@@ -280,7 +280,7 @@ void lastRunROM()
 			&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
 				// Prepare for reboot into 16:10 TWL_FIRM
 				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-				rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+				fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
@@ -309,7 +309,7 @@ void lastRunROM()
 				&& ms().homebrewHasWide) {
 					// Prepare for reboot into 16:10 TWL_FIRM
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
@@ -326,7 +326,7 @@ void lastRunROM()
 				&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
 					// Prepare for reboot into 16:10 TWL_FIRM
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
