@@ -375,10 +375,10 @@ void SetSpeedBumpExclude(const char* filename) {
 			if (memcmp(game_TID, sbeListB4DS[i], 3) == 0) {
 				// Found match
 				ceCached = false;
-				break;
+				return;
 			}
 		}
-		return;
+		//return;
 	}
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -386,7 +386,7 @@ void SetSpeedBumpExclude(const char* filename) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			break;
+			return;
 		}
 	}
 }

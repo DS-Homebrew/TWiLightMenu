@@ -101,7 +101,6 @@ BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 				return ceCached(false);
 			}
 		}
-		return ceCached(true);
 	}
 
 	for (const char *speedtid : sbeList2)

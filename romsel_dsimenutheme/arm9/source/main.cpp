@@ -210,10 +210,10 @@ void SetSpeedBumpExclude(void) {
 			if (memcmp(gameTid[CURPOS], sbeListB4DS[i], 3) == 0) {
 				// Found match
 				ceCached = false;
-				break;
+				return;
 			}
 		}
-		return;
+		//return;
 	}
 
 	// TODO: If the list gets large enough, switch to bsearch().
@@ -221,7 +221,7 @@ void SetSpeedBumpExclude(void) {
 		if (memcmp(gameTid[CURPOS], sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			break;
+			return;
 		}
 	}
 }

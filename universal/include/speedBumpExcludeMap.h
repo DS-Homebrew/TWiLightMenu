@@ -1,10 +1,18 @@
 #ifndef SBEMAP_H
 #define SBEMAP_H
 
+	// Hi Heap Shrink list (B4DS)
 	static const char sbeListB4DS[][4] = {
+		"CLP",	// Club Penguin: Elite Penguin Force
+		"CY9",	// Club Penguin: EPF: Herbert's Revenge
+		"ARM",	// Mario & Luigi: Partners in Time
+		"CLJ",	// Mario & Luigi: Bowser's Inside Story
+		"AMH",	// Metroid Prime Hunters
 		"B3R",	// Pokemon Ranger: Guardian Signs
+		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 	};
 
+	// Heap Shrink blacklist (or Part 2 of Hi Heap Shrink list (B4DS))
 	static const char sbeList2[][4] = {
 		"CQS",	// 007: Quantum of Solace
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
@@ -43,11 +51,8 @@
 		"YLU",	// Last Window: The Secret of Cape West
 		"ANI",	// Luminous Arc
 		"AVC",	// Magical Starsign
-		//"ARM",	// Mario & Luigi: Partners in Time
-		//"CLJ",	// Mario & Luigi: Bowser's Inside Story
 		"COL",	// Mario & Sonic at the Olympic Winter Games
 		"AMQ",	// Mario vs. Donkey Kong 2: March of the Minis
-		//"AMH",	// Metroid Prime Hunters
 		"YNP",	// Need for Speed: ProStreet
 		"A2D",	// New Super Mario Bros.
 		"BSK",	// Nine Hours, Nine Persons, Nine Doors
@@ -58,7 +63,6 @@
 		"Y4R",	// Pokemon Mystery Dungeon: Explorers of Time + Explorers of Darkness (Demo)
 		"C2S",	// Pokemon Mystery Dungeon: Explorers of Sky
 		"Y6S",	// Pokemon Mystery Dungeon: Explorers of Sky (Demo)
-		//"B3R",	// Pokemon Ranger: Guardian Signs
 		"BPP",	// PostPet DS: Yumemiru Momo to Fushigi no Pen
 		"APU",	// Puyo Puyo!! 15th Anniversary
 		"BYO",	// Puyo Puyo 7
@@ -67,7 +71,6 @@
 		//"ARZ",	// Rockman ZX/MegaMan ZX
 		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
 		"B6X",	// Rockman EXE: Operate Shooting Star
-		//"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
 		"AKA",	// The Rub Rabbits!
 		"ARF",	// Rune Factory: A Fantasy Harvest Moon
 		"A6N",	// Rune Factory 2: A Fantasy Harvest Moon
