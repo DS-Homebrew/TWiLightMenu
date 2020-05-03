@@ -18,7 +18,6 @@ static const char incompatibleGameListB4DS[][4] = {
 
 static const char incompatibleGameList[][4] = {
 	"BO5", // Golden Sun: Dark Dawn
-	"YKR", // Jam with the Band
 	"APD", // Pokemon Dash
 	"A24", // Pokemon Dash (Kiosk Demo)
 	"AH9", // Tony Hawk's American Sk8land
