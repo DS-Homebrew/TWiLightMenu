@@ -42,6 +42,12 @@
 		"APR",	// Feel the Magic: XY XX
 		"A26",	// Feel the Magic: XY XX (Demo)
 		//"CYY",	// Giana Sisters DS (EUR)
+		"YGH",	// Guitar Hero: On Tour
+		"Y5R",	// Guitar Hero: On Tour (Demo)
+		"CGS",	// Guitar Hero: On Tour: Decades
+		"Y56",	// Guitar Hero: On Tour: Decades (Demo)
+		"C6Q",	// Guitar Hero: On Tour: Modern Hits
+		"Y6R",	// Guitar Hero: On Tour: Modern Hits (Demo)
 		"A5P",	// Harry Potter and the Order of the Phoenix
 		"CQ7",	// Henry Hatsworth
 		"YIP",	// Idol Janshi Suchi-Pai III Remix
