@@ -703,23 +703,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		bool proceedToLaunch = true;
 
 		if (!isDSiMode()) {
-			bool expansionPakFound = true;
-			if (sys().isRegularDS() && rominfo.deviceSize() >= 0x0B) {
-				sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-				*(vu32*)(0x08240000) = 1;
-				expansionPakFound = (*(vu32*)(0x08240000) == 1);
-			}
-			if (!expansionPakFound) {
-				proceedToLaunch = false;
-				messageBox(this, LANG("game launch", "NDS Bootstrap Error"),
-				sys().isRegularDS()
-				? "This ROM is too big. Please insert the DS Memory Expansion Pak."
-				: "This ROM is too big. Please run this on the console's SD Card."
-				, MB_OK);
-				progressWnd().hide();
-				return;
-			}
-
 			// TODO: If the list gets large enough, switch to bsearch().
 			for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
 				if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {

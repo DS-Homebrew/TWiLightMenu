@@ -335,31 +335,6 @@ void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 0;
 }
 
-void romTooBigMsg(void) {
-	dialogboxHeight = 2;
-	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This ROM is too big.");
-	if (isRegularDS) {
-		printSmallCentered(false, 112, "Please insert the");
-		printSmallCentered(false, 120, "DS Memory Expansion Pak.");
-	} else {
-		printSmallCentered(false, 112, "Please run this on the");
-		printSmallCentered(false, 120, "console's SD Card.");
-	}
-	printSmallCentered(false, 134, "A: OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	clearText();
-	showdialogbox = false;
-	dialogboxHeight = 0;
-}
-
 void donorRomMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
@@ -633,19 +608,6 @@ string browseForFile(const vector<string> extensionList) {
 					fclose(f_nds_file);
 
 					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
-					if (proceedToLaunch && !isDSiMode() && romDeviceSize >= 0x0B)
-					{
-						bool expansionPakFound = false;
-						if (isRegularDS) {
-							sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-							*(vu32*)(0x08240000) = 1;
-							expansionPakFound = (*(vu32*)(0x08240000) == 1);
-						}
-						if (!expansionPakFound) {
-							proceedToLaunch = false;
-							romTooBigMsg();
-						}
-					}
 					if (proceedToLaunch && requiresDonorRom)
 					{
 						const char* pathDefine = "DONOR_NDS_PATH";

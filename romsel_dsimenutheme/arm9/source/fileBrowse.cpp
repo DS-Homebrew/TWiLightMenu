@@ -1126,66 +1126,6 @@ void dsiBinariesMissingMsg(const char *filename) {
 	}
 }
 
-void romTooBigMsg(const char *filename) {
-	clearText();
-	snd().playWrong();
-	if (ms().theme != 4) {
-		dbox_showIcon = true;
-		showdialogbox = true;
-		for (int i = 0; i < 30; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
-		}
-		titleUpdate(false, filename, CURPOS);
-		dirContName = filename;
-		// About 38 characters fit in the box.
-		if (strlen(dirContName.c_str()) > 38) {
-			// Truncate to 35, 35 + 3 = 38 (because we append "...").
-			dirContName.resize(35, ' ');
-			size_t first = dirContName.find_first_not_of(' ');
-			size_t last = dirContName.find_last_not_of(' ');
-			dirContName = dirContName.substr(first, (last - first + 1));
-			dirContName.append("...");
-		}
-		printSmall(false, 16, 66, dirContName.c_str());
-	}
-	int yPos1 = (ms().theme == 4 ? 8 : 96);
-	int yPos2 = (ms().theme == 4 ? 24 : 112);
-	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, STR_ROM_TOO_BIG_1.c_str());
-	if (sys().isRegularDS()) {
-		printSmallCentered(false, yPos2, STR_ROM_TOO_BIG_2.c_str());
-		printSmallCentered(false, yPos3, STR_ROM_TOO_BIG_3.c_str());
-	} else {
-		printSmallCentered(false, yPos2, STR_ROM_TOO_BIG_2_SD.c_str());
-		printSmallCentered(false, yPos3, STR_ROM_TOO_BIG_3_SD.c_str());
-	}
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
-	int pressed = 0;
-	do {
-		scanKeys();
-		pressed = keysDown();
-		checkSdEject();
-		tex().drawVolumeImageCached();
-		tex().drawBatteryImageCached();
-
-		drawCurrentTime();
-		drawCurrentDate();
-		drawClockColon();
-		snd().updateStream();
-		swiWaitForVBlank();
-	} while (!(pressed & KEY_A));
-	clearText();
-	if (ms().theme == 5) {
-		dbox_showIcon = false;
-	}
-	if (ms().theme == 4) {
-		snd().playLaunch();
-	} else {
-		showdialogbox = false;
-	}
-}
-
 void donorRomMsg(const char *filename) {
 	clearText();
 	snd().playWrong();
@@ -2590,18 +2530,6 @@ string browseForFile(const vector<string> extensionList) {
 					 &&	isHomebrew[CURPOS] == 0)
 					{
 						proceedToLaunch = checkForCompatibleGame(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-						if (proceedToLaunch && !isDSiMode() && romDeviceSize[CURPOS] >= 0x0B) {
-							bool expansionPakFound = false;
-							if (sys().isRegularDS()) {
-								sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-								*(vu32*)(0x08240000) = 1;
-								expansionPakFound = (*(vu32*)(0x08240000) == 1);
-							}
-							if (!expansionPakFound) {
-								proceedToLaunch = false;
-								romTooBigMsg(dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str());
-							}
-						}
 						if (proceedToLaunch && requiresDonorRom[CURPOS]) {
 							const char* pathDefine = "DONOR_NDS_PATH";
 							if (requiresDonorRom[CURPOS]==20) {

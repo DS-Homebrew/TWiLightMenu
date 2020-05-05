@@ -68,7 +68,6 @@ private:
   int _requiresDonorRom;
   std::string _fileName;
   s32 _extIcon;
-  u8 _deviceSize;
   u8 _romVersion;
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
 
@@ -85,7 +84,6 @@ public:
   _isArgv(EFalse),
   _requiresDonorRom(0),
   _extIcon(-1), 
-  _deviceSize(0),
   _romVersion(0)
   {
     toncset(&_banner, 0, sizeof(_banner));
@@ -109,7 +107,6 @@ public:
   const tNDSCompactedBanner &banner(void);
   const tDSiAnimatedIcon &animatedIcon(void);
   SAVE_INFO_EX &saveInfo(void);
-  u8 deviceSize(void);
   u8 version(void);
   void setExtIcon(const std::string &aValue);
   inline bool isExtIcon(void) { return _extIcon >= 0; };

@@ -14,7 +14,6 @@ extern sNDSBannerExt ndsBanner;
 
 char gameTid[40][5] = {0};
 u8 romVersion[40] = {0};
-u8 romDeviceSize[40] = {0};
 u16 headerCRC[40] = {0};
 
 typedef enum
