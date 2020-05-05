@@ -313,13 +313,6 @@ void perGameSettings (std::string filename) {
 	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
 
-	bool expansionPakFound = false;
-	if (!isDSiMode() && sys().isRegularDS() && (ms().useBootstrap || !ms().secondaryDevice)) {
-		sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory Expansion Pak)
-		*(vu32*)(0x08240000) = 1;
-		expansionPakFound = (*(vu32*)(0x08240000) == 1);
-	}
-
 	bool showPerGameSettings =
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
