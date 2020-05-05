@@ -1464,6 +1464,7 @@ void drawCurrentDate() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
+	int y = (ms().theme == 4 ? 12 : 7);
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1475,7 +1476,7 @@ void drawCurrentDate() {
 
 	loadedDate = date;
 
-	tex().drawDateTime(date, x, 15, 5, NULL);
+	tex().drawDateTime(date, x, y, 5, NULL);
 }
 
 static std::string loadedTime;
@@ -1488,6 +1489,7 @@ void drawCurrentTime() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
+	int y = (ms().theme == 4 ? 12 : 7);
 	char time[10];
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
@@ -1506,7 +1508,7 @@ void drawCurrentTime() {
 				x = hourWidth;
 			}
 		}
-		tex().drawDateTime(time, x, 15, howManyToDraw, &hourWidth);
+		tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
 	}
 }
 
@@ -1516,7 +1518,7 @@ void drawClockColon() {
 	if (ms().theme == 5) {
 		x -= 28;
 	}
-	int imgY = 15;
+	int y = (ms().theme == 4 ? 12 : 7);
 	char colon[1];
 
 	// Blink the ':' once per second.
@@ -1524,7 +1526,7 @@ void drawClockColon() {
 		colonTimer = 0;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
-		tex().drawDateTime(colon, x, imgY, 1, NULL);
+		tex().drawDateTime(colon, x, y, 1, NULL);
 		showColon = !showColon;
 	}
 }
@@ -1601,7 +1603,7 @@ void loadRotatingCubes() {
 					y--;
 				}
 				u16 val = *(src++);
-				renderedImageBuffer[y*256+x] = convertToDsBmp(val);
+				renderedImageBuffer[y*256+x] = Texture::bmpToDS(val);
 				x++;
 			}
 		}
