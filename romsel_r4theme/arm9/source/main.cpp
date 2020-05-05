@@ -467,7 +467,7 @@ void SetMPUSettings(const char* filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
-	if (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2) {
+	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2)) {
 		ceCached = perGameSettings_heapShrink;
 		return;
 	}
@@ -479,24 +479,11 @@ void SetSpeedBumpExclude(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
-	if (!isDSiMode()) {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(sbeListB4DS)/sizeof(sbeListB4DS[0]); i++) {
-			if (memcmp(game_TID, sbeListB4DS[i], 3) == 0) {
-				// Found match
-				ceCached = false;
-				return;
-			}
-		}
-		//return;
-	}
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			return;
 		}
 	}
 }

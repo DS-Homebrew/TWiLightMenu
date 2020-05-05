@@ -89,18 +89,8 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 {
-	if (heapShrink >= 0 && heapShrink < 2) {
+	if (!isDSiMode() || (heapShrink >= 0 && heapShrink < 2)) {
 		return ceCached(heapShrink);
-	}
-
-	if (!isDSiMode()) {
-		for (const char *speedtid : sbeListB4DS)
-		{
-			if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
-			{
-				return ceCached(false);
-			}
-		}
 	}
 
 	for (const char *speedtid : sbeList2)

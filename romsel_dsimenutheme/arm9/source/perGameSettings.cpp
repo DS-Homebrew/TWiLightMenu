@@ -378,8 +378,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			if ((isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000)
-			|| (!isDSiMode() && !expansionPakFound && SDKVersion >= 0x2008000)) {
+			if (isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
@@ -429,7 +428,7 @@ void perGameSettings (std::string filename) {
 	sprintf(RUN_IN, "%s:", STR_RUN_IN.c_str());
 	sprintf(ARM9_CPU_SPEED, "%s:", STR_ARM9_CPU_SPEED.c_str());
 	sprintf(VRAM_BOOST, "%s:", STR_VRAM_BOOST.c_str());
-	sprintf(HEAP_SHRINK, "%s:", isDSiMode() ? STR_HEAP_SHRINK.c_str() : STR_HEAP_SHRINK_TYPE.c_str());
+	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
 	sprintf(DIRECT_BOOT, "%s:", STR_DIRECT_BOOT.c_str());
 	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
 	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
@@ -558,9 +557,9 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_AUTO.c_str());
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? STR_ON.c_str() : "Lo");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_ON.c_str());
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? STR_OFF.c_str() : "Hi");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, STR_OFF.c_str());
 				}
 				break;
 			case 6:

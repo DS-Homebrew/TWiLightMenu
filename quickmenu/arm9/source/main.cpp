@@ -357,7 +357,7 @@ void SetMPUSettings(const char* filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
-	if (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2) {
+	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2)) {
 		ceCached = perGameSettings_heapShrink;
 		return;
 	}
@@ -369,24 +369,11 @@ void SetSpeedBumpExclude(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
-	if (!isDSiMode()) {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(sbeListB4DS)/sizeof(sbeListB4DS[0]); i++) {
-			if (memcmp(game_TID, sbeListB4DS[i], 3) == 0) {
-				// Found match
-				ceCached = false;
-				return;
-			}
-		}
-		//return;
-	}
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			return;
 		}
 	}
 }
@@ -507,7 +494,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			resultText1 = "Failed to backup custom";
 			resultText2 = "TwlBg.";
 		} else {
-			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen

@@ -337,8 +337,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (useBootstrap || !secondaryDevice) {
-			if ((isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000)
-			|| (!isDSiMode() && !expansionPakFound && SDKVersion >= 0x2008000)) {
+			if (isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
@@ -481,13 +480,13 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 5:
-				printSmall(false, 32, perGameOpYpos, isDSiMode() ? "Heap Shrink:" : "Heap Shrink type:");
+				printSmall(false, 32, perGameOpYpos, "Heap Shrink:");
 				if (perGameSettings_heapShrink == -1) {
 					printSmallRightAlign(false, 256-24, perGameOpYpos, "Auto");
 				} else if (perGameSettings_heapShrink == 1) {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? "On" : "Lo");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "On");
 				} else {
-					printSmallRightAlign(false, 256-24, perGameOpYpos, isDSiMode() ? "Off" : "Hi");
+					printSmallRightAlign(false, 256-24, perGameOpYpos, "Off");
 				}
 				break;
 			case 6:
