@@ -10,6 +10,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"BQB", // Crayon Shin-chan - Obaka Dainin Den - Susume! Kasukabe Ninja Tai!
 	"YKR", // Culdcept DS
 	"AWD", // Diddy Kong Racing
+	"AK4", // Kabu Trader Shun
 	"ARM", // Mario & Luigi: Partners in Time
 	"CLJ", // Mario & Luigi: Bowser's Inside Story
 	"COL", // Mario & Sonic at the Olympic Winter Games
@@ -17,6 +18,7 @@ static const char incompatibleGameListB4DS[][4] = {
 	"ARZ", // Rockman ZX/MegaMan ZX
 	"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
 	"B6X", // Rockman EXE: Operate Shooting Star
+	"CS3", // Sonic & Sega All-Stars Racing
 };
 
 static const char incompatibleGameList[][4] = {
