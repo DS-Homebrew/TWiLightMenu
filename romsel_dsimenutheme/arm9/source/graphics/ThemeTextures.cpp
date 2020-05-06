@@ -422,7 +422,6 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadBipsImage(*_bipsTexture);
 
-	
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
@@ -444,11 +443,11 @@ void ThemeTextures::loadDSiTheme() {
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-	
+
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
-	
 }
+
 void ThemeTextures::loadVolumeTextures() {
 	if (isDSiMode()) {
 		_volume0Texture = std::make_unique<Texture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
