@@ -245,20 +245,20 @@ void vBlankHandler()
 			glBox(10+(startMenu_cursorPosition*82), 62, 81+(startMenu_cursorPosition*82), 132, startBorderColor);
 			glSprite(232, 2, GL_FLIP_NONE, &manualIcon[manualIconNextImg]);
 		} else {
-			glBoxFilled(31, 23, 217, 64, RGB15(0, 0, 0));
-			glBoxFilled(73, 24, 216, 63, RGB15(31, 31, 31));
-			glSprite(32, 24, GL_FLIP_NONE, iconboxImage);
-			if (isDirectory) drawIconFolder(36, 28);
-			else if (bnrRomType == 9) drawIconPlg(36, 28);
-			else if (bnrRomType == 8) drawIconSNES(36, 28);
-			else if (bnrRomType == 7) drawIconMD(36, 28);
-			else if (bnrRomType == 6) drawIconGG(36, 28);
-			else if (bnrRomType == 5) drawIconSMS(36, 28);
-			else if (bnrRomType == 4) drawIconNES(36, 28);
-			else if (bnrRomType == 3) drawIconGBC(36, 28);
-			else if (bnrRomType == 2) drawIconGB(36, 28);
-			else if (bnrRomType == 1) drawIconGBA(36, 28);
-			else drawIcon(36, 28);
+			glBoxFilled(33, 23, 217, 64, RGB15(0, 0, 0));
+			glBoxFilled(75, 24, 216, 63, RGB15(31, 31, 31));
+			glSprite(34, 24, GL_FLIP_NONE, iconboxImage);
+			if (isDirectory) drawIconFolder(38, 28);
+			else if (bnrRomType == 9) drawIconPlg(38, 28);
+			else if (bnrRomType == 8) drawIconSNES(38, 28);
+			else if (bnrRomType == 7) drawIconMD(38, 28);
+			else if (bnrRomType == 6) drawIconGG(38, 28);
+			else if (bnrRomType == 5) drawIconSMS(38, 28);
+			else if (bnrRomType == 4) drawIconNES(38, 28);
+			else if (bnrRomType == 3) drawIconGBC(38, 28);
+			else if (bnrRomType == 2) drawIconGB(38, 28);
+			else if (bnrRomType == 1) drawIconGBA(38, 28);
+			else drawIcon(38, 28);
 			if (bnrWirelessIcon > 0) glSprite(20, 12, GL_FLIP_NONE, &wirelessIcons[(bnrWirelessIcon-1) & 31]);
 			// Playback animated icons
 			if(bnriconisDSi==true) {
@@ -266,9 +266,9 @@ void vBlankHandler()
 			}
 		}
 		if (showdialogbox) {
-			glBoxFilled(15, 79, 241, 129+(dialogboxHeight*8), RGB15(0, 0, 0));
-			glBoxFilledGradient(16, 80, 240, 94, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
-			glBoxFilled(16, 96, 240, 128+(dialogboxHeight*8), RGB15(31, 31, 31));
+			glBoxFilled(15, 71, 241, 121+(dialogboxHeight*12), RGB15(0, 0, 0));
+			glBoxFilledGradient(16, 72, 240, 86, windowColorTop, windowColorBottom, windowColorBottom, windowColorTop);
+			glBoxFilled(16, 88, 240, 120+(dialogboxHeight*12), RGB15(31, 31, 31));
 		}
 		if (whiteScreen) {
 			glBoxFilled(0, 0, 256, 192, RGB15(31, 31, 31));

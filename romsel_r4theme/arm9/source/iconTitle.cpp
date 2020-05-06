@@ -107,16 +107,16 @@ static inline void writeBannerText(int textlines, const char* text1, const char*
 	switch(textlines) {
 		case 0:
 		default:
-			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1, text1);
+			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text1);
 			break;
 		case 1:
-			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing3, text2);
+			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing2, text1);
+			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing3, text2);
 			break;
 		case 2:
-			printSmallCentered(false, BOX_PX, 25+BOX_PY, text1);
-			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PX, 25+BOX_PY+BOX_PY_spacing1*2, text3);
+			printSmallCentered(false, BOX_PX, BOX_PY, text1);
+			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1, text2);
+			printSmallCentered(false, BOX_PX, BOX_PY+BOX_PY_spacing1*2, text3);
 			break;
 	}
 }

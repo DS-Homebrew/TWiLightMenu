@@ -381,14 +381,14 @@ void perGameSettings (std::string filename) {
 		clearText();
 		titleUpdate(isDirectory, filename.c_str());
 
-		printLargeCentered(false, 84, showPerGameSettings ? "Game settings" : "Info");
-		if (showSDKVersion) printSmall(false, 24, 104, SDKnumbertext);
-		printSmall(false, 172, 104, gameTIDText);
+		printLargeCentered(false, 74, showPerGameSettings ? "Game settings" : "Info");
+		if (showSDKVersion) printSmall(false, 24, 90, SDKnumbertext);
+		printSmallRightAlign(false, 232, 90, gameTIDText);
 
-		int perGameOpYpos = 112;
+		int perGameOpYpos = 102;
 
 		if (showPerGameSettings) {
-			printSmall(false, 24, 112+(perGameSettings_cursorPosition*8)-(firstPerGameOpShown*8), ">");
+			printSmall(false, 24, 102+(perGameSettings_cursorPosition*12)-(firstPerGameOpShown*12), ">");
 		}
 
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
@@ -514,18 +514,14 @@ void perGameSettings (std::string filename) {
 				printSmallCentered(false, perGameOpYpos, SET_AS_DONOR_ROM);
 				break;
 		}
-		perGameOpYpos += 8;
+		perGameOpYpos += 12;
 		}
-		if (isHomebrew) {
-			printSmallCentered(false, 126, "B: Back");
+		if (!isDSiMode() && isHomebrew) {
+			printSmallCentered(false, 132, "B: Back");
 		} else if (!showPerGameSettings) {
-			printSmallCentered(false, 118, "A: OK");
-		} else {
-			if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
-				printSmallCentered(false, 150, "X: Cheats  B: Back");
-			} else {
-				printSmallCentered(false, 150, "B: Back");
-			}
+			printSmallCentered(false, 124, "A: OK");
+		} else if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
+			printSmallCentered(false, 154, isHomebrew ? "B: Back" : "X: Cheats  B: Back");
 		}
 		do {
 			scanKeys();

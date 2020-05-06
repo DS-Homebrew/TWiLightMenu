@@ -236,7 +236,7 @@ bool checkGbaBios(void) {
 
 	dialogboxHeight = 1;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error code: BINF");
+	printLargeCentered(false, 74, "Error code: BINF");
 	printSmallCentered(false, 104, "The GBA BIOS is required");
 	printSmallCentered(false, 112, "to run GBA games.");
 	printSmallCentered(false, 126, "A: OK");
@@ -257,7 +257,7 @@ bool checkGbaBios(void) {
 void smsWarning(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Warning");
+	printLargeCentered(false, 74, "Warning");
 	printSmallCentered(false, 104, "When the game starts, please");
 	printSmallCentered(false, 112, "touch the screen to go into");
 	printSmallCentered(false, 120, "the menu, and exit out of it");
@@ -278,7 +278,7 @@ void smsWarning(void) {
 void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
+	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 104, "This SEGA Genesis/Mega Drive");
 	printSmallCentered(false, 112, "ROM cannot be launched,");
 	printSmallCentered(false, 120, "due to its surpassing the");
@@ -299,7 +299,7 @@ void mdRomTooBig(void) {
 void ramDiskMsg(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
+	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 104, "This app requires a");
 	printSmallCentered(false, 112, "RAM disk to work.");
 	printSmallCentered(false, 126, "A: OK");
@@ -318,7 +318,7 @@ void ramDiskMsg(void) {
 void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
+	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 104, "The DSi binaries are missing.");
 	printSmallCentered(false, 112, "Please get a clean dump of");
 	printSmallCentered(false, 120, "this ROM, or start in DS mode.");
@@ -338,7 +338,7 @@ void dsiBinariesMissingMsg(void) {
 void donorRomMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
+	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 104, "This game requires a donor ROM");
 	printSmallCentered(false, 112, "to run. Please set an existing");
 	switch (requiresDonorRom) {
@@ -356,7 +356,7 @@ void donorRomMsg(void) {
 			printSmallCentered(false, 120, "DS SDK5 game as a donor ROM.");
 			break;
 		case 51:
-			printSmallCentered(false, 120, "DSi-Enhncd. game as a donor ROM.");
+			printSmallCentered(false, 120, "DSi-Enhanced game as a donor ROM.");
 			break;
 	}
 	printSmallCentered(false, 134, "A: OK");
@@ -375,11 +375,11 @@ void donorRomMsg(void) {
 void showLocation(void) {
 	if (isRegularDS) return;
 
-	printSmall(false, 8, 168, "Location:");
+	printSmall(false, 8, 162, "Location:");
 	if (secondaryDevice) {
-		printSmall(false, 8, 176, "Slot-1 microSD Card");
+		printSmall(false, 8, 174, "Slot-1 microSD Card");
 	} else {
-		printSmall(false, 8, 176, showMicroSd ? "microSD Card" : "SD Card");
+		printSmall(false, 8, 174, showMicroSd ? "microSD Card" : "SD Card");
 	}
 }
 
@@ -410,14 +410,17 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	if (proceedToLaunch) return true;	// Game is compatible
 
+	clearText();
+	titleUpdate(false, filename);
+
 	dialogboxHeight = 4;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Compatibility Warning");
-	printSmallCentered(false, 104, "This game is known to not run.");
-	printSmallCentered(false, 112, "If there's an nds-bootstrap");
-	printSmallCentered(false, 120, "version that fixes this,");
-	printSmallCentered(false, 128, "please ignore this message.");
-	printSmallCentered(false, 150, "A: Ignore   B: Don't launch");
+	printLargeCentered(false, 74, "Compatibility Warning");
+	printSmallCentered(false, 96, "This game is known to not run.");
+	printSmallCentered(false, 110, "If there's an nds-bootstrap");
+	printSmallCentered(false, 122, "version that fixes this,");
+	printSmallCentered(false, 134, "please ignore this message.");
+	printSmallCentered(false, 152, "A: Ignore   B: Don't launch");
 
 	int pressed = 0;
 	while (1) {
