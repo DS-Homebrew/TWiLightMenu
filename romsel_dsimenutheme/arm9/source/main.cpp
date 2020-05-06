@@ -455,11 +455,13 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	char text[32];
 	snprintf(text, sizeof(text), "Start failed. Error %i", err);
 	fadeType = true;	// Fade from white
-	printLarge(false, 4, 4, text);
 	if (err == 0) {
+		printLarge(false, 4, 4, "Error!");
 		printLarge(false, 4, 20, "Flashcard may be unsupported.");
 		printLarge(false, 4, 52, "Flashcard name:");
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
+	} else {
+		printLarge(false, 4, 4, text);
 	}
 	printLarge(false, 4, 90, "Press B to return.");
 	int pressed = 0;

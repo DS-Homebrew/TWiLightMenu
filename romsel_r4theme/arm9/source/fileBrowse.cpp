@@ -237,9 +237,9 @@ bool checkGbaBios(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error code: BINF");
-	printSmallCentered(false, 98, "The GBA BIOS is required");
-	printSmallCentered(false, 110, "to run GBA games.");
-	printSmallCentered(false, 128, "\u2427 OK");
+	printSmallCentered(false, 90, "The GBA BIOS is required");
+	printSmallCentered(false, 102, "to run GBA games.");
+	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -300,9 +300,9 @@ void ramDiskMsg(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, "This app requires a");
-	printSmallCentered(false, 110, "RAM disk to work.");
-	printSmallCentered(false, 128, "\u2427 OK");
+	printSmallCentered(false, 90, "This app requires a");
+	printSmallCentered(false, 102, "RAM disk to work.");
+	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -319,10 +319,10 @@ void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, "The DSi binaries are missing.");
-	printSmallCentered(false, 110, "Please get a clean dump of");
-	printSmallCentered(false, 122, "this ROM, or start in DS mode.");
-	printSmallCentered(false, 140, "\u2427 OK");
+	printSmallCentered(false, 90, "The DSi binaries are missing.");
+	printSmallCentered(false, 102, "Please get a clean dump of");
+	printSmallCentered(false, 114, "this ROM, or start in DS mode.");
+	printSmallCentered(false, 132, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -584,8 +584,8 @@ string browseForFile(const vector<string> extensionList) {
 			{
 				showdialogbox = true;
 				printLargeCentered(false, 74, "Error!");
-				printSmallCentered(false, 98, "This game cannot be launched.");
-				printSmallCentered(false, 116, "\u2427 OK");
+				printSmallCentered(false, 90, "This game cannot be launched.");
+				printSmallCentered(false, 108, "\u2427 OK");
 				pressed = 0;
 				do {
 					scanKeys();
@@ -727,10 +727,6 @@ string browseForFile(const vector<string> extensionList) {
 				if (proceedToLaunch) {
 					applaunch = true;
 
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
-					}
 					cursorPosition[secondaryDevice] = fileOffset;
 					pagenum[secondaryDevice] = 0;
 					for (int i = 0; i < 100; i++) {
