@@ -311,7 +311,6 @@ void ThemeTextures::loadSaturnTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
 	loadBraceImage(*_braceTexture);
@@ -323,10 +322,9 @@ void ThemeTextures::loadSaturnTheme() {
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-	
+
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
-	
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -400,7 +398,7 @@ void ThemeTextures::loadDSiTheme() {
 	_startTextTexture = std::make_unique<Texture>(TFN_GRF_START_TEXT, TFN_FALLBACK_GRF_START_TEXT);
 	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
-	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
+	//_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	// Apply the DSi palette shifts
 	if (tc().startTextUserPalette())
@@ -430,7 +428,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadStartImage(*_startTextTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
-	
+
 	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
 	loadLaunchdotImage(*_launchDotTexture);
@@ -439,7 +437,7 @@ void ThemeTextures::loadDSiTheme() {
 	// careful here, it's boxTexture, not boxFulltexture.
 	loadBoxfullImage(*_boxTexture);
 
-	loadManualImage(*_manualIconTexture);
+	//loadManualImage(*_manualIconTexture);
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
