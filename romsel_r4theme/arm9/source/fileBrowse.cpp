@@ -237,9 +237,9 @@ bool checkGbaBios(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error code: BINF");
-	printSmallCentered(false, 104, "The GBA BIOS is required");
-	printSmallCentered(false, 112, "to run GBA games.");
-	printSmallCentered(false, 132, "A: OK");
+	printSmallCentered(false, 98, "The GBA BIOS is required");
+	printSmallCentered(false, 110, "to run GBA games.");
+	printSmallCentered(false, 128, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -258,11 +258,11 @@ void smsWarning(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Warning");
-	printSmallCentered(false, 98, "When the game starts, please");
-	printSmallCentered(false, 110, "touch the screen to go into");
-	printSmallCentered(false, 122, "the menu, and exit out of it");
-	printSmallCentered(false, 134, "for the sound to work.");
-	printSmallCentered(false, 154, "A: OK");
+	printSmallCentered(false, 90, "When the game starts, please");
+	printSmallCentered(false, 102, "touch the screen to go into");
+	printSmallCentered(false, 114, "the menu, and exit out of it");
+	printSmallCentered(false, 126, "for the sound to work.");
+	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -279,11 +279,11 @@ void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Error!");
-	printSmallCentered(false, 98, "This SEGA Genesis/Mega Drive");
-	printSmallCentered(false, 110, "ROM cannot be launched,");
-	printSmallCentered(false, 122, "due to its surpassing the");
-	printSmallCentered(false, 134, "size limit of 3MB.");
-	printSmallCentered(false, 154, "A: OK");
+	printSmallCentered(false, 90, "This SEGA Genesis/Mega Drive");
+	printSmallCentered(false, 102, "ROM cannot be launched,");
+	printSmallCentered(false, 114, "due to its surpassing the");
+	printSmallCentered(false, 126, "size limit of 3MB.");
+	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -302,7 +302,7 @@ void ramDiskMsg(void) {
 	printLargeCentered(false, 74, "Error!");
 	printSmallCentered(false, 98, "This app requires a");
 	printSmallCentered(false, 110, "RAM disk to work.");
-	printSmallCentered(false, 130, "A: OK");
+	printSmallCentered(false, 128, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -322,7 +322,7 @@ void dsiBinariesMissingMsg(void) {
 	printSmallCentered(false, 98, "The DSi binaries are missing.");
 	printSmallCentered(false, 110, "Please get a clean dump of");
 	printSmallCentered(false, 122, "this ROM, or start in DS mode.");
-	printSmallCentered(false, 142, "A: OK");
+	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -359,7 +359,7 @@ void donorRomMsg(void) {
 			printSmallCentered(false, 122, "DSi-Enhanced game as a donor ROM.");
 			break;
 	}
-	printSmallCentered(false, 142, "A: OK");
+	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -410,17 +410,14 @@ bool checkForCompatibleGame(char gameTid[5], const char *filename) {
 
 	if (proceedToLaunch) return true;	// Game is compatible
 
-	clearText();
-	titleUpdate(false, filename);
-
-	dialogboxHeight = 4;
+	dialogboxHeight = 3;
 	showdialogbox = true;
 	printLargeCentered(false, 74, "Compatibility Warning");
-	printSmallCentered(false, 98, "This game is known to not run.");
-	printSmallCentered(false, 110, "If there's an nds-bootstrap");
-	printSmallCentered(false, 122, "version that fixes this,");
-	printSmallCentered(false, 134, "please ignore this message.");
-	printSmallCentered(false, 154, "A: Ignore   B: Don't launch");
+	printSmallCentered(false, 90, "This game is known to not run.");
+	printSmallCentered(false, 102, "If there's an nds-bootstrap");
+	printSmallCentered(false, 114, "version that fixes this,");
+	printSmallCentered(false, 126, "please ignore this message.");
+	printSmallCentered(false, 144, "\u2427 Ignore   \u2428 Don't launch");
 
 	int pressed = 0;
 	while (1) {
@@ -586,9 +583,9 @@ string browseForFile(const vector<string> extensionList) {
 			      || (isDSiWare && !sdFound()))
 			{
 				showdialogbox = true;
-				printLargeCentered(false, 84, "Error!");
-				printSmallCentered(false, 104, "This game cannot be launched.");
-				printSmallCentered(false, 118, "A: OK");
+				printLargeCentered(false, 74, "Error!");
+				printSmallCentered(false, 98, "This game cannot be launched.");
+				printSmallCentered(false, 116, "\u2427 OK");
 				pressed = 0;
 				do {
 					scanKeys();
@@ -670,17 +667,17 @@ string browseForFile(const vector<string> extensionList) {
 				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
-					printLargeCentered(false, 84, "Anti-Piracy Warning");
+					printLargeCentered(false, 74, "Anti-Piracy Warning");
 					if (hasAP == 2) {
-						printSmallCentered(false, 104, "This game has AP, and MUST");
-						printSmallCentered(false, 112, "be patched using the RGF");
-						printSmallCentered(false, 120, "TWiLight Menu AP patcher.");
+						printSmallCentered(false, 98, "This game has AP, and MUST");
+						printSmallCentered(false, 110, "be patched using the RGF");
+						printSmallCentered(false, 122, "TWiLight Menu AP patcher.");
 					} else {
-						printSmallCentered(false, 104, "This game has AP. Please");
-						printSmallCentered(false, 112, "make sure you're using the");
-						printSmallCentered(false, 120, "latest TWiLight Menu++.");
+						printSmallCentered(false, 98, "This game has AP. Please");
+						printSmallCentered(false, 110, "make sure you're using the");
+						printSmallCentered(false, 122, "latest TWiLight Menu++.");
 					}
-					printSmallCentered(false, 142, "B: Return   A: Launch");
+					printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
 
 					pressed = 0;
 					while (1) {
@@ -792,23 +789,23 @@ string browseForFile(const vector<string> extensionList) {
 			dialogboxHeight = 3;
 
 			if (isDirectory) {
-				printLargeCentered(false, 84, "Folder Management options");
-				printSmallCentered(false, 104, "What would you like");
-				printSmallCentered(false, 112, "to do with this folder?");
+				printLargeCentered(false, 74, "Folder Management options");
+				printSmallCentered(false, 98, "What would you like");
+				printSmallCentered(false, 110, "to do with this folder?");
 			} else {
-				printLargeCentered(false, 84, "ROM Management options");
-				printSmallCentered(false, 104, "What would you like");
-				printSmallCentered(false, 112, "to do with this ROM?");
+				printLargeCentered(false, 74, "ROM Management options");
+				printSmallCentered(false, 98, "What would you like");
+				printSmallCentered(false, 110, "to do with this ROM?");
 			}
 
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isDirectory) {
-				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  B: Nothing");
-				else		printSmallCentered(false, 142, "Y: Hide    B: Nothing");
+				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
+				else		printSmallCentered(false, 128, "Y: Hide    \u2428 Nothing");
 			} else {
-				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  A: Delete  B: Nothing");
-				else		printSmallCentered(false, 142, "Y: Hide   A: Delete   B: Nothing");
+				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2427 Delete  \u2428 Nothing");
+				else		printSmallCentered(false, 128, "Y: Hide   \u2427 Delete   \u2428 Nothing");
 			}
 
 			while (1) {

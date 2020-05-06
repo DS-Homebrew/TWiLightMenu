@@ -1130,10 +1130,10 @@ int main(int argc, char **argv) {
 							clearText();
 							dialogboxHeight = 1;
 							showdialogbox = true;
-							printLargeCentered(false, 84, "Error code: BINF");
-							printSmallCentered(false, 104, "The GBA BIOS is required");
-							printSmallCentered(false, 112, "to run GBA games.");
-							printSmallCentered(false, 126, "A: OK");
+							printLargeCentered(false, 74, "Error code: BINF");
+							printSmallCentered(false, 98, "The GBA BIOS is required");
+							printSmallCentered(false, 110, "to run GBA games.");
+							printSmallCentered(false, 128, "\u2427 OK");
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							pressed = 0;
 							do {

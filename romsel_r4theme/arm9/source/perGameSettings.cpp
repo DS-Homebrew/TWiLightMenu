@@ -517,11 +517,11 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 12;
 		}
 		if (!isDSiMode() && isHomebrew) {
-			printSmallCentered(false, 132, "B: Back");
+			printSmallCentered(false, 132, "\u2428 Back");
 		} else if (!showPerGameSettings) {
-			printSmallCentered(false, 124, "A: OK");
+			printSmallCentered(false, 124, "\u2427 OK");
 		} else if ((isDSiMode() && useBootstrap) || !secondaryDevice) {
-			printSmallCentered(false, 154, isHomebrew ? "B: Back" : "X: Cheats  B: Back");
+			printSmallCentered(false, 154, isHomebrew ? "\u2428 Back" : "\u2429 Cheats  \u2428 Back");
 		}
 		do {
 			scanKeys();
