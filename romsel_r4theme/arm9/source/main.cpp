@@ -1016,6 +1016,7 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
+				printLargeCentered(false, -112, 166, DrawDate());
 				printLargeCentered(false, 180, "SELECT: Settings menu");
 				switch (startMenu_cursorPosition) {
 					case 0:
