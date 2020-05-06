@@ -113,7 +113,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK );
 
 	setPowerButtonCB(powerButtonCB);
 	
@@ -143,7 +143,6 @@ int main() {
 			fifoSendValue32(FIFO_USER_04, 0);
 			gotCartHeader = true;
 		}*/
-		resyncClock();
 		timeTilVolumeLevelRefresh++;
 		if (timeTilVolumeLevelRefresh == 8) {
 			if (isDSiMode()) { //vol

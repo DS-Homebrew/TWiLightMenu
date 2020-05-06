@@ -137,6 +137,7 @@ int slot1LaunchMethod = 1;	// 0 == Reboot, 1 == Direct, 2 == Unlaunch
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool show12hrClock = true;
 //bool snesEmulator = true;
 bool smsGgInRam = false;
 bool fcSaveOnSd = false;
@@ -214,6 +215,8 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+
+    show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
