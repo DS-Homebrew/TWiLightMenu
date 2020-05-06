@@ -1,18 +1,7 @@
 #ifndef SBEMAP_H
 #define SBEMAP_H
 
-	// Hi Heap Shrink list (B4DS)
-	static const char sbeListB4DS[][4] = {
-		"CLP",	// Club Penguin: Elite Penguin Force
-		"CY9",	// Club Penguin: EPF: Herbert's Revenge
-		"ARM",	// Mario & Luigi: Partners in Time
-		"CLJ",	// Mario & Luigi: Bowser's Inside Story
-		"AMH",	// Metroid Prime Hunters
-		"B3R",	// Pokemon Ranger: Guardian Signs
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
-	};
-
-	// Heap Shrink blacklist (or Part 2 of Hi Heap Shrink list (B4DS))
+	// Heap Shrink blacklist
 	static const char sbeList2[][4] = {
 		"CQS",	// 007: Quantum of Solace
 		"C32",	// Ace Attorney Investigations: Miles Edgeworth
