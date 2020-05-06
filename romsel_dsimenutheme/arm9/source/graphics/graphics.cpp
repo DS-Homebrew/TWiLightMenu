@@ -49,8 +49,19 @@
 #include "uvcoord_date_time_font.h"
 #include "uvcoord_top_font.h"
 
+#include "bubbles.h"	// For HBL theme
+
 #define CONSOLE_SCREEN_WIDTH 32
 #define CONSOLE_SCREEN_HEIGHT 24
+
+static glImage hblBubbles[32 * 64];
+static int hblBubblesID = 0;
+
+static int backBubblesYpos_def[4] = {256, 256+56, 256+32, 256+16};
+static int frontBubblesYpos_def[3] = {256, 256+64, 256+32};
+
+static int backBubblesYpos[4] = {256, 256+56, 256+32, 256+16};
+static int frontBubblesYpos[3] = {256, 256+64, 256+32};
 
 extern u16 usernameRendered[11];
 
@@ -625,6 +636,32 @@ void vBlankHandler() {
 
 		glColor(RGB15(bg_R, bg_G, bg_B));
 
+		if (ms().theme == 5) {
+			// Back bubbles
+			int bubbleXpos = 16;
+			for (int i = 0; i < 4; i++) {
+				glSprite(bubbleXpos, backBubblesYpos[i], GL_FLIP_NONE, &hblBubbles[3]);
+				bubbleXpos += 64;
+				backBubblesYpos[i]--;
+				if (backBubblesYpos[i] < -16) {
+					backBubblesYpos[i] = backBubblesYpos_def[i];
+				}
+			}
+			// Front bubbles
+			bubbleXpos = 32;
+			for (int i = 0; i < 3; i++) {
+				glSprite(bubbleXpos, frontBubblesYpos[i], GL_FLIP_NONE, &hblBubbles[4]);
+				glSprite(bubbleXpos+16, frontBubblesYpos[i], GL_FLIP_NONE, &hblBubbles[5]);
+				glSprite(bubbleXpos, frontBubblesYpos[i]+16, GL_FLIP_NONE, &hblBubbles[6]);
+				glSprite(bubbleXpos+16, frontBubblesYpos[i]+16, GL_FLIP_NONE, &hblBubbles[7]);
+				bubbleXpos += 64;
+				frontBubblesYpos[i] -= 2;
+				if (frontBubblesYpos[i] < -32) {
+					frontBubblesYpos[i] = frontBubblesYpos_def[i];
+				}
+			}
+		}
+
 		if (ms().theme == 0) {
 			int bipXpos = 27;
 			glSprite(16 + titlewindowXpos[ms().secondaryDevice], 171, GL_FLIP_NONE,
@@ -1025,7 +1062,7 @@ void vBlankHandler() {
 				 tex().braceImage());
 		}
 
-		if (movingApp != -1 && !ms().theme && showMovingArrow) {
+		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
 			if (movingArrowYdirection) {
 				movingArrowYpos += 0.33;
 				if (movingArrowYpos > 67)
@@ -1141,18 +1178,18 @@ void vBlankHandler() {
 		}
 
 		// Refresh the background layer.
-		if (currentBg == 1 && ms().theme != 4)
+		if (currentBg == 1 && ms().theme != 4 && ms().theme != 5)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
 			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
-		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1)) {
+		if (dbox_Ypos != -192 || (ms().theme == 4 && currentBg == 1) || ms().theme == 5) {
 			// Draw the dialog box.
-			if (ms().theme != 4) drawDbox();
+			if (ms().theme != 4 && ms().theme != 5) drawDbox();
 			if (dbox_showIcon && !isDirectory[CURPOS]) {
-				drawIcon(24, (ms().theme == 4 ? 0 : dbox_Ypos) + 24, CURPOS);
+				drawIcon(24, ((ms().theme == 4 || ms().theme == 5) ? 0 : dbox_Ypos) + 24, CURPOS);
 			}
 			if (dbox_selectMenu) {
 				int selIconYpos = 96;
@@ -1416,7 +1453,11 @@ static std::string loadedDate;
 
 void drawCurrentDate() {
 	// Load date
-	int x = (ms().theme == 4 ? 122 : 162);
+	int x = (ms().theme >= 4 ? 122 : 162);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
+	int y = (ms().theme == 4 ? 12 : 7);
 	char date[6];
 
 	if (!GetDate(FORMAT_MD, date, sizeof(date)))
@@ -1428,7 +1469,7 @@ void drawCurrentDate() {
 
 	loadedDate = date;
 
-	tex().drawDateTime(date, x, 15, 5, NULL);
+	tex().drawDateTime(date, x, y, 5, NULL);
 }
 
 static std::string loadedTime;
@@ -1437,7 +1478,11 @@ static bool initialClockDraw = true;
 
 void drawCurrentTime() {
 	// Load time
-	int x = (ms().theme == 4 ? 162 : 200);
+	int x = (ms().theme >= 4 ? 162 : 200);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
+	int y = (ms().theme == 4 ? 12 : 7);
 	char time[10];
 	std::string currentTime = RetTime();
 	if (currentTime != loadedTime) {
@@ -1456,14 +1501,17 @@ void drawCurrentTime() {
 				x = hourWidth;
 			}
 		}
-		tex().drawDateTime(time, x, 15, howManyToDraw, &hourWidth);
+		tex().drawDateTime(time, x, y, howManyToDraw, &hourWidth);
 	}
 }
 
 void drawClockColon() {
 	// Load time
-	int x = (ms().theme == 4 ? 176 : 214);
-	int imgY = 15;
+	int x = (ms().theme >= 4 ? 176 : 214);
+	if (ms().theme == 5) {
+		x -= 28;
+	}
+	int y = (ms().theme == 4 ? 12 : 7);
 	char colon[1];
 
 	// Blink the ':' once per second.
@@ -1471,7 +1519,7 @@ void drawClockColon() {
 		colonTimer = 0;
 		std::string currentColon = showColon ? ":" : ";";
 		sprintf(colon, currentColon.c_str());
-		tex().drawDateTime(colon, x, imgY, 1, NULL);
+		tex().drawDateTime(colon, x, y, 1, NULL);
 		showColon = !showColon;
 	}
 }
@@ -1548,7 +1596,7 @@ void loadRotatingCubes() {
 					y--;
 				}
 				u16 val = *(src++);
-				renderedImageBuffer[y*256+x] = convertToDsBmp(val);
+				renderedImageBuffer[y*256+x] = Texture::bmpToDS(val);
 				x++;
 			}
 		}
@@ -1599,7 +1647,7 @@ void graphicsInit() {
 		dropSeq[i] = 0;
 		dropSpeed[i] = dropSpeedDefine;
 		dropSpeedChange[i] = 0;
-		if (ms().theme == 1 || ms().theme == 4)
+		if (ms().theme == 1 || ms().theme == 4 || ms().theme == 5)
 			titleboxYposDropDown[i] = 0;
 		else
 			titleboxYposDropDown[i] = -85 - 80;
@@ -1615,8 +1663,8 @@ void graphicsInit() {
 	titleboxXpos[1] = ms().cursorPosition[1] * 64;
 	titlewindowXpos[1] = ms().cursorPosition[1] * 5;
 
-	SetBrightness(0, ms().theme == 4 ? -31 : 31);
-	SetBrightness(1, ms().theme == 4 ? -31 : 31);
+	SetBrightness(0, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
+	SetBrightness(1, (ms().theme == 4 || ms().theme == 5) ? -31 : 31);
 
 	// videoSetup() Called here before.
 	// REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
@@ -1637,7 +1685,7 @@ void graphicsInit() {
 	}
 
 	tex().drawTopBg();
-	if (ms().theme != 4) {
+	if (ms().theme != 4 && ms().theme != 5) {
 		tex().drawProfileName();
 	}
 
@@ -1654,6 +1702,23 @@ void graphicsInit() {
 	if (tc().renderPhoto()) {
 		srand(time(NULL));
 		loadPhotoList();
+	}
+
+	if (ms().theme == 5) {
+		// Load the texture here.
+		hblBubblesID = glLoadTileSet(hblBubbles,   // pointer to glImage array
+					   16,	       // sprite width
+					   16,	       // sprite height
+					   32,	       // bitmap width
+					   64,	       // bitmap height
+					   GL_RGB16,	   // texture type for glTexImage2D() in videoGL.h
+					   TEXTURE_SIZE_32, // sizeX for glTexImage2D() in videoGL.h
+					   TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+					   TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT, // param for glTexImage2D() in videoGL.h
+					   6,	    // Length of the palette to use (6 colors)
+					   (u16 *)bubblesPal, // Load our 16 color tiles palette
+					   (u8 *)bubblesBitmap   // image data generated by GRIT
+		);
 	}
 
 	tex().drawVolumeImageCached();

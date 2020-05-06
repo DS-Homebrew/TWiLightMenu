@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help us improve the menu screens. For games, please select `DS game issue`
 title: ''
 labels: bug
 assignees: ''

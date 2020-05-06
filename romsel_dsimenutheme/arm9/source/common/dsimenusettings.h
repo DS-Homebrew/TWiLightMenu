@@ -97,7 +97,8 @@ class DSiMenuPlusPlusSettings
         ES8DSLaunch = 6,
         ERVideoLaunch = 7,
         EMPEG4Launch = 8,
-        EStellaDSLaunch = 9
+        EStellaDSLaunch = 9,
+        EPicoDriveTWLLaunch = 10
    };
 
     /*	0 = Nintendo DSi (Retail)
@@ -154,7 +155,7 @@ class DSiMenuPlusPlusSettings
 	bool showNes;
 	bool showGb;
 	bool showSmsGg;
-	bool showMd;
+	int showMd;
 	bool showSnes;
     bool showDirectories;
     bool showHidden;

@@ -187,7 +187,7 @@ unique_ptr<glImage[]> ThemeTextures::loadTexture(int *textureId, const Texture &
 }
 
 void ThemeTextures::reloadPalDialogBox() {
-	if (ms().theme == 4) return;
+	if (ms().theme == 4 || ms().theme == 5) return;
 	glBindTexture(0, dialogboxTexID);
 	glColorSubTableEXT(0, 0, _dialogBoxTexture->paletteLength(), 0, 0, _dialogBoxTexture->palette());
 	if (ms().theme != 1) {
@@ -221,6 +221,69 @@ void ThemeTextures::loadBackgrounds() {
 	
 }
 
+void ThemeTextures::loadHBTheme() {	
+	printf("tex().loadHBTheme()\n");
+
+	// printf("tex().loadBackgrounds()\n");
+	loadBackgrounds();
+	// printf("tex().loadUITextures()\n");
+	loadUITextures();
+
+	// printf("tex().loadVolumeTextures()\n");
+	loadVolumeTextures();
+	// printf("tex().loadBatteryTextures()\n");
+	loadBatteryTextures();
+	// printf("tex().loadIconTextures()\n");
+	loadIconTextures();
+
+	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
+	_boxEmptyTexture = std::make_unique<Texture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
+	_braceTexture = std::make_unique<Texture>(TFN_GRF_BRACE, TFN_FALLBACK_GRF_BRACE);
+	_cornerButtonTexture = std::make_unique<Texture>(TFN_GRF_CORNERBUTTON, TFN_FALLBACK_GRF_CORNERBUTTON);
+
+	_folderTexture = std::make_unique<Texture>(TFN_GRF_FOLDER, TFN_FALLBACK_GRF_FOLDER);
+	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
+
+	_progressTexture = std::make_unique<Texture>(TFN_GRF_PROGRESS, TFN_FALLBACK_GRF_PROGRESS);
+	_smallCartTexture = std::make_unique<Texture>(TFN_GRF_SMALL_CART, TFN_FALLBACK_GRF_SMALL_CART);
+	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
+	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
+	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
+
+	if (ms().colorMode == 1) {
+		// printf("tex().applyGrayscaleToAllGrfTextures()\n");
+		applyGrayscaleToAllGrfTextures();
+	}
+
+	
+	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	loadWirelessIcons(*_wirelessIconsTexture);
+	// printf("tex().loadSettingsImage(*_settingsIconTexture)\n");
+	loadSettingsImage(*_settingsIconTexture);
+	// printf("tex().loadBraceImage(*_braceTexture)\n");
+	loadBraceImage(*_braceTexture);
+
+	// printf("tex().loadBoxfullImage(*_boxFullTexture)\n");
+	loadBoxfullImage(*_boxFullTexture);
+	// printf("tex().loadBoxEmptyImage(*_boxFullTexture)\n");
+	loadBoxemptyImage(*_boxEmptyTexture);
+
+	// printf("tex().loadManualImage(*_manualIconTexture)\n");
+	loadManualImage(*_manualIconTexture);
+	// printf("tex().loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32)\n");
+	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
+	// printf("tex().loadSmallCartImage(*_smallCartTexture)\n");
+	loadSmallCartImage(*_smallCartTexture);
+	// printf("tex().loadFolderImage(*_folderTexture)\n");
+	loadFolderImage(*_folderTexture);
+	
+	// printf("tex().loadProgressImage(*_progressTexture)\n");
+	loadProgressImage(*_progressTexture);
+	// printf("tex().loadWirelessIcons(*_wirelessIconsTexture)\n");
+	loadWirelessIcons(*_wirelessIconsTexture);
+	
+}
+
 void ThemeTextures::loadSaturnTheme() {	
 	printf("tex().loadSaturnTheme()\n");
 
@@ -230,8 +293,6 @@ void ThemeTextures::loadSaturnTheme() {
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-	
-	loadDateFont(_dateTimeFontTexture->texture());
 
 	_boxFullTexture = std::make_unique<Texture>(TFN_GRF_BOX_FULL, TFN_FALLBACK_GRF_BOX_FULL);
 	_boxEmptyTexture = std::make_unique<Texture>(TFN_GRF_BOX_EMPTY, TFN_FALLBACK_GRF_BOX_EMPTY);
@@ -250,7 +311,6 @@ void ThemeTextures::loadSaturnTheme() {
 		applyGrayscaleToAllGrfTextures();
 	}
 
-	
 	loadWirelessIcons(*_wirelessIconsTexture);
 	loadSettingsImage(*_settingsIconTexture);
 	loadBraceImage(*_braceTexture);
@@ -262,10 +322,9 @@ void ThemeTextures::loadSaturnTheme() {
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-	
+
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
-	
 }
 
 void ThemeTextures::load3DSTheme() {
@@ -278,7 +337,6 @@ void ThemeTextures::load3DSTheme() {
 	loadBatteryTextures();
 
 	loadIconTextures();
-	loadDateFont(_dateTimeFontTexture->texture());
 
 	_bubbleTexture = std::make_unique<Texture>(TFN_GRF_BUBBLE, TFN_FALLBACK_GRF_BUBBLE);
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
@@ -319,8 +377,6 @@ void ThemeTextures::loadDSiTheme() {
 	loadVolumeTextures();
 	loadBatteryTextures();
 	loadIconTextures();
-	
-	loadDateFont(_dateTimeFontTexture->texture());
 
 	_bipsTexture = std::make_unique<Texture>(TFN_GRF_BIPS, TFN_FALLBACK_GRF_BIPS);
 	_boxTexture = std::make_unique<Texture>(TFN_GRF_BOX, TFN_FALLBACK_GRF_BOX);
@@ -342,7 +398,7 @@ void ThemeTextures::loadDSiTheme() {
 	_startTextTexture = std::make_unique<Texture>(TFN_GRF_START_TEXT, TFN_FALLBACK_GRF_START_TEXT);
 	_wirelessIconsTexture = std::make_unique<Texture>(TFN_GRF_WIRELESSICONS, TFN_FALLBACK_GRF_WIRELESSICONS);
 	_settingsIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_SETTINGS, TFN_FALLBACK_GRF_ICON_SETTINGS);
-	_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
+	//_manualIconTexture = std::make_unique<Texture>(TFN_GRF_ICON_MANUAL, TFN_FALLBACK_GRF_ICON_MANUAL);
 
 	// Apply the DSi palette shifts
 	if (tc().startTextUserPalette())
@@ -364,7 +420,6 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadBipsImage(*_bipsTexture);
 
-	
 	loadBubbleImage(*_bubbleTexture, tc().bubbleTipSpriteW(), tc().bubbleTipSpriteH());
 	loadScrollwindowImage(*_scrollWindowTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
@@ -373,7 +428,7 @@ void ThemeTextures::loadDSiTheme() {
 
 	loadStartImage(*_startTextTexture);
 	loadStartbrdImage(*_startBorderTexture, tc().startBorderSpriteH());
-	
+
 	loadButtonarrowImage(*_buttonArrowTexture);
 	loadMovingarrowImage(*_movingArrowTexture);
 	loadLaunchdotImage(*_launchDotTexture);
@@ -382,15 +437,15 @@ void ThemeTextures::loadDSiTheme() {
 	// careful here, it's boxTexture, not boxFulltexture.
 	loadBoxfullImage(*_boxTexture);
 
-	loadManualImage(*_manualIconTexture);
+	//loadManualImage(*_manualIconTexture);
 	loadCornerButtonImage(*_cornerButtonTexture, (32 / 16) * (32 / 32), 32, 32);
 	loadSmallCartImage(*_smallCartTexture);
 	loadFolderImage(*_folderTexture);
-	
+
 	loadProgressImage(*_progressTexture);
 	loadWirelessIcons(*_wirelessIconsTexture);
-	
 }
+
 void ThemeTextures::loadVolumeTextures() {
 	if (isDSiMode()) {
 		_volume0Texture = std::make_unique<Texture>(TFN_VOLUME0, TFN_FALLBACK_VOLUME0);
@@ -418,14 +473,13 @@ void ThemeTextures::loadBatteryTextures() {
 }
 
 void ThemeTextures::loadUITextures() {
-
 	_dateTimeFontTexture = std::make_unique<Texture>(TFN_UI_DATE_TIME_FONT, TFN_FALLBACK_UI_DATE_TIME_FONT);
-	_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
-	_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
-	_leftShoulderGreyedTexture =
-	    std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
-	_rightShoulderGreyedTexture =
-	    std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+	if (ms().theme != 5) {
+		_leftShoulderTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER, TFN_FALLBACK_UI_LSHOULDER);
+		_rightShoulderTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER, TFN_FALLBACK_UI_RSHOULDER);
+		_leftShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_LSHOULDER_GREYED, TFN_FALLBACK_UI_LSHOULDER_GREYED);
+		_rightShoulderGreyedTexture = std::make_unique<Texture>(TFN_UI_RSHOULDER_GREYED, TFN_FALLBACK_UI_RSHOULDER_GREYED);
+	}
 }
 
 void ThemeTextures::loadIconTextures() {
@@ -593,7 +647,7 @@ void ThemeTextures::drawProfileName() {
 						break;
 					}
 					if (val != 0xFC1F && val != 0x7C1F) { // Do not render magneta pixel
-						_bgSubBuffer[(y + 2) * 256 + (i + x)] = convertToDsBmp(val);
+						_bgSubBuffer[(y + 2) * 256 + (i + x)] = Texture::bmpToDS(val);
 					}
 				}
 			}
@@ -602,38 +656,6 @@ void ThemeTextures::drawProfileName() {
 		}
 
 		fclose(file);
-	}
-}
-
-unsigned short ThemeTextures::convertToDsBmp(unsigned short val) {
-
-	int blfLevel = ms().blfLevel;
-	if (ms().colorMode == 1) {
-		u16 newVal = ((val >> 10) & 31) | (val & 31 << 5) | (val & 31) << 10 | BIT(15);
-
-		u8 b, g, r, max, min;
-		b = ((newVal) >> 10) & 31;
-		g = ((newVal) >> 5) & 31;
-		r = (newVal)&31;
-		// Value decomposition of hsv
-		max = (b > g) ? b : g;
-		max = (max > r) ? max : r;
-
-		// Desaturate
-		min = (b < g) ? b : g;
-		min = (min < r) ? min : r;
-		max = (max + min) / 2;
-
-		newVal = 32768 | (max << 10) | (max << 5) | (max);
-
-		b = ((newVal) >> 10) & (31 - 6 * blfLevel);
-		g = ((newVal) >> 5) & (31 - 3 * blfLevel);
-		r = (newVal)&31;
-
-		return 32768 | (b << 10) | (g << 5) | (r);
-	} else {
-		return ((val >> 10) & 31) | (val & (31 - 3 * blfLevel) << 5) | (val & (31 - 6 * blfLevel)) << 10 |
-		       BIT(15);
 	}
 }
 
@@ -768,19 +790,15 @@ void ThemeTextures::drawVolumeImage(int volumeLevel) {
 
 	const Texture *tex = volumeTexture(volumeLevel);
 	const u16 *src = tex->texture();
-	int staticX = (ms().theme == 4 ? 40 : 4);
-	int x = staticX;
-	int y = (ms().theme == 4 ? 10 : 5) + 11;
-	for (u32 i = 0; i < tex->pixelCount(); i++) {
-		if (x >= staticX + 18) {
-			x = staticX;
-			y--;
+	int startX = (ms().theme == 4 ? 40 : 4);
+	int startY = (ms().theme == 4 ? 10 : 5);
+	for (uint y = 0; y < tex->texHeight(); y++) {
+		for (uint x = 0; x < tex->texWidth(); x++) {
+			u16 val = *(src++);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgSubBuffer[(startY + y) * 256 + startX + x] = val;
+			}
 		}
-		u16 val = *(src++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
 	}
 	commitBgSubModify();
 }
@@ -838,18 +856,13 @@ void ThemeTextures::drawBatteryImage(int batteryLevel, bool drawDSiMode, bool is
 	beginBgSubModify();
 	const Texture *tex = batteryTexture(batteryLevel, drawDSiMode, isRegularDS);
 	const u16 *src = tex->texture();
-	u32 x = tc().batteryRenderX();
-	u32 y = tc().batteryRenderY();
-	for (u32 i = 0; i < tex->pixelCount(); i++) {
-		if (x >= tc().batteryRenderX() + tex->texWidth()) {
-			x = tc().batteryRenderX();
-			y--;
+	for (uint y = tc().batteryRenderY(); y < tc().batteryRenderY() + tex->texHeight(); y++) {
+		for (uint x = tc().batteryRenderX(); x < tc().batteryRenderX() + tex->texWidth(); x++) {
+			u16 val = *(src++);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgSubBuffer[y * 256 + x] = val;
+			}
 		}
-		u16 val = *(src++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			_bgSubBuffer[y * 256 + x] = convertToDsBmp(val);
-		}
-		x++;
 	}
 	commitBgSubModify();
 }
@@ -886,59 +899,36 @@ void ThemeTextures::drawTopBgAvoidingShoulders() {
 	commitBgSubModify();
 }
 
-void ThemeTextures::drawShoulders(bool showLshoulder, bool showRshoulder) {
-
+void ThemeTextures::drawShoulders(bool LShoulderActive, bool RShoulderActive) {
 	beginBgSubModify();
 
-	const Texture *rightTex = showRshoulder ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
+	const Texture *rightTex = RShoulderActive ? _rightShoulderTexture.get() : _rightShoulderGreyedTexture.get();
 	const u16 *rightSrc = rightTex->texture();
 
-	const Texture *leftTex = showLshoulder ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
-
+	const Texture *leftTex = LShoulderActive ? _leftShoulderTexture.get() : _leftShoulderGreyedTexture.get();
 	const u16 *leftSrc = leftTex->texture();
 
-	for (u32 y = rightTex->texHeight(); y > 0; y--) {
-		// Draw R Shoulders
-		for (u32 i = 0; i < rightTex->texWidth(); i++) {
+	// Draw R Shoulder
+	for (uint y = tc().shoulderRRenderY(); y < tc().shoulderRRenderY() + rightTex->texHeight(); y++) {
+		for (uint x = tc().shoulderRRenderX(); x < tc().shoulderRRenderX() + rightTex->texWidth(); x++) {
 			u16 val = *(rightSrc++);
-			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[((y - 1) + tc().shoulderRRenderY()) * 256 +
-					     (i + tc().shoulderRRenderX())] = convertToDsBmp(val);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgSubBuffer[y * 256 + x] = val;
 			}
 		}
 	}
 
-	for (u32 y = leftTex->texHeight(); y > 0; y--) {
-		// Draw L Shoulders
-		for (u32 i = 0; i < leftTex->texWidth(); i++) {
+	// Draw L Shoulder
+	for (uint y = tc().shoulderLRenderY(); y < tc().shoulderLRenderY() + leftTex->texHeight(); y++) {
+		for (uint x = tc().shoulderLRenderX(); x < tc().shoulderLRenderX() + leftTex->texWidth(); x++) {
 			u16 val = *(leftSrc++);
-			if (val != 0xFC1F) { // Do not render magneta pixel
-				_bgSubBuffer[((y - 1) + tc().shoulderLRenderY()) * 256 +
-					     (i + tc().shoulderLRenderX())] = convertToDsBmp(val);
+			if (val >> 15) { // Do not render transparent pixel
+				_bgSubBuffer[y * 256 + x] = val;
 			}
 		}
 	}
+
 	commitBgSubModify();
-}
-
-void ThemeTextures::loadDateFont(const unsigned short *bitmap) {
-	_dateFontImage = std::make_unique<u16[]>(128 * 16);
-
-	int x = 0;
-	int y = 15;
-	for (int i = 0; i < 128 * 16; i++) {
-		if (x >= 128) {
-			x = 0;
-			y--;
-		}
-		u16 val = *(bitmap++);
-		if (val != 0x7C1F) { // Do not render magneta pixel
-			_dateFontImage[y * 128 + x] = convertToDsBmp(val);
-		} else {
-			_dateFontImage[y * 128 + x] = 0x7C1F;
-		}
-		x++;
-	}
 }
 
 unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
@@ -963,34 +953,31 @@ unsigned int ThemeTextures::getDateTimeFontSpriteIndex(const u16 letter) {
 	return spriteIndex;
 }
 
-void ThemeTextures::drawDateTime(const char *str, const int posX, const int posY, const int drawCount,
-				 int *hourWidthPointer) {
-	int x = posX;
-	int screenPosY = (ms().theme == 4 ? 19 : 14);
-
+void ThemeTextures::drawDateTime(const char *str, int posX, int posY, const int drawCount, int *hourWidthPointer) {
 	beginBgSubModify();
-	for (int c = 0; c < drawCount; c++) {
-		int imgY = posY;
 
+	const Texture *tex = dateTimeFontTexture();
+	const u16 *bitmap = tex->texture();
+
+	for (int c = 0; c < drawCount; c++) {
 		unsigned int charIndex = getDateTimeFontSpriteIndex(str[c]);
 		// Start date
-		for (int y = screenPosY; y >= screenPosY-8; y--) {
-			for (u16 i = 0; i < date_time_font_texcoords[2 + (4 * charIndex)]; i++) {
-				if (_dateFontImage[(imgY * 128) + (date_time_font_texcoords[0 + (4 * charIndex)] +
-								   i)] != 0x7C1F) { // Do not render magneta pixel
-					_bgSubBuffer[y * 256 + (i + x)] =
-					    _dateFontImage[(imgY * 128) +
-							   (date_time_font_texcoords[0 + (4 * charIndex)] + i)];
+		for (uint y = 0; y < tex->texHeight(); y++) {
+			const u16 *src = bitmap + (y * 128) + (date_time_font_texcoords[4 * charIndex]);
+			for (uint x = 0; x < date_time_font_texcoords[2 + (4 * charIndex)]; x++) {
+				u16 val = *(src++);
+				if (val >> 15) { // Do not render transparent pixel
+					_bgSubBuffer[(posY + y) * 256 + (posX + x)] = val;
 				}
 			}
-			imgY--;
 		}
-		x += date_time_font_texcoords[2 + (4 * charIndex)];
+		posX += date_time_font_texcoords[2 + (4 * charIndex)];
 		if (hourWidthPointer != NULL) {
 			if (c == 2)
-				*hourWidthPointer = x;
+				*hourWidthPointer = posX;
 		}
 	}
+
 	commitBgSubModify();
 }
 

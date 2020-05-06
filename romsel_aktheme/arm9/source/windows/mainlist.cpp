@@ -195,7 +195,7 @@ void MainList::addDirEntry(const std::string row1,
     const std::string row2, 
     const std::string path, const std::string &bannerKey, const u8 *banner)
 {
-    nocashMessage("mainlist:140");
+    nocashMessage("mainlist:198");
 
     std::vector<std::string> a_row;
     a_row.reserve(4);
@@ -205,15 +205,15 @@ void MainList::addDirEntry(const std::string row1,
     a_row.push_back(row2);
     a_row.push_back(path);
 
-    nocashMessage("mainlist:152");
+    nocashMessage("mainlist:208");
     nocashMessage(a_row[0].c_str());
     nocashMessage(a_row[1].c_str());
     nocashMessage(a_row[2].c_str());
     nocashMessage(a_row[3].c_str());
-    nocashMessage("mainlist:158");
+    nocashMessage("mainlist:213");
 
     appendRow(std::move(a_row));
-    nocashMessage("mainlist:157");
+    nocashMessage("mainlist:216");
 
     DSRomInfo romInfo;
     if (!bannerKey.empty())
@@ -304,19 +304,21 @@ bool MainList::enterDir(const std::string &dirName)
     // list dir
 
     cwl();
-    nocashMessage("mainlist:295");
+    nocashMessage("mainlist:307");
     if (dir)
     {
         nocashMessage(dirName.c_str());
         _currentDir = std::string(dirName);
-        
+        extern void RemoveTrailingSlashes(std::string &path);
+        RemoveTrailingSlashes(_currentDir);
+
         while ((direntry = readdir(dir)) != NULL)
         {
             toncset(lfnBuf, 0, sizeof(lfnBuf));
             snprintf(lfnBuf, sizeof(lfnBuf), "%s/%s", _currentDir.c_str(), direntry->d_name);
             stat(lfnBuf, &st);
             std::string lfn(direntry->d_name);
-            nocashMessage("mainlist:307");
+            nocashMessage("mainlist:319");
 
             // st.st_mode & S_IFDIR indicates a directory
             size_t lastDotPos = lfn.find_last_of('.');
@@ -325,7 +327,7 @@ bool MainList::enterDir(const std::string &dirName)
             } else {
                 extName = "";
             }
-            nocashMessage("mainlist:316");
+            nocashMessage("mainlist:328");
 
 
             dbg_printf("%s: %s %s\n", (st.st_mode & S_IFDIR ? " DIR" : "FILE"), lfnBuf, extName.c_str());
@@ -335,24 +337,24 @@ bool MainList::enterDir(const std::string &dirName)
             showThis = showThis && (ms().showHidden || (strncmp(".", direntry->d_name, 1)));                                                    // Hide dotfiles
             showThis = showThis && (ms().showHidden || !(FAT_getAttr((dirName + lfn).c_str()) & ATTR_HIDDEN));                                  // Hide if the hidden FAT attribute is true
             cwl();
-            nocashMessage("mainlist:322");
+            nocashMessage("mainlist:338");
 
             if (showThis)
             {
-                nocashMessage("mainlist:324");
+                nocashMessage("mainlist:342");
                 std::string real_name = dirName + lfn;
                 if (st.st_mode & S_IFDIR)
                 {
                     real_name += "/";
                 }
-                nocashMessage("mainlist:337");
+                nocashMessage("mainlist:348");
                 nocashMessage(lfn.c_str());
                 nocashMessage(real_name.c_str());
                 addDirEntry(lfn, "", real_name, "", unknown_banner_bin);
-                nocashMessage("mainlist:341");
+                nocashMessage("mainlist:352");
             }
         }
-        nocashMessage("mainlist:341");
+        nocashMessage("mainlist:355");
 
         closedir(dir);
 

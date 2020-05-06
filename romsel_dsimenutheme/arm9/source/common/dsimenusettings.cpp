@@ -44,7 +44,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	showNes = true;
 	showGb = true;
 	showSmsGg = true;
-	showMd = true;
+	showMd = 3;
 	showSnes = true;
     showDirectories = true;
     showHidden = false;

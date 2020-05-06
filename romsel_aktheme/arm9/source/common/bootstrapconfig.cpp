@@ -14,6 +14,7 @@
 #include <nds/arm9/dldi.h>
 
 #include "donorMap.h"
+#include "mpuMap.h"
 #include "speedBumpExcludeMap.h"
 #include "saveMap.h"
 
@@ -77,32 +78,6 @@ BootstrapConfig &BootstrapConfig::donorSdk(int sdk)
 
 BootstrapConfig &BootstrapConfig::mpuSettings()
 {
-	static const char mpu_3MB_list[][4] = {
-		"A7A", // DS Download Station - Vol 1
-		"A7B", // DS Download Station - Vol 2
-		"A7C", // DS Download Station - Vol 3
-		"A7D", // DS Download Station - Vol 4
-		"A7E", // DS Download Station - Vol 5
-		"A7F", // DS Download Station - Vol 6 (EUR)
-		"A7G", // DS Download Station - Vol 6 (USA)
-		"A7H", // DS Download Station - Vol 7
-		"A7I", // DS Download Station - Vol 8
-		"A7J", // DS Download Station - Vol 9
-		"A7K", // DS Download Station - Vol 10
-		"A7L", // DS Download Station - Vol 11
-		"A7M", // DS Download Station - Vol 12
-		"A7N", // DS Download Station - Vol 13
-		"A7O", // DS Download Station - Vol 14
-		"A7P", // DS Download Station - Vol 15
-		"A7Q", // DS Download Station - Vol 16
-		"A7R", // DS Download Station - Vol 17
-		"A7S", // DS Download Station - Vol 18
-		"A7T", // DS Download Station - Vol 19
-		"ARZ", // Rockman ZX/MegaMan ZX
-		"YZX", // Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z", // Rockman Zero Collection/MegaMan Zero Collection
-		"A2D", // New Super Mario Bros.
-	};
 	for (const char *mputid : mpu_3MB_list)
 	{
 		if (strncmp(mputid, _gametid.c_str(), 3) == 0)
@@ -114,19 +89,8 @@ BootstrapConfig &BootstrapConfig::mpuSettings()
 }
 BootstrapConfig &BootstrapConfig::speedBumpExclude(int heapShrink)
 {
-	if (heapShrink >= 0 && heapShrink < 2) {
+	if (!isDSiMode() || (heapShrink >= 0 && heapShrink < 2)) {
 		return ceCached(heapShrink);
-	}
-
-	if (!isDSiMode()) {
-		for (const char *speedtid : sbeListB4DS)
-		{
-			if (strncmp(speedtid, _gametid.c_str(), 3) == 0)
-			{
-				return ceCached(false);
-			}
-		}
-		return ceCached(true);
 	}
 
 	for (const char *speedtid : sbeList2)

@@ -574,6 +574,10 @@ void twlMenuVideo(void) {
 		// Load pink BG for Valentine's Day
 		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppPink.bmp");
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppPink.bmp");
+	} else if (strcmp(currentDate, "04/22") == 0) {
+		// Load green BG for Earth Day
+		sprintf(bgPath, "nitro:/graphics/bg_twlmenuppGreen.bmp");
+		sprintf(logoPath, "nitro:/graphics/logo_twlmenuppGreen.bmp");
 	} else {
 		// Load normal BG
 		sprintf(bgPath, "nitro:/graphics/bg_twlmenupp.bmp");

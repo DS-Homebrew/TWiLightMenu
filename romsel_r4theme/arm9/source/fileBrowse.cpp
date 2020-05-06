@@ -46,6 +46,7 @@
 #include "SwitchState.h"
 #include "perGameSettings.h"
 #include "errorScreen.h"
+#include "incompatibleGameMap.h"
 
 #include "gbaswitch.h"
 #include "nds_loader_arm9.h"
@@ -59,6 +60,8 @@
 #define ENTRIES_START_ROW 2
 #define ENTRY_PAGE_LENGTH 10
 
+extern const char *bootstrapinipath;
+
 extern bool whiteScreen;
 extern bool fadeType;
 extern bool fadeSpeed;
@@ -70,6 +73,7 @@ extern bool homebrewBootstrap;
 extern bool useGbarunner;
 extern int consoleModel;
 extern bool isRegularDS;
+extern bool arm7SCFGLocked;
 extern bool smsGgInRam;
 
 extern bool showdialogbox;
@@ -90,6 +94,7 @@ extern bool startMenu;
 
 extern int theme;
 
+extern int showMd;
 extern bool showDirectories;
 extern bool showHidden;
 extern int spawnedtitleboxes;
@@ -231,10 +236,10 @@ bool checkGbaBios(void) {
 
 	dialogboxHeight = 1;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error code: BINF");
-	printSmallCentered(false, 104, "The GBA BIOS is required");
-	printSmallCentered(false, 112, "to run GBA games.");
-	printSmallCentered(false, 126, "A: OK");
+	printLargeCentered(false, 74, "Error code: BINF");
+	printSmallCentered(false, 90, "The GBA BIOS is required");
+	printSmallCentered(false, 102, "to run GBA games.");
+	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -252,12 +257,12 @@ bool checkGbaBios(void) {
 void smsWarning(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Warning");
-	printSmallCentered(false, 104, "When the game starts, please");
-	printSmallCentered(false, 112, "touch the screen to go into");
-	printSmallCentered(false, 120, "the menu, and exit out of it");
-	printSmallCentered(false, 128, "for the sound to work.");
-	printSmallCentered(false, 142, "A: OK");
+	printLargeCentered(false, 74, "Warning");
+	printSmallCentered(false, 90, "When the game starts, please");
+	printSmallCentered(false, 102, "touch the screen to go into");
+	printSmallCentered(false, 114, "the menu, and exit out of it");
+	printSmallCentered(false, 126, "for the sound to work.");
+	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -273,12 +278,12 @@ void smsWarning(void) {
 void mdRomTooBig(void) {
 	dialogboxHeight = 3;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This SEGA Genesis/Mega Drive");
-	printSmallCentered(false, 112, "ROM cannot be launched,");
-	printSmallCentered(false, 120, "due to its surpassing the");
-	printSmallCentered(false, 128, "size limit of 3MB.");
-	printSmallCentered(false, 142, "A: OK");
+	printLargeCentered(false, 74, "Error!");
+	printSmallCentered(false, 90, "This SEGA Genesis/Mega Drive");
+	printSmallCentered(false, 102, "ROM cannot be launched,");
+	printSmallCentered(false, 114, "due to its surpassing the");
+	printSmallCentered(false, 126, "size limit of 3MB.");
+	printSmallCentered(false, 144, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -294,10 +299,10 @@ void mdRomTooBig(void) {
 void ramDiskMsg(void) {
 	dialogboxHeight = 1;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "This app requires a");
-	printSmallCentered(false, 112, "RAM disk to work.");
-	printSmallCentered(false, 126, "A: OK");
+	printLargeCentered(false, 74, "Error!");
+	printSmallCentered(false, 90, "This app requires a");
+	printSmallCentered(false, 102, "RAM disk to work.");
+	printSmallCentered(false, 120, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -313,11 +318,48 @@ void ramDiskMsg(void) {
 void dsiBinariesMissingMsg(void) {
 	dialogboxHeight = 2;
 	showdialogbox = true;
-	printLargeCentered(false, 84, "Error!");
-	printSmallCentered(false, 104, "The DSi binaries are missing.");
-	printSmallCentered(false, 112, "Please get a clean dump of");
-	printSmallCentered(false, 120, "this ROM, or start in DS mode.");
-	printSmallCentered(false, 134, "A: OK");
+	printLargeCentered(false, 74, "Error!");
+	printSmallCentered(false, 90, "The DSi binaries are missing.");
+	printSmallCentered(false, 102, "Please get a clean dump of");
+	printSmallCentered(false, 114, "this ROM, or start in DS mode.");
+	printSmallCentered(false, 132, "\u2427 OK");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_A));
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+}
+
+void donorRomMsg(void) {
+	dialogboxHeight = 2;
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Error!");
+	printSmallCentered(false, 98, "This game requires a donor ROM");
+	printSmallCentered(false, 110, "to run. Please set an existing");
+	switch (requiresDonorRom) {
+		case 20:
+			printSmallCentered(false, 122, "early SDK2 game as a donor ROM.");
+			break;
+		case 2:
+			printSmallCentered(false, 122, "late SDK2 game as a donor ROM.");
+			break;
+		case 3:
+			printSmallCentered(false, 122, "early SDK3 game as a donor ROM.");
+			break;
+		case 5:
+		default:
+			printSmallCentered(false, 122, "DS SDK5 game as a donor ROM.");
+			break;
+		case 51:
+			printSmallCentered(false, 122, "DSi-Enhanced game as a donor ROM.");
+			break;
+	}
+	printSmallCentered(false, 140, "\u2427 OK");
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -333,12 +375,77 @@ void dsiBinariesMissingMsg(void) {
 void showLocation(void) {
 	if (isRegularDS) return;
 
-	printSmall(false, 8, 168, "Location:");
+	printSmall(false, 8, 162, "Location:");
 	if (secondaryDevice) {
-		printSmall(false, 8, 176, "Slot-1 microSD Card");
+		printSmall(false, 8, 174, "Slot-1 microSD Card");
 	} else {
-		printSmall(false, 8, 176, showMicroSd ? "microSD Card" : "SD Card");
+		printSmall(false, 8, 174, showMicroSd ? "microSD Card" : "SD Card");
 	}
+}
+
+bool checkForCompatibleGame(char gameTid[5], const char *filename) {
+	bool proceedToLaunch = true;
+
+	if (!isDSiMode()) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
+			if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	}
+
+	if (proceedToLaunch) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+			if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
+				// Found match
+				proceedToLaunch = false;
+				break;
+			}
+		}
+	}
+
+	if (proceedToLaunch) return true;	// Game is compatible
+
+	dialogboxHeight = 3;
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Compatibility Warning");
+	printSmallCentered(false, 90, "This game is known to not run.");
+	printSmallCentered(false, 102, "If there's an nds-bootstrap");
+	printSmallCentered(false, 114, "version that fixes this,");
+	printSmallCentered(false, 126, "please ignore this message.");
+	printSmallCentered(false, 144, "\u2427 Ignore   \u2428 Don't launch");
+
+	int pressed = 0;
+	while (1) {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+		if (pressed & KEY_A) {
+			proceedToLaunch = true;
+			pressed = 0;
+			break;
+		}
+		if (pressed & KEY_B) {
+			proceedToLaunch = false;
+			pressed = 0;
+			break;
+		}
+	}
+	clearText();
+	showdialogbox = false;
+	dialogboxHeight = 0;
+
+	if (proceedToLaunch) {
+		titleUpdate(false, filename);
+		showLocation();
+	}
+
+	return proceedToLaunch;
 }
 
 extern bool extention(const std::string& filename, const char* ext);
@@ -476,9 +583,9 @@ string browseForFile(const vector<string> extensionList) {
 			      || (isDSiWare && !sdFound()))
 			{
 				showdialogbox = true;
-				printLargeCentered(false, 84, "Error!");
-				printSmallCentered(false, 104, "This game cannot be launched.");
-				printSmallCentered(false, 118, "A: OK");
+				printLargeCentered(false, 74, "Error!");
+				printSmallCentered(false, 90, "This game cannot be launched.");
+				printSmallCentered(false, 108, "\u2427 OK");
 				pressed = 0;
 				do {
 					scanKeys();
@@ -492,12 +599,42 @@ string browseForFile(const vector<string> extensionList) {
 				int hasAP = 0;
 				bool proceedToLaunch = true;
 				bool useBootstrapAnyway = (useBootstrap || !secondaryDevice);
-				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0
-				&& checkIfShowAPMsg(dirContents.at(fileOffset).name))
+				if (useBootstrapAnyway && bnrRomType == 0 && !isDSiWare && isHomebrew == 0)
 				{
 					FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
-					hasAP = checkRomAP(f_nds_file);
+					char game_TID[5];
+					grabTID(f_nds_file, game_TID);
+					game_TID[4] = 0;
 					fclose(f_nds_file);
+
+					proceedToLaunch = checkForCompatibleGame(game_TID, dirContents.at(fileOffset).name.c_str());
+					if (proceedToLaunch && requiresDonorRom)
+					{
+						const char* pathDefine = "DONOR_NDS_PATH";
+						if (requiresDonorRom==20) {
+							pathDefine = "DONORE2_NDS_PATH";
+						} else if (requiresDonorRom==2) {
+							pathDefine = "DONOR2_NDS_PATH";
+						} else if (requiresDonorRom==3) {
+							pathDefine = "DONOR3_NDS_PATH";
+						} else if (requiresDonorRom==51) {
+							pathDefine = "DONORTWL_NDS_PATH";
+						}
+						std::string donorRomPath;
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						CIniFile bootstrapini(bootstrapinipath);
+						donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+						if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
+							proceedToLaunch = false;
+							donorRomMsg();
+						}
+					}
+					if (proceedToLaunch && checkIfShowAPMsg(dirContents.at(fileOffset).name))
+					{
+						FILE *f_nds_file = fopen(dirContents.at(fileOffset).name.c_str(), "rb");
+						hasAP = checkRomAP(f_nds_file);
+						fclose(f_nds_file);
+					}
 				}
 				else if (isHomebrew == 1)
 				{
@@ -521,7 +658,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				else if (bnrRomType == 7)
 				{
-					if (getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
+					if (showMd==1 && getFileSize(dirContents.at(fileOffset).name.c_str()) > 0x300000) {
 						proceedToLaunch = false;
 						mdRomTooBig();
 					}
@@ -530,17 +667,17 @@ string browseForFile(const vector<string> extensionList) {
 				if (hasAP > 0) {
 					dialogboxHeight = 3;
 					showdialogbox = true;
-					printLargeCentered(false, 84, "Anti-Piracy Warning");
+					printLargeCentered(false, 74, "Anti-Piracy Warning");
 					if (hasAP == 2) {
-						printSmallCentered(false, 104, "This game has AP, and MUST");
-						printSmallCentered(false, 112, "be patched using the RGF");
-						printSmallCentered(false, 120, "TWiLight Menu AP patcher.");
+						printSmallCentered(false, 98, "This game has AP, and MUST");
+						printSmallCentered(false, 110, "be patched using the RGF");
+						printSmallCentered(false, 122, "TWiLight Menu AP patcher.");
 					} else {
-						printSmallCentered(false, 104, "This game has AP. Please");
-						printSmallCentered(false, 112, "make sure you're using the");
-						printSmallCentered(false, 120, "latest TWiLight Menu++.");
+						printSmallCentered(false, 98, "This game has AP. Please");
+						printSmallCentered(false, 110, "make sure you're using the");
+						printSmallCentered(false, 122, "latest TWiLight Menu++.");
 					}
-					printSmallCentered(false, 142, "B: Return   A: Launch");
+					printSmallCentered(false, 142, "\u2428 Return   \u2427 Launch");
 
 					pressed = 0;
 					while (1) {
@@ -590,10 +727,6 @@ string browseForFile(const vector<string> extensionList) {
 				if (proceedToLaunch) {
 					applaunch = true;
 
-					fadeType = false;	// Fade to white
-					for (int i = 0; i < 25; i++) {
-						swiWaitForVBlank();
-					}
 					cursorPosition[secondaryDevice] = fileOffset;
 					pagenum[secondaryDevice] = 0;
 					for (int i = 0; i < 100; i++) {
@@ -652,23 +785,23 @@ string browseForFile(const vector<string> extensionList) {
 			dialogboxHeight = 3;
 
 			if (isDirectory) {
-				printLargeCentered(false, 84, "Folder Management options");
-				printSmallCentered(false, 104, "What would you like");
-				printSmallCentered(false, 112, "to do with this folder?");
+				printLargeCentered(false, 74, "Folder Management options");
+				printSmallCentered(false, 98, "What would you like");
+				printSmallCentered(false, 110, "to do with this folder?");
 			} else {
-				printLargeCentered(false, 84, "ROM Management options");
-				printSmallCentered(false, 104, "What would you like");
-				printSmallCentered(false, 112, "to do with this ROM?");
+				printLargeCentered(false, 74, "ROM Management options");
+				printSmallCentered(false, 98, "What would you like");
+				printSmallCentered(false, 110, "to do with this ROM?");
 			}
 
 			for (int i = 0; i < 90; i++) swiWaitForVBlank();
 
 			if (isDirectory) {
-				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  B: Nothing");
-				else		printSmallCentered(false, 142, "Y: Hide    B: Nothing");
+				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2428 Nothing");
+				else		printSmallCentered(false, 128, "Y: Hide    \u2428 Nothing");
 			} else {
-				if(unHide)	printSmallCentered(false, 142, "Y: Unhide  A: Delete  B: Nothing");
-				else		printSmallCentered(false, 142, "Y: Hide   A: Delete   B: Nothing");
+				if(unHide)	printSmallCentered(false, 128, "Y: Unhide  \u2427 Delete  \u2428 Nothing");
+				else		printSmallCentered(false, 128, "Y: Hide   \u2427 Delete   \u2428 Nothing");
 			}
 
 			while (1) {

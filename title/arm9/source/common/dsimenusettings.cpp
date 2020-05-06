@@ -23,6 +23,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     theme = 0;
     subtheme = 0;
 
+	showMd = 3;
     showDirectories = true;
     showBoxArt = true;
     animateDsiIcons = true;
@@ -79,6 +80,8 @@ void DSiMenuPlusPlusSettings::loadSettings()
     cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
+
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
     // Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);

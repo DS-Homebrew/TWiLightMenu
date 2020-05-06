@@ -398,7 +398,7 @@ void opt_hiya_autoboot_toggle(bool prev, bool next)
 
 void opt_wifiLed_toggle(bool prev, bool next)
 {
-	*(u8*)(0x023FFD00) = (next ? 0x13 : 0x12);		// On/Off
+	*(u8*)(0x023FFD00) = (next ? 0x13 : 0);		// On/Off
 }
 
 /*void opt_twlFirm_changed(int prev, int next)
@@ -503,8 +503,8 @@ int main(int argc, char **argv)
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"DSi", "3DS", "R4", "Acekard", "SEGA Saturn"},
-				{0, 1, 2, 3, 4})
+				{"Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", "Homebrew Launcher", "Wood UI", "R4 Original"},
+				{0, 1, 4, 5, 3, 2})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
@@ -525,22 +525,22 @@ int main(int argc, char **argv)
 		guiPage.option(STR_BOXARTMEM, STR_DESCRIPTION_BOXARTMEM, Option::Bool(&ms().cacheBoxArt), {STR_YES, STR_NO}, {true, false});
 	}
 	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_12_HOUR_CLOCK, STR_DESCRIPTION_12_HOUR_CLOCK, Option::Bool(&ms().show12hrClock), {STR_YES, STR_NO}, {true, false})
+		.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {"12 hours [AM/PM]", "24 hours"}, {true, false})
 		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
-	SettingsPage filetypePage(STR_FILETYPE_SETTINGS);
+	SettingsPage emulationPage(STR_EMULATION_HB_SETTINGS);
 
-	filetypePage
+	emulationPage
 		.option("NDS ROMs", STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
 		.option("Videos (.RVID and .MP4)", STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Atari 2600 ROMs", STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Bool(&ms().showMd), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {STR_SHOW, STR_HIDE}, {true, false});
+		.option("Atari 2600 ROMs", STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
+		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
+		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
+		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false})
+		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3})
+		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false});
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
@@ -800,7 +800,7 @@ int main(int argc, char **argv)
 	
 	gui()
 		.addPage(guiPage)
-		.addPage(filetypePage)
+		.addPage(emulationPage)
 		.addPage(gbar2Page)
 		.addPage(gamesPage)
 		.addPage(miscPage);

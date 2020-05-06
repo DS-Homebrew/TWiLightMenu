@@ -18,6 +18,8 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nds/arm9/dldi.h>
+
 #include "dsrom.h"
 #include "tool/dbgtool.h"
 #include "fileicons.h"
@@ -59,6 +61,7 @@ DSRomInfo &DSRomInfo::operator=(const DSRomInfo &src)
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
+    _requiresDonorRom = src._requiresDonorRom;
     
     return *this;
 }
@@ -68,6 +71,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
   _isGbaRom(EFalse), 
   _isBannerAnimated(EFalse),
   _isArgv(EFalse),
+  _requiresDonorRom(0),
   _extIcon(-1), 
   _romVersion(0)
 {
@@ -87,6 +91,7 @@ DSRomInfo::DSRomInfo(const DSRomInfo &src)
     _isDSiWare = src._isDSiWare;
     _isBannerAnimated = src._isBannerAnimated;
     _isArgv = src._isArgv;
+    _requiresDonorRom = src._requiresDonorRom;
 }
 
 bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
@@ -131,6 +136,41 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         _isDSRom = ETrue;
         _isDSiWare = EFalse;
         _hasExtendedBinaries = ETrue;
+		_requiresDonorRom = 0;
+		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+		switch (header.arm7binarySize) {
+			case 0x22B40:
+			case 0x22BCC:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 51;
+				break;
+			case 0x23708:
+			case 0x2378C:
+			case 0x237F0:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 5;
+				break;
+			case 0x23CAC:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 20;
+				break;
+			case 0x24DA8:
+			case 0x24F50:
+				_requiresDonorRom = 2;
+				break;
+			case 0x2434C:
+			case 0x2484C:
+			case 0x249DC:
+			case 0x25D04:
+			case 0x25D94:
+			case 0x25FFC:
+				if (!isDSiMode() || hasCycloDSi) _requiresDonorRom = 3;
+				break;
+			case 0x27618:
+			case 0x2762C:
+			case 0x29CEC:
+				_requiresDonorRom = 5;
+				break;
+			default:
+				break;
+		}
 
 		fseek(f, (header.arm9romOffset <= 0x200 ? header.arm9romOffset : header.arm9romOffset+0x800), SEEK_SET);
 		fread(arm9Sig[0], sizeof(u32), 4, f);
@@ -154,7 +194,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 				}
 			}
 		}
-		else if (memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
+		else if ((memcmp(header.gameTitle, "NDS.TinyFB", 10) == 0)
+			   || (memcmp(header.gameTitle, "UNLAUNCH.DSI", 12) == 0))
 		{
 			_isDSiWare = ETrue;
             _isHomebrew = ETrue;
@@ -623,6 +664,12 @@ bool DSRomInfo::isArgv(void)
 {
     load();
     return (_isArgv == ETrue) ? true : false;
+}
+
+int DSRomInfo::requiresDonorRom(void)
+{
+    load();
+    return _requiresDonorRom;
 }
 
 bool DSRomInfo::isBannerAnimated(void)

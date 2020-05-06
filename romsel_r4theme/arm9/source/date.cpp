@@ -7,8 +7,14 @@
 #include <malloc.h>
 
 #include <string>
+#include "common/tonccpy.h"
+
+extern bool show12hrClock;
+
 using std::string;
 char date_str[24] = {'\0'};
+
+tm iTimeParts;
 
 /**
  * Get the current date as a C string.
@@ -59,12 +65,33 @@ size_t GetDate(DateFormat format, char *buf, size_t size)
  */
 string RetTime()
 {
-	time_t Raw;
-	time(&Raw);
-	const struct tm *Time = localtime(&Raw);
+	time_t epochTime;
+  if(time(&epochTime)==(time_t)-1)
+  {
+    toncset(&iTimeParts,0,sizeof(iTimeParts));
+  }
+  else
+  {
+    localtime_r(&epochTime,&iTimeParts);
+  }
+
+    u8 hours = iTimeParts.tm_hour;
+    u8 minutes = iTimeParts.tm_min;
+    if (show12hrClock)
+    {
+        if (hours > 12)
+            hours -= 12;
+        if (hours == 0)
+            hours = 12;
+    }
+
+    u8 number1 = hours / 10;
+    u8 number2 = hours % 10;
+    u8 number3 = minutes / 10;
+    u8 number4 = minutes % 10;
 
 	char Tmp[24];
-	strftime(Tmp, sizeof(Tmp), "%k:%M", Time);
+	snprintf(Tmp, sizeof(Tmp), "%i%i : %i%i", number1, number2, number3, number4);
 
 	return string(Tmp);
 }

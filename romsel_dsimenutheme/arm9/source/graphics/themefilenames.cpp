@@ -26,6 +26,11 @@ ThemeFilenames::ThemeFilenames() {
 				formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
 					"saturn",  "default");
 			break;
+		case 5:
+			systemDirectory =
+				formatString(TFN_SYSTEM_UI_DIRECTORY "%s", 
+					"hbLauncher",  "default");
+			break;
 	}
 	if (!sys().useNitroFS()) {
 		// nocashMessage("NNONITROFS");
@@ -49,6 +54,9 @@ ThemeFilenames::ThemeFilenames() {
 				case 4:
 					_uiDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
 					break;
+				case 5:
+					_uiDirectory = TFN_FALLBACK_HBLAUNCHER_UI_DIRECTORY;
+					break;
 			}
 		}
 
@@ -62,6 +70,9 @@ ThemeFilenames::ThemeFilenames() {
 				break;
 			case 4:
 				_fallbackDirectory = TFN_FALLBACK_SATURN_UI_DIRECTORY;
+				break;
+			case 5:
+				_fallbackDirectory = TFN_FALLBACK_HBLAUNCHER_UI_DIRECTORY;
 				break;
 		}
 	}

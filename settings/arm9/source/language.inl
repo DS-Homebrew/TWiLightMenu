@@ -5,7 +5,7 @@ STRING(LR_SWITCH, "L/R/Y/X Switch Pages")
 STRING(MISC_SETTINGS, "Misc. settings")
 //STRING(TWLFIRM_SETTINGS, "TWL_FIRM settings")
 STRING(GUI_SETTINGS, "GUI Settings")
-STRING(FILETYPE_SETTINGS, "Filetype settings")
+STRING(EMULATION_HB_SETTINGS, "Emulation/HB settings")
 STRING(GBARUNNER2_SETTINGS, "GBARunner2 Emulation settings")
 STRING(GAMESAPPS_SETTINGS, "Games and Apps settings")
 
@@ -42,6 +42,7 @@ STRING(RESTOREDSIMENU, "Restore DSi Menu")
 
 STRING(SHOW, "Show")
 STRING(HIDE, "Hide")
+STRING(HYBRID, "Hybrid")
 
 STRING(ALPHABETICAL, "Alphabetical")
 STRING(RECENT, "Recent")
@@ -214,8 +215,8 @@ STRING(AB_SETSUBTHEME, "A/B: Set sub-theme")
 STRING(DEFAULT_LAUNCHER, "Default launcher")
 STRING(DESCRIPTION_DEFAULT_LAUNCHER_1, "Launch Nintendo DSi Menu or TWiLight Menu++ on boot.")
 
-STRING(12_HOUR_CLOCK, "Use a 12 hour clock")
-STRING(DESCRIPTION_12_HOUR_CLOCK, "Use a 12-hour clock instead of a 24 hour clock in the Acekard theme.")
+STRING(CLOCK_SYSTEM, "Clock system")
+STRING(DESCRIPTION_CLOCK_SYSTEM, "Use either a 12-hour clock or a 24-hour clock.")
 
 //STRING(SNES_EMULATOR, "Choose a SNES emulator")
 //STRING(DESCRIPTION_SNES_EMULATOR, "Choose whether you would rather use SNEmulDS or lolSNES.")

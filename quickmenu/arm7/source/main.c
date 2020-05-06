@@ -139,7 +139,7 @@ int main() {
 	irqSet(IRQ_VCOUNT, VcountHandler);
 	irqSet(IRQ_VBLANK, VblankHandler);
 
-	irqEnable( IRQ_VBLANK | IRQ_VCOUNT );
+	irqEnable( IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK );
 
 	setPowerButtonCB(powerButtonCB);
 
@@ -181,7 +181,6 @@ int main() {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
 			exitflag = true;
 		}
-		resyncClock();
 		if (isDSiMode() && *(vu32*)(0x400481C) & BIT(4)) {
 			*(u8*)(0x023FF002) = 2;
 		} else if (isDSiMode() && *(vu32*)(0x400481C) & BIT(3)) {

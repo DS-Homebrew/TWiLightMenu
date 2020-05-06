@@ -35,7 +35,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	showNes = true;
 	showGb = true;
 	showSmsGg = true;
-	showMd = true;
+	showMd = 3;
 	showSnes = true;
 	updateRecentlyPlayedList = true;
     sortMethod = 0;

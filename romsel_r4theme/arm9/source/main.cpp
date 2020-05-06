@@ -37,6 +37,7 @@
 #include "crc.h"
 
 #include "donorMap.h"
+#include "mpuMap.h"
 #include "speedBumpExcludeMap.h"
 #include "saveMap.h"
 
@@ -117,6 +118,7 @@ bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
 bool homebrewHasWide = false;
+bool show12hrClock = true;
 //bool snesEmulator = true;
 bool smsGgInRam = false;
 bool fcSaveOnSd = false;
@@ -137,7 +139,7 @@ bool showA26 = true;
 bool showNes = true;
 bool showGb = true;
 bool showSmsGg = true;
-bool showMd = true;
+int showMd = 3;
 bool showSnes = true;
 bool showDirectories = true;
 bool showHidden = false;
@@ -176,7 +178,7 @@ void LoadSettings(void) {
 	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", true);
 	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", true);
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", true);
-	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", true);
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
@@ -221,6 +223,8 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+
+    show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -451,33 +455,6 @@ void SetMPUSettings(const char* filename) {
 	}
 
 	// Check for games that need an MPU size of 3 MB.
-	static const char mpu_3MB_list[][4] = {
-		"A7A",	// DS Download Station - Vol 1
-		"A7B",	// DS Download Station - Vol 2
-		"A7C",	// DS Download Station - Vol 3
-		"A7D",	// DS Download Station - Vol 4
-		"A7E",	// DS Download Station - Vol 5
-		"A7F",	// DS Download Station - Vol 6 (EUR)
-		"A7G",	// DS Download Station - Vol 6 (USA)
-		"A7H",	// DS Download Station - Vol 7
-		"A7I",	// DS Download Station - Vol 8
-		"A7J",	// DS Download Station - Vol 9
-		"A7K",	// DS Download Station - Vol 10
-		"A7L",	// DS Download Station - Vol 11
-		"A7M",	// DS Download Station - Vol 12
-		"A7N",	// DS Download Station - Vol 13
-		"A7O",	// DS Download Station - Vol 14
-		"A7P",	// DS Download Station - Vol 15
-		"A7Q",	// DS Download Station - Vol 16
-		"A7R",	// DS Download Station - Vol 17
-		"A7S",	// DS Download Station - Vol 18
-		"A7T",	// DS Download Station - Vol 19
-		"ARZ",	// Rockman ZX/MegaMan ZX
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
-		"A2D",	// New Super Mario Bros.
-	};
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(mpu_3MB_list)/sizeof(mpu_3MB_list[0]); i++) {
 		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
@@ -493,7 +470,7 @@ void SetMPUSettings(const char* filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
-	if (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2) {
+	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2)) {
 		ceCached = perGameSettings_heapShrink;
 		return;
 	}
@@ -505,24 +482,11 @@ void SetSpeedBumpExclude(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
-	if (!isDSiMode()) {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(sbeListB4DS)/sizeof(sbeListB4DS[0]); i++) {
-			if (memcmp(game_TID, sbeListB4DS[i], 3) == 0) {
-				// Found match
-				ceCached = false;
-				break;
-			}
-		}
-		return;
-	}
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			break;
 		}
 	}
 }
@@ -634,7 +598,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			resultText1 = "Failed to backup custom";
 			resultText2 = "TwlBg.";
 		} else {
-			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -769,14 +733,27 @@ void loadGameOnFlashcard (const char* ndsPath, bool usePerGameSettings) {
 	}
 
 	char text[32];
-	snprintf(text, sizeof(text), "Start failed. Error %i", err);
-	ClearBrightness();
-	printLarge(false, 4, 4, text);
+	snprintf (text, sizeof(text), "Start failed. Error %i", err);
+	clearText();
+	dialogboxHeight = (err==0 ? 2 : 0);
+	showdialogbox = true;
+	printLargeCentered(false, 74, "Error!");
 	if (err == 0) {
-		printLarge(false, 4, 20, "Flashcard may be unsupported.");
-		printLarge(false, 4, 52, "Flashcard name:");
-		printLarge(false, 4, 68, io_dldi_data->friendlyName);
+		printSmallCentered(false, 90, "Flashcard may be unsupported.");
+		printSmallCentered(false, 102, "Flashcard name:");
+		printSmallCentered(false, 114, io_dldi_data->friendlyName);
+	} else {
+		printSmallCentered(false, 90, text);
 	}
+	printSmallCentered(false, (err==0 ? 132 : 108), "\u2428 Back");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDown();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_B));
+	runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 	stop();
 }
 
@@ -809,6 +786,7 @@ void unlaunchRomBoot(const char* rom) {
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
 }
@@ -847,6 +825,7 @@ void dsCardLaunch() {
 	
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 	stop();
 }
@@ -1050,7 +1029,8 @@ int main(int argc, char **argv) {
 
 			do {
 				clearText();
-				printLargeCentered(false, 182, "SELECT: Settings menu");
+				printLargeCentered(false, -112, 166, DrawDate());
+				printLargeCentered(false, 180, "SELECT: Settings menu");
 				switch (startMenu_cursorPosition) {
 					case 0:
 					default:
@@ -1071,7 +1051,7 @@ int main(int argc, char **argv) {
 						}
 						break;
 				}
-				printLarge(false, 212, 166, RetTime().c_str());
+				printLargeCentered(false, 112, 166, RetTime().c_str());
 
 				scanKeys();
 				pressed = keysDownRepeat();
@@ -1163,10 +1143,10 @@ int main(int argc, char **argv) {
 							clearText();
 							dialogboxHeight = 1;
 							showdialogbox = true;
-							printLargeCentered(false, 84, "Error code: BINF");
-							printSmallCentered(false, 104, "The GBA BIOS is required");
-							printSmallCentered(false, 112, "to run GBA games.");
-							printSmallCentered(false, 126, "A: OK");
+							printLargeCentered(false, 74, "Error code: BINF");
+							printSmallCentered(false, 90, "The GBA BIOS is required");
+							printSmallCentered(false, 102, "to run GBA games.");
+							printSmallCentered(false, 120, "\u2427 OK");
 							for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							pressed = 0;
 							do {
@@ -1285,11 +1265,6 @@ int main(int argc, char **argv) {
 		// Launch the item
 
 		if (applaunch) {
-			// Clear screen with white
-			whiteScreen = true;
-			controlTopBright = false;
-			clearText();
-
 			// Delete previously used DSiWare of flashcard from SD
 			if (!gotosettings && consoleModel < 2 && previousUsedDevice && bothSDandFlashcard()) {
 				if (access("sd:/_nds/TWiLightMenu/tempDSiWare.dsi", F_OK) == 0) {
@@ -1340,7 +1315,7 @@ int main(int argc, char **argv) {
 			bool mpeg4 = false;
 			bool GBA = false;
 			bool SNES = false;
-			bool GENESIS = false;
+			bool GENESIS = false, usePicoDrive = false;
 			bool gameboy = false;
 			bool nes = false;
 			bool gamegear = false;
@@ -1381,12 +1356,12 @@ int main(int argc, char **argv) {
 				fread(&NDSHeader, 1, sizeof(NDSHeader), f_nds_file);
 				fclose(f_nds_file);
 
-				whiteScreen = true;
-
 				if ((getFileSize(dsiWarePubPath.c_str()) == 0) && (NDSHeader.pubSavSize > 0)) {
 					clearText();
-					ClearBrightness();
-					printSmall(false, 2, 80, "Creating public save file...");
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Save creation");
+					printSmallCentered(false, 98, "Creating public save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1404,14 +1379,18 @@ int main(int argc, char **argv) {
 						fputc('\0', pFile);
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, "Public save file created!");
+					clearText();
+					printLargeCentered(false, 74, "Save creation");
+					printSmallCentered(false, 98, "Public save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
 				if ((getFileSize(dsiWarePrvPath.c_str()) == 0) && (NDSHeader.prvSavSize > 0)) {
 					clearText();
-					ClearBrightness();
-					printSmall(false, 2, 80, "Creating private save file...");
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Save creation");
+					printSmallCentered(false, 98, "Creating private save file...");
 
 					static const int BUFFER_SIZE = 4096;
 					char buffer[BUFFER_SIZE];
@@ -1429,7 +1408,9 @@ int main(int argc, char **argv) {
 						fputc('\0', pFile);
 						fclose(pFile);
 					}
-					printSmall(false, 2, 88, "Private save file created!");
+					clearText();
+					printLargeCentered(false, 74, "Save creation");
+					printSmallCentered(false, 98, "Private save file created!");
 					for (int i = 0; i < 60; i++) swiWaitForVBlank();
 				}
 
@@ -1477,20 +1458,33 @@ int main(int argc, char **argv) {
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					clearText();
-					ClearBrightness();
-					printSmall(false, 4, 80, text);
+					dialogboxHeight = (err==1 ? 2 : 0);
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Error!");
+					printSmallCentered(false, 90, text);
 					if (err == 1) {
-						printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-						printSmall(false, 4, 96, "not found.");
+						printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+						printSmallCentered(false, 4, 114, "not found.");
 					}
+					printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 					stop();
 				}
 
 				if (secondaryDevice) {
 					clearText();
-					ClearBrightness();
-					printSmallCentered(false, 88, "Now copying data...");
-					printSmallCentered(false, 96, "Do not turn off the power.");
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Please wait");
+					printSmallCentered(false, 98, "Now copying data...");
+					printSmallCentered(false, 110, "Do not turn off the power.");
 					fcopy(dsiWareSrlPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.dsi");
 					if ((access(dsiWarePubPath.c_str(), F_OK) == 0) && (NDSHeader.pubSavSize > 0)) {
 						fcopy(dsiWarePubPath.c_str(), "sd:/_nds/TWiLightMenu/tempDSiWare.pub");
@@ -1502,9 +1496,11 @@ int main(int argc, char **argv) {
 					clearText();
 					if ((access(dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
-						printSmall(false, 2, 112, "After saving, please re-start");
-						printSmall(false, 2, 120, "TWiLight Menu++ to transfer your");
-						printSmall(false, 2, 128, "save data back.");
+						dialogboxHeight = 1;
+						printLargeCentered(false, 74, "Important!");
+						printSmall(false, 2, 90, "After saving, please re-start");
+						printSmall(false, 2, 102, "TWiLight Menu++ to transfer your");
+						printSmall(false, 2, 114, "save data back.");
 						for (int i = 0; i < 60*3; i++) swiWaitForVBlank();		// Wait 3 seconds
 					}
 				}
@@ -1543,7 +1539,7 @@ int main(int argc, char **argv) {
 
 				fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 				for (int i = 0; i < 15; i++) swiWaitForVBlank();
-			}
+			} else
 
 			// Launch .nds directly or via nds-bootstrap
 			if (extention(filename, ".nds") || extention(filename, ".dsi")
@@ -1625,8 +1621,10 @@ int main(int argc, char **argv) {
 
 							if (savesize > 0) {
 								clearText();
-								ClearBrightness();
-								printSmall(false, 2, 80, "Creating save file...");
+								dialogboxHeight = 0;
+								showdialogbox = true;
+								printLargeCentered(false, 74, "Save creation");
+								printSmallCentered(false, 90, "Creating save file...");
 
 								FILE *pFile = fopen(savepath.c_str(), "wb");
 								if (pFile) {
@@ -1634,7 +1632,9 @@ int main(int argc, char **argv) {
 									fputc('\0', pFile);
 									fclose(pFile);
 								}
-								printSmall(false, 2, 88, "Save file created!");
+								clearText();
+								printLargeCentered(false, 74, "Save creation");
+								printSmallCentered(false, 90, "Save file created!");
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
 						}
@@ -1744,13 +1744,26 @@ int main(int argc, char **argv) {
 						char text[32];
 						snprintf (text, sizeof(text), "Start failed. Error %i", err);
 						clearText();
-						ClearBrightness();
-						printSmall(false, 4, 80, text);
+						dialogboxHeight = (err==1 ? 2 : 0);
+						showdialogbox = true;
+						printLargeCentered(false, 74, "Error!");
+						printSmallCentered(false, 90, text);
 						if (err == 1) {
-							printSmall(false, 4, 88, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-							printSmall(false, 4, 96, "not found.");
+							printSmallCentered(false, 4, 102, useNightly ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+							printSmallCentered(false, 4, 114, "not found.");
 						}
-						stop();
+						printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+						int pressed = 0;
+						do {
+							scanKeys();
+							pressed = keysDownRepeat();
+							checkSdEject();
+							swiWaitForVBlank();
+						} while (!(pressed & KEY_B));
+						if (sdFound()) {
+							chdir("sd:/");
+						}
+						runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 					} else {
 						romPath[secondaryDevice] = argarray[0];
 						launchType[secondaryDevice] = 1;
@@ -1783,9 +1796,22 @@ int main(int argc, char **argv) {
 					char text[32];
 					snprintf (text, sizeof(text), "Start failed. Error %i", err);
 					clearText();
-					ClearBrightness();
-					printSmall(false, 4, 4, text);
-					stop();
+					dialogboxHeight = 0;
+					showdialogbox = true;
+					printLargeCentered(false, 74, "Error!");
+					printSmallCentered(false, 90, text);
+					printSmallCentered(false, 108, "\u2428 Back");
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					if (sdFound()) {
+						chdir("sd:/");
+					}
+					runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 				}
 			} else if (extention(filename, ".plg")) {
 				dstwoPlg = true;
@@ -1817,14 +1843,19 @@ int main(int argc, char **argv) {
 				gamegear = true;
 			} else if (extention(filename, ".gen")) {
 				GENESIS = true;
+				usePicoDrive = (showMd==2 || (showMd==3 && getFileSize(filename.c_str()) > 0x300000));
 			} else if (extention(filename, ".smc") || extention(filename, ".sfc")) {
 				SNES = true;
 			} else if (extention(filename, ".a26")) {
 				atari2600 = true;
 			}
 
-			if (dstwoPlg || rvid || mpeg4 || gameboy || nes || (gamegear&&!smsGgInRam) || (gamegear&&secondaryDevice) || atari2600) {
-				const char *ndsToBoot;
+			if (dstwoPlg || rvid || mpeg4 || gameboy || nes
+			|| (gamegear && !smsGgInRam)
+			|| (gamegear && secondaryDevice)
+			|| (GENESIS && usePicoDrive)
+			|| atari2600) {
+				const char *ndsToBoot = "";
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
 				char ROMpath[256];
@@ -1844,6 +1875,8 @@ int main(int argc, char **argv) {
 					launchType[secondaryDevice] = 8;
 				} else if (atari2600) {
 					launchType[secondaryDevice] = 9;
+				} else if (GENESIS) {
+					launchType[secondaryDevice] = 10;
 				}
 
 				previousUsedDevice = secondaryDevice;
@@ -1884,6 +1917,11 @@ int main(int argc, char **argv) {
 					if(access(ndsToBoot, F_OK) != 0) {
 						ndsToBoot = "/_nds/TWiLightMenu/emulators/S8DS.nds";
 					}
+				} else if (GENESIS) {
+					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+					if(access(ndsToBoot, F_OK) != 0) {
+						ndsToBoot = "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+					}
 				} else if (atari2600) {
 					ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/StellaDS.nds";
 					if(access(ndsToBoot, F_OK) != 0) {
@@ -1896,10 +1934,24 @@ int main(int argc, char **argv) {
 
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				ClearBrightness();
-				printLarge(false, 4, 4, text);
-				stop();
-			} else if (GBA || SNES || GENESIS) {
+				clearText();
+				dialogboxHeight = 0;
+				showdialogbox = true;
+				printLargeCentered(false, 74, "Error!");
+				printSmallCentered(false, 90, text);
+				printSmallCentered(false, 108, "\u2428 Back");
+				int pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					checkSdEject();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_B));
+				if (sdFound()) {
+					chdir("sd:/");
+				}
+				runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
+			} else if (GBA || gamegear || SNES || GENESIS) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1977,13 +2029,27 @@ int main(int argc, char **argv) {
 						     (secondaryDevice && !GBA), true, !GBA);
 				char text[32];
 				snprintf (text, sizeof(text), "Start failed. Error %i", err);
-				ClearBrightness();
-				printLarge(false, 4, 80, text);
+				clearText();
+				dialogboxHeight = (err==1 ? 2 : 0);
+				showdialogbox = true;
+				printLargeCentered(false, 74, "Error!");
+				printSmallCentered(false, 90, text);
 				if (err == 1) {
-					printSmall(false, 4, 88, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
-					printSmall(false, 4, 96, "not found.");
+					printSmallCentered(false, 4, 102, bootstrapFile ? "nds-bootstrap (Nightly)" : "nds-bootstrap (Release)");
+					printSmallCentered(false, 4, 114, "not found.");
 				}
-				stop();
+				printSmallCentered(false, (err==1 ? 132 : 108), "\u2428 Back");
+				int pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					checkSdEject();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_B));
+				if (sdFound()) {
+					chdir("sd:/");
+				}
+				runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, true, false, true, true);
 			}
 
 			while(argarray.size() !=0 ) {

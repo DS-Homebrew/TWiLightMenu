@@ -42,6 +42,7 @@
 #include "soundbank_bin.h"
 
 #include "donorMap.h"
+#include "mpuMap.h"
 #include "speedBumpExcludeMap.h"
 #include "saveMap.h"
 
@@ -136,6 +137,7 @@ int slot1LaunchMethod = 1;	// 0 == Reboot, 1 == Direct, 2 == Unlaunch
 bool useBootstrap = true;
 bool bootstrapFile = false;
 bool homebrewBootstrap = false;
+bool show12hrClock = true;
 //bool snesEmulator = true;
 bool smsGgInRam = false;
 bool fcSaveOnSd = false;
@@ -150,6 +152,7 @@ bool useGbarunner = false;
 bool gbar2DldiAccess = false;	// false == ARM9, true == ARM7
 int theme = 0;
 int subtheme = 0;
+int showMd = 3;
 int cursorPosition[2] = {0};
 int startMenu_cursorPosition = 0;
 int pagenum[2] = {0};
@@ -176,6 +179,8 @@ void LoadSettings(void) {
 
 	// UI settings.
 	consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", 0);
+
+	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
 	// Customizable UI settings.
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
@@ -210,6 +215,8 @@ void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
+
+    show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
 	// Default nds-bootstrap settings
 	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
@@ -338,33 +345,6 @@ void SetMPUSettings(const char* filename) {
 	}
 
 	// Check for games that need an MPU size of 3 MB.
-	static const char mpu_3MB_list[][4] = {
-		"A7A",	// DS Download Station - Vol 1
-		"A7B",	// DS Download Station - Vol 2
-		"A7C",	// DS Download Station - Vol 3
-		"A7D",	// DS Download Station - Vol 4
-		"A7E",	// DS Download Station - Vol 5
-		"A7F",	// DS Download Station - Vol 6 (EUR)
-		"A7G",	// DS Download Station - Vol 6 (USA)
-		"A7H",	// DS Download Station - Vol 7
-		"A7I",	// DS Download Station - Vol 8
-		"A7J",	// DS Download Station - Vol 9
-		"A7K",	// DS Download Station - Vol 10
-		"A7L",	// DS Download Station - Vol 11
-		"A7M",	// DS Download Station - Vol 12
-		"A7N",	// DS Download Station - Vol 13
-		"A7O",	// DS Download Station - Vol 14
-		"A7P",	// DS Download Station - Vol 15
-		"A7Q",	// DS Download Station - Vol 16
-		"A7R",	// DS Download Station - Vol 17
-		"A7S",	// DS Download Station - Vol 18
-		"A7T",	// DS Download Station - Vol 19
-		"ARZ",	// Rockman ZX/MegaMan ZX
-		"YZX",	// Rockman ZX Advent/MegaMan ZX Advent
-		"B6Z",	// Rockman Zero Collection/MegaMan Zero Collection
-		"A2D",	// New Super Mario Bros.
-	};
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(mpu_3MB_list)/sizeof(mpu_3MB_list[0]); i++) {
 		if (!memcmp(game_TID, mpu_3MB_list[i], 3)) {
@@ -380,7 +360,7 @@ void SetMPUSettings(const char* filename) {
  * Move nds-bootstrap's cardEngine_arm9 to cached memory region for some games.
  */
 void SetSpeedBumpExclude(const char* filename) {
-	if (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2) {
+	if (!isDSiMode() || (perGameSettings_heapShrink >= 0 && perGameSettings_heapShrink < 2)) {
 		ceCached = perGameSettings_heapShrink;
 		return;
 	}
@@ -392,24 +372,11 @@ void SetSpeedBumpExclude(const char* filename) {
 	fread(game_TID, 1, 4, f_nds_file);
 	fclose(f_nds_file);
 
-	if (!isDSiMode()) {
-		// TODO: If the list gets large enough, switch to bsearch().
-		for (unsigned int i = 0; i < sizeof(sbeListB4DS)/sizeof(sbeListB4DS[0]); i++) {
-			if (memcmp(game_TID, sbeListB4DS[i], 3) == 0) {
-				// Found match
-				ceCached = false;
-				break;
-			}
-		}
-		return;
-	}
-
 	// TODO: If the list gets large enough, switch to bsearch().
 	for (unsigned int i = 0; i < sizeof(sbeList2)/sizeof(sbeList2[0]); i++) {
 		if (memcmp(game_TID, sbeList2[i], 3) == 0) {
 			// Found match
 			ceCached = false;
-			break;
 		}
 	}
 }
@@ -530,7 +497,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			resultText1 = "Failed to backup custom";
 			resultText2 = "TwlBg.";
 		} else {
-			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -797,6 +764,7 @@ void unlaunchRomBoot(const char* rom) {
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
 }
@@ -835,6 +803,7 @@ void dsCardLaunch() {
 	
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Launcher
 	stop();
 }
@@ -2182,7 +2151,7 @@ int main(int argc, char **argv) {
 								ClearBrightness();
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
-								} else if (consoleModel >= 2) {
+								} else if (REG_SCFG_EXT != 0 && consoleModel >= 2) {
 									printSmallCentered(false, 20, "If this takes a while, press HOME,");
 									printSmallCentered(false, 34, "then press B.");
 								} else {
@@ -2465,15 +2434,16 @@ int main(int argc, char **argv) {
 						}
 					}
 				} else if (extention(filename[secondaryDevice], ".gen")) {
-					launchType[secondaryDevice] = 1;
+					bool usePicoDrive = (showMd==2 || (showMd==3 && getFileSize(filename[secondaryDevice].c_str()) > 0x300000));
+					launchType[secondaryDevice] = (usePicoDrive ? 10 : 1);
 
-					if (secondaryDevice) {
-						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+					if (usePicoDrive || secondaryDevice) {
+						ndsToBoot = usePicoDrive ? "sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
-							ndsToBoot = "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
+							ndsToBoot = usePicoDrive ? "/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds" : "/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 							boostVram = true;
 						}
-						dsModeSwitch = true;
+						dsModeSwitch = !usePicoDrive;
 					} else {
 						useNDSB = true;
 

@@ -135,5 +135,6 @@ void UnlaunchBoot::launch()
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
 
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1);
 }

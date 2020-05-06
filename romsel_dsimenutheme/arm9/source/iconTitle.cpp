@@ -33,6 +33,7 @@
 #include "common/tonccpy.h"
 #include <ctype.h>
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
@@ -46,6 +47,7 @@ static int BOX_PY_spacing2 = 9;
 static int BOX_PY_spacing3 = 28;
 
 extern bool showdialogbox;
+extern bool dbox_showIcon;
 extern bool startMenu;
 
 
@@ -286,6 +288,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 	isHomebrew[num] = false;
 	isModernHomebrew[num] = false;
 	requiresRamDisk[num] = false;
+	requiresDonorRom[num] = false;
 	infoFound[num] = false;
 
 	if (isDir) {
@@ -400,10 +403,45 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			}
 		}
 
+		bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+
 		if (num < 40) {
 			tonccpy(gameTid[num], ndsHeader.gameCode, 4);
 			romVersion[num] = ndsHeader.romversion;
 			headerCRC[num] = ndsHeader.headerCRC16;
+			switch (ndsHeader.arm7binarySize) {
+				case 0x22B40:
+				case 0x22BCC:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 51;
+					break;
+				case 0x23708:
+				case 0x2378C:
+				case 0x237F0:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 5;
+					break;
+				case 0x23CAC:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 20;
+					break;
+				case 0x24DA8:
+				case 0x24F50:
+					requiresDonorRom[num] = 2;
+					break;
+				case 0x2434C:
+				case 0x2484C:
+				case 0x249DC:
+				case 0x25D04:
+				case 0x25D94:
+				case 0x25FFC:
+					if (!isDSiMode() || hasCycloDSi) requiresDonorRom[num] = 3;
+					break;
+				case 0x27618:
+				case 0x2762C:
+				case 0x29CEC:
+					requiresDonorRom[num] = 5;
+					break;
+				default:
+					break;
+			}
 		}
 
 		fseek(fp, (ndsHeader.arm9romOffset <= 0x200 ? ndsHeader.arm9romOffset : ndsHeader.arm9romOffset+0x800), SEEK_SET);
@@ -424,7 +462,8 @@ void getGameInfo(bool isDir, const char *name, int num) {
 					isModernHomebrew[num] = false; // Have nds-bootstrap load it (in case if it doesn't)
 				}
 			}
-		} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
+		} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
+				 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
 			isHomebrew[num] = true;
 			isModernHomebrew[num] = true; // No need to use nds-bootstrap
 		} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
@@ -438,7 +477,7 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
-		if (isHomebrew[num] == true) {
+		if (isHomebrew[num] == true && num < 40) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
 			|| (ndsHeader.arm9binarySize == 0xD45C0 && ndsHeader.arm7binarySize == 0x2B7C)			// ikuReader v0.058
@@ -753,8 +792,9 @@ void titleUpdate(bool isDir, const char *name, int num) {
 		}
 
 		// text
-		if (showdialogbox || (ms().theme == 4 && currentBg == 1) || infoFound[num]) {
-			if (showdialogbox || (ms().theme == 4 && currentBg == 1)) {
+		bool theme_showdialogbox = (showdialogbox || (ms().theme == 4 && currentBg == 1) || (ms().theme == 5 && dbox_showIcon));
+		if (theme_showdialogbox || infoFound[num]) {
+			if (theme_showdialogbox) {
 				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
 			} else {
 				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);

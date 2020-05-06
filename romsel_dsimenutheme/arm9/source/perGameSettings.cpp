@@ -1,25 +1,3 @@
-/*-----------------------------------------------------------------
- Copyright (C) 2005 - 2013
-	Michael "Chishm" Chisholm
-	Dave "WinterMute" Murphy
-	Claudio "sverx"
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-------------------------------------------------------------------*/
-
 #include "perGameSettings.h"
 #include "buttontext.h"
 #include <vector>
@@ -31,6 +9,7 @@
 #include <dirent.h>
 
 #include <nds.h>
+#include <nds/arm9/dldi.h>
 #include <maxmod9.h>
 #include "common/gl2d.h"
 
@@ -54,6 +33,7 @@
 #include "common/inifile.h"
 #include "common/flashcard.h"
 #include "common/dsimenusettings.h"
+#include "common/systemdetails.h"
 
 #define SCREEN_COLS 32
 #define ENTRIES_PER_SCREEN 15
@@ -62,6 +42,8 @@
 
 
 extern bool useTwlCfg;
+
+extern const char *bootstrapinipath;
 
 extern int currentBg;
 extern bool displayGameIcons;
@@ -95,10 +77,13 @@ static char VRAM_BOOST[32];
 static char HEAP_SHRINK[32];
 static char DIRECT_BOOT[32];
 static char SCREEN_ASPECT_RATIO[32];
+static char SET_AS_DONOR_ROM[32];
 
 extern int file_count;
 
 char pergamefilepath[256];
+
+extern void RemoveTrailingSlashes(std::string &path);
 
 extern std::string dirContName;
 
@@ -205,10 +190,62 @@ bool checkIfDSiMode (std::string filename) {
 	}
 }
 
+bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
+	if (requiresDonorRom[CURPOS]) return false;
+
+	bool hasCycloDSi = (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0);
+
+	if (((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x2000000 && SDKVersion < 0x2008000	// Early SDK2
+	 && (arm7size==0x25F70
+	  || arm7size==0x25FA4
+	  || arm7size==0x2619C
+	  || arm7size==0x26A60
+	  || arm7size==0x27218
+	  || arm7size==0x27224
+	  || arm7size==0x2724C))
+	 || (SDKVersion >= 0x2008000 && SDKVersion < 0x3000000 && (arm7size==0x26F24 || arm7size==0x26F28))	// Late SDK2
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x3000000 && SDKVersion < 0x4000000	// SDK3
+	 && (arm7size==0x28464
+	  || arm7size==0x28684
+	  || arm7size==0x286A0
+	  || arm7size==0x286B0
+	  || arm7size==0x289A4
+	  || arm7size==0x289C0
+	  || arm7size==0x289F8
+	  || arm7size==0x28FFC))
+	 || (SDKVersion > 0x5000000 && (arm7size==0x26370 || arm7size==0x2642C || arm7size==0x26488))		// SDK5 (NTR)
+	 || ((!isDSiMode() || hasCycloDSi) && SDKVersion > 0x5000000	// SDK5 (TWL)
+	 && (arm7size==0x28F84
+	  || arm7size==0x2909C
+	  || arm7size==0x2914C
+	  || arm7size==0x29164
+	  || arm7size==0x29EE8
+	  || arm7size==0x2A2EC
+	  || arm7size==0x2A318
+	  || arm7size==0x2AF18
+	  || arm7size==0x2B184
+	  || arm7size==0x2B24C
+	  || arm7size==0x2C5B4)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool donorRomTextShown = false;
+void revertDonorRomText(void) {
+	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
+
+	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
+}
+
 void perGameSettings (std::string filename) {
 	int pressed = 0;
 
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		displayGameIcons = false;
+	} else if (ms().theme == 4) {
 		snd().playStartup();
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
@@ -264,11 +301,17 @@ void perGameSettings (std::string filename) {
 		SDKVersion = getSDKVersion(f_nds_file);
 		showSDKVersion = true;
 	}
+	u8 unitCode = 0;
 	u32 arm9dst = 0;
+	u32 arm7size = 0;
+	fseek(f_nds_file, 0x12, SEEK_SET);
+	fread(&unitCode, sizeof(u8), 1, f_nds_file);
 	fseek(f_nds_file, 0x28, SEEK_SET);
 	fread(&arm9dst, sizeof(u32), 1, f_nds_file);
+	fseek(f_nds_file, 0x3C, SEEK_SET);
+	fread(&arm7size, sizeof(u32), 1, f_nds_file);
 	fclose(f_nds_file);
-	
+
 	bool showPerGameSettings =
 		(!isDSiWare[CURPOS]
 		&& memcmp(gameTid[CURPOS], "HND", 3) != 0
@@ -327,7 +370,7 @@ void perGameSettings (std::string filename) {
 			perGameOp[perGameOps] = 4;	// VRAM Boost
 		}
 		if (ms().useBootstrap || !ms().secondaryDevice) {
-			if ((arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) || !isDSiMode()) {
+			if (isDSiMode() && arm9dst != 0x02004000 && SDKVersion >= 0x2008000 && SDKVersion < 0x5000000) {
 				perGameOps++;
 				perGameOp[perGameOps] = 5;	// Heap shrink
 			}
@@ -337,10 +380,17 @@ void perGameSettings (std::string filename) {
 				perGameOps++;
 				perGameOp[perGameOps] = 8;	// Screen Aspect Ratio
 			}
+			if (showSetDonorRom(arm7size, SDKVersion)) {
+				perGameOps++;
+				perGameOp[perGameOps] = 9;	// Set as Donor ROM
+				donorRomTextShown = true;
+			} else {
+				donorRomTextShown = false;
+			}
 		}
 	}
 
-	snprintf (gameTIDText, sizeof(gameTIDText), "TID: %s", gameTid[CURPOS]);
+	snprintf (gameTIDText, sizeof(gameTIDText), gameTid[CURPOS][0]==0 ? "" : "TID: %s", gameTid[CURPOS]);
 
 	if((SDKVersion > 0x1000000) && (SDKVersion < 0x2000000)) {
 		SDKnumbertext = "SDK ver: 1";
@@ -355,7 +405,9 @@ void perGameSettings (std::string filename) {
 	} else {
 		SDKnumbertext = "SDK ver: ?";
 	}
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		dbox_showIcon = true;
+	} else if (ms().theme == 4) {
 		while (!screenFadedIn()) { swiWaitForVBlank(); }
 		dbox_showIcon = true;
 	} else {
@@ -371,6 +423,7 @@ void perGameSettings (std::string filename) {
 	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
 	sprintf(DIRECT_BOOT, "%s:", STR_DIRECT_BOOT.c_str());
 	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
+	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
 
 	// About 38 characters fit in the box.
 	dirContName = filename;
@@ -388,20 +441,27 @@ void perGameSettings (std::string filename) {
 	fwrite((void*)0x02000000, 1, 0x4000, cfgFile);
 	fclose(cfgFile);*/
 
+	int row1Y = (ms().theme==5 ? 78 : 66);
+	if (!showSDKVersion && gameTid[CURPOS][0] == 0) {
+		row1Y += 4;
+	}
+	int row2Y = (ms().theme==5 ? 92 : 80);
+	int botRowY = (ms().theme==5 ? 172 : 160);
+
 	while (1) {
 		clearText();
 		titleUpdate(isDirectory[CURPOS], filename.c_str(), CURPOS);
 
-		printSmall(false, 16, 66, dirContName);
-		//if (showSDKVersion) printSmall(false, 16, 80, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
-		if (showSDKVersion) printSmall(false, 16, 80, SDKnumbertext);
-		printSmall(false, 176, 80, gameTIDText);
-		printSmall(false, 16, 160, fileCounter);
+		printSmall(false, 16, row1Y, dirContName);
+		//if (showSDKVersion) printSmall(false, 16, row2Y, (useTwlCfg ? "TwlCfg found!" : SDKnumbertext));
+		if (showSDKVersion) printSmall(false, 16, row2Y, SDKnumbertext);
+		printSmall(false, 176, row2Y, gameTIDText);
+		printSmall(false, 16, botRowY, fileCounter);
 
-		int perGameOpYpos = 98;
+		int perGameOpYpos = (ms().theme==5 ? 110 : 98);
 
 		if (showPerGameSettings) {
-			printSmall(false, 16, 98+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
+			printSmall(false, 16, perGameOpYpos+(perGameSettings_cursorPosition*14)-(firstPerGameOpShown*14), ">");
 		}
 		for (int i = firstPerGameOpShown; i < firstPerGameOpShown+4; i++) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
@@ -522,18 +582,21 @@ void perGameSettings (std::string filename) {
 					printSmall(false, 256-24, perGameOpYpos, "4:3", Alignment::right);
 				}
 				break;
+			case 9:
+				printSmallCentered(false, perGameOpYpos, SET_AS_DONOR_ROM);
+				break;
 		}
 		perGameOpYpos += 14;
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-			printSmall(false, 194, 160, BUTTON_B" Back");
+			printSmall(false, 194, botRowY, BUTTON_B" Back");
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, 160, BUTTON_A" OK");
+			printSmall(false, 208, botRowY, BUTTON_A" OK");
 		} else {	// Per-game settings for retail/commercial games
 			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-				printSmall(false, 128, 160, BUTTON_X " Cheats  " BUTTON_B" Back");
+				printSmall(false, 128, botRowY, BUTTON_X " Cheats  " BUTTON_B" Back");
 			} else {
-				printSmall(false, 194, 160, BUTTON_B" Back");
+				printSmall(false, 194, botRowY, BUTTON_B" Back");
 			}
 		}
 		do {
@@ -557,6 +620,7 @@ void perGameSettings (std::string filename) {
 		} else {
 			if (pressed & KEY_UP) {
 				snd().playSelect();
+				revertDonorRomText();
 				perGameSettings_cursorPosition--;
 				if (perGameSettings_cursorPosition < 0) {
 					perGameSettings_cursorPosition = perGameOps;
@@ -567,6 +631,7 @@ void perGameSettings (std::string filename) {
 			}
 			if (pressed & KEY_DOWN) {
 				snd().playSelect();
+				revertDonorRomText();
 				perGameSettings_cursorPosition++;
 				if (perGameSettings_cursorPosition > perGameOps) {
 					perGameSettings_cursorPosition = 0;
@@ -675,6 +740,27 @@ void perGameSettings (std::string filename) {
 						perGameSettings_wideScreen++;
 						if (perGameSettings_wideScreen > 1) perGameSettings_wideScreen = -1;
 						break;
+					case 9:
+					  if (pressed & KEY_A) {
+						const char* pathDefine = "DONOR_NDS_PATH";
+						if (SDKVersion > 0x2000000 && SDKVersion < 0x2008000) {
+							pathDefine = "DONORE2_NDS_PATH";
+						} else if (SDKVersion > 0x2008000 && SDKVersion < 0x3000000) {
+							pathDefine = "DONOR2_NDS_PATH";
+						} else if (SDKVersion > 0x3000000 && SDKVersion < 0x5000000) {
+							pathDefine = "DONOR3_NDS_PATH";
+						} else if (unitCode > 0 && SDKVersion > 0x5000000) {
+							pathDefine = "DONORTWL_NDS_PATH";
+						}
+						std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+						RemoveTrailingSlashes(romFolderNoSlash);
+						bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+						CIniFile bootstrapini(bootstrapinipath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
+						bootstrapini.SaveIniFile(bootstrapinipath);
+						sprintf(SET_AS_DONOR_ROM, "Done!");
+					  }
+						break;
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
@@ -698,7 +784,10 @@ void perGameSettings (std::string filename) {
 		}
 	}
 	showdialogbox = false;
-	if (ms().theme == 4) {
+	if (ms().theme == 5) {
+		displayGameIcons = true;
+		dbox_showIcon = false;
+	} else if (ms().theme == 4) {
 		fadeType = false;	   // Fade to black
 		for (int i = 0; i < 25; i++) {
 			swiWaitForVBlank();

@@ -44,6 +44,7 @@
 #include "common/files.h"
 #include "common/filecopy.h"
 #include "common/nds_loader_arm9.h"
+#include "incompatibleGameMap.h"
 
 #include "common/inifile.h"
 #include "language.h"
@@ -615,7 +616,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
 			//resultText = "Failed to backup custom TwlBg.";
 		} else {
-			if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -689,17 +690,6 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         config.language(gameConfig.language);
     }
 
-	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
-	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
-		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please start in DS mode.", MB_OK);
-		progressWnd().hide();
-		return;
-	}
-
-	bool hasAP = false;
-	bool hasAP1 = false;
-    PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
-
 	char gameTid[5] = {0};
 	tonccpy(gameTid, rominfo.saveInfo().gameCode, 4);
 
@@ -708,6 +698,83 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
 	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
 	fclose(f_nds_file);
+
+	if (!rominfo.isDSiWare()) {
+		bool proceedToLaunch = true;
+
+		if (!isDSiMode()) {
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
+				if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
+					// Found match
+					proceedToLaunch = false;
+					break;
+				}
+			}
+		}
+
+		if (proceedToLaunch) {
+			// TODO: If the list gets large enough, switch to bsearch().
+			for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+				if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
+					// Found match
+					proceedToLaunch = false;
+					break;
+				}
+			}
+		}
+
+		if (!proceedToLaunch) {
+			int optionPicked = messageBox(this, LANG("game launch", "Compatibility Warning"), "This game is known to not run. If there's an nds-bootstrap version that fixes this, please ignore this message.", MB_OK | MB_CANCEL);
+			progressWnd().hide();
+
+			scanKeys();
+			int pressed = keysHeld();
+
+			if (pressed & KEY_B || optionPicked == ID_CANCEL)
+			{
+				return;
+			}
+		}
+	}
+
+	if (!rominfo.isDSiWare() && rominfo.requiresDonorRom()) {
+		const char* pathDefine = "DONOR_NDS_PATH";
+		const char* msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing DS SDK5 game as a donor ROM.";
+		if (rominfo.requiresDonorRom()==20) {
+			pathDefine = "DONORE2_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing early SDK2 game as a donor ROM.";
+		} else if (rominfo.requiresDonorRom()==2) {
+			pathDefine = "DONOR2_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing late SDK2 game as a donor ROM.";
+		} else if (rominfo.requiresDonorRom()==3) {
+			pathDefine = "DONOR3_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing early SDK3 game as a donor ROM.";
+		} else if (rominfo.requiresDonorRom()==51) {
+			pathDefine = "DONORTWL_NDS_PATH";
+			msg = "This game requires a donor ROM to run. Please switch the theme, and set an existing DSi-Enhanced game as a donor ROM.";
+		}
+		std::string donorRomPath;
+		const char* bootstrapinipath = (sdFound() ? "sd:/_nds/nds-bootstrap.ini" : "fat:/_nds/nds-bootstrap.ini");
+		CIniFile bootstrapini(bootstrapinipath);
+		donorRomPath = bootstrapini.GetString("NDS-BOOTSTRAP", pathDefine, "");
+		if (donorRomPath == "" || access(donorRomPath.c_str(), F_OK) != 0) {
+			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), msg, MB_OK);
+			progressWnd().hide();
+			return;
+		}
+	}
+
+	if ((gameConfig.dsiMode == PerGameSettings::EDefault ? ms().bstrap_dsiMode : (int)gameConfig.dsiMode)
+	 && !rominfo.isDSiWare() && !rominfo.hasExtendedBinaries()) {
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), "The DSi binaries are missing. Please get a clean dump of this ROM, or start in DS mode.", MB_OK);
+		progressWnd().hide();
+		return;
+	}
+
+	bool hasAP = false;
+	bool hasAP1 = false;
+    PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 
 	char ipsPath[256];
 	sprintf(ipsPath, "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", gameTid, headerCRC16);
@@ -1478,14 +1545,15 @@ void MainWnd::launchSelected()
     // GEN Launch
     if (extension == ".gen")
 	{
+		bool usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = (usePicoDrive ? DSiMenuPlusPlusSettings::EPicoDriveTWLLaunch : DSiMenuPlusPlusSettings::ESDFlashcardLaunch);
         ms().saveSettings();
-		if (ms().secondaryDevice)
+		if (usePicoDrive || ms().secondaryDevice)
         {
-			ndsToBoot = JENESISDS_ROM;
+			ndsToBoot = usePicoDrive ? PICODRIVETWL_ROM : JENESISDS_ROM;
 			if(access(ndsToBoot, F_OK) != 0) {
-				ndsToBoot = JENESISDS_FC;
+				ndsToBoot = usePicoDrive ? PICODRIVETWL_FC : JENESISDS_FC;
 			}
 
             bootFile(ndsToBoot, fullPath);

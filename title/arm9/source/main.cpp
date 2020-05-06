@@ -206,6 +206,7 @@ void unlaunchRomBoot(const char* rom) {
 		*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 	}
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1);	// Reboot into DSiWare title, booted via Unlaunch
 	stop();
 }
@@ -225,6 +226,7 @@ void dsCardLaunch() {
 
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
 	fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 	stop();
 }
@@ -278,7 +280,7 @@ void lastRunROM()
 			&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
 				// Prepare for reboot into 16:10 TWL_FIRM
 				rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-				rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+				fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 				memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
@@ -307,7 +309,7 @@ void lastRunROM()
 				&& ms().homebrewHasWide) {
 					// Prepare for reboot into 16:10 TWL_FIRM
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
@@ -324,7 +326,7 @@ void lastRunROM()
 				&& (access("/_nds/nds-bootstrap/wideCheatData.bin", F_OK) == 0)) {
 					// Prepare for reboot into 16:10 TWL_FIRM
 					rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi");
-					rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
+					fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
@@ -624,6 +626,20 @@ void lastRunROM()
 		}
 		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to StellaDS as argument
 	}
+	else if (ms().launchType[ms().secondaryDevice] == Launch::EPicoDriveTWLLaunch && ms().showMd >= 2)
+	{
+		if (access(ms().romPath[ms().secondaryDevice].c_str(), F_OK) != 0) return;	// Skip to running TWiLight Menu++
+
+		if (sys().flashcardUsed())
+		{
+			argarray.at(0) = (char*)"/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+		}
+		else
+		{
+			argarray.at(0) = (char*)"sd:/_nds/TWiLightMenu/emulators/PicoDriveTWL.nds";
+		}
+		err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to PicoDrive TWL as argument
+	}
 	if (err > 0) {
 		consoleDemoInit();
 		printf("Start failed. Error %i\n", err);
@@ -707,11 +723,11 @@ int main(int argc, char **argv)
 		if (ms().wifiLed == -1) {
 			if (*(u8*)(0x023FFD01) == 0x13) {
 				ms().wifiLed = true;
-			} else if (*(u8*)(0x023FFD01) == 0x12) {
+			} else if (*(u8*)(0x023FFD01) == 0 || *(u8*)(0x023FFD01) == 0x12) {
 				ms().wifiLed = false;
 			}
 		} else {
-			*(u8*)(0x023FFD00) = (ms().wifiLed ? 0x13 : 0x12);		// WiFi LED On/Off
+			*(u8*)(0x023FFD00) = (ms().wifiLed ? 0x13 : 0);		// WiFi On/Off
 		}
 	}
 
@@ -767,13 +783,25 @@ int main(int argc, char **argv)
 	bool soundBankLoaded = false;
 
 	bool softResetParamsFound = false;
+	const char* softResetParamsPath = (isDSiMode() ? (sdFound() ? "sd:/_nds/nds-bootstrap/softResetParams.bin" : "fat:/_nds/nds-bootstrap/softResetParams.bin") : "fat:/_nds/nds-bootstrap/B4DS-softResetParams.bin");
 	u32 softResetParams = 0;
-	FILE* file = fopen("sd:/_nds/nds-bootstrap/softResetParams.bin", "rb");
+	FILE* file = fopen(softResetParamsPath, "rb");
 	if (file) {
 		fread(&softResetParams, sizeof(u32), 1, file);
 		softResetParamsFound = (softResetParams != 0xFFFFFFFF);
 	}
 	fclose(file);
+
+	if (softResetParamsFound) {
+		scanKeys();
+		if (keysHeld() & KEY_B) {
+			softResetParams = 0xFFFFFFFF;
+			file = fopen(softResetParamsPath, "wb");
+			fwrite(&softResetParams, sizeof(u32), 1, file);
+			fclose(file);
+			softResetParamsFound = false;
+		}
+	}
 
 	if (!softResetParamsFound && (ms().dsiSplash || ms().showlogo)) {
 		// Get date
@@ -806,11 +834,9 @@ int main(int argc, char **argv)
 		soundBankLoaded = true;
 	}
 
-	if (!softResetParamsFound && ms().dsiSplash && fifoGetValue32(FIFO_USER_01) != 0x01) {
+	if (!softResetParamsFound && ms().dsiSplash && (isDSiMode() ? fifoGetValue32(FIFO_USER_01) != 0x01 : *(u32*)0x02000000 != 1)) {
 		BootSplashInit();
-		if (isDSiMode()) {
-			fifoSendValue32(FIFO_USER_01, 10);
-		}
+		isDSiMode() ? fifoSendValue32(FIFO_USER_01, 10) : *(u32*)0x02000000 = 1;
 	}
 
 	if (access(DSIMENUPP_INI, F_OK) != 0) {
@@ -822,6 +848,17 @@ int main(int argc, char **argv)
 	mkdir("/_nds/TWiLightMenu/gamesettings", 0777);
 
 	if (access(BOOTSTRAP_INI, F_OK) != 0) {
+		u64 driveSize = 0;
+		int gbNumber = 0;
+		struct statvfs st;
+		if (statvfs(sdFound() ? "sd:/" : "fat:/", &st) == 0) {
+			driveSize = st.f_bsize * st.f_blocks;
+		}
+		for (u64 i = 0; i <= driveSize; i += 0x40000000) {
+			gbNumber++;	// Get GB number
+		}
+		bs().cacheFatTable = (gbNumber < 32);	// Enable saving FAT table cache, if SD/Flashcard is 32GB or less
+
 		// Create "nds-bootstrap.ini"
 		bs().saveSettings();
 	}

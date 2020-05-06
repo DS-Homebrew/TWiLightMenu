@@ -43,6 +43,7 @@ void cardLaunch()
 
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 }
 
@@ -111,6 +112,7 @@ void dsiSysMenuLaunch()
 			*(u16*)(0x0200080E) = swiCRC16(0xFFFF, (void*)0x02000810, 0x3F0);		// Unlaunch CRC16
 		}
 	}
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1);  // ReturntoDSiMenu
 }
 
@@ -132,6 +134,7 @@ void dsiLaunch(u32 *tid)
 
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1); // Reboot into DSiWare title, booted via Launcher
 }
 void dsiLaunchSystemSettings()
@@ -172,6 +175,7 @@ void dsiLaunchSystemSettings()
 
 	unlaunchSetHiyaBoot();
 
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
 }
 

@@ -30,6 +30,7 @@ void dsiSysMenuLaunch()
     *(u16 *)(0x02000304) = 0x1801;
     *(u32 *)(0x02000310) = 0x4D454E55; // "MENU"
 	unlaunchSetHiyaBoot();
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_02, 1);  // ReturntoDSiMenu
 }
 
@@ -71,9 +72,7 @@ void dsiLaunchSystemSettings()
 
 	unlaunchSetHiyaBoot();
 
-	for (int i = 0; i < 10; i++)
-		swiWaitForVBlank();
-
+	DC_FlushAll();						// Make reboot not fail
     fifoSendValue32(FIFO_USER_08, 1); // Reboot into System Settings
 }
 

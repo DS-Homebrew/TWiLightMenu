@@ -685,7 +685,8 @@ void getGameInfo(int num, bool isDir, const char* name)
 						isModernHomebrew[num] = false; // Have nds-bootstrap load it (in case if it doesn't)
 					}
 				}
-			} else if (memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0) {
+			} else if ((memcmp(ndsHeader.gameTitle, "NDS.TinyFB", 10) == 0)
+					 || (memcmp(ndsHeader.gameTitle, "UNLAUNCH.DSI", 12) == 0)) {
 				isHomebrew[num] = true;
 				isModernHomebrew[num] = true; // No need to use nds-bootstrap
 			} else if ((memcmp(ndsHeader.gameTitle, "NMP4BOOT", 8) == 0)
@@ -950,6 +951,5 @@ void titleUpdate(int num, bool isDir, const char* name)
 			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing2, name);
 			printSmallCentered(false, BOX_PX, iconYpos[num==0 ? 3 : 0]+BOX_PY+BOX_PY_spacing3, titleToDisplay[num][0]);
 		}
-		
 	}
 }

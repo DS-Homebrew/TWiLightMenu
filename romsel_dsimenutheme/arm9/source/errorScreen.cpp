@@ -22,8 +22,6 @@ extern float dbox_Ypos;
 vu16* sdRemovedExtendedImage = (vu16*)0x026C8000;
 vu16* sdRemovedImage = (vu16*)0x026E0000;
 
-extern u16 convertToDsBmp(u16 val);
-
 static int timeTillChangeToNonExtendedImage = 0;
 static bool showNonExtendedImage = false;
 
