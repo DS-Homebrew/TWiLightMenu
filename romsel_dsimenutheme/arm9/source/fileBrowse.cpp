@@ -1149,24 +1149,24 @@ void donorRomMsg(const char *filename) {
 	int yPos1 = (ms().theme == 4 ? 8 : 96);
 	int yPos2 = (ms().theme == 4 ? 24 : 112);
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
-	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
+	printSmall(false, 0, yPos1, STR_DONOR_ROM_MSG_1.c_str(), Alignment::center);
+	printSmall(false, 0, yPos2, STR_DONOR_ROM_MSG_2.c_str(), Alignment::center);
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str(), Alignment::center);
 			break;
 		case 2:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str(), Alignment::center);
 			break;
 		case 3:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK3.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK3.c_str(), Alignment::center);
 			break;
 		case 5:
 		default:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str(), Alignment::center);
 			break;
 		case 51:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str(), Alignment::center);
 			break;
 	}
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
@@ -1245,11 +1245,11 @@ bool checkForCompatibleGame(const char *filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	titleUpdate(false, filename, CURPOS);
-	printSmallCentered(false, 72, STR_GAME_INCOMPATIBLE_MSG_1.c_str());
-	printSmallCentered(false, 104, STR_GAME_INCOMPATIBLE_MSG_2.c_str());
-	printSmallCentered(false, 118, STR_GAME_INCOMPATIBLE_MSG_3.c_str());
-	printSmallCentered(false, 132, STR_GAME_INCOMPATIBLE_MSG_4.c_str());
-	printSmallCentered(false, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch");
+	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG_1.c_str(), Alignment::center);
+	printSmall(false, 0, 104, STR_GAME_INCOMPATIBLE_MSG_2.c_str(), Alignment::center);
+	printSmall(false, 0, 118, STR_GAME_INCOMPATIBLE_MSG_3.c_str(), Alignment::center);
+	printSmall(false, 0, 132, STR_GAME_INCOMPATIBLE_MSG_4.c_str(), Alignment::center);
+	printSmall(false, 0, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch", Alignment::center);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -1695,9 +1695,9 @@ string browseForFile(const vector<string> extensionList) {
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
 				if (ms().theme == 5) {
-					printLargeCentered(false, 142, "^");
+					printLarge(false, 0, 142, "^", Alignment::center);
 					printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-					printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
+					printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
 				}
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
@@ -2399,7 +2399,7 @@ string browseForFile(const vector<string> extensionList) {
 						}
 						if (ms().theme == 5) {
 							printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-							printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
+							printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
 						}
 					}
 					prevTouch2 = prevTouch1;

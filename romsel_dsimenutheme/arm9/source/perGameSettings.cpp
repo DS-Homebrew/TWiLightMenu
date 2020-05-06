@@ -583,7 +583,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 9:
-				printSmallCentered(false, perGameOpYpos, SET_AS_DONOR_ROM);
+				printSmall(false, 0, perGameOpYpos, SET_AS_DONOR_ROM, Alignment::center);
 				break;
 		}
 		perGameOpYpos += 14;
