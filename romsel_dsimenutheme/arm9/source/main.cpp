@@ -24,6 +24,7 @@
 #include "graphics/ThemeTextures.h"
 #include "graphics/themefilenames.h"
 
+#include "errorScreen.h"
 #include "fileBrowse.h"
 #include "nds_loader_arm9.h"
 #include "gbaswitch.h"
@@ -453,13 +454,29 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 
 	char text[32];
 	snprintf(text, sizeof(text), "Start failed. Error %i", err);
-	ClearBrightness();
+	fadeType = true;	// Fade from white
 	printLarge(false, 4, 4, text);
 	if (err == 0) {
 		printLarge(false, 4, 20, "Flashcard may be unsupported.");
 		printLarge(false, 4, 52, "Flashcard name:");
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
 	}
+	printLarge(false, 4, 90, "Press B to return.");
+	int pressed = 0;
+	do {
+		scanKeys();
+		pressed = keysDownRepeat();
+		checkSdEject();
+		swiWaitForVBlank();
+	} while (!(pressed & KEY_B));
+	fadeType = false;	// Fade to white
+	for (int i = 0; i < 25; i++) {
+		swiWaitForVBlank();
+	}
+	if (sdFound()) {
+		chdir("sd:/");
+	}
+	runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, true, false, true, true);
 	stop();
 }
 
@@ -1396,6 +1413,22 @@ int main(int argc, char **argv) {
 						if (err == 1) {
 							printLarge(false, 4, 20, useNightly ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
 						}
+						printLarge(false, 4, 44, "Press B to return.");
+						int pressed = 0;
+						do {
+							scanKeys();
+							pressed = keysDownRepeat();
+							checkSdEject();
+							swiWaitForVBlank();
+						} while (!(pressed & KEY_B));
+						fadeType = false;	// Fade to white
+						for (int i = 0; i < 25; i++) {
+							swiWaitForVBlank();
+						}
+						if (sdFound()) {
+							chdir("sd:/");
+						}
+						runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, true, false, true, true);
 						stop();
 					} else {
 						ms().romPath[ms().secondaryDevice] = std::string(argarray[0]);
@@ -1446,6 +1479,22 @@ int main(int argc, char **argv) {
 					snprintf(text, sizeof(text), "Start failed. Error %i", err);
 					fadeType = true;
 					printLarge(false, 4, 4, text);
+					printLarge(false, 4, 20, "Press B to return.");
+					int pressed = 0;
+					do {
+						scanKeys();
+						pressed = keysDownRepeat();
+						checkSdEject();
+						swiWaitForVBlank();
+					} while (!(pressed & KEY_B));
+					fadeType = false;	// Fade to white
+					for (int i = 0; i < 25; i++) {
+						swiWaitForVBlank();
+					}
+					if (sdFound()) {
+						chdir("sd:/");
+					}
+					runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, true, false, true, true);
 					stop();
 				}
 			} else if (extention(filename, ".plg")) {
@@ -1585,6 +1634,22 @@ int main(int argc, char **argv) {
 				snprintf(text, sizeof(text), "Start failed. Error %i", err);
 				fadeType = true;
 				printLarge(false, 4, 4, text);
+				printLarge(false, 4, 20, "Press B to return.");
+				int pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					checkSdEject();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_B));
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+				if (sdFound()) {
+					chdir("sd:/");
+				}
+				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, true, false, true, true);
 				stop();
 			} else if (GBA || gamegear || SNES || GENESIS) {
 				const char *ndsToBoot;
@@ -1676,6 +1741,22 @@ int main(int argc, char **argv) {
 				if (err == 1) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
 				}
+				printLarge(false, 4, 44, "Press B to return.");
+				int pressed = 0;
+				do {
+					scanKeys();
+					pressed = keysDownRepeat();
+					checkSdEject();
+					swiWaitForVBlank();
+				} while (!(pressed & KEY_B));
+				fadeType = false;	// Fade to white
+				for (int i = 0; i < 25; i++) {
+					swiWaitForVBlank();
+				}
+				if (sdFound()) {
+					chdir("sd:/");
+				}
+				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, true, false, true, true);
 				stop();
 			}
 
