@@ -1,7 +1,7 @@
 #ifndef ICONTITLE_H
 #define ICONTITLE_H
 
-#define BOX_PX				22
+#define BOX_PX				20
 #define BOX_PY				25
 #define BOX_PY_spacing1		13
 #define BOX_PY_spacing2		6
