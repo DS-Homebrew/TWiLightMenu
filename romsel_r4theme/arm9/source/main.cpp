@@ -1878,7 +1878,7 @@ int main(int argc, char **argv) {
 				ClearBrightness();
 				printLarge(false, 4, 4, text);
 				stop();
-			} else if (GBA || SNES || GENESIS) {
+			} else if (GBA || gamegear || SNES || GENESIS) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = romfolder[secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
