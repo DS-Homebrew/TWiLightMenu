@@ -732,11 +732,6 @@ static void setMemoryAddress(const tNDSHeader* ndsHeader) {
 
 void arm7_main (void) {
 	
-	if (runCardEngine) {
-		arm9_runCardEngine = runCardEngine;
-		initMBK();
-	}
-	
 	int errorCode;
 	
 	// Wait for ARM9 to at least start
@@ -848,6 +843,11 @@ void arm7_main (void) {
 	arm9_boostVram = boostVram;
 	arm9_scfgUnlock = scfgUnlock;
 	arm9_isSdk5 = isSdk5(moduleParams);
+	arm9_runCardEngine = runCardEngine;
+
+	if (runCardEngine) {
+		initMBK();
+	}
 
 	if (isSdk5(moduleParams) && ndsHeader->unitCode != 0 && dsiModeConfirmed) {
 		ROMisDsiExclusive(ndsHeader) ? initMBK() : initMBK_dsiEnhanced();
@@ -858,7 +858,6 @@ void arm7_main (void) {
 		REG_SCFG_EXT &= ~(1UL << 31);
 	}
 
-	while (arm9_stateFlag != ARM9_READY);
 	arm9_stateFlag = ARM9_SETSCFG;
 	while (arm9_stateFlag != ARM9_READY);
 

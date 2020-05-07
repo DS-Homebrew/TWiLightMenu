@@ -213,10 +213,6 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	WRAM_CR = 0x03;
 	REG_EXMEMCNT = 0xE880;
 
-	if (arm9_runCardEngine) {
-		initMBKARM9();
-	}
-
 	arm9_stateFlag = ARM9_START;
 
 	REG_IME = 0;
@@ -302,6 +298,9 @@ void __attribute__((target("arm"))) arm9_main (void) {
 			}
 		}
 		if (arm9_stateFlag == ARM9_SETSCFG) {
+			if (arm9_runCardEngine) {
+				initMBKARM9();
+			}
 			if (dsiModeConfirmed) {
 				if (arm9_isSdk5 && ndsHeader->unitCode != 0) {
 					ROMisDsiExclusive(ndsHeader) ? initMBKARM9() : initMBKARM9_dsiEnhanced();
