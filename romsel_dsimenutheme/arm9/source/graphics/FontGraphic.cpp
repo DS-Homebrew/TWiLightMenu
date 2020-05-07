@@ -2,8 +2,11 @@
 
 #include "common/tonccpy.h"
 
-FontGraphic::FontGraphic(const std::string &path) {
+FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
 	FILE *file = fopen(path.c_str(), "rb");
+	if(!file) {
+		file = fopen(fallback.c_str(), "rb");
+	}
 
 	if(file) {
 		// Get file size
@@ -88,6 +91,9 @@ FontGraphic::FontGraphic(const std::string &path) {
 		}
 		fclose(file);
 		questionMark = getCharIndex('?');
+
+		// Allocate character buffer
+		characterBuffer = std::vector<u8>(tileWidth * tileHeight + 2);
 	}
 }
 
@@ -109,10 +115,6 @@ u16 FontGraphic::getCharIndex(char16_t c) {
 		}
 	}
 
-	// If that doesn't find the char, do a linear search
-	for(unsigned int i=0;i<fontMap.size();i++) {
-		if(fontMap[i] == c)	return i;
-	}
 	return questionMark;
 }
 
@@ -137,11 +139,11 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 	return out;
 }
 
-int FontGraphic::calcWidth(std::u16string_view text) {
-	int x = 0;
+uint FontGraphic::calcWidth(std::u16string_view text) {
+	uint x = 0;
 
-	for(uint i = 0; i < text.size(); i++) {
-		u16 index = getCharIndex(text[i]);
+	for(auto c : text) {
+		u16 index = getCharIndex(c);
 		x += fontWidths[(index * 3) + 2];
 	}
 
@@ -151,44 +153,55 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
 	// Adjust x for alignment
 	switch(align) {
-		case Alignment::left:
+		case Alignment::left: {
 			break;
-		case Alignment::center:
+		} case Alignment::center: {
+			size_t newline = text.find('\n');
+			while(newline != text.npos) {
+				print(x, y, text.substr(0, newline), align);
+				text = text.substr(newline + 1);
+				newline = text.find('\n');
+				y += tileHeight;
+			}
 			x = ((256 - calcWidth(text)) / 2) + x;
 			break;
-		case Alignment::right:
+		} case Alignment::right: {
 			x = x - calcWidth(text);
+			break;
+		}
 	}
 	const int xStart = x;
 
 	// Loop through string and print it
-	for(uint i = 0; i < text.size(); i++) {
-		if(text[i] == '\n') {
+	for(auto c : text) {
+		if(c == '\n') {
 			x = xStart;
 			y += tileHeight;
 			continue;
 		}
 
-		int index = getCharIndex(text[i]);
-		u8 bitmap[tileWidth * tileHeight];
-		for(int i=0;i<tileSize;i++) {
-			bitmap[(i * 4)]     = (fontTiles[i + (index * tileSize)] >> 6 & 3);
-			bitmap[(i * 4) + 1] = (fontTiles[i + (index * tileSize)] >> 4 & 3);
-			bitmap[(i * 4) + 2] = (fontTiles[i + (index * tileSize)] >> 2 & 3);
-			bitmap[(i * 4) + 3] = (fontTiles[i + (index * tileSize)]      & 3);
+		bool p1 = 0;
+		if(x % 2) {
+			x--;
+			p1 = 1;
+		}
+		u16 index = getCharIndex(c);
+		for(int i = 0; i < tileSize; i++) {
+			u8 tile = fontTiles[i + (index * tileSize)];
+			characterBuffer[(i * 4) + p1]     = (tile >> 6 & 3);
+			characterBuffer[(i * 4) + 1 + p1] = (tile >> 4 & 3);
+			characterBuffer[(i * 4) + 2 + p1] = (tile >> 2 & 3);
+			characterBuffer[(i * 4) + 3 + p1] = (tile      & 3);
 		}
 
-		if(x + fontWidths[(index * 3) + 2] > 256) {
-			x = xStart;
-			y += tileHeight;
-		}
+		if(x + fontWidths[(index * 3) + 2] > 256)
+			return;
 
-		u8 *dst = (u8*)bgGetGfxPtr(2); // BG2 Main
+		u8 *dst = (u8*)bgGetGfxPtr(2) + x + fontWidths[(index * 3)];
 		for(int i = 0; i < tileHeight; i++) {
-			tonccpy(dst + ((y + i) * 256 + x + fontWidths[(index * 3)]), bitmap + ((i * tileWidth)), tileWidth);
+			dmaCopyHalfWordsAsynch(1, &characterBuffer[i * tileWidth], dst + ((y + i) * 256), tileWidth + 1);
 		}
 
-		x += fontWidths[(index * 3) + 2];
-		// if( i++ > 3)	return;
+		x += fontWidths[(index * 3) + 2] + p1;
 	}
 }

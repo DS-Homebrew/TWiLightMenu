@@ -3,20 +3,33 @@
 
 #include "common/tonccpy.h"
 #include "TextEntry.h"
+#include "ThemeConfig.h"
+#include "themefilenames.h"
 
 FontGraphic smallFont;
 FontGraphic largeFont;
 
 std::list<TextEntry> topText, bottomText;
 
+bool shouldClear[] = {false, false};
+
 
 void fontInit() {
 	printf("fontInit()\n");
 
-	smallFont = FontGraphic("nitro:/graphics/font/small.nftr");
+	// Load font graphics
+	smallFont = FontGraphic(TFN_FONT_SMALL, TFN_FALLBACK_FONT_SMALL);
+	largeFont = FontGraphic(TFN_FONT_LARGE, TFN_FALLBACK_FONT_LARGE);
 
-	//Do the same with our bigger texture
-	largeFont = FontGraphic("nitro:/graphics/font/large.nftr");
+	// Load palettes
+	u16 palette[] = {
+		tc().fontPalette1(),
+		tc().fontPalette2(),
+		tc().fontPalette3(),
+		tc().fontPalette4(),
+	};
+	tonccpy(BG_PALETTE, palette, sizeof(palette));
+	tonccpy(BG_PALETTE_SUB, palette, sizeof(palette));
 }
 
 static std::list<TextEntry> &getTextQueue(bool top) {
@@ -29,23 +42,21 @@ FontGraphic &getFont(bool large) {
 
 void updateText(bool top) {
 	// Clear before redrawing
-	dmaFillWords(0, bgGetGfxPtr(2), 256 * 192);
+	if(shouldClear[top] && /* remove when adding top drawing */ !top) {
+		dmaFillWords(0, bgGetGfxPtr(2), 256 * 192);
+		shouldClear[top] = false;
+	}
 
 	// Draw text
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
 		getFont(it->large).print(it->x, it->y, it->message, it->align);
 	}
+	text.clear();
 }
 
 void clearText(bool top) {
-	std::list<TextEntry> &text = getTextQueue(top);
-	for (auto it = text.begin(); it != text.end(); ++it) {
-		// if (it->immune)
-		// 	continue;
-		it = text.erase(it);
-		--it;
-	}
+	shouldClear[top] = true;
 }
 
 void clearText() {
@@ -61,10 +72,18 @@ void printLarge(bool top, int x, int y, std::string_view message, Alignment alig
 	getTextQueue(top).emplace_back(true, x, y, message, align);
 }
 
-int calcSmallFontWidth(const char *text) {
+uint calcSmallFontWidth(std::string_view text) {
 	return smallFont.calcWidth(text);
 }
 
-int calcLargeFontWidth(const char *text) {
+uint calcLargeFontWidth(std::string_view text) {
 	return largeFont.calcWidth(text);
+}
+
+u8 smallFontHeight(void) {
+	return smallFont.height();
+}
+
+u8 largeFontHeight(void) {
+	return largeFont.height();
 }

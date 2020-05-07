@@ -32,6 +32,7 @@ package: all
 	@cp "settings/settings.nds" "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
 	@cp "slot1launch/slot1launch.nds" "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
 	@cp "title/title.nds" "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
+	@echo "Copied package files"
 
 booter:
 	@$(MAKE) -C booter

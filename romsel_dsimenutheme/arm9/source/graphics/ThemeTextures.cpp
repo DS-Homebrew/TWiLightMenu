@@ -1123,12 +1123,5 @@ void ThemeTextures::videoSetup() {
 
 	bgSetPriority(0, 1); // Set 3D to below text
 
-	// Copy palette for font
-	constexpr u16 paletteBlack[] = {0x0000, 0xDEF7, 0xC631, 0xA108};
-	constexpr u16 paletteWhite[] =  {0x0000, 0xB9CE, 0xD6B5, 0xFFFF};
-	const u16 *palette = ms().theme == 4 ? paletteWhite : paletteBlack;
-	tonccpy(BG_PALETTE, palette, sizeof(paletteBlack));
-	tonccpy(BG_PALETTE_SUB, palette, sizeof(paletteBlack));
-
 	REG_BLDCNT = BLEND_SRC_BG3 | BLEND_FADE_BLACK;
 }

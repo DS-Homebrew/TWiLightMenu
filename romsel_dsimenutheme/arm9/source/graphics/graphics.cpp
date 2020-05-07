@@ -1258,7 +1258,6 @@ void vBlankHandler() {
 		} else {
 			vblankRefreshCounter++;
 		}
-		updateText(false);
 	}
 	glEnd2D();
 	GFX_FLUSH = 0;
@@ -1345,6 +1344,7 @@ void vBlankHandler() {
 	// 	launchDotDoFrameChange = !launchDotDoFrameChange;
 
 	bottomBgRefresh(); // Refresh the background image on vblank
+	updateText(false);
 }
 
 void loadPhoto(const std::string &path);
