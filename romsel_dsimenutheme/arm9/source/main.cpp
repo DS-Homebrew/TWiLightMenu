@@ -351,7 +351,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 				resultText1 = "Failed to backup custom";
 				resultText2 = "TwlBg.";
 			} else {
-				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
