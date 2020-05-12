@@ -42,7 +42,7 @@
 // hookARM7Binary error codes:
 #define ERR_NOCHEAT 0x21
 #define ERR_HOOK 0x22
-//}; 
+//};
 
 //ARM9_STATE
 //enum {
