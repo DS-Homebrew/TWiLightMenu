@@ -1598,6 +1598,82 @@ void getFileInfo(SwitchState scrn, vector<vector<DirEntry>> dirContents, bool re
 	}
 }
 
+static bool previousPage(void) {
+	if (CURPOS == 0 && !showLshoulder) {
+		snd().playWrong();
+	} else if (!titleboxXmoveleft && !titleboxXmoveright) {
+		snd().playSwitch();
+		if (ms().theme != 4 && ms().theme != 5) {
+			fadeType = false; // Fade to white
+			for (int i = 0; i < 6; i++) {
+				snd().updateStream();
+				swiWaitForVBlank();
+			}
+		}
+		if (showLshoulder)
+			PAGENUM -= 1;
+		CURPOS = 0;
+		titleboxXpos[ms().secondaryDevice] = 0;
+		titlewindowXpos[ms().secondaryDevice] = 0;
+		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
+		if (ms().showBoxArt)
+			clearBoxArt(); // Clear box art
+		boxArtLoaded = false;
+		rocketVideo_playVideo = true;
+		shouldersRendered = false;
+		currentBg = 0;
+		showSTARTborder = false;
+		stopSoundPlayed = false;
+		clearText();
+		ms().saveSettings();
+		settingsChanged = false;
+		displayNowLoading();
+		return true;
+	}
+	return false;
+}
+
+static bool nextPage(void) {
+	if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
+		snd().playWrong();
+	} else if (!titleboxXmoveleft && !titleboxXmoveright) {
+		snd().playSwitch();
+		if (ms().theme != 4 && ms().theme != 5) {
+			fadeType = false; // Fade to white
+			for (int i = 0; i < 6; i++) {
+				snd().updateStream();
+				swiWaitForVBlank();
+			}
+		}
+		if (showRshoulder) {
+			PAGENUM += 1;
+			CURPOS = 0;
+			titleboxXpos[ms().secondaryDevice] = 0;
+			titlewindowXpos[ms().secondaryDevice] = 0;
+		} else {
+			CURPOS = (file_count - 1) - PAGENUM * 40;
+			if (CURPOS < 0) CURPOS = 0;
+			titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
+			titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
+		}
+		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
+		if (ms().showBoxArt)
+			clearBoxArt(); // Clear box art
+		boxArtLoaded = false;
+		rocketVideo_playVideo = true;
+		shouldersRendered = false;
+		currentBg = 0;
+		showSTARTborder = false;
+		stopSoundPlayed = false;
+		clearText();
+		ms().saveSettings();
+		settingsChanged = false;
+		displayNowLoading();
+		return true;
+	}
+	return false;
+}
+
 string browseForFile(const vector<string> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
@@ -2841,75 +2917,12 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			// page switch
-
 			if (pressed & KEY_L) {
-				if (CURPOS == 0 && !showLshoulder) {
-					snd().playWrong();
-				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
-					snd().playSwitch();
-					if (ms().theme != 4 && ms().theme != 5) {
-						fadeType = false; // Fade to white
-						for (int i = 0; i < 6; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-					}
-					if (showLshoulder)
-						PAGENUM -= 1;
-					CURPOS = 0;
-					titleboxXpos[ms().secondaryDevice] = 0;
-					titlewindowXpos[ms().secondaryDevice] = 0;
-					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
-					if (ms().showBoxArt)
-						clearBoxArt(); // Clear box art
-					boxArtLoaded = false;
-					rocketVideo_playVideo = true;
-					shouldersRendered = false;
-					currentBg = 0;
-					showSTARTborder = false;
-					stopSoundPlayed = false;
-					clearText();
-					ms().saveSettings();
-					settingsChanged = false;
-					displayNowLoading();
+				if (previousPage()) {
 					break;
 				}
 			} else if (pressed & KEY_R) {
-				if (CURPOS == (file_count - 1) - PAGENUM * 40 && !showRshoulder) {
-					snd().playWrong();
-				} else if (!titleboxXmoveleft && !titleboxXmoveright) {
-					snd().playSwitch();
-					if (ms().theme != 4 && ms().theme != 5) {
-						fadeType = false; // Fade to white
-						for (int i = 0; i < 6; i++) {
-							snd().updateStream();
-							swiWaitForVBlank();
-						}
-					}
-					if (showRshoulder) {
-						PAGENUM += 1;
-						CURPOS = 0;
-						titleboxXpos[ms().secondaryDevice] = 0;
-						titlewindowXpos[ms().secondaryDevice] = 0;
-					} else {
-						CURPOS = (file_count - 1) - PAGENUM * 40;
-						if (CURPOS < 0) CURPOS = 0;
-						titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
-						titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-					}
-					if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
-					if (ms().showBoxArt)
-						clearBoxArt(); // Clear box art
-					boxArtLoaded = false;
-					rocketVideo_playVideo = true;
-					shouldersRendered = false;
-					currentBg = 0;
-					showSTARTborder = false;
-					stopSoundPlayed = false;
-					clearText();
-					ms().saveSettings();
-					settingsChanged = false;
-					displayNowLoading();
+				if (nextPage()) {
 					break;
 				}
 			}
@@ -3126,7 +3139,47 @@ string browseForFile(const vector<string> extensionList) {
 			}
 
 			if (held & KEY_SELECT) {
-				if (ms().theme == 0 || ms().theme == 4 || ms().theme == 5) {
+				bool runSelectMenu = true;
+				bool break2 = false;
+				while (held & KEY_SELECT) {
+					scanKeys();
+					pressed = keysDown();
+					held = keysHeld();
+					updateScrollingState(held, pressed);
+					checkSdEject();
+					tex().drawVolumeImageCached();
+					tex().drawBatteryImageCached();
+					drawCurrentTime();
+					drawCurrentDate();
+					drawClockColon();
+					snd().updateStream();
+					swiWaitForVBlank();
+
+					// page switch
+					if (pressed & KEY_LEFT) {
+						runSelectMenu = false;
+						if (previousPage()) {
+							break2 = true;
+							break;
+						}
+					} else if (pressed & KEY_RIGHT) {
+						runSelectMenu = false;
+						if (nextPage()) {
+							break2 = true;
+							break;
+						}
+					}
+
+					if (ms().theme == 0 || ms().theme == 4 || ms().theme == 5) {
+						if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN)))
+						{
+							switchDevice();
+							return "null";
+						}
+					}
+				}
+				if (break2) break;
+				if (runSelectMenu && (ms().theme == 0 || ms().theme == 4 || ms().theme == 5)) {
 					if (ms().showSelectMenu) {
 						if (selectMenu()) {
 							clearText();
@@ -3136,26 +3189,6 @@ string browseForFile(const vector<string> extensionList) {
 							return "null";
 						}
 					} else {
-						while (held & KEY_SELECT) {
-							scanKeys();
-							pressed = keysDown();
-							held = keysHeld();
-							updateScrollingState(held, pressed);
-							checkSdEject();
-							tex().drawVolumeImageCached();
-							tex().drawBatteryImageCached();
-							drawCurrentTime();
-							drawCurrentDate();
-							drawClockColon();
-							snd().updateStream();
-							swiWaitForVBlank();
-
-							if (bothSDandFlashcard() && ((pressed & KEY_UP) || (pressed & KEY_DOWN)))
-							{
-								switchDevice();
-								return "null";
-							}
-						}
 						launchDsClassicMenu();
 					}
 				}
