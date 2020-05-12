@@ -669,15 +669,17 @@ void exitToSystemMenu(void) {
 void switchDevice(void) {
 	if (bothSDandFlashcard()) {
 		(ms().theme == 4) ? snd().playLaunch() : snd().playSwitch();
-		fadeType = false; // Fade to white
-		for (int i = 0; i < 25; i++) {
-			snd().updateStream();
-			swiWaitForVBlank();
+		if (ms().theme != 4 && ms().theme != 5) {
+			fadeType = false; // Fade to white
+			for (int i = 0; i < 25; i++) {
+				snd().updateStream();
+				swiWaitForVBlank();
+			}
 		}
 		ms().secondaryDevice = !ms().secondaryDevice;
 		if (!rocketVideo_playVideo || ms().showBoxArt)
 			clearBoxArt(); // Clear box art
-		if (ms().theme != 4 && ms().theme == 5) whiteScreen = true;
+		if (ms().theme != 4 && ms().theme != 5) whiteScreen = true;
 		boxArtLoaded = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
