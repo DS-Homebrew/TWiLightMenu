@@ -35,8 +35,8 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 
 	VRAM_CR = (VRAM_CR & 0xffff0000) | 0x00008080 ;
 	
-	u16 *mainregs = (u16*)0x04000000;
-	u16 *subregs = (u16*)0x04001000;
+	vu16 *mainregs = (vu16*)0x04000000;
+	vu16 *subregs = (vu16*)0x04001000;
 	
 	for (i=0; i<43; i++) {
 		mainregs[i] = 0;
@@ -75,8 +75,8 @@ void __attribute__ ((long_call)) __attribute__((naked)) __attribute__((noreturn)
 {
 	u16 mode = 1 << 14;
 
-	*(u16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
-	*(u16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
+	*(vu16*)(0x0400006C + (0x1000 * 0)) = 0 + mode;
+	*(vu16*)(0x0400006C + (0x1000 * 1)) = 0 + mode;
 
 	// Return to passme loop
 	*((vu32*)0x02FFFE04) = (u32)0xE59FF018;		// ldr pc, 0x02FFFE24

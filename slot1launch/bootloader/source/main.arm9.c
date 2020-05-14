@@ -113,7 +113,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	if (bright > 31) {
 		bright = 31;
 	}
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /*-------------------------------------------------------------------------
@@ -282,8 +282,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	VRAM_I_CR = 0;
 	REG_POWERCNT = 0x820F;
 
-	*(u16*)0x0400006C |= BIT(14);
-	*(u16*)0x0400006C &= BIT(15);
+	*(vu16*)0x0400006C |= BIT(14);
+	*(vu16*)0x0400006C &= BIT(15);
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
