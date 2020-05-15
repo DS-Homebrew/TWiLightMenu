@@ -153,6 +153,7 @@ class DSiMenuPlusPlusSettings
     int sortMethod;
     bool showDirectories;
     bool showHidden;
+    bool preventDeletion;
     bool showBoxArt;
     bool cacheBoxArt;
     bool animateDsiIcons;

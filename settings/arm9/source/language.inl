@@ -39,6 +39,7 @@ STRING(LAUNCHERAPP, "SysNAND Launcher")
 STRING(SYSTEMSETTINGS, "System Settings")
 STRING(REPLACEDSIMENU, "Replace DSi Menu")
 STRING(RESTOREDSIMENU, "Restore DSi Menu")
+STRING(PREVENT_ROM_DELETION, "Prevent ROM hiding and deletion")
 
 STRING(SHOW, "Show")
 STRING(HIDE, "Hide")
@@ -84,6 +85,8 @@ STRING(DESCRIPTION_SORT_METHOD, "Changes whether to sort alphabetically, by rece
 STRING(DESCRIPTION_DIRECTORIES_1, "If you're in a folder where most of your games are, it is safe to hide directories/folders.")
 
 STRING(DESCRIPTION_SHOW_HIDDEN_1, "If turned on, whether an app is set to hidden or not will be ignored and it will be displayed anyways.")
+
+STRING(DESCRIPTION_PREVENT_ROM_DELETION_1, "When turned on, ROM hiding/deletion is disabled. Also note this prevents un-hiding as well.")
 
 STRING(DESCRIPTION_SHOW_NDS, "Display Nintendo DS/DSi ROMs in the ROM list.")
 

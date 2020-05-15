@@ -51,6 +51,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showBoxArt = true;
     cacheBoxArt = true;
     animateDsiIcons = true;
+    preventDeletion = false;
     sysRegion = -1;
     launcherApp = -1;
     secondaryAccess = false;
@@ -173,6 +174,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+    preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	if (consoleModel < 2) {
 		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);

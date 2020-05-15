@@ -2960,7 +2960,7 @@ string browseForFile(const vector<string> extensionList) {
 				return "null";
 			}
 
-			if ((pressed & KEY_X) && bannerTextShown && showSTARTborder
+			if ((pressed & KEY_X) && !ms().preventDeletion && bannerTextShown && showSTARTborder
 			&& dirContents[scrn].at(CURPOS + PAGENUM * 40).name != "..") {
 				DirEntry *entry = &dirContents[scrn].at((PAGENUM * 40) + (CURPOS));
 				bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));
