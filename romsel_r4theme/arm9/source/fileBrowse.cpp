@@ -97,6 +97,7 @@ extern int theme;
 extern int showMd;
 extern bool showDirectories;
 extern bool showHidden;
+extern bool preventDeletion;
 extern int spawnedtitleboxes;
 extern int cursorPosition[2];
 extern int startMenu_cursorPosition;
@@ -776,7 +777,7 @@ string browseForFile(const vector<string> extensionList) {
 			return "null";
 		}
 
-		if ((pressed & KEY_X) && dirContents.at(fileOffset).name != "..")
+		if ((pressed & KEY_X) && !preventDeletion && dirContents.at(fileOffset).name != "..")
 		{
 			DirEntry *entry = &dirContents.at(fileOffset);
 			bool unHide = (FAT_getAttr(entry->name.c_str()) & ATTR_HIDDEN || (strncmp(entry->name.c_str(), ".", 1) == 0 && entry->name != ".."));

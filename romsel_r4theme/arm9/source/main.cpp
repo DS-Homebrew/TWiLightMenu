@@ -143,6 +143,7 @@ int showMd = 3;
 bool showSnes = true;
 bool showDirectories = true;
 bool showHidden = false;
+bool preventDeletion = false;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -195,6 +196,7 @@ void LoadSettings(void) {
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
+    preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);

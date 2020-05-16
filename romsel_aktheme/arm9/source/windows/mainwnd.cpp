@@ -293,7 +293,7 @@ void MainWnd::startMenuItemClicked(s16 i)
     else if (START_MENU_ITEM_DELETE == i)
     {
         std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "")
+        if (fullPath != "" && !ms().preventDeletion)
         {
             bool ret = false;
             ret = deleteFile(fullPath);
