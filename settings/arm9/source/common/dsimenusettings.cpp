@@ -44,6 +44,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showBoxArt = true;
     cacheBoxArt = true;
     animateDsiIcons = true;
+	preventDeletion = false;
     sysRegion = -1;
     launcherApp = -1;
     secondaryAccess = false;
