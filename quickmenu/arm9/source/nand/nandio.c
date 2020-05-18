@@ -27,9 +27,6 @@ void nandio_set_fat_sig_fix(u32 offset) {
 }
 
 void getConsoleID(u8 *consoleID){
-	*(u32*)(0x2FFFD0C) = 0x434F4944;
-	while (*(u32*)(0x2FFFD0C) != 0);
-
 	u8 *fifo=(u8*)0x02500000; //shared mem address that has our computed key3 stuff
 	u8 key[16]; //key3 normalkey - keyslot 3 is used for DSi/twln NAND crypto
 	u8 key_xy[16]; //key3_y ^ key3_x

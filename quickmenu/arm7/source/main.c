@@ -107,6 +107,10 @@ TWL_CODE void aes(void* in, void* out, void* iv, u32 method){ //this is sort of 
 }
 
 TWL_CODE void getConsoleID(void) {
+	// Fix duplicated line bug on 3DS
+	while (REG_VCOUNT != 191);
+	while (REG_VCOUNT == 191);
+
 	u8 base[16]={0};
 	u8 in[16]={0};
 	u8 iv[16]={0};
@@ -122,7 +126,7 @@ TWL_CODE void getConsoleID(void) {
 		for(int j=0;j<256;j++){
 			*(key3+i)=j & 0xFF;
 			aes(in, scratch, iv, 2);
-			if(!memcmp(scratch, base, 16)){
+			if(memcmp(scratch, base, 16)==0){
 				out[i]=j;
 				//hit++;
 				break;
@@ -176,6 +180,10 @@ int main() {
 	fifoSendValue32(FIFO_USER_07, *(u16*)(0x4004700));
 	fifoSendValue32(FIFO_USER_06, 1);
 
+	if (isDSiMode()) {
+		getConsoleID();
+	}
+
 	// Keep the ARM7 mostly idle
 	while (!exitflag) {
 		if ( 0 == (REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R))) {
@@ -201,10 +209,7 @@ int main() {
 			changeBacklightLevel();
 			fifoSendValue32(FIFO_USER_04, 0);
 		}
-		if (*(u32*)(0x2FFFD0C) == 0x434F4944) {
-			getConsoleID();
-			*(u32*)(0x2FFFD0C) = 0;
-		} else if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
+		if (*(u32*)(0x2FFFD0C) == 0x454D4D43) {
 			sdmmc_nand_cid((u32*)0x2FFD7BC);	// Get eMMC CID
 			*(u32*)(0x2FFFD0C) = 0;
 		}
