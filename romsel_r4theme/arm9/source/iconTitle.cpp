@@ -777,7 +777,9 @@ void getGameInfo(bool isDir, const char* name)
 			isDSiWare = true; // Is a DSiWare game
 		}
 
-		if (memcmp(ndsHeader.gameCode, "KPF", 3) == 0 && (!isDSiMode() || dsiWareBooter || consoleModel > 0)) {
+		if ((memcmp(ndsHeader.gameCode, "KPP", 3) == 0
+		  || memcmp(ndsHeader.gameCode, "KPF", 3) == 0)
+		&& (!isDSiMode() || dsiWareBooter || consoleModel > 0)) {
 			isDSiWare = false;
 		}
 

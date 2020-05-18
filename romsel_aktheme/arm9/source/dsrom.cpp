@@ -220,7 +220,9 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			_saveInfo.dsiTid[1] = header.dsi_tid2;
 		  }
         }
-		if (memcmp(header.gameCode, "KPF", 3) == 0 && (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
+		if ((memcmp(header.gameCode, "KPP", 3) == 0
+		  || memcmp(header.gameCode, "KPF", 3) == 0)
+		&& (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
 			_isDSiWare = EFalse;
 		}
     }
