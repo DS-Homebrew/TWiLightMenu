@@ -52,6 +52,9 @@
 
 extern bool extention(const std::string& filename, const char* ext);
 
+extern int consoleModel;
+extern bool dsiWareBooter;
+
 extern int theme;
 extern int colorMode;
 extern bool animateDsiIcons;
@@ -698,6 +701,9 @@ void getGameInfo(int num, bool isDir, const char* name)
 			 || (ndsHeader.gameCode[0] == 0x42 && ndsHeader.gameCode[1] == 0x38 && ndsHeader.gameCode[2] == 0x38))
 			{ if (ndsHeader.unitCode != 0)
 				isDSiWare[num] = true; // Is a DSiWare game
+			}
+			if (memcmp(ndsHeader.gameCode, "KPF", 3) == 0 && (!isDSiMode() || dsiWareBooter || consoleModel > 0)) {
+				isDSiWare[num] = false;
 			}
 		}
 

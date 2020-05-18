@@ -477,6 +477,10 @@ void getGameInfo(bool isDir, const char *name, int num) {
 			isDSiWare[num] = true; // Is a DSiWare game
 		}
 
+		if (memcmp(ndsHeader.gameCode, "KPF", 3) == 0 && (!isDSiMode() || ms().dsiWareBooter || ms().consoleModel > 0)) {
+			isDSiWare[num] = false;
+		}
+
 		if (isHomebrew[num] == true && num < 40) {
 			if ((ndsHeader.arm9binarySize == 0x98F70 && ndsHeader.arm7binarySize == 0xED94)		// jEnesisDS 0.7.4
 			|| (ndsHeader.arm9binarySize == 0x48950 && ndsHeader.arm7binarySize == 0x74C4)			// SNEmulDS06-WIP2
