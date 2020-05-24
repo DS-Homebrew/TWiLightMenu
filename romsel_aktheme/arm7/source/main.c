@@ -112,6 +112,7 @@ int main() {
 	fifoInit();
 	touchInit();
 		
+	mmInstall(FIFO_MAXMOD);
 	SetYtrigger(80);
 	
 	installSoundFIFO();

@@ -93,6 +93,9 @@
 #define SFN_CHEATS                  "/_nds/TWiLightMenu/extras/usrcheat.dat"
 #define SFN_CHEAT_DATA              "/_nds/nds-bootstrap/cheatData.bin"
 
+#define SFN_SOUND_EFFECTBANK        SFN_UI_DIRECTORY"/sound/sfx.bin"
+#define SFN_SOUND_BG                SFN_UI_DIRECTORY"/sound/bgm.pcm.raw"
+
 class SystemFilenames
 {
     private:
