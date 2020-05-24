@@ -91,12 +91,6 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"YM8", // Gakken Mu Henshuubu Kanshuu - Choujou Genshou Research File
 		"CAI", // Gyakkyou Burai Kaiji - Death or Survival
 		"CMA", // Hoshizora no Comic Garden
-		"YEE", // Inazuma Eleven
-		"BEE", // Inazuma Eleven 2 - Firestorm
-		"BEB", // Inazuma Eleven 2 - Blizzard
-		"BEZ", // Inazuma Eleven 3 - Bomb Blast
-		"BE8", // Inazuma Eleven 3 - Lightning Bolt
-		"BOE", // Inazuma Eleven 3 - Team Ogre Attacks!
 		"YX2", // Kageyama Method - Masu x Masu Pure Hyaku Masu Keisan - Hyaku Masu no Maeni Kore Dayo!
 		"AKW", // Kirby - Squeak Squad
 		"CKN", // Knights in the Nightmare
@@ -139,6 +133,12 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"AXJ", // Dungeon Explorer
 		"YVS", // From the Abyss
 		"CHU", // Harukanaru Toki no Naka de - Yume no Ukihashi
+		"YEE", // Inazuma Eleven
+		"BEE", // Inazuma Eleven 2 - Firestorm
+		"BEB", // Inazuma Eleven 2 - Blizzard
+		"BEZ", // Inazuma Eleven 3 - Bomb Blast
+		"BE8", // Inazuma Eleven 3 - Lightning Bolt
+		"BOE", // Inazuma Eleven 3 - Team Ogre Attacks!
 		"C6C", // Infinite Space
 		"YKW", // Kirby - Super Star Ultra
 		"CKU", // Kumatanchi
@@ -357,7 +357,6 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"CX4", // Tokutenryoku Gakushuu DS - Chuugaku Jitsugi 4 Kyouka
 		"YXK", // Tokutenryoku Gakushuu DS - Chuu 2 Eisuukoku Pack
 		"ATC", // Tom Clancy's Splinter Cell - Chaos Theory
-		"CCU", // Tomodachi Collection
 		"YUD", // Tomodachi Tsukurou! Mahou no Koukan Nikki
 		"AH9", // Tony Hawk's American Sk8land
 		"AWK", // Tony Hawk's Downhill Jam
@@ -399,6 +398,7 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 		"VP4", // Power Pro Kun Pocket 14
 		"ANH", // Practice English
 		"CYA", // Taiheiyou no Arashi DS - Senkan Yamato, Akatsuki ni Shutsugeki Su!
+		"CCU", // Tomodachi Collection
 		"A3A", // Wi-Fi Baken Yosouryoku Training - Umania - 2007 Nendo Ban
 	}},
 	{ 0x100000, {	// 1 MB / 8 Mbit
@@ -413,6 +413,17 @@ static const std::map<uint, std::set<std::string>> saveMap = {
 	{ 0x2000000, {	// 32 MB
 		"UOR", // WarioWare - D.I.Y. (Do It Yourself)
 	}}
+};
+
+static const char saveSizeFixList[][4] = {
+	"YEE", // Inazuma Eleven
+	"BEE", // Inazuma Eleven 2 - Firestorm
+	"BEB", // Inazuma Eleven 2 - Blizzard
+	"BEZ", // Inazuma Eleven 3 - Bomb Blast
+	"BE8", // Inazuma Eleven 3 - Lightning Bolt
+	"BOE", // Inazuma Eleven 3 - Team Ogre Attacks!
+	"CCU", // Tomodachi Collection
+	"AZL", // Wagamama Fashion: Girls Mode/Style Savvy/Nintendo presents: Style Boutique/Namanui Collection: Girls Style
 };
 
 #endif // SAVEMAP_H
