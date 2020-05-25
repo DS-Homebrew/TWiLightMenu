@@ -45,7 +45,7 @@
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/filecopy.h"
-
+#include "sound.h"
 // -- AK End ------------
 
 #include <stdio.h>
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
 
 	irq().vblankStart();
-
+	snd().beginStream();
 	while (1)
 	{
 		timer().updateFps();
@@ -247,6 +247,7 @@ int main(int argc, char **argv)
 		processInput(inputs);
 		swiWaitForVBlank();
 		windowManager().update();
+		snd().updateStream();
 		gdi().present(GE_MAIN);
 	}
 	return 0;
