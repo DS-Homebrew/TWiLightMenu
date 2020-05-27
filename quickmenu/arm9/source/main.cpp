@@ -58,7 +58,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
-int fps = 0;
+int fps = 60;
 int colorMode = 0;
 int blfLevel = 0;
 
