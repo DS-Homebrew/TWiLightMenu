@@ -1289,7 +1289,7 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							if (savesize > 0 || (orgsavesize < savesize && saveSizeFixNeeded)) {
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing

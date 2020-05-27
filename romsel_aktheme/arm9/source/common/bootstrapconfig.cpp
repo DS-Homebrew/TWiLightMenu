@@ -272,7 +272,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 		}
 	}
 
-	if (_saveSize > 0 || (orgsavesize < _saveSize && saveSizeFixNeeded))
+	if ((orgsavesize == 0 && _saveSize > 0) || (orgsavesize < _saveSize && saveSizeFixNeeded))
 	{
 		if (orgsavesize > 0)
 		{

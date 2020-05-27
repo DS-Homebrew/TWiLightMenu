@@ -1635,7 +1635,7 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							if (savesize > 0 || (orgsavesize < savesize && saveSizeFixNeeded)) {
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								clearText();
 								dialogboxHeight = 0;
 								showdialogbox = true;

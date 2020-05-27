@@ -387,7 +387,7 @@ void lastRunROM()
 						}
 					}
 
-					if (savesize > 0 || (orgsavesize < savesize && saveSizeFixNeeded)) {
+					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 						consoleDemoInit();
 						printf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						fadeType = true;
