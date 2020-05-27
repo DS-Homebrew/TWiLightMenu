@@ -686,6 +686,23 @@ void vBlankHandler() {
 			}
 		}
 
+	if (ms().theme == 5) {
+		// Back bubbles
+		for (int i = 0; i < 4; i++) {
+			backBubblesYpos[i]--;
+			if (backBubblesYpos[i] < -16) {
+				backBubblesYpos[i] = backBubblesYpos_def[i];
+			}
+		}
+		// Front bubbles
+		for (int i = 0; i < 3; i++) {
+			frontBubblesYpos[i] -= 2;
+			if (frontBubblesYpos[i] < -32) {
+				frontBubblesYpos[i] = frontBubblesYpos_def[i];
+			}
+		}
+	}
+
 	if (renderFrame) {
 		glBegin2D();
 
@@ -705,10 +722,6 @@ void vBlankHandler() {
 			for (int i = 0; i < 4; i++) {
 				glSprite(bubbleXpos, backBubblesYpos[i], GL_FLIP_NONE, &hblBubbles[3]);
 				bubbleXpos += 64;
-				backBubblesYpos[i]--;
-				if (backBubblesYpos[i] < -16) {
-					backBubblesYpos[i] = backBubblesYpos_def[i];
-				}
 			}
 			// Front bubbles
 			bubbleXpos = 32;
@@ -718,10 +731,6 @@ void vBlankHandler() {
 				glSprite(bubbleXpos, frontBubblesYpos[i]+16, GL_FLIP_NONE, &hblBubbles[6]);
 				glSprite(bubbleXpos+16, frontBubblesYpos[i]+16, GL_FLIP_NONE, &hblBubbles[7]);
 				bubbleXpos += 64;
-				frontBubblesYpos[i] -= 2;
-				if (frontBubblesYpos[i] < -32) {
-					frontBubblesYpos[i] = frontBubblesYpos_def[i];
-				}
 			}
 		}
 
