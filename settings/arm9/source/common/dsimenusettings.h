@@ -128,6 +128,7 @@ class DSiMenuPlusPlusSettings
     int consoleModel;
     int guiLanguage;
 	int titleLanguage;
+    int fps;
     int colorMode;
     int blfLevel;
     int dsiWareExploit;

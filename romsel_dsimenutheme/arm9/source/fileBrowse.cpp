@@ -470,7 +470,6 @@ void displayNowLoading(void) {
 	}
 	snd().updateStream();
 	showProgressIcon = true;
-	controlTopBright = false;
 }
 
 void updateScrollingState(u32 held, u32 pressed) {
@@ -1690,6 +1689,8 @@ string browseForFile(const vector<string> extensionList) {
 	vector<vector<DirEntry>> dirContents(scrn.SIZE);
 
 	getDirectoryContents(dirContents[scrn], extensionList);
+
+	controlTopBright = false;
 
 	while (1) {
 		snd().updateStream();

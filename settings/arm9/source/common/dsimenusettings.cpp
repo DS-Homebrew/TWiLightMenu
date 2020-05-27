@@ -15,6 +15,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     guiLanguage = ELangDefault;
 	titleLanguage = -1;
+	fps = 60;
     colorMode = 0;
     blfLevel = 0;
     dsiWareExploit = 0;
@@ -117,6 +118,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
     // Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);

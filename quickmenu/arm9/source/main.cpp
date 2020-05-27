@@ -58,6 +58,7 @@ bool fadeType = false;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+int fps = 0;
 int colorMode = 0;
 int blfLevel = 0;
 
@@ -183,6 +184,7 @@ void LoadSettings(void) {
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 
 	// Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);

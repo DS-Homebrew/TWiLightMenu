@@ -14,7 +14,8 @@ STRING(GAMESAPPS_SETTINGS, "Games and Apps settings")
 STRING(DESCRIPTION_SCREENSCALESIZE, "Changes screen scaling size.")*/
 
 // GUI settings
-STRING(COLORMODE, "Color mode")
+STRING(FRAMERATE, "Frame Rate")
+STRING(COLORMODE, "Color Mode")
 STRING(BLUELIGHTFILTER, "Blue light filter")
 STRING(WIFILED, "WiFi LED")
 STRING(REFERSD, "Refer to the SD as")
@@ -50,6 +51,8 @@ STRING(RECENT, "Recent")
 STRING(MOST_PLAYED, "Most Played")
 STRING(FILE_TYPE, "File Type")
 STRING(CUSTOM, "Custom")
+
+STRING(DESCRIPTION_FRAMERATE, "Changes how many frames per second are displayed.")
 
 STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect.")
 

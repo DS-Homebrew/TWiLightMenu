@@ -139,6 +139,7 @@ class DSiMenuPlusPlusSettings
     
     int guiLanguage;
 	int titleLanguage;
+    int fps;
     int colorMode;
     int blfLevel;
     bool sdRemoveDetect;

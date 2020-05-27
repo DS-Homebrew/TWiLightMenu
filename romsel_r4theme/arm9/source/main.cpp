@@ -51,6 +51,7 @@ bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+int fps = 0;
 int colorMode = 0;
 int blfLevel = 0;
 
@@ -183,6 +184,7 @@ void LoadSettings(void) {
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -858,7 +860,6 @@ int main(int argc, char **argv) {
 		fontInit();
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		stop();
 	}
 

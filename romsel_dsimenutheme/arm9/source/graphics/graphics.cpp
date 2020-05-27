@@ -174,9 +174,11 @@ int frameOf60fps = 60;
 int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
 int rocketVideo_frameDelay = 0;
-bool rocketVideo_frameDelayEven = true; // For 24FPS
+int frameDelay = 0;
+bool frameDelayEven = true; // For 24FPS
 bool bottomField = false;
 bool rocketVideo_loadFrame = true;
+bool renderFrame = true;
 
 int bubbleYpos = 80;
 int bubbleXpos = 122;
@@ -376,14 +378,55 @@ void reloadDboxPalette() { tex().reloadPalDialogBox(); }
 
 static u8 *rotatingCubesLocation = (u8 *)0x02700000;
 
-void rvidFrameRateHandler(void) {
+void frameRateHandler(void) {
+	frameOf60fps++;
+	if (frameOf60fps > 60) frameOf60fps = 1;
+
+	if (!renderFrame) {
+		frameDelay++;
+		switch (ms().fps) {
+			case 11:
+				renderFrame = (frameDelay == 5+frameDelayEven);
+				break;
+			case 24:
+			//case 25:
+				renderFrame = (frameDelay == 2+frameDelayEven);
+				break;
+			case 48:
+				renderFrame = (frameOf60fps != 3
+							&& frameOf60fps != 8
+							&& frameOf60fps != 13
+							&& frameOf60fps != 18
+							&& frameOf60fps != 23
+							&& frameOf60fps != 28
+							&& frameOf60fps != 33
+							&& frameOf60fps != 38
+							&& frameOf60fps != 43
+							&& frameOf60fps != 48
+							&& frameOf60fps != 53
+							&& frameOf60fps != 58);
+				break;
+			case 50:
+				renderFrame = (frameOf60fps != 3
+							&& frameOf60fps != 9
+							&& frameOf60fps != 16
+							&& frameOf60fps != 22
+							&& frameOf60fps != 28
+							&& frameOf60fps != 34
+							&& frameOf60fps != 40
+							&& frameOf60fps != 46
+							&& frameOf60fps != 51
+							&& frameOf60fps != 58);
+				break;
+			default:
+				renderFrame = (frameDelay == 60/ms().fps);
+				break;
+		}
+	}
+
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
-		frameOf60fps++;
-		if (frameOf60fps > 60) frameOf60fps = 1;
-
-		rocketVideo_frameDelay++;
 		// 50FPS
 		rocketVideo_loadFrame =   (frameOf60fps != 3
 								&& frameOf60fps != 9
@@ -403,13 +446,15 @@ void playRotatingCubesVideo(void) {
 		return;
 
 	if (rocketVideo_loadFrame) {
-		DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-		for (int v = 0; v < 56; v += 2) {
-			dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
-			if (v == 54) {
-				dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
-			} else {
-				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+		if (renderFrame) {
+			DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
+			for (int v = 0; v < 56; v += 2) {
+				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
+				if (v == 54) {
+					dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+				} else {
+					dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
+				}
 			}
 		}
 
@@ -421,7 +466,7 @@ void playRotatingCubesVideo(void) {
 		}
 		bottomField = !bottomField;
 		rocketVideo_frameDelay = 0;
-		rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
+		//rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 		rocketVideo_loadFrame = false;
 	}
 }
@@ -442,8 +487,6 @@ void vBlankHandler() {
 		playRotatingCubesVideo();
 	}
 
-	glBegin2D();
-	{
 		if (fadeType == true) {
 			if (!fadeDelay) {
 				screenBrightness -= 1+(ms().theme<4 && fadeSpeed);
@@ -471,9 +514,9 @@ void vBlankHandler() {
 				fadeDelay = 0;
 			}
 		}
-		if (controlBottomBright)
+		if (controlBottomBright && renderFrame)
 			SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
-		if (controlTopBright)
+		if (controlTopBright && renderFrame)
 			SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 
 		if (showdialogbox) {
@@ -630,6 +673,21 @@ void vBlankHandler() {
 				delayForTitleboxToDropDown = 0;
 			}
 		}
+
+		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
+			if (movingArrowYdirection) {
+				movingArrowYpos += 0.33;
+				if (movingArrowYpos > 67)
+					movingArrowYdirection = false;
+			} else {
+				movingArrowYpos -= 0.33;
+				if (movingArrowYpos < 59)
+					movingArrowYdirection = true;
+			}
+		}
+
+	if (renderFrame) {
+		glBegin2D();
 
 		int bg_R = bottomScreenBrightness / 8;
 		int bg_G = (bottomScreenBrightness / 8) - (3 * ms().blfLevel);
@@ -1068,15 +1126,6 @@ void vBlankHandler() {
 		}
 
 		if (movingApp != -1 && ms().theme==0 && showMovingArrow) {
-			if (movingArrowYdirection) {
-				movingArrowYpos += 0.33;
-				if (movingArrowYpos > 67)
-					movingArrowYdirection = false;
-			} else {
-				movingArrowYpos -= 0.33;
-				if (movingArrowYpos < 59)
-					movingArrowYdirection = true;
-			}
 			glSprite(115, movingArrowYpos, GL_FLIP_NONE, tex().movingArrowImage());
 		}
 	}
@@ -1266,9 +1315,13 @@ void vBlankHandler() {
 		}
 		updateText(false);
 		//}
+		glEnd2D();
+		GFX_FLUSH = 0;
+
+		frameDelay = 0;
+		frameDelayEven = !frameDelayEven;
+		renderFrame = false;
 	}
-	glEnd2D();
-	GFX_FLUSH = 0;
 
 	colonTimer++;
 
@@ -1732,7 +1785,7 @@ void graphicsInit() {
 	tex().drawBatteryImageCached();
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);
-	irqSet(IRQ_VCOUNT, rvidFrameRateHandler);
+	irqSet(IRQ_VCOUNT, frameRateHandler);
 	irqEnable(IRQ_VCOUNT);
 	// consoleDemoInit();
 }
