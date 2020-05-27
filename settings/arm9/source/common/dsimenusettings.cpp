@@ -214,6 +214,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 
     // Customizable UI settings.
+	settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);
 	settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
