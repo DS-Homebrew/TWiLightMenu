@@ -208,7 +208,6 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 	 && (arm7size==0x28464
 	  || arm7size==0x28684
 	  || arm7size==0x286A0
-	  || arm7size==0x286B0
 	  || arm7size==0x289A4
 	  || arm7size==0x289C0
 	  || arm7size==0x289F8

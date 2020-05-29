@@ -293,7 +293,7 @@ void MainWnd::startMenuItemClicked(s16 i)
     else if (START_MENU_ITEM_DELETE == i)
     {
         std::string fullPath = _mainList->getSelectedFullPath();
-        if (fullPath != "")
+        if (fullPath != "" && !ms().preventDeletion)
         {
             bool ret = false;
             ret = deleteFile(fullPath);
@@ -640,7 +640,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
 				//resultText = "Failed to backup custom TwlBg.";
 			} else {
-				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					memcpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen

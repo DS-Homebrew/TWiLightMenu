@@ -51,6 +51,7 @@ bool fadeType = true;		// false = out, true = in
 bool fadeSpeed = true;		// false = slow (for DSi launch effect), true = fast
 bool controlTopBright = true;
 bool controlBottomBright = true;
+int fps = 60;
 int colorMode = 0;
 int blfLevel = 0;
 
@@ -143,6 +144,7 @@ int showMd = 3;
 bool showSnes = true;
 bool showDirectories = true;
 bool showHidden = false;
+bool preventDeletion = false;
 bool animateDsiIcons = false;
 int launcherApp = -1;
 int sysRegion = -1;
@@ -182,6 +184,7 @@ void LoadSettings(void) {
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", true);
 
 	// Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", 0);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", 0);
 	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", -1);
@@ -195,6 +198,7 @@ void LoadSettings(void) {
 	subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", 0);
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", 1);
 	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", 0);
+    preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", 0);
 	if (consoleModel < 2) {
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
@@ -640,7 +644,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 				resultText1 = "Failed to backup custom";
 				resultText2 = "TwlBg.";
 			} else {
-				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -856,7 +860,6 @@ int main(int argc, char **argv) {
 		fontInit();
 		printSmall(false, 64, 32, "fatinitDefault failed!");
 		fadeType = true;
-		for (int i = 0; i < 30; i++) swiWaitForVBlank();
 		stop();
 	}
 
@@ -1609,8 +1612,10 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
-						if ((getFileSize(savepath.c_str()) == 0) && !isHomebrew && (strcmp(game_TID, "NTR") != 0)) {	// Create save if game isn't homebrew
-							int savesize = 524288;	// 512KB (default size for most games)
+						if (!isHomebrew && (strcmp(game_TID, "NTR") != 0)) {
+							// Create or expand save if game isn't homebrew
+							int orgsavesize = getFileSize(savepath.c_str());
+							int savesize = 524288;	// 512KB (default size)
 
 							for (auto i : saveMap) {
 								if (i.second.find(game_TID) != i.second.cend()) {
@@ -1619,22 +1624,37 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							if (savesize > 0) {
+							bool saveSizeFixNeeded = false;
+
+							// TODO: If the list gets large enough, switch to bsearch().
+							for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
+								if (memcmp(game_TID, saveSizeFixList[i], 3) == 0) {
+									// Found a match.
+									saveSizeFixNeeded = true;
+									break;
+								}
+							}
+
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								clearText();
 								dialogboxHeight = 0;
 								showdialogbox = true;
-								printLargeCentered(false, 74, "Save creation");
-								printSmallCentered(false, 90, "Creating save file...");
+								printLargeCentered(false, 74, "Save management");
+								printSmallCentered(false, 90, (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...");
 
-								FILE *pFile = fopen(savepath.c_str(), "wb");
-								if (pFile) {
-									fseek(pFile, savesize - 1, SEEK_SET);
-									fputc('\0', pFile);
-									fclose(pFile);
+								if (orgsavesize > 0) {
+									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
+								} else {
+									FILE *pFile = fopen(savepath.c_str(), "wb");
+									if (pFile) {
+										fseek(pFile, savesize - 1, SEEK_SET);
+										fputc('\0', pFile);
+										fclose(pFile);
+									}
 								}
 								clearText();
-								printLargeCentered(false, 74, "Save creation");
-								printSmallCentered(false, 90, "Save file created!");
+								printLargeCentered(false, 74, "Save management");
+								printSmallCentered(false, 90, (orgsavesize == 0) ? "Save file created!" : "Save file expanded!");
 								for (int i = 0; i < 30; i++) swiWaitForVBlank();
 							}
 						}

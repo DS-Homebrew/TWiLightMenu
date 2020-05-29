@@ -139,6 +139,7 @@ class DSiMenuPlusPlusSettings
     
     int guiLanguage;
 	int titleLanguage;
+    int fps;
     int colorMode;
     int blfLevel;
     bool sdRemoveDetect;
@@ -159,6 +160,7 @@ class DSiMenuPlusPlusSettings
 	bool showSnes;
     bool showDirectories;
     bool showHidden;
+    bool preventDeletion;
     bool showBoxArt;
     bool cacheBoxArt;
     bool animateDsiIcons;

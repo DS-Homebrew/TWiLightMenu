@@ -79,6 +79,7 @@ int main() {
 			TWLVRAM = settingsini.GetInt("NDS-BOOTSTRAP","BOOST_VRAM",0);
 			soundFreq = settingsini.GetInt("NDS-BOOTSTRAP","SOUND_FREQ",0);
 			runCardEngine = settingsini.GetInt("SRLOADER","SLOT1_CARDENGINE",1);
+			EnableSD = settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0);
 
 			//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 			//	consoleOn = true;
@@ -96,12 +97,11 @@ int main() {
 				swiWaitForVBlank();
 			}
 
-			if(settingsini.GetInt("SRLOADER","SLOT1_ENABLESD",0) == 1) {
+			//if(EnableSD) {
 				//if(settingsini.GetInt("SRLOADER","DEBUG",0) == 1) {
 				//	printf("SD access ON\n");		
 				//}
-				EnableSD = true;
-			}
+			//}
 
 			scfgUnlock = settingsini.GetInt("SRLOADER","SLOT1_SCFG_UNLOCK",0);
 

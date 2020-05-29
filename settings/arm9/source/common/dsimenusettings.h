@@ -128,6 +128,7 @@ class DSiMenuPlusPlusSettings
     int consoleModel;
     int guiLanguage;
 	int titleLanguage;
+    int fps;
     int colorMode;
     int blfLevel;
     int dsiWareExploit;
@@ -153,6 +154,7 @@ class DSiMenuPlusPlusSettings
     int sortMethod;
     bool showDirectories;
     bool showHidden;
+    bool preventDeletion;
     bool showBoxArt;
     bool cacheBoxArt;
     bool animateDsiIcons;

@@ -496,6 +496,7 @@ int main(int argc, char **argv)
 	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
 	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
 	guiPage
+		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"60FPS", "50FPS", "30FPS", "24FPS"}, {60, 50, 30, 24})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
 		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {"SELECT Menu", "DS Classic Menu"}, {true, false})
 
@@ -520,6 +521,7 @@ int main(int argc, char **argv)
 		.option(STR_SORT_METHOD, STR_DESCRIPTION_SORT_METHOD, Option::Int(&ms().sortMethod), {STR_ALPHABETICAL, STR_RECENT, STR_MOST_PLAYED, STR_FILE_TYPE, STR_CUSTOM}, {0, 1, 2, 3, 4})
 		.option(STR_DIRECTORIES, STR_DESCRIPTION_DIRECTORIES_1, Option::Bool(&ms().showDirectories), {STR_SHOW, STR_HIDE}, {true, false})
 		.option(STR_SHOW_HIDDEN, STR_DESCRIPTION_SHOW_HIDDEN_1, Option::Bool(&ms().showHidden), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_PREVENT_ROM_DELETION, STR_DESCRIPTION_PREVENT_ROM_DELETION_1, Option::Bool(&ms().preventDeletion), {STR_YES, STR_NO}, {true, false})
 		.option(STR_BOXART, STR_DESCRIPTION_BOXART_1, Option::Bool(&ms().showBoxArt), {STR_SHOW, STR_HIDE}, {true, false});
 	if (isDSiMode()) {
 		guiPage.option(STR_BOXARTMEM, STR_DESCRIPTION_BOXARTMEM, Option::Bool(&ms().cacheBoxArt), {STR_YES, STR_NO}, {true, false});

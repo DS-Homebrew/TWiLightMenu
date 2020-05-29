@@ -351,7 +351,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 				resultText1 = "Failed to backup custom";
 				resultText2 = "TwlBg.";
 			} else {
-				if (rename("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
+				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
 					tonccpy((u32 *)0x02000300, sr_data_srllastran, 0x020);
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
@@ -1265,8 +1265,9 @@ int main(int argc, char **argv) {
 						}
 						std::string ramdiskpath = romFolderNoSlash + "/ramdisks/" + ramdiskname;
 
-						if ((getFileSize(savepath.c_str()) == 0) && !isHomebrew[CURPOS] && (strcmp(gameTid[CURPOS], "NTR") != 0))
-						{ // Create save if game isn't homebrew
+						if (!isHomebrew[CURPOS] && (strcmp(gameTid[CURPOS], "NTR") != 0))
+						{ // Create or expand save if game isn't homebrew
+							int orgsavesize = getFileSize(savepath.c_str());
 							int savesize = 524288; // 512KB (default size for most games)
 
 							for (auto i : saveMap) {
@@ -1276,7 +1277,18 @@ int main(int argc, char **argv) {
 								}
 							}
 
-							if (savesize > 0) {
+							bool saveSizeFixNeeded = false;
+
+							// TODO: If the list gets large enough, switch to bsearch().
+							for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
+								if (memcmp(gameTid[CURPOS], saveSizeFixList[i], 3) == 0) {
+									// Found a match.
+									saveSizeFixNeeded = true;
+									break;
+								}
+							}
+
+							if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 								if (ms().theme == 5) displayGameIcons = false;
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
@@ -1287,7 +1299,7 @@ int main(int argc, char **argv) {
 									printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
 									printSmall(false, 0, 34, "the console's lid.", Alignment::center);
 								}
-								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), "Creating save file...", Alignment::center);
+								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center);
 
 								if (ms().theme != 4 && ms().theme != 5) {
 									fadeSpeed = true; // Fast fading
@@ -1295,15 +1307,19 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = true;
 
-								FILE *pFile = fopen(savepath.c_str(), "wb");
-								if (pFile) {
-									fseek(pFile, savesize - 1, SEEK_SET);
-									fputc('\0', pFile);
-									fclose(pFile);
+								if (orgsavesize > 0) {
+									fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
+								} else {
+									FILE *pFile = fopen(savepath.c_str(), "wb");
+									if (pFile) {
+										fseek(pFile, savesize - 1, SEEK_SET);
+										fputc('\0', pFile);
+										fclose(pFile);
+									}
 								}
 								showProgressIcon = false;
 								clearText();
-								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), "Save file created!", Alignment::center);
+								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center);
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}

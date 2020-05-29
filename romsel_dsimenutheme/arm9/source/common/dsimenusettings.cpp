@@ -27,6 +27,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     guiLanguage = ELangDefault;
 	titleLanguage = -1;
+	fps = 60;
     colorMode = 0;
     blfLevel = 0;
     sdRemoveDetect = true;
@@ -51,6 +52,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showBoxArt = true;
     cacheBoxArt = true;
     animateDsiIcons = true;
+    preventDeletion = false;
     sysRegion = -1;
     launcherApp = -1;
     secondaryAccess = false;
@@ -104,7 +106,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
 void DSiMenuPlusPlusSettings::loadSettings()
 {
-	printf("ms().loadSettings()\n");
+	//printf("ms().loadSettings()\n");
     CIniFile settingsini(settingsinipath);
 
     // UI settings.
@@ -133,6 +135,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
     // Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
@@ -173,6 +176,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
+    preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	if (consoleModel < 2) {
 		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
 		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);

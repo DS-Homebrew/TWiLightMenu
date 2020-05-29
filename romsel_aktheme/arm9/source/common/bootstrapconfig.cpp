@@ -254,15 +254,40 @@ void BootstrapConfig::createSaveFileIfNotExists()
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
 	}
 
-	if (access(savepath.c_str(), F_OK) == 0)
-		return;
+	int orgsavesize = 0;
+    FILE* sourceFile = fopen(savepath.c_str(), "rb");
+	fseek(sourceFile, 0, SEEK_END);
+	orgsavesize = ftell(sourceFile);			// Get file size
+	fseek(sourceFile, 0, SEEK_SET);
+	fclose(sourceFile);
 
-	FILE *pFile = fopen(savepath.c_str(), "wb");
-	if (pFile)
+	bool saveSizeFixNeeded = false;
+
+	// TODO: If the list gets large enough, switch to bsearch().
+	for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
+		if (memcmp(_gametid.c_str(), saveSizeFixList[i], 3) == 0) {
+			// Found a match.
+			saveSizeFixNeeded = true;
+			break;
+		}
+	}
+
+	if ((orgsavesize == 0 && _saveSize > 0) || (orgsavesize < _saveSize && saveSizeFixNeeded))
 	{
-		fseek(pFile, _saveSize - 1, SEEK_SET);
-		fputc('\0', pFile);
-		fclose(pFile);
+		if (orgsavesize > 0)
+		{
+			fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", _saveSize);
+		}
+		else
+		{
+			FILE *pFile = fopen(savepath.c_str(), "wb");
+			if (pFile)
+			{
+				fseek(pFile, _saveSize - 1, SEEK_SET);
+				fputc('\0', pFile);
+				fclose(pFile);
+			}
+		}
 	}
 }
 

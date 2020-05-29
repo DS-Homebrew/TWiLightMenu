@@ -365,7 +365,8 @@ void lastRunROM()
 					savepath = ReplaceAll(savepath, "fat:/", "sd:/");
 				}
 
-				if ((getFileSize(savepath.c_str()) == 0) && (strcmp(game_TID, "###") != 0) && (strcmp(game_TID, "NTR") != 0)) {
+				if ((strcmp(game_TID, "###") != 0) && (strcmp(game_TID, "NTR") != 0)) {
+					int orgsavesize = getFileSize(savepath.c_str());
 					int savesize = 524288;	// 512KB (default size for most games)
 
 					for (auto i : saveMap) {
@@ -375,18 +376,33 @@ void lastRunROM()
 						}
 					}
 
-					if (savesize > 0) {
+					bool saveSizeFixNeeded = false;
+
+					// TODO: If the list gets large enough, switch to bsearch().
+					for (unsigned int i = 0; i < sizeof(saveSizeFixList) / sizeof(saveSizeFixList[0]); i++) {
+						if (memcmp(game_TID, saveSizeFixList[i], 3) == 0) {
+							// Found a match.
+							saveSizeFixNeeded = true;
+							break;
+						}
+					}
+
+					if ((orgsavesize == 0 && savesize > 0) || (orgsavesize < savesize && saveSizeFixNeeded)) {
 						consoleDemoInit();
-						printf("Creating save file...\n");
+						printf((orgsavesize == 0) ? "Creating save file...\n" : "Expanding save file...\n");
 						fadeType = true;
 
-						FILE *pFile = fopen(savepath.c_str(), "wb");
-						if (pFile) {
-							fseek(pFile, savesize - 1, SEEK_SET);
-							fputc('\0', pFile);
-							fclose(pFile);
+						if (orgsavesize > 0) {
+							fsizeincrease(savepath.c_str(), sdFound() ? "sd:/_nds/TWiLightMenu/temp.sav" : "fat:/_nds/TWiLightMenu/temp.sav", savesize);
+						} else {
+							FILE *pFile = fopen(savepath.c_str(), "wb");
+							if (pFile) {
+								fseek(pFile, savesize - 1, SEEK_SET);
+								fputc('\0', pFile);
+								fclose(pFile);
+							}
 						}
-						printf("Save file created!\n");
+						printf((orgsavesize == 0) ? "Save file created!\n" : "Save file expanded!\n");
 
 						for (int i = 0; i < 30; i++) {
 							swiWaitForVBlank();

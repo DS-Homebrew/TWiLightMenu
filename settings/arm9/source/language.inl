@@ -14,7 +14,8 @@ STRING(GAMESAPPS_SETTINGS, "Games and Apps settings")
 STRING(DESCRIPTION_SCREENSCALESIZE, "Changes screen scaling size.")*/
 
 // GUI settings
-STRING(COLORMODE, "Color mode")
+STRING(FRAMERATE, "Frame Rate")
+STRING(COLORMODE, "Color Mode")
 STRING(BLUELIGHTFILTER, "Blue light filter")
 STRING(WIFILED, "WiFi LED")
 STRING(REFERSD, "Refer to the SD as")
@@ -39,6 +40,7 @@ STRING(LAUNCHERAPP, "SysNAND Launcher")
 STRING(SYSTEMSETTINGS, "System Settings")
 STRING(REPLACEDSIMENU, "Replace DSi Menu")
 STRING(RESTOREDSIMENU, "Restore DSi Menu")
+STRING(PREVENT_ROM_DELETION, "Prevent ROM hiding and deletion")
 
 STRING(SHOW, "Show")
 STRING(HIDE, "Hide")
@@ -49,6 +51,8 @@ STRING(RECENT, "Recent")
 STRING(MOST_PLAYED, "Most Played")
 STRING(FILE_TYPE, "File Type")
 STRING(CUSTOM, "Custom")
+
+STRING(DESCRIPTION_FRAMERATE, "Changes how many frames per second are displayed.")
 
 STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect.")
 
@@ -84,6 +88,8 @@ STRING(DESCRIPTION_SORT_METHOD, "Changes whether to sort alphabetically, by rece
 STRING(DESCRIPTION_DIRECTORIES_1, "If you're in a folder where most of your games are, it is safe to hide directories/folders.")
 
 STRING(DESCRIPTION_SHOW_HIDDEN_1, "If turned on, whether an app is set to hidden or not will be ignored and it will be displayed anyways.")
+
+STRING(DESCRIPTION_PREVENT_ROM_DELETION_1, "When turned on, ROM hiding/deletion is disabled. Also note this prevents un-hiding as well.")
 
 STRING(DESCRIPTION_SHOW_NDS, "Display Nintendo DS/DSi ROMs in the ROM list.")
 
@@ -190,7 +196,7 @@ STRING(DESCRIPTION_DSIWAREBOOTER, "Select which app boots launched DSiWare apps 
 STRING(DESCRIPTION_EXPANDROMSPACE_DSI, "Extends the ROM space in RAM from 8MB to 12MB, or for SDK5 games, allows 12MB (or lower) ROMs to be loaded into RAM. ")
 STRING(DESCRIPTION_EXPANDROMSPACE_3DS, "Extends the ROM space in RAM from 24MB to 28MB, or for SDK5 games, 16MB to 28MB. ")
 STRING(DESCRIPTION_EXPANDROMSPACE_2, "Breaks a few games that fit in RAM.")
-STRING(DESCRIPTION_CACHEBLOCKSIZE, "Depending on the side, some areas in DS(i) games will load slightly faster or slower.")
+STRING(DESCRIPTION_CACHEBLOCKSIZE, "Depending on the size, some areas in DS(i) games will load slightly faster or slower.")
 STRING(DESCRIPTION_SNDFREQ_1, "32.73kHz is original quality, 47.61kHz is high quality. Does not affect retail Slot-1 cards.")
 STRING(DESCRIPTION_SLOT1LAUNCHMETHOD_1, "Change this if some Slot-1 cards are not booting. Please note the reboot method will not use your set language or CPU speed.")
 STRING(DESCRIPTION_BOOTSTRAP_1, "Pick release or nightly bootstrap")

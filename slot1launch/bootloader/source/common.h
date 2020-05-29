@@ -25,14 +25,36 @@
 #define resetCpu() \
 		__asm volatile("swi 0x000000")
 
-enum {	ERR_NONE=0x00, ERR_STS_CLR_MEM=0x01, ERR_STS_LOAD_BIN=0x02, ERR_STS_HOOK_BIN=0x03, ERR_STS_START=0x04,
-		// initCard error codes:
-		ERR_LOAD_NORM=0x11, ERR_LOAD_OTHR=0x12, ERR_SEC_NORM=0x13, ERR_SEC_OTHR=0x14, ERR_LOGO_CRC=0x15, ERR_HEAD_CRC=0x16,
-		// hookARM7Binary error codes:
-		ERR_NOCHEAT=0x21, ERR_HOOK=0x22,
-	} ERROR_CODES;
+// ERROR_CODES
+//enum {
+#define ERR_NONE 0x00
+#define ERR_STS_CLR_MEM 0x01
+#define ERR_STS_LOAD_BIN 0x02
+#define ERR_STS_HOOK_BIN 0x03
+#define ERR_STS_START 0x04
+// initCard error codes:
+#define ERR_LOAD_NORM 0x11
+#define ERR_LOAD_OTHR 0x12
+#define ERR_SEC_NORM 0x13
+#define ERR_SEC_OTHR 0x14
+#define ERR_LOGO_CRC 0x15
+#define ERR_HEAD_CRC 0x16
+// hookARM7Binary error codes:
+#define ERR_NOCHEAT 0x21
+#define ERR_HOOK 0x22
+//};
 
-enum {ARM9_BOOT, ARM9_START, ARM9_MEMCLR, ARM9_READY, ARM9_BOOTBIN, ARM9_DISPERR, ARM9_SETSCFG} ARM9_STATE;
+//ARM9_STATE
+//enum {
+#define ARM9_BOOT 0
+#define ARM9_START 1
+#define ARM9_MEMCLR 2
+#define ARM9_READY 3
+#define ARM9_BOOTBIN 4
+#define ARM9_DISPERR 5
+#define ARM9_SETSCFG 6
+//};
+
 extern tNDSHeader* ndsHeader;
 extern bool dsiModeConfirmed;
 extern bool arm9_boostVram;

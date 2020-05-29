@@ -15,6 +15,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 
     guiLanguage = ELangDefault;
 	titleLanguage = -1;
+	fps = 60;
     colorMode = 0;
     blfLevel = 0;
     dsiWareExploit = 0;
@@ -44,6 +45,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     showBoxArt = true;
     cacheBoxArt = true;
     animateDsiIcons = true;
+	preventDeletion = false;
     sysRegion = -1;
     launcherApp = -1;
     secondaryAccess = false;
@@ -116,6 +118,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
 
     // Customizable UI settings.
+	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
 	colorMode = settingsini.GetInt("SRLOADER", "COLOR_MODE", colorMode);
 	blfLevel = settingsini.GetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	dsiWareExploit = settingsini.GetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
@@ -148,6 +151,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
+    preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
@@ -210,6 +214,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
 
     // Customizable UI settings.
+	settingsini.SetInt("SRLOADER", "FRAME_RATE", fps);
 	settingsini.SetInt("SRLOADER", "COLOR_MODE", colorMode);
 	settingsini.SetInt("SRLOADER", "BLUE_LIGHT_FILTER_LEVEL", blfLevel);
 	settingsini.SetInt("SRLOADER", "DSIWARE_EXPLOIT", dsiWareExploit);
@@ -243,6 +248,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
+    settingsini.SetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     settingsini.SetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);

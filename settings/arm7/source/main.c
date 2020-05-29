@@ -60,6 +60,7 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	resyncClock();
 	if(fifoCheckValue32(FIFO_USER_01)) {
 		soundFadeOut();
 	} else {
@@ -148,7 +149,6 @@ int main() {
 			}
 			rebootTimer++;
 		}
-		resyncClock();
 		swiWaitForVBlank();
 	}
 	return 0;

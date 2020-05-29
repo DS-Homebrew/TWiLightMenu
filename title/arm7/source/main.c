@@ -74,6 +74,7 @@ void ReturntoDSiMenu() {
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
 //---------------------------------------------------------------------------------
+	resyncClock();
 	if(fifoGetValue32(FIFO_USER_01) == 10) {
 		i2cWriteRegister(0x4A, 0x71, 0x01);
 		fifoSendValue32(FIFO_USER_01, 0);
@@ -172,7 +173,6 @@ int main() {
 			runFrameRateHack = true;
 			fifoSendValue32(FIFO_USER_05, 0);
 		}
-		resyncClock();
 		swiWaitForVBlank();
 	}
 	return 0;

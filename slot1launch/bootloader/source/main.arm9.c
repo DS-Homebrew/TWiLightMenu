@@ -113,7 +113,7 @@ void SetBrightness(u8 screen, s8 bright) {
 	if (bright > 31) {
 		bright = 31;
 	}
-	*(u16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
+	*(vu16*)(0x0400006C + (0x1000 * screen)) = bright + mode;
 }
 
 /*-------------------------------------------------------------------------
@@ -213,10 +213,6 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	WRAM_CR = 0x03;
 	REG_EXMEMCNT = 0xE880;
 
-	if (arm9_runCardEngine) {
-		initMBKARM9();
-	}
-
 	arm9_stateFlag = ARM9_START;
 
 	REG_IME = 0;
@@ -286,8 +282,8 @@ void __attribute__((target("arm"))) arm9_main (void) {
 	VRAM_I_CR = 0;
 	REG_POWERCNT = 0x820F;
 
-	*(u16*)0x0400006C |= BIT(14);
-	*(u16*)0x0400006C &= BIT(15);
+	*(vu16*)0x0400006C |= BIT(14);
+	*(vu16*)0x0400006C &= BIT(15);
 	SetBrightness(0, 0);
 	SetBrightness(1, 0);
 
@@ -302,6 +298,9 @@ void __attribute__((target("arm"))) arm9_main (void) {
 			}
 		}
 		if (arm9_stateFlag == ARM9_SETSCFG) {
+			if (arm9_runCardEngine) {
+				initMBKARM9();
+			}
 			if (dsiModeConfirmed) {
 				if (arm9_isSdk5 && ndsHeader->unitCode != 0) {
 					ROMisDsiExclusive(ndsHeader) ? initMBKARM9() : initMBKARM9_dsiEnhanced();
