@@ -93,7 +93,7 @@ FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
 		questionMark = getCharIndex('?');
 
 		// Allocate character buffer
-		characterBuffer = std::vector<u8>(tileWidth * tileHeight + 2);
+		characterBuffer = std::vector<u8>(tileWidth * tileHeight);
 	}
 }
 
@@ -180,18 +180,13 @@ void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align)
 			continue;
 		}
 
-		bool p1 = 0;
-		if(x % 2) {
-			x--;
-			p1 = 1;
-		}
 		u16 index = getCharIndex(c);
 		for(int i = 0; i < tileSize; i++) {
 			u8 tile = fontTiles[i + (index * tileSize)];
-			characterBuffer[(i * 4) + p1]     = (tile >> 6 & 3);
-			characterBuffer[(i * 4) + 1 + p1] = (tile >> 4 & 3);
-			characterBuffer[(i * 4) + 2 + p1] = (tile >> 2 & 3);
-			characterBuffer[(i * 4) + 3 + p1] = (tile      & 3);
+			characterBuffer[(i * 4)]     = (tile >> 6 & 3);
+			characterBuffer[(i * 4) + 1] = (tile >> 4 & 3);
+			characterBuffer[(i * 4) + 2] = (tile >> 2 & 3);
+			characterBuffer[(i * 4) + 3] = (tile      & 3);
 		}
 
 		if(x + fontWidths[(index * 3) + 2] > 256)
@@ -199,9 +194,9 @@ void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align)
 
 		u8 *dst = (u8*)bgGetGfxPtr(2) + x + fontWidths[(index * 3)];
 		for(int i = 0; i < tileHeight; i++) {
-			dmaCopyHalfWordsAsynch(1, &characterBuffer[i * tileWidth], dst + ((y + i) * 256), tileWidth + 1);
+			tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
 		}
 
-		x += fontWidths[(index * 3) + 2] + p1;
+		x += fontWidths[(index * 3) + 2];
 	}
 }
