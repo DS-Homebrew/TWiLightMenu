@@ -150,7 +150,7 @@ uint FontGraphic::calcWidth(std::u16string_view text) {
 	return x;
 }
 
-void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
+ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left: {
