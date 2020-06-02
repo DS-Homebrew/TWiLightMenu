@@ -339,7 +339,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-void runNds9 (const char* filename, bool dldiPatchNds) {
+void runNds9i (const char* filename, bool dldiPatchNds) {
 	consoleClear();
 	printf ("Now loading...\n");
 	FILE* ndsFile = fopen(filename, "rb");
@@ -458,7 +458,7 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 	bool loadFromRam = runNds9(filename);
 
 	if (isDSiMode()) {
-		runNds9(filename, true);
+		runNds9i(filename, true);
 	}
 
 	bool havedsiSD = false;
