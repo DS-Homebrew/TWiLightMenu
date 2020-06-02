@@ -30,6 +30,7 @@
 	.global argSize
 	.global dsiSD
 	.global dsiMode
+	.global loadFromRam
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -54,6 +55,8 @@ dldiOffset:
 dsiSD:
 	.word	0
 dsiMode:
+	.word	0
+loadFromRam:
 	.word	0
 
 startUp:

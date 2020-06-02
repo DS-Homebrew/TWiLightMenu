@@ -32,6 +32,7 @@
 	.global dsiMode
 	.global clearMasterBright
 	.global dsMode
+	.global loadFromRam
 @---------------------------------------------------------------------------------
 	.align	4
 	.arm
@@ -60,6 +61,8 @@ dsiMode:
 clearMasterBright:
 	.word	0
 dsMode:
+	.word	0
+loadFromRam:
 	.word	0
 
 startUp:

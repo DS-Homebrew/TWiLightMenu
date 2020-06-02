@@ -240,7 +240,7 @@ u8 dsiFlags;
 
 void loadBinary_ARM7 (u32 fileCluster)
 {
-	if (dsiMode && loadFromRam) {
+	if (loadFromRam) {
 		ARM9_SRC = *(u32*)(TWL_HEAD+0x20);
 		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
 		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
@@ -250,8 +250,8 @@ void loadBinary_ARM7 (u32 fileCluster)
 
 		ROM_TID = *(u32*)(TWL_HEAD+0xC);
 
-		tonccpy(ARM9_DST, (char*)0x02800000, ARM9_LEN);
-		tonccpy(ARM7_DST, (char*)0x02B80000, ARM7_LEN);
+		tonccpy(ARM9_DST, (char*)(dsiMode ? 0x02800000 : 0x09000000), ARM9_LEN);
+		tonccpy(ARM7_DST, (char*)(dsiMode ? 0x02B80000 : 0x09380000), ARM7_LEN);
 
 		// first copy the header to its proper location, excluding
 		// the ARM9 start address, so as not to start it
@@ -261,19 +261,23 @@ void loadBinary_ARM7 (u32 fileCluster)
 		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
 
 		dsiFlags = *(u8*)(TWL_HEAD+0x1BF);
-		//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
-		char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
-		u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
-		//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
-		char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
-		u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
+		if (!dsMode && dsiMode && (*(u8*)(TWL_HEAD+0x12) > 0))
+		{
+			//char* ARM9i_SRC = (char*)*(u32*)(TWL_HEAD+0x1C0);
+			char* ARM9i_DST = (char*)*(u32*)(TWL_HEAD+0x1C8);
+			u32 ARM9i_LEN = *(u32*)(TWL_HEAD+0x1CC);
+			//char* ARM7i_SRC = (char*)*(u32*)(TWL_HEAD+0x1D0);
+			char* ARM7i_DST = (char*)*(u32*)(TWL_HEAD+0x1D8);
+			u32 ARM7i_LEN = *(u32*)(TWL_HEAD+0x1DC);
 
-		if (ARM9i_LEN)
-			tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
-		if (ARM7i_LEN)
-			tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
+			if (ARM9i_LEN)
+				tonccpy(ARM9i_DST, (char*)0x02C00000, ARM9i_LEN);
+			if (ARM7i_LEN)
+				tonccpy(ARM7i_DST, (char*)0x02C80000, ARM7i_LEN);
+		}
 
-		toncset((void*)0x02800000, 0, 0x500000);
+		if (dsiMode)
+			toncset((void*)0x02800000, 0, 0x500000);
 
 		return;
 	}
@@ -522,7 +526,7 @@ int main (void) {
 	sdRead = (dsiSD && dsiMode);
 #endif
 	u32 fileCluster = storedFileCluster;
-	if (!dsiMode || !loadFromRam) {
+	if (!loadFromRam) {
 		// Init card
 		if(!FAT_InitFiles(initDisc))
 		{
