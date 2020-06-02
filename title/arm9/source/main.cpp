@@ -892,7 +892,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	if (ms().autorun || ms().showlogo)
+	if (ms().showlogo)
 	{
 		if (!soundBankLoaded) {
 			// Load sound bank into memory
