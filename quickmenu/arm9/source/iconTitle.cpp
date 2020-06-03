@@ -920,10 +920,14 @@ void titleUpdate(int num, bool isDir, const char* name)
 	 || extention(name, ".gen")
 	 || extention(name, ".smc")
 	 || extention(name, ".sfc")
-	 || extention(name, ".a26")
-	 || extention(name, ".pce"))
+	 || extention(name, ".a26"))
 	{
 		writeBannerText(num, 0, name, "", "");
+	}
+	else
+	if (extention(name, ".pce"))
+	{
+		writeBannerText(num, 0, "NitroGrafx", "", "");
 	}
 	else
 	{

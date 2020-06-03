@@ -1124,7 +1124,7 @@ int main(int argc, char **argv) {
 			iconUpdate (0, false, filename[0].c_str());
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26")) {
+		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26") || extention(filename[0], ".pce")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".gba")) {
