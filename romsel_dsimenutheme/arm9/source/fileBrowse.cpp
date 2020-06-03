@@ -2247,7 +2247,7 @@ string browseForFile(const vector<string> extensionList) {
 						touchRead(&touch);
 						snd().updateStream();
 						if (!(keysHeld() & KEY_TOUCH)) {
-							gameTapped = true;
+							gameTapped = showSTARTborder;
 							break;
 						} else if (touch.px < startTouch.px - 20 ||
 								   touch.px > startTouch.px + 20)
@@ -2525,10 +2525,8 @@ string browseForFile(const vector<string> extensionList) {
 				ms().cursorPosition[ms().secondaryDevice] = 39;
 
 			// Startup...
-			if (((pressed & KEY_A) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
-				 !titleboxXmoveright) ||
-				((pressed & KEY_START) && bannerTextShown && showSTARTborder && !titleboxXmoveleft &&
-				 !titleboxXmoveright) ||
+			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder &&
+				!titleboxXmoveleft && !titleboxXmoveright) ||
 				(gameTapped)) {
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
