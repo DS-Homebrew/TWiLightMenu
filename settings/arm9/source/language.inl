@@ -92,20 +92,14 @@ STRING(DESCRIPTION_SHOW_HIDDEN_1, "If turned on, whether an app is set to hidden
 STRING(DESCRIPTION_PREVENT_ROM_DELETION_1, "When turned on, ROM hiding/deletion is disabled. Also note this prevents un-hiding as well.")
 
 STRING(DESCRIPTION_SHOW_NDS, "Display Nintendo DS/DSi ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_VIDEO, "Display Rocket Video and MPEG4 files in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_NES, "Display NES and Famicom Disk System ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_A26, "Display Atari 2600 ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_GB, "Display GameBoy, Super GB, and GBC ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_SMS, "Display Sega Master System and Game Gear ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_MD, "Display Sega Genesis/Mega Drive ROMs in the ROM list.")
-
 STRING(DESCRIPTION_SHOW_SNES, "Display Super Nintendo/Super Famicom ROMs in the ROM list.")
+STRING(DESCRIPTION_SHOW_PCE, "Display PC Engine/TurboGrafx-16 ROMs in the ROM list.")
 
 STRING(DESCRIPTION_BOXART_1, "Displayed in the top screen of the DSi/3DS theme.")
 

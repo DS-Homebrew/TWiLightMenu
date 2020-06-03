@@ -189,6 +189,10 @@ void MainList::setupExtnames()
         _extnameFilter.emplace_back(std::string(".smc"));
         _extnameFilter.emplace_back(std::string(".sfc"));
     }
+    if (ms().showPce)
+    {
+        _extnameFilter.emplace_back(std::string(".pce"));
+    }
 }
 
 void MainList::addDirEntry(const std::string row1,
@@ -389,7 +393,7 @@ bool MainList::enterDir(const std::string &dirName)
                     rominfo.MayBeArgv(filename);
                     allowUnknown = true;
                 }
-                else if (".plg" == extName || ".rvid" == extName || ".mp4" == extName || ".a26" == extName)
+                else if (".plg" == extName || ".rvid" == extName || ".mp4" == extName || ".a26" == extName || ".pce" == extName)
                 {
                     rominfo.setBanner("plg", ds2plg_banner_bin);
                 }

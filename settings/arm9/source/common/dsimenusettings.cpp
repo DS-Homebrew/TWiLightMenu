@@ -38,6 +38,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	showSmsGg = true;
 	showMd = 3;
 	showSnes = true;
+	showPce = true;
 	updateRecentlyPlayedList = true;
     sortMethod = 0;
     showDirectories = true;
@@ -116,6 +117,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
 	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
+	showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
 
     // Customizable UI settings.
 	fps = settingsini.GetInt("SRLOADER", "FRAME_RATE", fps);
@@ -244,6 +246,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
 	settingsini.SetInt("SRLOADER", "SHOW_MDGEN", showMd);
 	settingsini.SetInt("SRLOADER", "SHOW_SNES", showSnes);
+	settingsini.SetInt("SRLOADER", "SHOW_PCE", showPce);
     settingsini.SetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
     settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);

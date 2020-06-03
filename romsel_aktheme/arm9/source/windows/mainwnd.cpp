@@ -1620,6 +1620,45 @@ void MainWnd::launchSelected()
 			}
 		}
 	}
+
+    // PCE Launch
+    if (extension == ".pce")
+	{
+        ms().homebrewArg = fullPath;
+        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().saveSettings();
+		if (ms().secondaryDevice)
+        {
+			ndsToBoot = NITROGRAFX_ROM;
+			if(access(ndsToBoot, F_OK) != 0) {
+				ndsToBoot = NITROGRAFX_FC;
+			}
+
+            bootFile(ndsToBoot, fullPath);
+		}
+		else
+		{
+			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
+
+			std::vector<char*> argarray;
+			argarray.push_back(strdup(bootstrapPath.c_str()));
+			argarray.at(0) = (char*)bootstrapPath.c_str();
+
+			LoaderConfig snes(bootstrapPath, BOOTSTRAP_INI);
+			snes.option("NDS-BOOTSTRAP", "NDS_PATH", NITROGRAFX_ROM)
+			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
+			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
+			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
+				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
+			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+			if (int err = snes.launch(argarray.size(), (const char **)&argarray[0], false))
+			{
+				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+				messageBox(this, LANG("game launch", "nds-bootstrap error"), errorString, MB_OK);
+			}
+		}
+	}
 }
 
 void MainWnd::onKeyBPressed()
