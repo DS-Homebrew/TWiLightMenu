@@ -36,6 +36,7 @@ Helpful information:
 #include <nds/ndstypes.h>
 #include <nds/dma.h>
 #include <nds/system.h>
+#include <nds/ipc.h>
 #include <nds/interrupts.h>
 #include <nds/timers.h>
 #define ARM9
@@ -197,6 +198,11 @@ void resetMemory_ARM7 (void)
 		TIMER_CR(i) = 0;
 		TIMER_DATA(i) = 0;
 	}
+
+	// Clear out FIFO
+	REG_IPC_SYNC = 0;
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
+	REG_IPC_FIFO_CR = 0;
 
 	arm7clearRAM();
 
