@@ -31,6 +31,7 @@
 #define CONSOLE_SCREEN_HEIGHT 24
 
 extern bool fadeType;
+extern bool fadeColor;
 bool controlTopBright = true;
 bool controlBottomBright = true;
 int screenBrightness = 31;
@@ -137,8 +138,8 @@ void vBlankHandler()
 		screenBrightness++;
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
-	if (controlTopBright) SetBrightness(0, screenBrightness);
-	if (controlBottomBright) SetBrightness(1, screenBrightness);
+	if (controlTopBright) SetBrightness(0, fadeColor ? screenBrightness : -screenBrightness);
+	if (controlBottomBright) SetBrightness(1, fadeColor ? screenBrightness : -screenBrightness);
 	if (twlMenuSplash) {
 		twlMenuVideo_topGraphicRender();
 	}

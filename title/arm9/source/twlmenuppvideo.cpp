@@ -57,6 +57,9 @@ extern u16 videoImageBuffer[39][256*144];
 
 extern u16 convertToDsBmp(u16 val);
 
+extern bool fadeType;
+extern bool fadeColor;
+extern bool controlTopBright;
 static char videoFrameFilename[256];
 
 static FILE* videoFrameFile;
@@ -584,6 +587,16 @@ void twlMenuVideo(void) {
 		sprintf(logoPath, "nitro:/graphics/logo_twlmenupp.bmp");
 	}
 
+	for (int i = 0; i < 30; i++) {
+		scanKeys();
+		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
+		swiWaitForVBlank();
+	}
+
+	controlTopBright = false;
+	fadeColor = false;
+	fadeType = false;
+
 	while (!videoDonePlaying)
 	{
 		scanKeys();
@@ -616,6 +629,7 @@ void twlMenuVideo(void) {
 	}
 	fclose(videoFrameFile);
 
+	fadeType = true;
 	changeBgAlpha = true;
 
 	// Load TWLMenu++ BG
@@ -702,7 +716,7 @@ void twlMenuVideo(void) {
 	}
 	fclose(videoFrameFile);
 
-	for (int i = 0; i < 60 * 2; i++)
+	for (int i = 0; i < (60 * 2)+30; i++)
 	{
 		scanKeys();
 		if ((keysHeld() & KEY_START) || (keysHeld() & KEY_SELECT) || (keysHeld() & KEY_TOUCH)) return;
