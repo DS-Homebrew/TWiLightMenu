@@ -19,12 +19,12 @@ jobs:
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
         sudo apt update
         # Install haveged to ensure enough entropy
-        sudo apt install p7zip-full jq haveged
+        sudo apt install p7zip-full jq haveged build-essential
         sudo dpkg -i pacman.deb
 
         sudo dkp-pacman -Sy
         sudo dkp-pacman -S nds-dev --noconfirm
-      displayName: 'Installing devkitPro and 7zip'
+      displayName: 'Installing libraries'
 
     - script: |
         export DEVKITPRO="/opt/devkitpro"
@@ -50,6 +50,17 @@ jobs:
         echo '##vso[task.setvariable variable=COMMIT_MESSAGE;isOutput=true]'$(git log --pretty=format:"%an - %s" -1)
       name: makeCias
       displayName: 'Make booter and TWiLightMenu CIAs'
+
+    - script: |
+        cd booter_fc/r4_menu_dat/
+        cp "../booter_fc.nds" "_DS_MENU.nds"
+        ./dlditool r4_sd.dldi _DS_MENU.ds
+
+        g++ -o r4enc r4enc.cpp
+        ./r4enc _DS_MENU.ds
+        mv "_DS_MENU.ds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+      name: makeDat
+      displayName: 'Make WoodR4 _DS_MENU.DAT files'
 
     - script: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
