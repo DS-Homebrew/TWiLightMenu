@@ -24,7 +24,7 @@ jobs:
 
         sudo dkp-pacman -Sy
         sudo dkp-pacman -S nds-dev --noconfirm
-      displayName: 'Installing devkitPro and 7zip'
+      displayName: 'Installing libraries'
 
     - script: |
         export DEVKITPRO="/opt/devkitpro"
@@ -50,6 +50,16 @@ jobs:
         echo '##vso[task.setvariable variable=COMMIT_MESSAGE;isOutput=true]'$(git log --pretty=format:"%an - %s" -1)
       name: makeCias
       displayName: 'Make booter and TWiLightMenu CIAs'
+
+    - script: |
+        cd booter_fc/r4_menu_dat/
+        cp "../booter_fc.nds" "_DS_MENU.nds"
+        dlditool r4_sd.dldi _DS_MENU.ds
+
+        r4denc _DS_MENU.ds _DS_MENU.DAT
+        mv "_DS_MENU.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+      name: makeDat
+      displayName: 'Make WoodR4 _DS_MENU.DAT files'
 
     - script: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
