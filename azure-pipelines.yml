@@ -54,10 +54,10 @@ jobs:
     - script: |
         cd booter_fc/r4_menu_dat/
         cp "../booter_fc.nds" "_DS_MENU.nds"
-        dlditool r4_sd.dldi _DS_MENU.ds
+        ./dlditool r4_sd.dldi _DS_MENU.ds
 
-        r4denc _DS_MENU.ds _DS_MENU.DAT
-        mv "_DS_MENU.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+        ./r4enc _DS_MENU.ds
+        mv "_DS_MENU.ds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       name: makeDat
       displayName: 'Make WoodR4 _DS_MENU.DAT files'
 
