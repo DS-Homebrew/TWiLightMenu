@@ -925,6 +925,11 @@ void titleUpdate(int num, bool isDir, const char* name)
 		writeBannerText(num, 0, name, "", "");
 	}
 	else
+	if (extention(name, ".pce"))
+	{
+		writeBannerText(num, 0, "NitroGrafx", "", "");
+	}
+	else
 	{
 		// this is an nds/app file!
 

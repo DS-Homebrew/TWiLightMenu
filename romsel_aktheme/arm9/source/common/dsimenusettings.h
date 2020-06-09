@@ -127,6 +127,7 @@ class DSiMenuPlusPlusSettings
 	bool showSmsGg;
 	int showMd;
 	bool showSnes;
+	bool showPce;
     bool showDirectories;
 	bool showHidden;
 	bool preventDeletion;

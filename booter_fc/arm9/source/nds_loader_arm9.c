@@ -48,6 +48,7 @@
 #define ARG_SIZE_OFFSET 20
 #define HAVE_DSISD_OFFSET 28
 #define DSIMODE_OFFSET 32
+#define LOADFROMRAM_OFFSET 36
 
 
 typedef signed int addr_t;
@@ -249,7 +250,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv)
 {
 	char* argStart;
 	u16* argData;
@@ -275,6 +276,8 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 		dldiPatchNds = false;
 		writeAddr ((data_t*) LCDC_BANK_C, HAVE_DSISD_OFFSET, 1);
 	}
+
+	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -336,7 +339,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
-void runNds9 (const char* filename, bool dldiPatchNds) {
+void runNds9i (const char* filename, bool dldiPatchNds) {
 	consoleClear();
 	printf ("Now loading...\n");
 	FILE* ndsFile = fopen(filename, "rb");
@@ -409,6 +412,27 @@ void runNds9 (const char* filename, bool dldiPatchNds) {
 	return;
 }
 
+bool runNds9 (const char* filename) {
+	if (isDSiMode()) return false;
+
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+					 // Expansion Pak)
+
+	*(vu32*)(0x08240000) = 1;
+	if (*(vu32*)(0x08240000) != 1) return false;
+
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x09000000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x09380000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	fclose(ndsFile);
+
+	return true;
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -431,8 +455,10 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 		argv = args;
 	}
 
+	bool loadFromRam = runNds9(filename);
+
 	if (isDSiMode()) {
-		runNds9(filename, true);
+		runNds9i(filename, true);
 	}
 
 	bool havedsiSD = false;
@@ -441,7 +467,7 @@ int runNdsFile (const char* filename, int argc, const char** argv)  {
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, true, argc, argv);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, true, loadFromRam, argc, argv);
 }
 
 

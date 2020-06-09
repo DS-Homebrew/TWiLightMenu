@@ -18,6 +18,7 @@
  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ------------------------------------------------------------------*/
+#include <stdio.h>
 #include <string.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
@@ -71,6 +72,7 @@ dsiMode:
 #define DSIMODE_OFFSET 32
 #define CLEAR_MASTER_BRIGHT_OFFSET 36
 #define DSMODE_SWITCH_OFFSET 40
+#define LOADFROMRAM_OFFSET 44
 
 
 typedef signed int addr_t;
@@ -268,7 +270,7 @@ static bool dldiPatchLoader (data_t *binData, u32 binSize, bool clearBSS)
 	return true;
 }
 
-int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram)
+int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool dldiPatchNds, bool loadFromRam, int argc, const char** argv, bool clearMasterBright, bool dsModeSwitch, bool lockScfg, bool boostCpu, bool boostVram)
 {
 	char* argStart;
 	u16* argData;
@@ -298,6 +300,7 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	if (isDSiMode()) {
 		writeAddr ((data_t*) LCDC_BANK_C, DSMODE_SWITCH_OFFSET, dsModeSwitch);
 	}
+	writeAddr ((data_t*) LCDC_BANK_C, LOADFROMRAM_OFFSET, loadFromRam);
 
 	// WANT_TO_PATCH_DLDI = dldiPatchNds;
 	writeAddr ((data_t*) LCDC_BANK_C, WANT_TO_PATCH_DLDI_OFFSET, dldiPatchNds);
@@ -370,6 +373,27 @@ int runNds (const void* loader, u32 loaderSize, u32 cluster, bool initDisc, bool
 	return true;
 }
 
+bool runNds9 (const char* filename) {
+	if (isDSiMode()) return false;
+
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+					 // Expansion Pak)
+
+	*(vu32*)(0x08240000) = 1;
+	if (*(vu32*)(0x08240000) != 1) return false;
+
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x09000000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x09380000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	fclose(ndsFile);
+
+	return true;
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -394,13 +418,15 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 
 	bool lockScfg = (strncmp(filename, "fat:/_nds/GBARunner2", 20) != 0);
 
+	bool loadFromRam = runNds9(filename);
+
 	bool havedsiSD = false;
 
 	if(access("sd:/", F_OK) == 0) havedsiSD = true;
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, true, (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, lockScfg, boostCpu, boostVram);
 }
 
 /*

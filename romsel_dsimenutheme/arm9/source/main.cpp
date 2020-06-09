@@ -753,6 +753,9 @@ int main(int argc, char **argv) {
 		extensionList.emplace_back(".smc");
 		extensionList.emplace_back(".sfc");
 	}
+	if (ms().showPce) {
+		extensionList.emplace_back(".pce");
+	}
 	srand(time(NULL));
 
 	char path[256] = {0};
@@ -876,6 +879,7 @@ int main(int argc, char **argv) {
 			bool nes = false;
 			bool gamegear = false;
 			bool atari2600 = false;
+			bool pcEngine = false;
 
 			// Launch DSiWare .nds via Unlaunch
 			if (isDSiMode() && isDSiWare[CURPOS]) {
@@ -1567,6 +1571,8 @@ int main(int argc, char **argv) {
 				SNES = true;
 			} else if (extention(filename, ".a26")) {
 				atari2600 = true;
+			} else if (extention(filename, ".pce")) {
+				pcEngine = true;
 			}
 
 			if (dstwoPlg || rvid || mpeg4 || gameboy || nes
@@ -1685,7 +1691,7 @@ int main(int argc, char **argv) {
 				}
 				runNdsFile("/_nds/TWiLightMenu/dsimenu.srldr", 0, NULL, true, false, false, true, true);
 				stop();
-			} else if (GBA || gamegear || SNES || GENESIS) {
+			} else if (GBA || gamegear || SNES || GENESIS || pcEngine) {
 				const char *ndsToBoot;
 				std::string romfolderNoSlash = ms().romfolder[ms().secondaryDevice];
 				RemoveTrailingSlashes(romfolderNoSlash);
@@ -1727,6 +1733,11 @@ int main(int argc, char **argv) {
 						if(access(ndsToBoot, F_OK) != 0) {
 							ndsToBoot = "/_nds/TWiLightMenu/emulators/SNEmulDS.nds";
 						}
+					} else if (pcEngine) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+						}
 					} else {
 						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds";
 						if(access(ndsToBoot, F_OK) != 0) {
@@ -1755,6 +1766,11 @@ int main(int argc, char **argv) {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+					} else if (pcEngine) {
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 					} else {
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");

@@ -46,6 +46,7 @@ Helpful information:
 #undef ARM9
 #define ARM7
 #include <nds/arm7/audio.h>
+#include "tonccpy.h"
 #include <nds/arm7/sdmmc.h>
 #include "fat.h"
 #include "dldi_patcher.h"
@@ -72,6 +73,7 @@ extern unsigned long argStart;
 extern unsigned long argSize;
 extern unsigned long dsiSD;
 extern unsigned long dsiMode;
+extern unsigned long loadFromRam;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Firmware stuff
@@ -221,6 +223,27 @@ void resetMemory_ARM7 (void)
 
 void loadBinary_ARM7 (u32 fileCluster)
 {
+	if (loadFromRam) {
+		//u32 ARM9_SRC = *(u32*)(TWL_HEAD+0x20);
+		char* ARM9_DST = (char*)*(u32*)(TWL_HEAD+0x28);
+		u32 ARM9_LEN = *(u32*)(TWL_HEAD+0x2C);
+		//char* ARM7_SRC = (char*)*(u32*)(TWL_HEAD+0x30);
+		char* ARM7_DST = (char*)*(u32*)(TWL_HEAD+0x38);
+		u32 ARM7_LEN = *(u32*)(TWL_HEAD+0x3C);
+
+		tonccpy(ARM9_DST, (char*)0x09000000, ARM9_LEN);
+		tonccpy(ARM7_DST, (char*)0x09380000, ARM7_LEN);
+
+		// first copy the header to its proper location, excluding
+		// the ARM9 start address, so as not to start it
+		TEMP_ARM9_START_ADDRESS = *(u32*)(TWL_HEAD+0x24);		// Store for later
+		*(u32*)(TWL_HEAD+0x24) = 0;
+		dmaCopyWords(3, (void*)TWL_HEAD, (void*)NDS_HEAD, 0x170);
+		*(u32*)(TWL_HEAD+0x24) = TEMP_ARM9_START_ADDRESS;
+
+		return;
+	}
+
 	u32 ndsHeader[0x170>>2];
 
 	// read NDS header
@@ -314,18 +337,20 @@ int main (void) {
 	}
 #endif
 	u32 fileCluster = storedFileCluster;
-	// Init card
-	if(!FAT_InitFiles(initDisc))
-	{
-		return -1;
-	}
-	if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
-	{
-		fileCluster = getBootFileCluster(bootName);
-	}
-	if (fileCluster == CLUSTER_FREE)
-	{
-		return -1;
+	if (!loadFromRam) {
+		// Init card
+		if(!FAT_InitFiles(initDisc))
+		{
+			return -1;
+		}
+		if ((fileCluster < CLUSTER_FIRST) || (fileCluster >= CLUSTER_EOF)) 	/* Invalid file cluster specified */
+		{
+			fileCluster = getBootFileCluster(bootName);
+		}
+		if (fileCluster == CLUSTER_FREE)
+		{
+			return -1;
+		}
 	}
 
 	// ARM9 clears its memory part 2

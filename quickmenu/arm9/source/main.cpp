@@ -1124,7 +1124,7 @@ int main(int argc, char **argv) {
 			iconUpdate (0, false, filename[0].c_str());
 			bnrRomType[0] = 0;
 			boxArtType[0] = 0;
-		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26")) {
+		} else if (extention(filename[0], ".plg") || extention(filename[0], ".rvid") || extention(filename[0], ".mp4") || extention(filename[0], ".a26") || extention(filename[0], ".pce")) {
 			bnrRomType[0] = 9;
 			boxArtType[0] = 0;
 		} else if (extention(filename[0], ".gba")) {
@@ -2503,6 +2503,32 @@ int main(int argc, char **argv) {
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", ROMpath);
+						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
+					}
+				} else if (extention(filename[secondaryDevice], ".pce")) {
+					launchType[secondaryDevice] = 1;
+
+					if (secondaryDevice) {
+						ndsToBoot = "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+						if(access(ndsToBoot, F_OK) != 0) {
+							ndsToBoot = "/_nds/TWiLightMenu/emulators/NitroGrafx.nds";
+							boostVram = true;
+						}
+						dsModeSwitch = true;
+					} else {
+						useNDSB = true;
+
+						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
+						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
+
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
+						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds");
+						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
+
+						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
 						bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 					}
 				}

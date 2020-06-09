@@ -38,6 +38,9 @@ bool useTwlCfg = false;
 
 bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
+bool fadeColor = true; // false = black, true = white
+extern bool controlTopBright;
+extern bool controlBottomBright;
 
 //bool soundfreqsettingChanged = false;
 bool hiyaAutobootFound = false;
@@ -138,6 +141,9 @@ void rebootDSiMenuPP()
 
 void loadMainMenu()
 {
+	fadeColor = true;
+	controlTopBright = true;
+	controlBottomBright = true;
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
@@ -149,6 +155,9 @@ void loadMainMenu()
 
 void loadROMselect(int number)
 {
+	fadeColor = true;
+	controlTopBright = true;
+	controlBottomBright = true;
 	fadeType = false;
 	fifoSendValue32(FIFO_USER_01, 1); // Fade out sound
 	for (int i = 0; i < 25; i++)
@@ -892,7 +901,7 @@ int main(int argc, char **argv)
 	keysSetRepeat(25, 5);
 	// snprintf(vertext, sizeof(vertext), "Ver %d.%d.%d   ", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Doesn't work :(
 
-	if (ms().autorun || ms().showlogo)
+	if (ms().showlogo)
 	{
 		if (!soundBankLoaded) {
 			// Load sound bank into memory
@@ -904,7 +913,7 @@ int main(int argc, char **argv)
 
 		loadTitleGraphics();
 		fadeType = true;
-		for (int i = 0; i < 25; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			swiWaitForVBlank();
 		}
@@ -922,6 +931,9 @@ int main(int argc, char **argv)
 
 	while (1) {
 		if (screenmode == 1) {
+			fadeColor = true;
+			controlTopBright = true;
+			controlBottomBright = true;
 			fadeType = false;
 			for (int i = 0; i < 25; i++) {
 				swiWaitForVBlank();

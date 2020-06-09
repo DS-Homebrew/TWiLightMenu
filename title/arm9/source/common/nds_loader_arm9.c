@@ -390,6 +390,27 @@ void runNds9i (const char* filename) {
 	fclose(ndsFile);
 }
 
+bool runNds9 (const char* filename) {
+	if (isDSiMode()) return false;
+
+	sysSetCartOwner(BUS_OWNER_ARM9); // Allow arm9 to access GBA ROM (or in this case, the DS Memory
+					 // Expansion Pak)
+
+	*(vu32*)(0x08240000) = 1;
+	if (*(vu32*)(0x08240000) != 1) return false;
+
+	FILE* ndsFile = fopen(filename, "rb");
+	fseek(ndsFile, 0, SEEK_SET);
+	fread(__DSiHeader, 1, 0x1000, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm9romOffset, SEEK_SET);
+	fread((void*)0x09000000, 1, __DSiHeader->ndshdr.arm9binarySize, ndsFile);
+	fseek(ndsFile, __DSiHeader->ndshdr.arm7romOffset, SEEK_SET);
+	fread((void*)0x09380000, 1, __DSiHeader->ndshdr.arm7binarySize, ndsFile);
+	fclose(ndsFile);
+
+	return true;
+}
+
 int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatchNds, bool clearMasterBright, bool dsModeSwitch, bool boostCpu, bool boostVram)  {
 	struct stat st;
 	char filePath[PATH_MAX];
@@ -412,7 +433,9 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 		argv = args;
 	}
 
-	if (isDSiMode() && access("sd:/", F_OK) != 0) {
+	bool loadFromRam = (runNds9(filename) || (isDSiMode() && access("sd:/", F_OK) != 0));
+
+	if (isDSiMode() && loadFromRam) {
 		runNds9i(filename);
 	}
 
@@ -422,7 +445,7 @@ int runNdsFile (const char* filename, int argc, const char** argv, bool dldiPatc
 	
 	installBootStub(havedsiSD);
 
-	return runNds (load_bin, load_bin_size, st.st_ino, (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0), (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), (isDSiMode() && access("sd:/", F_OK) != 0), argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
+	return runNds (load_bin, load_bin_size, st.st_ino, (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0), (dldiPatchNds && memcmp(io_dldi_data->friendlyName, "Default", 7) != 0), loadFromRam, argc, argv, clearMasterBright, dsModeSwitch, boostCpu, boostVram);
 }
 
 /*
