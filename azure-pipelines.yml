@@ -149,14 +149,14 @@ jobs:
           cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
         displayName: 'Make booter and TWiLightMenu CIAs'
       - script: |
-        cd booter_fc/r4_menu_dat/
-        cp "../booter_fc.nds" "_DS_MENU.nds"
-        ./dlditool r4_sd.dldi _DS_MENU.nds
+          cd booter_fc/r4_menu_dat/
+          cp "../booter_fc.nds" "_DS_MENU.nds"
+          ./dlditool r4_sd.dldi _DS_MENU.nds
 
-        ./r4enc _DS_MENU.nds
-        mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
-      name: makeDat
-      displayName: 'Make WoodR4 _DS_MENU.DAT files'
+          ./r4enc _DS_MENU.nds
+          mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+        name: makeDat
+        displayName: 'Make WoodR4 _DS_MENU.DAT files'
       - script: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
           # Clean .gitkeep files
