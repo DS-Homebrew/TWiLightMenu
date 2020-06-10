@@ -125,7 +125,6 @@ jobs:
     displayName: "Publish build to TWLBot"
     dependsOn:
       - latest_build
-      - docker_build
     variables:
       COMMIT_TAG: $[ dependencies.latest_build.outputs['makeCias.COMMIT_TAG'] ]
       COMMIT_MESSAGE: $[ dependencies.latest_build.outputs['makeCias.COMMIT_MESSAGE'] ]
