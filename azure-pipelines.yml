@@ -120,11 +120,66 @@ jobs:
         pathtoPublish: '$(Build.ArtifactStagingDirectory)'
         artifactName: 'build-devkitARM-latest'
 
+  - job: docker_build
+    pool:
+      vmImage: 'Ubuntu-20.04'
+    displayName: "Build with Docker using forked libnds and devkitARM r50"
+    steps:
+      - script: |
+          sudo apt update
+          sudo apt install p7zip-full
+        displayName: "Install 7zip"
+      - script: |
+          docker build -t twilightmenu --label twilightmenu ./
+          docker ps -a
+        displayName: "Build Docker image"
+      - script: |
+          docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
+        displayName: "Build TWiLightMenu++ with devkitARM r54"
+      - script: |
+          cd booter/
+          chmod +x make_cia
+          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          mkdir -p "../7zfile/3DS - CFW users/"
+          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+
+          cd ../rungame/
+          chmod +x make_cia
+          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+        displayName: 'Make booter and TWiLightMenu CIAs'
+      - script: |
+        cd booter_fc/r4_menu_dat/
+        cp "../booter_fc.nds" "_DS_MENU.nds"
+        ./dlditool r4_sd.dldi _DS_MENU.nds
+
+        ./r4enc _DS_MENU.nds
+        mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+      name: makeDat
+      displayName: 'Make WoodR4 _DS_MENU.DAT files'
+      - script: |
+          rm -r 7zfile/_nds/TWiLightMenu/*menu/
+          # Clean .gitkeep files
+          rm -rf 7zfile/*/.gitkeep
+          rm -rf 7zfile/*/*/.gitkeep
+
+          mv 7zfile/ TWiLightMenu/
+          7z a TWiLightMenu.7z TWiLightMenu/
+          cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu_docker.7z
+        condition: not(startsWith(variables['Build.SourceBranchName'], 'v'))
+        displayName: 'Pack 7z Package'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish build to Azure"
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: 'build-devkitARM-Docker'
+
     # Only run this for non-PR jobs.
   - job: publish_build_twlbot
     displayName: "Publish build to TWLBot"
     dependsOn:
       - latest_build
+      - docker_build
     variables:
       COMMIT_TAG: $[ dependencies.latest_build.outputs['makeCias.COMMIT_TAG'] ]
       COMMIT_MESSAGE: $[ dependencies.latest_build.outputs['makeCias.COMMIT_MESSAGE'] ]
@@ -153,6 +208,7 @@ jobs:
           cd Builds/
           cp $(Build.ArtifactStagingDirectory)/build-devkitARM-latest/TWiLightMenu.7z TWiLightMenu.7z
           cp $(Build.ArtifactStagingDirectory)/build-devkitARM-latest/TWiLightMenu-Lite.7z TWiLightMenu-Lite.7z
+          cp $(Build.ArtifactStagingDirectory)/build-devkitARM-Docker/TWiLightMenu_docker.7z TWiLightMenu_docker.7z
           git stage .
           git commit -m "TWiLightMenu | $(COMMIT_TAG)"
           git push origin master
