@@ -151,8 +151,8 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 }
 
 ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
-	// Wrap to two lines if too long
-	if(calcWidth(text) > 256) {
+	// Wrap centered text to two lines if too long
+	if(align == Alignment::center && calcWidth(text) > 256) {
 		int mid = text.length() / 2;
 		for(uint i = 0; i < text.length() / 2; i++) {
 			if(text[mid + i] == ' ') {
