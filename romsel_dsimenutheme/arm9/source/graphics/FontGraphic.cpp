@@ -139,7 +139,7 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 	return out;
 }
 
-uint FontGraphic::calcWidth(std::u16string_view text) {
+int FontGraphic::calcWidth(std::u16string_view text) {
 	uint x = 0;
 
 	for(auto c : text) {
@@ -151,6 +151,22 @@ uint FontGraphic::calcWidth(std::u16string_view text) {
 }
 
 ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
+	// Wrap to two lines if too long
+	if(calcWidth(text) > 256) {
+		int mid = text.length() / 2;
+		for(uint i = 0; i < text.length() / 2; i++) {
+			if(text[mid + i] == ' ') {
+				print(x, y - (tileHeight / 2), text.substr(0, mid + i), align);
+				return print(x, y + (tileHeight / 2), text.substr(mid + i + 1), align);
+			} else if(text[mid - i] == ' ') {
+				print(x, y - (tileHeight / 2), text.substr(0, mid - i), align);
+				return print(x, y + (tileHeight / 2), text.substr(mid - i + 1), align);
+			}
+		}
+		print(x, y - (tileHeight / 2), text.substr(0, mid), align);
+		return print(x, y + (tileHeight / 2), text.substr(mid), align);
+	}
+
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left: {
@@ -192,9 +208,12 @@ ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignm
 		if(x + fontWidths[(index * 3) + 2] > 256)
 			return;
 
-		u8 *dst = (u8*)bgGetGfxPtr(2) + x + fontWidths[(index * 3)];
-		for(int i = 0; i < tileHeight; i++) {
-			tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
+		// No need to draw off screen chars if they somehow make it through
+		if(x >= 0) {
+			u8 *dst = (u8*)bgGetGfxPtr(2) + x + fontWidths[(index * 3)];
+			for(int i = 0; i < tileHeight; i++) {
+				tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
+			}
 		}
 
 		x += fontWidths[(index * 3) + 2];

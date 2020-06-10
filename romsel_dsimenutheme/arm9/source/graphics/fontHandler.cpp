@@ -72,11 +72,11 @@ void printLarge(bool top, int x, int y, std::string_view message, Alignment alig
 	getTextQueue(top).emplace_back(true, x, y, message, align);
 }
 
-uint calcSmallFontWidth(std::string_view text) {
+int calcSmallFontWidth(std::string_view text) {
 	return smallFont.calcWidth(text);
 }
 
-uint calcLargeFontWidth(std::string_view text) {
+int calcLargeFontWidth(std::string_view text) {
 	return largeFont.calcWidth(text);
 }
 

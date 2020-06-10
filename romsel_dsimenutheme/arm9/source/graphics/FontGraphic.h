@@ -30,8 +30,8 @@ public:
 
 	u8 height(void) { return tileHeight; }
 
-	uint calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
-	uint calcWidth(std::u16string_view text);
+	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
+	int calcWidth(std::u16string_view text);
 
 	void print(int x, int y, int value, Alignment align) { print(x, y, std::to_string(value), align); }
 	void print(int x, int y, std::string_view text, Alignment align) { print(x, y, utf8to16(text), align); }
