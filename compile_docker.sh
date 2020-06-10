@@ -10,7 +10,7 @@ docker image inspect twilightmenu >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     # build the image if it doesn't exist.
-    docker build -t twilightmenu --label twilightmenu ./docker
+    docker build -t twilightmenu --label twilightmenu ./
 fi
 
 docker run --rm -t -i -v "$(pwd):/data" twilightmenu make $@
