@@ -450,7 +450,20 @@ void CheatCodelist::selectCheats(std::string filename)
           words.push_back(_topTextStr);
         std::string temp;
         for(auto word : words) {
-          int width = calcLargeFontWidth(temp + " " + word);
+          // Split word if the word is too long for a line
+          int width = calcSmallFontWidth(word);
+          if(width > 240) {
+            if(temp.length())
+              _topText += temp + '\n';
+            for(int i = 0; i < width/240; i++) {
+              word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
+            }
+            // word = "text\ntext\ntext\n4";
+            _topText += word + '\n';
+            continue;
+          }
+
+          width = calcSmallFontWidth(temp + " " + word);
           if(width > 240) {
             _topText += temp + '\n';
             temp = word;
