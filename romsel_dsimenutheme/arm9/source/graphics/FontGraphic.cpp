@@ -139,6 +139,21 @@ std::u16string FontGraphic::utf8to16(std::string_view text) {
 	return out;
 }
 
+void FontGraphic::wrapCentered(int x, int y, std::u16string_view text, Alignment align) {
+	int mid = text.length() / 2;
+	for(uint i = 0; i < text.length() / 2; i++) {
+		if(text[mid + i] == ' ') {
+			print(x, y - (tileHeight / 2), text.substr(0, mid + i), align);
+			return print(x, y + (tileHeight / 2), text.substr(mid + i + 1), align);
+		} else if(text[mid - i] == ' ') {
+			print(x, y - (tileHeight / 2), text.substr(0, mid - i), align);
+			return print(x, y + (tileHeight / 2), text.substr(mid - i + 1), align);
+		}
+	}
+	print(x, y - (tileHeight / 2), text.substr(0, mid), align);
+	return print(x, y + (tileHeight / 2), text.substr(mid), align);
+}
+
 int FontGraphic::calcWidth(std::u16string_view text) {
 	uint x = 0;
 
@@ -151,22 +166,6 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 }
 
 ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
-	// Wrap centered text to two lines if too long
-	if(align == Alignment::center && calcWidth(text) > 256) {
-		int mid = text.length() / 2;
-		for(uint i = 0; i < text.length() / 2; i++) {
-			if(text[mid + i] == ' ') {
-				print(x, y - (tileHeight / 2), text.substr(0, mid + i), align);
-				return print(x, y + (tileHeight / 2), text.substr(mid + i + 1), align);
-			} else if(text[mid - i] == ' ') {
-				print(x, y - (tileHeight / 2), text.substr(0, mid - i), align);
-				return print(x, y + (tileHeight / 2), text.substr(mid - i + 1), align);
-			}
-		}
-		print(x, y - (tileHeight / 2), text.substr(0, mid), align);
-		return print(x, y + (tileHeight / 2), text.substr(mid), align);
-	}
-
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left: {
@@ -179,6 +178,12 @@ ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignm
 				newline = text.find('\n');
 				y += tileHeight;
 			}
+
+			// Wrap centered text to two lines if too long
+			if(calcWidth(text) > 256) {
+				return wrapCentered(x, y, text, align);
+			}
+
 			x = ((256 - calcWidth(text)) / 2) + x;
 			break;
 		} case Alignment::right: {
