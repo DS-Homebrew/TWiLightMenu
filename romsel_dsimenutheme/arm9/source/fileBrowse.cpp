@@ -2073,7 +2073,7 @@ string browseForFile(const vector<string> extensionList) {
 				int prevPos = CURPOS;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
-				bannerTextShown = false; // Redraw the title when done
+				int prevCurPos;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -2081,6 +2081,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (!(keysHeld() & KEY_TOUCH))
 						break;
 
+					prevCurPos = CURPOS;
 					CURPOS = round((touch.px - 30) / 4.925);
 					if (CURPOS > 39) {
 						CURPOS = 39;
@@ -2166,13 +2167,17 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					}
 
-					clearText();
 					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-						currentBg = 1;
-						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
-								CURPOS);
+						if(prevCurPos != CURPOS) {
+							currentBg = 1;
+							clearText();
+							titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+									dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
+									CURPOS);
+									bannerTextShown = true;
+						}
 					} else {
+						clearText();
 						currentBg = 0;
 					}
 					prevPos = CURPOS;
@@ -2191,6 +2196,7 @@ string browseForFile(const vector<string> extensionList) {
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
 				boxArtLoaded = false;
+				bannerTextShown = false;
 				settingsChanged = true;
 				touch = startTouch;
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))
