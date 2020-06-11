@@ -717,8 +717,6 @@ static inline void writeDialogTitle(std::u16string text) {
 const char *lastName;
 
 void titleUpdate(bool isDir, const std::string &name, int num) {
-	clearText(false);
-
 	if (isDir) {
 		if (name == "..") {
 			writeBannerText("Back");

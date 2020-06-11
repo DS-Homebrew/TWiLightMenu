@@ -1615,6 +1615,7 @@ static bool previousPage(void) {
 		if (ms().showBoxArt)
 			clearBoxArt(); // Clear box art
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
 		currentBg = 0;
@@ -1656,6 +1657,7 @@ static bool nextPage(void) {
 		if (ms().showBoxArt)
 			clearBoxArt(); // Clear box art
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
 		currentBg = 0;
@@ -1760,9 +1762,12 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
-					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
-					bannerTextShown = true;
+					if(!bannerTextShown) {
+						clearText();
+						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
+						bannerTextShown = true;
+					}
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
@@ -1810,6 +1815,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSelect();
 					boxArtLoaded = false;
 					settingsChanged = true;
+					bannerTextShown = false;
 				} else if (!edgeBumpSoundPlayed) {
 					snd().playWrong();
 					edgeBumpSoundPlayed = true;
@@ -1836,6 +1842,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSelect();
 					boxArtLoaded = false;
 					settingsChanged = true;
+					bannerTextShown = false;
 				} else if (!edgeBumpSoundPlayed) {
 					snd().playWrong();
 					edgeBumpSoundPlayed = true;
@@ -1852,6 +1859,7 @@ string browseForFile(const vector<string> extensionList) {
 				// Move apps
 			} else if ((pressed & KEY_UP) && (ms().theme != 4 && ms().theme != 5) && !dirInfoIniFound && (ms().sortMethod == 4)
 				   && !titleboxXmoveleft && !titleboxXmoveright &&CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
 				currentBg = 2;
 				clearText();
@@ -2065,6 +2073,7 @@ string browseForFile(const vector<string> extensionList) {
 				int prevPos = CURPOS;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
+				bannerTextShown = false; // Redraw the title when done
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -2499,10 +2508,10 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				}	// End of DSi/3DS theme check
 				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-				;
 				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 				boxArtLoaded = false;
 				settingsChanged = true;
+				bannerTextShown = false;
 				touch = startTouch;
 				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					showSTARTborder = (ms().theme == 1 ? true : false);
@@ -2518,6 +2527,7 @@ string browseForFile(const vector<string> extensionList) {
 			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder &&
 				!titleboxXmoveleft && !titleboxXmoveright) ||
 				(gameTapped)) {
+				bannerTextShown = false; // Redraw title when done
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
@@ -2934,6 +2944,7 @@ string browseForFile(const vector<string> extensionList) {
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
+				bannerTextShown = false;
 				rocketVideo_playVideo = true;
 				shouldersRendered = false;
 				currentBg = 0;
@@ -3119,15 +3130,18 @@ string browseForFile(const vector<string> extensionList) {
 					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				dbox_showIcon = false;
+				bannerTextShown = false;
 			}
 
 			if ((pressed & KEY_Y) && (isDirectory[CURPOS] == false) &&
 				(bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
 				bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+				bannerTextShown = false;
 			}
 
 			if (held & KEY_SELECT) {
+				bannerTextShown = false;
 				bool runSelectMenu = true;
 				bool break2 = false;
 				while (held & KEY_SELECT) {
