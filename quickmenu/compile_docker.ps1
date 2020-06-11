@@ -5,14 +5,14 @@ if (!$?) {
 }
 
 #check for dsimenuplusplus image
-docker image inspect twilightmenu >$null 2>&1 
+docker image inspect TWiLightMenu >$null 2>&1 
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t twilightmenu --label twilightmenu ../
+    docker build -t TWiLightMenu --label TWiLightMenu ../
 }
 
-docker run --rm -t -i -v "$pwd\:/data" twilightmenu make @args
+docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
     Copy-Item "mainmenu.nds" "../7zfile/_nds/TWiLightMenu/mainmenu.srldr"

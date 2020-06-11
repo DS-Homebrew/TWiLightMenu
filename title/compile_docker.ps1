@@ -15,6 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "booter.nds" "../7zfile/BOOT.NDS"
-	Copy-Item "booter.nds" "../7zfile/CFW - SDNAND root/title/00030015/53524c41/content/00000000.app"
+    Copy-Item "title.nds" "../7zfile/_nds/TWiLightMenu/main.srldr"
 }
