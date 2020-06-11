@@ -127,7 +127,7 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
-	@cp $(TARGET).nds "../_nds/TWiLightMenu/manual.srldr"
+	@cp $(TARGET).nds "../7zfile/_nds/TWiLightMenu/manual.srldr"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-u 00030004 -g HBLA -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -d $(NITRODATA) \
