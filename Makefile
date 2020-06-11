@@ -10,11 +10,11 @@ PACKAGE		:=	7zfile
 
 all:	booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-package: all
-	@mkdir -p "$(PACKAGE)"
-	@cp "booter/booter.nds" "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
-	@cp "booter_fc/booter_fc.nds" "$(PACKAGE)/Flashcard users/BOOT.NDS"
-	@cp "booter_fc/booter_fc_cyclodsi.nds" "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
+package:
+	@$(MAKE) -C booter dist
+	@$(MAKE) -C booter_fc dist
+	@$(MAKE) -C quickmenu dist
+	@$(MAKE) -C manual dist
 
 	@mkdir -p "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
 	@cp "booter/booter.nds" "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
@@ -24,8 +24,6 @@ package: all
 	@cp "rungame/rungame.nds" "$(PACKAGE)/_nds/TWiLightMenu/resetgame.srldr"
 
 	@mkdir -p "$(PACKAGE)/_nds/TWiLightMenu"
-	@cp "quickmenu/mainmenu.nds" "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
-	@cp "manual/manual.nds" "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
 	@cp "romsel_aktheme/romsel_aktheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 	@cp "romsel_dsimenutheme/romsel_dsimenutheme.nds" "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@cp "romsel_r4theme/romsel_r4theme.nds" "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
@@ -81,16 +79,16 @@ clean:
 	@$(MAKE) -C title clean
 
 	@echo clean package files
-	@rm -rf "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
-	@rm -rf "$(PACKAGE)/Flashcard users/BOOT.NDS"
-	@rm -rf "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
-	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
-	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"
+	@rm "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
+	@rm "$(PACKAGE)/Flashcard users/BOOT.NDS"
+	@rm "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
+	@rm "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
+	@rm "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/manual.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/r4menu.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/settings.srldr"
+	@rm "$(PACKAGE)/_nds/TWiLightMenu/slot1launch.srldr"

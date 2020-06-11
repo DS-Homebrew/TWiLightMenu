@@ -122,12 +122,11 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 	
 dist:	all
-	@rm	-fr	hbmenu
-	@mkdir hbmenu
-	@cp $(TARGET).nds hbmenu/BOOT.NDS
-	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds hbmenu
-	@tar -cvjf $(TARGET)-$(VERSION).tar.bz2 hbmenu testfiles README.html COPYING hbmenu -X exclude.lst
-	
+	@cp "booter_fc.nds" "../7zfile/Flashcard users/BOOT.NDS"
+	@cp "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.NDS"
+	@mkdir -p "../7zfile/Flashcard users/Autoboot/Original R4/"
+	@cp "booter_fc.nds" "../7zfile/Flashcard users/Autoboot/Original R4/default.nds"
+
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET)_cyclodsi.arm7 $(TARGET).arm9 $(TARGET)_cyclodsi.arm9
   # simple nds srl without dsi extended header
 	ndstool	-h 0x200 -c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf -b icon.bmp "TWiLight Menu++;RocketRobz"

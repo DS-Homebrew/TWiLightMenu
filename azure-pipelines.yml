@@ -65,8 +65,8 @@ jobs:
 
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
-        rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
         rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
+        rm -r TWiLightMenu/3DS - CFW users/_nds/TWiLightMenu/widescreen/
         7z a TWiLightMenu-Lite.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
         cp TWiLightMenu-Lite.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu-Lite.7z
