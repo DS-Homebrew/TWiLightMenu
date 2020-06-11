@@ -12,7 +12,12 @@ private:
 	int _startBorderSpriteW;
 	int _startBorderSpriteH;
 	int _startTextRenderY;
+
 	int _titleboxRenderY;
+	int _titleboxMaxLines;
+	int _titleboxTextY;
+	int _titleboxTextW;
+	bool _titleboxTextLarge;
 	
 	int _bubbleTipRenderY;
 	int _bubbleTipRenderX;
@@ -63,7 +68,12 @@ public:
 	int startBorderSpriteW() const { return _startBorderSpriteW; }
 	int startBorderSpriteH() const { return _startBorderSpriteH; }
 	int startTextRenderY() const { return _startTextRenderY; }
+
 	int titleboxRenderY() const { return _titleboxRenderY; }
+	int titleboxMaxLines() const { return _titleboxMaxLines; }
+	int titleboxTextY() const { return _titleboxTextY; }
+	int titleboxTextW() const { return _titleboxTextW; }
+	bool titleboxTextLarge() const { return _titleboxTextLarge; }
 	
 	int bubbleTipRenderY() const { return _bubbleTipRenderY; }
 	int bubbleTipRenderX() const { return _bubbleTipRenderX; }

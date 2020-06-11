@@ -22,11 +22,10 @@ private:
 	std::vector<u8> characterBuffer;
 
 	u16 getCharIndex(char16_t c);
-	static std::u16string utf8to16(std::string_view text);
-
-	void wrapCentered(int x, int y, std::u16string_view text, Alignment align);
 
 public:
+	static std::u16string utf8to16(std::string_view text);
+
 	FontGraphic() {};
 	FontGraphic(const std::string &path, const std::string &fallback);
 

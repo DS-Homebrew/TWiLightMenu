@@ -67,16 +67,28 @@ void clearText() {
 void printSmall(bool top, int x, int y, std::string_view message, Alignment align) {
 	getTextQueue(top).emplace_back(false, x, y, message, align);
 }
+void printSmall(bool top, int x, int y, std::u16string_view message, Alignment align) {
+	getTextQueue(top).emplace_back(false, x, y, message, align);
+}
 
 void printLarge(bool top, int x, int y, std::string_view message, Alignment align) {
+	getTextQueue(top).emplace_back(true, x, y, message, align);
+}
+void printLarge(bool top, int x, int y, std::u16string_view message, Alignment align) {
 	getTextQueue(top).emplace_back(true, x, y, message, align);
 }
 
 int calcSmallFontWidth(std::string_view text) {
 	return smallFont.calcWidth(text);
 }
+int calcSmallFontWidth(std::u16string_view text) {
+	return smallFont.calcWidth(text);
+}
 
 int calcLargeFontWidth(std::string_view text) {
+	return largeFont.calcWidth(text);
+}
+int calcLargeFontWidth(std::u16string_view text) {
 	return largeFont.calcWidth(text);
 }
 

@@ -20,7 +20,9 @@
 
 ------------------------------------------------------------------*/
 #pragma once
-void writeBannerText(int textlines, const char* text1, const char* text2, const char* text3);
+
+#include <string_view>
+
 void getGameInfo(bool isDir, const char* name, int num);
 void iconUpdate(bool isDir, const char* name, int num);
 void titleUpdate(bool isDir, const char* name, int num);
@@ -36,3 +38,5 @@ void drawIconMD(int Xpos, int Ypos);
 void drawIconSNES(int Xpos, int Ypos);
 void drawIconPLG(int Xpos, int Ypos);
 void execDeferredIconUpdates();
+void writeBannerText(std::string_view text);
+void writeBannerText(std::u16string text);

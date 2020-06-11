@@ -12,7 +12,8 @@ ThemeConfig::ThemeConfig() : ThemeConfig(false) {}
 
 // Magic numbers derived from default dark theme
 ThemeConfig::ThemeConfig(bool _3dsDefaults)
-	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143), _titleboxRenderY(85),
+	: _startBorderRenderY(81), _startBorderSpriteW(32), _startBorderSpriteH(80), _startTextRenderY(143),
+	_titleboxRenderY(85), _titleboxMaxLines(4), _titleboxTextY(30), _titleboxTextW(240), _titleboxTextLarge(true),
 	_bubbleTipRenderY(80), _bubbleTipRenderX(122), _bubbleTipSpriteH(8), _bubbleTipSpriteW(11),
 	_rotatingCubesRenderY(78), _shoulderLRenderY(172), _shoulderLRenderX(0), _shoulderRRenderY(172), _shoulderRRenderX(178),
 	_volumeRenderY(4), _volumeRenderX(16),  _batteryRenderY(5), _batteryRenderX(235),
@@ -32,6 +33,11 @@ ThemeConfig::ThemeConfig(bool _3dsDefaults)
 		_bubbleTipSpriteH = 7;
 		_bubbleTipSpriteW = 7;
 		_renderPhoto = false;
+
+		_titleboxMaxLines = 3;
+		_titleboxTextY = 55;
+		_titleboxTextW = 200;
+		_titleboxTextLarge = false;
 	}
 
 	if (ms().theme == 4 || ms().theme == 5) {
@@ -52,7 +58,13 @@ void ThemeConfig::loadConfig() {
 	_bubbleTipRenderX = themeConfig.GetInt("THEME", "BubbleTipRenderX", _bubbleTipRenderX);
 	_bubbleTipSpriteW = themeConfig.GetInt("THEME", "BubbleTipSpriteW", _bubbleTipSpriteW);
 	_bubbleTipSpriteH = themeConfig.GetInt("THEME", "BubbleTipSpriteH", _bubbleTipSpriteH);
+
 	_titleboxRenderY = themeConfig.GetInt("THEME", "TitleboxRenderY", _titleboxRenderY);
+	_titleboxMaxLines = themeConfig.GetInt("THEME", "TitleboxMaxLines", _titleboxMaxLines);
+	_titleboxTextY = themeConfig.GetInt("THEME", "TitleboxTextY", _titleboxTextY);
+	_titleboxTextW = themeConfig.GetInt("THEME", "TitleboxTextW", _titleboxTextW);
+	_titleboxTextLarge = themeConfig.GetInt("THEME", "TitleboxTextLarge", _titleboxTextLarge);
+
 	_volumeRenderX = themeConfig.GetInt("THEME", "VolumeRenderX", _volumeRenderX);
 	_volumeRenderY = themeConfig.GetInt("THEME", "VolumeRenderY", _volumeRenderY);
 	// _photoRenderX = themeConfig.GetInt("THEME", "PhotoRenderX", _photoRenderX);

@@ -2029,7 +2029,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
-					writeBannerText(0, "Please wait...", "", "");
+					writeBannerText("Please wait...");
 
 					int dest = CURPOS + (PAGENUM * 40);
 
