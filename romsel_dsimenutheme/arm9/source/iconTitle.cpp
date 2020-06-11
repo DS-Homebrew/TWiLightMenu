@@ -716,11 +716,11 @@ static inline void writeDialogTitle(std::u16string text) {
 
 const char *lastName;
 
-void titleUpdate(bool isDir, const char *name, int num) {
+void titleUpdate(bool isDir, const std::string &name, int num) {
 	clearText(false);
 
 	if (isDir) {
-		if (strcmp(name, "..") == 0) {
+		if (name == "..") {
 			writeBannerText("Back");
 		} else {
 			writeBannerText(name);
@@ -741,7 +741,7 @@ void titleUpdate(bool isDir, const char *name, int num) {
 			|| extention(name, ".sfc")
 			|| extention(name, ".a26")
 			|| extention(name, ".pce")) {
-		writeBannerText(name);
+		writeBannerText(name.substr(0, name.find_last_of('.')));
 	} else {
 		// this is an nds/app file!
 

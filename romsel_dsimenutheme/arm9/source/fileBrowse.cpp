@@ -1246,10 +1246,10 @@ bool checkForCompatibleGame(const char *filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	titleUpdate(false, filename, CURPOS);
-	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG_1.c_str(), Alignment::center);
-	printSmall(false, 0, 104, STR_GAME_INCOMPATIBLE_MSG_2.c_str(), Alignment::center);
-	printSmall(false, 0, 118, STR_GAME_INCOMPATIBLE_MSG_3.c_str(), Alignment::center);
-	printSmall(false, 0, 132, STR_GAME_INCOMPATIBLE_MSG_4.c_str(), Alignment::center);
+	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG_1, Alignment::center);
+	printSmall(false, 0, 104, STR_GAME_INCOMPATIBLE_MSG_2, Alignment::center);
+	printSmall(false, 0, 118, STR_GAME_INCOMPATIBLE_MSG_3, Alignment::center);
+	printSmall(false, 0, 132, STR_GAME_INCOMPATIBLE_MSG_4, Alignment::center);
 	printSmall(false, 0, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch", Alignment::center);
 	int pressed = 0;
 	while (1) {
@@ -1761,7 +1761,7 @@ string browseForFile(const vector<string> extensionList) {
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
 					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+							dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					bannerTextShown = true;
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
@@ -2161,7 +2161,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 						currentBg = 1;
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 					} else {
 						currentBg = 0;
@@ -2471,7 +2471,7 @@ string browseForFile(const vector<string> extensionList) {
 							currentBg = 1;
 							titleUpdate(
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						} else {
 							currentBg = 0;
@@ -2559,7 +2559,7 @@ string browseForFile(const vector<string> extensionList) {
 							swiWaitForVBlank();
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
 					int yPos1 = (ms().theme == 4 ? 24 : 112);
 					int yPos2 = (ms().theme == 4 ? 40 : 128);
@@ -2666,7 +2666,7 @@ string browseForFile(const vector<string> extensionList) {
 							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						if (hasAP == 2) {
 							printSmall(false, 0, 80, "This game has AP (Anti-Piracy)", Alignment::center);
@@ -2976,7 +2976,7 @@ string browseForFile(const vector<string> extensionList) {
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-						dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+						dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 				dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
 				// About 38 characters fit in the box.
 				if (strlen(dirContName.c_str()) > 38) {
