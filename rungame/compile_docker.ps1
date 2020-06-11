@@ -16,4 +16,5 @@ docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
     Copy-Item "rungame.nds" "../7zfile/CFW - SDNAND root/title/00030015/534c524e/content/00000000.app"
+    Copy-Item "rungame.nds" "../7zfile/_nds/TWiLightMenu/resetgame.srldr"
 }
