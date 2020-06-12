@@ -77,6 +77,8 @@ clean:
 	@rm -rf "$(PACKAGE)/DSi&3DS - SD card users/BOOT.NDS"
 	@rm -rf "$(PACKAGE)/Flashcard users/BOOT.NDS"
 	@rm -rf "$(PACKAGE)/Flashcard users/BOOT_cyclodsi.NDS"
+	@rm -rf "${PACKAGE}/Flashcard users/Autoboot/Original R4/default.nds"
+	@rm -rf "${PACKAGE}/Flashcard users/Autoboot/Original R4/akMenu-Wood UI root/_DS_MENU.DAT"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
