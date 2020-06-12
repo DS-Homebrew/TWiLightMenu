@@ -1045,9 +1045,9 @@ int main(int argc, char **argv) {
 					fadeType = true;
 					printLarge(false, 4, 4, text);
 					if (err == 1) {
-						printLarge(false, 4, 20, useNightly ? BOOTSTRAP_NIGHTLY_NOT_FOUND : BOOTSTRAP_RELEASE_NOT_FOUND);
+						printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_RELEASE_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
-					printSmall(false, 4, 44, PRESS_B_RETURN);
+					printSmall(false, 4, 44, STR_PRESS_B_RETURN);
 					int pressed = 0;
 					do {
 						scanKeys();

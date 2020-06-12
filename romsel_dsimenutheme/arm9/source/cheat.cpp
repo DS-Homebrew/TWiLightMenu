@@ -36,6 +36,7 @@
 #include "graphics/graphics.h"
 #include "graphics/ThemeTextures.h"
 #include "errorScreen.h"
+#include "language.h"
 #include "common/tonccpy.h"
 
 

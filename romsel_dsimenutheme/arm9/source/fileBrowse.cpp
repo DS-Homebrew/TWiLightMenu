@@ -450,9 +450,9 @@ void displayNowLoading(void) {
 			}
 		} else {
 			if (ms().secondaryDevice) {
-				printSmall(false, 8, 152, LOCATION_N_SLOT_1);
+				printSmall(false, 8, 152, STR_LOCATION_N_SLOT_1);
 			} else {
-				printSmall(false, 8, 152, ms().showMicroSd ? LOCATION_N_MICRO_SD : LOCATION_N_SD);
+				printSmall(false, 8, 152, ms().showMicroSd ? STR_LOCATION_N_MICRO_SD : STR_LOCATION_N_SD);
 			}
 		}
 	}
@@ -2550,7 +2550,7 @@ string browseForFile(const vector<string> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
 					int yPos = (ms().theme == 4 ? 24 : 112);
-					printSmall(false, 0, yPos, isDSiMode() ? STR_STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
+					printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
 					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
 					pressed = 0;
 					do {
