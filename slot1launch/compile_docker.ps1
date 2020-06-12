@@ -15,5 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"
+    Copy-Item "slot1launch.nds" "../7zfile/_nds/TWiLightMenu/slot1launch.srldr"
 }

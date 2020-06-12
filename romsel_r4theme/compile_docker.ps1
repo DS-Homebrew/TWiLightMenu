@@ -9,7 +9,7 @@ docker image inspect TWiLightMenu >$null 2>&1
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t TWiLightMenu --label TWiLightMenu ../docker
+    docker build -t TWiLightMenu --label TWiLightMenu ../
 }
 
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args

@@ -5,16 +5,17 @@ if (!$?) {
 }
 
 #check for dsimenuplusplus image
-docker image inspect dsimenuplusplus >$null 2>&1 
+docker image inspect TWiLightMenu >$null 2>&1 
 
 if (!$?) {
     # build the image if it doesn't exist.
-    docker build -t dsimenuplusplus --label dsimenuplusplus ../docker
+    docker build -t TWiLightMenu --label TWiLightMenu ../
 }
 
-docker run --rm -t -i -v "$pwd\:/data" dsimenuplusplus make @args
+docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
     Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/BOOT_fc.nds"
     Copy-Item "booter_fc_cyclodsi.nds" "../7zfile/Flashcard users/BOOT_cyclodsi.nds"
+    Copy-Item "booter_fc.nds" "../7zfile/Flashcard users/Autoboot/Original R4/default.nds"
 }

@@ -34,7 +34,6 @@ jobs:
         cd booter/
         chmod +x make_cia
         ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-        mkdir -p "../7zfile/3DS - CFW users/"
         cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
         cd ../rungame/
@@ -59,14 +58,11 @@ jobs:
 
     - script: |
         rm -r 7zfile/_nds/TWiLightMenu/*menu/
-        # Clean .gitkeep files
-        rm -rf 7zfile/*/.gitkeep
-        rm -rf 7zfile/*/*/.gitkeep
 
         mv 7zfile/ TWiLightMenu/
         7z a TWiLightMenu.7z TWiLightMenu/
-        rm -r TWiLightMenu/_nds/TWiLightMenu/widescreen/
         rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
+        rm -r TWiLightMenu/3DS - CFW users/_nds/TWiLightMenu/widescreen/
         7z a TWiLightMenu-Lite.7z TWiLightMenu/
         cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu.7z
         cp TWiLightMenu-Lite.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu-Lite.7z
@@ -76,10 +72,6 @@ jobs:
     - script: |
         mkdir 7zfile/_nds/TWiLightMenu/boxart/
         mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
-
-        # Clean .gitkeep files
-        rm -rf 7zfile/*/.gitkeep
-        rm -rf 7zfile/*/*/.gitkeep
 
         # nds-bootstrap
         mkdir nds-bootstrap
@@ -99,6 +91,7 @@ jobs:
         mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
         mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
         mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
+        mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
         mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
         mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
@@ -152,10 +145,6 @@ jobs:
         displayName: 'Make WoodR4 _DS_MENU.DAT files'
       - script: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
-          # Clean .gitkeep files
-          rm -rf 7zfile/*/.gitkeep
-          rm -rf 7zfile/*/*/.gitkeep
-
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
           cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu_docker.7z

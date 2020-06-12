@@ -4,7 +4,7 @@ if (!$?) {
     Write-Output "Install Docker at https://www.docker.com/";
 }
 
-#check for TWiLightMenu image
+#check for dsimenuplusplus image
 docker image inspect TWiLightMenu >$null 2>&1 
 
 if (!$?) {
@@ -15,5 +15,5 @@ if (!$?) {
 docker run --rm -t -i -v "$pwd\:/data" TWiLightMenu make @args
 
 if($args.Count -eq 0 -and $?) {
-    Copy-Item "romsel_dsimenutheme.nds" "../7zfile/_nds/TWiLightMenu/dsimenu.srldr"
+    Copy-Item "manual.nds" "../7zfile/_nds/TWiLightMenu/manual.srldr"
 }

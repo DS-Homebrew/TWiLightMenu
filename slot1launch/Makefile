@@ -29,11 +29,7 @@ export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 all: cardengine_arm7 bootloader $(TARGET).nds
 
 dist:	all
-	@rm	-fr	hbmenu
-	@mkdir hbmenu
-	@cp hbmenu.nds hbmenu/BOOT.NDS
-	@cp BootStrap/_BOOT_MP.NDS BootStrap/TTMENU.DAT BootStrap/_DS_MENU.DAT BootStrap/ez5sys.bin BootStrap/akmenu4.nds hbmenu
-	@tar -cvjf hbmenu-$(VERSION).tar.bz2 hbmenu testfiles README.md COPYING -X exclude.lst
+	@cp $(TARGET).nds "../7zfile/_nds/TWiLightMenu/slot1launch.srldr"
 
 $(TARGET).nds:	$(TARGET).arm7 $(TARGET).arm9
 	ndstool	-c $(TARGET).nds -7 $(TARGET).arm7.elf -9 $(TARGET).arm9.elf \
