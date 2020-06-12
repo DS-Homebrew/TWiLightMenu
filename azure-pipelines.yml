@@ -145,10 +145,6 @@ jobs:
         displayName: 'Make WoodR4 _DS_MENU.DAT files'
       - script: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
-          # Clean .gitkeep files
-          rm -rf 7zfile/*/.gitkeep
-          rm -rf 7zfile/*/*/.gitkeep
-
           mv 7zfile/ TWiLightMenu/
           7z a TWiLightMenu.7z TWiLightMenu/
           cp TWiLightMenu.7z $(Build.ArtifactStagingDirectory)/TWiLightMenu_docker.7z
