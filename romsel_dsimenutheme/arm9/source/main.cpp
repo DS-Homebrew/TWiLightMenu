@@ -290,15 +290,13 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	if (isHomebrew[CURPOS]) {
 		if (!ms().homebrewHasWide) return;
 
-		const char* resultText1;
-		const char* resultText2;
+		std::string resultText;
 		// Prepare for reboot into 16:10 TWL_FIRM
 		mkdir("sd:/luma", 0777);
 		mkdir("sd:/luma/sysmodules", 0777);
 		if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
 		&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-			resultText1 = "Failed to backup custom";
-			resultText2 = "TwlBg.";
+			resultText = STR_FAILED_TO_BACKUP_TWLBG;
 		} else {
 			if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 				irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
@@ -306,22 +304,12 @@ TWL_CODE void SetWidescreen(const char *filename) {
 				fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 				stop();
 			} else {
-				resultText1 = "Failed to reboot TwlBg";
-				resultText2 = "in widescreen.";
+				resultText = STR_FAILED_TO_REBOOT_TWLBG;
 			}
 		}
 		rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
-		int textXpos[2] = {0};
-		if (ms().theme == 4) {
-			textXpos[0] = 24;
-			textXpos[1] = 40;
-		} else {
-			textXpos[0] = 72;
-			textXpos[1] = 88;
-		}
 		clearText();
-		printLarge(false, 0, textXpos[0], resultText1, Alignment::center);
-		printLarge(false, 0, textXpos[1], resultText2, Alignment::center);
+		printLarge(false, 0, ms().theme == 4 ? 24 : 72, resultText, Alignment::center);
 		if (ms().theme != 4) {
 			fadeType = true; // Fade in from white
 		}
@@ -338,8 +326,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 	}
 
 	if (wideCheatFound) {
-		const char* resultText1;
-		const char* resultText2;
+		std::string resultText;
 		mkdir("/_nds", 0777);
 		mkdir("/_nds/nds-bootstrap", 0777);
 		if (fcopy(wideBinPath, "/_nds/nds-bootstrap/wideCheatData.bin") == 0) {
@@ -348,8 +335,7 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			mkdir("sd:/luma/sysmodules", 0777);
 			if ((access("sd:/luma/sysmodules/TwlBg.cxi", F_OK) == 0)
 			&& (rename("sd:/luma/sysmodules/TwlBg.cxi", "sd:/luma/sysmodules/TwlBg_bak.cxi") != 0)) {
-				resultText1 = "Failed to backup custom";
-				resultText2 = "TwlBg.";
+				resultText = STR_FAILED_TO_BACKUP_TWLBG;
 			} else {
 				if (fcopy("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", "sd:/luma/sysmodules/TwlBg.cxi") == 0) {
 					irqDisable(IRQ_VBLANK);				// Fix the throwback to 3DS HOME Menu bug
@@ -357,27 +343,16 @@ TWL_CODE void SetWidescreen(const char *filename) {
 					fifoSendValue32(FIFO_USER_02, 1); // Reboot in 16:10 widescreen
 					stop();
 				} else {
-					resultText1 = "Failed to reboot TwlBg";
-					resultText2 = "in widescreen.";
+					resultText = STR_FAILED_TO_REBOOT_TWLBG;
 				}
 			}
 			rename("sd:/luma/sysmodules/TwlBg_bak.cxi", "sd:/luma/sysmodules/TwlBg.cxi");
 		} else {
-			resultText1 = "Failed to copy widescreen";
-			resultText2 = "code for the game.";
+			resultText = STR_FAILED_TO_COPY_WIDESCREEN;
 		}
 		remove("/_nds/nds-bootstrap/wideCheatData.bin");
-		int textXpos[2] = {0};
-		if (ms().theme == 4) {
-			textXpos[0] = 24;
-			textXpos[1] = 40;
-		} else {
-			textXpos[0] = 72;
-			textXpos[1] = 88;
-		}
 		clearText();
-		printLarge(false, 0, textXpos[0], resultText1, Alignment::center);
-		printLarge(false, 0, textXpos[1], resultText2, Alignment::center);
+		printLarge(false, 0, ms().theme == 4 ? 24 : 72, resultText, Alignment::center);
 		if (ms().theme != 4) {
 			fadeType = true; // Fade in from white
 		}
@@ -454,17 +429,15 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 	}
 
 	char text[32];
-	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;	// Fade from white
 	if (err == 0) {
-		printLarge(false, 4, 4, "Error!");
-		printLarge(false, 4, 20, "Flashcard may be unsupported.");
-		printLarge(false, 4, 52, "Flashcard name:");
+		printLarge(false, 4, 4, STR_ERROR_FLASHCARD_UNSUPPORTED);
 		printLarge(false, 4, 68, io_dldi_data->friendlyName);
 	} else {
 		printLarge(false, 4, 4, text);
 	}
-	printSmall(false, 4, 90, "Press " BUTTON_B " to return.");
+	printSmall(false, 4, 90, STR_PRESS_B_RETURN);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -777,8 +750,7 @@ int main(int argc, char **argv) {
 	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
-		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
-		printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
+		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 		printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 		printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 		for (int i = 0; i < 15; i++) {
@@ -924,13 +896,11 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
-						printSmall(false, 0, 34, "then press B.", Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
-						printSmall(false, 0, 34, "the console's lid.", Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
-					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), "Creating public save file...", Alignment::center);
+					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PUBLIC_SAVE, Alignment::center);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -959,7 +929,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), "Public save file created!", Alignment::center);
+					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), STR_PUBLIC_SAVE_CREATED, Alignment::center);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -972,13 +942,11 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
-						printSmall(false, 0, 34, "then press B.", Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 					} else {
-						printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
-						printSmall(false, 0, 34, "the console's lid.", Alignment::center);
+						printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					}
-					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), "Creating private save file...", Alignment::center);
+					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_CREATING_PRIVATE_SAVE, Alignment::center);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1007,7 +975,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), "Private save file created!", Alignment::center);
+					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), STR_PRIVATE_SAVE_CREATED, Alignment::center);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -1072,14 +1040,14 @@ int main(int argc, char **argv) {
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
 					char text[32];
-					snprintf(text, sizeof(text), "Start failed. Error %i", err);
+					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					fadeType = true;
 					printLarge(false, 4, 4, text);
 					if (err == 1) {
-						printLarge(false, 4, 20, useNightly ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+						printLarge(false, 4, 20, useNightly ? BOOTSTRAP_NIGHTLY_NOT_FOUND : BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
-					printSmall(false, 4, 44, "Press " BUTTON_B " to return.");
+					printSmall(false, 4, 44, PRESS_B_RETURN);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1100,8 +1068,7 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice) {
 					clearText();
-					printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
-					printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
+					printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
 					printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 					if (ms().theme != 4) {
@@ -1130,20 +1097,8 @@ int main(int argc, char **argv) {
 
 					if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && (NDSHeader.pubSavSize > 0))
 					 || (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && (NDSHeader.prvSavSize > 0))) {
-						int afterSaveTextXpos[3] = {0};
-						if (ms().theme == 4) {
-							afterSaveTextXpos[0] = 16;
-							afterSaveTextXpos[1] = 32;
-							afterSaveTextXpos[2] = 48;
-						} else {
-							afterSaveTextXpos[0] = 72;
-							afterSaveTextXpos[1] = 88;
-							afterSaveTextXpos[2] = 104;
-						}
 						clearText();
-						printLarge(false, 0, afterSaveTextXpos[0], "After saving, please re-start", Alignment::center);
-						printLarge(false, 0, afterSaveTextXpos[1], "TWiLight Menu++ to transfer your", Alignment::center);
-						printLarge(false, 0, afterSaveTextXpos[2], "save data back.", Alignment::center);
+						printLarge(false, 0, ms().theme == 4 ? 16 : 72, STR_RESTART_AFTER_SAVING, Alignment::center);
 						if (ms().theme != 4) {
 							fadeType = true; // Fade in from white
 						}
@@ -1297,13 +1252,11 @@ int main(int argc, char **argv) {
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
 								} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-									printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
-									printSmall(false, 0, 34, "then press B.", Alignment::center);
+									printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 								} else {
-									printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
-									printSmall(false, 0, 34, "the console's lid.", Alignment::center);
+									printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 								}
-								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center);
+								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? STR_CREATING_SAVE : STR_EXPANDING_SAVE, Alignment::center);
 
 								if (ms().theme != 4 && ms().theme != 5) {
 									fadeSpeed = true; // Fast fading
@@ -1323,7 +1276,7 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = false;
 								clearText();
-								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center);
+								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? STR_SAVE_CREATED : STR_SAVE_EXPANDED, Alignment::center);
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}
@@ -1444,14 +1397,14 @@ int main(int argc, char **argv) {
 						snd().stopStream();
 						int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
 						char text[32];
-						snprintf(text, sizeof(text), "Start failed. Error %i", err);
+						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
 						fadeType = true;
 						printLarge(false, 4, 4, text);
 						if (err == 1) {
-							printLarge(false, 4, 20, useNightly ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+							printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 						}
-						printSmall(false, 4, 44, "Press " BUTTON_B " to return.");
+						printSmall(false, 4, 44, STR_PRESS_B_RETURN);
 						int pressed = 0;
 						do {
 							scanKeys();
@@ -1514,10 +1467,10 @@ int main(int argc, char **argv) {
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
 					char text[32];
-					snprintf(text, sizeof(text), "Start failed. Error %i", err);
+					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					fadeType = true;
 					printLarge(false, 4, 4, text);
-					printSmall(false, 4, 20, "Press " BUTTON_B " to return.");
+					printSmall(false, 4, 20, STR_PRESS_B_RETURN);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1671,10 +1624,10 @@ int main(int argc, char **argv) {
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to emulator as argument
 
 				char text[32];
-				snprintf(text, sizeof(text), "Start failed. Error %i", err);
+				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				fadeType = true;
 				printLarge(false, 4, 4, text);
-				printLarge(false, 4, 20, "Press B to return.");
+				printLarge(false, 4, 20, STR_PRESS_B_RETURN);
 				int pressed = 0;
 				do {
 					scanKeys();
@@ -1785,13 +1738,13 @@ int main(int argc, char **argv) {
 				snd().stopStream();
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, (ms().secondaryDevice && !GBA), true, !GBA);
 				char text[32];
-				snprintf(text, sizeof(text), "Start failed. Error %i", err);
+				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				fadeType = true;
 				printLarge(false, 4, 4, text);
 				if (err == 1) {
-					printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 				}
-				printSmall(false, 4, 44, "Press " BUTTON_B " to return.");
+				printSmall(false, 4, 44, STR_PRESS_B_RETURN);
 				int pressed = 0;
 				do {
 					scanKeys();

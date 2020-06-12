@@ -237,24 +237,24 @@ std::string CheatCodelist::getCheats()
 
 void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list, uint curPos, uint screenPos) {
   // Print Cheats at the top
-  printLarge(false, 0, 30, "Cheats", Alignment::center);
+  printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 
   // Print bottom text
   if(list[curPos]._comment != "") {
     if(list[curPos]._flags&cParsedItem::EFolder) {
-      printSmall(false, 0, 160, BUTTON_A " Open  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancel", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_FOLDER_INFO, Alignment::center);
     } else if(list[curPos]._flags&cParsedItem::ESelected) {
-      printSmall(false, 0, 160, BUTTON_A " Deslct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_SELECTED_INFO, Alignment::center);
     } else {
-      printSmall(false, 0, 160, BUTTON_A " Slct  " BUTTON_Y " Info  " BUTTON_X " Save  " BUTTON_B " Cancl", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_DESELECTED_INFO, Alignment::center);
     }
   } else {
     if(list[curPos]._flags&cParsedItem::EFolder) {
-      printSmall(false, 0, 160, BUTTON_A " Open  " BUTTON_X " Save  " BUTTON_B " Cancel", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center);
     } else if(list[curPos]._flags&cParsedItem::ESelected) {
-      printSmall(false, 0, 160, BUTTON_A " Deselect  " BUTTON_X " Save  " BUTTON_B " Cancl", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
     } else {
-      printSmall(false, 0, 160,  BUTTON_A " Select  " BUTTON_X " Save  " BUTTON_B " Cancl", Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
     }
   }
 
@@ -282,8 +282,8 @@ void CheatCodelist::selectCheats(std::string filename)
 
   dbox_showIcon = true;
 
-  printLarge(false, 0, 30, "Cheats", Alignment::center);
-  printSmall(false, 0, 100, "Loading...", Alignment::center);
+  printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+  printSmall(false, 0, 100, STR_LOADING, Alignment::center);
   
   parse(filename);
 
@@ -293,9 +293,9 @@ void CheatCodelist::selectCheats(std::string filename)
     snd().playWrong();
     cheatsFound = false;
     clearText();
-    printLarge(false, 0, 30, "Cheats", Alignment::center);
-    printSmall(false, 0, 100, "No cheats found", Alignment::center);
-    printSmall(false, 0, 160, BUTTON_B " Back", Alignment::center);
+    printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+    printSmall(false, 0, 100, STR_NO_CHEATS_FOUND, Alignment::center);
+    printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
 
     while(1) {
       scanKeys();
@@ -425,8 +425,8 @@ void CheatCodelist::selectCheats(std::string filename)
     if(pressed & KEY_X) {
       snd().playLaunch();
       clearText();
-      printLarge(false, 0, 30, "Cheats", Alignment::center);
-      printSmall(false, 0, 100, "Saving...", Alignment::center);
+      printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
+      printSmall(false, 0, 100, STR_SAVING, Alignment::center);
       onGenerate();
       break;
     }
@@ -434,7 +434,7 @@ void CheatCodelist::selectCheats(std::string filename)
       if(currentList[cheatWnd_cursorPosition]._comment != "") {
         (ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
         clearText();
-        printLarge(false, 0, 30, "Cheats", Alignment::center);
+        printLarge(false, 0, 30, STR_CHEATS, Alignment::center);
 
         std::string _topText = "";
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]._comment);
@@ -458,7 +458,6 @@ void CheatCodelist::selectCheats(std::string filename)
             for(int i = 0; i < width/240; i++) {
               word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
             }
-            // word = "text\ntext\ntext\n4";
             _topText += word + '\n';
             continue;
           }
@@ -478,7 +477,7 @@ void CheatCodelist::selectCheats(std::string filename)
         printSmall(false, 0, 60, _topText, Alignment::center);
 
         // Print 'Back' text
-        printSmall(false, 0, 160, BUTTON_B" Back", Alignment::center);
+        printSmall(false, 0, 160, STR_B_BACK, Alignment::center);
         while(1) {
           scanKeys();
           pressed = keysDown();

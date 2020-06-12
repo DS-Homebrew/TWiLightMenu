@@ -297,7 +297,7 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 
 	if (pdir == NULL) {
 		// iprintf("Unable to open the directory.\n");
-		printSmall(false, 4, 4, "Unable to open the directory.");
+		printSmall(false, 4, 4, STR_UNABLE_TO_OPEN_DIRECTORY);
 	} else {
 		int currentPos = 0;
 		while (true) {
@@ -434,29 +434,25 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF_1, Alignment::center);
-		printSmall(false, 0, 34, STR_TAKEWHILE_TURNOFF_2, Alignment::center);
+		printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
 	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-		printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME_1, Alignment::center);
-		printSmall(false, 0, 34, STR_TAKEWHILE_PRESSHOME_2, Alignment::center);
+		printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
 	} else {
-		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
-		printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
+		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
 	}
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
-				printSmall(false, 0, 48, "Location: Slot-1 microSD", Alignment::center);
+				printSmall(false, 0, 48, STR_LOCATION_SLOT_1, Alignment::center);
 			} else {
-				printSmall(false, 0, 48, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card", Alignment::center);
+				printSmall(false, 0, 48, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
 			}
 		} else {
-			printSmall(false, 8, 152, "Location:");
 			if (ms().secondaryDevice) {
-				printSmall(false, 8, 168, "Slot-1 microSD Card");
+				printSmall(false, 8, 152, LOCATION_N_SLOT_1);
 			} else {
-				printSmall(false, 8, 168, ms().showMicroSd ? "microSD Card" : "SD Card");
+				printSmall(false, 8, 152, ms().showMicroSd ? LOCATION_N_MICRO_SD : LOCATION_N_SD);
 			}
 		}
 	}
@@ -555,7 +551,7 @@ void launchDsClassicMenu(void) {
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/mainmenu.srldr", 0, NULL, true, false, false, true, true);
 	char text[32];
-	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
 	printLarge(false, 4, 4, text);
 	stop();
@@ -581,7 +577,7 @@ void launchSettings(void) {
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/settings.srldr", 0, NULL, true, false, false, true, true);
 	char text[32];
-	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
 	printLarge(false, 4, 4, text);
 	stop();
@@ -609,7 +605,7 @@ void launchManual(void) {
 	}
 	int err = runNdsFile("/_nds/TWiLightMenu/manual.srldr", 0, NULL, true, false, false, true, true);
 	char text[32];
-	snprintf(text, sizeof(text), "Start failed. Error %i", err);
+	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;
 	printLarge(false, 4, 4, text);
 	stop();
@@ -718,7 +714,7 @@ void switchDevice(void) {
 			}
 			int err = runNdsFile("/_nds/TWiLightMenu/slot1launch.srldr", 0, NULL, true, true, false, true, true);
 			char text[32];
-			snprintf(text, sizeof(text), "Start failed. Error %i", err);
+			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			fadeType = true;
 			printLarge(false, 4, 4, text);
 			stop();
@@ -738,12 +734,9 @@ bool checkGbaBios(void) {
 				swiWaitForVBlank();
 			}
 		}
-		printLarge(false, 16, 12, "Error code: BINF");
-		printSmall(false, 0, 64, "The GBA BIOS is required", Alignment::center);
-		printSmall(false, 0, 78, "to run GBA games.", Alignment::center);
-		printSmall(false, 0, 112, "Please place the BIOS on the", Alignment::center);
-		printSmall(false, 0, 126, "root as \"bios.bin\".", Alignment::center);
-		printSmall(false, 208, 160, BUTTON_A " OK");
+		printLarge(false, 16, 12, STR_GBA_BIOS_ERROR);
+		printSmall(false, 0, 64, STR_GBA_BIOS_ERROR_DESC, Alignment::center);
+		printSmall(false, 208, 160, STR_A_OK);
 		int pressed = 0;
 		do {
 			scanKeys();
@@ -824,11 +817,11 @@ void launchGba(void) {
 			bootstrapini.SaveIniFile("sd:/_nds/nds-bootstrap.ini");
 			int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], false, true, false, true, true);
 			char text[32];
-			snprintf(text, sizeof(text), "Start failed. Error %i", err);
+			snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 			fadeType = true;
 			printLarge(false, 4, 4, text);
 			if (err == 1) {
-				printLarge(false, 4, 20, ms().bootstrapFile ? "nds-bootstrap (Nightly) not found." : "nds-bootstrap (Release) not found.");
+				printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 			}
 			stop();
 		}
@@ -856,11 +849,8 @@ void smsWarning(void) {
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmall(false, 0, 64, "When the game starts, please", Alignment::center);
-	printSmall(false, 0, 78, "touch the screen to go into", Alignment::center);
-	printSmall(false, 0, 92, "the menu, and exit out of it", Alignment::center);
-	printSmall(false, 0, 106, "for the sound to work.", Alignment::center);
-	printSmall(false, 208, 160, BUTTON_A " OK");
+	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
+	printSmall(false, 208, 160, STR_A_OK);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -916,11 +906,8 @@ void mdRomTooBig(void) {
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmall(false, 0, 64, "This Mega Drive or Genesis", Alignment::center);
-	printSmall(false, 0, 78, "ROM cannot be launched,", Alignment::center);
-	printSmall(false, 0, 92, "due to the size of it", Alignment::center);
-	printSmall(false, 0, 106, "being above 3MB.", Alignment::center);
-	printSmall(false, 208, 160, BUTTON_A " OK");
+	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
+	printSmall(false, 208, 160, STR_A_OK);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1039,11 +1026,9 @@ void ramDiskMsg(const char *filename) {
 		dirContName.append("...");
 	}
 	printSmall(false, 16, 66, dirContName);
-	int yPos1 = (ms().theme == 4 ? 24 : 112);
-	int yPos2 = (ms().theme == 4 ? 40 : 128);
-	printSmall(false, 0, yPos1, "This app requires a", Alignment::center);
-	printSmall(false, 0, yPos2, "RAM disk to work.", Alignment::center);
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	int yPos = (ms().theme == 4 ? 24 : 112);
+	printSmall(false, 0, yPos, STR_RAM_DISK_REQUIRED, Alignment::center);
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1092,13 +1077,9 @@ void dsiBinariesMissingMsg(const char *filename) {
 		}
 		printSmall(false, 16, 66, dirContName);
 	}
-	int yPos1 = (ms().theme == 4 ? 8 : 96);
-	int yPos2 = (ms().theme == 4 ? 24 : 112);
-	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmall(false, 0, yPos1, STR_DSIBINARIES_MISSING_1, Alignment::center);
-	printSmall(false, 0, yPos2, STR_DSIBINARIES_MISSING_2, Alignment::center);
-	printSmall(false, 0, yPos3, STR_DSIBINARIES_MISSING_3, Alignment::center);
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	int yPos = (ms().theme == 4 ? 8 : 96);
+	printSmall(false, 0, yPos, STR_DSIBINARIES_MISSING, Alignment::center);
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1147,30 +1128,26 @@ void donorRomMsg(const char *filename) {
 		}
 		printSmall(false, 16, 66, dirContName.c_str());
 	}
-	int yPos1 = (ms().theme == 4 ? 8 : 96);
-	int yPos2 = (ms().theme == 4 ? 24 : 112);
-	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmall(false, 0, yPos1, STR_DONOR_ROM_MSG_1.c_str(), Alignment::center);
-	printSmall(false, 0, yPos2, STR_DONOR_ROM_MSG_2.c_str(), Alignment::center);
+	int yPos = (ms().theme == 4 ? 8 : 96);
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
-			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str(), Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_ESDK2, Alignment::center);
 			break;
 		case 2:
-			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str(), Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK2, Alignment::center);
 			break;
 		case 3:
-			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK3.c_str(), Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_ESDK3, Alignment::center);
 			break;
 		case 5:
 		default:
-			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str(), Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5, Alignment::center);
 			break;
 		case 51:
-			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str(), Alignment::center);
+			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
 			break;
 	}
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1246,11 +1223,8 @@ bool checkForCompatibleGame(const char *filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	titleUpdate(false, filename, CURPOS);
-	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG_1, Alignment::center);
-	printSmall(false, 0, 104, STR_GAME_INCOMPATIBLE_MSG_2, Alignment::center);
-	printSmall(false, 0, 118, STR_GAME_INCOMPATIBLE_MSG_3, Alignment::center);
-	printSmall(false, 0, 132, STR_GAME_INCOMPATIBLE_MSG_4, Alignment::center);
-	printSmall(false, 0, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch", Alignment::center);
+	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG, Alignment::center);
+	printSmall(false, 0, 160, STR_A_IGNORE_B_DONT_LAUNCH, Alignment::center);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -1364,34 +1338,32 @@ bool selectMenu(void) {
 	while (1) {
 		int textYpos = selIconYpos + 4;
 		clearText();
-		printSmall(false, 0, (ms().theme == 4 ? 8 : 16), "SELECT menu", Alignment::center);
+		printSmall(false, 0, (ms().theme == 4 ? 8 : 16), STR_SELECT_MENU, Alignment::center);
 		printSmall(false, 24, -2 + textYpos + (28 * selCursorPosition), ">");
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
-				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? "DSi Menu" : "3DS HOME Menu");
+				printSmall(false, 64, textYpos, (ms().consoleModel < 2) ? STR_DSI_MENU : STR_3DS_HOME_MENU);
 			} else if (assignedOp[i] == 1) {
-				printSmall(false, 64, textYpos, "TWLMenu++ Settings");
+				printSmall(false, 64, textYpos, STR_TWLMENU_SETTINGS);
 			} else if (assignedOp[i] == 2) {
 				if (bothSDandFlashcard()) {
 					if (ms().secondaryDevice) {
-						printSmall(false, 64, textYpos, ms().showMicroSd ? "Switch to microSD Card" : "Switch to SD Card");
+						printSmall(false, 64, textYpos, ms().showMicroSd ? STR_SWITCH_TO_MICRO_SD : STR_SWITCH_TO_SD);
 					} else {
-						printSmall(false, 64, textYpos, "Switch to Slot-1 microSD");
+						printSmall(false, 64, textYpos, STR_SWITCH_TO_SLOT_1);
 					}
 				} else if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) != 0) {
-					printSmall(false, 64, textYpos,
-						   (REG_SCFG_MC == 0x11) ? "No Slot-1 card inserted"
-									 : "Launch Slot-1 card");
+					printSmall(false, 64, textYpos, (REG_SCFG_MC == 0x11) ? STR_NO_SLOT_1 : STR_LAUNCH_SLOT_1);
 				}
 			/*} else if (assignedOp[i] == 3) {
 				printSmall(false, 64, textYpos,
 					   ms().useGbarunner ? "Start GBARunner2" : "Start GBA Mode");*/
 			} else if (assignedOp[i] == 4) {
-				printSmall(false, 64, textYpos, "Open Manual");
+				printSmall(false, 64, textYpos, STR_OPEN_MANUAL);
 			}
 			textYpos += 28;
 		}
-		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), "SELECT/" BUTTON_B " Back, " BUTTON_A " Select", Alignment::center);
+		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), STR_SELECT_B_BACK_A_SELECT, Alignment::center);
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1780,8 +1752,8 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if (ms().theme == 5) {
 					printLarge(false, 0, 142, "^", Alignment::center);
-					printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-					printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
+					printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+					printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 				}
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
@@ -2037,7 +2009,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
-					writeBannerText("Please wait...");
+					writeBannerText(STR_PLEASE_WAIT);
 
 					int dest = CURPOS + (PAGENUM * 40);
 
@@ -2492,8 +2464,8 @@ string browseForFile(const vector<string> extensionList) {
 							currentBg = 0;
 						}
 						if (ms().theme == 5) {
-							printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-							printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
+							printSmall(false, 4, 174, (showLshoulder ? STR_L_PREV : STR_L));
+							printSmall(false, 256-4, 174, (showRshoulder ? STR_NEXT_R : STR_R), Alignment::right);
 						}
 					}
 					prevTouch2 = prevTouch1;
@@ -2577,11 +2549,9 @@ string browseForFile(const vector<string> extensionList) {
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
-					int yPos1 = (ms().theme == 4 ? 24 : 112);
-					int yPos2 = (ms().theme == 4 ? 40 : 128);
-					printSmall(false, 0, yPos1, "This game cannot be launched", Alignment::center);
-					printSmall(false, 0, yPos2, isDSiMode() ? "without an SD card." : "in DS mode.", Alignment::center);
-					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
+					int yPos = (ms().theme == 4 ? 24 : 112);
+					printSmall(false, 0, yPos, isDSiMode() ? STR_STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
+					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
 					pressed = 0;
 					do {
 						scanKeys();
@@ -2685,16 +2655,11 @@ string browseForFile(const vector<string> extensionList) {
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						if (hasAP == 2) {
-							printSmall(false, 0, 80, "This game has AP (Anti-Piracy)", Alignment::center);
-							printSmall(false, 0, 94, "and MUST be patched using the", Alignment::center);
-							printSmall(false, 0, 108, "RGF TWiLight Menu AP patcher.", Alignment::center);
+							printSmall(false, 0, 80, STR_AP_PATCH_RGF, Alignment::center);
 						} else {
-							printSmall(false, 0, 72, "This game has AP (Anti-Piracy).", Alignment::center);
-							printSmall(false, 0, 104, "Please make sure you're", Alignment::center);
-							printSmall(false, 0, 118, "using the latest version of", Alignment::center);
-							printSmall(false, 0, 132, "TWiLight Menu++.", Alignment::center);
+							printSmall(false, 0, 72, STR_AP_USE_LATEST, Alignment::center);
 						}
-						printSmall(false, 0, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again", Alignment::center);
+						printSmall(false, 0, 160, STR_B_A_OK_X_DONT_SHOW, Alignment::center);
 						pressed = 0;
 						while (1) {
 							scanKeys();
@@ -2816,8 +2781,7 @@ string browseForFile(const vector<string> extensionList) {
 								showProgressIcon = true;
 							}
 
-							printSmall(false, 0, 20, "If this crashes with an error, please", Alignment::center);
-							printSmall(false, 0, 34, "disable \"Update recently played list\".", Alignment::center);
+							printSmall(false, 0, 20, STR_IF_CRASH_DISABLE_RECENT, Alignment::center);
 
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
@@ -3006,17 +2970,16 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				printSmall(false, 16, 66, dirContName);
 				printSmall(false, 16, 160, fileCounter);
-				printSmall(false, 0, 112, "Are you sure you want to", Alignment::center);
 				if (isDirectory[CURPOS]) {
 					if (unHide)
-						printSmall(false, 0, 128, "unhide this folder?", Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_UNHIDE, Alignment::center);
 					else
-						printSmall(false, 0, 128, "hide this folder?", Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_HIDE, Alignment::center);
 				} else {
 					if (unHide)
-						printSmall(false, 0, 128, "delete/unhide this game?", Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_UNHIDE, Alignment::center);
 					else
-						printSmall(false, 0, 128, "delete/hide this game?", Alignment::center);
+						printSmall(false, 0, 112, STR_ARE_YOU_SURE_DELETE_HIDE, Alignment::center);
 				}
 				for (int i = 0; i < 90; i++) {
 					snd().updateStream();
@@ -3024,17 +2987,17 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if (isDirectory[CURPOS]) {
 					if (unHide)
-						printSmall(false, 141, 160, BUTTON_Y " Unhide");
+						printSmall(false, 141, 160, STR_Y_UNHIDE);
 					else
-						printSmall(false, 155, 160, BUTTON_Y " Hide");
-					printSmall(false, 208, 160, BUTTON_B " No");
+						printSmall(false, 155, 160, STR_Y_HIDE);
+					printSmall(false, 208, 160, STR_B_NO);
 				} else {
 					if (unHide)
-						printSmall(false, 93, 160, BUTTON_Y" Unhide");
+						printSmall(false, 93, 160, STR_Y_UNHIDE);
 					else
-						printSmall(false, 107, 160, BUTTON_Y" Hide");
-					printSmall(false, 160, 160, BUTTON_A " Del.");
-					printSmall(false, 208, 160, BUTTON_B " No");
+						printSmall(false, 107, 160, STR_Y_HIDE);
+					printSmall(false, 160, 160, STR_A_DEL);
+					printSmall(false, 208, 160, STR_B_NO);
 				}
 				while (1) {
 					do {
