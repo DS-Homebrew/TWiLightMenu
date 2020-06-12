@@ -123,7 +123,7 @@ export GAME_TITLE := $(TARGET)
 all:	bootloader bootstub $(TARGET).nds
 
 dist:	all
-	@mkdir -p "../DSi&3DS - SD card users"
+	@mkdir -p "../7zfile/DSi&3DS - SD card users"
 	@cp "booter.nds" "../7zfile/DSi&3DS - SD card users/BOOT.NDS"
 	@mkdir -p "../DSi - CFW users/SDNAND root/title/00030004/53524c41/content"
 	@cp "booter.nds" "../7zfile/DSi - CFW users/SDNAND root/title/00030004/53524c41/content/00000000.app"
