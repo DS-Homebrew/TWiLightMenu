@@ -20,7 +20,6 @@
 #include "SwitchState.h"
 #include "errorScreen.h"
 #include "graphics/FontGraphic.h"
-#include "graphics/TextPane.h"
 #include "graphics/ThemeTextures.h"
 #include "graphics/fontHandler.h"
 #include "graphics/graphics.h"
@@ -151,7 +150,6 @@ struct TimesPlayed {
 	int amount;
 };
 
-TextEntry *pathText = nullptr;
 char path[PATH_MAX] = {0};
 
 #ifdef EMULATE_FILES
@@ -436,22 +434,22 @@ void displayNowLoading(void) {
 	fadeType = true; // Fade in from white
 	snd().updateStream();
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		printSmallCentered(false, 20, STR_TAKEWHILE_TURNOFF_1.c_str());
-		printSmallCentered(false, 34, STR_TAKEWHILE_TURNOFF_2.c_str());
+		printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF_1, Alignment::center);
+		printSmall(false, 0, 34, STR_TAKEWHILE_TURNOFF_2, Alignment::center);
 	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-		printSmallCentered(false, 20, STR_TAKEWHILE_PRESSHOME_1.c_str());
-		printSmallCentered(false, 34, STR_TAKEWHILE_PRESSHOME_2.c_str());
+		printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME_1, Alignment::center);
+		printSmall(false, 0, 34, STR_TAKEWHILE_PRESSHOME_2, Alignment::center);
 	} else {
-		printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
-		printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
+		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
+		printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
 	}
-	printLargeCentered(false, 88, STR_NOW_LOADING.c_str());
+	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
-				printSmallCentered(false, 48, "Location: Slot-1 microSD");
+				printSmall(false, 0, 48, "Location: Slot-1 microSD", Alignment::center);
 			} else {
-				printSmallCentered(false, 48, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card");
+				printSmall(false, 0, 48, ms().showMicroSd ? "Location: microSD Card" : "Location: SD Card", Alignment::center);
 			}
 		} else {
 			printSmall(false, 8, 152, "Location:");
@@ -463,7 +461,6 @@ void displayNowLoading(void) {
 		}
 	}
 	nowLoadingDisplaying = true;
-	reloadFontPalettes();
 	while (!screenFadedIn()) 
 	{
 		snd().updateStream();
@@ -742,10 +739,10 @@ bool checkGbaBios(void) {
 			}
 		}
 		printLarge(false, 16, 12, "Error code: BINF");
-		printSmallCentered(false, 64, "The GBA BIOS is required");
-		printSmallCentered(false, 78, "to run GBA games.");
-		printSmallCentered(false, 112, "Please place the BIOS on the");
-		printSmallCentered(false, 126, "root as \"bios.bin\".");
+		printSmall(false, 0, 64, "The GBA BIOS is required", Alignment::center);
+		printSmall(false, 0, 78, "to run GBA games.", Alignment::center);
+		printSmall(false, 0, 112, "Please place the BIOS on the", Alignment::center);
+		printSmall(false, 0, 126, "root as \"bios.bin\".", Alignment::center);
 		printSmall(false, 208, 160, BUTTON_A " OK");
 		int pressed = 0;
 		do {
@@ -859,10 +856,10 @@ void smsWarning(void) {
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmallCentered(false, 64, "When the game starts, please");
-	printSmallCentered(false, 78, "touch the screen to go into");
-	printSmallCentered(false, 92, "the menu, and exit out of it");
-	printSmallCentered(false, 106, "for the sound to work.");
+	printSmall(false, 0, 64, "When the game starts, please", Alignment::center);
+	printSmall(false, 0, 78, "touch the screen to go into", Alignment::center);
+	printSmall(false, 0, 92, "the menu, and exit out of it", Alignment::center);
+	printSmall(false, 0, 106, "for the sound to work.", Alignment::center);
 	printSmall(false, 208, 160, BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -919,10 +916,10 @@ void mdRomTooBig(void) {
 	} else {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
-	printSmallCentered(false, 64, "This Mega Drive or Genesis");
-	printSmallCentered(false, 78, "ROM cannot be launched,");
-	printSmallCentered(false, 92, "due to the size of it");
-	printSmallCentered(false, 106, "being above 3MB.");
+	printSmall(false, 0, 64, "This Mega Drive or Genesis", Alignment::center);
+	printSmall(false, 0, 78, "ROM cannot be launched,", Alignment::center);
+	printSmall(false, 0, 92, "due to the size of it", Alignment::center);
+	printSmall(false, 0, 106, "being above 3MB.", Alignment::center);
 	printSmall(false, 208, 160, BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -1041,11 +1038,11 @@ void ramDiskMsg(const char *filename) {
 		dirContName = dirContName.substr(first, (last - first + 1));
 		dirContName.append("...");
 	}
-	printSmall(false, 16, 66, dirContName.c_str());
+	printSmall(false, 16, 66, dirContName);
 	int yPos1 = (ms().theme == 4 ? 24 : 112);
 	int yPos2 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, "This app requires a");
-	printSmallCentered(false, yPos2, "RAM disk to work.");
+	printSmall(false, 0, yPos1, "This app requires a", Alignment::center);
+	printSmall(false, 0, yPos2, "RAM disk to work.", Alignment::center);
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -1093,14 +1090,14 @@ void dsiBinariesMissingMsg(const char *filename) {
 			dirContName = dirContName.substr(first, (last - first + 1));
 			dirContName.append("...");
 		}
-		printSmall(false, 16, 66, dirContName.c_str());
+		printSmall(false, 16, 66, dirContName);
 	}
 	int yPos1 = (ms().theme == 4 ? 8 : 96);
 	int yPos2 = (ms().theme == 4 ? 24 : 112);
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, STR_DSIBINARIES_MISSING_1.c_str());
-	printSmallCentered(false, yPos2, STR_DSIBINARIES_MISSING_2.c_str());
-	printSmallCentered(false, yPos3, STR_DSIBINARIES_MISSING_3.c_str());
+	printSmall(false, 0, yPos1, STR_DSIBINARIES_MISSING_1, Alignment::center);
+	printSmall(false, 0, yPos2, STR_DSIBINARIES_MISSING_2, Alignment::center);
+	printSmall(false, 0, yPos3, STR_DSIBINARIES_MISSING_3, Alignment::center);
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 	int pressed = 0;
 	do {
@@ -1153,24 +1150,24 @@ void donorRomMsg(const char *filename) {
 	int yPos1 = (ms().theme == 4 ? 8 : 96);
 	int yPos2 = (ms().theme == 4 ? 24 : 112);
 	int yPos3 = (ms().theme == 4 ? 40 : 128);
-	printSmallCentered(false, yPos1, STR_DONOR_ROM_MSG_1.c_str());
-	printSmallCentered(false, yPos2, STR_DONOR_ROM_MSG_2.c_str());
+	printSmall(false, 0, yPos1, STR_DONOR_ROM_MSG_1.c_str(), Alignment::center);
+	printSmall(false, 0, yPos2, STR_DONOR_ROM_MSG_2.c_str(), Alignment::center);
 	switch (requiresDonorRom[CURPOS]) {
 		case 20:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK2.c_str(), Alignment::center);
 			break;
 		case 2:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK2.c_str(), Alignment::center);
 			break;
 		case 3:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_ESDK3.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_ESDK3.c_str(), Alignment::center);
 			break;
 		case 5:
 		default:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5.c_str(), Alignment::center);
 			break;
 		case 51:
-			printSmallCentered(false, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str());
+			printSmall(false, 0, yPos3, STR_DONOR_ROM_MSG_3_SDK5TWL.c_str(), Alignment::center);
 			break;
 	}
 	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
@@ -1249,11 +1246,11 @@ bool checkForCompatibleGame(const char *filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	titleUpdate(false, filename, CURPOS);
-	printSmallCentered(false, 72, STR_GAME_INCOMPATIBLE_MSG_1.c_str());
-	printSmallCentered(false, 104, STR_GAME_INCOMPATIBLE_MSG_2.c_str());
-	printSmallCentered(false, 118, STR_GAME_INCOMPATIBLE_MSG_3.c_str());
-	printSmallCentered(false, 132, STR_GAME_INCOMPATIBLE_MSG_4.c_str());
-	printSmallCentered(false, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch");
+	printSmall(false, 0, 72, STR_GAME_INCOMPATIBLE_MSG_1, Alignment::center);
+	printSmall(false, 0, 104, STR_GAME_INCOMPATIBLE_MSG_2, Alignment::center);
+	printSmall(false, 0, 118, STR_GAME_INCOMPATIBLE_MSG_3, Alignment::center);
+	printSmall(false, 0, 132, STR_GAME_INCOMPATIBLE_MSG_4, Alignment::center);
+	printSmall(false, 0, 160, BUTTON_A " Ignore, " BUTTON_B " Don't launch", Alignment::center);
 	int pressed = 0;
 	while (1) {
 		scanKeys();
@@ -1367,7 +1364,7 @@ bool selectMenu(void) {
 	while (1) {
 		int textYpos = selIconYpos + 4;
 		clearText();
-		printSmallCentered(false, (ms().theme == 4 ? 8 : 16), "SELECT menu");
+		printSmall(false, 0, (ms().theme == 4 ? 8 : 16), "SELECT menu", Alignment::center);
 		printSmall(false, 24, -2 + textYpos + (28 * selCursorPosition), ">");
 		for (int i = 0; i <= maxCursors; i++) {
 			if (assignedOp[i] == 0) {
@@ -1394,7 +1391,7 @@ bool selectMenu(void) {
 			}
 			textYpos += 28;
 		}
-		printSmallCentered(false, (ms().theme == 4 ? 164 : 160), "SELECT/" BUTTON_B " Back, " BUTTON_A " Select");
+		printSmall(false, 0, (ms().theme == 4 ? 164 : 160), "SELECT/" BUTTON_B " Back, " BUTTON_A " Select", Alignment::center);
 		scanKeys();
 		pressed = keysDown();
 		checkSdEject();
@@ -1618,6 +1615,7 @@ static bool previousPage(void) {
 		if (ms().showBoxArt)
 			clearBoxArt(); // Clear box art
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
 		currentBg = 0;
@@ -1659,6 +1657,7 @@ static bool nextPage(void) {
 		if (ms().showBoxArt)
 			clearBoxArt(); // Clear box art
 		boxArtLoaded = false;
+		bannerTextShown = false;
 		rocketVideo_playVideo = true;
 		shouldersRendered = false;
 		currentBg = 0;
@@ -1697,7 +1696,6 @@ string browseForFile(const vector<string> extensionList) {
 		updateDirectoryContents(dirContents[scrn]);
 		getFileInfo(scrn, dirContents, true);
 		reloadIconPalettes();
-		reloadFontPalettes();
 		if (ms().theme != 4 && ms().theme != 5) {
 			while (!screenFadedOut());
 		}
@@ -1764,9 +1762,12 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					currentBg = (ms().theme == 4 ? 0 : 1), displayBoxArt = ms().showBoxArt;
-					titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-							dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
-					bannerTextShown = true;
+					if(!bannerTextShown) {
+						clearText();
+						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
+						bannerTextShown = true;
+					}
 				} else {
 					if (displayBoxArt && !rocketVideo_playVideo) {
 						clearBoxArt();
@@ -1778,9 +1779,9 @@ string browseForFile(const vector<string> extensionList) {
 					showSTARTborder = rocketVideo_playVideo = (ms().theme == 1 ? true : false);
 				}
 				if (ms().theme == 5) {
-					printLargeCentered(false, 142, "^");
+					printLarge(false, 0, 142, "^", Alignment::center);
 					printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-					printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
+					printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
 				}
 				buttonArrowTouched[0] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px < 19);
 				buttonArrowTouched[1] = ((keysHeld() & KEY_TOUCH) && touch.py > 171 && touch.px > 236);
@@ -1814,6 +1815,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSelect();
 					boxArtLoaded = false;
 					settingsChanged = true;
+					bannerTextShown = false;
 				} else if (!edgeBumpSoundPlayed) {
 					snd().playWrong();
 					edgeBumpSoundPlayed = true;
@@ -1824,7 +1826,6 @@ string browseForFile(const vector<string> extensionList) {
 							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).isDirectory,
 							dirContents[scrn].at((CURPOS - 2) + PAGENUM * 40).name.c_str(),
 							CURPOS - 2);
-						defer(reloadFontTextures);
 					}
 				}
 			} else if (((pressed & KEY_RIGHT) && !titleboxXmoveleft && !titleboxXmoveright) ||
@@ -1841,6 +1842,7 @@ string browseForFile(const vector<string> extensionList) {
 					snd().playSelect();
 					boxArtLoaded = false;
 					settingsChanged = true;
+					bannerTextShown = false;
 				} else if (!edgeBumpSoundPlayed) {
 					snd().playWrong();
 					edgeBumpSoundPlayed = true;
@@ -1852,12 +1854,12 @@ string browseForFile(const vector<string> extensionList) {
 							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).isDirectory,
 							dirContents[scrn].at((CURPOS + 2) + PAGENUM * 40).name.c_str(),
 							CURPOS + 2);
-						defer(reloadFontTextures);
 					}
 				}
 				// Move apps
 			} else if ((pressed & KEY_UP) && (ms().theme != 4 && ms().theme != 5) && !dirInfoIniFound && (ms().sortMethod == 4)
 				   && !titleboxXmoveleft && !titleboxXmoveright &&CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
+				bannerTextShown = false; // Redraw the title when done
 				showSTARTborder = false;
 				currentBg = 2;
 				clearText();
@@ -1922,7 +1924,6 @@ string browseForFile(const vector<string> extensionList) {
 										   .at((CURPOS - 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS - 2);
-								defer(reloadFontTextures);
 							}
 						} else if (!edgeBumpSoundPlayed) {
 							snd().playWrong();
@@ -1945,7 +1946,6 @@ string browseForFile(const vector<string> extensionList) {
 										   .at((CURPOS + 2) + PAGENUM * 40)
 										   .name.c_str(),
 									   CURPOS + 2);
-								defer(reloadFontTextures);
 							}
 						} else if (!edgeBumpSoundPlayed) {
 							snd().playWrong();
@@ -1995,7 +1995,6 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 							reloadIconPalettes();
-							reloadFontPalettes();
 							clearText();
 						} else {
 							snd().playWrong();
@@ -2030,7 +2029,6 @@ string browseForFile(const vector<string> extensionList) {
 								swiWaitForVBlank();
 							}
 							reloadIconPalettes();
-							reloadFontPalettes();
 							clearText();
 						} else {
 							snd().playWrong();
@@ -2039,7 +2037,7 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				if ((PAGENUM != orgPage) || (CURPOS != orgCursorPosition)) {
 					currentBg = 1;
-					writeBannerText(0, "Please wait...", "", "");
+					writeBannerText("Please wait...");
 
 					int dest = CURPOS + (PAGENUM * 40);
 
@@ -2075,6 +2073,7 @@ string browseForFile(const vector<string> extensionList) {
 				int prevPos = CURPOS;
 				showSTARTborder = false;
 				scrollWindowTouched = true;
+				int prevCurPos;
 				while (1) {
 					scanKeys();
 					touchRead(&touch);
@@ -2082,6 +2081,7 @@ string browseForFile(const vector<string> extensionList) {
 					if (!(keysHeld() & KEY_TOUCH))
 						break;
 
+					prevCurPos = CURPOS;
 					CURPOS = round((touch.px - 30) / 4.925);
 					if (CURPOS > 39) {
 						CURPOS = 39;
@@ -2167,13 +2167,17 @@ string browseForFile(const vector<string> extensionList) {
 						}
 					}
 
-					clearText();
 					if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
-						currentBg = 1;
-						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
-								CURPOS);
+						if(prevCurPos != CURPOS) {
+							currentBg = 1;
+							clearText();
+							titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
+									dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
+									CURPOS);
+									bannerTextShown = true;
+						}
 					} else {
+						clearText();
 						currentBg = 0;
 					}
 					prevPos = CURPOS;
@@ -2192,6 +2196,7 @@ string browseForFile(const vector<string> extensionList) {
 				waitForNeedToPlayStopSound = 1;
 				snd().playSelect();
 				boxArtLoaded = false;
+				bannerTextShown = false;
 				settingsChanged = true;
 				touch = startTouch;
 				if (CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size()))
@@ -2481,14 +2486,14 @@ string browseForFile(const vector<string> extensionList) {
 							currentBg = 1;
 							titleUpdate(
 								dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						} else {
 							currentBg = 0;
 						}
 						if (ms().theme == 5) {
 							printSmall(false, 4, 174, (showLshoulder ? (BUTTON_L " Prev Page") : BUTTON_L));
-							printSmallRightAlign(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R));
+							printSmall(false, 256-4, 174, (showRshoulder ? ("Next Page " BUTTON_R) : BUTTON_R), Alignment::right);
 						}
 					}
 					prevTouch2 = prevTouch1;
@@ -2509,10 +2514,10 @@ string browseForFile(const vector<string> extensionList) {
 				}
 				}	// End of DSi/3DS theme check
 				titlewindowXpos[ms().secondaryDevice] = CURPOS * 5;
-				;
 				titleboxXpos[ms().secondaryDevice] = CURPOS * 64;
 				boxArtLoaded = false;
 				settingsChanged = true;
+				bannerTextShown = false;
 				touch = startTouch;
 				if (!gameTapped && CURPOS + PAGENUM * 40 < ((int)dirContents[scrn].size())) {
 					showSTARTborder = (ms().theme == 1 ? true : false);
@@ -2528,6 +2533,7 @@ string browseForFile(const vector<string> extensionList) {
 			if ((((pressed & KEY_A) || (pressed & KEY_START)) && bannerTextShown && showSTARTborder &&
 				!titleboxXmoveleft && !titleboxXmoveright) ||
 				(gameTapped)) {
+				bannerTextShown = false; // Redraw title when done
 				DirEntry *entry = &dirContents[scrn].at(CURPOS + PAGENUM * 40);
 				if (entry->isDirectory) {
 					// Enter selected directory
@@ -2569,12 +2575,12 @@ string browseForFile(const vector<string> extensionList) {
 							swiWaitForVBlank();
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 					}
 					int yPos1 = (ms().theme == 4 ? 24 : 112);
 					int yPos2 = (ms().theme == 4 ? 40 : 128);
-					printSmallCentered(false, yPos1, "This game cannot be launched");
-					printSmallCentered(false, yPos2, isDSiMode() ? "without an SD card." : "in DS mode.");
+					printSmall(false, 0, yPos1, "This game cannot be launched", Alignment::center);
+					printSmall(false, 0, yPos2, isDSiMode() ? "without an SD card." : "in DS mode.", Alignment::center);
 					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), BUTTON_A " OK");
 					pressed = 0;
 					do {
@@ -2676,19 +2682,19 @@ string browseForFile(const vector<string> extensionList) {
 							for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 						}
 						titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-								dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(),
+								dirContents[scrn].at(CURPOS + PAGENUM * 40).name,
 								CURPOS);
 						if (hasAP == 2) {
-							printSmallCentered(false, 80, "This game has AP (Anti-Piracy)");
-							printSmallCentered(false, 94, "and MUST be patched using the");
-							printSmallCentered(false, 108, "RGF TWiLight Menu AP patcher.");
+							printSmall(false, 0, 80, "This game has AP (Anti-Piracy)", Alignment::center);
+							printSmall(false, 0, 94, "and MUST be patched using the", Alignment::center);
+							printSmall(false, 0, 108, "RGF TWiLight Menu AP patcher.", Alignment::center);
 						} else {
-							printSmallCentered(false, 72, "This game has AP (Anti-Piracy).");
-							printSmallCentered(false, 104, "Please make sure you're");
-							printSmallCentered(false, 118, "using the latest version of");
-							printSmallCentered(false, 132, "TWiLight Menu++.");
+							printSmall(false, 0, 72, "This game has AP (Anti-Piracy).", Alignment::center);
+							printSmall(false, 0, 104, "Please make sure you're", Alignment::center);
+							printSmall(false, 0, 118, "using the latest version of", Alignment::center);
+							printSmall(false, 0, 132, "TWiLight Menu++.", Alignment::center);
 						}
-						printSmallCentered(false, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again");
+						printSmall(false, 0, 160, BUTTON_B "/" BUTTON_A " OK, " BUTTON_X " Don't show again", Alignment::center);
 						pressed = 0;
 						while (1) {
 							scanKeys();
@@ -2797,7 +2803,7 @@ string browseForFile(const vector<string> extensionList) {
 						clearText();
 
 						if(ms().updateRecentlyPlayedList) {
-							printLargeCentered(false, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING.c_str());
+							printLarge(false, 0, (ms().theme == 4 ? 72 : 88), STR_NOW_SAVING, Alignment::center);
 							if (ms().theme == 5) {
 								displayGameIcons = false;
 								showProgressIcon = true;
@@ -2810,8 +2816,8 @@ string browseForFile(const vector<string> extensionList) {
 								showProgressIcon = true;
 							}
 
-							printSmallCentered(false, 20, "If this crashes with an error, please");
-							printSmallCentered(false, 34, "disable \"Update recently played list\".");
+							printSmall(false, 0, 20, "If this crashes with an error, please", Alignment::center);
+							printSmall(false, 0, 34, "disable \"Update recently played list\".", Alignment::center);
 
 							mkdir(sdFound() ? "sd:/_nds/TWiLightMenu/extras" : "fat:/_nds/TWiLightMenu/extras",
 						  0777);
@@ -2944,6 +2950,7 @@ string browseForFile(const vector<string> extensionList) {
 				if (ms().showBoxArt)
 					clearBoxArt(); // Clear box art
 				boxArtLoaded = false;
+				bannerTextShown = false;
 				rocketVideo_playVideo = true;
 				shouldersRendered = false;
 				currentBg = 0;
@@ -2986,7 +2993,7 @@ string browseForFile(const vector<string> extensionList) {
 				snprintf(fileCounter, sizeof(fileCounter), "%i/%i", (CURPOS + 1) + PAGENUM * 40,
 					 file_count);
 				titleUpdate(dirContents[scrn].at(CURPOS + PAGENUM * 40).isDirectory,
-						dirContents[scrn].at(CURPOS + PAGENUM * 40).name.c_str(), CURPOS);
+						dirContents[scrn].at(CURPOS + PAGENUM * 40).name, CURPOS);
 				dirContName = dirContents[scrn].at(CURPOS + PAGENUM * 40).name;
 				// About 38 characters fit in the box.
 				if (strlen(dirContName.c_str()) > 38) {
@@ -2997,19 +3004,19 @@ string browseForFile(const vector<string> extensionList) {
 					dirContName = dirContName.substr(first, (last - first + 1));
 					dirContName.append("...");
 				}
-				printSmall(false, 16, 66, dirContName.c_str());
+				printSmall(false, 16, 66, dirContName);
 				printSmall(false, 16, 160, fileCounter);
-				printSmallCentered(false, 112, "Are you sure you want to");
+				printSmall(false, 0, 112, "Are you sure you want to", Alignment::center);
 				if (isDirectory[CURPOS]) {
 					if (unHide)
-						printSmallCentered(false, 128, "unhide this folder?");
+						printSmall(false, 0, 128, "unhide this folder?", Alignment::center);
 					else
-						printSmallCentered(false, 128, "hide this folder?");
+						printSmall(false, 0, 128, "hide this folder?", Alignment::center);
 				} else {
 					if (unHide)
-						printSmallCentered(false, 128, "delete/unhide this game?");
+						printSmall(false, 0, 128, "delete/unhide this game?", Alignment::center);
 					else
-						printSmallCentered(false, 128, "delete/hide this game?");
+						printSmall(false, 0, 128, "delete/hide this game?", Alignment::center);
 				}
 				for (int i = 0; i < 90; i++) {
 					snd().updateStream();
@@ -3129,15 +3136,18 @@ string browseForFile(const vector<string> extensionList) {
 					for (int i = 0; i < 15; i++) { snd().updateStream(); swiWaitForVBlank(); }
 				}
 				dbox_showIcon = false;
+				bannerTextShown = false;
 			}
 
 			if ((pressed & KEY_Y) && (isDirectory[CURPOS] == false) &&
 				(bnrRomType[CURPOS] == 0) && !titleboxXmoveleft && !titleboxXmoveright &&
 				bannerTextShown && showSTARTborder) {
 				perGameSettings(dirContents[scrn].at(CURPOS + PAGENUM * 40).name);
+				bannerTextShown = false;
 			}
 
 			if (held & KEY_SELECT) {
+				bannerTextShown = false;
 				bool runSelectMenu = true;
 				bool break2 = false;
 				while (held & KEY_SELECT) {

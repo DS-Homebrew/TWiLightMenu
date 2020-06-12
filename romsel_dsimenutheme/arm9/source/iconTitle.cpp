@@ -21,35 +21,32 @@
 
 ------------------------------------------------------------------*/
 
+#include "iconTitle.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "common/gl2d.h"
+#include "common/tonccpy.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"
 #include "graphics/queueControl.h"
+#include "graphics/ThemeConfig.h"
 #include "graphics/ThemeTextures.h"
 #include "language.h"
 #include "ndsheaderbanner.h"
-#include "common/tonccpy.h"
 #include <ctype.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <vector>
 
 #define LEFT_ALIGN 70
 #define ICON_POS_X 112
 #define ICON_POS_Y 96
 
-static int BOX_PY = 11;
-static int BOX_PY_spacing1 = 19;
-static int BOX_PY_spacing2 = 9;
-static int BOX_PY_spacing3 = 28;
-
 extern bool showdialogbox;
 extern bool dbox_showIcon;
 extern bool startMenu;
-
 
 extern int currentBg;
 
@@ -63,50 +60,13 @@ sNDSBannerExt ndsBanner;
 #define TITLE_CACHE_SIZE 0x80
 
 static bool infoFound[41] = {false};
-static u16 cachedTitle[41][TITLE_CACHE_SIZE];
-static char titleToDisplay[3][384];
+static char16_t cachedTitle[41][TITLE_CACHE_SIZE];
 
 static u32 arm9StartSig[4];
 
 u8 tilesModified[(32 * 256) / 2] = {0};
 
 std::vector<std::tuple<u8 *, u16 *, int, bool>> queuedIconUpdateCache;
-
-void writeBannerText(int textlines, const char *text1, const char *text2, const char *text3) {
-	if (ms().theme == 1) {
-		switch (textlines) {
-		case 0:
-		default:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printSmallCentered(false, BOX_PY, text1);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
-			break;
-		}
-	} else {
-		switch (textlines) {
-		case 0:
-		default:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text1);
-			break;
-		case 1:
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, text2);
-			break;
-		case 2:
-			printLargeCentered(false, BOX_PY, text1);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1, text2);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing1 * 2, text3);
-			break;
-		}
-	}
-}
 
 static void convertIconTilesToRaw(u8 *tilesSrc, u8 *tilesNew, bool twl) {
 	int PY = 32;
@@ -686,132 +646,110 @@ void iconUpdate(bool isDir, const char *name, int num) {
 	}
 }
 
-static inline void writeDialogTitle(int textlines, const char *text1, const char *text2, const char *text3) {
-	// Ensure that the font isn't corrupted.
-	switch (textlines) {
-	case 0:
-	default:
-		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1, text1);
-		break;
-	case 1:
-		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing2, text1);
-		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing3, text2);
-		break;
-	case 2:
-		printLarge(false, LEFT_ALIGN, BOX_PY, text1);
-		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1, text2);
-		printLarge(false, LEFT_ALIGN, BOX_PY + BOX_PY_spacing1 * 2, text3);
-		break;
+void writeBannerText(std::string_view text) { writeBannerText(FontGraphic::utf8to16(text)); }
+void writeBannerText(std::u16string text) {
+	// Split to lines since DS game titles have manual line breaks
+	std::vector<std::u16string> lines;
+	size_t newline = text.find('\n');
+	while (newline != text.npos) {
+		lines.push_back(text.substr(0, newline));
+		text = text.substr(newline + 1);
+		newline = text.find('\n');
+	}
+	lines.push_back(text.data());
+	
+	// Insert line breaks if lines are too long
+	for(uint i = 0; i < lines.size(); i++) {
+		int width = tc().titleboxTextLarge() ? calcLargeFontWidth(lines[i]) : calcSmallFontWidth(lines[i]);
+		if(width > tc().titleboxTextW()) {
+			int mid = lines[i].length() / 2;
+			bool foundSpace = false;
+			for(uint j = 0; j < lines[i].length() / 2; j++) {
+				if(lines[i][mid + j] == ' ') {
+					lines.insert(lines.begin() + i, lines[i].substr(0, mid + j));
+					lines[i + 1] = lines[i + 1].substr(mid + j + 1);
+					i--;
+					foundSpace = true;
+					break;
+				} else if(lines[i][mid - j] == ' ') {
+					lines.insert(lines.begin() + i, lines[i].substr(0, mid - j));
+					lines[i + 1] = lines[i + 1].substr(mid - j + 1);
+					i--;
+					foundSpace = true;
+					break;
+				}
+			}
+			if(!foundSpace) {
+				lines.insert(lines.begin() + i, lines[i].substr(0, mid));
+				lines[i + 1] = lines[i + 1].substr(mid);
+				i--;
+			}
+		}
+	}
+
+	// Trim to the max lines if too big
+	if((int)lines.size() > tc().titleboxMaxLines())
+		lines.resize(tc().titleboxMaxLines());
+
+	// Re-combine to a single string
+	std::u16string out;
+	for(auto line : lines) {
+		out += line + u'\n';
+	}
+	if (tc().titleboxTextLarge()) {
+		printLarge(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * largeFontHeight()) / 2), out, Alignment::center);
+	} else {
+		printSmall(false, 0, tc().titleboxTextY() - (((lines.size() - 1) * smallFontHeight()) / 2), out, Alignment::center);
 	}
 }
 
-void titleUpdate(bool isDir, const char *name, int num) {
-	clearText(false);
-	if (showdialogbox || (ms().theme == 4 && currentBg == 1)) {
-		BOX_PY = 14;
-		BOX_PY_spacing1 = 17;
-		BOX_PY_spacing2 = 7;
-		BOX_PY_spacing3 = 26;
-	} else if (ms().theme == 1) {
-		BOX_PY = 39;
-		BOX_PY_spacing1 = 16;
-		BOX_PY_spacing2 = 8;
-		BOX_PY_spacing3 = 25;
-	} else {
-		BOX_PY = 11;
-		BOX_PY_spacing1 = 19;
-		BOX_PY_spacing2 = 9;
-		BOX_PY_spacing3 = 28;
+static inline void writeDialogTitle(std::u16string text) {
+	int lines = 0;
+	for(auto c : text) {
+		if(c == '\n') {
+			lines++;
+		}
 	}
 
-	/*if (startMenu) {
-		if (ms().startMenu_cursorPosition == 0) {
-			writeBannerText(0, "Settings", "", "");
-		} else if (ms().startMenu_cursorPosition == 1) {
-			if (!flashcardFound()) {
-				if (REG_SCFG_MC == 0x11) {
-					writeBannerText(1, "There is nothing inserted in", "the Game Card slot.", "");
-				} else {
-					writeBannerText(1, "Launch Slot-1 card", "(NTR carts only)", "");
-				}
-			} else {
-				if (ms().useGbarunner) {
-					writeBannerText(0, "Start GBARunner2", "", "");
-				} else {
-					writeBannerText(0, "Start GBA Mode", "", "");
-				}
-			}
-		} else if (ms().startMenu_cursorPosition == 2) {
-			writeBannerText(0, "Start GBARunner2", "", "");
-		}
-		return;
-	}*/
+	printLarge(false, LEFT_ALIGN, 31 - (lines * largeFontHeight() / 2), text);
+}
 
+const char *lastName;
+
+void titleUpdate(bool isDir, const std::string &name, int num) {
 	if (isDir) {
-		// text
-		if (strcmp(name, "..") == 0) {
-			writeBannerText(0, "Back", "", "");
+		if (name == "..") {
+			writeBannerText("Back");
 		} else {
-			writeBannerText(0, name, "", "");
+			writeBannerText(name);
 		}
 	} else if (extention(name, ".plg")
-	 || extention(name, ".rvid")
-	 || extention(name, ".mp4")
-	 || extention(name, ".gba")
-	 || extention(name, ".gb")
-	 || extention(name, ".sgb")
-	 || extention(name, ".gbc")
-	 || extention(name, ".nes")
-	 || extention(name, ".fds")
-	 || extention(name, ".sms")
-	 || extention(name, ".gg")
-	 || extention(name, ".gen")
-	 || extention(name, ".smc")
-	 || extention(name, ".sfc")
-	 || extention(name, ".a26")
-	 || extention(name, ".pce"))
-	{
-		writeBannerText(0, name, "", "");
+			|| extention(name, ".rvid")
+			|| extention(name, ".mp4")
+			|| extention(name, ".gba")
+			|| extention(name, ".gb")
+			|| extention(name, ".sgb")
+			|| extention(name, ".gbc")
+			|| extention(name, ".nes")
+			|| extention(name, ".fds")
+			|| extention(name, ".sms")
+			|| extention(name, ".gg")
+			|| extention(name, ".gen")
+			|| extention(name, ".smc")
+			|| extention(name, ".sfc")
+			|| extention(name, ".a26")
+			|| extention(name, ".pce")) {
+		writeBannerText(name.substr(0, name.find_last_of('.')));
 	} else {
 		// this is an nds/app file!
 
-		// turn unicode into ascii (kind of)
-		// and convert 0x0A into 0x00
-		int bannerlines = 0;
-		// The index of the character array
-		int charIndex = 0;
-		for (int i = 0; i < TITLE_CACHE_SIZE; i++) {
-			// todo: fix crash on titles that are too long (homebrew)
-			if ((cachedTitle[num][i] == 0x000A) || (cachedTitle[num][i] == 0xFFFF)) {
-				titleToDisplay[bannerlines][charIndex] = 0;
-				bannerlines++;
-				charIndex = 0;
-			} else if (cachedTitle[num][i] <= 0x007F) { // ASCII are one UTF-8 character
-				titleToDisplay[bannerlines][charIndex++] = cachedTitle[num][i];
-			} else if (cachedTitle[num][i] <= 0x07FF) { // 0x0080 - 0x07FF are two UTF-8 characters
-				titleToDisplay[bannerlines][charIndex++] = (0xC0 | ((cachedTitle[num][i] & 0x7C0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x03F));
-			} else { // 0x0800 - 0xFFFF take three UTF-8 characters, we don't need to handle higher as we're coming from single UTF-16 chars
-				titleToDisplay[bannerlines][charIndex++] = (0xE0 | ((cachedTitle[num][i] & 0xF000) >> 12));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | ((cachedTitle[num][i] & 0x0FC0) >> 6));
-				titleToDisplay[bannerlines][charIndex++] = (0x80 | (cachedTitle[num][i] & 0x003F));
-			}
-		}
-
-		// text
 		bool theme_showdialogbox = (showdialogbox || (ms().theme == 4 && currentBg == 1) || (ms().theme == 5 && dbox_showIcon));
-		if (theme_showdialogbox || infoFound[num]) {
-			if (theme_showdialogbox) {
-				writeDialogTitle(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-			} else {
-				writeBannerText(bannerlines, titleToDisplay[0], titleToDisplay[1], titleToDisplay[2]);
-			}
-		} else if (ms().theme == 1) {
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing2, name);
-			printSmallCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
+		if (theme_showdialogbox) {
+			writeDialogTitle(cachedTitle[num]);
+		} else if (infoFound[num]) {
+			writeBannerText(cachedTitle[num]);
 		} else {
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing2, name);
-			printLargeCentered(false, BOX_PY + BOX_PY_spacing3, titleToDisplay[0]);
+			writeBannerText(name);
 		}
 	}
 }

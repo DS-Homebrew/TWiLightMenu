@@ -320,8 +320,8 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			textXpos[1] = 88;
 		}
 		clearText();
-		printLargeCentered(false, textXpos[0], resultText1);
-		printLargeCentered(false, textXpos[1], resultText2);
+		printLarge(false, 0, textXpos[0], resultText1, Alignment::center);
+		printLarge(false, 0, textXpos[1], resultText2, Alignment::center);
 		if (ms().theme != 4) {
 			fadeType = true; // Fade in from white
 		}
@@ -376,8 +376,8 @@ TWL_CODE void SetWidescreen(const char *filename) {
 			textXpos[1] = 88;
 		}
 		clearText();
-		printLargeCentered(false, textXpos[0], resultText1);
-		printLargeCentered(false, textXpos[1], resultText2);
+		printLarge(false, 0, textXpos[0], resultText1, Alignment::center);
+		printLarge(false, 0, textXpos[1], resultText2, Alignment::center);
 		if (ms().theme != 4) {
 			fadeType = true; // Fade in from white
 		}
@@ -621,7 +621,7 @@ int main(int argc, char **argv) {
 				swiWaitForVBlank();
 		}
 		currentBg = 1;
-		printLargeCentered(false, 32, "fatInitDefault failed!");
+		printLarge(false, 0, 32, "fatInitDefault failed!", Alignment::center);
 
 		// Control the DSi Menu, but can't launch anything.
 		int pressed = 0;
@@ -777,15 +777,14 @@ int main(int argc, char **argv) {
 	  if ((access(ms().dsiWarePubPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePubPath.c_str(), ".pub")) ||
 	    (access(ms().dsiWarePrvPath.c_str(), F_OK) == 0 && extention(ms().dsiWarePrvPath.c_str(), ".prv"))) {
 		fadeType = true; // Fade in from white
-		printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
-		printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
-		printLargeCentered(false, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA.c_str());
-		printSmallCentered(false, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER.c_str());
+		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
+		printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
+		printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
+		printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 		for (int i = 0; i < 15; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
 		}
-		reloadFontPalettes();
 		for (int i = 0; i < 20; i++) {
 			snd().updateStream();
 			swiWaitForVBlank();
@@ -925,13 +924,13 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this takes a while, press HOME,");
-						printSmallCentered(false, 34, "then press B.");
+						printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
+						printSmall(false, 0, 34, "then press B.", Alignment::center);
 					} else {
-						printSmallCentered(false, 20, "If this takes a while, close and open");
-						printSmallCentered(false, 34, "the console's lid.");
+						printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
+						printSmall(false, 0, 34, "the console's lid.", Alignment::center);
 					}
-					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating public save file...");
+					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), "Creating public save file...", Alignment::center);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -960,7 +959,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Public save file created!");
+					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), "Public save file created!", Alignment::center);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -973,13 +972,13 @@ int main(int argc, char **argv) {
 					if (memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 						// Display nothing
 					} else if (ms().consoleModel >= 2) {
-						printSmallCentered(false, 20, "If this takes a while, press HOME,");
-						printSmallCentered(false, 34, "then press B.");
+						printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
+						printSmall(false, 0, 34, "then press B.", Alignment::center);
 					} else {
-						printSmallCentered(false, 20, "If this takes a while, close and open");
-						printSmallCentered(false, 34, "the console's lid.");
+						printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
+						printSmall(false, 0, 34, "the console's lid.", Alignment::center);
 					}
-					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), "Creating private save file...");
+					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), "Creating private save file...", Alignment::center);
 					if (ms().theme != 4 && !fadeType) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1008,7 +1007,7 @@ int main(int argc, char **argv) {
 					}
 					showProgressIcon = false;
 					clearText();
-					printLargeCentered(false, (ms().theme == 4 ? 32 : 88), "Private save file created!");
+					printLarge(false, 0, (ms().theme == 4 ? 32 : 88), "Private save file created!", Alignment::center);
 					for (int i = 0; i < 60; i++) {
 						swiWaitForVBlank();
 					}
@@ -1101,10 +1100,10 @@ int main(int argc, char **argv) {
 
 				if (ms().secondaryDevice) {
 					clearText();
-					printSmallCentered(false, 20, STR_TAKEWHILE_CLOSELID_1.c_str());
-					printSmallCentered(false, 34, STR_TAKEWHILE_CLOSELID_2.c_str());
-					printLargeCentered(false, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA.c_str());
-					printSmallCentered(false, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER.c_str());
+					printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID_1, Alignment::center);
+					printSmall(false, 0, 34, STR_TAKEWHILE_CLOSELID_2, Alignment::center);
+					printLarge(false, 0, (ms().theme == 4 ? 80 : 88), STR_NOW_COPYING_DATA, Alignment::center);
+					printSmall(false, 0, (ms().theme == 4 ? 96 : 104), STR_DONOT_TURNOFF_POWER, Alignment::center);
 					if (ms().theme != 4) {
 						fadeType = true; // Fade in from white
 						for (int i = 0; i < 35; i++) {
@@ -1142,9 +1141,9 @@ int main(int argc, char **argv) {
 							afterSaveTextXpos[2] = 104;
 						}
 						clearText();
-						printLargeCentered(false, afterSaveTextXpos[0], "After saving, please re-start");
-						printLargeCentered(false, afterSaveTextXpos[1], "TWiLight Menu++ to transfer your");
-						printLargeCentered(false, afterSaveTextXpos[2], "save data back.");
+						printLarge(false, 0, afterSaveTextXpos[0], "After saving, please re-start", Alignment::center);
+						printLarge(false, 0, afterSaveTextXpos[1], "TWiLight Menu++ to transfer your", Alignment::center);
+						printLarge(false, 0, afterSaveTextXpos[2], "save data back.", Alignment::center);
 						if (ms().theme != 4) {
 							fadeType = true; // Fade in from white
 						}
@@ -1298,13 +1297,13 @@ int main(int argc, char **argv) {
 								if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
 									// Display nothing
 								} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-									printSmallCentered(false, 20, "If this takes a while, press HOME,");
-									printSmallCentered(false, 34, "then press B.");
+									printSmall(false, 0, 20, "If this takes a while, press HOME,", Alignment::center);
+									printSmall(false, 0, 34, "then press B.", Alignment::center);
 								} else {
-									printSmallCentered(false, 20, "If this takes a while, close and open");
-									printSmallCentered(false, 34, "the console's lid.");
+									printSmall(false, 0, 20, "If this takes a while, close and open", Alignment::center);
+									printSmall(false, 0, 34, "the console's lid.", Alignment::center);
 								}
-								printLargeCentered(false, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...");
+								printLarge(false, 0, (ms().theme == 4 ? 80 : 88), (orgsavesize == 0) ? "Creating save file..." : "Expanding save file...", Alignment::center);
 
 								if (ms().theme != 4 && ms().theme != 5) {
 									fadeSpeed = true; // Fast fading
@@ -1324,7 +1323,7 @@ int main(int argc, char **argv) {
 								}
 								showProgressIcon = false;
 								clearText();
-								printLargeCentered(false, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? "Save file created!" : "Save file expanded!");
+								printLarge(false, 0, (ms().theme == 4 ? 32 : 88), (orgsavesize == 0) ? "Save file created!" : "Save file expanded!", Alignment::center);
 								for (int i = 0; i < 30; i++) {
 									swiWaitForVBlank();
 								}

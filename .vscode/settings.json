@@ -53,6 +53,9 @@
         "sstream": "cpp",
         "streambuf": "cpp",
         "cinttypes": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "bit": "cpp",
+        "numeric": "cpp",
+        "random": "cpp"
     }
 }
