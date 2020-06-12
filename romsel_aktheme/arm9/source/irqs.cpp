@@ -34,6 +34,7 @@
 #include "windows/batteryicon.h"
 #include "windows/volumeicon.h"
 #include "ui/animation.h"
+#include "sound.h"
 
 // #include "time/timer.h"
 #include "common/files.h"
@@ -107,8 +108,7 @@ void IRQ::vBlank()
 #endif
 
         gdi().present(GE_SUB);
-    }
-
+    } 
     animationManager().update();
 
     // if( REG_ROMCTRL & CARD_BUSY )

@@ -23,6 +23,7 @@
 #include "time/timer.h"
 #include "tool/dbgtool.h"
 #include "windowmanager.h"
+#include "sound.h"
 
 namespace akui
 {
@@ -216,11 +217,14 @@ u32 Form::doModal()
 
     do
     { // manually update system loop
+        // snd().updateStream();
         timer().updateFps();
         INPUT &inputs = updateInput();
         processInput(inputs);
         windowManager().update();
+        // snd().updateStream();
         gdi().present(GE_MAIN);
+
         //dbg_printf( "modal window looping\n" );
     } while (modalRet() == (u32)-1);
 

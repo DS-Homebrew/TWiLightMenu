@@ -68,19 +68,6 @@ double Timer::getTime()
     return _currentTime;
 }
 
-vu64 Timer::getTick()
-{
-    irqDisable( IRQ_TIMER0 );
-    DC_FlushAll();
-    static vu64 lastTick = 0;
-    vu64 tick = _overFlow + TIMER0_DATA;
-    if( tick < lastTick )
-        tick += 65536;
-    lastTick = tick;
-    irqEnable( IRQ_TIMER0 );
-    return tick;
-}
-
 double Timer::tickToUs( u64 tick )
 {
     return tick * 1.f/(33.514*1000000.f) * 1000 * 1000;

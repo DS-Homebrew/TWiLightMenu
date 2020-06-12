@@ -137,7 +137,6 @@ int main(int argc, char **argv)
 	sfn().initFilenames();
 	nocashMessage("sfn init");
 	irq().init();
-
 	gdi().init();
 	// init graphics
 	gdi().initBg(SFN_LOWER_SCREEN_BG);
@@ -237,17 +236,17 @@ int main(int argc, char **argv)
 
 	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
 	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
-
-	irq().vblankStart();
 	snd().beginStream();
+	irq().vblankStart();
 	while (1)
 	{
+		// snd().updateStream();
 		timer().updateFps();
 		INPUT &inputs = updateInput();
 		processInput(inputs);
+		snd().updateStream();
 		swiWaitForVBlank();
 		windowManager().update();
-		snd().updateStream();
 		gdi().present(GE_MAIN);
 	}
 	return 0;

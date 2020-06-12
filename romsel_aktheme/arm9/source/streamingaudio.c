@@ -16,6 +16,8 @@ static volatile s16 streaming_buf_swap[STREAMING_BUF_LENGTH] = {0};
  */
 volatile s32 streaming_buf_ptr = 0;
 
+volatile long streamed_samples = 0;
+
 /**
  * Number of samples filled so far
  */
@@ -115,6 +117,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
         // Increment the streaming buf pointer.
         streaming_buf_ptr++;
         
+        streamed_samples++;
     }
 
     if (!sample_delay_count && fade_out && (fade_counter > 0)) {
@@ -131,7 +134,7 @@ mm_word on_stream_request(mm_word length, mm_addr dest, mm_stream_formats format
     // Request a new fill from sound.cpp, refreshing the fill buffer.
     // Ensure that fills are requested only if the streaming buf ptr is more than
     // the filled samples.
-    if (!fill_requested && abs(streaming_buf_ptr - filled_samples) >= SAMPLES_PER_FILL) {
+    if (!fill_requested && streamed_samples >= SAMPLES_PER_FILL) {
         #ifdef SOUND_DEBUG
         nocashMessage("Fill requested!");
         #endif

@@ -23,7 +23,7 @@ extern volatile s16* fill_stream_buf;
 extern volatile s32 filled_samples;
 
 extern volatile bool fill_requested;
-extern volatile s32 samples_left_until_next_fill;
+extern volatile long streamed_samples;
 extern volatile s32 streaming_buf_ptr;
 
 #define SAMPLES_USED (STREAMING_BUF_LENGTH - samples_left)
@@ -76,23 +76,21 @@ SoundControl::SoundControl()
 	//     255,		     // volume
 	//     128,		     // panning
 	// };
-
 	stream_source = fopen(std::string(SFN_SOUND_BG).c_str(), "rb");
-	
-	fseek(stream_source, 0, SEEK_SET);
+	fseek((FILE*)stream_source, 0, SEEK_SET);
 
 	stream.sampling_rate = 16000;	 		// 16000Hz
-	stream.buffer_length = 800;	  			// should be adequate
+	stream.buffer_length = 400;	  			// should be adequate
 	stream.callback = on_stream_request;    
 	stream.format = MM_STREAM_16BIT_MONO;  // select format
 	stream.timer = MM_TIMER0;	    	   // use timer0
 	stream.manual = false;	      		   // auto filling
 	
 	// Prep the first section of the stream
-	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	fread((void*)play_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, (FILE*)stream_source);
 
 	// Fill the next section premptively
-	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, stream_source);
+	fread((void*)fill_stream_buf, sizeof(s16), STREAMING_BUF_LENGTH, (FILE*)stream_source);
 
 }
 
@@ -141,34 +139,34 @@ void SoundControl::setStreamDelay(u32 delay) {
 // filled_samples <= streaming_buf_ptr
 // fill_requested == false
 volatile void SoundControl::updateStream() {
-	
 	if (!stream_is_playing) return;
 	if (fill_requested && filled_samples < STREAMING_BUF_LENGTH) {
-			
 		// Reset the fill request
 		fill_requested = false;
 		int instance_filled = 0;
 
 		// Either fill the max amount, or fill up the buffer as much as possible.
-		int instance_to_fill = std::min(SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL);
+		int instance_to_fill = streamed_samples;
+		streamed_samples = 0;
 
 		// If we don't read enough samples, loop from the beginning of the file.
-		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, stream_source);		
+		instance_filled = fread((s16*)fill_stream_buf + filled_samples, sizeof(s16), instance_to_fill, (FILE*)stream_source);	
+
+
 		if (instance_filled < instance_to_fill) {
-			fseek(stream_source, 0, SEEK_SET);
+			fseek((FILE*)stream_source, 0, SEEK_SET);
 			instance_filled += fread((s16*)fill_stream_buf + filled_samples + instance_filled,
-				 sizeof(s16), (instance_to_fill - instance_filled), stream_source);
+				 sizeof(s16), (instance_to_fill - instance_filled), (FILE*)stream_source);
 		}
 
+	
 		#ifdef SOUND_DEBUG
 		sprintf(debug_buf, "FC: SAMPLES_LEFT_TO_FILL: %li, SAMPLES_TO_FILL: %li, instance_filled: %i, filled_samples %li, to_fill: %i", SAMPLES_LEFT_TO_FILL, SAMPLES_TO_FILL, instance_filled, filled_samples, instance_to_fill);
     	nocashMessage(debug_buf);
 		#endif
 
 		// maintain invariant 0 < filled_samples <= STREAMING_BUF_LENGTH
-		filled_samples = std::min<s32>(filled_samples + instance_filled, STREAMING_BUF_LENGTH);
-
-	
+		filled_samples = std::min<s32>(filled_samples + instance_filled, STREAMING_BUF_LENGTH);	
 	} else if (fill_requested && filled_samples >= STREAMING_BUF_LENGTH) {
 		// filled_samples == STREAMING_BUF_LENGTH is the only possible case
 		// but we'll keep it at gte to be safe.

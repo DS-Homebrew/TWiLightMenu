@@ -33,10 +33,10 @@ class SoundControl {
     private:
         mm_stream stream;
         mm_ds_system sys;
-        bool stream_is_playing;
+        volatile bool stream_is_playing;
         //mm_sound_effect snd_loading;
         mm_sound_effect mus_startup;
-        FILE* stream_source;
+        volatile FILE* stream_source;
         u32 startup_sample_length;
 };
 
