@@ -1,5 +1,4 @@
 #include "perGameSettings.h"
-#include "buttontext.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>

@@ -1,5 +1,4 @@
 #include "fileBrowse.h"
-#include "buttontext.h"
 #include <algorithm>
 #include <dirent.h>
 #include <math.h>

@@ -19,7 +19,6 @@
 */
 
 #include "cheat.h"
-#include "buttontext.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
 #include "tool/dbgtool.h"
