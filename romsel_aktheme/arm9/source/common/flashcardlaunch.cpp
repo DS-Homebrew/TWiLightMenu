@@ -44,10 +44,13 @@ int loadGameOnFlashcard (std::string ndsPath, bool usePerGameSettings) {
 		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT1);
 		config.option("Dir Info", "fullName", launchPath);
 		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
-	} else if (memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS (v2)", 0xB) == 0) {
-		LoaderConfig config(replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0), "fat:/__rpg/lastsave.ini");
-		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_FAT0);
-		config.option("Save Info", "lastLoaded", launchPath);
+	} else if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+		LoaderConfig config("fat:/YSMenu.nds", "fat:/TTMenu/YSMenu.ini");
+		launchPath = replaceAll(ndsPath.c_str(), FC_PREFIX_FAT, FC_PREFIX_SLASH);
+		config.option("YSMENU", "AUTO_BOOT", launchPath);
 		return config.launch(0, NULL, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
