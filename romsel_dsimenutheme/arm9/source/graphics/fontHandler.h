@@ -18,5 +18,10 @@ int calcSmallFontWidth(std::u16string_view text);
 int calcLargeFontWidth(std::string_view text);
 int calcLargeFontWidth(std::u16string_view text);
 
+int calcSmallFontHeight(std::string_view text);
+int calcSmallFontHeight(std::u16string_view text);
+int calcLargeFontHeight(std::string_view text);
+int calcLargeFontHeight(std::u16string_view text);
+
 u8 smallFontHeight(void);
 u8 largeFontHeight(void);

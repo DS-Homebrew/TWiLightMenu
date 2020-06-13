@@ -92,6 +92,26 @@ int calcLargeFontWidth(std::u16string_view text) {
 	return largeFont.calcWidth(text);
 }
 
+int calcSmallFontHeight(std::string_view text) { return calcSmallFontHeight(FontGraphic::utf8to16(text)); }
+int calcSmallFontHeight(std::u16string_view text) {
+	int lines = 1;
+	for(auto c : text) {
+		if(c == '\n')
+			lines++;
+	}
+	return lines * smallFont.height();
+}
+
+int calcLargeFontHeight(std::string_view text) { return calcLargeFontHeight(FontGraphic::utf8to16(text)); }
+int calcLargeFontHeight(std::u16string_view text) {
+	int lines = 1;
+	for(auto c : text) {
+		if(c == '\n')
+			lines++;
+	}
+	return lines * largeFont.height();
+}
+
 u8 smallFontHeight(void) {
 	return smallFont.height();
 }

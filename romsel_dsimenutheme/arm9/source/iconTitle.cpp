@@ -719,7 +719,7 @@ const char *lastName;
 void titleUpdate(bool isDir, const std::string &name, int num) {
 	if (isDir) {
 		if (name == "..") {
-			writeBannerText("Back");
+			writeBannerText(STR_BACK);
 		} else {
 			writeBannerText(name);
 		}

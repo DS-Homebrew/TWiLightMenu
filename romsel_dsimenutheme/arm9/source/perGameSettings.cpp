@@ -1,5 +1,4 @@
 #include "perGameSettings.h"
-#include "buttontext.h"
 #include <vector>
 #include <algorithm>
 #include <unistd.h>
@@ -472,21 +471,21 @@ void perGameSettings (std::string filename) {
 				} else if (perGameSettings_language == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_SYSTEM, Alignment::right);
 				} else if (perGameSettings_language == 0) {
-					printSmall(false, 256-24, perGameOpYpos, "Japanese", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_JAPANESE, Alignment::right);
 				} else if (perGameSettings_language == 1) {
-					printSmall(false, 256-24, perGameOpYpos, "English", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_ENGLISH, Alignment::right);
 				} else if (perGameSettings_language == 2) {
-					printSmall(false, 256-24, perGameOpYpos, "French", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_FRENCH, Alignment::right);
 				} else if (perGameSettings_language == 3) {
-					printSmall(false, 256-24, perGameOpYpos, "German", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_GERMAN, Alignment::right);
 				} else if (perGameSettings_language == 4) {
-					printSmall(false, 256-24, perGameOpYpos, "Italian", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_ITALIAN, Alignment::right);
 				} else if (perGameSettings_language == 5) {
-					printSmall(false, 256-24, perGameOpYpos, "Spanish", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_SPANISH, Alignment::right);
 				} else if (perGameSettings_language == 6) {
-					printSmall(false, 256-24, perGameOpYpos, "Chinese", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_CHINESE, Alignment::right);
 				} else if (perGameSettings_language == 7) {
-					printSmall(false, 256-24, perGameOpYpos, "Korean", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_KOREAN, Alignment::right);
 				}
 				break;
 			case 1:
@@ -508,11 +507,11 @@ void perGameSettings (std::string filename) {
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
 				} else if (perGameSettings_dsiMode == 2) {
-					printSmall(false, 256-24, perGameOpYpos, "DSi mode (Forced)", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_DSI_MODE_FORCED, Alignment::right);
 				} else if (perGameSettings_dsiMode == 1) {
-					printSmall(false, 256-24, perGameOpYpos, "DSi mode", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_DSI_MODE, Alignment::right);
 				} else {
-					printSmall(false, 256-24, perGameOpYpos, "DS mode", Alignment::right);
+					printSmall(false, 256-24, perGameOpYpos, STR_DS_MODE, Alignment::right);
 				}
 				break;
 			case 3:
@@ -588,14 +587,14 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 14;
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-			printSmall(false, 194, botRowY, BUTTON_B" Back");
+			printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, botRowY, BUTTON_A" OK");
+			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
 		} else {	// Per-game settings for retail/commercial games
 			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-				printSmall(false, 128, botRowY, BUTTON_X " Cheats  " BUTTON_B" Back");
+				printSmall(false, 240, botRowY, STR_X_CHEATS_B_BACK, Alignment::right);
 			} else {
-				printSmall(false, 194, botRowY, BUTTON_B" Back");
+				printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
 			}
 		}
 		do {
@@ -802,73 +801,17 @@ void perGameSettings (std::string filename) {
 }
 
 std::string getSavExtension(void) {
-	switch (perGameSettings_saveNo) {
-		case 0:
-		default:
-			return ".sav";
-			break;
-		case 1:
-			return ".sav1";
-			break;
-		case 2:
-			return ".sav2";
-			break;
-		case 3:
-			return ".sav3";
-			break;
-		case 4:
-			return ".sav4";
-			break;
-		case 5:
-			return ".sav5";
-			break;
-		case 6:
-			return ".sav6";
-			break;
-		case 7:
-			return ".sav7";
-			break;
-		case 8:
-			return ".sav8";
-			break;
-		case 9:
-			return ".sav9";
-			break;
+	if (perGameSettings_saveNo == 0) {
+		return ".sav";
+	} else {
+		return ".sav" + std::to_string(perGameSettings_saveNo);
 	}
 }
 
 std::string getImgExtension(int number) {
-	switch (number) {
-		case 0:
-		default:
-			return ".img";
-			break;
-		case 1:
-			return ".img1";
-			break;
-		case 2:
-			return ".img2";
-			break;
-		case 3:
-			return ".img3";
-			break;
-		case 4:
-			return ".img4";
-			break;
-		case 5:
-			return ".img5";
-			break;
-		case 6:
-			return ".img6";
-			break;
-		case 7:
-			return ".img7";
-			break;
-		case 8:
-			return ".img8";
-			break;
-		case 9:
-			return ".img9";
-			break;
+	if (number == 0) {
+		return ".img";
+	} else {
+		return ".img" + std::to_string(number);
 	}
 }
