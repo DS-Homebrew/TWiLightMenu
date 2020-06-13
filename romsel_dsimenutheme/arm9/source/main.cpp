@@ -427,7 +427,7 @@ void loadGameOnFlashcard (const char *ndsPath, bool usePerGameSettings) {
 		err = runNdsFile(path.c_str(), 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
 	}
 
-	char text[32];
+	char text[64];
 	snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 	fadeType = true;	// Fade from white
 	if (err == 0) {
@@ -1038,15 +1038,15 @@ int main(int argc, char **argv) {
 					argarray.at(0) = (char *)ndsToBoot;
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true);
-					char text[32];
+					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					clearText();
 					fadeType = true;
 					printLarge(false, 4, 4, text);
 					if (err == 1) {
-						printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_RELEASE_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
+						printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 					}
-					printSmall(false, 4, 44, STR_PRESS_B_RETURN);
+					printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 					int pressed = 0;
 					do {
 						scanKeys();
@@ -1395,7 +1395,7 @@ int main(int argc, char **argv) {
 						argarray.at(0) = (char *)ndsToBoot;
 						snd().stopStream();
 						int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], (ms().homebrewBootstrap ? false : true), true, false, true, true);
-						char text[32];
+						char text[64];
 						snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 						clearText();
 						fadeType = true;
@@ -1403,7 +1403,7 @@ int main(int argc, char **argv) {
 						if (err == 1) {
 							printLarge(false, 4, 20, useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 						}
-						printSmall(false, 4, 44, STR_PRESS_B_RETURN);
+						printSmall(false, 4, 20 + calcLargeFontHeight(useNightly ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 						int pressed = 0;
 						do {
 							scanKeys();
@@ -1465,7 +1465,7 @@ int main(int argc, char **argv) {
 					}
 					snd().stopStream();
 					int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, dsModeSwitch, runNds_boostCpu, runNds_boostVram);
-					char text[32];
+					char text[64];
 					snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 					fadeType = true;
 					printLarge(false, 4, 4, text);
@@ -1622,7 +1622,7 @@ int main(int argc, char **argv) {
 				snd().stopStream();
 				err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], true, true, false, true, true); // Pass ROM to emulator as argument
 
-				char text[32];
+				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				fadeType = true;
 				printLarge(false, 4, 4, text);
@@ -1736,14 +1736,14 @@ int main(int argc, char **argv) {
 				argarray.at(0) = (char *)ndsToBoot;
 				snd().stopStream();
 				int err = runNdsFile(argarray[0], argarray.size(), (const char **)&argarray[0], ms().secondaryDevice, true, (ms().secondaryDevice && !GBA), true, !GBA);
-				char text[32];
+				char text[64];
 				snprintf(text, sizeof(text), STR_START_FAILED_ERROR.c_str(), err);
 				fadeType = true;
 				printLarge(false, 4, 4, text);
 				if (err == 1) {
 					printLarge(false, 4, 20, ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND);
 				}
-				printSmall(false, 4, 44, STR_PRESS_B_RETURN);
+				printSmall(false, 4, 20 + calcLargeFontHeight(ms().bootstrapFile ? STR_BOOTSTRAP_NIGHTLY_NOT_FOUND : STR_BOOTSTRAP_RELEASE_NOT_FOUND), STR_PRESS_B_RETURN);
 				int pressed = 0;
 				do {
 					scanKeys();
