@@ -913,7 +913,7 @@ int main(int argc, char **argv)
 
 		loadTitleGraphics();
 		fadeType = true;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 15; i++)
 		{
 			swiWaitForVBlank();
 		}
