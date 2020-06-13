@@ -735,7 +735,7 @@ bool checkGbaBios(void) {
 		}
 		printLarge(false, 16, 12, STR_GBA_BIOS_ERROR);
 		printSmall(false, 0, 64, STR_GBA_BIOS_ERROR_DESC, Alignment::center);
-		printSmall(false, 208, 160, STR_A_OK);
+		printSmall(false, 240, 160, STR_A_OK, Alignment::right);
 		int pressed = 0;
 		do {
 			scanKeys();
@@ -849,7 +849,7 @@ void smsWarning(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_SMS_WARNING, Alignment::center);
-	printSmall(false, 208, 160, STR_A_OK);
+	printSmall(false, 240, 160, STR_A_OK, Alignment::right);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -906,7 +906,7 @@ void mdRomTooBig(void) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 	printSmall(false, 0, 64, STR_MD_ROM_TOO_BIG, Alignment::center);
-	printSmall(false, 208, 160, STR_A_OK);
+	printSmall(false, 240, 160, STR_A_OK, Alignment::right);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1025,9 +1025,8 @@ void ramDiskMsg(const char *filename) {
 		dirContName.append("...");
 	}
 	printSmall(false, 16, 66, dirContName);
-	int yPos = (ms().theme == 4 ? 24 : 112);
-	printSmall(false, 0, yPos, STR_RAM_DISK_REQUIRED, Alignment::center);
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
+	printSmall(false, 0, (ms().theme == 4 ? 24 : 112), STR_RAM_DISK_REQUIRED, Alignment::center);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1076,9 +1075,8 @@ void dsiBinariesMissingMsg(const char *filename) {
 		}
 		printSmall(false, 16, 66, dirContName);
 	}
-	int yPos = (ms().theme == 4 ? 8 : 96);
-	printSmall(false, 0, yPos, STR_DSIBINARIES_MISSING, Alignment::center);
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
+	printSmall(false, 0, (ms().theme == 4 ? 8 : 96), STR_DSIBINARIES_MISSING, Alignment::center);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -1146,7 +1144,7 @@ void donorRomMsg(const char *filename) {
 			printSmall(false, 0, yPos, STR_DONOR_ROM_MSG_SDK5TWL, Alignment::center);
 			break;
 	}
-	printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
+	printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
 	int pressed = 0;
 	do {
 		scanKeys();
@@ -2550,7 +2548,7 @@ string browseForFile(const vector<string> extensionList) {
 					}
 					int yPos = (ms().theme == 4 ? 24 : 112);
 					printSmall(false, 0, yPos, isDSiMode() ? STR_CANNOT_LAUNCH_WITHOUT_SD : STR_CANNOT_LAUNCH_IN_DS_MODE, Alignment::center);
-					printSmall(false, 208, (ms().theme == 4 ? 64 : 160), STR_A_OK);
+					printSmall(false, 240, (ms().theme == 4 ? 64 : 160), STR_A_OK, Alignment::right);
 					pressed = 0;
 					do {
 						scanKeys();
@@ -2985,18 +2983,9 @@ string browseForFile(const vector<string> extensionList) {
 					swiWaitForVBlank();
 				}
 				if (isDirectory[CURPOS]) {
-					if (unHide)
-						printSmall(false, 141, 160, STR_Y_UNHIDE);
-					else
-						printSmall(false, 155, 160, STR_Y_HIDE);
-					printSmall(false, 208, 160, STR_B_NO);
+					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_B_NO, Alignment::right);
 				} else {
-					if (unHide)
-						printSmall(false, 93, 160, STR_Y_UNHIDE);
-					else
-						printSmall(false, 107, 160, STR_Y_HIDE);
-					printSmall(false, 160, 160, STR_A_DEL);
-					printSmall(false, 208, 160, STR_B_NO);
+					printSmall(false, 240, 160, (unHide ? STR_Y_UNHIDE : STR_Y_HIDE) + "  " + STR_A_DEL + "  " + STR_B_NO, Alignment::right);
 				}
 				while (1) {
 					do {
@@ -3067,6 +3056,7 @@ string browseForFile(const vector<string> extensionList) {
 						if (ms().showBoxArt)
 							clearBoxArt(); // Clear box art
 						boxArtLoaded = false;
+						bannerTextShown = false;
 						shouldersRendered = false;
 						currentBg = 0;
 						showSTARTborder = false;

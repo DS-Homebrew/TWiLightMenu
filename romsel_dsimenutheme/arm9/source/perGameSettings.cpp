@@ -587,14 +587,14 @@ void perGameSettings (std::string filename) {
 		perGameOpYpos += 14;
 		}
 		if (isHomebrew[CURPOS]) {		// Per-game settings for homebrew
-			printSmall(false, 194, botRowY, STR_B_BACK);
+			printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
 		} else if (!showPerGameSettings) {
-			printSmall(false, 208, botRowY, STR_A_OK);
+			printSmall(false, 240, botRowY, STR_A_OK, Alignment::right);
 		} else {	// Per-game settings for retail/commercial games
 			if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-				printSmall(false, 128, botRowY, STR_X_CHEATS_B_BACK);
+				printSmall(false, 240, botRowY, STR_X_CHEATS_B_BACK, Alignment::right);
 			} else {
-				printSmall(false, 194, botRowY, STR_B_BACK);
+				printSmall(false, 240, botRowY, STR_B_BACK, Alignment::right);
 			}
 		}
 		do {
