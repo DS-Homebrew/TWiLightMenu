@@ -1,13 +1,16 @@
 <p align="center">
  <img src="https://github.com/DS-Homebrew/TWiLightMenu/blob/master/logo.png"><br>
   <a href="https://gbatemp.net/threads/ds-i-3ds-twilight-menu-gui-for-ds-i-games-and-ds-i-menu-replacement.472200/">
-   <img src="https://img.shields.io/badge/GBATemp-Thread-blue.svg">
-  </a>
-  <a href="https://dev.azure.com/DS-Homebrew/Builds/_build?definitionId=17">
-   <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/DS-Homebrew.TWiLightMenu?branchName=master" height="20">
+   <img src="https://img.shields.io/badge/GBAtemp-Thread-blue.svg" alt="GBAtemp Thread">
   </a>
   <a href="https://discord.gg/yD3spjv">
-   <img src="https://img.shields.io/badge/Discord%20Server-%23twilightmenu-green.svg">
+   <img src="https://img.shields.io/badge/Discord%20Server-%23twilightmenu-green.svg" alt="Discord Server">
+  </a>
+  <a href="https://dev.azure.com/DS-Homebrew/Builds/_build?definitionId=17">
+   <img src="https://dev.azure.com/DS-Homebrew/Builds/_apis/build/status/DS-Homebrew.TWiLightMenu?branchName=master" height="20" alt="Build status on Azure Pipelines">
+  </a>
+  <a href="https://crowdin.com/project/TwilightMenu">
+    <img src="https://badges.crowdin.net/TwilightMenu/localized.svg" alt="Localized on Crowdin">
   </a>
 </p>
 
