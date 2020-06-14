@@ -1,0 +1,7 @@
+files:
+  - source: /romsel_aktheme/nitrofiles/language/lang_en/language.ini
+    translation: /romsel_aktheme/nitrofiles/language/lang_%two_letters_code%/language.ini
+  - source: /romsel_dsimenutheme/nitrofiles/languages/english.ini
+    translation: /romsel_dsimenutheme/nitrofiles/languages/%language%.ini
+  - source: /settings/nitrofiles/languages/english.ini
+    translation: /settings/nitrofiles/languages/%language%.ini
