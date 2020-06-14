@@ -168,10 +168,10 @@ int rocketVideo_videoYpos = 78;
 int frameOf60fps = 60;
 int rocketVideo_videoFrames = 249;
 int rocketVideo_currentFrame = -1;
-int rocketVideo_frameDelay = 0;
+//int rocketVideo_frameDelay = 0;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
-bool bottomField = false;
+//bool rocketVideo_frameDelayEven = true;
 bool rocketVideo_loadFrame = true;
 bool renderFrame = true;
 
@@ -422,17 +422,32 @@ void frameRateHandler(void) {
 	if (!rocketVideo_playVideo)
 		return;
 	if (!rocketVideo_loadFrame) {
-		// 50FPS
-		rocketVideo_loadFrame =   (frameOf60fps != 3
-								&& frameOf60fps != 9
-								&& frameOf60fps != 16
-								&& frameOf60fps != 22
-								&& frameOf60fps != 28
-								&& frameOf60fps != 34
-								&& frameOf60fps != 40
-								&& frameOf60fps != 46
-								&& frameOf60fps != 51
-								&& frameOf60fps != 58);
+		// 25FPS
+		rocketVideo_loadFrame = (frameOf60fps == 1
+							  || frameOf60fps == 3
+							  || frameOf60fps == 5
+							  || frameOf60fps == 7
+							  || frameOf60fps == 9
+							  || frameOf60fps == 11
+							  || frameOf60fps == 14
+							  || frameOf60fps == 16
+							  || frameOf60fps == 19
+							  || frameOf60fps == 21
+							  || frameOf60fps == 24
+							  || frameOf60fps == 26
+							  || frameOf60fps == 29
+							  || frameOf60fps == 31
+							  || frameOf60fps == 34
+							  || frameOf60fps == 36
+							  || frameOf60fps == 39
+							  || frameOf60fps == 41
+							  || frameOf60fps == 44
+							  || frameOf60fps == 46
+							  || frameOf60fps == 49
+							  || frameOf60fps == 51
+							  || frameOf60fps == 54
+							  || frameOf60fps == 56
+							  || frameOf60fps == 59);
 	}
 }
 
@@ -441,26 +456,16 @@ void playRotatingCubesVideo(void) {
 		return;
 
 	if (rocketVideo_loadFrame) {
-		if (renderFrame) {
-			DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
-			for (int v = 0; v < 56; v += 2) {
-				dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+bottomField)), 0x200);
-				if (v == 54) {
-					dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
-				} else {
-					dmaCopyWords(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)+(0x200*v)+(0x200*bottomField)), (u16*)BG_GFX_SUB+(256*(rocketVideo_videoYpos+v+1+bottomField)), 0x200);
-				}
-			}
-		}
+		//if (renderFrame) {
+			//DC_FlushRange((void*)(rotatingCubesLocation + (rocketVideo_currentFrame * 0x7000)), 0x7000);
+			dmaCopyWordsAsynch(1, rotatingCubesLocation+(rocketVideo_currentFrame*(0x200*56)), (u16*)BG_GFX_SUB+(256*rocketVideo_videoYpos), 0x200*56);
+		//}
 
-		if (bottomField) {
-			rocketVideo_currentFrame++;
-			if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
-				rocketVideo_currentFrame = 0;
-			}
+		rocketVideo_currentFrame++;
+		if (rocketVideo_currentFrame > rocketVideo_videoFrames) {
+			rocketVideo_currentFrame = 0;
 		}
-		bottomField = !bottomField;
-		rocketVideo_frameDelay = 0;
+		//rocketVideo_frameDelay = 0;
 		//rocketVideo_frameDelayEven = !rocketVideo_frameDelayEven;
 		rocketVideo_loadFrame = false;
 	}
@@ -1608,20 +1613,20 @@ void clearBoxArt() {
 void loadRotatingCubes() {
 	bool rvidCompressed = false;
 	std::string cubes = TFN_RVID_CUBES;
-	if (isDSiMode()) {
+	/*if (isDSiMode()) {
 		rvidCompressed = true;
 		cubes = TFN_LZ77_RVID_CUBES;
 		if (ms().colorMode == 1) {
 			cubes = TFN_LZ77_RVID_CUBES_BW;
 		}
-	} else {
+	} else {*/
 		if (ms().colorMode == 1) {
 			cubes = TFN_RVID_CUBES_BW;
 		}
-	}
+	//}
 	FILE *videoFrameFile = fopen(cubes.c_str(), "rb");
 
-	if (!videoFrameFile && isDSiMode()) {
+	/*if (!videoFrameFile && isDSiMode()) {
 		// Fallback to uncompressed RVID
 		rvidCompressed = false;
 		cubes = TFN_RVID_CUBES;
@@ -1629,7 +1634,7 @@ void loadRotatingCubes() {
 			cubes = TFN_RVID_CUBES_BW;
 		}
 		videoFrameFile = fopen(cubes.c_str(), "rb");
-	}
+	}*/
 
 	// if (!videoFrameFile) {
 	// 	videoFrameFile = fopen(std::string(TFN_FALLBACK_RVID_CUBES).c_str(), "rb");
