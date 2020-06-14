@@ -203,14 +203,14 @@ STRING(FLASHCARD_SELECT, "Select Flashcard")
 STRING(LEFTRIGHT_FLASHCARD, "Left/Right: Select flashcard(s)")
 STRING(AB_SETRETURN, "A/B: Set and Return")
 
-// Sub-theme select
-STRING(SUBTHEMESEL_DSI, "Sub-theme select: DSi Menu")
-STRING(SUBTHEMESEL_3DS, "Sub-theme select: DSi Menu")
+// Skin select
+STRING(SKINSEL_DSI, "Skin select: Nintendo DSi Menu")
+STRING(SKINSEL_3DS, "Skin select: 3DS HOME Menu")
 
-STRING(SUBTHEMESEL_R4, "Sub-theme select: R4")
-STRING(SUBTHEMESEL_AK, "Sub-theme select: Acekard Menu")
+STRING(SKINSEL_R4, "Skin select: R4 Original")
+STRING(SKINSEL_WOOD, "Skin select: Wood UI")
 
-STRING(AB_SETSUBTHEME, "A/B: Set sub-theme")
+STRING(AB_SETSKIN, "A/B: Set skin")
 
 STRING(DEFAULT_LAUNCHER, "Default launcher")
 STRING(DESCRIPTION_DEFAULT_LAUNCHER_1, "Launch Nintendo DSi Menu or TWiLight Menu++ on boot.")
