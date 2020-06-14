@@ -232,13 +232,14 @@ STRING(DESCRIPTION_SYSTEMSETTINGS_1, "Press A to change settings related to the 
 // STRING(FLASHCARD_SELECT, "Select Flashcard")
 // STRING(LEFTRIGHT_FLASHCARD, "Left/Right: Select flashcard(s)")
 
-// STRING(Sub-theme select")
-STRING(SUBTHEMESEL_DSI, "Sub-theme select: DSi Menu")
-STRING(SUBTHEMESEL_3DS, "Sub-theme select: DSi Menu")
-STRING(SUBTHEMESEL_R4, "Sub-theme select: R4")
-STRING(SUBTHEMESEL_AK, "Sub-theme select: Acekard Menu")
+// Skin select
+STRING(SKINSEL_DSI, "Skin select: Nintendo DSi Menu")
+STRING(SKINSEL_3DS, "Skin select: 3DS HOME Menu")
 
-STRING(AB_SETSUBTHEME, "A/B: Set sub-theme")
+STRING(SKINSEL_R4, "Skin select: R4 Original")
+STRING(SKINSEL_WOOD, "Skin select: Wood UI")
+
+STRING(AB_SETSKIN, "A/B: Set skin")
 
 // STRING(SNES_EMULATOR, "Choose a SNES emulator")
 // STRING(DESCRIPTION_SNES_EMULATOR, "Choose whether you would rather use SNEmulDS or lolSNES.")

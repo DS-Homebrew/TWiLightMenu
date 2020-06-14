@@ -268,13 +268,13 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	switch (optVal.get())
 	{
 	case 0:
-		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME, Option::Str(&ms().dsi_theme), dsiThemeList);
+		return Option(STR_SKINSEL_DSI, STR_AB_SETSKIN, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case 2:
-		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME, Option::Str(&ms().r4_theme), r4ThemeList);
+		return Option(STR_SKINSEL_R4, STR_AB_SETSKIN, Option::Str(&ms().r4_theme), r4ThemeList);
 	case 3:
-		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETSUBTHEME, Option::Str(&ms().ak_theme), akThemeList);
+		return Option(STR_SKINSEL_WOOD, STR_AB_SETSKIN, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
-		return Option(STR_SUBTHEMESEL_3DS, STR_AB_SETSUBTHEME, Option::Str(&ms()._3ds_theme), _3dsThemeList);
+		return Option(STR_SKINSEL_3DS, STR_AB_SETSKIN, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
 		return nullopt;
 	}
