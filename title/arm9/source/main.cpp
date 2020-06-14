@@ -468,7 +468,8 @@ void lastRunROM()
 				runNds_boostVram = perGameSettings_boostVram == -1 ? ms().boostVram : perGameSettings_boostVram;
 			}
 			std::string path;
-			if (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0) {
+			if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
+			 || (memcmp(io_dldi_data->friendlyName, "R4iDSN", 6) == 0)) {
 				CIniFile fcrompathini("fat:/_wfwd/lastsave.ini");
 				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", woodfat);
 				fcrompathini.SetString("Save Info", "lastLoaded", path);
@@ -486,16 +487,15 @@ void lastRunROM()
 				fcrompathini.SetString("Dir Info", "fullName", path);
 				fcrompathini.SaveIniFile("fat:/_dstwo/autoboot.ini");
 				err = runNdsFile("fat:/_dstwo/autoboot.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-			} else if ((memcmp(io_dldi_data->friendlyName, "R4(DS) - Revolution for DS", 26) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
+			} /*else if ((memcmp(io_dldi_data->friendlyName, "TTCARD", 6) == 0)
 					 || (memcmp(io_dldi_data->friendlyName, "DSTT", 4) == 0)
-					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0)) {
+					 || (memcmp(io_dldi_data->friendlyName, "DEMON", 5) == 0) {
 				CIniFile fcrompathini("fat:/TTMenu/YSMenu.ini");
-				path = ReplaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
+				path = replaceAll(ms().romPath[ms().secondaryDevice], "fat:/", slashchar);
 				fcrompathini.SetString("YSMENU", "AUTO_BOOT", path);
 				fcrompathini.SaveIniFile("fat:/TTMenu/YSMenu.ini");
 				err = runNdsFile("fat:/YSMenu.nds", 0, NULL, true, true, true, runNds_boostCpu, runNds_boostVram);
-			}
+			}*/
 		}
 	}
 	else if (ms().launchType[ms().secondaryDevice] == Launch::ESDFlashcardDirectLaunch)
