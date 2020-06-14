@@ -81,7 +81,7 @@
 #define SFN_UI_FONT                 SFN_UI_DIRECTORY"/font.pcf"
 
 #define SFN_LANGUAGE_DIRECTORY      "nitro:/language/"
-#define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.txt"
+#define SFN_LANGUAGE_TEXT           SFN_LANGUAGE_DIRECTORY "%s/language.ini"
 
 #define SFN_FONTS_DIRECTORY         "nitro:/fonts/"
 #define SFN_DEFAULT_FONT            "tahoma.pcf"
