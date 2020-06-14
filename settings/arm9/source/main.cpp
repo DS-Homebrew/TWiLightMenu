@@ -270,9 +270,9 @@ std::optional<Option> opt_subtheme_select(Option::Int &optVal)
 	case 0:
 		return Option(STR_SUBTHEMESEL_DSI, STR_AB_SETSUBTHEME, Option::Str(&ms().dsi_theme), dsiThemeList);
 	case 2:
-		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETRETURN, Option::Str(&ms().r4_theme), r4ThemeList);
+		return Option(STR_SUBTHEMESEL_R4, STR_AB_SETSUBTHEME, Option::Str(&ms().r4_theme), r4ThemeList);
 	case 3:
-		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETRETURN, Option::Str(&ms().ak_theme), akThemeList);
+		return Option(STR_SUBTHEMESEL_AK, STR_AB_SETSUBTHEME, Option::Str(&ms().ak_theme), akThemeList);
 	case 1:
 		return Option(STR_SUBTHEMESEL_3DS, STR_AB_SETSUBTHEME, Option::Str(&ms()._3ds_theme), _3dsThemeList);
 	default:
@@ -498,22 +498,22 @@ int main(int argc, char **argv)
 	guiPage
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
-		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {"SELECT Menu", "DS Classic Menu"}, {true, false})
+		.option("DSi/Saturn: SELECT", STR_DESCRIPTION_SELECTBUTTONOPTION, Option::Bool(&ms().showSelectMenu), {STR_SELECT_MENU, STR_DS_CLASSIC_MENU}, {true, false})
 
 		// Theme
 		.option(STR_THEME,
 				STR_DESCRIPTION_THEME_1,
 				Option::Int(&ms().theme, opt_subtheme_select, opt_reset_subtheme),
-				{"Nintendo DSi", "Nintendo 3DS", "SEGA Saturn", "Homebrew Launcher", "Wood UI", "R4 Original"},
+				{STR_NINTENDO_DSI, STR_NINTENDO_3DS, STR_SEGA_SATURN, STR_HOMEBREW_LAUNCHER, STR_WOOD_UI, STR_R4_ORIGINAL},
 				{0, 1, 4, 5, 3, 2})
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
-				{STR_OFF, "Regular", "DSi Shop", "Theme"},
+				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME},
 				{0, 1, 2, 3});
 
 	if (isDSiMode() && sdAccessible) {
-		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {"microSD Card", "SD Card"}, {true, false});
+		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});
 	}
 
 	guiPage
@@ -527,39 +527,39 @@ int main(int argc, char **argv)
 		guiPage.option(STR_BOXARTMEM, STR_DESCRIPTION_BOXARTMEM, Option::Bool(&ms().cacheBoxArt), {STR_YES, STR_NO}, {true, false});
 	}
 	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
-		.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {"12 hours [AM/PM]", "24 hours"}, {true, false})
-		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {"Fast", "Medium", "Slow"},
+		.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false})
+		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {STR_FAST, STR_MEDIUM, STR_SLOW},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
 		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
 
 	SettingsPage emulationPage(STR_EMULATION_HB_SETTINGS);
 
 	emulationPage
-		.option("NDS ROMs", STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Videos (.RVID and .MP4)", STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
-		.option("Atari 2600 ROMs", STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
-		.option("NES/FDS ROMs", STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
-		.option("GameBoy (Color) ROMs", STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
-		.option("Sega MS/GG ROMs", STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false})
-		.option("Sega MD/Gen ROMs", STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3})
-		.option("SNES/SFC ROMs", STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
-		.option("PCE/TurboGrafx-16 ROMs", STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false});
+		.option(STR_NDS_ROMS, STR_DESCRIPTION_SHOW_NDS, Option::Bool(&ms().showNds), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_VIDEOS, STR_DESCRIPTION_SHOW_VIDEO, Option::Bool(&ms().showRvid), {STR_SHOW, STR_HIDE}, {true, false})
+		.option(STR_A26_ROMS, STR_DESCRIPTION_SHOW_A26, Option::Bool(&ms().showA26), {"StellaDS", STR_HIDE}, {true, false})
+		.option(STR_NES_ROMS, STR_DESCRIPTION_SHOW_NES, Option::Bool(&ms().showNes), {"nesDS", STR_HIDE}, {true, false})
+		.option(STR_GB_ROMS, STR_DESCRIPTION_SHOW_GB, Option::Bool(&ms().showGb), {"GameYob", STR_HIDE}, {true, false})
+		.option(STR_SMS_ROMS, STR_DESCRIPTION_SHOW_SMS, Option::Bool(&ms().showSmsGg), {"S8DS", STR_HIDE}, {true, false})
+		.option(STR_MD_ROMS, STR_DESCRIPTION_SHOW_MD, Option::Int(&ms().showMd), {STR_HIDE, "jEnesisDS", "PicoDriveTWL", STR_HYBRID}, {0, 1, 2, 3})
+		.option(STR_SNES_ROMS, STR_DESCRIPTION_SHOW_SNES, Option::Bool(&ms().showSnes), {"SNEmulDS", STR_HIDE}, {true, false})
+		.option(STR_PCE_ROMS, STR_DESCRIPTION_SHOW_PCE, Option::Bool(&ms().showPce), {"NitroGrafx", STR_HIDE}, {true, false});
 
 	SettingsPage gbar2Page(STR_GBARUNNER2_SETTINGS);
 
-	gbar2Page.option(sdAccessible ? "Slot-1 SD: DLDI access" : "DLDI access", STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false})
-			.option("Use bottom screen", STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
-			.option("Center and mask", STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
-			.option("Simulate GBA colors", STR_DESCRIPTION_GBACOLORS, Option::Bool(&gs().gbaColors), {STR_YES, STR_NO}, {true, false})
-			.option("DS main memory i-cache", STR_DESCRIPTION_GBAR2_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
-			.option("WRAM i-cache", STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
-			.option("BIOS intro", STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
+	gbar2Page.option(sdAccessible ? STR_SLOT_1_DLDI_ACCESS : STR_DLDI_ACCESS, STR_DESCRIPTION_GBAR2_DLDIACCESS, Option::Bool(&ms().gbar2DldiAccess), {"ARM7", "ARM9"}, {true, false})
+			.option(STR_USE_BOTTOM_SCREEN, STR_DESCRIPTION_USEBOTTOMSCREEN, Option::Bool(&gs().useBottomScreen), {STR_YES, STR_NO}, {true, false})
+			.option(STR_CENTER_AND_MASK, STR_DESCRIPTION_CENTERANDMASK, Option::Bool(&gs().centerMask), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_SIMULATE_GBA_COLORS, STR_DESCRIPTION_GBACOLORS, Option::Bool(&gs().gbaColors), {STR_YES, STR_NO}, {true, false})
+			.option(STR_DS_MAIN_MEMORY_I_CACHE, STR_DESCRIPTION_GBAR2_MAINMEMICACHE, Option::Bool(&gs().mainMemICache), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_WRAM_I_CACHE, STR_DESCRIPTION_GBAR2_WRAMICACHE, Option::Bool(&gs().wramICache), {STR_ON, STR_OFF}, {true, false})
+			.option(STR_BIOS_INTRO, STR_DESCRIPTION_BIOSINTRO, Option::Bool(&gs().skipIntro), {STR_OFF, STR_ON}, {true, false});
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
 	if (isDSiMode() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked())
 	{
-		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {"16:10 (Widescreen)", "4:3 (Full Screen)"}, {true, false});
+		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {STR_WIDESCREEN, STR_FULLSCREEN}, {true, false});
 	}
 
 	if (isDSiMode() && sdAccessible)
@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_RUNIN,
 						STR_DESCRIPTION_RUNIN_1,
 						Option::Int(&ms().bstrap_dsiMode),
-						{"DS mode", "DSi mode", "DSi mode (Forced)"},
+						{STR_DS_MODE, STR_DSI_MODE, STR_DSI_MODE_FORCED},
 						{TRunIn::EDSMode, TRunIn::EDSiMode, TRunIn::EDSiModeForced});
 	}
 
@@ -591,9 +591,9 @@ int main(int argc, char **argv)
 				{true, false})
 		.option(STR_VRAMBOOST, STR_DESCRIPTION_VRAMBOOST_1, Option::Bool(&ms().boostVram), {STR_ON, STR_OFF}, {true, false});
 		if (isDSiMode()) {
-			gamesPage.option(sdAccessible ? "Slot-1 SD: "+STR_USEBOOTSTRAP : STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
+			gamesPage.option(sdAccessible ? STR_SLOT_1_SD+": "+STR_USEBOOTSTRAP : STR_USEBOOTSTRAP, STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
 			if (sdAccessible) {
-				gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {"Console's SD", "Slot-1 SD"}, {true, false});
+				gamesPage.option(STR_FCSAVELOCATION, STR_DESCRIPTION_FCSAVELOCATION, Option::Bool(&ms().fcSaveOnSd), {STR_CONSOLE_SD, STR_SLOT_1_SD}, {true, false});
 			}
 		} else if (!isDSiMode() && fatAccessible) {
 			gamesPage.option(STR_USEBOOTSTRAP+" (B4DS)", STR_DESCRIPTION_USEBOOTSTRAP, Option::Bool(&ms().useBootstrap), {STR_YES, STR_NO}, {true, false});
@@ -627,7 +627,7 @@ int main(int argc, char **argv)
 			gamesPage
 				.option(STR_ROMREADLED, STR_DESCRIPTION_ROMREADLED_1, Option::Int(&bs().romreadled), {STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 							 {TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera})
-				.option(STR_DMAROMREADLED, STR_DESCRIPTION_DMAROMREADLED, Option::Int(&bs().dmaromreadled), {"Same as reg.", STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
+				.option(STR_DMAROMREADLED, STR_DESCRIPTION_DMAROMREADLED, Option::Int(&bs().dmaromreadled), {STR_SAME_AS_REG, STR_NONE, "WiFi", STR_POWER, STR_CAMERA},
 							 {TROMReadLED::ELEDSame, TROMReadLED::ELEDNone, TROMReadLED::ELEDWifi, TROMReadLED::ELEDPower, TROMReadLED::ELEDCamera});
 		}
 		gamesPage.option(STR_PRECISEVOLUMECTRL, STR_DESCRIPTION_PRECISEVOLUMECTRL, Option::Bool(&bs().preciseVolumeControl), {STR_ON, STR_OFF},
@@ -666,10 +666,10 @@ int main(int argc, char **argv)
 				{STR_SYSTEM,
 				 "Japanese",
 				 "English",
-				 "French",
-				 "German",
-				 "Italian",
-				 "Spanish",
+				 "Français",
+				 "Deutsch",
+				 "Italiano",
+				 "Español",
 				 "Chinese",
 				 "Korean"},
 				{TLanguage::ELangDefault,
@@ -687,10 +687,10 @@ int main(int argc, char **argv)
 				{STR_SYSTEM,
 				 "Japanese",
 				 "English",
-				 "French",
-				 "German",
-				 "Italian",
-				 "Spanish"},
+				 "Français",
+				 "Deutsch",
+				 "Italiano",
+				 "Español"},
 				{-1, 
 				 0,
 				 1,
@@ -702,7 +702,7 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_COLORMODE,
 				Option::Int(&ms().colorMode),
 				{STR_REGULAR,
-				 "B&W/Greyscale"},
+				 STR_BW_GREYSCALE},
 				{0,
 				 1});
 		/*.option(STR_BLF,
@@ -753,15 +753,15 @@ int main(int argc, char **argv)
 
 	if (isDSiMode() && sdAccessible) {
 		miscPage
-			.option("DSiWare Exploit",
-				"The exploited DSiWare app/game you're using for TWiLight Menu++ and nds-bootstrap. Set to \"None\" if not using one.",
+			.option(STR_DSIWARE_EXPLOIT,
+				STR_DESCRIPTION_DSIWARE_EXPLOIT,
 				Option::Int(&ms().dsiWareExploit),
 				{STR_NONE, "sudokuhax", "4swordshax", "fieldrunnerhax", "grtpwn", "ugopwn/Lenny", "UNO*pwn", "Memory Pit"},
 				{0, 1, 2, 3, 4, 5, 6, 7})
 			.option(STR_SYSREGION,
 				STR_DESCRIPTION_SYSREGION_1,
 				Option::Int(&ms().sysRegion),
-				{"Auto (hiyaCFW only)", "JAP", "USA", "EUR", "AUS", "CHN", "KOR"},
+				{STR_AUTO_HIYA_ONLY, "JPN", "USA", "EUR", "AUS", "CHN", "KOR"},
 				{-1, 0, 1, 2, 3, 4, 5});
 	}
 	if (isDSiMode() && sdAccessible && ms().consoleModel < 2) {
@@ -791,7 +791,7 @@ int main(int argc, char **argv)
 		// We are also using the changed callback to write
 		// or delete the hiya autoboot file.
 		miscPage
-			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", "System Menu"}, {true, false})
+			.option(STR_DEFAULT_LAUNCHER, STR_DESCRIPTION_DEFAULT_LAUNCHER_1, Option::Bool(&hiyaAutobootFound, opt_hiya_autoboot_toggle), {"TWiLight Menu++", STR_SYSTEM_MENU}, {true, false})
 			.option(STR_SYSTEMSETTINGS, STR_DESCRIPTION_SYSTEMSETTINGS_1, Option::Nul(opt_reboot_system_menu), {}, {});
 	}
 	
