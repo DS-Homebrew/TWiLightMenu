@@ -233,22 +233,22 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list,
   for(uint i=0;(int)i<(dialogboxHeight+2) && i<list.size();i++) {
     if(list[screenPos+i]._flags&cParsedItem::EFolder) {
       if(screenPos+i == curPos) {
-        printSmall(false, 27, 100+(i*8), ">");
-        printSmall(false, 35, 100+(i*8), list[screenPos+i]._title.c_str());
+        printSmall(false, 27, 90+(i*10), ">");
+        printSmall(false, 35, 90+(i*10), list[screenPos+i]._title.c_str());
       } else {
-        printSmall(false, 22, 100+(i*8), ">");
-        printSmall(false, 30, 100+(i*8), list[screenPos+i]._title.c_str());
+        printSmall(false, 22, 90+(i*10), ">");
+        printSmall(false, 30, 90+(i*10), list[screenPos+i]._title.c_str());
       }
     } else {
       if(list[screenPos+i]._flags&cParsedItem::ESelected) {
-        printSmall(false, 16, 99+(i*8), "x");
+        printSmall(false, 16, 89+(i*10), "x");
       }
       if(screenPos+i == curPos) {
-        printSmall(false, 25, 100+(i*8), "-");
-        printSmall(false, 32, 100+(i*8), list[screenPos+i]._title.c_str());
+        printSmall(false, 25, 90+(i*10), "-");
+        printSmall(false, 32, 90+(i*10), list[screenPos+i]._title.c_str());
       } else {
-        printSmall(false, 21, 100+(i*8), "-");
-        printSmall(false, 28, 100+(i*8), list[screenPos+i]._title.c_str());
+        printSmall(false, 21, 90+(i*10), "-");
+        printSmall(false, 28, 90+(i*10), list[screenPos+i]._title.c_str());
       }
     }
   }
@@ -262,10 +262,10 @@ void CheatCodelist::selectCheats(std::string filename)
   clearText();
 
   int oldDialogboxHeight = dialogboxHeight;
-  dialogboxHeight = 6;
+  dialogboxHeight = 5;
 
   titleUpdate(isDirectory, filename.c_str());
-  printLargeCentered(false, 84, "Cheats");
+  printLargeCentered(false, 74, "Cheats");
   printSmallCentered(false, 100, "Loading...");
 
   parse(filename);
@@ -276,7 +276,7 @@ void CheatCodelist::selectCheats(std::string filename)
     cheatsFound = false;
     clearText();
     titleUpdate(isDirectory, filename.c_str());
-    printLargeCentered(false, 84, "Cheats");
+    printLargeCentered(false, 74, "Cheats");
     printSmallCentered(false, 100, "No cheats found");
     printSmallCentered(false, 160, "B: Back");
 
@@ -315,16 +315,16 @@ void CheatCodelist::selectCheats(std::string filename)
   while(cheatsFound) {
     clearText();
     titleUpdate(isDirectory, filename.c_str());
-    printLargeCentered(false, 84, "Cheats");
+    printLargeCentered(false, 74, "Cheats");
 
     // Print bottom text
     if(currentList[cheatWnd_cursorPosition]._comment != "") {
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
-        printSmallCentered(false, 167, "A: Open Y: Info X: Save B: Cancl");
+        printSmallCentered(false, 167, "A: Open Y: Info X: Save B: Cancel");
       } else if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::ESelected) {
-        printSmallCentered(false, 167, "A: Deslct Y: Info X: Save B: Cancl");
+        printSmallCentered(false, 167, "A: Deselect Y: Info X: Save B: Cancel");
       } else {
-        printSmallCentered(false, 167, "A: Slct Y: Info X: Save B: Cancl");
+        printSmallCentered(false, 167, "A: Select Y: Info X: Save B: Cancel");
       }
     } else {
       if(currentList[cheatWnd_cursorPosition]._flags&cParsedItem::EFolder) {
@@ -412,7 +412,7 @@ void CheatCodelist::selectCheats(std::string filename)
     if(pressed & KEY_X) {
       clearText();
       titleUpdate(isDirectory, filename.c_str());
-      printLargeCentered(false, 84, "Cheats");
+      printLargeCentered(false, 74, "Cheats");
       printSmallCentered(false, 100, "Saving...");
       onGenerate();
       break;
@@ -421,7 +421,7 @@ void CheatCodelist::selectCheats(std::string filename)
       if(currentList[cheatWnd_cursorPosition]._comment != "") {
         clearText();
         titleUpdate(isDirectory, filename.c_str());
-        printLargeCentered(false, 84, "Cheats");
+        printLargeCentered(false, 74, "Cheats");
 
         std::vector<std::string> _topText;
         std::string _topTextStr(currentList[cheatWnd_cursorPosition]._comment);
@@ -451,7 +451,7 @@ void CheatCodelist::selectCheats(std::string filename)
         
         // Print comment
         for (int i = 0; i < (int)_topText.size(); i++) {
-          printSmallCentered(false, 100 + (i*8), _topText[i].c_str());
+          printSmallCentered(false, 90 + (i*10), _topText[i].c_str());
         }
 
         // Print 'Back' text

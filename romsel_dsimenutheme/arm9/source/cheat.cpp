@@ -252,7 +252,7 @@ void CheatCodelist::drawCheatList(std::vector<CheatCodelist::cParsedItem>& list,
     if(list[curPos]._flags&cParsedItem::EFolder) {
       printSmall(false, 0, 160, STR_CHEATS_FOLDER, Alignment::center);
     } else if(list[curPos]._flags&cParsedItem::ESelected) {
-      printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
+      printSmall(false, 0, 160, STR_CHEATS_SELECTED, Alignment::center);
     } else {
       printSmall(false, 0, 160, STR_CHEATS_DESELECTED, Alignment::center);
     }
