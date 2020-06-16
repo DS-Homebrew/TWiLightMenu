@@ -162,8 +162,15 @@ void loadFixedBanner(void) {
 	/* Banner fixes start here */
 	u32 bannersize = 0;
 
-	// Fire Emblem - Heroes of Light and Shadow
-	if (ndsBanner.crc[3] == 0xD8F4) {
+	// Alice in Wonderland (U)
+	if (ndsBanner.crc[3] == 0xB9EA) {
+		// Use fixed banner.
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Alice in Wonderland (U).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Fire Emblem - Heroes of Light and Shadow
+		if (ndsBanner.crc[3] == 0xD8F4) {
 		// Use fixed banner.
 		FILE *fixedBannerFile =
 		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");

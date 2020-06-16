@@ -6,12 +6,15 @@ inline void fixBanner(sNDSBannerExt *banner)
 {
     // Check for fixed banner here.
     u16 crc1 = banner->crc[0];
-	u16 crc2 = banner->crc[1];
-	u16 crc3 = banner->crc[2];
+	//u16 crc2 = banner->crc[1];
+	//u16 crc3 = banner->crc[2];
 	u16 crc4 = banner->crc[3];
     std::string fixedBannerPath;
 
-    if (crc4 == 0xD8F4) {
+    if (crc4 == 0xB9EA) {
+		// Alice in Wonderland (U)
+        fixedBannerPath = "nitro:/fixedbanners/Alice in Wonderland (U).bnr";
+	} else if (crc4 == 0xD8F4) {
 		// Fire Emblem - Heroes of Light and Shadow
         fixedBannerPath = "nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr";
 	} else if (crc4 == 0xEE5D && crc1 != 0x4683 && crc1 != 0xA251) {

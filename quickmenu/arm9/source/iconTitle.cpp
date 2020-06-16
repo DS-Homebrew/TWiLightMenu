@@ -456,8 +456,15 @@ void loadFixedBanner(bool isSlot1) {
 	fwrite(&ndsBanner, 1, bannersize, bannerFile);
 	fclose(bannerFile);*/
 
-	// Fire Emblem - Heroes of Light and Shadow
-	if (ndsBanner.crc[3] == 0xD8F4) {
+	// Alice in Wonderland (U)
+	if (ndsBanner.crc[3] == 0xB9EA) {
+		// Use fixed banner.
+		FILE *fixedBannerFile = fopen("nitro:/fixedbanners/Alice in Wonderland (U).bnr", "rb");
+		bannersize = NDS_BANNER_SIZE_DSi;
+		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
+		fclose(fixedBannerFile);
+	} else // Fire Emblem - Heroes of Light and Shadow
+		if (ndsBanner.crc[3] == 0xD8F4) {
 		// Use fixed banner.
 		FILE *fixedBannerFile =
 		    fopen("nitro:/fixedbanners/Fire Emblem - Heroes of Light and Shadow (J) (Eng).bnr", "rb");
@@ -520,7 +527,8 @@ void loadFixedBanner(bool isSlot1) {
 		bannersize = NDS_BANNER_SIZE_DSi;
 		fread(&ndsBanner, 1, bannersize, fixedBannerFile);
 		fclose(fixedBannerFile);
-	} else if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
+	} else
+		if (isSlot1 && memcmp(ndsHeader.gameCode, "ALXX", 4) == 0) {
 		cardRead(0x75600, &arm9StartSig, 0x10);
 		if (arm9StartSig[0] == 0xE58D0008
 		 && arm9StartSig[1] == 0xE1500005
