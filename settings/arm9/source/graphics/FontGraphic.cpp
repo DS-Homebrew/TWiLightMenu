@@ -193,10 +193,11 @@ ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view te
 		}
 
 		// No need to draw off screen chars
-		if(x >= 0 && x <= 256) {
+		if(x >= 0 && x < 256) {
 			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
 			for(int i = 0; i < tileHeight; i++) {
-				tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
+				if(y + i >= 0 && y + i < 192)
+					tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
 			}
 		}
 

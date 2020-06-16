@@ -149,9 +149,12 @@ void SettingsGUI::draw()
 
 void SettingsGUI::setTopText(const std::string &text)
 {
+    _topText.clear();
     std::string _topTextStr(text);
     std::vector<std::string> words;
     std::size_t pos;
+
+    // Process comment to stay within the box
     while((pos = _topTextStr.find(' ')) != std::string::npos) {
         words.push_back(_topTextStr.substr(0, pos));
         _topTextStr = _topTextStr.substr(pos + 1);
@@ -159,21 +162,29 @@ void SettingsGUI::setTopText(const std::string &text)
     if(_topTextStr.size())
         words.push_back(_topTextStr);
     std::string temp;
-    _topText.clear();
-    for(auto word : words)
-    {
-        int width = calcLargeFontWidth((temp + " " + word).c_str());
-        if(width > 250) {
-            _topText.push_back(temp);
-            temp = word;
+    for(auto word : words) {
+        // Split word if the word is too long for a line
+        int width = calcLargeFontWidth(word);
+        if(width > 240) {
+        if(temp.length())
+            _topText += temp + '\n';
+        for(int i = 0; i < width/240; i++) {
+            word.insert((float)((i + 1) * word.length()) / ((width/240) + 1), "\n");
         }
-        else
-        {
-            temp += " " + word;
+        _topText += word + '\n';
+        continue;
+        }
+
+        width = calcLargeFontWidth(temp + " " + word);
+        if(width > 240) {
+        _topText += temp + '\n';
+        temp = word;
+        } else {
+        temp += " " + word;
         }
     }
     if(temp.size())
-       _topText.push_back(temp);
+        _topText += temp;
 }
 
 void SettingsGUI::drawSub()
@@ -203,10 +214,7 @@ void SettingsGUI::drawTopText()
 {
     printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     printSmall(true, 256 - 4, 174, VERTEXT, Alignment::right);
-    for (unsigned int i = 0; i < _topText.size(); i++)
-    {
-        printLarge(true, 0, 96 + (i * 16), _topText[i].c_str(), Alignment::center);
-    }
+    printLarge(true, 0, 138 - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 
 void SettingsGUI::rotatePage(int rotateAmount)
