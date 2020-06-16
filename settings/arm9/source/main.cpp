@@ -53,7 +53,6 @@ std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
 
-bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
 //bool soundfreqsettingChanged = false;

@@ -18,51 +18,26 @@
 
 ------------------------------------------------------------------*/
 
+#include "graphics.h"
 #include <nds.h>
-#include <maxmod9.h>
+
 #include "common/dsimenusettings.h"
-#include "common/gl2d.h"
-#include "bios_decompress_callback.h"
-#include "FontGraphic.h"
+#include "common/tonccpy.h"
+#include "fontHandler.h"
+#include "soundeffect.h"
+
 #include "top_bg.h"
 #include "sub_bg.h"
 #include "saturn_bg.h"
-#include "font6x8.h"
-#include "graphics.h"
-#include "fontHandler.h"
 
-#include "soundeffect.h"
-
-#define CONSOLE_SCREEN_WIDTH 32
-#define CONSOLE_SCREEN_HEIGHT 24
-
-//extern int appName;
-
-static int currentTheme = 0;
-
-extern bool renderScreens;
 extern bool fadeType;
 int screenBrightness = 31;
+static int currentTheme = 0;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
 bool frameDelayEven = true; // For 24FPS
 bool renderFrame = true;
-
-bool renderingTop = true;
-int mainBgTexID, subBgTexID;
-glImage topBgImage[(256 / 16) * (256 / 16)];
-glImage subBgImage[(256 / 16) * (256 / 16)];
-
-void vramcpy_ui (void* dest, const void* src, int size) 
-{
-	u16* destination = (u16*)dest;
-	u16* source = (u16*)src;
-	while (size > 0) {
-		*destination++ = *source++;
-		size-=2;
-	}
-}
 
 // Ported from PAlib (obsolete)
 void SetBrightness(u8 screen, s8 bright) {
@@ -123,32 +98,6 @@ void frameRateHandler(void) {
 	}
 }
 
-//-------------------------------------------------------
-// set up a 2D layer construced of bitmap sprites
-// this holds the image when rendering to the top screen
-//-------------------------------------------------------
-
-void initSubSprites(void)
-{
-
-	oamInit(&oamSub, SpriteMapping_Bmp_2D_256, false);
-	int id = 0;
-
-	//set up a 4x3 grid of 64x64 sprites to cover the screen
-	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 4; x++)
-		{
-			oamSub.oamMemory[id].attribute[0] = ATTR0_BMP | ATTR0_SQUARE | (64 * y);
-			oamSub.oamMemory[id].attribute[1] = ATTR1_SIZE_64 | (64 * x);
-			oamSub.oamMemory[id].attribute[2] = ATTR2_ALPHA(1) | (8 * 32 * y) | (8 * x);
-			++id;
-		}
-
-	swiWaitForVBlank();
-
-	oamUpdate(&oamSub);
-}
-
 u16 convertVramColorToGrayscale(u16 val) {
 	u8 b,g,r,max,min;
 	b = ((val)>>10)&31;
@@ -166,39 +115,29 @@ u16 convertVramColorToGrayscale(u16 val) {
 	return 32768|(max<<10)|(max<<5)|(max);
 }
 
-void drawBG(glImage *images)
-{
-	for (int y = 0; y < 256 / 16; y++)
-	{
-		for (int x = 0; x < 256 / 16; x++)
-		{
-			int i = y * 16 + x;
-			glSprite(x * 16, y * 16, GL_FLIP_NONE, &images[i & 255]);
+// Copys a palette and applies filtering if enabled
+void copyPalette(u16 *dst, const u16 *src, int size) {
+	if(ms().colorMode == 1) { // Grayscale
+		for(int i = 0; i < size; i++) {
+			dst[i] = convertVramColorToGrayscale(src[i]);
 		}
+	} else {
+		tonccpy(dst, src, size);
 	}
 }
 
-void startRendering(bool top)
-{
-	if (top)
-	{
-		lcdMainOnBottom();
-		vramSetBankC(VRAM_C_LCD);
-		vramSetBankD(VRAM_D_SUB_SPRITE);
-		REG_DISPCAPCNT = DCAP_BANK(2) | DCAP_ENABLE | DCAP_SIZE(3);
-	}
-	else
-	{
-		lcdMainOnTop();
-		vramSetBankD(VRAM_D_LCD);
-		vramSetBankC(VRAM_C_SUB_BG);
-		REG_DISPCAPCNT = DCAP_BANK(3) | DCAP_ENABLE | DCAP_SIZE(3);
-	}
-}
+// TODO: If adding sprites, this would work better as one
+void drawScroller(int y, int h) {
+	// Reset layer
+	dmaCopyWords(0, currentTheme == 4 ? saturn_bgBitmap : sub_bgBitmap , bgGetGfxPtr(7), sub_bgBitmapLen);
 
-bool isRenderingTop()
-{
-	return renderingTop;
+	const u8 scroller[4] = {2, 3, 3, 2};
+	u8 *dst = (u8*)bgGetGfxPtr(7) + 250;
+	toncset16(dst + y * 256, 2 | 2 << 8, 2);
+	for(int i = 1; i < h - 1; i++) {
+		tonccpy(dst + (y + i) * 256, scroller, sizeof(scroller));
+	}
+	toncset16(dst + (y + h - 1) * 256, 2 | 2 << 8, 2);
 }
 
 void vBlankHandler()
@@ -211,34 +150,17 @@ void vBlankHandler()
 		if (screenBrightness > 31) screenBrightness = 31;
 	}
 	if (renderFrame) {
-		SetBrightness(0, currentTheme==4 ? -screenBrightness : screenBrightness);
-		SetBrightness(1, currentTheme==4 ? -screenBrightness : screenBrightness);
+		SetBrightness(0, currentTheme == 4 ? -screenBrightness : screenBrightness);
+		SetBrightness(1, currentTheme == 4 ? -screenBrightness : screenBrightness);
 	}
 
 	if (currentTheme != 4) {
 		snd().tickBgMusic();
 	}
 
-	if (renderScreens) {
-		startRendering(renderingTop);
-		glBegin2D();
-		{
-			glColor(RGB15(31, 31-(3*ms().blfLevel), 31-(6*ms().blfLevel)));
-			if (renderingTop)
-			{
-				drawBG(topBgImage);
-				updateText(renderingTop);
-			}
-			else
-			{
-				drawBG(currentTheme == 4 ? topBgImage : subBgImage);
-				updateText(renderingTop);
-			}
-		}
-		glEnd2D();
-		GFX_FLUSH = 0;
-		renderingTop = !renderingTop;
-	}
+	updateText(false);
+	updateText(true);
+
 	if (renderFrame) {
 		frameDelay = 0;
 		frameDelayEven = !frameDelayEven;
@@ -246,83 +168,41 @@ void vBlankHandler()
 	}
 }
 
-void graphicsInit()
-{
+void graphicsInit() {
 	currentTheme = ms().theme;
 
-	SetBrightness(0, currentTheme==4 ? -31 : 31);
-	SetBrightness(1, currentTheme==4 ? -31 : 31);
+	SetBrightness(0, currentTheme == 4 ? -31 : 31);
+	SetBrightness(1, currentTheme == 4 ? -31 : 31);
 
-	renderScreens = true;
+	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
+	videoSetModeSub(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 
-	////////////////////////////////////////////////////////////
-	videoSetMode(MODE_5_3D);
-	videoSetModeSub(MODE_5_2D);
+	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
 
-	// Initialize OAM to capture 3D scene
-	initSubSprites();
+	int bg3Main = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(bg3Main, 3);
 
-	// The sub background holds the top image when 3D directed to bottom
-	bgInitSub(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+	int bg2Main = bgInit(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(bg2Main, 0);
 
-	// Initialize GL in 3D mode
-	glScreen2D();
+	int bg3Sub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+	bgSetPriority(bg3Sub, 3);
 
-	// Set up enough texture memory for our textures
-	// Bank A is just 128kb and we are using 194 kb of
-	// sprites
-	// vramSetBankA(VRAM_A_TEXTURE);
-	vramSetBankB(VRAM_B_TEXTURE);
-	vramSetBankF(VRAM_F_TEX_PALETTE); // Allocate VRAM bank for all the palettes
-	vramSetBankE(VRAM_E_MAIN_BG);
+	int bg2Sub = bgInitSub(2, BgType_Bmp8, BgSize_B8_256x256, 3, 0);
+	bgSetPriority(bg2Sub, 0);
 
-	u16* newPalette;
-	
-	if (currentTheme != 4) {
-		newPalette = (u16*)sub_bgPal;
-		if (ms().colorMode == 1) {
-			// Convert palette to grayscale
-			for (int i2 = 0; i2 < 3; i2++) {
-				*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-			}
-		}
-
-		subBgTexID = glLoadTileSet(subBgImage, // pointer to glImage array
-								16, // sprite width
-								16, // sprite height
-								256, // bitmap width
-								256, // bitmap height
-								GL_RGB16, // texture type for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-								TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-								GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-								16, // Length of the palette to use (256 colors)
-								(u16*) sub_bgPal, // Load our 256 color tiles palette
-								(u8*) sub_bgBitmap // image data generated by GRIT
-								);
+	if(currentTheme != 4) {
+		tonccpy(bgGetGfxPtr(bg3Main), top_bgBitmap, top_bgBitmapLen);
+		copyPalette(BG_PALETTE + 0x10, top_bgPal, top_bgPalLen);
+		tonccpy(bgGetGfxPtr(bg3Sub), sub_bgBitmap, sub_bgBitmapLen);
+		copyPalette(BG_PALETTE_SUB + 0x10, sub_bgPal, sub_bgPalLen);
+	} else {
+		tonccpy(bgGetGfxPtr(bg3Main), saturn_bgBitmap, saturn_bgBitmapLen);
+		copyPalette(BG_PALETTE + 0x10, saturn_bgPal, saturn_bgPalLen);
+		tonccpy(bgGetGfxPtr(bg3Sub), saturn_bgBitmap, saturn_bgBitmapLen);
+		copyPalette(BG_PALETTE_SUB + 0x10, saturn_bgPal, saturn_bgPalLen);
 	}
-
-	newPalette = (u16*)top_bgPal;
-	if (ms().colorMode == 1) {
-		// Convert palette to grayscale
-		for (int i2 = 0; i2 < 256; i2++) {
-			*(newPalette+i2) = convertVramColorToGrayscale(*(newPalette+i2));
-		}
-	}
-
-	mainBgTexID = glLoadTileSet(topBgImage, // pointer to glImage array
-							16, // sprite width
-							16, // sprite height
-							256, // bitmap width
-							256, // bitmap height
-							GL_RGB256, // texture type for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeX for glTexImage2D() in videoGL.h
-							TEXTURE_SIZE_256, // sizeY for glTexImage2D() in videoGL.h
-							GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF, // param for glTexImage2D() in videoGL.h
-							256, // Length of the palette to use (256 colors)
-							(u16*) (currentTheme == 4 ? saturn_bgPal : top_bgPal), // Load our 256 color tiles palette
-							(u8*) (currentTheme == 4 ? saturn_bgBitmap : top_bgBitmap) // image data generated by GRIT
-							);
 
 	irqSet(IRQ_VBLANK, vBlankHandler);
 	irqEnable(IRQ_VBLANK);

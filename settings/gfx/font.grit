@@ -1,6 +1,0 @@
-#An 8 bit sprite
--gB8
-#A tiled image
--gt
-#The Transperant colour of 0xFF00FF
--gT FF00FF

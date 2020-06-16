@@ -1,6 +1,7 @@
 #include "settingsgui.h"
 
 #include "graphics/fontHandler.h"
+#include "graphics/graphics.h"
 #include "common/dsimenusettings.h"
 #include <variant>
 #include <algorithm>
@@ -16,7 +17,6 @@
 #define CURSOR_MAX (SCREEN_HEIGHT - 40)
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
-extern bool renderScreens;
 extern bool fadeType; // false = out, true = in
 
 void SettingsGUI::processInputs(int pressed, touchPosition &touch, int currentTheme)
@@ -125,8 +125,7 @@ void SettingsGUI::draw()
         {
             printSmall(false, 4, 29 + (i - _topCursor) * 14, ">");
             // print scroller on the other side
-            printSmall(false, 252, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
-            printSmall(false, 254, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
+            drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1));
         }
 
         int labelWidth = calcSmallFontWidth(_pages[_selectedPage].options()[i].labels()[selected].c_str());
@@ -143,38 +142,38 @@ void SettingsGUI::draw()
     // printSmall(false, 252, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
     // printSmall(false, 254, (scrollSections * (_selectedOption)) + CURSOR_MIN, "|");
 
-    printSmallCentered(false, 173, "TWiLight Menu++");
-    printSmall(false, 2, 173, "< L/Y");
-    printSmall(false, 224, 173, "R/X >");
+    printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
+    printSmall(false, 2, 173, "<  / "); // L / Y
+    printSmall(false, 256 - 2, 173, " /  >", Alignment::right); // R / X
 }
 
 void SettingsGUI::setTopText(const std::string &text)
 {
-	std::string _topTextStr(text);
-	std::vector<std::string> words;
-	std::size_t pos;
-	while((pos = _topTextStr.find(' ')) != std::string::npos) {
-		words.push_back(_topTextStr.substr(0, pos));
-		_topTextStr = _topTextStr.substr(pos + 1);
-	}
-	if(_topTextStr.size())
-		words.push_back(_topTextStr);
-	std::string temp;
-	_topText.clear();
-	for(auto word : words)
-	{
-		int width = calcLargeFontWidth((temp + " " + word).c_str());
-		if(width > 256) {
-			_topText.push_back(temp);
-			temp = word;
-		}
-		else
-		{
-			temp += " " + word;
-		}
-	}
-	if(temp.size())
-	   _topText.push_back(temp);
+    std::string _topTextStr(text);
+    std::vector<std::string> words;
+    std::size_t pos;
+    while((pos = _topTextStr.find(' ')) != std::string::npos) {
+        words.push_back(_topTextStr.substr(0, pos));
+        _topTextStr = _topTextStr.substr(pos + 1);
+    }
+    if(_topTextStr.size())
+        words.push_back(_topTextStr);
+    std::string temp;
+    _topText.clear();
+    for(auto word : words)
+    {
+        int width = calcLargeFontWidth((temp + " " + word).c_str());
+        if(width > 250) {
+            _topText.push_back(temp);
+            temp = word;
+        }
+        else
+        {
+            temp += " " + word;
+        }
+    }
+    if(temp.size())
+       _topText.push_back(temp);
 }
 
 void SettingsGUI::drawSub()
@@ -190,25 +189,23 @@ void SettingsGUI::drawSub()
             printSmall(false, 4, 29 + (i - _subTopCursor) * 14, ">");
 
             // print scroller on the other side
-            printSmall(false, 252, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
-            printSmall(false, 254, 30 + (14 * 8 * ((float)_selectedOption / (_pages[_selectedPage].options().size() - 1))), "|");
+            drawScroller(30 + i * CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1, (CURSOR_HEIGHT / _pages[_selectedPage].options().size() + 1));
         }
 
         printSmall(false, 12, 30 + (i - _subTopCursor) * 14, _subOption->labels()[i].c_str());
     }
 
     printLarge(false, 6, 1, _subOption->displayName().c_str());
-    printSmallCentered(false, 173, "TWiLight Menu++");
+    printSmall(false, 0, 173, "TWiLight Menu++", Alignment::center);
 }
 
 void SettingsGUI::drawTopText()
 {
-	printSmall(true, 4, 0, "nds-bootstrap Ver:");
-	printSmall(true, 114, 0, bsVerText[ms().bootstrapFile]);
-    printSmall(true, 256-calcSmallFontWidth(VERTEXT)-4, 174, VERTEXT);
+    printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
+    printSmall(true, 256 - 4, 174, VERTEXT, Alignment::right);
     for (unsigned int i = 0; i < _topText.size(); i++)
     {
-        printLargeCentered(true, 96 + (i * 16), _topText[i].c_str());
+        printLarge(true, 0, 96 + (i * 16), _topText[i].c_str(), Alignment::center);
     }
 }
 
@@ -355,11 +352,10 @@ void SettingsGUI::saveAndExit(int currentTheme)
     // Draw in between here.
     draw();
 
-	fadeType = false;
+    fadeType = false;
     for (int i = 0; i < 30; i++) {
         swiWaitForVBlank();
     }
-	renderScreens = false;
     ms().saveSettings();
     gs().saveSettings();
     bs().saveSettings();
