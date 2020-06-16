@@ -7,7 +7,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <maxmod9.h>
-#include "common/gl2d.h"
 
 #include "autoboot.h"
 
@@ -53,7 +52,6 @@ std::vector<std::string> r4ThemeList;
 std::vector<std::string> dsiThemeList;
 std::vector<std::string> _3dsThemeList;
 
-bool renderScreens = false;
 bool fadeType = false; // false = out, true = in
 
 //bool soundfreqsettingChanged = false;
@@ -664,14 +662,14 @@ int main(int argc, char **argv)
 				STR_DESCRIPTION_LANGUAGE_1,
 				Option::Int(&ms().guiLanguage),
 				{STR_SYSTEM,
-				 "Japanese",
+				 "日本語",
 				 "English",
 				 "Français",
 				 "Deutsch",
 				 "Italiano",
 				 "Español",
-				 "Chinese",
-				 "Korean"},
+				 "中文 (简体)",
+				 "한국어"},
 				{TLanguage::ELangDefault,
 				 TLanguage::ELangJapanese,
 				 TLanguage::ELangEnglish,

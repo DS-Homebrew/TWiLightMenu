@@ -24,6 +24,8 @@ private:
 	u16 getCharIndex(char16_t c);
 
 public:
+	static u8 textBuf[2][256 * 192];
+
 	static std::u16string utf8to16(std::string_view text);
 
 	FontGraphic() {};
@@ -34,7 +36,7 @@ public:
 	int calcWidth(std::string_view text) { return calcWidth(utf8to16(text)); }
 	int calcWidth(std::u16string_view text);
 
-	void print(int x, int y, int value, Alignment align) { print(x, y, std::to_string(value), align); }
-	void print(int x, int y, std::string_view text, Alignment align) { print(x, y, utf8to16(text), align); }
-	void print(int x, int y, std::u16string_view text, Alignment align);
+	void print(int x, int y, bool top, int value, Alignment align) { print(x, y, top, std::to_string(value), align); }
+	void print(int x, int y, bool top, std::string_view text, Alignment align) { print(x, y, top, utf8to16(text), align); }
+	void print(int x, int y, bool top, std::u16string_view text, Alignment align);
 };
