@@ -1,5 +1,6 @@
 STRING(SAVING_SETTINGS, "Saving settings...")
 STRING(SETTINGS_SAVED, "Settings saved.")
+STRING(NDS_BOOTSTRAP_VER, "nds-bootstrap Ver:")
 
 STRING(LR_SWITCH, "L/R/Y/X Switch Pages")
 STRING(MISC_SETTINGS, "Misc. settings")

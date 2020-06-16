@@ -17,27 +17,6 @@ extern bool useTwlCfg;
 
 const char *languageIniPath;
 
-std::string ConvertFromUTF8(const std::string& input) {
-	std::string res;
-	for(size_t i = 0; i < input.size();) {
-		auto c = input[i];
-		if((c & 0x80) == 0) {
-			res += c;
-			i++;
-		} else if((c & 0xe0) == 0xc0) {
-			res += ((((unsigned)c & 0x1f) << 6) | ((unsigned)input[i + 1] & 0x3f));
-			i += 2;
-		}
-		//characters not rendered by the actual font as they are bigger than a char
-		else if((c & 0xf0) == 0xe0) {
-			i += 3;
-		} else if((c & 0xf8) == 0xf0) {
-			i += 4;
-		}
-	}
-	return res;
-}
-
 /**
  * Initialize translations.
  * Uses the language ID specified in settings.ui.language.
@@ -73,7 +52,7 @@ void langInit(void)
 
 	CIniFile languageini(languageIniPath);
 
-#define STRING(what,def) STR_##what = ConvertFromUTF8(languageini.GetString("LANGUAGE", ""#what, def));
+#define STRING(what,def) STR_##what = languageini.GetString("LANGUAGE", ""#what, def);
 #include "language.inl"
 #undef STRING
 }
