@@ -13,10 +13,13 @@ jobs:
   - job: latest_build
     displayName: "Build with latest devkitARM"
     pool:
-      vmImage: 'Ubuntu-20.04'
+      vmImage: 'ubuntu-latest'
     steps:
     - script: |
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
+        sudo apt update
+        # Install haveged to ensure enough entropy
+        sudo apt install p7zip-full jq haveged
         sudo dpkg -i pacman.deb
 
         sudo dkp-pacman -Sy
@@ -112,13 +115,17 @@ jobs:
 
   - job: docker_build
     pool:
-      vmImage: 'Ubuntu-20.04'
+      vmImage: 'ubuntu-latest'
     displayName: "Build with Docker using devKitARM r54"
     steps:
       - script: |
           docker build -t twilightmenu --label twilightmenu ./
           docker ps -a
         displayName: "Build Docker image"
+      - script: |
+          sudo apt update
+          sudo apt install p7zip-full
+        displayName: "Install 7zip"
       - script: |
           docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
         displayName: "Build TWiLightMenu++ with devkitARM r54"
