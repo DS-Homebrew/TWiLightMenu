@@ -7,7 +7,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <maxmod9.h>
-#include "common/gl2d.h"
 
 #include "autoboot.h"
 
