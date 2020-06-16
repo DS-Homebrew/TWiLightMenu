@@ -13,7 +13,7 @@ jobs:
   - job: latest_build
     displayName: "Build with latest devkitARM"
     pool:
-      vmImage: 'Debian-10.04'
+      vmImage: 'Debian-10.10'
     steps:
     - script: |
         curl -L https://github.com/devkitPro/pacman/releases/download/devkitpro-pacman-1.0.1/devkitpro-pacman.deb -o pacman.deb
@@ -115,7 +115,7 @@ jobs:
 
   - job: docker_build
     pool:
-      vmImage: 'Debian-10.04'
+      vmImage: 'Debian-10.10'
     displayName: "Build with Docker using devKitARM r54"
     steps:
       - script: |
