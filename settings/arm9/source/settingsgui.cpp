@@ -18,8 +18,9 @@
 #define CURSOR_HEIGHT (CURSOR_MAX - CURSOR_MIN)
 
 extern bool fadeType; // false = out, true = in
+extern int currentTheme;
 
-void SettingsGUI::processInputs(int pressed, touchPosition &touch, int currentTheme)
+void SettingsGUI::processInputs(int pressed, touchPosition &touch)
 {
     if ((pressed & KEY_B || pressed & KEY_A) && inSub())
     {
@@ -214,7 +215,7 @@ void SettingsGUI::drawTopText()
 {
     printSmall(true, 4, 0, STR_NDS_BOOTSTRAP_VER + " " + bsVerText[ms().bootstrapFile]);
     printSmall(true, 256 - 4, 174, VERTEXT, Alignment::right);
-    printLarge(true, 0, 138 - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
+    printLarge(true, 0, (currentTheme == 4 ? 96 : 138) - (calcLargeFontHeight(_topText) / 2), _topText, Alignment::center);
 }
 
 void SettingsGUI::rotatePage(int rotateAmount)

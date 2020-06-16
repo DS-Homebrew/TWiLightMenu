@@ -43,7 +43,7 @@
 
 bool useTwlCfg = false;
 
-static int currentTheme = 0;
+int currentTheme = 0;
 static int previousDSiWareExploit = 0;
 static int previousSysRegion = 0;
 
@@ -829,7 +829,7 @@ int main(int argc, char **argv)
 			swiWaitForVBlank();
 		} while (!pressed);
 
-		gui().processInputs(pressed, touch, currentTheme);
+		gui().processInputs(pressed, touch);
 	}
 
 	return 0;
