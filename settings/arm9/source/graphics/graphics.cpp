@@ -32,7 +32,7 @@
 
 extern bool fadeType;
 int screenBrightness = 31;
-static int currentTheme = 0;
+extern int currentTheme;
 
 int frameOf60fps = 60;
 int frameDelay = 0;
