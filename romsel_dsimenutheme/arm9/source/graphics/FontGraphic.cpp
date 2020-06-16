@@ -2,6 +2,8 @@
 
 #include "common/tonccpy.h"
 
+u8 FontGraphic::textBuf[2][256 * 192];
+
 FontGraphic::FontGraphic(const std::string &path, const std::string &fallback) {
 	FILE *file = fopen(path.c_str(), "rb");
 	if(!file) {
@@ -150,7 +152,7 @@ int FontGraphic::calcWidth(std::u16string_view text) {
 	return x;
 }
 
-ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignment align) {
+ITCM_CODE void FontGraphic::print(int x, int y, bool top, std::u16string_view text, Alignment align) {
 	// Adjust x for alignment
 	switch(align) {
 		case Alignment::left: {
@@ -158,7 +160,7 @@ ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignm
 		} case Alignment::center: {
 			size_t newline = text.find('\n');
 			while(newline != text.npos) {
-				print(x, y, text.substr(0, newline), align);
+				print(x, y, top, text.substr(0, newline), align);
 				text = text.substr(newline + 1);
 				newline = text.find('\n');
 				y += tileHeight;
@@ -191,8 +193,8 @@ ITCM_CODE void FontGraphic::print(int x, int y, std::u16string_view text, Alignm
 		}
 
 		// No need to draw off screen chars
-		if(x >= 0 && x + fontWidths[(index * 3) + 2] <= 256) {
-			u8 *dst = (u8*)bgGetGfxPtr(2) + x + fontWidths[(index * 3)];
+		if(x >= 0 && x <= 256) {
+			u8 *dst = textBuf[top] + x + fontWidths[(index * 3)];
 			for(int i = 0; i < tileHeight; i++) {
 				tonccpy(dst + ((y + i) * 256), &characterBuffer[i * tileWidth], tileWidth);
 			}

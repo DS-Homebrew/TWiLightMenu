@@ -41,18 +41,23 @@ FontGraphic &getFont(bool large) {
 }
 
 void updateText(bool top) {
+	if(top)	return; // Assign some VRAM and remove this to be able to print to top
+
 	// Clear before redrawing
-	if(shouldClear[top] && /* remove when adding top drawing */ !top) {
-		dmaFillWords(0, bgGetGfxPtr(2), 256 * 192);
+	if(shouldClear[top]) {
+		dmaFillWords(0, FontGraphic::textBuf[top], 256 * 192);
 		shouldClear[top] = false;
 	}
 
 	// Draw text
 	auto &text = getTextQueue(top);
 	for(auto it = text.begin(); it != text.end(); ++it) {
-		getFont(it->large).print(it->x, it->y, it->message, it->align);
+		getFont(it->large).print(it->x, it->y, top, it->message, it->align);
 	}
 	text.clear();
+
+	// Copy buffer to the screen
+	tonccpy(bgGetGfxPtr(top ? 6 : 2), FontGraphic::textBuf[top], 256 * 192);
 }
 
 void clearText(bool top) {
