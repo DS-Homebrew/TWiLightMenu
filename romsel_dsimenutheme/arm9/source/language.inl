@@ -102,6 +102,7 @@ STRING(HEAP_SHRINK, "Heap Shrink")
 STRING(DIRECT_BOOT, "Direct Boot")
 STRING(SCREEN_ASPECT_RATIO, "Screen Aspect Ratio")
 STRING(SET_AS_DONOR_ROM, "Set as Donor ROM")
+STRING(DONE, "Done!")
 STRING(X_CHEATS_B_BACK, "\\X Cheats  \\B Back")
 
 // Per-game settings options
