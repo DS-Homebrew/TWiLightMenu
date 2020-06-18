@@ -463,7 +463,11 @@ int main(int argc, char **argv)
 	snd().init();
 	keysSetRepeat(25, 5);
 	
+	bool widescreenFound = false;
 	bool sdAccessible = (access("sd:/", F_OK) == 0);
+	if (sdAccessible) {
+		widescreenFound = ((access("sd:/_nds/TWiLightMenu/TwlBg/Widescreen.cxi", F_OK) == 0) && (ms().consoleModel >= 2) && (!sys().arm7SCFGLocked()));
+	}
 	bool fatAccessible = (access("fat:/", F_OK) == 0);
 
 	graphicsInit();
@@ -555,7 +559,7 @@ int main(int argc, char **argv)
 
 	SettingsPage gamesPage(STR_GAMESAPPS_SETTINGS);
 
-	if (isDSiMode() && ms().consoleModel >= 2 && !sys().arm7SCFGLocked())
+	if (widescreenFound)
 	{
 		gamesPage.option(STR_ASPECTRATIO, STR_DESCRIPTION_ASPECTRATIO, Option::Bool(&ms().wideScreen), {STR_WIDESCREEN, STR_FULLSCREEN}, {true, false});
 	}
