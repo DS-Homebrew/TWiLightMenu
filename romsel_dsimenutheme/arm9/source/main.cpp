@@ -110,8 +110,6 @@ bool gbaBiosFound[2] = {false};
 
 bool useBackend = false;
 
-using namespace std;
-
 bool dropDown = false;
 int currentBg = 0;
 bool showSTARTborder = false;
@@ -685,7 +683,7 @@ int main(int argc, char **argv) {
 
 	keysSetRepeat(10, 2);
 
-	vector<string> extensionList;
+	std::vector<std::string> extensionList;
 	if (ms().showNds) {
 		extensionList.emplace_back(".nds");
 		extensionList.emplace_back(".dsi");

@@ -18,6 +18,9 @@ STRING(EXPANDING_SAVE, "Expanding save file...")
 STRING(SAVE_EXPANDED, "Save file expanded!")
 STRING(UNABLE_TO_OPEN_DIRECTORY, "Unable to open the directory.")
 STRING(RESTART_AFTER_SAVING, "After saving, please re-start\nTWiLight Menu++ to transfer your\nsave data back.")
+STRING(DATE_FORMAT, "%m/%d")
+STRING(TIME_FORMAT_12, "%I/%M")
+STRING(TIME_FORMAT_24, "%H/%M")
 
 // Locations
 STRING(LOCATION_SLOT_1, "Location: Slot-1 microSD")
