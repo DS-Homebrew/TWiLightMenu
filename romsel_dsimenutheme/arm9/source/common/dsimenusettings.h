@@ -15,7 +15,7 @@
  * 
  * Try not to change settings that are not related to the current theme.
  */
-class DSiMenuPlusPlusSettings
+class TWLSettings
 {
 public:
 	enum TScrollSpeed
@@ -122,8 +122,8 @@ public:
 	};
 
 public:
-	DSiMenuPlusPlusSettings();
-	~DSiMenuPlusPlusSettings();
+	TWLSettings();
+	~TWLSettings();
 
 public:
 	void loadSettings();
@@ -219,7 +219,7 @@ public:
 	bool wideScreen;
 };
 
-typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;
-inline DSiMenuPlusPlusSettings &ms() { return menuSettings_s::instance(); }
+typedef singleton<TWLSettings> menuSettings_s;
+inline TWLSettings &ms() { return menuSettings_s::instance(); }
 
 #endif //_DSIMENUPPSETTINGS_H_

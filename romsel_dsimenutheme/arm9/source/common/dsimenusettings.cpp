@@ -8,7 +8,7 @@
 
 extern const char *settingsinipath;
 
-DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
+TWLSettings::TWLSettings()
 {
 	
 	romfolder[0] = "sd:/";
@@ -105,7 +105,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	wideScreen = false;
 }
 
-void DSiMenuPlusPlusSettings::loadSettings()
+void TWLSettings::loadSettings()
 {
 	//printf("ms().loadSettings()\n");
 	CIniFile settingsini(settingsinipath);
@@ -215,7 +215,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
 	wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
-void DSiMenuPlusPlusSettings::saveSettings()
+void TWLSettings::saveSettings()
 {
 	CIniFile settingsini(settingsinipath);
 
@@ -254,7 +254,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
 	settingsini.SaveIniFile(settingsinipath);
 }
 
-DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
+TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
 	if (guiLanguage == ELangDefault)
 	{

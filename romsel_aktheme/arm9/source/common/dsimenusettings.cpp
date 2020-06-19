@@ -8,7 +8,7 @@
 
 static const char* settingsinipath = DSIMENUPP_INI;
 
-DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
+TWLSettings::TWLSettings()
 {
     romfolder[0] = "sd:/";
     romfolder[1] = "fat:/";
@@ -81,7 +81,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	wideScreen = false;
 }
 
-void DSiMenuPlusPlusSettings::loadSettings()
+void TWLSettings::loadSettings()
 {
 	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
 		settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
@@ -179,7 +179,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
-void DSiMenuPlusPlusSettings::saveSettings()
+void TWLSettings::saveSettings()
 {
     CIniFile settingsini(settingsinipath);
 
@@ -238,14 +238,14 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
-u32 DSiMenuPlusPlusSettings::CopyBufferSize(void)
+u32 TWLSettings::CopyBufferSize(void)
 {
 //   if(font().FontRAM()<300*1024) return 1024*1024;
 //   return 512*1024;
 return 0x8000;
 }
 
-DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
+TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {

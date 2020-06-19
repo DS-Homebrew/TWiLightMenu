@@ -81,7 +81,7 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-typedef DSiMenuPlusPlusSettings::TLaunchType Launch;
+typedef TWLSettings::TLaunchType Launch;
 
 int screenmode = 0;
 int subscreenmode = 0;

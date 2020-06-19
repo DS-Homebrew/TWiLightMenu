@@ -34,27 +34,27 @@ extern int setTitleLanguage;
 class LanguageFile : public CIniFile
 {
 private:
-  static std::string getIdentifier(DSiMenuPlusPlusSettings::TLanguage language, bool useTwlCfg)
+  static std::string getIdentifier(TWLSettings::TLanguage language, bool useTwlCfg)
   {
-    if (language == DSiMenuPlusPlusSettings::ELangDefault)
-      language = (DSiMenuPlusPlusSettings::TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
+    if (language == TWLSettings::ELangDefault)
+      language = (TWLSettings::TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     switch (language)
     {
-    case DSiMenuPlusPlusSettings::ELangJapanese:
+    case TWLSettings::ELangJapanese:
       return "lang_jp";
-    case DSiMenuPlusPlusSettings::ELangEnglish:
+    case TWLSettings::ELangEnglish:
       return "lang_en";
-    case DSiMenuPlusPlusSettings::ELangFrench:
+    case TWLSettings::ELangFrench:
       return "lang_fr";
-    case DSiMenuPlusPlusSettings::ELangSpanish:
+    case TWLSettings::ELangSpanish:
       return "lang_es";
-    case DSiMenuPlusPlusSettings::ELangGerman:
+    case TWLSettings::ELangGerman:
       return "lang_de";
-    case DSiMenuPlusPlusSettings::ELangItalian:
+    case TWLSettings::ELangItalian:
       return "lang_it";
-    case DSiMenuPlusPlusSettings::ELangChinese:
+    case TWLSettings::ELangChinese:
       return "lang_cn";
-    case DSiMenuPlusPlusSettings::ELangKorean:
+    case TWLSettings::ELangKorean:
       return "lang_ko";
     default:
       return "lang_en";
@@ -62,7 +62,7 @@ private:
   }
 
 public:
-  LanguageFile(DSiMenuPlusPlusSettings::TLanguage language)
+  LanguageFile(TWLSettings::TLanguage language)
   {
 	extern bool useTwlCfg;
     m_bReadOnly = true;
@@ -71,7 +71,7 @@ public:
   ~LanguageFile(){};
 };
 
-typedef singleton<LanguageFile, DSiMenuPlusPlusSettings::TLanguage> languageFile_s;
+typedef singleton<LanguageFile, TWLSettings::TLanguage> languageFile_s;
 inline LanguageFile &lang() { return languageFile_s::instance(ms().getGuiLanguage()); }
 #define LANG(i, t) lang().GetString(i, t, t)
 

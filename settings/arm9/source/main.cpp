@@ -491,8 +491,8 @@ int main(int argc, char **argv)
 	// consoleDemoInit();
 	SettingsPage guiPage(STR_GUI_SETTINGS);
 
-	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
-	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
+	using TLanguage = TWLSettings::TLanguage;
+	using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	guiPage
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
@@ -570,7 +570,7 @@ int main(int argc, char **argv)
 		gamesPage.option(STR_USEGBARUNNER2, STR_DESCRIPTION_GBARUNNER2_1, Option::Bool(&ms().useGbarunner), {STR_YES, STR_NO}, {true, false});
 	}
 
-	using TRunIn = DSiMenuPlusPlusSettings::TRunIn;
+	using TRunIn = TWLSettings::TRunIn;
 	using TROMReadLED = BootstrapSettings::TROMReadLED;
 
 	if (isDSiMode()) {
@@ -654,8 +654,8 @@ int main(int argc, char **argv)
 
 	SettingsPage miscPage(STR_MISC_SETTINGS);
 
-	using TLanguage = DSiMenuPlusPlusSettings::TLanguage;
-	using TAKScrollSpeed = DSiMenuPlusPlusSettings::TScrollSpeed;
+	using TLanguage = TWLSettings::TLanguage;
+	using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	miscPage
 		// Language
 		.option(STR_LANGUAGE,
