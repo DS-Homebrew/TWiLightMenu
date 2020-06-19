@@ -53,6 +53,7 @@ public:
 		ESupercardDSTWO = 6
 	};
 
+	// Do not reorder these, just add to the end
 	enum TLanguage
 	{
 		ELangDefault = -1,
@@ -62,8 +63,13 @@ public:
 		ELangGerman = 3,
 		ELangItalian = 4,
 		ELangSpanish = 5,
-		ELangChinese = 6,
-		ELangKorean = 7
+		ELangChineseS = 6,
+		ELangKorean = 7,
+		ELangChineseT = 8,
+		ELangPolish = 9,
+		ELangPortuguese = 10,
+		ELangRussian = 11,
+		ELangSwedish = 12,
 	};
 
 	enum TRunIn
@@ -181,7 +187,7 @@ public:
 	bool useBootstrap;
 	bool bootstrapFile;
 
-	int bstrap_language;
+	int gameLanguage;
 	bool boostCpu;
 	bool boostVram;
 	int bstrap_dsiMode;

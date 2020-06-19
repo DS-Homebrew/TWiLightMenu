@@ -77,30 +77,28 @@ void langInit(void)
 	int userLanguage = (useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
 
 	//printf("langInit\n");
-	setLanguage = (ms().guiLanguage == -1) ? userLanguage : ms().guiLanguage;
-	setTitleLanguage = (ms().titleLanguage == -1) ? PersonalData->language : ms().titleLanguage;
-	setGameLanguage = (ms().bstrap_language == -1) ? userLanguage : ms().bstrap_language;
+	setLanguage = (ms().guiLanguage == TWLSettings::ELangDefault) ? userLanguage : ms().guiLanguage;
+	setTitleLanguage = (ms().titleLanguage == TWLSettings::ELangDefault) ? PersonalData->language : ms().titleLanguage;
+	setGameLanguage = (ms().gameLanguage == TWLSettings::ELangDefault) ? userLanguage : ms().gameLanguage;
 
 	switch (setLanguage) {
-		case 0:
+		case TWLSettings::ELangJapanese:
 			languageIniPath = "nitro:/languages/japanese.ini";
 			break;
-		case 1:
-		case 6:
-		case 7:
+		case TWLSettings::ELangEnglish:
 		default:
 			languageIniPath = "nitro:/languages/english.ini";
 			break;
-		case 2:
+		case TWLSettings::ELangFrench:
 			languageIniPath = "nitro:/languages/french.ini";
 			break;
-		case 3:
+		case TWLSettings::ELangGerman:
 			languageIniPath = "nitro:/languages/german.ini";
 			break;
-		case 4:
+		case TWLSettings::ELangItalian:
 			languageIniPath = "nitro:/languages/italian.ini";
 			break;
-		case 5:
+		case TWLSettings::ELangSpanish:
 			languageIniPath = "nitro:/languages/spanish.ini";
 			break;
 	}

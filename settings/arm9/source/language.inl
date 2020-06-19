@@ -186,6 +186,7 @@ STRING(DESCRIPTION_LOGGING_1, "Logs the process of patching to sd:/NDSBTSRP.LOG"
 
 // Misc settings
 STRING(LANGUAGE, "Language")
+STRING(GAMELANGUAGE, "Game Language")
 STRING(TITLELANGUAGE, "Game Title Language")
 STRING(COLORMODE, "Color Mode")
 STRING(SDREMOVALDETECTION, "SD removal detection")
@@ -210,6 +211,7 @@ STRING(AUTO_HIYA_ONLY, "Auto (hiyaCFW only)")
 STRING(SYSTEM_MENU, "System Menu")
 
 STRING(DESCRIPTION_LANGUAGE_1, "Avoid the limited selections of your console language by setting this option.")
+STRING(DESCRIPTION_GAMELANGUAGE_1, "Set language for DS ROMs played using nds-bootstrap.")
 STRING(DESCRIPTION_TITLELANGUAGE_1, "Set Banner Title Language for DS ROMs (expect DSiWare).")
 STRING(DESCRIPTION_COLORMODE, "Changes the color of your screens. May not work in all areas. Exit settings for the change to take effect.")
 // STRING(DESCRIPTION_BLF, "Decreases/Blocks blue light from coming through your screens, and reduces eye strain. This feature is experimental, so expect bugs.")

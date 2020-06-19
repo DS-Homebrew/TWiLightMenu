@@ -19,38 +19,38 @@ TWLSettings::TWLSettings()
 
     gotosettings = false;
     guiLanguage = ELangDefault;
-	titleLanguage = -1;
+    titleLanguage = -1;
     useGbarunner = false;
-	gbar2DldiAccess = false;
-	showMicroSd = false;
+    gbar2DldiAccess = false;
+    showMicroSd = false;
     theme = 0;
     subtheme = 0;
 
-	showNds = true;
-	showRvid = true;
-	showA26 = true;
-	showNes = true;
-	showGb = true;
-	showSmsGg = true;
-	showMd = 3;
-	showSnes = true;
-	showPce = true;
+    showNds = true;
+    showRvid = true;
+    showA26 = true;
+    showNes = true;
+    showGb = true;
+    showSmsGg = true;
+    showMd = 3;
+    showSnes = true;
+    showPce = true;
     showDirectories = true;
     showHidden = false;
     showBoxArt = true;
     animateDsiIcons = true;
-	preventDeletion = false;
+    preventDeletion = false;
     launcherApp = -1;
     previousUsedDevice = false;
     secondaryDevice = false;
-	fcSaveOnSd = false;
+    fcSaveOnSd = false;
 
     slot1LaunchMethod = EReboot;
 
     useBootstrap = isDSiMode();
     bootstrapFile = EReleaseBootstrap;
 
-    bstrap_language = ELangDefault;
+    gameLanguage = ELangDefault;
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = EDSMode;
@@ -67,7 +67,7 @@ TWLSettings::TWLSettings()
     ak_theme = "zelda";
     ak_zoomIcons = true;
 
-	slot1Launched = false;
+    slot1Launched = false;
     launchType[0] = ENoLaunch;
     launchType[1] = ENoLaunch;
     homebrewBootstrap = EReleaseBootstrap;
@@ -78,14 +78,14 @@ TWLSettings::TWLSettings()
     showlogo = true;
     autorun = false;
 
-	wideScreen = false;
+    wideScreen = false;
 }
 
 void TWLSettings::loadSettings()
 {
-	if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
-		settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
-	}
+    if (access(settingsinipath, F_OK) != 0 && flashcardFound()) {
+        settingsinipath = DSIMENUPP_INI_FC;		// Fallback to .ini path on flashcard, if not found on SD card, or if SD access is disabled
+    }
 
     CIniFile settingsini(settingsinipath);
 
@@ -98,38 +98,38 @@ void TWLSettings::loadSettings()
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
-	showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
-	showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
-	showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
-	showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
-	showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
-	showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
-	showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
-	showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
-	showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
+    showNds = settingsini.GetInt("SRLOADER", "SHOW_NDS", showNds);
+    showRvid = settingsini.GetInt("SRLOADER", "SHOW_RVID", showRvid);
+    showA26 = settingsini.GetInt("SRLOADER", "SHOW_A26", showA26);
+    showNes = settingsini.GetInt("SRLOADER", "SHOW_NES", showNes);
+    showGb = settingsini.GetInt("SRLOADER", "SHOW_GB", showGb);
+    showSmsGg = settingsini.GetInt("SRLOADER", "SHOW_SMSGG", showSmsGg);
+    showMd = settingsini.GetInt("SRLOADER", "SHOW_MDGEN", showMd);
+    showSnes = settingsini.GetInt("SRLOADER", "SHOW_SNES", showSnes);
+    showPce = settingsini.GetInt("SRLOADER", "SHOW_PCE", showPce);
 
     // Customizable UI settings.
     guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
-	titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
+    titleLanguage = settingsini.GetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     useGbarunner = settingsini.GetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
     if (!sys().isRegularDS()) {
         useGbarunner = true;
     }
-	gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
+    gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
     showMicroSd = settingsini.GetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
-	soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
+    soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
-	previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-	if (bothSDandFlashcard()) {
-		secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	} else if (flashcardFound()) {
-		secondaryDevice = true;
-	} else {
-		secondaryDevice = false;
-	}
-	fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
+    previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+    if (bothSDandFlashcard()) {
+        secondaryDevice = settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+    } else if (flashcardFound()) {
+        secondaryDevice = true;
+    } else {
+        secondaryDevice = false;
+    }
+    fcSaveOnSd = settingsini.GetInt("SRLOADER", "FC_SAVE_ON_SD", fcSaveOnSd);
 
     theme = settingsini.GetInt("SRLOADER", "THEME", theme);
     subtheme = settingsini.GetInt("SRLOADER", "SUB_THEME", subtheme);
@@ -137,23 +137,23 @@ void TWLSettings::loadSettings()
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
-	guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
-	if (consoleModel < 2) {
-		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
-		launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
-	}
+    guiLanguage = settingsini.GetInt("SRLOADER", "LANGUAGE", guiLanguage);
+    if (consoleModel < 2) {
+        sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
+        launcherApp = settingsini.GetInt("SRLOADER", "LAUNCHER_APP", launcherApp);
+    }
 
     slot1LaunchMethod = settingsini.GetInt("SRLOADER", "SLOT1_LAUNCHMETHOD", slot1LaunchMethod);
     bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", bootstrapFile);
     useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+    gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
     forceSleepPatch = settingsini.GetInt("NDS-BOOTSTRAP", "FORCE_SLEEP_PATCH", forceSleepPatch);
-	dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
+    dsiWareBooter = settingsini.GetInt("SRLOADER", "DSIWARE_BOOTER", dsiWareBooter);
 
     ak_viewMode = settingsini.GetInt("SRLOADER", "AK_VIEWMODE", ak_viewMode);
     ak_scrollSpeed = settingsini.GetInt("SRLOADER", "AK_SCROLLSPEED", ak_scrollSpeed);
@@ -165,8 +165,8 @@ void TWLSettings::loadSettings()
     dsiWarePrvPath = settingsini.GetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
     launchType[0] = settingsini.GetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
     launchType[1] = settingsini.GetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-	romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
-	romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+    romPath[0] = settingsini.GetString("SRLOADER", "ROM_PATH", romPath[0]);
+    romPath[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
     homebrewBootstrap = settingsini.GetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
 
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
@@ -175,7 +175,7 @@ void TWLSettings::loadSettings()
     smsGgInRam = settingsini.GetInt("SRLOADER", "SMS_GG_IN_RAM", smsGgInRam);
 
     autorun = settingsini.GetInt("SRLOADER", "AUTORUNGAME", autorun);
-	
+    
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
@@ -192,12 +192,12 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
-	settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
+    settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
 
-	if (bothSDandFlashcard()) {
-		settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
-	}
+    if (bothSDandFlashcard()) {
+        settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
+    }
     settingsini.SetInt("SRLOADER", "THEME", theme);
     settingsini.SetInt("SRLOADER", "SUB_THEME", subtheme);
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
@@ -209,7 +209,7 @@ void TWLSettings::saveSettings()
     if (!isDSiMode()) settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    /*settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+    /*settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "ASYNC_PREFETCH", bstrap_asyncPrefetch);*/
@@ -219,19 +219,19 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "AK_THEME", ak_theme);
     settingsini.SetInt("SRLOADER", "AK_ZOOM_ICONS", ak_zoomIcons);
 
-	if (!gotosettings) {
-		settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
-		settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
-		settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
-		settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
-		settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
-		settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
-		settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
-		settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
-		settingsini.SetString("SRLOADER", ms().secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
-		settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
-		settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
-	}
+    if (!gotosettings) {
+        settingsini.SetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
+        settingsini.SetString("SRLOADER", "DSIWARE_SRL", dsiWareSrlPath);
+        settingsini.SetString("SRLOADER", "DSIWARE_PUB", dsiWarePubPath);
+        settingsini.SetString("SRLOADER", "DSIWARE_PRV", dsiWarePrvPath);
+        settingsini.SetInt("SRLOADER", "LAUNCH_TYPE", launchType[0]);
+        settingsini.SetInt("SRLOADER", "SECONDARY_LAUNCH_TYPE", launchType[1]);
+        settingsini.SetString("SRLOADER", "ROM_PATH", romPath[0]);
+        settingsini.SetString("SRLOADER", "SECONDARY_ROM_PATH", romPath[1]);
+        settingsini.SetString("SRLOADER", ms().secondaryDevice ? "SECONDARY_HOMEBREW_ARG" : "HOMEBREW_ARG", homebrewArg);
+        settingsini.SetInt("SRLOADER", "HOMEBREW_BOOTSTRAP", homebrewBootstrap);
+        settingsini.SetInt("SRLOADER", "HOMEBREW_HAS_WIDE", homebrewHasWide);
+    }
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
@@ -249,7 +249,7 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {
-		extern bool useTwlCfg;
+        extern bool useTwlCfg;
         return (TLanguage)(useTwlCfg ? *(u8*)0x02000406 : PersonalData->language);
     }
     return (TLanguage)guiLanguage;

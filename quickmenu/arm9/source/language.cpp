@@ -13,7 +13,7 @@ extern bool useTwlCfg;
 const char* languageIniPath;
 
 extern int guiLanguage;
-extern int bstrap_language;
+extern int gameLanguage;
 extern int titleLanguage;
 int setLanguage = 0;
 int setGameLanguage = 0;
@@ -29,5 +29,5 @@ void langInit(void)
 
 	setLanguage = (guiLanguage == -1) ? userLanguage : guiLanguage;
 	setTitleLanguage = (titleLanguage == -1) ? PersonalData->language : titleLanguage;
-	setGameLanguage = (bstrap_language == -1) ? userLanguage : bstrap_language;
+	setGameLanguage = (gameLanguage == -1) ? userLanguage : gameLanguage;
 }

@@ -675,12 +675,12 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 
     // GameConfig is default, global is not default
-    if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != TWLSettings::ELangDefault)
+    if (gameConfig.language == PerGameSettings::ELangDefault && ms().gameLanguage != TWLSettings::ELangDefault)
     {
-        config.language(ms().bstrap_language);
+        config.language(ms().gameLanguage);
     }
     // GameConfig is system, or global is defaut
-    else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == TWLSettings::ELangDefault)
+    else if (gameConfig.language == PerGameSettings::ELangSystem || ms().gameLanguage == TWLSettings::ELangDefault)
     {
         config.language(-1);
     }
@@ -1439,7 +1439,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1518,7 +1518,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", S8DS07_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1570,7 +1570,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1609,7 +1609,7 @@ void MainWnd::launchSelected()
 			snes.option("NDS-BOOTSTRAP", "NDS_PATH", SNEMULDS_ROM)
 				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC")
 				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
 			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1648,7 +1648,7 @@ void MainWnd::launchSelected()
 			snes.option("NDS-BOOTSTRAP", "NDS_PATH", NITROGRAFX_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1793,7 +1793,7 @@ void MainWnd::bootGbaRunner(void)
 	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			 .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);

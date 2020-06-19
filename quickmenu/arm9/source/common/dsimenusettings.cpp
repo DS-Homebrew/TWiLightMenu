@@ -52,7 +52,7 @@ TWLSettings::TWLSettings()
     useBootstrap = isDSiMode();
     bootstrapFile = EReleaseBootstrap;
 
-    bstrap_language = ELangDefault;
+    gameLanguage = ELangDefault;
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = EDSMode;

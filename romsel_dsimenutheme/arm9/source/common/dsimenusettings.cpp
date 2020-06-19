@@ -70,7 +70,7 @@ TWLSettings::TWLSettings()
 	useBootstrap = isDSiMode();
 	bootstrapFile = EReleaseBootstrap;
 
-	bstrap_language = ELangDefault;
+	gameLanguage = ELangDefault;
 	boostCpu = false;
 	boostVram = false;
 	bstrap_dsiMode = EDSMode;
@@ -190,7 +190,7 @@ void TWLSettings::loadSettings()
 	useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
 	// Default nds-bootstrap settings
-	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);

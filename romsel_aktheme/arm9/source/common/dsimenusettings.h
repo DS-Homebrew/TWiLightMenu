@@ -29,6 +29,7 @@ class TWLSettings
         EViewInternal = 2
     };
 
+    // Do not reorder these, just add to the end
     enum TLanguage
     {
         ELangDefault = -1,
@@ -38,8 +39,13 @@ class TWLSettings
         ELangGerman = 3,
         ELangItalian = 4,
         ELangSpanish = 5,
-        ELangChinese = 6,
-        ELangKorean = 7
+        ELangChineseS = 6,
+        ELangKorean = 7,
+        ELangChineseT = 8,
+        ELangPolish = 9,
+        ELangPortuguese = 10,
+        ELangRussian = 11,
+        ELangSwedish = 12,
     };
 
     enum TRunIn
@@ -61,7 +67,7 @@ class TWLSettings
         ENightlyBootstrap = true
     };
 
-	// 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
+    // 0 = No launch, 1 = SD/Flash card, 2 = SD/Flash card (Direct boot), 3 = DSiWare, 4 = NES, 5 = (S)GB(C), 6 = SMS/GG
     enum TLaunchType
     {
         ENoLaunch = 0,
@@ -78,9 +84,9 @@ class TWLSettings
     };
 
     /*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
+    1 = Nintendo DSi (Dev/Panda)
+    2 = Nintendo 3DS
+    3 = New Nintendo 3DS	*/
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -113,24 +119,24 @@ class TWLSettings
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
-	int titleLanguage;
+    int titleLanguage;
     bool useGbarunner;
     bool gbar2DldiAccess;
     bool showMicroSd;
     int theme;
     int subtheme;
-	bool showNds;
-	bool showRvid;
-	bool showA26;
-	bool showNes;
-	bool showGb;
-	bool showSmsGg;
-	int showMd;
-	bool showSnes;
-	bool showPce;
+    bool showNds;
+    bool showRvid;
+    bool showA26;
+    bool showNes;
+    bool showGb;
+    bool showSmsGg;
+    int showMd;
+    bool showSnes;
+    bool showPce;
     bool showDirectories;
-	bool showHidden;
-	bool preventDeletion;
+    bool showHidden;
+    bool preventDeletion;
     bool showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
@@ -138,13 +144,13 @@ class TWLSettings
     bool gotosettings;
     bool previousUsedDevice;
     bool secondaryDevice;
-	bool fcSaveOnSd;
+    bool fcSaveOnSd;
 
     int slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;
 
-    int bstrap_language;
+    int gameLanguage;
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
@@ -175,8 +181,8 @@ class TWLSettings
     bool showlogo;
     // unused...
     std::string r4_theme;
-	
-	bool wideScreen;
+    
+    bool wideScreen;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;

@@ -50,6 +50,7 @@ class TWLSettings
         ESupercardDSTWO = 6
     };
 
+    // Do not reorder these, just add to the end
     enum TLanguage
     {
         ELangDefault = -1,
@@ -59,8 +60,13 @@ class TWLSettings
         ELangGerman = 3,
         ELangItalian = 4,
         ELangSpanish = 5,
-        ELangChinese = 6,
-        ELangKorean = 7
+        ELangChineseS = 6,
+        ELangKorean = 7,
+        ELangChineseT = 8,
+        ELangPolish = 9,
+        ELangPortuguese = 10,
+        ELangRussian = 11,
+        ELangSwedish = 12,
     };
 
     enum TRunIn
@@ -93,9 +99,9 @@ class TWLSettings
     };
 
     /*	0 = Nintendo DSi (Retail)
-	1 = Nintendo DSi (Dev/Panda)
-	2 = Nintendo 3DS
-	3 = New Nintendo 3DS	*/
+    1 = Nintendo DSi (Dev/Panda)
+    2 = Nintendo 3DS
+    3 = New Nintendo 3DS	*/
     enum TConsoleModel
     {
         EDSiRetail = 0,
@@ -137,14 +143,14 @@ class TWLSettings
     int theme;
     int subtheme;
     int dsiMusic;
-	bool showNds;
-	bool showRvid;
-	bool showNes;
-	bool showGb;
-	bool showSmsGg;
-	bool showMd;
-	bool showSnes;
-	bool updateRecentlyPlayedList;
+    bool showNds;
+    bool showRvid;
+    bool showNes;
+    bool showGb;
+    bool showSmsGg;
+    bool showMd;
+    bool showSnes;
+    bool updateRecentlyPlayedList;
     int sortMethod;
     bool showDirectories;
     bool showHidden;
@@ -156,14 +162,14 @@ class TWLSettings
     bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
-	bool fcSaveOnSd;
+    bool fcSaveOnSd;
 
     int flashcard;
     bool slot1LaunchMethod;
     bool useBootstrap;
     bool bootstrapFile;
 
-    int bstrap_language;
+    int gameLanguage;
     bool boostCpu;
     bool boostVram;
     int bstrap_dsiMode;
@@ -186,9 +192,9 @@ class TWLSettings
     int launchType;
     std::string homebrewArg;
     bool homebrewBootstrap;
-	bool soundFreq;
-	bool dsiSplash;
-	bool hsMsg;
+    bool soundFreq;
+    bool dsiSplash;
+    bool hsMsg;
     bool showlogo;
 
     std::string r4_theme;
@@ -196,7 +202,7 @@ class TWLSettings
     std::string _3ds_theme;
 
     //int screenScaleSize;
-	bool wideScreen;
+    bool wideScreen;
 };
 
 typedef singleton<TWLSettings> menuSettings_s;

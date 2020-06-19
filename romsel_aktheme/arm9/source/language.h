@@ -46,16 +46,26 @@ private:
       return "lang_en";
     case TWLSettings::ELangFrench:
       return "lang_fr";
-    case TWLSettings::ELangSpanish:
-      return "lang_es";
     case TWLSettings::ELangGerman:
       return "lang_de";
     case TWLSettings::ELangItalian:
       return "lang_it";
-    case TWLSettings::ELangChinese:
+    case TWLSettings::ELangSpanish:
+      return "lang_es";
+    case TWLSettings::ELangChineseS:
       return "lang_cn";
     case TWLSettings::ELangKorean:
       return "lang_ko";
+    case TWLSettings::ELangChineseT:
+      return "lang_zh";
+    case TWLSettings::ELangPolish:
+      return "lang_pl";
+    case TWLSettings::ELangPortuguese:
+      return "lang_pt";
+    case TWLSettings::ELangRussian:
+      return "lang_ru";
+    case TWLSettings::ELangSwedish:
+      return "lang_sv";
     default:
       return "lang_en";
     }
