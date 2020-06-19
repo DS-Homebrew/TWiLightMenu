@@ -81,7 +81,6 @@ extern bool dbox_selectMenu;
 extern bool applaunch;
 
 extern int vblankRefreshCounter;
-using namespace std;
 
 int file_count = 0;
 
@@ -138,14 +137,14 @@ std::string gameOrderIniPath, recentlyPlayedIniPath, timesPlayedIniPath;
 static bool inSelectMenu = false;
 
 struct DirEntry {
-	string name;
+	std::string name;
 	bool isDirectory;
 	int position;
 	bool customPos;
 };
 
 struct TimesPlayed {
-	string name;
+	std::string name;
 	int amount;
 };
 
@@ -167,7 +166,7 @@ void chdirFake(const char *dir) {
 }
 #endif
 
-bool nameEndsWith(const string &name, const vector<string> extensionList) {
+bool nameEndsWith(const std::string &name, const std::vector<std::string> extensionList) {
 
 	if (name.substr(0, 2) == "._")
 		return false; // Don't show macOS's index files
@@ -179,7 +178,7 @@ bool nameEndsWith(const string &name, const vector<string> extensionList) {
 		return true;
 
 	for (int i = 0; i < (int)extensionList.size(); i++) {
-		const string ext = extensionList.at(i);
+		const std::string ext = extensionList.at(i);
 		if (strcasecmp(name.c_str() + name.size() - ext.size(), ext.c_str()) == 0)
 			return true;
 	}
@@ -271,7 +270,7 @@ void updateDirectoryContents(vector<DirEntry> &dirContents) {
 	pageLoaded[PAGENUM] = true;
 }
 
-void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> extensionList) {
+void getDirectoryContents(std::vector<DirEntry> &dirContents, const std::vector<std::string> extensionList) {
 
 	dirContents.clear();
 
@@ -404,8 +403,8 @@ void getDirectoryContents(vector<DirEntry> &dirContents, const vector<string> ex
 	}
 }
 
-void getDirectoryContents(vector<DirEntry> &dirContents) {
-	vector<string> extensionList;
+void getDirectoryContents(std::vector<DirEntry> &dirContents) {
+	std::vector<std::string> extensionList;
 	getDirectoryContents(dirContents, extensionList);
 }
 
@@ -809,7 +808,7 @@ void launchGba(void) {
 			bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
 			bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "");
-			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language);
+			bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", 1);
 			bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1641,7 +1640,7 @@ static bool nextPage(void) {
 	return false;
 }
 
-string browseForFile(const vector<string> extensionList) {
+std::string browseForFile(const std::vector<std::string> extensionList) {
 	snd().updateStream();
 	displayNowLoading();
 	snd().updateStream();

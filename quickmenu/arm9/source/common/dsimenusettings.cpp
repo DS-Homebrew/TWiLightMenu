@@ -4,7 +4,7 @@
 #include "common/inifile.h"
 #include <string.h>
 
-DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
+TWLSettings::TWLSettings()
 {
     romfolder = "";
     pagenum = 0;
@@ -52,7 +52,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     useBootstrap = isDSiMode();
     bootstrapFile = EReleaseBootstrap;
 
-    bstrap_language = ELangDefault;
+    gameLanguage = ELangDefault;
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = EDSMode;
@@ -87,7 +87,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	wideScreen = false;
 }
 
-void DSiMenuPlusPlusSettings::loadSettings()
+void TWLSettings::loadSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);
 
@@ -182,7 +182,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
-void DSiMenuPlusPlusSettings::saveSettings()
+void TWLSettings::saveSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);
 
@@ -266,7 +266,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
-DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
+TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {

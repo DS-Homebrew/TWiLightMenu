@@ -67,16 +67,7 @@ int perGameSettings_heapShrink = -1;
 int perGameSettings_bootstrapFile = -1;
 int perGameSettings_wideScreen = -1;
 
-static char LANGUAGE[32];
-static char RAM_DISK[32];
-static char SAVE_NO[32];
-static char RUN_IN[32];
-static char ARM9_CPU_SPEED[32];
-static char VRAM_BOOST[32];
-static char HEAP_SHRINK[32];
-static char DIRECT_BOOT[32];
-static char SCREEN_ASPECT_RATIO[32];
-static char SET_AS_DONOR_ROM[32];
+std::string setAsDonorRom = "";
 
 extern int file_count;
 
@@ -233,9 +224,9 @@ bool showSetDonorRom(u32 arm7size, u32 SDKVersion) {
 
 bool donorRomTextShown = false;
 void revertDonorRomText(void) {
-	if (!donorRomTextShown || strncmp(SET_AS_DONOR_ROM, "Done!", 5) != 0) return;
+	if (!donorRomTextShown || setAsDonorRom != STR_DONE) return;
 
-	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
+	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 }
 
 void perGameSettings (std::string filename) {
@@ -412,16 +403,7 @@ void perGameSettings (std::string filename) {
 		for (int i = 0; i < 30; i++) { snd().updateStream(); swiWaitForVBlank(); }
 	}
 
-	sprintf(LANGUAGE, "%s:", STR_LANGUAGE.c_str());
-	sprintf(RAM_DISK, "%s:", STR_RAM_DISK.c_str());
-	sprintf(SAVE_NO, "%s:", STR_SAVE_NO.c_str());
-	sprintf(RUN_IN, "%s:", STR_RUN_IN.c_str());
-	sprintf(ARM9_CPU_SPEED, "%s:", STR_ARM9_CPU_SPEED.c_str());
-	sprintf(VRAM_BOOST, "%s:", STR_VRAM_BOOST.c_str());
-	sprintf(HEAP_SHRINK, "%s:", STR_HEAP_SHRINK.c_str());
-	sprintf(DIRECT_BOOT, "%s:", STR_DIRECT_BOOT.c_str());
-	sprintf(SCREEN_ASPECT_RATIO, "%s:", STR_SCREEN_ASPECT_RATIO.c_str());
-	sprintf(SET_AS_DONOR_ROM, "%s", STR_SET_AS_DONOR_ROM.c_str());
+	setAsDonorRom = STR_SET_AS_DONOR_ROM;
 
 	// About 38 characters fit in the box.
 	dirContName = filename;
@@ -465,7 +447,7 @@ void perGameSettings (std::string filename) {
 		if (!showPerGameSettings || perGameOp[i] == -1) break;
 		switch (perGameOp[i]) {
 			case 0:
-				printSmall(false, 24, perGameOpYpos, LANGUAGE);
+				printSmall(false, 24, perGameOpYpos, STR_LANGUAGE + ":");
 				if (perGameSettings_language == -2) {
 					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
 				} else if (perGameSettings_language == -1) {
@@ -490,10 +472,10 @@ void perGameSettings (std::string filename) {
 				break;
 			case 1:
 				if (isHomebrew[CURPOS]) {
-					printSmall(false, 24, perGameOpYpos, RAM_DISK);
+					printSmall(false, 24, perGameOpYpos, STR_RAM_DISK + ":");
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_ramDiskNo);
 				} else {
-					printSmall(false, 24, perGameOpYpos, SAVE_NO);
+					printSmall(false, 24, perGameOpYpos, STR_SAVE_NO + ":");
 					snprintf (saveNoDisplay, sizeof(saveNoDisplay), "%i", perGameSettings_saveNo);
 				}
 				if (isHomebrew[CURPOS] && perGameSettings_ramDiskNo == -1) {
@@ -503,7 +485,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 2:
-				printSmall(false, 24, perGameOpYpos, RUN_IN);
+				printSmall(false, 24, perGameOpYpos, STR_RUN_IN + ":");
 				if (perGameSettings_dsiMode == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
 				} else if (perGameSettings_dsiMode == 2) {
@@ -515,7 +497,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 3:
-				printSmall(false, 24, perGameOpYpos, ARM9_CPU_SPEED);
+				printSmall(false, 24, perGameOpYpos, STR_ARM9_CPU_SPEED + ":");
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmall(false, 256-24, perGameOpYpos, "133mhz (TWL)", Alignment::right);
 				} else {
@@ -529,7 +511,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 4:
-				printSmall(false, 24, perGameOpYpos, VRAM_BOOST);
+				printSmall(false, 24, perGameOpYpos, STR_VRAM_BOOST + ":");
 				if (perGameSettings_dsiMode > 0 && isDSiMode()) {
 					printSmall(false, 256-24, perGameOpYpos, STR_ON, Alignment::right);
 				} else {
@@ -543,7 +525,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 5:
-				printSmall(false, 24, perGameOpYpos, HEAP_SHRINK);
+				printSmall(false, 24, perGameOpYpos, STR_HEAP_SHRINK + ":");
 				if (perGameSettings_heapShrink == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_AUTO, Alignment::right);
 				} else if (perGameSettings_heapShrink == 1) {
@@ -553,7 +535,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 6:
-				printSmall(false, 24, perGameOpYpos, DIRECT_BOOT);
+				printSmall(false, 24, perGameOpYpos, STR_DIRECT_BOOT + ":");
 				if (perGameSettings_directBoot) {
 					printSmall(false, 256-24, perGameOpYpos, STR_YES, Alignment::right);
 				} else {
@@ -571,7 +553,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 8:
-				printSmall(false, 24, perGameOpYpos, SCREEN_ASPECT_RATIO);
+				printSmall(false, 24, perGameOpYpos, STR_SCREEN_ASPECT_RATIO + ":");
 				if (perGameSettings_wideScreen == -1) {
 					printSmall(false, 256-24, perGameOpYpos, STR_DEFAULT, Alignment::right);
 				} else if (perGameSettings_wideScreen == 1) {
@@ -581,7 +563,7 @@ void perGameSettings (std::string filename) {
 				}
 				break;
 			case 9:
-				printSmall(false, 0, perGameOpYpos, SET_AS_DONOR_ROM, Alignment::center);
+				printSmall(false, 0, perGameOpYpos, setAsDonorRom, Alignment::center);
 				break;
 		}
 		perGameOpYpos += 14;
@@ -756,7 +738,7 @@ void perGameSettings (std::string filename) {
 						CIniFile bootstrapini(bootstrapinipath);
 						bootstrapini.SetString("NDS-BOOTSTRAP", pathDefine, romFolderNoSlash+"/"+filename);
 						bootstrapini.SaveIniFile(bootstrapinipath);
-						sprintf(SET_AS_DONOR_ROM, "Done!");
+						setAsDonorRom = STR_DONE;
 					  }
 						break;
 				}

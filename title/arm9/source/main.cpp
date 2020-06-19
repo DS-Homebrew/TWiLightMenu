@@ -81,7 +81,7 @@ static const std::string slashchar = "/";
 static const std::string woodfat = "fat0:/";
 static const std::string dstwofat = "fat1:/";
 
-typedef DSiMenuPlusPlusSettings::TLaunchType Launch;
+typedef TWLSettings::TLaunchType Launch;
 
 int screenmode = 0;
 int subscreenmode = 0;
@@ -440,7 +440,7 @@ void lastRunROM()
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", ms().romPath[ms().secondaryDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE",
-					(perGameSettings_language == -2 ? ms().bstrap_language : perGameSettings_language));
+					(perGameSettings_language == -2 ? ms().gameLanguage : perGameSettings_language));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE",
 					(perGameSettings_dsiMode == -1 ? ms().bstrap_dsiMode : perGameSettings_dsiMode));
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU",

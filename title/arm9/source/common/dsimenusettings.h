@@ -12,7 +12,7 @@
  * 
  * Try not to change settings that are not related to the current theme.
  */
-class DSiMenuPlusPlusSettings
+class TWLSettings
 {
   public:
     enum TScrollSpeed
@@ -49,6 +49,7 @@ class DSiMenuPlusPlusSettings
         ESupercardDSTWO = 6
     };
 
+    // Do not reorder these, just add to the end
     enum TLanguage
     {
         ELangDefault = -1,
@@ -58,8 +59,13 @@ class DSiMenuPlusPlusSettings
         ELangGerman = 3,
         ELangItalian = 4,
         ELangSpanish = 5,
-        ELangChinese = 6,
-        ELangKorean = 7
+        ELangChineseS = 6,
+        ELangKorean = 7,
+        ELangChineseT = 8,
+        ELangPolish = 9,
+        ELangPortuguese = 10,
+        ELangRussian = 11,
+        ELangSwedish = 12,
     };
 
     enum TSlot1LaunchMethod
@@ -103,8 +109,8 @@ class DSiMenuPlusPlusSettings
     };
 
   public:
-    DSiMenuPlusPlusSettings();
-    ~DSiMenuPlusPlusSettings();
+    TWLSettings();
+    ~TWLSettings();
 
   public:
     void loadSettings();
@@ -142,7 +148,7 @@ class DSiMenuPlusPlusSettings
     bool useBootstrap;
     bool bootstrapFile;
 
-    int bstrap_language;
+    int gameLanguage;
     bool boostCpu;
     bool boostVram;
     bool bstrap_dsiMode;
@@ -175,7 +181,7 @@ class DSiMenuPlusPlusSettings
 	bool wideScreen;
 };
 
-typedef singleton<DSiMenuPlusPlusSettings> menuSettings_s;
-inline DSiMenuPlusPlusSettings &ms() { return menuSettings_s::instance(); }
+typedef singleton<TWLSettings> menuSettings_s;
+inline TWLSettings &ms() { return menuSettings_s::instance(); }
 
 #endif //_DSIMENUPPSETTINGS_H_

@@ -15,7 +15,7 @@ class PerGameSettings
         ELangGerman = 3,
         ELangItalian = 4,
         ELangSpanish = 5,
-        ELangChinese = 6,
+        ELangChineseS = 6,
         ELangKorean = 7
     };
 

@@ -92,7 +92,7 @@ static bool wideScreen = false;
 
 static bool soundfreq = false;	// false == 32.73 kHz, true == 47.61 kHz
 
-static int bstrap_language = -1;
+static int gameLanguage = -1;
 static bool boostCpu = false;	// false == NTR, true == TWL
 static bool boostVram = false;
 static bool bstrap_dsiMode = false;
@@ -110,7 +110,7 @@ TWL_CODE void LoadSettings(void) {
 	bootstrapFile = settingsini.GetInt("SRLOADER", "BOOTSTRAP_FILE", 0);
 
 	// Default nds-bootstrap settings
-	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -288,7 +288,7 @@ TWL_CODE int lastRunROM() {
 				CIniFile bootstrapini(bootstrapinipath);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", romPath[secondaryDevice]);
 				bootstrapini.SetString("NDS-BOOTSTRAP", "SAV_PATH", savepath);
-				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
+				bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 				bootstrapini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", perGameSettings_boostCpu == -1 ? boostCpu : perGameSettings_boostCpu);
 				bootstrapini.SetInt( "NDS-BOOTSTRAP", "BOOST_VRAM", perGameSettings_boostVram == -1 ? boostVram : perGameSettings_boostVram);

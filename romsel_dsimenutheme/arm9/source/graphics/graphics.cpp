@@ -1526,18 +1526,14 @@ void drawCurrentDate() {
 		x -= 28;
 	}
 	int y = (ms().theme == 4 ? 12 : 7);
-	char date[6];
 
-	if (!GetDate(FORMAT_MD, date, sizeof(date)))
-		return;
-
-	std::string currentDate = date;
+	std::string currentDate = getDate();
 	if (currentDate == loadedDate)
 		return;
 
-	loadedDate = date;
+	loadedDate = currentDate;
 
-	tex().drawDateTime(date, x, y, 5, NULL);
+	tex().drawDateTime(loadedDate.c_str(), x, y, 5, NULL);
 }
 
 static std::string loadedTime;
@@ -1552,7 +1548,7 @@ void drawCurrentTime() {
 	}
 	int y = (ms().theme == 4 ? 12 : 7);
 	char time[10];
-	std::string currentTime = RetTime();
+	std::string currentTime = retTime();
 	if (currentTime != loadedTime) {
 		loadedTime = currentTime;
 		if (currentTime.substr(0, 1) == " ")

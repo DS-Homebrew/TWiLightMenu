@@ -164,8 +164,8 @@ int launcherApp = -1;
 int sysRegion = -1;
 
 int guiLanguage = -1;
+int gameLanguage = -1;
 int titleLanguage = -1;
-int bstrap_language = -1;
 bool boostCpu = false;	// false == NTR, true == TWL
 bool boostVram = false;
 int bstrap_dsiMode = 0;
@@ -221,7 +221,7 @@ void LoadSettings(void) {
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
 	// Default nds-bootstrap settings
-	bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
+	gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", -1);
 	boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", 0);
 	boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
 	bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
@@ -2208,7 +2208,7 @@ int main(int argc, char **argv) {
 						}
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", (useWidescreen && game_TID[0] == 'W') ? "wide" : "");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", (perGameSettings_ramDiskNo >= 0 && !secondaryDevice) ? ramdiskpath : "sd:/null.img");
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? bstrap_language : perGameSettings_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", perGameSettings_language == -2 ? gameLanguage : perGameSettings_language);
 						if (isDSiMode()) {
 							bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", perGameSettings_dsiMode == -1 ? bstrap_dsiMode : perGameSettings_dsiMode);
 						}
@@ -2390,7 +2390,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", consoleModel>0 ? "sd:/_nds/GBARunner2_arm7dldi_3ds.nds" : "sd:/_nds/GBARunner2_arm7dldi_dsi.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);
@@ -2436,7 +2436,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/S8DS07.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "");
@@ -2471,7 +2471,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/jEnesisDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN");
@@ -2497,7 +2497,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/SNEmulDS.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC");
@@ -2523,7 +2523,7 @@ int main(int argc, char **argv) {
 						ndsToBoot = (bootstrapFile ? "sd:/_nds/nds-bootstrap-hb-nightly.nds" : "sd:/_nds/nds-bootstrap-hb-release.nds");
 						CIniFile bootstrapini("sd:/_nds/nds-bootstrap.ini");
 
-						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+						bootstrapini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
 						bootstrapini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", 0);
 						bootstrapini.SetString("NDS-BOOTSTRAP", "NDS_PATH", "sd:/_nds/TWiLightMenu/emulators/NitroGrafx.nds");
 						bootstrapini.SetString("NDS-BOOTSTRAP", "HOMEBREW_ARG", ROMpath);

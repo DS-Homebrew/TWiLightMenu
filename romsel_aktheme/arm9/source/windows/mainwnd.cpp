@@ -569,7 +569,7 @@ void bootWidescreen(const char *filename, bool isHomebrew, bool useWidescreen)
 	
 	bool wideCheatFound = false;
 	char wideBinPath[256];
-	if (ms().launchType[ms().secondaryDevice] == DSiMenuPlusPlusSettings::ESDFlashcardLaunch) {
+	if (ms().launchType[ms().secondaryDevice] == TWLSettings::ESDFlashcardLaunch) {
 		snprintf(wideBinPath, sizeof(wideBinPath), "sd:/_nds/TWiLightMenu/widescreen/%s.bin", filename);
 		wideCheatFound = (access(wideBinPath, F_OK) == 0);
 	}
@@ -675,12 +675,12 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 
     // GameConfig is default, global is not default
-    if (gameConfig.language == PerGameSettings::ELangDefault && ms().bstrap_language != DSiMenuPlusPlusSettings::ELangDefault)
+    if (gameConfig.language == PerGameSettings::ELangDefault && ms().gameLanguage != TWLSettings::ELangDefault)
     {
-        config.language(ms().bstrap_language);
+        config.language(ms().gameLanguage);
     }
     // GameConfig is system, or global is defaut
-    else if (gameConfig.language == PerGameSettings::ELangSystem || ms().bstrap_language == DSiMenuPlusPlusSettings::ELangDefault)
+    else if (gameConfig.language == PerGameSettings::ELangSystem || ms().gameLanguage == TWLSettings::ELangDefault)
     {
         config.language(-1);
     }
@@ -1303,7 +1303,7 @@ void MainWnd::launchSelected()
 			progressWnd().hide();
             messageBox(this, LANG("game launch", "unlaunch boot"), LANG("game launch", "unlaunch instructions"), MB_OK);
         }
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EDSiWareLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::EDSiWareLaunch;
         ms().saveSettings();
         progressWnd().hide();
         unlaunch.launch();
@@ -1321,7 +1321,7 @@ void MainWnd::launchSelected()
 			BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, gameConfig.heapShrink);
 
 			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W' || rominfo.version() == 0x57);
-			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardDirectLaunch;
+			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardDirectLaunch;
 			ms().saveSettings();
 			bootWidescreen(fileName.c_str(), true, (gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen));
             bootArgv(rominfo);
@@ -1330,14 +1330,14 @@ void MainWnd::launchSelected()
 
         else if (ms().useBootstrap || !ms().secondaryDevice)
         {
-			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
             bootBootstrap(gameConfig, rominfo);
             return;
         }
         else
         {
-			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
             dbg_printf("Flashcard Launch: %s\n", fullPath.c_str());
             bootFlashcard(fullPath, true);
@@ -1353,7 +1353,7 @@ void MainWnd::launchSelected()
     // DSTWO Plugin Launch
     if (extension == ".plg" && ms().secondaryDevice && memcmp(io_dldi_data->friendlyName, "DSTWO(Slot-1)", 0xD) == 0)
     {
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 
 		// Print .plg path without "fat:" at the beginning
@@ -1376,7 +1376,7 @@ void MainWnd::launchSelected()
     if (extension == ".rvid")
     {
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ERVideoLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ERVideoLaunch;
         ms().saveSettings();
 
 		ndsToBoot = RVIDPLAYER_SD;
@@ -1391,7 +1391,7 @@ void MainWnd::launchSelected()
     if (extension == ".mp4")
     {
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EMPEG4Launch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::EMPEG4Launch;
         ms().saveSettings();
 
 		ndsToBoot = MPEG4PLAYER_SD;
@@ -1406,7 +1406,7 @@ void MainWnd::launchSelected()
     if (extension == ".gba")
 	{
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1439,7 +1439,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1455,7 +1455,7 @@ void MainWnd::launchSelected()
     if (extension == ".a26")
     {
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EStellaDSLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::EStellaDSLaunch;
         ms().saveSettings();
 
 		ndsToBoot = STELLADS_SD;
@@ -1470,7 +1470,7 @@ void MainWnd::launchSelected()
     if (extension == ".nes" || extension == ".fds")
     {
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ENESDSLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ENESDSLaunch;
         ms().saveSettings();
 
 		ndsToBoot = (ms().secondaryDevice ? NESDS_SD : NESTWL_SD);
@@ -1485,7 +1485,7 @@ void MainWnd::launchSelected()
     if (extension == ".gb" || extension == ".gbc")
     {
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::EGameYobLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::EGameYobLaunch;
         ms().saveSettings();
 
 		ndsToBoot = GAMEYOB_SD;
@@ -1505,7 +1505,7 @@ void MainWnd::launchSelected()
 		ms().homebrewArg = fullPath;
 		if (!ms().secondaryDevice && ms().smsGgInRam)
 		{
-			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
 			ms().saveSettings();
 
 			std::string bootstrapPath = (ms().bootstrapFile ? BOOTSTRAP_NIGHTLY_HB : BOOTSTRAP_RELEASE_HB);
@@ -1518,7 +1518,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", S8DS07_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1530,7 +1530,7 @@ void MainWnd::launchSelected()
 		}
 		else
 		{
-			ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ES8DSLaunch;
+			ms().launchType[ms().secondaryDevice] = TWLSettings::ES8DSLaunch;
 			ms().saveSettings();
 
 			ndsToBoot = S8DS_ROM;
@@ -1547,7 +1547,7 @@ void MainWnd::launchSelected()
 	{
 		bool usePicoDrive = (ms().showMd==2 || (ms().showMd==3 && getFileSize(fullPath) > 0x300000));
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = (usePicoDrive ? DSiMenuPlusPlusSettings::EPicoDriveTWLLaunch : DSiMenuPlusPlusSettings::ESDFlashcardLaunch);
+        ms().launchType[ms().secondaryDevice] = (usePicoDrive ? TWLSettings::EPicoDriveTWLLaunch : TWLSettings::ESDFlashcardLaunch);
         ms().saveSettings();
 		if (usePicoDrive || ms().secondaryDevice)
         {
@@ -1570,7 +1570,7 @@ void MainWnd::launchSelected()
 			gen.option("NDS-BOOTSTRAP", "NDS_PATH", JENESISDS_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/ROM.BIN")
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			   .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			   .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			   .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			   .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1586,7 +1586,7 @@ void MainWnd::launchSelected()
     if (extension == ".smc" || extension == ".sfc")
 	{
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1609,7 +1609,7 @@ void MainWnd::launchSelected()
 			snes.option("NDS-BOOTSTRAP", "NDS_PATH", SNEMULDS_ROM)
 				.option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "fat:/snes/ROM.SMC")
 				.option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", fullPath)
-			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 0)
 			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1625,7 +1625,7 @@ void MainWnd::launchSelected()
     if (extension == ".pce")
 	{
         ms().homebrewArg = fullPath;
-        ms().launchType[ms().secondaryDevice] = DSiMenuPlusPlusSettings::ESDFlashcardLaunch;
+        ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardLaunch;
         ms().saveSettings();
 		if (ms().secondaryDevice)
         {
@@ -1648,7 +1648,7 @@ void MainWnd::launchSelected()
 			snes.option("NDS-BOOTSTRAP", "NDS_PATH", NITROGRAFX_ROM)
 			   .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", fullPath)
 			   .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			    .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			    .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 				.option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			    .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);
@@ -1793,7 +1793,7 @@ void MainWnd::bootGbaRunner(void)
 	gbaRunner.option("NDS-BOOTSTRAP", "NDS_PATH", ms().consoleModel>0 ? GBARUNNER_3DS : GBARUNNER_DSI)
 			 .option("NDS-BOOTSTRAP", "HOMEBREW_ARG", "")
 			 .option("NDS-BOOTSTRAP", "RAM_DRIVE_PATH", "")
-			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().bstrap_language)
+			 .option("NDS-BOOTSTRAP", "LANGUAGE", ms().gameLanguage)
 			 .option("NDS-BOOTSTRAP", "DSI_MODE", 0)
 			 .option("NDS-BOOTSTRAP", "BOOST_CPU", 1)
 			 .option("NDS-BOOTSTRAP", "BOOST_VRAM", 0);

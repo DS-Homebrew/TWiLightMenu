@@ -5,7 +5,7 @@
 #include "common/inifile.h"
 #include <string.h>
 
-DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
+TWLSettings::TWLSettings()
 {
     romfolder = "";
     pagenum = 0;
@@ -41,7 +41,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
     useBootstrap = true;
     bootstrapFile = EReleaseBootstrap;
 
-    bstrap_language = ELangDefault;
+    gameLanguage = ELangDefault;
     boostCpu = false;
     boostVram = false;
     bstrap_dsiMode = false;
@@ -69,7 +69,7 @@ DSiMenuPlusPlusSettings::DSiMenuPlusPlusSettings()
 	wideScreen = false;
 }
 
-void DSiMenuPlusPlusSettings::loadSettings()
+void TWLSettings::loadSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);
 
@@ -121,7 +121,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     useBootstrap = settingsini.GetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    bstrap_language = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+    gameLanguage = settingsini.GetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     boostCpu = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     boostVram = settingsini.GetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     bstrap_dsiMode = settingsini.GetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
@@ -149,7 +149,7 @@ void DSiMenuPlusPlusSettings::loadSettings()
     wideScreen = settingsini.GetInt("SRLOADER", "WIDESCREEN", wideScreen);
 }
 
-void DSiMenuPlusPlusSettings::saveSettings()
+void TWLSettings::saveSettings()
 {
     CIniFile settingsini(DSIMENUPP_INI);
 
@@ -184,7 +184,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "USE_BOOTSTRAP", useBootstrap);
 
     // Default nds-bootstrap settings
-    settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", bstrap_language);
+    settingsini.SetInt("NDS-BOOTSTRAP", "LANGUAGE", gameLanguage);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_CPU", boostCpu);
     settingsini.SetInt("NDS-BOOTSTRAP", "BOOST_VRAM", boostVram);
     settingsini.SetInt("NDS-BOOTSTRAP", "DSI_MODE", bstrap_dsiMode);
@@ -199,7 +199,7 @@ void DSiMenuPlusPlusSettings::saveSettings()
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
 
-DSiMenuPlusPlusSettings::TLanguage DSiMenuPlusPlusSettings::getGuiLanguage()
+TWLSettings::TLanguage TWLSettings::getGuiLanguage()
 {
     if (guiLanguage == ELangDefault)
     {
