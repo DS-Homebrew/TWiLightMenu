@@ -74,26 +74,45 @@ void langInit(void)
 	int setLanguage = (ms().getGuiLanguage() == -1) ? userLanguage : ms().getGuiLanguage();
 
 	switch (setLanguage) {
-		case 0:
+		case TWLSettings::ELangJapanese:
 			languageIniPath = "nitro:/languages/japanese.ini";
 			break;
-		case 1:
-		case 6:
-		case 7:
+		case TWLSettings::ELangEnglish:
 		default:
 			languageIniPath = "nitro:/languages/english.ini";
 			break;
-		case 2:
+		case TWLSettings::ELangFrench:
 			languageIniPath = "nitro:/languages/french.ini";
 			break;
-		case 3:
+		case TWLSettings::ELangGerman:
 			languageIniPath = "nitro:/languages/german.ini";
 			break;
-		case 4:
+		case TWLSettings::ELangItalian:
 			languageIniPath = "nitro:/languages/italian.ini";
 			break;
-		case 5:
+		case TWLSettings::ELangSpanish:
 			languageIniPath = "nitro:/languages/spanish.ini";
+			break;
+		case TWLSettings::ELangChineseS:
+			languageIniPath = "nitro:/languages/chinese_s.ini";
+			break;
+		case TWLSettings::ELangKorean:
+			languageIniPath = "nitro:/languages/korean.ini";
+			break;
+		case TWLSettings::ELangChineseT:
+			languageIniPath = "nitro:/languages/chinese_t.ini";
+			break;
+		case TWLSettings::ELangPolish:
+			languageIniPath = "nitro:/languages/polish.ini";
+			break;
+		case TWLSettings::ELangPortuguese:
+			languageIniPath = "nitro:/languages/portuguese.ini";
+			break;
+		case TWLSettings::ELangRussian:
+			languageIniPath = "nitro:/languages/russian.ini";
+			break;
+		case TWLSettings::ELangSwedish:
+			languageIniPath = "nitro:/languages/swedish.ini";
 			break;
 	}
 

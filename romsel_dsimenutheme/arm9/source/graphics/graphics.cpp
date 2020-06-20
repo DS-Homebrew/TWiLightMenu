@@ -1244,7 +1244,7 @@ void vBlankHandler() {
 		if (currentBg == 1 && ms().theme != 4 && ms().theme != 5)
 			drawBubble(tex().bubbleImage());
 		if (showSTARTborder && displayGameIcons && ms().theme == 0 && !isScrolling) {
-			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setLanguage]);
+			glSprite(96, tc().startTextRenderY(), GL_FLIP_NONE, &tex().startImage()[setGameLanguage]);
 		}
 
 		glColor(RGB15(31, 31 - (3 * ms().blfLevel), 31 - (6 * ms().blfLevel)));
