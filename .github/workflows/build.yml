@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: "Build Docker image"
         run: |
-          docker build -t twilightmenu --label twilightmenu ./
+          docker build -t twilightmenu --label twilightmenu .
           docker ps -a
       - name: "Install 7zip"
         run: |
@@ -94,7 +94,7 @@ jobs:
           cp TWiLightMenu.7z ${{ runner.temp}}/TWiLightMenu.7z
           echo "========================"
           ls ${{ runner.temp }}
-      - uses: actions/upload-artifact@v2
+      - name: "Publish build to GH Actions"
+        uses: actions/upload-artifact@v2
         with:
-          name: "Publish build to GH Actions"
           path: ${{ runner.temp }}
