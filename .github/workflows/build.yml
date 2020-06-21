@@ -47,7 +47,7 @@ jobs:
           ./r4enc _DS_MENU.nds
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       - name: "Pack 7z Package for nightly"
-        if: ${{ startsWith(github.ref, "v") }}
+        if: ${{ startsWith(github.ref, 'v') }}
         run: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
 
@@ -59,7 +59,7 @@ jobs:
           cp TWiLightMenu.7z ${{ runner.temp }}/TWiLightMenu.7z
           cp TWiLightMenu-Lite.7z ${{ runner.temp }}/TWiLightMenu-Lite.7z
       - name: "Pack 7z Package for release"
-        if: ${{ startsWith(github.ref, "v") }}
+        if: ${{ startsWith(github.ref, 'v') }}
         run: |
           mkdir 7zfile/_nds/TWiLightMenu/boxart/
           mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
