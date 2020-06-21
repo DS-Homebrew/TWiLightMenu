@@ -36,7 +36,7 @@ jobs:
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Make WoodR4 _DS_MENU.DAT files"
         run: |
-          echo Tag: $commit_tag | ${{ commit_tag }}
+          echo Tag: $commit_tag | ${{ jobs.build.outputs.commit_tag }}
           cd booter_fc/r4_menu_dat/
           cp "../booter_fc.nds" "_DS_MENU.nds"
           ./dlditool r4_sd.dldi _DS_MENU.nds
