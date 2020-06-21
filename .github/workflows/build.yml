@@ -22,7 +22,7 @@ jobs:
           sudo apt install p7zip-full
       - name: "Build TWiLightMenu++ with devkitARM r54"
         run: |
-          docker run --rm -i -v ".:/data" twilightmenu make package
+          docker run --rm -i -v "$(pwd):/data" twilightmenu make package
       - name: "Make booter and TWiLightMenu CIAs"
         run: |
           cd booter/
