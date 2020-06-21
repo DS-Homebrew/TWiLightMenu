@@ -83,6 +83,7 @@ jobs:
           mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
+          pwd
           mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
@@ -97,5 +98,107 @@ jobs:
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          name: "TWiLight Menu++"
+          name: "build"
           path: ${{ github.workspace }}/artifacts
+
+  # Only run this for non-PR jobs.
+  publish_build_twlbot:
+    runs-on: ubuntu-latest
+    name: "Publish build to TWLBot"
+    if: ${{ succeeded("build") && !startsWith(github.ref, 'refs/pull') }}
+    needs: build
+    env:
+      COMMIT_TAG: ${{ jobs.build.outputs.commit_tag }}
+      COMMIT_MESSAGE: ${{ jobs.build.outputs.commit_message }}
+    outputs:
+      commit_tag: ${{ steps.commit.outputs.current_date }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Make artifacts dir"
+        run: |
+          mkdir -p ${{ github.workspace }}/artifacts
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: "build"
+          path: ${{ github.workspace }}/artifacts
+      - name: "Commit and push to TWLBot/Builds"
+        id: "commit"
+        script: |
+          # test ls
+          ls ${{ github.workspace }}/artifacts
+          CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
+          echo "::set-output name=current_date::$CURRENT_DATE"
+
+          git config --global user.email "flamekat54@aol.com"
+          git config --global user.name "TWLBot"
+          git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
+          cd Builds/
+          cp ${{ github.workspace }}/artifacts/* .
+          git stage .
+          git commit -m "TWiLightMenu | $(COMMIT_TAG)"
+          git push origin master
+          git tag v$CURRENT_DATE
+
+#       - task: GitHubRelease@0
+#         displayName: "Release to TWLBot/Builds"
+#         inputs:
+#           gitHubConnection: TWLBot
+#           repositoryName: TWLBot/Builds
+#           action: create
+#           target: $(TWLBOT_COMMIT)
+#           tagSource: 'manual'
+#           tag: v$(CURRENT_DATE)
+#           title: TWiLightMenu | $(COMMIT_TAG)
+#           releaseNotesSource: input
+#           releaseNotes: $(COMMIT_MESSAGE)
+#           assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
+#           isPreRelease: true
+#           addChangeLog: false
+
+      - name: "Upload to DS-Homebrew/TWiLightMenu release"
+        uses: actions/upload-release-asset@v1.0.2
+        with:
+          upload_url: "https://github.com/${{ github.repository }}/releases/${{ github.ref }}"
+          asset_path: $${{ github.workspace }}/artifacts
+          asset_name: "*"
+          asset_content_type: "*"
+
+      - task: GitHubRelease@0
+        displayName: "Release to DS-Homebrew/TWiLightMenu"
+        condition: startsWith(variables['Build.SourceBranchName'], 'v')
+        inputs:
+          gitHubConnection: TWLBot
+          repositoryName: DS-Homebrew/TWiLightMenu
+          action: edit
+          target: '$(Build.SourceVersion)'
+          tag: $(Build.SourceBranchName)
+          assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
+          assetUploadMode: replace
+
+  send_webhook_success: 
+    runs-on: ubuntu-latest
+    needs: publish_build_twlbot
+    name: Send Discord Success Webhook
+    if: succeeded('publish_build_twlbot') && !startsWith(${{ github.ref }}, 'refs/pull')
+    env:
+      CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
+    steps:
+      - name: "Send success webhook"
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+          chmod +x send.sh
+          ./send.sh success $WEBHOOK_URL
+  send_webhook_failure:
+    runs-on: ubuntu-latest
+    needs: publish_build_twlbot
+    name: Send Discord Failure Webhook
+    if: (failed('publish_build_twlbot') || failed('build')) && !startsWith(${{ github.ref }}, 'refs/pull')))
+    env:
+      CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
+    steps:
+      - name: "Send failure webhook"
+        run: |
+          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+          chmod +x send.sh
+          ./send.sh failure $WEBHOOK_URL
