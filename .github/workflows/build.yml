@@ -10,6 +10,10 @@ jobs:
       commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
+      - name: "Teting..."
+        run: |
+          curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
+          jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json
       - uses: actions/checkout@v2
       - name: "Build Docker image"
         run: |
