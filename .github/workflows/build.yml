@@ -1,10 +1,6 @@
-name: Build with Docker
+name: Build TWiLight Menu++
 
-on:
-  push:
-    branches: ["*"]
-  pull_request:
-    branches: ["*"]
+on: [push, pull_request, release]
 
 jobs:
   build:
@@ -40,6 +36,7 @@ jobs:
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Make WoodR4 _DS_MENU.DAT files"
         run: |
+          echo Tag: $commit_tag | ${{ commit_tag }}
           cd booter_fc/r4_menu_dat/
           cp "../booter_fc.nds" "_DS_MENU.nds"
           ./dlditool r4_sd.dldi _DS_MENU.nds
@@ -47,7 +44,7 @@ jobs:
           ./r4enc _DS_MENU.nds
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       - name: "Pack 7z Package for nightly"
-        if: ${{ !startsWith(github.ref, 'v') }}
+        if: ${{ false && !startsWith(github.ref, 'v') }}
         run: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
 
@@ -56,10 +53,11 @@ jobs:
           rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          cp TWiLightMenu.7z ${{ runner.temp }}/TWiLightMenu.7z
-          cp TWiLightMenu-Lite.7z ${{ runner.temp }}/TWiLightMenu-Lite.7z
+          mkdir -p ${{ github.workspace }}/artifacts
+          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts/TWiLightMenu.7z
+          cp TWiLightMenu-Lite.7z ${{ github.workspace }}/artifacts/TWiLightMenu-Lite.7z
       - name: "Pack 7z Package for release"
-        if: ${{ startsWith(github.ref, 'v') }}
+        if: ${{ true || startsWith(github.ref, 'v') }}
         run: |
           mkdir 7zfile/_nds/TWiLightMenu/boxart/
           mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
@@ -91,10 +89,10 @@ jobs:
 
           cd 7zfile
           7z a TWiLightMenu.7z .
-          cp TWiLightMenu.7z ${{ runner.temp}}/TWiLightMenu.7z
-          echo "========================"
-          ls ${{ runner.temp }}
+          mkdir -p ${{ github.workspace }}/artifacts
+          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts/TWiLightMenu.7z
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ runner.temp }}
+          name: "TWiLight Menu++"
+          path: ${{ github.workspace }}/artifacts
