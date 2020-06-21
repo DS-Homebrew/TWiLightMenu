@@ -1,0 +1,101 @@
+name: Build with Docker
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+  label: ["*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Build with Docker using devKitARM r54"
+
+    steps:
+      - name: "Build Docker image"
+        run: |
+          docker build -t twilightmenu --label twilightmenu ./
+          docker ps -a
+      - name: "Install 7zip"
+        run: |
+          sudo apt update
+          sudo apt install p7zip-full
+      - name: "Build TWiLightMenu++ with devkitARM r54"
+        run: |
+          docker run --rm -i -v "$(Build.SourcesDirectory):/data" twilightmenu make package
+      - name: "Make booter and TWiLightMenu CIAs"
+        run: |
+          cd booter/
+          chmod +x make_cia
+          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          mkdir -p "../7zfile/3DS - CFW users/"
+          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+
+          cd ../rungame/
+          chmod +x make_cia
+          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+
+          echo "::set-output name=commit_tag::$(git log --format=%h -1)"
+          echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
+      - name: 'Make WoodR4 _DS_MENU.DAT files'
+        run: |
+          cd booter_fc/r4_menu_dat/
+          cp "../booter_fc.nds" "_DS_MENU.nds"
+          ./dlditool r4_sd.dldi _DS_MENU.nds
+
+          ./r4enc _DS_MENU.nds
+          mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+      - name: 'Pack 7z Package for nightly'
+        if: ${{ !startsWith(github.ref, "v") }}
+        run: |
+          rm -r 7zfile/_nds/TWiLightMenu/*menu/
+
+          mv 7zfile/ TWiLightMenu/
+          7z a TWiLightMenu.7z TWiLightMenu/
+          rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
+          rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
+          7z a TWiLightMenu-Lite.7z TWiLightMenu/
+          cp TWiLightMenu.7z ${{ runner.temp }}/TWiLightMenu.7z
+          cp TWiLightMenu-Lite.7z ${{ runner.temp }}/TWiLightMenu-Lite.7z
+      - name: 'Pack 7z Package for release'
+        if: ${{ startsWith(github.ref, 'v') }}
+        run: |
+          mkdir 7zfile/_nds/TWiLightMenu/boxart/
+          mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
+
+          # nds-bootstrap
+          mkdir nds-bootstrap
+          cd nds-bootstrap
+          curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/ahezard/nds-bootstrap/releases/latest -o nds-bootstrap.json
+          curl -L $(jq --raw-output '.assets[0].browser_download_url' nds-bootstrap.json) -o nds-bootstrap.7z
+          7z x nds-bootstrap.7z
+          mv nds-bootstrap.* ..
+          mkdir TWiLightMenu
+          mv release-bootstrap.ver TWiLightMenu
+          cd ..
+          curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
+          7z x nds-bootstrap.7z
+          mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
+          mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
+          mv nds-bootstrap/b4ds-release.nds 7zfile/Flashcard\ users/_nds/
+          mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
+          mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
+          mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
+          mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
+          mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
+          mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
+
+          # version.txt
+          echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
+
+          cd 7zfile
+          7z a TWiLightMenu.7z .
+          cp TWiLightMenu.7z ${{ runner.temp}}/TWiLightMenu.7z
+          echo "========================"
+          ls ${{ runner.temp }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "Publish build to GH Actions"
+          path: ${{ runner.temp }}
