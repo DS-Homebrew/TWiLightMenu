@@ -127,8 +127,8 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://$GITHUB_TOKEN@github.com/TWLBot/Builds.git
           cd Builds/
-          cp $(Build.ArtifactStagingDirectory)/build-devkitARM-latest/TWiLightMenu.7z TWiLightMenu.7z
-          cp $(Build.ArtifactStagingDirectory)/build-devkitARM-latest/TWiLightMenu-Lite.7z TWiLightMenu-Lite.7z
+          cp $(Build.ArtifactStagingDirectory)/build/TWiLightMenu.7z TWiLightMenu.7z
+          cp $(Build.ArtifactStagingDirectory)/build/TWiLightMenu-Lite.7z TWiLightMenu-Lite.7z
           git stage .
           git commit -m "TWiLightMenu | $(COMMIT_TAG)"
           git push origin master
@@ -181,7 +181,7 @@ jobs:
   - job: send_webhook_failure
     dependsOn: publish_build_twlbot
     displayName: Send Discord Failure Webhook
-    condition: and(or(failed('publish_build_twlbot'), failed('latest_build'), failed('docker_build')), not(startsWith(variables['Build.SourceBranch'], 'refs/pull')))
+    condition: and(or(failed('publish_build_twlbot'), failed('build')), not(startsWith(variables['Build.SourceBranch'], 'refs/pull')))
     variables:
       CURRENT_DATE: $[ dependencies.publish_build_twlbot.outputs['commit.CURRENT_DATE'] ]
     steps:
