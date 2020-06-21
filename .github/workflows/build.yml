@@ -10,14 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: "Build with Docker using devKitARM r54"
-
     steps:
+      - uses: actions/checkout@v2
       - name: "Build Docker image"
         run: |
-          echo "ls ."
-          ls .
-          echo "ls .."
-          ls ..
           docker build -t twilightmenu --label twilightmenu .
           docker ps -a
       - name: "Install 7zip"
