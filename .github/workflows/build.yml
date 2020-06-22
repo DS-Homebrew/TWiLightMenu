@@ -108,8 +108,8 @@ jobs:
     if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
-      COMMIT_TAG: ${{ jobs.build.outputs.commit_tag }}
-      COMMIT_MESSAGE: ${{ jobs.build.outputs.commit_message }}
+      COMMIT_TAG: ${{ build.outputs.commit_tag }}
+      COMMIT_MESSAGE: ${{ build.outputs.commit_message }}
     outputs:
       commit_tag: ${{ steps.commit.outputs.current_date }}
     steps:
@@ -169,7 +169,7 @@ jobs:
     name: Send Discord Success Webhook
     if: success() && !startsWith(${{ github.ref }}, 'refs/pull')
     env:
-      CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
+      CURRENT_DATE: ${{ publish_build_twlbot.outputs.current_date }}
     steps:
       - name: "Send success webhook"
         run: |
@@ -183,7 +183,7 @@ jobs:
     name: Send Discord Failure Webhook
     if: failure() && !startsWith(${{ github.ref }}, 'refs/pull')))
     env:
-      CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
+      CURRENT_DATE: ${{ publish_build_twlbot.outputs.current_date }}
     steps:
       - name: "Send failure webhook"
         run: |
