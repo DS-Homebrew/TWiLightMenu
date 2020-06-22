@@ -112,7 +112,7 @@ jobs:
   publish_build_twlbot:
     runs-on: ubuntu-latest
     name: "Publish build to TWLBot"
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') && secrets.TWLBOT_TOKEN != "" }}
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
@@ -181,7 +181,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish_build_twlbot, build]
     name: "Send Discord success webhook"
-    if: ${{ success() && !startsWith(github.ref, 'refs/pull') && secrets.WEBHOOK_URL != "" }}
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
@@ -200,7 +200,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [publish_build_twlbot, build]
     name: "Send Discord failure webhook"
-    if: ${{ failure() && !startsWith(github.ref, 'refs/pull') && secrets.WEBHOOK_URL != "" }}
+    if: ${{ failure() && !startsWith(github.ref, 'refs/pull') }}
     env:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
