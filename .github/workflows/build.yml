@@ -16,6 +16,9 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/artifacts
           touch ${{ github.workspace }}/artifacts/test.txt
+      - name: "test 2"
+        run: |
+          ls ${{ github.workspace }}/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
