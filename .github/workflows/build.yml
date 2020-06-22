@@ -109,9 +109,8 @@ jobs:
       COMMIT_TAG: ${{ needs.build.outputs.commit_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
-      commit_tag: ${{ steps.commit.outputs.current_date }}
+      current_date: ${{ steps.commit.outputs.current_date }}
     steps:
-      - uses: actions/checkout@v2
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -162,12 +161,16 @@ jobs:
 
   send_webhook_success: 
     runs-on: ubuntu-latest
-    needs: publish_build_twlbot
-    name: Send Discord Success Webhook
-    if: success() && !startsWith(${{ github.ref }}, 'refs/pull')
+    needs: [publish_build_twlbot, build]
+    name: "Send Discord success webhook"
+    if: ${{ success() && !startsWith(${{ github.ref }}, 'refs/pull') }}
     env:
+      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
     steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
       - name: "Send success webhook"
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
@@ -176,12 +179,16 @@ jobs:
 
   send_webhook_failure:
     runs-on: ubuntu-latest
-    needs: publish_build_twlbot
-    name: Send Discord Failure Webhook
-    if: failure() && !startsWith(${{ github.ref }}, 'refs/pull')))
+    needs: [publish_build_twlbot, build]
+    name: "Send Discord failure webhook"
+    if: ${{ failure() && !startsWith(${{ github.ref }}, 'refs/pull'))) }}
     env:
+      COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
+      COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
     steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
       - name: "Send failure webhook"
         run: |
           curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
