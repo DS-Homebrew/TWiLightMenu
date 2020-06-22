@@ -12,7 +12,7 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Install ttols"
+      - name: "Install tools"
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python jq -y
@@ -72,7 +72,7 @@ jobs:
           mkdir TWiLightMenu
           mv release-bootstrap.ver TWiLightMenu
           cd ..
-          curl -L https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true -o nds-bootstrap.7z
+          curl -LO https://github.com/TWLBot/Builds/blob/master/nds-bootstrap.7z?raw=true
           7z x nds-bootstrap.7z
           mv nds-bootstrap/TWiLightMenu/release-bootstrap.ver 7zfile/_nds/TWiLightMenu
           mv nds-bootstrap/TWiLightMenu/nightly-bootstrap.ver 7zfile/_nds/TWiLightMenu
