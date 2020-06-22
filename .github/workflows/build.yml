@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: "Install tools"
+      - name: "test"
+        run: |
+          mkdir ${{ github.workspace }}/artifacts
+          touch ${{ github.workspace }}/artifacts/test.txt
+      - name: "Publish build to GH Actions"
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ github.workspace }}/artifacts/*
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python jq -y
