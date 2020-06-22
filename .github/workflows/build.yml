@@ -14,15 +14,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: "test"
         run: |
-          mkdir -p ${{ github.workspace }}/artifacts
-          touch ${{ github.workspace }}/artifacts/test.txt
+          # mkdir -p ${{ github.workspace }}/artifacts
+          touch ~/test.txt
       - name: "test 2"
         run: |
           ls ${{ github.workspace }}/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ github.workspace }}/artifacts/*
+          path: ~/*
       - name: "Install tools"
         run: |
           sudo apt-get update
