@@ -123,8 +123,6 @@ jobs:
         with:
           name: "build"
           path: "build"
-      - name: "ls dir"
-        run: ls ${{ github.workspace }}/build
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
         run: |
@@ -161,13 +159,16 @@ jobs:
       #     asset_path: "${{ github.workspace }}/build/TWiLightMenu-Lite.7z"
       #     asset_name: "TWiLightMenu-Lite.7z"
       #     asset_content_type: "application/x-7z-compressed"
+      - name: "Get tag"
+        id: get-tag
+        run: echo "::set-output name=release_tag::${GITHUB_REF/refs\/tags\//}"
       - name: "Upload to DS-Homebrew/TWiLightMenu release"
         uses: actions/upload-release-asset@v1.0.2
         if: ${{ startsWith(github.ref, 'refs/tags') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: "https://github.com/${{ github.repository }}/releases/${{ github.ref }}"
+          upload_url: "https://github.com/${{ github.repository }}/releases/${{ steps.get-tag.outputs.release_tag }}"
           asset_path: "${{ github.workspace }}/build/TWiLightMenu.7z"
           asset_name: "TWiLightMenu.7z"
           asset_content_type: "application/x-7z-compressed"
