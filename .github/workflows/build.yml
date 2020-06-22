@@ -12,7 +12,6 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Install tools"
       - name: "test"
         run: |
           mkdir ${{ github.workspace }}/artifacts
@@ -21,6 +20,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: ${{ github.workspace }}/artifacts/*
+      - name: "Install tools"
         run: |
           sudo apt-get update
           sudo apt-get install p7zip-full python jq -y
