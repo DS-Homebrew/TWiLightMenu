@@ -131,7 +131,7 @@ jobs:
           cd Builds/
           cp ${{ github.workspace }}/build/* .
           git stage .
-          git commit -m "TWiLightMenu | $(COMMIT_TAG)"
+          git commit -m "TWiLightMenu | $COMMIT_TAG"
           git push origin master
           git tag v$CURRENT_DATE
 
