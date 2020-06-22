@@ -148,7 +148,7 @@ jobs:
       #       ${{ github.workspace }}/build/TWiLightMenu.7z
       #       ${{ github.workspace }}/build/TWiLightMenu-Lite.7z
       - uses: meeDamian/github-release@2.0
-        if: ${{ startsWith(github.ref, 'refs/pull') }}
+        if: ${{ startsWith(github.ref, 'refs/tags') }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           files: ${{ github.workspace }}/build/TWiLightMenu.7z
