@@ -148,7 +148,7 @@ jobs:
           API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
           RELEASE_INFO='{"tag_name": "v${{ steps.commit.outputs.current_date }}", "name": "TWiLightMenu | $COMMIT_TAG", "body": "$(COMMIT_MESSAGE)"}'
 
-          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$UPLOAD_URL" -d "$RELEASE_INFO")
+          RESPONSE=$(curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$API_URL" -d "$RELEASE_INFO")
 
           ID=$(echo $RESPONSE | jq --raw-output '.id')
 
