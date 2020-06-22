@@ -138,23 +138,39 @@ jobs:
           cp ${{ github.workspace }}/build/* .
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_TAG"
-          git push origin master
+          git tag v$CURRENT_DATE
+          git push origin v$CURRENT_DATE
           echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
-      # Find a way to upload to TWLBot if we want this back
-      # - uses: meeDamian/github-release@2.0
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     files: >
-      #       ${{ github.workspace }}/build/TWiLightMenu.7z
-      #       ${{ github.workspace }}/build/TWiLightMenu-Lite.7z
-      - name: Upload to DS-Homebrew/TWiLightMenu release
-        uses: JasonEtco/upload-to-release@master
-        if: ${{ startsWith(github.ref, 'refs/tags') }}
-        with:
-          args: ${{ github.workspace }}/build/TWiLightMenu.7z
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release to TWLBot/Builds
+        run: |
+          AUTH_HEADER="Authorization: token $TWLBOT_TOKEN"
+          CONTENT_TYPE="Content-Type: application/json"
+          API_URL="https://api.github.com/repos/TWLBot/Builds/releases"
 
+          RESPONSE=curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_TYPE" "$UPLOAD_URL" -d '{"tag_name": "v${{ steps.commit.outputs.current_date }}"}'
+
+          ID=$(echo $RESPONSE | jq --raw-output '.id')
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
+      - name: Upload to DS-Homebrew/TWiLightMenu release
+        run: |
+          ID=$(jq --raw-output '.id' $GITHUB_EVENT_PATH)
+
+          for file in ${{ github.workspace }}/build/*; do
+            AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+            UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
+
+            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          done
 
   send_webhook_success:
     runs-on: ubuntu-latest
