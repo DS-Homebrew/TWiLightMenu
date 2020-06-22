@@ -11,7 +11,8 @@ jobs:
       commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
-      - uses: actions/checkout@v1
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
       - name: "Install tools"
         run: |
           sudo apt-get update
@@ -111,12 +112,12 @@ jobs:
       commit_tag: ${{ steps.commit.outputs.current_date }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Make artifacts dir"
-        run: mkdir -p ~/artifacts
       - name: Download artifacts
         uses: actions/download-artifact@v2
+        with:
+          name: "build"
       - name: "ls dir"
-        run: ls ${{ github.workspace }}/artifact
+        run: ls ${{ github.workspace }}/build
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
         run: |
@@ -127,7 +128,7 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
-          cp ${{ github.workspace }}/artifact/* .
+          cp ${{ github.workspace }}/build/* .
           git stage .
           git commit -m "TWiLightMenu | $(COMMIT_TAG)"
           git push origin master
