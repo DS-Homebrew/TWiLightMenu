@@ -105,7 +105,7 @@ jobs:
   publish_build_twlbot:
     runs-on: ubuntu-latest
     name: "Publish build to TWLBot"
-    if: ${{ succeeded("build") && !startsWith(github.ref, 'refs/pull') }}
+    if: ${{ success() && !startsWith(github.ref, 'refs/pull') }}
     needs: build
     env:
       COMMIT_TAG: ${{ jobs.build.outputs.commit_tag }}
