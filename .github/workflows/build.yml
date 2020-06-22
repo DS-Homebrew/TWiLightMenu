@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: "Build Docker image"
         run: |
-          docker build -t twilightmenu --label twilightmenu .
-          docker ps -a
+          # docker build -t twilightmenu --label twilightmenu .
+          # docker ps -a
       - name: "Install 7zip"
         run: |
           sudo apt update
@@ -25,27 +25,27 @@ jobs:
       - name: "Make booter and TWiLightMenu CIAs"
         id: make-cias
         run: |
-          cd booter/
-          chmod +x make_cia
-          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          mkdir -p "../7zfile/3DS - CFW users/"
-          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+          # cd booter/
+          # chmod +x make_cia
+          # ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          # mkdir -p "../7zfile/3DS - CFW users/"
+          # cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-          cd ../rungame/
-          chmod +x make_cia
-          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+          # cd ../rungame/
+          # chmod +x make_cia
+          # ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          # cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
           echo "::set-output name=commit_tag::$(git log --format=%h -1)"
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Make WoodR4 _DS_MENU.DAT files"
         run: |
-          cd booter_fc/r4_menu_dat/
-          cp "../booter_fc.nds" "_DS_MENU.nds"
-          ./dlditool r4_sd.dldi _DS_MENU.nds
+          # cd booter_fc/r4_menu_dat/
+          # cp "../booter_fc.nds" "_DS_MENU.nds"
+          # ./dlditool r4_sd.dldi _DS_MENU.nds
 
-          ./r4enc _DS_MENU.nds
-          mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+          # ./r4enc _DS_MENU.nds
+          # mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       - name: "Pack 7z Package for nightly"
         if: ${{ false && !startsWith(github.ref, 'v') }}
         run: |
