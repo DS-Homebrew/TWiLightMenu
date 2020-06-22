@@ -12,17 +12,6 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - uses: actions/checkout@v2
-      - name: "test"
-        run: |
-          # mkdir -p ${{ github.workspace }}/artifacts
-          touch ~/test.txt
-      - name: "test 2"
-        run: |
-          ls ~
-      - name: "Publish build to GH Actions"
-        uses: actions/upload-artifact@v2
-        with:
-          path: ~/*
       - name: "Install tools"
         run: |
           sudo apt-get update
@@ -64,9 +53,9 @@ jobs:
           rm -r TWiLightMenu/_nds/TWiLightMenu/apfix/
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
-          mkdir -p ${{ github.workspace }}/artifacts
-          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts
-          cp TWiLightMenu-Lite.7z ${{ github.workspace }}/artifacts
+          mkdir -p ~/artifacts
+          cp TWiLightMenu.7z ~/artifacts
+          cp TWiLightMenu-Lite.7z ~/artifacts
       - name: "Pack 7z Package for release"
         if: ${{ true || startsWith(github.ref, 'v') }}
         run: |
@@ -101,14 +90,12 @@ jobs:
 
           cd 7zfile
           7z a TWiLightMenu.7z .
-          mkdir -p ${{ github.workspace }}/artifacts
-          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts
-          echo "============ ${{ github.workspace }}/artifacts ========="
-          ls ${{ github.workspace }}/artifacts
+          mkdir -p ~/artifacts
+          cp TWiLightMenu.7z ~/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          path: ${{ github.workspace }}/artifacts/*
+          path: ~/artifacts/*
 
   # Only run this for non-PR jobs.
   publish_build_twlbot:
@@ -124,18 +111,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: "Make artifacts dir"
-        run: mkdir -p ${{ github.workspace }}/artifacts
+        run: mkdir -p ~/artifacts
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          path: ${{ github.workspace }}/artifacts
+          path: ~/artifacts
       - name: "ls dir"
-        run: ls ${{ github.workspace }}/artifacts
+        run: ls ~/artifacts
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
         run: |
-          # test ls
-          ls ${{ github.workspace }}/artifacts
           CURRENT_DATE=$(date +"%Y%m%d-%H%M%S")
           echo "::set-output name=current_date::$CURRENT_DATE"
 
@@ -143,7 +128,7 @@ jobs:
           git config --global user.name "TWLBot"
           git clone --depth 1 https://${{ secrets.TWLBOT_TOKEN }}@github.com/TWLBot/Builds.git
           cd Builds/
-          cp ${{ github.workspace }}/artifacts/* .
+          cp ~/artifacts/* .
           git stage .
           git commit -m "TWiLightMenu | $(COMMIT_TAG)"
           git push origin master
