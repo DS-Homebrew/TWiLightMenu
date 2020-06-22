@@ -30,7 +30,7 @@
 #include "../ndsheaderbanner.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
-#include <common/gl2d.h>
+#include <gl2d.h>
 #include "common/lzss.h"
 #include "common/systemdetails.h"
 #include "date.h"
