@@ -173,6 +173,7 @@ jobs:
           upload_url: "https://github.com/${{ github.repository }}/releases/${{ steps.get-tag.outputs.release_tag }}"
           asset_path: "${{ github.workspace }}/build/TWiLightMenu.7z"
           asset_name: "TWiLightMenu.7z"
+          asset_content_type: "application/x-7z-compressed"
 
   send_webhook_success:
     runs-on: ubuntu-latest
