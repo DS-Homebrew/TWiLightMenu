@@ -116,6 +116,7 @@ jobs:
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
     outputs:
       current_date: ${{ steps.commit.outputs.current_date }}
+      twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
@@ -138,46 +139,28 @@ jobs:
           git stage .
           git commit -m "TWiLightMenu | $COMMIT_TAG"
           git push origin master
-          git tag v$CURRENT_DATE
+          echo "::set-output name=twlbot_commit::$(git log --format=%H -1)"
+      # - name: "Upload to TWLBot/Builds release"
+      #   uses: actions/upload-release-asset@v1.0.2
+      #   if: ${{ !startsWith(github.ref, 'v') }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
+      #     asset_path: "${{ github.workspace }}/build/TWiLightMenu.7z"
+      #     asset_name: "TWiLightMenu.7z"
+      #     asset_content_type: "application/x-7z-compressed"
 
-#       - task: GitHubRelease@0
-#         displayName: "Release to TWLBot/Builds"
-#         inputs:
-#           gitHubConnection: TWLBot
-#           repositoryName: TWLBot/Builds
-#           action: create
-#           target: $(TWLBOT_COMMIT)
-#           tagSource: 'manual'
-#           tag: v$(CURRENT_DATE)
-#           title: TWiLightMenu | $(COMMIT_TAG)
-#           releaseNotesSource: input
-#           releaseNotes: $(COMMIT_MESSAGE)
-#           assets: '$(Build.ArtifactStagingDirectory)/**/*.7z'
-#           isPreRelease: true
-#           addChangeLog: false
-
-      - name: "Upload to TWLBot/Builds release"
-        uses: actions/upload-release-asset@v1.0.2
-        if: ${{ !startsWith(github.ref, 'v') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
-          asset_path: "${{ github.workspace }}/build/TWiLightMenu.7z"
-          asset_name: "TWiLightMenu.7z"
-          asset_content_type: "application/x-7z-compressed"
-
-      - name: "Upload lite to TWLBot/Builds release"
-        uses: actions/upload-release-asset@v1.0.2
-        if: ${{ !startsWith(github.ref, 'v') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
-          asset_path: "${{ github.workspace }}/build/TWiLightMenu-Lite.7z"
-          asset_name: "TWiLightMenu-Lite.7z"
-          asset_content_type: "application/x-7z-compressed"
-
+      # - name: "Upload lite to TWLBot/Builds release"
+      #   uses: actions/upload-release-asset@v1.0.2
+      #   if: ${{ !startsWith(github.ref, 'v') }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
+      #     asset_path: "${{ github.workspace }}/build/TWiLightMenu-Lite.7z"
+      #     asset_name: "TWiLightMenu-Lite.7z"
+      #     asset_content_type: "application/x-7z-compressed"
       - name: "Upload to DS-Homebrew/TWiLightMenu release"
         uses: actions/upload-release-asset@v1.0.2
         if: ${{ startsWith(github.ref, 'v') }}
@@ -198,6 +181,7 @@ jobs:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
+      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
@@ -216,6 +200,7 @@ jobs:
       COMMIT_TAG: ${{ needs.build.outputs.commite_tag }}
       COMMIT_MESSAGE: ${{ needs.build.outputs.commit_message }}
       CURRENT_DATE: ${{ needs.publish_build_twlbot.outputs.current_date }}
+      TWLBOT_COMMIT: ${{ needs.publish_build_twlbot.outputs.twlbot_commit }}
     steps:
       - name: "Checkout repo"
         uses: actions/checkout@v1
