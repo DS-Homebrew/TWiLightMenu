@@ -92,6 +92,8 @@ jobs:
           7z a TWiLightMenu.7z .
           mkdir -p ${{ github.workspace }}/artifacts
           cp TWiLightMenu.7z ${{ github.workspace }}/artifacts
+          echo "============ ${{ github.workspace }}/artifacts ========="
+          ls ${{ github.workspace }}/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
