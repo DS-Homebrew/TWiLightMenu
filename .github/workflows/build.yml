@@ -21,31 +21,33 @@ jobs:
           sudo apt install p7zip-full
       - name: "Build TWiLightMenu++ with devkitARM r54"
         run: |
-          # docker run --rm -i -v "$(pwd):/data" twilightmenu make package
+          # mkdir the DSi&3DS folder so it has the correct permissions later
+          mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users
+          docker run --rm -i -v "$(pwd):/data" twilightmenu make package
       - name: "Make booter and TWiLightMenu CIAs"
         id: make-cias
         run: |
-          # cd booter/
-          # chmod +x make_cia
-          # ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          # mkdir -p "../7zfile/3DS - CFW users/"
-          # cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
+          cd booter/
+          chmod +x make_cia
+          ./make_cia --srl="booter.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          mkdir -p "../7zfile/3DS - CFW users/"
+          cp "booter.cia" "../7zfile/3DS - CFW users/TWiLight Menu.cia"
 
-          # cd ../rungame/
-          # chmod +x make_cia
-          # ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
-          # cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
+          cd ../rungame/
+          chmod +x make_cia
+          ./make_cia --srl="rungame.nds" --id_0=$(git rev-parse --short=7 HEAD) --tikID=$(git rev-parse --short=16 HEAD)
+          cp "rungame.cia" "../7zfile/3DS - CFW users/TWiLight Menu - Game booter.cia"
 
           echo "::set-output name=commit_tag::$(git log --format=%h -1)"
           echo "::set-output name=commit_message::$(git log --pretty=format:'%an - %s' -1)"
       - name: "Make WoodR4 _DS_MENU.DAT files"
         run: |
-          # cd booter_fc/r4_menu_dat/
-          # cp "../booter_fc.nds" "_DS_MENU.nds"
-          # ./dlditool r4_sd.dldi _DS_MENU.nds
+          cd booter_fc/r4_menu_dat/
+          cp "../booter_fc.nds" "_DS_MENU.nds"
+          ./dlditool r4_sd.dldi _DS_MENU.nds
 
-          # ./r4enc _DS_MENU.nds
-          # mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
+          ./r4enc _DS_MENU.nds
+          mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       - name: "Pack 7z Package for nightly"
         if: ${{ false && !startsWith(github.ref, 'v') }}
         run: |
@@ -83,11 +85,7 @@ jobs:
           mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
-          echo "=========== ls 7zfile ==========="
-          ls 7zfile
-          echo "=========== ls DSi&3DS - SD card users ==========="
-          ls "DSi&3DS - SD card users"
-          mkdir "7zfile/DSi&3DS - SD card users/_nds"
+          mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
