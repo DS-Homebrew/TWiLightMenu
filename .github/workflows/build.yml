@@ -54,8 +54,8 @@ jobs:
           rm -r TWiLightMenu/3DS\ -\ CFW\ users/_nds/TWiLightMenu/widescreen/
           7z a TWiLightMenu-Lite.7z TWiLightMenu/
           mkdir -p ${{ github.workspace }}/artifacts
-          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts/TWiLightMenu.7z
-          cp TWiLightMenu-Lite.7z ${{ github.workspace }}/artifacts/TWiLightMenu-Lite.7z
+          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts
+          cp TWiLightMenu-Lite.7z ${{ github.workspace }}/artifacts
       - name: "Pack 7z Package for release"
         if: ${{ true || startsWith(github.ref, 'v') }}
         run: |
@@ -91,12 +91,11 @@ jobs:
           cd 7zfile
           7z a TWiLightMenu.7z .
           mkdir -p ${{ github.workspace }}/artifacts
-          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts/TWiLightMenu.7z
+          cp TWiLightMenu.7z ${{ github.workspace }}/artifacts
       - name: "Publish build to GH Actions"
         uses: actions/upload-artifact@v2
         with:
-          name: "build"
-          path: ${{ github.workspace }}/artifacts
+          path: ${{ github.workspace }}/artifacts/*
 
   # Only run this for non-PR jobs.
   publish_build_twlbot:
@@ -116,8 +115,9 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          name: "build"
           path: ${{ github.workspace }}/artifacts
+      - name: "ls dir"
+        run: ls ${{ github.workspace }}/artifacts
       - name: "Commit and push to TWLBot/Builds"
         id: "commit"
         run: |
