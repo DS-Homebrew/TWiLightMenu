@@ -818,6 +818,8 @@ void arm7_main (void) {
 	}
 
 	if (runCardEngine) {
+		initMBK();
+
 		copyLoop ((u32*)ENGINE_LOCATION_ARM7, (u32*)cardengine_arm7_bin, cardengine_arm7_bin_size);
 		errorCode = hookNdsRetail(ndsHeader, (u32*)ENGINE_LOCATION_ARM7);
 		if(errorCode == ERR_NONE) {
@@ -844,10 +846,6 @@ void arm7_main (void) {
 	arm9_scfgUnlock = scfgUnlock;
 	arm9_isSdk5 = isSdk5(moduleParams);
 	arm9_runCardEngine = runCardEngine;
-
-	if (runCardEngine) {
-		initMBK();
-	}
 
 	if (isSdk5(moduleParams) && ndsHeader->unitCode != 0 && dsiModeConfirmed) {
 		ROMisDsiExclusive(ndsHeader) ? initMBK() : initMBK_dsiEnhanced();
