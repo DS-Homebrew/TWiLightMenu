@@ -1,6 +1,6 @@
 #include "launchDots.h"
 #include "ThemeTextures.h"
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include <algorithm>
 #include <cmath>
 

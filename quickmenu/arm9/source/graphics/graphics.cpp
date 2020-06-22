@@ -20,7 +20,7 @@
 
 #include <nds.h>
 #include <maxmod9.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 #include "common/dsimenusettings.h"

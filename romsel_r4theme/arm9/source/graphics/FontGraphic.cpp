@@ -10,7 +10,7 @@
 
 #include <nds.h>
 #include <stdio.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "FontGraphic.h"
 
 int fontTextureID[2];

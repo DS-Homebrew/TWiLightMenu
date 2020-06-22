@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include <string.h>
 #include <unistd.h>
 

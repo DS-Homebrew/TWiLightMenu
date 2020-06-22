@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <vector>
 
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include <maxmod9.h>
 #include <nds.h>
 #include <nds/arm9/dldi.h>

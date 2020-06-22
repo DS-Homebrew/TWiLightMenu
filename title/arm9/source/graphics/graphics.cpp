@@ -24,7 +24,7 @@
 #include "bios_decompress_callback.h"
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "graphics.h"
 
 #define CONSOLE_SCREEN_WIDTH 32

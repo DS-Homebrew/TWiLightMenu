@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/stat.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "common/tonccpy.h"
 #include "graphics/graphics.h"
 #include "graphics/fontHandler.h"

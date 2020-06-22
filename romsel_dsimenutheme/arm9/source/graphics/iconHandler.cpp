@@ -1,7 +1,7 @@
 #include "iconHandler.h"
 #include "ThemeTextures.h"
 #include "common/dsimenusettings.h"
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "tool/colortool.h"
 #include <ctype.h>
 #include <nds.h>

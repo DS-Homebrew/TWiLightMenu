@@ -1,4 +1,4 @@
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #pragma once
 

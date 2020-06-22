@@ -8,7 +8,7 @@
 
 #include "common/dsimenusettings.h"
 #include "common/systemdetails.h"
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #include "logo_twlmenupp.h"
 #include "logo_anniversary.h"
