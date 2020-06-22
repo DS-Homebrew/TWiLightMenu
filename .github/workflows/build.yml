@@ -161,9 +161,18 @@ jobs:
         if: ${{ !startsWith(github.ref, 'v') }}
         with:
           upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
-          asset_path: ["${{ github.workspace }}/build/TWiLightMenu.7z", "${{ github.workspace }}/build/TWiLightMenu-Lite.7z"]
-          asset_name: ["TWiLightMenu.7z", "TWiLightMenu-Lite.7z"]
-          asset_content_type: ["application/x-7z-compressed", "application/x-7z-compressed"]
+          asset_path: "${{ github.workspace }}/build/TWiLightMenu.7z"
+          asset_name: "TWiLightMenu.7z"
+          asset_content_type: "application/x-7z-compressed"
+
+      - name: "Upload lite to TWLBot/Builds release"
+        uses: actions/upload-release-asset@v1.0.2
+        if: ${{ !startsWith(github.ref, 'v') }}
+        with:
+          upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
+          asset_path: "${{ github.workspace }}/build/TWiLightMenu-Lite.7z"
+          asset_name: "TWiLightMenu-Lite.7z"
+          asset_content_type: "application/x-7z-compressed"
 
       - name: "Upload to DS-Homebrew/TWiLightMenu release"
         uses: actions/upload-release-asset@v1.0.2
