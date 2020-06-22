@@ -5,25 +5,20 @@ on: [push, pull_request, release]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:20200528
     name: "Build with Docker using devKitARM r54"
     outputs:
       commit_tag: ${{ steps.make-cias.outputs.commit_tag }}
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Build Docker image"
-        run: |
-          docker build -t twilightmenu --label twilightmenu .
-          docker ps -a
-      - name: "Install 7zip"
+      - name: "Install 7zip and python"
         run: |
           sudo apt update
-          sudo apt install p7zip-full
-      - name: "Build TWiLightMenu++ with devkitARM r54"
+          sudo apt install p7zip-full python
+      - name: "Build TWiLightMenu++"
         run: |
-          # Make the DSi&3DS folder so it has the correct permissions later
-          mkdir 7zfile/DSi\&3DS\ -\ SD\ card\ users
-          docker run --rm -i -v "$(pwd):/data" twilightmenu make package
+          make package
       - name: "Make booter and TWiLightMenu CIAs"
         id: make-cias
         run: |
