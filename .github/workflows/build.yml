@@ -1,6 +1,12 @@
 name: Build TWiLight Menu++
 
-on: [push, pull_request, release]
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+  release:
+    types: [created]
 
 jobs:
   build:
@@ -150,6 +156,13 @@ jobs:
 #           isPreRelease: true
 #           addChangeLog: false
 
+      - name: "Upload to TWLBot/Builds release"
+        uses: actions/upload-release-asset@v1.0.2
+        with:
+          upload_url: "https://github.com/TWLBot/Builds/releases/${{ steps.commit.outputs.current_date }}"
+          asset_path: ${{ github.workspace }}/artifacts
+          asset_name: "*"
+          asset_content_type: "*"
       - name: "Upload to DS-Homebrew/TWiLightMenu release"
         uses: actions/upload-release-asset@v1.0.2
         if: ${{ startsWith(github.ref, 'v') }}
@@ -159,7 +172,7 @@ jobs:
           asset_name: "*"
           asset_content_type: "*"
 
-  send_webhook_success: 
+  send_webhook_success:
     runs-on: ubuntu-latest
     needs: [publish_build_twlbot, build]
     name: "Send Discord success webhook"
