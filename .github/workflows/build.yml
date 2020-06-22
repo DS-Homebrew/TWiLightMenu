@@ -114,8 +114,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Download artifacts
         uses: actions/download-artifact@v2
-        with:
-          name: "build"
       - name: "ls dir"
         run: ls ${{ github.workspace }}/build
       - name: "Commit and push to TWLBot/Builds"
