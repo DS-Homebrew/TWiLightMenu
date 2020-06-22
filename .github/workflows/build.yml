@@ -118,6 +118,8 @@ jobs:
       current_date: ${{ steps.commit.outputs.current_date }}
       twlbot_commit: ${{ steps.commit.outputs.twlbot_commit }}
     steps:
+      - name: "Checkout repo"
+        uses: actions/checkout@v1
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
