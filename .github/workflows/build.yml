@@ -167,7 +167,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: publish_build_twlbot
     name: Send Discord Success Webhook
-    if: succeeded('publish_build_twlbot') && !startsWith(${{ github.ref }}, 'refs/pull')
+    if: success() && !startsWith(${{ github.ref }}, 'refs/pull')
     env:
       CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
     steps:
@@ -181,7 +181,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: publish_build_twlbot
     name: Send Discord Failure Webhook
-    if: (failed('publish_build_twlbot') || failed('build')) && !startsWith(${{ github.ref }}, 'refs/pull')))
+    if: failure() && !startsWith(${{ github.ref }}, 'refs/pull')))
     env:
       CURRENT_DATE: ${{ jobs.publish_build_twlbot.outputs.current_date }}
     steps:
