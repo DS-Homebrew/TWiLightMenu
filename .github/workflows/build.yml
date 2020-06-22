@@ -170,7 +170,7 @@ jobs:
     steps:
       - name: "Send success webhook"
         run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
           ./send.sh success ${{ secrets.WEBHOOK_URL }}
 
@@ -184,6 +184,6 @@ jobs:
     steps:
       - name: "Send failure webhook"
         run: |
-          curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
+          curl -o send.sh https://raw.githubusercontent.com/Universal-Team/discord-webhooks/master/send-ghactions.sh
           chmod +x send.sh
           ./send.sh failure ${{ secrets.WEBHOOK_URL }}
