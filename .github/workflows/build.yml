@@ -152,24 +152,24 @@ jobs:
           ID=$(echo $RESPONSE | jq --raw-output '.id')
 
           for file in ${{ github.workspace }}/build/*; do
-            AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
-            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
-            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
+          AUTH_HEADER="Authorization: token ${{ secrets.TWLBOT_TOKEN }}"
+          CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+          CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+          UPLOAD_URL="https://uploads.github.com/repos/TWLBot/Builds/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
       - name: Upload to DS-Homebrew/TWiLightMenu release
         run: |
           ID=$(jq --raw-output '.id' $GITHUB_EVENT_PATH)
 
           for file in ${{ github.workspace }}/build/*; do
-            AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
-            CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
-            CONTENT_TYPE="Content-Type: application/7z-x-compressed"
-            UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
+          AUTH_HEADER="Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+          CONTENT_LENGTH="Content-Length: $(stat -c%s $file)"
+          CONTENT_TYPE="Content-Type: application/7z-x-compressed"
+          UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/$ID/assets?name=$(basename $file)"
 
-            curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
+          curl -XPOST -H "$AUTH_HEADER" -H "$CONTENT_LENGTH" -H "$CONTENT_TYPE" --upload-file "$file" "$UPLOAD_URL"
           done
 
   send_webhook_success:
