@@ -21,7 +21,7 @@ jobs:
           sudo apt install p7zip-full
       - name: "Build TWiLightMenu++ with devkitARM r54"
         run: |
-          docker run --rm -i -v "$(pwd):/data" twilightmenu make package
+          # docker run --rm -i -v "$(pwd):/data" twilightmenu make package
       - name: "Make booter and TWiLightMenu CIAs"
         id: make-cias
         run: |
@@ -83,6 +83,12 @@ jobs:
           mv nds-bootstrap/b4ds-nightly.nds 7zfile/Flashcard\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-release.nds 7zfile/_nds/
           mv nds-bootstrap/nds-bootstrap-nightly.nds 7zfile/_nds/
+          echo ls .
+          ls .
+          echo ls 7zfile
+          ls 7zfile
+          echo ls "DSi&3DS - SD card users"
+          ls "DSi&3DS - SD card users"
           mkdir "7zfile/DSi&3DS - SD card users/_nds"
           mv nds-bootstrap/nds-bootstrap-hb-release.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
