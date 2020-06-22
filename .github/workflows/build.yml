@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: "Install tools"
         run: |
+          sudo add-apt-repository ppa:git-core/ppa
           sudo apt-get update
           sudo apt-get install p7zip-full python jq git -y
           git --version
