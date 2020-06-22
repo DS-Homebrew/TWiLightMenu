@@ -45,7 +45,7 @@ jobs:
           ./r4enc _DS_MENU.nds
           mv "_DS_MENU.nds.DAT" "../../7zfile/Flashcard users/Autoboot/akMenu-Wood UI root/_DS_MENU.DAT"
       - name: "Pack 7z Package for nightly"
-        if: ${{ false && !startsWith(github.ref, 'v') }}
+        if: ${{ !startsWith(github.ref, 'v') }}
         run: |
           rm -r 7zfile/_nds/TWiLightMenu/*menu/
 
@@ -58,7 +58,7 @@ jobs:
           cp TWiLightMenu.7z ~/artifacts
           cp TWiLightMenu-Lite.7z ~/artifacts
       - name: "Pack 7z Package for release"
-        if: ${{ true || startsWith(github.ref, 'v') }}
+        if: ${{ startsWith(github.ref, 'v') }}
         run: |
           mkdir 7zfile/_nds/TWiLightMenu/boxart/
           mkdir 7zfile/_nds/TWiLightMenu/gamesettings/
@@ -172,7 +172,7 @@ jobs:
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
           chmod +x send.sh
-          ./send.sh success $WEBHOOK_URL
+          ./send.sh success ${{ secrets.WEBHOOK_URL }}
 
   send_webhook_failure:
     runs-on: ubuntu-latest
@@ -186,4 +186,4 @@ jobs:
         run: |
           curl -o send.sh https://raw.githubusercontent.com/DS-Homebrew/discord-webhooks/master/send-azure.sh
           chmod +x send.sh
-          ./send.sh failure $WEBHOOK_URL
+          ./send.sh failure ${{ secrets.WEBHOOK_URL }}
