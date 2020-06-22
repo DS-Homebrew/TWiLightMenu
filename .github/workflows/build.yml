@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: "Install 7zip and python"
         run: |
-          sudo apt update
-          sudo apt install p7zip-full python
+          sudo apt-get update
+          sudo apt-get install p7zip-full python -y
       - name: "Build TWiLightMenu++"
         run: |
           make package
