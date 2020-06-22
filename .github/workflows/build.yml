@@ -87,7 +87,7 @@ jobs:
           mv nds-bootstrap/nds-bootstrap-hb-nightly.nds 7zfile/DSi\&3DS\ -\ SD\ card\ users/_nds/
 
           # version.txt
-          echo -e "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard" > 7zfile/version.txt
+          printf "TWiLight Menu++: $(git describe --tags)\nnds-bootstrap: $(jq --raw-output '.tag_name' nds-bootstrap.json)\n\nRocketRobz, ahezard\n" > 7zfile/version.txt
 
           cd 7zfile
           7z a TWiLightMenu.7z .
