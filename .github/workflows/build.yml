@@ -12,10 +12,10 @@ jobs:
       commit_message: ${{ steps.make-cias.outputs.commit_message }}
     steps:
       - uses: actions/checkout@v2
-      - name: "Install 7zip and python"
+      - name: "Install ttols"
         run: |
           sudo apt-get update
-          sudo apt-get install p7zip-full python -y
+          sudo apt-get install p7zip-full python jq -y
       - name: "Build TWiLightMenu++"
         run: |
           make package
