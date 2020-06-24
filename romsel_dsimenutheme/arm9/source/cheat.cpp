@@ -334,8 +334,6 @@ void CheatCodelist::selectCheats(std::string filename)
   int mainListCurPos = -1, mainListScreenPos = -1,
       cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
 
-  keysSetRepeat(25, 5); // Slow down key repeat
-
   while(cheatsFound) {
     // Scroll screen if needed
     if(cheatWnd_cursorPosition < cheatWnd_screenPosition) {
@@ -507,8 +505,6 @@ void CheatCodelist::selectCheats(std::string filename)
       }
     }
   }
-
-  keysSetRepeat(10, 2); // Reset key repeat
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
