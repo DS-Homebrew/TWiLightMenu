@@ -431,20 +431,22 @@ void displayNowLoading(void) {
 	displayGameIcons = false;
 	fadeType = true; // Fade in from white
 	snd().updateStream();
+	std::string *msg;
 	if (isDSiMode() && memcmp(io_dldi_data->friendlyName, "CycloDS iEvolution", 18) == 0) {
-		printSmall(false, 0, 20, STR_TAKEWHILE_TURNOFF, Alignment::center);
+		msg = &STR_TAKEWHILE_TURNOFF;
 	} else if (REG_SCFG_EXT != 0 && ms().consoleModel >= 2) {
-		printSmall(false, 0, 20, STR_TAKEWHILE_PRESSHOME, Alignment::center);
+		msg = &STR_TAKEWHILE_PRESSHOME;
 	} else {
-		printSmall(false, 0, 20, STR_TAKEWHILE_CLOSELID, Alignment::center);
+		msg = &STR_TAKEWHILE_CLOSELID;
 	}
+	printSmall(false, 0, 20, *msg, Alignment::center);
 	printLarge(false, 0, 88, STR_NOW_LOADING, Alignment::center);
 	if (!sys().isRegularDS()) {
 		if (ms().theme == 4) {
 			if (ms().secondaryDevice) {
-				printSmall(false, 0, 48, STR_LOCATION_SLOT_1, Alignment::center);
+				printSmall(false, 0, 20 + calcSmallFontHeight(*msg), STR_LOCATION_SLOT_1, Alignment::center);
 			} else {
-				printSmall(false, 0, 48, ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
+				printSmall(false, 0, 20 + calcSmallFontHeight(*msg), ms().showMicroSd ? STR_LOCATION_MICRO_SD : STR_LOCATION_SD, Alignment::center);
 			}
 		} else {
 			if (ms().secondaryDevice) {
