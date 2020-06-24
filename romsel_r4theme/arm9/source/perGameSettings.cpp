@@ -214,7 +214,9 @@ void revertDonorRomText(void) {
 }
 
 void perGameSettings (std::string filename) {
-	int pressed = 0;
+	int pressed = 0, held = 0;
+
+	keysSetRepeat(25, 5); // Slow down key repeat
 
 	clearText();
 	
@@ -525,16 +527,17 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDown();
+			held = keysDownRepeat();
 			checkSdEject();
 			swiWaitForVBlank();
-		} while (!pressed);
+		} while (!held);
 
 		if (!showPerGameSettings) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
 				break;
 			}
 		} else {
-			if (pressed & KEY_UP) {
+			if (held & KEY_UP) {
 				revertDonorRomText();
 				perGameSettings_cursorPosition--;
 				if (perGameSettings_cursorPosition < 0) {
@@ -544,7 +547,7 @@ void perGameSettings (std::string filename) {
 					firstPerGameOpShown--;
 				}
 			}
-			if (pressed & KEY_DOWN) {
+			if (held & KEY_DOWN) {
 				revertDonorRomText();
 				perGameSettings_cursorPosition++;
 				if (perGameSettings_cursorPosition > perGameOps) {
@@ -555,7 +558,7 @@ void perGameSettings (std::string filename) {
 				}
 			}
 
-			if (pressed & KEY_LEFT) {
+			if (held & KEY_LEFT) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language--;
@@ -605,7 +608,7 @@ void perGameSettings (std::string filename) {
 						break;
 				}
 				perGameSettingsChanged = true;
-			} else if ((pressed & KEY_A) || (pressed & KEY_RIGHT)) {
+			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language++;
@@ -696,6 +699,7 @@ void perGameSettings (std::string filename) {
 	clearText();
 	showdialogbox = false;
 	dialogboxHeight = 0;
+	keysSetRepeat(10, 2); // Reset key repeat
 }
 
 std::string getSavExtension(void) {

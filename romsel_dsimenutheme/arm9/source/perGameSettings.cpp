@@ -230,7 +230,9 @@ void revertDonorRomText(void) {
 }
 
 void perGameSettings (std::string filename) {
-	int pressed = 0;
+	int pressed = 0, held = 0;
+
+	keysSetRepeat(25, 5); // Slow down key repeat
 
 	if (ms().theme == 5) {
 		displayGameIcons = false;
@@ -582,6 +584,7 @@ void perGameSettings (std::string filename) {
 		do {
 			scanKeys();
 			pressed = keysDown();
+			held = keysDownRepeat();
 			checkSdEject();
 			tex().drawVolumeImageCached();
 			tex().drawBatteryImageCached();
@@ -590,7 +593,7 @@ void perGameSettings (std::string filename) {
 			drawClockColon();
 			snd().updateStream();
 			swiWaitForVBlank();
-		} while (!pressed);
+		} while (!held);
 
 		if (!showPerGameSettings) {
 			if ((pressed & KEY_A) || (pressed & KEY_B)) {
@@ -598,7 +601,7 @@ void perGameSettings (std::string filename) {
 				break;
 			}
 		} else {
-			if (pressed & KEY_UP) {
+			if (held & KEY_UP) {
 				snd().playSelect();
 				revertDonorRomText();
 				perGameSettings_cursorPosition--;
@@ -609,7 +612,7 @@ void perGameSettings (std::string filename) {
 					firstPerGameOpShown--;
 				}
 			}
-			if (pressed & KEY_DOWN) {
+			if (held & KEY_DOWN) {
 				snd().playSelect();
 				revertDonorRomText();
 				perGameSettings_cursorPosition++;
@@ -621,7 +624,7 @@ void perGameSettings (std::string filename) {
 				}
 			}
 
-			if (pressed & KEY_LEFT) {
+			if (held & KEY_LEFT) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language--;
@@ -672,7 +675,7 @@ void perGameSettings (std::string filename) {
 				}
 				(ms().theme == 4) ? snd().playLaunch() : snd().playSelect();
 				perGameSettingsChanged = true;
-			} else if ((pressed & KEY_A) || (pressed & KEY_RIGHT)) {
+			} else if ((pressed & KEY_A) || (held & KEY_RIGHT)) {
 				switch (perGameOp[perGameSettings_cursorPosition]) {
 					case 0:
 						perGameSettings_language++;
@@ -780,6 +783,8 @@ void perGameSettings (std::string filename) {
 	} else {
 		clearText();
 	}
+
+	keysSetRepeat(10, 2); // Reset key repeat
 }
 
 std::string getSavExtension(void) {

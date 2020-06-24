@@ -310,8 +310,6 @@ void CheatCodelist::selectCheats(std::string filename)
   int mainListCurPos = -1, mainListScreenPos = -1,
       cheatWnd_cursorPosition = 0, cheatWnd_screenPosition = 0;
 
-  keysSetRepeat(25, 5); // Slow down key repeat
-
   while(cheatsFound) {
     clearText();
     titleUpdate(isDirectory, filename.c_str());
@@ -479,7 +477,6 @@ void CheatCodelist::selectCheats(std::string filename)
     }
   }
   dialogboxHeight = oldDialogboxHeight;
-  keysSetRepeat(10, 2); // Reset key repeat
 }
 
 static void updateDB(u8 value,u32 offset,FILE* db)
