@@ -496,7 +496,7 @@ int main(int argc, char **argv)
 	SettingsPage guiPage(STR_GUI_SETTINGS);
 
 	using TLanguage = TWLSettings::TLanguage;
-	using TAKScrollSpeed = TWLSettings::TScrollSpeed;
+	//using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	guiPage
 		.option(STR_FRAMERATE, STR_DESCRIPTION_FRAMERATE, Option::Int(&ms().fps), {"15FPS", "20FPS", "24FPS", "30FPS", "50FPS", "60FPS"}, {15, 20, 24, 30, 50, 60})
 		.option(STR_DSCLASSICMENU, STR_DESCRIPTION_DSCLASSICMENU, Option::Bool(&ms().showMainMenu), {STR_YES, STR_NO}, {true, false})
@@ -532,9 +532,9 @@ int main(int argc, char **argv)
 	}
 	guiPage.option(STR_ANIMATEDSIICONS, STR_DESCRIPTION_ANIMATEDSIICONS_1, Option::Bool(&ms().animateDsiIcons), {STR_YES, STR_NO}, {true, false})
 		.option(STR_CLOCK_SYSTEM, STR_DESCRIPTION_CLOCK_SYSTEM, Option::Bool(&ms().show12hrClock), {STR_12_HOUR, STR_24_HOUR}, {true, false})
-		.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {STR_FAST, STR_MEDIUM, STR_SLOW},
+		/*.option(STR_AK_SCROLLSPEED, STR_DESCRIPTION_AK_SCROLLSPEED, Option::Int(&ms().ak_scrollSpeed), {STR_FAST, STR_MEDIUM, STR_SLOW},
 				{TAKScrollSpeed::EScrollFast, TAKScrollSpeed::EScrollMedium, TAKScrollSpeed::EScrollSlow})
-		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false});
+		.option(STR_AK_ZOOMING_ICON, STR_DESCRIPTION_ZOOMING_ICON, Option::Bool(&ms().ak_zoomIcons), {STR_ON, STR_OFF}, {true, false})*/;
 
 	SettingsPage emulationPage(STR_EMULATION_HB_SETTINGS);
 
@@ -661,7 +661,6 @@ int main(int argc, char **argv)
 	SettingsPage miscPage(STR_MISC_SETTINGS);
 
 	using TLanguage = TWLSettings::TLanguage;
-	using TAKScrollSpeed = TWLSettings::TScrollSpeed;
 	miscPage
 		// Language
 		.option(STR_LANGUAGE,
