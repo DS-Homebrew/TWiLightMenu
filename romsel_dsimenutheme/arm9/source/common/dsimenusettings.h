@@ -170,8 +170,7 @@ public:
 	bool showDirectories;
 	bool showHidden;
 	bool preventDeletion;
-	bool showBoxArt;
-	bool cacheBoxArt;
+	int showBoxArt;
 	bool animateDsiIcons;
 	int sysRegion;
 	int launcherApp;

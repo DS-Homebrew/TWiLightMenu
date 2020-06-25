@@ -162,8 +162,7 @@ class TWLSettings
     bool showDirectories;
     bool showHidden;
     bool preventDeletion;
-    bool showBoxArt;
-    bool cacheBoxArt;
+    int showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
     int launcherApp;
@@ -202,8 +201,7 @@ class TWLSettings
     std::string homebrewArg;
     bool homebrewBootstrap;
     bool soundFreq;
-    bool dsiSplash;
-    bool hsMsg;
+    int dsiSplash;
     bool showlogo;
 
     std::string r4_theme;

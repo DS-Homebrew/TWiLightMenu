@@ -35,8 +35,7 @@ TWLSettings::TWLSettings()
     sortMethod = 0;
     showDirectories = true;
     showHidden = false;
-    showBoxArt = true;
-    cacheBoxArt = true;
+    showBoxArt = 1;
     animateDsiIcons = true;
     sysRegion = -1;
     launcherApp = -1;
@@ -79,7 +78,6 @@ TWLSettings::TWLSettings()
     
     soundFreq = EFreq32KHz;
 	dsiSplash = isDSiMode();
-	hsMsg = false;
     showlogo = true;
     autorun = false;
 
@@ -117,7 +115,6 @@ void TWLSettings::loadSettings()
     gbar2DldiAccess = settingsini.GetInt("SRLOADER", "GBAR2_DLDI_ACCESS", gbar2DldiAccess);
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
-    hsMsg = settingsini.GetInt("SRLOADER", "HS_MSG", hsMsg);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
@@ -134,7 +131,6 @@ void TWLSettings::loadSettings()
     showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
-    cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	if (consoleModel < 2) {
 		sysRegion = settingsini.GetInt("SRLOADER", "SYS_REGION", sysRegion);
@@ -203,7 +199,6 @@ void TWLSettings::saveSettings()
 	settingsini.SetInt("SRLOADER", "SHOW_MICROSD", showMicroSd);
 
     settingsini.SetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
-    settingsini.SetInt("SRLOADER", "HS_MSG", hsMsg);
     settingsini.SetInt("SRLOADER", "SHOWLOGO", showlogo);
 
     settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
@@ -223,7 +218,6 @@ void TWLSettings::saveSettings()
     settingsini.SetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
     settingsini.SetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
     settingsini.SetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
-    settingsini.SetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
     settingsini.SetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	if (consoleModel < 2) {
 		settingsini.SetInt("SRLOADER", "SYS_REGION", sysRegion);

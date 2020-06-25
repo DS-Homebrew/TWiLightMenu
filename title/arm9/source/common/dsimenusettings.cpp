@@ -25,7 +25,7 @@ TWLSettings::TWLSettings()
 
 	showMd = 3;
     showDirectories = true;
-    showBoxArt = true;
+    showBoxArt = 1;
     animateDsiIcons = true;
     sysRegion = -1;
     launcherApp = -1;
@@ -62,7 +62,6 @@ TWLSettings::TWLSettings()
 
     r4_theme = "unused";
 	dsiSplash = isDSiMode();
-	hsMsg = false;
     showlogo = true;
     autorun = false;
 
@@ -95,7 +94,6 @@ void TWLSettings::loadSettings()
     }
 
     dsiSplash = settingsini.GetInt("SRLOADER", "DSI_SPLASH", dsiSplash);
-    hsMsg = settingsini.GetInt("SRLOADER", "HS_MSG", hsMsg);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
 
 	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);

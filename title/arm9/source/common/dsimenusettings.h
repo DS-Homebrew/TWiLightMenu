@@ -134,7 +134,7 @@ class TWLSettings
     int subtheme;
 	int showMd;
     bool showDirectories;
-    bool showBoxArt;
+    int showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
     int launcherApp;
@@ -172,8 +172,7 @@ class TWLSettings
     bool homebrewBootstrap;
     bool homebrewHasWide;
     bool soundfreq;
-	bool dsiSplash;
-	bool hsMsg;
+	int dsiSplash;
     bool showlogo;
     // unused...
     std::string r4_theme;
