@@ -44,7 +44,7 @@ TWLSettings::TWLSettings()
     sortMethod = 0;
     showDirectories = true;
     showHidden = false;
-    showBoxArt = 1;
+    showBoxArt = 1 + isDSiMode();
     animateDsiIcons = true;
     preventDeletion = false;
     sysRegion = -1;
