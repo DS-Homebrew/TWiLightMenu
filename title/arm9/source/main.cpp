@@ -165,9 +165,9 @@ void loadROMselect(int number)
 	fifoSendValue32(FIFO_USER_01, 0); // Cancel sound fade out
 
 	switch (number) {
-		case 3:
+		/*case 3:
 			runNdsFile("/_nds/TWiLightMenu/akmenu.srldr", 0, NULL, true, false, false, true, true);
-			break;
+			break;*/
 		case 2:
 			runNdsFile("/_nds/TWiLightMenu/r4menu.srldr", 0, NULL, true, false, false, true, true);
 			break;
@@ -866,8 +866,10 @@ int main(int argc, char **argv)
 		isDSiMode() ? fifoSendValue32(FIFO_USER_01, 10) : *(u32*)0x02000000 = 1;
 	}
 
-	if (access(DSIMENUPP_INI, F_OK) != 0) {
-		// Create "settings.ini"
+	if ((access(DSIMENUPP_INI, F_OK) != 0)
+	|| (ms().theme < 0) || (ms().theme == 3) || (ms().theme > 5)) {
+		// Create or modify "settings.ini"
+		(ms().theme == 3) ? ms().theme = 2 : ms().theme = 0;
 		ms().saveSettings();
 	}
 
