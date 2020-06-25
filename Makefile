@@ -6,16 +6,16 @@ PACKAGE		:=	7zfile
 #---------------------------------------------------------------------------------
 # Goals for Build
 #---------------------------------------------------------------------------------
-.PHONY: all package booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+.PHONY: all package booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
-all:	booter booter_fc quickmenu manual romsel_aktheme romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
+all:	booter booter_fc quickmenu manual romsel_dsimenutheme romsel_r4theme rungame settings slot1launch title
 
 package:
 	@$(MAKE) -C booter dist
 	@$(MAKE) -C booter_fc dist
 	@$(MAKE) -C quickmenu dist
 	@$(MAKE) -C manual dist
-	@$(MAKE) -C romsel_aktheme dist
+	#@$(MAKE) -C romsel_aktheme dist
 	@$(MAKE) -C romsel_dsimenutheme dist
 	@$(MAKE) -C romsel_r4theme dist
 	@$(MAKE) -C rungame dist
@@ -25,6 +25,8 @@ package:
 
 	@rm -rf 7zfile/*/.gitkeep
 	@rm -rf 7zfile/*/*/.gitkeep
+	# Theme is currently unused
+	@rm -rf 7zfile/_nds/TWiLightMenu/akmenu
 
 booter:
 	@$(MAKE) -C booter
@@ -65,7 +67,7 @@ clean:
 	@$(MAKE) -C booter_fc clean
 	@$(MAKE) -C quickmenu clean
 	@$(MAKE) -C manual clean
-	@$(MAKE) -C romsel_aktheme clean
+	#@$(MAKE) -C romsel_aktheme clean
 	@$(MAKE) -C romsel_dsimenutheme clean
 	@$(MAKE) -C romsel_r4theme clean
 	@$(MAKE) -C rungame clean
@@ -81,7 +83,7 @@ clean:
 	@rm -rf "${PACKAGE}/Flashcard users/Autoboot/Original R4/akMenu-Wood UI root/_DS_MENU.DAT"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/53524c41/content/00000000.app"
 	@rm -rf "$(PACKAGE)/DSi - CFW users/SDNAND root/title/00030015/534c524e/content/00000000.app"
-	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
+	#@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/akmenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/dsimenu.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/main.srldr"
 	@rm -rf "$(PACKAGE)/_nds/TWiLightMenu/mainmenu.srldr"
