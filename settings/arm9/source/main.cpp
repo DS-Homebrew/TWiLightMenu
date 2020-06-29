@@ -513,8 +513,8 @@ int main(int argc, char **argv)
 		.option(STR_DSIMUSIC,
 				STR_DESCRIPTION_DSIMUSIC,
 				Option::Int(&ms().dsiMusic),
-				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME},
-				{0, 1, 2, 3});
+				{STR_OFF, STR_REGULAR, STR_DSI_SHOP, STR_THEME, STR_CLASSIC},
+				{0, 1, 2, 3, 4});
 
 	if (isDSiMode() && sdAccessible) {
 		guiPage.option(STR_REFERSD, STR_DESCRIPTION_REFERSD, Option::Bool(&ms().showMicroSd), {STR_MICRO_SD_CARD, STR_SD_CARD}, {true, false});

@@ -124,6 +124,8 @@
 #define TFN_SHOP_SOUND_EFFECTBANK         TFN_SYSTEM_SOUND_DIRECTORY"/shopfx.bin"
 #define TFN_SHOP_SOUND_BG                 TFN_SYSTEM_SOUND_DIRECTORY"/shopbg.pcm.raw"
 
+#define TFN_CLASSIC_SOUND_BG              TFN_SYSTEM_SOUND_DIRECTORY"/classicbg.pcm.raw"
+
 #define TFN_SATURN_SOUND_EFFECTBANK       TFN_SYSTEM_SOUND_DIRECTORY"/saturnfx.bin"
 
 // We need fallbacks, because unlike akmenu, a bad GRF file could crash the theme

@@ -155,6 +155,9 @@ SoundControl::SoundControl()
 		stream_source = fopen(std::string(TFN_DEFAULT_SOUND_BG).c_str(), "rb");
 	} else {
 		switch(ms().dsiMusic) {
+			case 4:
+				stream_source = fopen(std::string(TFN_CLASSIC_SOUND_BG).c_str(), "rb");
+				break;
 			case 2:
 				stream_source = fopen(std::string(TFN_SHOP_SOUND_BG).c_str(), "rb");
 				break;
