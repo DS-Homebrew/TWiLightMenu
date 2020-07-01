@@ -50,8 +50,7 @@ TWLSettings::TWLSettings()
 	showPce = true;
 	showDirectories = true;
 	showHidden = false;
-	showBoxArt = true;
-	cacheBoxArt = true;
+	showBoxArt = 1 + isDSiMode();
 	animateDsiIcons = true;
 	preventDeletion = false;
 	sysRegion = -1;
@@ -176,7 +175,6 @@ void TWLSettings::loadSettings()
 	showDirectories = settingsini.GetInt("SRLOADER", "SHOW_DIRECTORIES", showDirectories);
 	showHidden = settingsini.GetInt("SRLOADER", "SHOW_HIDDEN", showHidden);
 	showBoxArt = settingsini.GetInt("SRLOADER", "SHOW_BOX_ART", showBoxArt);
-	cacheBoxArt = settingsini.GetInt("SRLOADER", "CACHE_BOX_ART", cacheBoxArt);
 	animateDsiIcons = settingsini.GetInt("SRLOADER", "ANIMATE_DSI_ICONS", animateDsiIcons);
 	preventDeletion = settingsini.GetInt("SRLOADER", "PREVENT_ROM_DELETION", preventDeletion);
 	if (consoleModel < 2) {

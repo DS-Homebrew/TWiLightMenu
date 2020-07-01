@@ -137,7 +137,7 @@ class TWLSettings
     bool showDirectories;
     bool showHidden;
     bool preventDeletion;
-    bool showBoxArt;
+    int showBoxArt;
     bool animateDsiIcons;
     int sysRegion;
     int launcherApp;

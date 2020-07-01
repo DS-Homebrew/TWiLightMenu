@@ -170,7 +170,7 @@ void BootSplashDSi(void) {
 		controlBottomBright = false;
 	}
 
-	if (ms().hsMsg) {
+	if (ms().dsiSplash == 2) {
 		// Load H&S image
 		//Get the language for the splash screen
 		sprintf(videoFrameFilename, (virtualPain ? "nitro:/graphics/VirtualPain_bot.bmp" : "nitro:/graphics/hsmsg%i.bmp"), language);
@@ -428,7 +428,7 @@ void BootSplashDSi(void) {
 		fclose(videoFrameFile);
 	}
 
-	rocketVideo_videoYpos = (ms().hsMsg ? 160 : 80);
+	rocketVideo_videoYpos = (ms().dsiSplash == 2 ? 160 : 80);
 	rocketVideo_videoYsize = 32;
 	rocketVideo_screen = false;
 	rocketVideo_playVideo = true;

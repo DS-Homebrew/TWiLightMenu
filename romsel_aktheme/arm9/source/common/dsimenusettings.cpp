@@ -37,7 +37,7 @@ TWLSettings::TWLSettings()
     showPce = true;
     showDirectories = true;
     showHidden = false;
-    showBoxArt = true;
+    showBoxArt = 1 + isDSiMode();
     animateDsiIcons = true;
     preventDeletion = false;
     launcherApp = -1;
