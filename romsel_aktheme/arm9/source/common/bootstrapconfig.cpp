@@ -216,6 +216,12 @@ BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
 }
 
 
+off_t fsize(const char *path)
+{
+	struct stat st;
+	stat(path, &st);
+	return st.st_size;
+}
 
 
 /**
@@ -254,13 +260,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 		savepath = replaceAll(savepath, "fat:/", "sd:/");
 	}
 
-	int orgsavesize = 0;
-    FILE* sourceFile = fopen(savepath.c_str(), "rb");
-	fseek(sourceFile, 0, SEEK_END);
-	orgsavesize = ftell(sourceFile);			// Get file size
-	fseek(sourceFile, 0, SEEK_SET);
-	fclose(sourceFile);
-
+	int orgsavesize = fsize(savepath.c_str());;
 	bool saveSizeFixNeeded = false;
 
 	// TODO: If the list gets large enough, switch to bsearch().
