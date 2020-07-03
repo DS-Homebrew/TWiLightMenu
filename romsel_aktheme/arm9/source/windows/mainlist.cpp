@@ -242,11 +242,11 @@ bool MainList::enterDir(const std::string &dirName)
 
         if (sdFound())
         {
-            addDirEntry(LANG("mainlist", ((ms().showMicroSd) ? "microSD Card" : "SD Card")), "", (ms().showDirectories ? SD_ROOT : ms().romfolder[0]), "usd", microsd_banner_bin);
+            addDirEntry(LANG("mainlist", ((ms().showMicroSd) ? "microSD Card" : "SD Card")), "", (ms().showDirectories ? SD_ROOT : ms().getPrimaryRomFolder()), "usd", microsd_banner_bin);
         }
         if (flashcardFound())
         {
-            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().romfolder[1]), "usd", microsd_banner_bin);
+            addDirEntry(LANG("mainlist", ((sys().isRegularDS()) ? "microSD Card" : "SLOT-1 microSD Card")), "", (ms().showDirectories ? S1SD_ROOT : ms().getSecondaryRomFolder()), "usd", microsd_banner_bin);
         }
         addDirEntry("GBARunner2", "", SPATH_GBARUNNER, "gbarunner", gbarom_banner_bin);
         if (!sys().isRegularDS())
@@ -316,8 +316,6 @@ bool MainList::enterDir(const std::string &dirName)
     {
         nocashMessage(dirName.c_str());
         _currentDir = std::string(dirName);
-        extern void RemoveTrailingSlashes(std::string &path);
-        // RemoveTrailingSlashes(_currentDir);
 
         while ((direntry = readdir(dir)) != NULL)
         {

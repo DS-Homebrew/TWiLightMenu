@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 	}
 
 	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
-	wnd->_mainList->enterDir(ms().romfolder[ms().secondaryDevice]);
+	wnd->_mainList->enterDir(ms().getCurrentRomFolder());
 
 	irq().vblankStart();
 

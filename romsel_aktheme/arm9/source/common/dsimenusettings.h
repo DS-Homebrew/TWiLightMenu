@@ -118,8 +118,16 @@ class TWLSettings
 
     TLanguage getGuiLanguage();
     const char* getAppName();
+
+    std::string getCurrentRomFolder();
+    std::string getPrimaryRomFolder();
+    std::string getSecondaryRomFolder();
+    void setCurrentRomFolder(const std::string& romfolder);
+
+  private: 
+      std::string romfolder[2];
+
   public:
-    std::string romfolder[2];
     int pagenum;
     int cursorPosition;
     int startMenu_cursorPosition;

@@ -244,7 +244,7 @@ void BootstrapConfig::createSaveFileIfNotExists()
 	}
 
 	std::string savename = replaceAll(_fileName, typeToReplace, getSavExtension(_saveNo));
-	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+	std::string romFolderNoSlash = ms().getCurrentRomFolder();
 
 	RemoveTrailingSlashes(romFolderNoSlash);
 
@@ -359,7 +359,7 @@ int BootstrapConfig::launch()
 
 	std::string savename = replaceAll(_fileName, typeToReplace, getSavExtension(_saveNo));
 	std::string ramdiskname = replaceAll(_fileName, typeToReplace, getImgExtension(_ramDiskNo));
-	std::string romFolderNoSlash = ms().romfolder[ms().secondaryDevice];
+	std::string romFolderNoSlash = ms().getCurrentRomFolder();
 	RemoveTrailingSlashes(romFolderNoSlash);
 	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
 	std::string savepath = romFolderNoSlash+"/saves/"+savename;

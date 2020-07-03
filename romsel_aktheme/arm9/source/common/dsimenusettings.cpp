@@ -257,3 +257,44 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
     }
     return (TLanguage)guiLanguage;
 }
+
+#define PREFER_SLASH
+
+#ifdef PREFER_SLASH
+std::string GetPathWithFinalSlash(const std::string& path) {
+    if (path.empty()) return path;
+    if (path.back() == '/') return path;
+    return path + "/";
+}
+#endif
+
+std::string TWLSettings::getPrimaryRomFolder() {
+    #ifdef PREFER_SLASH
+    return GetPathWithFinalSlash(romfolder[0]);
+    #else
+    return romfolder[0]
+    #endif
+}
+
+std::string TWLSettings::getSecondaryRomFolder() {
+    #ifdef PREFER_SLASH
+    return GetPathWithFinalSlash(romfolder[1]);
+    #else
+    return romfolder[0]
+    #endif
+}
+
+std::string TWLSettings::getCurrentRomFolder() {
+    #ifdef PREFER_SLASH
+    return GetPathWithFinalSlash(romfolder[secondaryDevice]);
+    #else
+    return romfolder[0]
+    #endif
+}
+
+void TWLSettings::setCurrentRomFolder(const std::string& path) {
+    extern void RemoveTrailingSlashes(std::string &path);
+	std::string romFolderNoSlash = path;
+    RemoveTrailingSlashes(romFolderNoSlash);
+    romfolder[secondaryDevice] = romFolderNoSlash;
+}
