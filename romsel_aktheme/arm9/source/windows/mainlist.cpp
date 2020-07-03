@@ -317,7 +317,7 @@ bool MainList::enterDir(const std::string &dirName)
         nocashMessage(dirName.c_str());
         _currentDir = std::string(dirName);
         extern void RemoveTrailingSlashes(std::string &path);
-        RemoveTrailingSlashes(_currentDir);
+        // RemoveTrailingSlashes(_currentDir);
 
         while ((direntry = readdir(dir)) != NULL)
         {
