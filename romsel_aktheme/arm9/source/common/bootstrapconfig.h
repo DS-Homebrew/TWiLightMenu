@@ -23,6 +23,7 @@ class BootstrapConfig
         BootstrapConfig& mpuRegion(int mpuRegion);
         BootstrapConfig& ceCached(bool ceCached);
         BootstrapConfig& saveSize(int saveSize);
+        BootstrapConfig& cheatData(const std::string& cheatData);
 
         BootstrapConfig& donorSdk();
         BootstrapConfig& mpuSettings();
@@ -46,10 +47,6 @@ class BootstrapConfig
         BootstrapConfig& onCheatsApplied(std::function<void(void)> handler);
 
         int launch();
-
-        std::string _cheatData;
-
-
     private:
 
         void createSaveFileIfNotExists();
@@ -82,5 +79,6 @@ class BootstrapConfig
         int _saveNo;
         int _ramDiskNo;
         bool _soundFix;
+        std::string _cheatData;
 };
 #endif

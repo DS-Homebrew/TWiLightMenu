@@ -30,6 +30,8 @@
 #include "unknown_banner_bin.h"
 #include <memory>
 
+#define GAME_CODE(gamecode) ((u32)( (gamecode[0]) | (gamecode[1])<<8 | (gamecode[2])<<16 | (gamecode[3])<<24 ))
+
 using std::unique_ptr;
 
 typedef struct {
@@ -68,6 +70,7 @@ private:
   int _requiresDonorRom;
   std::string _fileName;
   s32 _extIcon;
+  u32 _headerCrc32;
   u8 _romVersion;
   unique_ptr<tDSiAnimatedIcon> _dsiIcon;
 
@@ -118,6 +121,7 @@ public:
   bool isBannerAnimated(void);
   bool isArgv(void);
   int requiresDonorRom(void);
+  u32 headerCrc32(void);
 
   DSRomInfo &operator=(const DSRomInfo &src);
   void MayBeArgv(const std::string &filename)

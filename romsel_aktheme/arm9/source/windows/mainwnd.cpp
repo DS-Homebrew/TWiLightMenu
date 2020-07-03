@@ -50,6 +50,7 @@
 #include "language.h"
 #include "common/dsimenusettings.h"
 #include "windows/rominfownd.h"
+#include "windows/cheatwnd.h"
 
 #include "sr_data_srllastran.h"
 
@@ -673,6 +674,15 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .vramBoost(gameConfig.boostVram == PerGameSettings::EDefault ? ms().boostVram : (bool)gameConfig.boostVram)
 		  .nightlyBootstrap(gameConfig.bootstrapFile == PerGameSettings::EDefault ? ms().bootstrapFile : (bool)gameConfig.bootstrapFile)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
+	
+	long cheatOffset; size_t cheatSize;
+	FILE* dat = fopen(SFN_CHEATS,"rb");
+	if (dat && CheatWnd::searchCheatData(dat, GAME_CODE(rominfo.saveInfo().gameCode),
+		rominfo.headerCrc32(), cheatOffset, cheatSize)) {
+		CheatWnd chtwnd((256)/2, (192)/2, 100, 100, NULL, fullPath);
+		chtwnd.parse(fullPath);
+		config.cheatData(chtwnd.getCheats());
+	}
 
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().gameLanguage != TWLSettings::ELangDefault)

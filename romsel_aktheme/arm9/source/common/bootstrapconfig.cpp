@@ -6,8 +6,6 @@
 #include "loaderconfig.h"
 #include "systemfilenames.h"
 #include "tool/stringtool.h"
-#include "windows/cheatwnd.h"
-#include "windows/mainlist.h"
 #include "windows/mainwnd.h"
 #include <stdio.h>
 #include <nds.h>
@@ -43,6 +41,7 @@ BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string 
 	_ramDiskNo = -1;
 	_cpuBoost = false;
 	_useGbarBootstrap = false;
+	_cheatData = std::string();
 
 	this
 		->saveSize()
@@ -179,6 +178,13 @@ BootstrapConfig &BootstrapConfig::ramDiskNo(int ramDiskNo)
 	_ramDiskNo = ramDiskNo;
 	return *this;
 }
+
+BootstrapConfig &BootstrapConfig::cheatData(const std::string& cheatData)
+{
+	_cheatData = cheatData;
+	return *this;
+}
+
 BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handler)
 {
 	_saveCreatedHandler = handler;
@@ -236,8 +242,7 @@ void RemoveTrailingSlashes(std::string &path) {
 	}
 }
 
-void BootstrapConfig::createSaveFileIfNotExists()
-{
+void BootstrapConfig::createSaveFileIfNotExists() {
 	const char *typeToReplace = ".nds";
 	if (extention(_fileName, ".dsi")) {
 		typeToReplace = ".dsi";
@@ -291,53 +296,44 @@ void BootstrapConfig::createSaveFileIfNotExists()
 	}
 }
 
-void BootstrapConfig::loadCheats()
-{
-	u32 gameCode,crc32;
-	
-	bool cheatsEnabled = true;
-	mkdir(ms().secondaryDevice ? "fat:/_nds/nds-bootstrap" : "sd:/_nds/nds-bootstrap", 0777);
-	if(CheatWnd::romData(_fullPath,gameCode,crc32))
-      {
-				long cheatOffset; size_t cheatSize;
-        FILE* dat=fopen(SFN_CHEATS,"rb");
-        if(dat)
-        {
-          if(CheatWnd::searchCheatData(dat,gameCode,crc32,cheatOffset,cheatSize))
-          {
-						CheatWnd chtwnd((256)/2,(192)/2,100,100,NULL,_fullPath);
+void BootstrapConfig::loadCheats() {
+	remove(SFN_CHEAT_DATA);
+	if (_cheatData.empty()) return;
+	FILE* cheatFile = fopen(SFN_CHEAT_DATA, "wb+");
+	if (!cheatFile) {
+		fclose(cheatFile);
+		return;
+	}
 
-						chtwnd.parse(_fullPath);
-						chtwnd.writeCheatsToFile(chtwnd.getCheats(), SFN_CHEAT_DATA);
-						FILE* cheatData=fopen(SFN_CHEAT_DATA,"rb");
-						if (cheatData) {
-							u32 check[2];
-							fread(check, 1, 8, cheatData);
-							fclose(cheatData);
-							// TODO: Delete file, if above 0x8000 bytes
-							if (check[1] == 0xCF000000) {
-								cheatsEnabled = false;
-							}
-						}
-          } else {
-		    cheatsEnabled = false;
-          }
-          fclose(dat);
-        } else {
-		  cheatsEnabled = false;
-        }
-      } else {
-	    cheatsEnabled = false;
-      }
-	  if (!cheatsEnabled) {
-	    remove(SFN_CHEAT_DATA);
-	  }
+	std::string cheatStr = _cheatData;
+	uint32_t value;
+
+	while (1) {
+		std::string current_cheat = cheatStr.substr(0, cheatStr.find(" "));
+		cheatStr = cheatStr.substr(cheatStr.find(" ") + 1);
+    	value = strtol(current_cheat.c_str(), NULL, 16);
+  		fwrite(&value, sizeof(value), 1, cheatFile);
+    	if((int)cheatStr.find(" ") == -1) break;
+	}
+	fwrite("\0\0\0\xCF", 4, 1, cheatFile);
+	fflush(cheatFile);
+	fseek(cheatFile, 0, SEEK_SET);
+	u32 check[2];
+	fread(check, 1, 8, cheatFile);
+	fclose(cheatFile);
+	if (check[1] == 0xCF000000) {
+		// cheats disabled
+		remove(SFN_CHEAT_DATA);
+	}
 }
 
 int BootstrapConfig::launch()
 {
-	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice)
+	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
 		loadCheats();
+		if (_cheatsAppliedHandler)
+			_cheatsAppliedHandler();
+	}
 
 	createSaveFileIfNotExists();
 
