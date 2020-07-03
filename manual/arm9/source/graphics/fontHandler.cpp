@@ -18,7 +18,7 @@
 
 ------------------------------------------------------------------*/
 
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include <list>
 #include <stdio.h>
 #include <nds/interrupts.h>

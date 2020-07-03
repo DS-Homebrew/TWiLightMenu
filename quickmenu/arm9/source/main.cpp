@@ -9,7 +9,7 @@
 
 #include <string.h>
 #include <unistd.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #include "date.h"
 #include "fileCopy.h"

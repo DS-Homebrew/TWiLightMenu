@@ -1,7 +1,7 @@
 #pragma once
 #ifndef __DSIMENUPP_THEME_TEXTURES__
 #define __DSIMENUPP_THEME_TEXTURES__
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "common/singleton.h"
 #include "Texture.h"
 #include <memory>

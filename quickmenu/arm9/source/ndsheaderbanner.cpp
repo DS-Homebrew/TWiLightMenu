@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #include "ndsheaderbanner.h"
 #include "module_params.h"

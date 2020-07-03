@@ -9,7 +9,7 @@
 
 #include <nds.h>
 #include <nds/arm9/dldi.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #include "date.h"
 

@@ -19,7 +19,7 @@
 ------------------------------------------------------------------*/
 
 #include <nds.h>
-#include "gl2d.h"
+#include <gl2d.h>
 #include "bios_decompress_callback.h"
 #include "FontGraphic.h"
 

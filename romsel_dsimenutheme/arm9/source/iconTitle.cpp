@@ -24,7 +24,7 @@
 #include "iconTitle.h"
 #include "common/dsimenusettings.h"
 #include "common/flashcard.h"
-#include "common/gl2d.h"
+#include <gl2d.h>
 #include "common/tonccpy.h"
 #include "graphics/fontHandler.h"
 #include "graphics/iconHandler.h"

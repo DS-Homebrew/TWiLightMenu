@@ -12,34 +12,13 @@
 ---------------------------------------------------------------------------------*/
 
 /*!
- \mainpage Easy GL2D Documentation
 
 
  
- \section api Library API
+ \section gl2d API
  - \ref gl2d.h "Reference"
  
- \section intro Official Site
- - <a href="http://rel.phatcode.net">Genso's Junkyard</a> 
  
- \section download Download
- - <a href="http://rel.phatcode.net/junk.php?id=117">Easy GL2D</a> 
- 
- \section games Example Games
- - <a href="http://rel.phatcode.net/index.php?action=contents&item=Bubble_Fight_EX_DS">Bubble Fight EX</a> 
- - <a href="http://rel.phatcode.net/index.php?action=contents&item=Space-Impakto-DS">Space Impakto DS</a> 
- 
- \section tools Misc. Tools
- - <a href="http://rel.phatcode.net/junk.php?id=106">Rel's Texture Packer</a> 
- 
- \section external_links Useful links
- - <a href="http://www.devkitpro.org/">devkitPro</a>
- - <a href="http://www.forum.gbadev.org">GbaDev forums</a>
- 
-*/
-
-
-
 
 /*! \file gl2d.h
 	\brief A very small and simple DS rendering lib using the 3d core to render 2D stuff.
@@ -314,7 +293,7 @@ void glSpriteRotateScale( int x, int y, s32 angle, s32 scale, int flipmode, cons
 void glSpriteRotateScaleXY( int x, int y, s32 angle, s32 scaleX, s32 scaleY, int flipmode, const glImage *spr);
 
 
-/*! \brief Draws a Horizontally Stretched Sprite (Clean Stretching) <Br>
+/*! \brief Draws a Horizontaly Stretched Sprite (Clean Stretching) <Br>
 	Useful for "Laser Effects".
 \param x X position of the sprite center.
 \param y Y position of the sprite center.

@@ -961,77 +961,76 @@ void glSpriteStretchVertical(int x, int y, int length_y, const glImage *spr )
 	int x2 = x + spr->width-1;
 	int y2 = y + length_y;
 	int su = ( spr->width/2 )-1;
-	
-	
-	int	u1 = spr->u_off;
- 	int	u2 = spr->u_off + spr->width;
+
+
+	int u1 = spr->u_off;
+	int u2 = spr->u_off + spr->width;
 	int v1 = spr->v_off;
- 	int v2 = spr->v_off + spr->height;
- 	
-    
+	int v2 = spr->v_off + spr->height;
+
+
 	if ( spr->textureID != gCurrentTexture )
     {
         glBindTexture( GL_TEXTURE_2D, spr->textureID );
         gCurrentTexture = spr->textureID;
     }
-	
+
 	// left
 	int x2l = x + su;
 	glBegin( GL_QUADS );
-	
+
 		gxTexcoord2i( u1, v1 );
 		gxVertex3i( x1, y1, g_depth );
-		
+
 		gxTexcoord2i( u1, v2 );
 		gxVertex2i( x1, y2 );
-		
+
 		gxTexcoord2i( u1 + su, v2);
 		gxVertex2i( x2l, y2 );
-		
+
 		gxTexcoord2i( u1 + su, v1 );
 		gxVertex2i( x2l, y1 );
-		
+
 	glEnd();
-	
+
 	// center
 	int x1l = x + su;
 	x2l = x2 - su - 1; 
 	glBegin( GL_QUADS );
-	
+
 		gxTexcoord2i( u1 + su, v1 );
 		gxVertex2i( x1l, y1 );
-		
+
 		gxTexcoord2i( u1 + su, v2 );
 		gxVertex2i( x1l, y2 );
-		
+
 		gxTexcoord2i( u1 + su, v2 );
 		gxVertex2i( x2l, y2 );
-		
+
 		gxTexcoord2i( u1 + su, v1 );
 		gxVertex2i( x2l, y1 );
-		
+
 	glEnd();
-	
+
 	// right
 	x1l = x2 - su-1;
 	glBegin( GL_QUADS );
-	
+
 		gxTexcoord2i( u1 + su, v1 );
 		gxVertex2i( x1l, y1 );
-		
+
 		gxTexcoord2i( u1 + su, v2 );
 		gxVertex2i( x1l, y2 );
-		
+
 		gxTexcoord2i( u2, v2 );
 		gxVertex2i( x2, y2 );
-		
+
 		gxTexcoord2i( u2, v1 );
 		gxVertex2i( x2, y1 );
-		
-	glEnd();
-	
-	g_depth++;
 
+	glEnd();
+
+	g_depth++;
 }
 
 

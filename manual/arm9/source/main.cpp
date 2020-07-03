@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <string.h>
 #include <unistd.h>
-#include "common/gl2d.h"
+#include <gl2d.h>
 
 #include "graphics/graphics.h"
 #include "graphics/topText.h"
