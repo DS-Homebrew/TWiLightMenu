@@ -167,15 +167,6 @@ int main(int argc, char **argv)
 		stop();
 	}
 	dbg_printf("UISETTINGS: %s\n", SFN_BUTTON2);
-	//stop();
-	// if (!nitroFSInitOk)
-	// {
-	// 	consoleDemoInit();
-	// 	printf("Failed to init NitroFS");
-	// 	stop();
-	// }
-
-
 	
 	// init unicode
 	//if( initUnicode() )
@@ -235,7 +226,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	//if (!wnd->_mainList->enterDir(SPATH_ROOT != lastDirectory ? lastDirectory : gs().startupFolder))
 	wnd->_mainList->enterDir(ms().getCurrentRomFolder());
 
 	irq().vblankStart();

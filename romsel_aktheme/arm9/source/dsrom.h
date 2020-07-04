@@ -121,7 +121,6 @@ public:
   bool isBannerAnimated(void);
   bool isArgv(void);
   int requiresDonorRom(void);
-  u32 headerCrc32(void);
 
   DSRomInfo &operator=(const DSRomInfo &src);
   void MayBeArgv(const std::string &filename)

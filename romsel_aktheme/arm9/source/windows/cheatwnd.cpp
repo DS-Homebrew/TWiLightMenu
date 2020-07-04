@@ -362,7 +362,7 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
   if(rom)
   {
     u8 header[512];
-    if(1==fread(header,sizeof(header),1,rom))
+    if(1==fread(header, sizeof(header),1,rom))
     {
       aCrc32=crc32(header,sizeof(header));
       aGameCode=gamecode((const char*)(header+12));
@@ -526,6 +526,6 @@ std::string CheatWnd::getCheats()
       cheats += _data[i]._cheat.substr(0, _data[i]._cheat.size());
     }
   }
-  std::replace( cheats.begin(), cheats.end(), '\n', ' ');
+  std::replace(cheats.begin(), cheats.end(), '\n', ' ');
   return cheats;
 }

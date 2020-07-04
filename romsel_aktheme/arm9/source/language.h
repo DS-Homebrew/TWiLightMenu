@@ -97,7 +97,6 @@ typedef singleton<LanguageFile, TWLSettings::TLanguage> languageFile_s;
 inline LanguageFile &lang() { return languageFile_s::instance(ms().getGuiLanguage()); }
 #define LANG(i, t) lang().GetString(i, t, t)
 
-bool stringComp(const std::string &item1, const std::string &item2);
 void langInit(void);
 
 #endif //_AK_LANGUAGE_H_

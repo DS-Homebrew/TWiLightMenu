@@ -191,6 +191,12 @@ BootstrapConfig &BootstrapConfig::onSaveCreated(std::function<void(void)> handle
 	return *this;
 }
 
+BootstrapConfig &BootstrapConfig::onBeforeSaveCreate(std::function<void(void)> handler)
+{
+	_saveBeforeCreatedHandler = handler;
+	return *this;
+}
+
 BootstrapConfig &BootstrapConfig::onConfigSaved(std::function<void(void)> handler)
 {
 	_configSavedHandler = handler;
@@ -221,14 +227,12 @@ BootstrapConfig &BootstrapConfig::gbarBootstrap(bool gbarBootstrap)
 	return *this;
 }
 
-
 off_t fsize(const char *path)
 {
 	struct stat st;
 	stat(path, &st);
 	return st.st_size;
 }
-
 
 /**
  * Remove trailing slashes from a pathname, if present.
@@ -242,7 +246,7 @@ void RemoveTrailingSlashes(std::string &path) {
 	}
 }
 
-void BootstrapConfig::createSaveFileIfNotExists() {
+std::string BootstrapConfig::createSaveFileIfNotExists() {
 	const char *typeToReplace = ".nds";
 	if (extention(_fileName, ".dsi")) {
 		typeToReplace = ".dsi";
@@ -258,7 +262,7 @@ void BootstrapConfig::createSaveFileIfNotExists() {
 	std::string romFolderNoSlash = ms().getCurrentRomFolder();
 
 	RemoveTrailingSlashes(romFolderNoSlash);
-
+	mkdir((romFolderNoSlash + "/saves/").c_str(), 0777);
 	std::string savepath = romFolderNoSlash + "/saves/" + savename;
 
 	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
@@ -294,11 +298,17 @@ void BootstrapConfig::createSaveFileIfNotExists() {
 			}
 		}
 	}
+
+	return savepath;
 }
 
 void BootstrapConfig::loadCheats() {
+	mkdir("/_nds", 0777);
+	mkdir("/_nds/nds-bootstrap", 0777);
+
 	remove(SFN_CHEAT_DATA);
 	if (_cheatData.empty()) return;
+	
 	FILE* cheatFile = fopen(SFN_CHEAT_DATA, "wb+");
 	if (!cheatFile) {
 		fclose(cheatFile);
@@ -329,16 +339,21 @@ void BootstrapConfig::loadCheats() {
 
 int BootstrapConfig::launch()
 {
-	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
-		loadCheats();
-		if (_cheatsAppliedHandler)
-			_cheatsAppliedHandler();
+	if (_saveBeforeCreatedHandler) {
+		_saveBeforeCreatedHandler();
 	}
-
-	createSaveFileIfNotExists();
+	
+	std::string savepath = createSaveFileIfNotExists();
 
 	if (_saveCreatedHandler)
 		_saveCreatedHandler();
+
+	if ((isDSiMode() && ms().useBootstrap) || !ms().secondaryDevice) {
+		loadCheats();
+		if (_cheatsAppliedHandler) {
+			_cheatsAppliedHandler();
+		}
+	}
 
 	bootWidescreen(_fileName.c_str(), _isHomebrew, _useWideScreen);
 
@@ -353,15 +368,12 @@ int BootstrapConfig::launch()
 		typeToReplace = ".app";
 	}
 
-	std::string savename = replaceAll(_fileName, typeToReplace, getSavExtension(_saveNo));
 	std::string ramdiskname = replaceAll(_fileName, typeToReplace, getImgExtension(_ramDiskNo));
 	std::string romFolderNoSlash = ms().getCurrentRomFolder();
 	RemoveTrailingSlashes(romFolderNoSlash);
-	mkdir ((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
-	std::string savepath = romFolderNoSlash+"/saves/"+savename;
-	if (sdFound() && ms().secondaryDevice && ms().fcSaveOnSd) {
-		savepath = replaceAll(savepath, "fat:/", "sd:/");
-	}
+
+	mkdir((_isHomebrew && !ms().secondaryDevice) ? (romFolderNoSlash+"/ramdisks").c_str() : (romFolderNoSlash+"/saves").c_str(), 0777);
+
 	std::string ramdiskpath = romFolderNoSlash+"/ramdisks/"+ramdiskname;
 
 	std::string bootstrapPath;
@@ -420,3 +432,47 @@ int BootstrapConfig::launch()
 		_configSavedHandler();
 	return loader.launch(argarray.size(), (const char **)&argarray[0], (_isHomebrew ? false : true));
 }
+
+
+std::string BootstrapConfig::apFix(const char *filename, bool isHomebrew)
+{
+	remove("fat:/_nds/nds-bootstrap/apFix.ips");
+
+	if (isHomebrew) {
+		return "";
+	}
+
+	bool ipsFound = false;
+	char ipsPath[256];
+	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
+	ipsFound = (access(ipsPath, F_OK) == 0);
+
+	if (!ipsFound) {
+		FILE *f_nds_file = fopen(filename, "rb");
+
+		char game_TID[5];
+		u16 headerCRC16 = 0;
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
+		fread(game_TID, 1, 4, f_nds_file);
+		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
+		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
+		fclose(f_nds_file);
+		game_TID[4] = 0;
+
+		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
+		ipsFound = (access(ipsPath, F_OK) == 0);
+	}
+
+	if (ipsFound) {
+		if (ms().secondaryDevice && sdFound()) {
+			mkdir("fat:/_nds", 0777);
+			mkdir("fat:/_nds/nds-bootstrap", 0777);
+			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
+			return "fat:/_nds/nds-bootstrap/apFix.ips";
+		}
+		return ipsPath;
+	}
+
+	return "";
+}
+

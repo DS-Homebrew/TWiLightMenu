@@ -473,8 +473,17 @@ void MainWnd::onKeyAPressed()
     launchSelected();
 }
 
+
+void bootstrapBeforeSaveHandler()
+{
+    progressWnd().setPercent(0);
+	progressWnd().setTipText("Creating Save file...");
+    progressWnd().update();
+}
+
 void bootstrapSaveHandler()
 {
+	progressWnd().setTipText("Please wait...");
     progressWnd().setPercent(50);
     progressWnd().update();
 }
@@ -511,49 +520,6 @@ void MainWnd::bootArgv(DSRomInfo &rominfo)
         messageBox(this, LANG("game launch", "ROM Start Error"), errorString, MB_OK);
         progressWnd().hide();
     }
-}
-
-//void MainWnd::apFix(const char *filename)
-std::string apFix(const char *filename, bool isHomebrew)
-{
-	remove("fat:/_nds/nds-bootstrap/apFix.ips");
-
-	if (isHomebrew) {
-		return "";
-	}
-
-	bool ipsFound = false;
-	char ipsPath[256];
-	snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s.ips", sdFound() ? "sd" : "fat", filename);
-	ipsFound = (access(ipsPath, F_OK) == 0);
-
-	if (!ipsFound) {
-		FILE *f_nds_file = fopen(filename, "rb");
-
-		char game_TID[5];
-		u16 headerCRC16 = 0;
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, gameCode), SEEK_SET);
-		fread(game_TID, 1, 4, f_nds_file);
-		fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-		fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-		fclose(f_nds_file);
-		game_TID[4] = 0;
-
-		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", game_TID, headerCRC16);
-		ipsFound = (access(ipsPath, F_OK) == 0);
-	}
-
-	if (ipsFound) {
-		if (ms().secondaryDevice && sdFound()) {
-			mkdir("fat:/_nds", 0777);
-			mkdir("fat:/_nds/nds-bootstrap", 0777);
-			fcopy(ipsPath, "fat:/_nds/nds-bootstrap/apFix.ips");
-			return "fat:/_nds/nds-bootstrap/apFix.ips";
-		}
-		return ipsPath;
-	}
-
-	return "";
 }
 
 sNDSHeader ndsCart;
@@ -677,13 +643,15 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 	
 	long cheatOffset; size_t cheatSize;
 	FILE* dat = fopen(SFN_CHEATS,"rb");
-	if (dat && CheatWnd::searchCheatData(dat, GAME_CODE(rominfo.saveInfo().gameCode),
-		rominfo.headerCrc32(), cheatOffset, cheatSize)) {
-		CheatWnd chtwnd((256)/2, (192)/2, 100, 100, NULL, fullPath);
-		chtwnd.parse(fullPath);
-		config.cheatData(chtwnd.getCheats());
+	if (dat) {	
+		if (CheatWnd::searchCheatData(dat, GAME_CODE(rominfo.saveInfo().gameCode),
+			rominfo.saveInfo().headerCRC, cheatOffset,cheatSize)) {
+				CheatWnd chtwnd((256)/2, (192)/2, 100, 100, NULL, fullPath);
+				chtwnd.parse(fullPath);
+				config.cheatData(chtwnd.getCheats());
+		}
+		fclose(dat);
 	}
-
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().gameLanguage != TWLSettings::ELangDefault)
     {
@@ -1194,7 +1162,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		if (!hasAP || pressed & KEY_A || pressed & KEY_X || optionPicked == ID_HOLD_X || optionPicked == ID_OK)
 		{
 			// Event handlers for progress window.
-			config.onSaveCreated(bootstrapSaveHandler)
+			config
+				.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
+				.onSaveCreated(bootstrapSaveHandler)
 				.onConfigSaved(bootstrapLaunchHandler);
 
 			progressWnd().setTipText(LANG("game launch", "Please wait"));
@@ -1211,7 +1181,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		}
 	} else {
 		// Event handlers for progress window.
-		config.onSaveCreated(bootstrapSaveHandler)
+		config
+			.onSaveCreated(bootstrapSaveHandler)
 			.onConfigSaved(bootstrapLaunchHandler);
 
 		progressWnd().setTipText(LANG("game launch", "Please wait"));

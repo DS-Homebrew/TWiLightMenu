@@ -43,7 +43,7 @@
 static u32 arm9Sig[3][4];
 
 #define CRCPOLY 0xedb88320
-static u32 crc32(const u8* p,size_t len)
+u32 crc32(const u8* p,size_t len)
 {
   u32 crc=-1;
   while(len--)
@@ -116,10 +116,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
         return false;
     }
     
+    fseek(f, 0, SEEK_SET);
+
     sNDSHeaderExt header;
     if (1 != fread(&header, sizeof(header), 1, f))
     {    
-        _headerCrc32 = crc32((const u8*) &header, sizeof(sNDSHeader));
 		if (1 != fread(&header, 0x160, 1, f))
 		{
 			dbg_printf("read rom header fail\n");
@@ -131,9 +132,11 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			return false;
 		}
     }
+    _saveInfo.headerCRC = crc32((const u8*) &header, 512);
     
     ///////// ROM Header /////////
     u16 crc = header.headerCRC16;
+
     if (crc != header.headerCRC16)
     {
         dbg_printf("%s rom header crc error\n", filename.c_str());
@@ -707,12 +710,6 @@ bool DSRomInfo::isGbaRom(void)
 {
     load();
     return (_isGbaRom == ETrue) ? true : false;
-}
-
-u32 DSRomInfo::headerCrc32(void)
-{
-    load();
-    return _headerCrc32;
 }
 
 void DSRomInfo::setExtIcon(const std::string &aValue)

@@ -42,14 +42,15 @@ class BootstrapConfig
         BootstrapConfig& wideScreen(bool wideScreen);
         BootstrapConfig& gbarBootstrap(bool gbarBootstrap);
 
+        BootstrapConfig& onBeforeSaveCreate(std::function<void(void)> handler);
         BootstrapConfig& onSaveCreated(std::function<void(void)> handler);
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);
         BootstrapConfig& onCheatsApplied(std::function<void(void)> handler);
 
         int launch();
     private:
-
-        void createSaveFileIfNotExists();
+        std::string apFix(const char *filename, bool isHomebrew);
+        std::string createSaveFileIfNotExists();
         void createTmpFileIfNotExists();
         void loadCheats();
 
@@ -58,6 +59,7 @@ class BootstrapConfig
         const std::string _gametid;
         const u32 _sdkVersion;
 
+        std::function<void(void)> _saveBeforeCreatedHandler;
         std::function<void(void)> _saveCreatedHandler;
         std::function<void(void)>  _configSavedHandler;
         std::function<void(void)>  _cheatsAppliedHandler;
