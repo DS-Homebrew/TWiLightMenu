@@ -11,10 +11,17 @@
 #ifndef __BOOTSTRAP_CONFIG__
 #define __BOOTSTRAP_CONFIG__
 
+enum APFixType {
+    ENone = 0,
+    EHasIPS = 1,
+    EMissingIPS = 2,
+    ERGFPatch = 3,
+};
+
 class BootstrapConfig
 {
     public:
-        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion, int heapShrink);
+        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion, u16 headerCrc16, int heapShrink);
 
         ~BootstrapConfig();
         
@@ -47,9 +54,10 @@ class BootstrapConfig
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);
         BootstrapConfig& onCheatsApplied(std::function<void(void)> handler);
 
+        APFixType romNeedsAPFix();
         int launch();
     private:
-        std::string apFix(const char *filename, bool isHomebrew);
+        std::string getAPFix();
         std::string createSaveFileIfNotExists();
         void createTmpFileIfNotExists();
         void loadCheats();
@@ -58,6 +66,7 @@ class BootstrapConfig
         const std::string _fullPath;
         const std::string _gametid;
         const u32 _sdkVersion;
+        const u16 _headerCrc16;
 
         std::function<void(void)> _saveBeforeCreatedHandler;
         std::function<void(void)> _saveCreatedHandler;
@@ -82,5 +91,6 @@ class BootstrapConfig
         int _ramDiskNo;
         bool _soundFix;
         std::string _cheatData;
+        std::string _apFix;
 };
 #endif

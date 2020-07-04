@@ -132,8 +132,8 @@ bool DSRomInfo::loadDSRomInfo(const std::string &filename, bool loadBanner)
 			return false;
 		}
     }
-    _saveInfo.headerCRC = crc32((const u8*) &header, 512);
     
+    _saveInfo.headerCRC = crc32((const u8*) &header, 512);
     ///////// ROM Header /////////
     u16 crc = header.headerCRC16;
 
