@@ -90,9 +90,6 @@
 
 #define SFN_ICONS_DIRECTORY         SFN_SYSTEM_DIR"icons/"
 
-#define SFN_CHEATS                  "/_nds/TWiLightMenu/extras/usrcheat.dat"
-#define SFN_CHEAT_DATA              "/_nds/nds-bootstrap/cheatData.bin"
-
 class SystemFilenames
 {
     private:

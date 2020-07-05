@@ -4,7 +4,6 @@
 #include "filecopy.h"
 #include "flashcard.h"
 #include "loaderconfig.h"
-#include "systemfilenames.h"
 #include "tool/stringtool.h"
 #include "windows/mainwnd.h"
 #include <stdio.h>
@@ -308,10 +307,10 @@ void BootstrapConfig::loadCheats() {
 	mkdir("/_nds", 0777);
 	mkdir("/_nds/nds-bootstrap", 0777);
 
-	remove(SFN_CHEAT_DATA);
+	remove(CHEATS_CHEAT_DATA);
 	if (_cheatData.empty()) return;
 	
-	FILE* cheatFile = fopen(SFN_CHEAT_DATA, "wb+");
+	FILE* cheatFile = fopen(CHEATS_CHEAT_DATA, "wb+");
 	if (!cheatFile) {
 		fclose(cheatFile);
 		return;
@@ -335,7 +334,7 @@ void BootstrapConfig::loadCheats() {
 	fclose(cheatFile);
 	if (check[1] == 0xCF000000) {
 		// cheats disabled
-		remove(SFN_CHEAT_DATA);
+		remove(CHEATS_CHEAT_DATA);
 	}
 }
 

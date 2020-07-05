@@ -19,6 +19,7 @@
 */
 
 #include "cheatwnd.h"
+#include "common/bootstrapconfig.h"
 #include "ui/uisettings.h"
 #include "ui/windowmanager.h"
 #include "language.h"
@@ -26,9 +27,6 @@
 #include "gamecode.h"
 #include <sys/stat.h>
 #include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 using namespace akui;
 
@@ -282,7 +280,7 @@ static void updateDB(u8 value,u32 offset,FILE* db)
 
 void CheatWnd::onGenerate(void)
 {
-  FILE* db=fopen(SFN_CHEATS,"r+b");
+  FILE* db=fopen(CHEATS_USRCHEAT,"r+b");
   if(db)
   {
     std::vector<cParsedItem>::iterator itr=_data.begin();
@@ -345,7 +343,7 @@ bool CheatWnd::parse(const std::string& aFileName)
   u32 romcrc32,gamecode;
   if(romData(_fileName,gamecode,romcrc32))
   {
-    FILE* dat=fopen(SFN_CHEATS,"rb");
+    FILE* dat=fopen(CHEATS_USRCHEAT,"rb");
     if(dat)
     {
       res=parseInternal(dat,gamecode,romcrc32);
@@ -375,7 +373,7 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
 
 bool CheatWnd::searchCheatData(u32 gamecode,u32 crc32,long& aPos,size_t& aSize) {
   FILE* db;
-  if ((db = fopen(SFN_CHEATS, "rb"))) {
+  if ((db = fopen(CHEATS_USRCHEAT, "rb"))) {
     bool ret = CheatWnd::searchCheatDataInternal(db, gamecode, crc32, aPos, aSize);
     fclose(db);
     return ret;

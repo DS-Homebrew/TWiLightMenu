@@ -77,4 +77,9 @@
 #define NESDS_FC  "fat:/_nds/TWiLightMenu/emulators/nesds.nds"
 #define NESDS_SD "sd:/_nds/TWiLightMenu/emulators/nesds.nds"
 #define NESTWL_SD "sd:/_nds/TWiLightMenu/emulators/nestwl.nds"
+
+
+#define CHEATS_USRCHEAT          "/_nds/TWiLightMenu/extras/usrcheat.dat"
+#define CHEATS_CHEAT_DATA        "/_nds/nds-bootstrap/cheatData.bin"
+
 #endif
