@@ -721,8 +721,8 @@ void MainWnd::launchSelected()
     ms().romPath[ms().secondaryDevice] = fullPath;
 
 	// compatiblity with dsimenu theme. + 1 to account for back folder
-	ms().cursorPosition[ms().secondaryDevice] = _mainList->selectedRowId() + 1 % 40;
-	ms().pagenum[ms().secondaryDevice] = _mainList->selectedRowId() + 1 / 40;
+	ms().cursorPosition[ms().secondaryDevice] = (_mainList->selectedRowId() + 1) % 40;
+	ms().pagenum[ms().secondaryDevice] = (_mainList->selectedRowId() + 1) / 40;
 
     ms().slot1Launched = false;
     ms().saveSettings();
