@@ -104,6 +104,11 @@ bool ListView::appendRow(const std::vector<std::string>&& texts)
         aItem.setText(col < texts.size() ? texts[col] : "Empty");
         row.emplace_back(std::move(aItem));
     }
+
+    // 6 = CUSTOM_PARAM
+    row[6].param = false;
+    // 7 = POSITION_COLUMN;
+    row[7].param = _rows.size() + 1;
     _rows.emplace_back(std::move(row));
     nocashMessage("listview:106");
     //if( _visibleRowCount > _rows.size() ) _visibleRowCount = _rows.size();

@@ -93,7 +93,8 @@ int MainList::init()
     insertColumn(INTERNALNAME_COLUMN, "internalName", 0);
     insertColumn(REALNAME_COLUMN, "realName", 0); // hidden column for contain real filename
     insertColumn(SAVETYPE_COLUMN, "saveType", 0);
-    insertColumn(FILESIZE_COLUMN, "fileSize", 0);
+    insertColumn(CUSTOM_POS_COLUMN, "customPos", 0);
+    insertColumn(POSITION_COLUMN, "position", 0);
 
     setViewMode((MainList::VIEW_MODE)ms().ak_viewMode);
 
@@ -102,22 +103,36 @@ int MainList::init()
     return 1;
 }
 
-static bool itemSortComp(const ListView::itemVector &item1, const ListView::itemVector &item2)
+static bool itemSortComp(const ListView::itemVector &lhs, const ListView::itemVector &rhs)
 {
-    const std::string &fn1 = item1[MainList::REALNAME_COLUMN].text();
-    const std::string &fn2 = item2[MainList::REALNAME_COLUMN].text();
-    if ("../" == fn1)
+    const std::string &lhfn = lhs[MainList::REALNAME_COLUMN].text();
+    const std::string &rhfn = rhs[MainList::REALNAME_COLUMN].text();
+
+    bool lhIsCustom = (bool)lhs[MainList::CUSTOM_POS_COLUMN].param;
+    bool rhIsCustom = (bool)rhs[MainList::CUSTOM_POS_COLUMN].param;
+
+    bool lhIsDir = '/' == lhfn[lhfn.size() - 1];
+    bool rhIsDir = '/' == rhfn[rhfn.size() - 1];
+
+    if ("../" == lhfn)
         return true;
-    if ("../" == fn2)
-        return false;
-    if ('/' == fn1[fn1.size() - 1] && '/' == fn2[fn2.size() - 1])
-        return fn1 < fn2;
-    if ('/' == fn1[fn1.size() - 1])
-        return true;
-    if ('/' == fn2[fn2.size() - 1])
+    if ("../" == rhfn)
         return false;
 
-    return fn1 < fn2;
+    if (lhIsDir && !lhIsCustom && !rhIsDir) {
+		return true;
+	}
+    if (!lhIsDir && rhIsDir && !rhIsCustom) {
+		return false;
+	}
+
+    if (lhIsCustom || rhIsCustom) {
+		if(!lhIsCustom)	return false;
+		else if (!rhIsCustom) return true;
+
+		return (lhs[MainList::POSITION_COLUMN].param < rhs[MainList::POSITION_COLUMN].param);
+	}
+	return strcasecmp(lhfn.c_str(), rhfn.c_str()) < 0;
 }
 
 static bool extnameFilter(const std::vector<std::string> &extNames, std::string extName)
@@ -197,6 +212,11 @@ void MainList::setupExtnames()
 		}
 	}
 }
+
+struct TimesPlayed {
+	std::string name;
+	int amount;
+};
 
 void MainList::addDirEntry(const std::string row1,
     const std::string row2, 
@@ -309,7 +329,6 @@ bool MainList::enterDir(const std::string &dirName)
     std::string extName;
     char lfnBuf[dirName.length() + 256 + 2];
     // list dir
-
     cwl();
     nocashMessage("mainlist:307");
     if (dir)
@@ -362,8 +381,80 @@ bool MainList::enterDir(const std::string &dirName)
         nocashMessage("mainlist:355");
 
         closedir(dir);
+        
+        switch (ms().sortMethod) {
+            case TWLSettings::ERecent: 
+            {
+                CIniFile recentlyPlayedIni(SFN_RECENTLY_PLAYED);
+                std::vector<std::string> recentlyPlayed;
+                recentlyPlayedIni.GetStringVector("RECENT", dirName, recentlyPlayed, ':');
+                int k = 0;
+                for (uint i = 0; i < recentlyPlayed.size(); i++) {
+                    for (uint j = 0; j <= _rows.size(); j++) {
+                        if (recentlyPlayed[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            
+                            _rows[j][MainList::POSITION_COLUMN].param = k++;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = (u32)true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EMostPlayed: 
+            {
+                CIniFile timesPlayedIni(SFN_TIMES_PLAYED);
+                std::vector<TimesPlayed> timesPlayed;
 
-        std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                for (int i = 0; i < (int)_rows.size(); i++) {
+                    TimesPlayed timesPlayedTemp;
+                    timesPlayedTemp.name = _rows[i][MainList::SHOWNAME_COLUMN].text();
+                    timesPlayedTemp.amount = timesPlayedIni.GetInt(dirName, _rows[i][MainList::SHOWNAME_COLUMN].text(), 0);
+                    timesPlayed.push_back(timesPlayedTemp);
+                }
+
+                for (int i = 0; i < (int)timesPlayed.size(); i++) {
+                    for (int j = 0; j <= (int)_rows.size(); j++) {
+                        if (timesPlayed[i].name == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            _rows[j][MainList::POSITION_COLUMN].param = timesPlayed[i].amount;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = (u32)true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EFileType:
+            {
+                // todo: filetype sort
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::ECustom:
+            {
+                nocashWrite("custom", 16);
+                CIniFile gameOrderIni(SFN_GAME_ORDER);
+                std::vector<std::string> gameOrder;
+                gameOrderIni.GetStringVector("ORDER", dirName, gameOrder, ':');
+                for (uint i = 0; i < gameOrder.size(); i++) {
+                    for (uint j = 0; j < _rows.size(); j++) {
+                        if (gameOrder[i] == _rows[j][MainList::SHOWNAME_COLUMN].text()) {
+                            _rows[j][MainList::POSITION_COLUMN].param = i;
+                            _rows[j][MainList::CUSTOM_POS_COLUMN].param = true;
+                            break;
+                        }
+                    }
+                }
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+            }
+            case TWLSettings::EAlphabetical:
+            default:
+                std::sort(_rows.begin(), _rows.end(), itemSortComp);
+                break;
+        }
 
         for (size_t ii = 0; ii < _rows.size(); ii++)
         {

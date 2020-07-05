@@ -51,6 +51,8 @@ TWLSettings::TWLSettings()
     previousUsedDevice = false;
     secondaryDevice = false;
     fcSaveOnSd = false;
+    updateRecentlyPlayedList = true;
+	sortMethod = 0;
 
     slot1LaunchMethod = EReboot;
 
@@ -181,6 +183,8 @@ void TWLSettings::loadSettings()
 	charUnlaunchBg = unlaunchBg.c_str();
 	removeLauncherPatches = settingsini.GetInt("SRLOADER", "UNLAUNCH_PATCH_REMOVE", removeLauncherPatches);
 
+	updateRecentlyPlayedList = settingsini.GetInt("SRLOADER", "UPDATE_RECENTLY_PLAYED_LIST", updateRecentlyPlayedList);
+	sortMethod = settingsini.GetInt("SRLOADER", "SORT_METHOD", sortMethod);
     show12hrClock = settingsini.GetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
 
     //snesEmulator = settingsini.GetInt("SRLOADER", "SNES_EMULATOR", snesEmulator);
@@ -256,6 +260,7 @@ void TWLSettings::saveSettings()
     }
 
     settingsini.SetInt("SRLOADER", "SHOW_12H_CLOCK", show12hrClock);
+	settingsini.SetInt("SRLOADER", "SORT_METHOD", sortMethod);
 
     settingsini.SaveIniFile(DSIMENUPP_INI);
 }
@@ -277,13 +282,11 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
     return (TLanguage)guiLanguage;
 }
 
-#ifdef PREFER_SLASH
 std::string GetPathWithFinalSlash(const std::string& path) {
     if (path.empty()) return path;
     if (path.back() == '/') return path;
     return path + "/";
 }
-#endif
 
 std::string TWLSettings::getPrimaryRomFolder() {
     #ifdef PREFER_SLASH

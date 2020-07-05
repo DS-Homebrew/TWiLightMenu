@@ -26,7 +26,9 @@
 
 
 #define SFN_SYSTEM_DIR              "/_nds/TWiLightMenu/akmenu/"
-
+#define SFN_GAME_ORDER              "/_nds/TWiLightMenu/extras/gameorder.ini"
+#define SFN_RECENTLY_PLAYED         "/_nds/TWiLightMenu/extras/recentlyplayed.ini"
+#define SFN_TIMES_PLAYED            "/_nds/TWiLightMenu/extras/timesplayed.ini"
 
 #define SFN_FALLBACK_UI_DIRECTORY  "nitro:/themes/zelda"
 #define SFN_SYSTEM_UI_DIRECTORY    SFN_SYSTEM_DIR"themes/"

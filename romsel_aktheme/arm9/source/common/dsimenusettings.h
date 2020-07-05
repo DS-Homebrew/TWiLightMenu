@@ -29,6 +29,14 @@ class TWLSettings
         EViewInternal = 2
     };
 
+    enum TSortMethod 
+    {
+        EAlphabetical = 0,
+        ERecent = 1,
+        EMostPlayed = 2,
+        EFileType = 3,
+        ECustom = 4,
+    };
     // Do not reorder these, just add to the end
     enum TLanguage
     {
@@ -160,6 +168,8 @@ class TWLSettings
     bool previousUsedDevice;
     bool secondaryDevice;
     bool fcSaveOnSd;
+	bool updateRecentlyPlayedList;
+	int sortMethod;
 
     int slot1LaunchMethod;
     bool useBootstrap;

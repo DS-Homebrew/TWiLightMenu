@@ -198,7 +198,7 @@ bool dirEntryPredicate(const DirEntry &lhs, const DirEntry &rhs) {
 		if(!lhs.customPos)	return false;
 		else if(!rhs.customPos)	return true;
 
-		if(lhs.position < rhs.position)	return true;
+		if (lhs.position < rhs.position) return true;
 		else return false;
 	}
 	return strcasecmp(lhs.name.c_str(), rhs.name.c_str()) < 0;
