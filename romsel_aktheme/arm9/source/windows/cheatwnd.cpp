@@ -373,7 +373,17 @@ bool CheatWnd::romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32)
   return res;
 }
 
-bool CheatWnd::searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
+bool CheatWnd::searchCheatData(u32 gamecode,u32 crc32,long& aPos,size_t& aSize) {
+  FILE* db;
+  if ((db = fopen(SFN_CHEATS, "rb"))) {
+    bool ret = CheatWnd::searchCheatDataInternal(db, gamecode, crc32, aPos, aSize);
+    fclose(db);
+    return ret;
+  }
+  return false;
+}
+
+bool CheatWnd::searchCheatDataInternal(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize)
 {
   aPos=0;
   aSize=0;
@@ -414,7 +424,7 @@ bool CheatWnd::parseInternal(FILE* aDat,u32 gamecode,u32 crc32)
   _data.clear();
 
   long dataPos; size_t dataSize;
-  if(!searchCheatData(aDat,gamecode,crc32,dataPos,dataSize)) return false;
+  if(!searchCheatDataInternal(aDat,gamecode,crc32,dataPos,dataSize)) return false;
   fseek(aDat,dataPos,SEEK_SET);
 
   dbg_printf("record found: %d\n",dataSize);

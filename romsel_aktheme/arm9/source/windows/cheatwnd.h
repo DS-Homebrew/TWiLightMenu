@@ -31,7 +31,7 @@ class CheatWnd: public akui::Form
     CheatWnd(s32 x,s32 y,u32 w,u32 h,Window* parent,const std::string& text);
     ~CheatWnd();
     bool parse(const std::string& aFileName);
-    static bool searchCheatData(FILE* aDat,u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
+    static bool searchCheatData(u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
     static bool romData(const std::string& aFileName,u32& aGameCode,u32& aCrc32);
   protected:
     void draw();
@@ -55,6 +55,7 @@ class CheatWnd: public akui::Form
     akui::FormDesc _renderDesc;
     akui::ListView _List;
   protected:
+    static bool searchCheatDataInternal(FILE* aDat, u32 gamecode,u32 crc32,long& aPos,size_t& aSize);
     bool parseInternal(FILE* aDat,u32 gamecode,u32 crc32);
     void deselectFolder(size_t anIndex);
   private:

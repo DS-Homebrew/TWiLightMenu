@@ -647,20 +647,13 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		  .wideScreen(gameConfig.wideScreen == PerGameSettings::EDefault ? ms().wideScreen : (bool)gameConfig.wideScreen);
 	
 	long cheatOffset; size_t cheatSize;
-	FILE* dat = fopen(SFN_CHEATS,"rb");
-	char dbg[256];
-	if(dat) {
-	
-		if (CheatWnd::searchCheatData(dat, GAME_CODE(rominfo.saveInfo().gameCode),
-			rominfo.saveInfo().headerCRC, cheatOffset,cheatSize)) {
-				sprintf(dbg, "%ld", GAME_CODE(rominfo.saveInfo().gameCode));
-				nocashWrite(dbg, 256);
-				CheatWnd chtwnd((256)/2, (192)/2, 100, 100, NULL, fullPath);
-				chtwnd.parse(fullPath);
-				config.cheatData(chtwnd.getCheats());
-		}
-		fclose(dat);
+	if (CheatWnd::searchCheatData(GAME_CODE(rominfo.saveInfo().gameCode), 
+			rominfo.saveInfo().headerCRC, cheatOffset, cheatSize)) {
+		CheatWnd chtwnd((256)/2, (192)/2, 100, 100, NULL, fullPath);
+		chtwnd.parse(fullPath);
+		config.cheatData(chtwnd.getCheats());
 	}
+	
     // GameConfig is default, global is not default
     if (gameConfig.language == PerGameSettings::ELangDefault && ms().gameLanguage != TWLSettings::ELangDefault)
     {
@@ -726,11 +719,9 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		return;
 	}
 
-    PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
-
 	APFixType apType = config.hasAPFix();
 
-	if (settingsIni.checkIfShowAPMsg() && !(apType == APFixType::EHasIPS || apType == APFixType::ENone)) {
+	if (gameConfig.checkIfShowAPMsg() && !(apType == APFixType::EHasIPS || apType == APFixType::ENone)) {
 		
         int optionPicked = 0;
 
@@ -749,7 +740,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
 		if (pressed & KEY_X || optionPicked == ID_HOLD_X)
 		{
-			settingsIni.dontShowAPMsgAgain();
+			gameConfig.dontShowAPMsgAgain();
 		}
 		if (pressed & KEY_A || pressed & KEY_X || optionPicked == ID_HOLD_X || optionPicked == ID_OK)
 		{
@@ -891,9 +882,6 @@ void MainWnd::launchSelected()
         {
 			std::string fileName = _mainList->getSelectedShowName();
 			std::string fullPath = _mainList->getSelectedFullPath();
-
-			BootstrapConfig config(fileName, fullPath, rominfo.saveInfo().gameCode, rominfo.saveInfo().gameSdkVersion, 
-			rominfo.saveInfo().gameCRC, gameConfig.heapShrink);
 
 			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W' || rominfo.version() == 0x57);
 			ms().launchType[ms().secondaryDevice] = TWLSettings::ESDFlashcardDirectLaunch;
