@@ -742,44 +742,28 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 		{
 			gameConfig.dontShowAPMsgAgain();
 		}
-		if (pressed & KEY_A || pressed & KEY_X || optionPicked == ID_HOLD_X || optionPicked == ID_OK)
+
+		if (pressed & KEY_B || optionPicked == ID_CANCEL || optionPicked == ID_NO)
 		{
-			// Event handlers for progress window.
-			config
-				.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
-				.onSaveCreated(bootstrapSaveHandler)
-				.onConfigSaved(bootstrapLaunchHandler);
-
-			progressWnd().setTipText(LANG("game launch", "Please wait"));
-			progressWnd().update();
-			progressWnd().show();
-
-			int err = config.launch();
-			if (err)
-			{
-				std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-				messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-				progressWnd().hide();
-			}
+			return;
 		}
-	} else {
-		// Event handlers for progress window.
-		config
-			.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
-			.onSaveCreated(bootstrapSaveHandler)
-			.onConfigSaved(bootstrapLaunchHandler);
+	} 
+	// Event handlers for progress window.
+	config
+		.onBeforeSaveCreate(bootstrapBeforeSaveHandler)
+		.onSaveCreated(bootstrapSaveHandler)
+		.onConfigSaved(bootstrapLaunchHandler);
 
-		progressWnd().setTipText(LANG("game launch", "Please wait"));
-		progressWnd().update();
-		progressWnd().show();
+	progressWnd().setTipText(LANG("game launch", "Please wait"));
+	progressWnd().update();
+	progressWnd().show();
 
-		int err = config.launch();
-		if (err)
-		{
-			std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
-			messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
-			progressWnd().hide();
-		}
+	int err = config.launch();
+	if (err)
+	{
+		std::string errorString = formatString(LANG("game launch", "error").c_str(), err);
+		messageBox(this, LANG("game launch", "NDS Bootstrap Error"), errorString, MB_OK);
+		progressWnd().hide();
 	}
 }
 
