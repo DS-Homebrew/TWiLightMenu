@@ -633,7 +633,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     BootstrapConfig config(fileName, 
 		fullPath, 
-		std::string((char *)rominfo.saveInfo().gameCode),
+		rominfo.saveInfo().gameCode,
+		
 		rominfo.saveInfo().gameSdkVersion, 
 		rominfo.saveInfo().gameCRC, gameConfig.heapShrink);
 
@@ -676,41 +677,8 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
         config.language(gameConfig.language);
     }
 
-	char gameTid[5] = {0};
-	tonccpy(gameTid, rominfo.saveInfo().gameCode, 4);
-
-	FILE *f_nds_file = fopen(fullPath.c_str(), "rb");
-	u16 headerCRC16 = 0;
-	fseek(f_nds_file, offsetof(sNDSHeaderExt, headerCRC16), SEEK_SET);
-	fread(&headerCRC16, sizeof(u16), 1, f_nds_file);
-	fclose(f_nds_file);
-
 	if (!rominfo.isDSiWare()) {
-		bool proceedToLaunch = true;
-
-		if (!isDSiMode() && ms().secondaryDevice) {
-			// TODO: If the list gets large enough, switch to bsearch().
-			for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
-				if (memcmp(gameTid, incompatibleGameListB4DS[i], 3) == 0) {
-					// Found match
-					proceedToLaunch = false;
-					break;
-				}
-			}
-		}
-
-		if (proceedToLaunch) {
-			// TODO: If the list gets large enough, switch to bsearch().
-			for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
-				if (memcmp(gameTid, incompatibleGameList[i], 3) == 0) {
-					// Found match
-					proceedToLaunch = false;
-					break;
-				}
-			}
-		}
-
-		if (!proceedToLaunch) {
+		if (!config.checkCompatibility()) {
 			int optionPicked = messageBox(this, LANG("game launch", "Compatibility Warning"), "This game is known to not run. If there's an nds-bootstrap version that fixes this, please ignore this message.", MB_OK | MB_CANCEL);
 			progressWnd().hide();
 
@@ -760,7 +728,7 @@ void MainWnd::bootBootstrap(PerGameSettings &gameConfig, DSRomInfo &rominfo)
 
     PerGameSettings settingsIni(_mainList->getSelectedShowName().c_str());
 
-	APFixType apType = config.romNeedsAPFix();
+	APFixType apType = config.hasAPFix();
 
 	if (settingsIni.checkIfShowAPMsg() && !(apType == APFixType::EHasIPS || apType == APFixType::ENone)) {
 		
@@ -924,7 +892,7 @@ void MainWnd::launchSelected()
 			std::string fileName = _mainList->getSelectedShowName();
 			std::string fullPath = _mainList->getSelectedFullPath();
 
-			BootstrapConfig config(fileName, fullPath, std::string((char *)rominfo.saveInfo().gameCode), rominfo.saveInfo().gameSdkVersion, 
+			BootstrapConfig config(fileName, fullPath, rominfo.saveInfo().gameCode, rominfo.saveInfo().gameSdkVersion, 
 			rominfo.saveInfo().gameCRC, gameConfig.heapShrink);
 
 			ms().homebrewHasWide = (rominfo.saveInfo().gameCode[0] == 'W' || rominfo.version() == 0x57);

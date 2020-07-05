@@ -21,7 +21,7 @@ enum APFixType {
 class BootstrapConfig
 {
     public:
-        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const std::string& gametid, u32 sdkVersion, u16 headerCrc16, int heapShrink);
+        BootstrapConfig(const std::string& fileName, const std::string& fullPath, const u8* gametid, u32 sdkVersion, u16 headerCrc16, int heapShrink);
 
         ~BootstrapConfig();
         
@@ -54,7 +54,8 @@ class BootstrapConfig
         BootstrapConfig& onConfigSaved(std::function<void(void)> handler);
         BootstrapConfig& onCheatsApplied(std::function<void(void)> handler);
 
-        APFixType romNeedsAPFix();
+        APFixType hasAPFix();
+        bool checkCompatibility();
         int launch();
     private:
         std::string getAPFix();

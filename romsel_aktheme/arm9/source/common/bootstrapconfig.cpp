@@ -14,14 +14,15 @@
 #include "donorMap.h"
 #include "mpuMap.h"
 #include "speedBumpExcludeMap.h"
+#include "incompatibleGameMap.h"
 #include "saveMap.h"
 
 extern std::string getSavExtension(int number);
 extern std::string getImgExtension(int number);
 extern bool extention(const std::string& filename, const char* ext);
 
-BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const std::string &gametid, u32 sdkVersion, u16 headerCrc16, int heapShrink)
-	: _fileName(fileName), _fullPath(fullPath), _gametid(gametid), _sdkVersion(sdkVersion), _headerCrc16(headerCrc16)
+BootstrapConfig::BootstrapConfig(const std::string &fileName, const std::string &fullPath, const u8* gametid, u32 sdkVersion, u16 headerCrc16, int heapShrink)
+	: _fileName(fileName), _fullPath(fullPath), _gametid(std::string((char *)gametid, 4)), _sdkVersion(sdkVersion), _headerCrc16(headerCrc16)
 {
 	_donorSdk = 0;
 	_mpuSize = 0;
@@ -449,6 +450,7 @@ std::string BootstrapConfig::getAPFix()
 
 	if (!ipsFound) {
 		snprintf(ipsPath, sizeof(ipsPath), "%s:/_nds/TWiLightMenu/apfix/%s-%X.ips", sdFound() ? "sd" : "fat", _gametid.c_str(), _headerCrc16);
+		nocashWrite(ipsPath, sizeof(ipsPath));
 		ipsFound = (access(ipsPath, F_OK) == 0);
 	}
 
@@ -465,9 +467,28 @@ std::string BootstrapConfig::getAPFix()
 	return "";
 }
 
-APFixType BootstrapConfig::romNeedsAPFix() {
-	if (!_apFix.empty()) return APFixType::EHasIPS; // we have a known AP fix ready.
+bool BootstrapConfig::checkCompatibility() {
+	if (!isDSiMode()) {
+		// TODO: If the list gets large enough, switch to bsearch().
+		for (unsigned int i = 0; i < sizeof(incompatibleGameListB4DS)/sizeof(incompatibleGameListB4DS[0]); i++) {
+			if (memcmp(_gametid.c_str(), incompatibleGameListB4DS[i], 3) == 0) {
+				return false;
+			}
+		}
+	} 
+	for (unsigned int i = 0; i < sizeof(incompatibleGameList)/sizeof(incompatibleGameList[0]); i++) {
+		if (memcmp(_gametid.c_str(), incompatibleGameList[i], 3) == 0) {
+			// Found match
+			return false;
+		}
+	}
+	return true;
+}
 
+APFixType BootstrapConfig::hasAPFix() {
+	nocashWrite(_apFix.c_str(), _apFix.length());
+	if (!_apFix.empty()) return APFixType::EHasIPS; // we have a known AP fix ready.
+	nocashWrite(_gametid.c_str(), 4);
 	// Check for SDK4-5 ROMs that don't have AP measures.
 	if ((_gametid.rfind("AZLJ", 0) == 0)	// Girls Mode (JAP version of Style Savvy)
 		 || (_gametid.rfind("YEEJ", 0) == 0)	// Inazuma Eleven (Japan)
