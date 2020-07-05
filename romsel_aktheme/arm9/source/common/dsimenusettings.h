@@ -128,8 +128,8 @@ class TWLSettings
       std::string romfolder[2];
 
   public:
-    int pagenum;
-    int cursorPosition;
+    int pagenum[2];
+	int cursorPosition[2];
     int startMenu_cursorPosition;
     int consoleModel;
     int guiLanguage;
@@ -156,6 +156,7 @@ class TWLSettings
     int sysRegion;
     int launcherApp;
     bool gotosettings;
+    bool secondaryAccess;
     bool previousUsedDevice;
     bool secondaryDevice;
     bool fcSaveOnSd;

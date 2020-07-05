@@ -15,8 +15,12 @@ TWLSettings::TWLSettings()
 {
     romfolder[0] = "sd:/";
     romfolder[1] = "fat:/";
-    pagenum = 0;
-    cursorPosition = 0;
+    
+    pagenum[0] = 0;
+	pagenum[1] = 0;
+
+	cursorPosition[0] = 0;
+	cursorPosition[1] = 0;
     startMenu_cursorPosition = 0;
     consoleModel = 0;
 
@@ -98,8 +102,12 @@ void TWLSettings::loadSettings()
     romfolder[0] = settingsini.GetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     romfolder[1] = settingsini.GetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
 
-    pagenum = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-    cursorPosition = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+    pagenum[0] = settingsini.GetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+	pagenum[1] = settingsini.GetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+
+	cursorPosition[0] = settingsini.GetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+	cursorPosition[1] = settingsini.GetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+
     startMenu_cursorPosition = settingsini.GetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     consoleModel = settingsini.GetInt("SRLOADER", "CONSOLE_MODEL", consoleModel);
 
@@ -125,6 +133,7 @@ void TWLSettings::loadSettings()
 
     soundfreq = settingsini.GetInt("SRLOADER", "SOUND_FREQ", soundfreq);
     showlogo = settingsini.GetInt("SRLOADER", "SHOWLOGO", showlogo);
+	secondaryAccess = settingsini.GetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 
     previousUsedDevice = settingsini.GetInt("SRLOADER", "PREVIOUS_USED_DEVICE", previousUsedDevice);
 	secondaryDevice = bothSDandFlashcard() ? settingsini.GetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice) : flashcardFound();
@@ -189,14 +198,24 @@ void TWLSettings::saveSettings()
     settingsini.SetString("SRLOADER", "ROM_FOLDER", romfolder[0]);
     settingsini.SetString("SRLOADER", "SECONDARY_ROM_FOLDER", romfolder[1]);
 
-    settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum);
-    settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition);
+   	settingsini.SetInt("SRLOADER", "PAGE_NUMBER", pagenum[0]);
+	settingsini.SetInt("SRLOADER", "SECONDARY_PAGE_NUMBER", pagenum[1]);
+
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+
+
+	settingsini.SetInt("SRLOADER", "CURSOR_POSITION", cursorPosition[0]);
+	settingsini.SetInt("SRLOADER", "SECONDARY_CURSOR_POSITION", cursorPosition[1]);
+    
     settingsini.SetInt("SRLOADER", "STARTMENU_CURSOR_POSITION", startMenu_cursorPosition);
     settingsini.SetInt("SRLOADER", "AUTORUNGAME", autorun);
     // Customizable UI settings.
     settingsini.SetInt("SRLOADER", "LANGUAGE", guiLanguage);
     settingsini.SetInt("SRLOADER", "TITLELANGUAGE", titleLanguage);
     settingsini.SetInt("SRLOADER", "USE_GBARUNNER2", useGbarunner);
+
+	settingsini.SetInt("SRLOADER", "SECONDARY_ACCESS", secondaryAccess);
 
     if (bothSDandFlashcard()) {
         settingsini.SetInt("SRLOADER", "SECONDARY_DEVICE", secondaryDevice);
