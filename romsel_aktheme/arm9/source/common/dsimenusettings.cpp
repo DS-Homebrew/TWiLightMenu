@@ -258,8 +258,6 @@ TWLSettings::TLanguage TWLSettings::getGuiLanguage()
     return (TLanguage)guiLanguage;
 }
 
-#define PREFER_SLASH
-
 #ifdef PREFER_SLASH
 std::string GetPathWithFinalSlash(const std::string& path) {
     if (path.empty()) return path;
